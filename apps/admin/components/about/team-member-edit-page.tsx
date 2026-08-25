@@ -3,12 +3,15 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import type { TeamMember } from '@africatourismgate/types';
-import Link from 'next/link';
+import { Skeleton } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { AdminIntroPage } from '../pages/admin-intro-page';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { TeamMemberForm } from './team-member-form';
+
+const ABOUT_TEAM_HUB_HREF = '/contenu/site?tab=about-team';
 
 type TeamMemberEditPageProps = {
   memberId: string;
@@ -17,7 +20,7 @@ type TeamMemberEditPageProps = {
 export function TeamMemberEditPage({ memberId }: TeamMemberEditPageProps) {
   const { about: getAboutErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.about.team.edit');
-  const tCommon = useTranslations('modules.common');
+  const tCommonForm = useTranslations('modules.common.form');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -48,21 +51,41 @@ export function TeamMemberEditPage({ memberId }: TeamMemberEditPageProps) {
   }, [memberId, getAboutErrorMessage]);
 
   if (state.status === 'loading') {
-    return <p className="text-sm text-atg-muted">{tCommon('loading')}</p>;
+    return (
+      <AdminIntroPage
+        routePath="contenu/a-propos/equipe/id"
+        backHref={ABOUT_TEAM_HUB_HREF}
+        backLabelKey="backLabel"
+      >
+        <Skeleton className="h-96 w-full max-w-2xl" />
+        <p className="sr-only">{tCommonForm('loading')}</p>
+      </AdminIntroPage>
+    );
   }
 
   if (state.status === 'error') {
     return (
-      <div className="space-y-4">
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+      <AdminIntroPage
+        routePath="contenu/a-propos/equipe/id"
+        backHref={ABOUT_TEAM_HUB_HREF}
+        backLabelKey="backLabel"
+      >
+        <p role="alert" className="text-sm text-destructive">
           {state.message}
         </p>
-        <Link href="/contenu/a-propos/equipe" className="text-sm font-medium text-primary">
-          {tCommon('back.toList')}
-        </Link>
-      </div>
+      </AdminIntroPage>
     );
   }
 
-  return <TeamMemberForm mode="edit" memberId={memberId} initialMember={state.member} />;
+  return (
+    <AdminIntroPage
+      routePath="contenu/a-propos/equipe/id"
+      backHref={ABOUT_TEAM_HUB_HREF}
+      backLabelKey="backLabel"
+    >
+      <div className="min-w-0">
+        <TeamMemberForm mode="edit" memberId={memberId} initialMember={state.member} />
+      </div>
+    </AdminIntroPage>
+  );
 }

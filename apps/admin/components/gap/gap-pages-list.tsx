@@ -1,25 +1,29 @@
 'use client';
 
 import {
-  Button,
+  AlertDialog,
   Card,
   DataTable,
   DataTableActionButton,
   DataTableActions,
   DataTableBadge,
   DataTablePagination,
+  FilterBar,
   Input,
+  Select,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { GapPage, GapPageSectionKey, GapStatus } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { GAP_PAGE_SECTION_KEYS } from '../../lib/gap/constants';
 import { useGapPermissions } from '../../lib/gap/use-gap-permissions';
 import { getApiClient } from '../../lib/auth/api';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { AdminNetworkErrorModal } from '../admin-network-error-modal';
+import { GapPageDetailModal } from './gap-page-detail-modal';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
 
 function formatDateTime(iso: string | null): string {
@@ -43,23 +47,22 @@ export function GapPagesList() {
   const tStatus = useTranslations('modules.about.status');
   const tLocale = useTranslations('modules.about.locale');
   const tCommon = useTranslations('modules.common');
-  const statusFilterId = useId();
-  const localeFilterId = useId();
-  const sectionFilterId = useId();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<'' | GapStatus>('');
   const [localeFilter, setLocaleFilter] = useState('');
   const [sectionFilter, setSectionFilter] = useState<'' | GapPageSectionKey>('');
-  const [filterTick, setFilterTick] = useState(0);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
     | { status: 'ready'; pages: GapPage[]; total: number; totalPages: number }
   >({ status: 'loading' });
+  const [networkModalOpen, setNetworkModalOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<GapPage | null>(null);
+  const [viewTarget, setViewTarget] = useState<GapPage | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -72,6 +75,7 @@ export function GapPagesList() {
         locale: localeFilter || undefined,
         sectionKey: sectionFilter || undefined,
       });
+      setNetworkModalOpen(false);
       setState({
         status: 'ready',
         pages: result.data,
@@ -79,9 +83,11 @@ export function GapPagesList() {
         totalPages: result.meta.totalPages,
       });
     } catch (error) {
+      const isNetwork = error instanceof TypeError;
       setState({ status: 'error', message: getGapErrorMessage(error) });
+      if (isNetwork) setNetworkModalOpen(true);
     }
-  }, [page, search, statusFilter, localeFilter, sectionFilter, filterTick, getGapErrorMessage]);
+  }, [page, search, statusFilter, localeFilter, sectionFilter, getGapErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -98,22 +104,25 @@ export function GapPagesList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (item: GapPage) => {
-      if (!window.confirm(t('deleteConfirm', { title: item.title }))) return;
-      setDeleteError(null);
-      setDeletingId(item.id);
-      try {
-        await getApiClient().deleteGapPage(item.id);
-        await load();
-      } catch (error) {
-        setDeleteError(getGapErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, t, getGapErrorMessage],
-  );
+  const handleDeleteRequest = useCallback((item: GapPage) => {
+    setConfirmTarget(item);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const item = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(item.id);
+    try {
+      await getApiClient().deleteGapPage(item.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getGapErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getGapErrorMessage, load]);
 
   const columns = useMemo<ColumnDef<GapPage, unknown>[]>(
     () => [
@@ -171,11 +180,15 @@ export function GapPagesList() {
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
+            <DataTableActionButton
+              action="view"
+              onClick={() => setViewTarget(row.original)}
+            />
             <DataTableActionButton action="edit" href={`/gap/pages/${row.original.id}`} />
             {canWrite ? (
               <DataTableActionButton
                 action="delete"
-                onClick={() => void handleDelete(row.original)}
+                onClick={() => handleDeleteRequest(row.original)}
                 disabled={deletingId === row.original.id}
                 loading={deletingId === row.original.id}
               />
@@ -184,105 +197,136 @@ export function GapPagesList() {
         ),
       },
     ],
-    [canWrite, deletingId, handleDelete, t, tCommon, tSections, tStatus],
+    [canWrite, deletingId, handleDeleteRequest, t, tCommon, tSections, tStatus],
   );
 
   const pages = state.status === 'ready' ? state.pages : [];
-  const hasActiveFilters = Boolean(statusFilter || localeFilter || sectionFilter);
+  const activeFilterCount = [
+    search.trim().length > 0,
+    statusFilter !== '',
+    localeFilter !== '',
+    sectionFilter !== '',
+  ].filter(Boolean).length;
+  const hasActiveFilters = activeFilterCount > 0;
+
+  const sectionOptions = useMemo(
+    () => [
+      { value: '', label: tCommon('filters.all') },
+      ...GAP_PAGE_SECTION_KEYS.map((key) => ({ value: key, label: tSections(key) })),
+    ],
+    [tCommon, tSections],
+  );
+  const statusOptions = useMemo(
+    () => [
+      { value: '', label: tCommon('filters.all') },
+      { value: 'draft', label: tStatus('draft') },
+      { value: 'published', label: tStatus('published') },
+    ],
+    [tCommon, tStatus],
+  );
+  const localeOptions = useMemo(
+    () => [
+      { value: '', label: tCommon('filters.all') },
+      { value: 'fr', label: tLocale('fr') },
+      { value: 'en', label: tLocale('en') },
+      { value: 'es', label: tLocale('es') },
+    ],
+    [tCommon, tLocale],
+  );
+
+  const handleClearFilters = useCallback(() => {
+    setSearchInput('');
+    setSearch('');
+    setStatusFilter('');
+    setLocaleFilter('');
+    setSectionFilter('');
+    setPage(1);
+  }, []);
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { title: confirmTarget.title }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
+      <GapPageDetailModal
+        open={!!viewTarget}
+        page={viewTarget}
+        onOpenChange={(open) => {
+          if (!open) setViewTarget(null);
+        }}
+        canWrite={canWrite}
+      />
+      <AdminNetworkErrorModal
+        open={networkModalOpen}
+        onOpenChange={setNetworkModalOpen}
+        onRetry={() => void load()}
+        retrying={state.status === 'loading'}
+      />
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
-          <div className="flex-1 sm:max-w-md">
-            <Input
-              name="search"
-              type="search"
-              placeholder={t('searchPlaceholder')}
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              aria-label={t('searchAria')}
-            />
-          </div>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div>
-              <label
-                htmlFor={sectionFilterId}
-                className="mb-1 block text-xs font-medium text-atg-muted"
-              >
-                {t('columns.section')}
-              </label>
-              <select
-                id={sectionFilterId}
+      <FilterBar
+        mobileVariant="drawer"
+        activeCount={activeFilterCount}
+        onClear={handleClearFilters}
+        clearLabel={tCommon('filters.clearAll')}
+        applyLabel={tCommon('filters.apply')}
+        toggleLabel={tCommon('filters.toggle')}
+        filters={
+          <>
+            <div className="min-w-[200px] flex-1 sm:max-w-md">
+              <Input
+                name="search"
+                type="search"
+                placeholder={t('searchPlaceholder')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                aria-label={t('searchAria')}
+              />
+            </div>
+            <div className="w-full sm:w-48">
+              <Select
+                label={t('columns.section')}
                 value={sectionFilter}
-                onChange={(e) => setSectionFilter(e.target.value as '' | GapPageSectionKey)}
-                className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-              >
-                <option value="">{tCommon('filters.all')}</option>
-                {GAP_PAGE_SECTION_KEYS.map((key) => (
-                  <option key={key} value={key}>
-                    {tSections(key)}
-                  </option>
-                ))}
-              </select>
+                options={sectionOptions}
+                onChange={(e) => {
+                  setSectionFilter(e.target.value as '' | GapPageSectionKey);
+                  setPage(1);
+                }}
+              />
             </div>
-            <div>
-              <label
-                htmlFor={statusFilterId}
-                className="mb-1 block text-xs font-medium text-atg-muted"
-              >
-                {tCommon('columns.status')}
-              </label>
-              <select
-                id={statusFilterId}
+            <div className="w-full sm:w-40">
+              <Select
+                label={tCommon('columns.status')}
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as '' | GapStatus)}
-                className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-              >
-                <option value="">{tCommon('filters.all')}</option>
-                <option value="draft">{tStatus('draft')}</option>
-                <option value="published">{tStatus('published')}</option>
-              </select>
+                options={statusOptions}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value as '' | GapStatus);
+                  setPage(1);
+                }}
+              />
             </div>
-            <div>
-              <label
-                htmlFor={localeFilterId}
-                className="mb-1 block text-xs font-medium text-atg-muted"
-              >
-                {t('columns.locale')}
-              </label>
-              <select
-                id={localeFilterId}
+            <div className="w-full sm:w-40">
+              <Select
+                label={t('columns.locale')}
                 value={localeFilter}
-                onChange={(e) => setLocaleFilter(e.target.value)}
-                className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-              >
-                <option value="">{tCommon('filters.all')}</option>
-                <option value="fr">{tLocale('fr')}</option>
-                <option value="en">{tLocale('en')}</option>
-                <option value="es">{tLocale('es')}</option>
-              </select>
+                options={localeOptions}
+                onChange={(e) => {
+                  setLocaleFilter(e.target.value);
+                  setPage(1);
+                }}
+              />
             </div>
-          </div>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => {
-              setPage(1);
-              setFilterTick((n) => n + 1);
-            }}
-          >
-            {tCommon('filters.apply')}
-          </Button>
-        </div>
-        {canWrite ? <Button href="/gap/pages/nouveau">{t('newButton')}</Button> : null}
-      </div>
-
-      {deleteError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {deleteError}
-        </p>
-      ) : null}
+          </>
+        }
+      />
 
       {state.status === 'error' ? (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
@@ -314,5 +358,6 @@ export function GapPagesList() {
         </>
       )}
     </div>
+    </>
   );
 }

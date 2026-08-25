@@ -161,6 +161,7 @@ export type RichTextEditorProps = {
   placeholder?: string;
   className?: string;
   contentClassName?: string;
+  readOnly?: boolean;
   onUploadAsset?: (file: File) => Promise<RichTextUploadedAsset>;
 };
 
@@ -172,6 +173,7 @@ export function RichTextEditor({
   placeholder = 'Saisissez une description…',
   className,
   contentClassName,
+  readOnly = false,
   onUploadAsset,
 }: RichTextEditorProps) {
   const tRich = useTranslations('modules.common.richTextImage');
@@ -256,6 +258,7 @@ export function RichTextEditor({
     ],
     content: value || '',
     immediatelyRender: false,
+    editable: !readOnly,
     editorProps: {
       attributes: {
         id: editorId,
@@ -276,6 +279,11 @@ export function RichTextEditor({
       editor.commands.setContent(value || '', { emitUpdate: false });
     }
   }, [editor, value]);
+
+  useEffect(() => {
+    if (!editor) return;
+    editor.setEditable(!readOnly);
+  }, [editor, readOnly]);
 
   useEffect(() => {
     if (!editor) return;
@@ -360,6 +368,7 @@ export function RichTextEditor({
         </label>
       ) : null}
       <div className="overflow-hidden rounded-lg border border-atg-border bg-atg-elevated">
+        {!readOnly ? (
         <div
           className="flex flex-wrap gap-1 border-b border-atg-border bg-atg-surface/60 px-2 py-1.5"
           role="toolbar"
@@ -435,7 +444,8 @@ export function RichTextEditor({
             }}
           />
         </div>
-        {uploadError ? (
+        ) : null}
+        {!readOnly && uploadError ? (
           <p className="border-b border-atg-border bg-red-50 px-3 py-2 text-xs text-red-700 dark:bg-red-950/30 dark:text-red-300">
             {uploadError}
           </p>

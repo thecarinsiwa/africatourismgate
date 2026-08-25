@@ -12,6 +12,7 @@ import type {
   CreateAmenityRequest,
   CreateDestinationRequest,
   CreateEmployeeRequest,
+  CreateDepartmentRequest,
   CreateOrganizationRequest,
   CreatePointOfInterestRequest,
   CreatePropertyImageRequest,
@@ -100,6 +101,8 @@ import type {
   BookingDetail,
   BookingIdentityDocument,
   ReviewBookingIdentityDocumentRequest,
+  RequestIdentityDocumentUploadRequest,
+  RequestIdentityDocumentUploadResponse,
   BookingManifestEntry,
   CreateBookingManifestEntryRequest,
   UpdateBookingManifestEntryRequest,
@@ -113,6 +116,9 @@ import type {
   BookingItemsListQuery,
   BookingGuideAssignment,
   AssignBookingGuidesRequest,
+  UpdateBookingGuideAssignmentRequest,
+  RemoveBookingGuideRequest,
+  BookingGuideAssignmentHistoryItem,
   BookingListItem,
   BookingsListQuery,
   AdminReviewDetail,
@@ -172,10 +178,22 @@ import type {
   LoyaltyAccountsListQuery,
   Employee,
   EmployeesListQuery,
+  Department,
+  DepartmentsListQuery,
   TourGuide,
   TourGuidesListQuery,
   CreateTourGuideRequest,
   UpdateTourGuideRequest,
+  TourGuideBookingListItem,
+  TourGuideBookingsListQuery,
+  TourGuideCalendarSummary,
+  TourGuideCalendarSummaryQuery,
+  TourGuideCalendarDayDetail,
+  TourGuideCalendarDayQuery,
+  TourGuideAvailableQuery,
+  TourGuideAvailableItem,
+  UpsertGuideAvailabilityRequest,
+  GuideAvailabilitySlot,
   BlogPost,
   BlogPostsListQuery,
   CreateBlogPostRequest,
@@ -321,6 +339,7 @@ import type {
   UpdateAirportRequest,
   UpdateDestinationRequest,
   UpdateEmployeeRequest,
+  UpdateDepartmentRequest,
   UpdateFlightClassAvailabilityRequest,
   UpdateFlightClassRequest,
   UpdateFlightImageRequest,
@@ -443,6 +462,7 @@ export type {
   DestinationsListQuery,
   CreateDestinationRequest,
   CreateEmployeeRequest,
+  CreateDepartmentRequest,
   CreateOrganizationRequest,
   CreatePointOfInterestRequest,
   PointOfInterest,
@@ -452,6 +472,7 @@ export type {
   CreateRoleRequest,
   CreateUserRoleAssignmentRequest,
   UpdateEmployeeRequest,
+  UpdateDepartmentRequest,
   BulkUpsertOrganizationSettingsRequest,
   CreateOrganizationBankAccountRequest,
   EmailBrandingValue,
@@ -469,6 +490,8 @@ export type {
   UpdateUserRequest,
   Employee,
   EmployeesListQuery,
+  Department,
+  DepartmentsListQuery,
   Permission,
   PermissionsListQuery,
   RbacAuditLog,
@@ -1091,6 +1114,13 @@ export class ApiClient {
     return this.request<void>(`/promo-codes/${id}`, { method: 'DELETE' });
   }
 
+  uploadPromoCodeImage(id: string, body: FormData): Promise<{ url: string }> {
+    return this.request<{ url: string }>(`/promo-codes/${id}/upload-image`, {
+      method: 'POST',
+      body,
+    });
+  }
+
   listPromotions(query?: PromotionsListQuery): Promise<PaginatedResponse<Promotion>> {
     return fetchPaginated<Promotion>(this, '/promotions', query);
   }
@@ -1109,6 +1139,13 @@ export class ApiClient {
 
   deletePromotion(id: string): Promise<void> {
     return this.request<void>(`/promotions/${id}`, { method: 'DELETE' });
+  }
+
+  uploadPromotionImage(id: string, body: FormData): Promise<{ url: string }> {
+    return this.request<{ url: string }>(`/promotions/${id}/upload-image`, {
+      method: 'POST',
+      body,
+    });
   }
 
   countUsers(): Promise<number> {
@@ -1243,6 +1280,37 @@ export class ApiClient {
     return fetchPaginated<Employee>(this, '/employees', query);
   }
 
+  listDepartments(
+    query?: DepartmentsListQuery,
+  ): Promise<PaginatedResponse<Department>> {
+    return fetchPaginated<Department>(this, '/departments', query);
+  }
+
+  getDepartment(id: string): Promise<Department> {
+    return this.request<Department>(`/departments/${id}`);
+  }
+
+  createDepartment(body: CreateDepartmentRequest): Promise<Department> {
+    return this.request<Department>('/departments', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateDepartment(
+    id: string,
+    body: UpdateDepartmentRequest,
+  ): Promise<Department> {
+    return this.request<Department>(`/departments/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteDepartment(id: string): Promise<void> {
+    return this.request<void>(`/departments/${id}`, { method: 'DELETE' });
+  }
+
   getEmployee(id: string): Promise<Employee> {
     return this.request<Employee>(`/employees/${id}`);
   }
@@ -1291,6 +1359,65 @@ export class ApiClient {
 
   deleteTourGuide(id: string): Promise<void> {
     return this.request<void>(`/tour-guides/${id}`, { method: 'DELETE' });
+  }
+
+  listTourGuideBookings(
+    guideId: string,
+    query?: TourGuideBookingsListQuery,
+  ): Promise<PaginatedResponse<TourGuideBookingListItem>> {
+    return fetchPaginated<TourGuideBookingListItem>(
+      this,
+      `/tour-guides/${guideId}/bookings`,
+      query,
+    );
+  }
+
+  getTourGuideCalendarSummary(
+    query: TourGuideCalendarSummaryQuery,
+  ): Promise<TourGuideCalendarSummary> {
+    const params = new URLSearchParams();
+    params.set('month', query.month);
+    if (query.destinationId) params.set('destinationId', query.destinationId);
+    if (query.organizationId) params.set('organizationId', query.organizationId);
+    if (query.guideId) params.set('guideId', query.guideId);
+    const qs = params.toString();
+    return this.request<TourGuideCalendarSummary>(
+      `/tour-guides/calendar/summary?${qs}`,
+    );
+  }
+
+  getTourGuideCalendarDay(
+    query: TourGuideCalendarDayQuery,
+  ): Promise<TourGuideCalendarDayDetail> {
+    const params = new URLSearchParams();
+    params.set('date', query.date);
+    if (query.destinationId) params.set('destinationId', query.destinationId);
+    if (query.organizationId) params.set('organizationId', query.organizationId);
+    if (query.guideId) params.set('guideId', query.guideId);
+    const qs = params.toString();
+    return this.request<TourGuideCalendarDayDetail>(`/tour-guides/calendar/day?${qs}`);
+  }
+
+  searchAvailableTourGuides(
+    query: TourGuideAvailableQuery,
+  ): Promise<TourGuideAvailableItem[]> {
+    const params = new URLSearchParams();
+    params.set('from', query.from);
+    params.set('to', query.to);
+    if (query.destinationId) params.set('destinationId', query.destinationId);
+    if (query.organizationId) params.set('organizationId', query.organizationId);
+    const qs = params.toString();
+    return this.request<TourGuideAvailableItem[]>(`/tour-guides/available?${qs}`);
+  }
+
+  upsertGuideAvailability(
+    guideId: string,
+    body: UpsertGuideAvailabilityRequest,
+  ): Promise<GuideAvailabilitySlot> {
+    return this.request<GuideAvailabilitySlot>(`/tour-guides/${guideId}/availability`, {
+      method: 'PUT',
+      body,
+    });
   }
 
   listBlogPosts(
@@ -2391,9 +2518,48 @@ export class ApiClient {
     });
   }
 
-  removeBookingGuide(bookingId: string, guideId: string): Promise<void> {
-    return this.request<void>(`/bookings/${bookingId}/guides/${guideId}`, {
+  updateBookingGuideSlot(
+    bookingId: string,
+    assignmentId: string,
+    body: UpdateBookingGuideAssignmentRequest,
+  ): Promise<BookingGuideAssignment> {
+    return this.request<BookingGuideAssignment>(
+      `/bookings/${bookingId}/guides/${assignmentId}`,
+      {
+        method: 'PUT',
+        body,
+      },
+    );
+  }
+
+  removeBookingGuideSlot(
+    bookingId: string,
+    assignmentId: string,
+    body?: RemoveBookingGuideRequest,
+  ): Promise<void> {
+    return this.request<void>(`/bookings/${bookingId}/guides/${assignmentId}`, {
       method: 'DELETE',
+      body: body ?? {},
+    });
+  }
+
+  listBookingGuideAssignmentHistory(
+    bookingId: string,
+  ): Promise<BookingGuideAssignmentHistoryItem[]> {
+    return this.request<BookingGuideAssignmentHistoryItem[]>(
+      `/bookings/${bookingId}/guides/history`,
+    );
+  }
+
+  /** @deprecated Préférez removeBookingGuideSlot pour un créneau unique. */
+  removeBookingGuide(
+    bookingId: string,
+    guideId: string,
+    body?: RemoveBookingGuideRequest,
+  ): Promise<void> {
+    return this.request<void>(`/bookings/${bookingId}/guides/by-guide/${guideId}`, {
+      method: 'DELETE',
+      body: body ?? {},
     });
   }
 
@@ -2522,6 +2688,12 @@ export class ApiClient {
     });
   }
 
+  listBookingIdentityDocuments(bookingId: string): Promise<BookingIdentityDocument[]> {
+    return this.request<BookingIdentityDocument[]>(
+      `/bookings/${bookingId}/identity-documents`,
+    );
+  }
+
   approveBookingIdentityDocument(
     bookingId: string,
     documentId: string,
@@ -2552,6 +2724,16 @@ export class ApiClient {
     return this.request<BookingIdentityDocument>(
       `/bookings/${bookingId}/identity-documents/${documentId}/reject`,
       { method: 'POST', body: body ?? {} },
+    );
+  }
+
+  requestBookingIdentityDocumentUpload(
+    bookingId: string,
+    body: RequestIdentityDocumentUploadRequest,
+  ): Promise<RequestIdentityDocumentUploadResponse> {
+    return this.request<RequestIdentityDocumentUploadResponse>(
+      `/bookings/${bookingId}/request-identity-document-upload`,
+      { method: 'POST', body },
     );
   }
 
@@ -2635,6 +2817,13 @@ export class ApiClient {
 
   deleteAirline(id: string): Promise<void> {
     return this.request<void>(`/airlines/${id}`, { method: 'DELETE' });
+  }
+
+  uploadAirlineImage(id: string, body: FormData): Promise<{ url: string }> {
+    return this.request<{ url: string }>(`/airlines/${id}/upload-image`, {
+      method: 'POST',
+      body,
+    });
   }
 
   listAirports(query?: AirportsListQuery): Promise<PaginatedResponse<Airport>> {

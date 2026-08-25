@@ -51,7 +51,6 @@ export const bookingsKpis = [
     key: 'lines',
     labelKey: 'stats.bookings.lines.label',
     subtitleKey: 'stats.bookings.lines.subtitle',
-    href: '/reservations/lignes',
     iconClass: 'bg-atg-info-light text-atg-info',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>

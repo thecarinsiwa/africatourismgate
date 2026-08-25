@@ -2,7 +2,7 @@
   "status": {
     "draft": "Borrador",
     "pending_approval": "Pendiente de validación",
-    "pending_payment": "Pendiente de paiement",
+    "pending_payment": "Pendiente de pago",
     "confirmed": "Confirmada",
     "cancelled": "Cancelada",
     "refunded": "Reembolsada"
@@ -16,16 +16,18 @@
     "package": "Paquete"
   },
   "catalogLink": {
-    "referencePrefix": "Réf. {idPrefix}",
-    "ariaLabel": "Voir {typeLabel} : {title}"
+    "referencePrefix": "Ref. {idPrefix}",
+    "ariaLabel": "Ver {typeLabel}: {title}"
   },
   "list": {
-    "emptyDefault": "Ninguna réservation pour le moment.",
-    "emptyFiltered": "Ninguna réservation ne correspond à vos critères.",
-    "ariaLabel": "Liste des réservations",
+    "emptyDefault": "Ninguna reserva por el momento.",
+    "emptyFiltered": "Ninguna reserva coincide con tus criterios.",
+    "ariaLabel": "Lista de reservas",
     "filters": {
       "client": "Cliente"
     },
+    "searchPlaceholder": "Buscar por cliente, correo o ref.…",
+    "searchAria": "Buscar reservas",
     "tabs": {
       "ariaLabel": "Filtros rápidos por estado",
       "all": "Todas",
@@ -36,58 +38,75 @@
   "itemsList": {
     "filters": {
       "type": "Tipo",
-      "bookingStatus": "Estado réservation",
-      "bookingId": "ID réservation",
-      "bookingIdPlaceholder": "UUID complet"
+      "bookingStatus": "Estado de la reserva",
+      "bookingId": "ID de reserva",
+      "bookingIdPlaceholder": "UUID completo"
     },
-    "emptyDefault": "Ninguna ligne de réservation pour le moment.",
-    "emptyFiltered": "Ninguna ligne ne correspond à vos critères.",
-    "ariaLabel": "Líneas de réservation"
+    "emptyDefault": "Ninguna línea de reserva por el momento.",
+    "emptyFiltered": "Ninguna línea coincide con tus criterios.",
+    "ariaLabel": "Líneas de reserva"
   },
   "detail": {
     "title": "Reserva",
-    "backLink": "Volver aux réservations",
-    "reference": "Réf. {idPrefix}",
+    "backLink": "Volver a las reservas",
+    "reference": "Ref. {idPrefix}",
     "sections": {
       "client": "Cliente",
       "status": "Estado",
       "actions": "Acciones",
-      "bookingLines": "Líneas de réservation",
+      "bookingLines": "Líneas de reserva",
       "payments": "Pagos",
       "assignedGuides": "Guías asignados"
     },
     "clientFields": {
       "email": "Correo",
-      "name": "Apellido",
+      "name": "Nombre",
       "organization": "Organización",
       "total": "Total",
       "createdAt": "Creada el"
     },
+    "summary": {
+      "createdAt": "Creada el {date}",
+      "unreadMessages": "{count, plural, one {# mensaje del cliente sin leer} other {# mensajes del cliente sin leer}}"
+    },
+    "tabs": {
+      "ariaLabel": "Secciones complementarias",
+      "manifest": "Manifiesto",
+      "guides": "Guías",
+      "documents": "Documentos de identidad",
+      "documentsPending": "Documentos de identidad ({count})",
+      "history": "Historial"
+    },
+    "actionsBar": {
+      "ariaLabel": "Acciones sobre la reserva",
+      "statusModalDescription": "Elija el nuevo estado y un motivo opcional para el historial.",
+      "cancelModalDescription": "Indique un motivo de cancelación si es necesario."
+    },
     "actions": {
-      "changeStatus": "Changer le statut",
-      "statusReason": "Motivo (historique)",
-      "statusReasonPlaceholder": "Ex. confirmation manuelle, remboursement…",
-      "applyStatus": "Aplicar le statut",
+      "changeStatus": "Cambiar el estado",
+      "statusReason": "Motivo (historial)",
+      "statusReasonPlaceholder": "Ej. confirmación manual, reembolso…",
+      "applyStatus": "Aplicar el estado",
       "cancellation": "Cancelación",
       "cancelReason": "Motivo de cancelación",
-      "cancelReasonPlaceholder": "Ex. demande client, indisponibilité…",
-      "cancelBooking": "Annuler la réservation",
+      "cancelReasonPlaceholder": "Ej. solicitud del cliente, no disponibilidad…",
+      "cancelBooking": "Cancelar la reserva",
       "readOnly": "La edición requiere el permiso bookings.write.",
       "assistedStatusHint": "Use el panel de validación asistida para aprobar o rechazar esta solicitud."
     },
-    "linesEmpty": "Ninguna ligne.",
-    "linesAriaLabel": "Líneas de réservation",
-    "paymentsEmpty": "Hastacun paiement enregistré pour cette réservation.",
+    "linesEmpty": "Ninguna línea.",
+    "linesAriaLabel": "Líneas de reserva",
+    "paymentsEmpty": "Ningún pago registrado para esta reserva.",
     "paymentsAriaLabel": "Pagos",
     "statusDialog": {
-      "title": "Confirmer le changement de statut",
-      "description": "Passer la réservation de « {fromStatus} » à « {toStatus} » ?{reasonSuffix}",
-      "reasonSuffix": " Motivo : {reason}"
+      "title": "Confirmar el cambio de estado",
+      "description": "¿Pasar la reserva de « {fromStatus} » a « {toStatus} »?{reasonSuffix}",
+      "reasonSuffix": " Motivo: {reason}"
     },
     "cancelDialog": {
-      "title": "Annuler la réservation",
-      "description": "Annuler cette réservation ? Le stock des produits sera libéré (moteur de réservation).",
-      "confirm": "Annuler la réservation",
+      "title": "Cancelar la reserva",
+      "description": "¿Cancelar esta reserva? El stock de los productos se liberará (motor de reservas).",
+      "confirm": "Cancelar la reserva",
       "cancel": "Volver"
     },
     "paymentStatus": {
@@ -98,11 +117,11 @@
     }
   },
   "timeline": {
-    "progressAria": "Progression du statut de réservation",
+    "progressAria": "Progreso del estado de la reserva",
     "finalStatus": "Estado final",
     "history": "Historial",
-    "historyAria": "Historial des changements de statut",
-    "historyEmpty": "Hastacun changement de statut enregistré.",
+    "historyAria": "Historial de cambios de estado",
+    "historyEmpty": "Ningún cambio de estado registrado.",
     "transition": "{fromStatus} → {toStatus}"
   },
   "manifest": {
@@ -192,7 +211,30 @@
     "totalHint": "Ajuste el total si es necesario antes de aprobar.",
     "totalOverrideHint": "Calculado automáticamente a partir de los precios por viajero. Edite para aplicar un total manual.",
     "travelersTitle": "Desglose del pago por viajero",
+    "travelersCount": "{count, plural, one {# viajero} other {# viajeros}}",
+    "travelerNumber": "Viajero {number}",
+    "documentModal": {
+      "title": "Documento — {name}",
+      "description": "Documento de identidad de este viajero (asociación por orden de envío).",
+      "empty": "Ningún documento depositado para este viajero.",
+      "previewError": "No se puede mostrar el documento.",
+      "requestByEmail": "Solicitar envío por correo",
+      "requestByEmailSuccess": "Correo de solicitud enviado al cliente.",
+      "emailNotSent": "No se pudo enviar el correo (dirección del cliente no encontrada).",
+      "emailNoteLabel": "Mensaje al cliente (opcional)",
+      "emailNotePlaceholder": "Ej. suba una foto nítida del pasaporte…",
+      "travelerNameRequired": "El nombre del viajero es obligatorio para enviar la solicitud.",
+      "approve": "Validar documento",
+      "reject": "Rechazar",
+      "rejectSuccess": "Documento rechazado.",
+      "rejectDialogTitle": "Rechazar documento",
+      "rejectDialogDescription": "El cliente podrá subir una nueva versión desde su cuenta.",
+      "rejectNoteLabel": "Motivo (opcional)",
+      "rejectNotePlaceholder": "Ej. documento ilegible o caducado…"
+    },
     "travelerName": "Nombre del viajero",
+    "viewDocument": "Ver documento",
+    "viewDocumentPending": "Documento por validar",
     "travelerAge": "Edad",
     "travelerBasePrice": "Precio base ({currency})",
     "travelerPrice": "Precio ({currency})",
@@ -253,57 +295,114 @@
   },
   "guides": {
     "title": "Guías asignados",
-    "empty": "Ningún guía asignado a esta reserva.",
-    "ariaLabel": "Guías asignados a la reserva",
-    "assignTitle": "Asignar un guía",
-    "selectGuide": "Guía",
-    "selectPlaceholder": "Elegir un guía activo…",
+    "empty": "Ningún turno de guía asignado a esta reserva.",
+    "ariaLabel": "Turnos de guía asignados a la reserva",
+    "assignTitle": "Añadir un turno",
+    "assignHint": "Indique el horario y elija un guía disponible en ese intervalo.",
+    "selectGuide": "Guía disponible",
+    "selectPlaceholder": "Elegir un guía…",
+    "selectTimesFirst": "Indique primero los horarios",
+    "searchingGuides": "buscando…",
     "selectRole": "Rol",
-    "assignButton": "Asignar",
-    "noGuidesAvailable": "Todos los guías activos ya están asignados.",
-    "removeConfirm": "¿Quitar este guía de la reserva?",
+    "assignButton": "Asignar turno",
+    "assignConfirmTitle": "¿Asignar este turno?",
+    "assignConfirm": "El guía seleccionado será programado en el intervalo indicado y recibirá un correo.",
+    "assignConfirmNamed": "« {name} » intervendrá como guía {role} ({schedule}). Se enviará un correo de notificación.",
+    "assignConfirmButton": "Asignar y notificar",
+    "noGuidesForSlot": "Ningún guía disponible en este intervalo horario.",
+    "noGuidesAvailable": "Ningún guía activo disponible.",
+    "visitWindowHint": "Turnos permitidos del {start} al {end} (inclusive).",
+    "noVisitDates": "Esta reserva no tiene fechas — no se puede asignar un guía.",
+    "editSlotTitle": "Editar turno",
+    "editSlotDescription": "Ajuste los horarios de « {name} ». Los conflictos se verifican al guardar.",
+    "removeTitle": "Quitar turno",
+    "removeConfirm": "Este turno será eliminado. El guía recibirá un correo de notificación.",
+    "removeConfirmNamed": "El turno de « {name} » ({schedule}) será eliminado. Se enviará un correo al guía.",
+    "removeCommentLabel": "Mensaje al guía",
+    "removeCommentHint": "Este comentario se incluirá en el correo de notificación (opcional).",
+    "removeConfirmButton": "Quitar y notificar",
+    "cancel": "Cancelar",
     "viewProfile": "Ver perfil",
+    "validation": {
+      "endAfterStart": "La hora de fin debe ser posterior a la hora de inicio.",
+      "outsideVisitWindow": "El turno debe estar dentro del periodo de la reserva."
+    },
+    "fields": {
+      "startDatetime": "Inicio",
+      "endDatetime": "Fin",
+      "notes": "Notas",
+      "notesHint": "Ej. conductor, visita al mercado… (opcional)"
+    },
+    "conflicts": {
+      "assignment": "Misión",
+      "unavailability": "Indisponibilidad",
+      "viewBooking": "Ver reserva"
+    },
     "columns": {
       "guide": "Guía",
+      "schedule": "Intervalo horario",
       "role": "Rol",
+      "notes": "Notas",
       "assignedAt": "Asignado el"
+    },
+    "history": {
+      "title": "Historial de asignaciones",
+      "titleShort": "Historial",
+      "description": "Registro de creaciones, modificaciones y eliminaciones de turnos de guía.",
+      "expand": "Mostrar historial",
+      "collapse": "Ocultar historial",
+      "empty": "Ningún evento registrado para esta reserva.",
+      "ariaLabel": "Historial de turnos de guía",
+      "actions": {
+        "created": "Creación",
+        "updated": "Modificación",
+        "deleted": "Eliminación"
+      },
+      "columns": {
+        "when": "Fecha",
+        "action": "Acción",
+        "guide": "Guía",
+        "schedule": "Intervalo",
+        "role": "Rol",
+        "actor": "Por"
+      }
     }
   },
   "stats": {
     "bookings": {
       "total": {
         "label": "Reservas",
-        "subtitle": "Todas les réservations"
+        "subtitle": "Todas las reservas"
       },
       "confirmed": {
         "label": "Confirmadas",
-        "subtitle": "Reservas confirmées"
+        "subtitle": "Reservas confirmadas"
       },
       "pending_payment": {
         "label": "Pendiente",
-        "subtitle": "Paiement en attente"
+        "subtitle": "Pago pendiente"
       },
       "lines": {
         "label": "Líneas",
-        "subtitle": "Articles réservés"
+        "subtitle": "Artículos reservados"
       }
     },
     "items": {
       "total": {
         "label": "Líneas",
-        "subtitle": "Todas les lignes"
+        "subtitle": "Todas las líneas"
       },
       "confirmed": {
         "label": "Confirmadas",
-        "subtitle": "Líneas de réservations confirmées"
+        "subtitle": "Líneas de reservas confirmadas"
       },
       "pending_payment": {
         "label": "Pendiente",
-        "subtitle": "Líneas en attente de paiement"
+        "subtitle": "Líneas pendientes de pago"
       },
       "bookings": {
         "label": "Reservas",
-        "subtitle": "Voir toutes les réservations"
+        "subtitle": "Ver todas las reservas"
       }
     }
   }

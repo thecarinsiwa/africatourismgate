@@ -5,12 +5,21 @@
     "searchPlaceholder": "Rechercher par nom, slug ou pays…",
     "searchAria": "Rechercher une destination",
     "ariaLabel": "Liste des destinations",
-    "deleteConfirm": "Supprimer la destination « {name} » ? Les points d'intérêt associés seront également supprimés."
+    "viewGrid": "Grille",
+    "viewTable": "Tableau",
+    "viewModeAria": "Mode d'affichage des destinations",
+    "featuredFilter": "Mise en avant",
+    "featuredYes": "Page d'accueil",
+    "featuredNo": "Hors page d'accueil",
+    "deleteTitle": "Supprimer la destination",
+    "deleteConfirm": "La destination « {name} » et ses points d'intérêt associés seront supprimés définitivement.",
+    "deleteConfirmButton": "Supprimer",
+    "cancel": "Annuler"
   },
   "columns": {
     "destination": "Destination",
     "country": "Pays",
-    "featured": "Homepage"
+    "featured": "Page d'accueil"
   },
   "form": {
     "submitCreate": "Créer la destination",
@@ -18,32 +27,55 @@
     "sections": {
       "identity": "Identité",
       "presentation": "Présentation",
-      "geography": "Géographie"
+      "geography": "Géographie",
+      "publication": "Publication"
     },
     "slugHint": "Identifiant unique (ex. kinshasa).",
-    "countryCode": "Code pays (ISO)",
-    "countryCodeHint": "2 lettres, ex. CD, KE, ZA.",
-    "heroImageUrl": "URL image hero",
+    "countryCode": "Pays",
+    "countryCodeHint": "Recherchez par nom ou code ISO (2 lettres).",
+    "countrySearchPlaceholder": "Rechercher un pays…",
+    "countrySearchAria": "Rechercher un pays",
+    "countrySearchEmpty": "Aucun pays ne correspond à cette recherche.",
+    "heroImageUrl": "URL de l'image d'en-tête",
     "heroImageHint": "Affichée dans le bandeau. Laissez vide pour un dégradé.",
-    "isFeatured": "Afficher sur la homepage",
+    "isFeatured": "Afficher sur la page d'accueil",
     "isFeaturedHint": "Section « Destinations populaires » du site public (max. 4).",
     "geographyIntro": "Coordonnées du centre de la destination pour la carte statique.",
     "latitudeHint": "Optionnel, -90 à 90",
     "longitudeHint": "Optionnel, -180 à 180",
-    "mapPreview": "Aperçu carte",
+    "mapPreview": "Aperçu de la carte",
     "openStreetMap": "Ouvrir dans OpenStreetMap"
   },
   "detail": {
     "title": "Modifier la destination",
     "viewTitle": "Voir la destination",
+    "viewButton": "Voir la destination",
     "editButton": "Modifier la destination",
     "backLink": "Retour aux destinations",
+    "subtitle": "Identité, géographie et points d'intérêt.",
+    "featuredBadge": "Page d'accueil",
+    "tabsAria": "Sections de la destination",
+    "tabs": {
+      "informations": "Informations",
+      "pois": "Points d'intérêt"
+    },
     "mapTitle": "Carte de la destination",
     "description": "Description",
     "noDescription": "Aucune description renseignée.",
     "notFound": "Destination introuvable."
   },
   "view": {
+    "title": "Voir la destination",
+    "editButton": "Modifier la destination",
+    "subtitle": "Aperçu catalogue de la destination.",
+    "infoTitle": "Informations",
+    "coordinates": "Coordonnées",
+    "featuredNo": "Non mise en avant",
+    "heroTitle": "Image hero",
+    "heroIntro": "Visuel principal de la destination.",
+    "heroAlt": "Image hero de {name}",
+    "heroEmpty": "Aucune image hero.",
+    "mapEmpty": "Aucune coordonnée renseignée pour la carte.",
     "poisTitle": "Points d'intérêt",
     "poisIntro": "{count} point(s) d'intérêt enregistré(s)",
     "poisEmpty": "Aucun point d'intérêt pour cette destination.",
@@ -52,13 +84,32 @@
   "hero": {
     "ariaLabel": "Destination {name}"
   },
+  "heroImage": {
+    "title": "Image hero",
+    "hint": "Affichée dans le bandeau admin, les listes et le site public. JPEG, PNG ou WebP, max. 5 Mo.",
+    "previewAlt": "Aperçu de l'image hero",
+    "empty": "Aucune image hero définie.",
+    "upload": "Téléverser une image",
+    "remove": "Retirer l'image",
+    "saveUrl": "Enregistrer l'URL",
+    "saving": "Enregistrement…"
+  },
   "sections": {
     "pois": {
+      "title": "Points d'intérêt",
+      "intro": "Lieux remarquables rattachés à cette destination.",
+      "addPoi": "Ajouter un point d'intérêt",
+      "mapPicker": "Carte d'assistance",
+      "mapPickerHint": "Cliquez sur la carte ou déplacez le marqueur pour renseigner automatiquement la latitude et la longitude.",
+      "mapPickerAria": "Carte interactive pour sélectionner les coordonnées",
       "new": "Nouveau point d'intérêt",
       "edit": "Modifier le point d'intérêt",
       "empty": "Aucun point d'intérêt pour cette destination.",
       "ariaLabel": "Points d'intérêt de la destination",
-      "deleteConfirm": "Supprimer le point d'intérêt « {name} » ?"
+      "deleteTitle": "Supprimer le point d'intérêt",
+      "deleteConfirm": "Le point d'intérêt « {name} » sera supprimé définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler"
     },
     "related": {
       "properties": {
@@ -71,14 +122,14 @@
       },
       "packages": {
         "label": "Forfaits",
-        "subtitle": "Packages incluant des produits locaux"
+        "subtitle": "Forfaits incluant des produits locaux"
       }
     }
   },
   "stats": {
     "destinations": {
       "label": "Destinations",
-      "subtitle": "Villes et régions catalogue"
+      "subtitle": "Villes et régions du catalogue"
     },
     "pois": {
       "label": "Points d'intérêt",

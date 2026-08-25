@@ -6,7 +6,12 @@ import { AdminIntroPage } from './admin-intro-page';
 export function JournauxSecuritePageContent() {
   return (
     <AdminIntroPage routePath="utilisateurs/journaux-securite">
-      <RbacAuditLogsList showSubnav={false} />
+      <RbacAuditLogsList
+        showSubnav={false}
+        showFilterBar={false}
+        variant="simple"
+        pageSize={5}
+      />
     </AdminIntroPage>
   );
 }

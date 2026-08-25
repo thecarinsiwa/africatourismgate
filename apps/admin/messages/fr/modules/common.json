@@ -24,7 +24,9 @@
     "searchByEmailOrName": "Rechercher par e-mail ou nom…",
     "searchByEmailOrNameAria": "Rechercher par e-mail ou nom",
     "searchByNameOrSlug": "Rechercher par nom ou slug…",
-    "searchByNameOrSlugAria": "Rechercher par nom ou slug"
+    "searchByNameOrSlugAria": "Rechercher par nom ou slug",
+    "searchBookings": "Rechercher par client, e-mail ou réf.…",
+    "searchBookingsAria": "Rechercher des réservations"
   },
   "columns": {
     "user": "Utilisateur",
@@ -39,7 +41,7 @@
     "address": "Adresse",
     "country": "Pays",
     "default": "Par défaut",
-    "provider": "Fournisseur",
+    "provider": "Partenaire",
     "method": "Méthode",
     "role": "Rôle",
     "quantityShort": "Qté",
@@ -84,7 +86,8 @@
     "reserved": "Réservés",
     "available": "Disponibles",
     "product": "Produit",
-    "category": "Catégorie"
+    "category": "Catégorie",
+    "description": "Description"
   },
   "pagination": {
     "session": "session",
@@ -103,7 +106,7 @@
     "destination": "destination",
     "guide": "guide",
     "package": "forfait",
-    "provider": "fournisseur",
+    "provider": "partenaire",
     "category": "catégorie",
     "agency": "agence",
     "airport": "aéroport",
@@ -115,7 +118,11 @@
     "review": "avis",
     "ticket": "tickets",
     "loyaltyAccount": "comptes",
-    "activity": "activité"
+    "activity": "activité",
+    "employee": "employé",
+    "department": "département",
+    "date": "date",
+    "service": "prestation"
   },
   "dataTable": {
     "loading": "Chargement…",
@@ -145,6 +152,7 @@
   },
   "dates": {
     "createdAt": "Créée le",
+    "updatedAt": "Modifiée le",
     "expiresAt": "Expire le"
   },
   "select": {
@@ -188,7 +196,7 @@
     "slugInvalid": "Slug invalide (minuscules, chiffres, tirets).",
     "slugInvalidLong": "Slug invalide : minuscules, chiffres et tirets uniquement (ex. kinshasa).",
     "destinationRequired": "La destination est obligatoire.",
-    "providerRequired": "Le fournisseur est obligatoire.",
+    "providerRequired": "Le partenaire est obligatoire.",
     "invalidPriceCents": "Prix invalide (centimes).",
     "invalidPrice": "Prix invalide.",
     "invalidCapacity": "Capacité invalide.",
@@ -217,10 +225,13 @@
     "selectProduct": "Sélectionnez un produit.",
     "invalidCabinCount": "Nombre de cabines invalide.",
     "datesRequired": "Les dates de début et de fin sont obligatoires.",
-    "iataAndNameRequired": "Code IATA (2 lettres) et nom sont obligatoires."
+    "iataAndNameRequired": "Code IATA (2 lettres) et nom sont obligatoires.",
+    "codeAndNameRequired": "Le code et le nom sont obligatoires."
   },
   "toast": {
     "saved": "Enregistré",
+    "created": "Créé",
+    "deleted": "Supprimé",
     "saveError": "Erreur d'enregistrement",
     "deleteError": "Erreur de suppression",
     "availabilitySaved": "Disponibilité enregistrée",
@@ -230,7 +241,15 @@
     "propertySavedTitle": "Hébergement enregistré",
     "deletedProperty": "L'hébergement « {name} » a été supprimé.",
     "deletedFlight": "Le vol « {flightNumber} » a été supprimé.",
-    "deletedVehicle": "Le véhicule « {label} » a été supprimé."
+    "deletedVehicle": "Le véhicule « {label} » a été supprimé.",
+    "deletedBlogPost": "L'article « {title} » a été supprimé.",
+    "deletedHeroSlide": "La diapositive « {title} » a été supprimée.",
+    "deletedEmployee": "L'employé « {label} » a été supprimé.",
+    "deletedAmenity": "L'équipement « {name} » a été supprimé.",
+    "deletedDestination": "La destination « {name} » a été supprimée.",
+    "deletedTourGuide": "Le guide « {name} » a été retiré du catalogue.",
+    "tourGuideSavedTitle": "Guide enregistré",
+    "deletedOrganization": "L'organisation « {name} » a été supprimée."
   },
   "availabilityCalendar": {
     "previousMonth": "Mois précédent",
@@ -238,6 +257,8 @@
     "today": "Aujourd'hui",
     "bulkTitle": "Mise à jour groupée",
     "bulkIntro": "Définissez le stock et le prix pour toutes les dates de la plage sélectionnée.",
+    "bulkIntroSeats": "Définissez les sièges disponibles et le prix pour toutes les dates de la plage sélectionnée.",
+    "applyToRange": "Appliquer à la plage",
     "weekdays": {
       "mon": "lun.",
       "tue": "mar.",
@@ -251,6 +272,8 @@
     "stockUnits": "Stock (unités)",
     "availableSeats": "Sièges disponibles",
     "seatsAria": "Sièges {date}",
+    "priceAria": "Prix {date}",
+    "seatsShort": "{count} sièges",
     "unitsShort": "{count} u."
   },
   "imagesGallery": {
@@ -262,7 +285,10 @@
     "newPhoto": "Nouvelle photo",
     "editPhoto": "Modifier la photo",
     "addPhoto": "Ajouter une photo",
-    "deleteConfirm": "Supprimer cette image ?",
+    "deleteConfirm": "Cette image sera supprimée définitivement.",
+    "deleteTitle": "Supprimer l'image",
+    "deleteConfirmButton": "Supprimer",
+    "cancel": "Annuler",
     "emptyDefault": "Aucune photo.",
     "emptyRoom": "Aucune photo pour cette chambre.",
     "emptyProperty": "Aucune image.",
@@ -273,7 +299,16 @@
     "suggestionsLoading": "Chargement des suggestions…",
     "suggestionsEmpty": "Aucune photo disponible dans les produits inclus. Ajoutez des produits au forfait ou uploadez une photo manuellement.",
     "alreadyAdded": "Ajoutée",
-    "addFromSuggestion": "Ajouter"
+    "addFromSuggestion": "Ajouter",
+    "ariaLabel": "Galerie photos",
+    "loading": "Chargement de la galerie…",
+    "viewerTitle": "Aperçu de la photo",
+    "viewerClose": "Fermer l'aperçu",
+    "viewerPrev": "Photo précédente",
+    "viewerNext": "Photo suivante",
+    "viewerOpen": "Agrandir la photo",
+    "maxPhotosHint": "Maximum {max} photos par chambre.",
+    "maxPhotosReached": "Limite atteinte : {max} photos maximum par chambre."
   },
   "flightClass": {
     "economy": "Économique",

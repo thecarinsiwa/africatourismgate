@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -10,34 +11,61 @@ import {
   DataTableActions,
   DataTableBadge,
   DataTablePagination,
+  FilterBar,
   Input,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Promotion } from '@africatourismgate/types';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { PromotionsListFilter } from '../../config/promotions-kpi';
 import { getApiClient } from '../../lib/auth/api';
-import { usePromoDiscountLabels } from '../../lib/i18n/use-module-labels';
+import { exportCsv } from '../../lib/export-csv';
 import {
+  usePromoDiscountLabels,
+  usePromoDiscountTypeLabels,
+  usePromoUsageLabels,
+  usePromoValidityLabels,
+} from '../../lib/i18n/use-module-labels';
+import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { useHydrated } from '../../lib/i18n/use-hydrated';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
+import {
+  formatPromotionDiscountBadge,
   formatPromoUsageLabel,
   formatPromotionValidityDisplay,
+  getPromoDiscountTypeLabel,
+  getPromotionValidityState,
   getPromoUsageBadgeVariant,
+  getPromoValidityBadgeVariant,
+  getPromoValidityLabel,
 } from '../../lib/promo-validity';
-import {
-  PromotionPreviewBanner,
-  promotionToPreviewProps,
-} from './promotion-preview-banner';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
 
-export function PromotionsList() {
+type PromotionsListProps = {
+  listFilter: PromotionsListFilter;
+  onListFilterChange?: (filter: PromotionsListFilter) => void;
+};
+
+export function PromotionsList({ listFilter, onListFilterChange }: PromotionsListProps) {
   const { promotions: getPromotionsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.promotions.list');
   const tStatus = useTranslations('modules.promotions.status');
   const tCommon = useTranslations('modules.common');
-  const tUsage = useTranslations('modules.promoCodes.usage');
+  const tDataTable = useTranslations('modules.common.dataTable');
+  const tExport = useTranslations('modules.common.exportCsv');
+  const tUsage = usePromoUsageLabels();
   const discountLabels = usePromoDiscountLabels();
+  const discountTypeLabels = usePromoDiscountTypeLabels();
+  const validityLabels = usePromoValidityLabels();
+  const paginationLabels = useDataTablePaginationLabels();
+  const hydrated = useHydrated();
+  const { toast } = useToast();
+  const emptyDash = tCommon('empty.dash');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -49,6 +77,7 @@ export function PromotionsList() {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<Promotion | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -74,6 +103,7 @@ export function PromotionsList() {
         page,
         limit: PAGE_SIZE,
         search: search || undefined,
+        ...listFilter,
       });
       setState({
         status: 'ready',
@@ -84,7 +114,11 @@ export function PromotionsList() {
     } catch (error) {
       setState({ status: 'error', message: getPromotionsErrorMessage(error) });
     }
-  }, [page, search, getPromotionsErrorMessage]);
+  }, [page, search, listFilter, getPromotionsErrorMessage]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [listFilter]);
 
   useEffect(() => {
     void load();
@@ -101,54 +135,139 @@ export function PromotionsList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (promo: Promotion) => {
-      if (!window.confirm(t('deleteConfirm', { name: promo.name }))) return;
-      setDeleteError(null);
-      setDeletingId(promo.id);
-      try {
-        await getApiClient().deletePromotion(promo.id);
-        await load();
-      } catch (error) {
-        setDeleteError(getPromotionsErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, t, getPromotionsErrorMessage],
-  );
+  const hasKpiFilter =
+    listFilter.active !== undefined ||
+    listFilter.validity !== undefined ||
+    listFilter.hasDiscount !== undefined;
+  const activeFilterCount = (search !== '' ? 1 : 0) + (hasKpiFilter ? 1 : 0);
+  const hasFilters = activeFilterCount > 0;
+
+  const handleClearFilters = useCallback(() => {
+    setSearchInput('');
+    setSearch('');
+    setPage(1);
+    onListFilterChange?.({});
+  }, [onListFilterChange]);
+
+  const handleDeleteRequest = useCallback((promo: Promotion) => {
+    setConfirmTarget(promo);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const promo = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(promo.id);
+    try {
+      await getApiClient().deletePromotion(promo.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getPromotionsErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getPromotionsErrorMessage, load]);
 
   const columns = useMemo<ColumnDef<Promotion, unknown>[]>(
     () => [
       {
+        id: 'cover',
+        header: t('columns.cover'),
+        meta: { align: 'center' },
+        cell: ({ row }) => {
+          const imageUrl = row.original.coverImageUrl?.trim();
+          if (!imageUrl) {
+            return <span className="text-sm text-atg-muted">{emptyDash}</span>;
+          }
+          return (
+            <div className="relative mx-auto h-12 w-16 overflow-hidden rounded-md border border-atg-border">
+              <Image
+                src={resolveMediaUrl(imageUrl)}
+                alt=""
+                fill
+                unoptimized
+                className="object-cover"
+                sizes="64px"
+              />
+            </div>
+          );
+        },
+      },
+      {
         accessorKey: 'name',
         header: t('columns.campaign'),
-        cell: ({ row }) => (
-          <div className="max-w-md space-y-2">
-            <PromotionPreviewBanner
-              {...promotionToPreviewProps(row.original)}
-              compact
-            />
-          </div>
-        ),
+        cell: ({ row }) => {
+          const promo = row.original;
+          const description = promo.description?.trim();
+          return (
+            <div className="min-w-0 max-w-md">
+              <span className="block truncate font-medium text-atg-fg">{promo.name}</span>
+              {description ? (
+                <p className="line-clamp-1 text-xs text-atg-muted">{description}</p>
+              ) : null}
+            </div>
+          );
+        },
+      },
+      {
+        id: 'discount',
+        header: t('columns.discount'),
+        cell: ({ row }) => {
+          const promo = row.original;
+          const hasDiscount = promo.discountType != null && promo.discountValue != null;
+          return (
+            <div className="flex flex-wrap items-center gap-1.5">
+              <DataTableBadge variant="default" className="tabular-nums">
+                {formatPromotionDiscountBadge(
+                  {
+                    hasDiscount,
+                    discountType: promo.discountType,
+                    discountValue: promo.discountValue,
+                  },
+                  discountLabels,
+                )}
+              </DataTableBadge>
+              {hasDiscount && promo.discountType ? (
+                <DataTableBadge variant="muted">
+                  {getPromoDiscountTypeLabel(promo.discountType, discountTypeLabels)}
+                </DataTableBadge>
+              ) : null}
+            </div>
+          );
+        },
       },
       {
         id: 'validity',
         header: t('columns.validity'),
-        cell: ({ row }) => (
-          <span className="whitespace-nowrap text-sm tabular-nums text-atg-muted">
-            {formatPromotionValidityDisplay(
-              row.original.validFrom,
-              row.original.validUntil,
-              discountLabels,
-            )}
-          </span>
-        ),
+        meta: { hideOnMobile: true },
+        cell: ({ row }) => {
+          const promo = row.original;
+          const validityState = hydrated
+            ? getPromotionValidityState(promo.validFrom, promo.validUntil)
+            : null;
+          return (
+            <div className="flex flex-col gap-1.5">
+              <span className="whitespace-nowrap text-sm tabular-nums text-atg-muted">
+                {formatPromotionValidityDisplay(
+                  promo.validFrom,
+                  promo.validUntil,
+                  discountLabels,
+                )}
+              </span>
+              {validityState ? (
+                <DataTableBadge variant={getPromoValidityBadgeVariant(validityState)}>
+                  {getPromoValidityLabel(validityState, validityLabels)}
+                </DataTableBadge>
+              ) : null}
+            </div>
+          );
+        },
       },
       {
         id: 'usage',
         header: t('columns.usage'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) => {
           const promo = row.original;
           return (
@@ -159,8 +278,8 @@ export function PromotionsList() {
               {formatPromoUsageLabel(
                 promo.redemptionCount,
                 promo.maxRedemptions,
-                tUsage('format'),
-                tUsage('unlimitedMax'),
+                tUsage.format,
+                tUsage.unlimitedMax,
               )}
             </DataTableBadge>
           );
@@ -184,11 +303,15 @@ export function PromotionsList() {
           const promo = row.original;
           return (
             <DataTableActions>
+              <DataTableActionButton
+                action="view"
+                href={`/paiements/promotions/${promo.id}/voir`}
+              />
               <DataTableActionButton action="edit" href={`/paiements/promotions/${promo.id}`} />
               {canWrite ? (
                 <DataTableActionButton
                   action="delete"
-                  onClick={() => void handleDelete(promo)}
+                  onClick={() => handleDeleteRequest(promo)}
                   disabled={deletingId === promo.id}
                   loading={deletingId === promo.id}
                 />
@@ -198,68 +321,185 @@ export function PromotionsList() {
         },
       },
     ],
-    [canWrite, deletingId, discountLabels, handleDelete, t, tCommon, tStatus, tUsage],
+    [
+      canWrite,
+      deletingId,
+      discountLabels,
+      discountTypeLabels,
+      emptyDash,
+      handleDeleteRequest,
+      hydrated,
+      t,
+      tCommon,
+      tStatus,
+      tUsage,
+      validityLabels,
+    ],
   );
 
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
   const promotions = state.status === 'ready' ? state.promotions : [];
-  const emptyMessage = search.trim() ? t('emptySearch') : t('emptyDefault');
+  const emptyMessage = hasFilters ? t('emptySearch') : t('emptyDefault');
+
+  const handleExportCsv = useCallback(() => {
+    if (promotions.length === 0) return;
+    const date = new Date().toISOString().slice(0, 10);
+    exportCsv({
+      filename: `promotions-${date}.csv`,
+      columns: [
+        {
+          header: t('columns.campaign'),
+          value: (row) => row.name,
+        },
+        {
+          header: t('columns.description'),
+          value: (row) => row.description?.trim() || emptyDash,
+        },
+        {
+          header: t('columns.discount'),
+          value: (row) =>
+            formatPromotionDiscountBadge(
+              {
+                hasDiscount: row.discountType != null && row.discountValue != null,
+                discountType: row.discountType,
+                discountValue: row.discountValue,
+              },
+              discountLabels,
+            ),
+        },
+        {
+          header: tCommon('columns.type'),
+          value: (row) =>
+            row.discountType
+              ? getPromoDiscountTypeLabel(row.discountType, discountTypeLabels)
+              : emptyDash,
+        },
+        {
+          header: t('columns.validity'),
+          value: (row) =>
+            formatPromotionValidityDisplay(row.validFrom, row.validUntil, discountLabels),
+        },
+        {
+          header: t('columns.usage'),
+          value: (row) =>
+            formatPromoUsageLabel(
+              row.redemptionCount,
+              row.maxRedemptions,
+              tUsage.format,
+              tUsage.unlimitedMax,
+            ),
+        },
+        {
+          header: t('columns.status'),
+          value: (row) => (row.active === 1 ? tStatus('active') : tStatus('inactive')),
+        },
+        {
+          header: 'ID',
+          value: (row) => row.id,
+        },
+      ],
+      rows: promotions,
+    });
+    toast({ variant: 'success', message: tExport('success') });
+  }, [
+    discountLabels,
+    discountTypeLabels,
+    emptyDash,
+    promotions,
+    t,
+    tCommon,
+    tExport,
+    tStatus,
+    tUsage,
+    toast,
+  ]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex-1 sm:max-w-md">
-          <Input
-            name="search"
-            type="search"
-            placeholder={t('searchPlaceholder')}
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            aria-label={t('searchAria')}
-          />
-        </div>
-        {canWrite ? (
-          <Button href="/paiements/promotions/nouveau">{t('newButton')}</Button>
-        ) : null}
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => {
+          if (!open) setConfirmTarget(null);
+        }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { name: confirmTarget.name }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
+      <div className="space-y-6">
+        <FilterBar
+          mobileVariant="drawer"
+          activeCount={activeFilterCount}
+          onClear={handleClearFilters}
+          clearLabel={tCommon('filters.clearAll')}
+          applyLabel={tCommon('filters.apply')}
+          toggleLabel={tCommon('filters.toggle')}
+          actions={
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={isLoading || promotions.length === 0}
+              onClick={handleExportCsv}
+            >
+              {tExport('button')}
+            </Button>
+          }
+          filters={
+            <div className="min-w-[200px] flex-1 sm:max-w-md">
+              <Input
+                name="search"
+                type="search"
+                placeholder={t('searchPlaceholder')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                aria-label={t('searchAria')}
+              />
+            </div>
+          }
+        />
+
+        {isError ? (
+          <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+            {state.message}
+          </p>
+        ) : (
+          <>
+            <Card variant="dashboard" padding="none" className="overflow-hidden">
+              <DataTable
+                columns={columns}
+                data={promotions}
+                isLoading={isLoading}
+                loadingMessage={tDataTable('loading')}
+                emptyMessage={emptyMessage}
+                emptyVariant={hasFilters ? 'search' : 'default'}
+                expandRowLabel={tDataTable('expandRow')}
+                collapseRowLabel={tDataTable('collapseRow')}
+                expandRowAriaLabel={tDataTable('expandRowAria')}
+                getRowId={(row) => row.id}
+                aria-label={t('tableAria')}
+              />
+            </Card>
+
+            {state.status === 'ready' ? (
+              <DataTablePagination
+                page={page}
+                pageSize={PAGE_SIZE}
+                totalPages={state.totalPages}
+                totalItems={state.total}
+                itemLabel={t('paginationItem')}
+                labels={paginationLabels}
+                onPageChange={setPage}
+              />
+            ) : null}
+          </>
+        )}
       </div>
-
-      {deleteError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {deleteError}
-        </p>
-      ) : null}
-
-      {isError ? (
-        <p className="text-sm text-red-600 dark:text-red-400" role="alert">
-          {state.message}
-        </p>
-      ) : (
-        <>
-          <Card variant="dashboard" padding="none" className="overflow-hidden">
-            <DataTable
-              columns={columns}
-              data={promotions}
-              isLoading={isLoading}
-              emptyMessage={emptyMessage}
-              emptyVariant={search.trim() ? 'search' : 'default'}
-              getRowId={(row) => row.id}
-              aria-label={t('tableAria')}
-            />
-          </Card>
-
-          {state.status === 'ready' ? (
-            <DataTablePagination
-              page={page}
-              pageSize={PAGE_SIZE}
-              totalPages={state.totalPages}
-              totalItems={state.total}
-              itemLabel={t('paginationItem')}
-              onPageChange={setPage}
-            />
-          ) : null}
-        </>
-      )}
-    </div>
+    </>
   );
 }

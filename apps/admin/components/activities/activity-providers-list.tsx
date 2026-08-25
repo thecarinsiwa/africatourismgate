@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -10,6 +11,7 @@ import {
   DataTableActions,
   DataTablePagination,
   Input,
+  Modal,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { ActivityProvider, Destination } from '@africatourismgate/types';
@@ -53,6 +55,8 @@ export function ActivityProvidersList() {
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<ActivityProvider | null>(null);
 
   useEffect(() => {
     void getApiClient()
@@ -108,6 +112,23 @@ export function ActivityProvidersList() {
     setFormError(null);
   }
 
+  function openCreate() {
+    setEditing(null);
+    setFormValues(emptyForm);
+    setFormError(null);
+    setShowForm(true);
+  }
+
+  function openEdit(provider: ActivityProvider) {
+    setEditing(provider);
+    setFormValues({
+      name: provider.name,
+      destinationId: provider.destinationId,
+    });
+    setFormError(null);
+    setShowForm(true);
+  }
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setFormError(null);
@@ -138,6 +159,26 @@ export function ActivityProvidersList() {
       setSubmitting(false);
     }
   }
+
+  const handleDeleteRequest = useCallback((provider: ActivityProvider) => {
+    setConfirmTarget(provider);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const provider = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(provider.id);
+    try {
+      await getApiClient().deleteActivityProvider(provider.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getActivitiesErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getActivitiesErrorMessage, load]);
 
   const columns = useMemo<ColumnDef<ActivityProvider, unknown>[]>(
     () => [
@@ -174,29 +215,11 @@ export function ActivityProvidersList() {
           <DataTableActions>
             <DataTableActionButton
               action="edit"
-              onClick={() => {
-                setEditing(row.original);
-                setFormValues({
-                  name: row.original.name,
-                  destinationId: row.original.destinationId,
-                });
-                setShowForm(true);
-              }}
+              onClick={() => openEdit(row.original)}
             />
             <DataTableActionButton
               action="delete"
-              onClick={async () => {
-                if (!window.confirm(t('deleteConfirm', { name: row.original.name }))) return;
-                setDeletingId(row.original.id);
-                try {
-                  await getApiClient().deleteActivityProvider(row.original.id);
-                  await load();
-                } catch (error) {
-                  setFormError(getActivitiesErrorMessage(error));
-                } finally {
-                  setDeletingId(null);
-                }
-              }}
+              onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
             />
@@ -204,7 +227,7 @@ export function ActivityProvidersList() {
         ),
       },
     ],
-    [deletingId, destById, emptyDash, getActivitiesErrorMessage, load, t, tColumns, tList],
+    [deletingId, destById, emptyDash, handleDeleteRequest, tColumns, tList],
   );
 
   const providers = state.status === 'ready' ? state.providers : [];
@@ -212,31 +235,60 @@ export function ActivityProvidersList() {
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
-          <div className="flex-1 sm:max-w-md">
-            <Input
-              type="search"
-              placeholder={t('searchPlaceholder')}
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              aria-label={tActions('search')}
-            />
-          </div>
-          <div className="sm:w-56">
-            <label className="mb-2 block text-sm font-medium text-atg-fg">
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => {
+          if (!open) setConfirmTarget(null);
+        }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { name: confirmTarget.name }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
+
+      <Modal
+        open={showForm}
+        onOpenChange={(open) => {
+          if (!open && !submitting) resetForm();
+        }}
+        title={editing ? t('edit') : t('new')}
+        showClose={!submitting}
+        closeAriaLabel={tActions('close')}
+        className="max-w-lg"
+      >
+        <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
+          {formError ? (
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              {formError}
+            </p>
+          ) : null}
+          <Input
+            label={tColumns('name')}
+            value={formValues.name}
+            onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
+            disabled={submitting}
+            required
+          />
+          <div>
+            <label htmlFor={destId} className="mb-2 block text-sm font-medium">
               {tList('destination')}
             </label>
             <select
-              value={destinationFilter}
-              onChange={(e) => {
-                setDestinationFilter(e.target.value);
-                setPage(1);
-              }}
+              id={destId}
               className={selectClass}
+              value={formValues.destinationId}
+              onChange={(e) =>
+                setFormValues((p) => ({ ...p, destinationId: e.target.value }))
+              }
+              disabled={submitting}
+              required
             >
-              <option value="">{tCommon('filters.allFeminine')}</option>
+              <option value="">{tSelect('chooseDash')}</option>
               {destinations.map((d) => (
                 <option key={d.id} value={d.id}>
                   {d.name}
@@ -244,49 +296,47 @@ export function ActivityProvidersList() {
               ))}
             </select>
           </div>
-        </div>
-        {!showForm ? (
-          <Button
-            type="button"
-            onClick={() => {
-              resetForm();
-              setShowForm(true);
-            }}
-          >
-            {t('new')}
-          </Button>
-        ) : null}
-      </div>
+          <div className="flex justify-end gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={resetForm}
+              disabled={submitting}
+            >
+              {tActions('cancel')}
+            </Button>
+            <Button type="submit" loading={submitting}>
+              {editing ? tActions('save') : tActions('create')}
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
-      {showForm ? (
-        <Card variant="dashboard" className="max-w-2xl">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">
-              {editing ? t('edit') : t('new')}
-            </h3>
-            {formError ? (
-              <p role="alert" className="text-sm text-red-600">
-                {formError}
-              </p>
-            ) : null}
-            <Input
-              label={tColumns('name')}
-              value={formValues.name}
-              onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
-            />
-            <div>
-              <label htmlFor={destId} className="mb-2 block text-sm font-medium">
+      <div className="space-y-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
+            <div className="flex-1 sm:max-w-md">
+              <Input
+                type="search"
+                placeholder={t('searchPlaceholder')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                aria-label={tActions('search')}
+              />
+            </div>
+            <div className="sm:w-56">
+              <label className="mb-2 block text-sm font-medium text-atg-fg">
                 {tList('destination')}
               </label>
               <select
-                id={destId}
+                value={destinationFilter}
+                onChange={(e) => {
+                  setDestinationFilter(e.target.value);
+                  setPage(1);
+                }}
                 className={selectClass}
-                value={formValues.destinationId}
-                onChange={(e) =>
-                  setFormValues((p) => ({ ...p, destinationId: e.target.value }))
-                }
               >
-                <option value="">{tSelect('chooseDash')}</option>
+                <option value="">{tCommon('filters.allFeminine')}</option>
                 {destinations.map((d) => (
                   <option key={d.id} value={d.id}>
                     {d.name}
@@ -294,45 +344,40 @@ export function ActivityProvidersList() {
                 ))}
               </select>
             </div>
-            <div className="flex gap-3">
-              <Button type="submit" loading={submitting}>
-                {editing ? tActions('save') : tActions('create')}
-              </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
-                {tActions('cancel')}
-              </Button>
-            </div>
-          </form>
-        </Card>
-      ) : null}
+          </div>
+          <Button type="button" onClick={openCreate}>
+            {t('new')}
+          </Button>
+        </div>
 
-      {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600">
-          {state.message}
-        </p>
-      ) : (
-        <>
-          <Card variant="dashboard" padding="none">
-            <DataTable
-              columns={columns}
-              data={providers}
-              isLoading={state.status === 'loading'}
-              emptyMessage={t('empty')}
-              getRowId={(r) => r.id}
-            />
-          </Card>
-          {state.status === 'ready' ? (
-            <DataTablePagination
-              page={page}
-              pageSize={PAGE_SIZE}
-              totalPages={state.totalPages}
-              totalItems={state.total}
-              itemLabel={tPagination('provider')}
-              onPageChange={setPage}
-            />
-          ) : null}
-        </>
-      )}
-    </div>
+        {state.status === 'error' ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {state.message}
+          </p>
+        ) : (
+          <>
+            <Card variant="dashboard" padding="none">
+              <DataTable
+                columns={columns}
+                data={providers}
+                isLoading={state.status === 'loading'}
+                emptyMessage={t('empty')}
+                getRowId={(r) => r.id}
+              />
+            </Card>
+            {state.status === 'ready' ? (
+              <DataTablePagination
+                page={page}
+                pageSize={PAGE_SIZE}
+                totalPages={state.totalPages}
+                totalItems={state.total}
+                itemLabel={tPagination('provider')}
+                onPageChange={setPage}
+              />
+            ) : null}
+          </>
+        )}
+      </div>
+    </>
   );
 }

@@ -8,8 +8,14 @@ import {
   Card,
   DataTable,
   DataTableBadge,
+  Modal,
   Select,
   Skeleton,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Textarea,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type {
@@ -19,7 +25,7 @@ import type {
   BookingStatus,
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { getApiClient } from '../../lib/auth/api';
@@ -32,6 +38,7 @@ import {
 import { formatMoney } from '../../lib/format-money';
 import {
   useBookingStatusLabels,
+  useFormatDateTime,
   usePaymentProviderLabels,
   usePaymentStatusLabels,
 } from '../../lib/i18n/use-module-labels';
@@ -45,20 +52,12 @@ import { BookingManifestSection } from './booking-manifest-section';
 import { BookingMessagesSection } from './booking-messages-section';
 import { BookingStatusTimeline } from './booking-status-timeline';
 
-function formatDateTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      dateStyle: 'short',
-      timeStyle: 'medium',
-    });
-  } catch {
-    return iso;
-  }
-}
-
 function formatBookingRef(id: string): string {
   return id.slice(0, 8);
 }
+
+const actionErrorClassName =
+  'rounded-lg border border-red-500 bg-red-500/5 px-3 py-2 text-sm text-red-600 dark:border-red-500/50 dark:bg-red-500/10 dark:text-red-400';
 
 type BookingDetailPageProps = {
   bookingId: string;
@@ -66,16 +65,13 @@ type BookingDetailPageProps = {
 
 function BookingDetailSkeleton() {
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(280px,1fr)_minmax(0,1.6fr)]">
-      <div className="space-y-6">
-        <Skeleton className="h-48 w-full rounded-xl" />
-        <Skeleton className="h-56 w-full rounded-xl" />
-        <Skeleton className="h-40 w-full rounded-xl" />
+    <div className="space-y-6">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,1fr)]">
+        <Skeleton className="h-36 w-full rounded-xl" />
+        <Skeleton className="h-36 w-full rounded-xl" />
       </div>
-      <div className="space-y-6">
-        <Skeleton className="h-64 w-full rounded-xl" />
-        <Skeleton className="h-48 w-full rounded-xl" />
-      </div>
+      <Skeleton className="h-48 w-full rounded-xl" />
+      <Skeleton className="h-56 w-full rounded-xl" />
     </div>
   );
 }
@@ -89,9 +85,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const paymentStatusLabels = usePaymentStatusLabels();
   const providerLabels = usePaymentProviderLabels();
   const emptyDash = tCommon('empty.dash');
-
-  const statusReasonId = useId();
-  const cancelReasonId = useId();
+  const formatDateTime = useFormatDateTime('mediumTime');
 
   const [canWrite, setCanWrite] = useState(false);
   const [canApprove, setCanApprove] = useState(false);
@@ -107,7 +101,10 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const [statusReason, setStatusReason] = useState('');
   const [cancelReason, setCancelReason] = useState('');
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
+  const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('manifest');
   const [manifestSync, setManifestSync] = useState(0);
 
   const bumpManifestSync = useCallback(() => {
@@ -117,7 +114,10 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   useAdminEditPageMeta({
     ready: state.status === 'ready' && detail != null,
     title: t('title'),
-    entityLabel: detail?.booking.id,
+    entityLabel:
+      detail != null
+        ? t('reference', { idPrefix: formatBookingRef(detail.booking.id) })
+        : undefined,
   });
 
   const load = useCallback(async () => {
@@ -141,6 +141,16 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    if (
+      detail?.identityDocuments?.some((doc) => doc.status === 'pending_review')
+    ) {
+      setActiveTab('documents');
+    } else {
+      setActiveTab('manifest');
+    }
+  }, [bookingId, detail?.booking.id, detail?.identityDocuments]);
 
   useEffect(() => {
     let cancelled = false;
@@ -304,12 +314,12 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
           formatPaymentProvider(row.original.provider, providerLabels, emptyDash),
       },
     ],
-    [emptyDash, paymentStatusLabels, providerLabels, tCommon],
+    [emptyDash, formatDateTime, paymentStatusLabels, providerLabels, tCommon],
   );
 
   if (state.status === 'loading' && !detail) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <AdminPageBackLink href="/reservations" label={t('backLink')} />
         <BookingDetailSkeleton />
       </div>
@@ -318,9 +328,9 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
 
   if (state.status === 'error') {
     return (
-      <div className="space-y-4">
+      <div className="min-w-0 space-y-4">
         <AdminPageBackLink href="/reservations" label={t('backLink')} />
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className={actionErrorClassName}>
           {state.message}
         </p>
       </div>
@@ -342,195 +352,306 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
     booking.status === 'pending_payment' || booking.status === 'confirmed';
   const statusUnchanged = newStatus === booking.status;
   const trimmedStatusReason = statusReason.trim();
+  const identityDocuments = detail.identityDocuments ?? [];
+  const pendingDocumentCount = identityDocuments.filter(
+    (doc) => doc.status === 'pending_review',
+  ).length;
+  const unreadMessageCount = detail.unreadCustomerMessageCount ?? 0;
+  const clientName = `${client.firstName} ${client.lastName}`.trim();
+  const showActionsBar =
+    canWrite && (showManualStatusChange || canCancel || booking.status === 'pending_approval');
 
   return (
-    <div className="space-y-6">
+    <div className={`min-w-0 space-y-6${showActionsBar ? ' pb-24' : ''}`}>
       <AdminPageBackLink href="/reservations" label={t('backLink')} />
 
       {actionError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className={actionErrorClassName}>
           {actionError}
         </p>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(280px,1fr)_minmax(0,1.6fr)] lg:items-start">
-        <div className="space-y-6 lg:sticky lg:top-4">
-          <Card variant="dashboard" padding="md">
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-lg font-semibold text-atg-fg">{t('sections.client')}</h2>
-              <DataTableBadge variant={BOOKING_STATUS_VARIANTS[booking.status]}>
-                {getBookingStatusLabel(booking.status, statusLabels)}
-              </DataTableBadge>
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,1fr)] lg:items-start">
+        <Card variant="dashboard" padding="md" className="min-w-0 space-y-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0 space-y-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="text-xl font-semibold text-atg-fg">
+                  {clientName || client.email}
+                </h2>
+                <DataTableBadge variant={BOOKING_STATUS_VARIANTS[booking.status]}>
+                  {getBookingStatusLabel(booking.status, statusLabels)}
+                </DataTableBadge>
+              </div>
+              <p className="text-sm">
+                <a
+                  href={`mailto:${client.email}`}
+                  className="font-medium text-primary hover:underline"
+                >
+                  {client.email}
+                </a>
+              </p>
+              {client.organizationName ? (
+                <p className="text-sm text-atg-muted">{client.organizationName}</p>
+              ) : null}
+              <p className="font-mono text-xs text-atg-muted">
+                {t('reference', { idPrefix: formatBookingRef(booking.id) })}
+              </p>
+              {unreadMessageCount > 0 ? (
+                <p className="text-sm font-medium text-primary">
+                  {t('summary.unreadMessages', { count: unreadMessageCount })}
+                </p>
+              ) : null}
             </div>
-            <p className="mb-4 font-mono text-xs text-atg-muted">
-              {t('reference', { idPrefix: formatBookingRef(booking.id) })}
-            </p>
-            <dl className="space-y-3 text-sm">
-              <div>
-                <dt className="text-atg-muted">{t('clientFields.email')}</dt>
-                <dd className="font-medium text-atg-fg">{client.email}</dd>
-              </div>
-              <div>
-                <dt className="text-atg-muted">{t('clientFields.name')}</dt>
-                <dd>
-                  {client.firstName} {client.lastName}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-atg-muted">{t('clientFields.organization')}</dt>
-                <dd>{client.organizationName ?? emptyDash}</dd>
-              </div>
-              <div>
-                <dt className="text-atg-muted">{t('clientFields.total')}</dt>
-                <dd className="tabular-nums text-base font-semibold text-atg-fg">
-                  {formatMoney(detail.totalCents, detail.currency)}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-atg-muted">{t('clientFields.createdAt')}</dt>
-                <dd className="tabular-nums">{formatDateTime(booking.createdAt)}</dd>
-              </div>
-            </dl>
-          </Card>
+            <div className="shrink-0 text-left sm:text-right">
+              <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                {t('clientFields.total')}
+              </p>
+              <p className="tabular-nums text-2xl font-semibold text-atg-fg">
+                {formatMoney(detail.totalCents, detail.currency)}
+              </p>
+              <p className="mt-1 text-sm tabular-nums text-atg-muted">
+                {t('summary.createdAt', { date: formatDateTime(booking.createdAt) })}
+              </p>
+            </div>
+          </div>
 
-          <Card variant="dashboard" padding="md">
-            <h2 className="mb-4 text-lg font-semibold text-atg-fg">{t('sections.status')}</h2>
+          <BookingStatusTimeline
+            currentStatus={booking.status}
+            history={detail.statusHistory}
+            showHistory={false}
+            className="border-t border-atg-border pt-4"
+          />
+        </Card>
+
+        <section className="min-w-0 space-y-3">
+          <h2 className="text-lg font-semibold text-atg-fg">{t('sections.payments')}</h2>
+          <Card variant="dashboard" padding="none" className="overflow-hidden">
+            <DataTable
+              columns={paymentColumns}
+              data={detail.payments}
+              emptyMessage={t('paymentsEmpty')}
+              getRowId={(row) => row.id}
+              aria-label={t('paymentsAriaLabel')}
+            />
+          </Card>
+        </section>
+      </div>
+
+      <BookingAssistedApprovalPanel
+        bookingId={bookingId}
+        status={booking.status}
+        totalCents={detail.totalCents}
+        currency={detail.currency}
+        items={detail.items}
+        identityDocuments={identityDocuments}
+        canApprove={canApprove}
+        manifestSyncKey={manifestSync}
+        onUpdated={refreshDetail}
+      />
+
+      <section className="space-y-3">
+        <h2 className="text-lg font-semibold text-atg-fg">{t('sections.bookingLines')}</h2>
+        <Card variant="dashboard" padding="none" className="overflow-hidden">
+          <DataTable
+            columns={itemColumns}
+            data={detail.items}
+            emptyMessage={t('linesEmpty')}
+            getRowId={(row) => row.id}
+            aria-label={t('linesAriaLabel')}
+          />
+        </Card>
+      </section>
+
+      <Card variant="dashboard" padding="md">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList aria-label={t('tabs.ariaLabel')}>
+            <TabsTrigger value="manifest">{t('tabs.manifest')}</TabsTrigger>
+            <TabsTrigger value="guides">{t('tabs.guides')}</TabsTrigger>
+            <TabsTrigger value="documents">
+              {pendingDocumentCount > 0
+                ? t('tabs.documentsPending', { count: pendingDocumentCount })
+                : t('tabs.documents')}
+            </TabsTrigger>
+            <TabsTrigger value="history">{t('tabs.history')}</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="manifest">
+            <BookingManifestSection
+              bookingId={bookingId}
+              canWrite={canWrite}
+              suggestedCount={suggestedTravelerCount}
+              syncKey={manifestSync}
+              onChanged={bumpManifestSync}
+              embedded
+            />
+          </TabsContent>
+
+          <TabsContent value="guides">
+            <BookingGuidesSection
+              bookingId={bookingId}
+              items={detail.items}
+              canWrite={canWrite}
+              embedded
+            />
+          </TabsContent>
+
+          <TabsContent value="documents">
+            <BookingIdentityDocumentsPanel
+              bookingId={bookingId}
+              documents={identityDocuments}
+              canReview={canApprove}
+              onUpdated={load}
+              embedded
+            />
+          </TabsContent>
+
+          <TabsContent value="history">
             <BookingStatusTimeline
               currentStatus={booking.status}
               history={detail.statusHistory}
+              showProgress={false}
             />
-          </Card>
+          </TabsContent>
+        </Tabs>
+      </Card>
 
-          <BookingAssistedApprovalPanel
-            bookingId={bookingId}
-            status={booking.status}
-            totalCents={detail.totalCents}
-            currency={detail.currency}
-            items={detail.items}
-            canApprove={canApprove}
-            manifestSyncKey={manifestSync}
-            onUpdated={refreshDetail}
-          />
-
-          <BookingIdentityDocumentsPanel
-            bookingId={bookingId}
-            documents={detail.identityDocuments ?? []}
-            canReview={canApprove}
-            onUpdated={load}
-          />
-
-          {canWrite ? (
-            <Card variant="dashboard" padding="md" className="space-y-6">
-              <h2 className="text-lg font-semibold text-atg-fg">{t('sections.actions')}</h2>
-              {showManualStatusChange ? (
-                <div className="space-y-3">
-                  <Select
-                    label={t('actions.changeStatus')}
-                    value={newStatus}
-                    options={statusOptions}
-                    onChange={(e) => setNewStatus(e.target.value as BookingStatus)}
-                  />
-                  <label htmlFor={statusReasonId} className="block text-sm font-medium text-atg-fg">
-                    {t('actions.statusReason')}
-                  </label>
-                  <textarea
-                    id={statusReasonId}
-                    rows={2}
-                    value={statusReason}
-                    onChange={(e) => setStatusReason(e.target.value)}
-                    className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg"
-                    placeholder={t('actions.statusReasonPlaceholder')}
-                  />
-                  <Button
-                    type="button"
-                    onClick={() => setStatusDialogOpen(true)}
-                    disabled={actionLoading || statusUnchanged}
-                    loading={actionLoading && statusDialogOpen}
-                  >
-                    {t('actions.applyStatus')}
-                  </Button>
-                </div>
-              ) : booking.status === 'pending_approval' ? (
-                <p className="text-sm text-atg-muted">{t('actions.assistedStatusHint')}</p>
-              ) : null}
-
-              {canCancel ? (
-                <div className="space-y-3 border-t border-atg-border pt-6">
-                  <h3 className="text-sm font-semibold text-atg-fg">{t('actions.cancellation')}</h3>
-                  <label htmlFor={cancelReasonId} className="block text-sm font-medium text-atg-fg">
-                    {t('actions.cancelReason')}
-                  </label>
-                  <textarea
-                    id={cancelReasonId}
-                    rows={3}
-                    value={cancelReason}
-                    onChange={(e) => setCancelReason(e.target.value)}
-                    className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg"
-                    placeholder={t('actions.cancelReasonPlaceholder')}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    className="!text-red-600 hover:!bg-red-50 dark:!text-red-400"
-                    onClick={() => setCancelDialogOpen(true)}
-                    disabled={actionLoading}
-                  >
-                    {t('actions.cancelBooking')}
-                  </Button>
-                </div>
-              ) : null}
-            </Card>
-          ) : (
-            <Card variant="dashboard" padding="md">
-              <p className="text-sm text-atg-muted">{t('actions.readOnly')}</p>
-            </Card>
-          )}
-        </div>
-
-        <div className="space-y-6">
-          <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-atg-fg">{t('sections.bookingLines')}</h2>
-            <Card variant="dashboard" padding="none" className="overflow-hidden">
-              <DataTable
-                columns={itemColumns}
-                data={detail.items}
-                emptyMessage={t('linesEmpty')}
-                getRowId={(row) => row.id}
-                aria-label={t('linesAriaLabel')}
-              />
-            </Card>
-          </section>
-
-          <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-atg-fg">{t('sections.payments')}</h2>
-            <Card variant="dashboard" padding="none" className="overflow-hidden">
-              <DataTable
-                columns={paymentColumns}
-                data={detail.payments}
-                emptyMessage={t('paymentsEmpty')}
-                getRowId={(row) => row.id}
-                aria-label={t('paymentsAriaLabel')}
-              />
-            </Card>
-          </section>
-
-          <BookingManifestSection
-            bookingId={bookingId}
-            canWrite={canWrite}
-            suggestedCount={suggestedTravelerCount}
-            syncKey={manifestSync}
-            onChanged={bumpManifestSync}
-          />
-
-          <BookingGuidesSection bookingId={bookingId} canWrite={canWrite} />
-        </div>
-      </div>
+      {!canWrite ? (
+        <p className="text-sm text-atg-muted">{t('actions.readOnly')}</p>
+      ) : null}
 
       <BookingMessagesSection
         bookingId={bookingId}
         canWrite={canWrite}
-        initialUnreadCount={detail?.unreadCustomerMessageCount ?? 0}
+        initialUnreadCount={unreadMessageCount}
       />
+
+      {showActionsBar ? (
+        <div
+          className="sticky bottom-0 z-20 border-t border-atg-border bg-atg-bg/95 px-4 py-3 backdrop-blur"
+          role="region"
+          aria-label={t('actionsBar.ariaLabel')}
+        >
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
+            {booking.status === 'pending_approval' && !showManualStatusChange ? (
+              <p className="mr-auto text-sm text-atg-muted">{t('actions.assistedStatusHint')}</p>
+            ) : null}
+            {showManualStatusChange ? (
+              <Button
+                type="button"
+                disabled={actionLoading}
+                className="w-full sm:w-auto"
+                onClick={() => setStatusModalOpen(true)}
+              >
+                {t('actions.changeStatus')}
+              </Button>
+            ) : null}
+            {canCancel ? (
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full sm:w-auto !text-red-600 hover:!bg-red-50 dark:!text-red-400"
+                onClick={() => setCancelModalOpen(true)}
+                disabled={actionLoading}
+              >
+                {t('actions.cancelBooking')}
+              </Button>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
+
+      <Modal
+        open={statusModalOpen}
+        onOpenChange={(open) => {
+          if (!actionLoading) setStatusModalOpen(open);
+        }}
+        title={t('actions.changeStatus')}
+        description={t('actionsBar.statusModalDescription')}
+        showClose
+        className="max-w-lg"
+      >
+        <div className="space-y-4">
+          <Select
+            label={t('actions.changeStatus')}
+            value={newStatus}
+            options={statusOptions}
+            onChange={(e) => setNewStatus(e.target.value as BookingStatus)}
+          />
+          <Textarea
+            name="statusReason"
+            label={t('actions.statusReason')}
+            rows={3}
+            value={statusReason}
+            onChange={(e) => setStatusReason(e.target.value)}
+            placeholder={t('actions.statusReasonPlaceholder')}
+          />
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={actionLoading}
+              onClick={() => setStatusModalOpen(false)}
+            >
+              {tActions('cancel')}
+            </Button>
+            <Button
+              type="button"
+              disabled={actionLoading || statusUnchanged}
+              onClick={() => {
+                setStatusModalOpen(false);
+                setStatusDialogOpen(true);
+              }}
+            >
+              {t('actions.applyStatus')}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        open={cancelModalOpen}
+        onOpenChange={(open) => {
+          if (!actionLoading) setCancelModalOpen(open);
+        }}
+        title={t('actions.cancellation')}
+        description={t('actionsBar.cancelModalDescription')}
+        showClose
+        className="max-w-lg"
+      >
+        <div className="space-y-4">
+          <Textarea
+            name="cancelReason"
+            label={t('actions.cancelReason')}
+            rows={3}
+            value={cancelReason}
+            onChange={(e) => setCancelReason(e.target.value)}
+            placeholder={t('actions.cancelReasonPlaceholder')}
+          />
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={actionLoading}
+              onClick={() => setCancelModalOpen(false)}
+            >
+              {tActions('cancel')}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              className="!text-red-600 hover:!bg-red-50 dark:!text-red-400"
+              disabled={actionLoading}
+              onClick={() => {
+                setCancelModalOpen(false);
+                setCancelDialogOpen(true);
+              }}
+            >
+              {t('actions.cancelBooking')}
+            </Button>
+          </div>
+        </div>
+      </Modal>
 
       <AlertDialog
         open={statusDialogOpen}

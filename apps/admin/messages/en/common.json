@@ -10,22 +10,27 @@
     "delete": "Delete",
     "edit": "Edit",
     "create": "Create",
+    "add": "Add",
     "back": "Back",
     "search": "Search",
     "filter": "Filter",
     "close": "Close",
     "confirm": "Confirm",
-    "view": "View"
+    "view": "View",
+    "retry": "Try again"
   },
   "loading": {
+    "default": "Loading…",
     "page": "Loading…",
     "submit": "Saving…"
   },
   "empty": {
+    "default": "No items",
     "noResults": "No results",
     "noMatch": "No matches for your search"
   },
   "errors": {
+    "networkTitle": "Unable to reach the API",
     "network": "Unable to reach the API. Check that the server is running.",
     "networkShort": "Unable to reach the server. Check your connection.",
     "forbidden": "You do not have permission to perform this action.",
@@ -42,6 +47,17 @@
     "title": "Quick navigation",
     "placeholder": "Search for a page…",
     "empty": "No pages found",
-    "shortcutHint": "Ctrl+K"
+    "shortcutHint": "Ctrl+K · ⌘K — press ? for help"
+  },
+  "keyboardShortcuts": {
+    "title": "Keyboard shortcuts",
+    "description": "Shortcuts available in the admin.",
+    "close": "Close",
+    "hint": "Shortcuts are ignored while typing in a field.",
+    "items": {
+      "palette": "Open / close quick navigation",
+      "escape": "Close the palette or this help",
+      "help": "Show this help"
+    }
   }
 }

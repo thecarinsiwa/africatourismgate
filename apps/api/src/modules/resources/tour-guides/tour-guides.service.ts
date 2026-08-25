@@ -106,7 +106,7 @@ export class TourGuidesService extends CrudService<TourGuides> {
     dto: CreateTourGuideDto,
     actorUserId?: string,
   ): Promise<TourGuideDto> {
-    this.assertTypeUserRules(dto.type, dto.userId ?? null);
+    this.assertTypeUserRules(dto.type, dto.userId ?? null, dto.contactEmail ?? null);
 
     if (dto.type === 'internal' && dto.userId) {
       await this.requireUser(dto.userId);
@@ -128,6 +128,8 @@ export class TourGuidesService extends CrudService<TourGuides> {
         displayName: dto.displayName.trim(),
         bio: dto.bio?.trim() || null,
         photoUrl: dto.photoUrl?.trim() || null,
+        contactEmail:
+          dto.type === 'external' ? dto.contactEmail?.trim().toLowerCase() ?? null : null,
         languages: dto.languages.map((l) => l.trim()).filter(Boolean),
         destinations: dto.destinations,
         status: dto.status ?? 'active',
@@ -153,9 +155,13 @@ export class TourGuidesService extends CrudService<TourGuides> {
     const nextType = dto.type ?? existing.type;
     const nextUserId =
       dto.userId !== undefined ? dto.userId : existing.userId;
+    const nextContactEmail =
+      dto.contactEmail !== undefined ? dto.contactEmail : existing.contactEmail;
     const effectiveUserId = nextType === 'internal' ? nextUserId : null;
+    const effectiveContactEmail =
+      nextType === 'external' ? nextContactEmail?.trim().toLowerCase() ?? null : null;
 
-    this.assertTypeUserRules(nextType, effectiveUserId);
+    this.assertTypeUserRules(nextType, effectiveUserId, effectiveContactEmail);
 
     if (nextType === 'internal' && effectiveUserId) {
       await this.requireUser(effectiveUserId);
@@ -186,6 +192,9 @@ export class TourGuidesService extends CrudService<TourGuides> {
     }
     if (dto.bio !== undefined) payload.bio = dto.bio?.trim() || null;
     if (dto.photoUrl !== undefined) payload.photoUrl = dto.photoUrl?.trim() || null;
+    if (dto.contactEmail !== undefined || dto.type !== undefined) {
+      payload.contactEmail = effectiveContactEmail;
+    }
     if (dto.languages !== undefined) {
       payload.languages = dto.languages.map((l) => l.trim()).filter(Boolean);
     }
@@ -228,15 +237,26 @@ export class TourGuidesService extends CrudService<TourGuides> {
   private assertTypeUserRules(
     type: 'internal' | 'external',
     userId: string | null,
+    contactEmail: string | null,
   ): void {
     if (type === 'internal' && !userId) {
       throw new BadRequestException(
         "Un guide interne doit être lié à un compte utilisateur.",
       );
     }
+    if (type === 'internal' && contactEmail) {
+      throw new BadRequestException(
+        "Un guide interne ne doit pas avoir d'e-mail de contact séparé.",
+      );
+    }
     if (type === 'external' && userId) {
       throw new BadRequestException(
         'Un guide externe ne doit pas être lié à un compte utilisateur.',
+      );
+    }
+    if (type === 'external' && !contactEmail?.trim()) {
+      throw new BadRequestException(
+        "Un guide externe doit avoir une adresse e-mail de contact.",
       );
     }
   }

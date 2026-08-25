@@ -26,15 +26,20 @@
     },
     "bookings": {
       "label": "Bookings",
-      "subtitle": "Total bookings"
+      "subtitle": "Total bookings",
+      "subtitlePeriod": "For the selected period"
     },
     "revenue": {
       "label": "Revenue",
-      "subtitle": "Successful payments"
+      "subtitle": "Successful payments",
+      "subtitlePeriod": "Successful payments in period"
     },
     "properties": {
       "label": "Accommodations",
       "subtitle": "Published properties"
+    },
+    "change": {
+      "vsPreviousPeriod": "vs previous period"
     }
   },
   "metaTitle": "Dashboard — Africa Tourism Gate Admin",
@@ -83,6 +88,18 @@
       "active": "Active",
       "suspended": "Suspended",
       "deleted": "Deleted"
+    }
+  },
+  "activity": {
+    "title": "Recent activity",
+    "subtitle": "Bookings, reviews and support tickets",
+    "empty": "No recent activity.",
+    "loading": "Loading activity…",
+    "reviewTitle": "{author} · {rating}/5",
+    "types": {
+      "booking": "Booking",
+      "review": "Review",
+      "ticket": "Support ticket"
     }
   }
 }

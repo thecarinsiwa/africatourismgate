@@ -8,6 +8,5 @@ import { PackageImagesService } from './package-images.service';
   imports: [TypeOrmModule.forFeature([PackageImages])],
   controllers: [PackageImagesController],
   providers: [PackageImagesService],
-  exports: [PackageImagesService],
 })
 export class PackageImagesModule {}

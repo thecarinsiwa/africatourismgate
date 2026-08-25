@@ -1,6 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { newId } from '../../../common/utils/uuid';
 import { FlightClassAvailability, FlightClasses } from '../../../entities/generated';
@@ -8,7 +12,9 @@ import { CrudService } from '../../../common/crud/crud.service';
 import { enumerateDates } from '../room-availability/room-availability-date.util';
 import { BulkUpsertFlightClassAvailabilityDto } from './dto/bulk-upsert-flight-class-availability.dto';
 import { BulkUpsertFlightClassAvailabilityResponseDto } from './dto/bulk-upsert-flight-class-availability-response.dto';
+import { CreateFlightClassAvailabilityDto } from './dto/create-flight-class-availability.dto';
 import { FlightClassAvailabilityListQueryDto } from './dto/flight-class-availability-list-query.dto';
+import { UpdateFlightClassAvailabilityDto } from './dto/update-flight-class-availability.dto';
 
 @Injectable()
 export class FlightClassAvailabilityService extends CrudService<FlightClassAvailability> {
@@ -58,6 +64,52 @@ export class FlightClassAvailabilityService extends CrudService<FlightClassAvail
     };
   }
 
+  async createAvailability(
+    dto: CreateFlightClassAvailabilityDto,
+    actorUserId?: string,
+  ): Promise<FlightClassAvailability> {
+    await this.assertFlightClassExists(dto.flightClassId);
+
+    const existing = await this.availabilityRepository.findOne({
+      where: { flightClassId: dto.flightClassId, date: dto.date },
+      withDeleted: true,
+    });
+
+    if (existing && !existing.deletedAt) {
+      throw new ConflictException(
+        'Une disponibilité existe déjà pour cette date.',
+      );
+    }
+
+    if (existing?.deletedAt) {
+      await this.availabilityRepository.recover(existing);
+      const merged = this.availabilityRepository.merge(existing, {
+        availableSeats: dto.availableSeats,
+        priceCents: dto.priceCents,
+        updatedByUserId: actorUserId ?? null,
+      });
+      return this.availabilityRepository.save(merged);
+    }
+
+    return super.create(
+      {
+        flightClassId: dto.flightClassId,
+        date: dto.date,
+        availableSeats: dto.availableSeats,
+        priceCents: dto.priceCents,
+      } as DeepPartial<FlightClassAvailability>,
+      actorUserId,
+    );
+  }
+
+  async updateAvailability(
+    id: string,
+    dto: UpdateFlightClassAvailabilityDto,
+    actorUserId?: string,
+  ): Promise<FlightClassAvailability> {
+    return super.update(id, dto as DeepPartial<FlightClassAvailability>, actorUserId);
+  }
+
   async bulkUpsert(
     dto: BulkUpsertFlightClassAvailabilityDto,
     actorUserId?: string,
@@ -71,16 +123,15 @@ export class FlightClassAvailabilityService extends CrudService<FlightClassAvail
         const saved: FlightClassAvailability[] = [];
 
         for (const date of dates) {
-          saved.push(
-            await this.upsertOneDate(
-              repo,
-              dto.flightClassId,
-              date,
-              dto.availableSeats,
-              dto.priceCents,
-              actorUserId,
-            ),
+          const row = await this.upsertOneDate(
+            repo,
+            dto.flightClassId,
+            date,
+            dto.availableSeats,
+            dto.priceCents,
+            actorUserId,
           );
+          saved.push(row);
         }
 
         return saved;

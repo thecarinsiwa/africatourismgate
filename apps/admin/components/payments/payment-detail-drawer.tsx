@@ -3,7 +3,7 @@
 import { Button, DataTableBadge, Drawer } from '@africatourismgate/ui';
 import type { PaymentAdminDetail, RefundPaymentResponse } from '@africatourismgate/types';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { formatMoney } from '../../lib/format-money';
 import {
@@ -75,6 +75,7 @@ export function PaymentDetailDrawer({
   canRefund = false,
   onRefundClick,
 }: PaymentDetailDrawerProps) {
+  const locale = useLocale();
   const t = useTranslations('modules.payments.detail');
   const tCommon = useTranslations('modules.common');
   const paymentStatusLabels = usePaymentStatusLabels();
@@ -141,7 +142,7 @@ export function PaymentDetailDrawer({
                   {formatPaymentProvider(detail.provider, providerLabels, emptyDash)}
                 </DetailField>
                 <DetailField label={t('fields.date')}>
-                  <span className="tabular-nums">{formatPaymentDateTime(detail.createdAt)}</span>
+                  <span className="tabular-nums">{formatPaymentDateTime(detail.createdAt, locale)}</span>
                 </DetailField>
                 <DetailField label={t('fields.client')}>
                   <span>{detail.clientEmail}</span>
@@ -181,7 +182,7 @@ export function PaymentDetailDrawer({
                 {t('sections.booking')}
               </h3>
               <Link
-                href={`/dashboard/bookings/${detail.bookingId}`}
+                href={`/reservations/${detail.bookingId}`}
                 className="inline-flex text-sm font-medium text-primary hover:underline"
               >
                 {t('fields.viewBooking')}
@@ -210,7 +211,7 @@ export function PaymentDetailDrawer({
                             {entry.label ?? refundLabels.generic}
                           </p>
                           <p className="mt-0.5 tabular-nums text-xs text-atg-muted">
-                            {formatPaymentDateTime(entry.createdAt)}
+                            {formatPaymentDateTime(entry.createdAt, locale)}
                           </p>
                           {entry.stripeStatus ? (
                             <p className="mt-0.5 text-xs text-atg-muted">

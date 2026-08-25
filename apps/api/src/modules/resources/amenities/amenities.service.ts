@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
-import { Amenities } from '../../../entities/generated';
 import { CrudService } from '../../../common/crud/crud.service';
+import { Amenities } from '../../../entities/generated';
 import { AmenitiesListQueryDto } from './dto/amenities-list-query.dto';
 
 @Injectable()
@@ -20,12 +20,12 @@ export class AmenitiesService extends CrudService<Amenities> {
   ): Promise<PaginatedResult<Amenities>> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
+    const search = query.search?.trim();
 
     const qb = this.amenitiesRepository
       .createQueryBuilder('amenity')
       .where('amenity.deletedAt IS NULL');
 
-    const search = query.search?.trim();
     if (search) {
       qb.andWhere('(amenity.code LIKE :term OR amenity.name LIKE :term)', {
         term: `%${search}%`,

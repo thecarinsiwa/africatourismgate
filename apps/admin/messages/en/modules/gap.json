@@ -31,8 +31,20 @@
     "fields": {
       "title": "Title",
       "subtitle": "Subtitle",
+      "heroImage": "Hero image",
       "heroImageUrl": "Hero image URL",
       "heroImageAlt": "Hero image alt text",
+      "heroPreviewAlt": "Hero image preview",
+      "removeHero": "Remove image",
+      "links": "Partner links",
+      "linksHint": "UNESCO, partners, resources… up to 10 links.",
+      "linksCount": "{count} / {max}",
+      "linksEmpty": "No links yet.",
+      "linkLabel": "Label",
+      "linkLabelPlaceholder": "e.g. UNESCO, WWF…",
+      "linkUrl": "URL (optional)",
+      "addLink": "Add link",
+      "removeLink": "Remove",
       "unescoLabel": "UNESCO label (optional)",
       "unescoUrl": "UNESCO link (optional)",
       "donateLabel": "Donate button label (optional)",
@@ -44,6 +56,9 @@
       "heroImageUrlRequired": "Hero image URL is required.",
       "heroImageUrlInvalid": "Hero image URL must be valid.",
       "heroImageAltRequired": "Alt text is required.",
+      "linkLabelRequired": "Each link must have a label.",
+      "linkUrlInvalid": "Link URL must be valid.",
+      "maxLinks": "Maximum 10 links.",
       "unescoUrlInvalid": "UNESCO URL must be valid.",
       "donateUrlInvalid": "Donate URL must be valid."
     },
@@ -51,8 +66,17 @@
     "saveButton": "Save"
   },
   "pages": {
+    "stats": {
+      "total": { "label": "Pages", "subtitle": "GAP institutional pages" },
+      "published": { "label": "Published", "subtitle": "Visible on the site" },
+      "draft": { "label": "Drafts", "subtitle": "Not published" },
+      "french": { "label": "In French", "subtitle": "FR locale content" }
+    },
     "list": {
-      "deleteConfirm": "Delete page \"{title}\"?",
+      "deleteTitle": "Delete page",
+      "deleteConfirm": "Page \"{title}\" will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "columns": {
         "section": "Section",
         "title": "Title",
@@ -70,6 +94,11 @@
     "edit": {
       "pageTitle": "Edit page"
     },
+    "detail": {
+      "title": "Page details",
+      "close": "Close",
+      "edit": "Edit"
+    },
     "form": {
       "info": {
         "sectionLocaleUnique": "Each section + language combination is unique.",
@@ -77,7 +106,8 @@
       },
       "validation": {
         "contentRequired": "Content is required.",
-        "coverUrlInvalid": "Cover image URL must be valid."
+        "coverUrlInvalid": "Cover image URL must be valid.",
+        "maxImages": "Maximum 10 images per page."
       },
       "fields": {
         "section": "Section",
@@ -86,8 +116,15 @@
         "excerptPlaceholder": "Short summary shown in the header…",
         "content": "Content",
         "contentPlaceholder": "Write the page body…",
+        "images": "Images",
+        "imagesCount": "{count} / {max}",
+        "imagesEmpty": "No images yet.",
         "coverImageUrl": "Cover image",
         "coverPreviewAlt": "Cover preview",
+        "coverBadge": "Cover",
+        "removeImage": "Remove",
+        "addImageUrl": "Add URL",
+        "removeCover": "Remove image",
         "locale": "Language",
         "publishedAtOptional": "Publication date (optional)"
       },
@@ -101,8 +138,17 @@
     }
   },
   "activities": {
+    "stats": {
+      "total": { "label": "Activities", "subtitle": "Program initiatives" },
+      "published": { "label": "Published", "subtitle": "Visible on the site" },
+      "draft": { "label": "Drafts", "subtitle": "Not published" },
+      "french": { "label": "In French", "subtitle": "FR locale content" }
+    },
     "list": {
-      "deleteConfirm": "Delete activity \"{title}\"?",
+      "deleteTitle": "Delete activity",
+      "deleteConfirm": "Activity \"{title}\" will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "columns": {
         "title": "Title",
         "icon": "Icon",
@@ -118,18 +164,32 @@
     "edit": {
       "pageTitle": "Edit activity"
     },
+    "detail": {
+      "title": "Activity details",
+      "close": "Close",
+      "edit": "Edit"
+    },
     "form": {
       "validation": {
         "titleRequired": "Title is required.",
         "descriptionRequired": "Description is required.",
-        "imageUrlInvalid": "Image URL must be valid."
+        "imageUrlInvalid": "Image URL must be valid.",
+        "maxImages": "Maximum 10 images per activity."
       },
       "fields": {
         "title": "Title",
         "description": "Description",
+        "descriptionPlaceholder": "Describe the activity…",
         "iconKey": "Icon",
+        "images": "Images",
+        "imagesCount": "{count} / {max}",
+        "imagesEmpty": "No images yet.",
+        "image": "Image",
         "imageUrl": "Image (URL)",
         "imagePreviewAlt": "Image preview",
+        "coverBadge": "Cover",
+        "removeImage": "Remove",
+        "addImageUrl": "Add URL",
         "sortOrder": "Display order",
         "locale": "Language"
       },
@@ -140,8 +200,17 @@
     }
   },
   "impact": {
+    "stats": {
+      "total": { "label": "Statistics", "subtitle": "Impact indicators" },
+      "published": { "label": "Published", "subtitle": "Visible on the site" },
+      "draft": { "label": "Drafts", "subtitle": "Not published" },
+      "french": { "label": "In French", "subtitle": "FR locale content" }
+    },
     "list": {
-      "deleteConfirm": "Delete stat \"{label}\"?",
+      "deleteTitle": "Delete stat",
+      "deleteConfirm": "Stat \"{label}\" will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "columns": {
         "label": "Label",
         "value": "Value",
@@ -161,26 +230,45 @@
     "form": {
       "validation": {
         "labelRequired": "Label is required.",
-        "valueRequired": "Displayed value is required."
+        "valueRequired": "Displayed value is required.",
+        "imageUrlInvalid": "The image URL must be valid.",
+        "localesRequired": "Select at least one language.",
+        "partialCreateFailed": "Partial create: failed for {locales}. Other languages were created."
       },
       "fields": {
         "label": "Label",
         "valueDisplay": "Displayed value",
         "valueDisplayPlaceholder": "e.g. 12,000+",
         "description": "Description (optional)",
+        "descriptionPlaceholder": "Add a formatted description…",
+        "image": "Photo (optional)",
+        "imagePreviewAlt": "Photo preview",
+        "removeImage": "Remove photo",
         "colorKey": "Color",
         "sortOrder": "Display order",
-        "locale": "Language"
+        "locale": "Language",
+        "locales": "Languages",
+        "localesHint": "One stat will be created for each selected language (same content)."
       },
       "saving": "Saving…",
       "createButton": "Create stat",
+      "createBulkButton": "Create {count} stats",
       "saveButton": "Save",
       "cancelButton": "Cancel"
     }
   },
   "media": {
+    "stats": {
+      "total": { "label": "Media", "subtitle": "Photos and videos" },
+      "published": { "label": "Published", "subtitle": "Visible on the site" },
+      "draft": { "label": "Drafts", "subtitle": "Not published" },
+      "french": { "label": "In French", "subtitle": "FR locale content" }
+    },
     "list": {
-      "deleteConfirm": "Delete media \"{title}\"?",
+      "deleteTitle": "Delete media",
+      "deleteConfirm": "Media item \"{title}\" will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "columns": {
         "title": "Title",
         "mediaType": "Type",
@@ -197,23 +285,38 @@
     "edit": {
       "pageTitle": "Edit media"
     },
+    "detail": {
+      "title": "Media details",
+      "close": "Close",
+      "edit": "Edit",
+      "openUrl": "Open link"
+    },
     "form": {
       "validation": {
         "titleRequired": "Title is required.",
         "urlRequired": "Provide at least a file URL or external URL.",
-        "urlInvalid": "URL must be valid."
+        "urlInvalid": "URL must be valid.",
+        "imageFormat": "Invalid image format (JPEG, PNG or WebP).",
+        "videoFormat": "Invalid video format (MP4 or WebM).",
+        "fileTooLarge": "File must not exceed 50 MB."
       },
       "fields": {
         "mediaType": "Media type",
         "title": "Title",
         "description": "Description",
+        "file": "File",
         "fileUrl": "File URL",
         "externalUrl": "External URL (video, etc.)",
+        "thumbnail": "Thumbnail",
         "thumbnailUrl": "Thumbnail URL",
         "thumbnailPreviewAlt": "Thumbnail preview",
         "publishedAtOptional": "Publication date (optional)",
         "sortOrder": "Display order",
         "locale": "Language"
+      },
+      "hints": {
+        "imageFormat": "JPEG, PNG or WebP, max 50 MB",
+        "videoFormat": "MP4 or WebM, max 50 MB"
       },
       "saving": "Saving…",
       "createButton": "Create media",

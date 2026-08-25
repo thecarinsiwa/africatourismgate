@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, FindOptionsWhere, Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
-import { ActivityItineraryStops } from '../../../entities/generated';
 import { CrudService } from '../../../common/crud/crud.service';
+import { ActivityItineraryStops } from '../../../entities/generated';
 import { ActivityItineraryStopsListQueryDto } from './dto/activity-itinerary-stops-list-query.dto';
-import { CreateActivityItineraryStopDto } from './dto/create-activity-itinerary-stop.dto';
-import { UpdateActivityItineraryStopDto } from './dto/update-activity-itinerary-stop.dto';
 
 @Injectable()
 export class ActivityItineraryStopsService extends CrudService<ActivityItineraryStops> {
@@ -17,59 +15,20 @@ export class ActivityItineraryStopsService extends CrudService<ActivityItinerary
     super(activityItineraryStopsRepository);
   }
 
-  createFromDto(
-    dto: CreateActivityItineraryStopDto,
-    actorUserId?: string,
-  ): Promise<ActivityItineraryStops> {
-    return super.create(this.toEntityPayload(dto), actorUserId);
-  }
-
-  updateFromDto(
-    id: string,
-    dto: UpdateActivityItineraryStopDto,
-    actorUserId?: string,
-  ): Promise<ActivityItineraryStops> {
-    return super.update(id, this.toEntityPayload(dto), actorUserId);
-  }
-
-  private toEntityPayload(
-    dto: CreateActivityItineraryStopDto | UpdateActivityItineraryStopDto,
-  ): DeepPartial<ActivityItineraryStops> {
-    const { latitude, longitude, description, durationMinutes, ...rest } = dto;
-    const payload: DeepPartial<ActivityItineraryStops> = { ...rest };
-
-    if (latitude !== undefined) {
-      payload.latitude = String(latitude);
-    }
-    if (longitude !== undefined) {
-      payload.longitude = String(longitude);
-    }
-    if (description !== undefined) {
-      payload.description = description ?? null;
-    }
-    if (durationMinutes !== undefined) {
-      payload.durationMinutes = durationMinutes ?? null;
-    }
-
-    return payload;
-  }
-
   override async findAll(
     query: ActivityItineraryStopsListQueryDto,
   ): Promise<PaginatedResult<ActivityItineraryStops>> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
-    const where: FindOptionsWhere<ActivityItineraryStops> = {};
-
-    if (query.activityId) {
-      where.activityId = query.activityId;
-    }
 
     const [data, total] = await this.activityItineraryStopsRepository.findAndCount({
-      where,
+      where: {
+        deletedAt: IsNull(),
+        ...(query.activityId ? { activityId: query.activityId } : {}),
+      },
       skip: (page - 1) * limit,
       take: limit,
-      order: { stopOrder: 'ASC', createdAt: 'ASC' },
+      order: { stopOrder: 'ASC', createdAt: 'DESC' },
     });
 
     return {

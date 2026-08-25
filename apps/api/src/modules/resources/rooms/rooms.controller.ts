@@ -12,18 +12,11 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import {
-  ApiBody,
-  ApiConsumes,
-  ApiForbiddenResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync } from 'node:fs';
 import { extname, join } from 'node:path';
-import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { DeepPartial } from 'typeorm';
 import { roomUploadUrl } from '../../../common/utils/public-asset-url';
 import { Rooms } from '../../../entities/generated';
@@ -35,16 +28,26 @@ const ALLOWED_ROOM_IMAGE_MIMES = new Set(['image/jpeg', 'image/png', 'image/webp
 const ALLOWED_ROOM_IMAGE_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 
 @ApiTags('rooms')
-@ApiForbiddenResponse({ description: 'Missing permission' })
 @Controller('rooms')
 export class RoomsController {
   constructor(private readonly service: RoomsService) {}
 
-  @RequirePermissions('properties.read')
   @Get()
   @ApiOperation({ summary: 'List rooms' })
   findAll(@Query() query: RoomsListQueryDto) {
     return this.service.findAll(query);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get rooms by id' })
+  findOne(@Param('id') id: string) {
+    return this.service.findOne(id);
+  }
+
+  @Post()
+  @ApiOperation({ summary: 'Create rooms' })
+  create(@Body() dto: DeepPartial<Rooms>) {
+    return this.service.create(dto);
   }
 
   @ApiConsumes('multipart/form-data')
@@ -86,7 +89,6 @@ export class RoomsController {
       },
     }),
   )
-  @RequirePermissions('properties.write')
   @Post(':id/upload-image')
   @ApiOperation({ summary: 'Upload room image (JPEG, PNG or WebP, max 5 MB)' })
   async uploadImage(
@@ -102,28 +104,12 @@ export class RoomsController {
     return { url: roomUploadUrl(file.filename) };
   }
 
-  @RequirePermissions('properties.read')
-  @Get(':id')
-  @ApiOperation({ summary: 'Get rooms by id' })
-  findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
-  }
-
-  @RequirePermissions('properties.write')
-  @Post()
-  @ApiOperation({ summary: 'Create rooms' })
-  create(@Body() dto: DeepPartial<Rooms>) {
-    return this.service.create(dto);
-  }
-
-  @RequirePermissions('properties.write')
   @Patch(':id')
   @ApiOperation({ summary: 'Update rooms' })
   update(@Param('id') id: string, @Body() dto: DeepPartial<Rooms>) {
     return this.service.update(id, dto);
   }
 
-  @RequirePermissions('properties.write')
   @Delete(':id')
   @ApiOperation({ summary: 'Soft-delete rooms' })
   remove(@Param('id') id: string) {

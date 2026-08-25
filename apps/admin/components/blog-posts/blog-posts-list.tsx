@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -11,6 +12,7 @@ import {
   DataTableBadge,
   DataTablePagination,
   Input,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { BlogPost, BlogPostStatus } from '@africatourismgate/types';
@@ -40,6 +42,8 @@ export function BlogPostsList() {
   const tStatus = useTranslations('modules.blog.status');
   const tLocale = useTranslations('modules.blog.locale');
   const tCommon = useTranslations('modules.common');
+  const tToast = useTranslations('modules.common.toast');
+  const { toast } = useToast();
   const statusFilterId = useId();
   const localeFilterId = useId();
   const [searchInput, setSearchInput] = useState('');
@@ -56,6 +60,7 @@ export function BlogPostsList() {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<BlogPost | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -110,22 +115,32 @@ export function BlogPostsList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (post: BlogPost) => {
-      if (!window.confirm(t('deleteConfirm', { title: post.title }))) return;
-      setDeleteError(null);
-      setDeletingId(post.id);
-      try {
-        await getApiClient().deleteBlogPost(post.id);
-        await load();
-      } catch (error) {
-        setDeleteError(getBlogErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, t, getBlogErrorMessage],
-  );
+  const handleDeleteRequest = useCallback((post: BlogPost) => {
+    setConfirmTarget(post);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const post = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(post.id);
+    try {
+      await getApiClient().deleteBlogPost(post.id);
+      await load();
+      toast({
+        variant: 'success',
+        message: tToast('deletedBlogPost', { title: post.title }),
+      });
+    } catch (error) {
+      toast({
+        variant: 'error',
+        message: getBlogErrorMessage(error),
+      });
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getBlogErrorMessage, load, toast, tToast]);
 
   const columns = useMemo<ColumnDef<BlogPost, unknown>[]>(
     () => [
@@ -189,7 +204,7 @@ export function BlogPostsList() {
               {canWrite ? (
                 <DataTableActionButton
                   action="delete"
-                  onClick={() => void handleDelete(post)}
+                  onClick={() => handleDeleteRequest(post)}
                   disabled={deletingId === post.id}
                   loading={deletingId === post.id}
                 />
@@ -199,7 +214,7 @@ export function BlogPostsList() {
         },
       },
     ],
-    [canWrite, deletingId, handleDelete, t, tCommon, tStatus],
+    [canWrite, deletingId, handleDeleteRequest, t, tCommon, tStatus],
   );
 
   const isLoading = state.status === 'loading';
@@ -209,6 +224,19 @@ export function BlogPostsList() {
   const hasActiveFilters = Boolean(statusFilter || localeFilter);
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { title: confirmTarget.title }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
@@ -289,12 +317,6 @@ export function BlogPostsList() {
         {canWrite ? <Button href="/contenu/blog/nouveau">{t('newButton')}</Button> : null}
       </div>
 
-      {deleteError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {deleteError}
-        </p>
-      ) : null}
-
       {isError ? (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
           {state.message}
@@ -326,5 +348,6 @@ export function BlogPostsList() {
         </>
       )}
     </div>
+    </>
   );
 }

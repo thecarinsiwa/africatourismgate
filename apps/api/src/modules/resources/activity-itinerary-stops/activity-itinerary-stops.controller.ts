@@ -9,10 +9,10 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { DeepPartial } from 'typeorm';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
+import { ActivityItineraryStops } from '../../../entities/generated';
 import { ActivityItineraryStopsListQueryDto } from './dto/activity-itinerary-stops-list-query.dto';
-import { CreateActivityItineraryStopDto } from './dto/create-activity-itinerary-stop.dto';
-import { UpdateActivityItineraryStopDto } from './dto/update-activity-itinerary-stop.dto';
 import { ActivityItineraryStopsService } from './activity-itinerary-stops.service';
 
 @ApiTags('activity-itinerary-stops')
@@ -38,15 +38,15 @@ export class ActivityItineraryStopsController {
   @RequirePermissions('activities.write')
   @Post()
   @ApiOperation({ summary: 'Create activity itinerary stop' })
-  create(@Body() dto: CreateActivityItineraryStopDto) {
-    return this.service.createFromDto(dto);
+  create(@Body() dto: DeepPartial<ActivityItineraryStops>) {
+    return this.service.create(dto);
   }
 
   @RequirePermissions('activities.write')
   @Patch(':id')
   @ApiOperation({ summary: 'Update activity itinerary stop' })
-  update(@Param('id') id: string, @Body() dto: UpdateActivityItineraryStopDto) {
-    return this.service.updateFromDto(id, dto);
+  update(@Param('id') id: string, @Body() dto: DeepPartial<ActivityItineraryStops>) {
+    return this.service.update(id, dto);
   }
 
   @RequirePermissions('activities.write')

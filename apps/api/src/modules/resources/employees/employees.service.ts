@@ -60,6 +60,11 @@ export class EmployeesService extends CrudService<Employees> {
       qb.andWhere('employee.organizationId = :organizationId', { organizationId });
     }
 
+    const department = query.department?.trim();
+    if (department) {
+      qb.andWhere('employee.department = :department', { department });
+    }
+
     const search = query.search?.trim();
     if (search) {
       const term = `%${search}%`;

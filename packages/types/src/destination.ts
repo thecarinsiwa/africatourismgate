@@ -38,6 +38,7 @@ export interface DestinationsListQuery {
   page?: number;
   limit?: number;
   search?: string;
+  isFeatured?: boolean;
 }
 
 export interface DestinationRelatedCounts {

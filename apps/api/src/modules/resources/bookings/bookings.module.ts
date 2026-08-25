@@ -48,7 +48,7 @@ import { BookingsService } from './bookings.service';
     forwardRef(() => StripeModule),
     EmailVerificationModule,
     OrganizationSettingsModule,
-    TourGuidesModule,
+    forwardRef(() => TourGuidesModule),
     ReviewsModule,
     PackagesModule,
     TypeOrmModule.forFeature([
@@ -92,6 +92,7 @@ import { BookingsService } from './bookings.service';
   ],
   exports: [
     BookingEngineService,
+    BookingManifestService,
     BookingStatusHistoryService,
     BookingPaymentReminderService,
   ],

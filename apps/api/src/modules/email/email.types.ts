@@ -105,3 +105,37 @@ export type BookingStaffMessageEmailPayload = AssistedBookingEmailBase & {
 export type BookingPaymentReminderEmailPayload = AssistedBookingEmailBase & {
   paymentUrl: string;
 };
+
+export type BookingIdentityDocumentUploadRequestEmailPayload = AssistedBookingEmailBase & {
+  travelerName: string;
+  uploadUrl: string;
+  staffNote?: string | null;
+  locale?: 'fr' | 'en' | 'es';
+};
+
+export type BookingGuideAssignmentEmailPayload = {
+  to: string;
+  guideName: string;
+  bookingId: string;
+  role: 'primary' | 'secondary';
+  itemTitles: string[];
+  visitStartDate?: string | null;
+  visitEndDate?: string | null;
+  adminUrl?: string;
+  locale?: 'fr' | 'en' | 'es';
+  webUrl?: string;
+  hasPdfAttachment?: boolean;
+};
+
+export type BookingGuideRemovalEmailPayload = {
+  to: string;
+  guideName: string;
+  bookingId: string;
+  role: 'primary' | 'secondary';
+  itemTitles: string[];
+  visitStartDate?: string | null;
+  visitEndDate?: string | null;
+  comment?: string | null;
+  locale?: 'fr' | 'en' | 'es';
+  webUrl?: string;
+};

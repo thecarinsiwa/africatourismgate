@@ -9,58 +9,50 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
-import { DeepPartial } from 'typeorm';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { BulkUpsertFlightClassAvailabilityDto } from './dto/bulk-upsert-flight-class-availability.dto';
+import { CreateFlightClassAvailabilityDto } from './dto/create-flight-class-availability.dto';
 import { FlightClassAvailabilityListQueryDto } from './dto/flight-class-availability-list-query.dto';
-import { FlightClassAvailability } from '../../../entities/generated';
+import { UpdateFlightClassAvailabilityDto } from './dto/update-flight-class-availability.dto';
 import { FlightClassAvailabilityService } from './flight-class-availability.service';
 
 @ApiTags('flight-class-availability')
-@ApiForbiddenResponse({ description: 'Missing permission' })
 @Controller('flight-class-availability')
 export class FlightClassAvailabilityController {
   constructor(private readonly service: FlightClassAvailabilityService) {}
 
-  @RequirePermissions('flights.read')
   @Get()
-  @ApiOperation({ summary: 'List flight-class-availability' })
+  @ApiOperation({ summary: 'List flight class availability' })
   findAll(@Query() query: FlightClassAvailabilityListQueryDto) {
     return this.service.findAll(query);
   }
 
-  @RequirePermissions('flights.write')
   @Put('bulk')
   @ApiOperation({ summary: 'Bulk upsert availability for a date range' })
   bulkUpsert(@Body() dto: BulkUpsertFlightClassAvailabilityDto) {
     return this.service.bulkUpsert(dto);
   }
 
-  @RequirePermissions('flights.read')
   @Get(':id')
-  @ApiOperation({ summary: 'Get flight-class-availability by id' })
+  @ApiOperation({ summary: 'Get flight class availability by id' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
-  @RequirePermissions('flights.write')
   @Post()
-  @ApiOperation({ summary: 'Create flight-class-availability' })
-  create(@Body() dto: DeepPartial<FlightClassAvailability>) {
-    return this.service.create(dto);
+  @ApiOperation({ summary: 'Create flight class availability' })
+  create(@Body() dto: CreateFlightClassAvailabilityDto) {
+    return this.service.createAvailability(dto);
   }
 
-  @RequirePermissions('flights.write')
   @Patch(':id')
-  @ApiOperation({ summary: 'Update flight-class-availability' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<FlightClassAvailability>) {
-    return this.service.update(id, dto);
+  @ApiOperation({ summary: 'Update flight class availability' })
+  update(@Param('id') id: string, @Body() dto: UpdateFlightClassAvailabilityDto) {
+    return this.service.updateAvailability(id, dto);
   }
 
-  @RequirePermissions('flights.write')
   @Delete(':id')
-  @ApiOperation({ summary: 'Soft-delete flight-class-availability' })
+  @ApiOperation({ summary: 'Soft-delete flight class availability' })
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }

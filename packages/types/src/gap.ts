@@ -10,13 +10,22 @@ export type GapImpactStatColorKey = 'primary' | 'secondary';
 
 export type GapMediaItemType = 'image' | 'video';
 
+export interface GapSiteLink {
+  label: string;
+  url: string | null;
+}
+
 export interface GapSiteSettings extends AuditFields {
   id: string;
   title: string;
   subtitle: string;
   heroImageUrl: string;
   heroImageAlt: string;
+  /** Up to 10 partner / external links. */
+  links: GapSiteLink[] | null;
+  /** @deprecated Prefer links */
   unescoLabel: string | null;
+  /** @deprecated Prefer links */
   unescoUrl: string | null;
   donateUrl: string | null;
   donateLabel: string | null;
@@ -31,6 +40,8 @@ export interface GapPage extends AuditFields {
   excerpt: string | null;
   content: string;
   coverImageUrl: string | null;
+  /** Up to 10 image URLs; `coverImageUrl` is the cover (first). */
+  coverImageUrls: string[] | null;
   status: GapStatus;
   publishedAt: string | null;
   locale: string;
@@ -42,6 +53,8 @@ export interface GapActivity extends AuditFields {
   description: string;
   iconKey: GapActivityIconKey;
   imageUrl: string | null;
+  /** Up to 10 image URLs; `imageUrl` is the cover (first). */
+  imageUrls: string[] | null;
   sortOrder: number;
   status: GapStatus;
   locale: string;
@@ -52,6 +65,7 @@ export interface GapImpactStat extends AuditFields {
   label: string;
   valueDisplay: string;
   description: string | null;
+  imageUrl: string | null;
   colorKey: GapImpactStatColorKey;
   sortOrder: number;
   status: GapStatus;
@@ -78,7 +92,10 @@ export interface PublicGapSiteSettings {
   subtitle: string;
   heroImageUrl: string;
   heroImageAlt: string;
+  links: GapSiteLink[];
+  /** @deprecated Prefer links */
   unescoLabel: string | null;
+  /** @deprecated Prefer links */
   unescoUrl: string | null;
   donateUrl: string | null;
   donateLabel: string | null;
@@ -92,6 +109,7 @@ export interface PublicGapPage {
   excerpt: string | null;
   content: string;
   coverImageUrl: string | null;
+  coverImageUrls: string[];
   publishedAt: string | null;
   locale: string;
 }
@@ -102,6 +120,7 @@ export interface PublicGapActivity {
   description: string;
   iconKey: GapActivityIconKey;
   imageUrl: string | null;
+  imageUrls: string[];
   sortOrder: number;
   locale: string;
 }
@@ -111,6 +130,7 @@ export interface PublicGapImpactStat {
   label: string;
   valueDisplay: string;
   description: string | null;
+  imageUrl: string | null;
   colorKey: GapImpactStatColorKey;
   sortOrder: number;
   locale: string;
@@ -139,7 +159,11 @@ export interface CreateGapSiteSettingsRequest {
   subtitle: string;
   heroImageUrl: string;
   heroImageAlt: string;
+  /** Up to 10 partner / external links. */
+  links?: GapSiteLink[] | null;
+  /** @deprecated Prefer links */
   unescoLabel?: string | null;
+  /** @deprecated Prefer links */
   unescoUrl?: string | null;
   donateUrl?: string | null;
   donateLabel?: string | null;
@@ -161,6 +185,9 @@ export interface CreateGapPageRequest {
   title: string;
   excerpt?: string | null;
   content: string;
+  /** Up to 10 image URLs; first becomes the cover. */
+  coverImageUrls?: string[] | null;
+  /** @deprecated Prefer coverImageUrls */
   coverImageUrl?: string | null;
   status?: GapStatus;
   publishedAt?: string | null;
@@ -182,6 +209,9 @@ export interface CreateGapActivityRequest {
   title: string;
   description: string;
   iconKey: GapActivityIconKey;
+  /** Up to 10 image URLs; first becomes the cover. */
+  imageUrls?: string[] | null;
+  /** @deprecated Prefer imageUrls */
   imageUrl?: string | null;
   sortOrder?: number;
   status?: GapStatus;
@@ -202,6 +232,7 @@ export interface CreateGapImpactStatRequest {
   label: string;
   valueDisplay: string;
   description?: string | null;
+  imageUrl?: string | null;
   colorKey: GapImpactStatColorKey;
   sortOrder?: number;
   status?: GapStatus;

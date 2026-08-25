@@ -58,5 +58,6 @@ export type UpdateEmployeeRequest = Partial<{
 export interface EmployeesListQuery extends PaginationQuery {
   organizationId?: string;
   status?: EmployeeStatus;
+  department?: string;
   search?: string;
 }

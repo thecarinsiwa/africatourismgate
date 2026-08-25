@@ -1,15 +1,10 @@
-import type { Metadata } from 'next';
-import { getAdminPageMetadata } from '../../../../../lib/i18n/admin-page-i18n';
-import { BookingDetailPage } from '../../../../../components/bookings/booking-detail-page';
+import { redirect } from 'next/navigation';
 
 type PageProps = {
   params: { id: string };
 };
 
-export async function generateMetadata(): Promise<Metadata> {
-  return getAdminPageMetadata('dashboard/bookings/id');
-}
-
-export default function BookingDetailRoutePage({ params }: PageProps) {
-  return <BookingDetailPage bookingId={params.id} />;
+/** @deprecated Use `/reservations/[id]` — kept for backward-compatible links. */
+export default function LegacyBookingDetailPage({ params }: PageProps) {
+  redirect(`/reservations/${params.id}`);
 }

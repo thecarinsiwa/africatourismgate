@@ -8,6 +8,37 @@ import { CreateGapActivityDto } from './dto/create-gap-activity.dto';
 import { GapActivitiesListQueryDto } from './dto/gap-activities-list-query.dto';
 import { UpdateGapActivityDto } from './dto/update-gap-activity.dto';
 
+const MAX_ACTIVITY_IMAGES = 10;
+
+function normalizeImageUrls(
+  imageUrls?: string[] | null,
+  legacyImageUrl?: string | null,
+): string[] {
+  const fromArray = (imageUrls ?? [])
+    .map((url) => url.trim())
+    .filter(Boolean);
+  const fromLegacy = legacyImageUrl?.trim() ? [legacyImageUrl.trim()] : [];
+  const merged = fromArray.length > 0 ? fromArray : fromLegacy;
+  return Array.from(new Set(merged)).slice(0, MAX_ACTIVITY_IMAGES);
+}
+
+function toActivityPayload(
+  dto: CreateGapActivityDto | UpdateGapActivityDto,
+): DeepPartial<GapActivities> {
+  const hasImageUrls = Object.prototype.hasOwnProperty.call(dto, 'imageUrls');
+  const hasImageUrl = Object.prototype.hasOwnProperty.call(dto, 'imageUrl');
+
+  const payload: DeepPartial<GapActivities> = { ...dto };
+
+  if (hasImageUrls || hasImageUrl) {
+    const urls = normalizeImageUrls(dto.imageUrls, dto.imageUrl);
+    payload.imageUrls = urls;
+    payload.imageUrl = urls[0] ?? null;
+  }
+
+  return payload;
+}
+
 @Injectable()
 export class GapActivitiesService extends CrudService<GapActivities> {
   constructor(
@@ -21,7 +52,7 @@ export class GapActivitiesService extends CrudService<GapActivities> {
     dto: CreateGapActivityDto,
     actorUserId?: string,
   ): Promise<GapActivities> {
-    return super.create(dto as DeepPartial<GapActivities>, actorUserId);
+    return super.create(toActivityPayload(dto), actorUserId);
   }
 
   updateFromDto(
@@ -29,7 +60,7 @@ export class GapActivitiesService extends CrudService<GapActivities> {
     dto: UpdateGapActivityDto,
     actorUserId?: string,
   ): Promise<GapActivities> {
-    return super.update(id, dto as DeepPartial<GapActivities>, actorUserId);
+    return super.update(id, toActivityPayload(dto), actorUserId);
   }
 
   override async findAll(
@@ -66,7 +97,7 @@ export class GapActivitiesService extends CrudService<GapActivities> {
     const [data, total] = await qb.getManyAndCount();
 
     return {
-      data,
+      data: data.map((activity) => this.withResolvedImageUrls(activity)),
       meta: {
         total,
         page,
@@ -74,5 +105,17 @@ export class GapActivitiesService extends CrudService<GapActivities> {
         totalPages: Math.ceil(total / limit) || 1,
       },
     };
+  }
+
+  override async findOne(id: string): Promise<GapActivities> {
+    const activity = await super.findOne(id);
+    return this.withResolvedImageUrls(activity);
+  }
+
+  private withResolvedImageUrls(activity: GapActivities): GapActivities {
+    const urls = normalizeImageUrls(activity.imageUrls, activity.imageUrl);
+    activity.imageUrls = urls;
+    activity.imageUrl = urls[0] ?? null;
+    return activity;
   }
 }

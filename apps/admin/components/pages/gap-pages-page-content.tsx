@@ -1,15 +1,29 @@
 'use client';
 
+import { Button } from '@africatourismgate/ui';
+import { useTranslations } from 'next-intl';
 import { GapAccessShell } from '../gap/gap-access-shell';
 import { GapPagesList } from '../gap/gap-pages-list';
-import { AdminIntroPage } from './admin-intro-page';
+import { GapPagesStatCards } from '../gap/gap-pages-stat-cards';
+import { useGapPermissions } from '../../lib/gap/use-gap-permissions';
+import { AdminListPageHeader } from './admin-list-page-header';
 
 export function GapPagesPageContent() {
+  const t = useTranslations('pages.gap.pages');
+  const { canWrite } = useGapPermissions();
+
   return (
     <GapAccessShell>
-      <AdminIntroPage routePath="gap/pages">
+      <div className="min-w-0">
+        <AdminListPageHeader
+          routePath="gap/pages"
+          actions={
+            canWrite ? <Button href="/gap/pages/nouveau">{t('actions.new')}</Button> : null
+          }
+        />
+        <GapPagesStatCards className="mb-6" />
         <GapPagesList />
-      </AdminIntroPage>
+      </div>
     </GapAccessShell>
   );
 }

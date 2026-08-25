@@ -73,6 +73,7 @@
     "title": "Edit accommodation",
     "backLink": "Back to accommodations",
     "backToList": "← Back to list",
+    "viewButton": "View",
     "tabsAria": "Accommodation sections",
     "tabs": {
       "infos": "Info",
@@ -80,6 +81,26 @@
       "amenities": "Amenities",
       "availability": "Availability"
     }
+  },
+  "view": {
+    "title": "View accommodation",
+    "editButton": "Edit accommodation",
+    "notFound": "Accommodation not found.",
+    "infoTitle": "Details",
+    "description": "Description",
+    "imagesTitle": "Photos",
+    "imagesIntro": "{count, plural, =0 {No photos} one {# photo} other {# photos}}",
+    "imagesEmpty": "No photos for this accommodation.",
+    "carouselPrev": "Previous photo",
+    "carouselNext": "Next photo",
+    "carouselThumbs": "Photo thumbnails",
+    "carouselGoTo": "Go to photo {index}",
+    "carouselOpen": "Enlarge photo {index}",
+    "carouselViewerTitle": "Photo preview",
+    "carouselClose": "Close preview",
+    "roomsIntro": "{count, plural, =0 {No rooms} one {# room} other {# rooms}}",
+    "amenitiesIntro": "{count, plural, =0 {No amenities} one {# amenity} other {# amenities}}",
+    "amenitiesEmpty": "No amenities linked."
   },
   "sections": {
     "rooms": {
@@ -92,8 +113,13 @@
       "roomTypePlaceholder": "standard, suite…",
       "maxCapacity": "Max capacity",
       "bedConfig": "Bed configuration",
+      "searchPlaceholder": "Search rooms…",
+      "searchEmpty": "No rooms match your search.",
       "empty": "No rooms yet.",
       "deleteConfirm": "Delete room « {name} »?",
+      "deleteTitle": "Delete room",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "photosAction": "Photos"
     },
     "amenities": {
@@ -101,7 +127,11 @@
       "intro": "Select amenities available at this accommodation.",
       "saveSelection": "Save selection",
       "emptyGlobal": "No global amenities yet.",
-      "createLink": "Create amenities"
+      "createLink": "Create amenities",
+      "editAmenities": "Edit selection",
+      "selectedCount": "{count, plural, =0 {None selected} one {# selected} other {# selected}}",
+      "searchPlaceholder": "Search amenities…",
+      "searchEmpty": "No amenities match your search."
     },
     "availability": {
       "title": "Availability",
@@ -112,14 +142,26 @@
       "goToRoomsTab": "Go to Rooms tab",
       "roomMismatch": "This room does not belong to this accommodation.",
       "backToProperty": "Back to accommodation",
-      "summary": "Room {roomName} — stock and price per night ({currency})."
+      "summary": "Room {roomName} — stock and price per night ({currency}).",
+      "tableTitle": "Available dates",
+      "tableIntro": "Days with stock and fare for this room.",
+      "tableEmpty": "No availability for this month.",
+      "deleteTitle": "Delete availability",
+      "deleteConfirm": "Delete availability for {date}? This cannot be undone.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel"
     }
   },
   "amenitiesList": {
     "newAmenity": "New amenity",
+    "editAmenity": "Edit amenity",
+    "viewAmenity": "Amenity details",
     "empty": "No amenities yet.",
     "searchPlaceholder": "Search amenities…",
-    "deleteConfirm": "Delete amenity « {name} »?",
+    "deleteTitle": "Delete amenity",
+    "deleteConfirm": "Amenity \"{name}\" will be permanently deleted.",
+    "deleteConfirmButton": "Delete",
+    "cancel": "Cancel",
     "ariaLabel": "Amenities list",
     "viewGrid": "Grid",
     "viewTable": "Table",

@@ -3,11 +3,13 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTableActionButton,
   DataTableActions,
   Input,
+  Modal,
 } from '@africatourismgate/ui';
 import type { FlightClass, FlightClassName } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
@@ -59,6 +61,8 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<FlightClass | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -82,6 +86,22 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
     setFormValues(emptyForm);
     setEditing(null);
     setShowForm(false);
+    setFormError(null);
+  }
+
+  function openCreate() {
+    resetForm();
+    setShowForm(true);
+  }
+
+  function openEdit(flightClass: FlightClass) {
+    setEditing(flightClass);
+    setFormValues({
+      className: flightClass.className,
+      basePriceCents: String(flightClass.basePriceCents),
+      seatsTotal: String(flightClass.seatsTotal),
+    });
+    setShowForm(true);
     setFormError(null);
   }
 
@@ -119,21 +139,44 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
     }
   }
 
-  function openEdit(flightClass: FlightClass) {
-    setEditing(flightClass);
-    setFormValues({
-      className: flightClass.className,
-      basePriceCents: String(flightClass.basePriceCents),
-      seatsTotal: String(flightClass.seatsTotal),
-    });
-    setShowForm(true);
-  }
+  const handleDeleteRequest = useCallback((flightClass: FlightClass) => {
+    setConfirmTarget(flightClass);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const flightClass = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(flightClass.id);
+    try {
+      await getApiClient().deleteFlightClass(flightClass.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getVolsErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getVolsErrorMessage, load]);
 
   const classes = state.status === 'ready' ? state.classes : [];
   const selectClass =
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={t('deleteConfirm')}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <section
       className={
         embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
@@ -148,77 +191,87 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
         ) : (
           <p className="text-sm text-atg-muted">{t('intro')}</p>
         )}
-        {!showForm ? (
-          <Button type="button" onClick={() => setShowForm(true)}>
-            {t('addClass')}
-          </Button>
-        ) : null}
+        <Button type="button" onClick={openCreate}>
+          {t('addClass')}
+        </Button>
       </div>
 
-      {showForm ? (
-        <Card variant="dashboard" className="max-w-2xl">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">
-              {editing ? t('editClass') : t('newClass')}
-            </h3>
-            {formError ? (
-              <p role="alert" className="text-sm text-red-600">
-                {formError}
-              </p>
-            ) : null}
-            <div>
-              <label htmlFor={classSelectId} className="mb-2 block text-sm font-medium">
-                {t('cabinType')}
-              </label>
-              <select
-                id={classSelectId}
-                className={selectClass}
-                value={formValues.className}
-                onChange={(e) =>
-                  setFormValues((p) => ({
-                    ...p,
-                    className: e.target.value as FlightClassName,
-                  }))
-                }
-              >
-                {classOptions.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Input
-                label={tCommon('form.basePriceCents')}
-                type="number"
-                min={0}
-                value={formValues.basePriceCents}
-                onChange={(e) =>
-                  setFormValues((p) => ({ ...p, basePriceCents: e.target.value }))
-                }
-              />
-              <Input
-                label={t('totalSeats')}
-                type="number"
-                min={1}
-                value={formValues.seatsTotal}
-                onChange={(e) =>
-                  setFormValues((p) => ({ ...p, seatsTotal: e.target.value }))
-                }
-              />
-            </div>
-            <div className="flex gap-3">
-              <Button type="submit" loading={submitting}>
-                {editing ? tActions('save') : t('addClass')}
-              </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
-                {tActions('cancel')}
-              </Button>
-            </div>
-          </form>
-        </Card>
-      ) : null}
+      <Modal
+        open={showForm}
+        onOpenChange={(open) => {
+          if (!open && !submitting) resetForm();
+        }}
+        title={editing ? t('editClass') : t('newClass')}
+        showClose={!submitting}
+        closeAriaLabel={tActions('close')}
+        className="max-w-lg"
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {formError ? (
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              {formError}
+            </p>
+          ) : null}
+          <div>
+            <label htmlFor={classSelectId} className="mb-2 block text-sm font-medium">
+              {t('cabinType')}
+            </label>
+            <select
+              id={classSelectId}
+              className={selectClass}
+              value={formValues.className}
+              onChange={(e) =>
+                setFormValues((p) => ({
+                  ...p,
+                  className: e.target.value as FlightClassName,
+                }))
+              }
+              disabled={submitting}
+            >
+              {classOptions.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Input
+              label={tCommon('form.basePriceCents')}
+              type="number"
+              min={0}
+              value={formValues.basePriceCents}
+              onChange={(e) =>
+                setFormValues((p) => ({ ...p, basePriceCents: e.target.value }))
+              }
+              disabled={submitting}
+            />
+            <Input
+              label={t('totalSeats')}
+              type="number"
+              min={1}
+              value={formValues.seatsTotal}
+              onChange={(e) =>
+                setFormValues((p) => ({ ...p, seatsTotal: e.target.value }))
+              }
+              disabled={submitting}
+            />
+          </div>
+          <div className="flex gap-3 pt-1">
+            <Button type="submit" loading={submitting}>
+              {editing ? tActions('save') : t('addClass')}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={resetForm}
+              disabled={submitting}
+            >
+              {tActions('cancel')}
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
       {state.status === 'error' ? (
         <p role="alert" className="text-sm text-red-600">
@@ -254,18 +307,7 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
                   />
                   <DataTableActionButton
                     action="delete"
-                    onClick={async () => {
-                      if (!window.confirm(t('deleteConfirm'))) return;
-                      setDeletingId(flightClass.id);
-                      try {
-                        await getApiClient().deleteFlightClass(flightClass.id);
-                        await load();
-                      } catch (error) {
-                        setFormError(getVolsErrorMessage(error));
-                      } finally {
-                        setDeletingId(null);
-                      }
-                    }}
+                    onClick={() => handleDeleteRequest(flightClass)}
                     disabled={deletingId === flightClass.id}
                     loading={deletingId === flightClass.id}
                   />
@@ -281,5 +323,6 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
         </div>
       )}
     </section>
+    </>
   );
 }

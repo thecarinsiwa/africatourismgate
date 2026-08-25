@@ -12,53 +12,38 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import {
-  ApiBody,
-  ApiConsumes,
-  ApiForbiddenResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync } from 'node:fs';
 import { extname, join } from 'node:path';
-import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { DeepPartial } from 'typeorm';
+import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { propertyUploadUrl } from '../../../common/utils/public-asset-url';
 import { Properties } from '../../../entities/generated';
-import { PropertiesListQueryDto } from './dto/properties-list-query.dto';
 import { PropertiesService } from './properties.service';
 
 const PROPERTY_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
-const ALLOWED_PROPERTY_IMAGE_MIMES = new Set([
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-]);
+const ALLOWED_PROPERTY_IMAGE_MIMES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const ALLOWED_PROPERTY_IMAGE_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 
 @ApiTags('properties')
-@ApiForbiddenResponse({ description: 'Missing permission' })
 @Controller('properties')
 export class PropertiesController {
   constructor(private readonly service: PropertiesService) {}
 
-  @RequirePermissions('properties.read')
   @Get()
   @ApiOperation({ summary: 'List properties' })
-  findAll(@Query() query: PropertiesListQueryDto) {
+  findAll(@Query() query: PaginationQueryDto) {
     return this.service.findAll(query);
   }
 
-  @RequirePermissions('properties.read')
   @Get(':id')
   @ApiOperation({ summary: 'Get properties by id' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
-  @RequirePermissions('properties.write')
   @Post()
   @ApiOperation({ summary: 'Create properties' })
   create(@Body() dto: DeepPartial<Properties>) {
@@ -104,7 +89,6 @@ export class PropertiesController {
       },
     }),
   )
-  @RequirePermissions('properties.write')
   @Post(':id/upload-image')
   @ApiOperation({ summary: 'Upload property image (JPEG, PNG or WebP, max 5 MB)' })
   async uploadImage(
@@ -120,14 +104,12 @@ export class PropertiesController {
     return { url: propertyUploadUrl(file.filename) };
   }
 
-  @RequirePermissions('properties.write')
   @Patch(':id')
   @ApiOperation({ summary: 'Update properties' })
   update(@Param('id') id: string, @Body() dto: DeepPartial<Properties>) {
     return this.service.update(id, dto);
   }
 
-  @RequirePermissions('properties.write')
   @Delete(':id')
   @ApiOperation({ summary: 'Soft-delete properties' })
   remove(@Param('id') id: string) {

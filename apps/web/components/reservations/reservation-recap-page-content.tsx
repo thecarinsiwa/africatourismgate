@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { createBooking, createBookingCheckoutSession, requestBooking } from '../../lib/api/booking';
+import { uploadBookingIdentityDocument } from '../../lib/api/booking-identity-documents';
 import { formatCarPrice } from '../../lib/cars/listings';
 import type { VehicleDetail } from '../../lib/cars/types';
 import { formatActivityPrice, formatScheduleTime } from '../../lib/activities/listings';
@@ -43,8 +44,10 @@ import {
 import { PackagePriceDisplay } from '../packages/package-price-display';
 import { PackageReservationSummary } from '../packages/package-reservation-summary';
 import { CheckoutPageShell } from './checkout-page-shell';
+import { CheckoutManifestForm, manifestDraftToPayload, type ManifestEntryDraft } from './checkout-manifest-form';
 import { CheckoutRecapLine } from './checkout-recap-line';
 import { StripePaymentError } from './stripe-payment-error';
+import { createApiClient } from '@africatourismgate/api-client';
 
 type Props = {
   draft: ReservationDraft | null;
@@ -69,6 +72,8 @@ export function ReservationRecapPageContent({ draft }: Props) {
   const [loading, setLoading] = useState(Boolean(draft));
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [manifestEntries, setManifestEntries] = useState<ManifestEntryDraft[]>([]);
+  const [manifestErrors, setManifestErrors] = useState<Record<number, string>>({});
 
   useEffect(() => {
     let cancelled = false;
@@ -248,6 +253,16 @@ export function ReservationRecapPageContent({ draft }: Props) {
   const modes = useBookingItemTypeModes();
   const isAssisted = draft ? isAssistedBookingDraft(draft, modes) : false;
 
+  const travelerCount = useMemo(() => {
+    if (!draft) return 0;
+    if (isRoomReservationDraft(draft)) return draft.guests;
+    if (isFlightReservationDraft(draft)) return draft.passengers;
+    if (isCabinReservationDraft(draft)) return draft.guests;
+    if (isActivityScheduleReservationDraft(draft)) return draft.participants;
+    if (isPackageReservationDraft(draft)) return draft.travelers;
+    return 1;
+  }, [draft]);
+
   async function handleCheckout() {
     if (!draft) return;
     const accessToken = await ensureClientAccessToken();
@@ -256,12 +271,48 @@ export function ReservationRecapPageContent({ draft }: Props) {
       return;
     }
 
+    if (isAssisted) {
+      const errors: Record<number, string> = {};
+      manifestEntries.forEach((entry, i) => {
+        if (!entry.fullName.trim()) {
+          errors[i] = ck.manifest.fullNameRequired.replace('{n}', String(i + 1));
+        }
+      });
+      if (Object.keys(errors).length > 0) {
+        setManifestErrors(errors);
+        return;
+      }
+      setManifestErrors({});
+    }
+
     setSubmitting(true);
     setError(null);
     try {
       const payload = buildCheckoutRequest(draft);
       if (isAssisted) {
         const response = await requestBooking(accessToken, payload);
+
+        const apiBaseUrl =
+          (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api').replace(/\/$/, '');
+        const apiClient = createApiClient({ baseUrl: apiBaseUrl, accessToken });
+        const filled = manifestEntries.filter((e) => e.fullName.trim());
+        await Promise.all(
+          filled.map((entry, i) =>
+            apiClient.createBookingManifestEntry(
+              response.bookingId,
+              manifestDraftToPayload(entry, i),
+            ),
+          ),
+        );
+        const filesToUpload = filled.filter((e) => e.file);
+        if (filesToUpload.length > 0) {
+          await Promise.allSettled(
+            filesToUpload.map((entry) =>
+              uploadBookingIdentityDocument(response.bookingId, entry.file!, 'passport'),
+            ),
+          );
+        }
+
         router.push(`/booking/request-success?booking_id=${response.bookingId}`);
         return;
       }
@@ -549,6 +600,19 @@ export function ReservationRecapPageContent({ draft }: Props) {
                   {ck.resumeSearch}
                 </Link>
               </p>
+            )}
+
+            {isAssisted && !loading && canPay && (
+              <CheckoutManifestForm
+                count={travelerCount}
+                entries={manifestEntries}
+                onChange={(entries) => {
+                  setManifestEntries(entries);
+                  setManifestErrors({});
+                }}
+                labels={ck.manifest}
+                validationErrors={manifestErrors}
+              />
             )}
 
             {!hasToken && (

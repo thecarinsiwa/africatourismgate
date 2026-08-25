@@ -6,6 +6,7 @@ import { useAccountStatusLabels } from '../../lib/i18n/use-module-labels';
 import type { User, UserStatus } from '@africatourismgate/types';
 import {
   Avatar,
+  Button,
   DataTableBadge,
   Skeleton,
   Tabs,
@@ -17,6 +18,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { UserRoleAssignmentsPanel } from '../rbac/user-role-assignments-panel';
@@ -45,6 +47,7 @@ function isTabValue(value: string | null): value is TabValue {
 export function UserEditPage({ userId }: UserEditPageProps) {
   const { users: getUsersErrorMessage } = useAdminErrorMessages();
   const tDetail = useTranslations('modules.users.detail');
+  const tPages = useTranslations('pages.utilisateurs.id');
   const tActions = useTranslations('common.actions');
   const statusLabels = useAccountStatusLabels();
   const router = useRouter();
@@ -138,6 +141,11 @@ export function UserEditPage({ userId }: UserEditPageProps) {
 
   return (
     <div className="space-y-6">
+      <AdminPageBackLink
+        href="/utilisateurs"
+        label={tPages('backLabel')}
+        className="block"
+      />
       <div className="flex flex-wrap items-center gap-4">
         <Avatar
           email={user.email}
@@ -154,6 +162,9 @@ export function UserEditPage({ userId }: UserEditPageProps) {
           </div>
           <p className="mt-1 text-sm text-atg-muted">{user.email}</p>
         </div>
+        <Button href={`/utilisateurs/${userId}/voir`} variant="outline" className="w-full sm:w-auto">
+          {tDetail('viewButton')}
+        </Button>
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>

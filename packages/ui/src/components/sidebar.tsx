@@ -10,6 +10,8 @@ export type SidebarNavLink = {
   href: string;
   label: string;
   icon?: ReactNode;
+  /** Compteur affiché à droite du libellé (ex. tickets ou avis en attente). */
+  badge?: number;
 };
 
 export type SidebarNavGroup = {
@@ -179,6 +181,9 @@ type SidebarNavLinkRowProps = {
 
 function SidebarNavLinkRow({ item, pathname, allHrefs, nested, onNavigate }: SidebarNavLinkRowProps) {
   const active = isActivePath(pathname, item.href, allHrefs);
+  const showBadge = item.badge != null && item.badge > 0;
+  const badgeLabel = showBadge ? (item.badge! > 99 ? '99+' : String(item.badge)) : null;
+
   return (
     <Link
       href={item.href}
@@ -187,7 +192,17 @@ function SidebarNavLinkRow({ item, pathname, allHrefs, nested, onNavigate }: Sid
       aria-current={active ? 'page' : undefined}
     >
       {item.icon ? <span className="flex shrink-0">{item.icon}</span> : null}
-      <span className="truncate">{item.label}</span>
+      <span className="min-w-0 flex-1 truncate">{item.label}</span>
+      {showBadge ? (
+        <span
+          className={cn(
+            'ml-auto shrink-0 rounded-full px-1.5 py-0.5 text-xs font-semibold tabular-nums',
+            active ? 'bg-white/20 text-white' : 'bg-primary/15 text-primary',
+          )}
+        >
+          {badgeLabel}
+        </span>
+      ) : null}
     </Link>
   );
 }

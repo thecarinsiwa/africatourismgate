@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { CrudService } from '../../../common/crud/crud.service';
 import { PackageDescriptionAssets } from '../../../entities/generated';
@@ -20,17 +20,13 @@ export class PackageDescriptionAssetsService extends CrudService<PackageDescript
   ): Promise<PaginatedResult<PackageDescriptionAssets>> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
-    const where: FindOptionsWhere<PackageDescriptionAssets> = {};
-
-    if (query.packageId) {
-      where.packageId = query.packageId;
-    }
-    if (query.assetType) {
-      where.assetType = query.assetType;
-    }
 
     const [data, total] = await this.packageDescriptionAssetsRepository.findAndCount({
-      where,
+      where: {
+        deletedAt: IsNull(),
+        ...(query.packageId ? { packageId: query.packageId } : {}),
+        ...(query.assetType ? { assetType: query.assetType } : {}),
+      },
       skip: (page - 1) * limit,
       take: limit,
       order: { sortOrder: 'ASC', createdAt: 'DESC' },

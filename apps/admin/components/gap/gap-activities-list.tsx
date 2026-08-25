@@ -1,22 +1,26 @@
 'use client';
 
 import {
-  Button,
+  AlertDialog,
   Card,
   DataTable,
   DataTableActionButton,
   DataTableActions,
   DataTableBadge,
   DataTablePagination,
+  FilterBar,
   Input,
+  Select,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { GapActivity, GapStatus } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { useGapPermissions } from '../../lib/gap/use-gap-permissions';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { stripHtml } from '../../lib/rich-text';
+import { GapActivityDetailModal } from './gap-activity-detail-modal';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -33,14 +37,11 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
   const tStatus = useTranslations('modules.about.status');
   const tLocale = useTranslations('modules.about.locale');
   const tCommon = useTranslations('modules.common');
-  const statusFilterId = useId();
-  const localeFilterId = useId();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<'' | GapStatus>('');
   const [localeFilter, setLocaleFilter] = useState(locale ?? '');
-  const [filterTick, setFilterTick] = useState(0);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -48,6 +49,8 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<GapActivity | null>(null);
+  const [viewTarget, setViewTarget] = useState<GapActivity | null>(null);
 
   useEffect(() => {
     if (locale !== undefined) {
@@ -74,7 +77,7 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
     } catch (error) {
       setState({ status: 'error', message: getGapErrorMessage(error) });
     }
-  }, [page, search, statusFilter, localeFilter, filterTick, getGapErrorMessage]);
+  }, [page, search, statusFilter, localeFilter, getGapErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -91,22 +94,25 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (item: GapActivity) => {
-      if (!window.confirm(t('deleteConfirm', { title: item.title }))) return;
-      setDeleteError(null);
-      setDeletingId(item.id);
-      try {
-        await getApiClient().deleteGapActivity(item.id);
-        await load();
-      } catch (error) {
-        setDeleteError(getGapErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, t, getGapErrorMessage],
-  );
+  const handleDeleteRequest = useCallback((item: GapActivity) => {
+    setConfirmTarget(item);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const item = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(item.id);
+    try {
+      await getApiClient().deleteGapActivity(item.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getGapErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getGapErrorMessage, load]);
 
   const columns = useMemo<ColumnDef<GapActivity, unknown>[]>(
     () => [
@@ -116,7 +122,9 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
         cell: ({ row }) => (
           <div className="max-w-md space-y-1">
             <p className="font-medium text-atg-fg">{row.original.title}</p>
-            <p className="line-clamp-2 text-sm text-atg-muted">{row.original.description}</p>
+            <p className="line-clamp-2 text-sm text-atg-muted">
+              {stripHtml(row.original.description)}
+            </p>
           </div>
         ),
       },
@@ -160,11 +168,15 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
+            <DataTableActionButton
+              action="view"
+              onClick={() => setViewTarget(row.original)}
+            />
             <DataTableActionButton action="edit" href={`/gap/activites/${row.original.id}`} />
             {canWrite ? (
               <DataTableActionButton
                 action="delete"
-                onClick={() => void handleDelete(row.original)}
+                onClick={() => handleDeleteRequest(row.original)}
                 disabled={deletingId === row.original.id}
                 loading={deletingId === row.original.id}
               />
@@ -173,85 +185,111 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
         ),
       },
     ],
-    [canWrite, deletingId, handleDelete, t, tCommon, tIcons, tStatus],
+    [canWrite, deletingId, handleDeleteRequest, t, tCommon, tIcons, tStatus],
   );
 
   const activities = state.status === 'ready' ? state.activities : [];
-  const hasActiveFilters = Boolean(statusFilter || localeFilter);
   const showLocaleFilter = locale === undefined;
+  const activeFilterCount = [
+    search.trim().length > 0,
+    statusFilter !== '',
+    showLocaleFilter && localeFilter !== '',
+  ].filter(Boolean).length;
+  const hasActiveFilters = activeFilterCount > 0;
+
+  const statusOptions = useMemo(
+    () => [
+      { value: '', label: tCommon('filters.all') },
+      { value: 'draft', label: tStatus('draft') },
+      { value: 'published', label: tStatus('published') },
+    ],
+    [tCommon, tStatus],
+  );
+  const localeOptions = useMemo(
+    () => [
+      { value: '', label: tCommon('filters.all') },
+      { value: 'fr', label: tLocale('fr') },
+      { value: 'en', label: tLocale('en') },
+      { value: 'es', label: tLocale('es') },
+    ],
+    [tCommon, tLocale],
+  );
+
+  const handleClearFilters = useCallback(() => {
+    setSearchInput('');
+    setSearch('');
+    setStatusFilter('');
+    if (showLocaleFilter) setLocaleFilter('');
+    setPage(1);
+  }, [showLocaleFilter]);
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { title: confirmTarget.title }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
+      <GapActivityDetailModal
+        open={!!viewTarget}
+        activity={viewTarget}
+        onOpenChange={(open) => {
+          if (!open) setViewTarget(null);
+        }}
+        canWrite={canWrite}
+      />
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
-          <div className="flex-1 sm:max-w-md">
-            <Input
-              type="search"
-              placeholder={t('searchPlaceholder')}
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-            />
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label
-                htmlFor={statusFilterId}
-                className="mb-1 block text-xs font-medium text-atg-muted"
-              >
-                {tCommon('columns.status')}
-              </label>
-              <select
-                id={statusFilterId}
+      <FilterBar
+        mobileVariant="drawer"
+        activeCount={activeFilterCount}
+        onClear={handleClearFilters}
+        clearLabel={tCommon('filters.clearAll')}
+        applyLabel={tCommon('filters.apply')}
+        toggleLabel={tCommon('filters.toggle')}
+        filters={
+          <>
+            <div className="min-w-[200px] flex-1 sm:max-w-md">
+              <Input
+                type="search"
+                placeholder={t('searchPlaceholder')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+              />
+            </div>
+            <div className="w-full sm:w-40">
+              <Select
+                label={tCommon('columns.status')}
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as '' | GapStatus)}
-                className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
-              >
-                <option value="">{tCommon('filters.all')}</option>
-                <option value="draft">{tStatus('draft')}</option>
-                <option value="published">{tStatus('published')}</option>
-              </select>
+                options={statusOptions}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value as '' | GapStatus);
+                  setPage(1);
+                }}
+              />
             </div>
             {showLocaleFilter ? (
-              <div>
-                <label
-                  htmlFor={localeFilterId}
-                  className="mb-1 block text-xs font-medium text-atg-muted"
-                >
-                  {t('columns.locale')}
-                </label>
-                <select
-                  id={localeFilterId}
+              <div className="w-full sm:w-40">
+                <Select
+                  label={t('columns.locale')}
                   value={localeFilter}
-                  onChange={(e) => setLocaleFilter(e.target.value)}
-                  className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
-                >
-                  <option value="">{tCommon('filters.all')}</option>
-                  <option value="fr">{tLocale('fr')}</option>
-                  <option value="en">{tLocale('en')}</option>
-                  <option value="es">{tLocale('es')}</option>
-                </select>
+                  options={localeOptions}
+                  onChange={(e) => {
+                    setLocaleFilter(e.target.value);
+                    setPage(1);
+                  }}
+                />
               </div>
             ) : null}
-          </div>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => {
-              setPage(1);
-              setFilterTick((n) => n + 1);
-            }}
-          >
-            {tCommon('filters.apply')}
-          </Button>
-        </div>
-        {canWrite ? <Button href="/gap/activites/nouveau">{t('newButton')}</Button> : null}
-      </div>
-
-      {deleteError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {deleteError}
-        </p>
-      ) : null}
+          </>
+        }
+      />
 
       {state.status === 'error' ? (
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
@@ -282,5 +320,6 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
         </>
       )}
     </div>
+    </>
   );
 }

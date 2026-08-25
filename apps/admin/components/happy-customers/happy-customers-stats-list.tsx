@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -44,6 +45,7 @@ export function HappyCustomersStatsList({ locale }: HappyCustomersStatsListProps
     | { status: 'ready'; stats: HappyCustomersStat[]; total: number; totalPages: number }
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<HappyCustomersStat | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -98,21 +100,24 @@ export function HappyCustomersStatsList({ locale }: HappyCustomersStatsListProps
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (stat: HappyCustomersStat) => {
-      if (!window.confirm(t('deleteConfirm', { label: stat.label }))) return;
-      setDeletingId(stat.id);
-      try {
-        await getApiClient().deleteHappyCustomersStat(stat.id);
-        await load();
-      } catch {
-        /* list reload shows error on next load */
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, t],
-  );
+  const handleDeleteRequest = useCallback((stat: HappyCustomersStat) => {
+    setConfirmTarget(stat);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const stat = confirmTarget;
+    setConfirmTarget(null);
+    setDeletingId(stat.id);
+    try {
+      await getApiClient().deleteHappyCustomersStat(stat.id);
+      await load();
+    } catch {
+      /* reload at next load */
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, load]);
 
   const columns = useMemo<ColumnDef<HappyCustomersStat, unknown>[]>(
     () => [
@@ -172,7 +177,7 @@ export function HappyCustomersStatsList({ locale }: HappyCustomersStatsListProps
             {canWrite ? (
               <DataTableActionButton
                 action="delete"
-                onClick={() => void handleDelete(row.original)}
+                onClick={() => handleDeleteRequest(row.original)}
                 disabled={deletingId === row.original.id}
                 loading={deletingId === row.original.id}
               />
@@ -181,12 +186,24 @@ export function HappyCustomersStatsList({ locale }: HappyCustomersStatsListProps
         ),
       },
     ],
-    [canWrite, deletingId, handleDelete, t, tColors, tCommon, tStatus],
+    [canWrite, deletingId, handleDeleteRequest, t, tColors, tCommon, tStatus],
   );
 
   const stats = state.status === 'ready' ? state.stats : [];
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { label: confirmTarget.label }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
@@ -215,7 +232,9 @@ export function HappyCustomersStatsList({ locale }: HappyCustomersStatsListProps
         </div>
 
         {canWrite ? (
-          <Button href="/contenu/clients-satisfaits/nouveau">{t('newButton')}</Button>
+          <Button href={`/contenu/clients-satisfaits/nouveau?locale=${encodeURIComponent(locale)}`}>
+            {t('newButton')}
+          </Button>
         ) : null}
       </div>
 
@@ -247,5 +266,6 @@ export function HappyCustomersStatsList({ locale }: HappyCustomersStatsListProps
         </>
       )}
     </div>
+    </>
   );
 }

@@ -29,6 +29,10 @@ export function flightUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/flights/${filename}`;
 }
 
+export function airlineUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/airlines/${filename}`;
+}
+
 export function vehicleUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/vehicles/${filename}`;
 }
@@ -49,6 +53,18 @@ export function packageUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/packages/${filename}`;
 }
 
+export function destinationUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/destinations/${filename}`;
+}
+
+export function promotionUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/promotions/${filename}`;
+}
+
+export function promoCodeUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/promo-codes/${filename}`;
+}
+
 export function packageDescriptionAssetUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/packages/description-assets/${filename}`;
 }
@@ -65,12 +81,44 @@ export function teamMemberUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/about/team/${filename}`;
 }
 
+export function tourGuideUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/tour-guides/${filename}`;
+}
+
 export function aboutResourceUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/about/resources/${filename}`;
 }
 
 export function aboutTimelineUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/about/timeline/${filename}`;
+}
+
+export function gapMediaUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/gap/media/${filename}`;
+}
+
+export function gapActivityUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/gap/activities/${filename}`;
+}
+
+export function gapImpactStatUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/gap/impact/${filename}`;
+}
+
+export function gapPageUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/gap/pages/${filename}`;
+}
+
+export function gapSiteSettingsUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/gap/settings/${filename}`;
+}
+
+export function heroSlideUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/hero/slides/${filename}`;
+}
+
+export function happyCustomersSectionUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/happy-customers/sections/${filename}`;
 }
 
 function getApiPublicOrigin(): string {

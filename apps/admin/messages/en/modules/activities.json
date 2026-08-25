@@ -4,18 +4,21 @@
     "ariaLabel": "Liste des activités",
     "searchPlaceholder": "Rechercher par titre…",
     "destination": "Destination",
-    "deleteConfirm": "Supprimer l'activité « {title} » ?"
+    "deleteConfirm": "Delete activity « {title} »?",
+    "deleteTitle": "Delete activity",
+    "deleteConfirmButton": "Delete",
+    "cancel": "Cancel"
   },
   "columns": {
     "activity": "Activity",
-    "provider": "Provider",
+    "provider": "Partner",
     "price": "Price",
     "duration": "Duration",
     "difficulty": "Difficulty"
   },
   "form": {
     "submitCreate": "Create",
-    "provider": "Provider",
+    "provider": "Partner",
     "title": "Title",
     "difficulty": "Difficulty",
     "priceCents": "Price (cents)",
@@ -38,6 +41,9 @@
       "unnamed": "Unnamed",
       "fileHint": "Formats: JPG, PNG, WEBP, PDF, DOC, DOCX (max 10 MB)",
       "deleteConfirm": "Delete attachment « {name} »?",
+      "deleteTitle": "Delete attachment",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "fields": {
         "name": "Display name",
         "type": "Type"
@@ -72,11 +78,24 @@
     "schedulesIntro": "{count} scheduled slot(s).",
     "itineraryStopsIntro": "{count} itinerary stop(s).",
     "tabsAria": "Activity sections",
+    "subtitle": "Catalog details, media, itinerary and time slots.",
     "tabs": {
       "activity": "Activity",
+      "photos": "Photos",
+      "attachments": "Attachments",
       "itinerary": "Itinerary",
       "schedules": "Slots"
     }
+  },
+  "view": {
+    "title": "View activity",
+    "editButton": "Edit activity",
+    "notFound": "Activity not found.",
+    "subtitle": "Catalog overview of this activity.",
+    "infoTitle": "Details",
+    "imagesTitle": "Photos",
+    "imagesIntro": "{count, plural, =0 {No photos} one {# photo} other {# photos}}",
+    "imagesEmpty": "No photos for this activity."
   },
   "sections": {
     "schedules": {
@@ -88,7 +107,10 @@
       "dateTime": "Date and time",
       "capacity": "Capacity",
       "empty": "No time slots for this activity.",
-      "deleteConfirm": "Delete this slot?",
+      "deleteConfirm": "This time slot will be deleted.",
+      "deleteTitle": "Delete time slot",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "validationDateTime": "Date and time are required.",
       "validationCapacity": "Capacity must be at least 1.",
       "viewList": "List",
@@ -104,7 +126,10 @@
       "new": "New stop",
       "edit": "Edit stop",
       "empty": "No itinerary stops for this activity.",
-      "deleteConfirm": "Delete this stop?",
+      "deleteConfirm": "This itinerary stop will be deleted.",
+      "deleteTitle": "Delete stop",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "order": "Stop",
       "description": "Description (optional)",
       "mapPicker": "Location picker",
@@ -125,25 +150,28 @@
   },
   "referential": {
     "providers": {
-      "new": "Nouveau fournisseur",
-      "edit": "Modifier le fournisseur",
-      "empty": "Tocun fournisseur.",
-      "searchPlaceholder": "Rechercher un fournisseur…",
+      "new": "New partner",
+      "edit": "Edit partner",
+      "empty": "No partners yet.",
+      "searchPlaceholder": "Search for a partner…",
       "ratingTitle": "Note moyenne (à venir)",
-      "deleteConfirm": "Supprimer « {name} » ?",
+      "deleteConfirm": "Partner \"{name}\" will be permanently deleted.",
+      "deleteTitle": "Delete partner",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "validation": {
-        "destinationRequired": "La destination est obligatoire."
+        "destinationRequired": "Destination is required."
       }
     }
   },
   "stats": {
     "activities": {
       "label": "Activitys",
-      "subtitle": "Expériences catalogue"
+      "subtitle": "Catalog experiences"
     },
     "providers": {
-      "label": "Providers",
-      "subtitle": "Opérateurs locaux"
+      "label": "Partners",
+      "subtitle": "Local operators"
     },
     "schedules": {
       "label": "Time slots",

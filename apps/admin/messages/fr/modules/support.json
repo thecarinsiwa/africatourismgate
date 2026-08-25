@@ -14,10 +14,10 @@
   "assignee": {
     "unassigned": "Non assigné"
   },
-  "detail": {
-    "title": "Ticket support",
-    "backToList": "Retour à la liste",
-    "openedOn": "Ouvert le {date}",
+    "detail": {
+      "title": "Ticket support",
+      "backToList": "Retour au support",
+      "openedOn": "Ouvert le {date}",
     "sections": {
       "client": "Client",
       "handling": "Traitement",
@@ -47,8 +47,8 @@
     "assignedLabel": "Assigné :",
     "empty": {
       "default": {
-        "title": "Aucun ticket pour le moment",
-        "description": "Les demandes d'assistance clients apparaîtront ici dès qu'elles seront créées."
+        "title": "Aucun ticket ouvert",
+        "description": "La file des tickets ouverts est vide. Les nouvelles demandes clients apparaîtront ici."
       },
       "filtered": {
         "title": "Aucun ticket ne correspond aux filtres",

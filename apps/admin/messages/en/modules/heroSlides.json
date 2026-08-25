@@ -11,8 +11,29 @@
   "page": {
     "localeFilter": "Language"
   },
+  "stats": {
+    "total": {
+      "label": "Slides",
+      "subtitle": "Homepage carousel"
+    },
+    "published": {
+      "label": "Published",
+      "subtitle": "Visible on the site"
+    },
+    "draft": {
+      "label": "Drafts",
+      "subtitle": "Not published"
+    },
+    "french": {
+      "label": "In French",
+      "subtitle": "FR locale slides"
+    }
+  },
   "list": {
-    "deleteConfirm": "Delete slide \"{title}\"?",
+    "deleteTitle": "Delete slide",
+    "deleteConfirm": "Slide \"{title}\" will be permanently deleted.",
+    "deleteConfirmButton": "Delete",
+    "cancel": "Cancel",
     "columns": {
       "title": "Slide",
       "sortOrder": "Order"
@@ -26,20 +47,33 @@
   "edit": {
     "pageTitle": "Edit slide"
   },
+  "detail": {
+    "title": "Slide detail",
+    "close": "Close",
+    "edit": "Edit"
+  },
   "form": {
+    "info": {
+      "carouselHint": "Slide displayed in the homepage carousel. A wide image (16:9) is recommended."
+    },
     "validation": {
       "subtitleRequired": "Subtitle is required.",
       "titleRequired": "Title is required.",
       "descriptionRequired": "Description is required.",
-      "imageUrlRequired": "Image URL is required.",
+      "imageUrlRequired": "Image is required.",
+      "imageUrlInvalid": "Invalid image URL.",
       "imageAltRequired": "Alt text is required."
     },
     "fields": {
       "subtitle": "Subtitle",
       "title": "Title",
       "description": "Description",
-      "imageUrl": "Image URL",
+      "image": "Background image",
+      "imageUrl": "Image URL (alternative)",
       "imageAlt": "Image alt text",
+      "imagePreviewAlt": "Slide preview",
+      "removeImage": "Remove image",
+      "imageUploadHint": "JPEG, PNG or WebP — max 5 MB",
       "href": "Link (optional)",
       "hrefHint": "Internal or external link on the title. Leave empty for no link.",
       "sortOrder": "Display order",

@@ -47,6 +47,13 @@ export class BookingAssistedEmailService {
     void this.sendPaymentReminder(bookingId, paymentUrl).catch(() => undefined);
   }
 
+  async requestIdentityDocumentUpload(
+    bookingId: string,
+    input: { travelerName: string; staffNote?: string; travelerIndex?: number },
+  ): Promise<{ sent: boolean }> {
+    return this.sendIdentityDocumentUploadRequest(bookingId, input);
+  }
+
   private async buildBasePayload(
     bookingId: string,
   ): Promise<AssistedBookingEmailBase | null> {
@@ -214,5 +221,45 @@ export class BookingAssistedEmailService {
       ...base,
       paymentUrl,
     });
+  }
+
+  private async sendIdentityDocumentUploadRequest(
+    bookingId: string,
+    input: { travelerName: string; staffNote?: string; travelerIndex?: number },
+  ): Promise<{ sent: boolean }> {
+    const detail = await this.bookingEngine.getBookingDetail(bookingId);
+    const user = await this.usersRepository.findOne({
+      where: { id: detail.booking.userId, deletedAt: IsNull() },
+    });
+    if (!user?.email?.trim()) {
+      return { sent: false };
+    }
+
+    const itemTitles = detail.items
+      .map((item) => item.titleSnapshot?.trim())
+      .filter((title): title is string => Boolean(title));
+
+    const base: AssistedBookingEmailBase = {
+      to: user.email,
+      firstName: user.firstName,
+      bookingId: detail.booking.id,
+      totalCents: detail.totalCents,
+      currency: detail.currency,
+      itemTitles,
+      webUrl: process.env.NEXT_PUBLIC_WEB_URL,
+    };
+
+    const locale = resolvePdfLocale(user.preferredLanguage);
+    const uploadUrl = `${webBase(base.webUrl)}/account/reservations/${bookingId}`;
+
+    const result = await this.emailService.sendBookingIdentityDocumentUploadRequest({
+      ...base,
+      travelerName: input.travelerName.trim(),
+      staffNote: input.staffNote?.trim() || null,
+      uploadUrl,
+      locale,
+    });
+
+    return { sent: result.sent };
   }
 }

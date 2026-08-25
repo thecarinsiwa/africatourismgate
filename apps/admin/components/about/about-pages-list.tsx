@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -60,6 +61,7 @@ export function AboutPagesList() {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<AboutPage | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -115,22 +117,25 @@ export function AboutPagesList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (item: AboutPage) => {
-      if (!window.confirm(t('deleteConfirm', { title: item.title }))) return;
-      setDeleteError(null);
-      setDeletingId(item.id);
-      try {
-        await getApiClient().deleteAboutPage(item.id);
-        await load();
-      } catch (error) {
-        setDeleteError(getAboutErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, t, getAboutErrorMessage],
-  );
+  const handleDeleteRequest = useCallback((item: AboutPage) => {
+    setConfirmTarget(item);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const item = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(item.id);
+    try {
+      await getApiClient().deleteAboutPage(item.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getAboutErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getAboutErrorMessage, load]);
 
   const columns = useMemo<ColumnDef<AboutPage, unknown>[]>(
     () => [
@@ -195,7 +200,7 @@ export function AboutPagesList() {
             {canWrite ? (
               <DataTableActionButton
                 action="delete"
-                onClick={() => void handleDelete(row.original)}
+                onClick={() => handleDeleteRequest(row.original)}
                 disabled={deletingId === row.original.id}
                 loading={deletingId === row.original.id}
               />
@@ -204,13 +209,26 @@ export function AboutPagesList() {
         ),
       },
     ],
-    [canWrite, deletingId, handleDelete, t, tCommon, tSections, tStatus],
+    [canWrite, deletingId, handleDeleteRequest, t, tCommon, tSections, tStatus],
   );
 
   const pages = state.status === 'ready' ? state.pages : [];
   const hasActiveFilters = Boolean(statusFilter || localeFilter || sectionFilter);
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { title: confirmTarget.title }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
@@ -293,12 +311,6 @@ export function AboutPagesList() {
         ) : null}
       </div>
 
-      {deleteError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {deleteError}
-        </p>
-      ) : null}
-
       {state.status === 'error' ? (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
           {state.message}
@@ -329,5 +341,6 @@ export function AboutPagesList() {
         </>
       )}
     </div>
+    </>
   );
 }

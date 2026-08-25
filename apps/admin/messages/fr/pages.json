@@ -27,20 +27,32 @@
     "description": "Comptes plateforme. Filtrez par statut ou organisation.",
     "nouveau": {
       "metaTitle": "Nouvel utilisateur",
-      "description": "Créer un compte utilisateur."
+      "description": "Créer un compte utilisateur.",
+      "backLabel": "Retour aux utilisateurs"
     },
     "id": {
-      "metaTitle": "Modifier l'utilisateur"
+      "metaTitle": "Modifier l'utilisateur",
+      "backLabel": "Retour aux utilisateurs",
+      "voir": {
+        "metaTitle": "Voir l'utilisateur"
+      }
     },
     "employes": {
       "description": "Profils employés liés aux utilisateurs et organisations.",
       "nouveau": {
         "metaTitle": "Nouvel employé",
-        "description": "Lier un utilisateur existant à une organisation."
+        "description": "Lier un utilisateur existant à une organisation.",
+        "backLabel": "Retour aux employés"
       },
       "id": {
-        "metaTitle": "Modifier l'employé"
+        "metaTitle": "Modifier l'employé",
+        "voir": {
+          "metaTitle": "Voir l'employé"
+        }
       }
+    },
+    "departements": {
+      "description": "Départements organisationnels. Utilisés pour classer les employés."
     },
     "adresses": {
       "description": "Adresses enregistrées par les utilisateurs."
@@ -65,6 +77,9 @@
     },
     "id": {
       "metaTitle": "Modifier l'hébergement",
+      "voir": {
+        "metaTitle": "Voir l'hébergement"
+      },
       "chambres": {
         "roomId": {
           "disponibilites": {
@@ -77,6 +92,7 @@
       }
     },
     "equipements": {
+      "title": "Équipements",
       "description": "Catalogue global réutilisable sur les hébergements (Wi-Fi, piscine, etc.)."
     }
   },
@@ -100,17 +116,18 @@
   "produits": {
     "activites": {
       "title": "Activités & tours",
-      "description": "Expériences, fournisseurs et créneaux par destination.",
+      "description": "Expériences, partenaires et créneaux par destination.",
       "actions": {
-        "providers": "Fournisseurs",
+        "providers": "Partenaires",
         "new": "Nouvelle activité"
       },
       "nouveau": {
         "metaTitle": "Nouvelle activité",
-        "description": "Créez une expérience puis ajoutez des créneaux sur la page d'édition."
+        "description": "Créez une expérience puis ajoutez des créneaux sur la page d'édition.",
+        "backLabel": "Retour aux activités"
       },
       "fournisseurs": {
-        "title": "Fournisseurs d'activités",
+        "title": "Partenaires d'activités",
         "description": "Opérateurs liés aux destinations."
       },
       "id": {
@@ -128,7 +145,8 @@
       },
       "nouveau": {
         "metaTitle": "Nouvelle destination",
-        "description": "Créez la destination puis ajoutez des points d'intérêt sur la page de modification."
+        "description": "Créez la destination puis ajoutez des points d'intérêt sur la page de modification.",
+        "backLabel": "Retour aux destinations"
       },
       "id": {
         "metaTitle": "Modifier la destination",
@@ -210,14 +228,23 @@
         "classes": {
           "classId": {
             "disponibilites": {
-              "metaTitle": "Disponibilités classe"
+              "metaTitle": "Disponibilités classe",
+              "title": "Disponibilités classe",
+              "description": "Sièges et prix par date pour cette classe cabine."
             }
           }
         }
       }
     },
     "croisieres": {
+      "title": "Croisières",
       "description": "Départs programmés, itinéraires, cabines et disponibilités.",
+      "actions": {
+        "lines": "Lignes",
+        "ports": "Ports",
+        "ships": "Navires",
+        "new": "Nouveau départ"
+      },
       "links": {
         "ships": "Navires",
         "lines": "Lignes de croisière",
@@ -229,22 +256,29 @@
         "description": "Associez un itinéraire existant à une date de départ."
       },
       "lignes": {
-        "description": "Référentiel des compagnies / lignes."
+        "title": "Lignes de croisière",
+        "description": "Référentiel des compagnies / lignes.",
+        "backLabel": "Retour aux croisières"
       },
       "ports": {
-        "description": "Référentiel des escales."
+        "title": "Ports de croisière",
+        "description": "Référentiel des escales.",
+        "backLabel": "Retour aux croisières"
       },
       "navires": {
+        "title": "Navires",
         "description": "Navires, itinéraires, escales et cabines.",
+        "backLabel": "Retour aux croisières",
         "links": {
-          "backToSailings": "← Départs"
+          "backToSailings": "← Croisières"
         },
         "nouveau": {
           "metaTitle": "Nouveau navire",
-          "description": "Créez un navire puis ajoutez itinéraires et cabines."
+          "description": "Créez un navire puis ajoutez itinéraires et cabines.",
+          "backLabel": "Retour aux navires"
         },
         "shipId": {
-          "metaTitle": "Navire",
+          "metaTitle": "Modifier le navire",
           "itineraires": {
             "itineraryId": {
               "metaTitle": "Escales itinéraire"
@@ -253,14 +287,19 @@
         }
       },
       "id": {
-        "metaTitle": "Départ"
+        "metaTitle": "Modifier le départ"
       }
     },
     "forfaits": {
+      "title": "Forfaits",
       "description": "Packages combinés avec remise et prix calculé à partir des produits inclus.",
+      "actions": {
+        "new": "Nouveau forfait"
+      },
       "nouveau": {
         "metaTitle": "Nouveau forfait",
-        "description": "Créez le forfait puis ajoutez des items sur la page d’édition."
+        "description": "Créez le forfait puis ajoutez des items sur la page d’édition.",
+        "backLabel": "Retour aux forfaits"
       },
       "id": {
         "metaTitle": "Modifier le forfait",
@@ -271,47 +310,98 @@
     }
   },
   "reservations": {
+    "title": "Réservations",
     "description": "Liste paginée des réservations (données API live). Filtres par statut, date, client et organisation. Accès requis : bookings.read.",
+    "actions": {
+      "lines": "Lignes de réservation",
+      "guides": "Guides touristiques"
+    },
     "lignes": {
-      "description": "Tableau global des articles par réservation (données API live). Filtres par type, statut de la réservation et identifiant booking. Accès requis : bookings.read."
+      "title": "Lignes de réservation",
+      "description": "Tableau global des articles par réservation (données API live). Filtres par type, statut de la réservation et identifiant booking. Accès requis : bookings.read.",
+      "backLabel": "Retour aux réservations"
+    },
+    "id": {
+      "metaTitle": "Détail réservation"
     }
   },
   "guides": {
     "title": "Guides touristiques",
     "description": "Catalogue des guides internes et externes. Filtres par type, statut et recherche par nom.",
     "actions": {
-      "new": "Nouveau guide"
+      "new": "Nouveau guide",
+      "calendar": "Calendrier"
     },
     "nouveau": {
       "metaTitle": "Nouveau guide touristique",
-      "description": "Créez un profil guide puis assignez-le aux réservations depuis la fiche réservation."
+      "description": "Créez un profil guide puis assignez-le aux réservations depuis la fiche réservation.",
+      "backLabel": "Retour aux guides"
     },
     "id": {
-      "metaTitle": "Modifier le guide"
+      "metaTitle": "Modifier le guide",
+      "description": "Mettez à jour le profil, les destinations couvertes et le statut du guide.",
+      "voir": {
+        "metaTitle": "Voir le guide",
+        "title": "Voir le guide",
+        "description": "Consultez le profil, les destinations et les réservations assignées à ce guide."
+      }
+    },
+    "calendrier": {
+      "metaTitle": "Calendrier guides",
+      "title": "Calendrier",
+      "description": "Vue mensuelle de la disponibilité des guides actifs (disponibles, occupés par mission, indisponibles).",
+      "backLabel": "Retour aux guides"
     }
   },
   "paiements": {
+    "title": "Paiements",
     "description": "Transactions et remboursements Stripe (mode test). Filtres par statut, dates et organisation (super admin). Accès : payments.read ; remboursement : payments.write.",
+    "actions": {
+      "promoCodes": "Codes promo",
+      "promotions": "Promotions"
+    },
     "codes-promo": {
+      "title": "Codes promo",
+      "description": "Créez et gérez les codes utilisables dans le checkout (preview web). Validation des dates, unicité du code et plafond d'utilisations. Accès : promo_codes.read / write.",
+      "actions": {
+        "new": "Nouveau code promo",
+        "promotions": "Promotions"
+      },
       "intro": "Créez et gérez les codes utilisables dans le checkout (preview web). Validation des dates, unicité du code et plafond d'utilisations. Voir aussi les promotions. Accès : promo_codes.read / write.",
       "linkPromotions": "promotions",
       "nouveau": {
         "metaTitle": "Nouveau code promo",
-        "description": "Le code sera normalisé en majuscules et pourra être saisi tel quel dans le checkout."
+        "description": "Le code sera normalisé en majuscules et pourra être saisi tel quel dans le checkout.",
+        "backLabel": "Retour aux codes promo"
       },
       "id": {
-        "metaTitle": "Modifier le code promo"
+        "metaTitle": "Modifier le code promo",
+        "backLabel": "Retour aux codes promo",
+        "voir": {
+          "metaTitle": "Voir le code promo"
+        }
       }
     },
     "promotions": {
+      "title": "Promotions",
+      "description": "Campagnes marketing avec réduction optionnelle (checkout via promotionId). Complémentaire aux codes promo. Accès : promo_codes.read / write.",
+      "actions": {
+        "new": "Nouvelle promotion",
+        "promoCodes": "Codes promo"
+      },
       "intro": "Campagnes marketing avec réduction optionnelle (checkout via promotionId). Complémentaire aux codes promo. Accès : promo_codes.read / write.",
       "linkPromoCodes": "codes promo",
       "nouveau": {
         "metaTitle": "Nouvelle promotion",
-        "description": "Définissez la campagne, la réduction éventuelle et les dates de validité."
+        "description": "Définissez la campagne, la réduction éventuelle et les dates de validité.",
+        "backLabel": "Retour aux promotions"
       },
       "id": {
-        "metaTitle": "Modifier la promotion"
+        "metaTitle": "Modifier la promotion",
+        "backLabel": "Retour aux promotions",
+        "voir": {
+          "metaTitle": "Voir la promotion"
+        }
       }
     }
   },
@@ -324,6 +414,43 @@
       },
       "id": {
         "metaTitle": "Modifier l'article"
+      }
+    },
+    "hero": {
+      "description": "Diapositives du carrousel de la page d'accueil. Accès : content.read / content.write.",
+      "nouveau": {
+        "metaTitle": "Nouvelle diapositive hero",
+        "description": "Ajoutez une diapositive au carrousel de la page d'accueil.",
+        "backLabel": "Retour au hero"
+      },
+      "id": {
+        "metaTitle": "Modifier la diapositive hero",
+        "description": "Mettez à jour le libellé, le pourcentage et le statut de publication.",
+        "backLabel": "Retour au hero"
+      }
+    },
+    "pourquoi-nous": {
+      "nouveau": {
+        "metaTitle": "Nouvelle carte Pourquoi nous",
+        "description": "Ajoutez une carte à la section Pourquoi nous choisir.",
+        "backLabel": "Retour à Pourquoi nous"
+      },
+      "id": {
+        "metaTitle": "Modifier la carte Pourquoi nous",
+        "description": "Mettez à jour le titre, la description, l'icône et le statut de publication.",
+        "backLabel": "Retour à Pourquoi nous"
+      }
+    },
+    "clients-satisfaits": {
+      "nouveau": {
+        "metaTitle": "Nouvelle statistique clients satisfaits",
+        "description": "Ajoutez une barre de satisfaction à la section Clients satisfaits.",
+        "backLabel": "Retour aux clients satisfaits"
+      },
+      "id": {
+        "metaTitle": "Modifier la statistique clients satisfaits",
+        "description": "Mettez à jour le libellé, le pourcentage et le statut de publication.",
+        "backLabel": "Retour aux clients satisfaits"
       }
     },
     "a-propos": {
@@ -341,78 +468,155 @@
         "description": "Membres de l'équipe affichés sur le site public. Accès : content.read / content.write.",
         "nouveau": {
           "metaTitle": "Nouveau membre",
-          "description": "Ajoutez un membre à l'équipe."
+          "description": "Ajoutez un membre à l'équipe affichée sur le site.",
+          "backLabel": "Retour à l'équipe"
         },
         "id": {
-          "metaTitle": "Modifier le membre"
+          "metaTitle": "Modifier le membre",
+          "description": "Mettez à jour le profil, la photo et le statut de publication.",
+          "backLabel": "Retour à l'équipe"
+        }
+      },
+      "timeline": {
+        "description": "Jalons de la frise chronologique du site. Accès : content.read / content.write.",
+        "nouveau": {
+          "metaTitle": "Nouveau jalon",
+          "description": "Ajoutez un jalon à la frise chronologique.",
+          "backLabel": "Retour à la frise"
+        },
+        "id": {
+          "metaTitle": "Modifier le jalon",
+          "description": "Mettez à jour la période, le contenu, l'image et le statut de publication.",
+          "backLabel": "Retour à la frise"
         }
       },
       "ressources": {
         "description": "Rapports financiers et ressources médias téléchargeables. Accès : content.read / content.write.",
         "nouveau": {
           "metaTitle": "Nouvelle ressource",
-          "description": "Ajoutez un document ou une ressource média."
+          "description": "Ajoutez un document ou une ressource média téléchargeable.",
+          "backLabel": "Retour aux ressources"
         },
         "id": {
-          "metaTitle": "Modifier la ressource"
+          "metaTitle": "Modifier la ressource",
+          "description": "Mettez à jour le fichier, le lien et le statut de publication.",
+          "backLabel": "Retour aux ressources"
         }
       }
     },
     "tickets": {
       "description": "Demandes d'assistance clients. Filtres par statut et priorité. Accès : support_tickets.read / support_tickets.write.",
       "id": {
-        "metaTitle": "Détail ticket"
+        "metaTitle": "Détail ticket",
+        "description": "Consultez le fil de discussion et mettez à jour le statut ou la priorité.",
+        "backLabel": "Retour au support"
+      }
+    },
+    "support": {
+      "title": "Support",
+      "description": "Tickets d'assistance et messages clients. Filtres par statut et priorité. Accès : support_tickets.read / support_tickets.write.",
+      "tabsAria": "Sections support",
+      "tabs": {
+        "tickets": "Tickets",
+        "messages": "Messages"
+      },
+      "messages": {
+        "emptyTitle": "Messagerie unifiée à venir",
+        "emptyDescription": "Les échanges hors tickets seront centralisés ici. En attendant, gérez les conversations depuis l'onglet Tickets."
+      }
+    },
+    "site": {
+      "title": "Site & présentation",
+      "description": "Contenu institutionnel et vitrine du site public : pages À propos, équipe, hero, témoignages. Accès : content.read / content.write.",
+      "tabsAria": "Sections du site",
+      "tabs": {
+        "aboutPages": "À propos",
+        "aboutTeam": "Équipe",
+        "aboutTimeline": "Frise",
+        "aboutResources": "Ressources",
+        "whyUs": "Pourquoi nous",
+        "hero": "Hero",
+        "happyCustomers": "Clients satisfaits"
       }
     },
     "avis": {
+      "title": "Avis",
       "description": "Modération des notes et commentaires clients. Filtres par note, propriété et statut. Actions : approuver, masquer ou supprimer. Accès : reviews.read / reviews.write.",
       "id": {
-        "metaTitle": "Détail avis"
+        "metaTitle": "Détail avis",
+        "description": "Consultez le contexte, le commentaire et les actions de modération.",
+        "backLabel": "Retour aux avis"
       }
     }
   },
   "gap": {
     "parametres": {
+      "title": "Paramètres GAP",
       "description": "Titre, sous-titre et bannière du programme Gorilla Ambassadors par langue. Accès : gap.read / gap.write."
     },
     "pages": {
+      "title": "Pages GAP",
       "description": "Pages institutionnelles du programme GAP (À propos, objectifs, UNESCO). Accès : gap.read / gap.write.",
+      "actions": {
+        "new": "Nouvelle page"
+      },
       "nouveau": {
         "metaTitle": "Nouvelle page GAP",
-        "description": "Créez une page pour une section du programme GAP."
+        "description": "Créez une page pour une section du programme GAP.",
+        "backLabel": "Retour aux pages"
       },
       "id": {
-        "metaTitle": "Modifier la page GAP"
+        "metaTitle": "Modifier la page GAP",
+        "description": "Mettez à jour le contenu, les images et le statut de publication.",
+        "backLabel": "Retour aux pages"
       }
     },
     "activites": {
+      "title": "Activités GAP",
       "description": "Activités et initiatives du programme Gorilla Ambassadors. Accès : gap.read / gap.write.",
+      "actions": {
+        "new": "Nouvelle activité"
+      },
       "nouveau": {
         "metaTitle": "Nouvelle activité GAP",
-        "description": "Ajoutez une activité au programme."
+        "description": "Ajoutez une activité au programme.",
+        "backLabel": "Retour aux activités"
       },
       "id": {
-        "metaTitle": "Modifier l'activité GAP"
+        "metaTitle": "Modifier l'activité GAP",
+        "backLabel": "Retour aux activités"
       }
     },
     "impact": {
+      "title": "Impact GAP",
       "description": "Statistiques d'impact affichées sur le site GAP. Accès : gap.read / gap.write.",
+      "actions": {
+        "new": "Nouvelle statistique"
+      },
       "nouveau": {
         "metaTitle": "Nouvelle statistique d'impact",
-        "description": "Ajoutez une statistique d'impact."
+        "description": "Ajoutez une statistique d'impact.",
+        "backLabel": "Retour à l'impact"
       },
       "id": {
-        "metaTitle": "Modifier la statistique d'impact"
+        "metaTitle": "Modifier la statistique d'impact",
+        "backLabel": "Retour à l'impact"
       }
     },
     "medias": {
+      "title": "Médias GAP",
       "description": "Galerie photos et vidéos du programme GAP. Accès : gap.read / gap.write.",
+      "actions": {
+        "new": "Nouveau média"
+      },
       "nouveau": {
         "metaTitle": "Nouveau média GAP",
-        "description": "Ajoutez une image ou une vidéo."
+        "description": "Ajoutez une image ou une vidéo.",
+        "backLabel": "Retour aux médias"
       },
       "id": {
-        "metaTitle": "Modifier le média GAP"
+        "metaTitle": "Modifier le média GAP",
+        "backLabel": "Retour aux médias"
       }
     }
   },

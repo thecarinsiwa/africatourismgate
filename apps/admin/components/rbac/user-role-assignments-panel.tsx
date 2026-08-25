@@ -19,9 +19,14 @@ import { UserRoleAssignmentForm } from './user-role-assignment-form';
 
 type UserRoleAssignmentsPanelProps = {
   userId: string;
+  /** Affiche les rôles sans formulaire ni révocation. */
+  readOnly?: boolean;
 };
 
-export function UserRoleAssignmentsPanel({ userId }: UserRoleAssignmentsPanelProps) {
+export function UserRoleAssignmentsPanel({
+  userId,
+  readOnly = false,
+}: UserRoleAssignmentsPanelProps) {
   const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
   const tRoles = useTranslations('modules.users.roles');
   const tCommon = useTranslations('modules.common');
@@ -109,39 +114,45 @@ export function UserRoleAssignmentsPanel({ userId }: UserRoleAssignmentsPanelPro
                   assignment.scopeId,
                 )}
               </span>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setPendingRevoke(assignment)}
-                disabled={revokingId === assignment.id}
-                loading={revokingId === assignment.id}
-                className="!text-red-600"
-              >
-                {tRoles('revokeDialog.title')}
-              </Button>
+              {readOnly ? null : (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setPendingRevoke(assignment)}
+                  disabled={revokingId === assignment.id}
+                  loading={revokingId === assignment.id}
+                  className="!text-red-600"
+                >
+                  {tRoles('revokeDialog.title')}
+                </Button>
+              )}
             </div>
           ))}
         </div>
       )}
-      <UserRoleAssignmentForm
-        defaultUserId={userId}
-        lockUser
-        onSuccess={() => void load()}
-      />
+      {readOnly ? null : (
+        <UserRoleAssignmentForm
+          defaultUserId={userId}
+          lockUser
+          onSuccess={() => void load()}
+        />
+      )}
 
-      <AlertDialog
-        open={pendingRevoke !== null}
-        onOpenChange={(open) => {
-          if (!open) setPendingRevoke(null);
-        }}
-        title={tRoles('revokeDialog.title')}
-        description={tRoles('revokeDialog.description')}
-        confirmLabel={tRoles('revokeDialog.title')}
-        variant="danger"
-        loading={revokingId !== null}
-        onConfirm={() => void confirmRevoke()}
-      />
+      {readOnly ? null : (
+        <AlertDialog
+          open={pendingRevoke !== null}
+          onOpenChange={(open) => {
+            if (!open) setPendingRevoke(null);
+          }}
+          title={tRoles('revokeDialog.title')}
+          description={tRoles('revokeDialog.description')}
+          confirmLabel={tRoles('revokeDialog.title')}
+          variant="danger"
+          loading={revokingId !== null}
+          onConfirm={() => void confirmRevoke()}
+        />
+      )}
     </Card>
   );
 }

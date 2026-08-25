@@ -110,7 +110,7 @@ export function ShipForm({ mode, shipId, initialShip }: ShipFormProps) {
       ) : null}
       <div>
         <label htmlFor={lineId} className="mb-2 block text-sm font-medium">
-          {tForm('lineLabel')}
+          {tForm('line')}
         </label>
         <select
           id={lineId}

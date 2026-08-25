@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
+import { CrudService } from '../../../common/crud/crud.service';
 import {
   Activities,
   ActivityProviders,
@@ -10,11 +11,8 @@ import {
   Packages,
   Properties,
 } from '../../../entities/generated';
-import { CrudService } from '../../../common/crud/crud.service';
-import { CreateDestinationDto } from './dto/create-destination.dto';
 import { DestinationRelatedCountsDto } from './dto/destination-related-counts.dto';
 import { DestinationsListQueryDto } from './dto/destinations-list-query.dto';
-import { UpdateDestinationDto } from './dto/update-destination.dto';
 
 @Injectable()
 export class DestinationsService extends CrudService<Destinations> {
@@ -31,53 +29,31 @@ export class DestinationsService extends CrudService<Destinations> {
     super(destinationsRepository);
   }
 
-  createFromDto(dto: CreateDestinationDto, actorUserId?: string): Promise<Destinations> {
-    return super.create(this.toEntityPayload(dto), actorUserId);
-  }
-
-  updateFromDto(
-    id: string,
-    dto: UpdateDestinationDto,
-    actorUserId?: string,
-  ): Promise<Destinations> {
-    return super.update(id, this.toEntityPayload(dto), actorUserId);
-  }
-
-  private toEntityPayload(
-    dto: CreateDestinationDto | UpdateDestinationDto,
-  ): DeepPartial<Destinations> {
-    const { latitude, longitude, ...rest } = dto;
-    const payload: DeepPartial<Destinations> = { ...rest };
-
-    if (latitude !== undefined) {
-      payload.latitude = latitude === null ? null : String(latitude);
-    }
-    if (longitude !== undefined) {
-      payload.longitude = longitude === null ? null : String(longitude);
-    }
-
-    return payload;
-  }
-
   override async findAll(
     query: DestinationsListQueryDto,
   ): Promise<PaginatedResult<Destinations>> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
+    const search = query.search?.trim();
 
     const qb = this.destinationsRepository
-      .createQueryBuilder('dest')
-      .where('dest.deletedAt IS NULL');
+      .createQueryBuilder('destination')
+      .where('destination.deletedAt IS NULL');
 
-    const search = query.search?.trim();
     if (search) {
       qb.andWhere(
-        '(dest.name LIKE :term OR dest.slug LIKE :term OR dest.countryCode LIKE :term)',
+        '(destination.name LIKE :term OR destination.slug LIKE :term OR destination.countryCode LIKE :term)',
         { term: `%${search}%` },
       );
     }
 
-    qb.orderBy('dest.createdAt', 'DESC')
+    if (query.isFeatured !== undefined) {
+      qb.andWhere('destination.isFeatured = :isFeatured', {
+        isFeatured: query.isFeatured ? 1 : 0,
+      });
+    }
+
+    qb.orderBy('destination.createdAt', 'DESC')
       .skip((page - 1) * limit)
       .take(limit);
 
@@ -132,7 +108,9 @@ export class DestinationsService extends CrudService<Destinations> {
           'activity.providerId = provider.id AND provider.deletedAt IS NULL',
         )
         .where('pkg.deletedAt IS NULL')
-        .andWhere('(property.destinationId = :id OR provider.destinationId = :id)', { id })
+        .andWhere('(property.destinationId = :id OR provider.destinationId = :id)', {
+          id,
+        })
         .select('COUNT(DISTINCT pkg.id)', 'count')
         .getRawOne<{ count: string }>(),
     ]);

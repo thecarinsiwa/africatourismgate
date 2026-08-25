@@ -27,20 +27,32 @@
     "description": "Platform accounts. Filter by status or organization.",
     "nouveau": {
       "metaTitle": "New user",
-      "description": "Create a user account."
+      "description": "Create a user account.",
+      "backLabel": "Back to users"
     },
     "id": {
-      "metaTitle": "Edit user"
+      "metaTitle": "Edit user",
+      "backLabel": "Back to users",
+      "voir": {
+        "metaTitle": "View user"
+      }
     },
     "employes": {
       "description": "Employee profiles linked to users and organizations.",
       "nouveau": {
         "metaTitle": "New employee",
-        "description": "Link an existing user to an organization."
+        "description": "Link an existing user to an organization.",
+        "backLabel": "Back to employees"
       },
       "id": {
-        "metaTitle": "Edit employee"
+        "metaTitle": "Edit employee",
+        "voir": {
+          "metaTitle": "View employee"
+        }
       }
+    },
+    "departements": {
+      "description": "Organizational departments used to classify employees."
     },
     "adresses": {
       "description": "Addresses saved by users."
@@ -65,6 +77,9 @@
     },
     "id": {
       "metaTitle": "Edit accommodation",
+      "voir": {
+        "metaTitle": "View accommodation"
+      },
       "chambres": {
         "roomId": {
           "disponibilites": {
@@ -77,6 +92,7 @@
       }
     },
     "equipements": {
+      "title": "Amenities",
       "description": "Global catalog reused across accommodations (Wi-Fi, pool, etc.)."
     }
   },
@@ -100,17 +116,18 @@
   "produits": {
     "activites": {
       "title": "Activities & tours",
-      "description": "Experiences, providers and time slots by destination.",
+      "description": "Experiences, partners and time slots by destination.",
       "actions": {
-        "providers": "Providers",
+        "providers": "Partners",
         "new": "New activity"
       },
       "nouveau": {
         "metaTitle": "New activity",
-        "description": "Create an experience then add schedules on the edit page."
+        "description": "Create an experience then add schedules on the edit page.",
+        "backLabel": "Back to activities"
       },
       "fournisseurs": {
-        "title": "Activity providers",
+        "title": "Activity partners",
         "description": "Operators linked to destinations."
       },
       "id": {
@@ -128,7 +145,8 @@
       },
       "nouveau": {
         "metaTitle": "New destination",
-        "description": "Create the destination then add points of interest on the edit page."
+        "description": "Create the destination then add points of interest on the edit page.",
+        "backLabel": "Back to destinations"
       },
       "id": {
         "metaTitle": "Edit destination",
@@ -210,14 +228,23 @@
         "classes": {
           "classId": {
             "disponibilites": {
-              "metaTitle": "Class availability"
+              "metaTitle": "Class availability",
+              "title": "Class availability",
+              "description": "Seats and price by date for this cabin class."
             }
           }
         }
       }
     },
     "croisieres": {
+      "title": "Cruises",
       "description": "Scheduled departures, itineraries, cabins and availability.",
+      "actions": {
+        "lines": "Lines",
+        "ports": "Ports",
+        "ships": "Ships",
+        "new": "New sailing"
+      },
       "links": {
         "ships": "Ships",
         "lines": "Cruise lines",
@@ -229,22 +256,29 @@
         "description": "Link an existing itinerary to a departure date."
       },
       "lignes": {
-        "description": "Cruise line directory."
+        "title": "Cruise lines",
+        "description": "Cruise line directory.",
+        "backLabel": "Back to cruises"
       },
       "ports": {
-        "description": "Port directory."
+        "title": "Cruise ports",
+        "description": "Port directory.",
+        "backLabel": "Back to cruises"
       },
       "navires": {
+        "title": "Ships",
         "description": "Ships, itineraries, ports and cabins.",
+        "backLabel": "Back to cruises",
         "links": {
-          "backToSailings": "← Sailings"
+          "backToSailings": "← Cruises"
         },
         "nouveau": {
           "metaTitle": "New ship",
-          "description": "Create a ship then add itineraries and cabins."
+          "description": "Create a ship then add itineraries and cabins.",
+          "backLabel": "Back to ships"
         },
         "shipId": {
-          "metaTitle": "Ship",
+          "metaTitle": "Edit ship",
           "itineraires": {
             "itineraryId": {
               "metaTitle": "Itinerary stops"
@@ -253,14 +287,19 @@
         }
       },
       "id": {
-        "metaTitle": "Sailing"
+        "metaTitle": "Edit sailing"
       }
     },
     "forfaits": {
+      "title": "Packages",
       "description": "Combined packages with discount and price calculated from included products.",
+      "actions": {
+        "new": "New package"
+      },
       "nouveau": {
         "metaTitle": "New package",
-        "description": "Create the package then add items on the edit page."
+        "description": "Create the package then add items on the edit page.",
+        "backLabel": "Back to packages"
       },
       "id": {
         "metaTitle": "Edit package",
@@ -271,47 +310,98 @@
     }
   },
   "reservations": {
+    "title": "Bookings",
     "description": "Paginated booking list (live API data). Filter by status, date, customer and organization. Requires bookings.read.",
+    "actions": {
+      "lines": "Booking line items",
+      "guides": "Tour guides"
+    },
     "lignes": {
-      "description": "Global line items per booking (live API data). Filter by type, booking status and booking ID. Requires bookings.read."
+      "title": "Booking line items",
+      "description": "Global line items per booking (live API data). Filter by type, booking status and booking ID. Requires bookings.read.",
+      "backLabel": "Back to bookings"
+    },
+    "id": {
+      "metaTitle": "Booking detail"
     }
   },
   "guides": {
     "title": "Tour guides",
     "description": "Catalog of internal and external guides. Filter by type, status and search by name.",
     "actions": {
-      "new": "New guide"
+      "new": "New guide",
+      "calendar": "Calendar"
     },
     "nouveau": {
       "metaTitle": "New tour guide",
-      "description": "Create a guide profile, then assign guides from the booking detail page."
+      "description": "Create a guide profile, then assign guides from the booking detail page.",
+      "backLabel": "Back to tour guides"
     },
     "id": {
-      "metaTitle": "Edit guide"
+      "metaTitle": "Edit guide",
+      "description": "Update the guide profile, covered destinations and status.",
+      "voir": {
+        "metaTitle": "View guide",
+        "title": "View guide",
+        "description": "View profile, destinations and bookings assigned to this guide."
+      }
+    },
+    "calendrier": {
+      "metaTitle": "Guides calendar",
+      "title": "Calendar",
+      "description": "Monthly view of active guide availability (available, on mission, unavailable).",
+      "backLabel": "Back to tour guides"
     }
   },
   "paiements": {
+    "title": "Payments",
     "description": "Stripe transactions and refunds (test mode). Filter by status, dates and organization (super admin). Access: payments.read; refund: payments.write.",
+    "actions": {
+      "promoCodes": "Promo codes",
+      "promotions": "Promotions"
+    },
     "codes-promo": {
+      "title": "Promo codes",
+      "description": "Create and manage codes usable at checkout (web preview). Date validation, code uniqueness and usage limits. Access: promo_codes.read / write.",
+      "actions": {
+        "new": "New promo code",
+        "promotions": "Promotions"
+      },
       "intro": "Codes entered at checkout (e.g. WELCOME10). Complements promotions. Access: promo_codes.read / write.",
       "linkPromotions": "promotions",
       "nouveau": {
         "metaTitle": "New promo code",
-        "description": "The code will be uppercased and can be entered as-is at checkout."
+        "description": "The code will be uppercased and can be entered as-is at checkout.",
+        "backLabel": "Back to promo codes"
       },
       "id": {
-        "metaTitle": "Edit promo code"
+        "metaTitle": "Edit promo code",
+        "backLabel": "Back to promo codes",
+        "voir": {
+          "metaTitle": "View promo code"
+        }
       }
     },
     "promotions": {
+      "title": "Promotions",
+      "description": "Marketing campaigns with optional discount (checkout via promotionId). Complements promo codes. Access: promo_codes.read / write.",
+      "actions": {
+        "new": "New promotion",
+        "promoCodes": "Promo codes"
+      },
       "intro": "Marketing campaigns with optional discount (checkout via promotionId). Complements promo codes. Access: promo_codes.read / write.",
       "linkPromoCodes": "promo codes",
       "nouveau": {
         "metaTitle": "New promotion",
-        "description": "Define the campaign, optional discount and validity dates."
+        "description": "Define the campaign, optional discount and validity dates.",
+        "backLabel": "Back to promotions"
       },
       "id": {
-        "metaTitle": "Edit promotion"
+        "metaTitle": "Edit promotion",
+        "backLabel": "Back to promotions",
+        "voir": {
+          "metaTitle": "View promotion"
+        }
       }
     }
   },
@@ -324,6 +414,43 @@
       },
       "id": {
         "metaTitle": "Edit post"
+      }
+    },
+    "hero": {
+      "description": "Homepage carousel slides. Access: content.read / content.write.",
+      "nouveau": {
+        "metaTitle": "New hero slide",
+        "description": "Add a slide to the homepage carousel.",
+        "backLabel": "Back to hero"
+      },
+      "id": {
+        "metaTitle": "Edit hero slide",
+        "description": "Update content, image and publication status.",
+        "backLabel": "Back to hero"
+      }
+    },
+    "pourquoi-nous": {
+      "nouveau": {
+        "metaTitle": "New Why us card",
+        "description": "Add a card to the Why choose us section.",
+        "backLabel": "Back to Why us"
+      },
+      "id": {
+        "metaTitle": "Edit Why us card",
+        "description": "Update title, description, icon and publication status.",
+        "backLabel": "Back to Why us"
+      }
+    },
+    "clients-satisfaits": {
+      "nouveau": {
+        "metaTitle": "New happy customers stat",
+        "description": "Add a satisfaction bar to the Happy Customers section.",
+        "backLabel": "Back to happy customers"
+      },
+      "id": {
+        "metaTitle": "Edit happy customers stat",
+        "description": "Update label, percentage and publication status.",
+        "backLabel": "Back to happy customers"
       }
     },
     "a-propos": {
@@ -341,78 +468,155 @@
         "description": "Team members shown on the public site. Access: content.read / content.write.",
         "nouveau": {
           "metaTitle": "New team member",
-          "description": "Add a team member."
+          "description": "Add a team member shown on the public site.",
+          "backLabel": "Back to team"
         },
         "id": {
-          "metaTitle": "Edit team member"
+          "metaTitle": "Edit team member",
+          "description": "Update profile, photo and publication status.",
+          "backLabel": "Back to team"
+        }
+      },
+      "timeline": {
+        "description": "About page chronological timeline milestones. Access: content.read / content.write.",
+        "nouveau": {
+          "metaTitle": "New milestone",
+          "description": "Add a milestone to the chronological timeline.",
+          "backLabel": "Back to timeline"
+        },
+        "id": {
+          "metaTitle": "Edit milestone",
+          "description": "Update period, content, image and publication status.",
+          "backLabel": "Back to timeline"
         }
       },
       "ressources": {
         "description": "Financial reports and downloadable media resources. Access: content.read / content.write.",
         "nouveau": {
           "metaTitle": "New resource",
-          "description": "Add a document or media resource."
+          "description": "Add a downloadable document or media resource.",
+          "backLabel": "Back to resources"
         },
         "id": {
-          "metaTitle": "Edit resource"
+          "metaTitle": "Edit resource",
+          "description": "Update file, link and publication status.",
+          "backLabel": "Back to resources"
         }
       }
     },
     "tickets": {
       "description": "Customer support requests. Filter by status and priority. Access: support_tickets.read / support_tickets.write.",
       "id": {
-        "metaTitle": "Ticket detail"
+        "metaTitle": "Ticket detail",
+        "description": "Review the conversation thread and update status or priority.",
+        "backLabel": "Back to support"
+      }
+    },
+    "support": {
+      "title": "Support",
+      "description": "Support tickets and customer messages. Filter by status and priority. Access: support_tickets.read / support_tickets.write.",
+      "tabsAria": "Support sections",
+      "tabs": {
+        "tickets": "Tickets",
+        "messages": "Messages"
+      },
+      "messages": {
+        "emptyTitle": "Unified messaging coming soon",
+        "emptyDescription": "Non-ticket conversations will be centralized here. For now, manage threads from the Tickets tab."
+      }
+    },
+    "site": {
+      "title": "Site & presentation",
+      "description": "Institutional and marketing content for the public site: about pages, team, hero, testimonials. Access: content.read / content.write.",
+      "tabsAria": "Site sections",
+      "tabs": {
+        "aboutPages": "About",
+        "aboutTeam": "Team",
+        "aboutTimeline": "Timeline",
+        "aboutResources": "Resources",
+        "whyUs": "Why us",
+        "hero": "Hero",
+        "happyCustomers": "Happy customers"
       }
     },
     "avis": {
+      "title": "Reviews",
       "description": "Moderate customer ratings and comments. Filter by score, property and status. Actions: approve, hide or delete. Access: reviews.read / reviews.write.",
       "id": {
-        "metaTitle": "Review detail"
+        "metaTitle": "Review detail",
+        "description": "View context, comment and moderation actions.",
+        "backLabel": "Back to reviews"
       }
     }
   },
   "gap": {
     "parametres": {
+      "title": "GAP settings",
       "description": "Title, subtitle and hero banner for the Gorilla Ambassadors program per language. Access: gap.read / gap.write."
     },
     "pages": {
+      "title": "GAP pages",
       "description": "Institutional GAP program pages (About, objectives, UNESCO). Access: gap.read / gap.write.",
+      "actions": {
+        "new": "New page"
+      },
       "nouveau": {
         "metaTitle": "New GAP page",
-        "description": "Create a page for a GAP program section."
+        "description": "Create a page for a GAP program section.",
+        "backLabel": "Back to pages"
       },
       "id": {
-        "metaTitle": "Edit GAP page"
+        "metaTitle": "Edit GAP page",
+        "description": "Update content, images and publication status.",
+        "backLabel": "Back to pages"
       }
     },
     "activites": {
+      "title": "GAP activities",
       "description": "Activities and initiatives of the Gorilla Ambassadors program. Access: gap.read / gap.write.",
+      "actions": {
+        "new": "New activity"
+      },
       "nouveau": {
         "metaTitle": "New GAP activity",
-        "description": "Add an activity to the program."
+        "description": "Add an activity to the program.",
+        "backLabel": "Back to activities"
       },
       "id": {
-        "metaTitle": "Edit GAP activity"
+        "metaTitle": "Edit GAP activity",
+        "backLabel": "Back to activities"
       }
     },
     "impact": {
+      "title": "GAP impact",
       "description": "Impact statistics displayed on the GAP site. Access: gap.read / gap.write.",
+      "actions": {
+        "new": "New statistic"
+      },
       "nouveau": {
         "metaTitle": "New impact stat",
-        "description": "Add an impact statistic."
+        "description": "Add an impact statistic.",
+        "backLabel": "Back to impact"
       },
       "id": {
-        "metaTitle": "Edit impact stat"
+        "metaTitle": "Edit impact stat",
+        "backLabel": "Back to impact"
       }
     },
     "medias": {
+      "title": "GAP media",
       "description": "Photo and video gallery for the GAP program. Access: gap.read / gap.write.",
+      "actions": {
+        "new": "New media"
+      },
       "nouveau": {
         "metaTitle": "New GAP media",
-        "description": "Add an image or video."
+        "description": "Add an image or video.",
+        "backLabel": "Back to media"
       },
       "id": {
-        "metaTitle": "Edit GAP media"
+        "metaTitle": "Edit GAP media",
+        "backLabel": "Back to media"
       }
     }
   },

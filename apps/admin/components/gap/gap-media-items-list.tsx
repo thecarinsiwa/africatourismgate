@@ -1,19 +1,22 @@
 'use client';
 
 import {
-  Button,
+  AlertDialog,
   Card,
   DataTable,
   DataTableActionButton,
   DataTableActions,
   DataTableBadge,
   DataTablePagination,
+  FilterBar,
   Input,
+  Select,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { GapMediaItem, GapMediaItemType, GapStatus } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { GapMediaItemDetailModal } from './gap-media-item-detail-modal';
 import { getApiClient } from '../../lib/auth/api';
 import { GAP_MEDIA_TYPES } from '../../lib/gap/constants';
 import { useGapPermissions } from '../../lib/gap/use-gap-permissions';
@@ -43,16 +46,12 @@ export function GapMediaItemsList() {
   const tStatus = useTranslations('modules.about.status');
   const tLocale = useTranslations('modules.about.locale');
   const tCommon = useTranslations('modules.common');
-  const statusFilterId = useId();
-  const localeFilterId = useId();
-  const mediaTypeFilterId = useId();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<'' | GapStatus>('');
   const [localeFilter, setLocaleFilter] = useState('');
   const [mediaTypeFilter, setMediaTypeFilter] = useState<'' | GapMediaItemType>('');
-  const [filterTick, setFilterTick] = useState(0);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -60,6 +59,8 @@ export function GapMediaItemsList() {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<GapMediaItem | null>(null);
+  const [viewTarget, setViewTarget] = useState<GapMediaItem | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -81,7 +82,7 @@ export function GapMediaItemsList() {
     } catch (error) {
       setState({ status: 'error', message: getGapErrorMessage(error) });
     }
-  }, [page, search, statusFilter, localeFilter, mediaTypeFilter, filterTick, getGapErrorMessage]);
+  }, [page, search, statusFilter, localeFilter, mediaTypeFilter, getGapErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -98,22 +99,25 @@ export function GapMediaItemsList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (item: GapMediaItem) => {
-      if (!window.confirm(t('deleteConfirm', { title: item.title }))) return;
-      setDeleteError(null);
-      setDeletingId(item.id);
-      try {
-        await getApiClient().deleteGapMediaItem(item.id);
-        await load();
-      } catch (error) {
-        setDeleteError(getGapErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, t, getGapErrorMessage],
-  );
+  const handleDeleteRequest = useCallback((item: GapMediaItem) => {
+    setConfirmTarget(item);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const item = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(item.id);
+    try {
+      await getApiClient().deleteGapMediaItem(item.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getGapErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getGapErrorMessage, load]);
 
   const columns = useMemo<ColumnDef<GapMediaItem, unknown>[]>(
     () => [
@@ -178,11 +182,15 @@ export function GapMediaItemsList() {
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
+            <DataTableActionButton
+              action="view"
+              onClick={() => setViewTarget(row.original)}
+            />
             <DataTableActionButton action="edit" href={`/gap/medias/${row.original.id}`} />
             {canWrite ? (
               <DataTableActionButton
                 action="delete"
-                onClick={() => void handleDelete(row.original)}
+                onClick={() => handleDeleteRequest(row.original)}
                 disabled={deletingId === row.original.id}
                 loading={deletingId === row.original.id}
               />
@@ -191,103 +199,128 @@ export function GapMediaItemsList() {
         ),
       },
     ],
-    [canWrite, deletingId, handleDelete, t, tCommon, tStatus, tTypes],
+    [canWrite, deletingId, handleDeleteRequest, t, tCommon, tStatus, tTypes],
   );
 
   const items = state.status === 'ready' ? state.items : [];
-  const hasActiveFilters = Boolean(statusFilter || localeFilter || mediaTypeFilter);
+  const activeFilterCount = [
+    search.trim().length > 0,
+    statusFilter !== '',
+    localeFilter !== '',
+    mediaTypeFilter !== '',
+  ].filter(Boolean).length;
+  const hasActiveFilters = activeFilterCount > 0;
+
+  const mediaTypeOptions = useMemo(
+    () => [
+      { value: '', label: tCommon('filters.all') },
+      ...GAP_MEDIA_TYPES.map((key) => ({ value: key, label: tTypes(key) })),
+    ],
+    [tCommon, tTypes],
+  );
+  const statusOptions = useMemo(
+    () => [
+      { value: '', label: tCommon('filters.all') },
+      { value: 'draft', label: tStatus('draft') },
+      { value: 'published', label: tStatus('published') },
+    ],
+    [tCommon, tStatus],
+  );
+  const localeOptions = useMemo(
+    () => [
+      { value: '', label: tCommon('filters.all') },
+      { value: 'fr', label: tLocale('fr') },
+      { value: 'en', label: tLocale('en') },
+      { value: 'es', label: tLocale('es') },
+    ],
+    [tCommon, tLocale],
+  );
+
+  const handleClearFilters = useCallback(() => {
+    setSearchInput('');
+    setSearch('');
+    setStatusFilter('');
+    setLocaleFilter('');
+    setMediaTypeFilter('');
+    setPage(1);
+  }, []);
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { title: confirmTarget.title }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
+      <GapMediaItemDetailModal
+        open={!!viewTarget}
+        item={viewTarget}
+        onOpenChange={(open) => {
+          if (!open) setViewTarget(null);
+        }}
+        canWrite={canWrite}
+      />
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
-          <div className="flex-1 sm:max-w-md">
-            <Input
-              type="search"
-              placeholder={t('searchPlaceholder')}
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-            />
-          </div>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div>
-              <label
-                htmlFor={mediaTypeFilterId}
-                className="mb-1 block text-xs font-medium text-atg-muted"
-              >
-                {t('columns.mediaType')}
-              </label>
-              <select
-                id={mediaTypeFilterId}
+      <FilterBar
+        mobileVariant="drawer"
+        activeCount={activeFilterCount}
+        onClear={handleClearFilters}
+        clearLabel={tCommon('filters.clearAll')}
+        applyLabel={tCommon('filters.apply')}
+        toggleLabel={tCommon('filters.toggle')}
+        filters={
+          <>
+            <div className="min-w-[200px] flex-1 sm:max-w-md">
+              <Input
+                type="search"
+                placeholder={t('searchPlaceholder')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+              />
+            </div>
+            <div className="w-full sm:w-40">
+              <Select
+                label={t('columns.mediaType')}
                 value={mediaTypeFilter}
-                onChange={(e) => setMediaTypeFilter(e.target.value as '' | GapMediaItemType)}
-                className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
-              >
-                <option value="">{tCommon('filters.all')}</option>
-                {GAP_MEDIA_TYPES.map((key) => (
-                  <option key={key} value={key}>
-                    {tTypes(key)}
-                  </option>
-                ))}
-              </select>
+                options={mediaTypeOptions}
+                onChange={(e) => {
+                  setMediaTypeFilter(e.target.value as '' | GapMediaItemType);
+                  setPage(1);
+                }}
+              />
             </div>
-            <div>
-              <label
-                htmlFor={statusFilterId}
-                className="mb-1 block text-xs font-medium text-atg-muted"
-              >
-                {tCommon('columns.status')}
-              </label>
-              <select
-                id={statusFilterId}
+            <div className="w-full sm:w-40">
+              <Select
+                label={tCommon('columns.status')}
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as '' | GapStatus)}
-                className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
-              >
-                <option value="">{tCommon('filters.all')}</option>
-                <option value="draft">{tStatus('draft')}</option>
-                <option value="published">{tStatus('published')}</option>
-              </select>
+                options={statusOptions}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value as '' | GapStatus);
+                  setPage(1);
+                }}
+              />
             </div>
-            <div>
-              <label
-                htmlFor={localeFilterId}
-                className="mb-1 block text-xs font-medium text-atg-muted"
-              >
-                {t('columns.locale')}
-              </label>
-              <select
-                id={localeFilterId}
+            <div className="w-full sm:w-40">
+              <Select
+                label={t('columns.locale')}
                 value={localeFilter}
-                onChange={(e) => setLocaleFilter(e.target.value)}
-                className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
-              >
-                <option value="">{tCommon('filters.all')}</option>
-                <option value="fr">{tLocale('fr')}</option>
-                <option value="en">{tLocale('en')}</option>
-                <option value="es">{tLocale('es')}</option>
-              </select>
+                options={localeOptions}
+                onChange={(e) => {
+                  setLocaleFilter(e.target.value);
+                  setPage(1);
+                }}
+              />
             </div>
-          </div>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => {
-              setPage(1);
-              setFilterTick((n) => n + 1);
-            }}
-          >
-            {tCommon('filters.apply')}
-          </Button>
-        </div>
-        {canWrite ? <Button href="/gap/medias/nouveau">{t('newButton')}</Button> : null}
-      </div>
-
-      {deleteError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {deleteError}
-        </p>
-      ) : null}
+          </>
+        }
+      />
 
       {state.status === 'error' ? (
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
@@ -318,5 +351,6 @@ export function GapMediaItemsList() {
         </>
       )}
     </div>
+    </>
   );
 }

@@ -1,0 +1,85 @@
+{
+  "status": {
+    "active": "Active",
+    "on_leave": "On leave",
+    "terminated": "Terminated"
+  },
+  "columns": {
+    "jobTitle": "Job title",
+    "department": "Department"
+  },
+  "list": {
+    "emptyDefault": "No employees yet.",
+    "emptyFiltered": "No employees match your criteria.",
+    "emptyOrganization": "No employees for this organization.",
+    "searchPlaceholder": "Search by code, job title, or user…",
+    "searchAria": "Search employees",
+    "ariaLabel": "Employee list",
+    "viewOrganization": "View organization {name}",
+    "deleteTitle": "Delete employee",
+    "deleteDescription": "Employee « {label} » will be deleted. This action can be reversed in the database."
+  },
+  "filters": {
+    "status": "Status",
+    "organization": "Organization",
+    "department": "Department",
+    "departmentNeedsOrganization": "Select an organization"
+  },
+  "detail": {
+    "viewTitle": "View employee",
+    "editButton": "Edit",
+    "viewButton": "View",
+    "fallbackLabel": "Employee",
+    "profileIntro": "Employee profile details in read-only mode.",
+    "sections": {
+      "info": "Details"
+    },
+    "fields": {
+      "linkedUser": "Linked user",
+      "status": "Status",
+      "organization": "Organization",
+      "employeeCode": "Employee code",
+      "jobTitle": "Job title",
+      "department": "Department",
+      "hireDate": "Hire date",
+      "terminationDate": "End date",
+      "salary": "Salary",
+      "createdAt": "Created at",
+      "updatedAt": "Updated at"
+    }
+  },
+  "form": {
+    "linkedUser": "Linked user",
+    "selectUser": "Select a user",
+    "linkedUserHintCreate": "A user can only be linked to one employee profile.",
+    "noUsersAvailable": "No users available.",
+    "linkedUserHintEdit": "The linked user cannot be changed after creation.",
+    "organization": "Organization",
+    "organizationNone": "None",
+    "employeeCode": "Employee code",
+    "employeeCodeHintCreate": "Assigned automatically on save (organization prefix + sequential number).",
+    "employeeCodeHintEdit": "The employee code does not change after creation.",
+    "jobTitle": "Job title",
+    "department": "Department",
+    "departmentNone": "None",
+    "departmentHint": "Departments for the selected organization.",
+    "departmentNeedsOrganization": "Select an organization first.",
+    "hireDate": "Hire date",
+    "terminationDate": "End date",
+    "salary": "Salary",
+    "currency": "Currency",
+    "currencyHint": "3-letter ISO code (e.g. USD, EUR).",
+    "manager": "Manager",
+    "managerNone": "None",
+    "status": "Status",
+    "submitCreate": "Create employee",
+    "submitEdit": "Save",
+    "successSaved": "Changes have been saved.",
+    "validation": {
+      "userRequired": "A linked user is required.",
+      "userAlreadyLinked": "This user already has an employee profile.",
+      "salaryPositive": "Salary must be a positive number.",
+      "hireBeforeTermination": "Hire date must be before the end date."
+    }
+  }
+}

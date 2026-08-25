@@ -17,6 +17,7 @@ export type PublicGapSiteSettingsDto = {
   subtitle: string;
   heroImageUrl: string;
   heroImageAlt: string;
+  links: Array<{ label: string; url: string | null }>;
   unescoLabel: string | null;
   unescoUrl: string | null;
   donateUrl: string | null;
@@ -31,6 +32,7 @@ export type PublicGapPageDto = {
   excerpt: string | null;
   content: string;
   coverImageUrl: string | null;
+  coverImageUrls: string[];
   publishedAt: string | null;
   locale: string;
 };
@@ -41,6 +43,7 @@ export type PublicGapActivityDto = {
   description: string;
   iconKey: 'school' | 'tree' | 'art' | 'park' | 'community';
   imageUrl: string | null;
+  imageUrls: string[];
   sortOrder: number;
   locale: string;
 };
@@ -50,6 +53,7 @@ export type PublicGapImpactStatDto = {
   label: string;
   valueDisplay: string;
   description: string | null;
+  imageUrl: string | null;
   colorKey: 'primary' | 'secondary';
   sortOrder: number;
   locale: string;
@@ -297,14 +301,35 @@ export class PublicGapService {
   }
 
   private toSettingsDto(settings: GapSiteSettings): PublicGapSiteSettingsDto {
+    const links = [
+      ...(Array.isArray(settings.links) ? settings.links : []),
+    ]
+      .map((item) => ({
+        label: item.label?.trim() ?? '',
+        url: item.url?.trim() || null,
+      }))
+      .filter((item) => item.label)
+      .slice(0, 10);
+
+    if (
+      links.length === 0 &&
+      settings.unescoLabel?.trim()
+    ) {
+      links.push({
+        label: settings.unescoLabel.trim(),
+        url: settings.unescoUrl?.trim() || null,
+      });
+    }
+
     return {
       id: settings.id,
       title: settings.title,
       subtitle: settings.subtitle,
       heroImageUrl: settings.heroImageUrl,
       heroImageAlt: settings.heroImageAlt,
-      unescoLabel: settings.unescoLabel,
-      unescoUrl: settings.unescoUrl,
+      links,
+      unescoLabel: links[0]?.label ?? null,
+      unescoUrl: links[0]?.url ?? null,
       donateUrl: settings.donateUrl,
       donateLabel: settings.donateLabel,
       locale: settings.locale,
@@ -312,25 +337,49 @@ export class PublicGapService {
   }
 
   private toPageDto(page: GapPages): PublicGapPageDto {
+    const coverImageUrls = Array.from(
+      new Set(
+        [
+          ...(Array.isArray(page.coverImageUrls) ? page.coverImageUrls : []),
+          page.coverImageUrl,
+        ]
+          .map((url) => url?.trim())
+          .filter((url): url is string => Boolean(url)),
+      ),
+    ).slice(0, 10);
+
     return {
       id: page.id,
       sectionKey: page.sectionKey,
       title: page.title,
       excerpt: page.excerpt,
       content: page.content,
-      coverImageUrl: page.coverImageUrl,
+      coverImageUrl: coverImageUrls[0] ?? null,
+      coverImageUrls,
       publishedAt: page.publishedAt?.toISOString() ?? null,
       locale: page.locale,
     };
   }
 
   private toActivityDto(activity: GapActivities): PublicGapActivityDto {
+    const imageUrls = Array.from(
+      new Set(
+        [
+          ...(Array.isArray(activity.imageUrls) ? activity.imageUrls : []),
+          activity.imageUrl,
+        ]
+          .map((url) => url?.trim())
+          .filter((url): url is string => Boolean(url)),
+      ),
+    ).slice(0, 10);
+
     return {
       id: activity.id,
       title: activity.title,
       description: activity.description,
       iconKey: activity.iconKey,
-      imageUrl: activity.imageUrl,
+      imageUrl: imageUrls[0] ?? null,
+      imageUrls,
       sortOrder: activity.sortOrder,
       locale: activity.locale,
     };
@@ -342,6 +391,7 @@ export class PublicGapService {
       label: stat.label,
       valueDisplay: stat.valueDisplay,
       description: stat.description,
+      imageUrl: stat.imageUrl,
       colorKey: stat.colorKey,
       sortOrder: stat.sortOrder,
       locale: stat.locale,

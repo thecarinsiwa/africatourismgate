@@ -11,6 +11,9 @@ export class Airlines extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'name', length: 180 })
   name!: string;
 
+  @Column({ type: 'varchar', name: 'logo_url', length: 512, nullable: true })
+  logoUrl!: string | null;
+
 }
 
 @Entity('airports')
@@ -63,25 +66,6 @@ export class Flights extends BaseAuditEntity {
 
   @Column({ type: 'int', name: 'duration_minutes' })
   durationMinutes!: number;
-
-}
-
-@Entity('flight_images')
-export class FlightImages extends BaseAuditEntity {
-  @PrimaryColumn('uuid', { name: 'id', length: 36 })
-  id!: string;
-
-  @Column({ type: 'varchar', name: 'flight_id', length: 36 })
-  flightId!: string;
-
-  @Column({ type: 'varchar', name: 'url', length: 512 })
-  url!: string;
-
-  @Column({ type: 'varchar', name: 'caption', length: 255, nullable: true })
-  caption!: string | null;
-
-  @Column({ type: 'int', name: 'sort_order' })
-  sortOrder!: number;
 
 }
 

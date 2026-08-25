@@ -1,128 +1,246 @@
 {
   "list": {
-    "newSailing": "Nouveau départ",
-    "viewList": "Liste",
-    "viewCalendar": "Calendrier",
-    "emptySailings": "Tocun départ programmé.",
-    "deleteSailingConfirm": "Supprimer le départ « {label} » ?",
+    "newSailing": "New sailing",
+    "viewList": "List",
+    "viewGrid": "Grid",
+    "viewTable": "Table",
+    "viewCalendar": "Calendar",
+    "viewModeAria": "View mode",
+    "searchPlaceholder": "Search sailings…",
+    "searchAria": "Search sailings",
+    "emptySailings": "No sailings scheduled.",
+    "emptyFiltered": "No sailing matches this filter.",
+    "ariaLabel": "Cruise sailings list",
+    "deleteSailingTitle": "Delete sailing",
+    "deleteSailingConfirm": "The sailing \"{label}\" will be permanently deleted.",
+    "deleteSailingButton": "Delete",
+    "cancel": "Cancel",
     "fallbackDeparture": "Departure"
   },
   "columns": {
     "departure": "Departure",
     "itinerary": "Itinerary",
     "ship": "Ship",
-    "nights": "Nuits",
-    "line": "Ligne",
-    "year": "Année",
+    "nights": "Nights",
+    "line": "Line",
+    "year": "Year",
     "port": "Port"
   },
   "filters": {
-    "line": "Filtrer par ligne",
-    "searchShip": "Rechercher un navire…",
-    "searchLine": "Rechercher une ligne…",
-    "searchPort": "Rechercher par code ou nom…"
+    "line": "Filter by line",
+    "ship": "Ship",
+    "allShips": "All ships",
+    "itinerary": "Itinerary",
+    "allItineraries": "All itineraries",
+    "searchShip": "Search ships…",
+    "searchLine": "Search lines…",
+    "searchPort": "Search by code or name…"
+  },
+  "referential": {
+    "lines": {
+      "new": "New line",
+      "edit": "Edit line",
+      "line": "Line",
+      "emptyDefault": "No cruise lines.",
+      "emptySearch": "No line matches this search.",
+      "searchPlaceholder": "Search lines…",
+      "searchAria": "Search a cruise line",
+      "ariaLabel": "Cruise lines list",
+      "viewGrid": "Grid",
+      "viewTable": "Table",
+      "viewModeAria": "View mode",
+      "validation": "Line name is required.",
+      "deleteTitle": "Delete line",
+      "deleteConfirm": "Line \"{name}\" will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel"
+    },
+    "ports": {
+      "new": "New port",
+      "edit": "Edit port",
+      "port": "Port",
+      "code": "Code",
+      "country": "Country",
+      "emptyDefault": "No ports.",
+      "emptySearch": "No port matches this search.",
+      "searchPlaceholder": "Search by code or name…",
+      "searchAria": "Search a port",
+      "ariaLabel": "Cruise ports list",
+      "viewGrid": "Grid",
+      "viewTable": "Table",
+      "viewModeAria": "View mode",
+      "validation": "Code, name and country (2-letter ISO) are required.",
+      "deleteTitle": "Delete port",
+      "deleteConfirm": "Port \"{name}\" will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel"
+    },
+    "ships": {
+      "new": "New ship",
+      "emptyDefault": "No ships.",
+      "emptySearch": "No ship matches these filters.",
+      "searchPlaceholder": "Search ships…",
+      "searchAria": "Search a ship",
+      "ariaLabel": "Ships list",
+      "filterLine": "Filter by line",
+      "allLines": "All lines",
+      "viewGrid": "Grid",
+      "viewTable": "Table",
+      "viewModeAria": "View mode"
+    }
   },
   "form": {
     "ship": {
-      "submitCreate": "Créer le navire",
-      "line": "Ligne",
-      "shipName": "Name du navire",
-      "builtYear": "Année de construction (optionnel)",
-      "validation": "Ligne et nom du navire sont obligatoires."
+      "submitCreate": "Create ship",
+      "line": "Line",
+      "shipName": "Ship name",
+      "builtYear": "Year built (optional)",
+      "validation": "Line and ship name are required."
     },
     "sailing": {
-      "submitCreate": "Créer le départ",
+      "submitCreate": "Create sailing",
       "itinerary": "Itinerary",
-      "departureDate": "Date de départ",
-      "itineraryOption": "{name} ({shipName}) — {nights} nuits",
-      "validation": "Itinerary et date de départ sont obligatoires."
+      "departureDate": "Departure date",
+      "itineraryOption": "{name} ({shipName}) — {nights} nights",
+      "validation": "Itinerary and departure date are required.",
+      "fallbackShip": "Unknown ship",
+      "noItinerariesHint": "No itineraries available. Create one from a ship page."
     },
     "itinerary": {
-      "new": "Nouvel itinéraire",
-      "edit": "Modifier l'itinéraire",
-      "durationNights": "Fromrée (nuits)",
-      "empty": "Tocun itinéraire.",
-      "deleteConfirm": "Supprimer cet itinéraire ?",
-      "validation": "Name et durée (nuits) invalides."
+      "new": "New itinerary",
+      "edit": "Edit itinerary",
+      "durationNights": "Duration (nights)",
+      "empty": "No itineraries.",
+      "deleteConfirm": "This itinerary will be permanently deleted.",
+      "deleteTitle": "Delete itinerary",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
+      "validation": "Name and duration (nights) are required."
     },
     "port": {
-      "new": "Nouveau port de croisière",
-      "edit": "Modifier le port",
+      "new": "New cruise port",
+      "edit": "Edit port",
       "countryIso": "Country (ISO)",
-      "empty": "Tocun port.",
-      "deleteConfirm": "Supprimer le port « {name} » ?"
+      "empty": "No ports.",
+      "deleteConfirm": "Port \"{name}\" will be permanently deleted.",
+      "deleteTitle": "Delete port",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
+      "validation": "Code, name and country (2-letter ISO) are required.",
+      "newShort": "New port"
     },
     "line": {
-      "new": "Nouvelle ligne de croisière",
-      "edit": "Modifier la ligne",
-      "empty": "None ligne de croisière.",
-      "deleteConfirm": "Supprimer la ligne « {name} » ?"
+      "new": "New cruise line",
+      "edit": "Edit line",
+      "empty": "No cruise lines.",
+      "deleteConfirm": "Line \"{name}\" will be permanently deleted.",
+      "deleteTitle": "Delete line",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
+      "validation": "Line name is required.",
+      "newShort": "New line"
     },
     "cabin": {
-      "new": "Nouvelle cabine",
-      "edit": "Modifier la cabine",
-      "category": "Catégorie",
-      "maxGuests": "Voyageurs max",
-      "empty": "None cabine.",
-      "deleteConfirm": "Supprimer cette cabine ?",
-      "validationCategory": "Catégorie et capacité invalides.",
-      "validationPrice": "Price de base invalide."
+      "new": "New cabin",
+      "edit": "Edit cabin",
+      "category": "Category",
+      "maxGuests": "Max guests",
+      "empty": "No cabins.",
+      "deleteConfirm": "This cabin will be permanently deleted.",
+      "deleteTitle": "Delete cabin",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
+      "validationCategory": "Category and capacity are required.",
+      "validationPrice": "Base price is invalid."
     }
   },
   "detail": {
-    "shipTitle": "Modifier le navire",
-    "sailingTitle": "Modifier le départ",
-    "backToShips": "← Back aux navires",
+    "shipTitle": "Edit ship",
+    "shipSubtitle": "Identity, photos, itineraries and cabins.",
+    "sailingTitle": "Edit sailing",
+    "sailingSubtitle": "Itinerary, departure date and bookable cabins.",
+    "backToSailings": "Back to cruises",
+    "backToShips": "Back to ships",
     "escalesTitle": "Ports of call",
-    "backToShip": "Back au navire",
-    "timelineAria": "Schéma des escales"
+    "backToShip": "Back to ship",
+    "viewShip": "View ship",
+    "viewItinerary": "View ports of call",
+    "tabsAria": "Sailing sections",
+    "shipTabsAria": "Ship sections",
+    "tabs": {
+      "sailing": "Sailing",
+      "cabins": "Cabins",
+      "ship": "Ship",
+      "photos": "Photos",
+      "itineraries": "Itineraries",
+      "shipCabins": "Cabins"
+    },
+    "timelineAria": "Ports of call timeline"
   },
   "sections": {
+    "itineraries": {
+      "title": "Itineraries",
+      "intro": "Routes offered on this ship (duration in nights).",
+      "addItinerary": "Add itinerary",
+      "stopsLink": "Ports of call"
+    },
+    "cabins": {
+      "title": "Cabins",
+      "intro": "Cabin categories and base rates.",
+      "addCabin": "Add cabin"
+    },
     "itineraryPorts": {
-      "day": "Jour",
-      "arrivalTime": "Heure d'arrivée (HH:MM)",
-      "departureTime": "Heure de départ (HH:MM)",
+      "day": "Day",
+      "arrivalTime": "Arrival time (HH:MM)",
+      "departureTime": "Departure time (HH:MM)",
       "arrivalPlaceholder": "08:00",
       "departurePlaceholder": "18:00",
-      "empty": "None escale.",
-      "deleteConfirm": "Supprimer cette escale ?"
+      "empty": "No ports of call.",
+      "deleteConfirm": "This port of call will be permanently deleted.",
+      "deleteTitle": "Delete port of call",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
+      "validation": "Port and day number are required."
     },
     "cabinAvailability": {
-      "title": "Cabins réservables",
-      "intro": "Stock et prix par catégorie pour ce départ.",
-      "stopsLabel": "Ports of call : ",
-      "noStopsWarning": "None escale sur cet itinéraire — ajoutez-en depuis la fiche navire.",
+      "title": "Bookable cabins",
+      "intro": "Stock and price by category for this sailing.",
+      "stopsLabel": "Ports of call: ",
+      "noStopsWarning": "No ports of call on this itinerary — add some from the ship page.",
       "cabinMeta": "max {maxGuests} · base {basePrice}",
-      "cabinsAvailableAria": "Cabins disponibles",
-      "priceCentsAria": "Price en centimes",
-      "update": "Mettre à jour",
-      "makeBookable": "Rendre réservable",
-      "empty": "None cabine sur ce navire. Ajoutez des cabines sur la fiche navire."
+      "cabinsAvailableAria": "Available cabins",
+      "priceCentsAria": "Price in cents",
+      "update": "Update",
+      "makeBookable": "Make bookable",
+      "empty": "No cabins on this ship. Add cabins from the ship page."
     }
   },
   "dialogs": {
-    "deleteShip": "Supprimer le navire « {name} » ?"
+    "deleteShip": "Ship \"{name}\" will be permanently deleted.",
+    "deleteShipTitle": "Delete ship",
+    "deleteShipButton": "Delete",
+    "cancel": "Cancel"
   },
   "calendar": {
-    "ariaLabel": "Calendrier des départs — {month}",
+    "ariaLabel": "Sailings calendar — {month}",
     "today": "Today"
   },
   "stats": {
     "sailings": {
       "label": "Departures",
-      "subtitle": "Cruises programmées"
+      "subtitle": "Scheduled cruises"
     },
     "ships": {
       "label": "Ships",
-      "subtitle": "Flotte catalogue"
+      "subtitle": "Fleet catalog"
     },
     "lines": {
       "label": "Lines",
-      "subtitle": "Airlines de croisière"
+      "subtitle": "Cruise companies"
     },
     "ports": {
       "label": "Ports",
-      "subtitle": "Ports of call référencées"
+      "subtitle": "Listed ports of call"
     }
   }
 }

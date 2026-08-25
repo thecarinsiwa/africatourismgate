@@ -8,6 +8,44 @@
     "en": "English",
     "es": "Spanish"
   },
+  "stats": {
+    "pages": {
+      "total": { "label": "Pages", "subtitle": "Institutional pages" },
+      "published": { "label": "Published", "subtitle": "Visible on the site" },
+      "draft": { "label": "Drafts", "subtitle": "Not published" },
+      "french": { "label": "In French", "subtitle": "FR locale content" }
+    },
+    "resources": {
+      "total": { "label": "Resources", "subtitle": "Documents and media" },
+      "published": { "label": "Published", "subtitle": "Visible on the site" },
+      "draft": { "label": "Drafts", "subtitle": "Not published" },
+      "french": { "label": "In French", "subtitle": "FR locale content" }
+    },
+    "team": {
+      "total": { "label": "Members", "subtitle": "Displayed team" },
+      "published": { "label": "Published", "subtitle": "Visible on the site" },
+      "draft": { "label": "Drafts", "subtitle": "Not published" },
+      "french": { "label": "In French", "subtitle": "FR locale profiles" }
+    },
+    "timeline": {
+      "total": { "label": "Milestones", "subtitle": "Timeline entries" },
+      "published": { "label": "Published", "subtitle": "Visible on the site" },
+      "draft": { "label": "Drafts", "subtitle": "Not published" },
+      "french": { "label": "In French", "subtitle": "FR locale entries" }
+    },
+    "whyUs": {
+      "total": { "label": "Cards", "subtitle": "Why choose us cards" },
+      "published": { "label": "Published", "subtitle": "Visible on the site" },
+      "draft": { "label": "Drafts", "subtitle": "Not published" },
+      "french": { "label": "In French", "subtitle": "FR locale cards" }
+    },
+    "happyCustomers": {
+      "total": { "label": "Statistics", "subtitle": "Satisfaction indicators" },
+      "published": { "label": "Published", "subtitle": "Visible on the site" },
+      "draft": { "label": "Drafts", "subtitle": "Not published" },
+      "french": { "label": "In French", "subtitle": "FR locale stats" }
+    }
+  },
   "sections": {
     "who-we-are": "Who we are",
     "how-we-work": "How we work",
@@ -20,7 +58,10 @@
   },
   "pages": {
     "list": {
-      "deleteConfirm": "Delete page \"{title}\"?",
+      "deleteTitle": "Delete page",
+      "deleteConfirm": "Page \"{title}\" will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "columns": {
         "section": "Section",
         "title": "Title",
@@ -70,7 +111,10 @@
   },
   "timeline": {
     "list": {
-      "deleteConfirm": "Delete milestone \"{title}\"?",
+      "deleteTitle": "Delete milestone",
+      "deleteConfirm": "Milestone \"{title}\" will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "columns": {
         "title": "Milestone",
         "period": "Period",
@@ -86,6 +130,9 @@
       "pageTitle": "Edit milestone"
     },
     "form": {
+      "info": {
+        "sectionHint": "Milestone displayed in the About page chronological timeline."
+      },
       "validation": {
         "periodLabelRequired": "Period label is required.",
         "periodTitleRequired": "Period title is required.",
@@ -104,9 +151,14 @@
         "content": "Content",
         "image": "Image",
         "imagePreviewAlt": "Image preview",
+        "removeImage": "Remove image",
         "linkUrl": "Link (URL)",
         "sortOrder": "Display order",
         "locale": "Language"
+      },
+      "hints": {
+        "imageUpload": "JPEG, PNG or WebP — max 5 MB",
+        "linkUrl": "Optional link to a related page or resource."
       },
       "saving": "Saving…",
       "createButton": "Add milestone",
@@ -116,7 +168,10 @@
   },
   "team": {
     "list": {
-      "deleteConfirm": "Remove {name} from the team?",
+      "deleteTitle": "Remove team member",
+      "deleteConfirm": "{name} will be permanently removed from the team.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "columns": {
         "name": "Member",
         "sortOrder": "Order",
@@ -131,6 +186,9 @@
       "pageTitle": "Edit team member"
     },
     "form": {
+      "info": {
+        "sectionHint": "Profile shown in the Team section of the About page."
+      },
       "validation": {
         "nameRequired": "Name is required.",
         "roleRequired": "Role is required.",
@@ -142,8 +200,12 @@
         "bio": "Bio",
         "photo": "Photo",
         "photoPreviewAlt": "Photo preview",
+        "removePhoto": "Remove photo",
         "sortOrder": "Display order",
         "locale": "Language"
+      },
+      "hints": {
+        "photoUpload": "JPEG, PNG or WebP — max. 5 MB"
       },
       "saving": "Saving…",
       "createButton": "Add member",
@@ -153,7 +215,10 @@
   },
   "resources": {
     "list": {
-      "deleteConfirm": "Delete resource \"{title}\"?",
+      "deleteTitle": "Delete resource",
+      "deleteConfirm": "Resource \"{title}\" will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "columns": {
         "type": "Type",
         "title": "Title",
@@ -169,6 +234,9 @@
       "pageTitle": "Edit resource"
     },
     "form": {
+      "info": {
+        "sectionHint": "Document or link displayed in the About page Resources section."
+      },
       "validation": {
         "fileFormat": "Unsupported format (PDF or image).",
         "fileTooLarge": "File too large (max 10 MB).",
@@ -181,6 +249,7 @@
         "title": "Title",
         "description": "Description",
         "file": "File",
+        "removeFile": "Remove file",
         "externalUrl": "External link",
         "sortOrder": "Display order",
         "publishedAtOptional": "Publication date (optional)",
@@ -188,7 +257,8 @@
       },
       "hints": {
         "fileFormat": "PDF, JPEG, PNG or WebP — max 10 MB.",
-        "externalUrl": "Link to a document hosted elsewhere (optional if file uploaded)."
+        "externalUrl": "Link to a document hosted elsewhere (optional if file uploaded).",
+        "publishedAt": "Leave empty to use the current date when publishing."
       },
       "saving": "Saving…",
       "createButton": "Create resource",
@@ -217,7 +287,10 @@
     },
     "items": {
       "list": {
-        "deleteConfirm": "Delete card \"{title}\"?",
+        "deleteTitle": "Delete card",
+        "deleteConfirm": "Card \"{title}\" will be permanently deleted.",
+        "deleteConfirmButton": "Delete",
+        "cancel": "Cancel",
         "columns": {
           "title": "Card",
           "icon": "Icon",
@@ -234,6 +307,9 @@
         "pageTitle": "Edit card"
       },
       "form": {
+        "info": {
+          "sectionHint": "Card displayed in the homepage « Why choose us » section."
+        },
         "validation": {
           "titleRequired": "Title is required.",
           "descriptionRequired": "Description is required.",
@@ -243,6 +319,7 @@
           "title": "Title",
           "description": "Description",
           "linkUrl": "Link",
+          "linkUrlHint": "Internal or external link opened from the card (e.g. /about/who-we-are).",
           "iconKey": "Icon",
           "sortOrder": "Display order",
           "locale": "Language"
@@ -264,13 +341,21 @@
     },
     "section": {
       "heading": "Section content",
+      "validation": {
+        "imageUrlRequired": "Image is required.",
+        "imageUrlInvalid": "Image URL must be valid."
+      },
       "fields": {
         "title": "Title",
         "subtitle": "Subtitle",
         "paragraph1": "First paragraph",
         "paragraph2": "Second paragraph",
-        "imageUrl": "Image URL",
+        "image": "Section image",
+        "imageUrl": "Image URL (alternative)",
         "imageAlt": "Image alt text",
+        "imagePreviewAlt": "Section preview",
+        "removeImage": "Remove image",
+        "imageUploadHint": "JPEG, PNG or WebP — max 5 MB",
         "badgeValue": "Badge value",
         "badgeLabel": "Badge label"
       },
@@ -279,7 +364,10 @@
     },
     "stats": {
       "list": {
-        "deleteConfirm": "Delete stat \"{label}\"?",
+        "deleteTitle": "Delete stat",
+        "deleteConfirm": "Stat \"{label}\" will be permanently deleted.",
+        "deleteConfirmButton": "Delete",
+        "cancel": "Cancel",
         "columns": {
           "label": "Label",
           "percent": "Percentage",
@@ -296,6 +384,9 @@
         "pageTitle": "Edit stat"
       },
       "form": {
+        "info": {
+          "sectionHint": "Satisfaction bar displayed in the public site's Happy Customers section."
+        },
         "validation": {
           "labelRequired": "Label is required.",
           "percentInvalid": "Percentage must be between 0 and 100."
@@ -305,7 +396,9 @@
           "percentValue": "Percentage (%)",
           "colorKey": "Bar color",
           "sortOrder": "Display order",
-          "locale": "Language"
+          "locale": "Language",
+          "preview": "Site preview",
+          "previewLabelPlaceholder": "Bar label"
         },
         "saving": "Saving…",
         "createButton": "Add stat",

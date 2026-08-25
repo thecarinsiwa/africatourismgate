@@ -13,6 +13,7 @@
   "links": {
     "users": "Utilisateurs",
     "employees": "Employés",
+    "departments": "Départements",
     "addresses": "Adresses",
     "paymentMethods": "Moyens de paiement",
     "sessions": "Sessions",
@@ -35,7 +36,7 @@
     "rentalAgencies": "Agences de location",
     "vehicleCategories": "Catégories de véhicules",
     "newVehicle": "Nouveau véhicule",
-    "activityProviders": "Fournisseurs d'activités",
+    "activityProviders": "Partenaires d'activités",
     "newActivity": "Nouvelle activité",
     "newDestination": "Nouvelle destination",
     "newPackage": "Nouveau forfait",
@@ -78,6 +79,7 @@
     "promoCodes": "Codes promo",
     "promotions": "Promotions",
     "blog": "Blog",
+    "sitePresentation": "Site & présentation",
     "aboutPages": "Pages À propos",
     "aboutTeam": "Équipe",
     "aboutTimeline": "Frise chronologique",
@@ -86,7 +88,9 @@
     "heroSlides": "Carousel hero",
     "happyCustomers": "Clients satisfaits",
     "reviews": "Avis",
+    "support": "Support",
     "supportTickets": "Tickets support",
+    "supportHub": "Support",
     "supportMessages": "Messages support",
     "organizations": "Organisations",
     "roles": "Rôles et permissions",
@@ -103,6 +107,7 @@
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",
     "logout": "Se déconnecter",
-    "loggingOut": "Déconnexion…"
+    "loggingOut": "Déconnexion…",
+    "breadcrumb": "Fil d'Ariane"
   }
 }

@@ -8,6 +8,7 @@ export interface Airline {
   id: string;
   iataCode: string;
   name: string;
+  logoUrl: string | null;
   createdAt: string;
   updatedAt: string | null;
 }
@@ -15,6 +16,7 @@ export interface Airline {
 export interface CreateAirlineRequest {
   iataCode: string;
   name: string;
+  logoUrl?: string | null;
 }
 
 export type UpdateAirlineRequest = Partial<CreateAirlineRequest>;
@@ -23,6 +25,7 @@ export interface AirlinesListQuery {
   page?: number;
   limit?: number;
   search?: string;
+  hasLogo?: boolean;
 }
 
 export interface Airport {
@@ -52,6 +55,7 @@ export interface AirportsListQuery {
   page?: number;
   limit?: number;
   search?: string;
+  hasCoordinates?: boolean;
 }
 
 export interface Flight {

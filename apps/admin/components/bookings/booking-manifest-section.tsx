@@ -91,6 +91,7 @@ type Props = {
   suggestedCount?: number;
   syncKey?: number;
   onChanged?: () => void;
+  embedded?: boolean;
 };
 
 export function BookingManifestSection({
@@ -99,6 +100,7 @@ export function BookingManifestSection({
   suggestedCount = 0,
   syncKey = 0,
   onChanged,
+  embedded = false,
 }: Props) {
   const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.bookings.manifest');
@@ -298,18 +300,28 @@ export function BookingManifestSection({
     [canWrite, deletingId, t, tActions, tCommon],
   );
 
+  const Wrapper = embedded ? 'div' : 'section';
+
   return (
-    <section className="space-y-3">
+    <Wrapper className="space-y-3">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
-          <p className="mt-1 text-sm text-atg-muted">{t('subtitle')}</p>
-          {suggestedCount > 0 ? (
-            <p className="mt-1 text-xs text-atg-muted">
-              {t('suggestedCount', { count: suggestedCount })}
-            </p>
-          ) : null}
-        </div>
+        {embedded ? (
+          suggestedCount > 0 ? (
+            <p className="text-sm text-atg-muted">{t('suggestedCount', { count: suggestedCount })}</p>
+          ) : (
+            <span />
+          )
+        ) : (
+          <div>
+            <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+            <p className="mt-1 text-sm text-atg-muted">{t('subtitle')}</p>
+            {suggestedCount > 0 ? (
+              <p className="mt-1 text-xs text-atg-muted">
+                {t('suggestedCount', { count: suggestedCount })}
+              </p>
+            ) : null}
+          </div>
+        )}
         {canWrite ? (
           <Button type="button" size="sm" onClick={openCreate}>
             {t('addTraveler')}
@@ -477,6 +489,6 @@ export function BookingManifestSection({
         loading={Boolean(deletingId)}
         onConfirm={() => void handleDelete()}
       />
-    </section>
+    </Wrapper>
   );
 }

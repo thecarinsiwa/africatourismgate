@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -53,6 +54,7 @@ export function AboutResourcesList() {
     | { status: 'ready'; resources: AboutResource[]; total: number; totalPages: number }
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<AboutResource | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -108,19 +110,22 @@ export function AboutResourcesList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (resource: AboutResource) => {
-      if (!window.confirm(t('deleteConfirm', { title: resource.title }))) return;
-      setDeletingId(resource.id);
-      try {
-        await getApiClient().deleteAboutResource(resource.id);
-        await load();
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, t],
-  );
+  const handleDeleteRequest = useCallback((resource: AboutResource) => {
+    setConfirmTarget(resource);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const resource = confirmTarget;
+    setConfirmTarget(null);
+    setDeletingId(resource.id);
+    try {
+      await getApiClient().deleteAboutResource(resource.id);
+      await load();
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, load]);
 
   const columns = useMemo<ColumnDef<AboutResource, unknown>[]>(
     () => [
@@ -181,7 +186,7 @@ export function AboutResourcesList() {
             {canWrite ? (
               <DataTableActionButton
                 action="delete"
-                onClick={() => void handleDelete(row.original)}
+                onClick={() => handleDeleteRequest(row.original)}
                 disabled={deletingId === row.original.id}
                 loading={deletingId === row.original.id}
               />
@@ -190,12 +195,24 @@ export function AboutResourcesList() {
         ),
       },
     ],
-    [canWrite, deletingId, handleDelete, t, tCommon, tStatus, tTypes],
+    [canWrite, deletingId, handleDeleteRequest, t, tCommon, tStatus, tTypes],
   );
 
   const resources = state.status === 'ready' ? state.resources : [];
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { title: confirmTarget.title }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-1 flex-wrap items-end gap-4">
@@ -278,5 +295,6 @@ export function AboutResourcesList() {
         </>
       )}
     </div>
+    </>
   );
 }

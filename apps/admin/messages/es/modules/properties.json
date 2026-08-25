@@ -73,6 +73,7 @@
     "title": "Editar alojamiento",
     "backLink": "Volver a alojamientos",
     "backToList": "← Volver a la lista",
+    "viewButton": "Ver",
     "tabsAria": "Secciones del alojamiento",
     "tabs": {
       "infos": "Info",
@@ -80,6 +81,26 @@
       "amenities": "Equipamientos",
       "availability": "Disponibilidad"
     }
+  },
+  "view": {
+    "title": "Ver alojamiento",
+    "editButton": "Editar alojamiento",
+    "notFound": "Alojamiento no encontrado.",
+    "infoTitle": "Información",
+    "description": "Descripción",
+    "imagesTitle": "Fotos",
+    "imagesIntro": "{count, plural, =0 {Ninguna foto} one {# foto} other {# fotos}}",
+    "imagesEmpty": "Ninguna foto para este alojamiento.",
+    "carouselPrev": "Foto anterior",
+    "carouselNext": "Foto siguiente",
+    "carouselThumbs": "Miniaturas de fotos",
+    "carouselGoTo": "Ir a la foto {index}",
+    "carouselOpen": "Ampliar la foto {index}",
+    "carouselViewerTitle": "Vista previa de la foto",
+    "carouselClose": "Cerrar la vista previa",
+    "roomsIntro": "{count, plural, =0 {Ninguna habitación} one {# habitación} other {# habitaciones}}",
+    "amenitiesIntro": "{count, plural, =0 {Ningún equipamiento} one {# equipamiento} other {# equipamientos}}",
+    "amenitiesEmpty": "Ningún equipamiento asociado."
   },
   "sections": {
     "rooms": {
@@ -92,8 +113,13 @@
       "roomTypePlaceholder": "estándar, suite…",
       "maxCapacity": "Capacidad máx.",
       "bedConfig": "Configuración de camas",
+      "searchPlaceholder": "Buscar una habitación…",
+      "searchEmpty": "Ninguna habitación coincide con su búsqueda.",
       "empty": "Ninguna habitación.",
       "deleteConfirm": "¿Eliminar la habitación « {name} »?",
+      "deleteTitle": "Eliminar habitación",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "photosAction": "Fotos"
     },
     "amenities": {
@@ -101,7 +127,11 @@
       "intro": "Seleccione los equipamientos disponibles en este alojamiento.",
       "saveSelection": "Guardar selección",
       "emptyGlobal": "Ningún equipamiento global.",
-      "createLink": "Crear equipamientos"
+      "createLink": "Crear equipamientos",
+      "editAmenities": "Editar la selección",
+      "selectedCount": "{count, plural, =0 {Ninguno seleccionado} one {# seleccionado} other {# seleccionados}}",
+      "searchPlaceholder": "Buscar un equipamiento…",
+      "searchEmpty": "Ningún equipamiento coincide con su búsqueda."
     },
     "availability": {
       "title": "Disponibilidad",
@@ -112,14 +142,26 @@
       "goToRoomsTab": "Ir a la pestaña Habitaciones",
       "roomMismatch": "Esta habitación no pertenece a este alojamiento.",
       "backToProperty": "Volver al alojamiento",
-      "summary": "Habitación {roomName} — stock y precio por noche ({currency})."
+      "summary": "Habitación {roomName} — stock y precio por noche ({currency}).",
+      "tableTitle": "Fechas disponibles",
+      "tableIntro": "Días con stock y tarifa para esta habitación.",
+      "tableEmpty": "Ninguna disponibilidad en este mes.",
+      "deleteTitle": "Eliminar disponibilidad",
+      "deleteConfirm": "¿Eliminar la disponibilidad del {date}? Esta acción es irreversible.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar"
     }
   },
   "amenitiesList": {
     "newAmenity": "Nuevo equipamiento",
+    "editAmenity": "Editar equipamiento",
+    "viewAmenity": "Detalle del equipamiento",
     "empty": "Ningún equipamiento.",
     "searchPlaceholder": "Buscar un equipamiento…",
-    "deleteConfirm": "¿Eliminar el equipamiento « {name} »?",
+    "deleteTitle": "Eliminar equipamiento",
+    "deleteConfirm": "El equipamiento «{name}» será eliminado permanentemente.",
+    "deleteConfirmButton": "Eliminar",
+    "cancel": "Cancelar",
     "ariaLabel": "Lista de equipamientos",
     "viewGrid": "Cuadrícula",
     "viewTable": "Tabla",

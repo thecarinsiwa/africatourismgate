@@ -31,6 +31,7 @@ import {
   adminDashboardNavConfig,
   adminBreadcrumbExtraRoutes,
   navGroupMessageKey,
+  type AdminNavBadgeKey,
   type AdminNavLinkConfig,
 } from './dashboard-nav.config';
 
@@ -41,6 +42,7 @@ export {
   flattenAdminNavHrefs,
   getAdminRouteRootSegments,
   navGroupMessageKey,
+  type AdminNavBadgeKey,
 } from './dashboard-nav.config';
 
 const iconMap: Record<string, ReactNode> = {
@@ -82,6 +84,18 @@ function resolveLinkLabel(link: AdminNavLinkConfig, tNav: (key: string) => strin
   return tNav(`links.${link.labelKey}`);
 }
 
+function translateNavLinkLabel(tNav: (key: string) => string, labelKey: string): string {
+  const messageKey = `links.${labelKey}`;
+  const value = tNav(messageKey);
+  // next-intl renvoie le chemin complet si la clé est absente du bundle messages.
+  if (value === `nav.${messageKey}` || value === messageKey) {
+    if (labelKey === 'support' || labelKey === 'supportHub') {
+      return 'Support';
+    }
+  }
+  return value;
+}
+
 export function buildAdminBreadcrumbRoutes(
   tNav: (key: string) => string,
 ): { href: string; label: string }[] {
@@ -109,9 +123,61 @@ export function buildAdminDashboardNav(tNav: (key: string) => string): SidebarNa
       defaultOpen: entry.defaultOpen,
       children: entry.children.map((child) => ({
         href: child.href,
-        label: tNav(`links.${child.labelKey}`),
+        label: translateNavLinkLabel(tNav, child.labelKey),
         icon: resolveIcon(child.iconKey),
       })),
     };
+  });
+}
+
+const navBadgeHrefMap = (() => {
+  const map = new Map<string, AdminNavBadgeKey>();
+  for (const entry of adminDashboardNavConfig) {
+    if (entry.type !== 'group') continue;
+    for (const child of entry.children) {
+      if (child.badgeKey) {
+        map.set(child.href, child.badgeKey);
+      }
+    }
+  }
+  return map;
+})();
+
+/** Applique les compteurs nav aux entrées sidebar (après filtrage RBAC). */
+export function applyNavBadgeCounts(
+  navItems: SidebarNavEntry[],
+  counts: Partial<Record<AdminNavBadgeKey, number>>,
+): SidebarNavEntry[] {
+  if (navBadgeHrefMap.size === 0) {
+    return navItems;
+  }
+
+  return navItems.map((entry) => {
+    if (entry.type !== 'group') {
+      return entry;
+    }
+
+    let changed = false;
+    const children = entry.children.map((child) => {
+      const badgeKey = navBadgeHrefMap.get(child.href);
+      if (!badgeKey) {
+        return child;
+      }
+      const count = counts[badgeKey];
+      if (count == null || count <= 0) {
+        if (child.badge != null) {
+          changed = true;
+          return { ...child, badge: undefined };
+        }
+        return child;
+      }
+      if (child.badge === count) {
+        return child;
+      }
+      changed = true;
+      return { ...child, badge: count };
+    });
+
+    return changed ? { ...entry, children } : entry;
   });
 }

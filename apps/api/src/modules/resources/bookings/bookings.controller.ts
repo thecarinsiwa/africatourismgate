@@ -35,7 +35,12 @@ import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 import { CreateBookingReviewDto } from '../reviews/dto/create-booking-review.dto';
 import { TourGuidesModule } from '../tour-guides/tour-guides.module';
 import { BookingGuideAssignmentsService } from '../tour-guides/booking-guide-assignments.service';
-import { AssignBookingGuidesDto } from '../tour-guides/dto/booking-guide-assignment.dto';
+import {
+  AssignBookingGuidesDto,
+  RemoveBookingGuideDto,
+  UpdateBookingGuideAssignmentDto,
+} from '../tour-guides/dto/booking-guide-assignment.dto';
+import { BookingGuideAssignmentHistoryItemDto } from '../tour-guides/dto/booking-guide-assignment-history.dto';
 import { BookingMessagesService } from './booking-messages.service';
 import { BookingMessageDto, BookingMessagesListDto } from './dto/booking-message.dto';
 import { BookingMessagesQueryDto } from './dto/booking-messages-query.dto';
@@ -55,6 +60,10 @@ import {
   BookingIdentityDocumentDto,
   ReviewBookingIdentityDocumentDto,
 } from './dto/booking-identity-document.dto';
+import {
+  RequestIdentityDocumentUploadDto,
+  RequestIdentityDocumentUploadResponseDto,
+} from './dto/request-identity-document-upload.dto';
 import { BookingManifestService } from './booking-manifest.service';
 import {
   BookingManifestEntryDto,
@@ -134,9 +143,16 @@ export class BookingsController {
     return this.bookingGuideAssignmentsService.listByBookingId(id);
   }
 
+  @Get(':id/guides/history')
+  @RequirePermissions('bookings.read')
+  @ApiOperation({ summary: 'Assignment history for booking guide slots' })
+  listGuideAssignmentHistory(@Param('id') id: string): Promise<BookingGuideAssignmentHistoryItemDto[]> {
+    return this.bookingGuideAssignmentsService.listHistoryByBookingId(id);
+  }
+
   @Post(':id/guides')
   @RequirePermissions('bookings.write')
-  @ApiOperation({ summary: 'Assign one or more tour guides to a booking' })
+  @ApiOperation({ summary: 'Assign one or more tour guide slots to a booking' })
   assignGuides(
     @Param('id') id: string,
     @Body() dto: AssignBookingGuidesDto,
@@ -145,14 +161,51 @@ export class BookingsController {
     return this.bookingGuideAssignmentsService.assignGuides(id, dto, user.id);
   }
 
-  @Delete(':id/guides/:guideId')
+  @Put(':id/guides/:assignmentId')
   @RequirePermissions('bookings.write')
-  @ApiOperation({ summary: 'Remove a tour guide assignment from a booking' })
+  @ApiOperation({ summary: 'Update a tour guide assignment slot on a booking' })
+  updateGuideSlot(
+    @Param('id') id: string,
+    @Param('assignmentId') assignmentId: string,
+    @Body() dto: UpdateBookingGuideAssignmentDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.bookingGuideAssignmentsService.updateAssignment(
+      id,
+      assignmentId,
+      dto,
+      user.id,
+    );
+  }
+
+  @Delete(':id/guides/:assignmentId')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Remove a tour guide assignment slot from a booking' })
+  async removeGuideSlot(
+    @Param('id') id: string,
+    @Param('assignmentId') assignmentId: string,
+    @Body() dto: RemoveBookingGuideDto,
+  ) {
+    await this.bookingGuideAssignmentsService.removeAssignment(
+      id,
+      assignmentId,
+      dto?.comment,
+    );
+  }
+
+  @Delete(':id/guides/by-guide/:guideId')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Remove all assignment slots for a guide on a booking' })
   async removeGuide(
     @Param('id') id: string,
     @Param('guideId') guideId: string,
+    @Body() dto: RemoveBookingGuideDto,
   ) {
-    await this.bookingGuideAssignmentsService.removeGuide(id, guideId);
+    await this.bookingGuideAssignmentsService.removeGuide(
+      id,
+      guideId,
+      dto?.comment,
+    );
   }
 
   @Get(':id/messages/unread-count')
@@ -290,6 +343,18 @@ export class BookingsController {
       documentType,
       file,
     );
+  }
+
+  @Post(':id/request-identity-document-upload')
+  @RequirePermissions('bookings.approve', 'bookings.write')
+  @ApiOperation({
+    summary: 'E-mail au client pour demander le dépôt d’une pièce d’identité (voyageur)',
+  })
+  requestIdentityDocumentUpload(
+    @Param('id') id: string,
+    @Body() dto: RequestIdentityDocumentUploadDto,
+  ): Promise<RequestIdentityDocumentUploadResponseDto> {
+    return this.bookingsService.requestIdentityDocumentUpload(id, dto);
   }
 
   @Post(':id/identity-documents/:documentId/approve')

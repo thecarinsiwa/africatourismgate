@@ -1,14 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
-import { Properties, PropertyAmenities } from '../../../entities/generated';
+import { In, IsNull, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
+import { Amenities, Properties, PropertyAmenities } from '../../../entities/generated';
 import { PropertyAmenitiesListQueryDto } from './dto/property-amenities-list-query.dto';
-
-export type PropertyAmenitiesSyncResult = {
-  propertyId: string;
-  amenityIds: string[];
-};
+import { PropertyAmenitiesPayloadDto } from './dto/property-amenities-payload.dto';
+import { ReplacePropertyAmenitiesDto } from './dto/replace-property-amenities.dto';
 
 @Injectable()
 export class PropertyAmenitiesService {
@@ -17,6 +14,8 @@ export class PropertyAmenitiesService {
     private readonly repository: Repository<PropertyAmenities>,
     @InjectRepository(Properties)
     private readonly propertiesRepository: Repository<Properties>,
+    @InjectRepository(Amenities)
+    private readonly amenitiesRepository: Repository<Amenities>,
   ) {}
 
   async findAll(
@@ -24,16 +23,17 @@ export class PropertyAmenitiesService {
   ): Promise<PaginatedResult<PropertyAmenities>> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
-    const where: FindOptionsWhere<PropertyAmenities> = {};
-    if (query.propertyId) {
-      where.propertyId = query.propertyId;
-    }
+
     const [data, total] = await this.repository.findAndCount({
-      where,
+      where: {
+        deletedAt: IsNull(),
+        ...(query.propertyId ? { propertyId: query.propertyId } : {}),
+      },
       skip: (page - 1) * limit,
       take: limit,
       order: { createdAt: 'DESC' },
     });
+
     return {
       data,
       meta: { total, page, limit, totalPages: Math.ceil(total / limit) || 1 },
@@ -45,45 +45,60 @@ export class PropertyAmenitiesService {
     return this.repository.save(row);
   }
 
-  async replace(
-    propertyId: string,
-    amenityIds: string[],
-  ): Promise<PropertyAmenitiesSyncResult> {
+  async replace(dto: ReplacePropertyAmenitiesDto): Promise<PropertyAmenitiesPayloadDto> {
     const property = await this.propertiesRepository.findOne({
-      where: { id: propertyId },
+      where: { id: dto.propertyId, deletedAt: IsNull() },
     });
     if (!property) {
       throw new NotFoundException('Hébergement introuvable.');
     }
 
-    const uniqueIds = [...new Set(amenityIds)];
-
-    await this.repository.manager.transaction(async (manager) => {
-      const repo = manager.getRepository(PropertyAmenities);
-      const existing = await repo.find({
-        where: { propertyId },
-        withDeleted: true,
+    const amenityIds = [...new Set(dto.amenityIds)];
+    if (amenityIds.length > 0) {
+      const amenities = await this.amenitiesRepository.find({
+        where: { id: In(amenityIds), deletedAt: IsNull() },
       });
-      const pending = new Set(uniqueIds);
-
-      for (const row of existing) {
-        if (pending.has(row.amenityId)) {
-          if (row.deletedAt) {
-            await repo.recover(row);
-          }
-          pending.delete(row.amenityId);
-        } else if (!row.deletedAt) {
-          await repo.softRemove(row);
-        }
+      if (amenities.length !== amenityIds.length) {
+        throw new BadRequestException(
+          'Un ou plusieurs équipements sont introuvables.',
+        );
       }
+    }
 
-      for (const amenityId of pending) {
-        const entity = repo.create({ propertyId, amenityId });
-        await repo.save(entity);
-      }
+    const existing = await this.repository.find({
+      where: { propertyId: dto.propertyId },
+      withDeleted: true,
     });
 
-    return { propertyId, amenityIds: uniqueIds };
+    const desired = new Set(amenityIds);
+
+    for (const row of existing) {
+      if (!desired.has(row.amenityId)) {
+        if (!row.deletedAt) {
+          await this.repository.softRemove(row);
+        }
+        continue;
+      }
+
+      if (row.deletedAt) {
+        await this.repository.recover(row);
+      }
+      desired.delete(row.amenityId);
+    }
+
+    for (const amenityId of desired) {
+      await this.repository.save(
+        this.repository.create({
+          propertyId: dto.propertyId,
+          amenityId,
+        }),
+      );
+    }
+
+    return {
+      propertyId: dto.propertyId,
+      amenityIds,
+    };
   }
 
   async remove(propertyId: string, amenityId: string): Promise<void> {

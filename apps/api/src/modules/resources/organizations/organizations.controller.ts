@@ -10,10 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
+import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { Organizations } from '../../../entities/generated';
-import { CreateOrganizationDto } from './dto/create-organization.dto';
-import { OrganizationsListQueryDto } from './dto/organizations-list-query.dto';
-import { UpdateOrganizationDto } from './dto/update-organization.dto';
 import { OrganizationsService } from './organizations.service';
 
 @ApiTags('organizations')
@@ -23,8 +21,8 @@ export class OrganizationsController {
 
   @Get()
   @ApiOperation({ summary: 'List organizations' })
-  findAll(@Query() query: OrganizationsListQueryDto) {
-    return this.service.list(query);
+  findAll(@Query() query: PaginationQueryDto) {
+    return this.service.findAll(query);
   }
 
   @Get(':id')
@@ -35,13 +33,13 @@ export class OrganizationsController {
 
   @Post()
   @ApiOperation({ summary: 'Create organizations' })
-  create(@Body() dto: CreateOrganizationDto) {
+  create(@Body() dto: DeepPartial<Organizations>) {
     return this.service.create(dto);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update organizations' })
-  update(@Param('id') id: string, @Body() dto: UpdateOrganizationDto) {
+  update(@Param('id') id: string, @Body() dto: DeepPartial<Organizations>) {
     return this.service.update(id, dto);
   }
 

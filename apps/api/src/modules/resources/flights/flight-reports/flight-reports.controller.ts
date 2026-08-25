@@ -1,8 +1,9 @@
-import { Controller, Get, Query, Res } from '@nestjs/common';
+import { Controller, Get, Param, Query, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RequirePermissions } from '../../../rbac/decorators/require-permissions.decorator';
 import { FlightReportsService } from './flight-reports.service';
+import { FlightDossierReportQueryDto } from './dto/flight-dossier-report-query.dto';
 import { FlightReportsDatedQueryDto } from './dto/flight-reports-dated-query.dto';
 import { FlightReportsScopeQueryDto } from './dto/flight-reports-scope-query.dto';
 
@@ -65,6 +66,18 @@ export class FlightReportsController {
     @Res() res: Response,
   ) {
     const file = await this.reportsService.generateBookingsPdf(query);
+    sendReportFile(res, file);
+  }
+
+  @RequirePermissions('flights.read')
+  @Get(':id/reports/pdf/dossier')
+  @ApiOperation({ summary: 'Export single flight dossier PDF' })
+  async downloadFlightDossierPdf(
+    @Param('id') id: string,
+    @Query() query: FlightDossierReportQueryDto,
+    @Res() res: Response,
+  ) {
+    const file = await this.reportsService.generateFlightDossierPdf(id, query.locale);
     sendReportFile(res, file);
   }
 }

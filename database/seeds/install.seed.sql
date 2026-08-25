@@ -38,6 +38,8 @@ INSERT INTO `permissions` (`id`, `code`, `resource`, `action`, `description`) VA
 ('00000000-0000-4000-8000-000000001026', 'amenities.write', 'amenities', 'write', 'Manage amenities'),
 ('00000000-0000-4000-8000-000000001027', 'employees.read', 'employees', 'read', 'View employees'),
 ('00000000-0000-4000-8000-000000001028', 'employees.write', 'employees', 'write', 'Manage employees'),
+('00000000-0000-4000-8000-000000001052', 'departments.read', 'departments', 'read', 'View departments'),
+('00000000-0000-4000-8000-000000001053', 'departments.write', 'departments', 'write', 'Manage departments'),
 ('00000000-0000-4000-8000-000000001029', 'organization_bank_accounts.read', 'organization_bank_accounts', 'read', 'View organization bank accounts'),
 ('00000000-0000-4000-8000-000000001030', 'organization_bank_accounts.write', 'organization_bank_accounts', 'write', 'Manage organization bank accounts'),
 ('00000000-0000-4000-8000-000000001031', 'flights.read', 'flights', 'read', 'View flights catalog'),
@@ -151,6 +153,8 @@ INSERT INTO `role_permissions` (`role_id`, `permission_id`, `granted_by_user_id`
 ('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001018', '00000000-0000-4000-8000-000000000010'),
 ('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001027', '00000000-0000-4000-8000-000000000010'),
 ('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001028', '00000000-0000-4000-8000-000000000010'),
+('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001052', '00000000-0000-4000-8000-000000000010'),
+('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001053', '00000000-0000-4000-8000-000000000010'),
 ('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001029', '00000000-0000-4000-8000-000000000010'),
 ('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001030', '00000000-0000-4000-8000-000000000010');
 
@@ -377,6 +381,26 @@ INSERT INTO `rooms` (
   '1 double bed',
   8500,
   'USD',
+  '00000000-0000-4000-8000-000000000010'
+);
+
+INSERT INTO `room_availability` (
+  `id`, `room_id`, `date`, `available_units`, `price_cents`, `created_by_user_id`
+) VALUES
+(
+  '00000000-0000-4000-8000-000000002012',
+  '00000000-0000-4000-8000-000000002011',
+  '2026-08-01',
+  0,
+  8500,
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000002013',
+  '00000000-0000-4000-8000-000000002011',
+  '2026-08-08',
+  6,
+  9200,
   '00000000-0000-4000-8000-000000000010'
 );
 
@@ -975,7 +999,7 @@ INSERT INTO `package_images` (
 -- CE-1: tour_guides (demo — 1 internal, 1 external)
 -- -----------------------------------------------------------------------------
 INSERT INTO `tour_guides` (
-  `id`, `type`, `user_id`, `organization_id`, `display_name`, `bio`, `photo_url`,
+  `id`, `type`, `user_id`, `organization_id`, `display_name`, `bio`, `photo_url`, `contact_email`,
   `languages`, `destinations`, `status`, `created_by_user_id`
 ) VALUES
 (
@@ -985,6 +1009,7 @@ INSERT INTO `tour_guides` (
   '00000000-0000-4000-8000-000000000001',
   'Marie Kabila',
   'Guide senior spécialisée Kinshasa et région du Kongo Central. 8 ans d''expérience.',
+  NULL,
   NULL,
   '["fr","en","ln"]',
   '["00000000-0000-4000-8000-000000002001"]',
@@ -999,6 +1024,7 @@ INSERT INTO `tour_guides` (
   'Jean-Pierre Mwamba',
   'Guide indépendant, circuits culturels et nature en RDC.',
   NULL,
+  'jean-pierre.mwamba@example.com',
   '["fr","sw"]',
   '["00000000-0000-4000-8000-000000002001"]',
   'active',

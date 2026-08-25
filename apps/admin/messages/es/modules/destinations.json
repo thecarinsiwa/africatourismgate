@@ -1,49 +1,81 @@
 {
   "list": {
-    "emptyDefault": "Ninguna destination pour le moment.",
-    "emptySearch": "Ninguna destination ne correspond à votre recherche.",
-    "searchPlaceholder": "Rechercher par nom, slug ou pays…",
-    "searchAria": "Rechercher une destination",
-    "ariaLabel": "Liste des destinations",
-    "deleteConfirm": "Supprimer la destination « {name} » ? Les points d'intérêt associés seront également supprimés."
+    "emptyDefault": "Ningún destino por el momento.",
+    "emptySearch": "Ningún destino coincide con tu búsqueda.",
+    "searchPlaceholder": "Buscar por nombre, slug o país…",
+    "searchAria": "Buscar destinos",
+    "ariaLabel": "Lista de destinos",
+    "viewGrid": "Cuadrícula",
+    "viewTable": "Tabla",
+    "viewModeAria": "Modo de visualización de destinos",
+    "featuredFilter": "Destacado",
+    "featuredYes": "Página de inicio",
+    "featuredNo": "Fuera de la página de inicio",
+    "deleteTitle": "Eliminar destino",
+    "deleteConfirm": "El destino «{name}» y sus puntos de interés asociados serán eliminados permanentemente.",
+    "deleteConfirmButton": "Eliminar",
+    "cancel": "Cancelar"
   },
   "columns": {
     "destination": "Destino",
     "country": "País",
-    "featured": "Homepage"
+    "featured": "Página de inicio"
   },
   "form": {
-    "submitCreate": "Créer la destination",
-    "previewName": "Nouvelle destination",
+    "submitCreate": "Crear destino",
+    "previewName": "Nuevo destino",
     "sections": {
       "identity": "Identidad",
-      "presentation": "Présentation",
-      "geography": "Géographie"
+      "presentation": "Presentación",
+      "geography": "Geografía",
+      "publication": "Publicación"
     },
-    "slugHint": "Identifiant unique (ex. kinshasa).",
-    "countryCode": "Code pays (ISO)",
-    "countryCodeHint": "2 lettres, ex. CD, KE, ZA.",
-    "heroImageUrl": "URL image hero",
-    "heroImageHint": "Affichée dans le bandeau. Laissez vide pour un dégradé.",
+    "slugHint": "Identificador único (ej. kinshasa).",
+    "countryCode": "País",
+    "countryCodeHint": "Busque por nombre o código ISO de 2 letras.",
+    "countrySearchPlaceholder": "Buscar un país…",
+    "countrySearchAria": "Buscar países",
+    "countrySearchEmpty": "Ningún país coincide con esta búsqueda.",
+    "heroImageUrl": "URL de la imagen de cabecera",
+    "heroImageHint": "Se muestra en el banner. Déjelo vacío para un degradado.",
     "isFeatured": "Mostrar en la página de inicio",
     "isFeaturedHint": "Sección « Destinos populares » del sitio público (máx. 4).",
-    "geographyIntro": "Coordonnées du centre de la destination pour la carte statique.",
-    "latitudeHint": "Optionnel, -90 à 90",
-    "longitudeHint": "Optionnel, -180 à 180",
+    "geographyIntro": "Coordenadas del centro del destino para el mapa estático.",
+    "latitudeHint": "Opcional, -90 a 90",
+    "longitudeHint": "Opcional, -180 a 180",
     "mapPreview": "Vista previa del mapa",
     "openStreetMap": "Abrir en OpenStreetMap"
   },
   "detail": {
     "title": "Modificar el destino",
     "viewTitle": "Ver destino",
+    "viewButton": "Ver destino",
     "editButton": "Modificar el destino",
     "backLink": "Volver a destinos",
+    "subtitle": "Identidad, geografía y puntos de interés.",
+    "featuredBadge": "Página de inicio",
+    "tabsAria": "Secciones del destino",
+    "tabs": {
+      "informations": "Información",
+      "pois": "Puntos de interés"
+    },
     "mapTitle": "Mapa del destino",
     "description": "Descripción",
     "noDescription": "Sin descripción.",
     "notFound": "Destino no encontrado."
   },
   "view": {
+    "title": "Ver destino",
+    "editButton": "Modificar el destino",
+    "subtitle": "Vista previa del catálogo del destino.",
+    "infoTitle": "Información",
+    "coordinates": "Coordenadas",
+    "featuredNo": "No destacado",
+    "heroTitle": "Imagen de cabecera",
+    "heroIntro": "Visual principal del destino.",
+    "heroAlt": "Imagen de cabecera de {name}",
+    "heroEmpty": "Ninguna imagen de cabecera.",
+    "mapEmpty": "No hay coordenadas para el mapa.",
     "poisTitle": "Puntos de interés",
     "poisIntro": "{count} punto(s) de interés registrado(s)",
     "poisEmpty": "Ningún punto de interés para este destino.",
@@ -52,41 +84,60 @@
   "hero": {
     "ariaLabel": "Destino {name}"
   },
+  "heroImage": {
+    "title": "Imagen de cabecera",
+    "hint": "Se muestra en el banner admin, las listas y el sitio público. JPEG, PNG o WebP, máx. 5 MB.",
+    "previewAlt": "Vista previa de la imagen de cabecera",
+    "empty": "Ninguna imagen de cabecera definida.",
+    "upload": "Subir una imagen",
+    "remove": "Quitar la imagen",
+    "saveUrl": "Guardar la URL",
+    "saving": "Guardando…"
+  },
   "sections": {
     "pois": {
-      "new": "Nouveau point d'intérêt",
-      "edit": "Modifier le point d'intérêt",
-      "empty": "Hastacun point d'intérêt pour cette destination.",
-      "ariaLabel": "Points d'intérêt de la destination",
-      "deleteConfirm": "Supprimer le point d'intérêt « {name} » ?"
+      "title": "Puntos de interés",
+      "intro": "Lugares destacados vinculados a este destino.",
+      "addPoi": "Añadir un punto de interés",
+      "mapPicker": "Mapa de asistencia",
+      "mapPickerHint": "Haga clic en el mapa o mueva el marcador para completar automáticamente la latitud y la longitud.",
+      "mapPickerAria": "Mapa interactivo para seleccionar coordenadas",
+      "new": "Nuevo punto de interés",
+      "edit": "Editar punto de interés",
+      "empty": "Ningún punto de interés para este destino.",
+      "ariaLabel": "Puntos de interés del destino",
+      "deleteTitle": "Eliminar punto de interés",
+      "deleteConfirm": "El punto de interés «{name}» será eliminado permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar"
     },
     "related": {
       "properties": {
         "label": "Alojamientos",
-        "subtitle": "Propiedads rattachées"
+        "subtitle": "Propiedades vinculadas"
       },
       "activities": {
-        "label": "Actividads",
-        "subtitle": "Expériences locales"
+        "label": "Actividades",
+        "subtitle": "Experiencias locales"
       },
       "packages": {
         "label": "Paquetes",
-        "subtitle": "Packages incluant des produits locaux"
+        "subtitle": "Paquetes que incluyen productos locales"
       }
     }
   },
   "stats": {
     "destinations": {
       "label": "Destinos",
-      "subtitle": "Villes et régions catalogue"
+      "subtitle": "Ciudades y regiones del catálogo"
     },
     "pois": {
-      "label": "Points d'intérêt",
-      "subtitle": "Lieux remarquables liés"
+      "label": "Puntos de interés",
+      "subtitle": "Lugares destacados vinculados"
     },
     "countries": {
-      "label": "País couverts",
-      "subtitle": "Codes ISO distincts"
+      "label": "Países cubiertos",
+      "subtitle": "Códigos ISO distintos"
     }
   }
 }

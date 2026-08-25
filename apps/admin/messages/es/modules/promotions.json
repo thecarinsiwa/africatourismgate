@@ -1,88 +1,153 @@
 {
   "status": {
-    "active": "Active",
-    "inactive": "Inactive"
+    "active": "Activo",
+    "inactive": "Inactivo"
   },
   "validity": {
-    "active": "En cours",
-    "upcoming": "À venir",
-    "expired": "Expiré",
-    "noDateLimit": "Sans limite de dates",
-    "fromDate": "À partir du {from}",
-    "untilDate": "Jusqu'au {until}",
+    "active": "En curso",
+    "upcoming": "Próxima",
+    "expired": "Caducada",
+    "noDateLimit": "Sin límite de fechas",
+    "fromDate": "Desde el {from}",
+    "untilDate": "Hasta el {until}",
     "range": "{from} → {until}"
   },
   "discount": {
-    "informative": "Campagne informative",
-    "pending": "Réduction…",
+    "informative": "Campaña informativa",
+    "pending": "Descuento…",
     "percentFormat": "−{value} %",
     "fixedFormat": "−{value}"
   },
   "list": {
-    "deleteConfirm": "Supprimer la promotion « {name} » ?",
+    "deleteTitle": "Eliminar promoción",
+    "deleteConfirm": "La promoción «{name}» será eliminada permanentemente.",
+    "deleteConfirmButton": "Eliminar",
+    "cancel": "Cancelar",
     "columns": {
-      "campaign": "Campagne",
-      "validity": "Validité",
-      "usage": "Utilisations",
+      "cover": "Portada",
+      "campaign": "Campaña",
+      "description": "Descripción",
+      "discount": "Descuento",
+      "validity": "Validez",
+      "usage": "Usos",
       "status": "Estado"
     },
-    "emptySearch": "Ninguna promotion ne correspond à votre recherche.",
-    "emptyDefault": "Ninguna promotion pour le moment.",
-    "searchPlaceholder": "Rechercher par titre ou description…",
-    "searchAria": "Rechercher une promotion",
-    "newButton": "Nouvelle promotion",
-    "tableAria": "Liste des promotions",
-    "paginationItem": "promotion"
+    "emptySearch": "Ninguna promoción coincide con su búsqueda.",
+    "emptyDefault": "Aún no hay promociones.",
+    "searchPlaceholder": "Buscar por título o descripción…",
+    "searchAria": "Buscar promoción",
+    "newButton": "Nueva promoción",
+    "tableAria": "Lista de promociones",
+    "paginationItem": "promoción"
   },
   "edit": {
-    "pageTitle": "Modifier la promotion"
+    "pageTitle": "Editar promoción"
+  },
+  "view": {
+    "title": "Ver promoción",
+    "editButton": "Editar promoción",
+    "subtitle": "Detalles de la campaña de marketing.",
+    "infoTitle": "Campaña",
+    "descriptionTitle": "Descripción",
+    "noDescription": "Ninguna descripción indicada.",
+    "metaTitle": "Validez y seguimiento",
+    "checkoutId": "ID de checkout",
+    "coverTitle": "Foto de portada",
+    "coverEmpty": "Ninguna foto de portada.",
+    "coverEmptyHint": "Añada una foto de portada desde la página de edición para enriquecer el banner.",
+    "coverAlt": "Portada de {name}",
+    "discountInformative": "Campaña informativa",
+    "validityOpen": "Sin límite de fechas",
+    "usageHint": "{count} uso(s) registrado(s)",
+    "notFound": "Promoción no encontrada."
+  },
+  "coverImage": {
+    "title": "Foto de portada",
+    "hint": "Se muestra en el banner de vista previa, la lista y la ficha de campaña. JPEG, PNG o WebP, máx. 5 MB.",
+    "previewAlt": "Vista previa de la foto de portada",
+    "empty": "Ninguna foto de portada definida.",
+    "upload": "Subir una imagen",
+    "remove": "Quitar la imagen",
+    "saveUrl": "Guardar la URL",
+    "saving": "Guardando…"
   },
   "preview": {
-    "defaultName": "Nouvelle campagne",
-    "ariaLabel": "Vista previa promotion {name}",
-    "badge": "Promotion",
-    "usage": "Utilisations : {usage}"
+    "defaultName": "Nueva campaña",
+    "ariaLabel": "Vista previa de la promoción {name}",
+    "badge": "Promoción",
+    "usage": "Usos: {usage}"
   },
   "form": {
+    "sections": {
+      "campaign": "Campaña",
+      "campaignHint": "Título y texto visibles en los banners de marketing.",
+      "discount": "Descuento",
+      "discountHint": "Opcional — déjelo desactivado para una campaña informativa.",
+      "discountOff": "Sin descuento en el checkout: la campaña permanece puramente informativa.",
+      "schedule": "Validez y límites",
+      "scheduleHint": "Fechas opcionales. Déjelas vacías para una campaña sin límite temporal.",
+      "publication": "Publicación",
+      "publicationHint": "Controla la visibilidad de la campaña para los clientes.",
+      "preview": "Vista previa en vivo",
+      "previewHint": "Se actualiza al escribir — vista previa del renderizado de la campaña."
+    },
     "info": {
-      "codesVsPromotions": "Les codes promo sont saisis par le client au checkout. Les promotions sont des campagnes visibles (bannières, pages) — la réduction peut être optionnelle.",
-      "managePromoCodesLink": "Gérer les codes promo",
-      "targetHint": "Cible produit / destination (optionnel, pour affichage marketing)."
+      "codesVsPromotions": "Los códigos promocionales los introduce el cliente en el checkout. Las promociones son campañas visibles (banners, páginas) — el descuento puede ser opcional.",
+      "managePromoCodesLink": "Gestionar códigos promocionales",
+      "targetHint": "Objetivo producto / destino (opcional, para visualización de marketing)."
     },
     "validation": {
-      "nameRequired": "Le titre est obligatoire.",
-      "discountPositive": "La valeur doit être positive.",
-      "percentMax": "Le pourcentage ne peut pas dépasser 100.",
-      "endAfterStart": "La date de fin doit être après la date de début.",
-      "maxRedemptionsInvalid": "Apellidobre max. invalide (entier ≥ 1)."
+      "nameRequired": "El título es obligatorio.",
+      "discountPositive": "El valor debe ser positivo.",
+      "percentMax": "El porcentaje no puede superar 100.",
+      "endAfterStart": "La fecha de fin debe ser posterior a la de inicio.",
+      "maxRedemptionsInvalid": "Número máximo de usos no válido (entero ≥ 1)."
     },
     "fields": {
-      "name": "Título de la campagne",
-      "descriptionPlaceholder": "Ex. −20 % sur les hébergements…",
-      "hasDiscount": "Aplicar une réduction au checkout",
-      "discountType": "Tipo de réduction",
-      "discountTypePercent": "Pourcentage (%)",
-      "discountTypeFixed": "Importe fixe",
-      "discountValuePercent": "Pourcentage",
-      "discountValueFixed": "Importe fixe",
-      "validFromOptional": "Valide du (optionnel)",
-      "validUntilOptional": "Valide au (optionnel)",
-      "maxRedemptions": "Utilisations max.",
-      "active": "Campagne active"
+      "name": "Título de la campaña",
+      "descriptionPlaceholder": "P. ej. −20 % en alojamientos…",
+      "hasDiscount": "Aplicar un descuento en el checkout",
+      "discountType": "Tipo de descuento",
+      "discountTypePercent": "Porcentaje (%)",
+      "discountTypeFixed": "Importe fijo",
+      "discountValuePercent": "Porcentaje",
+      "discountValueFixed": "Importe fijo",
+      "validFromOptional": "Válido desde (opcional)",
+      "validUntilOptional": "Válido hasta (opcional)",
+      "maxRedemptions": "Usos máx.",
+      "active": "Campaña activa"
     },
     "hints": {
-      "discountPercent": "Pourcentage (ex. 15 pour −15 %).",
-      "discountFixed": "Importe fixe en unités monétaires (ex. 10 pour −10 USD).",
-      "maxRedemptions": "Laisser vide pour illimité."
+      "discountPercent": "Porcentaje (p. ej. 15 para −15 %).",
+      "discountFixed": "Importe fijo en unidades monetarias (p. ej. 10 para −10 USD).",
+      "maxRedemptions": "Dejar vacío para usos ilimitados."
     },
     "usage": {
-      "label": "Utilisations :",
-      "unlimited": "(illimité)"
+      "label": "Usos:",
+      "unlimited": "(ilimitado)"
     },
-    "checkoutId": "ID checkout :",
-    "saving": "Enregistrement…",
-    "createButton": "Créer la promotion",
+    "checkoutId": "ID de checkout:",
+    "saving": "Guardando…",
+    "createButton": "Crear promoción",
     "saveButton": "Guardar",
-    "cancelButton": "Annuler"
+    "cancelButton": "Cancelar"
+  },
+  "stats": {
+    "total": {
+      "label": "Campañas",
+      "subtitle": "Todas las promociones"
+    },
+    "active": {
+      "label": "Activas",
+      "subtitle": "Campañas publicadas"
+    },
+    "inactive": {
+      "label": "Inactivas",
+      "subtitle": "Campañas desactivadas"
+    },
+    "withDiscount": {
+      "label": "Con descuento",
+      "subtitle": "Descuento aplicado en el checkout"
+    }
   }
 }

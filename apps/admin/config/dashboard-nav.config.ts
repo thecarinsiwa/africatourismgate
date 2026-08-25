@@ -1,7 +1,11 @@
+export type AdminNavBadgeKey = 'pendingReviews' | 'openSupportTickets';
+
 export type AdminNavLinkConfig = {
   href: string;
   labelKey: string;
   iconKey: string;
+  /** Compteur nav (voir useNavBadgeCounts). */
+  badgeKey?: AdminNavBadgeKey;
 };
 
 export type AdminNavGroupConfig = {
@@ -38,6 +42,7 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
     children: [
       { href: '/utilisateurs', labelKey: 'users', iconKey: 'users' },
       { href: '/utilisateurs/employes', labelKey: 'employees', iconKey: 'userCircle' },
+      { href: '/utilisateurs/departements', labelKey: 'departments', iconKey: 'list' },
       { href: '/utilisateurs/adresses', labelKey: 'addresses', iconKey: 'mapPin' },
       { href: '/utilisateurs/moyens-paiement', labelKey: 'paymentMethods', iconKey: 'creditCard' },
       { href: '/utilisateurs/sessions', labelKey: 'sessions', iconKey: 'shield' },
@@ -70,7 +75,6 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
     iconKey: 'bookings',
     children: [
       { href: '/reservations', labelKey: 'bookings', iconKey: 'bookings' },
-      { href: '/reservations/lignes', labelKey: 'bookingLines', iconKey: 'list' },
       { href: '/guides', labelKey: 'tourGuides', iconKey: 'userCircle' },
     ],
   },
@@ -102,16 +106,14 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
     iconKey: 'headset',
     children: [
       { href: '/contenu/blog', labelKey: 'blog', iconKey: 'document' },
-      { href: '/contenu/a-propos/pages', labelKey: 'aboutPages', iconKey: 'document' },
-      { href: '/contenu/a-propos/equipe', labelKey: 'aboutTeam', iconKey: 'users' },
-      { href: '/contenu/a-propos/timeline', labelKey: 'aboutTimeline', iconKey: 'document' },
-      { href: '/contenu/a-propos/ressources', labelKey: 'aboutResources', iconKey: 'document' },
-      { href: '/contenu/pourquoi-nous', labelKey: 'whyUs', iconKey: 'document' },
-      { href: '/contenu/hero', labelKey: 'heroSlides', iconKey: 'document' },
-      { href: '/contenu/clients-satisfaits', labelKey: 'happyCustomers', iconKey: 'document' },
-      { href: '/contenu/avis', labelKey: 'reviews', iconKey: 'star' },
-      { href: '/contenu/tickets', labelKey: 'supportTickets', iconKey: 'ticket' },
-      { href: '/contenu/messages', labelKey: 'supportMessages', iconKey: 'chat' },
+      { href: '/contenu/site', labelKey: 'sitePresentation', iconKey: 'globe' },
+      { href: '/contenu/avis', labelKey: 'reviews', iconKey: 'star', badgeKey: 'pendingReviews' },
+      {
+        href: '/contenu/support',
+        labelKey: 'support',
+        iconKey: 'headset',
+        badgeKey: 'openSupportTickets',
+      },
     ],
   },
   {

@@ -3,7 +3,15 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import type { Activity } from '@africatourismgate/types';
-import { Button, DataTableBadge, Skeleton, Tabs, TabsContent, TabsList, TabsTrigger } from '@africatourismgate/ui';
+import {
+  Button,
+  DataTableBadge,
+  Skeleton,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
@@ -18,12 +26,13 @@ import { ActivityDescriptionAssetsSection } from './activity-description-assets-
 import { ActivityMetaBadges } from './activity-meta-badges';
 import { ActivitySchedulesSection } from './activity-schedules-section';
 import { ActivityItineraryStopsSection } from './activity-itinerary-stops-section';
+import { ActivityThumbnail, pickMainActivityImageUrl } from './activity-thumbnail';
 
 type ActivityEditPageProps = {
   activityId: string;
 };
 
-const TAB_VALUES = ['activite', 'itineraire', 'creneaux'] as const;
+const TAB_VALUES = ['activite', 'photos', 'pieces', 'itineraire', 'creneaux'] as const;
 type TabValue = (typeof TAB_VALUES)[number];
 
 function isTabValue(value: string | null): value is TabValue {
@@ -39,21 +48,11 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get('tab');
   const activeTab: TabValue = isTabValue(tabParam) ? tabParam : 'activite';
-  const stepItems: Array<{ value: TabValue; label: string }> = [
-    { value: 'activite', label: tDetail('tabs.activity') },
-    { value: 'itineraire', label: tDetail('tabs.itinerary') },
-    { value: 'creneaux', label: tDetail('tabs.schedules') },
-  ];
-  const activeStepIndex = Math.max(
-    0,
-    stepItems.findIndex((step) => step.value === activeTab),
-  );
-  const progressPercent = Math.round(((activeStepIndex + 1) / stepItems.length) * 100);
 
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
-    | { status: 'ready'; activity: Activity }
+    | { status: 'ready'; activity: Activity; providerName: string | null; coverImageUrl: string | null }
   >({ status: 'loading' });
 
   useAdminEditPageMeta({
@@ -62,19 +61,35 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
     entityLabel: state.status === 'ready' ? state.activity.title : undefined,
   });
 
-  const loadActivity = useCallback(async () => {
-    setState({ status: 'loading' });
-    try {
-      const activity = await getApiClient().getActivity(activityId);
-      setState({ status: 'ready', activity });
-    } catch (error) {
-      setState({ status: 'error', message: getActivitiesErrorMessage(error) });
-    }
-  }, [activityId, getActivitiesErrorMessage]);
-
   useEffect(() => {
-    void loadActivity();
-  }, [loadActivity]);
+    let cancelled = false;
+    void (async () => {
+      try {
+        const client = getApiClient();
+        const activity = await client.getActivity(activityId);
+        const [imagesResult, providerResult] = await Promise.all([
+          client.listActivityImages({ activityId, page: 1, limit: 100 }).catch(() => ({ data: [] })),
+          client.getActivityProvider(activity.providerId).catch(() => null),
+        ]);
+        const providerName = providerResult?.name ?? null;
+        if (!cancelled) {
+          setState({
+            status: 'ready',
+            activity,
+            providerName,
+            coverImageUrl: pickMainActivityImageUrl(imagesResult.data),
+          });
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setState({ status: 'error', message: getActivitiesErrorMessage(error) });
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [activityId, getActivitiesErrorMessage]);
 
   const handleTabChange = useCallback(
     (tab: string) => {
@@ -90,15 +105,31 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
     [pathname, router, searchParams],
   );
 
+  const reloadCoverImage = useCallback(async () => {
+    try {
+      const result = await getApiClient().listActivityImages({ activityId, page: 1, limit: 100 });
+      setState((current) =>
+        current.status === 'ready'
+          ? { ...current, coverImageUrl: pickMainActivityImageUrl(result.data) }
+          : current,
+      );
+    } catch {
+      /* conserve la vignette actuelle */
+    }
+  }, [activityId]);
+
   if (state.status === 'loading') {
     return (
       <div className="space-y-6">
         <Skeleton className="h-5 w-40" />
-        <div className="space-y-2">
-          <Skeleton className="h-6 w-64" />
-          <Skeleton className="h-6 w-48" />
+        <div className="flex items-center gap-4 rounded-xl border border-atg-border bg-atg-elevated p-4">
+          <Skeleton className="h-24 w-32 rounded-lg sm:h-28 sm:w-36" />
+          <div className="space-y-2">
+            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-4 w-32" />
+          </div>
         </div>
-        <Skeleton className="h-10 w-full max-w-xs" />
+        <Skeleton className="h-10 w-full max-w-md" />
         <Skeleton className="h-64 w-full max-w-2xl" />
       </div>
     );
@@ -121,17 +152,35 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
     );
   }
 
-  const { activity } = state;
+  const { activity, providerName, coverImageUrl } = state;
 
   return (
     <div className="space-y-6">
-      <AdminPageBackLink href="/produits/activites" label={tDetail('backLink')} />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <AdminPageBackLink href="/produits/activites" label={tDetail('backLink')} />
+        <Button
+          href={`/produits/activites/${activityId}/voir`}
+          variant="outline"
+          className="w-full sm:w-auto"
+        >
+          {tDetail('viewButton')}
+        </Button>
+      </div>
 
-      <div className="flex flex-col gap-4 rounded-xl border border-atg-border bg-atg-elevated p-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="space-y-2">
-          <h2 className="text-lg font-semibold text-atg-fg">{activity.title}</h2>
+      <div className="flex flex-col gap-4 rounded-xl border border-atg-border bg-atg-elevated p-4 sm:flex-row sm:items-start">
+        <ActivityThumbnail
+          activityId={activityId}
+          label={activity.title}
+          size="lg"
+          imageUrl={coverImageUrl}
+        />
+        <div className="min-w-0 flex-1 space-y-2">
+          <h2 className="text-xl font-semibold text-atg-fg">{activity.title}</h2>
           <div className="flex flex-wrap items-center gap-2">
-            <DataTableBadge variant="muted">
+            {providerName ? (
+              <DataTableBadge variant="muted">{providerName}</DataTableBadge>
+            ) : null}
+            <DataTableBadge variant="default">
               {formatMoney(activity.priceCents, activity.currency)}
             </DataTableBadge>
             <ActivityMetaBadges
@@ -139,93 +188,71 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
               difficultyLevel={activity.difficultyLevel}
             />
           </div>
+          <p className="text-sm text-atg-muted">{tDetail('subtitle')}</p>
         </div>
-        <Button href={`/produits/activites/${activityId}/voir`} variant="outline">
-          {tDetail('viewButton')}
-        </Button>
       </div>
 
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
-        <div className="rounded-xl border border-atg-border bg-atg-elevated p-4">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <p className="text-sm font-semibold text-atg-fg">{tDetail('tabsAria')}</p>
-            <p className="text-xs font-medium text-atg-muted">
-              {activeStepIndex + 1}/{stepItems.length} · {progressPercent}%
-            </p>
-          </div>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-atg-border/70">
-            <div
-              className="h-full rounded-full bg-primary transition-all duration-300"
-              style={{ width: `${progressPercent}%` }}
-              aria-hidden
-            />
-          </div>
-          <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
-            {stepItems.map((step, index) => {
-              const isActive = step.value === activeTab;
-              const isDone = index < activeStepIndex;
-              return (
-                <button
-                  key={step.value}
-                  type="button"
-                  onClick={() => handleTabChange(step.value)}
-                  className={`flex items-center gap-2 rounded-lg border px-2.5 py-2 text-left text-xs transition ${
-                    isActive
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : isDone
-                        ? 'border-emerald-500/40 bg-emerald-500/5 text-emerald-700 dark:text-emerald-300'
-                        : 'border-atg-border text-atg-muted hover:border-primary/40 hover:text-atg-fg'
-                  }`}
-                >
-                  <span
-                    className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${
-                      isActive ? 'bg-primary/20' : isDone ? 'bg-emerald-500/20' : 'bg-atg-surface/70'
-                    }`}
-                  >
-                    {index + 1}
-                  </span>
-                  <span className="truncate">{step.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <TabsList
-          aria-label={tDetail('tabsAria')}
-          className="rounded-xl border border-atg-border bg-atg-elevated px-1.5 py-1"
-        >
-          <TabsTrigger value="activite" className="rounded-lg">
-            {tDetail('tabs.activity')}
-          </TabsTrigger>
-          <TabsTrigger value="itineraire" className="rounded-lg">
-            {tDetail('tabs.itinerary')}
-          </TabsTrigger>
-          <TabsTrigger value="creneaux" className="rounded-lg">
-            {tDetail('tabs.schedules')}
-          </TabsTrigger>
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
+        <TabsList aria-label={tDetail('tabsAria')}>
+          <TabsTrigger value="activite">{tDetail('tabs.activity')}</TabsTrigger>
+          <TabsTrigger value="photos">{tDetail('tabs.photos')}</TabsTrigger>
+          <TabsTrigger value="pieces">{tDetail('tabs.attachments')}</TabsTrigger>
+          <TabsTrigger value="itineraire">{tDetail('tabs.itinerary')}</TabsTrigger>
+          <TabsTrigger value="creneaux">{tDetail('tabs.schedules')}</TabsTrigger>
         </TabsList>
 
-        <TabsContent
-          value="activite"
-          className="rounded-xl border border-atg-border bg-atg-elevated/60 p-4 sm:p-6"
-        >
-          <div className="space-y-6">
-            <ActivityForm
-              mode="edit"
-              activityId={activityId}
-              initialActivity={activity}
-              onUpdated={(updated) => setState({ status: 'ready', activity: updated })}
-            />
-            <ActivityImagesSection activityId={activityId} embedded />
-            <ActivityDescriptionAssetsSection activityId={activityId} />
-          </div>
+        <TabsContent value="activite">
+          <ActivityForm
+            mode="edit"
+            activityId={activityId}
+            initialActivity={activity}
+            onUpdated={(updated) => {
+              void (async () => {
+                let nextProviderName = providerName;
+                if (updated.providerId !== activity.providerId) {
+                  try {
+                    const provider = await getApiClient().getActivityProvider(
+                      updated.providerId,
+                    );
+                    nextProviderName = provider.name;
+                  } catch {
+                    nextProviderName = null;
+                  }
+                }
+                setState((current) => {
+                  if (current.status !== 'ready') {
+                    return {
+                      status: 'ready',
+                      activity: updated,
+                      providerName: nextProviderName,
+                      coverImageUrl: null,
+                    };
+                  }
+                  return {
+                    status: 'ready',
+                    activity: updated,
+                    providerName: nextProviderName,
+                    coverImageUrl: current.coverImageUrl,
+                  };
+                });
+              })();
+            }}
+          />
         </TabsContent>
 
-        <TabsContent
-          value="itineraire"
-          className="rounded-xl border border-atg-border bg-atg-elevated/60 p-4 sm:p-6"
-        >
+        <TabsContent value="photos">
+          <ActivityImagesSection
+            activityId={activityId}
+            embedded
+            onImagesChanged={() => void reloadCoverImage()}
+          />
+        </TabsContent>
+
+        <TabsContent value="pieces">
+          <ActivityDescriptionAssetsSection activityId={activityId} embedded />
+        </TabsContent>
+
+        <TabsContent value="itineraire">
           <ActivityItineraryStopsSection
             activityId={activityId}
             activityDurationMinutes={activity.durationMinutes}
@@ -233,10 +260,7 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
           />
         </TabsContent>
 
-        <TabsContent
-          value="creneaux"
-          className="rounded-xl border border-atg-border bg-atg-elevated/60 p-4 sm:p-6"
-        >
+        <TabsContent value="creneaux">
           <ActivitySchedulesSection activityId={activityId} embedded />
         </TabsContent>
       </Tabs>

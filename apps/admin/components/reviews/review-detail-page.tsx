@@ -7,6 +7,7 @@ import {
   Button,
   Card,
   DataTableBadge,
+  Skeleton,
   StarRatingDisplay,
   useToast,
 } from '@africatourismgate/ui';
@@ -15,14 +16,30 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
-import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
+import { AdminIntroPage } from '../pages/admin-intro-page';
 import { getApiClient } from '../../lib/auth/api';
+import { usePermissions } from '../../lib/auth/use-permissions';
 import { useFormatDateTime, useReviewStatusLabels } from '../../lib/i18n/use-module-labels';
 import {
   formatReviewEntity,
   reviewStatusVariants,
 } from '../../lib/review-display';
+
+const AVIS_LIST_HREF = '/contenu/avis';
+
+function reviewEntityTypeKey(entityType: string): string {
+  return `entityTypes.${entityType}`;
+}
+
+function formatReviewAuthorLabel(
+  review: Pick<AdminReviewDetail, 'authorFirstName' | 'authorEmail' | 'id'>,
+): string {
+  const name = review.authorFirstName?.trim();
+  if (name) return name;
+  if (review.authorEmail) return review.authorEmail;
+  return review.id.slice(0, 8);
+}
 
 type ReviewDetailPageProps = {
   reviewId: string;
@@ -37,9 +54,10 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
   const tLoading = useTranslations('common.loading');
   const formatDateTime = useFormatDateTime('long');
   const statusLabels = useReviewStatusLabels();
+  const { hasPermission, isSuperAdmin } = usePermissions();
+  const canWrite = isSuperAdmin || hasPermission('reviews.write');
   const router = useRouter();
   const { toast } = useToast();
-  const [canWrite, setCanWrite] = useState(false);
   const [acting, setActing] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -54,7 +72,7 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
     title: tDetail('title'),
     entityLabel:
       state.status === 'ready'
-        ? `${state.review.rating}/5 — ${state.review.authorFirstName ?? state.review.authorEmail ?? state.review.id.slice(0, 8)}`
+        ? `${state.review.rating}/5 — ${formatReviewAuthorLabel(state.review)}`
         : undefined,
   });
 
@@ -71,25 +89,6 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
   useEffect(() => {
     void load();
   }, [load]);
-
-  useEffect(() => {
-    let cancelled = false;
-    void getApiClient()
-      .getAuthMe()
-      .then((me) => {
-        if (!cancelled) {
-          setCanWrite(
-            me.isSuperAdmin || me.permissions.includes('reviews.write'),
-          );
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setCanWrite(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const runModerationAction = useCallback(
     async (action: 'approve' | 'hide') => {
@@ -135,7 +134,7 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
         title: t('toast.deleted.title'),
         message: t('toast.deleted.message'),
       });
-      router.push('/contenu/avis');
+      router.push(AVIS_LIST_HREF);
       return true;
     } catch (error) {
       setActionError(getReviewsErrorMessage(error));
@@ -147,128 +146,171 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
   const emptyDash = tCommon('empty.dash');
 
   if (state.status === 'loading') {
-    return <p className="text-sm text-atg-muted">{tLoading('page')}</p>;
+    return (
+      <AdminIntroPage
+        routePath="contenu/avis/id"
+        backHref={AVIS_LIST_HREF}
+        backLabelKey="backLabel"
+      >
+        <Skeleton className="h-96 w-full max-w-4xl" />
+        <p className="sr-only">{tCommon('loading')}</p>
+      </AdminIntroPage>
+    );
   }
 
   if (state.status === 'error') {
     return (
-      <div className="space-y-4">
-        <AdminPageBackLink href="/contenu/avis" label={tDetail('backLink')} />
+      <AdminIntroPage
+        routePath="contenu/avis/id"
+        backHref={AVIS_LIST_HREF}
+        backLabelKey="backLabel"
+      >
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
           {state.message}
         </p>
-      </div>
+      </AdminIntroPage>
     );
   }
 
   const { review } = state;
   const canApprove = review.status !== 'approved';
   const canHide = review.status !== 'hidden';
-  const showFooter = canWrite;
+  const showActions = canWrite;
+  const entityTypeLabel = tDetail.has(reviewEntityTypeKey(review.entityType))
+    ? tDetail(reviewEntityTypeKey(review.entityType))
+    : review.entityType;
+  const formattedEntity = formatReviewEntity(review, entityTypeLabel);
+  const bookingHref = `/reservations/${
+    review.entityType === 'tour_guide' ? review.bookingId : review.entityId
+  }`;
 
   return (
-    <div className={showFooter ? 'pb-24' : undefined}>
-      <div className="space-y-6">
-        <AdminPageBackLink href="/contenu/avis" label={tDetail('backLink')} />
-
+    <AdminIntroPage
+      routePath="contenu/avis/id"
+      backHref={AVIS_LIST_HREF}
+      backLabelKey="backLabel"
+    >
+      <div className={showActions ? 'min-w-0 space-y-6 pb-24' : 'min-w-0 space-y-6'}>
         {actionError ? (
-          <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+          <p
+            className="rounded-lg border border-red-500 bg-red-500/5 px-3 py-2 text-sm text-red-600 dark:border-red-500/50 dark:bg-red-500/10 dark:text-red-400"
+            role="alert"
+          >
             {actionError}
           </p>
         ) : null}
 
         <div className="grid gap-6 lg:grid-cols-[minmax(280px,1fr)_minmax(0,1.6fr)] lg:items-start">
-          <div className="space-y-6 lg:sticky lg:top-4">
-            <Card variant="dashboard" padding="md">
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-                <h2 className="text-lg font-semibold text-atg-fg">{tDetail('sections.context')}</h2>
-                <DataTableBadge variant={reviewStatusVariants[review.status]}>
-                  {statusLabels[review.status]}
-                </DataTableBadge>
+          <Card variant="dashboard" padding="md" className="lg:sticky lg:top-4">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-lg font-semibold text-atg-fg">{tDetail('sections.context')}</h2>
+              <DataTableBadge variant={reviewStatusVariants[review.status]}>
+                {statusLabels[review.status]}
+              </DataTableBadge>
+            </div>
+
+            <StarRatingDisplay
+              value={review.rating}
+              size="md"
+              showValue
+              className="mb-5"
+            />
+
+            <dl className="divide-y divide-atg-border text-sm">
+              <div className="grid gap-1 py-3 first:pt-0">
+                <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                  {tDetail('fields.author')}
+                </dt>
+                <dd className="font-medium text-atg-fg">
+                  {review.authorFirstName?.trim() || emptyDash}
+                  {review.authorEmail ? (
+                    <span className="mt-0.5 block font-normal text-atg-muted">
+                      {review.authorEmail}
+                    </span>
+                  ) : null}
+                </dd>
               </div>
-
-              <StarRatingDisplay
-                value={review.rating}
-                size="md"
-                showValue
-                className="mb-4"
-              />
-
-              <dl className="space-y-3 text-sm">
-                <div>
-                  <dt className="text-atg-muted">{tDetail('fields.author')}</dt>
-                  <dd className="font-medium text-atg-fg">
-                    {review.authorFirstName?.trim() || emptyDash}
-                    {review.authorEmail ? (
-                      <span className="mt-0.5 block font-normal text-atg-muted">
-                        {review.authorEmail}
-                      </span>
-                    ) : null}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-atg-muted">{tDetail('fields.property')}</dt>
-                  <dd className="text-atg-fg">
-                    {review.propertyName ??
+              <div className="grid gap-1 py-3">
+                <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                  {tDetail('fields.property')}
+                </dt>
+                <dd className="text-atg-fg">
+                  {review.propertyId && review.propertyName ? (
+                    <Link
+                      href={`/hebergements/${review.propertyId}`}
+                      className="font-medium text-primary hover:underline"
+                    >
+                      {review.propertyName}
+                    </Link>
+                  ) : (
+                    (review.propertyName ??
                       (review.entityType === 'tour_guide' && review.guideName
                         ? review.guideName
-                        : emptyDash)}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-atg-muted">{tDetail('fields.entity')}</dt>
-                  <dd className="font-mono text-xs text-atg-fg">
-                    {formatReviewEntity(review)}
-                  </dd>
-                </div>
-                {review.entityType === 'booking' || review.entityType === 'tour_guide' ? (
-                  <div>
-                    <dt className="text-atg-muted">{tDetail('fields.booking')}</dt>
-                    <dd>
+                        : emptyDash))
+                  )}
+                </dd>
+              </div>
+              <div className="grid gap-1 py-3">
+                <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                  {tDetail('fields.entity')}
+                </dt>
+                <dd className="font-mono text-xs text-atg-fg">{formattedEntity}</dd>
+              </div>
+              {review.entityType === 'booking' || review.entityType === 'tour_guide' ? (
+                <div className="grid gap-1 py-3">
+                  <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                    {tDetail('fields.booking')}
+                  </dt>
+                  <dd>
+                    {review.entityType === 'tour_guide' && !review.bookingId ? (
+                      <span className="text-atg-muted">{emptyDash}</span>
+                    ) : (
                       <Link
-                        href={`/dashboard/bookings/${review.entityType === 'tour_guide' ? review.bookingId : review.entityId}`}
+                        href={bookingHref}
                         className="font-medium text-primary hover:underline"
                       >
                         {tDetail('viewBooking')}
                       </Link>
-                    </dd>
-                  </div>
-                ) : null}
-                {review.entityType === 'tour_guide' && review.guideName ? (
-                  <div>
-                    <dt className="text-atg-muted">{tDetail('fields.guide')}</dt>
-                    <dd>
-                      {review.guideId ? (
-                        <Link
-                          href={`/guides/${review.guideId}`}
-                          className="font-medium text-primary hover:underline"
-                        >
-                          {review.guideName}
-                        </Link>
-                      ) : (
-                        <span className="text-atg-fg">{review.guideName}</span>
-                      )}
-                    </dd>
-                  </div>
-                ) : null}
-                <div>
-                  <dt className="text-atg-muted">{tDetail('fields.publishedAt')}</dt>
-                  <dd className="tabular-nums text-atg-fg">
-                    {formatDateTime(review.createdAt)}
+                    )}
                   </dd>
                 </div>
-              </dl>
-            </Card>
-          </div>
+              ) : null}
+              {review.entityType === 'tour_guide' && review.guideName ? (
+                <div className="grid gap-1 py-3">
+                  <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                    {tDetail('fields.guide')}
+                  </dt>
+                  <dd>
+                    {review.guideId ? (
+                      <Link
+                        href={`/guides/${review.guideId}`}
+                        className="font-medium text-primary hover:underline"
+                      >
+                        {review.guideName}
+                      </Link>
+                    ) : (
+                      <span className="text-atg-fg">{review.guideName}</span>
+                    )}
+                  </dd>
+                </div>
+              ) : null}
+              <div className="grid gap-1 py-3 last:pb-0">
+                <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                  {tDetail('fields.publishedAt')}
+                </dt>
+                <dd className="tabular-nums text-atg-fg">{formatDateTime(review.createdAt)}</dd>
+              </div>
+            </dl>
+          </Card>
 
-          <Card variant="dashboard" padding="md">
+          <Card variant="dashboard" padding="md" className="min-h-[12rem]">
             <h2 className="mb-4 text-lg font-semibold text-atg-fg">{tDetail('sections.comment')}</h2>
             {review.title ? (
               <h3 className="text-base font-semibold text-atg-fg">{review.title}</h3>
             ) : null}
             {review.body ? (
               <p
-                className={`whitespace-pre-line text-sm leading-relaxed text-atg-muted ${review.title ? 'mt-3' : ''}`}
+                className={`whitespace-pre-line text-sm leading-relaxed text-atg-fg/90 ${review.title ? 'mt-3' : ''}`}
               >
                 {review.body}
               </p>
@@ -277,67 +319,71 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
             )}
           </Card>
         </div>
-      </div>
 
-      {showFooter ? (
-        <div
-          className="fixed inset-x-0 bottom-0 z-20 border-t border-atg-border bg-atg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-atg-surface/80"
-          role="region"
-          aria-label={tDetail('moderationActionsAria')}
-        >
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-end gap-2 px-4 py-3 sm:px-6 lg:px-8">
-            {canApprove ? (
+        {showActions ? (
+          <div
+            className="sticky bottom-0 z-20 border-t border-atg-border bg-atg-bg/95 px-4 py-3 backdrop-blur"
+            role="region"
+            aria-label={tDetail('moderationActionsAria')}
+          >
+            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
+              {canApprove ? (
+                <Button
+                  type="button"
+                  disabled={acting}
+                  loading={acting}
+                  loadingText={tLoading('default')}
+                  className="w-full sm:w-auto"
+                  onClick={() => void runModerationAction('approve')}
+                >
+                  {t('actions.approve')}
+                </Button>
+              ) : null}
+              {canHide ? (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  disabled={acting}
+                  loading={acting}
+                  loadingText={tLoading('default')}
+                  className="w-full sm:w-auto"
+                  onClick={() => void runModerationAction('hide')}
+                >
+                  {t('actions.hide')}
+                </Button>
+              ) : null}
               <Button
                 type="button"
+                variant="ghost"
                 disabled={acting}
-                loading={acting}
-                loadingText="…"
-                onClick={() => void runModerationAction('approve')}
+                onClick={() => setDeleteDialogOpen(true)}
+                className="w-full sm:w-auto !text-red-600 hover:!bg-red-50 dark:!text-red-400"
               >
-                {t('actions.approve')}
+                {t('actions.delete')}
               </Button>
-            ) : null}
-            {canHide ? (
-              <Button
-                type="button"
-                variant="secondary"
-                disabled={acting}
-                onClick={() => void runModerationAction('hide')}
-              >
-                {t('actions.hide')}
-              </Button>
-            ) : null}
-            <Button
-              type="button"
-              variant="ghost"
-              disabled={acting}
-              onClick={() => setDeleteDialogOpen(true)}
-              className="!text-red-600 hover:!bg-red-50 dark:!text-red-400"
-            >
-              {tActions('delete')}
-            </Button>
+            </div>
           </div>
-        </div>
-      ) : null}
+        ) : null}
 
-      <AlertDialog
-        open={deleteDialogOpen}
-        onOpenChange={(open) => {
-          if (!acting) setDeleteDialogOpen(open);
-        }}
-        title={t('deleteDialog.title')}
-        description={t('deleteDialog.description')}
-        confirmLabel={tActions('delete')}
-        cancelLabel={tActions('cancel')}
-        variant="danger"
-        loading={acting}
-        onConfirm={() => {
-          void runDelete().then((ok) => {
-            if (ok) setDeleteDialogOpen(false);
-          });
-        }}
-        onCancel={() => setDeleteDialogOpen(false)}
-      />
-    </div>
+        <AlertDialog
+          open={deleteDialogOpen}
+          onOpenChange={(open) => {
+            if (!acting) setDeleteDialogOpen(open);
+          }}
+          title={t('deleteDialog.title')}
+          description={t('deleteDialog.description')}
+          confirmLabel={t('actions.delete')}
+          cancelLabel={tActions('cancel')}
+          variant="danger"
+          loading={acting}
+          onConfirm={() => {
+            void runDelete().then((ok) => {
+              if (ok) setDeleteDialogOpen(false);
+            });
+          }}
+          onCancel={() => setDeleteDialogOpen(false)}
+        />
+      </div>
+    </AdminIntroPage>
   );
 }

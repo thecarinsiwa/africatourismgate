@@ -31,8 +31,20 @@
     "fields": {
       "title": "Titre",
       "subtitle": "Sous-titre",
+      "heroImage": "Image bannière",
       "heroImageUrl": "URL de l'image bannière",
       "heroImageAlt": "Texte alternatif de la bannière",
+      "heroPreviewAlt": "Aperçu de la bannière",
+      "removeHero": "Retirer l'image",
+      "links": "Liens partenaires",
+      "linksHint": "UNESCO, partenaires, ressources… jusqu'à 10 liens.",
+      "linksCount": "{count} / {max}",
+      "linksEmpty": "Aucun lien pour le moment.",
+      "linkLabel": "Libellé",
+      "linkLabelPlaceholder": "Ex. UNESCO, WWF…",
+      "linkUrl": "URL (optionnel)",
+      "addLink": "Ajouter un lien",
+      "removeLink": "Retirer",
       "unescoLabel": "Libellé UNESCO (optionnel)",
       "unescoUrl": "Lien UNESCO (optionnel)",
       "donateLabel": "Libellé du bouton Don (optionnel)",
@@ -44,6 +56,9 @@
       "heroImageUrlRequired": "L'URL de l'image bannière est obligatoire.",
       "heroImageUrlInvalid": "L'URL de l'image bannière doit être valide.",
       "heroImageAltRequired": "Le texte alternatif est obligatoire.",
+      "linkLabelRequired": "Chaque lien doit avoir un libellé.",
+      "linkUrlInvalid": "L'URL du lien doit être valide.",
+      "maxLinks": "Maximum 10 liens.",
       "unescoUrlInvalid": "L'URL UNESCO doit être valide.",
       "donateUrlInvalid": "L'URL de don doit être valide."
     },
@@ -51,8 +66,17 @@
     "saveButton": "Enregistrer"
   },
   "pages": {
+    "stats": {
+      "total": { "label": "Pages", "subtitle": "Pages institutionnelles GAP" },
+      "published": { "label": "Publiées", "subtitle": "Visibles sur le site" },
+      "draft": { "label": "Brouillons", "subtitle": "Non publiées" },
+      "french": { "label": "En français", "subtitle": "Contenu locale FR" }
+    },
     "list": {
-      "deleteConfirm": "Supprimer la page « {title} » ?",
+      "deleteTitle": "Supprimer la page",
+      "deleteConfirm": "La page « {title} » sera supprimée définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
       "columns": {
         "section": "Section",
         "title": "Titre",
@@ -70,6 +94,11 @@
     "edit": {
       "pageTitle": "Modifier la page"
     },
+    "detail": {
+      "title": "Détail de la page",
+      "close": "Fermer",
+      "edit": "Modifier"
+    },
     "form": {
       "info": {
         "sectionLocaleUnique": "Chaque combinaison section + langue est unique.",
@@ -77,7 +106,8 @@
       },
       "validation": {
         "contentRequired": "Le contenu est obligatoire.",
-        "coverUrlInvalid": "L'URL de l'image de couverture doit être valide."
+        "coverUrlInvalid": "L'URL de l'image de couverture doit être valide.",
+        "maxImages": "Maximum 10 images par page."
       },
       "fields": {
         "section": "Section",
@@ -86,8 +116,15 @@
         "excerptPlaceholder": "Résumé court affiché en en-tête…",
         "content": "Contenu",
         "contentPlaceholder": "Rédigez le corps de la page…",
+        "images": "Images",
+        "imagesCount": "{count} / {max}",
+        "imagesEmpty": "Aucune image pour le moment.",
         "coverImageUrl": "Image de couverture",
         "coverPreviewAlt": "Aperçu de la couverture",
+        "coverBadge": "Couverture",
+        "removeImage": "Retirer",
+        "addImageUrl": "Ajouter l'URL",
+        "removeCover": "Retirer l'image",
         "locale": "Langue",
         "publishedAtOptional": "Date de publication (optionnel)"
       },
@@ -101,8 +138,17 @@
     }
   },
   "activities": {
+    "stats": {
+      "total": { "label": "Activités", "subtitle": "Initiatives du programme" },
+      "published": { "label": "Publiées", "subtitle": "Visibles sur le site" },
+      "draft": { "label": "Brouillons", "subtitle": "Non publiées" },
+      "french": { "label": "En français", "subtitle": "Contenu locale FR" }
+    },
     "list": {
-      "deleteConfirm": "Supprimer l'activité « {title} » ?",
+      "deleteTitle": "Supprimer l'activité",
+      "deleteConfirm": "L'activité « {title} » sera supprimée définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
       "columns": {
         "title": "Titre",
         "icon": "Icône",
@@ -118,18 +164,32 @@
     "edit": {
       "pageTitle": "Modifier l'activité"
     },
+    "detail": {
+      "title": "Détail de l'activité",
+      "close": "Fermer",
+      "edit": "Modifier"
+    },
     "form": {
       "validation": {
         "titleRequired": "Le titre est obligatoire.",
         "descriptionRequired": "La description est obligatoire.",
-        "imageUrlInvalid": "L'URL de l'image doit être valide."
+        "imageUrlInvalid": "L'URL de l'image doit être valide.",
+        "maxImages": "Maximum 10 images par activité."
       },
       "fields": {
         "title": "Titre",
         "description": "Description",
+        "descriptionPlaceholder": "Décrivez l'activité…",
         "iconKey": "Icône",
+        "images": "Images",
+        "imagesCount": "{count} / {max}",
+        "imagesEmpty": "Aucune image pour le moment.",
+        "image": "Image",
         "imageUrl": "Image (URL)",
         "imagePreviewAlt": "Aperçu de l'image",
+        "coverBadge": "Couverture",
+        "removeImage": "Retirer",
+        "addImageUrl": "Ajouter l'URL",
         "sortOrder": "Ordre d'affichage",
         "locale": "Langue"
       },
@@ -140,8 +200,17 @@
     }
   },
   "impact": {
+    "stats": {
+      "total": { "label": "Statistiques", "subtitle": "Indicateurs d'impact" },
+      "published": { "label": "Publiées", "subtitle": "Visibles sur le site" },
+      "draft": { "label": "Brouillons", "subtitle": "Non publiées" },
+      "french": { "label": "En français", "subtitle": "Contenu locale FR" }
+    },
     "list": {
-      "deleteConfirm": "Supprimer la statistique « {label} » ?",
+      "deleteTitle": "Supprimer la statistique",
+      "deleteConfirm": "La statistique « {label} » sera supprimée définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
       "columns": {
         "label": "Libellé",
         "value": "Valeur",
@@ -161,26 +230,45 @@
     "form": {
       "validation": {
         "labelRequired": "Le libellé est obligatoire.",
-        "valueRequired": "La valeur affichée est obligatoire."
+        "valueRequired": "La valeur affichée est obligatoire.",
+        "imageUrlInvalid": "L'URL de l'image doit être valide.",
+        "localesRequired": "Sélectionnez au moins une langue.",
+        "partialCreateFailed": "Création partielle : échec pour {locales}. Les autres langues ont été créées."
       },
       "fields": {
         "label": "Libellé",
         "valueDisplay": "Valeur affichée",
         "valueDisplayPlaceholder": "ex. 12 000+",
         "description": "Description (optionnel)",
+        "descriptionPlaceholder": "Ajoutez une description formatée…",
+        "image": "Photo (optionnel)",
+        "imagePreviewAlt": "Aperçu de la photo",
+        "removeImage": "Retirer la photo",
         "colorKey": "Couleur",
         "sortOrder": "Ordre d'affichage",
-        "locale": "Langue"
+        "locale": "Langue",
+        "locales": "Langues",
+        "localesHint": "Une statistique sera créée pour chaque langue cochée (même contenu)."
       },
       "saving": "Enregistrement…",
       "createButton": "Créer la statistique",
+      "createBulkButton": "Créer {count} statistiques",
       "saveButton": "Enregistrer",
       "cancelButton": "Annuler"
     }
   },
   "media": {
+    "stats": {
+      "total": { "label": "Médias", "subtitle": "Photos et vidéos" },
+      "published": { "label": "Publiés", "subtitle": "Visibles sur le site" },
+      "draft": { "label": "Brouillons", "subtitle": "Non publiés" },
+      "french": { "label": "En français", "subtitle": "Contenu locale FR" }
+    },
     "list": {
-      "deleteConfirm": "Supprimer le média « {title} » ?",
+      "deleteTitle": "Supprimer le média",
+      "deleteConfirm": "Le média « {title} » sera supprimé définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
       "columns": {
         "title": "Titre",
         "mediaType": "Type",
@@ -197,23 +285,38 @@
     "edit": {
       "pageTitle": "Modifier le média"
     },
+    "detail": {
+      "title": "Détail du média",
+      "close": "Fermer",
+      "edit": "Modifier",
+      "openUrl": "Ouvrir le lien"
+    },
     "form": {
       "validation": {
         "titleRequired": "Le titre est obligatoire.",
         "urlRequired": "Indiquez au moins une URL de fichier ou externe.",
-        "urlInvalid": "L'URL doit être valide."
+        "urlInvalid": "L'URL doit être valide.",
+        "imageFormat": "Format image invalide (JPEG, PNG ou WebP).",
+        "videoFormat": "Format vidéo invalide (MP4 ou WebM).",
+        "fileTooLarge": "Le fichier ne doit pas dépasser 50 Mo."
       },
       "fields": {
         "mediaType": "Type de média",
         "title": "Titre",
         "description": "Description",
+        "file": "Fichier",
         "fileUrl": "URL du fichier",
         "externalUrl": "URL externe (vidéo, etc.)",
+        "thumbnail": "Miniature",
         "thumbnailUrl": "URL de la miniature",
         "thumbnailPreviewAlt": "Aperçu de la miniature",
         "publishedAtOptional": "Date de publication (optionnel)",
         "sortOrder": "Ordre d'affichage",
         "locale": "Langue"
+      },
+      "hints": {
+        "imageFormat": "JPEG, PNG ou WebP, max 50 Mo",
+        "videoFormat": "MP4 ou WebM, max 50 Mo"
       },
       "saving": "Enregistrement…",
       "createButton": "Créer le média",

@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -55,6 +56,8 @@ export function ShipImagesSection({ shipId, embedded }: ShipImagesSectionProps) 
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<ShipImage | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -175,21 +178,25 @@ export function ShipImagesSection({ shipId, embedded }: ShipImagesSectionProps) 
     }
   }
 
-  const handleDelete = useCallback(
-    async (img: ShipImage) => {
-      if (!window.confirm(tGallery('deleteConfirm'))) return;
-      setDeletingId(img.id);
-      try {
-        await getApiClient().deleteShipImage(img.id);
-        await load();
-      } catch (error) {
-        setFormError(getCroisieresErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [getCroisieresErrorMessage, load, tGallery],
-  );
+  const handleDeleteRequest = useCallback((img: ShipImage) => {
+    setConfirmTarget(img);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const img = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(img.id);
+    try {
+      await getApiClient().deleteShipImage(img.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getCroisieresErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getCroisieresErrorMessage, load]);
 
   const columns = useMemo<ColumnDef<ShipImage, unknown>[]>(
     () => [
@@ -245,7 +252,7 @@ export function ShipImagesSection({ shipId, embedded }: ShipImagesSectionProps) 
             <DataTableActionButton action="edit" onClick={() => openEdit(row.original)} />
             <DataTableActionButton
               action="delete"
-              onClick={() => void handleDelete(row.original)}
+              onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
             />
@@ -253,12 +260,25 @@ export function ShipImagesSection({ shipId, embedded }: ShipImagesSectionProps) 
         ),
       },
     ],
-    [deletingId, emptyDash, handleDelete, tColumns],
+    [deletingId, emptyDash, handleDeleteRequest, tColumns],
   );
 
   const images = state.status === 'ready' ? state.images : [];
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={tGallery('deleteTitle')}
+        description={tGallery('deleteConfirm')}
+        confirmLabel={tGallery('deleteConfirmButton')}
+        cancelLabel={tGallery('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <section
       className={
         embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
@@ -363,5 +383,6 @@ export function ShipImagesSection({ shipId, embedded }: ShipImagesSectionProps) 
         </Card>
       )}
     </section>
+    </>
   );
 }

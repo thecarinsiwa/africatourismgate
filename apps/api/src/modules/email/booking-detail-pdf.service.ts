@@ -9,6 +9,7 @@ import { resolveLogoForPdf } from './email-attachments';
 import { PLATFORM_ORG_ID } from '../../common/org-scope/org-scope.service';
 import { DEFAULT_EMAIL_BRANDING } from './email-branding.constants';
 import { bookingDetailPdfFilename, resolvePdfLocale } from './booking-detail-pdf.labels';
+import { BookingDetailPdfEnrichmentService } from './booking-detail-pdf-enrichment.service';
 import { renderBookingDetailPdf } from './booking-detail-pdf.renderer';
 import { webBase } from './email.templates';
 
@@ -59,6 +60,7 @@ function deriveVisitDates(
 export class BookingDetailPdfService {
   constructor(
     private readonly brandingService: EmailBrandingService,
+    private readonly pdfEnrichment: BookingDetailPdfEnrichmentService,
     @InjectRepository(Organizations)
     private readonly organizationsRepository: Repository<Organizations>,
   ) {}
@@ -74,6 +76,7 @@ export class BookingDetailPdfService {
     const visitDates = deriveVisitDates(detail.items);
     const baseUrl = webBase(webUrl);
     const bookingId = detail.booking.id;
+    const enriched = await this.pdfEnrichment.enrich(bookingId, detail, manifest, locale);
 
     const buffer = await renderBookingDetailPdf({
       bookingId,
@@ -92,12 +95,23 @@ export class BookingDetailPdfService {
         unitPriceCents: item.unitPriceCents,
         startDate: toDateOnlyString(item.startDate),
         endDate: toDateOnlyString(item.endDate),
+        schedule: enriched.itemSchedules.get(item.id) ?? null,
       })),
       travelers: manifest.map((entry) => ({
         fullName: entry.fullName,
         age: entry.age,
+        sex: entry.sex,
+        nationality: entry.nationality,
+        idNumber: entry.idNumber,
         priceCents: entry.priceCents,
+        conditions: entry.conditions,
+        comment: entry.comment,
+        other: entry.other,
       })),
+      itinerary: enriched.itinerary,
+      guides: enriched.guides,
+      payments: enriched.payments,
+      bookingCreatedAt: enriched.bookingCreatedAt,
       visitStartDate: visitDates.startDate,
       visitEndDate: visitDates.endDate,
       chatUrl: `${baseUrl}/account/reservations/${bookingId}/chat`,

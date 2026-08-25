@@ -2,8 +2,13 @@
   "list": {
     "newPackage": "Nouveau forfait",
     "emptyDefault": "Aucun forfait pour le moment.",
+    "ariaLabel": "Liste des forfaits",
     "searchPlaceholder": "Rechercher un forfait…",
-    "deleteConfirm": "Supprimer le forfait « {name} » ?"
+    "activeFilter": "Statut",
+    "deleteTitle": "Supprimer le forfait",
+    "deleteConfirm": "Le forfait « {name} » sera supprimé définitivement.",
+    "deleteConfirmButton": "Supprimer",
+    "cancel": "Annuler"
   },
   "columns": {
     "cover": "Couverture",
@@ -34,7 +39,10 @@
       "empty": "Aucune pièce jointe enregistrée.",
       "unnamed": "Sans nom",
       "fileHint": "Formats: JPG, PNG, WEBP, PDF, DOC, DOCX (max 10 Mo)",
-      "deleteConfirm": "Supprimer la pièce jointe « {name} » ?",
+      "deleteTitle": "Supprimer la pièce jointe",
+      "deleteConfirm": "La pièce jointe « {name} » sera supprimée définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
       "fields": {
         "name": "Nom affiché",
         "type": "Type"
@@ -63,12 +71,12 @@
     "invalidResponse": "Réponse forfait invalide.",
     "discountBadge": "Remise {percent}%",
     "description": "Description",
-    "includedProducts": "Produits inclus",
-    "includedProductsIntro": "{count} produit(s) dans ce forfait.",
+    "includedProducts": "Prestations incluses",
+    "includedProductsIntro": "{count} prestation(s) dans ce forfait.",
     "photoGallery": "Galerie photos",
     "photoGalleryIntro": "{count} photo(s) associée(s) au forfait.",
     "noPhotos": "Aucune photo pour ce forfait.",
-    "noIncludedProducts": "Aucun produit inclus.",
+    "noIncludedProducts": "Aucune prestation incluse.",
     "tabs": {
       "aria": "Étapes de configuration du forfait",
       "informations": "Informations",
@@ -87,6 +95,19 @@
       }
     }
   },
+  "view": {
+    "title": "Voir le forfait",
+    "notFound": "Forfait introuvable.",
+    "editButton": "Modifier le forfait",
+    "subtitle": "Fiche détaillée du forfait et de ses prestations.",
+    "infoTitle": "Informations",
+    "imagesTitle": "Photos",
+    "imagesIntro": "{count} photo(s)",
+    "imagesEmpty": "Aucune photo pour ce forfait.",
+    "packagePrice": "Prix forfait",
+    "separatePrice": "Prix séparé",
+    "featuredBadge": "Mis en avant"
+  },
   "coverImage": {
     "title": "Photo de couverture",
     "hint": "Cette image s'affiche dans les listes de forfaits côté admin et sur le site public.",
@@ -103,23 +124,31 @@
   },
   "sections": {
     "items": {
-      "title": "Items du forfait",
+      "title": "Prestations incluses",
       "intro": "Produits combinés (hébergement, vol, activité, etc.).",
-      "addItem": "Ajouter un item",
-      "newItem": "Nouvel item",
-      "empty": "Aucun item dans ce forfait.",
-      "removeConfirm": "Retirer « {label} » du forfait ?",
+      "addItem": "Ajouter une prestation",
+      "newItem": "Nouvelle prestation",
+      "empty": "Aucune prestation dans ce forfait.",
+      "searchPlaceholder": "Rechercher une prestation…",
+      "searchEmpty": "Aucune prestation ne correspond à votre recherche.",
+      "viewTitle": "Détail de la prestation",
+      "viewAddedAt": "Ajoutée le",
+      "openProduct": "Ouvrir la fiche produit",
+      "removeTitle": "Retirer du forfait",
+      "removeConfirm": "« {label} » sera retiré du forfait.",
+      "removeConfirmButton": "Retirer",
+      "cancel": "Annuler",
       "flightLabel": "Vol {flightNumber}"
     },
     "composition": {
       "title": "Composition",
-      "summary": "{productCount} produit(s) inclus",
-      "summaryWithTypes": "{productCount} produit(s) inclus · {typeCount} types",
+      "summary": "{productCount} prestation(s) incluse(s)",
+      "summaryWithTypes": "{productCount} prestation(s) · {typeCount} types",
       "ariaLabel": "Composition du forfait"
     },
     "pricingRecap": {
-      "title": "Récapitulatif tarifaire",
-      "empty": "Ajoutez des items pour calculer le prix du forfait.",
+      "title": "Tarification",
+      "empty": "Ajoutez des prestations pour calculer le prix du forfait.",
       "separatePrice": "Prix séparé",
       "packagePrice": "Prix forfait",
       "separatePriceAria": "Prix des composants achetés séparément",
@@ -129,10 +158,24 @@
       "ariaLabel": "Aperçu client du forfait",
       "header": "Aperçu client",
       "eyebrow": "Forfait",
-      "includedCount": "{count} produit(s) inclus",
+      "includedCount": "{count} prestation(s) incluse(s)",
       "discountOnBundle": "Remise de {percent}% sur le bundle",
       "suggestedDuration": "Durée suggérée : {days} jour(s)",
       "packagePrice": "Prix forfait"
+    },
+    "publication": {
+      "title": "Visibilité du forfait",
+      "intro": "Contrôlez la publication sur le catalogue et la mise en avant sur la page d’accueil.",
+      "activeHint": "Un forfait actif est visible dans le catalogue public et réservable.",
+      "statusTitle": "État actuel",
+      "statusVisibility": "Catalogue",
+      "statusFeatured": "Page d’accueil",
+      "featuredOn": "Mis en avant",
+      "featuredOff": "Non mis en avant",
+      "previewActive": "Ce forfait apparaîtra dans les résultats et listes publiques.",
+      "previewInactive": "Ce forfait restera masqué du catalogue tant qu’il n’est pas activé.",
+      "saved": "Paramètres de publication enregistrés.",
+      "viewPackage": "Voir le forfait"
     }
   },
   "stats": {

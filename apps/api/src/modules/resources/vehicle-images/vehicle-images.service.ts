@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
-import { VehicleImages } from '../../../entities/generated';
 import { CrudService } from '../../../common/crud/crud.service';
+import { VehicleImages } from '../../../entities/generated';
 import { VehicleImagesListQueryDto } from './dto/vehicle-images-list-query.dto';
 
 @Injectable()
@@ -20,16 +20,17 @@ export class VehicleImagesService extends CrudService<VehicleImages> {
   ): Promise<PaginatedResult<VehicleImages>> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
-    const where: FindOptionsWhere<VehicleImages> = {};
-    if (query.vehicleId) {
-      where.vehicleId = query.vehicleId;
-    }
+
     const [data, total] = await this.vehicleImagesRepository.findAndCount({
-      where,
+      where: {
+        deletedAt: IsNull(),
+        ...(query.vehicleId ? { vehicleId: query.vehicleId } : {}),
+      },
       skip: (page - 1) * limit,
       take: limit,
       order: { sortOrder: 'ASC', createdAt: 'DESC' },
     });
+
     return {
       data,
       meta: {

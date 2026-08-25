@@ -119,7 +119,7 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
   },
   'produits/activites': {
     title: 'Activités',
-    description: 'Expériences, fournisseurs et créneaux par destination.',
+    description: 'Expériences, partenaires et créneaux par destination.',
     apiResource: 'activities',
   },
   'produits/forfaits': {
@@ -152,9 +152,19 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Codes promotionnels.',
     apiResource: 'promo-codes',
   },
+  'paiements/codes-promo/id/voir': {
+    title: 'Voir le code promo',
+    description: 'Aperçu lecture seule d’un code promotionnel.',
+    apiResource: 'promo-codes',
+  },
   'paiements/promotions': {
     title: 'Promotions',
     description: 'Campagnes et offres.',
+    apiResource: 'promotions',
+  },
+  'paiements/promotions/id/voir': {
+    title: 'Voir la promotion',
+    description: 'Aperçu lecture seule d’une campagne marketing.',
     apiResource: 'promotions',
   },
   'contenu/blog': {
@@ -166,6 +176,21 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     title: 'Nouvel article',
     description: 'Rédiger un article de blog.',
     apiResource: 'blog-posts',
+  },
+  'contenu/site': {
+    title: 'Site & présentation',
+    description: 'Contenu institutionnel et vitrine du site public.',
+    apiResource: 'about-pages',
+  },
+  'contenu/support': {
+    title: 'Support',
+    description: 'Tickets d’assistance et messages clients.',
+    apiResource: 'support-tickets',
+  },
+  'contenu/avis': {
+    title: 'Avis',
+    description: 'Notes et commentaires clients.',
+    apiResource: 'reviews',
   },
   'contenu/a-propos/pages': {
     title: 'Pages À propos',
@@ -282,11 +307,6 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Ajouter une image ou une vidéo.',
     apiResource: 'gap-media-items',
   },
-  'contenu/avis': {
-    title: 'Avis',
-    description: 'Notes et commentaires clients.',
-    apiResource: 'reviews',
-  },
   'contenu/tickets': {
     title: 'Tickets support',
     description: 'Demandes d’assistance.',
@@ -305,6 +325,21 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
   'guides/nouveau': {
     title: 'Nouveau guide',
     description: 'Créer un profil guide touristique.',
+    apiResource: 'tour-guides',
+  },
+  'guides/id': {
+    title: 'Modifier le guide',
+    description: 'Édition du profil, couverture et statut du guide.',
+    apiResource: 'tour-guides',
+  },
+  'guides/id/voir': {
+    title: 'Voir le guide',
+    description: 'Profil guide, destinations couvertes et missions assignées.',
+    apiResource: 'tour-guides',
+  },
+  'guides/calendrier': {
+    title: 'Calendrier guides',
+    description: 'Disponibilité mensuelle des guides actifs.',
     apiResource: 'tour-guides',
   },
   organisations: {

@@ -123,8 +123,10 @@ function SortIndicator({ direction }: { direction: false | 'asc' | 'desc' }) {
 
 function DataTableHeaderCell<TData>({
   header,
+  mobile = false,
 }: {
   header: Header<TData, unknown>;
+  mobile?: boolean;
 }) {
   const align = getAlign(header.column.columnDef.meta);
   const canSort = header.column.getCanSort();
@@ -138,7 +140,8 @@ function DataTableHeaderCell<TData>({
         sorted === 'asc' ? 'ascending' : sorted === 'desc' ? 'descending' : canSort ? 'none' : undefined
       }
       className={cn(
-        'border-b border-atg-border px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-atg-muted',
+        'border-b border-atg-border text-xs font-semibold uppercase tracking-wider text-atg-muted',
+        mobile ? 'min-w-0 px-3 py-3' : 'px-5 py-3.5',
         alignClasses[align],
         header.column.columnDef.meta?.headerClassName,
       )}
@@ -148,16 +151,16 @@ function DataTableHeaderCell<TData>({
           type="button"
           onClick={header.column.getToggleSortingHandler()}
           className={cn(
-            'inline-flex items-center gap-0.5 transition-colors hover:text-atg-fg',
+            'inline-flex max-w-full items-center gap-0.5 transition-colors hover:text-atg-fg',
             align === 'center' && 'mx-auto',
             align === 'right' && 'ml-auto',
           )}
         >
-          {content}
+          <span className={cn(mobile && 'truncate')}>{content}</span>
           <SortIndicator direction={sorted} />
         </button>
       ) : (
-        content
+        <span className={cn(mobile && 'block truncate')}>{content}</span>
       )}
     </th>
   );
@@ -305,11 +308,18 @@ export function DataTable<TData>({
   const totalColSpan = visibleHeaders.length + (hasExpandColumn ? 1 : 0);
 
   return (
-    <div className={cn(useMobileLayout ? 'overflow-hidden' : '-mx-2 overflow-x-auto px-2 sm:mx-0 sm:px-0', className)}>
+    <div
+      className={cn(
+        useMobileLayout
+          ? 'w-full max-w-full overflow-x-hidden'
+          : '-mx-2 overflow-x-auto px-2 sm:mx-0 sm:px-0',
+        className,
+      )}
+    >
       <table
         className={cn(
           'w-full border-collapse text-left text-sm',
-          !useMobileLayout && 'min-w-[560px]',
+          useMobileLayout ? 'table-fixed' : 'min-w-[560px]',
           tableClassName,
         )}
         aria-label={ariaLabel}
@@ -317,12 +327,12 @@ export function DataTable<TData>({
         <thead className="sticky top-0 z-10 bg-atg-surface/95 backdrop-blur-sm">
           <tr>
             {visibleHeaders.map((header) => (
-              <DataTableHeaderCell key={header.id} header={header} />
+              <DataTableHeaderCell key={header.id} header={header} mobile={useMobileLayout} />
             ))}
             {hasExpandColumn ? (
               <th
                 scope="col"
-                className="w-10 border-b border-atg-border px-2 py-3.5 text-xs font-semibold uppercase tracking-wider text-atg-muted"
+                className="w-10 border-b border-atg-border px-1 py-3 text-xs font-semibold uppercase tracking-wider text-atg-muted"
               >
                 <span className="sr-only">{expandRowLabel}</span>
               </th>
@@ -349,7 +359,8 @@ export function DataTable<TData>({
                       <td
                         key={cell.id}
                         className={cn(
-                          'px-5 py-3.5 text-atg-fg',
+                          'text-atg-fg',
+                          useMobileLayout ? 'min-w-0 px-3 py-3' : 'px-5 py-3.5',
                           alignClasses[align],
                           cell.column.columnDef.meta?.cellClassName,
                         )}
@@ -359,7 +370,7 @@ export function DataTable<TData>({
                     );
                   })}
                   {hasExpandColumn ? (
-                    <td className="px-2 py-3.5 text-right">
+                    <td className="w-10 px-1 py-3 text-right">
                       <DataTableExpandButton
                         expanded={isExpanded}
                         expandLabel={expandRowLabel}

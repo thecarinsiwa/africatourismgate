@@ -12,6 +12,7 @@ import {
   Max,
   MaxLength,
   Min,
+  ValidateIf,
 } from 'class-validator';
 import {
   SLUG_PATTERN,
@@ -46,12 +47,14 @@ export class CreateDestinationDto {
   @ApiPropertyOptional({
     example: 'https://cdn.example.com/destinations/kinshasa.jpg',
     description: 'Hero image URL for admin and public listings',
+    nullable: true,
   })
   @IsOptional()
+  @ValidateIf((_, value) => value != null && value !== '')
   @IsString()
   @MaxLength(512)
   @IsUrl({}, { message: "L'URL de l'image doit être valide." })
-  imageUrl?: string;
+  imageUrl?: string | null;
 
   @ApiPropertyOptional({ example: -4.3058 })
   @IsOptional()

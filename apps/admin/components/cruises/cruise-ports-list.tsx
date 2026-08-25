@@ -3,38 +3,48 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
   DataTableActionButton,
   DataTableActions,
+  DataTableBadge,
   DataTablePagination,
   Input,
+  Modal,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { CruisePort } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ReferentialListToolbar } from '../referential-list-toolbar';
 import { getApiClient } from '../../lib/auth/api';
+import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { ListViewModeToggle } from '../list-view-mode-toggle';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
 
 type FormValues = { code: string; name: string; countryCode: string };
+type ViewMode = 'grid' | 'table';
 const emptyForm: FormValues = { code: '', name: '', countryCode: '' };
 
 export function CruisePortsList() {
   const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
-  const tForm = useTranslations('modules.cruises.form.port');
-  const tCruise = useTranslations('modules.cruises');
-  const tFilters = useTranslations('modules.cruises.filters');
-  const tColumns = useTranslations('modules.common.columns');
+  const t = useTranslations('modules.cruises.referential.ports');
+  const tCommon = useTranslations('modules.common');
   const tPagination = useTranslations('modules.common.pagination');
   const tActions = useTranslations('common.actions');
+  const tToast = useTranslations('modules.common.toast');
+  const tDataTable = useTranslations('modules.common.dataTable');
+  const { toast } = useToast();
+  const paginationLabels = useDataTablePaginationLabels();
+
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -46,6 +56,8 @@ export function CruisePortsList() {
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<CruisePort | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -81,6 +93,30 @@ export function CruisePortsList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
+  const viewModeOptions = useMemo(
+    () => [
+      { value: 'grid' as const, label: t('viewGrid') },
+      { value: 'table' as const, label: t('viewTable') },
+    ],
+    [t],
+  );
+
+  function openForm(port?: CruisePort) {
+    if (port) {
+      setEditing(port);
+      setFormValues({
+        code: port.code,
+        name: port.name,
+        countryCode: port.countryCode,
+      });
+    } else {
+      setEditing(null);
+      setFormValues(emptyForm);
+    }
+    setFormError(null);
+    setShowForm(true);
+  }
+
   function resetForm() {
     setFormValues(emptyForm);
     setEditing(null);
@@ -91,11 +127,11 @@ export function CruisePortsList() {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setFormError(null);
-    const code = formValues.code.trim();
+    const code = formValues.code.trim().toUpperCase();
     const name = formValues.name.trim();
     const countryCode = formValues.countryCode.trim().toUpperCase();
     if (!code || !name || countryCode.length !== 2) {
-      setFormError(tForm('validation'));
+      setFormError(t('validation'));
       return;
     }
     setSubmitting(true);
@@ -103,8 +139,10 @@ export function CruisePortsList() {
       const body = { code, name, countryCode };
       if (editing) {
         await getApiClient().updateCruisePort(editing.id, body);
+        toast({ variant: 'success', title: tToast('saved'), message: name });
       } else {
         await getApiClient().createCruisePort(body);
+        toast({ variant: 'success', title: tToast('created'), message: name });
       }
       resetForm();
       await load();
@@ -115,150 +153,257 @@ export function CruisePortsList() {
     }
   }
 
+  const handleDeleteRequest = useCallback((port: CruisePort) => {
+    setConfirmTarget(port);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const port = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(port.id);
+    try {
+      await getApiClient().deleteCruisePort(port.id);
+      toast({ variant: 'success', title: tToast('deleted'), message: port.name });
+      await load();
+    } catch (error) {
+      const message = getCroisieresErrorMessage(error);
+      setDeleteError(message);
+      toast({ variant: 'error', title: tToast('deleteError'), message });
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getCroisieresErrorMessage, load, tToast, toast]);
+
+  const renderActions = useCallback(
+    (port: CruisePort) => (
+      <DataTableActions>
+        <DataTableActionButton action="edit" onClick={() => openForm(port)} />
+        <DataTableActionButton
+          action="delete"
+          onClick={() => handleDeleteRequest(port)}
+          disabled={deletingId === port.id}
+          loading={deletingId === port.id}
+        />
+      </DataTableActions>
+    ),
+    [deletingId, handleDeleteRequest],
+  );
+
   const columns = useMemo<ColumnDef<CruisePort, unknown>[]>(
     () => [
       {
         accessorKey: 'code',
-        header: tColumns('code'),
+        header: t('code'),
         cell: ({ row }) => (
-          <code className="rounded-md bg-atg-surface px-2 py-0.5 font-mono text-sm">
+          <code className="rounded bg-atg-surface px-1.5 py-0.5 font-mono text-xs">
             {row.original.code}
           </code>
         ),
       },
-      { accessorKey: 'name', header: tCruise('columns.port') },
-      { accessorKey: 'countryCode', header: tColumns('country') },
+      { accessorKey: 'name', header: t('port') },
       {
-        id: 'actions',
-        header: tColumns('actions'),
-        meta: { align: 'right' },
+        accessorKey: 'countryCode',
+        header: t('country'),
         cell: ({ row }) => (
-          <DataTableActions>
-            <DataTableActionButton
-              action="edit"
-              onClick={() => {
-                setEditing(row.original);
-                setFormValues({
-                  code: row.original.code,
-                  name: row.original.name,
-                  countryCode: row.original.countryCode,
-                });
-                setShowForm(true);
-              }}
-            />
-            <DataTableActionButton
-              action="delete"
-              onClick={async () => {
-                if (!window.confirm(tForm('deleteConfirm', { name: row.original.name }))) return;
-                setDeletingId(row.original.id);
-                try {
-                  await getApiClient().deleteCruisePort(row.original.id);
-                  await load();
-                } catch (error) {
-                  setFormError(getCroisieresErrorMessage(error));
-                } finally {
-                  setDeletingId(null);
-                }
-              }}
-              disabled={deletingId === row.original.id}
-              loading={deletingId === row.original.id}
-            />
-          </DataTableActions>
+          <DataTableBadge variant="muted">{row.original.countryCode}</DataTableBadge>
         ),
       },
+      {
+        id: 'actions',
+        header: tCommon('columns.actions'),
+        meta: { align: 'right' },
+        cell: ({ row }) => renderActions(row.original),
+      },
     ],
-    [deletingId, getCroisieresErrorMessage, load, tColumns, tCruise, tForm],
+    [renderActions, t, tCommon],
   );
 
   const ports = state.status === 'ready' ? state.ports : [];
+  const emptyMessage = search.trim().length > 0 ? t('emptySearch') : t('emptyDefault');
 
   return (
-    <div className="space-y-6">
-      <ReferentialListToolbar
-        searchValue={searchInput}
-        onSearchChange={setSearchInput}
-        placeholder={tFilters('searchPort')}
-        ariaLabel={tActions('search')}
-        action={
-          !showForm ? (
-            <Button type="button" onClick={() => setShowForm(true)}>
-              {tForm('newShort')}
-            </Button>
-          ) : undefined
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => {
+          if (!open) setConfirmTarget(null);
+        }}
+        title={t('deleteTitle')}
+        description={
+          confirmTarget ? t('deleteConfirm', { name: confirmTarget.name }) : ''
         }
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
       />
 
-      {showForm ? (
-        <Card variant="dashboard" className="max-w-lg">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">
-              {editing ? tForm('edit') : tForm('new')}
-            </h3>
+      <div className="space-y-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="min-w-0 flex-1 sm:max-w-md">
+              <Input
+                type="search"
+                placeholder={t('searchPlaceholder')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                aria-label={t('searchAria')}
+              />
+            </div>
+            <ListViewModeToggle
+              value={viewMode}
+              options={viewModeOptions}
+              onChange={setViewMode}
+              ariaLabel={t('viewModeAria')}
+            />
+          </div>
+          <Button type="button" onClick={() => openForm()}>
+            {t('new')}
+          </Button>
+        </div>
+
+        <Modal
+          open={showForm}
+          onOpenChange={(open) => {
+            if (!open && !submitting) resetForm();
+          }}
+          title={editing ? t('edit') : t('new')}
+          showClose={!submitting}
+          closeAriaLabel={tActions('close')}
+          className="max-w-lg"
+        >
+          <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
             {formError ? (
-              <p role="alert" className="text-sm text-red-600">
+              <p role="alert" className="text-sm text-red-600 dark:text-red-400">
                 {formError}
               </p>
             ) : null}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Input
+                label={t('code')}
+                value={formValues.code}
+                onChange={(e) =>
+                  setFormValues((p) => ({
+                    ...p,
+                    code: e.target.value.toUpperCase(),
+                  }))
+                }
+                disabled={submitting}
+                required
+              />
+              <Input
+                label={t('country')}
+                value={formValues.countryCode}
+                onChange={(e) =>
+                  setFormValues((p) => ({
+                    ...p,
+                    countryCode: e.target.value.toUpperCase().slice(0, 2),
+                  }))
+                }
+                maxLength={2}
+                disabled={submitting}
+                required
+              />
+            </div>
             <Input
-              label={tColumns('code')}
-              value={formValues.code}
-              onChange={(e) => setFormValues((p) => ({ ...p, code: e.target.value }))}
-              required
-            />
-            <Input
-              label={tColumns('name')}
+              label={t('port')}
               value={formValues.name}
-              onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
-              required
-            />
-            <Input
-              label={tForm('countryIso')}
-              value={formValues.countryCode}
               onChange={(e) =>
-                setFormValues((p) => ({ ...p, countryCode: e.target.value }))
+                setFormValues((p) => ({ ...p, name: e.target.value }))
               }
-              maxLength={2}
+              disabled={submitting}
               required
             />
-            <div className="flex gap-3">
+            <div className="flex justify-end gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={resetForm}
+                disabled={submitting}
+              >
+                {tActions('cancel')}
+              </Button>
               <Button type="submit" loading={submitting}>
                 {editing ? tActions('save') : tActions('create')}
               </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
-                {tActions('cancel')}
-              </Button>
             </div>
           </form>
-        </Card>
-      ) : null}
+        </Modal>
 
-      {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600">
-          {state.message}
-        </p>
-      ) : (
-        <>
-          <Card variant="dashboard" padding="none">
-            <DataTable
-              columns={columns}
-              data={ports}
-              isLoading={state.status === 'loading'}
-              emptyMessage={tForm('empty')}
-              getRowId={(r) => r.id}
-            />
-          </Card>
-          {state.status === 'ready' ? (
-            <DataTablePagination
-              page={page}
-              pageSize={PAGE_SIZE}
-              totalPages={state.totalPages}
-              totalItems={state.total}
-              itemLabel={tPagination('port')}
-              onPageChange={setPage}
-            />
-          ) : null}
-        </>
-      )}
-    </div>
+        {state.status === 'error' ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {state.message}
+          </p>
+        ) : viewMode === 'table' ? (
+          <>
+            <Card variant="dashboard" padding="none" className="overflow-hidden">
+              <DataTable
+                columns={columns}
+                data={ports}
+                isLoading={state.status === 'loading'}
+                loadingMessage={tDataTable('loading')}
+                emptyMessage={emptyMessage}
+                emptyVariant={search.trim().length > 0 ? 'search' : 'default'}
+                getRowId={(r) => r.id}
+                aria-label={t('ariaLabel')}
+              />
+            </Card>
+            {state.status === 'ready' ? (
+              <DataTablePagination
+                page={page}
+                pageSize={PAGE_SIZE}
+                totalPages={state.totalPages}
+                totalItems={state.total}
+                itemLabel={tPagination('port')}
+                labels={paginationLabels}
+                onPageChange={setPage}
+              />
+            ) : null}
+          </>
+        ) : state.status === 'loading' ? (
+          <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
+        ) : ports.length === 0 ? (
+          <p className="text-sm text-atg-muted">{emptyMessage}</p>
+        ) : (
+          <>
+            <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+              {ports.map((port) => (
+                <li key={port.id}>
+                  <Card variant="dashboard" className="flex h-full flex-col gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <code className="rounded bg-atg-surface px-1.5 py-0.5 font-mono text-xs">
+                          {port.code}
+                        </code>
+                        <DataTableBadge variant="muted">{port.countryCode}</DataTableBadge>
+                      </div>
+                      <p className="mt-2 truncate font-medium text-atg-fg">{port.name}</p>
+                    </div>
+                    <div className="mt-auto flex justify-end border-t border-atg-border pt-3">
+                      {renderActions(port)}
+                    </div>
+                  </Card>
+                </li>
+              ))}
+            </ul>
+            {state.status === 'ready' ? (
+              <DataTablePagination
+                page={page}
+                pageSize={PAGE_SIZE}
+                totalPages={state.totalPages}
+                totalItems={state.total}
+                itemLabel={tPagination('port')}
+                labels={paginationLabels}
+                onPageChange={setPage}
+              />
+            ) : null}
+          </>
+        )}
+      </div>
+    </>
   );
 }

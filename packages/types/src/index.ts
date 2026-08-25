@@ -68,6 +68,7 @@ export type {
   PromoCode,
   PromoCodeDiscountType,
   PromoCodesListQuery,
+  PromoListValidityFilter,
   UpdatePromoCodeRequest,
 } from './promo-code.js';
 
@@ -241,6 +242,8 @@ export type {
   BookingIdentityDocumentStatus,
   BookingIdentityDocumentType,
   ReviewBookingIdentityDocumentRequest,
+  RequestIdentityDocumentUploadRequest,
+  RequestIdentityDocumentUploadResponse,
   BookingManifestEntry,
   BookingManifestSex,
   CreateBookingManifestEntryRequest,
@@ -284,6 +287,27 @@ export type {
   UpdateTourGuideRequest,
   AssignBookingGuideItem,
   AssignBookingGuidesRequest,
+  UpdateBookingGuideAssignmentRequest,
+  RemoveBookingGuideRequest,
+  GuideScheduleConflict,
+  TourGuideBookingListItem,
+  TourGuideBookingsListQuery,
+  GuideCalendarDayStatus,
+  GuideAvailabilityStatus,
+  TourGuideCalendarSummaryDay,
+  TourGuideCalendarSummary,
+  TourGuideCalendarDayGuide,
+  TourGuideCalendarDayDetail,
+  GuideCalendarScheduleSlot,
+  TourGuideCalendarSummaryQuery,
+  TourGuideCalendarDayQuery,
+  TourGuideAvailableQuery,
+  TourGuideAvailableItem,
+  UpsertGuideAvailabilityRequest,
+  GuideAvailabilitySlot,
+  BookingGuideAssignmentHistoryAction,
+  BookingGuideAssignmentHistorySnapshot,
+  BookingGuideAssignmentHistoryItem,
 } from './tour-guide.js';
 
 export type {
@@ -401,6 +425,7 @@ export type {
   GapPage,
   GapPageSectionKey,
   GapPagesListQuery,
+  GapSiteLink,
   GapSiteSettings,
   GapSiteSettingsListQuery,
   GapStatus,
@@ -591,6 +616,13 @@ export type {
   EmployeesListQuery,
   UpdateEmployeeRequest,
 } from './employee.js';
+
+export type {
+  CreateDepartmentRequest,
+  Department,
+  DepartmentsListQuery,
+  UpdateDepartmentRequest,
+} from './department.js';
 
 export type {
   CreateRoleRequest,

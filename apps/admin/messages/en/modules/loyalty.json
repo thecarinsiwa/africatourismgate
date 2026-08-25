@@ -33,8 +33,12 @@
       "lastActivity": "Dernière activité"
     },
     "actions": {
-      "history": "History"
+      "history": "History",
+      "adjust": "Adjust points"
     },
+    "searchPlaceholder": "Search by email, name, or program…",
+    "searchAria": "Search loyalty accounts",
+    "emptySearch": "No loyalty accounts match your search.",
     "empty": {
       "title": "Tocun compte fidélité",
       "description": "Les comptes OneKey sont créés automatiquement lors des premiers paiements réussis. Ajustements manuels réservés au super administrateur.",
@@ -54,19 +58,24 @@
     "reasonPlaceholder": "Ex. geste commercial",
     "apply": "Apply"
   },
+  "toast": {
+    "adjustedMessage": "Balance for {email} has been updated."
+  },
   "history": {
-    "title": "History des transactions",
-    "close": "Fermer",
-    "currentBalance": "Solde actuel",
+    "title": "Transaction history",
+    "close": "Close",
+    "currentBalance": "Current balance",
     "pointsUnit": "points",
-    "apiUnavailable": "L'API d'historique des transactions n'est pas encore disponible. La structure ci-dessous anticipe le futur journal des mouvements de points.",
+    "apiUnavailable": "The transaction history API is not available yet. The table below previews the future points ledger structure.",
+    "tableAria": "Points transaction history",
     "columns": {
-      "delta": "Variation",
-      "balanceAfter": "Solde après"
+      "delta": "Change",
+      "balanceAfter": "Balance after"
     },
     "transactionTypes": {
-      "paymentCredit": "Crédit paiement",
-      "manualAdjust": "Ajustement manuel"
+      "paymentCredit": "Payment credit",
+      "manualAdjust": "Manual adjustment",
+      "redemption": "Points redemption"
     }
   }
 }

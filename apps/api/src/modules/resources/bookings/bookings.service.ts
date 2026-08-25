@@ -27,6 +27,10 @@ import { CreateBookingReviewDto } from '../reviews/dto/create-booking-review.dto
 import { ReviewDto } from '../reviews/dto/review.dto';
 import { BookingIdentityDocumentsService } from './booking-identity-documents.service';
 import type { BookingIdentityDocumentDto } from './dto/booking-identity-document.dto';
+import {
+  RequestIdentityDocumentUploadDto,
+  RequestIdentityDocumentUploadResponseDto,
+} from './dto/request-identity-document-upload.dto';
 
 @Injectable()
 export class BookingsService extends CrudService<Bookings> {
@@ -155,15 +159,26 @@ export class BookingsService extends CrudService<Bookings> {
         dateTo: `${scopedQuery.dateTo}T23:59:59.999Z`,
       });
     }
-    if (scopedQuery.organizationId) {
+
+    const search = scopedQuery.search?.trim();
+    const needsClientJoin = Boolean(scopedQuery.organizationId || search);
+    if (needsClientJoin) {
       qb.innerJoin(
         Users,
         'client',
         'client.id = booking.userId AND client.deletedAt IS NULL',
       );
+    }
+    if (scopedQuery.organizationId) {
       qb.andWhere('client.organizationId = :organizationId', {
         organizationId: scopedQuery.organizationId,
       });
+    }
+    if (search) {
+      qb.andWhere(
+        '(client.email LIKE :term OR client.firstName LIKE :term OR client.lastName LIKE :term OR booking.id LIKE :term)',
+        { term: `%${search}%` },
+      );
     }
 
     qb.orderBy('booking.createdAt', scopedQuery.sortOrder === 'asc' ? 'ASC' : 'DESC')
@@ -405,6 +420,40 @@ export class BookingsService extends CrudService<Bookings> {
       identityDocuments,
       unreadCustomerMessageCount,
     };
+  }
+
+  async requestIdentityDocumentUpload(
+    bookingId: string,
+    dto: RequestIdentityDocumentUploadDto,
+  ): Promise<RequestIdentityDocumentUploadResponseDto> {
+    const booking = await this.bookingsRepository.findOne({
+      where: { id: bookingId, deletedAt: IsNull() },
+    });
+    if (!booking) {
+      throw new NotFoundException('Réservation introuvable.');
+    }
+
+    const allowedStatuses: Bookings['status'][] = [
+      'pending_approval',
+      'pending_payment',
+      'confirmed',
+    ];
+    if (!allowedStatuses.includes(booking.status)) {
+      throw new BadRequestException(
+        'Impossible de demander une pièce d’identité pour cette réservation.',
+      );
+    }
+
+    const travelerName = dto.travelerName.trim();
+    if (!travelerName) {
+      throw new BadRequestException('Le nom du voyageur est obligatoire.');
+    }
+
+    return this.assistedEmail.requestIdentityDocumentUpload(bookingId, {
+      travelerName,
+      staffNote: dto.staffNote,
+      travelerIndex: dto.travelerIndex,
+    });
   }
 
   updateStatus(

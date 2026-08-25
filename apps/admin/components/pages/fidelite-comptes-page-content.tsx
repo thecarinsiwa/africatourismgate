@@ -2,14 +2,13 @@
 
 import { LoyaltyAccountsList } from '../loyalty/loyalty-accounts-list';
 import { LoyaltySummaryCards } from '../loyalty/loyalty-summary-cards';
-import { AdminListPageHeader } from './admin-list-page-header';
+import { AdminIntroPage } from './admin-intro-page';
 
 export function ComptesFidelitePageContent() {
   return (
-    <div>
-      <AdminListPageHeader routePath="fidelite/comptes" />
+    <AdminIntroPage routePath="fidelite/comptes">
       <LoyaltySummaryCards className="mb-6" />
       <LoyaltyAccountsList />
-    </div>
+    </AdminIntroPage>
   );
 }

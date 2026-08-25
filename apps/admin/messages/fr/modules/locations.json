@@ -40,6 +40,25 @@
       "categoryRequired": "Catégorie obligatoire."
     }
   },
+  "view": {
+    "title": "Voir le véhicule",
+    "editButton": "Modifier le véhicule",
+    "notFound": "Véhicule introuvable.",
+    "infoTitle": "Informations",
+    "imagesTitle": "Photos",
+    "imagesIntro": "{count, plural, =0 {Aucune photo} one {# photo} other {# photos}}",
+    "imagesEmpty": "Aucune photo pour ce véhicule.",
+    "carouselPrev": "Photo précédente",
+    "carouselNext": "Photo suivante",
+    "carouselThumbs": "Miniatures des photos",
+    "carouselGoTo": "Aller à la photo {index}",
+    "carouselOpen": "Agrandir la photo {index}",
+    "carouselViewerTitle": "Aperçu de la photo",
+    "carouselClose": "Fermer l'aperçu",
+    "availabilityIntro": "{count, plural, =0 {Aucun créneau} one {# créneau} other {# créneaux}}",
+    "availabilitySearchPlaceholder": "Rechercher un créneau…",
+    "availabilitySearchEmpty": "Aucun créneau ne correspond à cette recherche."
+  },
   "detail": {
     "title": "Modifier le véhicule",
     "viewTitle": "Voir le véhicule",
@@ -50,7 +69,12 @@
     "noLicensePlate": "Sans plaque",
     "photoGallery": "Galerie photos",
     "photoGalleryIntro": "{count, plural, =0 {Aucune photo} one {# photo} other {# photos}}",
-    "noPhotos": "Aucune photo pour ce véhicule."
+    "noPhotos": "Aucune photo pour ce véhicule.",
+    "tabsAria": "Sections du véhicule",
+    "tabs": {
+      "vehicle": "Véhicule",
+      "availability": "Disponibilités"
+    }
   },
   "sections": {
     "availability": {
@@ -75,7 +99,15 @@
       "filterTo": "au",
       "status": "Statut",
       "empty": "Aucun créneau sur cette période.",
-      "deleteConfirm": "Supprimer ce créneau ?"
+      "searchPlaceholder": "Rechercher un créneau…",
+      "searchEmpty": "Aucun créneau ne correspond à cette recherche.",
+      "stats": {
+        "total": "Total"
+      },
+      "deleteTitle": "Supprimer le créneau",
+      "deleteConfirm": "Ce créneau sera supprimé définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler"
     }
   },
   "referential": {
@@ -86,8 +118,29 @@
       "emptySearch": "Aucune catégorie ne correspond à cette recherche.",
       "searchPlaceholder": "Rechercher par nom ou modèle…",
       "searchAria": "Rechercher une catégorie",
+      "ariaLabel": "Liste des catégories de véhicules",
       "exampleModel": "Modèle type",
-      "deleteConfirm": "Supprimer la catégorie « {name} » ?"
+      "viewGrid": "Grille",
+      "viewTable": "Tableau",
+      "viewModeAria": "Mode d'affichage",
+      "deleteTitle": "Supprimer la catégorie",
+      "deleteConfirm": "La catégorie « {name} » sera supprimée définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
+      "stats": {
+        "total": {
+          "label": "Catégories",
+          "subtitle": "Types de véhicules"
+        },
+        "withExampleModel": {
+          "label": "Avec modèle",
+          "subtitle": "Exemple renseigné"
+        },
+        "withoutExampleModel": {
+          "label": "Sans modèle",
+          "subtitle": "À compléter"
+        }
+      }
     },
     "agencies": {
       "new": "Nouvelle agence",
@@ -96,10 +149,31 @@
       "emptySearch": "Aucune agence ne correspond à cette recherche.",
       "searchPlaceholder": "Rechercher par nom ou adresse…",
       "searchAria": "Rechercher une agence",
+      "ariaLabel": "Liste des agences de location",
       "agency": "Agence",
       "address": "Adresse",
       "destinationOptional": "Destination (optionnel)",
-      "deleteConfirm": "Supprimer l'agence « {name} » ?"
+      "viewGrid": "Grille",
+      "viewTable": "Tableau",
+      "viewModeAria": "Mode d'affichage",
+      "deleteTitle": "Supprimer l'agence",
+      "deleteConfirm": "L'agence « {name} » sera supprimée définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
+      "stats": {
+        "total": {
+          "label": "Agences",
+          "subtitle": "Points de location"
+        },
+        "withAddress": {
+          "label": "Avec adresse",
+          "subtitle": "Localisation renseignée"
+        },
+        "withDestination": {
+          "label": "Avec destination",
+          "subtitle": "Liées à une destination"
+        }
+      }
     }
   },
   "stats": {

@@ -9,6 +9,11 @@
  * - Label formulaire : text-sm font-medium text-atg-fg
  * - Texte aide / hint : text-xs text-atg-muted
  *
+ * Espacement admin (Tailwind) :
+ * - Pages liste / formulaire : space-y-6
+ * - Dashboard et vues KPI : space-y-8
+ * - Formulaires longs : max-w-2xl (ou grille lg:grid-cols-2 pour champs courts)
+ *
  * Échelle typographique web marketing (apps/web) :
  * - Hero homepage (h1) : text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight
  * - Hero page liste (h1) : text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight

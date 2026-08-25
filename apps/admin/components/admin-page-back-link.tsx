@@ -1,5 +1,8 @@
+'use client';
+
 import { cn } from '@africatourismgate/ui';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 type AdminPageBackLinkProps = {
   href: string;
@@ -9,9 +12,12 @@ type AdminPageBackLinkProps = {
 
 export function AdminPageBackLink({
   href,
-  label = 'Retour',
+  label,
   className,
 }: AdminPageBackLinkProps) {
+  const t = useTranslations('common.actions');
+  const resolvedLabel = label ?? t('back');
+
   return (
     <Link
       href={href}
@@ -20,7 +26,7 @@ export function AdminPageBackLink({
         className,
       )}
     >
-      ← {label}
+      ← {resolvedLabel}
     </Link>
   );
 }

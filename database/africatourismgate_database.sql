@@ -87,6 +87,27 @@ CREATE TABLE `employees` (
   CONSTRAINT `fk_employees_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE `departments` (
+  `id` CHAR(36) NOT NULL,
+  `organization_id` CHAR(36) NOT NULL,
+  `name` VARCHAR(100) NOT NULL,
+  `description` VARCHAR(255) DEFAULT NULL,
+  `created_by_user_id` CHAR(36) DEFAULT NULL,
+  `updated_by_user_id` CHAR(36) DEFAULT NULL,
+  `deleted_by_user_id` CHAR(36) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_departments_org_name` (`organization_id`, `name`),
+  KEY `idx_departments_org` (`organization_id`),
+  KEY `idx_departments_deleted_at` (`deleted_at`),
+  CONSTRAINT `fk_departments_org` FOREIGN KEY (`organization_id`) REFERENCES `organizations` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_departments_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_departments_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_departments_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE `user_sessions` (
   `id` CHAR(36) NOT NULL,
   `user_id` CHAR(36) NOT NULL,
@@ -644,6 +665,7 @@ CREATE TABLE `airlines` (
   `id` CHAR(36) NOT NULL,
   `iata_code` CHAR(2) NOT NULL,
   `name` VARCHAR(180) NOT NULL,
+  `logo_url` VARCHAR(512) DEFAULT NULL,
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,
   `deleted_by_user_id` CHAR(36) DEFAULT NULL,
@@ -1176,16 +1198,45 @@ CREATE TABLE `activity_itinerary_stops` (
   CONSTRAINT `fk_activity_itinerary_stops_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE `activity_description_assets` (
+  `id` CHAR(36) NOT NULL,
+  `activity_id` CHAR(36) NOT NULL,
+  `asset_type` ENUM('image', 'pdf', 'word') NOT NULL,
+  `url` VARCHAR(1024) NOT NULL,
+  `name` VARCHAR(255) DEFAULT NULL,
+  `sort_order` INT NOT NULL DEFAULT 0,
+  `created_by_user_id` CHAR(36) DEFAULT NULL,
+  `updated_by_user_id` CHAR(36) DEFAULT NULL,
+  `deleted_by_user_id` CHAR(36) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_act_desc_assets_activity` (`activity_id`),
+  KEY `idx_act_desc_assets_type_sort` (`asset_type`, `sort_order`),
+  KEY `idx_act_desc_assets_deleted_at` (`deleted_at`),
+  CONSTRAINT `fk_act_desc_assets_activity`
+    FOREIGN KEY (`activity_id`) REFERENCES `activities` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_act_desc_assets_created_by`
+    FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_act_desc_assets_updated_by`
+    FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_act_desc_assets_deleted_by`
+    FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- -----------------------------------------------------------------------------
 -- Packages (bundles)
 -- -----------------------------------------------------------------------------
 CREATE TABLE `packages` (
   `id` CHAR(36) NOT NULL,
   `name` VARCHAR(180) NOT NULL,
-  `description` TEXT,
+  `description` VARCHAR(5000) NULL,
+  `cover_image_url` VARCHAR(512) DEFAULT NULL,
   `discount_percent` DECIMAL(5,2) NOT NULL DEFAULT 0.00,
   `duration_days` SMALLINT UNSIGNED NOT NULL DEFAULT 3,
   `active` TINYINT(1) NOT NULL DEFAULT 1,
+  `is_featured` TINYINT(1) NOT NULL DEFAULT 0,
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,
   `deleted_by_user_id` CHAR(36) DEFAULT NULL,
@@ -1194,6 +1245,7 @@ CREATE TABLE `packages` (
   `deleted_at` DATETIME DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_packages_deleted_at` (`deleted_at`),
+  KEY `idx_packages_featured_active` (`is_featured`, `active`),
   CONSTRAINT `fk_packages_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `fk_packages_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `fk_packages_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
@@ -1243,6 +1295,33 @@ CREATE TABLE `package_images` (
   CONSTRAINT `fk_package_images_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE `package_description_assets` (
+  `id` CHAR(36) NOT NULL,
+  `package_id` CHAR(36) NOT NULL,
+  `asset_type` ENUM('image', 'pdf', 'word') NOT NULL,
+  `url` VARCHAR(1024) NOT NULL,
+  `name` VARCHAR(255) DEFAULT NULL,
+  `sort_order` INT NOT NULL DEFAULT 0,
+  `created_by_user_id` CHAR(36) DEFAULT NULL,
+  `updated_by_user_id` CHAR(36) DEFAULT NULL,
+  `deleted_by_user_id` CHAR(36) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_pkg_desc_assets_package` (`package_id`),
+  KEY `idx_pkg_desc_assets_type_sort` (`asset_type`, `sort_order`),
+  KEY `idx_pkg_desc_assets_deleted_at` (`deleted_at`),
+  CONSTRAINT `fk_pkg_desc_assets_package`
+    FOREIGN KEY (`package_id`) REFERENCES `packages` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_pkg_desc_assets_created_by`
+    FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_pkg_desc_assets_updated_by`
+    FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_pkg_desc_assets_deleted_by`
+    FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- -----------------------------------------------------------------------------
 -- Bookings & payments
 -- -----------------------------------------------------------------------------
@@ -1256,6 +1335,7 @@ CREATE TABLE `bookings` (
   `promotion_id` CHAR(36) DEFAULT NULL,
   `customer_thread_last_seen_at` DATETIME DEFAULT NULL,
   `customer_thread_presence_at` DATETIME DEFAULT NULL,
+  `staff_thread_last_seen_at` DATETIME DEFAULT NULL,
   `payment_reminder_sent_at` DATETIME DEFAULT NULL,
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,
@@ -1320,6 +1400,7 @@ CREATE TABLE `tour_guides` (
   `display_name` VARCHAR(180) NOT NULL,
   `bio` TEXT DEFAULT NULL,
   `photo_url` VARCHAR(512) DEFAULT NULL,
+  `contact_email` VARCHAR(255) DEFAULT NULL,
   `languages` JSON NOT NULL,
   `destinations` JSON NOT NULL,
   `status` ENUM('active','inactive') NOT NULL DEFAULT 'active',
@@ -1346,15 +1427,58 @@ CREATE TABLE `booking_guide_assignments` (
   `booking_id` CHAR(36) NOT NULL,
   `guide_id` CHAR(36) NOT NULL,
   `role` ENUM('primary','secondary') NOT NULL DEFAULT 'primary',
+  `start_datetime` DATETIME NOT NULL,
+  `end_datetime` DATETIME NOT NULL,
+  `notes` VARCHAR(500) DEFAULT NULL,
   `assigned_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `assigned_by_user_id` CHAR(36) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_booking_guide` (`booking_id`, `guide_id`),
   KEY `idx_booking_guide_assignments_booking` (`booking_id`),
   KEY `idx_booking_guide_assignments_guide` (`guide_id`),
+  KEY `idx_bga_guide_schedule` (`guide_id`, `start_datetime`, `end_datetime`),
   CONSTRAINT `fk_booking_guide_assignments_booking` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_booking_guide_assignments_guide` FOREIGN KEY (`guide_id`) REFERENCES `tour_guides` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_booking_guide_assignments_user` FOREIGN KEY (`assigned_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `guide_availability` (
+  `id` CHAR(36) NOT NULL,
+  `guide_id` CHAR(36) NOT NULL,
+  `start_datetime` DATETIME NOT NULL,
+  `end_datetime` DATETIME NOT NULL,
+  `status` ENUM('available','unavailable') NOT NULL DEFAULT 'unavailable',
+  `created_by_user_id` CHAR(36) DEFAULT NULL,
+  `updated_by_user_id` CHAR(36) DEFAULT NULL,
+  `deleted_by_user_id` CHAR(36) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_guide_availability_guide_schedule` (`guide_id`, `start_datetime`, `end_datetime`),
+  KEY `idx_guide_availability_deleted_at` (`deleted_at`),
+  CONSTRAINT `fk_guide_availability_guide` FOREIGN KEY (`guide_id`) REFERENCES `tour_guides` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_guide_availability_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_guide_availability_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_guide_availability_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `booking_guide_assignment_history` (
+  `id` CHAR(36) NOT NULL,
+  `assignment_id` CHAR(36) NOT NULL,
+  `booking_id` CHAR(36) NOT NULL,
+  `guide_id` CHAR(36) NOT NULL,
+  `action` ENUM('created','updated','deleted') NOT NULL,
+  `snapshot` JSON NOT NULL,
+  `actor_user_id` CHAR(36) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_bga_history_assignment` (`assignment_id`),
+  KEY `idx_bga_history_booking` (`booking_id`),
+  KEY `idx_bga_history_guide` (`guide_id`),
+  KEY `idx_bga_history_created` (`created_at`),
+  CONSTRAINT `fk_bga_history_booking` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_bga_history_guide` FOREIGN KEY (`guide_id`) REFERENCES `tour_guides` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_bga_history_actor` FOREIGN KEY (`actor_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `booking_messages` (
@@ -1411,6 +1535,7 @@ CREATE TABLE `payments` (
 CREATE TABLE `promo_codes` (
   `id` CHAR(36) NOT NULL,
   `code` VARCHAR(64) NOT NULL,
+  `cover_image_url` VARCHAR(512) DEFAULT NULL,
   `discount_type` ENUM('percent','fixed_amount') NOT NULL DEFAULT 'percent',
   `discount_value` DECIMAL(12,2) NOT NULL,
   `valid_from` DATE NOT NULL,
@@ -1436,6 +1561,7 @@ CREATE TABLE `promotions` (
   `id` CHAR(36) NOT NULL,
   `name` VARCHAR(180) NOT NULL,
   `description` TEXT,
+  `cover_image_url` VARCHAR(512) DEFAULT NULL,
   `discount_type` ENUM('percent','fixed_amount') DEFAULT NULL,
   `discount_value` DECIMAL(12,2) DEFAULT NULL,
   `valid_from` DATE DEFAULT NULL,

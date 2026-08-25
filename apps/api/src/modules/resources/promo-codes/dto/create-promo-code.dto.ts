@@ -20,6 +20,15 @@ export class CreatePromoCodeDto {
   @MaxLength(64)
   code!: string;
 
+  @ApiPropertyOptional({
+    description: 'URL de la photo de couverture (upload ou URL externe).',
+    nullable: true,
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(512)
+  coverImageUrl?: string | null;
+
   @ApiProperty({ enum: ['percent', 'fixed_amount'] })
   @IsIn(['percent', 'fixed_amount'])
   discountType!: PromoCodes['discountType'];

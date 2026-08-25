@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
-import { ActivitySchedules } from '../../../entities/generated';
 import { CrudService } from '../../../common/crud/crud.service';
+import { ActivitySchedules } from '../../../entities/generated';
 import { ActivitySchedulesListQueryDto } from './dto/activity-schedules-list-query.dto';
 
 @Injectable()
@@ -20,16 +20,17 @@ export class ActivitySchedulesService extends CrudService<ActivitySchedules> {
   ): Promise<PaginatedResult<ActivitySchedules>> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
-    const where: FindOptionsWhere<ActivitySchedules> = {};
-    if (query.activityId) {
-      where.activityId = query.activityId;
-    }
+
     const [data, total] = await this.activitySchedulesRepository.findAndCount({
-      where,
+      where: {
+        deletedAt: IsNull(),
+        ...(query.activityId ? { activityId: query.activityId } : {}),
+      },
       skip: (page - 1) * limit,
       take: limit,
       order: { startDatetime: 'ASC', createdAt: 'DESC' },
     });
+
     return {
       data,
       meta: {

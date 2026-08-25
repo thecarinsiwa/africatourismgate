@@ -1,10 +1,13 @@
 {
   "list": {
     "newUser": "New user",
-    "emptyDefault": "Tocun utilisateur pour le moment.",
-    "emptyFiltered": "Tocun utilisateur ne correspond à vos critères.",
+    "emptyDefault": "No users yet.",
+    "emptyFiltered": "No users match your filters.",
     "ariaLabel": "User list",
-    "deleteConfirm": "Delete user « {email} »? This action is reversible in the database."
+    "deleteConfirm": "User « {email} » will be deleted. This action is reversible in the database.",
+    "deleteTitle": "Delete user",
+    "deleteConfirmButton": "Delete",
+    "cancel": "Cancel"
   },
   "filters": {
     "status": "Status",
@@ -37,10 +40,16 @@
   },
   "detail": {
     "title": "Edit user",
+    "viewTitle": "View user",
+    "viewButton": "View",
+    "editButton": "Edit",
+    "createdAt": "Created at",
+    "updatedAt": "Updated at",
+    "profileIntro": "Account details in read-only mode.",
     "tabsAria": "User account sections",
     "tabs": {
       "profile": "Profile",
-      "addresses": "Addresss",
+      "addresses": "Addresses",
       "paymentMethods": "Payment methods",
       "sessions": "Sessions",
       "roles": "Roles"
@@ -48,24 +57,49 @@
   },
   "userIdFilter": {
     "label": "User",
-    "allUsers": "All les utilisateurs"
+    "allUsers": "All users"
   },
   "addresses": {
-    "emptyDefault": "None adresse enregistrée.",
-    "emptyFiltered": "None adresse pour cet utilisateur.",
-    "ariaLabel": "Liste des adresses utilisateur"
+    "emptyDefault": "No addresses saved.",
+    "emptyFiltered": "No addresses for this user.",
+    "ariaLabel": "User addresses list"
   },
   "paymentMethods": {
     "lastFourMasked": "•••• {lastFour}",
-    "emptyDefault": "Tocun moyen de paiement enregistré.",
-    "emptyFiltered": "Tocun moyen de paiement pour cet utilisateur.",
-    "ariaLabel": "Liste des moyens de paiement"
+    "emptyDefault": "No payment methods saved.",
+    "emptyFiltered": "No payment methods for this user.",
+    "ariaLabel": "Payment methods list"
   },
   "sessions": {
-    "revokeConfirm": "Revoke this session? The user will need to sign in again.",
-    "emptyDefault": "None session active.",
-    "emptyFiltered": "None session active pour cet utilisateur.",
-    "ariaLabel": "Liste des sessions utilisateur"
+    "revokeTitle": "Revoke session",
+    "revokeConfirm": "This session will be revoked. The user will need to sign in again.",
+    "revokeConfirmButton": "Revoke",
+    "cancel": "Cancel",
+    "emptyDefault": "No active sessions.",
+    "emptyFiltered": "No active sessions for this user.",
+    "ariaLabel": "User sessions list",
+    "viewTable": "Table",
+    "viewGrid": "Grid",
+    "viewCompact": "Compact list",
+    "viewModeAria": "Display mode",
+    "stats": {
+      "total": {
+        "label": "Sessions",
+        "subtitle": "Registered"
+      },
+      "active": {
+        "label": "Active",
+        "subtitle": "Not expired"
+      },
+      "expired": {
+        "label": "Expired",
+        "subtitle": "To revoke or purge"
+      },
+      "users": {
+        "label": "Users",
+        "subtitle": "With a session"
+      }
+    }
   },
   "stats": {
     "total": {
@@ -73,56 +107,65 @@
       "subtitle": "Registered accounts"
     },
     "active": {
-      "label": "Actives",
+      "label": "Active",
       "subtitle": "Active accounts"
     },
     "suspended": {
-      "label": "Suspendeds",
+      "label": "Suspended",
       "subtitle": "Suspended accounts"
     },
     "employees": {
       "label": "Employees",
-      "subtitle": "Profiles employés"
+      "subtitle": "Employee profiles"
     }
   },
   "roles": {
-    "assignedTitle": "Roles assignés",
-    "empty": "Tocun rôle actif pour cet utilisateur.",
-    "assignFormTitle": "Assigner un rôle",
+    "assignedTitle": "Assigned roles",
+    "empty": "No active role for this user.",
+    "assignFormTitle": "Assign a role",
+    "assignSubmit": "Assign role",
+    "manageAction": "Manage roles",
+    "modalTitle": "Manage roles",
+    "modalDescription": "Add or remove roles for this user.",
     "user": "User",
     "role": "Role",
-    "selectPlaceholder": "Sélectionner…",
-    "scope": "Périmètre (scope)",
-    "scopeId": "ID du scope (UUID)",
-    "scopeIdHint": "Ex. ID propriété, agence ou file support.",
-    "expiresAt": "Expiration (optionnel)",
-    "superAdminWarning": "Réservé aux super administrateurs — périmètre forcé à Global.",
-    "superAdminConfirm": "Assign role « {roleName} »? This user will get full platform access.",
+    "selectPlaceholder": "Select…",
+    "scope": "Scope",
+    "scopeId": "Scope ID (UUID)",
+    "scopeIdHint": "E.g. property, agency, or support queue ID.",
+    "expiresAt": "Expiration (optional)",
+    "superAdminWarning": "Reserved for super administrators — scope forced to Global.",
+    "superAdminConfirmTitle": "Confirm super-admin assignment",
+    "superAdminConfirm": "The user will be granted the \"{roleName}\" role and full access to the platform.",
+    "superAdminConfirmButton": "Confirm",
+    "cancel": "Cancel",
     "validation": {
-      "userAndRoleRequired": "User et rôle sont obligatoires.",
+      "userAndRoleRequired": "User and role are required.",
       "scopeIdRequired": "Scope ID is required for this scope."
     },
     "scopeTypes": {
       "global": "Global",
       "property": "Property",
       "agency": "Agency",
-      "support_queue": "File support"
+      "support_queue": "Support queue"
     },
     "scopeDisplay": {
       "global": "Global",
-      "property": "Établissement",
+      "property": "Property",
       "agency": "Agency",
-      "support_queue": "File support",
+      "support_queue": "Support queue",
       "withId": "{label} · {idPrefix}…"
     },
     "revokeDialog": {
-      "title": "Révoquer le rôle",
-      "description": "Retirer ce rôle pour cet utilisateur ?"
+      "title": "Revoke role",
+      "description": "Remove this role from this user?"
     },
     "toast": {
-      "revokedTitle": "Role révoqué",
+      "assignedTitle": "Role assigned",
+      "assignedMessage": "Assignment created.",
+      "revokedTitle": "Role revoked",
       "revokedMessage": "Assignment removed.",
-      "revokeFailedTitle": "Échec de la révocation"
+      "revokeFailedTitle": "Revocation failed"
     }
   }
 }

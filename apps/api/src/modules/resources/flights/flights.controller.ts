@@ -12,22 +12,15 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import {
-  ApiBody,
-  ApiConsumes,
-  ApiForbiddenResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync } from 'node:fs';
 import { extname, join } from 'node:path';
-import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { DeepPartial } from 'typeorm';
+import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { flightUploadUrl } from '../../../common/utils/public-asset-url';
 import { Flights } from '../../../entities/generated';
-import { FlightsListQueryDto } from './dto/flights-list-query.dto';
 import { FlightsService } from './flights.service';
 
 const FLIGHT_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
@@ -35,16 +28,26 @@ const ALLOWED_FLIGHT_IMAGE_MIMES = new Set(['image/jpeg', 'image/png', 'image/we
 const ALLOWED_FLIGHT_IMAGE_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 
 @ApiTags('flights')
-@ApiForbiddenResponse({ description: 'Missing permission' })
 @Controller('flights')
 export class FlightsController {
   constructor(private readonly service: FlightsService) {}
 
-  @RequirePermissions('flights.read')
   @Get()
   @ApiOperation({ summary: 'List flights' })
-  findAll(@Query() query: FlightsListQueryDto) {
+  findAll(@Query() query: PaginationQueryDto) {
     return this.service.findAll(query);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get flights by id' })
+  findOne(@Param('id') id: string) {
+    return this.service.findOne(id);
+  }
+
+  @Post()
+  @ApiOperation({ summary: 'Create flights' })
+  create(@Body() dto: DeepPartial<Flights>) {
+    return this.service.create(dto);
   }
 
   @ApiConsumes('multipart/form-data')
@@ -86,7 +89,6 @@ export class FlightsController {
       },
     }),
   )
-  @RequirePermissions('flights.write')
   @Post(':id/upload-image')
   @ApiOperation({ summary: 'Upload flight image (JPEG, PNG or WebP, max 5 MB)' })
   async uploadImage(
@@ -102,28 +104,12 @@ export class FlightsController {
     return { url: flightUploadUrl(file.filename) };
   }
 
-  @RequirePermissions('flights.read')
-  @Get(':id')
-  @ApiOperation({ summary: 'Get flights by id' })
-  findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
-  }
-
-  @RequirePermissions('flights.write')
-  @Post()
-  @ApiOperation({ summary: 'Create flights' })
-  create(@Body() dto: DeepPartial<Flights>) {
-    return this.service.create(dto);
-  }
-
-  @RequirePermissions('flights.write')
   @Patch(':id')
   @ApiOperation({ summary: 'Update flights' })
   update(@Param('id') id: string, @Body() dto: DeepPartial<Flights>) {
     return this.service.update(id, dto);
   }
 
-  @RequirePermissions('flights.write')
   @Delete(':id')
   @ApiOperation({ summary: 'Soft-delete flights' })
   remove(@Param('id') id: string) {

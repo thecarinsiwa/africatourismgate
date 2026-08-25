@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -44,6 +45,8 @@ export function DonationsList() {
     | { status: 'ready'; donations: Donation[]; total: number; totalPages: number }
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<Donation | null>(null);
 
   useSetAdminPageMeta({ title: t('pageTitle') });
 
@@ -68,28 +71,32 @@ export function DonationsList() {
     };
   }, [t]);
 
-  const handleDelete = useCallback(
-    async (item: Donation) => {
-      if (!window.confirm(t('deleteConfirm', { title: item.title }))) return;
-      setDeletingId(item.id);
-      try {
-        await getApiClient().deleteDonation(item.id);
-        setState((prev) => {
-          if (prev.status !== 'ready') return prev;
-          return {
-            ...prev,
-            donations: prev.donations.filter((row) => row.id !== item.id),
-            total: Math.max(0, prev.total - 1),
-          };
-        });
-      } catch (error) {
-        window.alert(getErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [getErrorMessage, t],
-  );
+  const handleDeleteRequest = useCallback((item: Donation) => {
+    setConfirmTarget(item);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const item = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(item.id);
+    try {
+      await getApiClient().deleteDonation(item.id);
+      setState((prev) => {
+        if (prev.status !== 'ready') return prev;
+        return {
+          ...prev,
+          donations: prev.donations.filter((row) => row.id !== item.id),
+          total: Math.max(0, prev.total - 1),
+        };
+      });
+    } catch (error) {
+      setDeleteError(getErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getErrorMessage]);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -193,7 +200,7 @@ export function DonationsList() {
             {canWrite ? (
               <DataTableActionButton
                 action="delete"
-                onClick={() => void handleDelete(row.original)}
+                onClick={() => handleDeleteRequest(row.original)}
                 disabled={deletingId === row.original.id}
                 loading={deletingId === row.original.id}
               />
@@ -202,7 +209,7 @@ export function DonationsList() {
         ),
       },
     ],
-    [canWrite, deletingId, handleDelete, t, tCommon, tForm, tLocale, tStatus],
+    [canWrite, deletingId, handleDeleteRequest, t, tCommon, tForm, tLocale, tStatus],
   );
 
   const donations = state.status === 'ready' ? state.donations : [];
@@ -218,6 +225,19 @@ export function DonationsList() {
   }
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { title: confirmTarget.title }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <ParametresPageLayout>
       <div className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -295,5 +315,6 @@ export function DonationsList() {
         </Card>
       </div>
     </ParametresPageLayout>
+    </>
   );
 }

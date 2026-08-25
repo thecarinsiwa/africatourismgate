@@ -18,7 +18,7 @@ import {
   type SortingState,
 } from '@africatourismgate/ui';
 import type { BookingListItem, BookingStatus, OrganizationListItem, User } from '@africatourismgate/types';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import {
@@ -31,14 +31,16 @@ import {
 } from '../../lib/i18n/use-module-labels';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import { exportCsv } from '../../lib/export-csv';
+import { BookingItemsListModal } from './booking-items-list-modal';
 
 const PAGE_SIZE = 10;
+const SEARCH_DEBOUNCE_MS = 300;
 
 type StatusFilter = '' | BookingStatus;
 
-function formatDateTime(iso: string): string {
+function formatDateTime(iso: string, locale: string): string {
   try {
-    return new Date(iso).toLocaleString('fr-FR', {
+    return new Date(iso).toLocaleString(locale, {
       dateStyle: 'short',
       timeStyle: 'short',
     });
@@ -53,11 +55,14 @@ function formatMoney(cents: number, currency: string): string {
 
 export function BookingsList() {
   const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
+  const locale = useLocale();
   const t = useTranslations('modules.bookings.list');
   const tCommon = useTranslations('modules.common');
+  const tCommonFilters = useTranslations('modules.common.filters');
   const tDataTable = useTranslations('modules.common.dataTable');
   const tActions = useTranslations('common.actions');
   const tExport = useTranslations('modules.common.exportCsv');
+  const tPages = useTranslations('pages.reservations');
   const tUsers = useTranslations('modules.users.filters');
   const statusLabels = useBookingStatusLabels();
   const statusOptions = useBookingStatusFilterOptions();
@@ -71,6 +76,8 @@ export function BookingsList() {
   const [organizationFilter, setOrganizationFilter] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState('');
   const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [state, setState] = useState<
@@ -78,6 +85,7 @@ export function BookingsList() {
     | { status: 'error'; message: string }
     | { status: 'ready'; bookings: BookingListItem[]; total: number; totalPages: number }
   >({ status: 'loading' });
+  const [linesModalOpen, setLinesModalOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -104,6 +112,19 @@ export function BookingsList() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    const query = searchInput.trim();
+    const timer = window.setTimeout(() => {
+      setSearch((prev) => {
+        if (prev !== query) {
+          setPage(1);
+        }
+        return query;
+      });
+    }, SEARCH_DEBOUNCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [searchInput]);
 
   const orgNameById = useMemo(() => {
     const map = new Map<string, string>();
@@ -147,6 +168,7 @@ export function BookingsList() {
         dateFrom: dateFrom || undefined,
         dateTo: dateTo || undefined,
         sortOrder,
+        search: search || undefined,
       });
       setState({
         status: 'ready',
@@ -157,13 +179,14 @@ export function BookingsList() {
     } catch (error) {
       setState({ status: 'error', message: getBookingsErrorMessage(error) });
     }
-  }, [page, statusFilter, userFilter, organizationFilter, dateFrom, dateTo, sortOrder, getBookingsErrorMessage]);
+  }, [page, statusFilter, userFilter, organizationFilter, dateFrom, dateTo, sortOrder, search, getBookingsErrorMessage]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
   const activeFilterCount = [
+    search !== '',
     statusFilter !== '',
     userFilter !== '',
     organizationFilter !== '',
@@ -181,6 +204,8 @@ export function BookingsList() {
   );
 
   const handleClearFilters = useCallback(() => {
+    setSearchInput('');
+    setSearch('');
     setStatusFilter('');
     setUserFilter('');
     setOrganizationFilter('');
@@ -200,7 +225,7 @@ export function BookingsList() {
         meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm tabular-nums">
-            {formatDateTime(row.original.createdAt)}
+            {formatDateTime(row.original.createdAt, locale)}
           </span>
         ),
       },
@@ -208,9 +233,9 @@ export function BookingsList() {
         id: 'client',
         header: tCommon('columns.client'),
         cell: ({ row }) => (
-          <div>
-            <span className="font-medium text-atg-fg">{row.original.clientEmail}</span>
-            <p className="text-xs text-atg-muted">
+          <div className="min-w-0">
+            <span className="block truncate font-medium text-atg-fg">{row.original.clientEmail}</span>
+            <p className="truncate text-xs text-atg-muted">
               {row.original.clientFirstName} {row.original.clientLastName}
             </p>
           </div>
@@ -253,7 +278,7 @@ export function BookingsList() {
       {
         id: 'total',
         header: tCommon('columns.amount'),
-        meta: { align: 'right' },
+        meta: { align: 'right', hideOnMobile: true },
         cell: ({ row }) => (
           <span className="tabular-nums text-sm font-medium">
             {formatMoney(row.original.totalCents, row.original.currency)}
@@ -269,13 +294,13 @@ export function BookingsList() {
             <DataTableActionButton
               action="view"
               label={tActions('view')}
-              href={`/dashboard/bookings/${row.original.id}`}
+              href={`/reservations/${row.original.id}`}
             />
           </DataTableActions>
         ),
       },
     ],
-    [emptyDash, orgNameById, statusLabels, t, tActions, tCommon],
+    [emptyDash, locale, orgNameById, statusLabels, t, tActions, tCommon],
   );
 
   const isLoading = state.status === 'loading';
@@ -289,7 +314,7 @@ export function BookingsList() {
     exportCsv({
       filename: `reservations-${date}.csv`,
       columns: [
-        { header: tCommon('columns.date'), value: (row) => formatDateTime(row.createdAt) },
+        { header: tCommon('columns.date'), value: (row) => formatDateTime(row.createdAt, locale) },
         { header: tCommon('columns.client'), value: (row) => row.clientEmail },
         {
           header: tCommon('columns.organization'),
@@ -310,7 +335,7 @@ export function BookingsList() {
       rows: bookings,
     });
     toast({ variant: 'success', message: tExport('success') });
-  }, [bookings, emptyDash, orgNameById, statusLabels, tCommon, tExport, toast]);
+  }, [bookings, emptyDash, locale, orgNameById, statusLabels, tCommon, tExport, toast]);
 
   return (
     <div className="space-y-6">
@@ -345,18 +370,38 @@ export function BookingsList() {
         applyLabel={tCommon('filters.apply')}
         toggleLabel={tCommon('filters.toggle')}
         actions={
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={isLoading || bookings.length === 0}
-            onClick={handleExportCsv}
-          >
-            {tExport('button')}
-          </Button>
+          <>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setLinesModalOpen(true)}
+            >
+              {tPages('actions.lines')}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={isLoading || bookings.length === 0}
+              onClick={handleExportCsv}
+            >
+              {tExport('button')}
+            </Button>
+          </>
         }
         filters={
           <>
+            <div className="min-w-[200px] flex-1 sm:max-w-md">
+              <Input
+                name="search"
+                type="search"
+                placeholder={tCommonFilters('searchBookings')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                aria-label={tCommonFilters('searchBookingsAria')}
+              />
+            </div>
             <div className="w-full sm:w-48">
               <Select
                 label={tCommon('columns.status')}
@@ -393,6 +438,7 @@ export function BookingsList() {
             <div className="w-full sm:w-40">
               <Input
                 label={tCommon('filters.dateFrom')}
+                name="dateFrom"
                 type="date"
                 value={dateFrom}
                 onChange={(e) => {
@@ -404,6 +450,7 @@ export function BookingsList() {
             <div className="w-full sm:w-40">
               <Input
                 label={tCommon('filters.dateTo')}
+                name="dateTo"
                 type="date"
                 value={dateTo}
                 onChange={(e) => {
@@ -460,6 +507,8 @@ export function BookingsList() {
           ) : null}
         </>
       )}
+
+      <BookingItemsListModal open={linesModalOpen} onOpenChange={setLinesModalOpen} />
     </div>
   );
 }

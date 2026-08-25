@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -105,6 +106,7 @@ export function VehicleAvailabilitySection({
   const sectionRef = useRef<HTMLElement>(null);
   const [filterStart, setFilterStart] = useState('');
   const [filterEnd, setFilterEnd] = useState('');
+  const [slotSearch, setSlotSearch] = useState('');
   const [mapDefaultCenter, setMapDefaultCenter] = useState(DEFAULT_MAP_CENTER);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -120,6 +122,7 @@ export function VehicleAvailabilitySection({
   );
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<VehicleAvailability | null>(null);
 
   const formatRange = useCallback(
     (start: string, end: string): string => {
@@ -221,6 +224,25 @@ export function VehicleAvailabilitySection({
     setFieldErrors({});
     setShowForm(true);
   }, [autoOpenAdd]);
+
+  const handleDeleteRequest = useCallback((slot: VehicleAvailability) => {
+    setConfirmTarget(slot);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const slot = confirmTarget;
+    setConfirmTarget(null);
+    setDeletingId(slot.id);
+    try {
+      await getApiClient().deleteVehicleAvailability(slot.id);
+      await load();
+    } catch (error) {
+      setFormError(getLocationsErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getLocationsErrorMessage, load]);
 
   function handleCoordinatePick(latitude: string, longitude: string) {
     setFormValues((prev) => ({ ...prev, latitude, longitude }));
@@ -342,18 +364,7 @@ export function VehicleAvailabilitySection({
             />
             <DataTableActionButton
               action="delete"
-              onClick={async () => {
-                if (!window.confirm(t('deleteConfirm'))) return;
-                setDeletingId(row.original.id);
-                try {
-                  await getApiClient().deleteVehicleAvailability(row.original.id);
-                  await load();
-                } catch (error) {
-                  setFormError(getLocationsErrorMessage(error));
-                } finally {
-                  setDeletingId(null);
-                }
-              }}
+              onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
             />
@@ -361,10 +372,45 @@ export function VehicleAvailabilitySection({
         ),
       },
     ],
-    [deletingId, emptyDash, formatRange, load, statusLabels, t, tCommon, getLocationsErrorMessage],
+    [deletingId, emptyDash, formatRange, handleDeleteRequest, statusLabels, t, tCommon],
   );
 
   const slots = state.status === 'ready' ? state.slots : [];
+
+  const statusCounts = useMemo(() => {
+    const counts = { available: 0, rented: 0, maintenance: 0, total: slots.length };
+    for (const slot of slots) {
+      if (slot.status === 'available') counts.available += 1;
+      else if (slot.status === 'rented') counts.rented += 1;
+      else if (slot.status === 'maintenance') counts.maintenance += 1;
+    }
+    return counts;
+  }, [slots]);
+
+  const filteredSlots = useMemo(() => {
+    const query = slotSearch.trim().toLowerCase();
+    const sorted = [...slots].sort(
+      (a, b) =>
+        new Date(a.startDatetime).getTime() - new Date(b.startDatetime).getTime(),
+    );
+    if (!query) return sorted;
+
+    return sorted.filter((slot) => {
+      const statusLabel = getVehicleStatusLabel(slot.status, statusLabels);
+      const haystack = [
+        statusLabel,
+        slot.status,
+        formatRange(slot.startDatetime, slot.endDatetime),
+        slot.latitude ?? '',
+        slot.longitude ?? '',
+      ]
+        .join(' ')
+        .toLowerCase();
+      return haystack.includes(query);
+    });
+  }, [formatRange, slotSearch, slots, statusLabels]);
+
+  const hasSlotSearch = slotSearch.trim().length > 0;
 
   const slotFormModal = (
     <Modal
@@ -473,32 +519,32 @@ export function VehicleAvailabilitySection({
   );
 
   const filterToolbar = (
-    <Card variant="dashboard" className="p-4">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex flex-wrap items-end gap-4">
-          <Input
-            label={t('filterFrom')}
-            type="date"
-            value={filterStart}
-            onChange={(e) => setFilterStart(e.target.value)}
-            wrapperClassName="w-full sm:w-auto sm:min-w-[180px]"
-          />
-          <Input
-            label={t('filterTo')}
-            type="date"
-            value={filterEnd}
-            onChange={(e) => setFilterEnd(e.target.value)}
-            wrapperClassName="w-full sm:w-auto sm:min-w-[180px]"
-          />
-          <Button type="button" variant="outline" size="sm" onClick={() => void load()}>
-            {tCommon('filters.apply')}
-          </Button>
-        </div>
-        <Button type="button" onClick={() => openForm()} className="w-full lg:w-auto">
-          {t('addSlot')}
+    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+      <div className="flex flex-wrap items-end gap-3">
+        <Input
+          label={t('filterFrom')}
+          type="date"
+          value={filterStart}
+          onChange={(e) => setFilterStart(e.target.value)}
+          wrapperClassName="w-full sm:w-auto sm:min-w-[160px]"
+        />
+        <Input
+          label={t('filterTo')}
+          type="date"
+          value={filterEnd}
+          onChange={(e) => setFilterEnd(e.target.value)}
+          wrapperClassName="w-full sm:w-auto sm:min-w-[160px]"
+        />
+        <Button type="button" variant="outline" size="sm" onClick={() => void load()}>
+          {tCommon('filters.apply')}
         </Button>
       </div>
-    </Card>
+      {!isPageVariant ? (
+        <Button type="button" onClick={() => openForm()} className="w-full sm:w-auto">
+          {t('addSlot')}
+        </Button>
+      ) : null}
+    </div>
   );
 
   const defaultFilterToolbar = (
@@ -528,36 +574,125 @@ export function VehicleAvailabilitySection({
       {state.message}
     </p>
   ) : (
-    <Card variant="dashboard" padding="none">
+    <Card variant="dashboard" padding="none" className="overflow-hidden">
       <DataTable
         columns={columns}
-        data={slots}
+        data={isPageVariant ? filteredSlots : slots}
         isLoading={state.status === 'loading'}
-        emptyMessage={t('empty')}
+        emptyMessage={
+          isPageVariant && hasSlotSearch ? t('searchEmpty') : t('empty')
+        }
+        emptyVariant={isPageVariant && hasSlotSearch ? 'search' : 'default'}
         getRowId={(r) => r.id}
+        aria-label={t('title')}
+        loadingMessage={tCommon('dataTable.loading')}
+        expandRowLabel={tCommon('dataTable.expandRow')}
+        collapseRowLabel={tCommon('dataTable.collapseRow')}
+        expandRowAriaLabel={tCommon('dataTable.expandRowAria')}
       />
     </Card>
+  );
+
+  const deleteDialog = (
+    <AlertDialog
+      open={!!confirmTarget}
+      onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+      title={t('deleteTitle')}
+      description={t('deleteConfirm')}
+      confirmLabel={t('deleteConfirmButton')}
+      cancelLabel={t('cancel')}
+      variant="danger"
+      loading={!!deletingId}
+      onConfirm={() => void handleDeleteConfirm()}
+    />
   );
 
   if (isPageVariant) {
     return (
       <section ref={sectionRef} id="vehicle-availability" className="space-y-6">
+        {deleteDialog}
         {slotFormModal}
-        {filterToolbar}
-        <section className="space-y-4 rounded-xl border border-atg-border/80 bg-atg-elevated/40 p-4 sm:p-5">
-          <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-            <div>
+
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {(
+            [
+              {
+                key: 'total',
+                label: t('stats.total'),
+                value: statusCounts.total,
+              },
+              {
+                key: 'available',
+                label: statusLabels.available,
+                value: statusCounts.available,
+              },
+              {
+                key: 'rented',
+                label: statusLabels.rented,
+                value: statusCounts.rented,
+              },
+              {
+                key: 'maintenance',
+                label: statusLabels.maintenance,
+                value: statusCounts.maintenance,
+              },
+            ] as const
+          ).map((stat) => (
+            <Card
+              key={stat.key}
+              variant="dashboard"
+              className="border border-atg-border/80 p-3 sm:p-4"
+            >
+              <p className="text-[11px] font-medium uppercase tracking-wide text-atg-muted">
+                {stat.label}
+              </p>
+              {state.status === 'loading' ? (
+                <Skeleton className="mt-2 h-7 w-10" />
+              ) : (
+                <p className="mt-2 text-2xl font-semibold tabular-nums text-atg-fg">
+                  {stat.value}
+                </p>
+              )}
+            </Card>
+          ))}
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
-              <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
+              {state.status === 'ready' ? (
+                <DataTableBadge variant="muted">
+                  {hasSlotSearch
+                    ? `${filteredSlots.length}/${slots.length}`
+                    : slots.length}
+                </DataTableBadge>
+              ) : state.status === 'loading' ? (
+                <Skeleton className="h-5 w-10" />
+              ) : null}
             </div>
-            {state.status === 'ready' ? (
-              <p className="text-sm font-medium text-atg-muted">{t('slotsCount', { count: slots.length })}</p>
-            ) : state.status === 'loading' ? (
-              <Skeleton className="h-4 w-28" />
-            ) : null}
+            <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
           </div>
-          {slotsTable}
-        </section>
+          <Button type="button" variant="outline" size="sm" onClick={() => openForm()}>
+            {t('addSlot')}
+          </Button>
+        </div>
+
+        {filterToolbar}
+
+        {slots.length > 0 || hasSlotSearch ? (
+          <div className="max-w-md">
+            <Input
+              type="search"
+              placeholder={t('searchPlaceholder')}
+              value={slotSearch}
+              onChange={(e) => setSlotSearch(e.target.value)}
+              aria-label={t('searchPlaceholder')}
+            />
+          </div>
+        ) : null}
+
+        {slotsTable}
       </section>
     );
   }
@@ -570,6 +705,7 @@ export function VehicleAvailabilitySection({
         embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
       }
     >
+      {deleteDialog}
       {slotFormModal}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>

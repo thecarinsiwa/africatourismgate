@@ -2,7 +2,7 @@
   "status": {
     "draft": "Draft",
     "pending_approval": "Pending approval",
-    "pending_payment": "Pending de paiement",
+    "pending_payment": "Pending payment",
     "confirmed": "Confirmed",
     "cancelled": "Cancelled",
     "refunded": "Refunded"
@@ -16,16 +16,18 @@
     "package": "Package"
   },
   "catalogLink": {
-    "referencePrefix": "Réf. {idPrefix}",
-    "ariaLabel": "Voir {typeLabel} : {title}"
+    "referencePrefix": "Ref. {idPrefix}",
+    "ariaLabel": "View {typeLabel}: {title}"
   },
   "list": {
-    "emptyDefault": "None réservation pour le moment.",
-    "emptyFiltered": "None réservation ne correspond à vos critères.",
-    "ariaLabel": "Liste des réservations",
+    "emptyDefault": "No bookings yet.",
+    "emptyFiltered": "No bookings match your filters.",
+    "ariaLabel": "Bookings list",
     "filters": {
       "client": "Customer"
     },
+    "searchPlaceholder": "Search by customer, email or ref…",
+    "searchAria": "Search bookings",
     "tabs": {
       "ariaLabel": "Quick status filters",
       "all": "All",
@@ -36,23 +38,23 @@
   "itemsList": {
     "filters": {
       "type": "Type",
-      "bookingStatus": "Status réservation",
-      "bookingId": "ID réservation",
-      "bookingIdPlaceholder": "UUID complet"
+      "bookingStatus": "Booking status",
+      "bookingId": "Booking ID",
+      "bookingIdPlaceholder": "Full UUID"
     },
-    "emptyDefault": "None ligne de réservation pour le moment.",
-    "emptyFiltered": "None ligne ne correspond à vos critères.",
-    "ariaLabel": "Lines de réservation"
+    "emptyDefault": "No booking lines yet.",
+    "emptyFiltered": "No booking lines match your filters.",
+    "ariaLabel": "Booking lines"
   },
   "detail": {
     "title": "Booking",
-    "backLink": "Back aux réservations",
-    "reference": "Réf. {idPrefix}",
+    "backLink": "Back to bookings",
+    "reference": "Ref. {idPrefix}",
     "sections": {
       "client": "Customer",
       "status": "Status",
       "actions": "Actions",
-      "bookingLines": "Lines de réservation",
+      "bookingLines": "Booking lines",
       "payments": "Payments",
       "assignedGuides": "Assigned guides"
     },
@@ -63,31 +65,48 @@
       "total": "Total",
       "createdAt": "Created on"
     },
+    "summary": {
+      "createdAt": "Created on {date}",
+      "unreadMessages": "{count, plural, one {# unread customer message} other {# unread customer messages}}"
+    },
+    "tabs": {
+      "ariaLabel": "Additional sections",
+      "manifest": "Manifest",
+      "guides": "Guides",
+      "documents": "Identity documents",
+      "documentsPending": "Identity documents ({count})",
+      "history": "History"
+    },
+    "actionsBar": {
+      "ariaLabel": "Booking actions",
+      "statusModalDescription": "Choose the new status and an optional reason for the history.",
+      "cancelModalDescription": "Provide a cancellation reason if needed."
+    },
     "actions": {
-      "changeStatus": "Changer le statut",
-      "statusReason": "Reason (historique)",
-      "statusReasonPlaceholder": "Ex. confirmation manuelle, remboursement…",
-      "applyStatus": "Apply le statut",
+      "changeStatus": "Change status",
+      "statusReason": "Reason (history)",
+      "statusReasonPlaceholder": "E.g. manual confirmation, refund…",
+      "applyStatus": "Apply status",
       "cancellation": "Cancellation",
       "cancelReason": "Cancellation reason",
-      "cancelReasonPlaceholder": "Ex. demande client, indisponibilité…",
-      "cancelBooking": "Annuler la réservation",
+      "cancelReasonPlaceholder": "E.g. customer request, unavailability…",
+      "cancelBooking": "Cancel booking",
       "readOnly": "Editing requires the bookings.write permission.",
       "assistedStatusHint": "Use the Assisted validation panel to approve or reject this request."
     },
-    "linesEmpty": "None ligne.",
-    "linesAriaLabel": "Lines de réservation",
-    "paymentsEmpty": "Tocun paiement enregistré pour cette réservation.",
+    "linesEmpty": "No lines.",
+    "linesAriaLabel": "Booking lines",
+    "paymentsEmpty": "No payments recorded for this booking.",
     "paymentsAriaLabel": "Payments",
     "statusDialog": {
-      "title": "Confirmer le changement de statut",
-      "description": "Passer la réservation de « {fromStatus} » à « {toStatus} » ?{reasonSuffix}",
-      "reasonSuffix": " Reason : {reason}"
+      "title": "Confirm status change",
+      "description": "Change this booking from “{fromStatus}” to “{toStatus}”?{reasonSuffix}",
+      "reasonSuffix": " Reason: {reason}"
     },
     "cancelDialog": {
-      "title": "Annuler la réservation",
-      "description": "Annuler cette réservation ? Le stock des produits sera libéré (moteur de réservation).",
-      "confirm": "Annuler la réservation",
+      "title": "Cancel booking",
+      "description": "Cancel this booking? Product inventory will be released (booking engine).",
+      "confirm": "Cancel booking",
       "cancel": "Back"
     },
     "paymentStatus": {
@@ -98,11 +117,11 @@
     }
   },
   "timeline": {
-    "progressAria": "Progression du statut de réservation",
-    "finalStatus": "Status final",
+    "progressAria": "Booking status progress",
+    "finalStatus": "Final status",
     "history": "History",
-    "historyAria": "History des changements de statut",
-    "historyEmpty": "Tocun changement de statut enregistré.",
+    "historyAria": "Status change history",
+    "historyEmpty": "No status changes recorded.",
     "transition": "{fromStatus} → {toStatus}"
   },
   "manifest": {
@@ -192,7 +211,30 @@
     "totalHint": "Adjust the total if needed before approval.",
     "totalOverrideHint": "Auto-calculated from traveler prices. Edit to apply a manual override.",
     "travelersTitle": "Payment breakdown by traveler",
+    "travelersCount": "{count, plural, one {# traveler} other {# travelers}}",
+    "travelerNumber": "Traveler {number}",
+    "documentModal": {
+      "title": "Document — {name}",
+      "description": "Identity document for this traveler (matched by upload order).",
+      "empty": "No document uploaded for this traveler.",
+      "previewError": "Unable to display the document.",
+      "requestByEmail": "Request upload by email",
+      "requestByEmailSuccess": "Request email sent to the customer.",
+      "emailNotSent": "The email could not be sent (customer address not found).",
+      "emailNoteLabel": "Message to customer (optional)",
+      "emailNotePlaceholder": "E.g. please upload a clear passport photo…",
+      "travelerNameRequired": "Traveler name is required to send the request.",
+      "approve": "Approve document",
+      "reject": "Reject",
+      "rejectSuccess": "Document rejected.",
+      "rejectDialogTitle": "Reject document",
+      "rejectDialogDescription": "The customer can upload a new version from their account.",
+      "rejectNoteLabel": "Reason (optional)",
+      "rejectNotePlaceholder": "E.g. unreadable or expired document…"
+    },
     "travelerName": "Traveler name",
+    "viewDocument": "View document",
+    "viewDocumentPending": "Document to review",
     "travelerAge": "Age",
     "travelerBasePrice": "Base price ({currency})",
     "travelerPrice": "Price ({currency})",
@@ -253,57 +295,114 @@
   },
   "guides": {
     "title": "Assigned guides",
-    "empty": "No guides assigned to this booking.",
-    "ariaLabel": "Guides assigned to booking",
-    "assignTitle": "Assign a guide",
-    "selectGuide": "Guide",
-    "selectPlaceholder": "Choose an active guide…",
+    "empty": "No guide slots assigned to this booking.",
+    "ariaLabel": "Guide slots assigned to booking",
+    "assignTitle": "Add a slot",
+    "assignHint": "Set the time range, then pick a guide available for that slot.",
+    "selectGuide": "Available guide",
+    "selectPlaceholder": "Choose a guide…",
+    "selectTimesFirst": "Enter times first",
+    "searchingGuides": "searching…",
     "selectRole": "Role",
-    "assignButton": "Assign",
-    "noGuidesAvailable": "All active guides are already assigned.",
-    "removeConfirm": "Remove this guide from the booking?",
+    "assignButton": "Assign slot",
+    "assignConfirmTitle": "Assign this slot?",
+    "assignConfirm": "The selected guide will be scheduled for the time range and receive an email.",
+    "assignConfirmNamed": "“{name}” will serve as {role} guide ({schedule}). A notification email will be sent.",
+    "assignConfirmButton": "Assign and notify",
+    "noGuidesForSlot": "No guides available for this time range.",
+    "noGuidesAvailable": "No active guides available.",
+    "visitWindowHint": "Allowed slots from {start} through {end} (inclusive).",
+    "noVisitDates": "This booking has no dates — guide assignment is not available.",
+    "editSlotTitle": "Edit slot",
+    "editSlotDescription": "Adjust times for “{name}”. Conflicts are checked on save.",
+    "removeTitle": "Remove slot",
+    "removeConfirm": "This slot will be removed. The guide will receive a notification email.",
+    "removeConfirmNamed": "The slot for “{name}” ({schedule}) will be removed. A notification email will be sent.",
+    "removeCommentLabel": "Message to the guide",
+    "removeCommentHint": "This comment will be included in the notification email (optional).",
+    "removeConfirmButton": "Remove and notify",
+    "cancel": "Cancel",
     "viewProfile": "View profile",
+    "validation": {
+      "endAfterStart": "End time must be after start time.",
+      "outsideVisitWindow": "The slot must fall within the booking period."
+    },
+    "fields": {
+      "startDatetime": "Start",
+      "endDatetime": "End",
+      "notes": "Notes",
+      "notesHint": "E.g. driver, market tour… (optional)"
+    },
+    "conflicts": {
+      "assignment": "Assignment",
+      "unavailability": "Unavailable",
+      "viewBooking": "View booking"
+    },
     "columns": {
       "guide": "Guide",
+      "schedule": "Time range",
       "role": "Role",
+      "notes": "Notes",
       "assignedAt": "Assigned at"
+    },
+    "history": {
+      "title": "Assignment history",
+      "titleShort": "History",
+      "description": "Log of guide slot creates, updates, and deletions.",
+      "expand": "Show history",
+      "collapse": "Hide history",
+      "empty": "No events recorded for this booking.",
+      "ariaLabel": "Guide slot history",
+      "actions": {
+        "created": "Created",
+        "updated": "Updated",
+        "deleted": "Deleted"
+      },
+      "columns": {
+        "when": "When",
+        "action": "Action",
+        "guide": "Guide",
+        "schedule": "Time range",
+        "role": "Role",
+        "actor": "By"
+      }
     }
   },
   "stats": {
     "bookings": {
       "total": {
         "label": "Bookings",
-        "subtitle": "All les réservations"
+        "subtitle": "All bookings"
       },
       "confirmed": {
-        "label": "Confirmeds",
-        "subtitle": "Bookings confirmées"
+        "label": "Confirmed",
+        "subtitle": "Confirmed bookings"
       },
       "pending_payment": {
         "label": "Pending",
-        "subtitle": "Paiement en attente"
+        "subtitle": "Awaiting payment"
       },
       "lines": {
         "label": "Lines",
-        "subtitle": "Articles réservés"
+        "subtitle": "Booked items"
       }
     },
     "items": {
       "total": {
         "label": "Lines",
-        "subtitle": "All les lignes"
+        "subtitle": "All lines"
       },
       "confirmed": {
-        "label": "Confirmeds",
-        "subtitle": "Lines de réservations confirmées"
+        "label": "Confirmed",
+        "subtitle": "Lines from confirmed bookings"
       },
       "pending_payment": {
         "label": "Pending",
-        "subtitle": "Lines en attente de paiement"
+        "subtitle": "Lines awaiting payment"
       },
       "bookings": {
         "label": "Bookings",
-        "subtitle": "Voir toutes les réservations"
+        "subtitle": "View all bookings"
       }
     }
   }

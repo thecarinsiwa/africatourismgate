@@ -43,8 +43,12 @@ export { ThemeProvider } from './theme-provider';
 export { ThemeToggle, type ThemeToggleProps } from './components/theme-toggle';
 export { Button, type ButtonProps, type ButtonVariant, type ButtonSize } from './components/button';
 export { Input, type InputProps } from './components/input';
+export { Textarea, type TextareaProps } from './components/textarea';
 export { PasswordInput, type PasswordInputProps } from './components/password-input';
 export { Checkbox, type CheckboxProps } from './components/checkbox';
+export { Switch, type SwitchProps } from './components/switch';
+export { DatePicker, type DatePickerProps } from './components/date-picker';
+export { Tooltip, type TooltipProps, type TooltipPosition } from './components/tooltip';
 export { Card, type CardProps } from './components/card';
 export {
   ConversationChat,
@@ -58,7 +62,7 @@ export { Skeleton, type SkeletonProps } from './components/skeleton';
 export { StarRatingInput, type StarRatingInputProps } from './components/star-rating-input';
 export { StarRatingDisplay, type StarRatingDisplayProps } from './components/star-rating-display';
 export { StarIcon, type StarIconSize } from './components/star-rating-icons';
-export { StatCard, type StatCardProps, type StatCardStatus } from './components/stat-card';
+export { StatCard, type StatCardProps, type StatCardStatus, type StatCardChange, type StatCardChangeDirection } from './components/stat-card';
 export { Avatar, type AvatarProps, type AvatarSize } from './components/avatar';
 export {
   getUserDisplayName,

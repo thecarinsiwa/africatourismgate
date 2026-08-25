@@ -36,6 +36,22 @@ export type FlightPdfLabels = {
     empty: string;
     statusLabels: Record<string, string>;
   };
+  dossier: {
+    documentTitle: string;
+    infoSection: string;
+    flightNumber: string;
+    airline: string;
+    departure: string;
+    arrival: string;
+    departureTime: string;
+    arrivalTime: string;
+    duration: string;
+    classesSection: string;
+    emptyClasses: string;
+    colCabin: string;
+    colSeats: string;
+    colBasePrice: string;
+  };
   classNames: Record<string, string>;
 };
 
@@ -82,6 +98,22 @@ const LABELS: Record<FlightReportLocale, FlightPdfLabels> = {
         cancelled: 'Annulée',
         refunded: 'Remboursée',
       },
+    },
+    dossier: {
+      documentTitle: 'Dossier vol',
+      infoSection: 'Informations',
+      flightNumber: 'Code vol',
+      airline: 'Compagnie',
+      departure: 'Départ',
+      arrival: 'Arrivée',
+      departureTime: 'Heure de départ',
+      arrivalTime: "Heure d'arrivée",
+      duration: 'Durée',
+      classesSection: 'Classes cabine',
+      emptyClasses: 'Aucune classe cabine.',
+      colCabin: 'Cabine',
+      colSeats: 'Sièges',
+      colBasePrice: 'Prix de base',
     },
     classNames: {
       economy: 'Économique',
@@ -133,6 +165,22 @@ const LABELS: Record<FlightReportLocale, FlightPdfLabels> = {
         refunded: 'Refunded',
       },
     },
+    dossier: {
+      documentTitle: 'Flight dossier',
+      infoSection: 'Information',
+      flightNumber: 'Flight code',
+      airline: 'Airline',
+      departure: 'Departure',
+      arrival: 'Arrival',
+      departureTime: 'Departure time',
+      arrivalTime: 'Arrival time',
+      duration: 'Duration',
+      classesSection: 'Cabin classes',
+      emptyClasses: 'No cabin classes yet.',
+      colCabin: 'Cabin',
+      colSeats: 'Seats',
+      colBasePrice: 'Base price',
+    },
     classNames: {
       economy: 'Economy',
       premium_economy: 'Premium economy',
@@ -183,6 +231,22 @@ const LABELS: Record<FlightReportLocale, FlightPdfLabels> = {
         refunded: 'Reembolsada',
       },
     },
+    dossier: {
+      documentTitle: 'Dossier de vuelo',
+      infoSection: 'Información',
+      flightNumber: 'Código de vuelo',
+      airline: 'Aerolínea',
+      departure: 'Salida',
+      arrival: 'Llegada',
+      departureTime: 'Hora de salida',
+      arrivalTime: 'Hora de llegada',
+      duration: 'Duración',
+      classesSection: 'Clases de cabina',
+      emptyClasses: 'Ninguna clase de cabina.',
+      colCabin: 'Cabina',
+      colSeats: 'Asientos',
+      colBasePrice: 'Precio base',
+    },
     classNames: {
       economy: 'Económica',
       premium_economy: 'Económica premium',
@@ -212,6 +276,15 @@ export function catalogPdfFilename(): string {
 
 export function bookingsPdfFilename(dateFrom: string, dateTo: string): string {
   return `reservations-vols-${dateFrom.slice(0, 10)}_${dateTo.slice(0, 10)}.pdf`;
+}
+
+export function flightDossierPdfFilename(flightNumber: string): string {
+  const safe = flightNumber
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '') || 'vol';
+  return `dossier-vol-${safe}.pdf`;
 }
 
 export function bookingRefLabel(bookingId: string): string {

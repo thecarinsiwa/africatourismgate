@@ -1,60 +1,60 @@
 {
   "status": {
-    "open": "Ouvert",
-    "pending": "En cours",
-    "resolved": "Résolu",
-    "closed": "Fermé"
+    "open": "Abierto",
+    "pending": "En curso",
+    "resolved": "Resuelto",
+    "closed": "Cerrado"
   },
   "priority": {
-    "low": "Basse",
-    "normal": "Normale",
-    "high": "Haute",
+    "low": "Baja",
+    "normal": "Normal",
+    "high": "Alta",
     "urgent": "Urgente"
   },
   "assignee": {
-    "unassigned": "No assigné"
+    "unassigned": "Sin asignar"
   },
   "detail": {
-    "title": "Ticket support",
-    "backToList": "Volver à la liste",
-    "openedOn": "Ouvert le {date}",
+    "title": "Ticket de soporte",
+    "backToList": "Volver al soporte",
+    "openedOn": "Abierto el {date}",
     "sections": {
       "client": "Cliente",
-      "handling": "Traitement",
-      "messages": "Messages",
-      "reply": "Répondre au client"
+      "handling": "Gestión",
+      "messages": "Mensajes",
+      "reply": "Responder al cliente"
     },
     "fields": {
-      "priority": "Priorité",
-      "agentMessage": "Message agent"
+      "priority": "Prioridad",
+      "agentMessage": "Mensaje del agente"
     },
-    "advanceStatus": "Passer à « {status} »",
-    "noMessages": "Hastacun message.",
+    "advanceStatus": "Pasar a « {status} »",
+    "noMessages": "Ningún mensaje.",
     "messageAuthor": {
-      "staff": "Agent",
+      "staff": "Agente",
       "customer": "Cliente"
     },
-    "replyPlaceholder": "Votre réponse au client…",
-    "replyMinLength": "Le message doit contenir au moins 10 caractères.",
-    "sending": "Envoi…",
-    "sendReply": "Envoyer la réponse"
+    "replyPlaceholder": "Su respuesta al cliente…",
+    "replyMinLength": "El mensaje debe tener al menos 10 caracteres.",
+    "sending": "Enviando…",
+    "sendReply": "Enviar respuesta"
   },
   "list": {
     "filters": {
-      "priority": "Priorité",
-      "apply": "Aplicar les filtres"
+      "priority": "Prioridad",
+      "apply": "Aplicar filtros"
     },
-    "assignedLabel": "Assigné :",
+    "assignedLabel": "Asignado:",
     "empty": {
       "default": {
-        "title": "Hastacun ticket pour le moment",
-        "description": "Les demandes d'assistance clients apparaîtront ici dès qu'elles seront créées."
+        "title": "Ningún ticket abierto",
+        "description": "La cola de tickets abiertos está vacía. Las nuevas solicitudes de clientes aparecerán aquí."
       },
       "filtered": {
-        "title": "Hastacun ticket ne correspond aux filtres",
-        "description": "Élargissez les critères de statut ou de priorité pour afficher plus de demandes."
+        "title": "Ningún ticket coincide con los filtros",
+        "description": "Amplíe los criterios de estado o prioridad para mostrar más solicitudes."
       }
     },
-    "ariaLabel": "Boîte de réception des tickets support"
+    "ariaLabel": "Bandeja de entrada de tickets de soporte"
   }
 }

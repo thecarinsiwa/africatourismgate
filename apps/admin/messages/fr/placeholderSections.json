@@ -12,7 +12,7 @@
   "contenu": {
     "messages": {
       "title": "Messages support",
-      "description": "Échanges sur les tickets.",
+      "description": "Conversations clients liées aux tickets support. Ouvrez un ticket pour lire et répondre dans le fil.",
       "emptyTitle": "Messages dans les tickets",
       "emptyDescription": "Les échanges avec les clients se font dans le fil de chaque ticket support. Ouvrez un ticket pour lire et répondre aux messages.",
       "ctaLabel": "Voir les tickets"

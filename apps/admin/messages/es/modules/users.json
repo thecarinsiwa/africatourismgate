@@ -1,10 +1,13 @@
 {
   "list": {
     "newUser": "Nuevo usuario",
-    "emptyDefault": "Hastacun utilisateur pour le moment.",
-    "emptyFiltered": "Hastacun utilisateur ne correspond à vos critères.",
+    "emptyDefault": "Ningún usuario por el momento.",
+    "emptyFiltered": "Ningún usuario coincide con tus criterios.",
     "ariaLabel": "Lista de usuarios",
-    "deleteConfirm": "¿Eliminar usuario « {email} »? Esta acción es reversible en la base de datos."
+    "deleteConfirm": "El usuario « {email} » será eliminado. Esta acción es reversible en la base de datos.",
+    "deleteTitle": "Eliminar usuario",
+    "deleteConfirmButton": "Eliminar",
+    "cancel": "Cancelar"
   },
   "filters": {
     "status": "Estado",
@@ -37,6 +40,12 @@
   },
   "detail": {
     "title": "Editar usuario",
+    "viewTitle": "Ver usuario",
+    "viewButton": "Ver",
+    "editButton": "Editar",
+    "createdAt": "Creado el",
+    "updatedAt": "Modificado el",
+    "profileIntro": "Información de la cuenta en solo lectura.",
     "tabsAria": "Secciones de la cuenta de usuario",
     "tabs": {
       "profile": "Perfil",
@@ -51,21 +60,46 @@
     "allUsers": "Todos les utilisateurs"
   },
   "addresses": {
-    "emptyDefault": "Ninguna adresse enregistrée.",
-    "emptyFiltered": "Ninguna adresse pour cet utilisateur.",
-    "ariaLabel": "Liste des adresses utilisateur"
+    "emptyDefault": "Ninguna dirección registrada.",
+    "emptyFiltered": "Ninguna dirección para este usuario.",
+    "ariaLabel": "Lista de direcciones del usuario"
   },
   "paymentMethods": {
     "lastFourMasked": "•••• {lastFour}",
-    "emptyDefault": "Hastacun moyen de paiement enregistré.",
-    "emptyFiltered": "Hastacun moyen de paiement pour cet utilisateur.",
-    "ariaLabel": "Liste des moyens de paiement"
+    "emptyDefault": "Ningún medio de pago registrado.",
+    "emptyFiltered": "Ningún medio de pago para este usuario.",
+    "ariaLabel": "Lista de medios de pago"
   },
   "sessions": {
-    "revokeConfirm": "¿Revocar esta sesión? El usuario deberá volver a iniciar sesión.",
-    "emptyDefault": "Ninguna session active.",
-    "emptyFiltered": "Ninguna session active pour cet utilisateur.",
-    "ariaLabel": "Liste des sessions utilisateur"
+    "revokeTitle": "Revocar sesión",
+    "revokeConfirm": "Esta sesión será revocada. El usuario deberá volver a iniciar sesión.",
+    "revokeConfirmButton": "Revocar",
+    "cancel": "Cancelar",
+    "emptyDefault": "Ninguna sesión activa.",
+    "emptyFiltered": "Ninguna sesión activa para este usuario.",
+    "ariaLabel": "Lista de sesiones de usuario",
+    "viewTable": "Tabla",
+    "viewGrid": "Cuadrícula",
+    "viewCompact": "Lista compacta",
+    "viewModeAria": "Modo de visualización",
+    "stats": {
+      "total": {
+        "label": "Sesiones",
+        "subtitle": "Registradas"
+      },
+      "active": {
+        "label": "Activas",
+        "subtitle": "No expiradas"
+      },
+      "expired": {
+        "label": "Expiradas",
+        "subtitle": "A revocar o limpiar"
+      },
+      "users": {
+        "label": "Usuarios",
+        "subtitle": "Con una sesión"
+      }
+    }
   },
   "stats": {
     "total": {
@@ -82,47 +116,56 @@
     },
     "employees": {
       "label": "Empleados",
-      "subtitle": "Perfils employés"
+      "subtitle": "Perfiles de empleados"
     }
   },
   "roles": {
-    "assignedTitle": "Rols assignés",
-    "empty": "Hastacun rôle actif pour cet utilisateur.",
-    "assignFormTitle": "Assigner un rôle",
+    "assignedTitle": "Roles asignados",
+    "empty": "No hay ningún rol activo para este usuario.",
+    "assignFormTitle": "Asignar un rol",
+    "assignSubmit": "Asignar el rol",
+    "manageAction": "Gestionar roles",
+    "modalTitle": "Gestionar roles",
+    "modalDescription": "Añada o retire roles de este usuario.",
     "user": "Usuario",
     "role": "Rol",
-    "selectPlaceholder": "Sélectionner…",
-    "scope": "Périmètre (scope)",
-    "scopeId": "ID du scope (UUID)",
-    "scopeIdHint": "Ex. ID propriété, agence ou file support.",
-    "expiresAt": "Expiration (optionnel)",
-    "superAdminWarning": "Réservé aux super administrateurs — périmètre forcé à Global.",
-    "superAdminConfirm": "¿Asignar el rol « {roleName} »? Este usuario obtendrá acceso completo a la plataforma.",
+    "selectPlaceholder": "Seleccionar…",
+    "scope": "Ámbito (scope)",
+    "scopeId": "ID del ámbito (UUID)",
+    "scopeIdHint": "Ej. ID de propiedad, agencia o cola de soporte.",
+    "expiresAt": "Expiración (opcional)",
+    "superAdminWarning": "Reservado a super administradores — ámbito forzado a Global.",
+    "superAdminConfirmTitle": "Confirmar asignación super-admin",
+    "superAdminConfirm": "El usuario recibirá el rol «{roleName}» y acceso completo a la plataforma.",
+    "superAdminConfirmButton": "Confirmar",
+    "cancel": "Cancelar",
     "validation": {
-      "userAndRoleRequired": "Usuario et rôle sont obligatoires.",
+      "userAndRoleRequired": "El usuario y el rol son obligatorios.",
       "scopeIdRequired": "El identificador de ámbito es obligatorio para este ámbito."
     },
     "scopeTypes": {
       "global": "Global",
       "property": "Propiedad",
       "agency": "Agencia",
-      "support_queue": "File support"
+      "support_queue": "Cola de soporte"
     },
     "scopeDisplay": {
       "global": "Global",
-      "property": "Établissement",
+      "property": "Establecimiento",
       "agency": "Agencia",
-      "support_queue": "File support",
+      "support_queue": "Cola de soporte",
       "withId": "{label} · {idPrefix}…"
     },
     "revokeDialog": {
-      "title": "Révoquer le rôle",
-      "description": "Retirer ce rôle pour cet utilisateur ?"
+      "title": "Revocar el rol",
+      "description": "¿Retirar este rol a este usuario?"
     },
     "toast": {
-      "revokedTitle": "Rol révoqué",
+      "assignedTitle": "Rol asignado",
+      "assignedMessage": "La asignación fue creada.",
+      "revokedTitle": "Rol revocado",
       "revokedMessage": "La asignación fue retirada.",
-      "revokeFailedTitle": "Échec de la révocation"
+      "revokeFailedTitle": "Error al revocar"
     }
   }
 }

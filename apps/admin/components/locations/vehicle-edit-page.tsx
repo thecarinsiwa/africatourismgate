@@ -3,10 +3,19 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import type { Vehicle } from '@africatourismgate/types';
-import { Button, DataTableBadge, Skeleton } from '@africatourismgate/ui';
+import {
+  Button,
+  DataTableBadge,
+  Skeleton,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
@@ -20,9 +29,27 @@ type VehicleEditPageProps = {
   vehicleId: string;
 };
 
+const TAB_VALUES = ['vehicule', 'disponibilites'] as const;
+type TabValue = (typeof TAB_VALUES)[number];
+
+function isTabValue(value: string | null): value is TabValue {
+  return value !== null && (TAB_VALUES as readonly string[]).includes(value);
+}
+
+function formatPrice(cents: number, currency: string): string {
+  return `${(cents / 100).toFixed(2)} ${currency}`;
+}
+
 export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
   const { locations: getLocationsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.locations.detail');
+  const tAvailability = useTranslations('modules.locations.sections.availability');
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const activeTab: TabValue = isTabValue(tabParam) ? tabParam : 'vehicule';
+
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -75,23 +102,36 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
     };
   }, [vehicleId, getLocationsErrorMessage]);
 
+  const handleTabChange = useCallback(
+    (tab: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (tab === 'vehicule') {
+        params.delete('tab');
+      } else {
+        params.set('tab', tab);
+      }
+      const qs = params.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    },
+    [pathname, router, searchParams],
+  );
+
+  const viewHref = `/produits/locations/${vehicleId}/voir`;
+  const availabilityHref = `/produits/locations/${vehicleId}/disponibilites`;
+
   if (state.status === 'loading') {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-5 w-32" />
+        <Skeleton className="h-5 w-40" />
         <div className="flex items-center gap-4">
           <Skeleton className="h-12 w-16 rounded-lg" />
           <div className="space-y-2">
-            <Skeleton className="h-5 w-40" />
-            <Skeleton className="h-4 w-56" />
+            <Skeleton className="h-5 w-48" />
+            <Skeleton className="h-4 w-32" />
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <Skeleton className="h-20 w-full" />
-          <Skeleton className="h-20 w-full" />
-          <Skeleton className="h-20 w-full" />
-        </div>
-        <Skeleton className="h-64 w-full max-w-2xl" />
+        <Skeleton className="h-10 w-full max-w-md" />
+        <Skeleton className="h-64 w-full" />
       </div>
     );
   }
@@ -99,6 +139,7 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
   if (state.status === 'error') {
     return (
       <div className="space-y-4">
+        <AdminPageBackLink href="/produits/locations" label={t('backLink')} />
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
@@ -116,45 +157,73 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
   const thumbnailLabel = vehicle.licensePlate ?? categoryName;
 
   return (
-    <div className="space-y-8">
-      <AdminPageBackLink href="/produits/locations" label={t('backLink')} />
-
-      <div className="flex flex-col gap-4 rounded-xl border border-atg-border bg-atg-elevated p-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex min-w-0 flex-1 items-start gap-4">
-          <VehicleThumbnail
-            vehicleId={vehicleId}
-            label={thumbnailLabel}
-            categoryName={categoryName}
-            size="md"
-          />
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-2">
-              {vehicle.licensePlate ? (
-                <code className="rounded-md bg-atg-surface px-2.5 py-1 font-mono text-sm font-semibold text-atg-fg ring-1 ring-atg-border/60">
-                  {vehicle.licensePlate}
-                </code>
-              ) : (
-                <span className="text-sm font-medium text-atg-fg">{t('noLicensePlate')}</span>
-              )}
-              <DataTableBadge variant="muted">{agencyName}</DataTableBadge>
-              <DataTableBadge variant="default">{categoryName}</DataTableBadge>
-            </div>
-          </div>
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <AdminPageBackLink href="/produits/locations" label={t('backLink')} />
+        <div className="flex flex-wrap items-center gap-2">
+          <Button href={viewHref} variant="outline">
+            {t('viewButton')}
+          </Button>
+          <Button href={availabilityHref} variant="outline">
+            {tAvailability('title')}
+          </Button>
         </div>
-        <Button
-          href={`/produits/locations/${vehicleId}/voir`}
-          variant="outline"
-          className="w-full sm:w-auto"
-        >
-          {t('viewButton')}
-        </Button>
       </div>
 
-      <VehicleSpecsGrid categoryName={categoryName} />
+      <div className="flex flex-wrap items-start gap-4">
+        <VehicleThumbnail
+          vehicleId={vehicleId}
+          label={thumbnailLabel}
+          categoryName={categoryName}
+          size="md"
+        />
+        <div className="min-w-0 flex-1 space-y-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {vehicle.licensePlate ? (
+              <h2 className="font-mono text-xl font-semibold text-atg-fg">
+                {vehicle.licensePlate}
+              </h2>
+            ) : (
+              <h2 className="text-xl font-semibold text-atg-fg">
+                {t('noLicensePlate')}
+              </h2>
+            )}
+            <DataTableBadge variant="muted">{agencyName}</DataTableBadge>
+            <DataTableBadge variant="default">{categoryName}</DataTableBadge>
+          </div>
+          <p className="tabular-nums text-sm font-semibold text-atg-fg">
+            {formatPrice(vehicle.dailyPriceCents, vehicle.currency)}
+          </p>
+        </div>
+      </div>
 
-      <VehicleForm mode="edit" vehicleId={vehicleId} initialVehicle={vehicle} />
-      <VehicleImagesSection vehicleId={vehicleId} embedded />
-      <VehicleAvailabilitySection vehicleId={vehicleId} />
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
+        <TabsList aria-label={t('tabsAria')}>
+          <TabsTrigger value="vehicule">{t('tabs.vehicle')}</TabsTrigger>
+          <TabsTrigger value="disponibilites">{t('tabs.availability')}</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="vehicule" className="space-y-4">
+          <VehicleSpecsGrid categoryName={categoryName} />
+          <VehicleForm
+            mode="edit"
+            vehicleId={vehicleId}
+            initialVehicle={vehicle}
+            identityAside={
+              <VehicleImagesSection
+                vehicleId={vehicleId}
+                embedded
+                variant="aside"
+                altFallback={thumbnailLabel}
+              />
+            }
+          />
+        </TabsContent>
+
+        <TabsContent value="disponibilites">
+          <VehicleAvailabilitySection vehicleId={vehicleId} embedded />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

@@ -1,15 +1,43 @@
 {
+  "stats": {
+    "total": {
+      "label": "Guides",
+      "subtitle": "Total du catalogue"
+    },
+    "active": {
+      "label": "Actifs",
+      "subtitle": "Disponibles pour assignation"
+    },
+    "inactive": {
+      "label": "Inactifs",
+      "subtitle": "Hors catalogue actif"
+    },
+    "internal": {
+      "label": "Internes",
+      "subtitle": "Liés à un compte utilisateur"
+    },
+    "external": {
+      "label": "Externes",
+      "subtitle": "Prestataires sans compte"
+    }
+  },
   "list": {
     "emptyDefault": "Aucun guide touristique pour le moment.",
     "emptySearch": "Aucun guide ne correspond à votre recherche.",
+    "emptyFiltered": "Aucun guide ne correspond à vos critères.",
     "searchPlaceholder": "Rechercher par nom…",
     "searchAria": "Rechercher un guide",
     "ariaLabel": "Liste des guides touristiques",
-    "deleteConfirm": "Supprimer le guide « {name} » ?"
+    "deleteTitle": "Supprimer le guide",
+    "deleteConfirm": "Le guide « {name} » sera retiré du catalogue (suppression logique).",
+    "deleteConfirmButton": "Supprimer",
+    "cancel": "Annuler"
   },
   "columns": {
     "name": "Nom",
     "type": "Type",
+    "destinations": "Destinations",
+    "organization": "Organisation",
     "languages": "Langues",
     "status": "Statut"
   },
@@ -40,22 +68,125 @@
     "organizationId": "Organisation",
     "organizationPlaceholder": "Aucune (optionnel)",
     "displayName": "Nom affiché",
+    "contactEmail": "E-mail de contact",
+    "contactEmailHint": "Utilisé pour les notifications de mission (obligatoire pour un guide externe).",
     "bio": "Biographie",
     "photoUrl": "URL photo",
+    "uploadPhoto": "Choisir une photo",
     "languages": "Langues parlées",
     "languagesHint": "Codes ISO séparés par des virgules (ex. fr, en, sw).",
     "destinations": "Destinations couvertes",
     "destinationsHint": "Sélectionnez au moins une destination.",
     "destinationsEmpty": "Aucune destination disponible.",
-    "status": "Statut"
+    "destinationsSearch": "Filtrer les destinations…",
+    "previewPhoto": "Aperçu photo",
+    "previewNamePlaceholder": "Nom du guide",
+    "selectedDestinations": "Destinations sélectionnées",
+    "noDestinationsSelected": "Aucune destination sélectionnée.",
+    "selectedCount": "{count, plural, =0 {Aucune sélection} one {# destination} other {# destinations}}",
+    "status": "Statut",
+    "validation": {
+      "displayNameRequired": "Le nom affiché est obligatoire.",
+      "userIdRequired": "L'utilisateur lié est obligatoire pour un guide interne.",
+      "contactEmailRequired": "L'e-mail de contact est obligatoire pour un guide externe.",
+      "contactEmailInvalid": "Adresse e-mail invalide.",
+      "languagesRequired": "Indiquez au moins une langue.",
+      "destinationsRequired": "Sélectionnez au moins une destination."
+    }
   },
   "detail": {
     "title": "Modifier le guide",
-    "backLink": "Retour aux guides"
+    "backLink": "Retour aux guides",
+    "viewButton": "Voir le guide",
+    "subtitle": "Profil, couverture géographique et missions assignées.",
+    "tabsAria": "Sections du guide",
+    "tabs": {
+      "profile": "Profil",
+      "coverage": "Couverture",
+      "missions": "Missions"
+    }
+  },
+  "view": {
+    "title": "Voir le guide",
+    "editButton": "Modifier le guide",
+    "notFound": "Guide introuvable.",
+    "subtitle": "Profil, planning et missions assignées.",
+    "infoTitle": "Informations",
+    "contactEmail": "E-mail de contact",
+    "linkedUser": "Compte utilisateur",
+    "openFullCalendar": "Calendrier global",
+    "inactiveHint": "Guide inactif — le planning reste consultable.",
+    "tabsAria": "Sections du guide",
+    "tabs": {
+      "profile": "Profil",
+      "schedule": "Planning",
+      "missions": "Missions"
+    },
+    "schedule": {
+      "title": "Planning",
+      "intro": "Disponibilités et créneaux de mission. Cliquez sur un jour pour voir le détail horaire ou marquer une indisponibilité.",
+      "ariaLabel": "Planning du guide — {month}"
+    }
+  },
+  "sections": {
+    "bookings": {
+      "title": "Missions assignées",
+      "intro": "Réservations auxquelles ce guide est assigné, par créneau horaire.",
+      "schedule": "Plage horaire",
+      "role": "Rôle",
+      "assignedAt": "Assigné le",
+      "empty": "Aucune mission assignée pour le moment.",
+      "emptySearch": "Aucune mission ne correspond à votre recherche.",
+      "ariaLabel": "Missions assignées au guide"
+    }
+  },
+  "calendar": {
+    "ariaLabel": "Calendrier de disponibilité — {month}",
+    "availableShort": "{count} dispo",
+    "occupiedShort": "{count} occupés",
+    "unavailableShort": "{count} indispo",
+    "legendAvailable": "Disponibles",
+    "legendOccupied": "Occupés (missions)",
+    "legendUnavailable": "Indisponibles",
+    "legendTimelineAssignment": "Mission (créneau)",
+    "legendTimelineUnavailable": "Indisponibilité (créneau)",
+    "activeGuidesCount": "{count, plural, one {# guide actif} other {# guides actifs}}",
+    "noActiveGuides": "Aucun guide actif pour ces filtres.",
+    "today": "Aujourd'hui",
+    "dayModal": {
+      "title": "Disponibilité — {date}",
+      "intro": "Planning horaire des guides actifs. Les missions apparaissent en orange, les indisponibilités en gris.",
+      "empty": "Aucun guide actif ce jour-là.",
+      "viewBooking": "Voir la réservation",
+      "viewGuide": "Voir le guide",
+      "addUnavailability": "Marquer indisponible",
+      "clearUnavailability": "Lever l'indisponibilité",
+      "unavailabilityFormTitle": "Plage d'indisponibilité",
+      "startTime": "Début",
+      "endTime": "Fin",
+      "saveUnavailability": "Enregistrer",
+      "validation": {
+        "endAfterStart": "L'heure de fin doit être postérieure à l'heure de début."
+      },
+      "conflictAssignment": "Conflit avec une mission existante",
+      "conflictUnavailable": "Conflit avec une indisponibilité existante",
+      "status": {
+        "available": "Disponible",
+        "occupied": "En mission",
+        "unavailable": "Indisponible"
+      }
+    },
+    "timeline": {
+      "assignment": "Mission",
+      "unavailable": "Indisponible",
+      "empty": "Aucun créneau ce jour-là"
+    }
   },
   "filters": {
     "type": "Type",
     "status": "Statut",
+    "destination": "Destination",
+    "organization": "Organisation",
     "all": "Tous"
   }
 }

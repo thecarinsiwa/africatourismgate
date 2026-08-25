@@ -88,54 +88,64 @@ export function Modal({
   if (!open || typeof document === 'undefined') return null;
 
   return createPortal(
-    <div className={cn('fixed inset-0 z-50 flex items-center justify-center p-4', containerClassName)}>
+    <div
+      className={cn(
+        'fixed inset-0 z-50 overflow-y-auto overscroll-contain',
+        containerClassName,
+      )}
+    >
       <div
-        className="absolute inset-0 bg-black/50 dark:bg-black/70"
-        aria-hidden
+        className="flex min-h-full items-center justify-center p-4"
         onClick={close}
-      />
-      <div
-        ref={panelRef}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={title ? titleId : undefined}
-        aria-describedby={description ? descriptionId : undefined}
-        tabIndex={-1}
-        className={cn(
-          'relative z-10 w-full max-w-lg rounded-xl border border-atg-border bg-atg-elevated p-6 shadow-xl shadow-black/10 dark:shadow-black/40',
-          'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface',
-          className,
-        )}
       >
-        {(title || showClose) && (
-          <div className="mb-4 flex items-start justify-between gap-4">
-            {title ? (
-              <h2 id={titleId} className="text-lg font-semibold text-atg-fg">
-                {title}
-              </h2>
-            ) : (
-              <span />
-            )}
-            {showClose ? (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={close}
-                aria-label={closeAriaLabel}
-                className="shrink-0"
-              >
-                ✕
-              </Button>
-            ) : null}
-          </div>
-        )}
-        {description ? (
-          <p id={descriptionId} className="mb-4 text-sm text-atg-muted">
-            {description}
-          </p>
-        ) : null}
-        {children}
+        <div
+          className="fixed inset-0 bg-black/50 dark:bg-black/70"
+          aria-hidden
+        />
+        <div
+          ref={panelRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={title ? titleId : undefined}
+          aria-describedby={description ? descriptionId : undefined}
+          tabIndex={-1}
+          onClick={(event) => event.stopPropagation()}
+          className={cn(
+            'relative z-10 my-auto w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain rounded-xl border border-atg-border bg-atg-elevated p-6 shadow-xl shadow-black/10 dark:shadow-black/40',
+            'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface',
+            className,
+          )}
+        >
+          {(title || showClose) && (
+            <div className="mb-4 flex items-start justify-between gap-4">
+              {title ? (
+                <h2 id={titleId} className="text-lg font-semibold text-atg-fg">
+                  {title}
+                </h2>
+              ) : (
+                <span />
+              )}
+              {showClose ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={close}
+                  aria-label={closeAriaLabel}
+                  className="shrink-0"
+                >
+                  ✕
+                </Button>
+              ) : null}
+            </div>
+          )}
+          {description ? (
+            <p id={descriptionId} className="mb-4 text-sm text-atg-muted">
+              {description}
+            </p>
+          ) : null}
+          {children}
+        </div>
       </div>
     </div>,
     document.body,

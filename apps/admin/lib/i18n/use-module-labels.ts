@@ -5,6 +5,7 @@ import type {
   BookingItemType,
   BookingGuideRole,
   BookingStatus,
+  EmployeeStatus,
   FlightClassName,
   LoyaltyTier,
   OrganizationStatus,
@@ -43,6 +44,18 @@ export function useAccountStatusLabels() {
       active: t('active'),
       suspended: t('suspended'),
       deleted: t('deleted'),
+    }),
+    [t],
+  );
+}
+
+export function useEmployeeStatusLabels() {
+  const t = useTranslations('modules.employees.status');
+  return useMemo(
+    (): Record<EmployeeStatus, string> => ({
+      active: t('active'),
+      on_leave: t('on_leave'),
+      terminated: t('terminated'),
     }),
     [t],
   );
@@ -97,6 +110,32 @@ export function useTourGuideStatusLabels() {
       inactive: t('inactive'),
     }),
     [t],
+  );
+}
+
+export function useTourGuideTypeFilterOptions() {
+  const tAll = useTranslations('modules.tourGuides.filters');
+  const typeLabels = useTourGuideTypeLabels();
+  return useMemo(
+    () => [
+      { value: '', label: tAll('all') },
+      { value: 'internal', label: typeLabels.internal },
+      { value: 'external', label: typeLabels.external },
+    ],
+    [typeLabels, tAll],
+  );
+}
+
+export function useTourGuideStatusFilterOptions() {
+  const tAll = useTranslations('modules.tourGuides.filters');
+  const statusLabels = useTourGuideStatusLabels();
+  return useMemo(
+    () => [
+      { value: '', label: tAll('all') },
+      { value: 'active', label: statusLabels.active },
+      { value: 'inactive', label: statusLabels.inactive },
+    ],
+    [statusLabels, tAll],
   );
 }
 
@@ -370,6 +409,7 @@ export function useRbacPermissionDomainLabels() {
       cruises: t('cruises'),
       destinations: t('destinations'),
       employees: t('employees'),
+      departments: t('departments'),
       flights: t('flights'),
       loyalty: t('loyalty'),
       organizations: t('organizations'),
@@ -518,12 +558,23 @@ export function usePromoDiscountLabels(): PromoDiscountLabels {
     () => ({
       informative: t('discount.informative'),
       pending: t('discount.pending'),
-      percentFormat: t('discount.percentFormat'),
-      fixedFormat: t('discount.fixedFormat'),
+      percentFormat: t.raw('discount.percentFormat'),
+      fixedFormat: t.raw('discount.fixedFormat'),
       noDateLimit: t('validity.noDateLimit'),
-      fromDate: t('validity.fromDate'),
-      untilDate: t('validity.untilDate'),
-      range: t('validity.range'),
+      fromDate: t.raw('validity.fromDate'),
+      untilDate: t.raw('validity.untilDate'),
+      range: t.raw('validity.range'),
+    }),
+    [t],
+  );
+}
+
+export function usePromoUsageLabels() {
+  const t = useTranslations('modules.promoCodes.usage');
+  return useMemo(
+    () => ({
+      format: t.raw('format') as string,
+      unlimitedMax: t('unlimitedMax'),
     }),
     [t],
   );

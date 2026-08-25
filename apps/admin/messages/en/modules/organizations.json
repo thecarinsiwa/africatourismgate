@@ -8,7 +8,16 @@
     "emptyTableDefault": "None organisation pour le moment.",
     "ariaLabel": "Liste des organisations",
     "columns": {
-      "type": "Type"
+      "type": "Type",
+      "counts": "Headcount"
+    },
+    "counts": {
+      "usersShort": "Users",
+      "usersHint": "User accounts linked to this organization",
+      "employeesShort": "Staff",
+      "employeesHint": "Employees linked to this organization",
+      "productsShort": "Products",
+      "productsHint": "Tour guides linked (more product types coming soon)"
     },
     "deleteDialog": {
       "title": "Delete organization",

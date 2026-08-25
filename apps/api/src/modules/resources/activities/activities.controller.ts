@@ -23,16 +23,20 @@ import { diskStorage } from 'multer';
 import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync } from 'node:fs';
 import { extname, join } from 'node:path';
+import { DeepPartial } from 'typeorm';
+import {
+  activityDescriptionAssetUploadUrl,
+  activityUploadUrl,
+} from '../../../common/utils/public-asset-url';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
-import { activityUploadUrl, activityDescriptionAssetUploadUrl } from '../../../common/utils/public-asset-url';
-import { ActivitiesService } from './activities.service';
+import { Activities } from '../../../entities/generated';
 import { ActivitiesListQueryDto } from './dto/activities-list-query.dto';
-import { CreateActivityDto } from './dto/create-activity.dto';
-import { UpdateActivityDto } from './dto/update-activity.dto';
+import { ActivitiesService } from './activities.service';
 
 const ACTIVITY_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_ACTIVITY_IMAGE_MIMES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const ALLOWED_ACTIVITY_IMAGE_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.webp']);
+
 const ACTIVITY_DESCRIPTION_ASSET_MAX_BYTES = 10 * 1024 * 1024;
 const ALLOWED_ACTIVITY_DESCRIPTION_ASSET_MIMES = new Set([
   'image/jpeg',
@@ -52,6 +56,14 @@ const ALLOWED_ACTIVITY_DESCRIPTION_ASSET_EXTENSIONS = new Set([
   '.docx',
 ]);
 
+function descriptionAssetTypeFromExtension(
+  extension: string,
+): 'image' | 'pdf' | 'word' {
+  if (extension === '.pdf') return 'pdf';
+  if (extension === '.doc' || extension === '.docx') return 'word';
+  return 'image';
+}
+
 @ApiTags('activities')
 @ApiForbiddenResponse({ description: 'Missing permission' })
 @Controller('activities')
@@ -63,6 +75,65 @@ export class ActivitiesController {
   @ApiOperation({ summary: 'List activities' })
   findAll(@Query() query: ActivitiesListQueryDto) {
     return this.service.findAll(query);
+  }
+
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: { type: 'string', format: 'binary' },
+      },
+      required: ['file'],
+    },
+  })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: (_req, _file, cb) => {
+          const uploadDir = join(process.cwd(), 'uploads', 'activities', 'description-assets');
+          if (!existsSync(uploadDir)) {
+            mkdirSync(uploadDir, { recursive: true });
+          }
+          cb(null, uploadDir);
+        },
+        filename: (_req, file, cb) => {
+          const extension = extname(file.originalname || '').toLowerCase();
+          cb(null, `${Date.now()}-${randomUUID()}${extension}`);
+        },
+      }),
+      limits: { fileSize: ACTIVITY_DESCRIPTION_ASSET_MAX_BYTES },
+      fileFilter: (_req, file, cb) => {
+        const extension = extname(file.originalname || '').toLowerCase();
+        if (
+          !ALLOWED_ACTIVITY_DESCRIPTION_ASSET_MIMES.has(file.mimetype) ||
+          !ALLOWED_ACTIVITY_DESCRIPTION_ASSET_EXTENSIONS.has(extension)
+        ) {
+          cb(null, false);
+          return;
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  @RequirePermissions('activities.write')
+  @Post('upload-description-asset')
+  @ApiOperation({
+    summary: 'Upload activity description asset (image/PDF/Word, max 10 MB)',
+  })
+  uploadDescriptionAssetWithoutActivity(
+    @UploadedFile() file: Express.Multer.File | undefined,
+  ): { url: string; assetType: 'image' | 'pdf' | 'word' } {
+    if (!file) {
+      throw new BadRequestException(
+        'Fichier requis (image, PDF ou Word, max 10 Mo).',
+      );
+    }
+    const extension = extname(file.originalname || '').toLowerCase();
+    return {
+      url: activityDescriptionAssetUploadUrl(file.filename),
+      assetType: descriptionAssetTypeFromExtension(extension),
+    };
   }
 
   @ApiConsumes('multipart/form-data')
@@ -160,71 +231,6 @@ export class ActivitiesController {
     }),
   )
   @RequirePermissions('activities.write')
-  @Post('upload-description-asset')
-  @ApiOperation({
-    summary: 'Upload activity description asset (image/PDF/Word, max 10 MB)',
-  })
-  async uploadDescriptionAssetWithoutActivity(
-    @UploadedFile() file: Express.Multer.File | undefined,
-  ): Promise<{ url: string; assetType: 'image' | 'pdf' | 'word' }> {
-    if (!file) {
-      throw new BadRequestException(
-        'Fichier requis (image, PDF ou Word, max 10 Mo).',
-      );
-    }
-    const extension = extname(file.originalname || '').toLowerCase();
-    const assetType: 'image' | 'pdf' | 'word' =
-      extension === '.pdf'
-        ? 'pdf'
-        : extension === '.doc' || extension === '.docx'
-          ? 'word'
-          : 'image';
-    return {
-      url: activityDescriptionAssetUploadUrl(file.filename),
-      assetType,
-    };
-  }
-
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        file: { type: 'string', format: 'binary' },
-      },
-      required: ['file'],
-    },
-  })
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: (_req, _file, cb) => {
-          const uploadDir = join(process.cwd(), 'uploads', 'activities', 'description-assets');
-          if (!existsSync(uploadDir)) {
-            mkdirSync(uploadDir, { recursive: true });
-          }
-          cb(null, uploadDir);
-        },
-        filename: (_req, file, cb) => {
-          const extension = extname(file.originalname || '').toLowerCase();
-          cb(null, `${Date.now()}-${randomUUID()}${extension}`);
-        },
-      }),
-      limits: { fileSize: ACTIVITY_DESCRIPTION_ASSET_MAX_BYTES },
-      fileFilter: (_req, file, cb) => {
-        const extension = extname(file.originalname || '').toLowerCase();
-        if (
-          !ALLOWED_ACTIVITY_DESCRIPTION_ASSET_MIMES.has(file.mimetype) ||
-          !ALLOWED_ACTIVITY_DESCRIPTION_ASSET_EXTENSIONS.has(extension)
-        ) {
-          cb(null, false);
-          return;
-        }
-        cb(null, true);
-      },
-    }),
-  )
-  @RequirePermissions('activities.write')
   @Post(':id/upload-description-asset')
   @ApiOperation({
     summary: 'Upload activity description asset (image/PDF/Word, max 10 MB)',
@@ -240,42 +246,36 @@ export class ActivitiesController {
       );
     }
     const extension = extname(file.originalname || '').toLowerCase();
-    const assetType: 'image' | 'pdf' | 'word' =
-      extension === '.pdf'
-        ? 'pdf'
-        : extension === '.doc' || extension === '.docx'
-          ? 'word'
-          : 'image';
     return {
       url: activityDescriptionAssetUploadUrl(file.filename),
-      assetType,
+      assetType: descriptionAssetTypeFromExtension(extension),
     };
   }
 
   @RequirePermissions('activities.read')
   @Get(':id')
-  @ApiOperation({ summary: 'Get activities by id' })
+  @ApiOperation({ summary: 'Get activity by id' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
   @RequirePermissions('activities.write')
   @Post()
-  @ApiOperation({ summary: 'Create activities' })
-  create(@Body() dto: CreateActivityDto) {
+  @ApiOperation({ summary: 'Create activity' })
+  create(@Body() dto: DeepPartial<Activities>) {
     return this.service.create(dto);
   }
 
   @RequirePermissions('activities.write')
   @Patch(':id')
-  @ApiOperation({ summary: 'Update activities' })
-  update(@Param('id') id: string, @Body() dto: UpdateActivityDto) {
+  @ApiOperation({ summary: 'Update activity' })
+  update(@Param('id') id: string, @Body() dto: DeepPartial<Activities>) {
     return this.service.update(id, dto);
   }
 
   @RequirePermissions('activities.write')
   @Delete(':id')
-  @ApiOperation({ summary: 'Soft-delete activities' })
+  @ApiOperation({ summary: 'Soft-delete activity' })
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }

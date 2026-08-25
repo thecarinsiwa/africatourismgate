@@ -8,48 +8,41 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
-import { CreatePointOfInterestDto } from './dto/create-point-of-interest.dto';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { DeepPartial } from 'typeorm';
+import { PointsOfInterest } from '../../../entities/generated';
 import { PointsOfInterestListQueryDto } from './dto/points-of-interest-list-query.dto';
-import { UpdatePointOfInterestDto } from './dto/update-point-of-interest.dto';
 import { PointsOfInterestService } from './points-of-interest.service';
 
 @ApiTags('points-of-interest')
-@ApiForbiddenResponse({ description: 'Missing permission' })
 @Controller('points-of-interest')
 export class PointsOfInterestController {
   constructor(private readonly service: PointsOfInterestService) {}
 
-  @RequirePermissions('destinations.read')
   @Get()
   @ApiOperation({ summary: 'List points-of-interest' })
   findAll(@Query() query: PointsOfInterestListQueryDto) {
     return this.service.findAll(query);
   }
 
-  @RequirePermissions('destinations.read')
   @Get(':id')
   @ApiOperation({ summary: 'Get points-of-interest by id' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
-  @RequirePermissions('destinations.write')
   @Post()
   @ApiOperation({ summary: 'Create points-of-interest' })
-  create(@Body() dto: CreatePointOfInterestDto) {
-    return this.service.createFromDto(dto);
+  create(@Body() dto: DeepPartial<PointsOfInterest>) {
+    return this.service.create(dto);
   }
 
-  @RequirePermissions('destinations.write')
   @Patch(':id')
   @ApiOperation({ summary: 'Update points-of-interest' })
-  update(@Param('id') id: string, @Body() dto: UpdatePointOfInterestDto) {
-    return this.service.updateFromDto(id, dto);
+  update(@Param('id') id: string, @Body() dto: DeepPartial<PointsOfInterest>) {
+    return this.service.update(id, dto);
   }
 
-  @RequirePermissions('destinations.write')
   @Delete(':id')
   @ApiOperation({ summary: 'Soft-delete points-of-interest' })
   remove(@Param('id') id: string) {

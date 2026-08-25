@@ -13,6 +13,7 @@
   "links": {
     "users": "Users",
     "employees": "Employees",
+    "departments": "Departments",
     "addresses": "Addresses",
     "paymentMethods": "Payment methods",
     "sessions": "Sessions",
@@ -78,6 +79,7 @@
     "promoCodes": "Promo codes",
     "promotions": "Promotions",
     "blog": "Blog",
+    "sitePresentation": "Site & presentation",
     "aboutPages": "About pages",
     "aboutTeam": "Team",
     "aboutTimeline": "Timeline",
@@ -86,7 +88,9 @@
     "heroSlides": "Hero carousel",
     "happyCustomers": "Happy customers",
     "reviews": "Reviews",
+    "support": "Support",
     "supportTickets": "Support tickets",
+    "supportHub": "Support",
     "supportMessages": "Support messages",
     "organizations": "Organizations",
     "roles": "Roles & permissions",
@@ -103,6 +107,7 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "logout": "Sign out",
-    "loggingOut": "Signing out…"
+    "loggingOut": "Signing out…",
+    "breadcrumb": "Breadcrumb"
   }
 }

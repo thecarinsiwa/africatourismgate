@@ -10,22 +10,27 @@
     "delete": "Eliminar",
     "edit": "Editar",
     "create": "Crear",
+    "add": "Añadir",
     "back": "Volver",
     "search": "Buscar",
     "filter": "Filtrar",
     "close": "Cerrar",
     "confirm": "Confirmar",
-    "view": "Ver"
+    "view": "Ver",
+    "retry": "Reintentar"
   },
   "loading": {
+    "default": "Cargando…",
     "page": "Cargando…",
     "submit": "Guardando…"
   },
   "empty": {
+    "default": "Sin elementos",
     "noResults": "Sin resultados",
     "noMatch": "Ninguna coincidencia para su búsqueda"
   },
   "errors": {
+    "networkTitle": "No se pudo conectar con la API",
     "network": "No se pudo conectar con la API. Compruebe que el servidor esté en ejecución.",
     "networkShort": "No se pudo conectar con el servidor. Compruebe su conexión.",
     "forbidden": "No tiene permiso para realizar esta acción.",
@@ -42,6 +47,17 @@
     "title": "Navegación rápida",
     "placeholder": "Buscar una página…",
     "empty": "Ninguna página encontrada",
-    "shortcutHint": "Ctrl+K"
+    "shortcutHint": "Ctrl+K · ⌘K — pulse ? para la ayuda"
+  },
+  "keyboardShortcuts": {
+    "title": "Atajos de teclado",
+    "description": "Atajos disponibles en el back office.",
+    "close": "Cerrar",
+    "hint": "Los atajos se ignoran mientras escribe en un campo.",
+    "items": {
+      "palette": "Abrir / cerrar la navegación rápida",
+      "escape": "Cerrar la paleta o esta ayuda",
+      "help": "Mostrar esta ayuda"
+    }
   }
 }

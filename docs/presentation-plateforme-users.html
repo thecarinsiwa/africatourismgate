@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Africa Tourism Gate — Présentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="presentation-plateforme-users.css" />
+</head>
+<body>
+
+  <!-- Icon sprite — style outline uniforme -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+    <symbol id="i-credit-card" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></symbol>
+    <symbol id="i-bar-chart" viewBox="0 0 24 24"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+    <symbol id="i-megaphone" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></symbol>
+    <symbol id="i-heart-handshake" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"/><path d="m18 15-2-2"/><path d="m15 18-2-2"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></symbol>
+    <symbol id="i-store" viewBox="0 0 24 24"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><path d="M22 7v3a2 2 0 0 1-2 2a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7"/></symbol>
+    <symbol id="i-bed" viewBox="0 0 24 24"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></symbol>
+    <symbol id="i-plane" viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></symbol>
+    <symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
+    <symbol id="i-ship" viewBox="0 0 24 24"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.25"/><path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/><path d="M12 10v4"/><path d="M12 2v3"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"/></symbol>
+    <symbol id="i-package" viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></symbol>
+    <symbol id="i-chart-line" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+    <symbol id="i-file-text" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
+    <symbol id="i-shopping-cart" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></symbol>
+    <symbol id="i-handshake" viewBox="0 0 24 24"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></symbol>
+    <symbol id="i-building" viewBox="0 0 24 24"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></symbol>
+    <symbol id="i-luggage" viewBox="0 0 24 24"><path d="M6 20a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2"/><path d="M8 18V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v14"/><path d="M10 20h4"/><circle cx="16" cy="20" r="2"/><circle cx="8" cy="20" r="2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-sprout" viewBox="0 0 24 24"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></symbol>
+  </svg>
+
+  <div class="deck" id="deck">
+
+    <!-- Slide 1 — Titre -->
+    <section class="slide slide--hero slide--hero-image active" data-slide="1">
+      <div class="slide-inner">
+        <img src="presentation-assets/logo.png" alt="Africa Tourism Gate" class="slide-logo" />
+        <span class="badge">Présentation · Juillet 2026</span>
+        <h1>Africa Tourism Gate</h1>
+        <p class="subtitle">
+          Votre plateforme de voyage en ligne pour les voyageurs, votre équipe et vos partenaires.
+        </p>
+        <p class="meta">Direction · Équipes commerciales · Support · Partenaires</p>
+      </div>
+    </section>
+
+    <!-- Slide 2 — En une phrase -->
+    <section class="slide slide--light" data-slide="2">
+      <div class="slide-inner slide-split">
+        <div class="slide-split__content">
+          <span class="slide-label">Introduction</span>
+          <h2>En une phrase</h2>
+          <p class="lead">
+            <strong>Africa Tourism Gate</strong> est votre plateforme de voyage en ligne&nbsp;:
+            les clients peuvent <span class="highlight">chercher, réserver et payer</span> leurs voyages&nbsp;;
+            votre équipe peut <span class="highlight">gérer le catalogue, les réservations et les paiements</span>
+            depuis un espace de travail dédié.
+          </p>
+          <p class="subtitle">
+            Tout ce qu'offrent les grandes plateformes internationales, mais adapté à votre marché,
+            sous votre contrôle, avec votre identité.
+          </p>
+        </div>
+        <div class="slide-split__media">
+          <img src="presentation-assets/activity.jpg" alt="Expérience touristique en Afrique" class="slide-image slide-image--tall" />
+          <p class="image-caption">Des expériences authentiques, présentées sur une plateforme moderne</p>
+        </div>
+      </div>
+      <img src="presentation-assets/africa-outline.svg" alt="" class="decor-africa" aria-hidden="true" />
+    </section>
+
+    <!-- Slide 3 — À quoi sert -->
+    <section class="slide slide--white" data-slide="3">
+      <div class="slide-inner">
+        <span class="slide-label">Vision</span>
+        <h2>À quoi sert la plateforme&nbsp;?</h2>
+        <p class="lead">Imaginez un <strong>guichet unique</strong> pour tout le tourisme.</p>
+        <div class="card-grid card-grid--2">
+          <div class="card">
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-globe"/></svg></div>
+            <h3>Proposer des voyages en ligne</h3>
+            <p>Hôtels, vols, voitures, croisières, activités et forfaits sur un site moderne.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-credit-card"/></svg></div>
+            <h3>Encaisser des paiements</h3>
+            <p>En ligne par carte bancaire, ou en agence (espèces ou carte).</p>
+          </div>
+          <div class="card">
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-bar-chart"/></svg></div>
+            <h3>Gérer votre activité</h3>
+            <p>Réservations, clients, paiements et contenu du site au quotidien.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg></div>
+            <h3>Fidéliser vos clients</h3>
+            <p>Programme OneKey, avis clients et support personnalisé.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-megaphone"/></svg></div>
+            <h3>Communiquer sur votre marque</h3>
+            <p>Articles, photos, histoire et témoignages clients.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-heart-handshake"/></svg></div>
+            <h3>Soutenir une cause</h3>
+            <p>Programme GAP (Gorilla Ambassadors) et collecte de dons.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 4 — 4 espaces -->
+    <section class="slide slide--accent" data-slide="4">
+      <div class="slide-inner">
+        <span class="slide-label">Architecture simple</span>
+        <h2>Les 4 espaces de la plateforme</h2>
+        <p class="subtitle">Quatre interfaces distinctes, chacune pour un type d'utilisateur.</p>
+        <div class="card-grid">
+          <div class="card card--space">
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-globe"/></svg></div>
+            <h3>Site web</h3>
+            <p>Pour les voyageurs - recherche et réservation en ligne.</p>
+            <span class="card-url">africatourismgate.org</span>
+          </div>
+          <div class="card card--space">
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-monitor"/></svg></div>
+            <h3>Espace de gestion</h3>
+            <p>Pour votre équipe - administration et suivi.</p>
+            <span class="card-url">app-africatourismgate.org</span>
+          </div>
+          <div class="card card--space">
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-store"/></svg></div>
+            <h3>Guichet de vente</h3>
+            <p>Pour les vendeurs en agence ou au comptoir.</p>
+            <span class="card-url">pos.africatourismgate.org</span>
+          </div>
+          <div class="card card--space">
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-sprout"/></svg></div>
+            <h3>Site GAP</h3>
+            <p>Pour le programme Gorilla Ambassadors.</p>
+            <span class="card-url">gap.africatourismgate.org</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 5 — Aperçu visuel -->
+    <section class="slide slide--white" data-slide="5">
+      <div class="slide-inner">
+        <span class="slide-label">Espace 1 · Voyageurs</span>
+        <h2>Le site web</h2>
+        <p class="lead">
+          Le site que voient vos clients - disponible en
+          <strong>français, anglais et espagnol</strong>.
+        </p>
+        <ul class="feature-list">
+          <li>Grande bannière avec vos visuels (modifiables par l'équipe)</li>
+          <li>Barre de recherche multi-produits (hôtel, vol, voiture…)</li>
+          <li>Mise en avant de vos atouts, promotions et avis clients</li>
+          <li>Pages institutionnelles, blog, support et dons</li>
+        </ul>
+        <p class="subtitle" style="margin-top:1.25rem">
+          Parcours type&nbsp;: <strong>recherche → fiche → réservation → paiement → confirmation par e-mail</strong>
+        </p>
+        <span class="slide-label">Aperçu</span>
+        <h2>La plateforme en images</h2>
+        <p class="subtitle">Contenu réel du catalogue — hébergements, activités, forfaits et véhicules.</p>
+        <div class="photo-grid">
+          <figure class="photo-card">
+            <img src="presentation-assets/hotel.jpg" alt="Hébergement" />
+            <figcaption class="photo-card__label">Hébergements</figcaption>
+          </figure>
+          <figure class="photo-card">
+            <img src="presentation-assets/activity.jpg" alt="Activité touristique" />
+            <figcaption class="photo-card__label">Activités &amp; tours</figcaption>
+          </figure>
+          <figure class="photo-card">
+            <img src="presentation-assets/package.jpg" alt="Forfait voyage" />
+            <figcaption class="photo-card__label">Forfaits combinés</figcaption>
+          </figure>
+          <figure class="photo-card">
+            <img src="presentation-assets/vehicle.jpg" alt="Location véhicule" />
+            <figcaption class="photo-card__label">Locations véhicules</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 6 — Site web -->
+    <section class="slide slide--light" data-slide="6">
+      <div class="slide-inner slide-split">
+        <div class="slide-split__content">
+          <span class="slide-label">Espace 1 · Voyageurs</span>
+          <h2>Le site web</h2>
+          <p class="lead">
+            Le site que voient vos clients — disponible en
+            <strong>français, anglais et espagnol</strong>.
+          </p>
+          <ul class="feature-list">
+            <li>Grande bannière avec vos visuels (modifiables par l'équipe)</li>
+            <li>Barre de recherche multi-produits (hôtel, vol, voiture…)</li>
+            <li>Mise en avant de vos atouts, promotions et avis clients</li>
+            <li>Pages institutionnelles, blog, support et dons</li>
+          </ul>
+          <p class="subtitle" style="margin-top:1rem">
+            Parcours&nbsp;: <strong>recherche → fiche → réservation → paiement → confirmation</strong>
+          </p>
+        </div>
+        <div class="slide-split__media">
+          <div class="browser-frame">
+            <div class="browser-frame__bar">
+              <span class="browser-frame__dot"></span>
+              <span class="browser-frame__dot"></span>
+              <span class="browser-frame__dot"></span>
+              <span class="browser-frame__url">africatourismgate.org</span>
+            </div>
+            <div class="browser-frame__body">
+              <img src="presentation-assets/hero-brand.png" alt="Page d'accueil Africa Tourism Gate" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 7 — 6 produits -->
+    <section class="slide slide--white" data-slide="7">
+      <div class="slide-inner">
+        <span class="slide-label">Site web</span>
+        <h2>Six types de voyages réservables</h2>
+        <div class="product-grid">
+          <div class="product-pill product-pill--photo">
+            <img src="presentation-assets/hotel.jpg" alt="" class="product-pill__img" />
+            <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-bed"/></svg></span>
+            <strong>Hôtels</strong>
+            <span>Destination, dates, photos, tarifs</span>
+          </div>
+          <div class="product-pill product-pill--photo">
+            <img src="presentation-assets/marketing.jpg" alt="" class="product-pill__img" />
+            <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-plane"/></svg></span>
+            <strong>Vols</strong>
+            <span>Comparer, choisir une classe</span>
+          </div>
+          <div class="product-pill product-pill--photo">
+            <img src="presentation-assets/vehicle.jpg" alt="" class="product-pill__img" />
+            <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg></span>
+            <strong>Locations</strong>
+            <span>Véhicule, retrait, dates</span>
+          </div>
+          <div class="product-pill product-pill--photo">
+            <img src="presentation-assets/package.jpg" alt="" class="product-pill__img" />
+            <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-ship"/></svg></span>
+            <strong>Croisières</strong>
+            <span>Cabines et itinéraires</span>
+          </div>
+          <div class="product-pill product-pill--photo">
+            <img src="presentation-assets/activity.jpg" alt="" class="product-pill__img" />
+            <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-compass"/></svg></span>
+            <strong>Activités</strong>
+            <span>Excursions et expériences</span>
+          </div>
+          <div class="product-pill product-pill--photo">
+            <img src="presentation-assets/room.jpg" alt="" class="product-pill__img" />
+            <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-package"/></svg></span>
+            <strong>Forfaits</strong>
+            <span>Packs combinés à prix réduit</span>
+          </div>
+        </div>
+        <div class="two-columns" style="margin-top:1.5rem">
+          <div>
+            <h3>Compte client</h3>
+            <ul class="feature-list">
+              <li>Gérer ses réservations</li>
+              <li>Profil, adresses, moyens de paiement</li>
+              <li>Messagerie avec votre équipe</li>
+              <li>Points fidélité OneKey</li>
+              <li>Connexion Google ou e-mail</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 8 — Espace de gestion -->
+    <section class="slide slide--light" data-slide="8">
+      <div class="slide-inner slide-split">
+        <div class="slide-split__content">
+          <span class="slide-label">Espace 2 · Équipe</span>
+          <h2>L'espace de gestion</h2>
+          <p class="lead">
+            Le tableau de bord où votre staff travaille au quotidien.
+            Chaque personne voit uniquement ce à quoi elle a droit selon son rôle.
+          </p>
+          <div class="card-grid card-grid--2" style="margin-top:1rem">
+            <div class="card">
+              <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-chart-line"/></svg></span> Tableau de bord</h3>
+              <p>Réservations, chiffre d'affaires, nouveaux clients.</p>
+            </div>
+            <div class="card">
+              <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-wallet"/></svg></span> Paiements</h3>
+              <p>Transactions, remboursements, codes promo.</p>
+            </div>
+            <div class="card">
+              <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-file-text"/></svg></span> Contenu</h3>
+              <p>Blog, bannières, pages « À propos », avis.</p>
+            </div>
+            <div class="card">
+              <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-shield"/></svg></span> Droits d'accès</h3>
+              <p>Admin, support, commercial… par rôle.</p>
+            </div>
+          </div>
+        </div>
+        <div class="slide-split__media">
+          <div class="browser-frame">
+            <div class="browser-frame__bar">
+              <span class="browser-frame__dot"></span>
+              <span class="browser-frame__dot"></span>
+              <span class="browser-frame__dot"></span>
+              <span class="browser-frame__url">app-africatourismgate.org</span>
+            </div>
+            <div class="browser-frame__body">
+              <img src="presentation-assets/marketing.jpg" alt="Interface de gestion — contenu et catalogue" />
+            </div>
+          </div>
+          <p class="image-caption">Catalogue, réservations et contenu gérés depuis un seul espace</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 9 — Catalogue & réservations -->
+    <section class="slide slide--white" data-slide="9">
+      <div class="slide-inner">
+        <span class="slide-label">Espace de gestion</span>
+        <h2>Catalogue &amp; réservations</h2>
+        <div class="two-columns">
+          <div>
+            <h3>Catalogue voyage</h3>
+            <p class="subtitle" style="margin-bottom:0.75rem">Ajouter, modifier et supprimer tous vos produits&nbsp;:</p>
+            <ul class="feature-list">
+              <li>Destinations et points d'intérêt</li>
+              <li>Hébergements (chambres, photos, tarifs)</li>
+              <li>Vols, locations, croisières</li>
+              <li>Activités, tours et forfaits</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Gestion des réservations</h3>
+            <ul class="feature-list">
+              <li>Liste complète (en attente, confirmées, annulées…)</li>
+              <li>Réservation assistée (validation staff, manifeste, pièces d'identité)</li>
+              <li>Messagerie client sur chaque réservation</li>
+              <li>Assignation de guides touristiques</li>
+            </ul>
+            <div class="card-image-side" style="margin-top:1rem">
+              <img src="presentation-assets/room.jpg" alt="Exemple de chambre d'hôtel dans le catalogue" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 10 — Guichet & GAP -->
+    <section class="slide slide--accent" data-slide="10">
+      <div class="slide-inner">
+        <span class="slide-label">Espaces 3 &amp; 4</span>
+        <h2>Guichet de vente &amp; site GAP</h2>
+        <div class="two-columns">
+          <div class="card">
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-store"/></svg></div>
+            <h3>Guichet de vente (POS)</h3>
+            <p><em>Comptoir, agence, événement</em></p>
+            <ol class="steps" style="margin-top:0.75rem">
+              <li>Connexion employé</li>
+              <li>Ajout produits au panier</li>
+              <li>Encaissement espèces ou carte</li>
+              <li>Impression du reçu</li>
+            </ol>
+          </div>
+          <div class="card">
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-sprout"/></svg></div>
+            <h3>Site GAP</h3>
+            <p><em>Gorilla Ambassadors Program</em></p>
+            <ul class="feature-list" style="margin-top:0.75rem">
+              <li>Présentation et objectifs du programme</li>
+              <li>Activités sur le terrain et galerie médias</li>
+              <li>Statistiques d'impact</li>
+              <li>Page de dons - contenu géré depuis l'espace admin</li>
+            </ul>
+          <div class="card card--photo">
+            <img src="presentation-assets/vehicle.jpg" alt="Vente en agence" class="card-photo" />
+            <div class="card-body">
+              <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-store"/></svg></div>
+              <h3>Guichet de vente</h3>
+              <p><em>Comptoir, agence, événement</em></p>
+              <ol class="steps" style="margin-top:0.75rem">
+                <li>Connexion employé</li>
+                <li>Ajout produits au panier</li>
+                <li>Encaissement espèces ou carte</li>
+                <li>Impression du reçu</li>
+              </ol>
+            </div>
+          </div>
+          <div class="card card--photo">
+            <img src="presentation-assets/activity.jpg" alt="Programme GAP — conservation" class="card-photo" />
+            <div class="card-body">
+              <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-sprout"/></svg></div>
+              <h3>Site GAP</h3>
+              <p><em>Gorilla Ambassadors Program</em></p>
+              <ul class="feature-list" style="margin-top:0.75rem">
+                <li>Présentation et objectifs du programme</li>
+                <li>Activités sur le terrain et galerie médias</li>
+                <li>Statistiques d'impact</li>
+                <li>Page de dons — contenu géré depuis l'espace admin</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 11 — Deux façons de réserver -->
+    <section class="slide slide--white" data-slide="11">
+      <div class="slide-inner">
+        <span class="slide-label">Parcours client</span>
+        <h2>Deux façons de réserver</h2>
+        <div class="compare-grid">
+          <div class="compare-card">
+            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-shopping-cart"/></svg></span> Réservation en ligne</h3>
+            <dl>
+              <dt>Qui ?</dt>
+              <dd>Client autonome sur le site</dd>
+              <dt>Paiement</dt>
+              <dd>Immédiat par carte bancaire</dd>
+              <dt>Idéal pour</dt>
+              <dd>Voyage standard, disponibilité claire</dd>
+            </dl>
+          </div>
+          <div class="compare-card">
+            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-handshake"/></svg></span> Réservation assistée</h3>
+            <dl>
+              <dt>Qui ?</dt>
+              <dd>Client accompagné par votre équipe</dd>
+              <dt>Paiement</dt>
+              <dd>Après validation par le staff</dd>
+              <dt>Idéal pour</dt>
+              <dd>Groupes, voyages sur mesure, vérification de documents</dd>
+            </dl>
+          </div>
+        </div>
+        <p class="subtitle" style="margin-top:1.25rem;text-align:center">
+          Les deux modes envoient une <strong>confirmation par e-mail</strong> au client.
+        </p>
+      </div>
+    </section>
+
+    <!-- Slide 12 — Ce qui fonctionne -->
+    <section class="slide slide--light" data-slide="12">
+      <div class="slide-inner">
+        <span class="slide-label">État actuel</span>
+        <h2>Ce qui fonctionne déjà</h2>
+        <div class="two-columns">
+          <div>
+            <h3>Pour les voyageurs</h3>
+            <ul class="feature-list">
+              <li>6 types de produits réservables</li>
+              <li>Paiement en ligne sécurisé</li>
+              <li>Compte personnel et historique</li>
+              <li>Site en 3 langues (FR, EN, ES)</li>
+              <li>Support et messagerie</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Pour votre équipe</h3>
+            <ul class="feature-list">
+              <li>Espace de gestion complet</li>
+              <li>Tableau de bord et indicateurs clés</li>
+              <li>Remboursements et promotions</li>
+              <li>Réservations assistées</li>
+              <li>Gestion contenu, avis et GAP</li>
+            </ul>
+          </div>
+        </div>
+        <div class="status-row">
+          <span class="status-badge"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Guichet de vente + reçus</span>
+          <span class="status-badge"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> E-mails automatiques</span>
+          <span class="status-badge"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Plateforme en ligne</span>
+          <span class="status-badge"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Multi-organisations</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 13 — Ce qui arrive -->
+    <section class="slide slide--white" data-slide="13">
+      <div class="slide-inner">
+        <span class="slide-label">Transparence</span>
+        <h2>Ce qui arrive bientôt</h2>
+        <p class="subtitle">Rien de bloquant - surtout des finitions pour plus de confort.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Fonctionnalité</th>
+                <th>Situation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Historique points fidélité</strong></td>
+                <td>Le solde s'affiche ; l'historique complet arrive prochainement</td>
+              </tr>
+              <tr>
+                <td><strong>Statistiques avancées</strong></td>
+                <td>Chiffres principaux OK ; rapports plus détaillés en préparation</td>
+              </tr>
+              <tr>
+                <td><strong>Messages support centralisés</strong></td>
+                <td>Messages dans chaque ticket ; vue globale prévue</td>
+              </tr>
+              <tr>
+                <td><strong>Finitions visuelles</strong></td>
+                <td>Améliorations esthétiques planifiées</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="lead" style="margin-top:1.25rem;text-align:center">
+          Plateforme utilisable à environ <strong>90&nbsp;%</strong> de sa vision finale.
+        </p>
+      </div>
+    </section>
+
+    <!-- Slide 14 — Démo -->
+    <section class="slide slide--accent" data-slide="14">
+      <div class="slide-inner">
+        <span class="slide-label">Démonstration</span>
+        <h2>Déroulé suggéré pour la démo</h2>
+        <div class="demo-tabs" role="tablist">
+          <button class="demo-tab active" data-demo="voyageur" role="tab">Voyageur · 5 min</button>
+          <button class="demo-tab" data-demo="equipe" role="tab">Équipe · 5 min</button>
+          <button class="demo-tab" data-demo="agence" role="tab">Agence (POS) · 3 min</button>
+          <button class="demo-tab" data-demo="gap" role="tab">GAP · 3 min</button>
+        </div>
+        <div class="demo-panel active" id="demo-voyageur">
+          <ol class="steps">
+            <li>Ouvrir le site → choisir la langue</li>
+            <li>Rechercher un hôtel (ex. Kinshasa) avec dates</li>
+            <li>Ouvrir une fiche → choisir une chambre</li>
+            <li>Créer un compte ou se connecter</li>
+            <li>Payer → recevoir la confirmation</li>
+            <li>« Mon compte » → voir la réservation</li>
+          </ol>
+        </div>
+        <div class="demo-panel" id="demo-equipe">
+          <ol class="steps">
+            <li>Se connecter à l'espace de gestion</li>
+            <li>Montrer le tableau de bord (réservations, revenus)</li>
+            <li>Ouvrir une réservation → messagerie client</li>
+            <li>Ajouter ou modifier un produit (ex. une activité)</li>
+            <li>Créer un code promo</li>
+            <li>Modifier une bannière d'accueil</li>
+          </ol>
+        </div>
+        <div class="demo-panel" id="demo-agence">
+          <ol class="steps">
+            <li>Ouvrir le guichet de vente</li>
+            <li>Ajouter un produit au panier</li>
+            <li>Encaisser (espèces ou carte)</li>
+            <li>Imprimer le reçu</li>
+          </ol>
+        </div>
+        <div class="demo-panel" id="demo-gap">
+          <ol class="steps">
+            <li>Ouvrir le site Gorilla Ambassadors Program (GAP)</li>
+            <li>Voir les activités et les photos</li>
+            <li>Faire un don</li>
+            <li>Voir les statistiques et les rapports</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 15 — Bénéfices -->
+    <section class="slide slide--light" data-slide="15">
+      <div class="slide-inner">
+        <span class="slide-label">Valeur</span>
+        <h2>Les bénéfices concrets</h2>
+        <div class="card-grid card-grid--3">
+          <div class="card card--photo">
+            <img src="presentation-assets/hero-brand.png" alt="" class="card-photo" />
+            <div class="card-body">
+              <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-building"/></svg></span> Pour votre entreprise</h3>
+            <ul class="feature-list" style="margin-top:0.5rem">
+              <li>Indépendance sur catalogue et tarifs</li>
+              <li>Revenus en ligne 24 h/24</li>
+              <li>Une seule plateforme centralisée</li>
+              <li>Image professionnelle multilingue</li>
+            </ul>
+            </div>
+          </div>
+          <div class="card card--photo">
+            <img src="presentation-assets/hotel.jpg" alt="" class="card-photo" />
+            <div class="card-body">
+              <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-luggage"/></svg></span> Pour vos clients</h3>
+            <ul class="feature-list" style="margin-top:0.5rem">
+              <li>Tout réserver au même endroit</li>
+              <li>Tarifs clairs, confirmation immédiate</li>
+              <li>En ligne ou avec un conseiller</li>
+              <li>Avis, support et fidélité</li>
+            </ul>
+            </div>
+          </div>
+          <div class="card card--photo">
+            <img src="presentation-assets/activity.jpg" alt="" class="card-photo" />
+            <div class="card-body">
+              <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-sprout"/></svg></span> Pour la cause GAP</h3>
+            <ul class="feature-list" style="margin-top:0.5rem">
+              <li>Visibilité du programme conservation</li>
+              <li>Collecte de dons intégrée</li>
+              <li>Contenu mis à jour facilement</li>
+            </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 16 — FAQ -->
+    <section class="slide slide--white" data-slide="16">
+      <div class="slide-inner">
+        <span class="slide-label">Questions</span>
+        <h2>Questions fréquentes</h2>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary>Les clients peuvent-ils vraiment payer en ligne&nbsp;?</summary>
+            <p>Oui. Le paiement par carte bancaire est opérationnel et sécurisé. Le client reçoit une confirmation par e-mail.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Le site est-il multilingue&nbsp;?</summary>
+            <p>Oui : français, anglais et espagnol, sur le site public et dans l'espace de gestion.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Comment ajouter un nouvel hôtel ou une activité&nbsp;?</summary>
+            <p>Depuis l'espace de gestion, section « Produits voyage », avec des formulaires simples (texte, photos, tarifs).</p>
+          </details>
+          <details class="faq-item">
+            <summary>Un client peut-il réserver sans payer tout de suite&nbsp;?</summary>
+            <p>Oui, via la réservation assistée : demande → validation par l'équipe → confirmation.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Peut-on faire des dons au programme GAP&nbsp;?</summary>
+            <p>Oui, via le site GAP ou la page dons du site principal.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 17 — Avancement -->
+    <section class="slide slide--dark slide--hero-image" data-slide="17">
+      <div class="slide-inner">
+        <span class="slide-label">Bilan</span>
+        <h2>Où en sommes-nous&nbsp;?</h2>
+        <div class="progress-block">
+          <p style="font-weight:700;color:var(--color-primary-dark);margin-bottom:0.25rem">Avancement global</p>
+          <div class="progress-bar-large">
+            <div class="progress-bar-large-fill"></div>
+          </div>
+          <div class="status-row">
+            <span class="status-badge"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Site voyageur (6 produits)</span>
+            <span class="status-badge"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Paiements en ligne</span>
+            <span class="status-badge"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Espace de gestion</span>
+            <span class="status-badge"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Guichet + GAP</span>
+            <span class="status-badge"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Multilingue</span>
+            <span class="status-badge status-badge--pending"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg> Finitions en cours</span>
+          </div>
+        </div>
+        <blockquote class="quote-block">
+          « Africa Tourism Gate est une plateforme de voyage complète et déjà opérationnelle.
+          Les clients peuvent réserver en ligne ; votre équipe peut tout gérer depuis un seul espace.
+          Il reste principalement des finitions pour rendre l'expérience encore plus fluide. »
+          <cite>— Message clé pour la présentation</cite>
+        </blockquote>
+      </div>
+    </section>
+
+    <!-- Slide 18 — Priorités & accès -->
+    <section class="slide slide--light" data-slide="18">
+      <div class="slide-inner">
+        <span class="slide-label">Suite</span>
+        <h2>Prochaines priorités &amp; accès</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Priorité</th>
+                <th>Objectif</th>
+                <th>Bénéfice</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Historique complet fidélité</td>
+                <td>Parcours client visible de bout en bout</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Statistiques détaillées</td>
+                <td>Meilleures décisions commerciales</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Finitions visuelles</td>
+                <td>Image encore plus professionnelle</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Messages support centralisés</td>
+                <td>Support plus rapide</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="link-grid">
+          <a class="link-card" href="https://africatourismgate.org" target="_blank" rel="noopener">
+            <div class="link-card-head">
+              <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-globe"/></svg></span>
+              <strong>Site voyageurs</strong>
+            </div>
+            <span>africatourismgate.org</span>
+          </a>
+          <a class="link-card" href="https://app-africatourismgate.org" target="_blank" rel="noopener">
+            <div class="link-card-head">
+              <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-monitor"/></svg></span>
+              <strong>Espace de gestion</strong>
+            </div>
+            <span>app-africatourismgate.org</span>
+          </a>
+          <a class="link-card" href="https://gap.africatourismgate.org" target="_blank" rel="noopener">
+            <div class="link-card-head">
+              <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-sprout"/></svg></span>
+              <strong>Site GAP</strong>
+            </div>
+            <span>gap.africatourismgate.org</span>
+          </a>
+          <a class="link-card" href="https://pos.africatourismgate.org" target="_blank" rel="noopener">
+            <div class="link-card-head">
+              <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-store"/></svg></span>
+              <strong>Point de vente (POS)</strong>
+            </div>
+            <span>pos.africatourismgate.org</span>
+          </a>
+        </div>
+        <p class="subtitle" style="margin-top:1.5rem;text-align:center">
+          Merci · Africa Tourism Gate · Juillet 2026
+        </p>
+      </div>
+    </section>
+
+  </div>
+
+  <p class="nav-hint">← → ou clic pour naviguer · F plein écran</p>
+
+  <nav class="nav-bar" aria-label="Navigation présentation">
+    <button class="nav-prev" id="btnPrev" aria-label="Slide précédente">← Précédent</button>
+    <div class="nav-info">
+      <span class="nav-counter" id="navCounter">1 / 18</span>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width: 5.56%"></div>
+      </div>
+    </div>
+    <button class="nav-next" id="btnNext" aria-label="Slide suivante">Suivant →</button>
+  </nav>
+
+  <script>
+    (function () {
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const total = slides.length;
+      let current = 0;
+
+      const btnPrev = document.getElementById("btnPrev");
+      const btnNext = document.getElementById("btnNext");
+      const navCounter = document.getElementById("navCounter");
+      const progressFill = document.getElementById("progressFill");
+
+      function goTo(index) {
+        if (index < 0 || index >= total) return;
+
+        slides[current].classList.remove("active", "prev");
+        if (index < current) slides[current].classList.add("prev");
+
+        current = index;
+        slides[current].classList.add("active");
+        slides[current].classList.remove("prev");
+
+        navCounter.textContent = (current + 1) + " / " + total;
+        progressFill.style.width = ((current + 1) / total * 100) + "%";
+
+        btnPrev.disabled = current === 0;
+        btnNext.disabled = current === total - 1;
+
+        history.replaceState(null, "", "#slide-" + (current + 1));
+      }
+
+      function next() { goTo(current + 1); }
+      function prev() { goTo(current - 1); }
+
+      btnNext.addEventListener("click", next);
+      btnPrev.addEventListener("click", prev);
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
+          e.preventDefault();
+          next();
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+          e.preventDefault();
+          prev();
+        } else if (e.key === "Home") {
+          goTo(0);
+        } else if (e.key === "End") {
+          goTo(total - 1);
+        } else if (e.key === "f" || e.key === "F") {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(function () {});
+          } else {
+            document.exitFullscreen();
+          }
+        }
+      });
+
+      document.getElementById("deck").addEventListener("click", function (e) {
+        if (e.target.closest("button, a, summary, .demo-tab")) return;
+        var rect = e.currentTarget.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        if (x > rect.width / 2) next(); else prev();
+      });
+
+      /* Demo tabs */
+      document.querySelectorAll(".demo-tab").forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          document.querySelectorAll(".demo-tab").forEach(function (t) { t.classList.remove("active"); });
+          document.querySelectorAll(".demo-panel").forEach(function (p) { p.classList.remove("active"); });
+          tab.classList.add("active");
+          document.getElementById("demo-" + tab.dataset.demo).classList.add("active");
+        });
+      });
+
+      /* Hash on load */
+      var hash = location.hash.match(/^#slide-(\d+)$/);
+      if (hash) goTo(Math.min(parseInt(hash[1], 10) - 1, total - 1));
+      else goTo(0);
+    })();
+  </script>
+
+</body>
+</html>

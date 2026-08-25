@@ -31,8 +31,20 @@
     "fields": {
       "title": "Título",
       "subtitle": "Subtítulo",
+      "heroImage": "Imagen principal",
       "heroImageUrl": "URL de imagen principal",
       "heroImageAlt": "Texto alternativo de la imagen",
+      "heroPreviewAlt": "Vista previa de la imagen principal",
+      "removeHero": "Quitar la imagen",
+      "links": "Enlaces de socios",
+      "linksHint": "UNESCO, socios, recursos… hasta 10 enlaces.",
+      "linksCount": "{count} / {max}",
+      "linksEmpty": "Aún no hay enlaces.",
+      "linkLabel": "Etiqueta",
+      "linkLabelPlaceholder": "Ej. UNESCO, WWF…",
+      "linkUrl": "URL (opcional)",
+      "addLink": "Añadir enlace",
+      "removeLink": "Quitar",
       "unescoLabel": "Etiqueta UNESCO (opcional)",
       "unescoUrl": "Enlace UNESCO (opcional)",
       "donateLabel": "Etiqueta del botón Donar (opcional)",
@@ -44,6 +56,9 @@
       "heroImageUrlRequired": "La URL de la imagen principal es obligatoria.",
       "heroImageUrlInvalid": "La URL de la imagen principal debe ser válida.",
       "heroImageAltRequired": "El texto alternativo es obligatorio.",
+      "linkLabelRequired": "Cada enlace debe tener una etiqueta.",
+      "linkUrlInvalid": "La URL del enlace debe ser válida.",
+      "maxLinks": "Máximo 10 enlaces.",
       "unescoUrlInvalid": "La URL de UNESCO debe ser válida.",
       "donateUrlInvalid": "La URL de donación debe ser válida."
     },
@@ -51,8 +66,17 @@
     "saveButton": "Guardar"
   },
   "pages": {
+    "stats": {
+      "total": { "label": "Páginas", "subtitle": "Páginas institucionales GAP" },
+      "published": { "label": "Publicadas", "subtitle": "Visibles en el sitio" },
+      "draft": { "label": "Borradores", "subtitle": "No publicadas" },
+      "french": { "label": "En francés", "subtitle": "Contenido locale FR" }
+    },
     "list": {
-      "deleteConfirm": "¿Eliminar la página « {title} »?",
+      "deleteTitle": "Eliminar página",
+      "deleteConfirm": "La página «{title}» será eliminada permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "columns": {
         "section": "Sección",
         "title": "Título",
@@ -70,6 +94,11 @@
     "edit": {
       "pageTitle": "Modificar la página"
     },
+    "detail": {
+      "title": "Detalle de la página",
+      "close": "Cerrar",
+      "edit": "Editar"
+    },
     "form": {
       "info": {
         "sectionLocaleUnique": "Cada combinación sección + idioma es única.",
@@ -77,7 +106,8 @@
       },
       "validation": {
         "contentRequired": "El contenido es obligatorio.",
-        "coverUrlInvalid": "La URL de la imagen de portada debe ser válida."
+        "coverUrlInvalid": "La URL de la imagen de portada debe ser válida.",
+        "maxImages": "Máximo 10 imágenes por página."
       },
       "fields": {
         "section": "Sección",
@@ -86,8 +116,15 @@
         "excerptPlaceholder": "Resumen breve mostrado en el encabezado…",
         "content": "Contenido",
         "contentPlaceholder": "Redacte el cuerpo de la página…",
+        "images": "Imágenes",
+        "imagesCount": "{count} / {max}",
+        "imagesEmpty": "Aún no hay imágenes.",
         "coverImageUrl": "Imagen de portada",
         "coverPreviewAlt": "Vista previa de la portada",
+        "coverBadge": "Portada",
+        "removeImage": "Quitar",
+        "addImageUrl": "Añadir URL",
+        "removeCover": "Quitar la imagen",
         "locale": "Idioma",
         "publishedAtOptional": "Fecha de publicación (opcional)"
       },
@@ -101,8 +138,17 @@
     }
   },
   "activities": {
+    "stats": {
+      "total": { "label": "Actividades", "subtitle": "Iniciativas del programa" },
+      "published": { "label": "Publicadas", "subtitle": "Visibles en el sitio" },
+      "draft": { "label": "Borradores", "subtitle": "No publicadas" },
+      "french": { "label": "En francés", "subtitle": "Contenido locale FR" }
+    },
     "list": {
-      "deleteConfirm": "¿Eliminar la actividad « {title} »?",
+      "deleteTitle": "Eliminar actividad",
+      "deleteConfirm": "La actividad «{title}» será eliminada permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "columns": {
         "title": "Título",
         "icon": "Icono",
@@ -118,18 +164,32 @@
     "edit": {
       "pageTitle": "Modificar la actividad"
     },
+    "detail": {
+      "title": "Detalle de la actividad",
+      "close": "Cerrar",
+      "edit": "Editar"
+    },
     "form": {
       "validation": {
         "titleRequired": "El título es obligatorio.",
         "descriptionRequired": "La descripción es obligatoria.",
-        "imageUrlInvalid": "La URL de la imagen debe ser válida."
+        "imageUrlInvalid": "La URL de la imagen debe ser válida.",
+        "maxImages": "Máximo 10 imágenes por actividad."
       },
       "fields": {
         "title": "Título",
         "description": "Descripción",
+        "descriptionPlaceholder": "Describa la actividad…",
         "iconKey": "Icono",
+        "images": "Imágenes",
+        "imagesCount": "{count} / {max}",
+        "imagesEmpty": "Aún no hay imágenes.",
+        "image": "Imagen",
         "imageUrl": "Imagen (URL)",
         "imagePreviewAlt": "Vista previa de la imagen",
+        "coverBadge": "Portada",
+        "removeImage": "Quitar",
+        "addImageUrl": "Añadir URL",
         "sortOrder": "Orden de visualización",
         "locale": "Idioma"
       },
@@ -140,8 +200,17 @@
     }
   },
   "impact": {
+    "stats": {
+      "total": { "label": "Estadísticas", "subtitle": "Indicadores de impacto" },
+      "published": { "label": "Publicadas", "subtitle": "Visibles en el sitio" },
+      "draft": { "label": "Borradores", "subtitle": "No publicadas" },
+      "french": { "label": "En francés", "subtitle": "Contenido locale FR" }
+    },
     "list": {
-      "deleteConfirm": "¿Eliminar la estadística « {label} »?",
+      "deleteTitle": "Eliminar estadística",
+      "deleteConfirm": "La estadística «{label}» será eliminada permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "columns": {
         "label": "Etiqueta",
         "value": "Valor",
@@ -161,26 +230,45 @@
     "form": {
       "validation": {
         "labelRequired": "La etiqueta es obligatoria.",
-        "valueRequired": "El valor mostrado es obligatorio."
+        "valueRequired": "El valor mostrado es obligatorio.",
+        "imageUrlInvalid": "La URL de la imagen debe ser válida.",
+        "localesRequired": "Seleccione al menos un idioma.",
+        "partialCreateFailed": "Creación parcial: error en {locales}. Los demás idiomas se crearon."
       },
       "fields": {
         "label": "Etiqueta",
         "valueDisplay": "Valor mostrado",
         "valueDisplayPlaceholder": "ej. 12 000+",
         "description": "Descripción (opcional)",
+        "descriptionPlaceholder": "Añada una descripción formateada…",
+        "image": "Foto (opcional)",
+        "imagePreviewAlt": "Vista previa de la foto",
+        "removeImage": "Quitar la foto",
         "colorKey": "Color",
         "sortOrder": "Orden de visualización",
-        "locale": "Idioma"
+        "locale": "Idioma",
+        "locales": "Idiomas",
+        "localesHint": "Se creará una estadística por cada idioma marcado (mismo contenido)."
       },
       "saving": "Guardando…",
       "createButton": "Crear la estadística",
+      "createBulkButton": "Crear {count} estadísticas",
       "saveButton": "Guardar",
       "cancelButton": "Cancelar"
     }
   },
   "media": {
+    "stats": {
+      "total": { "label": "Medios", "subtitle": "Fotos y vídeos" },
+      "published": { "label": "Publicados", "subtitle": "Visibles en el sitio" },
+      "draft": { "label": "Borradores", "subtitle": "No publicados" },
+      "french": { "label": "En francés", "subtitle": "Contenido locale FR" }
+    },
     "list": {
-      "deleteConfirm": "¿Eliminar el medio « {title} »?",
+      "deleteTitle": "Eliminar medio",
+      "deleteConfirm": "El medio «{title}» será eliminado permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "columns": {
         "title": "Título",
         "mediaType": "Tipo",
@@ -197,23 +285,38 @@
     "edit": {
       "pageTitle": "Modificar el medio"
     },
+    "detail": {
+      "title": "Detalle del medio",
+      "close": "Cerrar",
+      "edit": "Editar",
+      "openUrl": "Abrir enlace"
+    },
     "form": {
       "validation": {
         "titleRequired": "El título es obligatorio.",
         "urlRequired": "Indique al menos una URL de archivo o externa.",
-        "urlInvalid": "La URL debe ser válida."
+        "urlInvalid": "La URL debe ser válida.",
+        "imageFormat": "Formato de imagen no válido (JPEG, PNG o WebP).",
+        "videoFormat": "Formato de vídeo no válido (MP4 o WebM).",
+        "fileTooLarge": "El archivo no debe superar los 50 MB."
       },
       "fields": {
         "mediaType": "Tipo de medio",
         "title": "Título",
         "description": "Descripción",
+        "file": "Archivo",
         "fileUrl": "URL del archivo",
         "externalUrl": "URL externa (vídeo, etc.)",
+        "thumbnail": "Miniatura",
         "thumbnailUrl": "URL de la miniatura",
         "thumbnailPreviewAlt": "Vista previa de la miniatura",
         "publishedAtOptional": "Fecha de publicación (opcional)",
         "sortOrder": "Orden de visualización",
         "locale": "Idioma"
+      },
+      "hints": {
+        "imageFormat": "JPEG, PNG o WebP, máx. 50 MB",
+        "videoFormat": "MP4 o WebM, máx. 50 MB"
       },
       "saving": "Guardando…",
       "createButton": "Crear el medio",

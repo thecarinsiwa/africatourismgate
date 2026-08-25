@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository, SelectQueryBuilder } from 'typeorm';
@@ -36,10 +37,12 @@ import { flightWorkbookFilename } from './labels/flight-workbook.labels';
 import {
   bookingsPdfFilename,
   catalogPdfFilename,
+  flightDossierPdfFilename,
   kpiSummaryPdfFilename,
 } from './labels/flight-pdf.labels';
 import { renderFlightBookingsPdf } from './pdf/bookings.renderer';
 import { renderFlightCatalogPdf } from './pdf/catalog.renderer';
+import { renderFlightDossierPdf } from './pdf/flight-dossier.renderer';
 import { renderFlightKpiSummaryPdf } from './pdf/kpi-summary.renderer';
 
 export type FlightReportFile = {
@@ -225,6 +228,51 @@ export class FlightReportsService {
     return {
       buffer,
       filename: bookingsPdfFilename(query.dateFrom, query.dateTo),
+      contentType: 'application/pdf',
+    };
+  }
+
+  async generateFlightDossierPdf(
+    flightId: string,
+    localeInput?: string | null,
+  ): Promise<FlightReportFile> {
+    const flight = await this.flightsRepository.findOne({
+      where: { id: flightId, deletedAt: IsNull() },
+    });
+    if (!flight) {
+      throw new NotFoundException(`Flight ${flightId} not found.`);
+    }
+
+    const [branding, airlineNameById, airportById, classes] = await Promise.all([
+      this.resolvePdfBrandingContext(localeInput),
+      this.loadAirlineNameMap([flight.airlineId]),
+      this.loadAirportMap([flight.departureAirportId, flight.arrivalAirportId]),
+      this.loadFlightDossierClasses(flightId),
+    ]);
+
+    const airline = airlineNameById.get(flight.airlineId);
+    const departure = airportById.get(flight.departureAirportId);
+    const arrival = airportById.get(flight.arrivalAirportId);
+
+    const scopedFlight: ScopedFlightRow = {
+      ...flight,
+      airlineName: airline?.name ?? '',
+      airlineIata: airline?.iataCode ?? '',
+      departureAirportIata: departure?.iataCode ?? '',
+      departureAirportCity: departure?.city ?? '',
+      arrivalAirportIata: arrival?.iataCode ?? '',
+      arrivalAirportCity: arrival?.city ?? '',
+    };
+
+    const buffer = await renderFlightDossierPdf({
+      ...branding,
+      flight: scopedFlight,
+      classes,
+    });
+
+    return {
+      buffer,
+      filename: flightDossierPdfFilename(flight.flightNumber),
       contentType: 'application/pdf',
     };
   }
@@ -452,6 +500,19 @@ export class FlightReportsService {
       travelDate: String(row.travelDate).slice(0, 10),
       lineTotalCents: Number(row.lineTotalCents),
       currency: row.currency,
+    }));
+  }
+
+  private async loadFlightDossierClasses(flightId: string) {
+    const classes = await this.flightClassesRepository.find({
+      where: { flightId, deletedAt: IsNull() },
+      order: { className: 'ASC' },
+    });
+
+    return classes.map((cabin) => ({
+      className: cabin.className,
+      seatsTotal: cabin.seatsTotal,
+      basePriceCents: cabin.basePriceCents,
     }));
   }
 

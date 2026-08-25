@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -42,6 +43,7 @@ export function TeamMembersList() {
     | { status: 'ready'; members: TeamMember[]; total: number; totalPages: number }
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<TeamMember | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -96,21 +98,24 @@ export function TeamMembersList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (member: TeamMember) => {
-      if (!window.confirm(t('deleteConfirm', { name: member.name }))) return;
-      setDeletingId(member.id);
-      try {
-        await getApiClient().deleteTeamMember(member.id);
-        await load();
-      } catch {
-        /* list reload shows error on next load */
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, t],
-  );
+  const handleDeleteRequest = useCallback((member: TeamMember) => {
+    setConfirmTarget(member);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const member = confirmTarget;
+    setConfirmTarget(null);
+    setDeletingId(member.id);
+    try {
+      await getApiClient().deleteTeamMember(member.id);
+      await load();
+    } catch {
+      /* reload at next load */
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, load]);
 
   const columns = useMemo<ColumnDef<TeamMember, unknown>[]>(
     () => [
@@ -163,7 +168,7 @@ export function TeamMembersList() {
             {canWrite ? (
               <DataTableActionButton
                 action="delete"
-                onClick={() => void handleDelete(row.original)}
+                onClick={() => handleDeleteRequest(row.original)}
                 disabled={deletingId === row.original.id}
                 loading={deletingId === row.original.id}
               />
@@ -172,12 +177,24 @@ export function TeamMembersList() {
         ),
       },
     ],
-    [canWrite, deletingId, handleDelete, t, tCommon, tStatus],
+    [canWrite, deletingId, handleDeleteRequest, t, tCommon, tStatus],
   );
 
   const members = state.status === 'ready' ? state.members : [];
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { name: confirmTarget.name }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
@@ -215,7 +232,11 @@ export function TeamMembersList() {
           </Button>
         </div>
         {canWrite ? (
-          <Button href="/contenu/a-propos/equipe/nouveau">{t('newButton')}</Button>
+          <Button
+            href={`/contenu/a-propos/equipe/nouveau?locale=${encodeURIComponent(localeFilter || 'fr')}`}
+          >
+            {t('newButton')}
+          </Button>
         ) : null}
       </div>
 
@@ -247,5 +268,6 @@ export function TeamMembersList() {
         </>
       )}
     </div>
+    </>
   );
 }
