@@ -40,7 +40,7 @@ export function localizeBlogPosts<T extends PublicBlogPostListItem>(
     groups.set(key, bucket);
   }
 
-  const data = [...groups.values()]
+  const data = Array.from(groups.values())
     .map((siblings) => pickBlogPostForLocale(siblings, locale))
     .filter((post): post is T => post !== null)
     .map((post) => applyBlogListLocaleFallback(post, locale))
