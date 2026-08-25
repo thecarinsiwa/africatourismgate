@@ -138,8 +138,13 @@ export function applyBlogListLocaleFallback<T extends PublicBlogPostListItem>(
     return coverImageUrl !== post.coverImageUrl ? { ...post, coverImageUrl } : post;
   }
 
-  const { slug: _localizedSlug, ...localizedFields } = fallback;
-  return { ...post, ...localizedFields, locale: fallback.locale, coverImageUrl };
+  return {
+    ...post,
+    title: fallback.title,
+    excerpt: fallback.excerpt,
+    locale: fallback.locale,
+    coverImageUrl,
+  };
 }
 
 export function applyBlogDetailLocaleFallback(
@@ -157,8 +162,14 @@ export function applyBlogDetailLocaleFallback(
   if (!fallback) {
     return coverImageUrl !== post.coverImageUrl ? { ...post, coverImageUrl } : post;
   }
-  const { slug: _localizedSlug, ...localizedFields } = fallback;
-  return { ...post, ...localizedFields, locale: fallback.locale, coverImageUrl };
+  return {
+    ...post,
+    title: fallback.title,
+    excerpt: fallback.excerpt,
+    content: fallback.content,
+    locale: fallback.locale,
+    coverImageUrl,
+  };
 }
 
 export function hasBlogLocaleFallback(locale?: string): boolean {
