@@ -57,8 +57,7 @@ export class EmailBrandingService {
     const secondaryColor =
       normalizeHex(email.secondaryColor) ?? normalizeHex(platform.secondaryColor);
 
-    const footerText =
-      optionalString(email.footerText) ?? DEFAULT_EMAIL_BRANDING.footerText;
+    const footerText = optionalString(email.footerText);
 
     const welcomeSubject = optionalString(email.welcomeSubject);
     const bookingSubject = optionalString(email.bookingSubject);

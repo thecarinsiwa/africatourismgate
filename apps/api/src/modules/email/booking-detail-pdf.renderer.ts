@@ -1,6 +1,7 @@
 import PDFDocument from 'pdfkit';
 import type { BookingDetailPdfInput } from './booking-detail-pdf.types';
 import { formatMoney } from './email.templates';
+import { formatEmailFooter } from './email-footer.utils';
 import type { BookingDetailPdfLabels } from './booking-detail-pdf.labels';
 import { getBookingDetailPdfLabels } from './booking-detail-pdf.labels';
 import {
@@ -480,15 +481,13 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
     link: input.chatUrl,
   });
 
-  const footer = input.branding.footerText?.trim();
-  if (footer) {
-    ensureSpace(doc, 24);
-    doc
-      .fillColor(mutedColor)
-      .fontSize(8)
-      .font('Helvetica')
-      .text(footer, PAGE_MARGIN, doc.y, { width: CONTENT_WIDTH, align: 'center' });
-  }
+  const footer = formatEmailFooter(input.branding);
+  ensureSpace(doc, 24);
+  doc
+    .fillColor(mutedColor)
+    .fontSize(8)
+    .font('Helvetica')
+    .text(footer, PAGE_MARGIN, doc.y, { width: CONTENT_WIDTH, align: 'center' });
 
   doc.end();
   return finished;

@@ -32,7 +32,7 @@ const defaultValues: EmailBrandingFormValues = {
   logoUrl: '',
   primaryColor: '#0d9488',
   secondaryColor: '#199a45',
-  footerText: '© Africa Tourism Gate',
+  footerText: '',
   welcomeSubject: '',
   bookingSubject: '',
 };
@@ -371,6 +371,7 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
             value={values.footerText}
             onChange={(e) => updateField('footerText', e.target.value)}
             placeholder={t('footerPlaceholder')}
+            hint={t('footerHint')}
             disabled={!canWrite}
           />
 
