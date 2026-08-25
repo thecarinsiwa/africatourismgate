@@ -168,9 +168,10 @@ export function DonationsList() {
       {
         id: 'title',
         header: t('columns.title'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => (
           <div className="min-w-0 max-w-md space-y-1">
-            <p className="font-medium text-atg-fg">{row.original.title}</p>
+            <p className="truncate font-medium text-atg-fg">{row.original.title}</p>
             {row.original.contextNote ? (
               <p className="line-clamp-2 text-xs text-atg-muted">{row.original.contextNote}</p>
             ) : null}
@@ -223,7 +224,7 @@ export function DonationsList() {
       {
         id: 'status',
         header: tCommon('columns.status'),
-        meta: { align: 'center', cellClassName: 'whitespace-nowrap' },
+        meta: { align: 'center', hideOnMobile: true, cellClassName: 'whitespace-nowrap' },
         cell: ({ row }) => (
           <DataTableBadge
             variant={row.original.status === 'published' ? 'success' : 'warning'}
@@ -236,7 +237,11 @@ export function DonationsList() {
       {
         id: 'actions',
         header: tCommon('columns.actions'),
-        meta: { align: 'right', cellClassName: 'whitespace-nowrap w-[1%]' },
+        meta: {
+          align: 'right',
+          headerClassName: 'w-[5.5rem]',
+          cellClassName: 'w-[5.5rem] whitespace-nowrap',
+        },
         cell: ({ row }) => (
           <DataTableActions>
             <DataTableActionButton
@@ -352,7 +357,7 @@ export function DonationsList() {
           </p>
         ) : (
           <>
-            <Card variant="dashboard" padding="none" className="overflow-hidden">
+            <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
               <DataTable
                 columns={columns}
                 data={donations}
@@ -360,7 +365,6 @@ export function DonationsList() {
                 emptyMessage={t('empty')}
                 emptyVariant={search.trim() || statusFilter || localeFilter ? 'search' : 'default'}
                 getRowId={(row) => row.id}
-                tableClassName="min-w-[48rem]"
                 aria-label={t('tableAria')}
               />
             </Card>
