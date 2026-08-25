@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Card, Input, Select, Textarea, useToast } from '@africatourismgate/ui';
+import { Button, Card, Input, SearchableSelect, Textarea, useToast } from '@africatourismgate/ui';
 import type {
   CreateOrganizationRequest,
   Organization,
@@ -134,6 +134,7 @@ export function OrganizationForm({
 }: OrganizationFormProps) {
   const { organizations: getOrganizationsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.organizations.form');
+  const tSelect = useTranslations('modules.common.select');
   const tActions = useTranslations('common.actions');
   const tLoading = useTranslations('common.loading');
   const accountStatusLabels = useAccountStatusLabels();
@@ -319,12 +320,14 @@ export function OrganizationForm({
         <div className="space-y-6">
           <Card variant="dashboard" className="space-y-4">
             <h3 className="text-sm font-semibold text-atg-fg">{t('sections.legal')}</h3>
-            <Select
+            <SearchableSelect
               id={legalFormId}
               label={t('legalForm')}
               value={values.legalForm}
-              onChange={(e) => updateField('legalForm', e.target.value)}
+              onChange={(value) => updateField('legalForm', value)}
               options={legalFormSelectOptions}
+              searchPlaceholder={tSelect('searchPlaceholder')}
+              emptyMessage={tSelect('empty')}
             />
             <Input
               label={t('rccm')}
@@ -370,14 +373,16 @@ export function OrganizationForm({
                 error={fieldErrors.currency}
                 required
               />
-              <Select
+              <SearchableSelect
                 id={statusId}
                 label={t('status')}
                 value={values.status}
-                onChange={(e) =>
-                  updateField('status', e.target.value as OrganizationFormValues['status'])
+                onChange={(value) =>
+                  updateField('status', value as OrganizationFormValues['status'])
                 }
                 options={statusOptions}
+                searchPlaceholder={tSelect('searchPlaceholder')}
+                emptyMessage={tSelect('empty')}
               />
             </div>
           </Card>
