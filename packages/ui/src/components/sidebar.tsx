@@ -165,7 +165,7 @@ const linkClassName = (active: boolean, nested = false) =>
   cn(
     'flex items-center gap-3 rounded-lg py-2.5 text-sm font-medium transition-colors',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
-    nested ? 'pl-9 pr-3' : 'px-3',
+    nested ? 'px-2.5' : 'px-3',
     active
       ? 'bg-primary text-white shadow-sm'
       : 'text-atg-muted hover:bg-atg-surface/80 hover:text-atg-fg',
@@ -253,7 +253,11 @@ function SidebarNavGroupRow({
         <ChevronIcon open={open} />
       </button>
       {open ? (
-        <div id={panelId} className="mt-0.5 flex flex-col gap-0.5" role="group">
+        <div
+          id={panelId}
+          className="ml-4 mt-0.5 flex flex-col gap-0.5 border-l border-atg-border/80 pl-2.5"
+          role="group"
+        >
           {group.children.map((child) => (
             <SidebarNavLinkRow
               key={child.href}

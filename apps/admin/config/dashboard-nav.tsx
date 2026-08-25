@@ -11,6 +11,7 @@ import {
   SidebarGlobeIcon,
   SidebarHeadsetIcon,
   SidebarListIcon,
+  SidebarMailIcon,
   SidebarMapPinIcon,
   SidebarOrganisationsIcon,
   SidebarPackageIcon,
@@ -21,6 +22,7 @@ import {
   SidebarSettingsIcon,
   SidebarShipIcon,
   SidebarShieldIcon,
+  SidebarSlidersIcon,
   SidebarStarIcon,
   SidebarTicketIcon,
   SidebarUserCircleIcon,
@@ -71,6 +73,8 @@ const iconMap: Record<string, ReactNode> = {
   organisations: <SidebarOrganisationsIcon />,
   roles: <SidebarRolesIcon />,
   settings: <SidebarSettingsIcon />,
+  mail: <SidebarMailIcon />,
+  sliders: <SidebarSlidersIcon />,
 };
 
 function resolveIcon(key: string): ReactNode | undefined {

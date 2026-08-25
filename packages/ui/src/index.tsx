@@ -32,6 +32,8 @@ export {
   SidebarSettingsIcon,
   SidebarShipIcon,
   SidebarShieldIcon,
+  SidebarSlidersIcon,
+  SidebarMailIcon,
   SidebarStarIcon,
   SidebarTicketIcon,
   SidebarUserCircleIcon,
