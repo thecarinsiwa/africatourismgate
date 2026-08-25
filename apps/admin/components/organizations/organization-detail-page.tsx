@@ -11,16 +11,15 @@ import {
   TabsList,
   TabsTrigger,
 } from '@africatourismgate/ui';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { EmployeesList } from '../employees/employees-list';
-import {
-  OrganizationSettingsForm,
-} from '../parametres/organization-settings-form';
+import { OrganizationSettingsForm } from '../parametres/organization-settings-form';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
+import { AdminIntroPage } from '../pages/admin-intro-page';
 import { getApiClient } from '../../lib/auth/api';
+import { usePermissions } from '../../lib/auth/use-permissions';
 import {
   useAccountStatusLabels,
   useOrganizationLegalFormOptions,
@@ -31,6 +30,8 @@ import {
 } from '../../lib/organization-display';
 import { OrganizationForm } from './organization-form';
 import { OrganizationLogo } from './organization-logo';
+
+const ORGANISATIONS_HUB_HREF = '/organisations';
 
 type OrganizationDetailPageProps = {
   organizationId: string;
@@ -46,9 +47,12 @@ function isTabValue(value: string | null): value is TabValue {
 export function OrganizationDetailPage({ organizationId }: OrganizationDetailPageProps) {
   const { organizations: getOrganizationsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.organizations.detail');
-  const tActions = useTranslations('common.actions');
+  const tCommon = useTranslations('modules.common');
   const accountStatusLabels = useAccountStatusLabels();
   const legalFormOptions = useOrganizationLegalFormOptions();
+  const { hasPermission, isSuperAdmin, loading: permissionsLoading } = usePermissions();
+  const canReadSettings =
+    !permissionsLoading && (isSuperAdmin || hasPermission('organization_settings.read'));
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -60,8 +64,6 @@ export function OrganizationDetailPage({ organizationId }: OrganizationDetailPag
     | { status: 'error'; message: string }
     | { status: 'ready'; organization: Organization }
   >({ status: 'loading' });
-  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
-  const [canReadSettings, setCanReadSettings] = useState(false);
   const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
 
   useAdminEditPageMeta({
@@ -93,41 +95,42 @@ export function OrganizationDetailPage({ organizationId }: OrganizationDetailPag
   }, [organizationId, getOrganizationsErrorMessage]);
 
   useEffect(() => {
-    let cancelled = false;
-
-    async function loadAccess() {
-      try {
-        const client = getApiClient();
-        const me = await client.getAuthMe();
-        const superAdmin = me.isSuperAdmin;
-        const settingsRead =
-          superAdmin || me.permissions.includes('organization_settings.read');
-
-        if (!cancelled) {
-          setIsSuperAdmin(superAdmin);
-          setCanReadSettings(settingsRead);
-        }
-
-        if (superAdmin) {
-          const orgs = await client.listOrganizations({ page: 1, limit: 100 });
-          if (!cancelled) {
-            setOrganizations(orgs.data);
-          }
-        }
-      } catch {
-        if (!cancelled) {
-          setIsSuperAdmin(false);
-          setCanReadSettings(false);
-          setOrganizations([]);
-        }
-      }
+    if (permissionsLoading || !isSuperAdmin) {
+      setOrganizations([]);
+      return;
     }
 
-    void loadAccess();
+    let cancelled = false;
+    void getApiClient()
+      .listOrganizations({ page: 1, limit: 100 })
+      .then((orgs) => {
+        if (!cancelled) setOrganizations(orgs.data);
+      })
+      .catch(() => {
+        if (!cancelled) setOrganizations([]);
+      });
+
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [isSuperAdmin, permissionsLoading]);
+
+  useEffect(() => {
+    if (permissionsLoading) return;
+    if (activeTab === 'settings' && !canReadSettings) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete('tab');
+      const qs = params.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    }
+  }, [
+    activeTab,
+    canReadSettings,
+    pathname,
+    permissionsLoading,
+    router,
+    searchParams,
+  ]);
 
   const handleTabChange = useCallback(
     (tab: string) => {
@@ -152,95 +155,109 @@ export function OrganizationDetailPage({ organizationId }: OrganizationDetailPag
 
   if (state.status === 'loading') {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Skeleton className="h-14 w-14 rounded-lg" />
-          <div className="space-y-2">
-            <Skeleton className="h-5 w-48" />
-            <Skeleton className="h-4 w-32" />
+      <AdminIntroPage
+        routePath="organisations/id"
+        backHref={ORGANISATIONS_HUB_HREF}
+        backLabelKey="backLabel"
+      >
+        <div className="min-w-0 space-y-6">
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-14 w-14 rounded-lg" />
+            <div className="space-y-2">
+              <Skeleton className="h-5 w-48" />
+              <Skeleton className="h-4 w-32" />
+            </div>
           </div>
+          <Skeleton className="h-10 w-full max-w-md" />
+          <Skeleton className="h-64 w-full" />
+          <p className="sr-only">{tCommon('loading')}</p>
         </div>
-        <Skeleton className="h-10 w-full max-w-md" />
-        <Skeleton className="h-64 w-full" />
-      </div>
+      </AdminIntroPage>
     );
   }
 
   if (state.status === 'error') {
     return (
-      <div className="space-y-4">
+      <AdminIntroPage
+        routePath="organisations/id"
+        backHref={ORGANISATIONS_HUB_HREF}
+        backLabelKey="backLabel"
+      >
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
-        <Link
-          href="/organisations"
-          className="text-sm font-medium text-primary hover:text-primary-hover"
-        >
-          ← {tActions('back')}
-        </Link>
-      </div>
+      </AdminIntroPage>
     );
   }
 
   const { organization } = state;
   const legalFormLabel = formatOrganizationLegalForm(organization.legalForm, legalFormOptions);
+  const showSettingsTab = canReadSettings;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center gap-4">
-        <OrganizationLogo
-          name={organization.name}
-          logoUrl={organization.logoUrl}
-          size="lg"
-        />
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-xl font-semibold text-atg-fg">{organization.name}</h2>
-            <DataTableBadge variant={organizationStatusVariants[organization.status]}>
-              {accountStatusLabels[organization.status]}
-            </DataTableBadge>
-            {organization.legalForm ? (
-              <DataTableBadge variant="muted">{legalFormLabel}</DataTableBadge>
-            ) : null}
-          </div>
-          <p className="mt-1 font-mono text-sm text-atg-muted">{organization.slug}</p>
-        </div>
-      </div>
-
-      <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList aria-label={t('tabsAria')}>
-          <TabsTrigger value="infos">{t('tabs.infos')}</TabsTrigger>
-          <TabsTrigger value="users">{t('tabs.users')}</TabsTrigger>
-          {canReadSettings ? <TabsTrigger value="settings">{t('tabs.settings')}</TabsTrigger> : null}
-        </TabsList>
-
-        <TabsContent value="infos">
-          <OrganizationForm
-            mode="edit"
-            organizationId={organizationId}
-            initialOrganization={organization}
-            onUpdated={(updated) => setState({ status: 'ready', organization: updated })}
+    <AdminIntroPage
+      routePath="organisations/id"
+      backHref={ORGANISATIONS_HUB_HREF}
+      backLabelKey="backLabel"
+    >
+      <div className="min-w-0 space-y-6">
+        <div className="flex flex-wrap items-center gap-4">
+          <OrganizationLogo
+            name={organization.name}
+            logoUrl={organization.logoUrl}
+            size="lg"
           />
-        </TabsContent>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-xl font-semibold text-atg-fg">{organization.name}</h2>
+              <DataTableBadge variant={organizationStatusVariants[organization.status]}>
+                {accountStatusLabels[organization.status]}
+              </DataTableBadge>
+              {organization.legalForm ? (
+                <DataTableBadge variant="muted">{legalFormLabel}</DataTableBadge>
+              ) : null}
+            </div>
+            <p className="mt-1 font-mono text-sm text-atg-muted">{organization.slug}</p>
+          </div>
+        </div>
 
-        <TabsContent value="users">
-          <EmployeesList lockedOrganizationId={organizationId} embedded />
-        </TabsContent>
+        <Tabs value={activeTab} onValueChange={handleTabChange}>
+          <TabsList aria-label={t('tabsAria')}>
+            <TabsTrigger value="infos">{t('tabs.infos')}</TabsTrigger>
+            <TabsTrigger value="users">{t('tabs.users')}</TabsTrigger>
+            {showSettingsTab ? (
+              <TabsTrigger value="settings">{t('tabs.settings')}</TabsTrigger>
+            ) : null}
+          </TabsList>
 
-        {canReadSettings ? (
-          <TabsContent value="settings">
-            <p className="mb-6 text-sm text-atg-muted">{t('settingsIntro')}</p>
-            <OrganizationSettingsForm
+          <TabsContent value="infos">
+            <OrganizationForm
+              mode="edit"
               organizationId={organizationId}
-              isSuperAdmin={isSuperAdmin}
-              organizations={organizations}
-              onOrganizationIdChange={
-                isSuperAdmin ? handleSettingsOrganizationChange : undefined
-              }
+              initialOrganization={organization}
+              onUpdated={(updated) => setState({ status: 'ready', organization: updated })}
             />
           </TabsContent>
-        ) : null}
-      </Tabs>
-    </div>
+
+          <TabsContent value="users">
+            <EmployeesList lockedOrganizationId={organizationId} embedded />
+          </TabsContent>
+
+          {showSettingsTab ? (
+            <TabsContent value="settings">
+              <p className="mb-6 text-sm text-atg-muted">{t('settingsIntro')}</p>
+              <OrganizationSettingsForm
+                organizationId={organizationId}
+                isSuperAdmin={isSuperAdmin}
+                organizations={organizations}
+                onOrganizationIdChange={
+                  isSuperAdmin ? handleSettingsOrganizationChange : undefined
+                }
+              />
+            </TabsContent>
+          ) : null}
+        </Tabs>
+      </div>
+    </AdminIntroPage>
   );
 }

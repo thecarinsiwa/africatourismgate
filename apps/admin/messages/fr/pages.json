@@ -108,7 +108,9 @@
       "backLabel": "Retour aux organisations"
     },
     "id": {
-      "metaTitle": "Modifier l'organisation"
+      "metaTitle": "Modifier l'organisation",
+      "description": "Infos, utilisateurs et paramètres de l'organisation.",
+      "backLabel": "Retour aux organisations"
     }
   },
   "fidelite": {

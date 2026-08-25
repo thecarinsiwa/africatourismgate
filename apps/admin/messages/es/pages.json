@@ -108,7 +108,9 @@
       "backLabel": "Volver a las organizaciones"
     },
     "id": {
-      "metaTitle": "Editar organización"
+      "metaTitle": "Editar organización",
+      "description": "Información, usuarios y parámetros de la organización.",
+      "backLabel": "Volver a las organizaciones"
     }
   },
   "fidelite": {

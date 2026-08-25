@@ -108,7 +108,9 @@
       "backLabel": "Back to organizations"
     },
     "id": {
-      "metaTitle": "Edit organization"
+      "metaTitle": "Edit organization",
+      "description": "Organization info, users and settings.",
+      "backLabel": "Back to organizations"
     }
   },
   "fidelite": {
