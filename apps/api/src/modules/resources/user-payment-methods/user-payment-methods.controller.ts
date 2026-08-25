@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { UserPaymentMethods } from '../../../entities/generated';
+import { UserPaymentMethodsListQueryDto } from './dto/user-payment-methods-list-query.dto';
 import { UserPaymentMethodsService } from './user-payment-methods.service';
 
 @ApiTags('user-payment-methods')
@@ -21,7 +21,7 @@ export class UserPaymentMethodsController {
 
   @Get()
   @ApiOperation({ summary: 'List user-payment-methods' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: UserPaymentMethodsListQueryDto) {
     return this.service.findAll(query);
   }
 
