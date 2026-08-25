@@ -667,6 +667,8 @@
     "description": "Organization configuration: contact details, locale, booking and branding.",
     "metaTitle": "Settings",
     "comptes": {
+      "title": "Bank accounts",
+      "description": "Organization B2B accounts for transfers and offline payments.",
       "metaTitle": "Bank accounts"
     },
     "emails": {

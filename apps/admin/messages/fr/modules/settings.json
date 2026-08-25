@@ -239,6 +239,24 @@
       "orgSelectAria": "Organisation",
       "empty": "Aucun compte bancaire."
     },
+    "stats": {
+      "total": {
+        "label": "Comptes",
+        "subtitle": "Comptes bancaires enregistrés"
+      },
+      "default": {
+        "label": "Par défaut",
+        "subtitle": "Compte utilisé pour les virements"
+      },
+      "banks": {
+        "label": "Banques",
+        "subtitle": "Établissements bancaires distincts"
+      },
+      "currencies": {
+        "label": "Devises",
+        "subtitle": "Devises couvertes par les comptes"
+      }
+    },
     "form": {
       "validation": {
         "bankNameRequired": "Le nom de la banque est obligatoire.",

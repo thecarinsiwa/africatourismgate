@@ -16,9 +16,12 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
+import { AdminListPageHeader } from '../pages/admin-list-page-header';
 import { getApiClient } from '../../lib/auth/api';
 import { maskAccountNumberForDisplay } from '../../lib/bank-account-masking';
 import { useUnsavedChangesGuard } from '../rbac/use-unsaved-changes-guard';
+import { OrganizationOrgSelector } from '../organizations/organization-org-selector';
+import { BankAccountsStatCards } from './bank-accounts-stat-cards';
 import { ParametresPageLayout } from './parametres-subnav';
 import { OrganizationBankAccountForm } from './organization-bank-account-form';
 import {
@@ -124,7 +127,7 @@ export function OrganizationBankAccountsList() {
       router.replace(`/parametres/comptes?${params.toString()}`);
       void loadAccounts(id, isSuperAdmin);
     },
-    [router, searchParams, loadAccounts],
+    [router, searchParams, loadAccounts, isSuperAdmin],
   );
 
   const handleDeleteRequest = useCallback((account: OrganizationBankAccount) => {
@@ -214,9 +217,12 @@ export function OrganizationBankAccountsList() {
   if (accessError) {
     return (
       <ParametresPageLayout>
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {accessError}
-        </p>
+        <div className="min-w-0">
+          <AdminListPageHeader routePath="parametres/comptes" />
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {accessError}
+          </p>
+        </div>
       </ParametresPageLayout>
     );
   }
@@ -224,40 +230,44 @@ export function OrganizationBankAccountsList() {
   if (!organizationId) {
     return (
       <ParametresPageLayout>
-        <p className="text-sm text-atg-muted">{t('form.loading')}</p>
+        <div className="min-w-0">
+          <AdminListPageHeader routePath="parametres/comptes" />
+          <p className="text-sm text-atg-muted">{t('form.loading')}</p>
+        </div>
       </ParametresPageLayout>
     );
   }
-
-  const selectClass =
-    'mb-6 w-full max-w-md rounded-lg border border-atg-border bg-atg-bg px-3 py-2 text-sm text-atg-fg focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary';
 
   return (
     <>
       <ParametresPageLayout
         onSubnavNavigate={formDirty ? (_href, proceed) => requestAction(proceed) : undefined}
       >
-        <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
-          <p className="text-sm text-atg-muted">{tBank('page.intro')}</p>
-          {!creating && !editing ? (
-            <Button onClick={() => setCreating(true)}>{tBank('list.newButton')}</Button>
-          ) : null}
-        </div>
+        <div className="min-w-0 space-y-6">
+          <AdminListPageHeader
+            routePath="parametres/comptes"
+            actions={
+              !creating && !editing ? (
+                <Button onClick={() => setCreating(true)}>{tBank('list.newButton')}</Button>
+              ) : undefined
+            }
+          />
 
-        {isSuperAdmin && organizations.length > 0 ? (
-          <select
-            className={selectClass}
-            value={organizationId}
-            onChange={(e) => handleOrganizationChange(e.target.value)}
-            aria-label={tBank('list.orgSelectAria')}
-          >
-            {organizations.map((org) => (
-              <option key={org.id} value={org.id}>
-                {org.name}
-              </option>
-            ))}
-          </select>
-        ) : null}
+          <BankAccountsStatCards
+            accounts={accounts}
+            loading={loading}
+            error={listError}
+          />
+
+          {isSuperAdmin && organizations.length > 0 ? (
+            <OrganizationOrgSelector
+              organizations={organizations}
+              value={organizationId}
+              onChange={handleOrganizationChange}
+              label={tBank('list.orgSelectAria')}
+              className="max-w-md"
+            />
+          ) : null}
 
         {creating && organizationId ? (
           <div className="mb-8">
@@ -298,15 +308,10 @@ export function OrganizationBankAccountsList() {
           </div>
         ) : null}
 
-        {listError ? (
-          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-            {listError}
-          </p>
-        ) : loading ? (
-          <p className="text-sm text-atg-muted">{t('form.loading')}</p>
-        ) : (
+        {!loading && !listError ? (
           <DataTable columns={columns} data={accounts} emptyMessage={tBank('list.empty')} />
-        )}
+        ) : null}
+        </div>
       </ParametresPageLayout>
       <AlertDialog
         open={dialogOpen}

@@ -667,6 +667,8 @@
     "description": "Configuración de la organización: contacto, idioma, reservas y marca.",
     "metaTitle": "Configuración",
     "comptes": {
+      "title": "Cuentas bancarias",
+      "description": "Cuentas B2B de la organización para transferencias y pagos fuera de línea.",
       "metaTitle": "Cuentas bancarias"
     },
     "emails": {

@@ -239,6 +239,24 @@
       "orgSelectAria": "Organization",
       "empty": "No bank accounts yet."
     },
+    "stats": {
+      "total": {
+        "label": "Accounts",
+        "subtitle": "Registered bank accounts"
+      },
+      "default": {
+        "label": "Default",
+        "subtitle": "Account used for transfers"
+      },
+      "banks": {
+        "label": "Banks",
+        "subtitle": "Distinct banking institutions"
+      },
+      "currencies": {
+        "label": "Currencies",
+        "subtitle": "Currencies covered by accounts"
+      }
+    },
     "form": {
       "validation": {
         "bankNameRequired": "Bank name is required.",

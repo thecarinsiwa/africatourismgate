@@ -239,6 +239,24 @@
       "orgSelectAria": "Organización",
       "empty": "No hay cuentas bancarias aún."
     },
+    "stats": {
+      "total": {
+        "label": "Cuentas",
+        "subtitle": "Cuentas bancarias registradas"
+      },
+      "default": {
+        "label": "Predeterminada",
+        "subtitle": "Cuenta usada para transferencias"
+      },
+      "banks": {
+        "label": "Bancos",
+        "subtitle": "Entidades bancarias distintas"
+      },
+      "currencies": {
+        "label": "Monedas",
+        "subtitle": "Monedas cubiertas por las cuentas"
+      }
+    },
     "form": {
       "validation": {
         "bankNameRequired": "El nombre del banco es obligatorio.",
