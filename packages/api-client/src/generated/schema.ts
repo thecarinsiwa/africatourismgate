@@ -5477,6 +5477,11 @@ export interface components {
             phone?: string;
             /** @example fr */
             preferredLanguage?: string;
+            /**
+             * Format: uuid
+             * @description Stable browser profile id — one active session per profile
+             */
+            clientInstanceId?: string;
         };
         RefreshTokenDto: {
             /** @description JWT refresh token issued at login or register */
@@ -5529,6 +5534,11 @@ export interface components {
              * @example 482916
              */
             code: string;
+            /**
+             * Format: uuid
+             * @description Stable browser profile id — one active session per profile
+             */
+            clientInstanceId?: string;
         };
         BookingCheckoutItemDto: {
             /** @enum {string} */

@@ -10,3 +10,8 @@ export {
   getPublicWebUrl,
   normalizeBrandingAssetUrl,
 } from './urls';
+
+export {
+  getOrCreateClientInstanceId,
+  withClientInstanceId,
+} from './client-instance';

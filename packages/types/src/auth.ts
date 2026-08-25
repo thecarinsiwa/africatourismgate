@@ -54,15 +54,17 @@ export interface RegisterRequest {
   lastName: string;
   phone?: string;
   preferredLanguage?: string;
-}
-
-export interface RefreshTokenRequest {
-  refreshToken: string;
+  clientInstanceId?: string;
 }
 
 export interface VerifyOperationRequest {
   verificationId: string;
   code: string;
+  clientInstanceId?: string;
+}
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
 }
 
 export interface ForgotPasswordRequest {

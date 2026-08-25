@@ -229,7 +229,7 @@ export class AuthService {
       firstName: user.firstName,
     });
 
-    const tokens = await this.issueTokenPair(user);
+    const tokens = await this.issueTokenPair(user, dto.clientInstanceId);
     void this.notifyWelcome(user);
 
     return {
@@ -414,6 +414,7 @@ export class AuthService {
       dto.verificationId,
       dto.code,
     );
+    const clientInstanceId = dto.clientInstanceId;
 
     if (row.purpose === 'booking') {
       await this.bookingEngine.activateDraftBooking(row.referenceId);
@@ -424,7 +425,7 @@ export class AuthService {
       if (!user) {
         throw new BadRequestException('Compte introuvable pour cette réservation.');
       }
-      const tokens = await this.issueTokenPair(user);
+      const tokens = await this.issueTokenPair(user, clientInstanceId);
       return {
         ...tokens,
         user: toAuthUserDto(user),
@@ -433,7 +434,7 @@ export class AuthService {
     }
 
     if (row.purpose === 'google_signup') {
-      return this.completeGoogleOAuthVerification(row);
+      return this.completeGoogleOAuthVerification(row, clientInstanceId);
     }
 
     if (row.purpose === 'register') {
@@ -461,7 +462,7 @@ export class AuthService {
       if (isNewAccount) {
         void this.notifyWelcome(user);
       }
-      return this.completeUserSession(user);
+      return this.completeUserSession(user, clientInstanceId);
     }
 
     if (row.purpose === 'login') {
@@ -478,7 +479,7 @@ export class AuthService {
       if (!user) {
         throw new BadRequestException('Compte introuvable ou inactif.');
       }
-      return this.completeUserSession(user);
+      return this.completeUserSession(user, clientInstanceId);
     }
 
     const user = await this.usersRepo.findOne({
@@ -491,7 +492,7 @@ export class AuthService {
     user.lastLoginAt = new Date();
     await this.usersRepo.save(user);
 
-    const tokens = await this.issueTokenPair(user);
+    const tokens = await this.issueTokenPair(user, clientInstanceId);
     return { ...tokens, user: toAuthUserDto(user) };
   }
 
@@ -1034,13 +1035,14 @@ export class AuthService {
 
   private async completeGoogleOAuthVerification(
     row: EmailOperationVerifications,
+    clientInstanceId?: string,
   ): Promise<AuthResponseDto> {
     const email = this.normalizeEmail(row.email);
     const existing = await this.findAnyUserByEmail(email);
 
     if (existing && !existing.deletedAt) {
       if (existing.status === 'active') {
-        return this.completeUserSession(existing);
+        return this.completeUserSession(existing, clientInstanceId);
       }
       throw new UnauthorizedException('Account is not active');
     }
@@ -1048,24 +1050,24 @@ export class AuthService {
     if (existing?.deletedAt) {
       const reactivated = await this.reactivateUserFromGoogleSignup(existing, row);
       void this.notifyWelcome(reactivated);
-      return this.completeUserSession(reactivated);
+      return this.completeUserSession(reactivated, clientInstanceId);
     }
 
     try {
       const user = await this.createUserFromGoogleSignupRow(row);
       void this.notifyWelcome(user);
-      return this.completeUserSession(user);
+      return this.completeUserSession(user, clientInstanceId);
     } catch (err) {
       const recovered = await this.findAnyUserByEmail(email);
       if (recovered && !recovered.deletedAt && recovered.status === 'active') {
-        return this.completeUserSession(recovered);
+        return this.completeUserSession(recovered, clientInstanceId);
       }
       if (recovered?.deletedAt) {
         const reactivated = await this.reactivateUserFromGoogleSignup(
           recovered,
           row,
         );
-        return this.completeUserSession(reactivated);
+        return this.completeUserSession(reactivated, clientInstanceId);
       }
       throw err;
     }
@@ -1141,13 +1143,16 @@ export class AuthService {
     }
   }
 
-  private async completeUserSession(user: Users): Promise<AuthResponseDto> {
+  private async completeUserSession(
+    user: Users,
+    clientInstanceId?: string,
+  ): Promise<AuthResponseDto> {
     if (user.status !== 'active') {
       throw new BadRequestException('Compte introuvable ou inactif.');
     }
     user.lastLoginAt = new Date();
     await this.usersRepo.save(user);
-    const tokens = await this.issueTokenPair(user);
+    const tokens = await this.issueTokenPair(user, clientInstanceId);
     return { ...tokens, user: toAuthUserDto(user) };
   }
 

@@ -5,6 +5,7 @@ import {
   type AuthTokens,
 } from '@africatourismgate/api-client';
 import type { LoginRequest, RegisterRequest, VerifyOperationRequest } from '@africatourismgate/types';
+import { getOrCreateClientInstanceId, withClientInstanceId } from '@africatourismgate/utils';
 import { appendDevOriginToNextPath, isLocalDevOrigin } from '../auth/dev-oauth-return';
 import { getOAuthApiBaseUrl } from './oauth-api-url';
 
@@ -17,15 +18,21 @@ function getApiBaseUrl(): string {
 }
 
 export function loginWithPassword(body: LoginRequest): Promise<AuthResponse> {
-  return createApiClient({ baseUrl: getApiBaseUrl() }).login(body);
+  return createApiClient({ baseUrl: getApiBaseUrl() }).login(
+    withClientInstanceId(body),
+  );
 }
 
 export function verifyOperation(body: VerifyOperationRequest): Promise<AuthResponse> {
-  return createApiClient({ baseUrl: getApiBaseUrl() }).verifyOperation(body);
+  return createApiClient({ baseUrl: getApiBaseUrl() }).verifyOperation(
+    withClientInstanceId(body),
+  );
 }
 
 export function registerCustomer(body: RegisterRequest): Promise<AuthResponse> {
-  return createApiClient({ baseUrl: getApiBaseUrl() }).registerCustomer(body);
+  return createApiClient({ baseUrl: getApiBaseUrl() }).registerCustomer(
+    withClientInstanceId(body),
+  );
 }
 
 export function buildGoogleOAuthStartUrl(
@@ -40,6 +47,10 @@ export function buildGoogleOAuthStartUrl(
   const params = new URLSearchParams({ next });
   if (origin) {
     params.set('web_origin', origin);
+  }
+  const clientInstanceId = getOrCreateClientInstanceId();
+  if (clientInstanceId) {
+    params.set('client_instance', clientInstanceId);
   }
   return `${getOAuthApiBaseUrl()}/auth/google?${params.toString()}`;
 }

@@ -9,6 +9,7 @@ import { getAuthErrorMessage } from '../lib/auth/api-errors';
 import { getApiClient } from '../lib/auth/api';
 import { authResponseToStoredSession, saveSession } from '../lib/auth/session';
 import { applyLocaleFromUser } from '../lib/i18n/preferred-language';
+import { withClientInstanceId } from '@africatourismgate/utils';
 
 export function AdminRegisterForm() {
   const router = useRouter();
@@ -34,14 +35,16 @@ export function AdminRegisterForm() {
           try {
             const preferredLanguage =
               document.documentElement.lang === 'en' ? 'en' : 'fr';
-            const response = await getApiClient().register({
-              firstName,
-              lastName,
-              email,
-              password,
-              preferredLanguage,
-              ...(phone.trim() ? { phone: phone.trim() } : {}),
-            });
+            const response = await getApiClient().register(
+              withClientInstanceId({
+                firstName,
+                lastName,
+                email,
+                password,
+                preferredLanguage,
+                ...(phone.trim() ? { phone: phone.trim() } : {}),
+              }),
+            );
             const session = authResponseToStoredSession(response);
             saveSession(session, false);
             applyLocaleFromUser(session.user);

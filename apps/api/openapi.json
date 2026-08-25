@@ -18047,6 +18047,11 @@
             "type": "string",
             "example": "fr",
             "maxLength": 2
+          },
+          "clientInstanceId": {
+            "type": "string",
+            "description": "Stable browser profile id — one active session per profile",
+            "format": "uuid"
           }
         },
         "required": [
@@ -18186,6 +18191,11 @@
             "type": "string",
             "example": "482916",
             "description": "6-digit code from email"
+          },
+          "clientInstanceId": {
+            "type": "string",
+            "description": "Stable browser profile id — one active session per profile",
+            "format": "uuid"
           }
         },
         "required": [

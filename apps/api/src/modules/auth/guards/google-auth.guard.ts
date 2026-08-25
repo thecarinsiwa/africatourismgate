@@ -17,7 +17,13 @@ export class GoogleAuthGuard extends AuthGuard('google') {
 
   override getAuthenticateOptions(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<{
-      query?: { next?: string; web_origin?: string; context?: string; lang?: string };
+      query?: {
+        next?: string;
+        web_origin?: string;
+        context?: string;
+        lang?: string;
+        client_instance?: string;
+      };
     }>();
     const next = request.query?.next;
     const webOrigin = request.query?.web_origin;
@@ -33,9 +39,18 @@ export class GoogleAuthGuard extends AuthGuard('google') {
           : '/booking/cart';
     const origin = typeof webOrigin === 'string' ? webOrigin : undefined;
     const preferredLanguage = typeof rawLang === 'string' ? rawLang : undefined;
+    const rawClientInstance = request.query?.client_instance;
+    const clientInstanceId =
+      typeof rawClientInstance === 'string' ? rawClientInstance : undefined;
     return {
       scope: ['profile', 'email'],
-      state: encodeOAuthState(nextPath, origin, oauthContext, preferredLanguage),
+      state: encodeOAuthState(
+        nextPath,
+        origin,
+        oauthContext,
+        preferredLanguage,
+        clientInstanceId,
+      ),
     };
   }
 
