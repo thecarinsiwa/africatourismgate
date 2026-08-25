@@ -49,7 +49,7 @@ export function RbacSubnav({ onNavigate }: RbacSubnavProps) {
 
   return (
     <nav
-      className="mb-8 flex flex-wrap gap-2 border-b border-atg-border pb-4"
+      className="flex flex-wrap gap-2 border-b border-atg-border pb-3"
       aria-label={t('ariaLabel')}
     >
       {linkKeys.map((link) => {

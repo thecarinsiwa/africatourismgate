@@ -116,12 +116,12 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <RbacSubnav
         onNavigate={matrixDirty ? (_href, proceed) => requestAction(proceed) : undefined}
       />
       {mode === 'edit' && initialRole ? (
-        <div className="mb-2 flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <RoleBadge code={initialRole.code} name={initialRole.name} showCode />
           {initialRole.isSystem ? (
             <span className="text-sm text-atg-muted">{t('systemReadOnlyHint')}</span>
@@ -129,7 +129,10 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
         </div>
       ) : null}
 
-      <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
+      <form
+        onSubmit={handleSubmit}
+        className={mode === 'edit' ? 'max-w-2xl space-y-4' : 'mx-auto max-w-2xl space-y-4'}
+      >
         {formError ? (
           <p
             role="alert"
@@ -139,7 +142,7 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
           </p>
         ) : null}
 
-        <Card variant="dashboard" className="space-y-4">
+        <Card variant="dashboard" className="space-y-3">
           {mode === 'create' ? (
             <Input
               label={tCommonColumns('code')}

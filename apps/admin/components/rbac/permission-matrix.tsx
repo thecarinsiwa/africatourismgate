@@ -223,15 +223,15 @@ export function PermissionMatrix({
 
   if (loading) {
     return (
-      <Card variant="dashboard" padding="lg" className="space-y-6">
+      <Card variant="dashboard" padding="md" className="space-y-4">
         <div className="space-y-2">
-          <Skeleton className="h-6 w-56" />
-          <Skeleton className="h-4 w-full max-w-lg" />
+          <Skeleton className="h-5 w-48" />
+          <Skeleton className="h-4 w-full max-w-md" />
         </div>
-        <Skeleton className="h-10 w-full max-w-md" />
-        <div className="space-y-4">
-          <Skeleton className="h-36 w-full" />
-          <Skeleton className="h-36 w-full" />
+        <Skeleton className="h-9 w-full max-w-sm" />
+        <div className="space-y-3">
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-24 w-full" />
         </div>
         <p className="sr-only">{t('loading')}</p>
       </Card>
@@ -240,11 +240,11 @@ export function PermissionMatrix({
 
   return (
     <>
-      <Card variant="dashboard" padding="lg" className="space-y-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0 space-y-1">
+      <Card variant="dashboard" padding="md" className="space-y-4">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0 space-y-0.5">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+              <h2 className="text-base font-semibold text-atg-fg">{t('title')}</h2>
               {readOnly ? (
                 <DataTableBadge variant="muted">{t('readOnlyBadge')}</DataTableBadge>
               ) : null}
@@ -258,7 +258,7 @@ export function PermissionMatrix({
           </DataTableBadge>
         </div>
 
-        <div className="min-w-[200px] max-w-md">
+        <div className="max-w-sm">
           <Input
             name="matrix-search"
             type="search"
@@ -279,11 +279,11 @@ export function PermissionMatrix({
         ) : null}
 
         {filteredGroups.length === 0 ? (
-          <p className="rounded-lg border border-dashed border-atg-border bg-atg-surface/40 px-4 py-8 text-center text-sm text-atg-muted">
+          <p className="rounded-lg border border-dashed border-atg-border bg-atg-surface/40 px-3 py-6 text-center text-sm text-atg-muted">
             {search.trim() ? t('searchEmpty') : t('empty')}
           </p>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {filteredGroups.map((group) => {
               const selection = domainSelectionState(group);
               const groupSelected = group.permissions.filter((permission) =>
@@ -293,22 +293,22 @@ export function PermissionMatrix({
               return (
                 <section
                   key={group.resource}
-                  className="overflow-hidden rounded-xl border border-atg-border bg-atg-elevated"
+                  className="overflow-hidden rounded-lg border border-atg-border bg-atg-elevated"
                 >
-                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-atg-border bg-atg-surface/50 px-4 py-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-atg-border bg-atg-surface/40 px-3 py-2">
                     <div className="min-w-0">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h3 className="font-semibold text-atg-fg">{group.label}</h3>
-                        <span className="tabular-nums text-xs text-atg-muted">
+                      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                        <h3 className="text-sm font-semibold text-atg-fg">{group.label}</h3>
+                        <span className="font-mono text-[11px] text-atg-muted">
+                          {group.resource}.*
+                        </span>
+                        <span className="tabular-nums text-[11px] text-atg-muted">
                           {t('domainCount', {
                             selected: groupSelected,
                             total: group.permissions.length,
                           })}
                         </span>
                       </div>
-                      <p className="mt-0.5 font-mono text-xs text-atg-muted">
-                        {group.resource}.*
-                      </p>
                     </div>
 
                     {!readOnly ? (
@@ -323,22 +323,24 @@ export function PermissionMatrix({
                         onChange={(event) => toggleDomain(group, event.target.checked)}
                         label={t('selectDomain')}
                         aria-label={t('ariaToggleDomainAll', { domain: group.label })}
-                        wrapperClassName="shrink-0 text-atg-fg"
+                        wrapperClassName="shrink-0 text-xs text-atg-fg"
                       />
                     ) : null}
                   </div>
 
-                  <ul className="grid gap-2 p-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  <ul className="grid gap-1.5 p-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {group.permissions.map((permission) => {
                       const isSelected = selectedIds.has(permission.id);
                       const actionLabel = formatPermissionAction(
                         permission.action,
                         actionLabels,
                       );
+                      const description = permission.description?.trim() || undefined;
                       return (
                         <li key={permission.id}>
                           <label
-                            className={`flex h-full cursor-pointer items-start gap-2.5 rounded-lg border px-3 py-2.5 transition-colors ${
+                            title={description}
+                            className={`flex cursor-pointer items-center gap-2 rounded-md border px-2.5 py-1.5 transition-colors ${
                               isSelected
                                 ? 'border-primary/40 bg-primary/5'
                                 : 'border-atg-border hover:bg-atg-surface/60'
@@ -346,24 +348,19 @@ export function PermissionMatrix({
                           >
                             <input
                               type="checkbox"
-                              className="mt-0.5 h-4 w-4 shrink-0 rounded border-atg-border text-primary focus:ring-primary"
+                              className="h-3.5 w-3.5 shrink-0 rounded border-atg-border text-primary focus:ring-primary"
                               checked={isSelected}
                               disabled={readOnly}
                               onChange={() => togglePermission(permission.id)}
                               aria-label={permission.code}
                             />
                             <span className="min-w-0 flex-1">
-                              <span className="block text-sm font-medium text-atg-fg">
+                              <span className="block truncate text-sm font-medium leading-tight text-atg-fg">
                                 {actionLabel}
                               </span>
-                              <code className="mt-1 inline-block max-w-full truncate rounded-md bg-atg-surface px-1.5 py-0.5 font-mono text-[11px] text-atg-muted">
+                              <code className="block truncate font-mono text-[10px] leading-tight text-atg-muted">
                                 {permission.code}
                               </code>
-                              {permission.description?.trim() ? (
-                                <span className="mt-1.5 block text-xs leading-snug text-atg-muted">
-                                  {permission.description.trim()}
-                                </span>
-                              ) : null}
                             </span>
                           </label>
                         </li>
@@ -378,7 +375,7 @@ export function PermissionMatrix({
       </Card>
 
       {!readOnly && isDirty ? (
-        <div className="sticky bottom-0 z-20 mt-4 border-t border-atg-border bg-atg-bg/95 px-4 py-3 backdrop-blur">
+        <div className="sticky bottom-0 z-20 mt-3 border-t border-atg-border bg-atg-bg/95 px-4 py-2.5 backdrop-blur">
           <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3">
             <p className="text-sm font-medium text-atg-fg">{tUnsaved('title')}</p>
             <div className="flex flex-wrap gap-2">
