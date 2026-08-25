@@ -165,7 +165,7 @@ export function OrganizationsList() {
               <OrganizationLogo name={org.name} logoUrl={org.logoUrl} size="sm" />
               <div className="min-w-0">
                 <Link
-                  href={`/organisations/${org.id}`}
+                  href={`/organisations/${org.id}/voir`}
                   className="font-medium text-atg-fg hover:text-primary hover:underline"
                 >
                   {org.name}
@@ -219,6 +219,11 @@ export function OrganizationsList() {
           const busy = deletingId === org.id;
           return (
             <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
+              <DataTableActionButton
+                action="view"
+                label={tActions('view')}
+                href={`/organisations/${org.id}/voir`}
+              />
               <DataTableActionButton action="edit" href={`/organisations/${org.id}`} />
               <DataTableActionButton
                 action="delete"
@@ -237,6 +242,7 @@ export function OrganizationsList() {
       emptyDash,
       legalFormOptions,
       t,
+      tActions,
       tCommon,
     ],
   );
