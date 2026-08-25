@@ -1,13 +1,20 @@
 {
   "list": {
     "newUser": "Nouvel utilisateur",
-    "emptyDefault": "Aucun utilisateur pour le moment.",
-    "emptyFiltered": "Aucun utilisateur ne correspond à vos critères.",
+    "emptyDefault": "Aucun utilisateur interne pour le moment.",
+    "emptyFiltered": "Aucun utilisateur interne ne correspond à vos critères.",
+    "emptyClients": "Aucun compte client pour le moment.",
+    "emptyFilteredClients": "Aucun compte client ne correspond à vos critères.",
     "ariaLabel": "Liste des utilisateurs",
     "deleteConfirm": "L'utilisateur « {email} » sera supprimé. Cette action est réversible en base de données.",
     "deleteTitle": "Supprimer l'utilisateur",
     "deleteConfirmButton": "Supprimer",
-    "cancel": "Annuler"
+    "cancel": "Annuler",
+    "tabs": {
+      "ariaLabel": "Type de compte utilisateur",
+      "internal": "Internes",
+      "client": "Clients"
+    }
   },
   "filters": {
     "status": "Statut",
@@ -123,6 +130,7 @@
     "assignedTitle": "Rôles assignés",
     "empty": "Aucun rôle actif pour cet utilisateur.",
     "assignFormTitle": "Assigner un rôle",
+    "assignFormHint": "Attribuez un rôle à un utilisateur, avec périmètre et expiration optionnels.",
     "assignSubmit": "Assigner le rôle",
     "manageAction": "Gérer les rôles",
     "modalTitle": "Gérer les rôles",
@@ -130,9 +138,9 @@
     "user": "Utilisateur",
     "role": "Rôle",
     "selectPlaceholder": "Sélectionner…",
-    "scope": "Périmètre (scope)",
-    "scopeId": "ID du scope (UUID)",
-    "scopeIdHint": "Ex. ID propriété, agence ou file support.",
+    "scope": "Périmètre",
+    "scopeId": "ID du périmètre (UUID)",
+    "scopeIdHint": "Ex. ID propriété, agence ou file d'attente support.",
     "expiresAt": "Expiration (optionnel)",
     "superAdminWarning": "Réservé aux super administrateurs — périmètre forcé à Global.",
     "superAdminConfirmTitle": "Confirmer l'attribution super-admin",
@@ -141,20 +149,21 @@
     "cancel": "Annuler",
     "validation": {
       "userAndRoleRequired": "Utilisateur et rôle sont obligatoires.",
-      "scopeIdRequired": "L'identifiant de scope est obligatoire pour ce périmètre."
+      "scopeIdRequired": "L'identifiant de périmètre est obligatoire pour ce type."
     },
     "scopeTypes": {
       "global": "Global",
       "property": "Propriété",
       "agency": "Agence",
-      "support_queue": "File support"
+      "support_queue": "File d'attente support"
     },
     "scopeDisplay": {
       "global": "Global",
       "property": "Établissement",
       "agency": "Agence",
-      "support_queue": "File support",
-      "withId": "{label} · {idPrefix}…"
+      "support_queue": "File d'attente support",
+      "withId": "{label} · {idPrefix}…",
+      "withName": "{label} · {name}"
     },
     "revokeDialog": {
       "title": "Révoquer le rôle",

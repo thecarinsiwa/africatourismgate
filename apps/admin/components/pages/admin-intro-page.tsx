@@ -17,6 +17,8 @@ type AdminIntroPageProps = {
   backHref?: string;
   backLabelKey?: string;
   introChildren?: ReactNode;
+  /** Masque la description pages.* (fiches avec en-tête entité). */
+  suppressDescription?: boolean;
 };
 
 export function AdminIntroPage({
@@ -26,6 +28,7 @@ export function AdminIntroPage({
   backHref,
   backLabelKey,
   introChildren,
+  suppressDescription = false,
 }: AdminIntroPageProps) {
   const t = useTranslations(routePathToTranslationNamespace(routePath));
 
@@ -34,7 +37,8 @@ export function AdminIntroPage({
     label: t(link.labelKey),
   }));
 
-  const description = t.has?.('description') ? t('description') : undefined;
+  const description =
+    !suppressDescription && t.has?.('description') ? t('description') : undefined;
   const backLabel = backLabelKey && t.has?.(backLabelKey) ? t(backLabelKey) : undefined;
 
   return (

@@ -5,6 +5,7 @@ export type OAuthState = {
   webOrigin?: string;
   context?: OAuthContext;
   preferredLanguage?: string;
+  clientInstanceId?: string;
 };
 
 export function encodeOAuthState(
@@ -12,6 +13,7 @@ export function encodeOAuthState(
   webOrigin?: string,
   context?: OAuthContext,
   preferredLanguage?: string,
+  clientInstanceId?: string,
 ): string {
   const safeNext = normalizeOAuthNext(next, context);
   const payload: OAuthState = { next: safeNext };
@@ -25,7 +27,16 @@ export function encodeOAuthState(
   if (lang === 'en' || lang === 'es' || lang === 'fr') {
     payload.preferredLanguage = lang;
   }
-  if (!payload.webOrigin && !payload.context && !payload.preferredLanguage) {
+  const instanceId = clientInstanceId?.trim();
+  if (instanceId) {
+    payload.clientInstanceId = instanceId;
+  }
+  if (
+    !payload.webOrigin &&
+    !payload.context &&
+    !payload.preferredLanguage &&
+    !payload.clientInstanceId
+  ) {
     return safeNext;
   }
   return Buffer.from(JSON.stringify(payload)).toString('base64url');
@@ -54,6 +65,10 @@ export function decodeOAuthState(state: string | undefined): OAuthState {
           parsed.preferredLanguage === 'es' ||
           parsed.preferredLanguage === 'fr'
             ? parsed.preferredLanguage
+            : undefined,
+        clientInstanceId:
+          typeof parsed.clientInstanceId === 'string'
+            ? parsed.clientInstanceId.trim() || undefined
             : undefined,
       };
     }

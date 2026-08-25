@@ -158,7 +158,9 @@
   "select": {
     "choose": "Choisir…",
     "chooseDash": "— Choisir —",
-    "chooseFeminine": "— Choisir —"
+    "chooseFeminine": "— Choisir —",
+    "searchPlaceholder": "Rechercher…",
+    "empty": "Aucun résultat"
   },
   "back": {
     "toList": "← Retour à la liste"
@@ -362,13 +364,14 @@
       "global": "Global",
       "property": "Propriété",
       "agency": "Agence",
-      "support_queue": "File support"
+      "support_queue": "File d'attente support"
     },
     "global": "Global",
     "property": "Établissement",
     "agency": "Agence",
-    "support_queue": "File support",
-    "withId": "{label} · {idPrefix}…"
+    "support_queue": "File d'attente support",
+    "withId": "{label} · {idPrefix}…",
+    "withName": "{label} · {name}"
   },
   "richTextImage": {
     "title": "Image",

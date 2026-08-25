@@ -4,9 +4,12 @@ import { Card } from '@africatourismgate/ui';
 import type { Donation } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
-import { useSetAdminPageMeta } from '../admin-page-meta-context';
+import { routePathToTranslationNamespace } from '../../lib/i18n/admin-page-i18n';
 import { getApiClient } from '../../lib/auth/api';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { AdminIntroPage } from '../pages/admin-intro-page';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
+import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { DonationForm } from './donation-form';
 import { ParametresPageLayout } from './parametres-subnav';
 
@@ -17,7 +20,10 @@ type DonationEditPageProps = {
 
 export function DonationEditPage({ donationId, mode }: DonationEditPageProps) {
   const { organizationSettings: getErrorMessage } = useAdminErrorMessages();
-  const t = useTranslations('modules.settings.donations.form');
+  const tForm = useTranslations('modules.settings.donations.form');
+  const tCommon = useTranslations('modules.common');
+  const pageRoutePath = mode === 'create' ? 'parametres/dons/nouveau' : 'parametres/dons/edit';
+  const tPage = useTranslations(routePathToTranslationNamespace(pageRoutePath));
   const [accessError, setAccessError] = useState<string | null>(null);
   const [canWrite, setCanWrite] = useState(false);
   const [donation, setDonation] = useState<Donation | null>(null);
@@ -25,7 +31,13 @@ export function DonationEditPage({ donationId, mode }: DonationEditPageProps) {
   const [loadError, setLoadError] = useState<string | null>(null);
 
   useSetAdminPageMeta({
-    title: mode === 'create' ? t('createTitle') : t('editTitle'),
+    title: mode === 'create' ? tPage('title') : undefined,
+  });
+
+  useAdminEditPageMeta({
+    ready: mode === 'edit' && !loading && !!donation && !loadError,
+    title: tPage('title'),
+    entityLabel: donation?.title,
   });
 
   useEffect(() => {
@@ -39,15 +51,15 @@ export function DonationEditPage({ donationId, mode }: DonationEditPageProps) {
         setCanWrite(
           me.isSuperAdmin || me.permissions.includes('organization_settings.write'),
         );
-        if (!canRead) setAccessError(t('denied'));
+        if (!canRead) setAccessError(tForm('denied'));
       })
       .catch(() => {
-        if (!cancelled) setAccessError(t('denied'));
+        if (!cancelled) setAccessError(tForm('denied'));
       });
     return () => {
       cancelled = true;
     };
-  }, [t]);
+  }, [tForm]);
 
   useEffect(() => {
     if (mode !== 'edit' || !donationId || accessError) return;
@@ -82,7 +94,7 @@ export function DonationEditPage({ donationId, mode }: DonationEditPageProps) {
   if (mode === 'edit' && loading) {
     return (
       <ParametresPageLayout>
-        <p className="text-sm text-muted-foreground">{t('loading')}</p>
+        <p className="text-sm text-muted-foreground">{tCommon('loading')}</p>
       </ParametresPageLayout>
     );
   }
@@ -91,7 +103,7 @@ export function DonationEditPage({ donationId, mode }: DonationEditPageProps) {
     return (
       <ParametresPageLayout>
         <Card className="p-6">
-          <p className="text-sm text-destructive">{loadError ?? t('notFound')}</p>
+          <p className="text-sm text-destructive">{loadError ?? tForm('notFound')}</p>
         </Card>
       </ParametresPageLayout>
     );
@@ -99,20 +111,18 @@ export function DonationEditPage({ donationId, mode }: DonationEditPageProps) {
 
   return (
     <ParametresPageLayout>
-      <div className="space-y-4">
-        <div>
-          <h1 className="text-2xl font-semibold">
-            {mode === 'create' ? t('createTitle') : t('editTitle')}
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">{t('intro')}</p>
-        </div>
+      <AdminIntroPage
+        routePath={pageRoutePath}
+        backHref="/parametres/dons"
+        backLabelKey="backLabel"
+      >
         <DonationForm
           mode={mode}
           donationId={donationId}
           initialDonation={donation ?? undefined}
           canWrite={canWrite}
         />
-      </div>
+      </AdminIntroPage>
     </ParametresPageLayout>
   );
 }

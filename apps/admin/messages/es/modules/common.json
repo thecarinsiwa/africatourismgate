@@ -156,9 +156,11 @@
     "expiresAt": "Expira el"
   },
   "select": {
-    "choose": "Choisir…",
-    "chooseDash": "— Choisir —",
-    "chooseFeminine": "— Choisir —"
+    "choose": "Elegir…",
+    "chooseDash": "— Elegir —",
+    "chooseFeminine": "— Elegir —",
+    "searchPlaceholder": "Buscar…",
+    "empty": "Ningún resultado"
   },
   "back": {
     "toList": "← Volver a la lista"
@@ -362,13 +364,14 @@
       "global": "Global",
       "property": "Propiedad",
       "agency": "Agencia",
-      "support_queue": "File support"
+      "support_queue": "Cola de soporte"
     },
     "global": "Global",
-    "property": "Établissement",
+    "property": "Establecimiento",
     "agency": "Agencia",
-    "support_queue": "File support",
-    "withId": "{label} · {idPrefix}…"
+    "support_queue": "Cola de soporte",
+    "withId": "{label} · {idPrefix}…",
+    "withName": "{label} · {name}"
   },
   "richTextImage": {
     "title": "Imagen",

@@ -156,9 +156,11 @@
     "expiresAt": "Expires on"
   },
   "select": {
-    "choose": "Choisir…",
-    "chooseDash": "— Choisir —",
-    "chooseFeminine": "— Choisir —"
+    "choose": "Choose…",
+    "chooseDash": "— Choose —",
+    "chooseFeminine": "— Choose —",
+    "searchPlaceholder": "Search…",
+    "empty": "No results"
   },
   "back": {
     "toList": "← Back to list"
@@ -362,13 +364,14 @@
       "global": "Global",
       "property": "Property",
       "agency": "Agency",
-      "support_queue": "File support"
+      "support_queue": "Support queue"
     },
     "global": "Global",
-    "property": "Établissement",
+    "property": "Property",
     "agency": "Agency",
-    "support_queue": "File support",
-    "withId": "{label} · {idPrefix}…"
+    "support_queue": "Support queue",
+    "withId": "{label} · {idPrefix}…",
+    "withName": "{label} · {name}"
   },
   "richTextImage": {
     "title": "Image",

@@ -26,6 +26,20 @@ export type RefreshTokenRequestBody = NonNullable<
 export type RefreshTokenResponseBody =
   paths['/api/auth/refresh']['post']['responses'][200]['content']['application/json'];
 
+export type TouchSessionRequestBody = NonNullable<
+  paths['/api/auth/touch']['post']['requestBody']
+>['content']['application/json'];
+
+export type TouchSessionResponseBody =
+  paths['/api/auth/touch']['post']['responses'][200]['content']['application/json'];
+
+export type UnlockSessionRequestBody = NonNullable<
+  paths['/api/auth/unlock']['post']['requestBody']
+>['content']['application/json'];
+
+export type UnlockSessionResponseBody =
+  paths['/api/auth/unlock']['post']['responses'][200]['content']['application/json'];
+
 export type AuthMeResponseBody =
   paths['/api/auth/me']['get']['responses'][200]['content']['application/json'];
 

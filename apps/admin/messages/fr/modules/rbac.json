@@ -46,6 +46,12 @@
   "roles": {
     "searchPlaceholder": "Rechercher par code ou nom…",
     "empty": "Aucun rôle trouvé.",
+    "emptyTitleSearch": "Aucun rôle ne correspond à vos filtres",
+    "emptyTitleDefault": "Aucun rôle pour le moment",
+    "emptyDescriptionSearch": "Essayez un autre code, nom ou type.",
+    "emptyDescriptionDefault": "Créez un rôle personnalisé pour commencer.",
+    "emptyTableSearch": "Aucun rôle ne correspond à vos filtres.",
+    "emptyTableDefault": "Aucun rôle pour le moment.",
     "ariaLabel": "Liste des rôles",
     "paginationItem": "rôle",
     "systemReadOnlyHint": "Rôle système (lecture seule)",
@@ -81,6 +87,24 @@
     "paginationItem": "permission",
     "columns": {
       "resource": "Ressource"
+    },
+    "stats": {
+      "total": {
+        "label": "Permissions",
+        "subtitle": "Entrées du catalogue"
+      },
+      "domains": {
+        "label": "Domaines",
+        "subtitle": "Ressources distinctes"
+      },
+      "actions": {
+        "label": "Actions",
+        "subtitle": "Types d'action"
+      },
+      "roles": {
+        "label": "Rôles",
+        "subtitle": "Rôles configurés"
+      }
     }
   },
   "matrix": {
@@ -88,21 +112,59 @@
     "loading": "Chargement de la matrice…",
     "descriptionReadOnly": "Rôle système : consultation seule.",
     "descriptionEditable": "Cochez les permissions accordées à ce rôle, regroupées par domaine.",
+    "readOnlyBadge": "Lecture seule",
+    "selectedCount": "{selected} / {total} sélectionnées",
+    "domainCount": "{selected}/{total}",
+    "selectDomain": "Tout sélectionner",
+    "searchPlaceholder": "Filtrer un domaine ou une permission…",
+    "searchEmpty": "Aucun domaine ne correspond à votre recherche.",
+    "empty": "Aucune permission disponible.",
     "columns": {
       "scope": "Périmètre"
     },
     "wholeDomain": "Tout le domaine",
     "perAction": "Par action",
     "ariaToggleDomain": "Tout {domain} — {action}",
+    "ariaToggleDomainAll": "Sélectionner toutes les permissions de {domain}",
     "toast": {
       "savedTitle": "Permissions enregistrées",
       "savedMessage": "La matrice du rôle a été mise à jour.",
       "saveFailedTitle": "Échec de l'enregistrement"
     }
   },
+  "roleNames": {
+    "super_admin": "Super administrateur",
+    "org_admin": "Administrateur d'organisation",
+    "support": "Agent support",
+    "customer": "Client",
+    "gap_coordinator": "Coordinateur GAP"
+  },
   "assignments": {
     "loading": "Chargement des assignations…",
     "empty": "Aucune assignation active.",
+    "emptyTitleSearch": "Aucune assignation ne correspond aux filtres",
+    "emptyTitleDefault": "Aucune assignation active",
+    "emptyDescriptionSearch": "Essayez un autre utilisateur, rôle ou périmètre.",
+    "emptyDescriptionDefault": "Assignez un rôle ci-dessus pour commencer.",
+    "emptyTableSearch": "Aucune assignation ne correspond aux filtres.",
+    "emptyTableDefault": "Aucune assignation active.",
+    "ariaLabel": "Liste des assignations de rôles",
+    "paginationItem": "assignation",
+    "filters": {
+      "user": "Utilisateur",
+      "role": "Rôle",
+      "scope": "Périmètre",
+      "search": "Recherche",
+      "searchPlaceholder": "Rechercher par nom, e-mail ou rôle…",
+      "allUsers": "Tous les utilisateurs",
+      "allRoles": "Tous les rôles",
+      "allScopes": "Tous les périmètres"
+    },
+    "columns": {
+      "user": "Utilisateur",
+      "role": "Rôle",
+      "scope": "Périmètre"
+    },
     "revoke": "Révoquer",
     "revokeDialog": {
       "title": "Révoquer l'assignation",

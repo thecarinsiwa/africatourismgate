@@ -49,7 +49,6 @@ async function main() {
       value: encodeURIComponent(JSON.stringify(session.user)),
       url: `${ADMIN}/`,
     },
-    { name: 'atg.admin.remember', value: '0', url: `${ADMIN}/` },
   ]);
   await page.goto(`${ADMIN}/dashboard`, { waitUntil: 'domcontentloaded' });
   await page.evaluate(

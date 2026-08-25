@@ -1,38 +1,41 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  IsDateString,
   IsEnum,
   IsNotEmpty,
   IsOptional,
-  IsString,
   IsUUID,
-  MaxLength,
-  ValidateIf,
 } from 'class-validator';
+
+const SCOPE_TYPES = ['global', 'property', 'agency', 'support_queue'] as const;
+export type UserRoleAssignmentScopeType = (typeof SCOPE_TYPES)[number];
 
 export class CreateUserRoleAssignmentDto {
   @ApiProperty({ format: 'uuid' })
-  @IsNotEmpty()
-  @IsUUID('4')
+  @IsNotEmpty({ message: "L'identifiant utilisateur est obligatoire." })
+  @IsUUID('4', { message: "L'identifiant utilisateur doit être un UUID valide." })
   userId!: string;
 
   @ApiProperty({ format: 'uuid' })
-  @IsNotEmpty()
-  @IsUUID('4')
+  @IsNotEmpty({ message: "L'identifiant du rôle est obligatoire." })
+  @IsUUID('4', { message: "L'identifiant du rôle doit être un UUID valide." })
   roleId!: string;
 
-  @ApiProperty({ enum: ['global', 'property', 'agency', 'support_queue'] })
-  @IsEnum(['global', 'property', 'agency', 'support_queue'])
-  scopeType!: 'global' | 'property' | 'agency' | 'support_queue';
+  @ApiProperty({ enum: SCOPE_TYPES })
+  @IsEnum(SCOPE_TYPES, {
+    message: 'Le type de périmètre doit être global, property, agency ou support_queue.',
+  })
+  scopeType!: UserRoleAssignmentScopeType;
 
-  @ApiPropertyOptional({ format: 'uuid' })
-  @ValidateIf((o) => o.scopeType !== 'global')
-  @IsNotEmpty({ message: "L'identifiant de scope est obligatoire pour ce type." })
-  @IsUUID('4')
-  scopeId?: string;
-
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ format: 'uuid', nullable: true })
   @IsOptional()
-  @IsString()
-  @MaxLength(32)
-  expiresAt?: string;
+  @IsUUID('4', {
+    message: "L'identifiant de périmètre doit être un UUID valide.",
+  })
+  scopeId?: string | null;
+
+  @ApiPropertyOptional({ format: 'date-time', nullable: true })
+  @IsOptional()
+  @IsDateString({}, { message: "La date d'expiration doit être une date ISO valide." })
+  expiresAt?: string | null;
 }

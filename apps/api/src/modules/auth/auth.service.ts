@@ -35,6 +35,9 @@ import {
   GMAIL_ONLY_MESSAGE,
   SEED_ORG_PLATFORM_ID,
   SEED_ROLE_CUSTOMER_ID,
+  SESSION_IDLE_LOCK_SECONDS,
+  SESSION_LOCKED_CODE,
+  SESSION_LOCKED_MESSAGE,
 } from './auth.constants';
 import {
   AuthResponseDto,
@@ -75,6 +78,7 @@ export class AuthService {
   private readonly refreshSecret: string;
   private readonly accessExpiresInSeconds: number;
   private readonly refreshExpiresInSeconds: number;
+  private readonly sessionIdleLockSeconds: number;
 
   constructor(
     @InjectRepository(Users)
@@ -99,6 +103,7 @@ export class AuthService {
     this.refreshSecret = this.requireSecret('JWT_REFRESH_SECRET');
     this.accessExpiresInSeconds = expiresInToSeconds(JWT_ACCESS_EXPIRES_IN);
     this.refreshExpiresInSeconds = expiresInToSeconds(JWT_REFRESH_EXPIRES_IN);
+    this.sessionIdleLockSeconds = SESSION_IDLE_LOCK_SECONDS;
   }
 
   async register(dto: RegisterDto): Promise<AuthResponseDto> {
@@ -224,7 +229,7 @@ export class AuthService {
       firstName: user.firstName,
     });
 
-    const tokens = await this.issueTokenPair(user);
+    const tokens = await this.issueTokenPair(user, dto.clientInstanceId);
     void this.notifyWelcome(user);
 
     return {
@@ -314,7 +319,7 @@ export class AuthService {
     user.lastLoginAt = new Date();
     await this.usersRepo.save(user);
 
-    const tokens = await this.issueTokenPair(user);
+    const tokens = await this.issueTokenPair(user, dto.clientInstanceId);
     return { ...tokens, user: toAuthUserDto(user) };
   }
 
@@ -409,6 +414,7 @@ export class AuthService {
       dto.verificationId,
       dto.code,
     );
+    const clientInstanceId = dto.clientInstanceId;
 
     if (row.purpose === 'booking') {
       await this.bookingEngine.activateDraftBooking(row.referenceId);
@@ -419,7 +425,7 @@ export class AuthService {
       if (!user) {
         throw new BadRequestException('Compte introuvable pour cette réservation.');
       }
-      const tokens = await this.issueTokenPair(user);
+      const tokens = await this.issueTokenPair(user, clientInstanceId);
       return {
         ...tokens,
         user: toAuthUserDto(user),
@@ -428,7 +434,7 @@ export class AuthService {
     }
 
     if (row.purpose === 'google_signup') {
-      return this.completeGoogleOAuthVerification(row);
+      return this.completeGoogleOAuthVerification(row, clientInstanceId);
     }
 
     if (row.purpose === 'register') {
@@ -456,7 +462,7 @@ export class AuthService {
       if (isNewAccount) {
         void this.notifyWelcome(user);
       }
-      return this.completeUserSession(user);
+      return this.completeUserSession(user, clientInstanceId);
     }
 
     if (row.purpose === 'login') {
@@ -473,7 +479,7 @@ export class AuthService {
       if (!user) {
         throw new BadRequestException('Compte introuvable ou inactif.');
       }
-      return this.completeUserSession(user);
+      return this.completeUserSession(user, clientInstanceId);
     }
 
     const user = await this.usersRepo.findOne({
@@ -486,7 +492,7 @@ export class AuthService {
     user.lastLoginAt = new Date();
     await this.usersRepo.save(user);
 
-    const tokens = await this.issueTokenPair(user);
+    const tokens = await this.issueTokenPair(user, clientInstanceId);
     return { ...tokens, user: toAuthUserDto(user) };
   }
 
@@ -589,34 +595,45 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string): Promise<AuthTokensResponseDto> {
-    const payload = await this.verifyRefreshToken(refreshToken);
-    const session = await this.sessionsRepo.findOne({
-      where: {
-        id: payload.sid,
-        userId: payload.sub,
-        deletedAt: IsNull(),
-      },
-    });
+    const { session, user } =
+      await this.loadValidatedSessionFromRefreshToken(refreshToken);
+    this.assertSessionNotIdleLocked(session);
+    return this.rotateSessionTokens(user, session);
+  }
 
-    if (!session || session.expiresAt <= new Date()) {
-      throw new UnauthorizedException('Invalid or expired refresh token');
+  async touchSession(refreshToken: string): Promise<{ success: true }> {
+    const { session } =
+      await this.loadValidatedSessionFromRefreshToken(refreshToken);
+    this.assertSessionNotIdleLocked(session);
+    session.lastActivityAt = new Date();
+    await this.sessionsRepo.save(session);
+    return { success: true };
+  }
+
+  async unlockSession(
+    password: string,
+    refreshToken: string,
+  ): Promise<AuthTokensResponseDto> {
+    const { session, user } =
+      await this.loadValidatedSessionFromRefreshToken(refreshToken);
+
+    const userWithPassword = await this.usersRepo
+      .createQueryBuilder('user')
+      .addSelect('user.passwordHash')
+      .where('user.id = :id', { id: user.id })
+      .andWhere('user.deletedAt IS NULL')
+      .getOne();
+
+    if (!userWithPassword?.passwordHash) {
+      throw new UnauthorizedException('Invalid email or password');
     }
 
-    const matches = await bcrypt.compare(
-      refreshToken,
-      session.refreshTokenHash,
-    );
-    if (!matches) {
-      throw new UnauthorizedException('Invalid or expired refresh token');
+    const valid = await bcrypt.compare(password, userWithPassword.passwordHash);
+    if (!valid) {
+      throw new UnauthorizedException('Invalid email or password');
     }
 
-    const user = await this.usersRepo.findOne({
-      where: { id: payload.sub, deletedAt: IsNull() },
-    });
-    if (!user || user.status !== 'active') {
-      throw new UnauthorizedException('Account is not active');
-    }
-
+    session.lastActivityAt = new Date();
     return this.rotateSessionTokens(user, session);
   }
 
@@ -747,14 +764,101 @@ export class AuthService {
     }
   }
 
-  private async issueTokenPair(user: Users): Promise<AuthTokensResponseDto> {
+  private async revokeSessionsForClientInstance(
+    userId: string,
+    clientInstanceId: string,
+  ): Promise<void> {
+    const sessions = await this.sessionsRepo.find({
+      where: {
+        userId,
+        clientInstanceId,
+        deletedAt: IsNull(),
+      },
+    });
+    for (const session of sessions) {
+      await this.sessionsRepo.softRemove(session);
+    }
+  }
+
+  private normalizeClientInstanceId(
+    clientInstanceId?: string | null,
+  ): string | null {
+    const trimmed = clientInstanceId?.trim();
+    return trimmed ? trimmed : null;
+  }
+
+  private isSessionIdleLocked(session: UserSessions): boolean {
+    if (!session.lastActivityAt) {
+      return false;
+    }
+    const idleMs = Date.now() - session.lastActivityAt.getTime();
+    return idleMs > this.sessionIdleLockSeconds * 1000;
+  }
+
+  private assertSessionNotIdleLocked(session: UserSessions): void {
+    if (!this.isSessionIdleLocked(session)) {
+      return;
+    }
+    throw new UnauthorizedException({
+      statusCode: 401,
+      message: SESSION_LOCKED_MESSAGE,
+      code: SESSION_LOCKED_CODE,
+    });
+  }
+
+  private async loadValidatedSessionFromRefreshToken(
+    refreshToken: string,
+  ): Promise<{ payload: RefreshJwtPayload; session: UserSessions; user: Users }> {
+    const payload = await this.verifyRefreshToken(refreshToken);
+    const session = await this.sessionsRepo.findOne({
+      where: {
+        id: payload.sid,
+        userId: payload.sub,
+        deletedAt: IsNull(),
+      },
+    });
+
+    if (!session || session.expiresAt <= new Date()) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+
+    const matches = await bcrypt.compare(
+      refreshToken,
+      session.refreshTokenHash,
+    );
+    if (!matches) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+
+    const user = await this.usersRepo.findOne({
+      where: { id: payload.sub, deletedAt: IsNull() },
+    });
+    if (!user || user.status !== 'active') {
+      throw new UnauthorizedException('Account is not active');
+    }
+
+    return { payload, session, user };
+  }
+
+  private async issueTokenPair(
+    user: Users,
+    clientInstanceId?: string | null,
+  ): Promise<AuthTokensResponseDto> {
+    const normalizedClientId = this.normalizeClientInstanceId(clientInstanceId);
+    if (normalizedClientId) {
+      await this.revokeSessionsForClientInstance(user.id, normalizedClientId);
+    }
+
+    const now = new Date();
     const session = this.sessionsRepo.create({
       id: newId(),
       userId: user.id,
+      clientInstanceId: normalizedClientId,
       refreshTokenHash: '',
       expiresAt: new Date(
         Date.now() + this.refreshExpiresInSeconds * 1000,
       ),
+      lastActivityAt: now,
     } as DeepPartial<UserSessions>);
     await this.sessionsRepo.save(session);
     return this.rotateSessionTokens(user, session);
@@ -780,6 +884,7 @@ export class AuthService {
     session.expiresAt = new Date(
       Date.now() + this.refreshExpiresInSeconds * 1000,
     );
+    session.lastActivityAt = new Date();
     await this.sessionsRepo.save(session);
 
     const accessToken = await this.jwtService.signAsync(
@@ -930,13 +1035,14 @@ export class AuthService {
 
   private async completeGoogleOAuthVerification(
     row: EmailOperationVerifications,
+    clientInstanceId?: string,
   ): Promise<AuthResponseDto> {
     const email = this.normalizeEmail(row.email);
     const existing = await this.findAnyUserByEmail(email);
 
     if (existing && !existing.deletedAt) {
       if (existing.status === 'active') {
-        return this.completeUserSession(existing);
+        return this.completeUserSession(existing, clientInstanceId);
       }
       throw new UnauthorizedException('Account is not active');
     }
@@ -944,24 +1050,24 @@ export class AuthService {
     if (existing?.deletedAt) {
       const reactivated = await this.reactivateUserFromGoogleSignup(existing, row);
       void this.notifyWelcome(reactivated);
-      return this.completeUserSession(reactivated);
+      return this.completeUserSession(reactivated, clientInstanceId);
     }
 
     try {
       const user = await this.createUserFromGoogleSignupRow(row);
       void this.notifyWelcome(user);
-      return this.completeUserSession(user);
+      return this.completeUserSession(user, clientInstanceId);
     } catch (err) {
       const recovered = await this.findAnyUserByEmail(email);
       if (recovered && !recovered.deletedAt && recovered.status === 'active') {
-        return this.completeUserSession(recovered);
+        return this.completeUserSession(recovered, clientInstanceId);
       }
       if (recovered?.deletedAt) {
         const reactivated = await this.reactivateUserFromGoogleSignup(
           recovered,
           row,
         );
-        return this.completeUserSession(reactivated);
+        return this.completeUserSession(reactivated, clientInstanceId);
       }
       throw err;
     }
@@ -1037,13 +1143,16 @@ export class AuthService {
     }
   }
 
-  private async completeUserSession(user: Users): Promise<AuthResponseDto> {
+  private async completeUserSession(
+    user: Users,
+    clientInstanceId?: string,
+  ): Promise<AuthResponseDto> {
     if (user.status !== 'active') {
       throw new BadRequestException('Compte introuvable ou inactif.');
     }
     user.lastLoginAt = new Date();
     await this.usersRepo.save(user);
-    const tokens = await this.issueTokenPair(user);
+    const tokens = await this.issueTokenPair(user, clientInstanceId);
     return { ...tokens, user: toAuthUserDto(user) };
   }
 

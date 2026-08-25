@@ -23,9 +23,13 @@ export type {
   RegisterRequest,
   ResetPasswordRequest,
   ResetPasswordResponse,
+  TouchSessionRequest,
+  UnlockSessionRequest,
   UserStatus,
   VerifyOperationRequest,
 } from './auth.js';
+
+export { SESSION_LOCKED_CODE } from './auth.js';
 
 export type {
   CreateUserAddressRequest,

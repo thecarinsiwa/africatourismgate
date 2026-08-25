@@ -39,6 +39,12 @@ export interface LogoutResponse {
 export interface LoginRequest {
   email: string;
   password: string;
+  clientInstanceId?: string;
+}
+
+export interface UnlockSessionRequest {
+  password: string;
+  refreshToken: string;
 }
 
 export interface RegisterRequest {
@@ -48,16 +54,23 @@ export interface RegisterRequest {
   lastName: string;
   phone?: string;
   preferredLanguage?: string;
+  clientInstanceId?: string;
+}
+
+export interface VerifyOperationRequest {
+  verificationId: string;
+  code: string;
+  clientInstanceId?: string;
 }
 
 export interface RefreshTokenRequest {
   refreshToken: string;
 }
 
-export interface VerifyOperationRequest {
-  verificationId: string;
-  code: string;
-}
+/** Same payload as refresh — heartbeat for session activity. */
+export type TouchSessionRequest = RefreshTokenRequest;
+
+export const SESSION_LOCKED_CODE = 'SESSION_LOCKED' as const;
 
 export interface ForgotPasswordRequest {
   email: string;

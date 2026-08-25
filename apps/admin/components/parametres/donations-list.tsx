@@ -18,14 +18,16 @@ import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { getApiClient } from '../../lib/auth/api';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { AdminListPageHeader } from '../pages/admin-list-page-header';
+import { DonationsStatCards } from './donations-stat-cards';
 import { ParametresPageLayout } from './parametres-subnav';
 
 const PAGE_SIZE = 20;
+const STATS_LIMIT = 100;
 
 export function DonationsList() {
   const { organizationSettings: getErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.settings.donations.list');
-  const tForm = useTranslations('modules.settings.donations.form');
   const tStatus = useTranslations('modules.about.status');
   const tLocale = useTranslations('modules.about.locale');
   const tCommon = useTranslations('modules.common');
@@ -47,8 +49,12 @@ export function DonationsList() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<Donation | null>(null);
+  const [statsDonations, setStatsDonations] = useState<Donation[]>([]);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [statsError, setStatsError] = useState<string | null>(null);
 
   useSetAdminPageMeta({ title: t('pageTitle') });
+
 
   useEffect(() => {
     let cancelled = false;
@@ -91,6 +97,7 @@ export function DonationsList() {
           total: Math.max(0, prev.total - 1),
         };
       });
+      setStatsDonations((prev) => prev.filter((row) => row.id !== item.id));
     } catch (error) {
       setDeleteError(getErrorMessage(error));
     } finally {
@@ -119,10 +126,31 @@ export function DonationsList() {
     }
   }, [page, search, statusFilter, localeFilter, getErrorMessage]);
 
+  const loadStats = useCallback(async () => {
+    setStatsLoading(true);
+    setStatsError(null);
+    try {
+      const result = await getApiClient().listDonations({
+        page: 1,
+        limit: STATS_LIMIT,
+      });
+      setStatsDonations(result.data);
+    } catch (error) {
+      setStatsError(getErrorMessage(error));
+    } finally {
+      setStatsLoading(false);
+    }
+  }, [getErrorMessage]);
+
   useEffect(() => {
     if (accessError) return;
     void load();
   }, [accessError, load]);
+
+  useEffect(() => {
+    if (accessError) return;
+    void loadStats();
+  }, [accessError, loadStats]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -140,11 +168,12 @@ export function DonationsList() {
       {
         id: 'title',
         header: t('columns.title'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => (
-          <div>
-            <p className="font-medium">{row.original.title}</p>
+          <div className="min-w-0 max-w-md space-y-1">
+            <p className="truncate font-medium text-atg-fg">{row.original.title}</p>
             {row.original.contextNote ? (
-              <p className="text-xs text-muted-foreground">{row.original.contextNote}</p>
+              <p className="line-clamp-2 text-xs text-atg-muted">{row.original.contextNote}</p>
             ) : null}
           </div>
         ),
@@ -152,18 +181,29 @@ export function DonationsList() {
       {
         id: 'locale',
         header: t('columns.locale'),
-        cell: ({ row }) => tLocale(row.original.locale as 'fr' | 'en' | 'es'),
+        meta: { align: 'center', hideOnMobile: true, cellClassName: 'whitespace-nowrap' },
+        cell: ({ row }) => (
+          <span className="text-sm text-atg-muted">{tLocale(row.original.locale as 'fr' | 'en' | 'es')}</span>
+        ),
       },
       {
         id: 'surfaces',
         header: t('columns.surfaces'),
+        meta: { hideOnMobile: true, cellClassName: 'whitespace-nowrap' },
         cell: ({ row }) => (
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-nowrap gap-1">
             {row.original.showOnWeb ? (
-              <DataTableBadge variant="muted">{tForm('surfaces.web')}</DataTableBadge>
+              <DataTableBadge variant="muted" className="whitespace-nowrap">
+                {t('surfacesShort.web')}
+              </DataTableBadge>
             ) : null}
             {row.original.showOnGap ? (
-              <DataTableBadge variant="muted">{tForm('surfaces.gap')}</DataTableBadge>
+              <DataTableBadge variant="muted" className="whitespace-nowrap">
+                {t('surfacesShort.gap')}
+              </DataTableBadge>
+            ) : null}
+            {!row.original.showOnWeb && !row.original.showOnGap ? (
+              <span className="text-muted-foreground">—</span>
             ) : null}
           </div>
         ),
@@ -171,9 +211,12 @@ export function DonationsList() {
       {
         id: 'featured',
         header: t('columns.featured'),
+        meta: { align: 'center', hideOnMobile: true, cellClassName: 'whitespace-nowrap' },
         cell: ({ row }) =>
           row.original.isNavbarFeatured ? (
-            <DataTableBadge variant="success">{t('featuredYes')}</DataTableBadge>
+            <DataTableBadge variant="success" className="whitespace-nowrap">
+              {t('featuredYes')}
+            </DataTableBadge>
           ) : (
             <span className="text-muted-foreground">—</span>
           ),
@@ -181,8 +224,12 @@ export function DonationsList() {
       {
         id: 'status',
         header: tCommon('columns.status'),
+        meta: { align: 'center', hideOnMobile: true, cellClassName: 'whitespace-nowrap' },
         cell: ({ row }) => (
-          <DataTableBadge variant={row.original.status === 'published' ? 'success' : 'warning'}>
+          <DataTableBadge
+            variant={row.original.status === 'published' ? 'success' : 'warning'}
+            className="whitespace-nowrap"
+          >
             {tStatus(row.original.status)}
           </DataTableBadge>
         ),
@@ -190,7 +237,11 @@ export function DonationsList() {
       {
         id: 'actions',
         header: tCommon('columns.actions'),
-        meta: { align: 'right' },
+        meta: {
+          align: 'right',
+          headerClassName: 'w-[5.5rem]',
+          cellClassName: 'w-[5.5rem] whitespace-nowrap',
+        },
         cell: ({ row }) => (
           <DataTableActions>
             <DataTableActionButton
@@ -209,7 +260,7 @@ export function DonationsList() {
         ),
       },
     ],
-    [canWrite, deletingId, handleDeleteRequest, t, tCommon, tForm, tLocale, tStatus],
+    [canWrite, deletingId, handleDeleteRequest, t, tCommon, tLocale, tStatus],
   );
 
   const donations = state.status === 'ready' ? state.donations : [];
@@ -239,70 +290,85 @@ export function DonationsList() {
         onConfirm={() => void handleDeleteConfirm()}
       />
     <ParametresPageLayout>
-      <div className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="min-w-0 space-y-6">
+        <AdminListPageHeader
+          routePath="parametres/dons"
+          actions={
+            canWrite ? (
+              <Button href="/parametres/dons/nouveau">{t('createButton')}</Button>
+            ) : undefined
+          }
+        />
+
+        <DonationsStatCards
+          donations={statsDonations}
+          loading={statsLoading}
+          error={statsError}
+        />
+
+        <div className="grid gap-3 sm:grid-cols-3">
+          <Input
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder={t('searchPlaceholder')}
+          />
           <div>
-            <h1 className="text-2xl font-semibold">{t('pageTitle')}</h1>
-            <p className="mt-1 text-sm text-muted-foreground">{t('intro')}</p>
+            <label htmlFor={localeFilterId} className="mb-1 block text-xs font-medium text-muted-foreground">
+              {t('localeFilter')}
+            </label>
+            <select
+              id={localeFilterId}
+              value={localeFilter}
+              onChange={(e) => {
+                setLocaleFilter(e.target.value);
+                setPage(1);
+              }}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            >
+              <option value="">{t('allLocales')}</option>
+              <option value="fr">{tLocale('fr')}</option>
+              <option value="en">{tLocale('en')}</option>
+              <option value="es">{tLocale('es')}</option>
+            </select>
           </div>
-          {canWrite ? (
-            <Button href="/parametres/dons/nouveau">{t('createButton')}</Button>
-          ) : null}
+          <div>
+            <label htmlFor={statusFilterId} className="mb-1 block text-xs font-medium text-muted-foreground">
+              {tCommon('columns.status')}
+            </label>
+            <select
+              id={statusFilterId}
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value as '' | DonationStatus);
+                setPage(1);
+              }}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            >
+              <option value="">{t('allStatuses')}</option>
+              <option value="draft">{tStatus('draft')}</option>
+              <option value="published">{tStatus('published')}</option>
+            </select>
+          </div>
         </div>
 
-        <Card className="p-4">
-          <div className="mb-4 grid gap-3 sm:grid-cols-3">
-            <Input
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder={t('searchPlaceholder')}
-            />
-            <div>
-              <label htmlFor={localeFilterId} className="mb-1 block text-xs font-medium text-muted-foreground">
-                {t('localeFilter')}
-              </label>
-              <select
-                id={localeFilterId}
-                value={localeFilter}
-                onChange={(e) => {
-                  setLocaleFilter(e.target.value);
-                  setPage(1);
-                }}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-              >
-                <option value="">{t('allLocales')}</option>
-                <option value="fr">{tLocale('fr')}</option>
-                <option value="en">{tLocale('en')}</option>
-                <option value="es">{tLocale('es')}</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor={statusFilterId} className="mb-1 block text-xs font-medium text-muted-foreground">
-                {tCommon('columns.status')}
-              </label>
-              <select
-                id={statusFilterId}
-                value={statusFilter}
-                onChange={(e) => {
-                  setStatusFilter(e.target.value as '' | DonationStatus);
-                  setPage(1);
-                }}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-              >
-                <option value="">{t('allStatuses')}</option>
-                <option value="draft">{tStatus('draft')}</option>
-                <option value="published">{tStatus('published')}</option>
-              </select>
-            </div>
-          </div>
-
-          {state.status === 'loading' ? (
-            <p className="text-sm text-muted-foreground">{tCommon('form.loading')}</p>
-          ) : state.status === 'error' ? (
-            <p className="text-sm text-destructive">{state.message}</p>
-          ) : (
-            <>
-              <DataTable columns={columns} data={donations} emptyMessage={t('empty')} />
+        {state.status === 'error' ? (
+          <p className="text-sm text-destructive" role="alert">
+            {state.message}
+          </p>
+        ) : (
+          <>
+            <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
+              <DataTable
+                columns={columns}
+                data={donations}
+                isLoading={state.status === 'loading'}
+                emptyMessage={t('empty')}
+                emptyVariant={search.trim() || statusFilter || localeFilter ? 'search' : 'default'}
+                getRowId={(row) => row.id}
+                aria-label={t('tableAria')}
+              />
+            </Card>
+            {state.status === 'ready' ? (
               <DataTablePagination
                 page={page}
                 pageSize={PAGE_SIZE}
@@ -310,9 +376,9 @@ export function DonationsList() {
                 totalItems={state.total}
                 onPageChange={setPage}
               />
-            </>
-          )}
-        </Card>
+            ) : null}
+          </>
+        )}
       </div>
     </ParametresPageLayout>
     </>

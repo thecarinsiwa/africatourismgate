@@ -1,12 +1,12 @@
 {
   "list": {
-    "emptyTitleSearch": "Ninguna organisation ne correspond à votre recherche",
-    "emptyTitleDefault": "Ninguna organisation pour le moment",
-    "emptyDescriptionSearch": "Essayez un autre nom ou slug.",
-    "emptyDescriptionDefault": "Créez une organisation partenaire pour commencer.",
-    "emptyTableSearch": "Ninguna organisation ne correspond à votre recherche.",
-    "emptyTableDefault": "Ninguna organisation pour le moment.",
-    "ariaLabel": "Liste des organisations",
+    "emptyTitleSearch": "Ninguna organización coincide con su búsqueda",
+    "emptyTitleDefault": "Aún no hay organizaciones",
+    "emptyDescriptionSearch": "Pruebe otro nombre o slug.",
+    "emptyDescriptionDefault": "Cree una organización socia para empezar.",
+    "emptyTableSearch": "Ninguna organización coincide con su búsqueda.",
+    "emptyTableDefault": "Aún no hay organizaciones.",
+    "ariaLabel": "Lista de organizaciones",
     "columns": {
       "type": "Tipo",
       "counts": "Plantilla"
@@ -21,64 +21,81 @@
     },
     "deleteDialog": {
       "title": "Eliminar organización",
-      "description": "Eliminar organización « {name} » ? Cette action est réversible côté base."
+      "description": "¿Eliminar la organización « {name} »? Esta acción es reversible a nivel de base de datos."
     }
   },
   "form": {
     "sections": {
       "identity": "Identidad",
       "contact": "Contacto",
-      "legal": "Legal",
+      "legal": "Jurídico",
       "configuration": "Configuración"
     },
-    "name": "Apellido",
+    "name": "Nombre",
     "slug": "Slug",
     "slugHint": "Identificador único en la URL (ej. africa-tourism-gate).",
     "description": "Descripción",
-    "website": "Site web",
+    "website": "Sitio web",
     "websitePlaceholder": "https://",
-    "contactEmail": "Correo de contact",
+    "contactEmail": "Correo de contacto",
     "contactPhone": "Teléfono",
-    "legalForm": "Forme juridique",
+    "legalForm": "Forma jurídica",
     "rccm": "RCCM",
-    "rccmHint": "Registre du Commerce et du Crédit Mobilier",
+    "rccmHint": "Registro de Comercio y Crédito Mobiliario",
     "idNat": "ID. Nat.",
-    "idNatHint": "Identification Nationale",
+    "idNatHint": "Identificación nacional",
     "nif": "NIF",
     "nifHint": "Número de Identificación Fiscal",
     "cnss": "CNSS",
-    "cnssHint": "Caisse Nationale de Sécurité Sociale",
+    "cnssHint": "Caja Nacional de Seguridad Social",
     "currency": "Moneda",
     "status": "Estado",
     "submitCreate": "Crear organización",
     "submitEdit": "Guardar",
     "validation": {
-      "nameRequired": "El apellido es obligatorio.",
-      "slugRequired": "Le slug est obligatoire.",
-      "slugInvalid": "Slug invalide : minuscules, chiffres et tirets uniquement (ex. mon-organisation).",
-      "currencyInvalid": "La devise doit comporter 3 lettres (ex. USD, CDF)."
+      "nameRequired": "El nombre es obligatorio.",
+      "slugRequired": "El slug es obligatorio.",
+      "slugInvalid": "Slug no válido: solo minúsculas, dígitos y guiones (ej. mi-organizacion).",
+      "currencyInvalid": "La moneda debe tener 3 letras (ej. USD, CDF)."
     },
     "toast": {
-      "savedTitle": "Organización enregistrée",
+      "savedTitle": "Organización guardada",
       "errorTitle": "Error al guardar"
     }
   },
   "legalForm": {
-    "unspecified": "No renseigné",
+    "unspecified": "No especificado",
     "SARL": "SARL",
     "SA": "SA",
     "SAS": "SAS",
-    "Ets": "Établissement (Ets)",
+    "Ets": "Establecimiento (Ets)",
     "SNC": "SNC",
     "ASBL": "ASBL"
   },
   "detail": {
     "title": "Organización",
+    "viewTitle": "Ver organización",
+    "editButton": "Editar",
+    "viewButton": "Ver",
     "tabsAria": "Secciones de la organización",
     "tabs": {
       "infos": "Info",
-      "users": "Usuarios",
+      "users": "Empleados",
       "settings": "Ajustes"
+    },
+    "meta": {
+      "currency": "Moneda",
+      "contact": "Contacto",
+      "website": "Sitio web",
+      "createdAt": "Creada el"
+    },
+    "logo": {
+      "change": "Cambiar",
+      "changeHint": "Elija un logo (JPEG, PNG, WebP, GIF o SVG — máx. 2 MB)",
+      "uploading": "Cargando…",
+      "uploadSuccess": "Logo actualizado.",
+      "invalidFormat": "Formatos aceptados: JPEG, PNG, WebP, GIF o SVG.",
+      "tooLarge": "Imagen demasiado pesada (máx. 2 MB)."
     },
     "settingsIntro": "Configuración de la organización: datos de contacto, idioma, reservas y marca."
   },

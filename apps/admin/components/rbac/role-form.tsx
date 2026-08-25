@@ -2,11 +2,11 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Input, AlertDialog } from '@africatourismgate/ui';
+import { AlertDialog, Button, Card, Input, Textarea } from '@africatourismgate/ui';
 import type { CreateRoleRequest, Role, UpdateRoleRequest } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useState } from 'react';
+import { useCallback, useId, useState } from 'react';
 import { RoleBadge } from './role-badge';
 import { getApiClient } from '../../lib/auth/api';
 import { PermissionMatrix } from './permission-matrix';
@@ -32,7 +32,9 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
   const tCommonColumns = useTranslations('modules.common.columns');
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
   const router = useRouter();
+  const descriptionId = useId();
   const [values, setValues] = useState<RoleFormValues>(() =>
     initialRole
       ? {
@@ -114,73 +116,92 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="min-w-0 space-y-6">
       <RbacSubnav
         onNavigate={matrixDirty ? (_href, proceed) => requestAction(proceed) : undefined}
       />
       {mode === 'edit' && initialRole ? (
-        <div className="mb-6 flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <RoleBadge code={initialRole.code} name={initialRole.name} showCode />
           {initialRole.isSystem ? (
             <span className="text-sm text-atg-muted">{t('systemReadOnlyHint')}</span>
           ) : null}
         </div>
       ) : null}
-      <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
+
+      <form
+        onSubmit={handleSubmit}
+        className={mode === 'edit' ? 'max-w-2xl space-y-4' : 'mx-auto max-w-2xl space-y-4'}
+      >
         {formError ? (
-          <p role="alert" className="text-sm text-red-600">
+          <p
+            role="alert"
+            className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400"
+          >
             {formError}
           </p>
         ) : null}
 
-        {mode === 'create' ? (
+        <Card variant="dashboard" className="space-y-3">
+          {mode === 'create' ? (
+            <Input
+              label={tCommonColumns('code')}
+              name="code"
+              value={values.code}
+              onChange={(e) => updateField('code', e.target.value.toLowerCase())}
+              error={fieldErrors.code}
+              hint={t('codeHint')}
+              required
+              autoComplete="off"
+            />
+          ) : (
+            <Input
+              label={tCommonColumns('code')}
+              name="code"
+              value={values.code}
+              readOnly
+              disabled
+            />
+          )}
+
           <Input
-            label={tCommonColumns('code')}
-            name="code"
-            value={values.code}
-            onChange={(e) => updateField('code', e.target.value.toLowerCase())}
-            error={fieldErrors.code}
-            hint={t('codeHint')}
+            label={tCommonColumns('name')}
+            name="name"
+            value={values.name}
+            onChange={(e) => updateField('name', e.target.value)}
+            error={fieldErrors.name}
+            readOnly={readOnly}
+            disabled={readOnly}
             required
           />
-        ) : (
-          <Input
-            label={tCommonColumns('code')}
-            name="code"
-            value={values.code}
-            readOnly
-            disabled
+
+          <Textarea
+            id={descriptionId}
+            name="description"
+            label={tCommon('form.description')}
+            rows={3}
+            value={values.description}
+            onChange={(e) => updateField('description', e.target.value)}
+            readOnly={readOnly}
+            disabled={readOnly}
           />
-        )}
-
-        <Input
-          label={tCommonColumns('name')}
-          name="name"
-          value={values.name}
-          onChange={(e) => updateField('name', e.target.value)}
-          error={fieldErrors.name}
-          readOnly={readOnly}
-          disabled={readOnly}
-          required
-        />
-
-        <Input
-          label={tCommon('form.description')}
-          name="description"
-          value={values.description}
-          onChange={(e) => updateField('description', e.target.value)}
-          readOnly={readOnly}
-          disabled={readOnly}
-        />
+        </Card>
 
         {!readOnly ? (
-          <div className="flex flex-wrap gap-3">
-            <Button type="submit" loading={submitting}>
+          <div
+            className={
+              mode === 'edit'
+                ? 'sticky bottom-0 z-10 flex flex-wrap gap-3 border-t border-atg-border bg-atg-bg/95 py-3 backdrop-blur'
+                : 'flex flex-wrap gap-3 pt-1'
+            }
+          >
+            <Button type="submit" variant="primary" loading={submitting} loadingText={tLoading('submit')}>
               {mode === 'create' ? t('createSubmit') : tActions('save')}
             </Button>
             <Button
               type="button"
               variant="outline"
+              disabled={submitting}
               onClick={() => requestAction(() => router.push('/systeme/roles'))}
             >
               {tActions('cancel')}

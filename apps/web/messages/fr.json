@@ -94,6 +94,19 @@
         "envMissing": "Configuration API manquante (NEXT_PUBLIC_API_URL).",
         "server": "Le serveur n'est pas prêt. Vérifiez la base de données."
       }
+    },
+    "sessionLock": {
+      "checkingSession": "Vérification de la session…",
+      "title": "Session verrouillée",
+      "subtitle": "Vous avez été inactif trop longtemps. Saisissez votre mot de passe pour reprendre.",
+      "passwordLabel": "Mot de passe",
+      "passwordPlaceholder": "••••••••",
+      "unlock": "Déverrouiller",
+      "unlockLoading": "Vérification…",
+      "logout": "Se déconnecter",
+      "invalidPassword": "Mot de passe incorrect.",
+      "genericError": "Impossible de déverrouiller la session. Réessayez.",
+      "idleHint": "Verrouillage automatique après {minutes} min d'inactivité."
     }
   },
   "hotelsDetail": {

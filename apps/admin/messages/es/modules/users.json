@@ -1,13 +1,20 @@
 {
   "list": {
     "newUser": "Nuevo usuario",
-    "emptyDefault": "Ningún usuario por el momento.",
-    "emptyFiltered": "Ningún usuario coincide con tus criterios.",
+    "emptyDefault": "Ningún usuario interno por el momento.",
+    "emptyFiltered": "Ningún usuario interno coincide con tus criterios.",
+    "emptyClients": "Ninguna cuenta de cliente por el momento.",
+    "emptyFilteredClients": "Ninguna cuenta de cliente coincide con tus criterios.",
     "ariaLabel": "Lista de usuarios",
     "deleteConfirm": "El usuario « {email} » será eliminado. Esta acción es reversible en la base de datos.",
     "deleteTitle": "Eliminar usuario",
     "deleteConfirmButton": "Eliminar",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "tabs": {
+      "ariaLabel": "Tipo de cuenta de usuario",
+      "internal": "Internos",
+      "client": "Clientes"
+    }
   },
   "filters": {
     "status": "Estado",
@@ -52,12 +59,12 @@
       "addresses": "Direccións",
       "paymentMethods": "Métodos de pago",
       "sessions": "Sesións",
-      "roles": "Rols"
+      "roles": "Roles"
     }
   },
   "userIdFilter": {
     "label": "Usuario",
-    "allUsers": "Todos les utilisateurs"
+    "allUsers": "Todos los usuarios"
   },
   "addresses": {
     "emptyDefault": "Ninguna dirección registrada.",
@@ -123,6 +130,7 @@
     "assignedTitle": "Roles asignados",
     "empty": "No hay ningún rol activo para este usuario.",
     "assignFormTitle": "Asignar un rol",
+    "assignFormHint": "Asigne un rol a un usuario, con ámbito y caducidad opcionales.",
     "assignSubmit": "Asignar el rol",
     "manageAction": "Gestionar roles",
     "modalTitle": "Gestionar roles",
@@ -130,18 +138,18 @@
     "user": "Usuario",
     "role": "Rol",
     "selectPlaceholder": "Seleccionar…",
-    "scope": "Ámbito (scope)",
+    "scope": "Ámbito",
     "scopeId": "ID del ámbito (UUID)",
     "scopeIdHint": "Ej. ID de propiedad, agencia o cola de soporte.",
-    "expiresAt": "Expiración (opcional)",
-    "superAdminWarning": "Reservado a super administradores — ámbito forzado a Global.",
-    "superAdminConfirmTitle": "Confirmar asignación super-admin",
-    "superAdminConfirm": "El usuario recibirá el rol «{roleName}» y acceso completo a la plataforma.",
+    "expiresAt": "Caducidad (opcional)",
+    "superAdminWarning": "Reservado a superadministradores — ámbito forzado a Global.",
+    "superAdminConfirmTitle": "Confirmar asignación de superadministrador",
+    "superAdminConfirm": "El usuario recibirá el rol « {roleName} » y acceso completo a la plataforma.",
     "superAdminConfirmButton": "Confirmar",
     "cancel": "Cancelar",
     "validation": {
       "userAndRoleRequired": "El usuario y el rol son obligatorios.",
-      "scopeIdRequired": "El identificador de ámbito es obligatorio para este ámbito."
+      "scopeIdRequired": "El identificador de ámbito es obligatorio para este tipo."
     },
     "scopeTypes": {
       "global": "Global",
@@ -154,7 +162,8 @@
       "property": "Establecimiento",
       "agency": "Agencia",
       "support_queue": "Cola de soporte",
-      "withId": "{label} · {idPrefix}…"
+      "withId": "{label} · {idPrefix}…",
+      "withName": "{label} · {name}"
     },
     "revokeDialog": {
       "title": "Revocar el rol",

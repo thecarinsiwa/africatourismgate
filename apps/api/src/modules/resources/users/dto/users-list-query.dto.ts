@@ -49,4 +49,13 @@ export class UsersListQueryDto extends PaginationQueryDto {
   @Transform(({ value }) => parseBooleanQuery(value))
   @IsBoolean()
   withoutRole?: boolean;
+
+  @ApiPropertyOptional({
+    enum: ['internal', 'client'],
+    description:
+      'internal = staff/admin (no role, or any non-customer role); client = customer role only',
+  })
+  @IsOptional()
+  @IsEnum(['internal', 'client'])
+  audience?: 'internal' | 'client';
 }

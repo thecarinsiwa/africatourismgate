@@ -24,6 +24,8 @@ import { usePermissions } from '../lib/auth/use-permissions';
 import { useOrganizationThemeOptional } from './organization-theme-provider';
 import { RouteAccessGate } from './route-access-gate';
 import { SessionSync } from './session-sync';
+import { SessionIdleLock } from './session-idle-lock';
+import { useBrowserSessionLifecycle } from '../lib/auth/browser-lifecycle';
 import { LanguageSwitcher } from './language-switcher';
 import { CommandPalette } from './command-palette';
 import { KeyboardShortcutsHelp } from './keyboard-shortcuts-help';
@@ -148,9 +150,12 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
 }
 
 export function DashboardShellLayout({ children }: { children: React.ReactNode }) {
+  useBrowserSessionLifecycle();
+
   return (
     <>
       <SessionSync />
+      <SessionIdleLock />
       <AdminPageMetaProvider>
         <DashboardShellInner>{children}</DashboardShellInner>
       </AdminPageMetaProvider>

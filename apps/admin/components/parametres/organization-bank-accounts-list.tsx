@@ -16,11 +16,15 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
+import { AdminListPageHeader } from '../pages/admin-list-page-header';
 import { getApiClient } from '../../lib/auth/api';
 import { maskAccountNumberForDisplay } from '../../lib/bank-account-masking';
 import { useUnsavedChangesGuard } from '../rbac/use-unsaved-changes-guard';
+import { OrganizationOrgSelector } from '../organizations/organization-org-selector';
+import { BankAccountsStatCards } from './bank-accounts-stat-cards';
+import { OrganizationBankAccountCreateModal } from './organization-bank-account-create-modal';
+import { OrganizationBankAccountEditModal } from './organization-bank-account-edit-modal';
 import { ParametresPageLayout } from './parametres-subnav';
-import { OrganizationBankAccountForm } from './organization-bank-account-form';
 import {
   resolveInitialOrganizationId,
 } from './organization-settings-form';
@@ -44,18 +48,19 @@ export function OrganizationBankAccountsList() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<OrganizationBankAccount | null>(null);
-  const [formDirty, setFormDirty] = useState(false);
+  const [editFormDirty, setEditFormDirty] = useState(false);
+  const [createFormDirty, setCreateFormDirty] = useState(false);
   const { dialogOpen, setDialogOpen, requestAction, confirmDiscard, cancelDiscard } =
-    useUnsavedChangesGuard(formDirty);
+    useUnsavedChangesGuard(editFormDirty || createFormDirty);
 
   useSetAdminPageMeta({ title: tBank('page.title') });
 
-  const loadAccounts = useCallback(async (orgId: string) => {
+  const loadAccounts = useCallback(async (orgId: string, superAdmin = false) => {
     setLoading(true);
     setListError(null);
     try {
       const result = await getApiClient().listOrganizationBankAccounts({
-        organizationId: orgId,
+        ...(superAdmin ? { organizationId: orgId } : {}),
         page: 1,
         limit: 100,
       });
@@ -100,7 +105,7 @@ export function OrganizationBankAccountsList() {
           if (!cancelled) setOrganizations(orgs.data);
         }
 
-        if (!cancelled) await loadAccounts(orgId);
+        if (!cancelled) await loadAccounts(orgId, me.isSuperAdmin);
       } catch (error) {
         if (!cancelled) {
           setAccessError(getOrganizationSettingsErrorMessage(error));
@@ -116,15 +121,75 @@ export function OrganizationBankAccountsList() {
 
   const handleOrganizationChange = useCallback(
     (id: string) => {
-      setOrganizationId(id);
-      setEditing(null);
-      setCreating(false);
-      const params = new URLSearchParams(searchParams.toString());
-      params.set('organizationId', id);
-      router.replace(`/parametres/comptes?${params.toString()}`);
-      void loadAccounts(id);
+      const applyChange = () => {
+        setOrganizationId(id);
+        setEditing(null);
+        setCreating(false);
+        setCreateFormDirty(false);
+        setEditFormDirty(false);
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('organizationId', id);
+        router.replace(`/parametres/comptes?${params.toString()}`);
+        void loadAccounts(id, isSuperAdmin);
+      };
+      if (editFormDirty || createFormDirty) {
+        requestAction(applyChange);
+        return;
+      }
+      applyChange();
     },
-    [router, searchParams, loadAccounts],
+    [router, searchParams, loadAccounts, isSuperAdmin, editFormDirty, createFormDirty, requestAction],
+  );
+
+  const handleCreateModalOpenChange = useCallback(
+    (open: boolean) => {
+      if (open) {
+        setCreating(true);
+        return;
+      }
+      if (createFormDirty) {
+        requestAction(() => {
+          setCreating(false);
+          setCreateFormDirty(false);
+        });
+        return;
+      }
+      setCreating(false);
+      setCreateFormDirty(false);
+    },
+    [createFormDirty, requestAction],
+  );
+
+  const handleEditModalOpenChange = useCallback(
+    (open: boolean) => {
+      if (open) return;
+      if (editFormDirty) {
+        requestAction(() => {
+          setEditing(null);
+          setEditFormDirty(false);
+        });
+        return;
+      }
+      setEditing(null);
+      setEditFormDirty(false);
+    },
+    [editFormDirty, requestAction],
+  );
+
+  const handleEditRequest = useCallback(
+    (account: OrganizationBankAccount) => {
+      const openEdit = () => {
+        setCreating(false);
+        setCreateFormDirty(false);
+        setEditing(account);
+      };
+      if (creating && createFormDirty) {
+        requestAction(openEdit);
+        return;
+      }
+      openEdit();
+    },
+    [creating, createFormDirty, requestAction],
   );
 
   const handleDeleteRequest = useCallback((account: OrganizationBankAccount) => {
@@ -142,7 +207,7 @@ export function OrganizationBankAccountsList() {
         account.id,
         isSuperAdmin ? organizationId : undefined,
       );
-      await loadAccounts(organizationId);
+      await loadAccounts(organizationId, isSuperAdmin);
     } catch (error) {
       setDeleteError(getOrganizationSettingsErrorMessage(error));
     } finally {
@@ -194,10 +259,7 @@ export function OrganizationBankAccountsList() {
           <DataTableActions>
             <DataTableActionButton
               action="edit"
-              onClick={() => {
-                setCreating(false);
-                setEditing(row.original);
-              }}
+              onClick={() => handleEditRequest(row.original)}
             />
             <DataTableActionButton
               action="delete"
@@ -208,15 +270,18 @@ export function OrganizationBankAccountsList() {
         ),
       },
     ],
-    [deletingId, handleDeleteRequest, tBank, tCommon],
+    [deletingId, handleDeleteRequest, handleEditRequest, tBank, tCommon],
   );
 
   if (accessError) {
     return (
       <ParametresPageLayout>
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {accessError}
-        </p>
+        <div className="min-w-0">
+          <AdminListPageHeader routePath="parametres/comptes" />
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {accessError}
+          </p>
+        </div>
       </ParametresPageLayout>
     );
   }
@@ -224,90 +289,81 @@ export function OrganizationBankAccountsList() {
   if (!organizationId) {
     return (
       <ParametresPageLayout>
-        <p className="text-sm text-atg-muted">{t('form.loading')}</p>
+        <div className="min-w-0">
+          <AdminListPageHeader routePath="parametres/comptes" />
+          <p className="text-sm text-atg-muted">{t('form.loading')}</p>
+        </div>
       </ParametresPageLayout>
     );
   }
 
-  const selectClass =
-    'mb-6 w-full max-w-md rounded-lg border border-atg-border bg-atg-bg px-3 py-2 text-sm text-atg-fg focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary';
-
   return (
     <>
       <ParametresPageLayout
-        onSubnavNavigate={formDirty ? (_href, proceed) => requestAction(proceed) : undefined}
+        onSubnavNavigate={
+          editFormDirty || createFormDirty ? (_href, proceed) => requestAction(proceed) : undefined
+        }
       >
-        <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
-          <p className="text-sm text-atg-muted">{tBank('page.intro')}</p>
-          {!creating && !editing ? (
-            <Button onClick={() => setCreating(true)}>{tBank('list.newButton')}</Button>
+        <div className="min-w-0 space-y-6">
+          <AdminListPageHeader
+            routePath="parametres/comptes"
+            actions={
+              !editing && !creating ? (
+                <Button onClick={() => setCreating(true)}>{tBank('list.newButton')}</Button>
+              ) : undefined
+            }
+          />
+
+          <BankAccountsStatCards
+            accounts={accounts}
+            loading={loading}
+            error={listError}
+          />
+
+          {isSuperAdmin && organizations.length > 0 ? (
+            <OrganizationOrgSelector
+              organizations={organizations}
+              value={organizationId}
+              onChange={handleOrganizationChange}
+              label={tBank('list.orgSelectAria')}
+              className="max-w-md"
+            />
           ) : null}
-        </div>
 
-        {isSuperAdmin && organizations.length > 0 ? (
-          <select
-            className={selectClass}
-            value={organizationId}
-            onChange={(e) => handleOrganizationChange(e.target.value)}
-            aria-label={tBank('list.orgSelectAria')}
-          >
-            {organizations.map((org) => (
-              <option key={org.id} value={org.id}>
-                {org.name}
-              </option>
-            ))}
-          </select>
-        ) : null}
-
-        {creating && organizationId ? (
-          <div className="mb-8">
-            <OrganizationBankAccountForm
-              organizationId={organizationId}
-              isSuperAdmin={isSuperAdmin}
-              onSuccess={() => {
-                setCreating(false);
-                setFormDirty(false);
-                void loadAccounts(organizationId);
-              }}
-              onCancel={() => {
-                setCreating(false);
-                setFormDirty(false);
-              }}
-              onDirtyChange={setFormDirty}
-            />
-          </div>
-        ) : null}
-
-        {editing && organizationId ? (
-          <div className="mb-8">
-            <OrganizationBankAccountForm
-              organizationId={organizationId}
-              isSuperAdmin={isSuperAdmin}
-              account={editing}
-              onSuccess={() => {
-                setEditing(null);
-                setFormDirty(false);
-                void loadAccounts(organizationId);
-              }}
-              onCancel={() => {
-                setEditing(null);
-                setFormDirty(false);
-              }}
-              onDirtyChange={setFormDirty}
-            />
-          </div>
-        ) : null}
-
-        {listError ? (
-          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-            {listError}
-          </p>
-        ) : loading ? (
-          <p className="text-sm text-atg-muted">{t('form.loading')}</p>
-        ) : (
+        {!loading && !listError ? (
           <DataTable columns={columns} data={accounts} emptyMessage={tBank('list.empty')} />
-        )}
+        ) : null}
+        </div>
       </ParametresPageLayout>
+      {organizationId ? (
+        <>
+          <OrganizationBankAccountCreateModal
+            open={creating}
+            organizationId={organizationId}
+            isSuperAdmin={isSuperAdmin}
+            onOpenChange={handleCreateModalOpenChange}
+            onDirtyChange={setCreateFormDirty}
+            onSuccess={() => {
+              setCreating(false);
+              setCreateFormDirty(false);
+              void loadAccounts(organizationId, isSuperAdmin);
+            }}
+          />
+          <OrganizationBankAccountEditModal
+            open={!!editing}
+            account={editing}
+            organizationId={organizationId}
+            isSuperAdmin={isSuperAdmin}
+            onOpenChange={handleEditModalOpenChange}
+            onDirtyChange={setEditFormDirty}
+            onSuccess={() => {
+              setEditing(null);
+              setEditFormDirty(false);
+              void loadAccounts(organizationId, isSuperAdmin);
+            }}
+          />
+        </>
+      ) : null}
       <AlertDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}

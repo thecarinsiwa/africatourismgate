@@ -3,7 +3,6 @@ import type { NextRequest } from 'next/server';
 import { adminProtectedPaths } from './config/dashboard';
 import {
   clearSessionCookies,
-  getRememberFromRequest,
   getSessionFromCookies,
   setSessionCookies,
 } from './lib/auth/cookies';
@@ -28,7 +27,6 @@ function isProtectedPath(pathname: string): boolean {
 
 type ValidSession = {
   session: StoredSession;
-  remember: boolean;
   refreshed: boolean;
 };
 
@@ -40,20 +38,20 @@ async function ensureValidSession(
     return null;
   }
 
-  const remember = getRememberFromRequest(request);
-
   if (!isAccessTokenExpired(session)) {
-    return { session, remember, refreshed: false };
+    return { session, refreshed: false };
   }
 
   const tokens = await refreshAccessToken(session.refreshToken);
+  if (tokens === 'locked') {
+    return { session, refreshed: false };
+  }
   if (!tokens) {
     return null;
   }
 
   return {
     session: tokensToStoredSession(tokens, session.user),
-    remember,
     refreshed: true,
   };
 }
@@ -78,7 +76,7 @@ async function handleAuth(request: NextRequest): Promise<NextResponse | null> {
 
     const response = NextResponse.next();
     if (valid.refreshed) {
-      setSessionCookies(response, valid.session, valid.remember);
+      setSessionCookies(response, valid.session);
     }
     return response;
   }

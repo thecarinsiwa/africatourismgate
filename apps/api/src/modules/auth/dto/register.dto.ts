@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
   MaxLength,
   MinLength,
 } from 'class-validator';
@@ -61,4 +62,14 @@ export class RegisterDto {
     message: 'La langue préférée ne doit pas dépasser 2 caractères.',
   })
   preferredLanguage?: string;
+
+  @ApiPropertyOptional({
+    description: 'Stable browser profile id — one active session per profile',
+    format: 'uuid',
+  })
+  @IsOptional()
+  @IsUUID('4', {
+    message: "L'identifiant d'instance client doit être un UUID valide.",
+  })
+  clientInstanceId?: string;
 }

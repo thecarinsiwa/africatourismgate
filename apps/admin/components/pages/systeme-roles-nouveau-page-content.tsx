@@ -1,13 +1,18 @@
 'use client';
 
 import { RoleForm } from '../rbac/role-form';
-import { AdminListPageHeader } from './admin-list-page-header';
+import { AdminIntroPage } from './admin-intro-page';
 
 export function NouveauRolePageContent() {
   return (
-    <div>
-      <AdminListPageHeader routePath="systeme/roles/nouveau" titleKey="metaTitle" />
-      <RoleForm mode="create" />
-    </div>
+    <AdminIntroPage
+      routePath="systeme/roles/nouveau"
+      backHref="/systeme/roles"
+      backLabelKey="backLabel"
+    >
+      <div className="min-w-0">
+        <RoleForm mode="create" />
+      </div>
+    </AdminIntroPage>
   );
 }

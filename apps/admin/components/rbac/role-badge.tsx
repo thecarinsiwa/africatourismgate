@@ -1,6 +1,7 @@
 'use client';
 
 import { DataTableBadge } from '@africatourismgate/ui';
+import { useTranslations } from 'next-intl';
 import { getRoleBadgeVariant } from '../../lib/rbac-display';
 
 type RoleBadgeProps = {
@@ -16,17 +17,20 @@ export function RoleBadge({
   showCode = false,
   className,
 }: RoleBadgeProps) {
-  const label = name ?? code;
+  const tRoleNames = useTranslations('modules.rbac.roleNames');
+  const hasTranslatedName =
+    typeof tRoleNames.has === 'function' ? tRoleNames.has(code) : false;
+  const displayName = hasTranslatedName ? tRoleNames(code) : (name ?? code);
 
   return (
     <DataTableBadge variant={getRoleBadgeVariant(code)} className={className}>
-      {showCode && name ? (
+      {showCode && displayName !== code ? (
         <span>
-          {name}
+          {displayName}
           <span className="ml-1 font-normal opacity-80">({code})</span>
         </span>
       ) : (
-        label
+        displayName
       )}
     </DataTableBadge>
   );

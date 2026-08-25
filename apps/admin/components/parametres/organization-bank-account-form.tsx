@@ -46,6 +46,8 @@ type OrganizationBankAccountFormProps = {
   organizationId: string;
   isSuperAdmin: boolean;
   account?: OrganizationBankAccount;
+  /** Sans cadre ni titre (ex. contenu d'une Modal). */
+  embedded?: boolean;
   onSuccess: () => void;
   onCancel: () => void;
   onDirtyChange?: (isDirty: boolean) => void;
@@ -55,6 +57,7 @@ export function OrganizationBankAccountForm({
   organizationId,
   isSuperAdmin,
   account,
+  embedded = false,
   onSuccess,
   onCancel,
   onDirtyChange,
@@ -166,12 +169,8 @@ export function OrganizationBankAccountForm({
     }
   }
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-atg-border bg-atg-elevated p-6">
-      <h3 className="text-lg font-semibold text-atg-fg">
-        {isEdit ? t('editTitle') : t('createTitle')}
-      </h3>
-
+  const fields = (
+    <>
       {formError ? (
         <p
           role="alert"
@@ -226,62 +225,39 @@ export function OrganizationBankAccountForm({
         />
         {t('isDefault')}
       </label>
+    </>
+  );
 
-      <div className="flex gap-3 pt-2">
-        <Button
-          type="submit"
-          loading={submitting}
-          loadingText={t('saving')}
-          disabled={!isDirty}
-        >
-          {isEdit ? t('update') : t('create')}
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={() => {
-            if (isDirty) {
-              setValues(initialValues);
-              setFieldErrors({});
-              setFormError(null);
-              return;
-            }
-            onCancel();
-          }}
-        >
-          {t('cancel')}
-        </Button>
-      </div>
+  const actions = (
+    <div className="flex flex-wrap justify-end gap-2 pt-2">
+      <Button type="button" variant="outline" onClick={onCancel} disabled={submitting}>
+        {t('cancel')}
+      </Button>
+      <Button type="submit" loading={submitting} loadingText={t('saving')} disabled={!isDirty}>
+        {isEdit ? t('update') : t('create')}
+      </Button>
+    </div>
+  );
 
-      <div className="sticky bottom-0 z-20 border-t border-atg-border bg-atg-bg/95 px-4 py-3 backdrop-blur">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm font-medium text-atg-fg">
-            {isDirty ? t('dirty') : t('clean')}
-          </p>
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                setValues(initialValues);
-                setFieldErrors({});
-                setFormError(null);
-              }}
-              disabled={!isDirty || submitting}
-            >
-              {t('cancel')}
-            </Button>
-            <Button
-              type="submit"
-              loading={submitting}
-              loadingText={t('saving')}
-              disabled={!isDirty}
-            >
-              {t('save')}
-            </Button>
-          </div>
-        </div>
-      </div>
+  if (embedded) {
+    return (
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {fields}
+        {actions}
+      </form>
+    );
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 rounded-lg border border-atg-border bg-atg-elevated p-6"
+    >
+      <h3 className="text-lg font-semibold text-atg-fg">
+        {isEdit ? t('editTitle') : t('createTitle')}
+      </h3>
+      {fields}
+      {actions}
     </form>
   );
 }

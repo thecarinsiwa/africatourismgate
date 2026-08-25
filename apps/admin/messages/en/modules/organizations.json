@@ -1,12 +1,12 @@
 {
   "list": {
-    "emptyTitleSearch": "None organisation ne correspond à votre recherche",
-    "emptyTitleDefault": "None organisation pour le moment",
-    "emptyDescriptionSearch": "Essayez un autre nom ou slug.",
-    "emptyDescriptionDefault": "Créez une organisation partenaire pour commencer.",
-    "emptyTableSearch": "None organisation ne correspond à votre recherche.",
-    "emptyTableDefault": "None organisation pour le moment.",
-    "ariaLabel": "Liste des organisations",
+    "emptyTitleSearch": "No organizations match your search",
+    "emptyTitleDefault": "No organizations yet",
+    "emptyDescriptionSearch": "Try a different name or slug.",
+    "emptyDescriptionDefault": "Create a partner organization to get started.",
+    "emptyTableSearch": "No organizations match your search.",
+    "emptyTableDefault": "No organizations yet.",
+    "ariaLabel": "Organizations list",
     "columns": {
       "type": "Type",
       "counts": "Headcount"
@@ -21,7 +21,7 @@
     },
     "deleteDialog": {
       "title": "Delete organization",
-      "description": "Delete organization « {name} » ? Cette action est réversible côté base."
+      "description": "Delete the organization “{name}”? This action is reversible at the database level."
     }
   },
   "form": {
@@ -35,50 +35,67 @@
     "slug": "Slug",
     "slugHint": "Unique URL identifier (e.g. africa-tourism-gate).",
     "description": "Description",
-    "website": "Site web",
+    "website": "Website",
     "websitePlaceholder": "https://",
-    "contactEmail": "Email de contact",
+    "contactEmail": "Contact email",
     "contactPhone": "Phone",
-    "legalForm": "Forme juridique",
+    "legalForm": "Legal form",
     "rccm": "RCCM",
-    "rccmHint": "Registre du Commerce et du Crédit Mobilier",
-    "idNat": "ID. Nat.",
-    "idNatHint": "Identification Nationale",
-    "nif": "NIF",
+    "rccmHint": "Trade and personal property credit register",
+    "idNat": "National ID",
+    "idNatHint": "National identification number",
+    "nif": "TIN",
     "nifHint": "Tax identification number",
-    "cnss": "CNSS",
-    "cnssHint": "Caisse Nationale de Sécurité Sociale",
+    "cnss": "Social security",
+    "cnssHint": "National social security number",
     "currency": "Currency",
     "status": "Status",
     "submitCreate": "Create organization",
     "submitEdit": "Save",
     "validation": {
-      "nameRequired": "Last name is required.",
-      "slugRequired": "Le slug est obligatoire.",
-      "slugInvalid": "Slug invalide : minuscules, chiffres et tirets uniquement (ex. mon-organisation).",
-      "currencyInvalid": "La devise doit comporter 3 lettres (ex. USD, CDF)."
+      "nameRequired": "Name is required.",
+      "slugRequired": "Slug is required.",
+      "slugInvalid": "Invalid slug: lowercase letters, digits and hyphens only (e.g. my-organization).",
+      "currencyInvalid": "Currency must be 3 letters (e.g. USD, CDF)."
     },
     "toast": {
-      "savedTitle": "Organization enregistrée",
+      "savedTitle": "Organization saved",
       "errorTitle": "Save error"
     }
   },
   "legalForm": {
-    "unspecified": "No renseigné",
-    "SARL": "SARL",
-    "SA": "SA",
-    "SAS": "SAS",
-    "Ets": "Établissement (Ets)",
-    "SNC": "SNC",
-    "ASBL": "ASBL"
+    "unspecified": "Not specified",
+    "SARL": "LLC (SARL)",
+    "SA": "Corporation (SA)",
+    "SAS": "Simplified joint-stock (SAS)",
+    "Ets": "Sole proprietorship (Ets)",
+    "SNC": "General partnership (SNC)",
+    "ASBL": "Non-profit (ASBL)"
   },
   "detail": {
     "title": "Organization",
+    "viewTitle": "View organization",
+    "editButton": "Edit",
+    "viewButton": "View",
     "tabsAria": "Organization sections",
     "tabs": {
       "infos": "Info",
-      "users": "Users",
+      "users": "Employees",
       "settings": "Settings"
+    },
+    "meta": {
+      "currency": "Currency",
+      "contact": "Contact",
+      "website": "Website",
+      "createdAt": "Created on"
+    },
+    "logo": {
+      "change": "Change",
+      "changeHint": "Choose a logo (JPEG, PNG, WebP, GIF or SVG — max. 2 MB)",
+      "uploading": "Uploading…",
+      "uploadSuccess": "Logo updated.",
+      "invalidFormat": "Accepted formats: JPEG, PNG, WebP, GIF or SVG.",
+      "tooLarge": "Image too large (max. 2 MB)."
     },
     "settingsIntro": "Organization settings: contact details, locale, booking and branding."
   },

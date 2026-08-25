@@ -8,7 +8,7 @@
     "payments": "Pagos",
     "contentSupport": "Contenido y soporte",
     "gap": "GAP (Gorilla Ambassadors)",
-    "system": "Sistema y analítica"
+    "system": "Sistema"
   },
   "links": {
     "users": "Usuarios",
@@ -66,6 +66,8 @@
     "newGapMediaItem": "Nuevo medio GAP",
     "newPromoCode": "Nuevo código promocional",
     "bankAccounts": "Cuentas bancarias",
+    "donations": "Donaciones",
+    "newDonation": "Nueva donación",
     "availability": "Disponibilidad",
     "itineraryStops": "Escalas",
     "activities": "Actividades",

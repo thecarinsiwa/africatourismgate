@@ -8,10 +8,14 @@ import { AdminListPageHeader } from './admin-list-page-header';
 export function RolesPageContent() {
   const t = useTranslations('pages.systeme.roles');
   return (
-    <div>
+    <div className="min-w-0">
       <AdminListPageHeader
         routePath="systeme/roles"
-        actions={<Button href="/systeme/roles/nouveau">{t('actions.new')}</Button>}
+        actions={
+          <Button href="/systeme/roles/nouveau" variant="primary">
+            {t('actions.new')}
+          </Button>
+        }
       />
       <RolesList />
     </div>

@@ -302,6 +302,8 @@ import type {
   ForgotPasswordResponse,
   LoginRequest,
   LogoutResponse,
+  TouchSessionRequest,
+  UnlockSessionRequest,
   Organization,
   OrganizationListItem,
   OrganizationsListQuery,
@@ -390,6 +392,7 @@ import type {
   UsersListQuery,
 } from '@africatourismgate/types';
 export type { PaginationQuery } from '@africatourismgate/types';
+export { SESSION_LOCKED_CODE } from '@africatourismgate/types';
 import { ApiHttpError, parseApiErrorMessage } from './http-error';
 import {
   fetchPaginated,
@@ -397,7 +400,7 @@ import {
   sumSucceededPaymentsRevenue,
 } from './pagination';
 
-export { ApiHttpError, parseApiErrorMessage } from './http-error';
+export { ApiHttpError, getApiErrorCode, isSessionLockedApiError, parseApiErrorMessage } from './http-error';
 
 function buildGapPublicQueryString(query?: {
   locale?: string;
@@ -442,6 +445,8 @@ export type {
   ForgotPasswordResponse,
   LoginRequest,
   LogoutResponse,
+  TouchSessionRequest,
+  UnlockSessionRequest,
   PaginatedResponse,
   PaginationMeta,
   PaymentListItem,
@@ -709,6 +714,26 @@ export class ApiClient {
     return this.request<LogoutResponse>('/auth/logout', {
       method: 'POST',
       body: { refreshToken },
+      skipAuth: true,
+    });
+  }
+
+  touchSession(refreshToken: string): Promise<LogoutResponse> {
+    return this.touchSessionWithBody({ refreshToken });
+  }
+
+  touchSessionWithBody(body: TouchSessionRequest): Promise<LogoutResponse> {
+    return this.request<LogoutResponse>('/auth/touch', {
+      method: 'POST',
+      body,
+      skipAuth: true,
+    });
+  }
+
+  unlockSession(body: UnlockSessionRequest): Promise<AuthTokens> {
+    return this.request<AuthTokens>('/auth/unlock', {
+      method: 'POST',
+      body,
       skipAuth: true,
     });
   }
@@ -1860,6 +1885,19 @@ export class ApiClient {
 
   deleteDonation(id: string): Promise<void> {
     return this.request<void>(`/donations/${id}`, { method: 'DELETE' });
+  }
+
+  uploadDonationDescriptionAsset(
+    body: FormData,
+    donationId?: string,
+  ): Promise<{ url: string; assetType: ActivityDescriptionAssetType }> {
+    const route = donationId
+      ? `/donations/${donationId}/upload-description-asset`
+      : '/donations/upload-description-asset';
+    return this.request<{ url: string; assetType: ActivityDescriptionAssetType }>(route, {
+      method: 'POST',
+      body,
+    });
   }
 
   getPublicDonations(query?: PublicDonationsQuery): Promise<PublicDonationsPayload> {

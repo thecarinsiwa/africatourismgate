@@ -23,7 +23,8 @@ export type RbacScopeDisplayLabels = {
   property: string;
   agency: string;
   support_queue: string;
-  withId: string;
+  withId: (params: { label: string; idPrefix: string }) => string;
+  withName: (params: { label: string; name: string }) => string;
 };
 
 export function formatPermissionDomain(
@@ -58,11 +59,11 @@ export function formatAssignmentScope(
   scopeType: 'global' | 'property' | 'agency' | 'support_queue',
   labels: RbacScopeDisplayLabels,
   scopeId?: string | null,
+  scopeName?: string | null,
 ): string {
   if (scopeType === 'global') return labels.global;
   const label = labels[scopeType] ?? scopeType;
+  if (scopeName) return labels.withName({ label, name: scopeName });
   if (!scopeId) return label;
-  return labels.withId
-    .replace('{label}', label)
-    .replace('{idPrefix}', scopeId.slice(0, 8));
+  return labels.withId({ label, idPrefix: scopeId.slice(0, 8) });
 }

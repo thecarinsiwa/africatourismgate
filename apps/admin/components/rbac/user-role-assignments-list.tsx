@@ -6,34 +6,66 @@ import {
   AlertDialog,
   Avatar,
   Card,
+  DataTable,
+  DataTableActionButton,
+  DataTableActions,
+  DataTablePagination,
+  EmptyState,
+  FilterBar,
+  Input,
+  SearchableSelect,
   useToast,
+  type ColumnDef,
 } from '@africatourismgate/ui';
-import type { UserRoleAssignment } from '@africatourismgate/types';
-import { useLocale, useTranslations } from 'next-intl';
+import type { Role, ScopeType, User, UserRoleAssignment } from '@africatourismgate/types';
+import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useRbacScopeDisplayLabels } from '../../lib/i18n/use-module-labels';
+import {
+  useRbacScopeDisplayLabels,
+  useRbacScopeTypeLabels,
+} from '../../lib/i18n/use-module-labels';
+import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import { formatAssignmentScope } from '../../lib/rbac-display';
 import { getApiClient } from '../../lib/auth/api';
-import { UserIdFilterBar } from '../users/user-id-filter-bar';
 import { RoleBadge } from './role-badge';
 import { RbacSubnav } from './rbac-subnav';
 import { UserRoleAssignmentForm } from './user-role-assignment-form';
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 10;
+const SEARCH_DEBOUNCE_MS = 300;
+const SCOPE_TYPES: ScopeType[] = ['global', 'property', 'agency', 'support_queue'];
 
-type UserAssignmentGroup = {
-  userId: string;
-  user: UserRoleAssignment['user'];
-  assignments: UserRoleAssignment[];
-};
+function isScopeType(value: string): value is ScopeType {
+  return (SCOPE_TYPES as string[]).includes(value);
+}
 
 export function UserRoleAssignmentsList() {
   const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
-  const locale = useLocale();
   const t = useTranslations('modules.rbac.assignments');
+  const tCommon = useTranslations('modules.common');
+  const tSelect = useTranslations('modules.common.select');
+  const tRoleNames = useTranslations('modules.rbac.roleNames');
+  const tActions = useTranslations('common.actions');
   const scopeLabels = useRbacScopeDisplayLabels();
+  const scopeTypeLabels = useRbacScopeTypeLabels();
+  const paginationLabels = useDataTablePaginationLabels();
   const { toast } = useToast();
-  const [userIdFilter, setUserIdFilter] = useState('');
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [userIdFilter, setUserIdFilter] = useState(() => searchParams.get('userId') ?? '');
+  const [roleIdFilter, setRoleIdFilter] = useState(() => searchParams.get('roleId') ?? '');
+  const [scopeTypeFilter, setScopeTypeFilter] = useState(() => {
+    const value = searchParams.get('scopeType') ?? '';
+    return isScopeType(value) ? value : '';
+  });
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState('');
+  const [users, setUsers] = useState<User[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
   const [page, setPage] = useState(1);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -48,10 +80,119 @@ export function UserRoleAssignmentsList() {
   const [revokingId, setRevokingId] = useState<string | null>(null);
   const [pendingRevoke, setPendingRevoke] = useState<UserRoleAssignment | null>(null);
 
-  const handleUserIdChange = useCallback((userId: string) => {
+  useEffect(() => {
+    const userId = searchParams.get('userId') ?? '';
+    const roleId = searchParams.get('roleId') ?? '';
+    const scopeTypeRaw = searchParams.get('scopeType') ?? '';
     setUserIdFilter(userId);
-    setPage(1);
+    setRoleIdFilter(roleId);
+    setScopeTypeFilter(isScopeType(scopeTypeRaw) ? scopeTypeRaw : '');
+  }, [searchParams]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setSearch((prev) => {
+        const q = searchInput.trim();
+        if (prev !== q) setPage(1);
+        return q;
+      });
+    }, SEARCH_DEBOUNCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [searchInput]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void Promise.all([
+      getApiClient().listUsers({ page: 1, limit: 100, status: 'active' }),
+      getApiClient().listRoles({ page: 1, limit: 100, includeSystem: true }),
+    ])
+      .then(([usersResult, rolesResult]) => {
+        if (cancelled) return;
+        setUsers(usersResult.data);
+        setRoles(rolesResult.data);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setUsers([]);
+        setRoles([]);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
+
+  const roleDisplayName = useCallback(
+    (role: Role) => {
+      const hasTranslated =
+        typeof tRoleNames.has === 'function' ? tRoleNames.has(role.code) : false;
+      return hasTranslated ? tRoleNames(role.code) : role.name;
+    },
+    [tRoleNames],
+  );
+
+  const roleOptions = useMemo(
+    () => [
+      { value: '', label: t('filters.allRoles') },
+      ...roles.map((role) => ({
+        value: role.id,
+        label: `${roleDisplayName(role)} (${role.code})`,
+      })),
+    ],
+    [roleDisplayName, roles, t],
+  );
+
+  const scopeOptions = useMemo(
+    () => [
+      { value: '', label: t('filters.allScopes') },
+      ...SCOPE_TYPES.map((value) => ({
+        value,
+        label: scopeTypeLabels[value],
+      })),
+    ],
+    [scopeTypeLabels, t],
+  );
+
+  const syncFilters = useCallback(
+    (next: { userId?: string; roleId?: string; scopeType?: string }) => {
+      const userId = next.userId ?? userIdFilter;
+      const roleId = next.roleId ?? roleIdFilter;
+      const scopeType = next.scopeType ?? scopeTypeFilter;
+
+      setUserIdFilter(userId);
+      setRoleIdFilter(roleId);
+      setScopeTypeFilter(isScopeType(scopeType) ? scopeType : '');
+      setPage(1);
+
+      const params = new URLSearchParams(searchParams.toString());
+      if (userId) params.set('userId', userId);
+      else params.delete('userId');
+      if (roleId) params.set('roleId', roleId);
+      else params.delete('roleId');
+      if (scopeType && isScopeType(scopeType)) params.set('scopeType', scopeType);
+      else params.delete('scopeType');
+
+      const qs = params.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname);
+    },
+    [pathname, roleIdFilter, router, scopeTypeFilter, searchParams, userIdFilter],
+  );
+
+  const handleClearFilters = useCallback(() => {
+    setSearchInput('');
+    setSearch('');
+    setUserIdFilter('');
+    setRoleIdFilter('');
+    setScopeTypeFilter('');
+    setPage(1);
+    router.replace(pathname);
+  }, [pathname, router]);
+
+  const activeFilterCount = [
+    search.trim().length > 0,
+    userIdFilter,
+    roleIdFilter,
+    scopeTypeFilter,
+  ].filter(Boolean).length;
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -60,7 +201,10 @@ export function UserRoleAssignmentsList() {
         page,
         limit: PAGE_SIZE,
         includeRevoked: false,
+        search: search || undefined,
         userId: userIdFilter || undefined,
+        roleId: roleIdFilter || undefined,
+        scopeType: isScopeType(scopeTypeFilter) ? scopeTypeFilter : undefined,
       });
       setState({
         status: 'ready',
@@ -71,39 +215,11 @@ export function UserRoleAssignmentsList() {
     } catch (error) {
       setState({ status: 'error', message: getRbacErrorMessage(error) });
     }
-  }, [page, userIdFilter, getRbacErrorMessage]);
+  }, [page, search, userIdFilter, roleIdFilter, scopeTypeFilter, getRbacErrorMessage]);
 
   useEffect(() => {
     void load();
   }, [load]);
-
-  const groupedByUser = useMemo<UserAssignmentGroup[]>(() => {
-    if (state.status !== 'ready') return [];
-
-    const groups = new Map<string, UserAssignmentGroup>();
-    for (const assignment of state.assignments) {
-      const existing = groups.get(assignment.userId);
-      if (existing) {
-        existing.assignments.push(assignment);
-      } else {
-        groups.set(assignment.userId, {
-          userId: assignment.userId,
-          user: assignment.user,
-          assignments: [assignment],
-        });
-      }
-    }
-
-    return Array.from(groups.values()).sort((a, b) => {
-      const nameA = a.user
-        ? `${a.user.lastName} ${a.user.firstName}`.toLowerCase()
-        : a.userId;
-      const nameB = b.user
-        ? `${b.user.lastName} ${b.user.firstName}`.toLowerCase()
-        : b.userId;
-      return nameA.localeCompare(nameB, locale);
-    });
-  }, [state, locale]);
 
   const confirmRevoke = useCallback(async () => {
     if (!pendingRevoke) return;
@@ -128,97 +244,216 @@ export function UserRoleAssignmentsList() {
     }
   }, [pendingRevoke, load, toast, t, getRbacErrorMessage]);
 
+  const columns = useMemo<ColumnDef<UserRoleAssignment, unknown>[]>(
+    () => [
+      {
+        id: 'user',
+        header: t('columns.user'),
+        cell: ({ row }) => {
+          const assignment = row.original;
+          const user = assignment.user;
+          if (!user) {
+            return (
+              <span className="font-mono text-xs text-atg-muted">
+                {assignment.userId.slice(0, 8)}…
+              </span>
+            );
+          }
+          return (
+            <div className="flex min-w-0 items-center gap-2.5">
+              <Avatar
+                email={user.email}
+                firstName={user.firstName}
+                lastName={user.lastName}
+                size="sm"
+              />
+              <div className="min-w-0">
+                <Link
+                  href={`/utilisateurs/${assignment.userId}/voir`}
+                  className="block truncate font-medium text-atg-fg hover:text-primary hover:underline"
+                >
+                  {user.firstName} {user.lastName}
+                </Link>
+                <p className="truncate text-xs text-atg-muted">{user.email}</p>
+              </div>
+            </div>
+          );
+        },
+      },
+      {
+        id: 'role',
+        header: t('columns.role'),
+        cell: ({ row }) => {
+          const role = row.original.role;
+          if (!role) {
+            return <RoleBadge code={row.original.roleId.slice(0, 8)} />;
+          }
+          return <RoleBadge code={role.code} name={role.name} />;
+        },
+      },
+      {
+        id: 'scope',
+        header: t('columns.scope'),
+        cell: ({ row }) => (
+          <span className="text-sm text-atg-muted">
+            {formatAssignmentScope(
+              row.original.scopeType,
+              scopeLabels,
+              row.original.scopeId,
+              row.original.scopeName,
+            )}
+          </span>
+        ),
+      },
+      {
+        id: 'actions',
+        header: tCommon('columns.actions'),
+        meta: { align: 'right' },
+        cell: ({ row }) => {
+          const assignment = row.original;
+          const busy = revokingId === assignment.id;
+          return (
+            <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
+              <DataTableActionButton
+                action="revoke"
+                label={t('revoke')}
+                onClick={() => setPendingRevoke(assignment)}
+                disabled={busy}
+                loading={busy}
+              />
+            </DataTableActions>
+          );
+        },
+      },
+    ],
+    [revokingId, scopeLabels, t, tCommon],
+  );
+
+  const isLoading = state.status === 'loading';
+  const isError = state.status === 'error';
+  const assignments = state.status === 'ready' ? state.assignments : [];
+  const isEmpty = state.status === 'ready' && assignments.length === 0;
+  const hasActiveFilters = activeFilterCount > 0;
+
   return (
     <div className="space-y-6">
       <RbacSubnav />
 
-      <UserIdFilterBar onUserIdChange={handleUserIdChange} />
-
       <UserRoleAssignmentForm onSuccess={() => void load()} />
 
-      {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600">
+      <FilterBar
+        mobileVariant="drawer"
+        activeCount={activeFilterCount}
+        onClear={handleClearFilters}
+        clearLabel={tCommon('filters.clearAll')}
+        applyLabel={tCommon('filters.apply')}
+        toggleLabel={tCommon('filters.toggle')}
+        filters={
+          <>
+            <div className="w-full sm:min-w-[220px] sm:max-w-sm">
+              <Input
+                label={t('filters.search')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder={t('filters.searchPlaceholder')}
+                aria-label={t('filters.searchPlaceholder')}
+              />
+            </div>
+            <div className="w-full sm:max-w-xs">
+              <SearchableSelect
+                label={t('filters.user')}
+                value={userIdFilter}
+                options={[
+                  { value: '', label: t('filters.allUsers') },
+                  ...users.map((user) => ({
+                    value: user.id,
+                    label: `${user.firstName} ${user.lastName} — ${user.email}`,
+                  })),
+                ]}
+                onChange={(value) => syncFilters({ userId: value })}
+                searchPlaceholder={tSelect('searchPlaceholder')}
+                emptyMessage={tSelect('empty')}
+              />
+            </div>
+            <div className="w-full sm:max-w-xs">
+              <SearchableSelect
+                label={t('filters.role')}
+                value={roleIdFilter}
+                options={roleOptions}
+                onChange={(value) => syncFilters({ roleId: value })}
+                searchPlaceholder={tSelect('searchPlaceholder')}
+                emptyMessage={tSelect('empty')}
+              />
+            </div>
+            <div className="w-full sm:max-w-xs">
+              <SearchableSelect
+                label={t('filters.scope')}
+                value={scopeTypeFilter}
+                options={scopeOptions}
+                onChange={(value) => syncFilters({ scopeType: value })}
+                searchPlaceholder={tSelect('searchPlaceholder')}
+                emptyMessage={tSelect('empty')}
+              />
+            </div>
+          </>
+        }
+      />
+
+      {isError ? (
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
-      ) : state.status === 'loading' ? (
-        <p className="text-sm text-atg-muted">{t('loading')}</p>
-      ) : groupedByUser.length === 0 ? (
-        <Card variant="dashboard" padding="lg">
-          <p className="text-sm text-atg-muted">{t('empty')}</p>
-        </Card>
+      ) : isEmpty && !isLoading ? (
+        <EmptyState
+          title={hasActiveFilters ? t('emptyTitleSearch') : t('emptyTitleDefault')}
+          description={
+            hasActiveFilters ? t('emptyDescriptionSearch') : t('emptyDescriptionDefault')
+          }
+        />
       ) : (
-        <div className="space-y-4">
-          {groupedByUser.map((group) => (
-            <Card key={group.userId} variant="dashboard" padding="lg" className="space-y-4">
-              <div className="flex items-start gap-3">
-                {group.user ? (
-                  <>
-                    <Avatar
-                      email={group.user.email}
-                      firstName={group.user.firstName}
-                      lastName={group.user.lastName}
-                      size="md"
-                    />
-                    <div className="min-w-0">
-                      <p className="font-medium text-atg-fg">
-                        {group.user.firstName} {group.user.lastName}
-                      </p>
-                      <p className="truncate text-sm text-atg-muted">{group.user.email}</p>
-                    </div>
-                  </>
-                ) : (
-                  <p className="font-mono text-sm text-atg-muted">{group.userId}</p>
-                )}
-              </div>
+        <>
+          <Card variant="dashboard" padding="none" className="overflow-hidden">
+            <DataTable
+              columns={columns}
+              data={assignments}
+              isLoading={isLoading}
+              loadingMessage={t('loading')}
+              emptyMessage={
+                hasActiveFilters ? t('emptyTableSearch') : t('emptyTableDefault')
+              }
+              emptyVariant={hasActiveFilters ? 'search' : 'default'}
+              getRowId={(row) => row.id}
+              aria-label={t('ariaLabel')}
+            />
+          </Card>
 
-              <div className="flex flex-wrap gap-2">
-                {group.assignments.map((assignment) => (
-                  <div
-                    key={assignment.id}
-                    className="flex flex-wrap items-center gap-2 rounded-lg border border-atg-border bg-atg-elevated px-3 py-2"
-                  >
-                    {assignment.role ? (
-                      <RoleBadge
-                        code={assignment.role.code}
-                        name={assignment.role.name}
-                      />
-                    ) : (
-                      <RoleBadge code={assignment.roleId.slice(0, 8)} />
-                    )}
-                    <span className="text-xs text-atg-muted">
-                      {formatAssignmentScope(
-                        assignment.scopeType,
-                        scopeLabels,
-                        assignment.scopeId,
-                      )}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setPendingRevoke(assignment)}
-                      disabled={revokingId === assignment.id}
-                      className="text-xs font-medium text-red-600 hover:underline disabled:opacity-50"
-                    >
-                      {t('revoke')}
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          ))}
-        </div>
+          {state.status === 'ready' && state.totalPages > 1 ? (
+            <DataTablePagination
+              page={page}
+              pageSize={PAGE_SIZE}
+              totalPages={state.totalPages}
+              totalItems={state.total}
+              itemLabel={t('paginationItem')}
+              labels={paginationLabels}
+              onPageChange={setPage}
+            />
+          ) : null}
+        </>
       )}
 
       <AlertDialog
         open={pendingRevoke !== null}
         onOpenChange={(open) => {
-          if (!open) setPendingRevoke(null);
+          if (!open && !revokingId) setPendingRevoke(null);
         }}
         title={t('revokeDialog.title')}
         description={t('revokeDialog.description')}
         confirmLabel={t('revoke')}
+        cancelLabel={tActions('cancel')}
         variant="danger"
         loading={revokingId !== null}
         onConfirm={() => void confirmRevoke()}
+        onCancel={() => setPendingRevoke(null)}
       />
     </div>
   );

@@ -1,16 +1,16 @@
 {
   "subnav": {
-    "ariaLabel": "Navigation RBAC",
+    "ariaLabel": "RBAC navigation",
     "roles": "Roles",
     "permissions": "Permissions",
-    "assignments": "Assignations",
-    "audit": "Todit"
+    "assignments": "Assignments",
+    "audit": "Audit"
   },
   "unsavedChanges": {
-    "title": "Modifications non enregistrées",
-    "description": "Des changements n'ont pas été enregistrés. Quitter sans sauvegarder ?",
-    "confirm": "Quitter sans enregistrer",
-    "cancel": "Continuer l'édition"
+    "title": "Unsaved changes",
+    "description": "Some changes have not been saved. Leave without saving?",
+    "confirm": "Leave without saving",
+    "cancel": "Continue editing"
   },
   "permissionDomains": {
     "amenities": "Amenities",
@@ -20,133 +20,195 @@
     "employees": "Employees",
     "departments": "Departments",
     "flights": "Flights",
-    "loyalty": "Fidélité",
+    "loyalty": "Loyalty",
     "organizations": "Organizations",
     "payments": "Payments",
     "permissions": "Permissions",
-    "promo_codes": "Codes promo",
+    "promo_codes": "Promo codes",
     "properties": "Accommodations",
     "promotions": "Promotions",
-    "reviews": "Avis",
+    "reviews": "Reviews",
     "roles": "Roles",
     "support": "Support",
     "users": "Users",
-    "vehicles": "Locations",
-    "activities": "Activitys",
+    "vehicles": "Rentals",
+    "activities": "Activities",
     "packages": "Packages",
     "gap": "GAP (Gorilla Ambassadors Program)"
   },
   "permissionActions": {
-    "read": "Lecture",
-    "write": "Écriture",
-    "delete": "Suppression",
-    "manage": "Gestion",
-    "approve": "Approbation"
+    "read": "Read",
+    "write": "Write",
+    "delete": "Delete",
+    "manage": "Manage",
+    "approve": "Approve"
   },
   "roles": {
-    "searchPlaceholder": "Rechercher par code ou nom…",
-    "empty": "Tocun rôle trouvé.",
-    "ariaLabel": "Liste des rôles",
-    "paginationItem": "rôle",
-    "systemReadOnlyHint": "Role système (lecture seule)",
-    "codeHint": "Minuscules, chiffres et underscore (ex. sales_manager).",
-    "createSubmit": "Créer le rôle",
-    "backToList": "← Back aux rôles",
+    "searchPlaceholder": "Search by code or name…",
+    "empty": "No roles found.",
+    "emptyTitleSearch": "No roles match your filters",
+    "emptyTitleDefault": "No roles yet",
+    "emptyDescriptionSearch": "Try a different code, name, or type.",
+    "emptyDescriptionDefault": "Create a custom role to get started.",
+    "emptyTableSearch": "No roles match your filters.",
+    "emptyTableDefault": "No roles yet.",
+    "ariaLabel": "Roles list",
+    "paginationItem": "role",
+    "systemReadOnlyHint": "System role (read-only)",
+    "codeHint": "Lowercase, digits and underscore (e.g. sales_manager).",
+    "createSubmit": "Create role",
+    "backToList": "← Back to roles",
     "type": {
-      "system": "Système",
-      "custom": "Personnalisé"
+      "system": "System",
+      "custom": "Custom"
     },
     "validation": {
-      "codeRequired": "Le code est obligatoire.",
-      "nameRequired": "Last name is required."
+      "codeRequired": "Code is required.",
+      "nameRequired": "Name is required."
     },
     "editTitle": {
-      "system": "Role système",
-      "custom": "Modifier le rôle"
+      "system": "System role",
+      "custom": "Edit role"
     },
     "deleteDialog": {
-      "title": "Supprimer le rôle",
-      "description": "Supprimer définitivement le rôle « {name} » ?"
+      "title": "Delete role",
+      "description": "Permanently delete the role “{name}”?"
     },
     "toast": {
-      "deletedTitle": "Role supprimé",
-      "deletedMessage": "Le rôle « {name} » a été supprimé.",
-      "deleteFailedTitle": "Échec de la suppression"
+      "deletedTitle": "Role deleted",
+      "deletedMessage": "The role “{name}” has been deleted.",
+      "deleteFailedTitle": "Delete failed"
     }
   },
   "permissions": {
-    "intro": "Catalogue des permissions (lecture seule). Modifiez les droits via la matrice sur chaque rôle.",
-    "searchPlaceholder": "Rechercher…",
-    "empty": "None permission.",
+    "intro": "Permission catalog (read-only). Edit rights via the matrix on each role.",
+    "searchPlaceholder": "Search…",
+    "empty": "No permissions.",
     "paginationItem": "permission",
     "columns": {
-      "resource": "Ressource"
+      "resource": "Resource"
+    },
+    "stats": {
+      "total": {
+        "label": "Permissions",
+        "subtitle": "Catalog entries"
+      },
+      "domains": {
+        "label": "Domains",
+        "subtitle": "Distinct resources"
+      },
+      "actions": {
+        "label": "Actions",
+        "subtitle": "Action types"
+      },
+      "roles": {
+        "label": "Roles",
+        "subtitle": "Configured roles"
+      }
     }
   },
   "matrix": {
-    "title": "Matrice des permissions",
-    "loading": "Chargement de la matrice…",
-    "descriptionReadOnly": "Role système : consultation seule.",
-    "descriptionEditable": "Cochez les permissions accordées à ce rôle, regroupées par domaine.",
+    "title": "Permission matrix",
+    "loading": "Loading matrix…",
+    "descriptionReadOnly": "System role: read-only.",
+    "descriptionEditable": "Select the permissions granted to this role, grouped by domain.",
+    "readOnlyBadge": "Read-only",
+    "selectedCount": "{selected} / {total} selected",
+    "domainCount": "{selected}/{total}",
+    "selectDomain": "Select all",
+    "searchPlaceholder": "Filter a domain or permission…",
+    "searchEmpty": "No domains match your search.",
+    "empty": "No permissions available.",
     "columns": {
-      "scope": "Périmètre"
+      "scope": "Scope"
     },
-    "wholeDomain": "Tout le domaine",
-    "perAction": "Par action",
-    "ariaToggleDomain": "Tout {domain} — {action}",
+    "wholeDomain": "Whole domain",
+    "perAction": "Per action",
+    "ariaToggleDomain": "All {domain} — {action}",
+    "ariaToggleDomainAll": "Select all permissions for {domain}",
     "toast": {
-      "savedTitle": "Permissions enregistrées",
-      "savedMessage": "La matrice du rôle a été mise à jour.",
-      "saveFailedTitle": "Échec de l'enregistrement"
+      "savedTitle": "Permissions saved",
+      "savedMessage": "The role matrix has been updated.",
+      "saveFailedTitle": "Save failed"
     }
   },
+  "roleNames": {
+    "super_admin": "Super administrator",
+    "org_admin": "Organization administrator",
+    "support": "Support agent",
+    "customer": "Customer",
+    "gap_coordinator": "GAP coordinator"
+  },
   "assignments": {
-    "loading": "Chargement des assignations…",
-    "empty": "None assignation active.",
-    "revoke": "Révoquer",
+    "loading": "Loading assignments…",
+    "empty": "No active assignments.",
+    "emptyTitleSearch": "No assignments match the filters",
+    "emptyTitleDefault": "No active assignments",
+    "emptyDescriptionSearch": "Try another user, role, or scope.",
+    "emptyDescriptionDefault": "Assign a role above to get started.",
+    "emptyTableSearch": "No assignments match the filters.",
+    "emptyTableDefault": "No active assignments.",
+    "ariaLabel": "Role assignments list",
+    "paginationItem": "assignment",
+    "filters": {
+      "user": "User",
+      "role": "Role",
+      "scope": "Scope",
+      "search": "Search",
+      "searchPlaceholder": "Search by name, email, or role…",
+      "allUsers": "All users",
+      "allRoles": "All roles",
+      "allScopes": "All scopes"
+    },
+    "columns": {
+      "user": "User",
+      "role": "Role",
+      "scope": "Scope"
+    },
+    "revoke": "Revoke",
     "revokeDialog": {
-      "title": "Révoquer l'assignation",
-      "description": "Retirer ce rôle pour l'utilisateur sur ce périmètre ?"
+      "title": "Revoke assignment",
+      "description": "Remove this role for the user on this scope?"
     },
     "toast": {
-      "revokedTitle": "Assignation révoquée",
-      "revokedMessage": "Le rôle a été retiré pour cet utilisateur.",
-      "revokeFailedTitle": "Échec de la révocation"
+      "revokedTitle": "Assignment revoked",
+      "revokedMessage": "The role has been removed for this user.",
+      "revokeFailedTitle": "Revoke failed"
     }
   },
   "audit": {
-    "checkingAccess": "Vérification des droits…",
-    "accessDenied": "Cette page est réservée au super administrateur. Connectez-vous avec admin@africatourismgate.local ou un compte disposant du rôle super_admin.",
-    "empty": "Tocun événement pour ces critères.",
-    "paginationItem": "événement",
+    "checkingAccess": "Checking access…",
+    "accessDenied": "This page is reserved for the super administrator. Sign in with admin@africatourismgate.local or an account with the super_admin role.",
+    "empty": "No events for these criteria.",
+    "paginationItem": "event",
     "hideDetail": "Hide details",
     "showDetailJson": "View JSON details",
     "detailModalTitle": "Event JSON details",
     "actorFallback": "Actor: {actorId}…",
-    "targetLabel": "Cible",
+    "targetLabel": "Target",
     "ipLabel": "IP",
     "filters": {
-      "eventType": "Type d'événement",
-      "actorUser": "User (acteur)"
+      "eventType": "Event type",
+      "actorUser": "User (actor)"
     },
     "toast": {
-      "loadFailedTitle": "Erreur de chargement"
+      "loadFailedTitle": "Load error"
     },
     "eventTypes": {
-      "role_created": "Role créé",
-      "role_updated": "Role modifié",
-      "role_deleted": "Role supprimé",
-      "permission_created": "Permission créée",
-      "permission_updated": "Permission modifiée",
-      "permission_deleted": "Permission supprimée",
-      "role_permission_granted": "Permission accordée au rôle",
-      "role_permission_revoked": "Permission retirée du rôle",
-      "user_role_granted": "Role assigné",
-      "user_role_revoked": "Role révoqué",
-      "user_role_extended": "Assignation prolongée",
-      "impersonation_started": "Impersonation démarrée",
-      "impersonation_ended": "Impersonation terminée",
-      "permission_denied": "Accès refusé"
+      "role_created": "Role created",
+      "role_updated": "Role updated",
+      "role_deleted": "Role deleted",
+      "permission_created": "Permission created",
+      "permission_updated": "Permission updated",
+      "permission_deleted": "Permission deleted",
+      "role_permission_granted": "Permission granted to role",
+      "role_permission_revoked": "Permission revoked from role",
+      "user_role_granted": "Role assigned",
+      "user_role_revoked": "Role revoked",
+      "user_role_extended": "Assignment extended",
+      "impersonation_started": "Impersonation started",
+      "impersonation_ended": "Impersonation ended",
+      "permission_denied": "Access denied"
     }
   }
 }

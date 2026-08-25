@@ -28,3 +28,13 @@ export const EMAIL_ALREADY_REGISTERED_MESSAGE = 'Email already registered';
 
 export const GMAIL_ONLY_MESSAGE =
   'Only Gmail accounts (@gmail.com) are allowed for admin registration.';
+
+/** Idle lock after this many seconds without activity (default 1 h). */
+export const SESSION_IDLE_LOCK_SECONDS = Number(
+  process.env.SESSION_IDLE_LOCK_SECONDS ?? 3600,
+);
+
+export const SESSION_LOCKED_CODE = 'SESSION_LOCKED';
+
+export const SESSION_LOCKED_MESSAGE =
+  'Session locked due to inactivity';

@@ -31,6 +31,7 @@ const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
 
 type StatusFilter = '' | 'active' | 'suspended';
+type AudienceFilter = 'internal' | 'client';
 
 const statusVariants: Record<UserStatus, 'success' | 'warning' | 'danger'> = {
   active: 'success',
@@ -55,6 +56,7 @@ export function UsersList() {
   const { toast } = useToast();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
+  const [audienceFilter, setAudienceFilter] = useState<AudienceFilter>('internal');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('');
   const [organizationFilter, setOrganizationFilter] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
@@ -140,6 +142,10 @@ export function UsersList() {
     if (status === 'active' || status === 'suspended') {
       setStatusFilter(status);
     }
+    const audience = searchParams.get('audience');
+    if (audience === 'internal' || audience === 'client') {
+      setAudienceFilter(audience);
+    }
     const withoutRole = searchParams.get('withoutRole');
     if (withoutRole === '1' || withoutRole === 'true') {
       setWithoutRoleFilter(true);
@@ -155,8 +161,9 @@ export function UsersList() {
         search: search || undefined,
         status: statusFilter || undefined,
         organizationId: organizationFilter || undefined,
-        roleId: roleFilter || undefined,
-        withoutRole: withoutRoleFilter || undefined,
+        roleId: audienceFilter === 'internal' && roleFilter ? roleFilter : undefined,
+        withoutRole: audienceFilter === 'internal' && withoutRoleFilter ? true : undefined,
+        audience: audienceFilter,
       });
       setState({
         status: 'ready',
@@ -167,7 +174,7 @@ export function UsersList() {
     } catch (error) {
       setState({ status: 'error', message: getUsersErrorMessage(error) });
     }
-  }, [page, search, statusFilter, organizationFilter, roleFilter, withoutRoleFilter, getUsersErrorMessage]);
+  }, [page, search, statusFilter, organizationFilter, roleFilter, withoutRoleFilter, audienceFilter, getUsersErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -294,11 +301,35 @@ export function UsersList() {
     search.trim().length > 0,
     statusFilter !== '',
     organizationFilter !== '',
-    roleFilter !== '',
-    withoutRoleFilter,
+    audienceFilter === 'internal' && roleFilter !== '',
+    audienceFilter === 'internal' && withoutRoleFilter,
   ].filter(Boolean).length;
   const hasFilters = activeFilterCount > 0;
-  const emptyMessage = hasFilters ? tList('emptyFiltered') : tList('emptyDefault');
+  const emptyMessage =
+    audienceFilter === 'client'
+      ? hasFilters
+        ? tList('emptyFilteredClients')
+        : tList('emptyClients')
+      : hasFilters
+        ? tList('emptyFiltered')
+        : tList('emptyDefault');
+
+  const audienceTabs = useMemo(
+    () => [
+      { value: 'internal' as const, label: tList('tabs.internal') },
+      { value: 'client' as const, label: tList('tabs.client') },
+    ],
+    [tList],
+  );
+
+  const handleAudienceChange = useCallback((next: AudienceFilter) => {
+    setAudienceFilter(next);
+    setPage(1);
+    if (next === 'client') {
+      setRoleFilter('');
+      setWithoutRoleFilter(false);
+    }
+  }, []);
   const emptyDash = tEmpty('dash');
 
   const handleExportCsv = useCallback(() => {
@@ -336,6 +367,9 @@ export function UsersList() {
     setWithoutRoleFilter(false);
     setPage(1);
   }, []);
+
+  const showStaffFilters = audienceFilter === 'internal';
+  const showNewUserButton = audienceFilter === 'internal';
 
   return (
     <>
@@ -422,6 +456,26 @@ export function UsersList() {
       </div>
     ) : null}
     <div className="space-y-6">
+      <div
+        className="flex flex-wrap gap-2"
+        role="tablist"
+        aria-label={tList('tabs.ariaLabel')}
+      >
+        {audienceTabs.map((tab) => (
+          <Button
+            key={tab.value}
+            type="button"
+            size="sm"
+            variant={audienceFilter === tab.value ? 'primary' : 'outline'}
+            role="tab"
+            aria-selected={audienceFilter === tab.value}
+            onClick={() => handleAudienceChange(tab.value)}
+          >
+            {tab.label}
+          </Button>
+        ))}
+      </div>
+
       <FilterBar
         activeCount={activeFilterCount}
         onClear={handleClearFilters}
@@ -436,7 +490,9 @@ export function UsersList() {
             >
               {tExport('button')}
             </Button>
-            <Button href="/utilisateurs/nouveau">{tList('newUser')}</Button>
+            {showNewUserButton ? (
+              <Button href="/utilisateurs/nouveau">{tList('newUser')}</Button>
+            ) : null}
           </div>
         }
         filters={
@@ -473,29 +529,33 @@ export function UsersList() {
                 }}
               />
             </div>
-            <div className="w-full sm:w-48">
-              <Select
-                label={tFilters('role')}
-                value={roleFilter}
-                options={roleOptions}
-                onChange={(e) => {
-                  setRoleFilter(e.target.value);
-                  setPage(1);
-                }}
-              />
-            </div>
-            <label className="flex min-h-[44px] items-center gap-2 text-sm text-atg-fg">
-              <input
-                type="checkbox"
-                className="h-4 w-4 rounded border-atg-border text-atg-primary focus:ring-atg-primary"
-                checked={withoutRoleFilter}
-                onChange={(e) => {
-                  setWithoutRoleFilter(e.target.checked);
-                  setPage(1);
-                }}
-              />
-              {tFilters('withoutRole')}
-            </label>
+            {showStaffFilters ? (
+              <div className="w-full sm:w-48">
+                <Select
+                  label={tFilters('role')}
+                  value={roleFilter}
+                  options={roleOptions}
+                  onChange={(e) => {
+                    setRoleFilter(e.target.value);
+                    setPage(1);
+                  }}
+                />
+              </div>
+            ) : null}
+            {showStaffFilters ? (
+              <label className="flex min-h-[44px] items-center gap-2 text-sm text-atg-fg">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 rounded border-atg-border text-atg-primary focus:ring-atg-primary"
+                  checked={withoutRoleFilter}
+                  onChange={(e) => {
+                    setWithoutRoleFilter(e.target.checked);
+                    setPage(1);
+                  }}
+                />
+                {tFilters('withoutRole')}
+              </label>
+            ) : null}
           </>
         }
       />

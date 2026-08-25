@@ -347,10 +347,35 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Partenaires et entités.',
     apiResource: 'organizations',
   },
+  'organisations/id': {
+    title: "Modifier l'organisation",
+    description: "Infos, employés et paramètres de l'organisation.",
+    apiResource: 'organizations',
+  },
+  'organisations/id/voir': {
+    title: "Voir l'organisation",
+    description: "Profil organisation, contact et employés.",
+    apiResource: 'organizations',
+  },
   'systeme/roles': {
     title: 'Rôles et permissions',
     description: 'Contrôle d’accès (RBAC).',
     apiResource: 'roles',
+  },
+  'systeme/roles/nouveau': {
+    title: 'Nouveau rôle',
+    description: 'Créer un rôle personnalisé et définir ses permissions.',
+    apiResource: 'roles',
+  },
+  'systeme/roles/assignations': {
+    title: 'Assignations de rôles',
+    description: 'Attribuer ou révoquer des rôles pour les utilisateurs.',
+    apiResource: 'user-role-assignments',
+  },
+  'systeme/roles/permissions': {
+    title: 'Catalogue des permissions',
+    description: 'Liste en lecture seule des permissions disponibles.',
+    apiResource: 'permissions',
   },
   'systeme/audit': {
     title: 'Audit RBAC',

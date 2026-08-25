@@ -5,7 +5,9 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 import { AlertDialog } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
+import { routePathToTranslationNamespace } from '../../lib/i18n/admin-page-i18n';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
+import { AdminListPageHeader } from '../pages/admin-list-page-header';
 import { getApiClient } from '../../lib/auth/api';
 import { useUnsavedChangesGuard } from '../rbac/use-unsaved-changes-guard';
 import { EmailBrandingForm } from './email-branding-form';
@@ -15,6 +17,8 @@ export function EmailBrandingPage() {
   const { organizationSettings: getOrganizationSettingsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.settings');
   const tEmails = useTranslations('modules.settings.emails');
+  const tCommon = useTranslations('modules.common');
+  const tPage = useTranslations(routePathToTranslationNamespace('parametres/emails'));
   const [accessError, setAccessError] = useState<string | null>(null);
   const [canWrite, setCanWrite] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -22,7 +26,7 @@ export function EmailBrandingPage() {
   const { dialogOpen, setDialogOpen, requestAction, confirmDiscard, cancelDiscard } =
     useUnsavedChangesGuard(formDirty);
 
-  useSetAdminPageMeta({ title: tEmails('page.title') });
+  useSetAdminPageMeta({ title: tPage('title') });
 
   useEffect(() => {
     let cancelled = false;
@@ -64,9 +68,12 @@ export function EmailBrandingPage() {
   if (accessError) {
     return (
       <ParametresPageLayout>
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {accessError}
-        </p>
+        <div className="min-w-0">
+          <AdminListPageHeader routePath="parametres/emails" />
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {accessError}
+          </p>
+        </div>
       </ParametresPageLayout>
     );
   }
@@ -74,7 +81,10 @@ export function EmailBrandingPage() {
   if (loading) {
     return (
       <ParametresPageLayout>
-        <p className="text-sm text-atg-muted">{t('form.loading')}</p>
+        <div className="min-w-0">
+          <AdminListPageHeader routePath="parametres/emails" />
+          <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
+        </div>
       </ParametresPageLayout>
     );
   }
@@ -84,8 +94,10 @@ export function EmailBrandingPage() {
       <ParametresPageLayout
         onSubnavNavigate={formDirty ? (_href, proceed) => requestAction(proceed) : undefined}
       >
-        <p className="mb-8 text-sm text-atg-muted">{tEmails('page.intro')}</p>
-        <EmailBrandingForm canWrite={canWrite} onDirtyChange={setFormDirty} />
+        <div className="min-w-0 space-y-6">
+          <AdminListPageHeader routePath="parametres/emails" />
+          <EmailBrandingForm canWrite={canWrite} onDirtyChange={setFormDirty} />
+        </div>
       </ParametresPageLayout>
       <AlertDialog
         open={dialogOpen}

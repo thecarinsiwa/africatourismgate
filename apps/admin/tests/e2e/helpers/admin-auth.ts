@@ -4,6 +4,9 @@ import type { AuthResponse, AuthUser } from '@africatourismgate/types';
 export const SEED_ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL ?? 'admin@africatourismgate.local';
 export const SEED_ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD ?? 'ChangeMe123!';
 
+/** Stable browser profile id for e2e API login (one session per admin browser). */
+export const E2E_CLIENT_INSTANCE_ID = '00000000-0000-4000-8000-000000000701';
+
 const API_URL = process.env.PLAYWRIGHT_API_URL ?? 'http://localhost:3000';
 const ADMIN_ORIGIN = (process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3001').replace(/\/$/, '');
 
@@ -11,8 +14,9 @@ const ACCESS_COOKIE = 'atg.admin.access';
 const REFRESH_COOKIE = 'atg.admin.refresh';
 const EXPIRES_COOKIE = 'atg.admin.expires';
 const USER_COOKIE = 'atg.admin.user';
-const REMEMBER_COOKIE = 'atg.admin.remember';
 const STORAGE_KEY = 'atg.admin.session';
+const LAST_ACTIVITY_KEY = 'atg.admin.lastActivity';
+const LOCKED_KEY = 'atg.admin.locked';
 
 type StoredSession = {
   accessToken: string;
@@ -76,6 +80,7 @@ async function fetchSeedAdminSession(force = false): Promise<StoredSession> {
       body: JSON.stringify({
         email: SEED_ADMIN_EMAIL,
         password: SEED_ADMIN_PASSWORD,
+        clientInstanceId: E2E_CLIENT_INSTANCE_ID,
       }),
     });
 
@@ -117,19 +122,21 @@ async function applySessionToPage(page: Page, session: StoredSession) {
       value: encodeUser(session.user),
       url: `${ADMIN_ORIGIN}/`,
     },
-    {
-      name: REMEMBER_COOKIE,
-      value: '0',
-      url: `${ADMIN_ORIGIN}/`,
-    },
   ]);
 
   await page.goto('/dashboard', { waitUntil: 'domcontentloaded' });
   await page.evaluate(
-    ({ storageKey, stored }) => {
+    ({ storageKey, stored, lastActivityKey, lockedKey }) => {
       sessionStorage.setItem(storageKey, JSON.stringify(stored));
+      sessionStorage.setItem(lastActivityKey, String(Date.now()));
+      sessionStorage.removeItem(lockedKey);
     },
-    { storageKey: STORAGE_KEY, stored: session },
+    {
+      storageKey: STORAGE_KEY,
+      stored: session,
+      lastActivityKey: LAST_ACTIVITY_KEY,
+      lockedKey: LOCKED_KEY,
+    },
   );
 
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 60_000 });
@@ -147,10 +154,17 @@ export async function loginAsSeedAdmin(page: Page) {
     if (!page.url().includes('/login')) {
       if (cachedSession) {
         await page.evaluate(
-          ({ storageKey, stored }) => {
+          ({ storageKey, stored, lastActivityKey, lockedKey }) => {
             sessionStorage.setItem(storageKey, JSON.stringify(stored));
+            sessionStorage.setItem(lastActivityKey, String(Date.now()));
+            sessionStorage.removeItem(lockedKey);
           },
-          { storageKey: STORAGE_KEY, stored: cachedSession },
+          {
+            storageKey: STORAGE_KEY,
+            stored: cachedSession,
+            lastActivityKey: LAST_ACTIVITY_KEY,
+            lockedKey: LOCKED_KEY,
+          },
         );
       }
       await expect(page).toHaveURL(/\/dashboard/, { timeout: 60_000 });

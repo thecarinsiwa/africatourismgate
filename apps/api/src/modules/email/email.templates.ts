@@ -1,6 +1,7 @@
 import type { EmailBrandingValue } from '@africatourismgate/types';
 import { resolveEmailLogoUrl } from './email-attachments';
 import { DEFAULT_EMAIL_BRANDING } from './email-branding.constants';
+import { formatEmailFooter } from './email-footer.utils';
 import {
   resolvePdfLocale,
   type BookingDetailPdfLocale,
@@ -47,9 +48,7 @@ function secondaryColor(branding: EmailBrandingValue): string {
   return branding.secondaryColor ?? BRAND.secondary;
 }
 
-function footerText(branding: EmailBrandingValue): string {
-  return branding.footerText ?? DEFAULT_EMAIL_BRANDING.footerText ?? '';
-}
+export { formatEmailFooter } from './email-footer.utils';
 
 function applySubjectTemplate(
   template: string,
@@ -227,8 +226,7 @@ export function layout(
   branding: EmailBrandingValue,
   options?: { footerNote?: string; webUrl?: string; preheader?: string },
 ): string {
-  const footer = escapeHtml(footerText(branding));
-  const year = new Date().getFullYear();
+  const copyright = escapeHtml(formatEmailFooter(branding));
   const base = webBase(options?.webUrl);
   const preheader = escapeHtml(options?.preheader ?? title);
   const footerNoteBlock = options?.footerNote
@@ -285,14 +283,13 @@ export function layout(
                       <span style="color:${BRAND.border};">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
                       ${mutedLink('mailto:support@africatourismgate.org', 'Support')}
                     </p>
-                    <p style="margin:0;font-size:12px;color:${BRAND.muted};">© ${year} Africa Tourism Gate · Tous droits réservés</p>
+                    <p style="margin:0;font-size:12px;color:${BRAND.muted};">${copyright}</p>
                   </td>
                 </tr>
               </table>
             </td>
           </tr>
         </table>
-        <p style="margin:18px 0 0;font-size:12px;line-height:1.5;color:#71717a;text-align:center;">${footer}</p>
       </td>
     </tr>
   </table>
@@ -343,7 +340,7 @@ ${noticeBox('Si vous n\'êtes pas à l\'origine de cette demande, ignorez cet e-
 <p style="margin:16px 0 0;font-size:12px;line-height:1.5;color:${BRAND.muted};word-break:break-all;">Lien direct : ${escapeHtml(payload.resetUrl)}</p>`,
     branding,
     {
-      preheader: 'Réinitialisez votre mot de passe en un clic — lien valide 1 heure.',
+      preheader: 'Réinitialisez votre mot de passe en un clic | Lien valide 1 heure.',
     },
   );
   const text = `Bonjour ${payload.firstName},\n\nRéinitialisez votre mot de passe : ${payload.resetUrl}\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail.`;
@@ -366,14 +363,14 @@ export function renderWelcomeEmail(
     subject,
     `${headline('Bienvenue !', branding)}
 ${paragraph(`Bonjour <strong>${name}</strong>,`)}
-${paragraph('Votre compte a été créé avec succès. Vous pouvez dès maintenant explorer nos expériences de voyage — safaris, croisières, hébergements et bien plus — et réserver en toute confiance.')}
+${paragraph('Votre compte a été créé avec succès. Vous pouvez dès maintenant explorer nos expériences de voyage, safaris, croisières, hébergements et bien plus et réserver en toute confiance.')}
 ${ctaButton(exploreUrl, 'Découvrir nos expériences', branding)}
 <p style="margin:0;font-size:14px;line-height:1.6;color:${BRAND.muted};">Déjà prêt à réserver ? ${mutedLink(loginUrl, 'Connectez-vous à votre espace')}</p>
 ${paragraph('Merci de nous faire confiance pour vos aventures en Afrique.')}`,
     branding,
     {
       webUrl: payload.webUrl,
-      preheader: 'Votre compte est prêt — explorez des expériences authentiques à travers l\'Afrique.',
+      preheader: 'Votre compte est prêt | Explorez des expériences authentiques à travers l\'Afrique.',
     },
   );
   const text = `Bonjour ${payload.firstName},\n\nBienvenue sur ${branding.displayName}. Votre compte a été créé avec succès.\n\nExplorer : ${exploreUrl}\nSe connecter : ${loginUrl}`;

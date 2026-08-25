@@ -98,8 +98,8 @@
       }
     },
     "preview": {
-      "title": "Preview live",
-      "description": "Le rendu se met a jour instantanement, sans sauvegarde.",
+      "title": "Aperçu en direct",
+      "description": "Le rendu se met à jour instantanément, sans sauvegarde.",
       "logoAlt": "Logo organisation",
       "adminBadge": "Admin",
       "primaryButton": "Bouton principal"
@@ -190,13 +190,14 @@
       "secondaryColor": "Couleur secondaire",
       "secondaryColorHint": "Couleur d'accompagnement (optionnel).",
       "footerText": "Texte de pied de page",
-      "footerPlaceholder": "© Africa Tourism Gate — Tous droits réservés",
+      "footerPlaceholder": "© '{year}' '{displayName}' · Tous droits réservés",
+      "footerHint": "Variables : '{year}', '{displayName}'. Laissez vide pour le texte par défaut.",
       "welcomeSubject": "Sujet — e-mail de bienvenue",
-      "welcomeSubjectPlaceholder": "Bienvenue chez {displayName}",
-      "welcomeSubjectHint": "Variables : {displayName}",
+      "welcomeSubjectPlaceholder": "Bienvenue chez '{displayName}'",
+      "welcomeSubjectHint": "Variables : '{displayName}'",
       "bookingSubject": "Sujet — confirmation de réservation",
-      "bookingSubjectPlaceholder": "Confirmation de réservation — {ref}",
-      "bookingSubjectHint": "Variables : {ref}, {displayName}",
+      "bookingSubjectPlaceholder": "Confirmation de réservation — '{ref}'",
+      "bookingSubjectHint": "Variables : '{ref}', '{displayName}'",
       "previewTemplate": "Modèle à prévisualiser",
       "templateWelcome": "Bienvenue (création de compte)",
       "templateBooking": "Confirmation de réservation",
@@ -239,6 +240,24 @@
       "orgSelectAria": "Organisation",
       "empty": "Aucun compte bancaire."
     },
+    "stats": {
+      "total": {
+        "label": "Comptes",
+        "subtitle": "Comptes bancaires enregistrés"
+      },
+      "default": {
+        "label": "Par défaut",
+        "subtitle": "Compte utilisé pour les virements"
+      },
+      "banks": {
+        "label": "Banques",
+        "subtitle": "Établissements bancaires distincts"
+      },
+      "currencies": {
+        "label": "Devises",
+        "subtitle": "Devises couvertes par les comptes"
+      }
+    },
     "form": {
       "validation": {
         "bankNameRequired": "Le nom de la banque est obligatoire.",
@@ -267,6 +286,24 @@
     }
   },
   "donations": {
+    "stats": {
+      "total": {
+        "label": "Campagnes",
+        "subtitle": "Campagnes de don enregistrées"
+      },
+      "published": {
+        "label": "Publiées",
+        "subtitle": "Visibles sur le site ou GAP"
+      },
+      "featured": {
+        "label": "Mise en avant",
+        "subtitle": "Campagnes navbar (bouton Don)"
+      },
+      "locales": {
+        "label": "Langues",
+        "subtitle": "Langues couvertes par les campagnes"
+      }
+    },
     "list": {
       "pageTitle": "Campagnes de don",
       "intro": "Gérez plusieurs appels à don selon le contexte. Un seul don peut être mis en avant dans la barre de navigation (site web et GAP).",
@@ -282,6 +319,11 @@
       "deleteConfirmButton": "Supprimer",
       "cancel": "Annuler",
       "featuredYes": "Navbar",
+      "tableAria": "Liste des campagnes de don",
+      "surfacesShort": {
+        "web": "Web",
+        "gap": "GAP"
+      },
       "columns": {
         "title": "Titre",
         "locale": "Langue",
@@ -298,6 +340,7 @@
       "loading": "Chargement…",
       "saving": "Enregistrement…",
       "saveButton": "Enregistrer",
+      "cancelButton": "Annuler",
       "surfaces": {
         "web": "Site web",
         "gap": "Site GAP"
@@ -305,6 +348,7 @@
       "fields": {
         "title": "Titre",
         "description": "Description",
+        "descriptionPlaceholder": "Décrivez la campagne de don…",
         "contextNote": "Contexte / circonstances",
         "contextNotePlaceholder": "Ex. urgence, saison des pluies, rentrée scolaire",
         "buttonLabel": "Libellé du bouton",

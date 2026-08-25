@@ -9,6 +9,7 @@ import { getAuthErrorMessage } from '../lib/auth/api-errors';
 import { getApiClient } from '../lib/auth/api';
 import { authResponseToStoredSession, saveSession } from '../lib/auth/session';
 import { applyLocaleFromUser } from '../lib/i18n/preferred-language';
+import { withClientInstanceId } from '@africatourismgate/utils';
 
 export function AdminLoginForm() {
   const router = useRouter();
@@ -23,12 +24,15 @@ export function AdminLoginForm() {
     <div className="space-y-4">
       <LoginForm
         config={formConfig}
-        onSubmit={async ({ email, password, remember }) => {
+        showRememberMe={false}
+        onSubmit={async ({ email, password }) => {
           setError(null);
           try {
-            const response = await getApiClient().login({ email, password });
+            const response = await getApiClient().login(
+              withClientInstanceId({ email, password }),
+            );
             const session = authResponseToStoredSession(response);
-            saveSession(session, remember);
+            saveSession(session);
             applyLocaleFromUser(session.user);
             router.refresh();
             router.push('/dashboard');

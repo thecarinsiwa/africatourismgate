@@ -120,7 +120,6 @@ export interface EmailBrandingValue {
 export const DEFAULT_EMAIL_BRANDING: EmailBrandingValue = {
   displayName: 'Africa Tourism Gate',
   primaryColor: '#0d9488',
-  footerText: '© Africa Tourism Gate',
 };
 
 export type EmailPreviewTemplate = 'welcome' | 'booking' | 'password_reset';

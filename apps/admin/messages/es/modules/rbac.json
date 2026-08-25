@@ -1,16 +1,16 @@
 {
   "subnav": {
-    "ariaLabel": "Navigation RBAC",
-    "roles": "Rols",
-    "permissions": "Permissions",
-    "assignments": "Assignations",
-    "audit": "Hastadit"
+    "ariaLabel": "Navegación RBAC",
+    "roles": "Roles",
+    "permissions": "Permisos",
+    "assignments": "Asignaciones",
+    "audit": "Auditoría"
   },
   "unsavedChanges": {
-    "title": "Modifications non enregistrées",
-    "description": "Des changements n'ont pas été enregistrés. Quitter sans sauvegarder ?",
-    "confirm": "Quitter sans enregistrer",
-    "cancel": "Continuer l'édition"
+    "title": "Cambios no guardados",
+    "description": "Hay cambios sin guardar. ¿Salir sin guardar?",
+    "confirm": "Salir sin guardar",
+    "cancel": "Seguir editando"
   },
   "permissionDomains": {
     "amenities": "Equipamientos",
@@ -20,133 +20,195 @@
     "employees": "Empleados",
     "departments": "Departamentos",
     "flights": "Vuelos",
-    "loyalty": "Fidélité",
-    "organizations": "Organizacións",
+    "loyalty": "Fidelidad",
+    "organizations": "Organizaciones",
     "payments": "Pagos",
-    "permissions": "Permissions",
-    "promo_codes": "Codes promo",
+    "permissions": "Permisos",
+    "promo_codes": "Códigos promo",
     "properties": "Alojamientos",
     "promotions": "Promociones",
-    "reviews": "Avis",
-    "roles": "Rols",
-    "support": "Support",
+    "reviews": "Reseñas",
+    "roles": "Roles",
+    "support": "Soporte",
     "users": "Usuarios",
-    "vehicles": "Locations",
-    "activities": "Actividads",
+    "vehicles": "Alquileres",
+    "activities": "Actividades",
     "packages": "Paquetes",
     "gap": "GAP (Gorilla Ambassadors Program)"
   },
   "permissionActions": {
-    "read": "Lecture",
-    "write": "Écriture",
-    "delete": "Suppression",
-    "manage": "Gestion",
-    "approve": "Approbation"
+    "read": "Lectura",
+    "write": "Escritura",
+    "delete": "Eliminación",
+    "manage": "Gestión",
+    "approve": "Aprobación"
   },
   "roles": {
-    "searchPlaceholder": "Rechercher par code ou nom…",
-    "empty": "Hastacun rôle trouvé.",
-    "ariaLabel": "Liste des rôles",
-    "paginationItem": "rôle",
-    "systemReadOnlyHint": "Rol système (lecture seule)",
-    "codeHint": "Minuscules, chiffres et underscore (ex. sales_manager).",
-    "createSubmit": "Créer le rôle",
-    "backToList": "← Volver aux rôles",
+    "searchPlaceholder": "Buscar por código o nombre…",
+    "empty": "No se encontraron roles.",
+    "emptyTitleSearch": "Ningún rol coincide con sus filtros",
+    "emptyTitleDefault": "Aún no hay roles",
+    "emptyDescriptionSearch": "Pruebe otro código, nombre o tipo.",
+    "emptyDescriptionDefault": "Cree un rol personalizado para empezar.",
+    "emptyTableSearch": "Ningún rol coincide con sus filtros.",
+    "emptyTableDefault": "Aún no hay roles.",
+    "ariaLabel": "Lista de roles",
+    "paginationItem": "rol",
+    "systemReadOnlyHint": "Rol del sistema (solo lectura)",
+    "codeHint": "Minúsculas, dígitos y guion bajo (ej. sales_manager).",
+    "createSubmit": "Crear rol",
+    "backToList": "← Volver a los roles",
     "type": {
-      "system": "Système",
-      "custom": "Personnalisé"
+      "system": "Sistema",
+      "custom": "Personalizado"
     },
     "validation": {
-      "codeRequired": "Le code est obligatoire.",
-      "nameRequired": "El apellido es obligatorio."
+      "codeRequired": "El código es obligatorio.",
+      "nameRequired": "El nombre es obligatorio."
     },
     "editTitle": {
-      "system": "Rol système",
-      "custom": "Modifier le rôle"
+      "system": "Rol del sistema",
+      "custom": "Editar rol"
     },
     "deleteDialog": {
-      "title": "Supprimer le rôle",
-      "description": "Supprimer définitivement le rôle « {name} » ?"
+      "title": "Eliminar rol",
+      "description": "¿Eliminar definitivamente el rol « {name} »?"
     },
     "toast": {
-      "deletedTitle": "Rol supprimé",
-      "deletedMessage": "Le rôle « {name} » a été supprimé.",
-      "deleteFailedTitle": "Échec de la suppression"
+      "deletedTitle": "Rol eliminado",
+      "deletedMessage": "El rol « {name} » ha sido eliminado.",
+      "deleteFailedTitle": "Error al eliminar"
     }
   },
   "permissions": {
-    "intro": "Catalogue des permissions (lecture seule). Modifiez les droits via la matrice sur chaque rôle.",
-    "searchPlaceholder": "Rechercher…",
-    "empty": "Ninguna permission.",
-    "paginationItem": "permission",
+    "intro": "Catálogo de permisos (solo lectura). Edite los derechos desde la matriz de cada rol.",
+    "searchPlaceholder": "Buscar…",
+    "empty": "Ningún permiso.",
+    "paginationItem": "permiso",
     "columns": {
-      "resource": "Ressource"
+      "resource": "Recurso"
+    },
+    "stats": {
+      "total": {
+        "label": "Permisos",
+        "subtitle": "Entradas del catálogo"
+      },
+      "domains": {
+        "label": "Dominios",
+        "subtitle": "Recursos distintos"
+      },
+      "actions": {
+        "label": "Acciones",
+        "subtitle": "Tipos de acción"
+      },
+      "roles": {
+        "label": "Roles",
+        "subtitle": "Roles configurados"
+      }
     }
   },
   "matrix": {
-    "title": "Matrice des permissions",
-    "loading": "Chargement de la matrice…",
-    "descriptionReadOnly": "Rol système : consultation seule.",
-    "descriptionEditable": "Cochez les permissions accordées à ce rôle, regroupées par domaine.",
+    "title": "Matriz de permisos",
+    "loading": "Cargando la matriz…",
+    "descriptionReadOnly": "Rol del sistema: solo lectura.",
+    "descriptionEditable": "Marque los permisos concedidos a este rol, agrupados por dominio.",
+    "readOnlyBadge": "Solo lectura",
+    "selectedCount": "{selected} / {total} seleccionados",
+    "domainCount": "{selected}/{total}",
+    "selectDomain": "Seleccionar todo",
+    "searchPlaceholder": "Filtrar un dominio o permiso…",
+    "searchEmpty": "Ningún dominio coincide con su búsqueda.",
+    "empty": "No hay permisos disponibles.",
     "columns": {
-      "scope": "Périmètre"
+      "scope": "Ámbito"
     },
-    "wholeDomain": "Tout le domaine",
-    "perAction": "Par action",
-    "ariaToggleDomain": "Tout {domain} — {action}",
+    "wholeDomain": "Todo el dominio",
+    "perAction": "Por acción",
+    "ariaToggleDomain": "Todo {domain} — {action}",
+    "ariaToggleDomainAll": "Seleccionar todos los permisos de {domain}",
     "toast": {
-      "savedTitle": "Permissions enregistrées",
-      "savedMessage": "La matrice du rôle a été mise à jour.",
-      "saveFailedTitle": "Échec de l'enregistrement"
+      "savedTitle": "Permisos guardados",
+      "savedMessage": "La matriz del rol se ha actualizado.",
+      "saveFailedTitle": "Error al guardar"
     }
   },
+  "roleNames": {
+    "super_admin": "Superadministrador",
+    "org_admin": "Administrador de organización",
+    "support": "Agente de soporte",
+    "customer": "Cliente",
+    "gap_coordinator": "Coordinador GAP"
+  },
   "assignments": {
-    "loading": "Chargement des assignations…",
-    "empty": "Ninguna assignation active.",
-    "revoke": "Révoquer",
+    "loading": "Cargando asignaciones…",
+    "empty": "Ninguna asignación activa.",
+    "emptyTitleSearch": "Ninguna asignación coincide con los filtros",
+    "emptyTitleDefault": "Ninguna asignación activa",
+    "emptyDescriptionSearch": "Pruebe otro usuario, rol o ámbito.",
+    "emptyDescriptionDefault": "Asigne un rol arriba para empezar.",
+    "emptyTableSearch": "Ninguna asignación coincide con los filtros.",
+    "emptyTableDefault": "Ninguna asignación activa.",
+    "ariaLabel": "Lista de asignaciones de roles",
+    "paginationItem": "asignación",
+    "filters": {
+      "user": "Usuario",
+      "role": "Rol",
+      "scope": "Ámbito",
+      "search": "Búsqueda",
+      "searchPlaceholder": "Buscar por nombre, correo o rol…",
+      "allUsers": "Todos los usuarios",
+      "allRoles": "Todos los roles",
+      "allScopes": "Todos los ámbitos"
+    },
+    "columns": {
+      "user": "Usuario",
+      "role": "Rol",
+      "scope": "Ámbito"
+    },
+    "revoke": "Revocar",
     "revokeDialog": {
-      "title": "Révoquer l'assignation",
-      "description": "Retirer ce rôle pour l'utilisateur sur ce périmètre ?"
+      "title": "Revocar asignación",
+      "description": "¿Quitar este rol al usuario en este ámbito?"
     },
     "toast": {
-      "revokedTitle": "Assignation révoquée",
-      "revokedMessage": "Le rôle a été retiré pour cet utilisateur.",
-      "revokeFailedTitle": "Échec de la révocation"
+      "revokedTitle": "Asignación revocada",
+      "revokedMessage": "El rol se ha quitado a este usuario.",
+      "revokeFailedTitle": "Error al revocar"
     }
   },
   "audit": {
-    "checkingAccess": "Vérification des droits…",
-    "accessDenied": "Cette page est réservée au super administrateur. Connectez-vous avec admin@africatourismgate.local ou un compte disposant du rôle super_admin.",
-    "empty": "Hastacun événement pour ces critères.",
-    "paginationItem": "événement",
+    "checkingAccess": "Comprobando permisos…",
+    "accessDenied": "Esta página está reservada al superadministrador. Inicie sesión con admin@africatourismgate.local o una cuenta con el rol super_admin.",
+    "empty": "Ningún evento para estos criterios.",
+    "paginationItem": "evento",
     "hideDetail": "Ocultar detalle",
     "showDetailJson": "Ver detalle JSON",
     "detailModalTitle": "Detalle JSON del evento",
     "actorFallback": "Actor: {actorId}…",
-    "targetLabel": "Cible",
+    "targetLabel": "Objetivo",
     "ipLabel": "IP",
     "filters": {
-      "eventType": "Tipo d'événement",
-      "actorUser": "Usuario (acteur)"
+      "eventType": "Tipo de evento",
+      "actorUser": "Usuario (actor)"
     },
     "toast": {
-      "loadFailedTitle": "Erreur de chargement"
+      "loadFailedTitle": "Error de carga"
     },
     "eventTypes": {
-      "role_created": "Rol créé",
-      "role_updated": "Rol modifié",
-      "role_deleted": "Rol supprimé",
-      "permission_created": "Permission créée",
-      "permission_updated": "Permission modifiée",
-      "permission_deleted": "Permission supprimée",
-      "role_permission_granted": "Permission accordée au rôle",
-      "role_permission_revoked": "Permission retirée du rôle",
-      "user_role_granted": "Rol assigné",
-      "user_role_revoked": "Rol révoqué",
-      "user_role_extended": "Assignation prolongée",
-      "impersonation_started": "Impersonation démarrée",
-      "impersonation_ended": "Impersonation terminée",
-      "permission_denied": "Accès refusé"
+      "role_created": "Rol creado",
+      "role_updated": "Rol modificado",
+      "role_deleted": "Rol eliminado",
+      "permission_created": "Permiso creado",
+      "permission_updated": "Permiso modificado",
+      "permission_deleted": "Permiso eliminado",
+      "role_permission_granted": "Permiso concedido al rol",
+      "role_permission_revoked": "Permiso retirado del rol",
+      "user_role_granted": "Rol asignado",
+      "user_role_revoked": "Rol revocado",
+      "user_role_extended": "Asignación prolongada",
+      "impersonation_started": "Suplantación iniciada",
+      "impersonation_ended": "Suplantación finalizada",
+      "permission_denied": "Acceso denegado"
     }
   }
 }

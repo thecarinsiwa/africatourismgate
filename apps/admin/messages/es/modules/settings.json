@@ -1,63 +1,63 @@
 {
   "nav": {
-    "ariaLabel": "Navigation paramètres",
+    "ariaLabel": "Navegación de ajustes",
     "settings": "Ajustes",
     "emails": "Correos",
     "donations": "Donaciones",
-    "bankAccounts": "Comptes bancaires"
+    "bankAccounts": "Cuentas bancarias"
   },
   "page": {
     "title": "Ajustes",
     "intro": "Configuración de la organización: datos de contacto, idioma, reservas y marca.",
-    "denied": "Vous n'avez pas la permission de consulter les paramètres."
+    "denied": "No tiene permiso para ver los ajustes."
   },
   "unsaved": {
-    "title": "Modifications non enregistrées",
-    "description": "Des changements n'ont pas été enregistrés. Quitter sans sauvegarder ?",
-    "confirm": "Quitter sans enregistrer",
-    "cancel": "Continuer l'édition"
+    "title": "Cambios no guardados",
+    "description": "Hay cambios sin guardar. ¿Salir sin guardar?",
+    "confirm": "Salir sin guardar",
+    "cancel": "Seguir editando"
   },
   "form": {
     "loading": "Cargando…",
-    "dirty": "Modifications non enregistrées",
-    "clean": "Ninguna modification en attente",
-    "cancel": "Annuler",
-    "saving": "Enregistrement…",
+    "dirty": "Cambios no guardados",
+    "clean": "Ningún cambio pendiente",
+    "cancel": "Cancelar",
+    "saving": "Guardando…",
     "save": "Guardar",
     "upload": {
-      "invalidImage": "Veuillez sélectionner une image valide.",
-      "tooLarge": "Image trop lourde (max 2 MB)."
+      "invalidImage": "Seleccione una imagen válida.",
+      "tooLarge": "Imagen demasiado grande (máx. 2 MB)."
     },
     "validation": {
-      "contactEmailInvalid": "L'e-mail de contact doit être valide.",
-      "currencyInvalid": "La devise doit comporter 3 lettres (ex. USD, CDF).",
-      "holdMinutesInvalid": "Desderée de retenue invalide (entier positif).",
-      "displayNameRequired": "Le nom affiché est obligatoire.",
-      "loyaltyRateInvalid": "Le taux de points doit être un entier positif ou nul.",
-      "programCodeInvalid": "Le code programme est obligatoire (32 caractères max)."
+      "contactEmailInvalid": "El correo de contacto debe ser válido.",
+      "currencyInvalid": "La moneda debe tener 3 letras (p. ej. USD, CDF).",
+      "holdMinutesInvalid": "Duración de retención no válida (entero positivo).",
+      "displayNameRequired": "El nombre mostrado es obligatorio.",
+      "loyaltyRateInvalid": "La tasa de puntos debe ser un entero positivo o cero.",
+      "programCodeInvalid": "El código de programa es obligatorio (máx. 32 caracteres)."
     },
     "sections": {
       "contact": {
-        "title": "Coordonnées",
-        "description": "Affichées dans le bandeau et le pied de page du site public.",
+        "title": "Datos de contacto",
+        "description": "Se muestran en el encabezado y el pie del sitio público.",
         "phone": "Teléfono",
-        "email": "Correo de contact",
-        "location": "Dirección / localisation",
+        "email": "Correo de contacto",
+        "location": "Dirección / ubicación",
         "locationPlaceholder": "Kinshasa, RD Congo",
-        "facebookUrl": "URL Facebook",
-        "twitterUrl": "URL X / Twitter",
-        "instagramUrl": "URL Instagram",
+        "facebookUrl": "URL de Facebook",
+        "twitterUrl": "URL de X / Twitter",
+        "instagramUrl": "URL de Instagram",
         "currency": "Moneda"
       },
       "locale": {
-        "title": "Locale",
-        "language": "Langue",
-        "timezone": "Fuseau horaire"
+        "title": "Configuración regional",
+        "language": "Idioma",
+        "timezone": "Zona horaria"
       },
       "booking": {
-        "title": "Reserva",
-        "holdMinutes": "Desderée de retenue (minutes)",
-        "allowGuestCheckout": "Hastatoriser la commande invité",
+        "title": "Reservas",
+        "holdMinutes": "Duración de retención (minutos)",
+        "allowGuestCheckout": "Permitir pedido como invitado",
         "modesTitle": "Modo por vertical",
         "modesDescription": "Inmediato: pago Stripe en el checkout. Asistido: solicitud pendiente de validación.",
         "modeImmediate": "Inmediato (pago)",
@@ -72,149 +72,150 @@
         }
       },
       "loyalty": {
-        "title": "Fidélité OneKey",
-        "description": "Points crédités après paiement confirmé : floor(montant en centimes / 100) × taux ci-dessous.",
-        "enabled": "Activer le crédit de points OneKey",
-        "pointsPerMajorUnit": "Points par unité majeure de devise",
-        "programCode": "Code programme"
+        "title": "Fidelidad OneKey",
+        "description": "Puntos acreditados tras pago confirmado: floor(importe en céntimos / 100) × tasa abajo.",
+        "enabled": "Activar crédito de puntos OneKey",
+        "pointsPerMajorUnit": "Puntos por unidad mayor de moneda",
+        "programCode": "Código de programa"
       },
       "branding": {
-        "title": "Branding",
-        "displayName": "Apellido affiché",
-        "primaryColor": "Couleur primaire",
-        "primaryColorHint": "Couleur dominante de l'interface (boutons, liens, accents).",
-        "secondaryColor": "Couleur secondaire",
-        "secondaryColorHint": "Couleur d'accompagnement (badges, éléments secondaires).",
-        "logoUrl": "URL du logo",
-        "uploading": "Upload en cours…",
-        "chooseLogo": "Choisir un logo local",
-        "logoFormatHint": "PNG/JPG/SVG/WebP, max 2 MB",
-        "faviconUrl": "URL de l'icône (favicon)",
-        "chooseFavicon": "Choisir une icône locale",
-        "faviconFormatHint": "PNG/ICO/SVG, max 2 MB"
+        "title": "Marca",
+        "displayName": "Nombre mostrado",
+        "primaryColor": "Color primario",
+        "primaryColorHint": "Color dominante de la interfaz (botones, enlaces, acentos).",
+        "secondaryColor": "Color secundario",
+        "secondaryColorHint": "Color de apoyo (insignias, elementos secundarios).",
+        "logoUrl": "URL del logo",
+        "uploading": "Subiendo…",
+        "chooseLogo": "Elegir un logo local",
+        "logoFormatHint": "PNG/JPG/SVG/WebP, máx. 2 MB",
+        "faviconUrl": "URL del favicon",
+        "chooseFavicon": "Elegir un icono local",
+        "faviconFormatHint": "PNG/ICO/SVG, máx. 2 MB"
       },
       "authVisual": {
-        "title": "Panneau connexion"
+        "title": "Panel de inicio de sesión"
       }
     },
     "preview": {
-      "title": "Preview live",
-      "description": "Le rendu se met a jour instantanement, sans sauvegarde.",
-      "logoAlt": "Logo organisation",
+      "title": "Vista previa en vivo",
+      "description": "La vista se actualiza al instante, sin guardar.",
+      "logoAlt": "Logo de la organización",
       "adminBadge": "Admin",
-      "primaryButton": "Bouton principal"
+      "primaryButton": "Botón principal"
     }
   },
   "colorPalette": {
-    "contrastWarning": "Contraste insuffisant avec le texte blanc : {ratio} (minimum {min} pour WCAG AA). Les boutons et liens actifs peuvent être difficiles à lire.",
-    "currentAria": "Couleur actuelle ({value})",
-    "currentTitle": "Couleur enregistrée — {value}",
-    "currentLabel": "Actuelle",
-    "selection": "Sélection :",
+    "contrastWarning": "Contraste insuficiente con texto blanco: {ratio} (mínimo {min} para WCAG AA). Los botones y enlaces activos pueden ser difíciles de leer.",
+    "currentAria": "Color actual ({value})",
+    "currentTitle": "Color guardado — {value}",
+    "currentLabel": "Actual",
+    "selection": "Selección:",
     "swatches": {
-      "atg-primary": "Vert ATG",
-      "atg-primary-hover": "Vert foncé",
-      "atg-primary-light": "Vert clair",
-      "forest": "Forêt",
-      "emerald": "Émeraude",
-      "teal": "Sarcelle",
-      "atg-secondary": "Secondaire ATG",
-      "lime": "Lime",
-      "gold": "Or",
-      "amber": "Ambre",
-      "sunset": "Coucher de soleil",
-      "ocean": "Océan",
-      "indigo": "Indigo",
-      "slate": "Ardoise",
-      "earth": "Terre",
-      "burgundy": "Bordeaux"
+      "atg-primary": "Verde ATG",
+      "atg-primary-hover": "Verde oscuro",
+      "atg-primary-light": "Verde claro",
+      "forest": "Bosque",
+      "emerald": "Esmeralda",
+      "teal": "Verde azulado",
+      "atg-secondary": "Secundario ATG",
+      "lime": "Lima",
+      "gold": "Oro",
+      "amber": "Ámbar",
+      "sunset": "Atardecer",
+      "ocean": "Océano",
+      "indigo": "Índigo",
+      "slate": "Pizarra",
+      "earth": "Tierra",
+      "burgundy": "Burdeos"
     }
   },
   "authVisual": {
-    "description": "Icônes décoratives affichées sur le panneau vert de connexion / inscription.",
-    "reset": "Réinitialiser",
-    "add": "Ajouter une icône",
-    "empty": "Ninguna icône configurée. Ajoutez-en une ou réinitialisez les valeurs par défaut.",
-    "iconLabel": "Icône {n}",
-    "remove": "Supprimer",
+    "description": "Iconos decorativos en el panel verde de inicio de sesión / registro.",
+    "reset": "Restablecer",
+    "add": "Añadir un icono",
+    "empty": "Ningún icono configurado. Añada uno o restablezca los valores por defecto.",
+    "iconLabel": "Icono {n}",
+    "remove": "Eliminar",
     "type": "Tipo",
-    "position": "Position",
-    "size": "Taille",
-    "opacity": "Opacité ({n}%)",
-    "imageUrl": "URL de l'image",
-    "uploading": "Upload en cours…",
-    "chooseImage": "Choisir une image locale",
+    "position": "Posición",
+    "size": "Tamaño",
+    "opacity": "Opacidad ({n}%)",
+    "imageUrl": "URL de la imagen",
+    "uploading": "Subiendo…",
+    "chooseImage": "Elegir una imagen local",
     "preview": "Vista previa",
     "presets": {
-      "pin": "Épingle (localisation)",
-      "compass": "Boussole",
-      "globe": "Globe",
-      "star": "Étoile",
-      "custom": "Image personnalisée"
+      "pin": "Pin (ubicación)",
+      "compass": "Brújula",
+      "globe": "Globo",
+      "star": "Estrella",
+      "custom": "Imagen personalizada"
     },
     "positions": {
-      "bottom-right": "Bas droite",
-      "top-right": "Haut droite",
-      "bottom-left": "Bas gauche",
-      "top-left": "Haut gauche"
+      "bottom-right": "Abajo derecha",
+      "top-right": "Arriba derecha",
+      "bottom-left": "Abajo izquierda",
+      "top-left": "Arriba izquierda"
     },
     "sizes": {
-      "sm": "Petite",
-      "md": "Moyenne",
+      "sm": "Pequeña",
+      "md": "Mediana",
       "lg": "Grande"
     }
   },
   "emails": {
     "page": {
       "title": "Correos",
-      "intro": "Personnalisez l'apparence des e-mails transactionnels (bienvenue, confirmation de réservation).",
-      "denied": "Vous n'avez pas la permission de consulter les paramètres e-mail."
+      "intro": "Personalice la apariencia de los correos transaccionales (bienvenida, confirmación de reserva).",
+      "denied": "No tiene permiso para ver los ajustes de correo."
     },
     "form": {
       "validation": {
-        "displayNameRequired": "Le nom affiché est obligatoire."
+        "displayNameRequired": "El nombre mostrado es obligatorio."
       },
-      "success": "Ajustes e-mail enregistrés.",
+      "success": "Ajustes de correo guardados.",
       "upload": {
-        "invalidImage": "Veuillez sélectionner une image valide.",
-        "tooLarge": "Image trop lourde (max 2 MB).",
-        "failed": "Échec de l'upload du logo. Réessayez."
+        "invalidImage": "Seleccione una imagen válida.",
+        "tooLarge": "Imagen demasiado grande (máx. 2 MB).",
+        "failed": "Error al subir el logo. Inténtelo de nuevo."
       },
-      "displayName": "Apellido affiché",
-      "logoUrl": "URL du logo",
-      "chooseLogo": "Choisir un logo local",
-      "logoFormatHint": "PNG/JPG/SVG/WebP, max 2 MB",
-      "logoPreview": "Vista previa du logo",
-      "primaryColor": "Couleur primaire",
-      "primaryColorHint": "Couleur dominante des e-mails (en-têtes, boutons).",
-      "secondaryColor": "Couleur secondaire",
-      "secondaryColorHint": "Couleur d'accompagnement (optionnel).",
-      "footerText": "Texte de pied de page",
-      "footerPlaceholder": "© Africa Tourism Gate — Todos droits réservés",
-      "welcomeSubject": "Sujet — e-mail de bienvenue",
-      "welcomeSubjectPlaceholder": "Bienvenue chez {displayName}",
-      "welcomeSubjectHint": "Variables : {displayName}",
-      "bookingSubject": "Sujet — confirmation de réservation",
-      "bookingSubjectPlaceholder": "Confirmation de réservation — {ref}",
-      "bookingSubjectHint": "Variables : {ref}, {displayName}",
-      "previewTemplate": "Modèle à prévisualiser",
-      "templateWelcome": "Bienvenue (création de compte)",
-      "templateBooking": "Confirmation de réservation",
-      "previewing": "Prévisualisation…",
-      "previewButton": "Prévisualiser",
+      "displayName": "Nombre mostrado",
+      "logoUrl": "URL del logo",
+      "chooseLogo": "Elegir un logo local",
+      "logoFormatHint": "PNG/JPG/SVG/WebP, máx. 2 MB",
+      "logoPreview": "Vista previa del logo",
+      "primaryColor": "Color primario",
+      "primaryColorHint": "Color dominante de los correos (encabezados, botones).",
+      "secondaryColor": "Color secundario",
+      "secondaryColorHint": "Color de apoyo (opcional).",
+      "footerText": "Texto del pie de página",
+      "footerPlaceholder": "© '{year}' '{displayName}' · Todos los derechos reservados",
+      "footerHint": "Variables: '{year}', '{displayName}'. Deje vacío para el texto predeterminado.",
+      "welcomeSubject": "Asunto — correo de bienvenida",
+      "welcomeSubjectPlaceholder": "Bienvenido a '{displayName}'",
+      "welcomeSubjectHint": "Variables: '{displayName}'",
+      "bookingSubject": "Asunto — confirmación de reserva",
+      "bookingSubjectPlaceholder": "Confirmación de reserva — '{ref}'",
+      "bookingSubjectHint": "Variables: '{ref}', '{displayName}'",
+      "previewTemplate": "Plantilla a previsualizar",
+      "templateWelcome": "Bienvenida (creación de cuenta)",
+      "templateBooking": "Confirmación de reserva",
+      "previewing": "Previsualizando…",
+      "previewButton": "Previsualizar",
       "save": "Guardar",
-      "cancel": "Annuler",
-      "saving": "Enregistrement…",
-      "dirty": "Modifications non enregistrées",
-      "clean": "Ninguna modification en attente",
-      "readOnlyHint": "Vous pouvez consulter ces paramètres mais pas les modifier (permission organization_settings.write requise)."
+      "cancel": "Cancelar",
+      "saving": "Guardando…",
+      "dirty": "Cambios no guardados",
+      "clean": "Ningún cambio pendiente",
+      "readOnlyHint": "Puede ver estos ajustes pero no modificarlos (se requiere organization_settings.write)."
     },
     "preview": {
-      "closeAria": "Fermer la prévisualisation",
-      "title": "Prévisualisation",
-      "subject": "Sujet :",
-      "close": "Fermer",
-      "iframeTitle": "Vista previa e-mail"
+      "closeAria": "Cerrar la vista previa",
+      "title": "Vista previa",
+      "subject": "Asunto:",
+      "close": "Cerrar",
+      "iframeTitle": "Vista previa del correo"
     }
   },
   "bankAccounts": {
@@ -239,34 +240,70 @@
       "orgSelectAria": "Organización",
       "empty": "No hay cuentas bancarias aún."
     },
+    "stats": {
+      "total": {
+        "label": "Cuentas",
+        "subtitle": "Cuentas bancarias registradas"
+      },
+      "default": {
+        "label": "Predeterminada",
+        "subtitle": "Cuenta usada para transferencias"
+      },
+      "banks": {
+        "label": "Bancos",
+        "subtitle": "Entidades bancarias distintas"
+      },
+      "currencies": {
+        "label": "Monedas",
+        "subtitle": "Monedas cubiertas por las cuentas"
+      }
+    },
     "form": {
       "validation": {
-        "bankNameRequired": "Le nom de la banque est obligatoire.",
-        "accountNameRequired": "Le nom du compte est obligatoire.",
-        "accountNumberRequired": "Le numéro de compte est obligatoire.",
-        "accountNumberNoMask": "Saisissez le numéro complet (sans masque).",
-        "currencyInvalid": "La devise doit comporter 3 lettres (ex. USD, CDF)."
+        "bankNameRequired": "El nombre del banco es obligatorio.",
+        "accountNameRequired": "El nombre de la cuenta es obligatorio.",
+        "accountNumberRequired": "El número de cuenta es obligatorio.",
+        "accountNumberNoMask": "Introduzca el número completo (sin máscara).",
+        "currencyInvalid": "La moneda debe tener 3 letras (p. ej. USD, CDF)."
       },
-      "editTitle": "Modifier le compte",
-      "createTitle": "Nouveau compte bancaire",
-      "bankName": "Banque",
-      "accountName": "Apellido du compte",
-      "accountNumberEdit": "Numéro de compte (laisser vide pour conserver)",
-      "accountNumberCreate": "Numéro de compte / IBAN",
-      "storedValue": "Valeur enregistrée: {masked}",
+      "editTitle": "Editar cuenta",
+      "createTitle": "Nueva cuenta bancaria",
+      "bankName": "Banco",
+      "accountName": "Nombre de la cuenta",
+      "accountNumberEdit": "Número de cuenta (dejar vacío para conservar)",
+      "accountNumberCreate": "Número de cuenta / IBAN",
+      "storedValue": "Valor guardado: {masked}",
       "swiftBic": "SWIFT / BIC",
       "currency": "Moneda",
-      "isDefault": "Compte par défaut",
-      "update": "Mettre à jour",
-      "create": "Créer",
-      "cancel": "Annuler",
+      "isDefault": "Cuenta por defecto",
+      "update": "Actualizar",
+      "create": "Crear",
+      "cancel": "Cancelar",
       "save": "Guardar",
-      "saving": "Enregistrement…",
-      "dirty": "Modifications non enregistrées",
-      "clean": "Ninguna modification en attente"
+      "saving": "Guardando…",
+      "dirty": "Cambios no guardados",
+      "clean": "Ningún cambio pendiente"
     }
   },
   "donations": {
+    "stats": {
+      "total": {
+        "label": "Campañas",
+        "subtitle": "Campañas de donación registradas"
+      },
+      "published": {
+        "label": "Publicadas",
+        "subtitle": "Visibles en web o GAP"
+      },
+      "featured": {
+        "label": "Destacadas",
+        "subtitle": "Campañas navbar (botón Donar)"
+      },
+      "locales": {
+        "label": "Idiomas",
+        "subtitle": "Idiomas cubiertos por las campañas"
+      }
+    },
     "list": {
       "pageTitle": "Campañas de donación",
       "intro": "Gestione varios llamados a donación según el contexto. Solo uno puede destacarse en la barra de navegación (web y GAP).",
@@ -282,6 +319,11 @@
       "deleteConfirmButton": "Eliminar",
       "cancel": "Cancelar",
       "featuredYes": "Navbar",
+      "tableAria": "Lista de campañas de donación",
+      "surfacesShort": {
+        "web": "Web",
+        "gap": "GAP"
+      },
       "columns": {
         "title": "Título",
         "locale": "Idioma",
@@ -298,6 +340,7 @@
       "loading": "Cargando…",
       "saving": "Guardando…",
       "saveButton": "Guardar",
+      "cancelButton": "Cancelar",
       "surfaces": {
         "web": "Sitio web",
         "gap": "Sitio GAP"
@@ -305,6 +348,7 @@
       "fields": {
         "title": "Título",
         "description": "Descripción",
+        "descriptionPlaceholder": "Describa la campaña de donación…",
         "contextNote": "Contexto / circunstancias",
         "contextNotePlaceholder": "Ej. emergencia, temporada de lluvias",
         "buttonLabel": "Etiqueta del botón",

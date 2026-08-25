@@ -4,5 +4,4 @@ import type { EmailBrandingValue } from '@africatourismgate/types';
 export const DEFAULT_EMAIL_BRANDING: EmailBrandingValue = {
   displayName: 'Africa Tourism Gate',
   primaryColor: '#0d9488',
-  footerText: '© Africa Tourism Gate',
 };

@@ -99,12 +99,23 @@
   "organisations": {
     "title": "Organizations",
     "description": "Platform partners and entities. Search by name or slug.",
+    "actions": {
+      "new": "New organization"
+    },
     "nouveau": {
       "metaTitle": "New organization",
-      "description": "Create a partner organization."
+      "description": "Create a partner organization.",
+      "backLabel": "Back to organizations"
     },
     "id": {
-      "metaTitle": "Edit organization"
+      "metaTitle": "Edit organization",
+      "description": "Organization info, users and settings.",
+      "backLabel": "Back to organizations",
+      "voir": {
+        "metaTitle": "View organization",
+        "description": "Organization profile, contact and staff.",
+        "backLabel": "Back to organizations"
+      }
     }
   },
   "fidelite": {
@@ -631,7 +642,8 @@
       },
       "nouveau": {
         "metaTitle": "New role",
-        "description": "Create a custom role and define its permissions."
+        "description": "Create a custom role and define its permissions.",
+        "backLabel": "Back to roles"
       },
       "permissions": {
         "title": "Permission catalog",
@@ -651,11 +663,34 @@
     }
   },
   "parametres": {
+    "title": "Settings",
+    "description": "Organization configuration: contact details, locale, booking and branding.",
     "metaTitle": "Settings",
     "comptes": {
+      "title": "Bank accounts",
+      "description": "Organization B2B accounts for transfers and offline payments.",
       "metaTitle": "Bank accounts"
     },
+    "dons": {
+      "title": "Donation campaigns",
+      "description": "Manage multiple donation appeals by context. Only one can be featured in the navigation bar (web and GAP).",
+      "metaTitle": "Donation campaigns",
+      "nouveau": {
+        "title": "New donation campaign",
+        "metaTitle": "New donation campaign",
+        "description": "The donation marked as navbar featured appears on the Donate button on the web and GAP sites (one per language).",
+        "backLabel": "Back to donations"
+      },
+      "edit": {
+        "title": "Edit donation campaign",
+        "metaTitle": "Edit donation campaign",
+        "description": "Update campaign content, visibility and navbar featured status.",
+        "backLabel": "Back to donations"
+      }
+    },
     "emails": {
+      "title": "Emails",
+      "description": "Customize the look of transactional emails (welcome, booking confirmation).",
       "metaTitle": "Emails"
     }
   },

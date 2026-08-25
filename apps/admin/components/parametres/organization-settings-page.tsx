@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
+import { AdminListPageHeader } from '../pages/admin-list-page-header';
 import { getApiClient } from '../../lib/auth/api';
 import { useUnsavedChangesGuard } from '../rbac/use-unsaved-changes-guard';
 import { ParametresPageLayout } from './parametres-subnav';
@@ -91,9 +92,12 @@ export function OrganizationSettingsPage() {
   if (accessError) {
     return (
       <ParametresPageLayout>
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {accessError}
-        </p>
+        <div className="min-w-0">
+          <AdminListPageHeader routePath="parametres" />
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {accessError}
+          </p>
+        </div>
       </ParametresPageLayout>
     );
   }
@@ -101,7 +105,10 @@ export function OrganizationSettingsPage() {
   if (!organizationId) {
     return (
       <ParametresPageLayout>
-        <p className="text-sm text-atg-muted">{t('form.loading')}</p>
+        <div className="min-w-0">
+          <AdminListPageHeader routePath="parametres" />
+          <p className="text-sm text-atg-muted">{t('form.loading')}</p>
+        </div>
       </ParametresPageLayout>
     );
   }
@@ -111,14 +118,16 @@ export function OrganizationSettingsPage() {
       <ParametresPageLayout
         onSubnavNavigate={formDirty ? (_href, proceed) => requestAction(proceed) : undefined}
       >
-        <p className="mb-8 text-sm text-atg-muted">{t('page.intro')}</p>
-        <OrganizationSettingsForm
-          organizationId={organizationId}
-          isSuperAdmin={isSuperAdmin}
-          organizations={organizations}
-          onOrganizationIdChange={isSuperAdmin ? handleOrganizationChange : undefined}
-          onDirtyChange={setFormDirty}
-        />
+        <div className="min-w-0 space-y-6">
+          <AdminListPageHeader routePath="parametres" />
+          <OrganizationSettingsForm
+            organizationId={organizationId}
+            isSuperAdmin={isSuperAdmin}
+            organizations={organizations}
+            onOrganizationIdChange={isSuperAdmin ? handleOrganizationChange : undefined}
+            onDirtyChange={setFormDirty}
+          />
+        </div>
       </ParametresPageLayout>
       <AlertDialog
         open={dialogOpen}

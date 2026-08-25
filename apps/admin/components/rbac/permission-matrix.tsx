@@ -5,6 +5,10 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 import {
   Button,
   Card,
+  Checkbox,
+  DataTableBadge,
+  Input,
+  Skeleton,
   useToast,
 } from '@africatourismgate/ui';
 import type { Permission } from '@africatourismgate/types';
@@ -29,8 +33,7 @@ type PermissionMatrixProps = {
 type DomainGroup = {
   resource: string;
   label: string;
-  actions: string[];
-  permissionByAction: Map<string, Permission>;
+  permissions: Permission[];
 };
 
 function setsEqual(a: Set<string>, b: Set<string>): boolean {
@@ -39,6 +42,21 @@ function setsEqual(a: Set<string>, b: Set<string>): boolean {
     if (!b.has(value)) return false;
   }
   return true;
+}
+
+async function loadAllPermissions(): Promise<Permission[]> {
+  const client = getApiClient();
+  const pageSize = 100;
+  const first = await client.listPermissions({ page: 1, limit: pageSize });
+  const pages = Math.max(1, first.meta.totalPages);
+  if (pages === 1) return first.data;
+
+  const rest = await Promise.all(
+    Array.from({ length: pages - 1 }, (_, index) =>
+      client.listPermissions({ page: index + 2, limit: pageSize }),
+    ),
+  );
+  return [...first.data, ...rest.flatMap((page) => page.data)];
 }
 
 export function PermissionMatrix({
@@ -59,6 +77,7 @@ export function PermissionMatrix({
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -83,12 +102,11 @@ export function PermissionMatrix({
     setLoading(true);
     setError(null);
     try {
-      const client = getApiClient();
-      const [permsResult, rolePerms] = await Promise.all([
-        client.listPermissions({ page: 1, limit: 100 }),
-        client.getRolePermissions(roleId),
+      const [allPermissions, rolePerms] = await Promise.all([
+        loadAllPermissions(),
+        getApiClient().getRolePermissions(roleId),
       ]);
-      setPermissions(permsResult.data);
+      setPermissions(allPermissions);
       const ids = new Set(rolePerms.permissionIds);
       setSavedIds(ids);
       setSelectedIds(new Set(ids));
@@ -113,17 +131,32 @@ export function PermissionMatrix({
 
     return Array.from(byResource.entries())
       .sort(([a], [b]) => a.localeCompare(b))
-      .map(([resource, perms]) => {
-        const sorted = [...perms].sort((a, b) => a.action.localeCompare(b.action));
-        const permissionByAction = new Map(sorted.map((perm) => [perm.action, perm]));
-        return {
-          resource,
-          label: formatPermissionDomain(resource, domainLabels, emptyDash),
-          actions: sorted.map((perm) => perm.action),
-          permissionByAction,
-        };
-      });
+      .map(([resource, perms]) => ({
+        resource,
+        label: formatPermissionDomain(resource, domainLabels, emptyDash),
+        permissions: [...perms].sort((a, b) => a.action.localeCompare(b.action)),
+      }));
   }, [permissions, domainLabels, emptyDash]);
+
+  const filteredGroups = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) return domainGroups;
+    return domainGroups.filter((group) => {
+      if (group.label.toLowerCase().includes(query)) return true;
+      if (group.resource.toLowerCase().includes(query)) return true;
+      return group.permissions.some(
+        (permission) =>
+          permission.code.toLowerCase().includes(query) ||
+          permission.action.toLowerCase().includes(query) ||
+          formatPermissionAction(permission.action, actionLabels)
+            .toLowerCase()
+            .includes(query),
+      );
+    });
+  }, [actionLabels, domainGroups, search]);
+
+  const selectedCount = selectedIds.size;
+  const totalCount = permissions.length;
 
   function togglePermission(permissionId: string) {
     if (readOnly) return;
@@ -139,7 +172,7 @@ export function PermissionMatrix({
     if (readOnly) return;
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      for (const permission of Array.from(group.permissionByAction.values())) {
+      for (const permission of group.permissions) {
         if (checked) next.add(permission.id);
         else next.delete(permission.id);
       }
@@ -148,10 +181,11 @@ export function PermissionMatrix({
   }
 
   function domainSelectionState(group: DomainGroup): 'none' | 'some' | 'all' {
-    const ids = Array.from(group.permissionByAction.values()).map((perm) => perm.id);
-    const selectedCount = ids.filter((id) => selectedIds.has(id)).length;
-    if (selectedCount === 0) return 'none';
-    if (selectedCount === ids.length) return 'all';
+    const selectedCountInGroup = group.permissions.filter((permission) =>
+      selectedIds.has(permission.id),
+    ).length;
+    if (selectedCountInGroup === 0) return 'none';
+    if (selectedCountInGroup === group.permissions.length) return 'all';
     return 'some';
   }
 
@@ -188,136 +222,172 @@ export function PermissionMatrix({
   }
 
   if (loading) {
-    return <p className="text-sm text-atg-muted">{t('loading')}</p>;
+    return (
+      <Card variant="dashboard" padding="md" className="space-y-4">
+        <div className="space-y-2">
+          <Skeleton className="h-5 w-48" />
+          <Skeleton className="h-4 w-full max-w-md" />
+        </div>
+        <Skeleton className="h-9 w-full max-w-sm" />
+        <div className="space-y-3">
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-24 w-full" />
+        </div>
+        <p className="sr-only">{t('loading')}</p>
+      </Card>
+    );
   }
 
   return (
     <>
-      <Card variant="dashboard" padding="lg" className="space-y-6">
-        <div>
-          <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
-          <p className="text-sm text-atg-muted">
-            {readOnly ? t('descriptionReadOnly') : t('descriptionEditable')}
-          </p>
+      <Card variant="dashboard" padding="md" className="space-y-4">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0 space-y-0.5">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-base font-semibold text-atg-fg">{t('title')}</h2>
+              {readOnly ? (
+                <DataTableBadge variant="muted">{t('readOnlyBadge')}</DataTableBadge>
+              ) : null}
+            </div>
+            <p className="text-sm text-atg-muted">
+              {readOnly ? t('descriptionReadOnly') : t('descriptionEditable')}
+            </p>
+          </div>
+          <DataTableBadge variant="muted" className="shrink-0 tabular-nums">
+            {t('selectedCount', { selected: selectedCount, total: totalCount })}
+          </DataTableBadge>
+        </div>
+
+        <div className="max-w-sm">
+          <Input
+            name="matrix-search"
+            type="search"
+            placeholder={t('searchPlaceholder')}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            aria-label={t('searchPlaceholder')}
+          />
         </div>
 
         {error ? (
-          <p role="alert" className="text-sm text-red-600">
+          <p
+            role="alert"
+            className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400"
+          >
             {error}
           </p>
         ) : null}
 
-        <div className="space-y-4">
-          {domainGroups.map((group) => {
-            const selection = domainSelectionState(group);
-            return (
-              <Card
-                key={group.resource}
-                variant="dashboard"
-                padding="md"
-                className="space-y-3"
-              >
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div>
-                    <h3 className="font-medium text-atg-fg">{group.label}</h3>
-                    <p className="font-mono text-xs text-atg-muted">{group.resource}.*</p>
-                  </div>
-                </div>
+        {filteredGroups.length === 0 ? (
+          <p className="rounded-lg border border-dashed border-atg-border bg-atg-surface/40 px-3 py-6 text-center text-sm text-atg-muted">
+            {search.trim() ? t('searchEmpty') : t('empty')}
+          </p>
+        ) : (
+          <div className="grid gap-3 md:grid-cols-2 md:items-start">
+            {filteredGroups.map((group) => {
+              const selection = domainSelectionState(group);
+              const groupSelected = group.permissions.filter((permission) =>
+                selectedIds.has(permission.id),
+              ).length;
 
-                <div className="-mx-2 overflow-x-auto px-2 sm:mx-0 sm:px-0">
-                  <table className="w-full min-w-[320px] border-collapse text-sm">
-                    <thead>
-                      <tr className="border-b border-atg-border text-left text-atg-muted">
-                        <th className="py-2 pr-4 font-medium">{t('columns.scope')}</th>
-                        {group.actions.map((action) => (
-                          <th
-                            key={action}
-                            className="px-2 py-2 text-center font-medium whitespace-nowrap"
+              return (
+                <section
+                  key={group.resource}
+                  className="overflow-hidden rounded-lg border border-atg-border bg-atg-elevated"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-atg-border bg-atg-surface/40 px-3 py-2">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                        <h3 className="text-sm font-semibold text-atg-fg">{group.label}</h3>
+                        <span className="font-mono text-[11px] text-atg-muted">
+                          {group.resource}.*
+                        </span>
+                        <span className="tabular-nums text-[11px] text-atg-muted">
+                          {t('domainCount', {
+                            selected: groupSelected,
+                            total: group.permissions.length,
+                          })}
+                        </span>
+                      </div>
+                    </div>
+
+                    {!readOnly ? (
+                      <Checkbox
+                        name={`domain-${group.resource}`}
+                        checked={selection === 'all'}
+                        ref={(element) => {
+                          if (element) {
+                            element.indeterminate = selection === 'some';
+                          }
+                        }}
+                        onChange={(event) => toggleDomain(group, event.target.checked)}
+                        label={t('selectDomain')}
+                        aria-label={t('ariaToggleDomainAll', { domain: group.label })}
+                        wrapperClassName="shrink-0 text-xs text-atg-fg"
+                      />
+                    ) : null}
+                  </div>
+
+                  <ul className="grid grid-cols-1 gap-1.5 p-2">
+                    {group.permissions.map((permission) => {
+                      const isSelected = selectedIds.has(permission.id);
+                      const actionLabel = formatPermissionAction(
+                        permission.action,
+                        actionLabels,
+                      );
+                      const description = permission.description?.trim() || undefined;
+                      return (
+                        <li key={permission.id}>
+                          <label
+                            title={description}
+                            className={`flex cursor-pointer items-center gap-2 rounded-md border px-2.5 py-1.5 transition-colors ${
+                              isSelected
+                                ? 'border-primary/40 bg-primary/5'
+                                : 'border-atg-border hover:bg-atg-surface/60'
+                            } ${readOnly ? 'cursor-default opacity-90' : ''}`}
                           >
-                            {formatPermissionAction(action, actionLabels)}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="border-b border-atg-border/60">
-                        <td className="py-2 pr-4 font-medium text-atg-fg">{t('wholeDomain')}</td>
-                        {group.actions.map((action) => {
-                          const permission = group.permissionByAction.get(action);
-                          if (!permission) {
-                            return (
-                              <td key={action} className="px-2 py-2 text-center text-atg-muted">
-                                {emptyDash}
-                              </td>
-                            );
-                          }
-                          return (
-                            <td key={action} className="px-2 py-2 text-center">
-                              <input
-                                type="checkbox"
-                                checked={selection === 'all'}
-                                ref={(element) => {
-                                  if (element) {
-                                    element.indeterminate = selection === 'some';
-                                  }
-                                }}
-                                disabled={readOnly}
-                                onChange={(event) =>
-                                  toggleDomain(group, event.target.checked)
-                                }
-                                aria-label={t('ariaToggleDomain', {
-                                  domain: group.label,
-                                  action: formatPermissionAction(action, actionLabels),
-                                })}
-                                className="h-4 w-4 rounded border-atg-border"
-                              />
-                            </td>
-                          );
-                        })}
-                      </tr>
-                      <tr>
-                        <td className="py-2 pr-4 text-atg-muted">{t('perAction')}</td>
-                        {group.actions.map((action) => {
-                          const permission = group.permissionByAction.get(action);
-                          if (!permission) {
-                            return (
-                              <td key={action} className="px-2 py-2 text-center text-atg-muted">
-                                {emptyDash}
-                              </td>
-                            );
-                          }
-                          return (
-                            <td key={action} className="px-2 py-2 text-center">
-                              <input
-                                type="checkbox"
-                                checked={selectedIds.has(permission.id)}
-                                disabled={readOnly}
-                                onChange={() => togglePermission(permission.id)}
-                                aria-label={permission.code}
-                                className="h-4 w-4 rounded border-atg-border"
-                              />
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </Card>
-            );
-          })}
-        </div>
+                            <input
+                              type="checkbox"
+                              className="h-3.5 w-3.5 shrink-0 rounded border-atg-border text-primary focus:ring-primary"
+                              checked={isSelected}
+                              disabled={readOnly}
+                              onChange={() => togglePermission(permission.id)}
+                              aria-label={permission.code}
+                            />
+                            <span className="min-w-0 flex-1">
+                              <span className="block truncate text-sm font-medium leading-tight text-atg-fg">
+                                {actionLabel}
+                              </span>
+                              <code className="block truncate font-mono text-[10px] leading-tight text-atg-muted">
+                                {permission.code}
+                              </code>
+                            </span>
+                          </label>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </section>
+              );
+            })}
+          </div>
+        )}
       </Card>
 
       {!readOnly && isDirty ? (
-        <div className="sticky bottom-0 z-20 mt-4 border-t border-atg-border bg-atg-bg/95 px-4 py-3 backdrop-blur">
+        <div className="sticky bottom-0 z-20 mt-3 border-t border-atg-border bg-atg-bg/95 px-4 py-2.5 backdrop-blur">
           <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3">
             <p className="text-sm font-medium text-atg-fg">{tUnsaved('title')}</p>
             <div className="flex flex-wrap gap-2">
               <Button type="button" variant="outline" onClick={handleCancel} disabled={saving}>
                 {tActions('cancel')}
               </Button>
-              <Button type="button" onClick={() => void handleSave()} loading={saving}>
+              <Button
+                type="button"
+                variant="primary"
+                onClick={() => void handleSave()}
+                loading={saving}
+              >
                 {tActions('save')}
               </Button>
             </div>

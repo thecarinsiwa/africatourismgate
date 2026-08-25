@@ -18,7 +18,7 @@ export function completeWebLogin(
   router: RouterLike,
   nextPath: string,
 ): void {
-  saveWebSession(session, false);
+  saveWebSession(session);
   applyUserPreferredLocale(session.user);
   router.replace(nextPath);
 }
