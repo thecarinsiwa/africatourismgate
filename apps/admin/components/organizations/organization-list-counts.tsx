@@ -9,6 +9,11 @@ type OrganizationListCountsProps = {
   productCount?: number;
 };
 
+function toCount(value: number | undefined | null): number {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : 0;
+}
+
 export function OrganizationListCounts({
   userCount,
   employeeCount,
@@ -21,17 +26,17 @@ export function OrganizationListCounts({
     {
       label: t('usersShort'),
       hint: t('usersHint'),
-      value: userCount,
+      value: toCount(userCount),
     },
     {
       label: t('employeesShort'),
       hint: t('employeesHint'),
-      value: employeeCount,
+      value: toCount(employeeCount),
     },
     {
       label: t('productsShort'),
       hint: t('productsHint'),
-      value: productCount,
+      value: toCount(productCount),
     },
   ] as const;
 

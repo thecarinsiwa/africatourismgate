@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { Organizations } from '../../../entities/generated';
+import { OrganizationsListQueryDto } from './dto/organizations-list-query.dto';
 import { OrganizationsService } from './organizations.service';
 
 @ApiTags('organizations')
@@ -21,8 +21,8 @@ export class OrganizationsController {
 
   @Get()
   @ApiOperation({ summary: 'List organizations' })
-  findAll(@Query() query: PaginationQueryDto) {
-    return this.service.findAll(query);
+  findAll(@Query() query: OrganizationsListQueryDto) {
+    return this.service.findAllWithCounts(query);
   }
 
   @Get(':id')
