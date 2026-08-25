@@ -362,6 +362,11 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Contrôle d’accès (RBAC).',
     apiResource: 'roles',
   },
+  'systeme/roles/nouveau': {
+    title: 'Nouveau rôle',
+    description: 'Créer un rôle personnalisé et définir ses permissions.',
+    apiResource: 'roles',
+  },
   'systeme/audit': {
     title: 'Audit RBAC',
     description: 'Journal des changements de permissions.',

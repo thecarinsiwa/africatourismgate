@@ -642,7 +642,8 @@
       },
       "nouveau": {
         "metaTitle": "New role",
-        "description": "Create a custom role and define its permissions."
+        "description": "Create a custom role and define its permissions.",
+        "backLabel": "Back to roles"
       },
       "permissions": {
         "title": "Permission catalog",

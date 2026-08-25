@@ -642,7 +642,8 @@
       },
       "nouveau": {
         "metaTitle": "Nouveau rôle",
-        "description": "Créer un rôle personnalisé et définir ses permissions."
+        "description": "Créer un rôle personnalisé et définir ses permissions.",
+        "backLabel": "Retour aux rôles"
       },
       "permissions": {
         "title": "Catalogue des permissions",
