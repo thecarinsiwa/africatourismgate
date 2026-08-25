@@ -347,6 +347,16 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Partenaires et entités.',
     apiResource: 'organizations',
   },
+  'organisations/id': {
+    title: "Modifier l'organisation",
+    description: "Infos, employés et paramètres de l'organisation.",
+    apiResource: 'organizations',
+  },
+  'organisations/id/voir': {
+    title: "Voir l'organisation",
+    description: "Profil organisation, contact et employés.",
+    apiResource: 'organizations',
+  },
   'systeme/roles': {
     title: 'Rôles et permissions',
     description: 'Contrôle d’accès (RBAC).',

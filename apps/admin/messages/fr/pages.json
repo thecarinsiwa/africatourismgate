@@ -110,7 +110,12 @@
     "id": {
       "metaTitle": "Modifier l'organisation",
       "description": "Infos, utilisateurs et paramètres de l'organisation.",
-      "backLabel": "Retour aux organisations"
+      "backLabel": "Retour aux organisations",
+      "voir": {
+        "metaTitle": "Voir l'organisation",
+        "description": "Profil organisation, contact et employés.",
+        "backLabel": "Retour aux organisations"
+      }
     }
   },
   "fidelite": {

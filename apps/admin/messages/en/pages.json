@@ -110,7 +110,12 @@
     "id": {
       "metaTitle": "Edit organization",
       "description": "Organization info, users and settings.",
-      "backLabel": "Back to organizations"
+      "backLabel": "Back to organizations",
+      "voir": {
+        "metaTitle": "View organization",
+        "description": "Organization profile, contact and staff.",
+        "backLabel": "Back to organizations"
+      }
     }
   },
   "fidelite": {
