@@ -31,3 +31,18 @@ export class ApiHttpError extends Error {
     this.body = body;
   }
 }
+
+export function getApiErrorCode(body: unknown): string | undefined {
+  if (!body || typeof body !== 'object') {
+    return undefined;
+  }
+  const code = (body as { code?: unknown }).code;
+  return typeof code === 'string' ? code : undefined;
+}
+
+export function isSessionLockedApiError(error: unknown): boolean {
+  if (!(error instanceof ApiHttpError)) {
+    return false;
+  }
+  return getApiErrorCode(error.body) === 'SESSION_LOCKED';
+}

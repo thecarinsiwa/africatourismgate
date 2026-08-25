@@ -302,6 +302,7 @@ import type {
   ForgotPasswordResponse,
   LoginRequest,
   LogoutResponse,
+  TouchSessionRequest,
   UnlockSessionRequest,
   Organization,
   OrganizationListItem,
@@ -391,6 +392,7 @@ import type {
   UsersListQuery,
 } from '@africatourismgate/types';
 export type { PaginationQuery } from '@africatourismgate/types';
+export { SESSION_LOCKED_CODE } from '@africatourismgate/types';
 import { ApiHttpError, parseApiErrorMessage } from './http-error';
 import {
   fetchPaginated,
@@ -398,7 +400,7 @@ import {
   sumSucceededPaymentsRevenue,
 } from './pagination';
 
-export { ApiHttpError, parseApiErrorMessage } from './http-error';
+export { ApiHttpError, getApiErrorCode, isSessionLockedApiError, parseApiErrorMessage } from './http-error';
 
 function buildGapPublicQueryString(query?: {
   locale?: string;
@@ -443,6 +445,7 @@ export type {
   ForgotPasswordResponse,
   LoginRequest,
   LogoutResponse,
+  TouchSessionRequest,
   UnlockSessionRequest,
   PaginatedResponse,
   PaginationMeta,
@@ -716,9 +719,13 @@ export class ApiClient {
   }
 
   touchSession(refreshToken: string): Promise<LogoutResponse> {
+    return this.touchSessionWithBody({ refreshToken });
+  }
+
+  touchSessionWithBody(body: TouchSessionRequest): Promise<LogoutResponse> {
     return this.request<LogoutResponse>('/auth/touch', {
       method: 'POST',
-      body: { refreshToken },
+      body,
       skipAuth: true,
     });
   }
