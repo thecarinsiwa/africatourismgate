@@ -104,7 +104,8 @@
     },
     "nouveau": {
       "metaTitle": "Nueva organización",
-      "description": "Crear una organización socia."
+      "description": "Crear una organización socia.",
+      "backLabel": "Volver a las organizaciones"
     },
     "id": {
       "metaTitle": "Editar organización"

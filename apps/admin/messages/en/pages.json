@@ -104,7 +104,8 @@
     },
     "nouveau": {
       "metaTitle": "New organization",
-      "description": "Create a partner organization."
+      "description": "Create a partner organization.",
+      "backLabel": "Back to organizations"
     },
     "id": {
       "metaTitle": "Edit organization"

@@ -104,7 +104,8 @@
     },
     "nouveau": {
       "metaTitle": "Nouvelle organisation",
-      "description": "Créer une organisation partenaire."
+      "description": "Créer une organisation partenaire.",
+      "backLabel": "Retour aux organisations"
     },
     "id": {
       "metaTitle": "Modifier l'organisation"
