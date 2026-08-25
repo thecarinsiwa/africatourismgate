@@ -95,8 +95,8 @@ function toBrandingPayload(values: EmailBrandingFormValues): EmailBrandingValue 
 export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingFormProps) {
   const { organizationSettings: getOrganizationSettingsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.settings.emails.form');
-  const tForm = useTranslations('modules.settings.form');
-  const tCommon = useTranslations('modules.common.form');
+  const tCommon = useTranslations('modules.common');
+  const tCommonForm = useTranslations('modules.common.form');
   const tValidation = useTranslations('modules.common.validation');
   const tPreview = useTranslations('modules.settings.emails.preview');
   const [values, setValues] = useState<EmailBrandingFormValues>(defaultValues);
@@ -282,7 +282,7 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
   }
 
   if (loading) {
-    return <p className="text-sm text-atg-muted">{tForm('loading')}</p>;
+    return <p className="text-sm text-atg-muted">{tCommon('loading')}</p>;
   }
 
   if (loadError) {
@@ -326,7 +326,7 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
           {canWrite ? (
             <div className="flex flex-wrap items-center gap-3">
               <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
-                {uploadingLogo ? tCommon('uploading') : t('chooseLogo')}
+                {uploadingLogo ? tCommonForm('uploading') : t('chooseLogo')}
                 <input
                   type="file"
                   accept="image/*"

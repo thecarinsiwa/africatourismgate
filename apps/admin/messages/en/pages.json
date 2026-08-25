@@ -689,6 +689,8 @@
       }
     },
     "emails": {
+      "title": "Emails",
+      "description": "Customize the look of transactional emails (welcome, booking confirmation).",
       "metaTitle": "Emails"
     }
   },

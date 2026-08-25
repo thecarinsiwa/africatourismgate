@@ -689,6 +689,8 @@
       }
     },
     "emails": {
+      "title": "Correos electrónicos",
+      "description": "Personalice la apariencia de los correos transaccionales (bienvenida, confirmación de reserva).",
       "metaTitle": "Correos electrónicos"
     }
   },

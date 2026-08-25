@@ -689,6 +689,8 @@
       }
     },
     "emails": {
+      "title": "E-mails",
+      "description": "Personnalisez l'apparence des e-mails transactionnels (bienvenue, confirmation de réservation).",
       "metaTitle": "E-mails"
     }
   },
