@@ -1,12 +1,15 @@
 import type { AuthResponse, AuthUser, AuthTokens } from '@africatourismgate/api-client';
 import { refreshAuthTokens } from '../api/auth';
+import {
+  clearSessionIdleState,
+  resetSessionActivity,
+  setSessionLocked,
+} from './session-idle';
 
 const WEB_SESSION_KEY = 'atg.web.session';
 const ACCESS_SKEW_MS = 30_000;
 
 export const AUTH_CHANGED_EVENT = 'atg:auth-changed';
-
-export type WebSessionPersistence = 'local' | 'session';
 
 export type WebStoredSession = {
   accessToken: string;
@@ -15,18 +18,19 @@ export type WebStoredSession = {
   user: AuthUser | null;
 };
 
-function readStorageSession(storage: Storage): WebStoredSession | null {
-  const raw = storage.getItem(WEB_SESSION_KEY);
+function readStorageSession(): WebStoredSession | null {
+  if (typeof window === 'undefined') return null;
+  const raw = sessionStorage.getItem(WEB_SESSION_KEY);
   if (!raw) return null;
   try {
     const parsed = JSON.parse(raw) as WebStoredSession;
     if (!parsed.accessToken || !parsed.refreshToken || !parsed.expiresAt) {
-      storage.removeItem(WEB_SESSION_KEY);
+      sessionStorage.removeItem(WEB_SESSION_KEY);
       return null;
     }
     return parsed;
   } catch {
-    storage.removeItem(WEB_SESSION_KEY);
+    sessionStorage.removeItem(WEB_SESSION_KEY);
     return null;
   }
 }
@@ -52,29 +56,15 @@ export function authTokensToWebSession(
   };
 }
 
-export function getWebSessionPersistence(): WebSessionPersistence | null {
-  if (typeof window === 'undefined') return null;
-  if (localStorage.getItem(WEB_SESSION_KEY)) return 'local';
-  if (sessionStorage.getItem(WEB_SESSION_KEY)) return 'session';
-  return null;
-}
-
-export function saveWebSession(session: WebStoredSession, remember?: boolean): void {
+export function saveWebSession(session: WebStoredSession): void {
   if (typeof window === 'undefined') return;
-  const useLocal = remember ?? getWebSessionPersistence() === 'local';
-  const storage = useLocal ? localStorage : sessionStorage;
-  const otherStorage = useLocal ? sessionStorage : localStorage;
-  storage.setItem(WEB_SESSION_KEY, JSON.stringify(session));
-  otherStorage.removeItem(WEB_SESSION_KEY);
+  sessionStorage.setItem(WEB_SESSION_KEY, JSON.stringify(session));
+  localStorage.removeItem(WEB_SESSION_KEY);
+  resetSessionActivity();
 }
 
 export function getWebSession(): WebStoredSession | null {
-  if (typeof window === 'undefined') return null;
-  for (const storage of [localStorage, sessionStorage]) {
-    const session = readStorageSession(storage);
-    if (session) return session;
-  }
-  return null;
+  return readStorageSession();
 }
 
 export function hasWebSession(): boolean {
@@ -83,8 +73,9 @@ export function hasWebSession(): boolean {
 
 export function clearWebSession(): void {
   if (typeof window === 'undefined') return;
-  localStorage.removeItem(WEB_SESSION_KEY);
   sessionStorage.removeItem(WEB_SESSION_KEY);
+  localStorage.removeItem(WEB_SESSION_KEY);
+  clearSessionIdleState();
 }
 
 export function clearWebAuthState(): void {
@@ -104,12 +95,14 @@ export async function ensureClientAccessToken(): Promise<string | null> {
   if (!session) return null;
   if (!isAccessTokenExpired(session)) return session.accessToken;
 
-  const persistence = getWebSessionPersistence();
-
   try {
     const refreshed = await refreshAuthTokens(session.refreshToken);
+    if (refreshed === 'locked') {
+      setSessionLocked(true);
+      return session.accessToken;
+    }
     const nextSession = authTokensToWebSession(refreshed, session.user);
-    saveWebSession(nextSession, persistence === 'local');
+    saveWebSession(nextSession);
     return nextSession.accessToken;
   } catch {
     clearWebAuthState();

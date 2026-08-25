@@ -1,4 +1,5 @@
 import {
+  ApiHttpError,
   createApiClient,
   type AuthMe,
   type AuthResponse,
@@ -9,7 +10,7 @@ import { getOrCreateClientInstanceId, withClientInstanceId } from '@africatouris
 import { appendDevOriginToNextPath, isLocalDevOrigin } from '../auth/dev-oauth-return';
 import { getOAuthApiBaseUrl } from './oauth-api-url';
 
-function getApiBaseUrl(): string {
+export function getApiBaseUrl(): string {
   const defaultApiUrl =
     process.env.NODE_ENV === 'production'
       ? 'https://app-africatourismgate.org/api'
@@ -62,10 +63,35 @@ export function getAuthMe(accessToken: string): Promise<AuthMe> {
   }).getAuthMe();
 }
 
-export function refreshAuthTokens(refreshToken: string): Promise<AuthTokens> {
-  return createApiClient({
-    baseUrl: getApiBaseUrl(),
-  }).refresh(refreshToken);
+export type RefreshAuthTokensResult = AuthTokens | 'locked';
+
+export async function refreshAuthTokens(
+  refreshToken: string,
+): Promise<RefreshAuthTokensResult> {
+  try {
+    return await createApiClient({
+      baseUrl: getApiBaseUrl(),
+    }).refresh(refreshToken);
+  } catch (error) {
+    if (error instanceof ApiHttpError && error.status === 401) {
+      const body = error.body as { code?: string } | undefined;
+      if (body?.code === 'SESSION_LOCKED') {
+        return 'locked';
+      }
+    }
+    throw error;
+  }
+}
+
+export function touchSession(refreshToken: string): Promise<{ success: boolean }> {
+  return createApiClient({ baseUrl: getApiBaseUrl() }).touchSession(refreshToken);
+}
+
+export function unlockSession(body: {
+  password: string;
+  refreshToken: string;
+}): Promise<AuthTokens> {
+  return createApiClient({ baseUrl: getApiBaseUrl() }).unlockSession(body);
 }
 
 export function logoutAuth(refreshToken: string): Promise<{ success: boolean }> {

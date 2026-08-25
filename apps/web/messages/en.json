@@ -94,6 +94,19 @@
         "envMissing": "Missing API configuration (NEXT_PUBLIC_API_URL).",
         "server": "The server is not ready. Check the database."
       }
+    },
+    "sessionLock": {
+      "checkingSession": "Checking your session…",
+      "title": "Session locked",
+      "subtitle": "You have been inactive for too long. Enter your password to continue.",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "unlock": "Unlock",
+      "unlockLoading": "Verifying…",
+      "logout": "Sign out",
+      "invalidPassword": "Incorrect password.",
+      "genericError": "Could not unlock the session. Please try again.",
+      "idleHint": "Automatic lock after {minutes} min of inactivity."
     }
   },
   "hotelsDetail": {
