@@ -123,6 +123,7 @@
     "assignedTitle": "Rôles assignés",
     "empty": "Aucun rôle actif pour cet utilisateur.",
     "assignFormTitle": "Assigner un rôle",
+    "assignFormHint": "Attribuez un rôle à un utilisateur, avec périmètre et expiration optionnels.",
     "assignSubmit": "Assigner le rôle",
     "manageAction": "Gérer les rôles",
     "modalTitle": "Gérer les rôles",

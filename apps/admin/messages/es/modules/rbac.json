@@ -117,6 +117,11 @@
   "assignments": {
     "loading": "Cargando asignaciones…",
     "empty": "Ninguna asignación activa.",
+    "emptyTitleSearch": "Ninguna asignación para este usuario",
+    "emptyTitleDefault": "Ninguna asignación activa",
+    "emptyDescriptionSearch": "Este usuario no tiene un rol activo, o pruebe otro filtro.",
+    "emptyDescriptionDefault": "Asigne un rol arriba para empezar.",
+    "paginationItem": "asignación",
     "revoke": "Revocar",
     "revokeDialog": {
       "title": "Revocar asignación",

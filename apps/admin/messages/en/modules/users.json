@@ -123,6 +123,7 @@
     "assignedTitle": "Assigned roles",
     "empty": "No active role for this user.",
     "assignFormTitle": "Assign a role",
+    "assignFormHint": "Assign a role to a user, with optional scope and expiration.",
     "assignSubmit": "Assign role",
     "manageAction": "Manage roles",
     "modalTitle": "Manage roles",

@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { AlertDialog, Button, Input } from '@africatourismgate/ui';
+import { AlertDialog, Button, Card, Input, Select } from '@africatourismgate/ui';
 import type {
   CreateUserRoleAssignmentRequest,
   Role,
@@ -10,7 +10,7 @@ import type {
   User,
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRbacScopeTypeLabels } from '../../lib/i18n/use-module-labels';
 import { getApiClient } from '../../lib/auth/api';
 
@@ -32,10 +32,8 @@ export function UserRoleAssignmentForm({
 }: UserRoleAssignmentFormProps) {
   const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
   const tRoles = useTranslations('modules.users.roles');
+  const tLoading = useTranslations('common.loading');
   const scopeTypeLabels = useRbacScopeTypeLabels();
-  const userFieldId = useId();
-  const roleFieldId = useId();
-  const scopeTypeId = useId();
   const [userId, setUserId] = useState(defaultUserId);
   const [roleId, setRoleId] = useState('');
   const [scopeType, setScopeType] = useState<ScopeType>('global');
@@ -55,6 +53,28 @@ export function UserRoleAssignmentForm({
         label: scopeTypeLabels[value],
       })),
     [scopeTypeLabels],
+  );
+
+  const userOptions = useMemo(
+    () => [
+      { value: '', label: tRoles('selectPlaceholder') },
+      ...users.map((user) => ({
+        value: user.id,
+        label: `${user.firstName} ${user.lastName} — ${user.email}`,
+      })),
+    ],
+    [tRoles, users],
+  );
+
+  const roleOptions = useMemo(
+    () => [
+      { value: '', label: tRoles('selectPlaceholder') },
+      ...roles.map((role) => ({
+        value: role.id,
+        label: `${role.name} (${role.code})`,
+      })),
+    ],
+    [tRoles, roles],
   );
 
   const selectedRole = roles.find((r) => r.id === roleId);
@@ -78,9 +98,7 @@ export function UserRoleAssignmentForm({
         if (!cancelled) {
           setUsers(usersResult.data);
           setRoles(
-            rolesResult.data.filter(
-              (r) => r.code !== 'super_admin' || me.isSuperAdmin,
-            ),
+            rolesResult.data.filter((r) => r.code !== 'super_admin' || me.isSuperAdmin),
           );
         }
       } catch (err) {
@@ -119,7 +137,16 @@ export function UserRoleAssignmentForm({
     } finally {
       setSubmitting(false);
     }
-  }, [userId, roleId, scopeType, scopeId, expiresAt, onSuccess, isSuperAdminRole, getRbacErrorMessage]);
+  }, [
+    userId,
+    roleId,
+    scopeType,
+    scopeId,
+    expiresAt,
+    onSuccess,
+    isSuperAdminRole,
+    getRbacErrorMessage,
+  ]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -144,116 +171,68 @@ export function UserRoleAssignmentForm({
     [userId, roleId, scopeType, scopeId, isSuperAdminRole, tRoles, submitAssignment],
   );
 
-  return (
+  const fields = (
     <>
-      <AlertDialog
-        open={superAdminDialogOpen}
-        onOpenChange={setSuperAdminDialogOpen}
-        title={tRoles('superAdminConfirmTitle')}
-        description={tRoles('superAdminConfirm', { roleName: selectedRole?.name ?? 'super_admin' })}
-        confirmLabel={tRoles('superAdminConfirmButton')}
-        cancelLabel={tRoles('cancel')}
-        variant="danger"
-        loading={submitting}
-        onConfirm={() => { setSuperAdminDialogOpen(false); void submitAssignment(); }}
-      />
-    <form
-      onSubmit={handleSubmit}
-      className={
-        embedded
-          ? 'space-y-4'
-          : 'space-y-4 rounded-lg border border-atg-border p-4'
-      }
-    >
-      {embedded ? null : (
-        <h3 className="text-sm font-semibold text-atg-fg">{tRoles('assignFormTitle')}</h3>
-      )}
       {loadError ? (
-        <p role="alert" className="text-sm text-red-600">
+        <p
+          role="alert"
+          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400"
+        >
           {loadError}
         </p>
       ) : null}
       {error ? (
-        <p role="alert" className="text-sm text-red-600">
+        <p
+          role="alert"
+          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400"
+        >
           {error}
         </p>
       ) : null}
 
-      {lockUser ? null : (
-        <div>
-          <label htmlFor={userFieldId} className="mb-2 block text-sm font-medium text-atg-fg">
-            {tRoles('user')}
-          </label>
-          <select
-            id={userFieldId}
+      <div className="grid gap-4 lg:grid-cols-2">
+        {lockUser ? null : (
+          <Select
+            label={tRoles('user')}
             value={userId}
+            options={userOptions}
             onChange={(e) => setUserId(e.target.value)}
-            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm"
-          >
-            <option value="">{tRoles('selectPlaceholder')}</option>
-            {users.map((u) => (
-              <option key={u.id} value={u.id}>
-                {u.firstName} {u.lastName} — {u.email}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+          />
+        )}
 
-      <div>
-        <label htmlFor={roleFieldId} className="mb-2 block text-sm font-medium text-atg-fg">
-          {tRoles('role')}
-        </label>
-        <select
-          id={roleFieldId}
-          value={roleId}
-          onChange={(e) => {
-            const nextId = e.target.value;
-            setRoleId(nextId);
-            const nextRole = roles.find((r) => r.id === nextId);
-            if (nextRole?.code === 'super_admin') {
-              setScopeType('global');
-              setScopeId('');
-            }
-          }}
-          className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm"
-        >
-          <option value="">{tRoles('selectPlaceholder')}</option>
-          {roles.map((r) => (
-            <option key={r.id} value={r.id}>
-              {r.name} ({r.code})
-            </option>
-          ))}
-        </select>
-        {isSuperAdminRole ? (
-          <p className="mt-1 text-xs text-amber-700 dark:text-amber-400">
-            {tRoles('superAdminWarning')}
-          </p>
-        ) : null}
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor={scopeTypeId} className="mb-2 block text-sm font-medium text-atg-fg">
-            {tRoles('scope')}
-          </label>
-          <select
-            id={scopeTypeId}
-            value={scopeType}
-            disabled={isSuperAdminRole}
+        <div className="space-y-1">
+          <Select
+            label={tRoles('role')}
+            value={roleId}
+            options={roleOptions}
             onChange={(e) => {
-              setScopeType(e.target.value as ScopeType);
-              if (e.target.value === 'global') setScopeId('');
+              const nextId = e.target.value;
+              setRoleId(nextId);
+              const nextRole = roles.find((r) => r.id === nextId);
+              if (nextRole?.code === 'super_admin') {
+                setScopeType('global');
+                setScopeId('');
+              }
             }}
-            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm disabled:opacity-60"
-          >
-            {scopeTypeOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          />
+          {isSuperAdminRole ? (
+            <p className="text-xs text-amber-700 dark:text-amber-400">
+              {tRoles('superAdminWarning')}
+            </p>
+          ) : null}
         </div>
+
+        <Select
+          label={tRoles('scope')}
+          value={scopeType}
+          options={scopeTypeOptions}
+          disabled={isSuperAdminRole}
+          onChange={(e) => {
+            setScopeType(e.target.value as ScopeType);
+            if (e.target.value === 'global') setScopeId('');
+          }}
+        />
+
         {scopeType !== 'global' ? (
           <Input
             label={tRoles('scopeId')}
@@ -262,19 +241,61 @@ export function UserRoleAssignmentForm({
             hint={tRoles('scopeIdHint')}
           />
         ) : null}
+
+        <Input
+          label={tRoles('expiresAt')}
+          type="datetime-local"
+          value={expiresAt}
+          onChange={(e) => setExpiresAt(e.target.value)}
+        />
       </div>
 
-      <Input
-        label={tRoles('expiresAt')}
-        type="datetime-local"
-        value={expiresAt}
-        onChange={(e) => setExpiresAt(e.target.value)}
-      />
+      <div className="flex flex-wrap gap-3 pt-1">
+        <Button
+          type="submit"
+          variant="primary"
+          loading={submitting}
+          loadingText={tLoading('submit')}
+        >
+          {submitLabel ?? tRoles('assignFormTitle')}
+        </Button>
+      </div>
+    </>
+  );
 
-      <Button type="submit" loading={submitting} size="sm">
-        {submitLabel ?? tRoles('assignFormTitle')}
-      </Button>
-    </form>
+  return (
+    <>
+      <AlertDialog
+        open={superAdminDialogOpen}
+        onOpenChange={setSuperAdminDialogOpen}
+        title={tRoles('superAdminConfirmTitle')}
+        description={tRoles('superAdminConfirm', {
+          roleName: selectedRole?.name ?? 'super_admin',
+        })}
+        confirmLabel={tRoles('superAdminConfirmButton')}
+        cancelLabel={tRoles('cancel')}
+        variant="danger"
+        loading={submitting}
+        onConfirm={() => {
+          setSuperAdminDialogOpen(false);
+          void submitAssignment();
+        }}
+      />
+      {embedded ? (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {fields}
+        </form>
+      ) : (
+        <Card variant="dashboard" padding="md" className="space-y-4">
+          <div>
+            <h3 className="text-sm font-semibold text-atg-fg">{tRoles('assignFormTitle')}</h3>
+            <p className="mt-0.5 text-sm text-atg-muted">{tRoles('assignFormHint')}</p>
+          </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {fields}
+          </form>
+        </Card>
+      )}
     </>
   );
 }

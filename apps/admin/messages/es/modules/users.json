@@ -123,6 +123,7 @@
     "assignedTitle": "Roles asignados",
     "empty": "No hay ningún rol activo para este usuario.",
     "assignFormTitle": "Asignar un rol",
+    "assignFormHint": "Asigne un rol a un usuario, con ámbito y caducidad opcionales.",
     "assignSubmit": "Asignar el rol",
     "manageAction": "Gestionar roles",
     "modalTitle": "Gestionar roles",

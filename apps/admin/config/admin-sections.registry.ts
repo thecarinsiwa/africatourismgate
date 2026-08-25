@@ -367,6 +367,16 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Créer un rôle personnalisé et définir ses permissions.',
     apiResource: 'roles',
   },
+  'systeme/roles/assignations': {
+    title: 'Assignations de rôles',
+    description: 'Attribuer ou révoquer des rôles pour les utilisateurs.',
+    apiResource: 'user-role-assignments',
+  },
+  'systeme/roles/permissions': {
+    title: 'Catalogue des permissions',
+    description: 'Liste en lecture seule des permissions disponibles.',
+    apiResource: 'permissions',
+  },
   'systeme/audit': {
     title: 'Audit RBAC',
     description: 'Journal des changements de permissions.',

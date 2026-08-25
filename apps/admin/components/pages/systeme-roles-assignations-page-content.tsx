@@ -5,7 +5,7 @@ import { AdminListPageHeader } from './admin-list-page-header';
 
 export function AssignationsPageContent() {
   return (
-    <div>
+    <div className="min-w-0">
       <AdminListPageHeader routePath="systeme/roles/assignations" />
       <UserRoleAssignmentsList />
     </div>

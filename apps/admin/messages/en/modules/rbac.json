@@ -117,6 +117,11 @@
   "assignments": {
     "loading": "Loading assignments…",
     "empty": "No active assignments.",
+    "emptyTitleSearch": "No assignments for this user",
+    "emptyTitleDefault": "No active assignments",
+    "emptyDescriptionSearch": "This user has no active role, or try another filter.",
+    "emptyDescriptionDefault": "Assign a role above to get started.",
+    "paginationItem": "assignment",
     "revoke": "Revoke",
     "revokeDialog": {
       "title": "Revoke assignment",
