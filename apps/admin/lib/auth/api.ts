@@ -9,6 +9,7 @@ import {
   tokensToStoredSession,
   type StoredSession,
 } from './session';
+import { setSessionLocked } from './session-idle';
 
 /** Aligné sur API_PORT (défaut 3000) — voir packages/config/dev-api-url.mjs */
 const DEFAULT_DEV_API_URL = 'http://localhost:3000/api';
@@ -83,14 +84,18 @@ export async function ensureFreshSession(): Promise<StoredSession | null> {
   if (!refreshInFlight) {
     const refreshToken = session.refreshToken;
     refreshInFlight = refreshAccessToken(refreshToken)
-      .then((tokens) => {
+      .then((result) => {
         refreshInFlight = null;
-        if (!tokens) {
+        if (result === 'locked') {
+          setSessionLocked(true);
+          return session;
+        }
+        if (!result) {
           clearAuthState();
           return null;
         }
         const current = getSession() ?? session;
-        const updated = tokensToStoredSession(tokens, current.user);
+        const updated = tokensToStoredSession(result, current.user);
         saveSession(updated);
         return updated;
       })

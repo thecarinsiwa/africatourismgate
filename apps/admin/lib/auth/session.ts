@@ -3,6 +3,7 @@ import {
   clearClientSessionCookies,
   setClientSessionCookies,
 } from './cookies';
+import { clearSessionIdleState, resetSessionActivity } from './session-idle';
 
 export const STORAGE_KEY = 'atg.admin.session';
 export const AUTH_CHANGED_EVENT = 'atg:admin:auth-changed';
@@ -31,6 +32,7 @@ export function saveSession(session: StoredSession): void {
   sessionStorage.setItem(STORAGE_KEY, JSON.stringify(session));
   localStorage.removeItem(STORAGE_KEY);
   setClientSessionCookies(session);
+  resetSessionActivity();
 }
 
 export function getSession(): StoredSession | null {
@@ -62,6 +64,7 @@ export function clearSession(): void {
   sessionStorage.removeItem(STORAGE_KEY);
   localStorage.removeItem(STORAGE_KEY);
   clearClientSessionCookies();
+  clearSessionIdleState();
 }
 
 export function clearAuthState(): void {

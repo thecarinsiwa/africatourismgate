@@ -1,10 +1,12 @@
 import type { AuthTokens } from '@africatourismgate/types';
 import { getApiBaseUrl } from './api';
 
+export type RefreshAccessTokenResult = AuthTokens | 'locked' | null;
+
 export async function refreshAccessToken(
   refreshToken: string,
   apiUrl = getApiBaseUrl(),
-): Promise<AuthTokens | null> {
+): Promise<RefreshAccessTokenResult> {
   if (!apiUrl) {
     return null;
   }
@@ -19,6 +21,16 @@ export async function refreshAccessToken(
     });
 
     if (!res.ok) {
+      if (res.status === 401) {
+        try {
+          const body = (await res.json()) as { code?: string };
+          if (body?.code === 'SESSION_LOCKED') {
+            return 'locked';
+          }
+        } catch {
+          // ignore parse errors
+        }
+      }
       return null;
     }
 

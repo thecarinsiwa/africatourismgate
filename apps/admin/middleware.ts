@@ -43,6 +43,9 @@ async function ensureValidSession(
   }
 
   const tokens = await refreshAccessToken(session.refreshToken);
+  if (tokens === 'locked') {
+    return { session, refreshed: false };
+  }
   if (!tokens) {
     return null;
   }
