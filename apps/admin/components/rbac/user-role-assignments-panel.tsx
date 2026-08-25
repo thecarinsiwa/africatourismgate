@@ -21,11 +21,13 @@ type UserRoleAssignmentsPanelProps = {
   userId: string;
   /** Affiche les rôles sans formulaire ni révocation. */
   readOnly?: boolean;
+  onChanged?: () => void;
 };
 
 export function UserRoleAssignmentsPanel({
   userId,
   readOnly = false,
+  onChanged,
 }: UserRoleAssignmentsPanelProps) {
   const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
   const tRoles = useTranslations('modules.users.roles');
@@ -72,6 +74,7 @@ export function UserRoleAssignmentsPanel({
       });
       setPendingRevoke(null);
       await load();
+      onChanged?.();
     } catch (err) {
       toast({
         title: tRoles('toast.revokeFailedTitle'),
@@ -81,7 +84,7 @@ export function UserRoleAssignmentsPanel({
     } finally {
       setRevokingId(null);
     }
-  }, [pendingRevoke, load, toast, tRoles, getRbacErrorMessage]);
+  }, [pendingRevoke, load, toast, tRoles, getRbacErrorMessage, onChanged]);
 
   return (
     <Card variant="dashboard" padding="lg" className="space-y-4">
@@ -136,7 +139,10 @@ export function UserRoleAssignmentsPanel({
         <UserRoleAssignmentForm
           defaultUserId={userId}
           lockUser
-          onSuccess={() => void load()}
+          onSuccess={() => {
+            void load();
+            onChanged?.();
+          }}
         />
       )}
 

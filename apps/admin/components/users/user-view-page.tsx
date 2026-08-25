@@ -111,25 +111,29 @@ export function UserViewPage({ userId }: UserViewPageProps) {
       try {
         const client = getApiClient();
         const user = await client.getUser(userId);
-        const [organization, rolesResult] = await Promise.all([
-          user.organizationId
-            ? client.getOrganization(user.organizationId).catch(() => null)
-            : Promise.resolve(null),
-          client
-            .listUserRoleAssignments({
-              userId,
-              page: 1,
-              limit: 20,
-              includeRevoked: false,
-            })
-            .catch(() => ({ data: [] as UserRoleAssignment[] })),
-        ]);
+        const organization = user.organizationId
+          ? await client.getOrganization(user.organizationId).catch(() => null)
+          : null;
+
+        let roles: UserRoleAssignment[] = [];
+        try {
+          const rolesResult = await client.listUserRoleAssignments({
+            userId,
+            page: 1,
+            limit: 20,
+            includeRevoked: false,
+          });
+          roles = rolesResult.data;
+        } catch {
+          roles = [];
+        }
+
         if (!cancelled) {
           setState({
             status: 'ready',
             user,
             organization,
-            roles: rolesResult.data,
+            roles,
           });
         }
       } catch (error) {

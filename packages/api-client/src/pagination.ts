@@ -57,6 +57,8 @@ const RESOURCE_QUERY_KEYS = [
   'roleId',
   'withoutRole',
   'audience',
+  'includeRevoked',
+  'scopeType',
   'eventType',
   'actorUserId',
   'userId',
