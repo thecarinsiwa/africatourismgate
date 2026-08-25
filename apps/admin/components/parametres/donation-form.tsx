@@ -10,7 +10,7 @@ import { isRichTextEmpty } from '../../lib/rich-text';
 import { getApiClient } from '../../lib/auth/api';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 import { RichTextContent } from '../rich-text-content';
-import { RichTextEditor } from '../rich-text-editor';
+import { RichTextEditor, type RichTextUploadedAsset } from '../rich-text-editor';
 
 export type DonationFormValues = {
   title: string;
@@ -117,6 +117,23 @@ export function DonationForm({
     [],
   );
 
+  const handleUploadDescriptionAsset = useCallback(
+    async (file: File): Promise<RichTextUploadedAsset> => {
+      const body = new FormData();
+      body.append('file', file);
+      const payload = await getApiClient().uploadDonationDescriptionAsset(
+        body,
+        mode === 'edit' ? donationId : undefined,
+      );
+      return {
+        url: payload.url,
+        assetType: payload.assetType,
+        name: file.name,
+      };
+    },
+    [donationId, mode],
+  );
+
   const validate = (): boolean => {
     const errors: Partial<Record<keyof DonationFormValues, string>> = {};
     if (!values.title.trim()) errors.title = t('validation.titleRequired');
@@ -213,6 +230,7 @@ export function DonationForm({
             onChange={(html) => updateField('description', html)}
             placeholder={t('fields.descriptionPlaceholder')}
             contentClassName="min-h-[160px]"
+            onUploadAsset={handleUploadDescriptionAsset}
           />
         ) : values.description.trim() && !isRichTextEmpty(values.description) ? (
           <div>

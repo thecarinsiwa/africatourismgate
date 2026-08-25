@@ -1862,6 +1862,19 @@ export class ApiClient {
     return this.request<void>(`/donations/${id}`, { method: 'DELETE' });
   }
 
+  uploadDonationDescriptionAsset(
+    body: FormData,
+    donationId?: string,
+  ): Promise<{ url: string; assetType: ActivityDescriptionAssetType }> {
+    const route = donationId
+      ? `/donations/${donationId}/upload-description-asset`
+      : '/donations/upload-description-asset';
+    return this.request<{ url: string; assetType: ActivityDescriptionAssetType }>(route, {
+      method: 'POST',
+      body,
+    });
+  }
+
   getPublicDonations(query?: PublicDonationsQuery): Promise<PublicDonationsPayload> {
     const qs = new URLSearchParams();
     if (query?.locale) qs.set('locale', query.locale);

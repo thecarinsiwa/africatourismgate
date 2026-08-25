@@ -69,6 +69,10 @@ export function packageDescriptionAssetUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/packages/description-assets/${filename}`;
 }
 
+export function donationDescriptionAssetUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/donations/description-assets/${filename}`;
+}
+
 export function blogPostUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/blog/${filename}`;
 }
