@@ -18,8 +18,8 @@ import { useTranslations } from 'next-intl';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { EmployeesList } from '../employees/employees-list';
+import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
-import { AdminIntroPage } from '../pages/admin-intro-page';
 import { getApiClient } from '../../lib/auth/api';
 import {
   useAccountStatusLabels,
@@ -45,9 +45,18 @@ function isTabValue(value: string | null): value is TabValue {
   return value !== null && (TAB_VALUES as readonly string[]).includes(value);
 }
 
+function MetaItem({ label, value }: { label: string; value: ReactNode }) {
+  return (
+    <div className="min-w-0">
+      <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">{label}</dt>
+      <dd className="mt-1 break-words text-sm font-medium text-atg-fg">{value}</dd>
+    </div>
+  );
+}
+
 function ProfileField({ label, value }: { label: string; value: ReactNode }) {
   return (
-    <div className="grid gap-1 py-3.5 first:pt-0 last:pb-0 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-4">
+    <div className="grid gap-1 py-3 first:pt-0 last:pb-0 sm:grid-cols-[8.5rem_minmax(0,1fr)] sm:gap-4">
       <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted sm:pt-0.5">
         {label}
       </dt>
@@ -56,12 +65,20 @@ function ProfileField({ label, value }: { label: string; value: ReactNode }) {
   );
 }
 
-function ProfileSection({ title, children }: { title: string; children: ReactNode }) {
+function ProfileSection({
+  title,
+  children,
+  className,
+}: {
+  title: string;
+  children: ReactNode;
+  className?: string;
+}) {
   return (
-    <div>
-      <h3 className="text-sm font-semibold text-atg-fg">{title}</h3>
-      <dl className="mt-1 divide-y divide-atg-border/60">{children}</dl>
-    </div>
+    <Card variant="dashboard" padding="md" className={className}>
+      <h3 className="text-sm font-semibold tracking-tight text-atg-fg">{title}</h3>
+      <dl className="mt-3 divide-y divide-atg-border/70">{children}</dl>
+    </Card>
   );
 }
 
@@ -69,6 +86,7 @@ export function OrganizationViewPage({ organizationId }: OrganizationViewPagePro
   const { organizations: getOrganizationsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.organizations.detail');
   const tForm = useTranslations('modules.organizations.form');
+  const tPages = useTranslations('pages.organisations.id.voir');
   const tCommon = useTranslations('modules.common');
   const accountStatusLabels = useAccountStatusLabels();
   const legalFormOptions = useOrganizationLegalFormOptions();
@@ -129,34 +147,28 @@ export function OrganizationViewPage({ organizationId }: OrganizationViewPagePro
 
   if (state.status === 'loading') {
     return (
-      <AdminIntroPage
-        routePath="organisations/id/voir"
-        backHref={ORGANISATIONS_HUB_HREF}
-        backLabelKey="backLabel"
-        suppressDescription
-      >
-        <div className="min-w-0 space-y-6">
-          <Skeleton className="h-28 w-full max-w-3xl" />
-          <Skeleton className="h-10 w-full max-w-md" />
-          <Skeleton className="h-64 w-full" />
-          <p className="sr-only">{tCommon('loading')}</p>
-        </div>
-      </AdminIntroPage>
+      <div className="mx-auto w-full max-w-5xl space-y-6">
+        <Skeleton className="h-5 w-40" />
+        <Skeleton className="h-44 w-full" />
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-72 w-full" />
+        <p className="sr-only">{tCommon('loading')}</p>
+      </div>
     );
   }
 
   if (state.status === 'error') {
     return (
-      <AdminIntroPage
-        routePath="organisations/id/voir"
-        backHref={ORGANISATIONS_HUB_HREF}
-        backLabelKey="backLabel"
-        suppressDescription
-      >
+      <div className="mx-auto w-full max-w-5xl space-y-4">
+        <AdminPageBackLink
+          href={ORGANISATIONS_HUB_HREF}
+          label={tPages('backLabel')}
+          className="block"
+        />
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
-      </AdminIntroPage>
+      </div>
     );
   }
 
@@ -172,29 +184,35 @@ export function OrganizationViewPage({ organizationId }: OrganizationViewPagePro
     const trimmed = value?.trim();
     return trimmed || emptyDash;
   };
+  const description = organization.description?.trim() || '';
 
   return (
-    <AdminIntroPage
-      routePath="organisations/id/voir"
-      backHref={ORGANISATIONS_HUB_HREF}
-      backLabelKey="backLabel"
-      suppressDescription
-    >
-      <div className="min-w-0 space-y-6">
-        <Card variant="dashboard" padding="md" className="overflow-hidden">
-          <div className="flex flex-wrap items-start gap-4">
+    <div className="mx-auto w-full max-w-5xl space-y-6">
+      <AdminPageBackLink
+        href={ORGANISATIONS_HUB_HREF}
+        label={tPages('backLabel')}
+        className="block"
+      />
+
+      <section className="overflow-hidden rounded-2xl border border-atg-border bg-atg-elevated shadow-sm">
+        <div className="border-b border-atg-border bg-gradient-to-br from-atg-surface via-atg-elevated to-atg-surface px-5 py-5 sm:px-6 sm:py-6">
+          <div className="flex items-start gap-4 sm:gap-5">
             <OrganizationLogoField
               organizationId={organizationId}
               name={organization.name}
               organizationLogoUrl={organization.logoUrl}
               canWrite={false}
               isSuperAdmin={false}
+              className="shrink-0"
             />
-            <div className="min-w-0 flex-1 space-y-3">
+
+            <div className="min-w-0 flex-1">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <div>
+                <div className="min-w-0 space-y-1.5">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="text-xl font-semibold text-atg-fg">{organization.name}</h2>
+                    <h2 className="text-xl font-semibold tracking-tight text-atg-fg sm:text-2xl">
+                      {organization.name}
+                    </h2>
                     <DataTableBadge variant={organizationStatusVariants[organization.status]}>
                       {accountStatusLabels[organization.status]}
                     </DataTableBadge>
@@ -202,151 +220,152 @@ export function OrganizationViewPage({ organizationId }: OrganizationViewPagePro
                       <DataTableBadge variant="muted">{legalFormLabel}</DataTableBadge>
                     ) : null}
                   </div>
-                  <p className="mt-1 font-mono text-sm text-atg-muted">{organization.slug}</p>
+                  <p className="font-mono text-sm text-atg-muted">{organization.slug}</p>
+                  {description ? (
+                    <p className="line-clamp-2 max-w-2xl pt-1 text-sm leading-relaxed text-atg-muted">
+                      {description}
+                    </p>
+                  ) : null}
                 </div>
-                <Button href={`/organisations/${organizationId}`} className="shrink-0 self-start">
+
+                <Button
+                  href={`/organisations/${organizationId}`}
+                  variant="primary"
+                  className="shrink-0 self-stretch sm:self-start"
+                >
                   {t('editButton')}
                 </Button>
               </div>
-
-              <dl className="grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-3">
-                <div>
-                  <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-                    {t('meta.currency')}
-                  </dt>
-                  <dd className="mt-0.5 font-medium tabular-nums text-atg-fg">
-                    {organization.currency}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-                    {t('meta.contact')}
-                  </dt>
-                  <dd className="mt-0.5 text-atg-fg">
-                    {displayOrDash(organization.contactEmail)}
-                    {organization.contactPhone?.trim() ? (
-                      <span className="mt-0.5 block text-atg-muted">
-                        {organization.contactPhone.trim()}
-                      </span>
-                    ) : null}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-                    {t('meta.website')}
-                  </dt>
-                  <dd className="mt-0.5">
-                    {websiteHref ? (
-                      <TextLink
-                        href={websiteHref}
-                        variant="primary"
-                        className="break-all font-medium"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {websiteHref.replace(/^https?:\/\//i, '')}
-                      </TextLink>
-                    ) : (
-                      <span className="text-atg-fg">{emptyDash}</span>
-                    )}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-                    {t('meta.createdAt')}
-                  </dt>
-                  <dd className="mt-0.5 tabular-nums text-atg-fg">
-                    {formatDateTime(organization.createdAt)}
-                  </dd>
-                </div>
-              </dl>
             </div>
           </div>
-        </Card>
+        </div>
 
-        <Tabs value={activeTab} onValueChange={handleTabChange}>
-          <TabsList aria-label={t('tabsAria')} className="h-auto flex-wrap">
+        <dl className="grid gap-4 border-t border-atg-border/80 bg-atg-surface/40 px-5 py-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
+          <MetaItem label={t('meta.currency')} value={organization.currency} />
+          <MetaItem
+            label={t('meta.contact')}
+            value={
+              <>
+                <span className="block">{displayOrDash(organization.contactEmail)}</span>
+                {organization.contactPhone?.trim() ? (
+                  <span className="mt-0.5 block font-normal text-atg-muted">
+                    {organization.contactPhone.trim()}
+                  </span>
+                ) : null}
+              </>
+            }
+          />
+          <MetaItem
+            label={t('meta.website')}
+            value={
+              websiteHref ? (
+                <TextLink
+                  href={websiteHref}
+                  variant="primary"
+                  className="break-all font-medium"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {websiteHref.replace(/^https?:\/\//i, '')}
+                </TextLink>
+              ) : (
+                emptyDash
+              )
+            }
+          />
+          <MetaItem
+            label={t('meta.createdAt')}
+            value={
+              <span className="tabular-nums">{formatDateTime(organization.createdAt)}</span>
+            }
+          />
+        </dl>
+      </section>
+
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
+        <div className="overflow-x-auto rounded-xl border border-atg-border bg-atg-elevated p-1.5">
+          <TabsList aria-label={t('tabsAria')} className="w-full justify-start">
             <TabsTrigger value="infos">{t('tabs.infos')}</TabsTrigger>
             <TabsTrigger value="users">{t('tabs.users')}</TabsTrigger>
           </TabsList>
+        </div>
 
-          <TabsContent value="infos" className="pt-2">
-            <Card variant="dashboard" padding="md" className="max-w-4xl space-y-8">
-              <ProfileSection title={tForm('sections.identity')}>
-                <ProfileField label={tForm('name')} value={organization.name} />
-                <ProfileField
-                  label={tForm('slug')}
-                  value={<span className="font-mono text-sm">{organization.slug}</span>}
-                />
-                <ProfileField
-                  label={tForm('description')}
-                  value={
-                    organization.description?.trim() ? (
-                      <span className="whitespace-pre-wrap font-normal">
-                        {organization.description.trim()}
-                      </span>
-                    ) : (
-                      emptyDash
-                    )
-                  }
-                />
-              </ProfileSection>
+        <TabsContent value="infos" className="outline-none">
+          <div className="grid gap-4 lg:grid-cols-2">
+            <ProfileSection title={tForm('sections.identity')}>
+              <ProfileField label={tForm('name')} value={organization.name} />
+              <ProfileField
+                label={tForm('slug')}
+                value={<span className="font-mono text-sm">{organization.slug}</span>}
+              />
+              <ProfileField
+                label={tForm('description')}
+                value={
+                  description ? (
+                    <span className="whitespace-pre-wrap font-normal leading-relaxed">
+                      {description}
+                    </span>
+                  ) : (
+                    emptyDash
+                  )
+                }
+              />
+            </ProfileSection>
 
-              <ProfileSection title={tForm('sections.contact')}>
-                <ProfileField
-                  label={tForm('website')}
-                  value={
-                    websiteHref ? (
-                      <TextLink
-                        href={websiteHref}
-                        variant="primary"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {websiteHref}
-                      </TextLink>
-                    ) : (
-                      emptyDash
-                    )
-                  }
-                />
-                <ProfileField
-                  label={tForm('contactEmail')}
-                  value={displayOrDash(organization.contactEmail)}
-                />
-                <ProfileField
-                  label={tForm('contactPhone')}
-                  value={displayOrDash(organization.contactPhone)}
-                />
-              </ProfileSection>
+            <ProfileSection title={tForm('sections.contact')}>
+              <ProfileField
+                label={tForm('website')}
+                value={
+                  websiteHref ? (
+                    <TextLink
+                      href={websiteHref}
+                      variant="primary"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {websiteHref}
+                    </TextLink>
+                  ) : (
+                    emptyDash
+                  )
+                }
+              />
+              <ProfileField
+                label={tForm('contactEmail')}
+                value={displayOrDash(organization.contactEmail)}
+              />
+              <ProfileField
+                label={tForm('contactPhone')}
+                value={displayOrDash(organization.contactPhone)}
+              />
+            </ProfileSection>
 
-              <ProfileSection title={tForm('sections.legal')}>
-                <ProfileField label={tForm('legalForm')} value={legalFormLabel} />
-                <ProfileField label={tForm('rccm')} value={displayOrDash(organization.rccm)} />
-                <ProfileField label={tForm('idNat')} value={displayOrDash(organization.idNat)} />
-                <ProfileField label={tForm('nif')} value={displayOrDash(organization.nif)} />
-                <ProfileField label={tForm('cnss')} value={displayOrDash(organization.cnss)} />
-              </ProfileSection>
+            <ProfileSection title={tForm('sections.legal')}>
+              <ProfileField label={tForm('legalForm')} value={legalFormLabel} />
+              <ProfileField label={tForm('rccm')} value={displayOrDash(organization.rccm)} />
+              <ProfileField label={tForm('idNat')} value={displayOrDash(organization.idNat)} />
+              <ProfileField label={tForm('nif')} value={displayOrDash(organization.nif)} />
+              <ProfileField label={tForm('cnss')} value={displayOrDash(organization.cnss)} />
+            </ProfileSection>
 
-              <ProfileSection title={tForm('sections.configuration')}>
-                <ProfileField label={tForm('currency')} value={organization.currency} />
-                <ProfileField
-                  label={tForm('status')}
-                  value={
-                    <DataTableBadge variant={organizationStatusVariants[organization.status]}>
-                      {accountStatusLabels[organization.status]}
-                    </DataTableBadge>
-                  }
-                />
-              </ProfileSection>
-            </Card>
-          </TabsContent>
+            <ProfileSection title={tForm('sections.configuration')}>
+              <ProfileField label={tForm('currency')} value={organization.currency} />
+              <ProfileField
+                label={tForm('status')}
+                value={
+                  <DataTableBadge variant={organizationStatusVariants[organization.status]}>
+                    {accountStatusLabels[organization.status]}
+                  </DataTableBadge>
+                }
+              />
+            </ProfileSection>
+          </div>
+        </TabsContent>
 
-          <TabsContent value="users" className="pt-2">
-            <EmployeesList lockedOrganizationId={organizationId} embedded />
-          </TabsContent>
-        </Tabs>
-      </div>
-    </AdminIntroPage>
+        <TabsContent value="users" className="outline-none">
+          <EmployeesList lockedOrganizationId={organizationId} embedded />
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }
