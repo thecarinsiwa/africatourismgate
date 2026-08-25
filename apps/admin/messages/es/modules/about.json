@@ -130,6 +130,9 @@
       "pageTitle": "Editar hito"
     },
     "form": {
+      "info": {
+        "sectionHint": "Hito mostrado en la línea de tiempo de la página Acerca de."
+      },
       "validation": {
         "periodLabelRequired": "La etiqueta del período es obligatoria.",
         "periodTitleRequired": "El título del período es obligatorio.",
@@ -148,9 +151,14 @@
         "content": "Contenido",
         "image": "Imagen",
         "imagePreviewAlt": "Vista previa de imagen",
+        "removeImage": "Quitar imagen",
         "linkUrl": "Enlace (URL)",
         "sortOrder": "Orden de visualización",
         "locale": "Idioma"
+      },
+      "hints": {
+        "imageUpload": "JPEG, PNG o WebP — máx. 5 MB",
+        "linkUrl": "Enlace opcional a una página o recurso asociado."
       },
       "saving": "Guardando…",
       "createButton": "Añadir hito",
@@ -178,6 +186,9 @@
       "pageTitle": "Editar miembro"
     },
     "form": {
+      "info": {
+        "sectionHint": "Perfil mostrado en la sección Equipo de la página Acerca de."
+      },
       "validation": {
         "nameRequired": "El nombre es obligatorio.",
         "roleRequired": "El rol es obligatorio.",
@@ -189,8 +200,12 @@
         "bio": "Biografía",
         "photo": "Foto",
         "photoPreviewAlt": "Vista previa de foto",
+        "removePhoto": "Quitar la foto",
         "sortOrder": "Orden de visualización",
         "locale": "Idioma"
+      },
+      "hints": {
+        "photoUpload": "JPEG, PNG o WebP — máx. 5 MB"
       },
       "saving": "Guardando…",
       "createButton": "Añadir miembro",
@@ -219,6 +234,9 @@
       "pageTitle": "Editar recurso"
     },
     "form": {
+      "info": {
+        "sectionHint": "Documento o enlace mostrado en la sección Recursos de la página Acerca de."
+      },
       "validation": {
         "fileFormat": "Formato no admitido (PDF o imagen).",
         "fileTooLarge": "Archivo demasiado grande (máx. 10 MB).",
@@ -231,6 +249,7 @@
         "title": "Título",
         "description": "Descripción",
         "file": "Archivo",
+        "removeFile": "Quitar archivo",
         "externalUrl": "Enlace externo",
         "sortOrder": "Orden de visualización",
         "publishedAtOptional": "Fecha de publicación (opcional)",
@@ -238,7 +257,8 @@
       },
       "hints": {
         "fileFormat": "PDF, JPEG, PNG o WebP — máx. 10 MB.",
-        "externalUrl": "Enlace a un documento alojado en otro sitio (opcional si hay archivo)."
+        "externalUrl": "Enlace a un documento alojado en otro sitio (opcional si hay archivo).",
+        "publishedAt": "Dejar vacío para usar la fecha actual al publicar."
       },
       "saving": "Guardando…",
       "createButton": "Crear recurso",
@@ -287,6 +307,9 @@
         "pageTitle": "Modificar tarjeta"
       },
       "form": {
+        "info": {
+          "sectionHint": "Tarjeta mostrada en la sección «Por qué elegirnos» de la página de inicio."
+        },
         "validation": {
           "titleRequired": "El título es obligatorio.",
           "descriptionRequired": "La descripción es obligatoria.",
@@ -296,6 +319,7 @@
           "title": "Título",
           "description": "Descripción",
           "linkUrl": "Enlace",
+          "linkUrlHint": "Enlace interno o externo abierto desde la tarjeta (p. ej. /about/who-we-are).",
           "iconKey": "Icono",
           "sortOrder": "Orden de visualización",
           "locale": "Idioma"
@@ -317,13 +341,21 @@
     },
     "section": {
       "heading": "Contenido de la sección",
+      "validation": {
+        "imageUrlRequired": "La imagen es obligatoria.",
+        "imageUrlInvalid": "La URL de la imagen debe ser válida."
+      },
       "fields": {
         "title": "Título",
         "subtitle": "Subtítulo",
         "paragraph1": "Primer párrafo",
         "paragraph2": "Segundo párrafo",
-        "imageUrl": "URL de la imagen",
+        "image": "Imagen de la sección",
+        "imageUrl": "URL de la imagen (alternativa)",
         "imageAlt": "Texto alternativo de la imagen",
+        "imagePreviewAlt": "Vista previa de la sección",
+        "removeImage": "Quitar imagen",
+        "imageUploadHint": "JPEG, PNG o WebP — máx. 5 MB",
         "badgeValue": "Valor del distintivo",
         "badgeLabel": "Etiqueta del distintivo"
       },
@@ -352,6 +384,9 @@
         "pageTitle": "Modificar estadística"
       },
       "form": {
+        "info": {
+          "sectionHint": "Barra de satisfacción mostrada en la sección «Clientes satisfechos» del sitio público."
+        },
         "validation": {
           "labelRequired": "La etiqueta es obligatoria.",
           "percentInvalid": "El porcentaje debe estar entre 0 y 100."
@@ -361,7 +396,9 @@
           "percentValue": "Porcentaje (%)",
           "colorKey": "Color de la barra",
           "sortOrder": "Orden de visualización",
-          "locale": "Idioma"
+          "locale": "Idioma",
+          "preview": "Vista previa en el sitio",
+          "previewLabelPlaceholder": "Etiqueta de la barra"
         },
         "saving": "Guardando…",
         "createButton": "Añadir estadística",

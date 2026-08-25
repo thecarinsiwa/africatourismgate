@@ -416,6 +416,43 @@
         "metaTitle": "Editar artículo"
       }
     },
+    "hero": {
+      "description": "Diapositivas del carrusel de la página de inicio. Acceso: content.read / content.write.",
+      "nouveau": {
+        "metaTitle": "Nueva diapositiva hero",
+        "description": "Añada una diapositiva al carrusel de la página de inicio.",
+        "backLabel": "Volver al hero"
+      },
+      "id": {
+        "metaTitle": "Editar diapositiva hero",
+        "description": "Actualice el contenido, la imagen y el estado de publicación.",
+        "backLabel": "Volver al hero"
+      }
+    },
+    "pourquoi-nous": {
+      "nouveau": {
+        "metaTitle": "Nueva tarjeta Por qué elegirnos",
+        "description": "Añada una tarjeta a la sección Por qué elegirnos.",
+        "backLabel": "Volver a Por qué elegirnos"
+      },
+      "id": {
+        "metaTitle": "Editar tarjeta Por qué elegirnos",
+        "description": "Actualice el título, la descripción, el icono y el estado de publicación.",
+        "backLabel": "Volver a Por qué elegirnos"
+      }
+    },
+    "clients-satisfaits": {
+      "nouveau": {
+        "metaTitle": "Nueva estadística clientes satisfechos",
+        "description": "Añada una barra de satisfacción a la sección Clientes satisfechos.",
+        "backLabel": "Volver a clientes satisfechos"
+      },
+      "id": {
+        "metaTitle": "Editar estadística clientes satisfechos",
+        "description": "Actualice la etiqueta, el porcentaje y el estado de publicación.",
+        "backLabel": "Volver a clientes satisfechos"
+      }
+    },
     "a-propos": {
       "pages": {
         "description": "Páginas institucionales del sitio (Quiénes somos, gobernanza, etc.). Acceso: content.read / content.write.",
@@ -431,33 +468,84 @@
         "description": "Miembros del equipo mostrados en el sitio público. Acceso: content.read / content.write.",
         "nouveau": {
           "metaTitle": "Nuevo miembro",
-          "description": "Añada un miembro al equipo."
+          "description": "Añada un miembro al equipo mostrado en el sitio.",
+          "backLabel": "Volver al equipo"
         },
         "id": {
-          "metaTitle": "Editar miembro"
+          "metaTitle": "Editar miembro",
+          "description": "Actualice el perfil, la foto y el estado de publicación.",
+          "backLabel": "Volver al equipo"
+        }
+      },
+      "timeline": {
+        "description": "Hitos de la línea de tiempo del sitio. Acceso: content.read / content.write.",
+        "nouveau": {
+          "metaTitle": "Nuevo hito",
+          "description": "Añada un hito a la línea de tiempo.",
+          "backLabel": "Volver a la línea de tiempo"
+        },
+        "id": {
+          "metaTitle": "Editar hito",
+          "description": "Actualice el período, el contenido, la imagen y el estado de publicación.",
+          "backLabel": "Volver a la línea de tiempo"
         }
       },
       "ressources": {
         "description": "Informes financieros y recursos multimedia descargables. Acceso: content.read / content.write.",
         "nouveau": {
           "metaTitle": "Nuevo recurso",
-          "description": "Añada un documento o recurso multimedia."
+          "description": "Añada un documento o recurso multimedia descargable.",
+          "backLabel": "Volver a recursos"
         },
         "id": {
-          "metaTitle": "Editar recurso"
+          "metaTitle": "Editar recurso",
+          "description": "Actualice el archivo, el enlace y el estado de publicación.",
+          "backLabel": "Volver a recursos"
         }
       }
     },
     "tickets": {
       "description": "Solicitudes de asistencia al cliente. Filtre por estado y prioridad. Acceso: support_tickets.read / support_tickets.write.",
       "id": {
-        "metaTitle": "Detalle de ticket"
+        "metaTitle": "Detalle de ticket",
+        "description": "Consulte el hilo de conversación y actualice el estado o la prioridad.",
+        "backLabel": "Volver al soporte"
+      }
+    },
+    "support": {
+      "title": "Soporte",
+      "description": "Tickets de asistencia y mensajes de clientes. Filtre por estado y prioridad. Acceso: support_tickets.read / support_tickets.write.",
+      "tabsAria": "Secciones de soporte",
+      "tabs": {
+        "tickets": "Tickets",
+        "messages": "Mensajes"
+      },
+      "messages": {
+        "emptyTitle": "Mensajería unificada próximamente",
+        "emptyDescription": "Las conversaciones fuera de tickets se centralizarán aquí. Mientras tanto, gestione los hilos desde la pestaña Tickets."
+      }
+    },
+    "site": {
+      "title": "Sitio y presentación",
+      "description": "Contenido institucional y de vitrina del sitio público: páginas sobre nosotros, equipo, hero, testimonios. Acceso: content.read / content.write.",
+      "tabsAria": "Secciones del sitio",
+      "tabs": {
+        "aboutPages": "Sobre nosotros",
+        "aboutTeam": "Equipo",
+        "aboutTimeline": "Línea de tiempo",
+        "aboutResources": "Recursos",
+        "whyUs": "Por qué elegirnos",
+        "hero": "Hero",
+        "happyCustomers": "Clientes satisfechos"
       }
     },
     "avis": {
+      "title": "Reseñas",
       "description": "Modere valoraciones y comentarios de clientes. Filtre por nota, propiedad y estado. Acciones: aprobar, ocultar o eliminar. Acceso: reviews.read / reviews.write.",
       "id": {
-        "metaTitle": "Detalle de reseña"
+        "metaTitle": "Detalle de reseña",
+        "description": "Consulte el contexto, el comentario y las acciones de moderación.",
+        "backLabel": "Volver a las reseñas"
       }
     }
   },

@@ -7,7 +7,7 @@ type PageProps = {
 };
 
 export async function generateMetadata(): Promise<Metadata> {
-  return getAdminPageMetadata('contenu/pourquoi-nous');
+  return getAdminPageMetadata('contenu/pourquoi-nous/id');
 }
 
 export default async function Page({ params }: PageProps) {

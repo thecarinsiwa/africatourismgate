@@ -1,12 +1,13 @@
 'use client';
 
 import { ReviewsList } from '../reviews/reviews-list';
-import { AdminIntroPage } from './admin-intro-page';
+import { AdminListPageHeader } from './admin-list-page-header';
 
 export function AvisPageContent() {
   return (
-    <AdminIntroPage routePath="contenu/avis">
+    <div className="min-w-0">
+      <AdminListPageHeader routePath="contenu/avis" />
       <ReviewsList />
-    </AdminIntroPage>
+    </div>
   );
 }

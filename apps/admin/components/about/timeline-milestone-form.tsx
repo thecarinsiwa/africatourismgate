@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Input } from '@africatourismgate/ui';
+import { Button, Card, Input, Select, Textarea } from '@africatourismgate/ui';
 import type {
   AboutTimelineMilestone,
   AboutTimelineMilestoneStatus,
@@ -11,11 +11,15 @@ import type {
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useId, useState } from 'react';
+import { useCallback, useId, useMemo, useState } from 'react';
 import { isValidMediaUrl } from '../../lib/about/form-utils';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
+import { usePermissions } from '../../lib/auth/use-permissions';
+import { useContentLocaleOptions } from '../../lib/content/use-content-locale-options';
 import { resolveMediaUrl } from '../../lib/resolve-media-url';
+
+export const ABOUT_TIMELINE_HUB_HREF = '/contenu/site?tab=about-timeline';
 
 const IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -88,25 +92,33 @@ type TimelineMilestoneFormProps = {
   mode: 'create' | 'edit';
   milestoneId?: string;
   initialMilestone?: AboutTimelineMilestone;
+  defaultLocale?: string;
+  cancelHref?: string;
 };
 
 export function TimelineMilestoneForm({
   mode,
   milestoneId,
   initialMilestone,
+  defaultLocale = 'fr',
+  cancelHref = ABOUT_TIMELINE_HUB_HREF,
 }: TimelineMilestoneFormProps) {
   const { about: getAboutErrorMessage } = useAdminErrorMessages();
+  const { hasPermission, isSuperAdmin } = usePermissions();
+  const canWrite = isSuperAdmin || hasPermission('content.write');
   const t = useTranslations('modules.about.timeline.form');
   const tCommon = useTranslations('modules.common');
   const tCommonForm = useTranslations('modules.common.form');
   const tValidation = useTranslations('modules.common.validation');
-  const tLocale = useTranslations('modules.about.locale');
   const tStatus = useTranslations('modules.about.status');
+  const localeOptions = useContentLocaleOptions('modules.about.locale');
   const router = useRouter();
-  const statusId = useId();
-  const localeId = useId();
+  const imageFileInputId = useId();
+
   const [values, setValues] = useState<TimelineMilestoneFormValues>(() =>
-    initialMilestone ? milestoneToFormValues(initialMilestone) : defaultValues,
+    initialMilestone
+      ? milestoneToFormValues(initialMilestone)
+      : { ...defaultValues, locale: defaultLocale },
   );
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<keyof TimelineMilestoneFormValues, string>>
@@ -114,7 +126,15 @@ export function TimelineMilestoneForm({
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
-  const imageFileInputId = useId();
+
+  const statusOptions = useMemo(
+    () =>
+      (['draft', 'published'] as const).map((status) => ({
+        value: status,
+        label: tStatus(status),
+      })),
+    [tStatus],
+  );
 
   const updateField = useCallback(
     <K extends keyof TimelineMilestoneFormValues>(key: K, value: TimelineMilestoneFormValues[K]) => {
@@ -142,13 +162,17 @@ export function TimelineMilestoneForm({
         return;
       }
       setUploadingImage(true);
+      setFieldErrors((prev) => ({ ...prev, imageUrl: undefined }));
       const body = new FormData();
       body.append('file', file);
-      const response = await fetch(`${resolveApiBaseUrl()}/about-timeline-milestones/upload-image`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${session.accessToken}` },
-        body,
-      });
+      const response = await fetch(
+        `${resolveApiBaseUrl()}/about-timeline-milestones/upload-image`,
+        {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${session.accessToken}` },
+          body,
+        },
+      );
       if (!response.ok) throw new Error('Upload failed');
       const payload = (await response.json()) as { url?: string };
       if (!payload.url) throw new Error('Invalid upload response');
@@ -184,6 +208,7 @@ export function TimelineMilestoneForm({
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    if (!canWrite) return;
     setFormError(null);
     if (!validate()) return;
 
@@ -197,7 +222,7 @@ export function TimelineMilestoneForm({
         router.refresh();
       } else if (milestoneId) {
         await client.updateAboutTimelineMilestone(milestoneId, payload);
-        router.push('/contenu/a-propos/timeline');
+        router.push(cancelHref);
         router.refresh();
       }
     } catch (error) {
@@ -207,191 +232,205 @@ export function TimelineMilestoneForm({
     }
   }
 
+  const busy = submitting || uploadingImage;
+
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
-      {formError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {formError}
-        </p>
-      ) : null}
+    <Card className="p-6">
+      <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
+        <div className="rounded-lg border border-atg-border bg-atg-elevated/50 px-4 py-3 text-sm text-atg-muted">
+          <p>{t('info.sectionHint')}</p>
+        </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+        {formError ? (
+          <p
+            role="alert"
+            className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400"
+          >
+            {formError}
+          </p>
+        ) : null}
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Select
+            label={t('fields.locale')}
+            value={values.locale}
+            options={localeOptions}
+            onChange={(e) => updateField('locale', e.target.value)}
+            disabled={!canWrite}
+          />
+          <Select
+            label={tCommon('columns.status')}
+            value={values.status}
+            options={statusOptions}
+            onChange={(e) =>
+              updateField('status', e.target.value as AboutTimelineMilestoneStatus)
+            }
+            disabled={!canWrite}
+          />
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Input
+            label={t('fields.periodLabel')}
+            name="periodLabel"
+            value={values.periodLabel}
+            onChange={(e) => updateField('periodLabel', e.target.value)}
+            error={fieldErrors.periodLabel}
+            required
+            disabled={!canWrite}
+          />
+          <Input
+            label={t('fields.periodSortOrder')}
+            name="periodSortOrder"
+            type="number"
+            min={0}
+            value={values.periodSortOrder}
+            onChange={(e) => updateField('periodSortOrder', e.target.value)}
+            disabled={!canWrite}
+          />
+        </div>
+
         <Input
-          label={t('fields.periodLabel')}
-          name="periodLabel"
-          value={values.periodLabel}
-          onChange={(e) => updateField('periodLabel', e.target.value)}
-          error={fieldErrors.periodLabel}
+          label={t('fields.periodTitle')}
+          name="periodTitle"
+          value={values.periodTitle}
+          onChange={(e) => updateField('periodTitle', e.target.value)}
+          error={fieldErrors.periodTitle}
           required
+          disabled={!canWrite}
         />
-        <Input
-          label={t('fields.periodSortOrder')}
-          name="periodSortOrder"
-          type="number"
-          min={0}
-          value={values.periodSortOrder}
-          onChange={(e) => updateField('periodSortOrder', e.target.value)}
-        />
-      </div>
 
-      <Input
-        label={t('fields.periodTitle')}
-        name="periodTitle"
-        value={values.periodTitle}
-        onChange={(e) => updateField('periodTitle', e.target.value)}
-        error={fieldErrors.periodTitle}
-        required
-      />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Input
+            label={t('fields.year')}
+            name="year"
+            type="number"
+            min={1800}
+            max={2200}
+            value={values.year}
+            onChange={(e) => updateField('year', e.target.value)}
+            error={fieldErrors.year}
+            required
+            disabled={!canWrite}
+          />
+          <Input
+            label={t('fields.sortOrder')}
+            name="sortOrder"
+            type="number"
+            min={0}
+            value={values.sortOrder}
+            onChange={(e) => updateField('sortOrder', e.target.value)}
+            disabled={!canWrite}
+          />
+        </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
         <Input
-          label={t('fields.year')}
-          name="year"
-          type="number"
-          min={1800}
-          max={2200}
-          value={values.year}
-          onChange={(e) => updateField('year', e.target.value)}
-          error={fieldErrors.year}
+          label={t('fields.title')}
+          name="title"
+          value={values.title}
+          onChange={(e) => updateField('title', e.target.value)}
+          error={fieldErrors.title}
           required
+          disabled={!canWrite}
         />
-        <Input
-          label={t('fields.sortOrder')}
-          name="sortOrder"
-          type="number"
-          min={0}
-          value={values.sortOrder}
-          onChange={(e) => updateField('sortOrder', e.target.value)}
-        />
-      </div>
 
-      <Input
-        label={t('fields.title')}
-        name="title"
-        value={values.title}
-        onChange={(e) => updateField('title', e.target.value)}
-        error={fieldErrors.title}
-        required
-      />
-
-      <div>
-        <label htmlFor="excerpt" className="mb-2 block text-sm font-medium text-atg-fg">
-          {t('fields.excerpt')}
-        </label>
-        <textarea
-          id="excerpt"
+        <Textarea
+          label={t('fields.excerpt')}
           name="excerpt"
           rows={3}
           value={values.excerpt}
           onChange={(e) => updateField('excerpt', e.target.value)}
-          className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+          disabled={!canWrite}
         />
-      </div>
 
-      <div>
-        <label htmlFor="content" className="mb-2 block text-sm font-medium text-atg-fg">
-          {t('fields.content')}
-        </label>
-        <textarea
-          id="content"
+        <Textarea
+          label={t('fields.content')}
           name="content"
           rows={6}
           value={values.content}
           onChange={(e) => updateField('content', e.target.value)}
-          className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+          disabled={!canWrite}
         />
-      </div>
 
-      <div className="space-y-3">
-        <p className="text-sm font-medium text-atg-fg">{t('fields.image')}</p>
-        <label
-          htmlFor={imageFileInputId}
-          className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10"
-        >
-          {uploadingImage ? tCommonForm('uploading') : tCommonForm('chooseFile')}
-          <input
-            id={imageFileInputId}
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            className="hidden"
-            onChange={(e) => void handleImagePick(e)}
-            disabled={uploadingImage || submitting}
+        <div className="space-y-3">
+          <p className="text-sm font-medium text-atg-fg">{t('fields.image')}</p>
+          {values.imageUrl.trim() ? (
+            <div className="space-y-2">
+              <Image
+                src={resolveMediaUrl(values.imageUrl.trim())}
+                alt={t('fields.imagePreviewAlt')}
+                width={640}
+                height={360}
+                unoptimized
+                className="h-40 w-full max-w-xl rounded-lg border border-atg-border object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+              {canWrite ? (
+                <button
+                  type="button"
+                  onClick={() => updateField('imageUrl', '')}
+                  className="text-xs font-medium text-red-600 hover:underline dark:text-red-400"
+                >
+                  {t('fields.removeImage')}
+                </button>
+              ) : null}
+            </div>
+          ) : null}
+          {canWrite ? (
+            <div className="flex flex-wrap items-center gap-3">
+              <label
+                htmlFor={imageFileInputId}
+                className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10"
+              >
+                {uploadingImage ? tCommonForm('uploading') : tCommonForm('chooseFile')}
+                <input
+                  id={imageFileInputId}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="sr-only"
+                  onChange={(e) => void handleImagePick(e)}
+                  disabled={busy}
+                />
+              </label>
+              <span className="text-xs text-atg-muted">{t('hints.imageUpload')}</span>
+            </div>
+          ) : null}
+          <Input
+            label={tCommonForm('externalUrlOptional')}
+            name="imageUrl"
+            type="url"
+            value={values.imageUrl}
+            onChange={(e) => updateField('imageUrl', e.target.value)}
+            placeholder={tCommonForm('urlPlaceholder')}
+            error={fieldErrors.imageUrl}
+            disabled={!canWrite}
           />
-        </label>
-        {values.imageUrl.trim() ? (
-          <Image
-            src={resolveMediaUrl(values.imageUrl.trim())}
-            alt={t('fields.imagePreviewAlt')}
-            width={320}
-            height={180}
-            unoptimized
-            className="h-32 w-auto rounded-lg border border-atg-border object-cover"
-          />
-        ) : null}
+        </div>
+
         <Input
-          label={tCommonForm('externalUrlOptional')}
-          name="imageUrl"
+          label={t('fields.linkUrl')}
+          name="linkUrl"
           type="url"
-          value={values.imageUrl}
-          onChange={(e) => updateField('imageUrl', e.target.value)}
-          error={fieldErrors.imageUrl}
+          value={values.linkUrl}
+          onChange={(e) => updateField('linkUrl', e.target.value)}
+          hint={t('hints.linkUrl')}
+          error={fieldErrors.linkUrl}
+          disabled={!canWrite}
         />
-      </div>
 
-      <Input
-        label={t('fields.linkUrl')}
-        name="linkUrl"
-        type="url"
-        value={values.linkUrl}
-        onChange={(e) => updateField('linkUrl', e.target.value)}
-        error={fieldErrors.linkUrl}
-      />
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor={statusId} className="mb-2 block text-sm font-medium text-atg-fg">
-            {tCommon('columns.status')}
-          </label>
-          <select
-            id={statusId}
-            value={values.status}
-            onChange={(e) => updateField('status', e.target.value as AboutTimelineMilestoneStatus)}
-            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-          >
-            <option value="draft">{tStatus('draft')}</option>
-            <option value="published">{tStatus('published')}</option>
-          </select>
+        <div className="flex flex-wrap gap-3 pt-2">
+          {canWrite ? (
+            <Button type="submit" loading={submitting} loadingText={t('saving')} disabled={busy}>
+              {mode === 'create' ? t('createButton') : t('saveButton')}
+            </Button>
+          ) : null}
+          <Button type="button" variant="outline" href={cancelHref}>
+            {t('cancelButton')}
+          </Button>
         </div>
-        <div>
-          <label htmlFor={localeId} className="mb-2 block text-sm font-medium text-atg-fg">
-            {t('fields.locale')}
-          </label>
-          <select
-            id={localeId}
-            value={values.locale}
-            onChange={(e) => updateField('locale', e.target.value)}
-            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-          >
-            <option value="fr">{tLocale('fr')}</option>
-            <option value="en">{tLocale('en')}</option>
-            <option value="es">{tLocale('es')}</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="flex flex-wrap gap-3 pt-2">
-        <Button
-          type="submit"
-          loading={submitting}
-          loadingText={t('saving')}
-          disabled={uploadingImage}
-        >
-          {mode === 'create' ? t('createButton') : t('saveButton')}
-        </Button>
-        <Button type="button" variant="outline" href="/contenu/a-propos/timeline">
-          {t('cancelButton')}
-        </Button>
-      </div>
-    </form>
+      </form>
+    </Card>
   );
 }

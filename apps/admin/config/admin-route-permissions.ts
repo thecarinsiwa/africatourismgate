@@ -30,6 +30,8 @@ export const ADMIN_ROUTE_ACCESS_RULES: RouteAccessRule[] = [
   { prefix: '/paiements', permission: 'payments.read' },
   { prefix: '/gap', permission: 'gap.read' },
   { prefix: '/contenu/blog', permission: 'blog.read' },
+  { prefix: '/contenu/site', permission: 'content.read' },
+  { prefix: '/contenu/support', permission: 'support_tickets.read' },
   { prefix: '/contenu/a-propos', permission: 'content.read' },
   { prefix: '/contenu/pourquoi-nous', permission: 'content.read' },
   { prefix: '/contenu/hero', permission: 'content.read' },

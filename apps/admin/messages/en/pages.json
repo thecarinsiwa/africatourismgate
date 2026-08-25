@@ -416,6 +416,43 @@
         "metaTitle": "Edit post"
       }
     },
+    "hero": {
+      "description": "Homepage carousel slides. Access: content.read / content.write.",
+      "nouveau": {
+        "metaTitle": "New hero slide",
+        "description": "Add a slide to the homepage carousel.",
+        "backLabel": "Back to hero"
+      },
+      "id": {
+        "metaTitle": "Edit hero slide",
+        "description": "Update content, image and publication status.",
+        "backLabel": "Back to hero"
+      }
+    },
+    "pourquoi-nous": {
+      "nouveau": {
+        "metaTitle": "New Why us card",
+        "description": "Add a card to the Why choose us section.",
+        "backLabel": "Back to Why us"
+      },
+      "id": {
+        "metaTitle": "Edit Why us card",
+        "description": "Update title, description, icon and publication status.",
+        "backLabel": "Back to Why us"
+      }
+    },
+    "clients-satisfaits": {
+      "nouveau": {
+        "metaTitle": "New happy customers stat",
+        "description": "Add a satisfaction bar to the Happy Customers section.",
+        "backLabel": "Back to happy customers"
+      },
+      "id": {
+        "metaTitle": "Edit happy customers stat",
+        "description": "Update label, percentage and publication status.",
+        "backLabel": "Back to happy customers"
+      }
+    },
     "a-propos": {
       "pages": {
         "description": "Institutional site pages (Who we are, governance, etc.). Access: content.read / content.write.",
@@ -431,33 +468,84 @@
         "description": "Team members shown on the public site. Access: content.read / content.write.",
         "nouveau": {
           "metaTitle": "New team member",
-          "description": "Add a team member."
+          "description": "Add a team member shown on the public site.",
+          "backLabel": "Back to team"
         },
         "id": {
-          "metaTitle": "Edit team member"
+          "metaTitle": "Edit team member",
+          "description": "Update profile, photo and publication status.",
+          "backLabel": "Back to team"
+        }
+      },
+      "timeline": {
+        "description": "About page chronological timeline milestones. Access: content.read / content.write.",
+        "nouveau": {
+          "metaTitle": "New milestone",
+          "description": "Add a milestone to the chronological timeline.",
+          "backLabel": "Back to timeline"
+        },
+        "id": {
+          "metaTitle": "Edit milestone",
+          "description": "Update period, content, image and publication status.",
+          "backLabel": "Back to timeline"
         }
       },
       "ressources": {
         "description": "Financial reports and downloadable media resources. Access: content.read / content.write.",
         "nouveau": {
           "metaTitle": "New resource",
-          "description": "Add a document or media resource."
+          "description": "Add a downloadable document or media resource.",
+          "backLabel": "Back to resources"
         },
         "id": {
-          "metaTitle": "Edit resource"
+          "metaTitle": "Edit resource",
+          "description": "Update file, link and publication status.",
+          "backLabel": "Back to resources"
         }
       }
     },
     "tickets": {
       "description": "Customer support requests. Filter by status and priority. Access: support_tickets.read / support_tickets.write.",
       "id": {
-        "metaTitle": "Ticket detail"
+        "metaTitle": "Ticket detail",
+        "description": "Review the conversation thread and update status or priority.",
+        "backLabel": "Back to support"
+      }
+    },
+    "support": {
+      "title": "Support",
+      "description": "Support tickets and customer messages. Filter by status and priority. Access: support_tickets.read / support_tickets.write.",
+      "tabsAria": "Support sections",
+      "tabs": {
+        "tickets": "Tickets",
+        "messages": "Messages"
+      },
+      "messages": {
+        "emptyTitle": "Unified messaging coming soon",
+        "emptyDescription": "Non-ticket conversations will be centralized here. For now, manage threads from the Tickets tab."
+      }
+    },
+    "site": {
+      "title": "Site & presentation",
+      "description": "Institutional and marketing content for the public site: about pages, team, hero, testimonials. Access: content.read / content.write.",
+      "tabsAria": "Site sections",
+      "tabs": {
+        "aboutPages": "About",
+        "aboutTeam": "Team",
+        "aboutTimeline": "Timeline",
+        "aboutResources": "Resources",
+        "whyUs": "Why us",
+        "hero": "Hero",
+        "happyCustomers": "Happy customers"
       }
     },
     "avis": {
+      "title": "Reviews",
       "description": "Moderate customer ratings and comments. Filter by score, property and status. Actions: approve, hide or delete. Access: reviews.read / reviews.write.",
       "id": {
-        "metaTitle": "Review detail"
+        "metaTitle": "Review detail",
+        "description": "View context, comment and moderation actions.",
+        "backLabel": "Back to reviews"
       }
     }
   },

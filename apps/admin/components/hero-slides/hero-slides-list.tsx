@@ -19,6 +19,7 @@ import type { HeroSlide, HeroSlideStatus } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { HeroSlideDetailModal } from './hero-slide-detail-modal';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -48,6 +49,7 @@ export function HeroSlidesList({ locale }: HeroSlidesListProps) {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<HeroSlide | null>(null);
+  const [viewTarget, setViewTarget] = useState<HeroSlide | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -164,6 +166,10 @@ export function HeroSlidesList({ locale }: HeroSlidesListProps) {
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
+            <DataTableActionButton
+              action="view"
+              onClick={() => setViewTarget(row.original)}
+            />
             <DataTableActionButton action="edit" href={`/contenu/hero/${row.original.id}`} />
             {canWrite ? (
               <DataTableActionButton
@@ -195,6 +201,14 @@ export function HeroSlidesList({ locale }: HeroSlidesListProps) {
         loading={!!deletingId}
         onConfirm={() => void handleDeleteConfirm()}
       />
+      <HeroSlideDetailModal
+        open={!!viewTarget}
+        slide={viewTarget}
+        onOpenChange={(open) => {
+          if (!open) setViewTarget(null);
+        }}
+        canWrite={canWrite}
+      />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
@@ -222,7 +236,11 @@ export function HeroSlidesList({ locale }: HeroSlidesListProps) {
           </select>
         </div>
 
-        {canWrite ? <Button href="/contenu/hero/nouveau">{t('newButton')}</Button> : null}
+        {canWrite ? (
+          <Button href={`/contenu/hero/nouveau?locale=${encodeURIComponent(locale)}`}>
+            {t('newButton')}
+          </Button>
+        ) : null}
       </div>
 
       {state.status === 'error' ? (

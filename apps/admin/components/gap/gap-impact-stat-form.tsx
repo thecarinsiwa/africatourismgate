@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Input, Select } from '@africatourismgate/ui';
+import { Button, Checkbox, Input, Select } from '@africatourismgate/ui';
 import type {
   CreateGapImpactStatRequest,
   GapImpactStat,
@@ -23,6 +23,8 @@ import { RichTextEditor } from '../rich-text-editor';
 
 const IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const CONTENT_LOCALES = ['fr', 'en', 'es'] as const;
+type ContentLocale = (typeof CONTENT_LOCALES)[number];
 
 export type GapImpactStatFormValues = {
   label: string;
@@ -46,6 +48,10 @@ const defaultValues: GapImpactStatFormValues = {
   locale: 'fr',
 };
 
+function isContentLocale(value: string): value is ContentLocale {
+  return (CONTENT_LOCALES as readonly string[]).includes(value);
+}
+
 function statToFormValues(stat: GapImpactStat): GapImpactStatFormValues {
   return {
     label: stat.label,
@@ -59,7 +65,10 @@ function statToFormValues(stat: GapImpactStat): GapImpactStatFormValues {
   };
 }
 
-function toPayload(values: GapImpactStatFormValues): CreateGapImpactStatRequest {
+function toPayload(
+  values: GapImpactStatFormValues,
+  locale: string,
+): CreateGapImpactStatRequest {
   const description = values.description.trim();
   const imageUrl = values.imageUrl.trim();
   return {
@@ -70,7 +79,7 @@ function toPayload(values: GapImpactStatFormValues): CreateGapImpactStatRequest 
     colorKey: values.colorKey,
     sortOrder: Number.parseInt(values.sortOrder, 10) || 0,
     status: values.status,
-    locale: values.locale,
+    locale,
   };
 }
 
@@ -104,8 +113,12 @@ export function GapImpactStatForm({
   const [values, setValues] = useState<GapImpactStatFormValues>(() =>
     initialStat ? statToFormValues(initialStat) : { ...defaultValues, locale: defaultLocale },
   );
+  const [selectedLocales, setSelectedLocales] = useState<ContentLocale[]>(() => {
+    if (initialStat && isContentLocale(initialStat.locale)) return [initialStat.locale];
+    return isContentLocale(defaultLocale) ? [...CONTENT_LOCALES] : ['fr', 'en', 'es'];
+  });
   const [fieldErrors, setFieldErrors] = useState<
-    Partial<Record<keyof GapImpactStatFormValues, string>>
+    Partial<Record<keyof GapImpactStatFormValues | 'locales', string>>
   >({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -139,12 +152,25 @@ export function GapImpactStatForm({
     [],
   );
 
+  const toggleLocale = useCallback((locale: ContentLocale) => {
+    setSelectedLocales((prev) => {
+      if (prev.includes(locale)) {
+        return prev.filter((item) => item !== locale);
+      }
+      return [...CONTENT_LOCALES].filter((item) => prev.includes(item) || item === locale);
+    });
+    setFieldErrors((prev) => ({ ...prev, locales: undefined }));
+  }, []);
+
   const validate = (): boolean => {
-    const errors: Partial<Record<keyof GapImpactStatFormValues, string>> = {};
+    const errors: Partial<Record<keyof GapImpactStatFormValues | 'locales', string>> = {};
     if (!values.label.trim()) errors.label = t('validation.labelRequired');
     if (!values.valueDisplay.trim()) errors.valueDisplay = t('validation.valueRequired');
     if (values.imageUrl.trim() && !isValidMediaUrl(values.imageUrl.trim())) {
       errors.imageUrl = t('validation.imageUrlInvalid');
+    }
+    if (mode === 'create' && selectedLocales.length === 0) {
+      errors.locales = t('validation.localesRequired');
     }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
@@ -203,16 +229,48 @@ export function GapImpactStatForm({
     setSaving(true);
     setSubmitError(null);
 
-    const payload = toPayload(values);
     const client = getApiClient();
 
     try {
       if (mode === 'create') {
-        const created = await client.createGapImpactStat(payload);
-        router.push(`/gap/impact/${created.id}`);
+        const results = await Promise.allSettled(
+          selectedLocales.map((locale) =>
+            client.createGapImpactStat(toPayload(values, locale)),
+          ),
+        );
+        const failed = results
+          .map((result, index) =>
+            result.status === 'rejected'
+              ? { locale: selectedLocales[index], error: result.reason }
+              : null,
+          )
+          .filter((item): item is { locale: ContentLocale; error: unknown } => item != null);
+
+        if (failed.length === selectedLocales.length) {
+          setSubmitError(getGapErrorMessage(failed[0]?.error));
+          return;
+        }
+
+        if (failed.length > 0) {
+          const labels = failed.map((item) => tLocale(item.locale)).join(', ');
+          setSubmitError(t('validation.partialCreateFailed', { locales: labels }));
+          return;
+        }
+
+        const created = results.find(
+          (result): result is PromiseFulfilledResult<GapImpactStat> =>
+            result.status === 'fulfilled',
+        );
+        if (selectedLocales.length === 1 && created) {
+          router.push(`/gap/impact/${created.value.id}`);
+        } else {
+          router.push('/gap/impact');
+        }
+        router.refresh();
       } else if (statId) {
-        await client.updateGapImpactStat(statId, payload);
+        await client.updateGapImpactStat(statId, toPayload(values, values.locale));
         router.push('/gap/impact');
+        router.refresh();
       }
     } catch (error) {
       setSubmitError(getGapErrorMessage(error));
@@ -347,19 +405,46 @@ export function GapImpactStatForm({
           onChange={(e) => updateField('status', e.target.value as GapStatus)}
           disabled={!canWrite}
         />
-        <Select
-          label={t('fields.locale')}
-          value={values.locale}
-          options={localeOptions}
-          onChange={(e) => updateField('locale', e.target.value)}
-          disabled={!canWrite}
-        />
+        {mode === 'edit' ? (
+          <Select
+            label={t('fields.locale')}
+            value={values.locale}
+            options={localeOptions}
+            onChange={(e) => updateField('locale', e.target.value)}
+            disabled={!canWrite}
+          />
+        ) : (
+          <div>
+            <p className="mb-2 text-sm font-medium text-atg-fg">{t('fields.locales')}</p>
+            <p className="mb-3 text-xs text-atg-muted">{t('fields.localesHint')}</p>
+            <div className="flex flex-wrap gap-4">
+              {CONTENT_LOCALES.map((locale) => (
+                <Checkbox
+                  key={locale}
+                  id={`impact-locale-${locale}`}
+                  name={`locale-${locale}`}
+                  label={tLocale(locale)}
+                  checked={selectedLocales.includes(locale)}
+                  onChange={() => toggleLocale(locale)}
+                  disabled={!canWrite}
+                />
+              ))}
+            </div>
+            {fieldErrors.locales ? (
+              <p className="mt-2 text-sm text-destructive">{fieldErrors.locales}</p>
+            ) : null}
+          </div>
+        )}
       </div>
 
       {canWrite ? (
         <div className="flex flex-wrap gap-3">
           <Button type="submit" disabled={busy} loading={saving}>
-            {mode === 'create' ? t('createButton') : t('saveButton')}
+            {mode === 'create'
+              ? selectedLocales.length > 1
+                ? t('createBulkButton', { count: selectedLocales.length })
+                : t('createButton')
+              : t('saveButton')}
           </Button>
           {mode === 'create' ? (
             <Button type="button" variant="outline" href="/gap/impact">

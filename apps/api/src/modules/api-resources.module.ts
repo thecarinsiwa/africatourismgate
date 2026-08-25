@@ -66,6 +66,16 @@ import { PromotionsModule } from './resources/promotions/promotions.module';
 import { ReviewsModule } from './resources/reviews/reviews.module';
 import { SupportTicketsModule } from './resources/support-tickets/support-tickets.module';
 import { SupportMessagesModule } from './resources/support-messages/support-messages.module';
+import { AboutPagesModule } from './resources/about-pages/about-pages.module';
+import { TeamMembersModule } from './resources/team-members/team-members.module';
+import { AboutTimelineMilestonesModule } from './resources/about-timeline-milestones/about-timeline-milestones.module';
+import { AboutResourcesModule } from './resources/about-resources/about-resources.module';
+import { WhyUsSectionsModule } from './resources/why-us-sections/why-us-sections.module';
+import { WhyUsItemsModule } from './resources/why-us-items/why-us-items.module';
+import { HappyCustomersSectionsModule } from './resources/happy-customers-sections/happy-customers-sections.module';
+import { HappyCustomersStatsModule } from './resources/happy-customers-stats/happy-customers-stats.module';
+import { HeroSlidesModule } from './resources/hero-slides/hero-slides.module';
+import { BlogPostsModule } from './resources/blog-posts/blog-posts.module';
 import { GapPagesModule } from './resources/gap-pages/gap-pages.module';
 import { GapActivitiesModule } from './resources/gap-activities/gap-activities.module';
 import { GapImpactStatsModule } from './resources/gap-impact-stats/gap-impact-stats.module';
@@ -144,6 +154,16 @@ import { Module } from '@nestjs/common';
     ReviewsModule,
     SupportTicketsModule,
     SupportMessagesModule,
+    AboutPagesModule,
+    TeamMembersModule,
+    AboutTimelineMilestonesModule,
+    AboutResourcesModule,
+    WhyUsSectionsModule,
+    WhyUsItemsModule,
+    HappyCustomersSectionsModule,
+    HappyCustomersStatsModule,
+    HeroSlidesModule,
+    BlogPostsModule,
     GapPagesModule,
     GapActivitiesModule,
     GapImpactStatsModule,

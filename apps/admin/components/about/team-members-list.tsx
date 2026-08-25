@@ -232,7 +232,11 @@ export function TeamMembersList() {
           </Button>
         </div>
         {canWrite ? (
-          <Button href="/contenu/a-propos/equipe/nouveau">{t('newButton')}</Button>
+          <Button
+            href={`/contenu/a-propos/equipe/nouveau?locale=${encodeURIComponent(localeFilter || 'fr')}`}
+          >
+            {t('newButton')}
+          </Button>
         ) : null}
       </div>
 

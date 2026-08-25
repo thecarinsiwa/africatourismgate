@@ -92,7 +92,7 @@ const SECTION_PLACEHOLDER_OVERRIDES: Record<
 > = {
   'contenu/messages': {
     illustration: 'support',
-    ctaHref: '/contenu/tickets',
+    ctaHref: '/contenu/support?tab=tickets',
   },
 };
 

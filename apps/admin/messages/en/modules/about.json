@@ -130,6 +130,9 @@
       "pageTitle": "Edit milestone"
     },
     "form": {
+      "info": {
+        "sectionHint": "Milestone displayed in the About page chronological timeline."
+      },
       "validation": {
         "periodLabelRequired": "Period label is required.",
         "periodTitleRequired": "Period title is required.",
@@ -148,9 +151,14 @@
         "content": "Content",
         "image": "Image",
         "imagePreviewAlt": "Image preview",
+        "removeImage": "Remove image",
         "linkUrl": "Link (URL)",
         "sortOrder": "Display order",
         "locale": "Language"
+      },
+      "hints": {
+        "imageUpload": "JPEG, PNG or WebP — max 5 MB",
+        "linkUrl": "Optional link to a related page or resource."
       },
       "saving": "Saving…",
       "createButton": "Add milestone",
@@ -178,6 +186,9 @@
       "pageTitle": "Edit team member"
     },
     "form": {
+      "info": {
+        "sectionHint": "Profile shown in the Team section of the About page."
+      },
       "validation": {
         "nameRequired": "Name is required.",
         "roleRequired": "Role is required.",
@@ -189,8 +200,12 @@
         "bio": "Bio",
         "photo": "Photo",
         "photoPreviewAlt": "Photo preview",
+        "removePhoto": "Remove photo",
         "sortOrder": "Display order",
         "locale": "Language"
+      },
+      "hints": {
+        "photoUpload": "JPEG, PNG or WebP — max. 5 MB"
       },
       "saving": "Saving…",
       "createButton": "Add member",
@@ -219,6 +234,9 @@
       "pageTitle": "Edit resource"
     },
     "form": {
+      "info": {
+        "sectionHint": "Document or link displayed in the About page Resources section."
+      },
       "validation": {
         "fileFormat": "Unsupported format (PDF or image).",
         "fileTooLarge": "File too large (max 10 MB).",
@@ -231,6 +249,7 @@
         "title": "Title",
         "description": "Description",
         "file": "File",
+        "removeFile": "Remove file",
         "externalUrl": "External link",
         "sortOrder": "Display order",
         "publishedAtOptional": "Publication date (optional)",
@@ -238,7 +257,8 @@
       },
       "hints": {
         "fileFormat": "PDF, JPEG, PNG or WebP — max 10 MB.",
-        "externalUrl": "Link to a document hosted elsewhere (optional if file uploaded)."
+        "externalUrl": "Link to a document hosted elsewhere (optional if file uploaded).",
+        "publishedAt": "Leave empty to use the current date when publishing."
       },
       "saving": "Saving…",
       "createButton": "Create resource",
@@ -287,6 +307,9 @@
         "pageTitle": "Edit card"
       },
       "form": {
+        "info": {
+          "sectionHint": "Card displayed in the homepage « Why choose us » section."
+        },
         "validation": {
           "titleRequired": "Title is required.",
           "descriptionRequired": "Description is required.",
@@ -296,6 +319,7 @@
           "title": "Title",
           "description": "Description",
           "linkUrl": "Link",
+          "linkUrlHint": "Internal or external link opened from the card (e.g. /about/who-we-are).",
           "iconKey": "Icon",
           "sortOrder": "Display order",
           "locale": "Language"
@@ -317,13 +341,21 @@
     },
     "section": {
       "heading": "Section content",
+      "validation": {
+        "imageUrlRequired": "Image is required.",
+        "imageUrlInvalid": "Image URL must be valid."
+      },
       "fields": {
         "title": "Title",
         "subtitle": "Subtitle",
         "paragraph1": "First paragraph",
         "paragraph2": "Second paragraph",
-        "imageUrl": "Image URL",
+        "image": "Section image",
+        "imageUrl": "Image URL (alternative)",
         "imageAlt": "Image alt text",
+        "imagePreviewAlt": "Section preview",
+        "removeImage": "Remove image",
+        "imageUploadHint": "JPEG, PNG or WebP — max 5 MB",
         "badgeValue": "Badge value",
         "badgeLabel": "Badge label"
       },
@@ -352,6 +384,9 @@
         "pageTitle": "Edit stat"
       },
       "form": {
+        "info": {
+          "sectionHint": "Satisfaction bar displayed in the public site's Happy Customers section."
+        },
         "validation": {
           "labelRequired": "Label is required.",
           "percentInvalid": "Percentage must be between 0 and 100."
@@ -361,7 +396,9 @@
           "percentValue": "Percentage (%)",
           "colorKey": "Bar color",
           "sortOrder": "Display order",
-          "locale": "Language"
+          "locale": "Language",
+          "preview": "Site preview",
+          "previewLabelPlaceholder": "Bar label"
         },
         "saving": "Saving…",
         "createButton": "Add stat",

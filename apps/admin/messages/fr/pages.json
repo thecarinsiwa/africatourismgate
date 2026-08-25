@@ -416,6 +416,43 @@
         "metaTitle": "Modifier l'article"
       }
     },
+    "hero": {
+      "description": "Diapositives du carrousel de la page d'accueil. Accès : content.read / content.write.",
+      "nouveau": {
+        "metaTitle": "Nouvelle diapositive hero",
+        "description": "Ajoutez une diapositive au carrousel de la page d'accueil.",
+        "backLabel": "Retour au hero"
+      },
+      "id": {
+        "metaTitle": "Modifier la diapositive hero",
+        "description": "Mettez à jour le libellé, le pourcentage et le statut de publication.",
+        "backLabel": "Retour au hero"
+      }
+    },
+    "pourquoi-nous": {
+      "nouveau": {
+        "metaTitle": "Nouvelle carte Pourquoi nous",
+        "description": "Ajoutez une carte à la section Pourquoi nous choisir.",
+        "backLabel": "Retour à Pourquoi nous"
+      },
+      "id": {
+        "metaTitle": "Modifier la carte Pourquoi nous",
+        "description": "Mettez à jour le titre, la description, l'icône et le statut de publication.",
+        "backLabel": "Retour à Pourquoi nous"
+      }
+    },
+    "clients-satisfaits": {
+      "nouveau": {
+        "metaTitle": "Nouvelle statistique clients satisfaits",
+        "description": "Ajoutez une barre de satisfaction à la section Clients satisfaits.",
+        "backLabel": "Retour aux clients satisfaits"
+      },
+      "id": {
+        "metaTitle": "Modifier la statistique clients satisfaits",
+        "description": "Mettez à jour le libellé, le pourcentage et le statut de publication.",
+        "backLabel": "Retour aux clients satisfaits"
+      }
+    },
     "a-propos": {
       "pages": {
         "description": "Pages institutionnelles du site (Qui nous sommes, gouvernance, etc.). Accès : content.read / content.write.",
@@ -431,33 +468,84 @@
         "description": "Membres de l'équipe affichés sur le site public. Accès : content.read / content.write.",
         "nouveau": {
           "metaTitle": "Nouveau membre",
-          "description": "Ajoutez un membre à l'équipe."
+          "description": "Ajoutez un membre à l'équipe affichée sur le site.",
+          "backLabel": "Retour à l'équipe"
         },
         "id": {
-          "metaTitle": "Modifier le membre"
+          "metaTitle": "Modifier le membre",
+          "description": "Mettez à jour le profil, la photo et le statut de publication.",
+          "backLabel": "Retour à l'équipe"
+        }
+      },
+      "timeline": {
+        "description": "Jalons de la frise chronologique du site. Accès : content.read / content.write.",
+        "nouveau": {
+          "metaTitle": "Nouveau jalon",
+          "description": "Ajoutez un jalon à la frise chronologique.",
+          "backLabel": "Retour à la frise"
+        },
+        "id": {
+          "metaTitle": "Modifier le jalon",
+          "description": "Mettez à jour la période, le contenu, l'image et le statut de publication.",
+          "backLabel": "Retour à la frise"
         }
       },
       "ressources": {
         "description": "Rapports financiers et ressources médias téléchargeables. Accès : content.read / content.write.",
         "nouveau": {
           "metaTitle": "Nouvelle ressource",
-          "description": "Ajoutez un document ou une ressource média."
+          "description": "Ajoutez un document ou une ressource média téléchargeable.",
+          "backLabel": "Retour aux ressources"
         },
         "id": {
-          "metaTitle": "Modifier la ressource"
+          "metaTitle": "Modifier la ressource",
+          "description": "Mettez à jour le fichier, le lien et le statut de publication.",
+          "backLabel": "Retour aux ressources"
         }
       }
     },
     "tickets": {
       "description": "Demandes d'assistance clients. Filtres par statut et priorité. Accès : support_tickets.read / support_tickets.write.",
       "id": {
-        "metaTitle": "Détail ticket"
+        "metaTitle": "Détail ticket",
+        "description": "Consultez le fil de discussion et mettez à jour le statut ou la priorité.",
+        "backLabel": "Retour au support"
+      }
+    },
+    "support": {
+      "title": "Support",
+      "description": "Tickets d'assistance et messages clients. Filtres par statut et priorité. Accès : support_tickets.read / support_tickets.write.",
+      "tabsAria": "Sections support",
+      "tabs": {
+        "tickets": "Tickets",
+        "messages": "Messages"
+      },
+      "messages": {
+        "emptyTitle": "Messagerie unifiée à venir",
+        "emptyDescription": "Les échanges hors tickets seront centralisés ici. En attendant, gérez les conversations depuis l'onglet Tickets."
+      }
+    },
+    "site": {
+      "title": "Site & présentation",
+      "description": "Contenu institutionnel et vitrine du site public : pages À propos, équipe, hero, témoignages. Accès : content.read / content.write.",
+      "tabsAria": "Sections du site",
+      "tabs": {
+        "aboutPages": "À propos",
+        "aboutTeam": "Équipe",
+        "aboutTimeline": "Frise",
+        "aboutResources": "Ressources",
+        "whyUs": "Pourquoi nous",
+        "hero": "Hero",
+        "happyCustomers": "Clients satisfaits"
       }
     },
     "avis": {
+      "title": "Avis",
       "description": "Modération des notes et commentaires clients. Filtres par note, propriété et statut. Actions : approuver, masquer ou supprimer. Accès : reviews.read / reviews.write.",
       "id": {
-        "metaTitle": "Détail avis"
+        "metaTitle": "Détail avis",
+        "description": "Consultez le contexte, le commentaire et les actions de modération.",
+        "backLabel": "Retour aux avis"
       }
     }
   },

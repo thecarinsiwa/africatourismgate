@@ -1,60 +1,60 @@
 {
   "status": {
-    "open": "Ouvert",
-    "pending": "En cours",
-    "resolved": "Résolu",
-    "closed": "Fermé"
+    "open": "Open",
+    "pending": "Pending",
+    "resolved": "Resolved",
+    "closed": "Closed"
   },
   "priority": {
-    "low": "Basse",
-    "normal": "Normale",
-    "high": "Haute",
-    "urgent": "Urgente"
+    "low": "Low",
+    "normal": "Normal",
+    "high": "High",
+    "urgent": "Urgent"
   },
   "assignee": {
-    "unassigned": "No assigné"
+    "unassigned": "Unassigned"
   },
   "detail": {
-    "title": "Ticket support",
-    "backToList": "Back à la liste",
-    "openedOn": "Ouvert le {date}",
+    "title": "Support ticket",
+    "backToList": "Back to support",
+    "openedOn": "Opened on {date}",
     "sections": {
       "client": "Customer",
-      "handling": "Traitement",
+      "handling": "Handling",
       "messages": "Messages",
-      "reply": "Répondre au client"
+      "reply": "Reply to customer"
     },
     "fields": {
-      "priority": "Priorité",
-      "agentMessage": "Message agent"
+      "priority": "Priority",
+      "agentMessage": "Agent message"
     },
-    "advanceStatus": "Passer à « {status} »",
-    "noMessages": "Tocun message.",
+    "advanceStatus": "Move to “{status}”",
+    "noMessages": "No messages yet.",
     "messageAuthor": {
       "staff": "Agent",
       "customer": "Customer"
     },
-    "replyPlaceholder": "Votre réponse au client…",
-    "replyMinLength": "Le message doit contenir au moins 10 caractères.",
-    "sending": "Envoi…",
-    "sendReply": "Envoyer la réponse"
+    "replyPlaceholder": "Your reply to the customer…",
+    "replyMinLength": "The message must be at least 10 characters.",
+    "sending": "Sending…",
+    "sendReply": "Send reply"
   },
   "list": {
     "filters": {
-      "priority": "Priorité",
-      "apply": "Apply les filtres"
+      "priority": "Priority",
+      "apply": "Apply filters"
     },
-    "assignedLabel": "Assigné :",
+    "assignedLabel": "Assigned:",
     "empty": {
       "default": {
-        "title": "Tocun ticket pour le moment",
-        "description": "Les demandes d'assistance clients apparaîtront ici dès qu'elles seront créées."
+        "title": "No open tickets",
+        "description": "The open-ticket queue is empty. New customer requests will appear here."
       },
       "filtered": {
-        "title": "Tocun ticket ne correspond aux filtres",
-        "description": "Élargissez les critères de statut ou de priorité pour afficher plus de demandes."
+        "title": "No tickets match your filters",
+        "description": "Widen the status or priority criteria to show more requests."
       }
     },
-    "ariaLabel": "Boîte de réception des tickets support"
+    "ariaLabel": "Support tickets inbox"
   }
 }

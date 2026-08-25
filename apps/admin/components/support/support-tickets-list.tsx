@@ -3,11 +3,12 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
-  Button,
   Card,
   DataTableBadge,
   DataTablePagination,
   EmptyState,
+  FilterBar,
+  Select,
   Skeleton,
 } from '@africatourismgate/ui';
 import type {
@@ -17,7 +18,7 @@ import type {
 } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import {
   useFormatDateTime,
@@ -27,26 +28,22 @@ import {
   useSupportTicketStatusLabels,
 } from '../../lib/i18n/use-module-labels';
 import {
-  formatSupportTicketAssignee,
   supportTicketPriorityVariants,
   supportTicketStatusVariants,
 } from '../../lib/support-ticket-display';
 
 const PAGE_SIZE = 20;
+const DEFAULT_STATUS: SupportTicketStatus = 'open';
 
 type SupportTicketInboxItemProps = {
   ticket: AdminSupportTicketListItem;
 };
 
 function SupportTicketInboxItem({ ticket }: SupportTicketInboxItemProps) {
-  const t = useTranslations('modules.support');
   const tCommon = useTranslations('modules.common');
   const formatDateTime = useFormatDateTime();
   const statusLabels = useSupportTicketStatusLabels();
   const priorityLabels = useSupportTicketPriorityLabels();
-  const unassignedLabel = t('assignee.unassigned');
-  const assignee = formatSupportTicketAssignee(null, unassignedLabel);
-  const isUnassigned = assignee === unassignedLabel;
   const emptyDash = tCommon('empty.dash');
 
   return (
@@ -78,12 +75,6 @@ function SupportTicketInboxItem({ ticket }: SupportTicketInboxItemProps) {
         <DataTableBadge variant={supportTicketPriorityVariants[ticket.priority]}>
           {priorityLabels[ticket.priority]}
         </DataTableBadge>
-        <span className="text-xs text-atg-muted">
-          {t('list.assignedLabel')}{' '}
-          <span className={isUnassigned ? 'italic text-atg-muted' : 'text-atg-fg'}>
-            {assignee}
-          </span>
-        </span>
       </div>
     </Link>
   );
@@ -118,12 +109,9 @@ export function SupportTicketsList() {
   const tPagination = useTranslations('modules.common.pagination');
   const statusOptions = useSupportTicketStatusFilterOptions();
   const priorityOptions = useSupportTicketPriorityFilterOptions();
-  const statusFilterId = useId();
-  const priorityFilterId = useId();
 
   const [page, setPage] = useState(1);
-  const [filterTick, setFilterTick] = useState(0);
-  const [statusFilter, setStatusFilter] = useState<'' | SupportTicketStatus>('');
+  const [statusFilter, setStatusFilter] = useState<'' | SupportTicketStatus>(DEFAULT_STATUS);
   const [priorityFilter, setPriorityFilter] = useState<'' | SupportTicketPriority>('');
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -137,7 +125,6 @@ export function SupportTicketsList() {
   >({ status: 'loading' });
 
   const load = useCallback(async () => {
-    void filterTick;
     setState({ status: 'loading' });
     try {
       const result = await getApiClient().listSupportTickets({
@@ -155,78 +142,65 @@ export function SupportTicketsList() {
     } catch (error) {
       setState({ status: 'error', message: getSupportTicketsErrorMessage(error) });
     }
-  }, [page, statusFilter, priorityFilter, filterTick, getSupportTicketsErrorMessage]);
+  }, [page, statusFilter, priorityFilter, getSupportTicketsErrorMessage]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
-  const applyFilters = useCallback(() => {
+  const activeFilterCount = [
+    statusFilter !== DEFAULT_STATUS,
+    priorityFilter !== '',
+  ].filter(Boolean).length;
+
+  const handleClearFilters = useCallback(() => {
+    setStatusFilter(DEFAULT_STATUS);
+    setPriorityFilter('');
     setPage(1);
-    setFilterTick((t) => t + 1);
   }, []);
 
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
   const tickets = state.status === 'ready' ? state.tickets : [];
-  const hasFilters = statusFilter !== '' || priorityFilter !== '';
+  const hasFilters = activeFilterCount > 0;
   const isEmpty = state.status === 'ready' && state.total === 0;
 
   return (
     <div className="space-y-6">
-      <Card className="p-4">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <div>
-            <label
-              htmlFor={statusFilterId}
-              className="mb-1 block text-xs font-medium text-atg-muted"
-            >
-              {tColumns('status')}
-            </label>
-            <select
-              id={statusFilterId}
-              value={statusFilter}
-              onChange={(e) =>
-                setStatusFilter(e.target.value as '' | SupportTicketStatus)
-              }
-              className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg"
-            >
-              {statusOptions.map((option) => (
-                <option key={option.value || 'all'} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label
-              htmlFor={priorityFilterId}
-              className="mb-1 block text-xs font-medium text-atg-muted"
-            >
-              {tList('filters.priority')}
-            </label>
-            <select
-              id={priorityFilterId}
-              value={priorityFilter}
-              onChange={(e) =>
-                setPriorityFilter(e.target.value as '' | SupportTicketPriority)
-              }
-              className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg"
-            >
-              {priorityOptions.map((option) => (
-                <option key={option.value || 'all'} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex items-end">
-            <Button type="button" onClick={applyFilters} className="w-full sm:w-auto">
-              {tCommon('filters.apply')}
-            </Button>
-          </div>
-        </div>
-      </Card>
+      <FilterBar
+        mobileVariant="drawer"
+        activeCount={activeFilterCount}
+        onClear={handleClearFilters}
+        clearLabel={tCommon('filters.clearAll')}
+        applyLabel={tCommon('filters.apply')}
+        toggleLabel={tCommon('filters.toggle')}
+        filters={
+          <>
+            <div className="w-full sm:w-44">
+              <Select
+                label={tColumns('status')}
+                value={statusFilter}
+                options={statusOptions}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value as '' | SupportTicketStatus);
+                  setPage(1);
+                }}
+              />
+            </div>
+            <div className="w-full sm:w-44">
+              <Select
+                label={tList('filters.priority')}
+                value={priorityFilter}
+                options={priorityOptions}
+                onChange={(e) => {
+                  setPriorityFilter(e.target.value as '' | SupportTicketPriority);
+                  setPage(1);
+                }}
+              />
+            </div>
+          </>
+        }
+      />
 
       {isError ? (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
