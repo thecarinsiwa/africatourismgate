@@ -124,10 +124,8 @@ export class UsersService extends CrudService<Users> {
             AND ura_client.role_id = :customerRoleId
             AND ura_client.revoked_at IS NULL
             AND ura_client.deleted_at IS NULL
-        )`,
-        { customerRoleId: SEED_ROLE_CUSTOMER_ID },
-      ).andWhere(
-        `NOT EXISTS (
+        )
+        AND NOT EXISTS (
           SELECT 1 FROM user_role_assignments ura_staff
           WHERE ura_staff.user_id = user.id
             AND ura_staff.role_id != :customerRoleId
