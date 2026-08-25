@@ -17,7 +17,7 @@ import {
 import { getApiClient } from '../../lib/auth/api';
 import { RbacSubnav } from './rbac-subnav';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 
 export function PermissionsList() {
   const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
