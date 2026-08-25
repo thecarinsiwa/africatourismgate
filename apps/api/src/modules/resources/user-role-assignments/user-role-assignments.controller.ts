@@ -10,15 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserRoleAssignmentsListQueryDto } from './dto/user-role-assignments-list-query.dto';
+import { CreateUserRoleAssignmentDto } from './dto/create-user-role-assignment.dto';
 import { UserRoleAssignmentsService } from './user-role-assignments.service';
-
-class CreateUserRoleAssignmentBodyDto {
-  userId!: string;
-  roleId!: string;
-  scopeType!: 'global' | 'property' | 'agency' | 'support_queue';
-  scopeId?: string | null;
-  expiresAt?: string | null;
-}
 
 @ApiTags('user-role-assignments')
 @Controller('user-role-assignments')
@@ -39,7 +32,7 @@ export class UserRoleAssignmentsController {
 
   @Post()
   @ApiOperation({ summary: 'Create user-role-assignments' })
-  create(@Body() dto: CreateUserRoleAssignmentBodyDto) {
+  create(@Body() dto: CreateUserRoleAssignmentDto) {
     return this.service.createAssignment({
       userId: dto.userId,
       roleId: dto.roleId,

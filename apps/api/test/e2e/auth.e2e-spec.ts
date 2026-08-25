@@ -8,10 +8,13 @@ import { AuthService } from '../../src/modules/auth/auth.service';
 import { EmailService } from '../../src/modules/email/email.service';
 import { EmailVerificationService } from '../../src/modules/email-verification/email-verification.service';
 import { UserRoleAssignments } from '../../src/entities/generated/rbac.entity';
-import { apiPath, authHeader, loginAsSeedAdmin } from './auth-client';
+import { apiPath, authHeader, loginAsSeedAdmin, loginWithCredentials } from './auth-client';
 import { createE2eApp } from './create-app';
 import { E2E_OTP_CODE } from './constants';
 import { getSeedAdminLogin } from './credentials';
+import { UserSessions } from '../../src/entities/generated/users.entity';
+import { IsNull } from 'typeorm';
+import { SESSION_LOCKED_CODE } from '../../src/modules/auth/auth.constants';
 
 describe('Auth (e2e)', () => {
   let app: INestApplication;
@@ -116,8 +119,7 @@ describe('Auth (e2e)', () => {
       .send({
         userId,
         roleId: '00000000-0000-4000-8000-000000000101',
-        scopeType: 'agency',
-        scopeId: '00000000-0000-4000-8000-000000000001',
+        scopeType: 'global',
       })
       .expect(201);
 
@@ -327,5 +329,154 @@ describe('Auth (e2e)', () => {
     expect(url).toContain('purpose=login');
     expect(url).toContain('verificationId=');
     expect(url).toContain('next=%2Faccount');
+  });
+
+  describe('Session policy (clientInstanceId, touch, unlock, idle lock)', () => {
+    const clientInstanceId = randomUUID();
+
+    function sessionsRepo(app: INestApplication) {
+      return app.get<Repository<UserSessions>>(getRepositoryToken(UserSessions));
+    }
+
+    it('login with same clientInstanceId revokes the previous refresh token', async () => {
+      const credentials = getSeedAdminLogin();
+      const first = await loginWithCredentials(app, {
+        ...credentials,
+        clientInstanceId,
+      });
+
+      await loginWithCredentials(app, {
+        ...credentials,
+        clientInstanceId,
+      });
+
+      await request(app.getHttpServer())
+        .post(apiPath('/auth/refresh'))
+        .send({ refreshToken: first.refreshToken })
+        .expect(401);
+    });
+
+    it('keeps one active session per user and clientInstanceId', async () => {
+      const credentials = getSeedAdminLogin();
+      const instance = randomUUID();
+
+      const first = await loginWithCredentials(app, {
+        ...credentials,
+        clientInstanceId: instance,
+      });
+      await loginWithCredentials(app, {
+        ...credentials,
+        clientInstanceId: instance,
+      });
+
+      const active = await sessionsRepo(app).find({
+        where: {
+          userId: first.userId,
+          clientInstanceId: instance,
+          deletedAt: IsNull(),
+        },
+      });
+      expect(active).toHaveLength(1);
+    });
+
+    it('POST /auth/touch updates lastActivityAt', async () => {
+      const { refreshToken, userId } = await loginAsSeedAdmin(app, randomUUID());
+
+      const repo = sessionsRepo(app);
+      const session = await repo.findOne({
+        where: { userId, deletedAt: IsNull() },
+        order: { createdAt: 'DESC' },
+      });
+      expect(session).toBeTruthy();
+
+      const stale = new Date(Date.now() - 60_000);
+      session!.lastActivityAt = stale;
+      await repo.save(session!);
+
+      await request(app.getHttpServer())
+        .post(apiPath('/auth/touch'))
+        .send({ refreshToken })
+        .expect(200);
+
+      const updated = await repo.findOne({ where: { id: session!.id } });
+      expect(updated!.lastActivityAt!.getTime()).toBeGreaterThan(stale.getTime());
+    });
+
+    it('POST /auth/refresh returns SESSION_LOCKED after idle timeout', async () => {
+      const credentials = getSeedAdminLogin();
+      const instance = randomUUID();
+      const { refreshToken, userId } = await loginWithCredentials(app, {
+        ...credentials,
+        clientInstanceId: instance,
+      });
+
+      const repo = sessionsRepo(app);
+      const session = await repo.findOne({
+        where: { userId, clientInstanceId: instance, deletedAt: IsNull() },
+      });
+      expect(session).toBeTruthy();
+
+      session!.lastActivityAt = new Date(Date.now() - 7_200_000);
+      await repo.save(session!);
+
+      const res = await request(app.getHttpServer())
+        .post(apiPath('/auth/refresh'))
+        .send({ refreshToken })
+        .expect(401);
+
+      expect(res.body.code).toBe(SESSION_LOCKED_CODE);
+    });
+
+    it('POST /auth/unlock restores session after idle lock', async () => {
+      const credentials = getSeedAdminLogin();
+      const instance = randomUUID();
+      const { refreshToken, userId } = await loginWithCredentials(app, {
+        ...credentials,
+        clientInstanceId: instance,
+      });
+
+      const repo = sessionsRepo(app);
+      const session = await repo.findOne({
+        where: { userId, clientInstanceId: instance, deletedAt: IsNull() },
+      });
+      session!.lastActivityAt = new Date(Date.now() - 7_200_000);
+      await repo.save(session!);
+
+      const unlock = await request(app.getHttpServer())
+        .post(apiPath('/auth/unlock'))
+        .send({ password: credentials.password, refreshToken })
+        .expect(200);
+
+      expect(unlock.body.accessToken).toEqual(expect.any(String));
+      expect(unlock.body.refreshToken).toEqual(expect.any(String));
+
+      await request(app.getHttpServer())
+        .post(apiPath('/auth/refresh'))
+        .send({ refreshToken: unlock.body.refreshToken })
+        .expect(200);
+    });
+
+    it('POST /auth/touch rejects idle-locked session', async () => {
+      const credentials = getSeedAdminLogin();
+      const instance = randomUUID();
+      const { refreshToken, userId } = await loginWithCredentials(app, {
+        ...credentials,
+        clientInstanceId: instance,
+      });
+
+      const repo = sessionsRepo(app);
+      const session = await repo.findOne({
+        where: { userId, clientInstanceId: instance, deletedAt: IsNull() },
+      });
+      session!.lastActivityAt = new Date(Date.now() - 7_200_000);
+      await repo.save(session!);
+
+      const res = await request(app.getHttpServer())
+        .post(apiPath('/auth/touch'))
+        .send({ refreshToken })
+        .expect(401);
+
+      expect(res.body.code).toBe(SESSION_LOCKED_CODE);
+    });
   });
 });

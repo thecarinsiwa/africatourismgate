@@ -1,27 +1,57 @@
 import type { INestApplication } from '@nestjs/common';
 import request from 'supertest';
+import { randomUUID } from 'node:crypto';
 import { API_PREFIX, E2E_OTP_CODE } from './constants';
 import { getSeedAdminLogin } from './credentials';
+
+export const E2E_CLIENT_INSTANCE_ID = '00000000-0000-4000-8000-000000000701';
+
+export type LoginOptions = {
+  email: string;
+  password: string;
+  clientInstanceId?: string;
+};
 
 export function apiPath(path: string): string {
   const normalized = path.startsWith('/') ? path : `/${path}`;
   return `/${API_PREFIX}${normalized}`;
 }
 
-export async function loginAsSeedAdmin(
+export async function loginWithCredentials(
   app: INestApplication,
-): Promise<{ accessToken: string; refreshToken: string }> {
-  const credentials = getSeedAdminLogin();
+  options: LoginOptions,
+): Promise<{
+  accessToken: string;
+  refreshToken: string;
+  userId: string;
+}> {
   const res = await request(app.getHttpServer())
     .post(apiPath('/auth/login'))
-    .send(credentials)
+    .send(options)
     .expect(200);
 
-  const { accessToken, refreshToken } = res.body;
-  if (!accessToken || !refreshToken) {
-    throw new Error('Login response missing tokens');
+  const { accessToken, refreshToken, user } = res.body;
+  if (!accessToken || !refreshToken || !user?.id) {
+    throw new Error('Login response missing tokens or user id');
   }
-  return { accessToken, refreshToken };
+  return { accessToken, refreshToken, userId: user.id as string };
+}
+
+export async function loginAsSeedAdmin(
+  app: INestApplication,
+  clientInstanceId = randomUUID(),
+): Promise<{
+  accessToken: string;
+  refreshToken: string;
+  userId: string;
+  clientInstanceId: string;
+}> {
+  const credentials = getSeedAdminLogin();
+  const login = await loginWithCredentials(app, {
+    ...credentials,
+    clientInstanceId,
+  });
+  return { ...login, clientInstanceId };
 }
 
 export function authHeader(token: string): { Authorization: string } {
