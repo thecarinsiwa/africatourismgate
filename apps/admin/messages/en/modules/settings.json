@@ -319,6 +319,11 @@
       "deleteConfirmButton": "Delete",
       "cancel": "Cancel",
       "featuredYes": "Navbar",
+      "tableAria": "Donation campaigns list",
+      "surfacesShort": {
+        "web": "Web",
+        "gap": "GAP"
+      },
       "columns": {
         "title": "Title",
         "locale": "Language",
