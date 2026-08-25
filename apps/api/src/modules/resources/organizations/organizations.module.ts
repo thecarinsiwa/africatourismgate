@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   Employees,
   Organizations,
+  OrganizationSettings,
   TourGuides,
   Users,
 } from '../../../entities/generated';
@@ -11,7 +12,13 @@ import { OrganizationsService } from './organizations.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Organizations, Users, Employees, TourGuides]),
+    TypeOrmModule.forFeature([
+      Organizations,
+      OrganizationSettings,
+      Users,
+      Employees,
+      TourGuides,
+    ]),
   ],
   controllers: [OrganizationsController],
   providers: [OrganizationsService],

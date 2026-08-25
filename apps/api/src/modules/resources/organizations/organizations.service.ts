@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 import {
   Employees,
   Organizations,
+  OrganizationSettings,
   TourGuides,
   Users,
 } from '../../../entities/generated';
@@ -12,11 +13,19 @@ import { CrudService } from '../../../common/crud/crud.service';
 import type { OrganizationListItemDto } from './dto/organization-list-item.dto';
 import type { OrganizationsListQueryDto } from './dto/organizations-list-query.dto';
 
+function optionalLogoUrl(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  return trimmed || null;
+}
+
 @Injectable()
 export class OrganizationsService extends CrudService<Organizations> {
   constructor(
     @InjectRepository(Organizations)
     private readonly organizationsRepository: Repository<Organizations>,
+    @InjectRepository(OrganizationSettings)
+    private readonly settingsRepository: Repository<OrganizationSettings>,
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
     @InjectRepository(Employees)
@@ -49,7 +58,10 @@ export class OrganizationsService extends CrudService<Organizations> {
 
     const [rows, total] = await qb.getManyAndCount();
     const ids = rows.map((row) => row.id);
-    const counts = await this.loadCountsByOrganizationId(ids);
+    const [counts, brandingLogos] = await Promise.all([
+      this.loadCountsByOrganizationId(ids),
+      this.loadBrandingLogoUrlsByOrganizationId(ids),
+    ]);
 
     return {
       data: rows.map((org) => {
@@ -62,7 +74,8 @@ export class OrganizationsService extends CrudService<Organizations> {
           id: org.id,
           name: org.name,
           slug: org.slug,
-          logoUrl: org.logoUrl ?? null,
+          logoUrl:
+            brandingLogos.get(org.id) ?? optionalLogoUrl(org.logoUrl) ?? null,
           legalForm: org.legalForm ?? null,
           currency: org.currency,
           status: org.status,
@@ -82,6 +95,35 @@ export class OrganizationsService extends CrudService<Organizations> {
         totalPages: Math.ceil(total / limit) || 1,
       },
     };
+  }
+
+  private async loadBrandingLogoUrlsByOrganizationId(
+    organizationIds: string[],
+  ): Promise<Map<string, string>> {
+    const map = new Map<string, string>();
+    if (organizationIds.length === 0) return map;
+
+    const settings = await this.settingsRepository.find({
+      where: {
+        organizationId: In(organizationIds),
+        settingGroup: 'branding',
+        settingKey: 'platform',
+        deletedAt: IsNull(),
+      },
+    });
+
+    for (const setting of settings) {
+      const value =
+        setting.settingValue && typeof setting.settingValue === 'object'
+          ? (setting.settingValue as Record<string, unknown>)
+          : null;
+      const logoUrl = optionalLogoUrl(value?.logoUrl);
+      if (logoUrl) {
+        map.set(setting.organizationId, logoUrl);
+      }
+    }
+
+    return map;
   }
 
   private async loadCountsByOrganizationId(
