@@ -1,7 +1,7 @@
 import type { LoginFormConfig } from '@africatourismgate/ui';
 
 type LoginFormTranslator = {
-  (key: 'emailLabel' | 'emailPlaceholder' | 'passwordLabel' | 'passwordPlaceholder' | 'forgotPassword' | 'rememberMe' | 'submit' | 'submitLoading'): string;
+  (key: 'emailLabel' | 'emailPlaceholder' | 'passwordLabel' | 'passwordPlaceholder' | 'forgotPassword' | 'submit' | 'submitLoading'): string;
 };
 
 type LoginErrorsTranslator = {
@@ -24,7 +24,7 @@ export function getAdminLoginFormConfig(t: LoginFormTranslator): LoginFormConfig
       },
     },
     rememberMe: {
-      label: t('rememberMe'),
+      label: '',
     },
     submit: {
       label: t('submit'),

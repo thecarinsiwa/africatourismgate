@@ -2,15 +2,10 @@
 
 import { useEffect } from 'react';
 import { ensureFreshSession } from '../lib/auth/api';
-import {
-  getRememberFromDocumentCookies,
-  getSessionFromDocumentCookies,
-} from '../lib/auth/cookies';
+import { getSessionFromDocumentCookies } from '../lib/auth/cookies';
 import { getSession, saveSession } from '../lib/auth/session';
 
-/**
- * Realigns localStorage/sessionStorage when middleware refreshed tokens in cookies only.
- */
+/** Realigns sessionStorage when middleware refreshed tokens in cookies only. */
 export function SessionSync() {
   useEffect(() => {
     function syncFromCookies() {
@@ -23,7 +18,7 @@ export function SessionSync() {
         stored.accessToken !== fromCookies.accessToken ||
         stored.expiresAt !== fromCookies.expiresAt
       ) {
-        saveSession(fromCookies, getRememberFromDocumentCookies());
+        saveSession(fromCookies);
       }
     }
 

@@ -130,7 +130,6 @@ async function applySession(page: Page, session: Awaited<ReturnType<typeof login
       value: encodeURIComponent(JSON.stringify(session.user)),
       url: `${ADMIN}/`,
     },
-    { name: 'atg.admin.remember', value: '0', url: `${ADMIN}/` },
   ]);
   await page.goto(`${ADMIN}/dashboard`, { waitUntil: 'domcontentloaded', timeout: 120_000 });
   await page.evaluate(

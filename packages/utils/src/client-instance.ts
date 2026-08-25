@@ -20,9 +20,7 @@ export function getOrCreateClientInstanceId(): string {
   }
 }
 
-export function withClientInstanceId<T extends { clientInstanceId?: string }>(
-  body: T,
-): T {
+export function withClientInstanceId<T extends object>(body: T): T {
   const clientInstanceId = getOrCreateClientInstanceId();
   if (!clientInstanceId) {
     return body;

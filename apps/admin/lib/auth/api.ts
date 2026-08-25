@@ -1,13 +1,9 @@
 import { ApiClient, ApiHttpError } from '@africatourismgate/api-client';
-import {
-  getRememberFromDocumentCookies,
-  getSessionFromDocumentCookies,
-} from './cookies';
+import { getSessionFromDocumentCookies } from './cookies';
 import { refreshAccessToken } from './refresh';
 import {
   clearAuthState,
   getSession,
-  getSessionPersistence,
   isAccessTokenExpired,
   saveSession,
   tokensToStoredSession,
@@ -62,7 +58,7 @@ function syncSessionFromCookies(): StoredSession | null {
     fromCookies.expiresAt > stored.expiresAt ||
     fromCookies.accessToken !== stored.accessToken
   ) {
-    saveSession(fromCookies, getRememberFromDocumentCookies());
+    saveSession(fromCookies);
     return fromCookies;
   }
 
@@ -95,9 +91,7 @@ export async function ensureFreshSession(): Promise<StoredSession | null> {
         }
         const current = getSession() ?? session;
         const updated = tokensToStoredSession(tokens, current.user);
-        const remember =
-          getRememberFromDocumentCookies() || getSessionPersistence() === 'local';
-        saveSession(updated, remember);
+        saveSession(updated);
         return updated;
       })
       .catch(() => {

@@ -11,7 +11,6 @@ const ACCESS_COOKIE = 'atg.admin.access';
 const REFRESH_COOKIE = 'atg.admin.refresh';
 const EXPIRES_COOKIE = 'atg.admin.expires';
 const USER_COOKIE = 'atg.admin.user';
-const REMEMBER_COOKIE = 'atg.admin.remember';
 const STORAGE_KEY = 'atg.admin.session';
 
 type StoredSession = {
@@ -115,11 +114,6 @@ async function applySessionToPage(page: Page, session: StoredSession) {
     {
       name: USER_COOKIE,
       value: encodeUser(session.user),
-      url: `${ADMIN_ORIGIN}/`,
-    },
-    {
-      name: REMEMBER_COOKIE,
-      value: '0',
       url: `${ADMIN_ORIGIN}/`,
     },
   ]);

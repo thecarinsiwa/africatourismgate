@@ -17,7 +17,6 @@ const ACCESS_COOKIE = 'atg.admin.access';
 const REFRESH_COOKIE = 'atg.admin.refresh';
 const EXPIRES_COOKIE = 'atg.admin.expires';
 const USER_COOKIE = 'atg.admin.user';
-const REMEMBER_COOKIE = 'atg.admin.remember';
 const STORAGE_KEY = 'atg.admin.session';
 
 async function loginSession() {
@@ -56,7 +55,6 @@ async function applySession(
       value: encodeURIComponent(JSON.stringify(session.user)),
       url: `${ADMIN}/`,
     },
-    { name: REMEMBER_COOKIE, value: '0', url: `${ADMIN}/` },
   ]);
   await page.goto(`${ADMIN}/dashboard`, { waitUntil: 'domcontentloaded' });
   await page.evaluate(
