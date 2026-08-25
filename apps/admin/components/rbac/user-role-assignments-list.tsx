@@ -317,6 +317,8 @@ export function UserRoleAssignmentsList() {
     <div className="space-y-6">
       <RbacSubnav />
 
+      <UserRoleAssignmentForm onSuccess={() => void load()} />
+
       <FilterBar
         mobileVariant="drawer"
         activeCount={activeFilterCount}
@@ -359,8 +361,6 @@ export function UserRoleAssignmentsList() {
           </>
         }
       />
-
-      <UserRoleAssignmentForm onSuccess={() => void load()} />
 
       {isError ? (
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
