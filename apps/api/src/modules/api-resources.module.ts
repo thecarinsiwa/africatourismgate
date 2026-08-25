@@ -20,6 +20,7 @@ import { BookingMessagesModule } from './resources/booking-messages/booking-mess
 import { OrganizationsModule } from './resources/organizations/organizations.module';
 import { OrganizationSettingsModule } from './resources/organization-settings/organization-settings.module';
 import { OrganizationBankAccountsModule } from './resources/organization-bank-accounts/organization-bank-accounts.module';
+import { DonationsModule } from './resources/donations/donations.module';
 import { PermissionsModule } from './resources/permissions/permissions.module';
 import { RolesModule } from './resources/roles/roles.module';
 import { RolePermissionsModule } from './resources/role-permissions/role-permissions.module';
@@ -108,6 +109,7 @@ import { Module } from '@nestjs/common';
     OrganizationsModule,
     OrganizationSettingsModule,
     OrganizationBankAccountsModule,
+    DonationsModule,
     PermissionsModule,
     RolesModule,
     RolePermissionsModule,
