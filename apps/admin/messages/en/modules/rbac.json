@@ -87,6 +87,24 @@
     "paginationItem": "permission",
     "columns": {
       "resource": "Resource"
+    },
+    "stats": {
+      "total": {
+        "label": "Permissions",
+        "subtitle": "Catalog entries"
+      },
+      "domains": {
+        "label": "Domains",
+        "subtitle": "Distinct resources"
+      },
+      "actions": {
+        "label": "Actions",
+        "subtitle": "Action types"
+      },
+      "roles": {
+        "label": "Roles",
+        "subtitle": "Configured roles"
+      }
     }
   },
   "matrix": {

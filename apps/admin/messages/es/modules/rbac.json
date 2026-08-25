@@ -87,6 +87,24 @@
     "paginationItem": "permiso",
     "columns": {
       "resource": "Recurso"
+    },
+    "stats": {
+      "total": {
+        "label": "Permisos",
+        "subtitle": "Entradas del catálogo"
+      },
+      "domains": {
+        "label": "Dominios",
+        "subtitle": "Recursos distintos"
+      },
+      "actions": {
+        "label": "Acciones",
+        "subtitle": "Tipos de acción"
+      },
+      "roles": {
+        "label": "Roles",
+        "subtitle": "Roles configurados"
+      }
     }
   },
   "matrix": {
