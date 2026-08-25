@@ -286,6 +286,24 @@
     }
   },
   "donations": {
+    "stats": {
+      "total": {
+        "label": "Campagnes",
+        "subtitle": "Campagnes de don enregistrées"
+      },
+      "published": {
+        "label": "Publiées",
+        "subtitle": "Visibles sur le site ou GAP"
+      },
+      "featured": {
+        "label": "Mise en avant",
+        "subtitle": "Campagnes navbar (bouton Don)"
+      },
+      "locales": {
+        "label": "Langues",
+        "subtitle": "Langues couvertes par les campagnes"
+      }
+    },
     "list": {
       "pageTitle": "Campagnes de don",
       "intro": "Gérez plusieurs appels à don selon le contexte. Un seul don peut être mis en avant dans la barre de navigation (site web et GAP).",

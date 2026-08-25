@@ -286,6 +286,24 @@
     }
   },
   "donations": {
+    "stats": {
+      "total": {
+        "label": "Campaigns",
+        "subtitle": "Registered donation campaigns"
+      },
+      "published": {
+        "label": "Published",
+        "subtitle": "Visible on web or GAP"
+      },
+      "featured": {
+        "label": "Featured",
+        "subtitle": "Navbar campaigns (Donate button)"
+      },
+      "locales": {
+        "label": "Languages",
+        "subtitle": "Languages covered by campaigns"
+      }
+    },
     "list": {
       "pageTitle": "Donation campaigns",
       "intro": "Manage multiple donation appeals by context. Only one can be featured in the navigation bar (web and GAP).",

@@ -286,6 +286,24 @@
     }
   },
   "donations": {
+    "stats": {
+      "total": {
+        "label": "Campañas",
+        "subtitle": "Campañas de donación registradas"
+      },
+      "published": {
+        "label": "Publicadas",
+        "subtitle": "Visibles en web o GAP"
+      },
+      "featured": {
+        "label": "Destacadas",
+        "subtitle": "Campañas navbar (botón Donar)"
+      },
+      "locales": {
+        "label": "Idiomas",
+        "subtitle": "Idiomas cubiertos por las campañas"
+      }
+    },
     "list": {
       "pageTitle": "Campañas de donación",
       "intro": "Gestione varios llamados a donación según el contexto. Solo uno puede destacarse en la barra de navegación (web y GAP).",

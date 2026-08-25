@@ -19,9 +19,11 @@ import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { getApiClient } from '../../lib/auth/api';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 import { AdminListPageHeader } from '../pages/admin-list-page-header';
+import { DonationsStatCards } from './donations-stat-cards';
 import { ParametresPageLayout } from './parametres-subnav';
 
 const PAGE_SIZE = 20;
+const STATS_LIMIT = 100;
 
 export function DonationsList() {
   const { organizationSettings: getErrorMessage } = useAdminErrorMessages();
@@ -48,6 +50,9 @@ export function DonationsList() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<Donation | null>(null);
+  const [statsDonations, setStatsDonations] = useState<Donation[]>([]);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [statsError, setStatsError] = useState<string | null>(null);
 
   useSetAdminPageMeta({ title: t('pageTitle') });
 
@@ -93,6 +98,7 @@ export function DonationsList() {
           total: Math.max(0, prev.total - 1),
         };
       });
+      setStatsDonations((prev) => prev.filter((row) => row.id !== item.id));
     } catch (error) {
       setDeleteError(getErrorMessage(error));
     } finally {
@@ -121,10 +127,31 @@ export function DonationsList() {
     }
   }, [page, search, statusFilter, localeFilter, getErrorMessage]);
 
+  const loadStats = useCallback(async () => {
+    setStatsLoading(true);
+    setStatsError(null);
+    try {
+      const result = await getApiClient().listDonations({
+        page: 1,
+        limit: STATS_LIMIT,
+      });
+      setStatsDonations(result.data);
+    } catch (error) {
+      setStatsError(getErrorMessage(error));
+    } finally {
+      setStatsLoading(false);
+    }
+  }, [getErrorMessage]);
+
   useEffect(() => {
     if (accessError) return;
     void load();
   }, [accessError, load]);
+
+  useEffect(() => {
+    if (accessError) return;
+    void loadStats();
+  }, [accessError, loadStats]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -249,6 +276,12 @@ export function DonationsList() {
               <Button href="/parametres/dons/nouveau">{t('createButton')}</Button>
             ) : undefined
           }
+        />
+
+        <DonationsStatCards
+          donations={statsDonations}
+          loading={statsLoading}
+          error={statsError}
         />
 
         <Card className="p-4">
