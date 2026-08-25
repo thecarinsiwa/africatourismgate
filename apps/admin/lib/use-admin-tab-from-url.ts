@@ -19,7 +19,8 @@ export function useAdminTabFromUrl<T extends string>(
   defaultTab: T,
 ): {
   activeTab: T;
-  setActiveTab: (tab: T) => void;
+  /** Accepte `string` pour coller à `Tabs.onValueChange` ; ignore les valeurs hors liste. */
+  setActiveTab: (tab: string) => void;
 } {
   const router = useRouter();
   const pathname = usePathname();
@@ -32,7 +33,8 @@ export function useAdminTabFromUrl<T extends string>(
   );
 
   const setActiveTab = useCallback(
-    (tab: T) => {
+    (tab: string) => {
+      if (!isAllowedTab(tab, allowedTabs)) return;
       const params = new URLSearchParams(searchParams.toString());
       if (tab === defaultTab) {
         params.delete('tab');
@@ -42,7 +44,7 @@ export function useAdminTabFromUrl<T extends string>(
       const qs = params.toString();
       router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     },
-    [defaultTab, pathname, router, searchParams],
+    [allowedTabs, defaultTab, pathname, router, searchParams],
   );
 
   return { activeTab, setActiveTab };
