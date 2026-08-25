@@ -123,9 +123,7 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
     children: [
       { href: '/organisations', labelKey: 'organizations', iconKey: 'organisations' },
       { href: '/systeme/roles', labelKey: 'roles', iconKey: 'roles' },
-      { href: '/systeme/audit', labelKey: 'rbacAudit', iconKey: 'shield' },
       { href: '/parametres', labelKey: 'settings', iconKey: 'sliders' },
-      { href: '/parametres/emails', labelKey: 'emails', iconKey: 'mail' },
     ],
   },
 ];
