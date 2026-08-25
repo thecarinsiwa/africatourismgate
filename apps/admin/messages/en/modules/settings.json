@@ -316,6 +316,7 @@
       "loading": "Loading…",
       "saving": "Saving…",
       "saveButton": "Save",
+      "cancelButton": "Cancel",
       "surfaces": {
         "web": "Web site",
         "gap": "GAP site"

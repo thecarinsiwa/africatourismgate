@@ -347,7 +347,7 @@ export function DonationForm({
             </Button>
           ) : null}
           <Button type="button" variant="outline" onClick={() => router.push('/parametres/dons')}>
-            {tCommon('form.cancel')}
+            {t('cancelButton')}
           </Button>
         </div>
       </form>

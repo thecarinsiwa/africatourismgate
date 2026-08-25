@@ -316,6 +316,7 @@
       "loading": "Cargando…",
       "saving": "Guardando…",
       "saveButton": "Guardar",
+      "cancelButton": "Cancelar",
       "surfaces": {
         "web": "Sitio web",
         "gap": "Sitio GAP"

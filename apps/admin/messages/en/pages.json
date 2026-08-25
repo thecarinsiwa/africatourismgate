@@ -671,6 +671,23 @@
       "description": "Organization B2B accounts for transfers and offline payments.",
       "metaTitle": "Bank accounts"
     },
+    "dons": {
+      "title": "Donation campaigns",
+      "description": "Manage multiple donation appeals by context. Only one can be featured in the navigation bar (web and GAP).",
+      "metaTitle": "Donation campaigns",
+      "nouveau": {
+        "title": "New donation campaign",
+        "metaTitle": "New donation campaign",
+        "description": "The donation marked as navbar featured appears on the Donate button on the web and GAP sites (one per language).",
+        "backLabel": "Back to donations"
+      },
+      "edit": {
+        "title": "Edit donation campaign",
+        "metaTitle": "Edit donation campaign",
+        "description": "Update campaign content, visibility and navbar featured status.",
+        "backLabel": "Back to donations"
+      }
+    },
     "emails": {
       "metaTitle": "Emails"
     }

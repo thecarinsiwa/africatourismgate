@@ -671,6 +671,23 @@
       "description": "Comptes B2B de l'organisation pour les virements et paiements hors ligne.",
       "metaTitle": "Comptes bancaires"
     },
+    "dons": {
+      "title": "Campagnes de don",
+      "description": "Gérez plusieurs appels à don selon le contexte. Un seul don peut être mis en avant dans la barre de navigation (site web et GAP).",
+      "metaTitle": "Campagnes de don",
+      "nouveau": {
+        "title": "Nouvelle campagne de don",
+        "metaTitle": "Nouvelle campagne de don",
+        "description": "Le don coché « mise en avant navbar » apparaît sur le bouton Don du site web et du site GAP (une seule par langue).",
+        "backLabel": "Retour aux dons"
+      },
+      "edit": {
+        "title": "Modifier la campagne de don",
+        "metaTitle": "Modifier la campagne de don",
+        "description": "Mettez à jour le contenu, la visibilité et la mise en avant navbar de la campagne.",
+        "backLabel": "Retour aux dons"
+      }
+    },
     "emails": {
       "metaTitle": "E-mails"
     }

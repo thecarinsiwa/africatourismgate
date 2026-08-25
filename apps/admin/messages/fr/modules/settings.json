@@ -316,6 +316,7 @@
       "loading": "Chargement…",
       "saving": "Enregistrement…",
       "saveButton": "Enregistrer",
+      "cancelButton": "Annuler",
       "surfaces": {
         "web": "Site web",
         "gap": "Site GAP"

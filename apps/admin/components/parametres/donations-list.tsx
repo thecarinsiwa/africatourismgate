@@ -18,6 +18,7 @@ import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { getApiClient } from '../../lib/auth/api';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { AdminListPageHeader } from '../pages/admin-list-page-header';
 import { ParametresPageLayout } from './parametres-subnav';
 
 const PAGE_SIZE = 20;
@@ -49,6 +50,7 @@ export function DonationsList() {
   const [confirmTarget, setConfirmTarget] = useState<Donation | null>(null);
 
   useSetAdminPageMeta({ title: t('pageTitle') });
+
 
   useEffect(() => {
     let cancelled = false;
@@ -240,15 +242,14 @@ export function DonationsList() {
       />
     <ParametresPageLayout>
       <div className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h1 className="text-2xl font-semibold">{t('pageTitle')}</h1>
-            <p className="mt-1 text-sm text-muted-foreground">{t('intro')}</p>
-          </div>
-          {canWrite ? (
-            <Button href="/parametres/dons/nouveau">{t('createButton')}</Button>
-          ) : null}
-        </div>
+        <AdminListPageHeader
+          routePath="parametres/dons"
+          actions={
+            canWrite ? (
+              <Button href="/parametres/dons/nouveau">{t('createButton')}</Button>
+            ) : undefined
+          }
+        />
 
         <Card className="p-4">
           <div className="mb-4 grid gap-3 sm:grid-cols-3">
@@ -297,7 +298,7 @@ export function DonationsList() {
           </div>
 
           {state.status === 'loading' ? (
-            <p className="text-sm text-muted-foreground">{tCommon('form.loading')}</p>
+            <p className="text-sm text-muted-foreground">{tCommon('loading')}</p>
           ) : state.status === 'error' ? (
             <p className="text-sm text-destructive">{state.message}</p>
           ) : (

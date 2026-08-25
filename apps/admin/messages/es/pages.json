@@ -671,6 +671,23 @@
       "description": "Cuentas B2B de la organización para transferencias y pagos fuera de línea.",
       "metaTitle": "Cuentas bancarias"
     },
+    "dons": {
+      "title": "Campañas de donación",
+      "description": "Gestione varios llamados a donación según el contexto. Solo uno puede destacarse en la barra de navegación (web y GAP).",
+      "metaTitle": "Campañas de donación",
+      "nouveau": {
+        "title": "Nueva campaña de donación",
+        "metaTitle": "Nueva campaña de donación",
+        "description": "La donación marcada como destacada en la navbar aparece en el botón Donar del sitio web y GAP (una por idioma).",
+        "backLabel": "Volver a donaciones"
+      },
+      "edit": {
+        "title": "Editar campaña de donación",
+        "metaTitle": "Editar campaña de donación",
+        "description": "Actualice el contenido, la visibilidad y el destacado en la navbar de la campaña.",
+        "backLabel": "Volver a donaciones"
+      }
+    },
     "emails": {
       "metaTitle": "Correos electrónicos"
     }
