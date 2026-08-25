@@ -29,7 +29,7 @@ import { RoleBadge } from './role-badge';
 import { RbacSubnav } from './rbac-subnav';
 import { UserRoleAssignmentForm } from './user-role-assignment-form';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 
 export function UserRoleAssignmentsList() {
   const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
