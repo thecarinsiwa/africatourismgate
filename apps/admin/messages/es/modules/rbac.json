@@ -44,34 +44,40 @@
     "approve": "Approbation"
   },
   "roles": {
-    "searchPlaceholder": "Rechercher par code ou nom…",
-    "empty": "Hastacun rôle trouvé.",
-    "ariaLabel": "Liste des rôles",
-    "paginationItem": "rôle",
-    "systemReadOnlyHint": "Rol système (lecture seule)",
-    "codeHint": "Minuscules, chiffres et underscore (ex. sales_manager).",
-    "createSubmit": "Créer le rôle",
-    "backToList": "← Volver aux rôles",
+    "searchPlaceholder": "Buscar por código o nombre…",
+    "empty": "No se encontraron roles.",
+    "emptyTitleSearch": "Ningún rol coincide con sus filtros",
+    "emptyTitleDefault": "Aún no hay roles",
+    "emptyDescriptionSearch": "Pruebe otro código, nombre o tipo.",
+    "emptyDescriptionDefault": "Cree un rol personalizado para empezar.",
+    "emptyTableSearch": "Ningún rol coincide con sus filtros.",
+    "emptyTableDefault": "Aún no hay roles.",
+    "ariaLabel": "Lista de roles",
+    "paginationItem": "rol",
+    "systemReadOnlyHint": "Rol del sistema (solo lectura)",
+    "codeHint": "Minúsculas, dígitos y guion bajo (ej. sales_manager).",
+    "createSubmit": "Crear rol",
+    "backToList": "← Volver a los roles",
     "type": {
-      "system": "Système",
-      "custom": "Personnalisé"
+      "system": "Sistema",
+      "custom": "Personalizado"
     },
     "validation": {
-      "codeRequired": "Le code est obligatoire.",
-      "nameRequired": "El apellido es obligatorio."
+      "codeRequired": "El código es obligatorio.",
+      "nameRequired": "El nombre es obligatorio."
     },
     "editTitle": {
-      "system": "Rol système",
-      "custom": "Modifier le rôle"
+      "system": "Rol del sistema",
+      "custom": "Editar rol"
     },
     "deleteDialog": {
-      "title": "Supprimer le rôle",
-      "description": "Supprimer définitivement le rôle « {name} » ?"
+      "title": "Eliminar rol",
+      "description": "¿Eliminar definitivamente el rol « {name} »?"
     },
     "toast": {
-      "deletedTitle": "Rol supprimé",
-      "deletedMessage": "Le rôle « {name} » a été supprimé.",
-      "deleteFailedTitle": "Échec de la suppression"
+      "deletedTitle": "Rol eliminado",
+      "deletedMessage": "El rol « {name} » ha sido eliminado.",
+      "deleteFailedTitle": "Error al eliminar"
     }
   },
   "permissions": {

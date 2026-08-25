@@ -10,11 +10,15 @@ import {
   DataTableActions,
   DataTableBadge,
   DataTablePagination,
+  EmptyState,
+  FilterBar,
   Input,
+  Select,
   useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Role } from '@africatourismgate/types';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
@@ -22,15 +26,21 @@ import { RoleBadge } from './role-badge';
 import { RbacSubnav } from './rbac-subnav';
 
 const PAGE_SIZE = 20;
+const SEARCH_DEBOUNCE_MS = 300;
+
+type RoleTypeFilter = '' | 'system' | 'custom';
 
 export function RolesList() {
   const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.rbac.roles');
+  const tCommon = useTranslations('modules.common');
   const tCommonColumns = useTranslations('modules.common.columns');
   const tActions = useTranslations('common.actions');
   const { toast } = useToast();
+
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
+  const [typeFilter, setTypeFilter] = useState<RoleTypeFilter>('');
   const [page, setPage] = useState(1);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -71,9 +81,29 @@ export function RolesList() {
         if (prev !== q) setPage(1);
         return q;
       });
-    }, 300);
+    }, SEARCH_DEBOUNCE_MS);
     return () => window.clearTimeout(timer);
   }, [searchInput]);
+
+  const typeOptions = useMemo(
+    () => [
+      { value: '', label: tCommon('filters.all') },
+      { value: 'system', label: t('type.system') },
+      { value: 'custom', label: t('type.custom') },
+    ],
+    [t, tCommon],
+  );
+
+  const activeFilterCount = [search.trim().length > 0, typeFilter !== ''].filter(
+    Boolean,
+  ).length;
+
+  const handleClearFilters = useCallback(() => {
+    setSearchInput('');
+    setSearch('');
+    setTypeFilter('');
+    setPage(1);
+  }, []);
 
   const confirmDelete = useCallback(async () => {
     if (!pendingDelete || pendingDelete.isSystem) return;
@@ -104,7 +134,12 @@ export function RolesList() {
         accessorKey: 'code',
         header: tCommonColumns('code'),
         cell: ({ row }) => (
-          <span className="font-mono text-sm text-atg-fg">{row.original.code}</span>
+          <Link
+            href={`/systeme/roles/${row.original.id}`}
+            className="font-mono text-sm text-atg-fg hover:text-primary hover:underline"
+          >
+            {row.original.code}
+          </Link>
         ),
       },
       {
@@ -112,7 +147,9 @@ export function RolesList() {
         header: tCommonColumns('name'),
         cell: ({ row }) => (
           <div className="flex flex-wrap items-center gap-2">
-            <RoleBadge code={row.original.code} name={row.original.name} />
+            <Link href={`/systeme/roles/${row.original.id}`} className="hover:opacity-90">
+              <RoleBadge code={row.original.code} name={row.original.name} />
+            </Link>
           </div>
         ),
       },
@@ -132,18 +169,21 @@ export function RolesList() {
         meta: { align: 'right' },
         cell: ({ row }) => {
           const role = row.original;
+          const busy = deletingId === role.id;
           return (
-            <DataTableActions>
+            <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
               <DataTableActionButton
                 action={role.isSystem ? 'view' : 'edit'}
+                label={role.isSystem ? tActions('view') : tActions('edit')}
                 href={`/systeme/roles/${role.id}`}
               />
               {!role.isSystem ? (
                 <DataTableActionButton
                   action="delete"
+                  label={tActions('delete')}
                   onClick={() => setPendingDelete(role)}
-                  disabled={deletingId === role.id}
-                  loading={deletingId === role.id}
+                  disabled={busy}
+                  loading={busy}
                 />
               ) : null}
             </DataTableActions>
@@ -151,42 +191,88 @@ export function RolesList() {
         },
       },
     ],
-    [deletingId, t, tCommonColumns],
+    [deletingId, t, tActions, tCommonColumns],
   );
 
-  const roles = state.status === 'ready' ? state.roles : [];
+  const isLoading = state.status === 'loading';
+  const isError = state.status === 'error';
+  const rolesRaw = state.status === 'ready' ? state.roles : [];
+  const roles =
+    typeFilter === 'system'
+      ? rolesRaw.filter((role) => role.isSystem)
+      : typeFilter === 'custom'
+        ? rolesRaw.filter((role) => !role.isSystem)
+        : rolesRaw;
+  const hasActiveFilters = activeFilterCount > 0;
+  const isEmpty =
+    state.status === 'ready' &&
+    (typeFilter ? roles.length === 0 : state.total === 0);
 
   return (
     <div className="space-y-6">
       <RbacSubnav />
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div className="min-w-[200px] flex-1 sm:max-w-md">
-          <Input
-            type="search"
-            placeholder={t('searchPlaceholder')}
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
-        </div>
-      </div>
 
-      {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600">
+      <FilterBar
+        mobileVariant="drawer"
+        activeCount={activeFilterCount}
+        onClear={handleClearFilters}
+        clearLabel={tCommon('filters.clearAll')}
+        applyLabel={tCommon('filters.apply')}
+        toggleLabel={tCommon('filters.toggle')}
+        filters={
+          <>
+            <div className="min-w-[200px] flex-1 sm:max-w-md">
+              <Input
+                name="search"
+                type="search"
+                placeholder={t('searchPlaceholder')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                aria-label={t('searchPlaceholder')}
+              />
+            </div>
+            <div className="w-full sm:w-44">
+              <Select
+                label={tCommonColumns('type')}
+                value={typeFilter}
+                options={typeOptions}
+                onChange={(e) => {
+                  setTypeFilter(e.target.value as RoleTypeFilter);
+                  setPage(1);
+                }}
+              />
+            </div>
+          </>
+        }
+      />
+
+      {isError ? (
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
+      ) : isEmpty && !isLoading ? (
+        <EmptyState
+          title={hasActiveFilters ? t('emptyTitleSearch') : t('emptyTitleDefault')}
+          description={
+            hasActiveFilters ? t('emptyDescriptionSearch') : t('emptyDescriptionDefault')
+          }
+        />
       ) : (
         <>
           <Card variant="dashboard" padding="none" className="overflow-hidden">
             <DataTable
               columns={columns}
               data={roles}
-              isLoading={state.status === 'loading'}
-              emptyMessage={t('empty')}
+              isLoading={isLoading}
+              emptyMessage={
+                hasActiveFilters ? t('emptyTableSearch') : t('emptyTableDefault')
+              }
+              emptyVariant={hasActiveFilters ? 'search' : 'default'}
               getRowId={(r) => r.id}
               aria-label={t('ariaLabel')}
             />
           </Card>
-          {state.status === 'ready' ? (
+          {state.status === 'ready' && state.totalPages > 1 ? (
             <DataTablePagination
               page={page}
               pageSize={PAGE_SIZE}
@@ -202,7 +288,7 @@ export function RolesList() {
       <AlertDialog
         open={pendingDelete !== null}
         onOpenChange={(open) => {
-          if (!open) setPendingDelete(null);
+          if (!open && !deletingId) setPendingDelete(null);
         }}
         title={t('deleteDialog.title')}
         description={
@@ -211,9 +297,11 @@ export function RolesList() {
             : undefined
         }
         confirmLabel={tActions('delete')}
+        cancelLabel={tActions('cancel')}
         variant="danger"
         loading={deletingId !== null}
         onConfirm={() => void confirmDelete()}
+        onCancel={() => setPendingDelete(null)}
       />
     </div>
   );

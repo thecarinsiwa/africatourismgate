@@ -44,34 +44,40 @@
     "approve": "Approbation"
   },
   "roles": {
-    "searchPlaceholder": "Rechercher par code ou nom…",
-    "empty": "Tocun rôle trouvé.",
-    "ariaLabel": "Liste des rôles",
-    "paginationItem": "rôle",
-    "systemReadOnlyHint": "Role système (lecture seule)",
-    "codeHint": "Minuscules, chiffres et underscore (ex. sales_manager).",
-    "createSubmit": "Créer le rôle",
-    "backToList": "← Back aux rôles",
+    "searchPlaceholder": "Search by code or name…",
+    "empty": "No roles found.",
+    "emptyTitleSearch": "No roles match your filters",
+    "emptyTitleDefault": "No roles yet",
+    "emptyDescriptionSearch": "Try a different code, name, or type.",
+    "emptyDescriptionDefault": "Create a custom role to get started.",
+    "emptyTableSearch": "No roles match your filters.",
+    "emptyTableDefault": "No roles yet.",
+    "ariaLabel": "Roles list",
+    "paginationItem": "role",
+    "systemReadOnlyHint": "System role (read-only)",
+    "codeHint": "Lowercase, digits and underscore (e.g. sales_manager).",
+    "createSubmit": "Create role",
+    "backToList": "← Back to roles",
     "type": {
-      "system": "Système",
-      "custom": "Personnalisé"
+      "system": "System",
+      "custom": "Custom"
     },
     "validation": {
-      "codeRequired": "Le code est obligatoire.",
-      "nameRequired": "Last name is required."
+      "codeRequired": "Code is required.",
+      "nameRequired": "Name is required."
     },
     "editTitle": {
-      "system": "Role système",
-      "custom": "Modifier le rôle"
+      "system": "System role",
+      "custom": "Edit role"
     },
     "deleteDialog": {
-      "title": "Supprimer le rôle",
-      "description": "Supprimer définitivement le rôle « {name} » ?"
+      "title": "Delete role",
+      "description": "Permanently delete the role “{name}”?"
     },
     "toast": {
-      "deletedTitle": "Role supprimé",
-      "deletedMessage": "Le rôle « {name} » a été supprimé.",
-      "deleteFailedTitle": "Échec de la suppression"
+      "deletedTitle": "Role deleted",
+      "deletedMessage": "The role “{name}” has been deleted.",
+      "deleteFailedTitle": "Delete failed"
     }
   },
   "permissions": {

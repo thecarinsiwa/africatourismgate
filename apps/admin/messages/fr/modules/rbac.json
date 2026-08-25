@@ -46,6 +46,12 @@
   "roles": {
     "searchPlaceholder": "Rechercher par code ou nom…",
     "empty": "Aucun rôle trouvé.",
+    "emptyTitleSearch": "Aucun rôle ne correspond à vos filtres",
+    "emptyTitleDefault": "Aucun rôle pour le moment",
+    "emptyDescriptionSearch": "Essayez un autre code, nom ou type.",
+    "emptyDescriptionDefault": "Créez un rôle personnalisé pour commencer.",
+    "emptyTableSearch": "Aucun rôle ne correspond à vos filtres.",
+    "emptyTableDefault": "Aucun rôle pour le moment.",
     "ariaLabel": "Liste des rôles",
     "paginationItem": "rôle",
     "systemReadOnlyHint": "Rôle système (lecture seule)",
