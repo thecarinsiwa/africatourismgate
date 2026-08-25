@@ -8,12 +8,10 @@ import type { LoginRequest, RegisterRequest, VerifyOperationRequest } from '@afr
 import { appendDevOriginToNextPath, isLocalDevOrigin } from '../auth/dev-oauth-return';
 import { getOAuthApiBaseUrl } from './oauth-api-url';
 
+import { getWebApiUrl } from './get-api-url';
+
 function getApiBaseUrl(): string {
-  const defaultApiUrl =
-    process.env.NODE_ENV === 'production'
-      ? 'https://app-africatourismgate.org/api'
-      : 'http://localhost:3000/api';
-  return (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(/\/$/, '');
+  return getWebApiUrl();
 }
 
 export function loginWithPassword(body: LoginRequest): Promise<AuthResponse> {

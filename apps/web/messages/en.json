@@ -17,7 +17,7 @@
     "about": "About",
     "gallery": "Gallery",
     "pages": "Our Products",
-    "blog": "Blog",
+    "blog": "Travel Blog",
     "packages": "Packages",
     "hotels": "Hotels",
     "flights": "Flights",
@@ -115,5 +115,27 @@
     "intro": "Several donation campaigns are available depending on the context. Choose the one that fits your commitment.",
     "allCampaigns": "All campaigns",
     "empty": "No donation campaigns are available at the moment."
+  },
+  "blog": {
+    "metaTitle": "Africa travel blog",
+    "metaDescription": "Tips, guides and inspiration to plan your next trip to Africa with Africa Tourism Gate.",
+    "heroTitle": "Travel Blog",
+    "heroSubtitle": "Guides, tips and inspiration for traveling in Africa.",
+    "readMore": "Read more",
+    "loading": "Loading articles…",
+    "loadError": "Could not load the blog. Check that the API is running.",
+    "retry": "Retry",
+    "noResults": "No published articles",
+    "noResultsHint": "Check back soon for new content.",
+    "localeFallback": "No articles in your language yet — showing posts available in other languages.",
+    "backToBlog": "Back to blog",
+    "publishedOn": "Published on",
+    "breadcrumbHome": "Home",
+    "breadcrumbBlog": "Travel Blog",
+    "categoryBadge": "Travel guide",
+    "readingTime": "{minutes} min read",
+    "articlesCount": "{count, plural, one {# article} other {# articles}}",
+    "relatedArticles": "Read also",
+    "relatedArticlesHint": "More ideas to plan your next trip to Africa."
   }
 }

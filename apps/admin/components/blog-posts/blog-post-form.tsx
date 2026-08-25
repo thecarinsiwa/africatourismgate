@@ -21,6 +21,7 @@ const ALLOWED_BLOG_COVER_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'imag
 export type BlogPostFormValues = {
   title: string;
   slug: string;
+  translationKey: string;
   excerpt: string;
   content: string;
   coverImageUrl: string;
@@ -32,6 +33,7 @@ export type BlogPostFormValues = {
 const defaultValues: BlogPostFormValues = {
   title: '',
   slug: '',
+  translationKey: '',
   excerpt: '',
   content: '',
   coverImageUrl: '',
@@ -52,6 +54,7 @@ function blogPostToFormValues(post: BlogPost): BlogPostFormValues {
   return {
     title: post.title,
     slug: post.slug,
+    translationKey: post.translationKey ?? post.slug,
     excerpt: post.excerpt ?? '',
     content: post.content,
     coverImageUrl: post.coverImageUrl ?? '',
@@ -66,6 +69,7 @@ function toPayload(values: BlogPostFormValues): CreateBlogPostRequest {
   return {
     title: values.title.trim(),
     slug: values.slug.trim().toLowerCase(),
+    translationKey: values.translationKey.trim().toLowerCase() || values.slug.trim().toLowerCase(),
     excerpt: values.excerpt.trim() || null,
     content: values.content.trim(),
     coverImageUrl: values.coverImageUrl.trim() || null,
@@ -109,6 +113,12 @@ export function BlogPostForm({ mode, postId, initialPost }: BlogPostFormProps) {
         const next = { ...prev, [key]: value };
         if (key === 'title' && !slugTouched) {
           next.slug = slugifyName(String(value));
+          if (!next.translationKey.trim()) {
+            next.translationKey = next.slug;
+          }
+        }
+        if (key === 'slug' && !prev.translationKey.trim()) {
+          next.translationKey = String(value).trim().toLowerCase();
         }
         return next;
       });
@@ -255,6 +265,14 @@ export function BlogPostForm({ mode, postId, initialPost }: BlogPostFormProps) {
         }}
         error={fieldErrors.slug}
         required
+      />
+
+      <Input
+        label={t('fields.translationKey')}
+        name="translationKey"
+        value={values.translationKey}
+        onChange={(e) => updateField('translationKey', e.target.value)}
+        placeholder={t('fields.translationKeyPlaceholder')}
       />
 
       <Textarea

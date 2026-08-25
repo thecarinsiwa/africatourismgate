@@ -17,7 +17,7 @@
     "about": "À propos",
     "gallery": "Galerie",
     "pages": "Nos Produits",
-    "blog": "Blog",
+    "blog": "Blog voyage",
     "packages": "Forfaits",
     "hotels": "Hôtels",
     "flights": "Vols",
@@ -115,5 +115,27 @@
     "intro": "Plusieurs campagnes de don sont disponibles selon le contexte. Choisissez celle qui correspond à votre engagement.",
     "allCampaigns": "Toutes les campagnes",
     "empty": "Aucune campagne de don disponible pour le moment."
+  },
+  "blog": {
+    "metaTitle": "Blog voyage en Afrique",
+    "metaDescription": "Conseils, guides et inspirations pour préparer votre prochain voyage en Afrique avec Africa Tourism Gate.",
+    "heroTitle": "Blog voyage",
+    "heroSubtitle": "Guides, conseils et inspirations pour voyager en Afrique.",
+    "readMore": "Lire la suite",
+    "loading": "Chargement des articles…",
+    "loadError": "Impossible de charger le blog. Vérifiez que l'API est démarrée.",
+    "retry": "Réessayer",
+    "noResults": "Aucun article publié",
+    "noResultsHint": "Revenez bientôt pour découvrir nos nouveaux contenus.",
+    "localeFallback": "Aucun article dans votre langue pour le moment — affichage des articles disponibles dans les autres langues.",
+    "backToBlog": "Retour au blog",
+    "publishedOn": "Publié le",
+    "breadcrumbHome": "Accueil",
+    "breadcrumbBlog": "Blog voyage",
+    "categoryBadge": "Guide voyage",
+    "readingTime": "{minutes} min de lecture",
+    "articlesCount": "{count, plural, one {# article} other {# articles}}",
+    "relatedArticles": "À lire aussi",
+    "relatedArticlesHint": "D'autres idées pour préparer votre prochain voyage en Afrique."
   }
 }

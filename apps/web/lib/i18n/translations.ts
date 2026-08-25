@@ -1311,7 +1311,7 @@ const fr: Translations = {
     about: 'À propos',
     gallery: 'Galerie',
     pages: 'Nos Produits',
-    blog: 'Blog',
+    blog: 'Blog voyage',
     contact: 'Contacts',
     hotels: 'Hôtels',
     flights: 'Vols',
@@ -2665,8 +2665,8 @@ const fr: Translations = {
   blog: {
     metaTitle: 'Blog voyage en Afrique',
     metaDescription:
-      'Conseils, guides et inspirations pour pr?parer votre prochain voyage en Afrique avec Africa Tourism Gate.',
-    heroTitle: 'Blog',
+      'Conseils, guides et inspirations pour préparer votre prochain voyage en Afrique avec Africa Tourism Gate.',
+    heroTitle: 'Blog voyage',
     heroSubtitle: 'Guides, conseils et inspirations pour voyager en Afrique.',
     readMore: 'Lire la suite',
     loading: 'Chargement des articles?',
@@ -2679,7 +2679,7 @@ const fr: Translations = {
     backToBlog: 'Retour au blog',
     publishedOn: 'Publi? le',
     breadcrumbHome: 'Accueil',
-    breadcrumbBlog: 'Blog',
+    breadcrumbBlog: 'Blog voyage',
   },
   about: {
     heroTitle: '? propos',
@@ -2821,7 +2821,7 @@ const en: Translations = {
     about: 'About',
     gallery: 'Gallery',
     pages: 'Our Products',
-    blog: 'Blog',
+    blog: 'Travel Blog',
     contact: 'Contact',
     hotels: 'Hotels',
     flights: 'Flights',
@@ -4164,7 +4164,7 @@ const en: Translations = {
     metaTitle: 'Africa travel blog',
     metaDescription:
       'Tips, guides and inspiration to plan your next trip to Africa with Africa Tourism Gate.',
-    heroTitle: 'Blog',
+    heroTitle: 'Travel Blog',
     heroSubtitle: 'Guides, tips and inspiration for traveling in Africa.',
     readMore: 'Read more',
     loading: 'Loading articles?',
@@ -4177,7 +4177,7 @@ const en: Translations = {
     backToBlog: 'Back to blog',
     publishedOn: 'Published on',
     breadcrumbHome: 'Home',
-    breadcrumbBlog: 'Blog',
+    breadcrumbBlog: 'Travel Blog',
   },
   about: {
     heroTitle: 'About us',

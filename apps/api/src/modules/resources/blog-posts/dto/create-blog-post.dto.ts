@@ -27,6 +27,16 @@ export class CreateBlogPostDto {
   @Matches(SLUG_PATTERN, { message: SLUG_VALIDATION_MESSAGE })
   slug!: string;
 
+  @ApiPropertyOptional({
+    example: 'kenya-masai-mara',
+    description: 'Clé commune aux traductions FR/EN/ES du même article.',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(180)
+  @Matches(SLUG_PATTERN, { message: SLUG_VALIDATION_MESSAGE })
+  translationKey?: string;
+
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()

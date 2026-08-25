@@ -10,8 +10,8 @@ export const es: Translations = {
     home: 'Inicio',
     about: 'Nosotros',
     gallery: 'Galería',
-    pages: 'Productos',
-    blog: 'Blog',
+    pages: 'Nuestros productos',
+    blog: 'Blog de viajes',
     contact: 'Contacto',
     hotels: 'Hoteles',
     flights: 'Vuelos',
@@ -1360,7 +1360,7 @@ export const es: Translations = {
     metaTitle: 'Blog de viajes en África',
     metaDescription:
       'Consejos, guías e inspiración para planificar su próximo viaje a África con Africa Tourism Gate.',
-    heroTitle: 'Blog',
+    heroTitle: 'Blog de viajes',
     heroSubtitle: 'Guías, consejos e inspiración para viajar por África.',
     readMore: 'Leer más',
     loading: 'Cargando artículos…',
@@ -1373,7 +1373,7 @@ export const es: Translations = {
     backToBlog: 'Volver al blog',
     publishedOn: 'Publicado el',
     breadcrumbHome: 'Inicio',
-    breadcrumbBlog: 'Blog',
+    breadcrumbBlog: 'Blog de viajes',
   },
   about: {
     heroTitle: 'Sobre nosotros',

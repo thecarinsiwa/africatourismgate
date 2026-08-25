@@ -1,10 +1,25 @@
 import type { NextRequest } from 'next/server';
-import { proxyRemoteApiRequest } from '../../../../../packages/config/remote-api-proxy';
+import {
+  proxyLocalDevApiRequest,
+  proxyRemoteApiRequest,
+  shouldProxyRemoteApi,
+} from '../../../../../packages/config/remote-api-proxy';
 
 type RouteContext = { params: { path: string[] } };
 
 async function handle(req: NextRequest, { params }: RouteContext) {
-  return proxyRemoteApiRequest(req, params.path ?? [], process.env.WEB_PORT ?? '3002');
+  const appPort = process.env.WEB_PORT ?? '3002';
+  const segments = params.path ?? [];
+
+  if (shouldProxyRemoteApi(appPort)) {
+    return proxyRemoteApiRequest(req, segments, appPort);
+  }
+
+  if (process.env.NODE_ENV === 'production') {
+    return Response.json({ message: 'Not found' }, { status: 404 });
+  }
+
+  return proxyLocalDevApiRequest(req, segments);
 }
 
 export const GET = handle;

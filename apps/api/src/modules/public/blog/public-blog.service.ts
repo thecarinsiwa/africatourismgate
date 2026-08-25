@@ -3,12 +3,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { BlogPosts } from '../../../entities/blog-post.entity';
+import {
+  groupBlogPostsByTranslationKey,
+  pickBlogPostForLocale,
+} from './blog-locale.util';
 import { PublicBlogPostsListQueryDto } from './dto/public-blog-posts-list-query.dto';
 
 export type PublicBlogPostListItemDto = {
   id: string;
   title: string;
   slug: string;
+  translationKey: string;
   excerpt: string | null;
   coverImageUrl: string | null;
   publishedAt: string | null;
@@ -39,23 +44,30 @@ export class PublicBlogService {
       .andWhere('post.publishedAt IS NOT NULL')
       .andWhere('post.publishedAt <= :now', { now: new Date() });
 
-    if (query.locale) {
-      qb.andWhere('post.locale = :locale', { locale: query.locale });
-    }
-
     const search = query.search?.trim();
     if (search) {
       qb.andWhere(
-        '(post.title LIKE :term OR post.excerpt LIKE :term)',
+        '(post.title LIKE :term OR post.excerpt LIKE :term OR post.translationKey LIKE :term)',
         { term: `%${search}%` },
       );
     }
 
-    qb.orderBy('post.publishedAt', 'DESC')
-      .skip((page - 1) * limit)
-      .take(limit);
+    qb.orderBy('post.publishedAt', 'DESC');
 
-    const [posts, total] = await qb.getManyAndCount();
+    const allPublished = await qb.getMany();
+    const groups = groupBlogPostsByTranslationKey(allPublished);
+    const localized = [...groups.values()]
+      .map((siblings) => pickBlogPostForLocale(siblings, query.locale))
+      .filter((post): post is BlogPosts => post !== null)
+      .sort((a, b) => {
+        const aTime = a.publishedAt?.getTime() ?? 0;
+        const bTime = b.publishedAt?.getTime() ?? 0;
+        return bTime - aTime;
+      });
+
+    const total = localized.length;
+    const offset = (page - 1) * limit;
+    const posts = localized.slice(offset, offset + limit);
 
     return {
       data: posts.map((post) => this.toListItem(post)),
@@ -69,19 +81,31 @@ export class PublicBlogService {
   }
 
   async getBySlug(slug: string, locale?: string): Promise<PublicBlogPostDetailDto> {
-    const qb = this.blogPostsRepository
+    const anchor = await this.blogPostsRepository
       .createQueryBuilder('post')
       .where('post.deletedAt IS NULL')
       .andWhere('post.slug = :slug', { slug })
       .andWhere('post.status = :status', { status: 'published' })
       .andWhere('post.publishedAt IS NOT NULL')
-      .andWhere('post.publishedAt <= :now', { now: new Date() });
+      .andWhere('post.publishedAt <= :now', { now: new Date() })
+      .getOne();
 
-    if (locale) {
-      qb.andWhere('post.locale = :locale', { locale });
+    if (!anchor) {
+      throw new NotFoundException(`Blog post "${slug}" not found`);
     }
 
-    const post = await qb.getOne();
+    const siblings = await this.blogPostsRepository
+      .createQueryBuilder('post')
+      .where('post.deletedAt IS NULL')
+      .andWhere('post.translationKey = :translationKey', {
+        translationKey: anchor.translationKey,
+      })
+      .andWhere('post.status = :status', { status: 'published' })
+      .andWhere('post.publishedAt IS NOT NULL')
+      .andWhere('post.publishedAt <= :now', { now: new Date() })
+      .getMany();
+
+    const post = pickBlogPostForLocale(siblings, locale);
     if (!post) {
       throw new NotFoundException(`Blog post "${slug}" not found`);
     }
@@ -94,6 +118,7 @@ export class PublicBlogService {
       id: post.id,
       title: post.title,
       slug: post.slug,
+      translationKey: post.translationKey,
       excerpt: post.excerpt,
       coverImageUrl: post.coverImageUrl,
       publishedAt: post.publishedAt?.toISOString() ?? null,

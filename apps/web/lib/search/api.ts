@@ -8,8 +8,10 @@ type SearchResultItem = {
   priceLabel: string;
 };
 
+import { getWebApiUrl } from '../api/get-api-url';
+
 function client() {
-  return createApiClient({ baseUrl: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api' });
+  return createApiClient({ baseUrl: getWebApiUrl() });
 }
 
 export async function fetchVerticalResults(vertical: SearchVertical, search?: string): Promise<SearchResultItem[]> {

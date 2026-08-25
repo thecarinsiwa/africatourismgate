@@ -49,7 +49,7 @@
   },
   "form": {
     "info": {
-      "slugUnique": "Le slug est unique sur toute la plateforme (pas par langue).",
+      "slugUnique": "Le slug est unique sur toute la plateforme. Utilisez la même clé de traduction pour lier les versions FR, EN et ES d'un même article.",
       "publishedAtHint": "À la publication, la date est renseignée automatiquement si elle est vide."
     },
     "validation": {
@@ -58,6 +58,8 @@
     },
     "fields": {
       "title": "Titre",
+      "translationKey": "Clé de traduction",
+      "translationKeyPlaceholder": "ex. kenya-masai-mara (identique pour FR, EN, ES)",
       "excerpt": "Extrait",
       "excerptPlaceholder": "Résumé court affiché dans la liste…",
       "content": "Contenu",

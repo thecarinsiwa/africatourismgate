@@ -14,6 +14,9 @@ export class BlogPosts extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'slug', length: 180 })
   slug!: string;
 
+  @Column({ type: 'varchar', name: 'translation_key', length: 180 })
+  translationKey!: string;
+
   @Column({ type: 'text', name: 'excerpt', nullable: true })
   excerpt!: string | null;
 

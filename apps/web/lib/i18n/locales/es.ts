@@ -11,7 +11,7 @@ export const es: Translations = {
     about: 'Acerca de',
     gallery: 'Galería',
     pages: 'Nuestros productos',
-    blog: 'Blog',
+    blog: 'Blog de viajes',
     contact: 'Contacto',
     hotels: 'Hoteles',
     flights: 'Vuelos',
