@@ -817,7 +817,6 @@ export function OrganizationSettingsForm({
               >
                 <div className="flex items-center gap-2">
                   {brandingPreview.logoUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element -- preview URL may be absolute/upload
                     <img
                       src={brandingPreview.logoUrl}
                       alt={t('preview.logoAlt')}
