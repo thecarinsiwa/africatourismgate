@@ -50,12 +50,12 @@ export function OrganizationBankAccountsList() {
 
   useSetAdminPageMeta({ title: tBank('page.title') });
 
-  const loadAccounts = useCallback(async (orgId: string) => {
+  const loadAccounts = useCallback(async (orgId: string, superAdmin = false) => {
     setLoading(true);
     setListError(null);
     try {
       const result = await getApiClient().listOrganizationBankAccounts({
-        organizationId: orgId,
+        ...(superAdmin ? { organizationId: orgId } : {}),
         page: 1,
         limit: 100,
       });
@@ -100,7 +100,7 @@ export function OrganizationBankAccountsList() {
           if (!cancelled) setOrganizations(orgs.data);
         }
 
-        if (!cancelled) await loadAccounts(orgId);
+        if (!cancelled) await loadAccounts(orgId, me.isSuperAdmin);
       } catch (error) {
         if (!cancelled) {
           setAccessError(getOrganizationSettingsErrorMessage(error));
@@ -122,7 +122,7 @@ export function OrganizationBankAccountsList() {
       const params = new URLSearchParams(searchParams.toString());
       params.set('organizationId', id);
       router.replace(`/parametres/comptes?${params.toString()}`);
-      void loadAccounts(id);
+      void loadAccounts(id, isSuperAdmin);
     },
     [router, searchParams, loadAccounts],
   );
@@ -142,7 +142,7 @@ export function OrganizationBankAccountsList() {
         account.id,
         isSuperAdmin ? organizationId : undefined,
       );
-      await loadAccounts(organizationId);
+      await loadAccounts(organizationId, isSuperAdmin);
     } catch (error) {
       setDeleteError(getOrganizationSettingsErrorMessage(error));
     } finally {
@@ -267,7 +267,7 @@ export function OrganizationBankAccountsList() {
               onSuccess={() => {
                 setCreating(false);
                 setFormDirty(false);
-                void loadAccounts(organizationId);
+                void loadAccounts(organizationId, isSuperAdmin);
               }}
               onCancel={() => {
                 setCreating(false);
@@ -287,7 +287,7 @@ export function OrganizationBankAccountsList() {
               onSuccess={() => {
                 setEditing(null);
                 setFormDirty(false);
-                void loadAccounts(organizationId);
+                void loadAccounts(organizationId, isSuperAdmin);
               }}
               onCancel={() => {
                 setEditing(null);
