@@ -243,7 +243,7 @@ export function OrganizationForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
+    <form onSubmit={handleSubmit} className="mx-auto max-w-6xl space-y-6">
       {formError ? (
         <p
           role="alert"
@@ -253,130 +253,136 @@ export function OrganizationForm({
         </p>
       ) : null}
 
-      <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">{t('sections.identity')}</h3>
-        <Input
-          label={t('name')}
-          name="name"
-          value={values.name}
-          onChange={(e) => updateField('name', e.target.value)}
-          error={fieldErrors.name}
-          required
-          autoComplete="organization"
-        />
-        <Input
-          label={t('slug')}
-          name="slug"
-          value={values.slug}
-          onChange={(e) => {
-            setSlugTouched(true);
-            updateField('slug', e.target.value.toLowerCase());
-          }}
-          hint={t('slugHint')}
-          error={fieldErrors.slug}
-          required
-        />
-        <Textarea
-          id={descriptionId}
-          name="description"
-          label={t('description')}
-          rows={3}
-          value={values.description}
-          onChange={(e) => updateField('description', e.target.value)}
-        />
-      </Card>
+      <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+        <div className="space-y-6">
+          <Card variant="dashboard" className="space-y-4">
+            <h3 className="text-sm font-semibold text-atg-fg">{t('sections.identity')}</h3>
+            <Input
+              label={t('name')}
+              name="name"
+              value={values.name}
+              onChange={(e) => updateField('name', e.target.value)}
+              error={fieldErrors.name}
+              required
+              autoComplete="organization"
+            />
+            <Input
+              label={t('slug')}
+              name="slug"
+              value={values.slug}
+              onChange={(e) => {
+                setSlugTouched(true);
+                updateField('slug', e.target.value.toLowerCase());
+              }}
+              hint={t('slugHint')}
+              error={fieldErrors.slug}
+              required
+            />
+            <Textarea
+              id={descriptionId}
+              name="description"
+              label={t('description')}
+              rows={3}
+              value={values.description}
+              onChange={(e) => updateField('description', e.target.value)}
+            />
+          </Card>
 
-      <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">{t('sections.contact')}</h3>
-        <Input
-          label={t('website')}
-          name="website"
-          type="url"
-          value={values.website}
-          onChange={(e) => updateField('website', e.target.value)}
-          placeholder={t('websitePlaceholder')}
-        />
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Input
-            label={t('contactEmail')}
-            name="contactEmail"
-            type="email"
-            value={values.contactEmail}
-            onChange={(e) => updateField('contactEmail', e.target.value)}
-          />
-          <Input
-            label={t('contactPhone')}
-            name="contactPhone"
-            value={values.contactPhone}
-            onChange={(e) => updateField('contactPhone', e.target.value)}
-          />
+          <Card variant="dashboard" className="space-y-4">
+            <h3 className="text-sm font-semibold text-atg-fg">{t('sections.contact')}</h3>
+            <Input
+              label={t('website')}
+              name="website"
+              type="url"
+              value={values.website}
+              onChange={(e) => updateField('website', e.target.value)}
+              placeholder={t('websitePlaceholder')}
+            />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Input
+                label={t('contactEmail')}
+                name="contactEmail"
+                type="email"
+                value={values.contactEmail}
+                onChange={(e) => updateField('contactEmail', e.target.value)}
+              />
+              <Input
+                label={t('contactPhone')}
+                name="contactPhone"
+                value={values.contactPhone}
+                onChange={(e) => updateField('contactPhone', e.target.value)}
+              />
+            </div>
+          </Card>
         </div>
-      </Card>
 
-      <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">{t('sections.legal')}</h3>
-        <Select
-          id={legalFormId}
-          label={t('legalForm')}
-          value={values.legalForm}
-          onChange={(e) => updateField('legalForm', e.target.value)}
-          options={legalFormSelectOptions}
-        />
-        <Input
-          label={t('rccm')}
-          name="rccm"
-          value={values.rccm}
-          onChange={(e) => updateField('rccm', e.target.value)}
-          hint={t('rccmHint')}
-        />
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Input
-            label={t('idNat')}
-            name="idNat"
-            value={values.idNat}
-            onChange={(e) => updateField('idNat', e.target.value)}
-            hint={t('idNatHint')}
-          />
-          <Input
-            label={t('nif')}
-            name="nif"
-            value={values.nif}
-            onChange={(e) => updateField('nif', e.target.value)}
-            hint={t('nifHint')}
-          />
-        </div>
-        <Input
-          label={t('cnss')}
-          name="cnss"
-          value={values.cnss}
-          onChange={(e) => updateField('cnss', e.target.value)}
-          hint={t('cnssHint')}
-        />
-      </Card>
+        <div className="space-y-6">
+          <Card variant="dashboard" className="space-y-4">
+            <h3 className="text-sm font-semibold text-atg-fg">{t('sections.legal')}</h3>
+            <Select
+              id={legalFormId}
+              label={t('legalForm')}
+              value={values.legalForm}
+              onChange={(e) => updateField('legalForm', e.target.value)}
+              options={legalFormSelectOptions}
+            />
+            <Input
+              label={t('rccm')}
+              name="rccm"
+              value={values.rccm}
+              onChange={(e) => updateField('rccm', e.target.value)}
+              hint={t('rccmHint')}
+            />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Input
+                label={t('idNat')}
+                name="idNat"
+                value={values.idNat}
+                onChange={(e) => updateField('idNat', e.target.value)}
+                hint={t('idNatHint')}
+              />
+              <Input
+                label={t('nif')}
+                name="nif"
+                value={values.nif}
+                onChange={(e) => updateField('nif', e.target.value)}
+                hint={t('nifHint')}
+              />
+            </div>
+            <Input
+              label={t('cnss')}
+              name="cnss"
+              value={values.cnss}
+              onChange={(e) => updateField('cnss', e.target.value)}
+              hint={t('cnssHint')}
+            />
+          </Card>
 
-      <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">{t('sections.configuration')}</h3>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Input
-            label={t('currency')}
-            name="currency"
-            value={values.currency}
-            onChange={(e) => updateField('currency', e.target.value.toUpperCase())}
-            maxLength={3}
-            error={fieldErrors.currency}
-            required
-          />
-          <Select
-            id={statusId}
-            label={t('status')}
-            value={values.status}
-            onChange={(e) =>
-              updateField('status', e.target.value as OrganizationFormValues['status'])
-            }
-            options={statusOptions}
-          />
+          <Card variant="dashboard" className="space-y-4">
+            <h3 className="text-sm font-semibold text-atg-fg">{t('sections.configuration')}</h3>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Input
+                label={t('currency')}
+                name="currency"
+                value={values.currency}
+                onChange={(e) => updateField('currency', e.target.value.toUpperCase())}
+                maxLength={3}
+                error={fieldErrors.currency}
+                required
+              />
+              <Select
+                id={statusId}
+                label={t('status')}
+                value={values.status}
+                onChange={(e) =>
+                  updateField('status', e.target.value as OrganizationFormValues['status'])
+                }
+                options={statusOptions}
+              />
+            </div>
+          </Card>
         </div>
-      </Card>
+      </div>
 
       <div
         className={
