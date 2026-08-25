@@ -155,7 +155,8 @@
       "property": "Établissement",
       "agency": "Agence",
       "support_queue": "File d'attente support",
-      "withId": "{label} · {idPrefix}…"
+      "withId": "{label} · {idPrefix}…",
+      "withName": "{label} · {name}"
     },
     "revokeDialog": {
       "title": "Révoquer le rôle",

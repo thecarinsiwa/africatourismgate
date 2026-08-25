@@ -42,6 +42,12 @@ export class UserRoleAssignmentDto {
   @ApiPropertyOptional({ format: 'uuid', nullable: true })
   scopeId!: string | null;
 
+  @ApiPropertyOptional({
+    nullable: true,
+    description: 'Resolved name of the scoped entity (property, agency, organization, …)',
+  })
+  scopeName!: string | null;
+
   @ApiPropertyOptional({ format: 'uuid', nullable: true })
   assignedByUserId!: string | null;
 
@@ -83,6 +89,7 @@ export function toUserRoleAssignmentDto(
   row: UserRoleAssignments,
   user?: Users | null,
   role?: Roles | null,
+  scopeName?: string | null,
 ): UserRoleAssignmentDto {
   return {
     id: row.id,
@@ -90,6 +97,7 @@ export function toUserRoleAssignmentDto(
     roleId: row.roleId,
     scopeType: row.scopeType,
     scopeId: row.scopeId ?? null,
+    scopeName: scopeName ?? null,
     assignedByUserId: row.assignedByUserId ?? null,
     assignedAt: formatTimestamp(row.assignedAt) ?? '',
     expiresAt: formatTimestamp(row.expiresAt),

@@ -155,7 +155,8 @@
       "property": "Property",
       "agency": "Agency",
       "support_queue": "Support queue",
-      "withId": "{label} · {idPrefix}…"
+      "withId": "{label} · {idPrefix}…",
+      "withName": "{label} · {name}"
     },
     "revokeDialog": {
       "title": "Revoke role",

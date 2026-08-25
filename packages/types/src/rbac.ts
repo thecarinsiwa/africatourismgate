@@ -33,6 +33,8 @@ export interface UserRoleAssignment {
   roleId: string;
   scopeType: ScopeType;
   scopeId: string | null;
+  /** Resolved display name for the scoped entity (property, agency, org, …). */
+  scopeName?: string | null;
   assignedByUserId: string | null;
   assignedAt: string;
   expiresAt: string | null;

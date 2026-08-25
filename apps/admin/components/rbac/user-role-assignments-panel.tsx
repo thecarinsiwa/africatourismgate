@@ -112,6 +112,7 @@ export function UserRoleAssignmentsPanel({
                   assignment.scopeType,
                   scopeLabels,
                   assignment.scopeId,
+                  assignment.scopeName,
                 )}
               </span>
               {readOnly ? null : (

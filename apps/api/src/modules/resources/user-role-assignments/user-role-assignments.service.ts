@@ -5,6 +5,9 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, IsNull, Repository } from 'typeorm';
 import {
+  Organizations,
+  Properties,
+  RentalAgencies,
   Roles,
   UserRoleAssignments,
   Users,
@@ -27,6 +30,12 @@ export class UserRoleAssignmentsService extends CrudService<UserRoleAssignments>
     private readonly usersRepository: Repository<Users>,
     @InjectRepository(Roles)
     private readonly rolesRepository: Repository<Roles>,
+    @InjectRepository(Properties)
+    private readonly propertiesRepository: Repository<Properties>,
+    @InjectRepository(RentalAgencies)
+    private readonly agenciesRepository: Repository<RentalAgencies>,
+    @InjectRepository(Organizations)
+    private readonly organizationsRepository: Repository<Organizations>,
   ) {
     super(assignmentsRepository);
   }
@@ -141,7 +150,8 @@ export class UserRoleAssignmentsService extends CrudService<UserRoleAssignments>
       }),
     );
 
-    return toUserRoleAssignmentDto(created, user, role);
+    const [dtoOut] = await this.enrichRows([created]);
+    return dtoOut;
   }
 
   async revoke(
@@ -169,13 +179,14 @@ export class UserRoleAssignmentsService extends CrudService<UserRoleAssignments>
     const userIds = Array.from(new Set(rows.map((row) => row.userId)));
     const roleIds = Array.from(new Set(rows.map((row) => row.roleId)));
 
-    const [users, roles] = await Promise.all([
+    const [users, roles, scopeNameById] = await Promise.all([
       this.usersRepository.find({
         where: { id: In(userIds) },
       }),
       this.rolesRepository.find({
         where: { id: In(roleIds) },
       }),
+      this.resolveScopeNames(rows),
     ]);
 
     const userById = new Map(users.map((user) => [user.id, user]));
@@ -186,7 +197,65 @@ export class UserRoleAssignmentsService extends CrudService<UserRoleAssignments>
         row,
         userById.get(row.userId) ?? null,
         roleById.get(row.roleId) ?? null,
+        row.scopeId ? (scopeNameById.get(row.scopeId) ?? null) : null,
       ),
     );
+  }
+
+  private async resolveScopeNames(
+    rows: UserRoleAssignments[],
+  ): Promise<Map<string, string>> {
+    const result = new Map<string, string>();
+    const propertyIds = new Set<string>();
+    const agencyIds = new Set<string>();
+    const unresolvedIds = new Set<string>();
+
+    for (const row of rows) {
+      if (!row.scopeId) continue;
+      if (row.scopeType === 'property') propertyIds.add(row.scopeId);
+      else if (row.scopeType === 'agency') agencyIds.add(row.scopeId);
+      else unresolvedIds.add(row.scopeId);
+    }
+
+    const [properties, agencies] = await Promise.all([
+      propertyIds.size > 0
+        ? this.propertiesRepository.find({
+            where: { id: In([...propertyIds]) },
+            select: ['id', 'name'],
+          })
+        : Promise.resolve([] as Properties[]),
+      agencyIds.size > 0
+        ? this.agenciesRepository.find({
+            where: { id: In([...agencyIds]) },
+            select: ['id', 'name'],
+          })
+        : Promise.resolve([] as RentalAgencies[]),
+    ]);
+
+    for (const property of properties) {
+      result.set(property.id, property.name);
+    }
+    for (const agency of agencies) {
+      result.set(agency.id, agency.name);
+    }
+
+    for (const id of propertyIds) {
+      if (!result.has(id)) unresolvedIds.add(id);
+    }
+    for (const id of agencyIds) {
+      if (!result.has(id)) unresolvedIds.add(id);
+    }
+
+    if (unresolvedIds.size > 0) {
+      const organizations = await this.organizationsRepository.find({
+        where: { id: In([...unresolvedIds]) },
+        select: ['id', 'name'],
+      });
+      for (const organization of organizations) {
+        result.set(organization.id, organization.name);
+      }
+    }
+
+    return result;
   }
 }

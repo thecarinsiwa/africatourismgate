@@ -214,6 +214,7 @@ export function UserRoleAssignmentsList() {
               row.original.scopeType,
               scopeLabels,
               row.original.scopeId,
+              row.original.scopeName,
             )}
           </span>
         ),

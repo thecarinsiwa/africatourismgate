@@ -167,6 +167,7 @@ export function UserRoleModal({
                       assignment.scopeType,
                       scopeLabels,
                       assignment.scopeId,
+                      assignment.scopeName,
                     )}
                   </span>
                   <Button

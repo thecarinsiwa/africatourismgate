@@ -155,7 +155,8 @@
       "property": "Establecimiento",
       "agency": "Agencia",
       "support_queue": "Cola de soporte",
-      "withId": "{label} · {idPrefix}…"
+      "withId": "{label} · {idPrefix}…",
+      "withName": "{label} · {name}"
     },
     "revokeDialog": {
       "title": "Revocar el rol",
