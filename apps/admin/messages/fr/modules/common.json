@@ -158,7 +158,9 @@
   "select": {
     "choose": "Choisir…",
     "chooseDash": "— Choisir —",
-    "chooseFeminine": "— Choisir —"
+    "chooseFeminine": "— Choisir —",
+    "searchPlaceholder": "Rechercher…",
+    "empty": "Aucun résultat"
   },
   "back": {
     "toList": "← Retour à la liste"

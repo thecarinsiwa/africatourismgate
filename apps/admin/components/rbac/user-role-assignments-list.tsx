@@ -13,7 +13,7 @@ import {
   EmptyState,
   FilterBar,
   Input,
-  Select,
+  SearchableSelect,
   useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
@@ -45,6 +45,7 @@ export function UserRoleAssignmentsList() {
   const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.rbac.assignments');
   const tCommon = useTranslations('modules.common');
+  const tSelect = useTranslations('modules.common.select');
   const tRoleNames = useTranslations('modules.rbac.roleNames');
   const tActions = useTranslations('common.actions');
   const scopeLabels = useRbacScopeDisplayLabels();
@@ -359,7 +360,7 @@ export function UserRoleAssignmentsList() {
               />
             </div>
             <div className="w-full sm:max-w-xs">
-              <Select
+              <SearchableSelect
                 label={t('filters.user')}
                 value={userIdFilter}
                 options={[
@@ -369,23 +370,29 @@ export function UserRoleAssignmentsList() {
                     label: `${user.firstName} ${user.lastName} — ${user.email}`,
                   })),
                 ]}
-                onChange={(e) => syncFilters({ userId: e.target.value })}
+                onChange={(value) => syncFilters({ userId: value })}
+                searchPlaceholder={tSelect('searchPlaceholder')}
+                emptyMessage={tSelect('empty')}
               />
             </div>
             <div className="w-full sm:max-w-xs">
-              <Select
+              <SearchableSelect
                 label={t('filters.role')}
                 value={roleIdFilter}
                 options={roleOptions}
-                onChange={(e) => syncFilters({ roleId: e.target.value })}
+                onChange={(value) => syncFilters({ roleId: value })}
+                searchPlaceholder={tSelect('searchPlaceholder')}
+                emptyMessage={tSelect('empty')}
               />
             </div>
             <div className="w-full sm:max-w-xs">
-              <Select
+              <SearchableSelect
                 label={t('filters.scope')}
                 value={scopeTypeFilter}
                 options={scopeOptions}
-                onChange={(e) => syncFilters({ scopeType: e.target.value })}
+                onChange={(value) => syncFilters({ scopeType: value })}
+                searchPlaceholder={tSelect('searchPlaceholder')}
+                emptyMessage={tSelect('empty')}
               />
             </div>
           </>

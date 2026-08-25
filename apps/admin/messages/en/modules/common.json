@@ -156,9 +156,11 @@
     "expiresAt": "Expires on"
   },
   "select": {
-    "choose": "Choisir…",
-    "chooseDash": "— Choisir —",
-    "chooseFeminine": "— Choisir —"
+    "choose": "Choose…",
+    "chooseDash": "— Choose —",
+    "chooseFeminine": "— Choose —",
+    "searchPlaceholder": "Search…",
+    "empty": "No results"
   },
   "back": {
     "toList": "← Back to list"

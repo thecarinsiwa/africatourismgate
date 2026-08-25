@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { AlertDialog, Button, Card, Input, Select } from '@africatourismgate/ui';
+import { AlertDialog, Button, Card, Input, SearchableSelect } from '@africatourismgate/ui';
 import type {
   CreateUserRoleAssignmentRequest,
   Role,
@@ -33,6 +33,7 @@ export function UserRoleAssignmentForm({
   const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
   const tRoles = useTranslations('modules.users.roles');
   const tRoleNames = useTranslations('modules.rbac.roleNames');
+  const tSelect = useTranslations('modules.common.select');
   const tLoading = useTranslations('common.loading');
   const scopeTypeLabels = useRbacScopeTypeLabels();
   const [userId, setUserId] = useState(defaultUserId);
@@ -203,21 +204,23 @@ export function UserRoleAssignmentForm({
 
       <div className="grid gap-4 lg:grid-cols-2">
         {lockUser ? null : (
-          <Select
+          <SearchableSelect
             label={tRoles('user')}
             value={userId}
             options={userOptions}
-            onChange={(e) => setUserId(e.target.value)}
+            onChange={setUserId}
+            searchPlaceholder={tSelect('searchPlaceholder')}
+            emptyMessage={tSelect('empty')}
+            placeholder={tRoles('selectPlaceholder')}
           />
         )}
 
         <div className="space-y-1">
-          <Select
+          <SearchableSelect
             label={tRoles('role')}
             value={roleId}
             options={roleOptions}
-            onChange={(e) => {
-              const nextId = e.target.value;
+            onChange={(nextId) => {
               setRoleId(nextId);
               const nextRole = roles.find((r) => r.id === nextId);
               if (nextRole?.code === 'super_admin') {
@@ -225,6 +228,9 @@ export function UserRoleAssignmentForm({
                 setScopeId('');
               }
             }}
+            searchPlaceholder={tSelect('searchPlaceholder')}
+            emptyMessage={tSelect('empty')}
+            placeholder={tRoles('selectPlaceholder')}
           />
           {isSuperAdminRole ? (
             <p className="text-xs text-amber-700 dark:text-amber-400">
@@ -233,15 +239,17 @@ export function UserRoleAssignmentForm({
           ) : null}
         </div>
 
-        <Select
+        <SearchableSelect
           label={tRoles('scope')}
           value={scopeType}
           options={scopeTypeOptions}
           disabled={isSuperAdminRole}
-          onChange={(e) => {
-            setScopeType(e.target.value as ScopeType);
-            if (e.target.value === 'global') setScopeId('');
+          onChange={(next) => {
+            setScopeType(next as ScopeType);
+            if (next === 'global') setScopeId('');
           }}
+          searchPlaceholder={tSelect('searchPlaceholder')}
+          emptyMessage={tSelect('empty')}
         />
 
         {scopeType !== 'global' ? (

@@ -89,6 +89,10 @@ export {
 export { PageHeader, type PageHeaderProps } from './components/page-header';
 export { Breadcrumb, type BreadcrumbProps, type BreadcrumbItem } from './components/breadcrumb';
 export { Select, type SelectProps, type SelectOption } from './components/select';
+export {
+  SearchableSelect,
+  type SearchableSelectProps,
+} from './components/searchable-select';
 export { Modal, type ModalProps } from './components/modal';
 export {
   AlertDialog,
