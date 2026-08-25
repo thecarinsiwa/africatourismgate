@@ -99,6 +99,9 @@
   "organisations": {
     "title": "Organizaciones",
     "description": "Socios y entidades de la plataforma. Busque por nombre o slug.",
+    "actions": {
+      "new": "Nueva organización"
+    },
     "nouveau": {
       "metaTitle": "Nueva organización",
       "description": "Crear una organización socia."

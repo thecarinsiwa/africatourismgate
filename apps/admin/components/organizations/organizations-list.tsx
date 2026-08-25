@@ -11,12 +11,14 @@ import {
   DataTableBadge,
   DataTablePagination,
   EmptyState,
+  FilterBar,
   Input,
+  Select,
   useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import { ApiHttpError } from '@africatourismgate/api-client';
-import type { OrganizationListItem } from '@africatourismgate/types';
+import type { OrganizationListItem, OrganizationStatus } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -48,6 +50,7 @@ export function OrganizationsList() {
 
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'' | OrganizationStatus>('');
   const [page, setPage] = useState(1);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -98,6 +101,26 @@ export function OrganizationsList() {
     }, SEARCH_DEBOUNCE_MS);
     return () => window.clearTimeout(timer);
   }, [searchInput]);
+
+  const statusOptions = useMemo(
+    () => [
+      { value: '', label: tCommon('filters.all') },
+      { value: 'active', label: accountStatusLabels.active },
+      { value: 'suspended', label: accountStatusLabels.suspended },
+    ],
+    [accountStatusLabels, tCommon],
+  );
+
+  const activeFilterCount = [search.trim().length > 0, statusFilter !== ''].filter(
+    Boolean,
+  ).length;
+
+  const handleClearFilters = useCallback(() => {
+    setSearchInput('');
+    setSearch('');
+    setStatusFilter('');
+    setPage(1);
+  }, []);
 
   const confirmDelete = useCallback(async () => {
     if (!pendingDelete) return;
@@ -220,22 +243,50 @@ export function OrganizationsList() {
 
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
-  const organizations = state.status === 'ready' ? state.organizations : [];
-  const hasSearch = search.trim().length > 0;
-  const isEmpty = state.status === 'ready' && state.total === 0;
+  const organizationsRaw = state.status === 'ready' ? state.organizations : [];
+  const organizations = statusFilter
+    ? organizationsRaw.filter((org) => org.status === statusFilter)
+    : organizationsRaw;
+  const hasActiveFilters = activeFilterCount > 0;
+  const isEmpty =
+    state.status === 'ready' &&
+    (statusFilter ? organizations.length === 0 : state.total === 0);
 
   return (
     <div className="space-y-6">
-      <div className="sm:max-w-md">
-        <Input
-          name="search"
-          type="search"
-          placeholder={tCommon('filters.searchByNameOrSlug')}
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-          aria-label={tCommon('filters.searchByNameOrSlugAria')}
-        />
-      </div>
+      <FilterBar
+        mobileVariant="drawer"
+        activeCount={activeFilterCount}
+        onClear={handleClearFilters}
+        clearLabel={tCommon('filters.clearAll')}
+        applyLabel={tCommon('filters.apply')}
+        toggleLabel={tCommon('filters.toggle')}
+        filters={
+          <>
+            <div className="min-w-[200px] flex-1 sm:max-w-md">
+              <Input
+                name="search"
+                type="search"
+                placeholder={tCommon('filters.searchByNameOrSlug')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                aria-label={tCommon('filters.searchByNameOrSlugAria')}
+              />
+            </div>
+            <div className="w-full sm:w-44">
+              <Select
+                label={tCommon('columns.status')}
+                value={statusFilter}
+                options={statusOptions}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value as '' | OrganizationStatus);
+                  setPage(1);
+                }}
+              />
+            </div>
+          </>
+        }
+      />
 
       {deleteError ? (
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
@@ -250,10 +301,12 @@ export function OrganizationsList() {
       ) : isEmpty && !isLoading ? (
         <EmptyState
           title={
-            hasSearch ? t('list.emptyTitleSearch') : t('list.emptyTitleDefault')
+            hasActiveFilters ? t('list.emptyTitleSearch') : t('list.emptyTitleDefault')
           }
           description={
-            hasSearch ? t('list.emptyDescriptionSearch') : t('list.emptyDescriptionDefault')
+            hasActiveFilters
+              ? t('list.emptyDescriptionSearch')
+              : t('list.emptyDescriptionDefault')
           }
         />
       ) : (
@@ -264,9 +317,9 @@ export function OrganizationsList() {
               data={organizations}
               isLoading={isLoading}
               emptyMessage={
-                hasSearch ? t('list.emptyTableSearch') : t('list.emptyTableDefault')
+                hasActiveFilters ? t('list.emptyTableSearch') : t('list.emptyTableDefault')
               }
-              emptyVariant={hasSearch ? 'search' : 'default'}
+              emptyVariant={hasActiveFilters ? 'search' : 'default'}
               getRowId={(row) => row.id}
               aria-label={t('list.ariaLabel')}
             />

@@ -99,6 +99,9 @@
   "organisations": {
     "title": "Organisations",
     "description": "Partenaires et entités de la plateforme. Recherche par nom ou slug.",
+    "actions": {
+      "new": "Nouvelle organisation"
+    },
     "nouveau": {
       "metaTitle": "Nouvelle organisation",
       "description": "Créer une organisation partenaire."
