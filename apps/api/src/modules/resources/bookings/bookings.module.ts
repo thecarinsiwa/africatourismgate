@@ -44,6 +44,7 @@ import { BookingsController } from './bookings.controller';
 import { BookingIdentityDocumentsService } from './booking-identity-documents.service';
 import { BookingManifestService } from './booking-manifest.service';
 import { BookingsService } from './bookings.service';
+import { PosReceiptEmailService } from './pos-receipt-email.service';
 
 @Module({
   imports: [
@@ -93,6 +94,7 @@ import { BookingsService } from './bookings.service';
     BookingPaymentReminderService,
     BookingIdentityDocumentsService,
     BookingManifestService,
+    PosReceiptEmailService,
   ],
   exports: [
     BookingEngineService,

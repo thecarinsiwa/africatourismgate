@@ -17,8 +17,9 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import type { Response } from 'express';
-import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiForbiddenResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { BadRequestException } from '@nestjs/common';
+import { OrgScopeService } from '../../../common/org-scope/org-scope.service';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
@@ -31,6 +32,8 @@ import { BookingRequestResponseDto } from './dto/booking-request-response.dto';
 import { BookingsListQueryDto } from './dto/bookings-list-query.dto';
 import { CancelBookingDto } from './dto/cancel-booking.dto';
 import { RecordCashPaymentDto } from './dto/record-cash-payment.dto';
+import { SendReceiptEmailDto } from './dto/send-receipt-email.dto';
+import { SendReceiptEmailResponseDto } from './dto/send-receipt-email-response.dto';
 import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 import { CreateBookingReviewDto } from '../reviews/dto/create-booking-review.dto';
 import { TourGuidesModule } from '../tour-guides/tour-guides.module';
@@ -65,6 +68,7 @@ import {
   RequestIdentityDocumentUploadResponseDto,
 } from './dto/request-identity-document-upload.dto';
 import { BookingManifestService } from './booking-manifest.service';
+import { PosReceiptEmailService } from './pos-receipt-email.service';
 import {
   BookingManifestEntryDto,
   CreateBookingManifestEntryDto,
@@ -85,6 +89,8 @@ export class BookingsController {
     private readonly bookingApprovalService: BookingApprovalService,
     private readonly bookingIdentityDocumentsService: BookingIdentityDocumentsService,
     private readonly bookingManifestService: BookingManifestService,
+    private readonly posReceiptEmailService: PosReceiptEmailService,
+    private readonly orgScopeService: OrgScopeService,
   ) {}
 
   @Post('checkout-preview')
@@ -490,6 +496,25 @@ export class BookingsController {
   ) {
     await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
     return this.bookingEngine.recordCashPayment(id, user.id, dto.note);
+  }
+
+  @Post(':id/receipt-email')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Send POS cash register receipt by email (SMTP)' })
+  @ApiOkResponse({ type: SendReceiptEmailResponseDto })
+  async sendReceiptEmail(
+    @Param('id') id: string,
+    @Body() dto: SendReceiptEmailDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<SendReceiptEmailResponseDto> {
+    await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
+    const organizationId = await this.orgScopeService.resolveOrganizationId(user);
+    return this.posReceiptEmailService.sendReceiptEmail(
+      id,
+      dto.to,
+      user.id,
+      organizationId,
+    );
   }
 
   @Post(':id/payment-intent')

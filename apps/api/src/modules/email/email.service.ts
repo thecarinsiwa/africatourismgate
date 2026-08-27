@@ -24,6 +24,7 @@ import {
   renderBookingGuideAssignmentEmail,
   renderBookingGuideRemovalEmail,
 } from './assisted-booking.email.templates';
+import { renderPosReceiptEmail } from './pos-receipt.email.templates';
 import type {
   AbandonmentReminderEmailPayload,
   AdminPendingRegistrationEmailPayload,
@@ -40,6 +41,7 @@ import type {
   BookingGuideAssignmentEmailPayload,
   BookingGuideRemovalEmailPayload,
   PasswordResetEmailPayload,
+  PosReceiptEmailPayload,
   SendMailResult,
   EmailAttachment,
   WelcomeEmailPayload,
@@ -110,6 +112,15 @@ export class EmailService implements OnModuleInit {
       payload,
       branding,
     );
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendPosReceiptEmail(
+    payload: PosReceiptEmailPayload,
+    organizationId: string,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBrandingForOrganization(organizationId);
+    const { subject, html, text } = renderPosReceiptEmail(payload, branding);
     return this.send('service', { to: payload.to, subject, html, text });
   }
 
@@ -230,12 +241,16 @@ export class EmailService implements OnModuleInit {
 
   /** MVP : org plateforme seed ; fallback gracieux si résolution impossible. */
   private async resolveBranding() {
+    return this.resolveBrandingForOrganization(PLATFORM_ORG_ID);
+  }
+
+  private async resolveBrandingForOrganization(organizationId: string) {
     try {
-      return await this.brandingService.resolveForOrganization(PLATFORM_ORG_ID);
+      return await this.brandingService.resolveForOrganization(organizationId);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       this.logger.warn(
-        `Impossible de résoudre le branding e-mail, fallback par défaut : ${message}`,
+        `Impossible de résoudre le branding e-mail (org ${organizationId}), fallback par défaut : ${message}`,
       );
       return DEFAULT_EMAIL_BRANDING;
     }
