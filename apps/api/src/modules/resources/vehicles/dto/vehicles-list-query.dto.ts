@@ -18,4 +18,13 @@ export class VehiclesListQueryDto extends PaginationQueryDto {
   @IsOptional()
   @IsUUID('4')
   categoryId?: string;
+
+  @ApiPropertyOptional({
+    format: 'uuid',
+    description:
+      'Filtre catalogue : produits partagés (NULL) + exclusifs de cette organisation',
+  })
+  @IsOptional()
+  @IsUUID('4')
+  organizationId?: string;
 }

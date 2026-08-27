@@ -7,4 +7,13 @@ export class CabinsListQueryDto extends PaginationQueryDto {
   @IsOptional()
   @IsUUID('4')
   shipId?: string;
+
+  @ApiPropertyOptional({
+    format: 'uuid',
+    description:
+      'Filtre catalogue : produits partagés (NULL) + exclusifs de cette organisation',
+  })
+  @IsOptional()
+  @IsUUID('4')
+  organizationId?: string;
 }

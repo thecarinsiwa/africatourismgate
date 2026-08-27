@@ -13,4 +13,13 @@ export class PropertiesListQueryDto extends PaginationQueryDto {
   @IsOptional()
   @IsUUID('4')
   destinationId?: string;
+
+  @ApiPropertyOptional({
+    format: 'uuid',
+    description:
+      'Filtre catalogue : produits partagés (NULL) + exclusifs de cette organisation',
+  })
+  @IsOptional()
+  @IsUUID('4')
+  organizationId?: string;
 }

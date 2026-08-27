@@ -29,6 +29,8 @@ import {
   activityUploadUrl,
 } from '../../../common/utils/public-asset-url';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { Activities } from '../../../entities/generated';
 import { ActivitiesListQueryDto } from './dto/activities-list-query.dto';
 import { ActivitiesService } from './activities.service';
@@ -73,8 +75,11 @@ export class ActivitiesController {
   @RequirePermissions('activities.read')
   @Get()
   @ApiOperation({ summary: 'List activities' })
-  findAll(@Query() query: ActivitiesListQueryDto) {
-    return this.service.findAll(query);
+  findAll(
+    @Query() query: ActivitiesListQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.findAllForUser(query, user);
   }
 
   @ApiConsumes('multipart/form-data')

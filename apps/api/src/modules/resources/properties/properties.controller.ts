@@ -18,9 +18,11 @@ import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync } from 'node:fs';
 import { extname, join } from 'node:path';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { propertyUploadUrl } from '../../../common/utils/public-asset-url';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { Properties } from '../../../entities/generated';
+import { PropertiesListQueryDto } from './dto/properties-list-query.dto';
 import { PropertiesService } from './properties.service';
 
 const PROPERTY_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
@@ -34,8 +36,11 @@ export class PropertiesController {
 
   @Get()
   @ApiOperation({ summary: 'List properties' })
-  findAll(@Query() query: PaginationQueryDto) {
-    return this.service.findAll(query);
+  findAll(
+    @Query() query: PropertiesListQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.findAllForUser(query, user);
   }
 
   @Get(':id')
