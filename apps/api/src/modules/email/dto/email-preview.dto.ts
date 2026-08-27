@@ -13,6 +13,7 @@ import {
 export const EMAIL_PREVIEW_TEMPLATES = [
   'welcome',
   'booking',
+  'booking_receipt',
   'password_reset',
   'booking_request_received',
   'booking_approved_chat',
@@ -71,7 +72,7 @@ export class EmailPreviewDto {
   @ApiProperty({ enum: EMAIL_PREVIEW_TEMPLATES, example: 'welcome' })
   @IsIn(EMAIL_PREVIEW_TEMPLATES, {
     message:
-      'template doit être welcome, booking, password_reset, booking_request_received, booking_approved_chat, booking_rejected ou booking_payment_invite.',
+      'template doit être welcome, booking, booking_receipt, password_reset, booking_request_received, booking_approved_chat, booking_rejected ou booking_payment_invite.',
   })
   template!: EmailPreviewTemplateDto;
 

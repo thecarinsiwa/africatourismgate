@@ -26,6 +26,7 @@ import {
   renderBookingRejectedEmail,
   renderBookingRequestReceivedEmail,
 } from './assisted-booking.email.templates';
+import { renderPosReceiptEmail } from './pos-receipt.email.templates';
 
 const PREVIEW_BOOKING_ID = '00000000-0000-4000-8000-000000009999';
 
@@ -90,6 +91,39 @@ export class EmailController {
             currency: 'USD',
             itemTitles: ['Safari 3 jours', 'Transfert aéroport'],
             confirmedAt: new Date().toISOString(),
+            webUrl: previewWebUrl,
+          },
+          branding,
+        );
+      case 'booking_receipt':
+        return renderPosReceiptEmail(
+          {
+            to: 'marie@example.com',
+            firstName: 'Marie',
+            bookingId: PREVIEW_BOOKING_ID,
+            issuedAt: new Date().toISOString(),
+            organizationName: branding.displayName,
+            employeeName: 'Jean Caissier',
+            clientName: 'Marie Dupont',
+            paymentMethodLabel: 'Espèces',
+            items: [
+              {
+                title: 'Safari 3 jours — Parc national',
+                quantity: 2,
+                unitPriceCents: 45_000,
+                lineTotalCents: 90_000,
+              },
+              {
+                title: 'Transfert aéroport',
+                quantity: 1,
+                unitPriceCents: 35_000,
+                lineTotalCents: 35_000,
+              },
+            ],
+            subtotalCents: 125_000,
+            discountCents: 0,
+            totalCents: 125_000,
+            currency: 'USD',
             webUrl: previewWebUrl,
           },
           branding,
