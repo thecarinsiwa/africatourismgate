@@ -136,8 +136,11 @@ export const posSaleSuccessPageConfig = {
   downloadPdfLabel: 'Télécharger PDF',
   downloadPdfHint:
     'Dans la fenêtre d’impression, choisissez « Enregistrer au format PDF » comme destination.',
-  emailReceiptLabel: 'Envoyer par e-mail',
+  emailFieldLabel: 'E-mail du destinataire',
+  emailReceiptLabel: 'Envoyer le reçu par email',
   emailPlaceholder: 'client@exemple.com',
   emailInvalid: 'Saisissez une adresse e-mail valide.',
-  emailSentHint: 'Votre client de messagerie va s’ouvrir avec le reçu.',
+  emailSendingLabel: 'Envoi en cours…',
+  emailSentHint: 'Le reçu a été envoyé par e-mail.',
+  emailSendErrorLabel: 'Impossible d’envoyer le reçu par e-mail.',
 } as const;
