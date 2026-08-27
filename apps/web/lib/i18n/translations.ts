@@ -132,6 +132,15 @@ export type Translations = {
     continueToRecap: string;
     backToCart: string;
     payWithStripe: string;
+    payWithCash: string;
+    cashSubmitting: string;
+    paymentMethodTitle: string;
+    paymentMethodHint: string;
+    paymentMethodRequired: string;
+    paymentMethodStripe: string;
+    paymentMethodStripeHint: string;
+    paymentMethodCash: string;
+    paymentMethodCashHint: string;
     requestBooking: string;
     requestSubmitting: string;
     stripeRedirecting: string;
@@ -160,13 +169,17 @@ export type Translations = {
     success: {
       title: string;
       titleConfirmed: string;
+      titleCashPending: string;
       subtitle: string;
       subtitleConfirmed: string;
+      subtitleCashPending: string;
       bookingIdLabel: string;
       statusLabel: string;
       statusConfirmed: string;
       statusPendingPayment: string;
       statusPendingHint: string;
+      statusCashPending: string;
+      statusCashPendingHint: string;
       totalLabel: string;
       verifying: string;
       statusUnavailable: string;
@@ -177,6 +190,7 @@ export type Translations = {
       nextStepsTitle: string;
       nextStepEmail: string;
       nextStepAccount: string;
+      nextStepCash: string;
     };
     requestSuccess: {
       title: string;
@@ -1019,6 +1033,7 @@ export type Translations = {
         timelineUpcoming: string;
         proceedToPayment: string;
         paymentInvitePending: string;
+        cashPaymentPending: string;
         identityDocuments: {
           title: string;
           subtitle: string;
@@ -1461,13 +1476,22 @@ const fr: Translations = {
     continueToRecap: 'Continuer vers récap',
     backToCart: 'Retour panier',
     payWithStripe: 'Payer avec Stripe',
+    payWithCash: 'Confirmer — paiement sur place',
+    cashSubmitting: 'Enregistrement…',
+    paymentMethodTitle: 'Mode de paiement',
+    paymentMethodHint: 'Choisissez comment vous souhaitez régler cette réservation.',
+    paymentMethodRequired: 'Sélectionnez un mode de paiement pour continuer.',
+    paymentMethodStripe: 'Carte (Stripe)',
+    paymentMethodStripeHint: 'Paiement sécurisé en ligne immédiat.',
+    paymentMethodCash: 'Espèces sur place',
+    paymentMethodCashHint: 'Réservation en attente — paiement en agence ou à l’arrivée.',
     requestBooking: 'Demander une réservation',
     requestSubmitting: 'Envoi de la demande…',
     stripeRedirecting: 'Redirection Stripe…',
     estimatedTotal: 'Total estimé',
     loading: 'Chargement…',
     authRequiredNext: 'Connexion client requise au prochain écran.',
-    authRequiredPayment: 'Connexion client requise pour lancer Stripe Checkout.',
+    authRequiredPayment: 'Connexion client requise pour lancer le paiement.',
     authRequiredRequest: 'Connexion client requise pour envoyer votre demande.',
     invalidDraft: 'Données de réservation incomplètes. Reprenez depuis une fiche produit.',
     invalidDraftBack: 'Retour aux hébergements',
@@ -1489,16 +1513,22 @@ const fr: Translations = {
     success: {
       title: 'Confirmation en cours',
       titleConfirmed: 'Réservation confirmée',
+      titleCashPending: 'Réservation enregistrée',
       subtitle:
         'Votre paiement Stripe est reçu. Nous finalisons la confirmation de votre réservation…',
       subtitleConfirmed:
         'Votre paiement a été reçu et votre réservation est confirmée.',
+      subtitleCashPending:
+        'Vous avez choisi de payer en espèces. Votre réservation est en attente jusqu’à l’encaissement en agence.',
       bookingIdLabel: 'Réf. réservation :',
       statusLabel: 'Statut :',
       statusConfirmed: 'Confirmée',
       statusPendingPayment: 'En attente de paiement',
       statusPendingHint:
         'La confirmation prend plus de temps que prévu. Consultez votre compte dans quelques instants ou contactez le support si le statut ne change pas.',
+      statusCashPending: 'En attente de paiement cash',
+      statusCashPendingHint:
+        'Présentez-vous en agence ou réglez à l’arrivée. Notre équipe confirmera la réservation après encaissement.',
       totalLabel: 'Total :',
       verifying: 'Vérification du statut en cours…',
       statusUnavailable:
@@ -1510,6 +1540,7 @@ const fr: Translations = {
       nextStepsTitle: 'Prochaines étapes',
       nextStepEmail: 'Un e-mail de confirmation vous sera envoyé sous peu.',
       nextStepAccount: 'Consultez vos réservations depuis votre espace compte.',
+      nextStepCash: 'Préparez le montant en espèces pour le règlement sur place.',
     },
     requestSuccess: {
       title: 'Demande envoyée',
@@ -2459,6 +2490,8 @@ const fr: Translations = {
         proceedToPayment: 'Procéder au paiement',
         paymentInvitePending:
           'Vous recevrez un e-mail avec le lien de paiement dès que votre demande sera validée.',
+        cashPaymentPending:
+          'Vous avez choisi le paiement en espèces. Réglez sur place ou en agence — la réservation sera confirmée après encaissement.',
         identityDocuments: {
           title: "Pièce d'identité",
           subtitle:
@@ -2970,13 +3003,22 @@ const en: Translations = {
     continueToRecap: 'Continue to summary',
     backToCart: 'Back to cart',
     payWithStripe: 'Pay with Stripe',
+    payWithCash: 'Confirm — pay on site',
+    cashSubmitting: 'Saving…',
+    paymentMethodTitle: 'Payment method',
+    paymentMethodHint: 'Choose how you want to pay for this booking.',
+    paymentMethodRequired: 'Select a payment method to continue.',
+    paymentMethodStripe: 'Card (Stripe)',
+    paymentMethodStripeHint: 'Secure online payment now.',
+    paymentMethodCash: 'Cash on site',
+    paymentMethodCashHint: 'Booking held — pay at the agency or on arrival.',
     requestBooking: 'Request a booking',
     requestSubmitting: 'Submitting request?',
     stripeRedirecting: 'Redirecting to Stripe?',
     estimatedTotal: 'Estimated total',
     loading: 'Loading?',
     authRequiredNext: 'Customer sign-in required on the next step.',
-    authRequiredPayment: 'Customer sign-in required to start Stripe Checkout.',
+    authRequiredPayment: 'Customer sign-in required to start payment.',
     authRequiredRequest: 'Customer sign-in required to submit your booking request.',
     invalidDraft: 'Incomplete booking data. Start again from a product page.',
     invalidDraftBack: 'Back to hotels',
@@ -2998,15 +3040,21 @@ const en: Translations = {
     success: {
       title: 'Confirming booking',
       titleConfirmed: 'Booking confirmed',
+      titleCashPending: 'Booking registered',
       subtitle:
         'Your Stripe payment was received. We are finalizing your booking confirmation?',
       subtitleConfirmed: 'Your payment was received and your booking is confirmed.',
+      subtitleCashPending:
+        'You chose to pay in cash. Your booking stays pending until payment is collected at the agency.',
       bookingIdLabel: 'Booking ref:',
       statusLabel: 'Status:',
       statusConfirmed: 'Confirmed',
       statusPendingPayment: 'Pending payment',
       statusPendingHint:
         'Confirmation is taking longer than expected. Check your account shortly or contact support if the status does not update.',
+      statusCashPending: 'Awaiting cash payment',
+      statusCashPendingHint:
+        'Pay at the agency or on arrival. Our team will confirm the booking after collection.',
       totalLabel: 'Total:',
       verifying: 'Checking status?',
       statusUnavailable: 'Detailed status is unavailable for now. Refresh in a moment.',
@@ -3017,6 +3065,7 @@ const en: Translations = {
       nextStepsTitle: 'What happens next',
       nextStepEmail: 'A confirmation email will be sent shortly.',
       nextStepAccount: 'View your bookings in your account area.',
+      nextStepCash: 'Have the cash amount ready for on-site payment.',
     },
     requestSuccess: {
       title: 'Request submitted',
@@ -3960,6 +4009,8 @@ const en: Translations = {
         proceedToPayment: 'Proceed to payment',
         paymentInvitePending:
           'You will receive an email with the payment link once your request is approved.',
+        cashPaymentPending:
+          'You chose to pay in cash. Pay on site or at the agency — the booking will be confirmed after collection.',
         identityDocuments: {
           title: 'Identity document',
           subtitle:

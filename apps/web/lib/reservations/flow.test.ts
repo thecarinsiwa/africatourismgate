@@ -336,15 +336,19 @@ test('buildCheckoutItems returns assisted package checkout item', () => {
 
 test('buildCheckoutRequest includes packageId for assisted package draft', () => {
   assert.deepEqual(
-    buildCheckoutRequest({
-      kind: 'package',
-      packageId: PACKAGE_ID,
-      startDate: '2026-08-01',
-      endDate: '2026-08-02',
-      travelers: 4,
-    }),
+    buildCheckoutRequest(
+      {
+        kind: 'package',
+        packageId: PACKAGE_ID,
+        startDate: '2026-08-01',
+        endDate: '2026-08-02',
+        travelers: 4,
+      },
+      'stripe',
+    ),
     {
       packageId: PACKAGE_ID,
+      preferredPaymentMethod: 'stripe',
       items: [
         {
           itemType: 'package',

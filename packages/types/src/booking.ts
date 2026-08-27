@@ -9,6 +9,9 @@ export type BookingStatus =
   | 'cancelled'
   | 'refunded';
 
+/** Chosen at checkout; null on legacy bookings. */
+export type BookingPreferredPaymentMethod = 'stripe' | 'cash';
+
 export type BookingCheckoutItemType =
   | 'room'
   | 'flight_class'
@@ -29,6 +32,8 @@ export interface Booking {
   currency: string;
   promoCodeId: string | null;
   promotionId?: string | null;
+  /** Stripe Checkout vs cash on site; null for bookings before this field. */
+  preferredPaymentMethod?: BookingPreferredPaymentMethod | null;
   createdAt: string;
   updatedAt: string | null;
 }
@@ -51,6 +56,8 @@ export interface BookingCheckoutRequest {
   packageId?: string;
   /** Staff only (e.g. POS): booking is owned by this user instead of the actor. */
   customerUserId?: string;
+  /** Required on create/request; optional on checkout-preview. */
+  preferredPaymentMethod?: BookingPreferredPaymentMethod;
 }
 
 export interface AppliedPackageCheckoutDiscount {

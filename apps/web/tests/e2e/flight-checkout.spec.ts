@@ -89,6 +89,7 @@ test('vol FIH→NBO: fiche -> panier -> recap -> Stripe -> confirmation', async 
           id: BOOKING_ID,
           userId: 'user-e2e',
           status: 'pending_payment',
+          preferredPaymentMethod: 'stripe',
           totalCents: TOTAL_CENTS,
           currency: 'USD',
           promoCodeId: null,
@@ -125,6 +126,7 @@ test('vol FIH→NBO: fiche -> panier -> recap -> Stripe -> confirmation', async 
           id: BOOKING_ID,
           userId: 'user-e2e',
           status: 'confirmed',
+          preferredPaymentMethod: 'stripe',
           totalCents: TOTAL_CENTS,
           currency: 'USD',
           promoCodeId: null,
@@ -155,13 +157,15 @@ test('vol FIH→NBO: fiche -> panier -> recap -> Stripe -> confirmation', async 
   await expect(page.getByRole('heading', { name: /recapitulatif/i })).toBeVisible();
   await expect(page.getByText('KQ550')).toBeVisible();
 
-  await expect(page.getByRole('button', { name: /payer avec stripe/i })).toBeEnabled();
-  await page.getByRole('button', { name: /payer avec stripe/i }).click();
+  await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();
+  await expect(page.getByRole('button', { name: /payer avec stripe|pay with stripe|pagar con stripe/i })).toBeEnabled();
+  await page.getByRole('button', { name: /payer avec stripe|pay with stripe|pagar con stripe/i }).click();
   await expect(page).toHaveURL(new RegExp(`/booking/success\\?booking_id=${BOOKING_ID}`), {
     timeout: 15_000,
   });
 
   expect(postedItems).toEqual({
+    preferredPaymentMethod: 'stripe',
     items: [
       {
         itemType: 'flight_class',

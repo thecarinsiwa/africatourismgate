@@ -41,6 +41,7 @@ describe('Booking messages (e2e)', () => {
           },
         ],
         currency: 'USD',
+        preferredPaymentMethod: 'stripe',
       })
       .expect(201);
 
@@ -173,6 +174,7 @@ describe('Booking messages (e2e)', () => {
           },
         ],
         currency: 'USD',
+        preferredPaymentMethod: 'stripe',
       })
       .expect(201);
 

@@ -63,11 +63,13 @@
       "name": "Name",
       "organization": "Organization",
       "total": "Total",
-      "createdAt": "Created on"
+      "createdAt": "Created on",
+      "preferredPaymentMethod": "Chosen payment method"
     },
     "summary": {
       "createdAt": "Created on {date}",
-      "unreadMessages": "{count, plural, one {# unread customer message} other {# unread customer messages}}"
+      "unreadMessages": "{count, plural, one {# unread customer message} other {# unread customer messages}}",
+      "preferredPaymentUnspecified": "Not specified"
     },
     "tabs": {
       "ariaLabel": "Additional sections",
@@ -91,8 +93,16 @@
       "cancelReason": "Cancellation reason",
       "cancelReasonPlaceholder": "E.g. customer request, unavailability…",
       "cancelBooking": "Cancel booking",
+      "recordCashPayment": "Record cash payment",
       "readOnly": "Editing requires the bookings.write permission.",
       "assistedStatusHint": "Use the Assisted validation panel to approve or reject this request."
+    },
+    "cashDialog": {
+      "title": "Record cash payment",
+      "description": "Confirm cash collection for this booking? It will move to confirmed status.",
+      "noteLabel": "Note (optional)",
+      "notePlaceholder": "E.g. till receipt, receipt number…",
+      "confirm": "Collect cash"
     },
     "linesEmpty": "No lines.",
     "linesAriaLabel": "Booking lines",
@@ -207,6 +217,7 @@
     "approve": "Approve",
     "reject": "Reject",
     "invitePayment": "Invite to pay",
+    "cashPaymentHint": "The customer chose cash on site. Record the payment from the actions bar.",
     "totalLabel": "Total ({currency})",
     "totalHint": "Adjust the total if needed before approval.",
     "totalOverrideHint": "Auto-calculated from traveler prices. Edit to apply a manual override.",

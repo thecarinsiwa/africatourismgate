@@ -29,6 +29,7 @@ export function ReservationSuccessPageContent() {
   const s = ck.success;
 
   const bookingId = searchParams.get('booking_id');
+  const paymentParam = searchParams.get('payment');
   const [booking, setBooking] = useState<BookingDetail | null>(null);
   const [status, setStatus] = useState<'idle' | 'loading' | 'confirming' | 'ready' | 'error'>(
     'idle',
@@ -55,7 +56,10 @@ export function ReservationSuccessPageContent() {
       if (detail.booking.status === CONFIRMED) {
         return detail;
       }
-      if (detail.booking.status !== 'pending_payment') {
+
+      const isCash =
+        paymentParam === 'cash' || detail.booking.preferredPaymentMethod === 'cash';
+      if (isCash || detail.booking.status !== 'pending_payment') {
         return detail;
       }
 
@@ -107,21 +111,35 @@ export function ReservationSuccessPageContent() {
     return () => {
       cancelled = true;
     };
-  }, [bookingId, pathname, router, searchParams]);
+  }, [bookingId, pathname, paymentParam, router, searchParams]);
 
   const isConfirmed = booking?.booking.status === CONFIRMED;
-  const isPendingPayment = booking?.booking.status === 'pending_payment';
+  const isCashPending =
+    !isConfirmed &&
+    (paymentParam === 'cash' ||
+      booking?.booking.preferredPaymentMethod === 'cash') &&
+    booking?.booking.status === 'pending_payment';
+  const isPendingPayment = booking?.booking.status === 'pending_payment' && !isCashPending;
+
+  const pageTitle = isConfirmed
+    ? s.titleConfirmed
+    : isCashPending
+      ? s.titleCashPending
+      : s.title;
+  const pageSubtitle = isConfirmed
+    ? s.subtitleConfirmed
+    : isCashPending
+      ? s.subtitleCashPending
+      : s.subtitle;
 
   return (
     <CheckoutPageShell
-      title={isConfirmed ? s.titleConfirmed : s.title}
+      title={pageTitle}
       currentStep="confirmation"
       stepperLabels={stepperLabels}
     >
       <div className="mt-6 rounded-xl border border-green-200 bg-atg-elevated p-6 dark:border-green-900/40 dark:bg-atg-elevated">
-        <p className="text-sm text-atg-muted">
-          {isConfirmed ? s.subtitleConfirmed : s.subtitle}
-        </p>
+        <p className="text-sm text-atg-muted">{pageSubtitle}</p>
 
         <div className="mt-5 space-y-2 text-sm text-atg-fg">
           <p>
@@ -136,14 +154,19 @@ export function ReservationSuccessPageContent() {
                 <span className="font-semibold">{s.statusLabel}</span>{' '}
                 {isConfirmed
                   ? s.statusConfirmed
-                  : isPendingPayment
-                    ? s.statusPendingPayment
-                    : booking.booking.status}
+                  : isCashPending
+                    ? s.statusCashPending
+                    : isPendingPayment
+                      ? s.statusPendingPayment
+                      : booking.booking.status}
               </p>
               <p>
                 <span className="font-semibold">{s.totalLabel}</span>{' '}
                 {formatHotelPrice(booking.totalCents, booking.currency)}
               </p>
+              {isCashPending ? (
+                <p className="text-amber-700 dark:text-amber-300">{s.statusCashPendingHint}</p>
+              ) : null}
               {isPendingPayment ? (
                 <p className="text-amber-700 dark:text-amber-300">{s.statusPendingHint}</p>
               ) : null}
@@ -159,7 +182,7 @@ export function ReservationSuccessPageContent() {
             {s.nextStepsTitle}
           </h2>
           <ul className="mt-2 space-y-1 text-sm text-atg-muted">
-            <li>• {s.nextStepEmail}</li>
+            {isCashPending ? <li>• {s.nextStepCash}</li> : <li>• {s.nextStepEmail}</li>}
             <li>• {s.nextStepAccount}</li>
           </ul>
         </section>

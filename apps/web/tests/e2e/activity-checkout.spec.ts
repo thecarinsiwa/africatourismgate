@@ -153,6 +153,13 @@ test('activité Gombe City Tour: créneau complet grisé, panier -> recap -> dem
   await expect(page.getByText('Gombe City Tour')).toBeVisible();
   await expect(page.getByText('Tourism Gate Experiences Kinshasa')).toBeVisible();
 
+  await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();
+  const nameInputs = page.getByLabel(/nom complet|full name|nombre completo/i);
+  const nameCount = await nameInputs.count();
+  for (let i = 0; i < nameCount; i += 1) {
+    await nameInputs.nth(i).fill(`Voyageur ${i + 1}`);
+  }
+
   await expect(
     page.getByRole('button', { name: /demander une r[ée]servation|request a booking|solicitar una reserva/i }),
   ).toBeEnabled();
@@ -164,6 +171,7 @@ test('activité Gombe City Tour: créneau complet grisé, panier -> recap -> dem
   });
 
   expect(postedItems).toEqual({
+    preferredPaymentMethod: 'stripe',
     items: [
       {
         itemType: 'activity_schedule',

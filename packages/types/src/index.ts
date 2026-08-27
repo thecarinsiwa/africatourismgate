@@ -263,6 +263,7 @@ export type {
   BookingItemType,
   BookingItemsListQuery,
   BookingsListQuery,
+  BookingPreferredPaymentMethod,
   BookingStatus,
 } from './booking.js';
 

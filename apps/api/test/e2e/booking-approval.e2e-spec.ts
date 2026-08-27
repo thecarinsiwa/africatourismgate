@@ -18,6 +18,7 @@ const assistedCheckoutBody = (date: string) => ({
     },
   ],
   currency: 'USD',
+  preferredPaymentMethod: 'stripe' as const,
 });
 
 describe('Booking approval (e2e)', () => {
@@ -165,6 +166,7 @@ describe('Booking approval (e2e)', () => {
       .send({
         packageId: PACKAGE_ID,
         currency: 'USD',
+        preferredPaymentMethod: 'stripe',
         items: [
           {
             itemType: 'package',
@@ -197,6 +199,7 @@ describe('Booking approval (e2e)', () => {
       .send({
         packageId: PACKAGE_ID,
         currency: 'USD',
+        preferredPaymentMethod: 'stripe',
         items: [
           {
             itemType: 'package',
@@ -424,6 +427,7 @@ describe('Booking approval (e2e)', () => {
           },
         ],
         currency: 'USD',
+        preferredPaymentMethod: 'stripe',
       })
       .expect(201);
 

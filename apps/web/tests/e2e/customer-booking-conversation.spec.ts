@@ -29,6 +29,7 @@ const bookingDetailMock = {
     id: BOOKING_ID,
     userId: USER_ID,
     status: 'pending_approval',
+    preferredPaymentMethod: 'stripe',
     totalCents: 9000,
     currency: 'USD',
     promoCodeId: null,

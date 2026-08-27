@@ -152,6 +152,13 @@ test('forfait activités: réserver sans créneaux, panier -> recap -> demande a
   await expect(page).toHaveURL(/\/booking\/recap\?.*kind=package/);
   await expect(page.getByRole('heading', { name: /recapitulatif/i })).toBeVisible();
 
+  await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();
+  const nameInputs = page.getByLabel(/nom complet|full name|nombre completo/i);
+  const nameCount = await nameInputs.count();
+  for (let i = 0; i < nameCount; i += 1) {
+    await nameInputs.nth(i).fill(`Voyageur ${i + 1}`);
+  }
+
   await expect(
     page.getByRole('button', { name: /demander une r[ée]servation|request a booking|solicitar una reserva/i }),
   ).toBeEnabled();
@@ -163,6 +170,7 @@ test('forfait activités: réserver sans créneaux, panier -> recap -> demande a
   });
 
   expect(postedCheckout).toEqual({
+    preferredPaymentMethod: 'stripe',
     packageId: PACKAGE_ID,
     items: [
       {

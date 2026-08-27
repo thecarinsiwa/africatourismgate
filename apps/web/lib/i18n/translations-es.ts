@@ -161,13 +161,22 @@ export const es: Translations = {
     continueToRecap: 'Continuar al resumen',
     backToCart: 'Volver al carrito',
     payWithStripe: 'Pagar con Stripe',
+    payWithCash: 'Confirmar — pago en efectivo',
+    cashSubmitting: 'Guardando…',
+    paymentMethodTitle: 'Método de pago',
+    paymentMethodHint: 'Elija cómo desea pagar esta reserva.',
+    paymentMethodRequired: 'Seleccione un método de pago para continuar.',
+    paymentMethodStripe: 'Tarjeta (Stripe)',
+    paymentMethodStripeHint: 'Pago seguro en línea inmediato.',
+    paymentMethodCash: 'Efectivo en el lugar',
+    paymentMethodCashHint: 'Reserva en espera — pague en agencia o a la llegada.',
     requestBooking: 'Solicitar una reserva',
     requestSubmitting: 'Enviando solicitud…',
     stripeRedirecting: 'Redirigiendo a Stripe…',
     estimatedTotal: 'Total estimado',
     loading: 'Cargando…',
     authRequiredNext: 'Inicio de sesión requerido en el siguiente paso.',
-    authRequiredPayment: 'Inicio de sesión requerido para iniciar Stripe Checkout.',
+    authRequiredPayment: 'Inicio de sesión requerido para iniciar el pago.',
     authRequiredRequest: 'Inicio de sesión requerido para enviar su solicitud.',
     invalidDraft: 'Datos de reserva incompletos. Vuelva a una ficha de producto.',
     invalidDraftBack: 'Volver a hoteles',
@@ -189,15 +198,21 @@ export const es: Translations = {
     success: {
       title: 'Confirmación en curso',
       titleConfirmed: 'Reserva confirmada',
+      titleCashPending: 'Reserva registrada',
       subtitle:
         'Su pago Stripe fue recibido. Estamos finalizando la confirmación de su reserva…',
       subtitleConfirmed: 'Su pago fue recibido y su reserva está confirmada.',
+      subtitleCashPending:
+        'Ha elegido pagar en efectivo. Su reserva permanece pendiente hasta el cobro en agencia.',
       bookingIdLabel: 'Ref. reserva:',
       statusLabel: 'Estado:',
       statusConfirmed: 'Confirmada',
       statusPendingPayment: 'Pendiente de pago',
       statusPendingHint:
         'La confirmación tarda más de lo esperado. Consulte su cuenta en unos instantes o contacte al soporte si el estado no cambia.',
+      statusCashPending: 'Pendiente de pago en efectivo',
+      statusCashPendingHint:
+        'Pague en agencia o a la llegada. Nuestro equipo confirmará la reserva tras el cobro.',
       totalLabel: 'Total:',
       verifying: 'Verificando estado…',
       statusUnavailable: 'Estado detallado no disponible por ahora. Actualice en un momento.',
@@ -208,6 +223,7 @@ export const es: Translations = {
       nextStepsTitle: 'Próximos pasos',
       nextStepEmail: 'Recibirá un correo de confirmación en breve.',
       nextStepAccount: 'Consulte sus reservas en su área de cuenta.',
+      nextStepCash: 'Prepare el importe en efectivo para el pago en el lugar.',
     },
     requestSuccess: {
       title: 'Solicitud enviada',
@@ -1154,6 +1170,8 @@ export const es: Translations = {
         proceedToPayment: 'Proceder al pago',
         paymentInvitePending:
           'Recibirá un correo con el enlace de pago cuando su solicitud sea validada.',
+        cashPaymentPending:
+          'Ha elegido pagar en efectivo. Pague en el lugar o en agencia — la reserva se confirmará tras el cobro.',
         identityDocuments: {
           title: 'Documento de identidad',
           subtitle:

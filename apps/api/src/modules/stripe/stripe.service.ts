@@ -494,6 +494,11 @@ export class StripeService {
         `Paiement impossible : statut actuel « ${booking.status} ».`,
       );
     }
+    if (booking.preferredPaymentMethod === 'cash') {
+      throw new BadRequestException(
+        'Paiement Stripe impossible : cette réservation est en paiement cash sur place.',
+      );
+    }
     if (booking.totalCents < 1) {
       throw new BadRequestException('Montant de réservation invalide.');
     }

@@ -63,11 +63,13 @@
       "name": "Nombre",
       "organization": "Organización",
       "total": "Total",
-      "createdAt": "Creada el"
+      "createdAt": "Creada el",
+      "preferredPaymentMethod": "Método de pago elegido"
     },
     "summary": {
       "createdAt": "Creada el {date}",
-      "unreadMessages": "{count, plural, one {# mensaje del cliente sin leer} other {# mensajes del cliente sin leer}}"
+      "unreadMessages": "{count, plural, one {# mensaje del cliente sin leer} other {# mensajes del cliente sin leer}}",
+      "preferredPaymentUnspecified": "No especificado"
     },
     "tabs": {
       "ariaLabel": "Secciones complementarias",
@@ -91,8 +93,16 @@
       "cancelReason": "Motivo de cancelación",
       "cancelReasonPlaceholder": "Ej. solicitud del cliente, no disponibilidad…",
       "cancelBooking": "Cancelar la reserva",
+      "recordCashPayment": "Registrar pago en efectivo",
       "readOnly": "La edición requiere el permiso bookings.write.",
       "assistedStatusHint": "Use el panel de validación asistida para aprobar o rechazar esta solicitud."
+    },
+    "cashDialog": {
+      "title": "Registrar pago en efectivo",
+      "description": "¿Confirmar el cobro en efectivo de esta reserva? Pasará al estado confirmada.",
+      "noteLabel": "Nota (opcional)",
+      "notePlaceholder": "Ej. recibo de caja, número de recibo…",
+      "confirm": "Cobrar"
     },
     "linesEmpty": "Ninguna línea.",
     "linesAriaLabel": "Líneas de reserva",
@@ -207,6 +217,7 @@
     "approve": "Aprobar",
     "reject": "Rechazar",
     "invitePayment": "Invitar al pago",
+    "cashPaymentHint": "El cliente eligió pago en efectivo. Registre el cobro desde la barra de acciones.",
     "totalLabel": "Total ({currency})",
     "totalHint": "Ajuste el total si es necesario antes de aprobar.",
     "totalOverrideHint": "Calculado automáticamente a partir de los precios por viajero. Edite para aplicar un total manual.",

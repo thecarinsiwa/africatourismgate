@@ -246,6 +246,10 @@ export class BookingNotificationsService {
       .where('booking.deleted_at IS NULL')
       .andWhere('booking.status = :pendingPayment')
       .andWhere('booking.payment_reminder_sent_at IS NULL')
+      .andWhere(
+        '(booking.preferred_payment_method IS NULL OR booking.preferred_payment_method = :stripeMethod)',
+        { stripeMethod: 'stripe' },
+      )
       .groupBy('booking.id')
       .having('MAX(history.created_at) <= :cutoff', { cutoff })
       .getMany();

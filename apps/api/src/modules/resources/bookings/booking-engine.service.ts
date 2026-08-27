@@ -130,6 +130,7 @@ export class BookingEngineService {
     userId: string,
     actorUserId?: string,
   ): Promise<CreateBookingResponseDto> {
+    this.assertPreferredPaymentMethod(dto);
     const pricing = await this.resolveCheckoutPricing(dto);
 
     const bookingId = await this.bookingsRepository.manager.transaction(
@@ -148,6 +149,7 @@ export class BookingEngineService {
           currency: pricing.currency,
           promoCodeId: pricing.discount?.promoCodeId ?? null,
           promotionId: pricing.discount?.promotionId ?? null,
+          preferredPaymentMethod: dto.preferredPaymentMethod!,
           createdByUserId: actorUserId ?? null,
         } as Bookings);
         await bookingsRepo.save(booking);
@@ -232,6 +234,7 @@ export class BookingEngineService {
     userId: string,
     actorUserId?: string,
   ): Promise<BookingRequestResponseDto> {
+    this.assertPreferredPaymentMethod(dto);
     const pricing = await this.resolveCheckoutPricing(dto);
 
     const bookingId = await this.bookingsRepository.manager.transaction(
@@ -248,6 +251,7 @@ export class BookingEngineService {
           currency: pricing.currency,
           promoCodeId: pricing.discount?.promoCodeId ?? null,
           promotionId: pricing.discount?.promotionId ?? null,
+          preferredPaymentMethod: dto.preferredPaymentMethod!,
           createdByUserId: actorUserId ?? null,
         } as Bookings);
         await bookingsRepo.save(booking);
@@ -696,6 +700,14 @@ export class BookingEngineService {
       totalCents: booking.totalCents,
       currency: booking.currency,
     };
+  }
+
+  private assertPreferredPaymentMethod(dto: BookingCheckoutDto): void {
+    if (!dto.preferredPaymentMethod) {
+      throw new BadRequestException(
+        'Le mode de paiement (preferredPaymentMethod) est obligatoire.',
+      );
+    }
   }
 
   private async resolveCheckoutPricing(dto: BookingCheckoutDto): Promise<{

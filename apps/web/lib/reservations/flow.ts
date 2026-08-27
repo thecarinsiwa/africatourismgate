@@ -1,4 +1,8 @@
-import type { BookingCheckoutItem, BookingCheckoutRequest } from '@africatourismgate/types';
+import type {
+  BookingCheckoutItem,
+  BookingCheckoutRequest,
+  BookingPreferredPaymentMethod,
+} from '@africatourismgate/types';
 import type { ActivityDetail } from '../activities/types';
 import type { VehicleDetail } from '../cars/types';
 import type { CruiseSailingDetail } from '../cruises/types';
@@ -437,16 +441,21 @@ export function buildCheckoutItems(draft: ReservationDraft): BookingCheckoutItem
   ];
 }
 
-export function buildCheckoutRequest(draft: ReservationDraft): BookingCheckoutRequest {
+export function buildCheckoutRequest(
+  draft: ReservationDraft,
+  preferredPaymentMethod: BookingPreferredPaymentMethod,
+): BookingCheckoutRequest {
   if (draft.kind === 'package') {
     return {
       items: buildCheckoutItems(draft),
       packageId: draft.packageId,
+      preferredPaymentMethod,
     };
   }
 
   return {
     items: buildCheckoutItems(draft),
+    preferredPaymentMethod,
   };
 }
 
