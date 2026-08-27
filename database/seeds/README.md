@@ -25,16 +25,17 @@ SEED_ADMIN_PASSWORD=your_seed_password_here
 | - | ----- | ------- |
 | 1 | `permissions` | 28 platform permissions (`resource` + `action`) |
 | 2 | `roles` | `super_admin`, `org_admin`, `support`, `customer` (`is_system = 1`) |
-| 3 | `organizations` | Default platform organization |
+| 3 | `organizations` | Platform org + `Kinshasa Guichet Est` (POS multi-tenant) |
 | 4 | `users` | Super admin account |
 | 5 | `role_permissions` | Permission matrix per role |
-| 6 | `organization_settings` | Locale, booking, branding JSON |
+| 6 | `organization_settings` | Locale, booking, branding JSON (both orgs) |
 | 7 | `user_role_assignments` | Super admin → `super_admin` (global) |
 | 8 | `amenities` | Wi-Fi, pool, parking, etc. |
 | 9 | `vehicle_categories` | Economy → Premium |
 | 10 | `organization_bank_accounts` | Sample B2B bank account |
 | 11 | `airlines`, `airports`, `cruise_lines`, `cruise_ports` | Minimal flight/cruise referentials |
 | 12 | Demo | Kinshasa destination, demo hotel + room |
+| 13 | POS-3 | Activité exclusive Guichet Est (`organization_id` = 2e org) |
 
 Fixed UUIDs are documented in [seed-ids.txt](seed-ids.txt).
 

@@ -93,7 +93,7 @@ Employé → apps/pos (login JWT + cookies)
 | Forfaits (`packageId`) au POS | ❌ | Absents du catalogue caisse |
 | Codes promo / promotions | ❌ | Non branchés dans le panier POS |
 | Client nominatif (`customerUserId`) | ❌ | API prête ; UI POS n’envoie jamais le champ |
-| Filtre catalogue par organisation | ⚠️ | Org = branding ; listes CRUD sans `organizationId` explicite |
+| Filtre catalogue par organisation | ✅ | Listes + preview/create avec `organizationId` ; `NULL` = partagé |
 | Bookings orphelins `pending_payment` | ✅ | Cancel client POS (échec cash/intent, fermeture sheet, bouton succès) ; pas de cron TTL (risque web) |
 | Tests unit/e2e dans `apps/pos` | ❌ | Aucun Playwright POS |
 | CI GitHub Actions | ✅ | Job `pos` (lint + build) ; E2E POS → POS-10 |
@@ -111,7 +111,7 @@ Employé → apps/pos (login JWT + cookies)
 | ID | Problème | Impact | Livrable |
 |----|----------|--------|----------|
 | D1 | Bookings `pending_payment` orphelins si cash/Stripe échoue après création | Stock bloqué, panier « fantôme » | ✅ POS-2 |
-| D2 | Catalogue non scopé à l’org sélectionnée | Multi-tenant incorrect / fuite de produits | POS-3 |
+| D2 | Catalogue non scopé à l’org sélectionnée | Multi-tenant incorrect / fuite de produits | ✅ POS-3 |
 | D3 | Booking souvent au nom de l’employé (pas de client) | Ownership, emails, historique client faux | POS-4 |
 | D4 | Aucun test POS + hors CI | Régressions silencieuses | ✅ POS-1 (CI) ; E2E → POS-10 |
 | D5 | Doc roadmap globale obsolète sur les reçus | Mauvaises priorités | ✅ POS-0 |
@@ -136,7 +136,7 @@ Employé → apps/pos (login JWT + cookies)
 | POS-0 | A | Alignement doc (reçus faits, ce fichier = source) | Haute | `chore/pos-roadmap-docs` | — |
 | POS-1 | A | CI — build + lint `apps/pos` | Haute | `chore/ci-pos` | — |
 | POS-2 | A | Annulation / cleanup bookings abandonnés | Haute | `fix/pos-orphan-bookings` | — |
-| POS-3 | A | Catalogue filtré par organisation sélectionnée | Haute | `fix/pos-org-catalog-scope` | — |
+| POS-3 | A | Catalogue filtré par organisation sélectionnée | Haute | `fix/pos-org-catalog-scope` ✅ | — |
 | POS-4 | B | Sélecteur client (`customerUserId`) | Haute | `feature/pos-customer-select` | — |
 | POS-5 | B | Historique ventes du jour | Haute | `feature/pos-sales-history` | POS-3 |
 | POS-6 | B | Codes promo / remises au panier POS | Moyenne | `feature/pos-promo-codes` | — |
@@ -260,9 +260,11 @@ Critères :
 
 ---
 
-### POS-3 — Scope catalogue par organisation
+### POS-3 — Scope catalogue par organisation (livré)
 
-**Branche :** `fix/pos-org-catalog-scope`
+**Statut :** ✅ — migration `organization_id` catalogue (NULL = partagé) ; listes API scopées ; POS `search-catalog` + preview/create envoient l’org session ; seed 2e org + activité exclusive.
+
+**Branche historique :** `fix/pos-org-catalog-scope`
 
 ```
 Projet : Africa Tourism Gate (pnpm monorepo).
@@ -284,6 +286,15 @@ Critères : avec 2 orgs seed, la caisse org A ne voit pas les produits exclusifs
 
 À la fin : fichiers + test manuel multi-org.
 ```
+
+**Test manuel multi-org (seed) :**
+1. `pnpm db:sync` (migration `add_pos_second_org_exclusive_activity` + seeds)
+2. POS login admin → sélectionner **Africa Tourism Gate** → recherche « Atelier exclusif » → **0 résultat**
+3. Changer d’établissement → **Kinshasa Guichet Est** → « Atelier exclusif Guichet Est » **visible**
+4. Produits partagés (ex. Gombe City Tour, `organization_id` NULL) visibles sur les deux orgs
+5. Preview / createBooking avec org B + produit exclusif B → OK ; forcer un produit exclusif B sous org A → 400
+
+**IDs seed :** `ORG_POS_GUICHET_EST`, `ACTIVITY_POS_EXCLUSIVE_GUICHET_EST` — voir `database/seeds/seed-ids.txt`
 
 ---
 
@@ -535,8 +546,9 @@ Critères : checklist ops dans docs ; pas de secrets commités.
 4. Nouvelle vente → **Carte** (si Stripe configuré) → success confirmé
 5. Admin : booking `confirmed`, paiement cohérent, stock décrémenté
 6. (Après POS-2) Abandonner un paiement carte → booking annulé / stock OK
-7. (Après POS-4) Vente avec client → bon `customerUserId`
-8. (Après POS-5) Vente visible dans historique du jour
+7. (Après POS-3) Org A : pas d’« Atelier exclusif Guichet Est » ; org B : visible ; partagés sur les deux
+8. (Après POS-4) Vente avec client → bon `customerUserId`
+9. (Après POS-5) Vente visible dans historique du jour
 
 Script API complémentaire : `pnpm test:pos-sale-cash`
 
@@ -569,7 +581,7 @@ Script API complémentaire : `pnpm test:pos-sale-cash`
 - [x] POS-0 Doc alignée
 - [x] POS-1 CI POS
 - [x] POS-2 Orphelins / abandon paiement
-- [ ] POS-3 Scope org catalogue
+- [x] POS-3 Scope org catalogue
 - [ ] POS-4 Client nominatif
 - [ ] POS-5 Historique du jour
 - [ ] POS-6 Promos
