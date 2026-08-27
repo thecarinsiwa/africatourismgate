@@ -7,25 +7,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { Organizations, Users } from '../../../entities/generated';
 import { EmailService } from '../../email/email.service';
-import type { PosReceiptEmailLineItem } from '../../email/email.types';
 import type { SendMailResult } from '../../email/email.types';
 import { BookingsService } from './bookings.service';
-import type { BookingAdminDetailDto } from './dto/booking-admin-detail.dto';
-
-function formatPersonName(firstName: string, lastName: string, fallback: string): string {
-  const name = `${firstName} ${lastName}`.trim();
-  return name || fallback;
-}
-
-function toIsoDate(value: Date | string | null | undefined): string {
-  if (!value) {
-    return new Date().toISOString();
-  }
-  if (value instanceof Date) {
-    return value.toISOString();
-  }
-  return value;
-}
+import {
+  buildPosReceiptContext,
+  type PosReceiptContext,
+  toPosReceiptEmailPayload,
+} from './pos-receipt.context';
 
 @Injectable()
 export class PosReceiptEmailService {
@@ -44,6 +32,23 @@ export class PosReceiptEmailService {
     actorUserId: string,
     organizationId: string,
   ): Promise<SendMailResult> {
+    const context = await this.resolveReceiptContext(
+      bookingId,
+      actorUserId,
+      organizationId,
+    );
+
+    return this.emailService.sendPosReceiptEmail(
+      toPosReceiptEmailPayload(context, to),
+      context.organizationId,
+    );
+  }
+
+  async resolveReceiptContext(
+    bookingId: string,
+    actorUserId: string,
+    organizationId: string,
+  ): Promise<PosReceiptContext> {
     const detail = await this.bookingsService.getAdminDetail(bookingId);
 
     if (detail.booking.status !== 'confirmed') {
@@ -64,63 +69,11 @@ export class PosReceiptEmailService {
     });
     const organizationName = organization?.name?.trim() ?? '';
 
-    const lineItems = this.buildLineItems(detail);
-    const subtotalCents = lineItems.reduce(
-      (sum, item) => sum + item.lineTotalCents,
-      0,
-    );
-    const discountCents = Math.max(0, subtotalCents - detail.totalCents);
-
-    const clientName = formatPersonName(
-      detail.client.firstName,
-      detail.client.lastName,
-      'Client',
-    );
-
-    return this.emailService.sendPosReceiptEmail(
-      {
-        to: to.trim(),
-        firstName: detail.client.firstName.trim() || 'Client',
-        bookingId: detail.booking.id,
-        issuedAt: toIsoDate(detail.booking.createdAt),
-        organizationName,
-        employeeName: formatPersonName(actor.firstName, actor.lastName, '—'),
-        clientName,
-        paymentMethodLabel: this.resolvePaymentMethodLabel(detail),
-        items: lineItems,
-        subtotalCents,
-        discountCents,
-        totalCents: detail.totalCents,
-        currency: detail.currency,
-        webUrl: process.env.NEXT_PUBLIC_WEB_URL,
-      },
+    return buildPosReceiptContext(
+      detail,
+      actor,
+      organizationName,
       organizationId,
     );
-  }
-
-  private buildLineItems(detail: BookingAdminDetailDto): PosReceiptEmailLineItem[] {
-    return detail.items.map((item) => ({
-      title: item.titleSnapshot?.trim() || 'Prestation',
-      quantity: item.quantity,
-      unitPriceCents: item.unitPriceCents,
-      lineTotalCents: item.unitPriceCents * item.quantity,
-    }));
-  }
-
-  private resolvePaymentMethodLabel(detail: BookingAdminDetailDto): string {
-    const succeeded = detail.payments.find((payment) => payment.status === 'succeeded');
-    if (succeeded?.provider === 'cash') {
-      return 'Espèces';
-    }
-    if (succeeded?.provider === 'stripe') {
-      return 'Carte bancaire';
-    }
-    if (detail.booking.preferredPaymentMethod === 'cash') {
-      return 'Espèces';
-    }
-    if (detail.booking.preferredPaymentMethod === 'stripe') {
-      return 'Carte bancaire';
-    }
-    return '—';
   }
 }
