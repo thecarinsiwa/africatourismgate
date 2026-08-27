@@ -94,7 +94,7 @@ Employé → apps/pos (login JWT + cookies)
 | Codes promo / promotions | ❌ | Non branchés dans le panier POS |
 | Client nominatif (`customerUserId`) | ❌ | API prête ; UI POS n’envoie jamais le champ |
 | Filtre catalogue par organisation | ⚠️ | Org = branding ; listes CRUD sans `organizationId` explicite |
-| Bookings orphelins `pending_payment` | ⚠️ | Si paiement abandonné après `POST /bookings` |
+| Bookings orphelins `pending_payment` | ✅ | Cancel client POS (échec cash/intent, fermeture sheet, bouton succès) ; pas de cron TTL (risque web) |
 | Tests unit/e2e dans `apps/pos` | ❌ | Aucun Playwright POS |
 | CI GitHub Actions | ✅ | Job `pos` (lint + build) ; E2E POS → POS-10 |
 | Déploiement prod | ⚠️ | Optionnel (`ATG_ENABLE_POS=1`, `pos.africatourismgate.org`) |
@@ -110,7 +110,7 @@ Employé → apps/pos (login JWT + cookies)
 
 | ID | Problème | Impact | Livrable |
 |----|----------|--------|----------|
-| D1 | Bookings `pending_payment` orphelins si cash/Stripe échoue après création | Stock bloqué, panier « fantôme » | POS-2 |
+| D1 | Bookings `pending_payment` orphelins si cash/Stripe échoue après création | Stock bloqué, panier « fantôme » | ✅ POS-2 |
 | D2 | Catalogue non scopé à l’org sélectionnée | Multi-tenant incorrect / fuite de produits | POS-3 |
 | D3 | Booking souvent au nom de l’employé (pas de client) | Ownership, emails, historique client faux | POS-4 |
 | D4 | Aucun test POS + hors CI | Régressions silencieuses | ✅ POS-1 (CI) ; E2E → POS-10 |
@@ -226,9 +226,11 @@ Critères : PR rouge si `apps/pos` ne compile pas ; job visible dans Actions.
 
 ---
 
-### POS-2 — Cleanup bookings abandonnés
+### POS-2 — Cleanup bookings abandonnés (livré)
 
-**Branche :** `fix/pos-orphan-bookings`
+**Statut :** ✅ — `cancelAbandonedPosBooking` + annulation sur échec cash/intent, fermeture sheet carte, bouton manuel page succès. **Pas de job TTL API** (`pending_payment` aussi utilisé par le web).
+
+**Branche historique :** `fix/pos-orphan-bookings`
 
 ```
 Projet : Africa Tourism Gate (pnpm monorepo).
@@ -566,7 +568,7 @@ Script API complémentaire : `pnpm test:pos-sale-cash`
 
 - [x] POS-0 Doc alignée
 - [x] POS-1 CI POS
-- [ ] POS-2 Orphelins / abandon paiement
+- [x] POS-2 Orphelins / abandon paiement
 - [ ] POS-3 Scope org catalogue
 - [ ] POS-4 Client nominatif
 - [ ] POS-5 Historique du jour
