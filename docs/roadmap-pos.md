@@ -91,7 +91,7 @@ Employé → apps/pos (login JWT + cookies)
 | Email reçu | ⚠️ | `mailto:` local seulement (pas d’email transactionnel serveur) |
 | Historique ventes du jour | ❌ | Bouton « Bientôt disponible » (`config/home.ts`) |
 | Forfaits (`packageId`) au POS | ❌ | Absents du catalogue caisse |
-| Codes promo / promotions | ❌ | Non branchés dans le panier POS |
+| Codes promo / promotions | ✅ | `SalePromoBar` + seed `POSWELCOME10` |
 | Client nominatif (`customerUserId`) | ✅ | Sheet Client + passage ; `createBooking` envoie `customerUserId` si sélectionné |
 | Filtre catalogue par organisation | ✅ | Listes + preview/create avec `organizationId` ; `NULL` = partagé |
 | Bookings orphelins `pending_payment` | ✅ | Cancel client POS (échec cash/intent, fermeture sheet, bouton succès) ; pas de cron TTL (risque web) |
@@ -139,7 +139,7 @@ Employé → apps/pos (login JWT + cookies)
 | POS-3 | A | Catalogue filtré par organisation sélectionnée | Haute | `fix/pos-org-catalog-scope` ✅ | — |
 | POS-4 | B | Sélecteur client (`customerUserId`) | Haute | `feature/pos-customer-select` ✅ | — |
 | POS-5 | B | Historique ventes du jour | Haute | `feature/pos-sales-history` ✅ | POS-3 |
-| POS-6 | B | Codes promo / remises au panier POS | Moyenne | `feature/pos-promo-codes` | — |
+| POS-6 | B | Codes promo / remises au panier POS | Moyenne | `feature/pos-promo-codes` ✅ | — |
 | POS-7 | B | Forfaits (`packageId`) au POS | Moyenne | `feature/pos-packages` | — |
 | POS-8 | C | Email reçu transactionnel (serveur) | Moyenne | `feature/pos-receipt-email` | 79 (SMTP) |
 | POS-9 | C | PDF reçu natif (serveur ou lib) | Basse | `feature/pos-receipt-pdf` | — |
@@ -592,7 +592,7 @@ Script API complémentaire : `pnpm test:pos-sale-cash`
 - [x] POS-3 Scope org catalogue
 - [x] POS-4 Client nominatif
 - [x] POS-5 Historique du jour
-- [ ] POS-6 Promos
+- [x] POS-6 Promos
 - [ ] POS-7 Forfaits
 - [ ] POS-8 Email reçu
 - [ ] POS-9 PDF natif
