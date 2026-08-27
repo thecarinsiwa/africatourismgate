@@ -63,11 +63,13 @@
       "name": "Nom",
       "organization": "Organisation",
       "total": "Total",
-      "createdAt": "Créée le"
+      "createdAt": "Créée le",
+      "preferredPaymentMethod": "Mode de paiement choisi"
     },
     "summary": {
       "createdAt": "Créée le {date}",
-      "unreadMessages": "{count, plural, one {# message client non lu} other {# messages client non lus}}"
+      "unreadMessages": "{count, plural, one {# message client non lu} other {# messages client non lus}}",
+      "preferredPaymentUnspecified": "Non spécifié"
     },
     "tabs": {
       "ariaLabel": "Sections complémentaires",
@@ -91,8 +93,16 @@
       "cancelReason": "Motif d'annulation",
       "cancelReasonPlaceholder": "Ex. demande client, indisponibilité…",
       "cancelBooking": "Annuler la réservation",
+      "recordCashPayment": "Enregistrer paiement cash",
       "readOnly": "Modification réservée aux comptes avec la permission bookings.write.",
       "assistedStatusHint": "Utilisez le panneau « Validation assistée » pour approuver ou refuser cette demande."
+    },
+    "cashDialog": {
+      "title": "Enregistrer un paiement cash",
+      "description": "Confirmer l'encaissement en espèces pour cette réservation ? Elle passera au statut confirmée.",
+      "noteLabel": "Note (optionnel)",
+      "notePlaceholder": "Ex. reçu en caisse, numéro de reçu…",
+      "confirm": "Encaisser"
     },
     "linesEmpty": "Aucune ligne.",
     "linesAriaLabel": "Lignes de réservation",
@@ -207,6 +217,7 @@
     "approve": "Approuver",
     "reject": "Refuser",
     "invitePayment": "Inviter au paiement",
+    "cashPaymentHint": "Le client a choisi le paiement cash sur place. Enregistrez l'encaissement depuis la barre d'actions.",
     "totalLabel": "Total ({currency})",
     "totalHint": "Ajustez le total si nécessaire avant approbation.",
     "totalOverrideHint": "Calculé automatiquement à partir des prix voyageurs. Modifiez pour forcer un total manuel.",

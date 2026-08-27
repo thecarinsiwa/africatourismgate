@@ -104,6 +104,8 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [cashDialogOpen, setCashDialogOpen] = useState(false);
+  const [cashNote, setCashNote] = useState('');
   const [activeTab, setActiveTab] = useState('manifest');
   const [manifestSync, setManifestSync] = useState(0);
 
@@ -215,6 +217,25 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       setActionLoading(false);
     }
   }, [bookingId, cancelReason, detail, load, getBookingsErrorMessage]);
+
+  const handleRecordCashPayment = useCallback(async () => {
+    if (!detail) return false;
+    setActionError(null);
+    setActionLoading(true);
+    try {
+      await getApiClient().recordBookingCashPayment(bookingId, {
+        note: cashNote.trim() || undefined,
+      });
+      setCashNote('');
+      await load();
+      return true;
+    } catch (error) {
+      setActionError(getBookingsErrorMessage(error));
+      return false;
+    } finally {
+      setActionLoading(false);
+    }
+  }, [bookingId, cashNote, detail, load, getBookingsErrorMessage]);
 
   const statusOptions = useMemo(() => {
     const current = detail?.booking.status;
@@ -350,6 +371,14 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const showManualStatusChange = canWrite && manualStatusTargets.length > 0;
   const canCancel =
     booking.status === 'pending_payment' || booking.status === 'confirmed';
+  const hasSucceededPayment = detail.payments.some(
+    (payment) => payment.status === 'succeeded',
+  );
+  const canCollectCash =
+    canWrite && booking.status === 'pending_payment' && !hasSucceededPayment;
+  const preferredPaymentLabel = booking.preferredPaymentMethod
+    ? formatPaymentProvider(booking.preferredPaymentMethod, providerLabels, emptyDash)
+    : t('summary.preferredPaymentUnspecified');
   const statusUnchanged = newStatus === booking.status;
   const trimmedStatusReason = statusReason.trim();
   const identityDocuments = detail.identityDocuments ?? [];
@@ -359,7 +388,8 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const unreadMessageCount = detail.unreadCustomerMessageCount ?? 0;
   const clientName = `${client.firstName} ${client.lastName}`.trim();
   const showActionsBar =
-    canWrite && (showManualStatusChange || canCancel || booking.status === 'pending_approval');
+    canWrite &&
+    (showManualStatusChange || canCancel || canCollectCash || booking.status === 'pending_approval');
 
   return (
     <div className={`min-w-0 space-y-6${showActionsBar ? ' pb-24' : ''}`}>
@@ -410,6 +440,10 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
               <p className="tabular-nums text-2xl font-semibold text-atg-fg">
                 {formatMoney(detail.totalCents, detail.currency)}
               </p>
+              <p className="mt-2 text-xs font-medium uppercase tracking-wide text-atg-muted">
+                {t('clientFields.preferredPaymentMethod')}
+              </p>
+              <p className="text-sm font-medium text-atg-fg">{preferredPaymentLabel}</p>
               <p className="mt-1 text-sm tabular-nums text-atg-muted">
                 {t('summary.createdAt', { date: formatDateTime(booking.createdAt) })}
               </p>
@@ -445,6 +479,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
         currency={detail.currency}
         items={detail.items}
         identityDocuments={identityDocuments}
+        preferredPaymentMethod={booking.preferredPaymentMethod ?? null}
         canApprove={canApprove}
         manifestSyncKey={manifestSync}
         onUpdated={refreshDetail}
@@ -544,6 +579,17 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
                 onClick={() => setStatusModalOpen(true)}
               >
                 {t('actions.changeStatus')}
+              </Button>
+            ) : null}
+            {canCollectCash ? (
+              <Button
+                type="button"
+                variant="primary"
+                disabled={actionLoading}
+                className="w-full sm:w-auto"
+                onClick={() => setCashDialogOpen(true)}
+              >
+                {t('actions.recordCashPayment')}
               </Button>
             ) : null}
             {canCancel ? (
@@ -695,6 +741,57 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
         }}
         onCancel={() => setCancelDialogOpen(false)}
       />
+
+      <Modal
+        open={cashDialogOpen}
+        onOpenChange={(open) => {
+          if (!actionLoading) {
+            setCashDialogOpen(open);
+            if (!open) setCashNote('');
+          }
+        }}
+        title={t('cashDialog.title')}
+        description={t('cashDialog.description')}
+        showClose
+        className="max-w-lg"
+      >
+        <div className="space-y-4">
+          <Textarea
+            name="cashNote"
+            label={t('cashDialog.noteLabel')}
+            rows={3}
+            value={cashNote}
+            onChange={(e) => setCashNote(e.target.value)}
+            placeholder={t('cashDialog.notePlaceholder')}
+          />
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={actionLoading}
+              onClick={() => {
+                setCashDialogOpen(false);
+                setCashNote('');
+              }}
+            >
+              {tActions('cancel')}
+            </Button>
+            <Button
+              type="button"
+              variant="primary"
+              disabled={actionLoading}
+              loading={actionLoading}
+              onClick={() => {
+                void handleRecordCashPayment().then((ok) => {
+                  if (ok) setCashDialogOpen(false);
+                });
+              }}
+            >
+              {t('cashDialog.confirm')}
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

@@ -7,6 +7,7 @@ import type {
   BookingIdentityDocument,
   BookingItem,
   BookingManifestEntry,
+  BookingPreferredPaymentMethod,
   BookingStatus,
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
@@ -32,6 +33,7 @@ type BookingAssistedApprovalPanelProps = {
   currency: string;
   items: BookingItem[];
   identityDocuments?: BookingIdentityDocument[];
+  preferredPaymentMethod?: BookingPreferredPaymentMethod | null;
   canApprove: boolean;
   manifestSyncKey?: number;
   onUpdated: () => Promise<void>;
@@ -149,6 +151,7 @@ export function BookingAssistedApprovalPanel({
   currency,
   items,
   identityDocuments = [],
+  preferredPaymentMethod = null,
   canApprove,
   manifestSyncKey = 0,
   onUpdated,
@@ -834,15 +837,19 @@ export function BookingAssistedApprovalPanel({
               >
                 {t('savePricing')}
               </Button>
-              <Button
-                type="button"
-                variant="primary"
-                disabled={loading}
-                loading={loading}
-                onClick={() => void handleInvitePayment()}
-              >
-                {t('invitePayment')}
-              </Button>
+              {preferredPaymentMethod === 'cash' ? (
+                <p className="w-full text-sm text-atg-muted">{t('cashPaymentHint')}</p>
+              ) : (
+                <Button
+                  type="button"
+                  variant="primary"
+                  disabled={loading}
+                  loading={loading}
+                  onClick={() => void handleInvitePayment()}
+                >
+                  {t('invitePayment')}
+                </Button>
+              )}
             </div>
           </div>
         ) : null}
