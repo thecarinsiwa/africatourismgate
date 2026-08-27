@@ -137,6 +137,7 @@ export class BookingsService extends CrudService<Bookings> {
     if (!staff) {
       scopedQuery.userId = currentUserId;
       scopedQuery.organizationId = undefined;
+      scopedQuery.createdByUserId = undefined;
     }
 
     const qb = this.bookingsRepository
@@ -148,6 +149,11 @@ export class BookingsService extends CrudService<Bookings> {
     }
     if (scopedQuery.userId) {
       qb.andWhere('booking.userId = :userId', { userId: scopedQuery.userId });
+    }
+    if (scopedQuery.createdByUserId) {
+      qb.andWhere('booking.createdByUserId = :createdByUserId', {
+        createdByUserId: scopedQuery.createdByUserId,
+      });
     }
     if (scopedQuery.dateFrom) {
       qb.andWhere('booking.createdAt >= :dateFrom', {
@@ -218,6 +224,7 @@ export class BookingsService extends CrudService<Bookings> {
         totalCents: booking.totalCents,
         currency: booking.currency,
         promoCodeId: booking.promoCodeId,
+        preferredPaymentMethod: booking.preferredPaymentMethod ?? null,
         createdAt: booking.createdAt,
         updatedAt: booking.updatedAt,
         clientEmail: client?.email ?? '—',

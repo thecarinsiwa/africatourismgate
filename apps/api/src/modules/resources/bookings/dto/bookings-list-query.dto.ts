@@ -23,6 +23,14 @@ export class BookingsListQueryDto extends PaginationQueryDto {
   @IsUUID('4')
   userId?: string;
 
+  @ApiPropertyOptional({
+    format: 'uuid',
+    description: 'Staff only: filter by creator (e.g. POS cashier)',
+  })
+  @IsOptional()
+  @IsUUID('4')
+  createdByUserId?: string;
+
   @ApiPropertyOptional({ format: 'uuid', description: 'Filter by client organization' })
   @IsOptional()
   @IsUUID('4')

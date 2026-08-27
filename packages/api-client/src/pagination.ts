@@ -62,6 +62,7 @@ const RESOURCE_QUERY_KEYS = [
   'eventType',
   'actorUserId',
   'userId',
+  'createdByUserId',
   'dateFrom',
   'dateTo',
   'sortOrder',

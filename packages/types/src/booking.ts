@@ -378,6 +378,8 @@ export interface BookingsListQuery {
   limit?: number;
   status?: BookingStatus;
   userId?: string;
+  /** Staff only: bookings created by this user (e.g. POS cashier). */
+  createdByUserId?: string;
   organizationId?: string;
   dateFrom?: string;
   dateTo?: string;

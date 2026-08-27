@@ -20,6 +20,13 @@ export class BookingListItemDto {
   @ApiPropertyOptional({ format: 'uuid', nullable: true })
   promoCodeId!: string | null;
 
+  @ApiPropertyOptional({
+    enum: ['stripe', 'cash'],
+    nullable: true,
+    description: 'Preferred payment method chosen at checkout',
+  })
+  preferredPaymentMethod!: 'stripe' | 'cash' | null;
+
   @ApiProperty()
   createdAt!: Date;
 
