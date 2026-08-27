@@ -133,7 +133,28 @@ async function main() {
     throw new Error('Cash payment row missing or not succeeded');
   }
 
+  console.log('5. GET /bookings/:id/receipt-pdf — PDF reçu POS');
+  const pdfRes = await fetch(`${API_URL}/bookings/${bookingId}/receipt-pdf`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (pdfRes.status !== 200) {
+    throw new Error(`receipt-pdf: expected HTTP 200, got ${pdfRes.status}`);
+  }
+  const contentType = pdfRes.headers.get('content-type') ?? '';
+  if (!contentType.includes('application/pdf')) {
+    throw new Error(`receipt-pdf: expected application/pdf, got ${contentType}`);
+  }
+  const pdfBuffer = Buffer.from(await pdfRes.arrayBuffer());
+  if (pdfBuffer.length < 500) {
+    throw new Error('receipt-pdf: PDF buffer too small');
+  }
+  if (pdfBuffer.subarray(0, 4).toString() !== '%PDF') {
+    throw new Error('receipt-pdf: invalid PDF magic bytes');
+  }
+  console.log(`  OK GET receipt-pdf → ${pdfRes.status} (${pdfBuffer.length} bytes)`);
+
   console.log('\nPOS cash sale API checks passed.');
+  console.log('Manuel POS : /sale/success → Imprimer + Télécharger PDF');
 }
 
 main().catch((err) => {

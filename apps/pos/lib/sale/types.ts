@@ -4,6 +4,8 @@ import type {
   Cabin,
   Flight,
   FlightClass,
+  Package,
+  PackagePricing,
   Room,
   Vehicle,
 } from '@africatourismgate/types';
@@ -14,7 +16,8 @@ export type SaleCatalogFilter =
   | 'room'
   | 'flight_class'
   | 'vehicle'
-  | 'cabin';
+  | 'cabin'
+  | 'package';
 
 /** Catalog search kind (activities map to checkout `activity_schedule`). */
 export type SaleCatalogKind =
@@ -22,7 +25,8 @@ export type SaleCatalogKind =
   | 'room'
   | 'flight_class'
   | 'vehicle'
-  | 'cabin';
+  | 'cabin'
+  | 'package';
 
 export type SaleCatalogHitBase = {
   hitId: string;
@@ -61,15 +65,48 @@ export type CabinCatalogHit = SaleCatalogHitBase & {
   cabin: Cabin;
 };
 
+export type PackageCatalogHit = SaleCatalogHitBase & {
+  kind: 'package';
+  package: Package;
+  pricing: PackagePricing;
+};
+
 export type SaleCatalogHit =
   | ActivityCatalogHit
   | RoomCatalogHit
   | FlightClassCatalogHit
   | VehicleCatalogHit
-  | CabinCatalogHit;
+  | CabinCatalogHit
+  | PackageCatalogHit;
 
 export type SaleCartLine = {
   id: string;
   label: string;
   item: BookingCheckoutItem;
+};
+
+export function isPackageCheckoutItem(item: BookingCheckoutItem): boolean {
+  return item.itemType === 'package';
+}
+
+export function cartHasPackage(lines: SaleCartLine[]): boolean {
+  return lines.some((line) => isPackageCheckoutItem(line.item));
+}
+
+export function cartHasNonPackage(lines: SaleCartLine[]): boolean {
+  return lines.some((line) => !isPackageCheckoutItem(line.item));
+}
+
+/** `packageId` pour checkout-preview / createBooking (ligne forfait unique). */
+export function getCartPackageId(lines: SaleCartLine[]): string | undefined {
+  const pkgLine = lines.find((line) => isPackageCheckoutItem(line.item));
+  return pkgLine?.item.referenceId;
+}
+
+/** Client nominatif sélectionné (null = client de passage). */
+export type SaleCartCustomer = {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
 };

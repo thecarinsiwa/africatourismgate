@@ -297,6 +297,16 @@ export interface RecordCashPaymentRequest {
   note?: string;
 }
 
+export interface SendBookingReceiptEmailRequest {
+  to: string;
+}
+
+export interface SendBookingReceiptEmailResponse {
+  sent: boolean;
+  messageId?: string;
+  previewUrl?: string;
+}
+
 export interface RejectBookingRequest {
   reason?: string;
 }
@@ -378,6 +388,8 @@ export interface BookingsListQuery {
   limit?: number;
   status?: BookingStatus;
   userId?: string;
+  /** Staff only: bookings created by this user (e.g. POS cashier). */
+  createdByUserId?: string;
   organizationId?: string;
   dateFrom?: string;
   dateTo?: string;

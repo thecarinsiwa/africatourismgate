@@ -139,3 +139,29 @@ export type BookingGuideRemovalEmailPayload = {
   locale?: 'fr' | 'en' | 'es';
   webUrl?: string;
 };
+
+export type PosReceiptEmailLineItem = {
+  title: string;
+  quantity: number;
+  unitPriceCents: number;
+  lineTotalCents: number;
+};
+
+/** POS cash register receipt e-mail (detailed lines, payment method, cashier). */
+export type PosReceiptEmailPayload = {
+  to: string;
+  firstName: string;
+  bookingId: string;
+  /** ISO 8601 issue date (typically booking.createdAt). */
+  issuedAt: string;
+  organizationName: string;
+  employeeName: string;
+  clientName: string;
+  paymentMethodLabel: string;
+  items: PosReceiptEmailLineItem[];
+  subtotalCents: number;
+  discountCents: number;
+  totalCents: number;
+  currency: string;
+  webUrl?: string;
+};

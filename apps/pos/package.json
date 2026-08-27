@@ -7,7 +7,8 @@
     "dev:clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\" && next dev -p 3003",
     "build": "next build",
     "start": "next start -p 3003",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@africatourismgate/api-client": "workspace:*",
@@ -21,6 +22,7 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@africatourismgate/config": "workspace:*",
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.18",

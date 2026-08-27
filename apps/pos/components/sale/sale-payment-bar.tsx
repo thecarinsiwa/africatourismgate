@@ -10,7 +10,7 @@ import { isStripeConfigured } from '../../lib/sale/stripe-publishable';
 import {
   buildSuccessUrl,
   cancelAbandonedPosBooking,
-  createBookingFromCart,
+  checkoutBookingFromCart,
   createCardPaymentIntent,
   payBookingCash,
   posAbandonCancelReasons,
@@ -22,7 +22,8 @@ const { payment: labels } = posSalePageConfig;
 
 export function SalePaymentBar() {
   const router = useRouter();
-  const { lines, preview, previewLoading, previewError, clearCart } = useSaleCart();
+  const { lines, preview, previewLoading, previewError, customer, appliedPromoCode, cartPackageId, clearCart } =
+    useSaleCart();
   const [processing, setProcessing] = useState<'cash' | 'card' | null>(null);
   const [closingCard, setClosingCard] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
@@ -54,6 +55,17 @@ export function SalePaymentBar() {
     setCardIntent(null);
   }, []);
 
+  function checkoutOptions(preferredPaymentMethod: 'cash' | 'stripe') {
+    return {
+      items: lines.map((line) => line.item),
+      preview: preview!,
+      preferredPaymentMethod,
+      customerUserId: customer?.id,
+      promoCode: appliedPromoCode,
+      packageId: cartPackageId,
+    };
+  }
+
   async function handleCash() {
     if (!preview || lines.length === 0) return;
 
@@ -62,12 +74,7 @@ export function SalePaymentBar() {
     let createdBookingId: string | null = null;
 
     try {
-      const created = await createBookingFromCart(
-        lines.map((line) => line.item),
-        preview,
-        'cash',
-      );
-      createdBookingId = created.booking.id;
+      createdBookingId = await checkoutBookingFromCart(checkoutOptions('cash'));
       await payBookingCash(createdBookingId);
       finishSale(createdBookingId, 'cash');
     } catch (error: unknown) {
@@ -101,12 +108,7 @@ export function SalePaymentBar() {
     let createdBookingId: string | null = null;
 
     try {
-      const created = await createBookingFromCart(
-        lines.map((line) => line.item),
-        preview,
-        'stripe',
-      );
-      createdBookingId = created.booking.id;
+      createdBookingId = await checkoutBookingFromCart(checkoutOptions('stripe'));
       const intent = await createCardPaymentIntent(createdBookingId);
       setCardBookingId(createdBookingId);
       setCardIntent(intent);

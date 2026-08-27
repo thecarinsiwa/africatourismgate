@@ -1,5 +1,6 @@
 /**
- * Email notifications: forgot-password, welcome (register), booking confirmation.
+ * Email notifications: forgot-password, welcome (register), booking confirmation,
+ * POS receipt email.
  *
  * Prérequis:
  * - API sur :3000 (pnpm dev:api)
@@ -150,8 +151,22 @@ async function main() {
   });
   assertStatus('POST cash-payment', cash.status, 201);
 
+  console.log('4. POS receipt email → reçu caisse (booking_receipt)');
+  const receiptTo = `receipt.${Date.now()}@africatourismgate.local`;
+  const receipt = await request('POST', `/bookings/${bookingId}/receipt-email`, {
+    token,
+    body: { to: receiptTo },
+  });
+  assertStatus('POST /bookings/:id/receipt-email', receipt.status, 201);
+  if (!receipt.data?.sent) {
+    throw new Error('POST receipt-email: expected sent=true');
+  }
+  console.log(`  OK receipt sent → ${receiptTo} (${receipt.data.messageId ?? 'no messageId'})`);
+
   console.log('\nDone. Vérifiez les e-mails :');
   console.log('  • Mailpit UI : http://localhost:8025');
+  console.log('  • Reçu POS   : chercher sujet « Reçu … » destinataire', receiptTo);
+  console.log('  • Preview HTML : apps/api/src/modules/email/preview/booking_receipt.html');
   console.log('  • Ethereal   : URL preview dans les logs API si EMAIL_TRANSPORT=ethereal');
 }
 

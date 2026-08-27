@@ -5,6 +5,7 @@ import type {
   BookingDetail,
   BookingPaymentIntentResponse,
   BookingPreferredPaymentMethod,
+  BookingRequestResponse,
 } from '@africatourismgate/types';
 import { getValidApiClient } from '../auth/api';
 import { requireSelectedOrganizationId } from '../auth/session';
@@ -14,8 +15,40 @@ export const posAbandonCancelReasons = {
   cashPaymentFailed: 'Abandon caisse — échec paiement espèces',
   cardIntentFailed: 'Abandon caisse — échec préparation carte',
   cardSheetClosed: 'Abandon caisse — fermeture paiement carte',
+  assistedApproveFailed: 'Abandon caisse — échec approbation assistée',
   manualAfterTimeout: 'Abandon caisse — annulation manuelle après délai',
 } as const;
+
+export type CheckoutCartOptions = {
+  items: BookingCheckoutItem[];
+  preview: BookingCheckoutPreview;
+  preferredPaymentMethod: BookingPreferredPaymentMethod;
+  customerUserId?: string | null;
+  promoCode?: string | null;
+  packageId?: string | null;
+};
+
+function buildCheckoutBody({
+  items,
+  preview,
+  preferredPaymentMethod,
+  customerUserId,
+  promoCode,
+  packageId,
+}: CheckoutCartOptions) {
+  const trimmedCustomerId = customerUserId?.trim();
+  const trimmedPromoCode = promoCode?.trim();
+  const trimmedPackageId = packageId?.trim();
+  return {
+    items,
+    currency: preview.currency,
+    preferredPaymentMethod,
+    organizationId: requireSelectedOrganizationId(),
+    ...(trimmedCustomerId ? { customerUserId: trimmedCustomerId } : {}),
+    ...(trimmedPromoCode ? { promoCode: trimmedPromoCode } : {}),
+    ...(trimmedPackageId ? { packageId: trimmedPackageId } : {}),
+  };
+}
 
 export function saleApiErrorMessage(error: unknown, fallback: string): string {
   if (error instanceof ApiHttpError) {
@@ -69,17 +102,54 @@ export async function cancelAbandonedPosBooking(
 }
 
 export async function createBookingFromCart(
-  items: BookingCheckoutItem[],
-  preview: BookingCheckoutPreview,
-  preferredPaymentMethod: BookingPreferredPaymentMethod,
+  options: CheckoutCartOptions,
 ): Promise<BookingDetail> {
   const client = await getValidApiClient();
-  return client.createBooking({
-    items,
-    currency: preview.currency,
-    preferredPaymentMethod,
-    organizationId: requireSelectedOrganizationId(),
-  });
+  return client.createBooking(buildCheckoutBody(options));
+}
+
+export async function requestBookingFromCart(
+  options: CheckoutCartOptions,
+): Promise<BookingRequestResponse> {
+  const client = await getValidApiClient();
+  return client.requestBooking(buildCheckoutBody(options));
+}
+
+export async function approveAssistedPosBooking(
+  bookingId: string,
+  totalCents: number,
+): Promise<void> {
+  const client = await getValidApiClient();
+  await client.approveBooking(bookingId, { totalCents });
+}
+
+/**
+ * Crée la réservation (immédiate ou assistée).
+ * Forfait assisté : request → approve staff → retourne l’id pour paiement.
+ */
+export async function checkoutBookingFromCart(
+  options: CheckoutCartOptions,
+): Promise<string> {
+  if (options.preview.bookingMode === 'assisted') {
+    const requested = await requestBookingFromCart(options);
+    try {
+      await approveAssistedPosBooking(requested.bookingId, options.preview.totalCents);
+    } catch (error: unknown) {
+      try {
+        await cancelAbandonedPosBooking(
+          requested.bookingId,
+          posAbandonCancelReasons.assistedApproveFailed,
+        );
+      } catch {
+        // ignore cancel failure; surface original approve error
+      }
+      throw error;
+    }
+    return requested.bookingId;
+  }
+
+  const created = await createBookingFromCart(options);
+  return created.booking.id;
 }
 
 export async function payBookingCash(bookingId: string): Promise<BookingDetail> {

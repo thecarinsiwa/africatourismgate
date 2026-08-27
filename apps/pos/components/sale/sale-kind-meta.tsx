@@ -33,6 +33,11 @@ const kindStyles: Record<
     text: 'text-violet-600 dark:text-violet-400',
     ring: 'group-hover:ring-violet-500/30',
   },
+  package: {
+    bg: 'bg-emerald-500/15',
+    text: 'text-emerald-700 dark:text-emerald-400',
+    ring: 'group-hover:ring-emerald-500/30',
+  },
 };
 
 export function getSaleKindStyles(kind: SaleKind) {
@@ -112,12 +117,26 @@ function CabinIcon({ className }: IconProps) {
   );
 }
 
+function PackageIcon({ className }: IconProps) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.75}
+        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+      />
+    </svg>
+  );
+}
+
 const kindIcons: Record<SaleKind, ComponentType<IconProps>> = {
   activity: ActivityIcon,
   room: RoomIcon,
   flight_class: FlightIcon,
   vehicle: VehicleIcon,
   cabin: CabinIcon,
+  package: PackageIcon,
 };
 
 export function SaleKindIcon({ kind, className }: { kind: SaleKind; className?: string }) {

@@ -2,6 +2,7 @@ import type {
   Activity,
   Cabin,
   Flight,
+  Package,
   Property,
   Vehicle,
 } from '@africatourismgate/types';
@@ -205,6 +206,52 @@ async function searchCabins(query: string): Promise<SaleCatalogHit[]> {
   }));
 }
 
+function formatPackageDiscountPercent(discountPercent: string): number {
+  const value = Number.parseFloat(discountPercent);
+  if (!Number.isFinite(value) || value <= 0) {
+    return 0;
+  }
+  return Math.round(value);
+}
+
+async function searchPackages(query: string): Promise<SaleCatalogHit[]> {
+  const client = await getValidApiClient();
+  const response = await client.listPackages({
+    search: query || undefined,
+    limit: SEARCH_LIMIT,
+    active: true,
+  });
+
+  const details = await Promise.allSettled(
+    response.data.map(async (pkg: Package) => {
+      const detail = await client.getPackage(pkg.id);
+      const discount = formatPackageDiscountPercent(pkg.discountPercent);
+      const { pricing } = detail;
+      return {
+        hitId: `package-${pkg.id}`,
+        kind: 'package' as const,
+        package: pkg,
+        pricing,
+        title: pkg.name,
+        subtitle:
+          discount > 0
+            ? `−${discount}% · ${formatCents(pricing.totalCents, pricing.currency)}/pers.`
+            : `${formatCents(pricing.totalCents, pricing.currency)}/pers.`,
+        priceCents: pricing.totalCents,
+        currency: pricing.currency,
+      };
+    }),
+  );
+
+  const hits: SaleCatalogHit[] = [];
+  for (const result of details) {
+    if (result.status === 'fulfilled') {
+      hits.push(result.value);
+    }
+  }
+  return hits;
+}
+
 const SEARCHERS: Record<
   Exclude<SaleCatalogFilter, 'all'>,
   (query: string) => Promise<SaleCatalogHit[]>
@@ -214,6 +261,7 @@ const SEARCHERS: Record<
   flight_class: searchFlightClasses,
   vehicle: searchVehicles,
   cabin: searchCabins,
+  package: searchPackages,
 };
 
 export async function searchCatalog(

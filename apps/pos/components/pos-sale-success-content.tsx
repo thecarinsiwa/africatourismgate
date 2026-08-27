@@ -3,17 +3,17 @@
 import { Button } from '@africatourismgate/ui';
 import type { BookingAdminDetail } from '@africatourismgate/types';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { posSaleSuccessPageConfig } from '../config/sale';
 import { PosReceipt, printPosReceipt } from './sale/pos-receipt';
 import { getApiClient } from '../lib/auth/api';
-import { getSession } from '../lib/auth/session';
+import { getSession, type PosStoredSession } from '../lib/auth/session';
 import { fetchPublicBranding } from '../lib/public-branding';
 import {
   buildReceiptData,
-  buildReceiptMailtoUrl,
   type PosReceiptData,
 } from '../lib/sale/receipt';
+import { downloadPosReceiptPdf } from '../lib/sale/receipt-pdf';
 import {
   cancelAbandonedPosBooking,
   posAbandonCancelReasons,
@@ -42,10 +42,15 @@ const {
   printReceiptLabel,
   downloadPdfLabel,
   downloadPdfHint,
+  downloadPdfProcessingLabel,
+  downloadPdfErrorLabel,
+  emailFieldLabel,
   emailReceiptLabel,
   emailPlaceholder,
   emailInvalid,
+  emailSendingLabel,
   emailSentHint,
+  emailSendErrorLabel,
 } = posSaleSuccessPageConfig;
 
 function formatPaymentMethod(method: string | null): string {
@@ -63,6 +68,27 @@ function isValidEmail(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
+/** Pré-remplit l’e-mail client si la réservation est liée à un compte (pas walk-in caissier). */
+function resolveDefaultReceiptEmail(
+  detail: BookingAdminDetail,
+  session: PosStoredSession | null,
+): string {
+  const sessionUserId = session?.user?.id?.trim();
+  const clientId = detail.client.id?.trim();
+  if (sessionUserId && clientId === sessionUserId) {
+    return '';
+  }
+  return detail.client.email?.trim() || '';
+}
+
+function applyDefaultReceiptEmail(
+  detail: BookingAdminDetail,
+  setCustomerEmail: (value: string | ((current: string) => string)) => void,
+): void {
+  const session = getSession();
+  setCustomerEmail((current) => current || resolveDefaultReceiptEmail(detail, session));
+}
+
 export function PosSaleSuccessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -75,6 +101,11 @@ export function PosSaleSuccessContent() {
   const [receiptData, setReceiptData] = useState<PosReceiptData | null>(null);
   const [customerEmail, setCustomerEmail] = useState('');
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [emailSending, setEmailSending] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [emailSendError, setEmailSendError] = useState<string | null>(null);
+  const [pdfDownloading, setPdfDownloading] = useState(false);
+  const [pdfDownloadError, setPdfDownloadError] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
   const [cancelError, setCancelError] = useState<string | null>(null);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
@@ -95,7 +126,7 @@ export function PosSaleSuccessContent() {
         if (cancelled) return;
 
         setBookingDetail(detail);
-        setCustomerEmail((current) => current || detail.client.email || '');
+        applyDefaultReceiptEmail(detail, setCustomerEmail);
 
         if (detail.booking.status === 'confirmed') {
           setStatus('confirmed');
@@ -112,7 +143,7 @@ export function PosSaleSuccessContent() {
             const refreshed = await getApiClient().getBooking(id);
             if (cancelled) return;
             setBookingDetail(refreshed);
-            setCustomerEmail((current) => current || refreshed.client.email || '');
+            applyDefaultReceiptEmail(refreshed, setCustomerEmail);
             setStatus('confirmed');
             setDisplaySubtitle(subtitle);
           } else {
@@ -178,19 +209,49 @@ export function PosSaleSuccessContent() {
     Boolean(bookingId) &&
     (bookingDetail?.booking.status === 'pending_payment' || bookingDetail === null);
 
-  const mailtoUrl = useMemo(() => {
-    if (!receiptData || !isValidEmail(customerEmail)) return '';
-    return buildReceiptMailtoUrl(customerEmail, receiptData);
-  }, [customerEmail, receiptData]);
+  async function handleEmailReceipt() {
+    if (!bookingId || emailSending) return;
 
-  function handleEmailReceipt() {
     if (!isValidEmail(customerEmail)) {
       setEmailError(emailInvalid);
       return;
     }
+
     setEmailError(null);
-    const url = buildReceiptMailtoUrl(customerEmail, receiptData!);
-    window.location.href = url;
+    setEmailSendError(null);
+    setEmailSending(true);
+
+    try {
+      const result = await getApiClient().sendBookingReceiptEmail(bookingId, {
+        to: customerEmail.trim(),
+      });
+      if (result.sent) {
+        setEmailSent(true);
+      } else {
+        setEmailSent(false);
+        setEmailSendError(emailSendErrorLabel);
+      }
+    } catch (error: unknown) {
+      setEmailSent(false);
+      setEmailSendError(saleApiErrorMessage(error, emailSendErrorLabel));
+    } finally {
+      setEmailSending(false);
+    }
+  }
+
+  async function handleDownloadPdf() {
+    if (!bookingId || pdfDownloading) return;
+
+    setPdfDownloadError(null);
+    setPdfDownloading(true);
+
+    try {
+      await downloadPosReceiptPdf(bookingId);
+    } catch (error: unknown) {
+      setPdfDownloadError(saleApiErrorMessage(error, downloadPdfErrorLabel));
+    } finally {
+      setPdfDownloading(false);
+    }
   }
 
   async function handleCancelPending() {
@@ -204,7 +265,7 @@ export function PosSaleSuccessContent() {
       const latest = await getApiClient().getBooking(bookingId);
       if (latest.booking.status === 'confirmed') {
         setBookingDetail(latest);
-        setCustomerEmail((current) => current || latest.client.email || '');
+        applyDefaultReceiptEmail(latest, setCustomerEmail);
         setStatus('confirmed');
         setDisplaySubtitle(subtitle);
         setInfoMessage(confirmedMeanwhileLabel);
@@ -218,7 +279,7 @@ export function PosSaleSuccessContent() {
         const latest = await getApiClient().getBooking(bookingId);
         if (latest.booking.status === 'confirmed') {
           setBookingDetail(latest);
-          setCustomerEmail((current) => current || latest.client.email || '');
+          applyDefaultReceiptEmail(latest, setCustomerEmail);
           setStatus('confirmed');
           setDisplaySubtitle(subtitle);
           setInfoMessage(confirmedMeanwhileLabel);
@@ -314,18 +375,25 @@ export function PosSaleSuccessContent() {
               size="lg"
               fullWidth
               className="min-h-[3.5rem] text-lg"
-              onClick={() => printPosReceipt()}
+              disabled={pdfDownloading || !bookingId}
+              loading={pdfDownloading}
+              onClick={() => void handleDownloadPdf()}
             >
-              {downloadPdfLabel}
+              {pdfDownloading ? downloadPdfProcessingLabel : downloadPdfLabel}
             </Button>
             <p className="text-center text-xs text-atg-muted">{downloadPdfHint}</p>
+            {pdfDownloadError ? (
+              <p className="text-center text-sm text-red-600" role="alert">
+                {pdfDownloadError}
+              </p>
+            ) : null}
 
             <div className="rounded-xl border border-atg-border bg-atg-elevated p-4">
               <label
                 htmlFor="receipt-email"
                 className="mb-2 block text-sm font-medium text-atg-fg"
               >
-                {emailReceiptLabel}
+                {emailFieldLabel}
               </label>
               <input
                 id="receipt-email"
@@ -334,15 +402,23 @@ export function PosSaleSuccessContent() {
                 autoComplete="email"
                 placeholder={emailPlaceholder}
                 value={customerEmail}
+                disabled={emailSending}
                 onChange={(event) => {
                   setCustomerEmail(event.target.value);
                   setEmailError(null);
+                  setEmailSendError(null);
+                  setEmailSent(false);
                 }}
-                className="min-h-[3rem] w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-base text-atg-fg"
+                className="min-h-[3rem] w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-base text-atg-fg disabled:opacity-60"
               />
               {emailError ? (
                 <p className="mt-2 text-sm text-red-600" role="alert">
                   {emailError}
+                </p>
+              ) : null}
+              {emailSendError ? (
+                <p className="mt-2 text-sm text-red-600" role="alert">
+                  {emailSendError}
                 </p>
               ) : null}
               <Button
@@ -351,12 +427,17 @@ export function PosSaleSuccessContent() {
                 size="lg"
                 fullWidth
                 className="mt-3 min-h-[3.25rem] text-base"
-                disabled={!mailtoUrl}
-                onClick={handleEmailReceipt}
+                disabled={emailSending || !isValidEmail(customerEmail)}
+                loading={emailSending}
+                onClick={() => void handleEmailReceipt()}
               >
-                {emailReceiptLabel}
+                {emailSending ? emailSendingLabel : emailReceiptLabel}
               </Button>
-              <p className="mt-2 text-xs text-atg-muted">{emailSentHint}</p>
+              {emailSent ? (
+                <p className="mt-2 text-sm text-primary" role="status">
+                  {emailSentHint}
+                </p>
+              ) : null}
             </div>
           </div>
         </section>

@@ -56,6 +56,8 @@
     "verify:smtp": "node scripts/verify-smtp.mjs",
     "send:preview": "tsx scripts/send-preview-emails.ts",
     "email:preview-assisted": "npm run build && node scripts/render-assisted-booking-email-previews.mjs",
+    "email:preview-pos-receipt": "npm run build && node scripts/render-pos-receipt-email-preview.mjs",
+    "pdf:preview-pos-receipt": "npm run build && node scripts/render-pos-receipt-pdf-sample.mjs",
     "email:preview-booking-pdf": "npm run build && node scripts/render-booking-detail-pdf-sample.mjs",
     "test:unit": "jest --config ./test/jest-unit.json --runInBand",
     "payment-reminders": "nest build && node dist/cli/run-payment-reminders.js",

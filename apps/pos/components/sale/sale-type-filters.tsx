@@ -13,6 +13,7 @@ const FILTER_OPTIONS: SaleCatalogFilter[] = [
   'flight_class',
   'vehicle',
   'cabin',
+  'package',
 ];
 
 type SaleTypeFiltersProps = {
