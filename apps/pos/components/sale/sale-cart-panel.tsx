@@ -6,6 +6,7 @@ import { formatCents } from '../../lib/sale/format';
 import { useSaleCart } from '../../lib/sale/cart-context';
 import { SaleCustomerBar } from './sale-customer-bar';
 import { SalePaymentBar } from './sale-payment-bar';
+import { SalePromoBar } from './sale-promo-bar';
 
 const { cart: cartLabels, backToHomeLabel } = posSalePageConfig;
 
@@ -123,6 +124,8 @@ export function SaleCartPanel() {
                   );
                 })}
               </ul>
+
+              <SalePromoBar />
 
               <div className="mt-5 space-y-2 rounded-xl bg-atg-surface/60 p-4">
                 {previewLoading && !preview ? (

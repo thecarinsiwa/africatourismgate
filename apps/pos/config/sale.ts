@@ -56,6 +56,13 @@ export const posSalePageConfig = {
     closeLabel: 'Fermer',
     selectWalkInLabel: 'Client de passage',
   },
+  promo: {
+    sectionLabel: 'Code promo',
+    placeholder: 'Saisir un code',
+    applyLabel: 'Appliquer',
+    removeLabel: 'Retirer',
+    appliedHint: (code: string) => `Code appliqué : ${code}`,
+  },
   config: {
     title: 'Configurer la ligne',
     closeLabel: 'Fermer',
