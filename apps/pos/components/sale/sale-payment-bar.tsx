@@ -9,9 +9,11 @@ import { useSaleCart } from '../../lib/sale/cart-context';
 import { isStripeConfigured } from '../../lib/sale/stripe-publishable';
 import {
   buildSuccessUrl,
+  cancelAbandonedPosBooking,
   createBookingFromCart,
   createCardPaymentIntent,
   payBookingCash,
+  posAbandonCancelReasons,
   saleApiErrorMessage,
 } from '../../lib/sale/sale-checkout';
 import { SaleCardPaymentSheet } from './sale-card-payment-sheet';
@@ -22,6 +24,7 @@ export function SalePaymentBar() {
   const router = useRouter();
   const { lines, preview, previewLoading, previewError, clearCart } = useSaleCart();
   const [processing, setProcessing] = useState<'cash' | 'card' | null>(null);
+  const [closingCard, setClosingCard] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [cardBookingId, setCardBookingId] = useState<string | null>(null);
   const [cardIntent, setCardIntent] = useState<BookingPaymentIntentResponse | null>(null);
@@ -32,7 +35,9 @@ export function SalePaymentBar() {
     !previewLoading &&
     !previewError &&
     preview.totalCents > 0 &&
-    processing === null;
+    processing === null &&
+    !closingCard &&
+    !cardBookingId;
 
   const stripeReady = isStripeConfigured();
 
@@ -44,11 +49,17 @@ export function SalePaymentBar() {
     [clearCart, router],
   );
 
+  const clearCardSheet = useCallback(() => {
+    setCardBookingId(null);
+    setCardIntent(null);
+  }, []);
+
   async function handleCash() {
     if (!preview || lines.length === 0) return;
 
     setCheckoutError(null);
     setProcessing('cash');
+    let createdBookingId: string | null = null;
 
     try {
       const created = await createBookingFromCart(
@@ -56,10 +67,27 @@ export function SalePaymentBar() {
         preview,
         'cash',
       );
-      await payBookingCash(created.booking.id);
-      finishSale(created.booking.id, 'cash');
+      createdBookingId = created.booking.id;
+      await payBookingCash(createdBookingId);
+      finishSale(createdBookingId, 'cash');
     } catch (error: unknown) {
-      setCheckoutError(saleApiErrorMessage(error, labels.checkoutErrorLabel));
+      if (createdBookingId) {
+        try {
+          await cancelAbandonedPosBooking(
+            createdBookingId,
+            posAbandonCancelReasons.cashPaymentFailed,
+          );
+          setCheckoutError(
+            `${saleApiErrorMessage(error, labels.checkoutErrorLabel)}. ${labels.abandonStockReleasedHint}`,
+          );
+        } catch (cancelError: unknown) {
+          setCheckoutError(
+            `${saleApiErrorMessage(error, labels.checkoutErrorLabel)}. ${saleApiErrorMessage(cancelError, labels.cancelAbandonErrorLabel)}`,
+          );
+        }
+      } else {
+        setCheckoutError(saleApiErrorMessage(error, labels.checkoutErrorLabel));
+      }
     } finally {
       setProcessing(null);
     }
@@ -70,6 +98,7 @@ export function SalePaymentBar() {
 
     setCheckoutError(null);
     setProcessing('card');
+    let createdBookingId: string | null = null;
 
     try {
       const created = await createBookingFromCart(
@@ -77,25 +106,54 @@ export function SalePaymentBar() {
         preview,
         'stripe',
       );
-      const intent = await createCardPaymentIntent(created.booking.id);
-      setCardBookingId(created.booking.id);
+      createdBookingId = created.booking.id;
+      const intent = await createCardPaymentIntent(createdBookingId);
+      setCardBookingId(createdBookingId);
       setCardIntent(intent);
     } catch (error: unknown) {
-      setCheckoutError(saleApiErrorMessage(error, labels.checkoutErrorLabel));
+      if (createdBookingId) {
+        try {
+          await cancelAbandonedPosBooking(
+            createdBookingId,
+            posAbandonCancelReasons.cardIntentFailed,
+          );
+          setCheckoutError(
+            `${saleApiErrorMessage(error, labels.checkoutErrorLabel)}. ${labels.abandonStockReleasedHint}`,
+          );
+        } catch (cancelError: unknown) {
+          setCheckoutError(
+            `${saleApiErrorMessage(error, labels.checkoutErrorLabel)}. ${saleApiErrorMessage(cancelError, labels.cancelAbandonErrorLabel)}`,
+          );
+        }
+      } else {
+        setCheckoutError(saleApiErrorMessage(error, labels.checkoutErrorLabel));
+      }
     } finally {
       setProcessing(null);
     }
   }
 
-  function closeCardSheet() {
-    setCardBookingId(null);
-    setCardIntent(null);
+  async function abandonCardSheet() {
+    const bookingId = cardBookingId;
+    if (!bookingId || closingCard) return;
+
+    setClosingCard(true);
+    setCheckoutError(null);
+
+    try {
+      await cancelAbandonedPosBooking(bookingId, posAbandonCancelReasons.cardSheetClosed);
+      clearCardSheet();
+    } catch (error: unknown) {
+      setCheckoutError(saleApiErrorMessage(error, labels.cancelAbandonErrorLabel));
+    } finally {
+      setClosingCard(false);
+    }
   }
 
   function handleCardPaid() {
     if (!cardBookingId) return;
     const bookingId = cardBookingId;
-    closeCardSheet();
+    clearCardSheet();
     finishSale(bookingId, 'card');
   }
 
@@ -106,7 +164,7 @@ export function SalePaymentBar() {
   return (
     <>
       <div className="mt-5 space-y-3 border-t border-atg-border pt-5">
-        {!canPay && !previewError && (previewLoading || !preview) ? (
+        {!canPay && !previewError && (previewLoading || !preview) && !cardBookingId ? (
           <p className="text-center text-sm text-atg-muted">{labels.previewRequiredHint}</p>
         ) : null}
 
@@ -153,7 +211,8 @@ export function SalePaymentBar() {
           open
           bookingId={cardBookingId}
           intent={cardIntent}
-          onClose={closeCardSheet}
+          closing={closingCard}
+          onClose={() => void abandonCardSheet()}
           onPaid={handleCardPaid}
         />
       ) : null}

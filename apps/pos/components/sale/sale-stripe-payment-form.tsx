@@ -54,16 +54,15 @@ export function SaleStripePaymentForm({
       });
 
       if (error) {
+        // Paiement non abouti : l’utilisateur peut réessayer ou fermer le sheet
+        // (fermeture → cancelAbandonedPosBooking côté payment-bar).
         onError(error.message ?? labels.cardErrorLabel);
         return;
       }
 
-      const confirmed = await waitForBookingConfirmed(bookingId);
-      if (!confirmed) {
-        onError(labels.cardErrorLabel);
-        return;
-      }
-
+      // Paiement Stripe accepté : même si le poll webhook timeout,
+      // aller sur la page succès (ne pas annuler — le stock/paiement sont en cours).
+      await waitForBookingConfirmed(bookingId);
       onSuccess();
     } catch (err) {
       onError(err instanceof Error ? err.message : labels.cardErrorLabel);

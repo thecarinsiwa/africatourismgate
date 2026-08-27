@@ -19,7 +19,11 @@ type ButtonBaseProps = {
 export type ButtonProps = ButtonBaseProps &
   (
     | (React.ButtonHTMLAttributes<HTMLButtonElement> & { href?: undefined })
-    | (React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string })
+    | (React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+        href: string;
+        /** Visually disable the link (pointer-events + aria-disabled). */
+        disabled?: boolean;
+      })
   );
 
 const variantClasses: Record<ButtonVariant, string> = {
