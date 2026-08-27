@@ -13,6 +13,7 @@ import {
   buildReceiptData,
   type PosReceiptData,
 } from '../lib/sale/receipt';
+import { downloadPosReceiptPdf } from '../lib/sale/receipt-pdf';
 import {
   cancelAbandonedPosBooking,
   posAbandonCancelReasons,
@@ -41,6 +42,8 @@ const {
   printReceiptLabel,
   downloadPdfLabel,
   downloadPdfHint,
+  downloadPdfProcessingLabel,
+  downloadPdfErrorLabel,
   emailFieldLabel,
   emailReceiptLabel,
   emailPlaceholder,
@@ -101,6 +104,8 @@ export function PosSaleSuccessContent() {
   const [emailSending, setEmailSending] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [emailSendError, setEmailSendError] = useState<string | null>(null);
+  const [pdfDownloading, setPdfDownloading] = useState(false);
+  const [pdfDownloadError, setPdfDownloadError] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
   const [cancelError, setCancelError] = useState<string | null>(null);
   const [infoMessage, setInfoMessage] = useState<string | null>(null);
@@ -234,6 +239,21 @@ export function PosSaleSuccessContent() {
     }
   }
 
+  async function handleDownloadPdf() {
+    if (!bookingId || pdfDownloading) return;
+
+    setPdfDownloadError(null);
+    setPdfDownloading(true);
+
+    try {
+      await downloadPosReceiptPdf(bookingId);
+    } catch (error: unknown) {
+      setPdfDownloadError(saleApiErrorMessage(error, downloadPdfErrorLabel));
+    } finally {
+      setPdfDownloading(false);
+    }
+  }
+
   async function handleCancelPending() {
     if (!bookingId || cancelling) return;
 
@@ -355,11 +375,18 @@ export function PosSaleSuccessContent() {
               size="lg"
               fullWidth
               className="min-h-[3.5rem] text-lg"
-              onClick={() => printPosReceipt()}
+              disabled={pdfDownloading || !bookingId}
+              loading={pdfDownloading}
+              onClick={() => void handleDownloadPdf()}
             >
-              {downloadPdfLabel}
+              {pdfDownloading ? downloadPdfProcessingLabel : downloadPdfLabel}
             </Button>
             <p className="text-center text-xs text-atg-muted">{downloadPdfHint}</p>
+            {pdfDownloadError ? (
+              <p className="text-center text-sm text-red-600" role="alert">
+                {pdfDownloadError}
+              </p>
+            ) : null}
 
             <div className="rounded-xl border border-atg-border bg-atg-elevated p-4">
               <label
