@@ -4,6 +4,7 @@ import type {
   BookingCheckoutPreview,
   BookingDetail,
   BookingPaymentIntentResponse,
+  BookingPreferredPaymentMethod,
 } from '@africatourismgate/types';
 import { getValidApiClient } from '../auth/api';
 
@@ -22,11 +23,13 @@ export function saleApiErrorMessage(error: unknown, fallback: string): string {
 export async function createBookingFromCart(
   items: BookingCheckoutItem[],
   preview: BookingCheckoutPreview,
+  preferredPaymentMethod: BookingPreferredPaymentMethod,
 ): Promise<BookingDetail> {
   const client = await getValidApiClient();
   return client.createBooking({
     items,
     currency: preview.currency,
+    preferredPaymentMethod,
   });
 }
 

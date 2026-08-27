@@ -54,6 +54,7 @@ export function SalePaymentBar() {
       const created = await createBookingFromCart(
         lines.map((line) => line.item),
         preview,
+        'cash',
       );
       await payBookingCash(created.booking.id);
       finishSale(created.booking.id, 'cash');
@@ -74,6 +75,7 @@ export function SalePaymentBar() {
       const created = await createBookingFromCart(
         lines.map((line) => line.item),
         preview,
+        'stripe',
       );
       const intent = await createCardPaymentIntent(created.booking.id);
       setCardBookingId(created.booking.id);
