@@ -96,7 +96,7 @@ Employé → apps/pos (login JWT + cookies)
 | Filtre catalogue par organisation | ✅ | Listes + preview/create avec `organizationId` ; `NULL` = partagé |
 | Bookings orphelins `pending_payment` | ✅ | Cancel client POS (échec cash/intent, fermeture sheet, bouton succès) ; pas de cron TTL (risque web) |
 | Tests unit/e2e dans `apps/pos` | ❌ | Aucun Playwright POS |
-| CI GitHub Actions | ✅ | Job `pos` (lint + build) ; E2E POS → POS-10 |
+| CI GitHub Actions | ✅ | Job `pos` (lint + build + E2E Playwright) |
 | Déploiement prod | ⚠️ | Optionnel (`ATG_ENABLE_POS=1`, `pos.africatourismgate.org`) |
 | Mode offline | ❌ | Hors scope (réseau API requis) |
 
@@ -596,6 +596,6 @@ Script API complémentaire : `pnpm test:pos-sale-cash`
 - [x] POS-7 Forfaits
 - [x] POS-8 Email reçu
 - [x] POS-9 PDF natif
-- [ ] POS-10 E2E Playwright
+- [x] POS-10 E2E Playwright
 - [ ] POS-11 UX polish
 - [ ] POS-12 Prod enable

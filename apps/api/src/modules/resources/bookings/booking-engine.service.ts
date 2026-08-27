@@ -145,6 +145,9 @@ export class BookingEngineService {
     this.assertPreferredPaymentMethod(dto);
     await this.assertCheckoutOrganizationScope(dto, actorUserId ?? userId);
     const pricing = await this.resolveCheckoutPricing(dto);
+    const isPosStaffCheckout =
+      Boolean(actorUserId?.trim()) && Boolean(dto.organizationId?.trim());
+    const initialStatus = isPosStaffCheckout ? 'pending_payment' : 'draft';
 
     const bookingId = await this.bookingsRepository.manager.transaction(
       async (manager) => {
@@ -157,7 +160,7 @@ export class BookingEngineService {
         const booking = bookingsRepo.create({
           id,
           userId,
-          status: 'draft',
+          status: initialStatus,
           totalCents: pricing.totalCents,
           currency: pricing.currency,
           promoCodeId: pricing.discount?.promoCodeId ?? null,
@@ -194,15 +197,25 @@ export class BookingEngineService {
     await this.statusHistory.record({
       bookingId,
       fromStatus: null,
-      toStatus: 'draft',
-      reason: 'Création de la réservation (en attente de vérification)',
+      toStatus: initialStatus,
+      reason: isPosStaffCheckout
+        ? 'Création caisse POS — en attente de paiement'
+        : 'Création de la réservation (en attente de vérification)',
       changedByUserId: actorUserId ?? null,
     });
+
+    const detail = await this.getBookingDetail(bookingId);
+
+    if (isPosStaffCheckout) {
+      return {
+        ...detail,
+        requiresVerification: false,
+      };
+    }
 
     const user = await this.usersRepository.findOne({
       where: { id: userId },
     });
-    const detail = await this.getBookingDetail(bookingId);
     const { verificationId } = await this.emailVerification.createAndSend({
       email: user?.email ?? '',
       purpose: 'booking',

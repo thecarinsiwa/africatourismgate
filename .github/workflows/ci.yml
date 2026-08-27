@@ -80,7 +80,34 @@ jobs:
 
   pos:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: africatourismgate_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     env:
+      DATABASE_HOST: 127.0.0.1
+      DATABASE_PORT: '3306'
+      DATABASE_USER: root
+      DATABASE_PASSWORD: root
+      DATABASE_NAME: africatourismgate_test
+      SEED_ADMIN_PASSWORD: ChangeMe123!
+      JWT_ACCESS_SECRET: ci-e2e-access-secret-min-32-chars-long
+      JWT_REFRESH_SECRET: ci-e2e-refresh-secret-min-32-chars-long
+      GOOGLE_CLIENT_ID: e2e-google-client-id
+      GOOGLE_CLIENT_SECRET: e2e-google-client-secret
+      GOOGLE_CALLBACK_URL: http://localhost:3000/api/auth/google/callback
+      STRIPE_SECRET_KEY: sk_test_e2e_placeholder
+      STRIPE_WEBHOOK_SECRET: whsec_e2e_test_secret_for_signature_only
       NEXT_PUBLIC_API_URL: http://localhost:3000/api
       NEXT_PUBLIC_POS_URL: http://localhost:3003
 
@@ -105,3 +132,12 @@ jobs:
 
       - name: Build POS
         run: pnpm --filter @africatourismgate/pos build
+
+      - name: Sync test database schema
+        run: pnpm db:sync
+
+      - name: Install Playwright browsers
+        run: pnpm --filter @africatourismgate/pos exec playwright install --with-deps chromium
+
+      - name: POS E2E tests
+        run: pnpm --filter @africatourismgate/pos test:e2e
