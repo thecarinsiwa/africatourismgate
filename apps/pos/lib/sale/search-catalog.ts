@@ -78,7 +78,7 @@ async function searchRooms(query: string): Promise<SaleCatalogHit[]> {
   const hits: SaleCatalogHit[] = [];
 
   await Promise.all(
-    [...propertyMap.values()].map(async (property) => {
+    Array.from(propertyMap.values()).map(async (property) => {
       const rooms = await client.listRooms({
         propertyId: property.id,
         limit: SEARCH_LIMIT,
@@ -132,7 +132,7 @@ async function searchFlightClasses(query: string): Promise<SaleCatalogHit[]> {
 
   const hits: SaleCatalogHit[] = [];
 
-  for (const flight of flightById.values()) {
+  for (const flight of Array.from(flightById.values())) {
     if (hits.length >= SEARCH_LIMIT) break;
     const classes = await client.listFlightClasses({
       flightId: flight.id,
