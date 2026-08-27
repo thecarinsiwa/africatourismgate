@@ -55,6 +55,8 @@ export interface Vehicle {
   licensePlate: string | null;
   dailyPriceCents: number;
   currency: string;
+  /** NULL = catalogue partagé (toutes orgs). */
+  organizationId: string | null;
   createdAt: string;
   updatedAt: string | null;
 }
@@ -65,6 +67,7 @@ export interface CreateVehicleRequest {
   licensePlate?: string;
   dailyPriceCents: number;
   currency: string;
+  organizationId?: string | null;
 }
 
 export type UpdateVehicleRequest = Partial<
@@ -80,6 +83,7 @@ export interface VehiclesListQuery {
   search?: string;
   agencyId?: string;
   categoryId?: string;
+  organizationId?: string;
 }
 
 export interface VehicleImage {

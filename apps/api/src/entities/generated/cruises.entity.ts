@@ -100,6 +100,9 @@ export class Cabins extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'currency', length: 3 })
   currency!: string;
 
+  @Column({ type: 'varchar', name: 'organization_id', length: 36, nullable: true })
+  organizationId!: string | null;
+
 }
 
 @Entity('cruise_sailings')

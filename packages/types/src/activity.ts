@@ -38,6 +38,8 @@ export interface Activity {
   difficultyLevel: ActivityDifficultyLevel | null;
   priceCents: number;
   currency: string;
+  /** NULL = catalogue partagé (toutes orgs). */
+  organizationId: string | null;
   createdAt: string;
   updatedAt: string | null;
 }
@@ -50,6 +52,7 @@ export interface CreateActivityRequest {
   difficultyLevel?: ActivityDifficultyLevel | null;
   priceCents: number;
   currency: string;
+  organizationId?: string | null;
 }
 
 export type UpdateActivityRequest = Partial<CreateActivityRequest>;
@@ -60,6 +63,7 @@ export interface ActivitiesListQuery {
   search?: string;
   providerId?: string;
   destinationId?: string;
+  organizationId?: string;
 }
 
 export interface ActivitySchedule {
