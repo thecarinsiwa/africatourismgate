@@ -45,6 +45,7 @@ import { BookingIdentityDocumentsService } from './booking-identity-documents.se
 import { BookingManifestService } from './booking-manifest.service';
 import { BookingsService } from './bookings.service';
 import { PosReceiptEmailService } from './pos-receipt-email.service';
+import { PosReceiptPdfService } from './pos-receipt-pdf.service';
 
 @Module({
   imports: [
@@ -95,6 +96,7 @@ import { PosReceiptEmailService } from './pos-receipt-email.service';
     BookingIdentityDocumentsService,
     BookingManifestService,
     PosReceiptEmailService,
+    PosReceiptPdfService,
   ],
   exports: [
     BookingEngineService,

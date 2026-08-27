@@ -69,11 +69,24 @@ import {
 } from './dto/request-identity-document-upload.dto';
 import { BookingManifestService } from './booking-manifest.service';
 import { PosReceiptEmailService } from './pos-receipt-email.service';
+import { PosReceiptPdfService } from './pos-receipt-pdf.service';
 import {
   BookingManifestEntryDto,
   CreateBookingManifestEntryDto,
   UpdateBookingManifestEntryDto,
 } from './dto/booking-manifest-entry.dto';
+
+function sendReceiptPdfFile(
+  res: Response,
+  file: { buffer: Buffer; filename: string; contentType: string },
+): void {
+  res.setHeader('Content-Type', file.contentType);
+  res.setHeader(
+    'Content-Disposition',
+    `attachment; filename="${encodeURIComponent(file.filename)}"`,
+  );
+  res.send(file.buffer);
+}
 
 @ApiTags('bookings')
 @ApiForbiddenResponse({ description: 'Missing permission' })
@@ -90,6 +103,7 @@ export class BookingsController {
     private readonly bookingIdentityDocumentsService: BookingIdentityDocumentsService,
     private readonly bookingManifestService: BookingManifestService,
     private readonly posReceiptEmailService: PosReceiptEmailService,
+    private readonly posReceiptPdfService: PosReceiptPdfService,
     private readonly orgScopeService: OrgScopeService,
   ) {}
 
@@ -515,6 +529,20 @@ export class BookingsController {
       user.id,
       organizationId,
     );
+  }
+
+  @Get(':id/receipt-pdf')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Download POS cash register receipt PDF' })
+  async downloadReceiptPdf(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthUserDto,
+    @Res() res: Response,
+  ): Promise<void> {
+    await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
+    const organizationId = await this.orgScopeService.resolveOrganizationId(user);
+    const file = await this.posReceiptPdfService.generate(id, user.id, organizationId);
+    sendReceiptPdfFile(res, file);
   }
 
   @Post(':id/payment-intent')

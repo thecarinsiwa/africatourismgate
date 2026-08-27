@@ -53,7 +53,7 @@ export class PosReceiptEmailService {
 
     if (detail.booking.status !== 'confirmed') {
       throw new BadRequestException(
-        'Le reçu ne peut être envoyé que pour une réservation confirmée.',
+        'Le reçu n’est disponible que pour une réservation confirmée.',
       );
     }
 
