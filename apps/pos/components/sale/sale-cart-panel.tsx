@@ -4,6 +4,7 @@ import { Button, Card, cn } from '@africatourismgate/ui';
 import { posSalePageConfig } from '../../config/sale';
 import { formatCents } from '../../lib/sale/format';
 import { useSaleCart } from '../../lib/sale/cart-context';
+import { SaleCustomerBar } from './sale-customer-bar';
 import { SalePaymentBar } from './sale-payment-bar';
 
 const { cart: cartLabels, backToHomeLabel } = posSalePageConfig;
@@ -60,6 +61,8 @@ export function SaleCartPanel() {
               {cartCountLabel}
             </span>
           </div>
+
+          <SaleCustomerBar />
 
           {lineCount === 0 ? (
             <div className="flex flex-col items-center rounded-xl border border-dashed border-atg-border bg-atg-surface/30 px-4 py-10 text-center">
