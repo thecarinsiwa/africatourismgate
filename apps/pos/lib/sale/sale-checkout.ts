@@ -73,15 +73,18 @@ export async function createBookingFromCart(
   preview: BookingCheckoutPreview,
   preferredPaymentMethod: BookingPreferredPaymentMethod,
   customerUserId?: string | null,
+  promoCode?: string | null,
 ): Promise<BookingDetail> {
   const client = await getValidApiClient();
   const trimmedCustomerId = customerUserId?.trim();
+  const trimmedPromoCode = promoCode?.trim();
   return client.createBooking({
     items,
     currency: preview.currency,
     preferredPaymentMethod,
     organizationId: requireSelectedOrganizationId(),
     ...(trimmedCustomerId ? { customerUserId: trimmedCustomerId } : {}),
+    ...(trimmedPromoCode ? { promoCode: trimmedPromoCode } : {}),
   });
 }
 
