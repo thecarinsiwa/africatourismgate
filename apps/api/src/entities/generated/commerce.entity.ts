@@ -36,6 +36,7 @@ export class Bookings extends BaseAuditEntity {
   paymentReminderSentAt!: Date | null;
 
   @Column({
+    type: 'enum',
     name: 'preferred_payment_method',
     enum: ['stripe', 'cash'],
     nullable: true,
