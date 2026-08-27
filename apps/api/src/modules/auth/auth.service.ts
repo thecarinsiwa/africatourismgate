@@ -605,11 +605,16 @@ export class AuthService {
     const { session } =
       await this.loadValidatedSessionFromRefreshToken(refreshToken);
     this.assertSessionNotIdleLocked(session);
-    // UPDATE explicite : évite les faux négatifs TypeORM/MySQL DATETIME (précision à la seconde).
-    await this.sessionsRepo.update(
-      { id: session.id },
-      { lastActivityAt: new Date() },
-    );
+    // CURRENT_TIMESTAMP côté MySQL : évite les écarts JS/DATETIME et les no-op TypeORM.
+    const result = await this.sessionsRepo
+      .createQueryBuilder()
+      .update(UserSessions)
+      .set({ lastActivityAt: () => 'CURRENT_TIMESTAMP' })
+      .where('id = :id', { id: session.id })
+      .execute();
+    if (!result.affected) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
     return { success: true };
   }
 

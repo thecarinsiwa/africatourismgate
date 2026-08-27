@@ -380,18 +380,29 @@ describe('Auth (e2e)', () => {
     });
 
     it('POST /auth/touch updates lastActivityAt', async () => {
-      const { refreshToken, userId } = await loginAsSeedAdmin(app, randomUUID());
+      const instance = randomUUID();
+      const { refreshToken, userId, clientInstanceId } = await loginAsSeedAdmin(
+        app,
+        instance,
+      );
 
       const repo = sessionsRepo(app);
+      // Cibler la session du login (pas une autre session seed admin plus récente).
       const session = await repo.findOne({
-        where: { userId, deletedAt: IsNull() },
-        order: { createdAt: 'DESC' },
+        where: {
+          userId,
+          clientInstanceId,
+          deletedAt: IsNull(),
+        },
       });
       expect(session).toBeTruthy();
+      expect(session!.id).toBeTruthy();
 
-      // Aligner à la seconde (DATETIME MySQL) et reculer clairement.
       const staleMs = Math.floor((Date.now() - 120_000) / 1000) * 1000;
-      await repo.update({ id: session!.id }, { lastActivityAt: new Date(staleMs) });
+      await repo.manager.query(
+        'UPDATE user_sessions SET last_activity_at = FROM_UNIXTIME(?) WHERE id = ?',
+        [staleMs / 1000, session!.id],
+      );
 
       const touchedAt = Date.now();
       await request(app.getHttpServer())
@@ -399,18 +410,17 @@ describe('Auth (e2e)', () => {
         .send({ refreshToken })
         .expect(200);
 
-      // `repository.update` ne met pas à jour l’identity map TypeORM :
-      // un findOne par id peut renvoyer l’ancienne entité. Lire en raw.
-      const raw = await repo
-        .createQueryBuilder('s')
-        .select('s.last_activity_at', 'lastActivityAt')
-        .where('s.id = :id', { id: session!.id })
-        .getRawOne<{ lastActivityAt: Date | string }>();
+      const rows = (await repo.manager.query(
+        'SELECT UNIX_TIMESTAMP(last_activity_at) AS ts FROM user_sessions WHERE id = ?',
+        [session!.id],
+      )) as Array<{ ts: number | string | null }>;
 
-      expect(raw?.lastActivityAt).toBeTruthy();
-      const updatedMs = new Date(raw!.lastActivityAt).getTime();
+      expect(rows[0]?.ts).not.toBeNull();
+      const updatedMs = Number(rows[0].ts) * 1000;
       expect(updatedMs).toBeGreaterThan(staleMs);
-      expect(updatedMs).toBeGreaterThanOrEqual(Math.floor((touchedAt - 5_000) / 1000) * 1000);
+      expect(updatedMs).toBeGreaterThanOrEqual(
+        Math.floor((touchedAt - 5_000) / 1000) * 1000,
+      );
     });
 
     it('POST /auth/refresh returns SESSION_LOCKED after idle timeout', async () => {
