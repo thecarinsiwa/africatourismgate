@@ -22,7 +22,8 @@ const { payment: labels } = posSalePageConfig;
 
 export function SalePaymentBar() {
   const router = useRouter();
-  const { lines, preview, previewLoading, previewError, clearCart } = useSaleCart();
+  const { lines, preview, previewLoading, previewError, customer, clearCart } =
+    useSaleCart();
   const [processing, setProcessing] = useState<'cash' | 'card' | null>(null);
   const [closingCard, setClosingCard] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
@@ -66,6 +67,7 @@ export function SalePaymentBar() {
         lines.map((line) => line.item),
         preview,
         'cash',
+        customer?.id,
       );
       createdBookingId = created.booking.id;
       await payBookingCash(createdBookingId);
@@ -105,6 +107,7 @@ export function SalePaymentBar() {
         lines.map((line) => line.item),
         preview,
         'stripe',
+        customer?.id,
       );
       createdBookingId = created.booking.id;
       const intent = await createCardPaymentIntent(createdBookingId);
