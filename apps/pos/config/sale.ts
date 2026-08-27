@@ -39,6 +39,8 @@ export const posSalePageConfig = {
     totalLabel: 'Total',
     previewLoadingLabel: 'Calcul du total…',
     previewErrorLabel: 'Impossible de calculer le total',
+    packageMixError:
+      'Un forfait ne peut pas être combiné avec d’autres produits. Retirez le forfait ou videz le panier.',
   },
   customer: {
     sectionLabel: 'Client',

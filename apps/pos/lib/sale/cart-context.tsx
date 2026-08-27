@@ -19,6 +19,11 @@ import { posSalePageConfig } from '../../config/sale';
 import { getValidApiClient } from '../auth/api';
 import { requireSelectedOrganizationId } from '../auth/session';
 import type { SaleCartCustomer, SaleCartLine } from './types';
+import {
+  cartHasPackage,
+  getCartPackageId,
+  isPackageCheckoutItem,
+} from './types';
 
 const PREVIEW_DEBOUNCE_MS = 400;
 const { cart: cartLabels } = posSalePageConfig;
@@ -33,6 +38,11 @@ type SaleCartContextValue = {
   preview: BookingCheckoutPreview | null;
   previewLoading: boolean;
   previewError: string | null;
+  /** Erreur ajout panier (ex. mix forfait + produit). */
+  cartAddError: string | null;
+  clearCartAddError: () => void;
+  /** Forfait actif dans le panier (null si aucun). */
+  cartPackageId: string | null;
   /** Code promo appliqué (null = aucun). */
   appliedPromoCode: string | null;
   applyPromoCode: (code: string) => void;
@@ -70,8 +80,33 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
   const [previewError, setPreviewError] = useState<string | null>(null);
   const [appliedPromoCode, setAppliedPromoCode] = useState<string | null>(null);
   const [customer, setCustomerState] = useState<SaleCartCustomer | null>(null);
+  const [cartAddError, setCartAddError] = useState<string | null>(null);
+
+  const cartPackageId = useMemo(
+    () => getCartPackageId(lines) ?? null,
+    [lines],
+  );
 
   const addLine = useCallback((item: BookingCheckoutItem, label: string) => {
+    if (isPackageCheckoutItem(item)) {
+      setCartAddError(null);
+      setAppliedPromoCode(null);
+      setLines([
+        {
+          id: newCartLineId(),
+          label,
+          item,
+        },
+      ]);
+      return;
+    }
+
+    if (cartHasPackage(lines)) {
+      setCartAddError(cartLabels.packageMixError);
+      return;
+    }
+
+    setCartAddError(null);
     setLines((prev) => [
       ...prev,
       {
@@ -80,9 +115,10 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
         item,
       },
     ]);
-  }, []);
+  }, [lines]);
 
   const removeLine = useCallback((lineId: string) => {
+    setCartAddError(null);
     setLines((prev) => prev.filter((line) => line.id !== lineId));
   }, []);
 
@@ -99,6 +135,10 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
     setAppliedPromoCode(null);
   }, []);
 
+  const clearCartAddError = useCallback(() => {
+    setCartAddError(null);
+  }, []);
+
   const clearCart = useCallback(() => {
     setLines([]);
     setPreview(null);
@@ -106,6 +146,7 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
     setPreviewLoading(false);
     setAppliedPromoCode(null);
     setCustomerState(null);
+    setCartAddError(null);
   }, []);
 
   useEffect(() => {
@@ -118,6 +159,7 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
 
     let cancelled = false;
     const items = lines.map((line) => line.item);
+    const packageId = getCartPackageId(lines);
 
     const timer = window.setTimeout(() => {
       setPreviewLoading(true);
@@ -128,6 +170,7 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
           client.previewBookingCheckout({
             items,
             organizationId: requireSelectedOrganizationId(),
+            ...(packageId ? { packageId } : {}),
             ...(appliedPromoCode ? { promoCode: appliedPromoCode } : {}),
           }),
         )
@@ -167,6 +210,9 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
       preview,
       previewLoading,
       previewError,
+      cartAddError,
+      clearCartAddError,
+      cartPackageId,
       appliedPromoCode,
       applyPromoCode,
       clearPromoCode,
@@ -182,6 +228,9 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
       preview,
       previewLoading,
       previewError,
+      cartAddError,
+      clearCartAddError,
+      cartPackageId,
       appliedPromoCode,
       applyPromoCode,
       clearPromoCode,
