@@ -1076,4 +1076,23 @@ INSERT INTO `tour_guides` (
   '00000000-0000-4000-8000-000000000010'
 );
 
+-- -----------------------------------------------------------------------------
+-- POS-6: code promo caisse (checkout-preview / createBooking POS)
+-- -----------------------------------------------------------------------------
+INSERT INTO `promo_codes` (
+  `id`, `code`, `discount_type`, `discount_value`, `valid_from`, `valid_until`,
+  `max_redemptions`, `redemption_count`, `active`, `created_by_user_id`
+) VALUES (
+  '00000000-0000-4000-8000-000000005010',
+  'POSWELCOME10',
+  'percent',
+  10.00,
+  '2020-01-01',
+  '2099-12-31',
+  1000,
+  0,
+  1,
+  '00000000-0000-4000-8000-000000000010'
+);
+
 SET FOREIGN_KEY_CHECKS = 1;

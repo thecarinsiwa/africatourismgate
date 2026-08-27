@@ -36,8 +36,13 @@ SEED_ADMIN_PASSWORD=your_seed_password_here
 | 11 | `airlines`, `airports`, `cruise_lines`, `cruise_ports` | Minimal flight/cruise referentials |
 | 12 | Demo | Kinshasa destination, demo hotel + room |
 | 13 | POS-3 | Activité exclusive Guichet Est (`organization_id` = 2e org) |
+| 14 | POS-6 | Code promo caisse `POSWELCOME10` (−10 %, table `promo_codes`) |
 
 Fixed UUIDs are documented in [seed-ids.txt](seed-ids.txt).
+
+### POS promo code (manual test)
+
+After `pnpm db:sync`, use code **`POSWELCOME10`** on the POS sale cart (`/sale`) to verify a 10 % discount on checkout-preview and booking creation (cash or card).
 
 ## Manual sync
 
