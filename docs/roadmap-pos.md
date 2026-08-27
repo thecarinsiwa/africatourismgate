@@ -141,7 +141,7 @@ Employé → apps/pos (login JWT + cookies)
 | POS-5 | B | Historique ventes du jour | Haute | `feature/pos-sales-history` ✅ | POS-3 |
 | POS-6 | B | Codes promo / remises au panier POS | Moyenne | `feature/pos-promo-codes` ✅ | — |
 | POS-7 | B | Forfaits (`packageId`) au POS | Moyenne | `feature/pos-packages` ✅ | — |
-| POS-8 | C | Email reçu transactionnel (serveur) | Moyenne | `feature/pos-receipt-email` | 79 (SMTP) |
+| POS-8 | C | Email reçu transactionnel (serveur) | Moyenne | `feature/pos-receipt-email` ✅ | 79 (SMTP) |
 | POS-9 | C | PDF reçu natif (serveur ou lib) | Basse | `feature/pos-receipt-pdf` | — |
 | POS-10 | D | Tests E2E Playwright POS | Haute | `feature/pos-e2e-playwright` | POS-1 |
 | POS-11 | D | Polish UX caisse (erreurs, retry, feedback tactile) | Moyenne | `feature/pos-ux-polish` | — |
@@ -594,7 +594,7 @@ Script API complémentaire : `pnpm test:pos-sale-cash`
 - [x] POS-5 Historique du jour
 - [x] POS-6 Promos
 - [x] POS-7 Forfaits
-- [ ] POS-8 Email reçu
+- [x] POS-8 Email reçu
 - [ ] POS-9 PDF natif
 - [ ] POS-10 E2E Playwright
 - [ ] POS-11 UX polish
