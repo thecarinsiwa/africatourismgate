@@ -389,18 +389,28 @@ describe('Auth (e2e)', () => {
       });
       expect(session).toBeTruthy();
 
-      // Aligner à la seconde (DATETIME MySQL) et reculer clairement pour éviter les flaky.
+      // Aligner à la seconde (DATETIME MySQL) et reculer clairement.
       const staleMs = Math.floor((Date.now() - 120_000) / 1000) * 1000;
       await repo.update({ id: session!.id }, { lastActivityAt: new Date(staleMs) });
 
+      const touchedAt = Date.now();
       await request(app.getHttpServer())
         .post(apiPath('/auth/touch'))
         .send({ refreshToken })
         .expect(200);
 
-      const updated = await repo.findOne({ where: { id: session!.id } });
-      expect(updated!.lastActivityAt).toBeTruthy();
-      expect(updated!.lastActivityAt!.getTime()).toBeGreaterThan(staleMs);
+      // `repository.update` ne met pas à jour l’identity map TypeORM :
+      // un findOne par id peut renvoyer l’ancienne entité. Lire en raw.
+      const raw = await repo
+        .createQueryBuilder('s')
+        .select('s.last_activity_at', 'lastActivityAt')
+        .where('s.id = :id', { id: session!.id })
+        .getRawOne<{ lastActivityAt: Date | string }>();
+
+      expect(raw?.lastActivityAt).toBeTruthy();
+      const updatedMs = new Date(raw!.lastActivityAt).getTime();
+      expect(updatedMs).toBeGreaterThan(staleMs);
+      expect(updatedMs).toBeGreaterThanOrEqual(Math.floor((touchedAt - 5_000) / 1000) * 1000);
     });
 
     it('POST /auth/refresh returns SESSION_LOCKED after idle timeout', async () => {
