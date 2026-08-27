@@ -67,6 +67,8 @@ export interface Flight {
   departureTime: string;
   arrivalTime: string;
   durationMinutes: number;
+  /** NULL = catalogue partagé (toutes orgs). */
+  organizationId: string | null;
   createdAt: string;
   updatedAt: string | null;
 }
@@ -79,6 +81,7 @@ export interface CreateFlightRequest {
   departureTime: string;
   arrivalTime: string;
   durationMinutes: number;
+  organizationId?: string | null;
 }
 
 export type UpdateFlightRequest = Partial<CreateFlightRequest>;
@@ -87,6 +90,7 @@ export interface FlightsListQuery {
   page?: number;
   limit?: number;
   search?: string;
+  organizationId?: string;
 }
 
 export interface FlightImage {

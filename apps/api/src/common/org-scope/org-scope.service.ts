@@ -64,6 +64,23 @@ export class OrgScopeService {
     }
   }
 
+  /**
+   * Scope optionnel pour listes catalogue (POS / admin).
+   * - sans `organizationId` → pas de filtre org (admin voit tout)
+   * - avec `organizationId` → validé puis utilisé (NULL partagé OU org)
+   */
+  async resolveCatalogListOrganizationId(
+    user: AuthUserDto,
+    queryOrganizationId?: string,
+  ): Promise<string | undefined> {
+    const trimmed = queryOrganizationId?.trim();
+    if (!trimmed) {
+      return undefined;
+    }
+    await this.assertCanAccessOrganization(user, trimmed);
+    return trimmed;
+  }
+
   rejectOrganizationIdInBody(
     user: AuthUserDto,
     bodyOrganizationId?: string,

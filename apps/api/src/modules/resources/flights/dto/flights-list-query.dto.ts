@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
 import { PaginationQueryDto } from '../../../../common/dto/pagination-query.dto';
 
 export class FlightsListQueryDto extends PaginationQueryDto {
@@ -8,4 +8,13 @@ export class FlightsListQueryDto extends PaginationQueryDto {
   @IsString()
   @MaxLength(50)
   search?: string;
+
+  @ApiPropertyOptional({
+    format: 'uuid',
+    description:
+      'Filtre catalogue : produits partagés (NULL) + exclusifs de cette organisation',
+  })
+  @IsOptional()
+  @IsUUID('4')
+  organizationId?: string;
 }

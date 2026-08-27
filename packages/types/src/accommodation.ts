@@ -15,6 +15,8 @@ export interface Property {
   starRating: string | null;
   description: string | null;
   addressLine: string | null;
+  /** NULL = catalogue partagé (toutes orgs). */
+  organizationId: string | null;
   createdAt: string;
   updatedAt: string | null;
 }
@@ -27,6 +29,7 @@ export interface CreatePropertyRequest {
   starRating?: number;
   description?: string;
   addressLine?: string;
+  organizationId?: string | null;
 }
 
 export type UpdatePropertyRequest = Partial<CreatePropertyRequest>;
@@ -36,6 +39,7 @@ export interface PropertiesListQuery {
   limit?: number;
   search?: string;
   destinationId?: string;
+  organizationId?: string;
 }
 
 export interface PropertyImage {

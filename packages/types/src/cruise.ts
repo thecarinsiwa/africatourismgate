@@ -125,6 +125,8 @@ export interface Cabin {
   maxGuests: number;
   basePriceCents: number;
   currency: string;
+  /** NULL = catalogue partagé (toutes orgs). */
+  organizationId: string | null;
   createdAt: string;
   updatedAt: string | null;
 }
@@ -135,6 +137,7 @@ export interface CreateCabinRequest {
   maxGuests: number;
   basePriceCents: number;
   currency: string;
+  organizationId?: string | null;
 }
 
 export type UpdateCabinRequest = Partial<Omit<CreateCabinRequest, 'shipId'>>;
@@ -143,6 +146,7 @@ export interface CabinsListQuery {
   page?: number;
   limit?: number;
   shipId?: string;
+  organizationId?: string;
 }
 
 export interface CruiseSailing {

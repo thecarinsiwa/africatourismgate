@@ -39,6 +39,9 @@ export class Properties extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'address_line', length: 255, nullable: true })
   addressLine!: string | null;
 
+  @Column({ type: 'varchar', name: 'organization_id', length: 36, nullable: true })
+  organizationId!: string | null;
+
 }
 
 @Entity('property_images')

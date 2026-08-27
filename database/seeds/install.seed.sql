@@ -80,6 +80,15 @@ INSERT INTO `organizations` (
   'contact@africatourismgate.local',
   'USD',
   'active'
+),
+(
+  '00000000-0000-4000-8000-000000000002',
+  'Kinshasa Guichet Est',
+  'kinshasa-guichet-est',
+  'Organisation POS de test multi-tenant (produits exclusifs).',
+  'guichet-est@africatourismgate.local',
+  'USD',
+  'active'
 );
 
 -- -----------------------------------------------------------------------------
@@ -105,6 +114,11 @@ SET `created_by_user_id` = '00000000-0000-4000-8000-000000000010',
     `contact_email` = 'support@africatourismgate.com',
     `contact_phone` = '+243 815 000 000'
 WHERE `id` = '00000000-0000-4000-8000-000000000001';
+
+UPDATE `organizations`
+SET `created_by_user_id` = '00000000-0000-4000-8000-000000000010',
+    `updated_by_user_id` = '00000000-0000-4000-8000-000000000010'
+WHERE `id` = '00000000-0000-4000-8000-000000000002';
 
 -- -----------------------------------------------------------------------------
 -- 5. role_permissions
@@ -245,6 +259,14 @@ INSERT INTO `organization_settings` (
   'booking',
   'item_type_modes',
   '{"room":"immediate","flight_class":"immediate","vehicle":"immediate","cabin":"immediate","activity_schedule":"assisted","package":"assisted"}',
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000000021',
+  '00000000-0000-4000-8000-000000000002',
+  'branding',
+  'platform',
+  '{"displayName":"Kinshasa Guichet Est","primaryColor":"#0B4F6C","secondaryColor":"#01BAEF"}',
   '00000000-0000-4000-8000-000000000010'
 );
 
@@ -750,7 +772,8 @@ INSERT INTO `activity_providers` (
 );
 
 INSERT INTO `activities` (
-  `id`, `provider_id`, `title`, `description`, `duration_minutes`, `difficulty_level`, `price_cents`, `currency`, `created_by_user_id`
+  `id`, `provider_id`, `title`, `description`, `duration_minutes`, `difficulty_level`,
+  `price_cents`, `currency`, `organization_id`, `created_by_user_id`
 ) VALUES
 (
   '00000000-0000-4000-8000-000000004031',
@@ -761,6 +784,7 @@ INSERT INTO `activities` (
   'moderate',
   4500,
   'USD',
+  NULL,
   '00000000-0000-4000-8000-000000000010'
 ),
 (
@@ -772,6 +796,19 @@ INSERT INTO `activities` (
   'easy',
   3500,
   'USD',
+  NULL,
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000004050',
+  '00000000-0000-4000-8000-000000004030',
+  'Atelier exclusif Guichet Est',
+  'Activité exclusive org Guichet Est — ne doit pas apparaître en caisse Africa Tourism Gate (POS-3).',
+  90,
+  'easy',
+  7500,
+  'USD',
+  '00000000-0000-4000-8000-000000000002',
   '00000000-0000-4000-8000-000000000010'
 );
 
@@ -798,6 +835,14 @@ INSERT INTO `activity_schedules` (
   '00000000-0000-4000-8000-000000004035',
   '00000000-0000-4000-8000-000000004032',
   '2026-07-20 16:00:00',
+  10,
+  0,
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000004051',
+  '00000000-0000-4000-8000-000000004050',
+  '2026-09-15 10:00:00',
   10,
   0,
   '00000000-0000-4000-8000-000000000010'

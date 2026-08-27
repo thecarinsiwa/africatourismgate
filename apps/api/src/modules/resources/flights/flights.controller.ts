@@ -18,9 +18,11 @@ import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync } from 'node:fs';
 import { extname, join } from 'node:path';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { flightUploadUrl } from '../../../common/utils/public-asset-url';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { Flights } from '../../../entities/generated';
+import { FlightsListQueryDto } from './dto/flights-list-query.dto';
 import { FlightsService } from './flights.service';
 
 const FLIGHT_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
@@ -34,8 +36,11 @@ export class FlightsController {
 
   @Get()
   @ApiOperation({ summary: 'List flights' })
-  findAll(@Query() query: PaginationQueryDto) {
-    return this.service.findAll(query);
+  findAll(
+    @Query() query: FlightsListQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.findAllForUser(query, user);
   }
 
   @Get(':id')

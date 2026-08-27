@@ -10,8 +10,10 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { Cabins } from '../../../entities/generated';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { AuthUserDto } from '../../auth/dto/auth-user.dto';
+import { CabinsListQueryDto } from './dto/cabins-list-query.dto';
 import { CabinsService } from './cabins.service';
 
 @ApiTags('cabins')
@@ -21,8 +23,11 @@ export class CabinsController {
 
   @Get()
   @ApiOperation({ summary: 'List cabins' })
-  findAll(@Query() query: PaginationQueryDto) {
-    return this.service.findAll(query);
+  findAll(
+    @Query() query: CabinsListQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.findAllForUser(query, user);
   }
 
   @Get(':id')

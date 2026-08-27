@@ -11,6 +11,8 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
 import { Vehicles } from '../../../entities/generated';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { VehiclesListQueryDto } from './dto/vehicles-list-query.dto';
 import { VehiclesService } from './vehicles.service';
 
@@ -21,8 +23,11 @@ export class VehiclesController {
 
   @Get()
   @ApiOperation({ summary: 'List vehicles' })
-  findAll(@Query() query: VehiclesListQueryDto) {
-    return this.service.findAll(query);
+  findAll(
+    @Query() query: VehiclesListQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.findAllForUser(query, user);
   }
 
   @Get(':id')

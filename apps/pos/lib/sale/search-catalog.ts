@@ -2,17 +2,18 @@ import type {
   Activity,
   Cabin,
   Flight,
-  FlightClass,
   Property,
-  Room,
   Vehicle,
 } from '@africatourismgate/types';
 import { getValidApiClient } from '../auth/api';
+import { requireSelectedOrganizationId } from '../auth/session';
 import { formatCents } from './format';
 import type { SaleCatalogFilter, SaleCatalogHit } from './types';
 
 const SEARCH_LIMIT = 15;
 const ROOM_PROPERTY_LIMIT = 5;
+/** Propriétés / vols org-scopés pour recherche par nom de chambre / classe. */
+const BROAD_PARENT_LIMIT = 30;
 
 function normalizeQuery(query: string): string {
   return query.trim().toLowerCase();
@@ -28,10 +29,12 @@ function sortHits(hits: SaleCatalogHit[]): SaleCatalogHit[] {
 }
 
 async function searchActivities(query: string): Promise<SaleCatalogHit[]> {
+  const organizationId = requireSelectedOrganizationId();
   const client = await getValidApiClient();
   const response = await client.listActivities({
     search: query || undefined,
     limit: SEARCH_LIMIT,
+    organizationId,
   });
 
   return response.data.map((activity: Activity) => ({
@@ -48,21 +51,34 @@ async function searchActivities(query: string): Promise<SaleCatalogHit[]> {
 }
 
 async function searchRooms(query: string): Promise<SaleCatalogHit[]> {
+  const organizationId = requireSelectedOrganizationId();
   const client = await getValidApiClient();
-  const properties = await client.listProperties({
-    search: query || undefined,
-    limit: ROOM_PROPERTY_LIMIT,
-  });
-
-  const hits: SaleCatalogHit[] = [];
   const propertyMap = new Map<string, Property>();
 
-  for (const property of properties.data) {
+  const primary = await client.listProperties({
+    search: query || undefined,
+    limit: ROOM_PROPERTY_LIMIT,
+    organizationId,
+  });
+  for (const property of primary.data) {
     propertyMap.set(property.id, property);
   }
 
+  // Recherche par nom de chambre : élargir via propriétés org-scopées (pas listRooms global).
+  if (query && propertyMap.size < ROOM_PROPERTY_LIMIT) {
+    const broader = await client.listProperties({
+      limit: BROAD_PARENT_LIMIT,
+      organizationId,
+    });
+    for (const property of broader.data) {
+      propertyMap.set(property.id, property);
+    }
+  }
+
+  const hits: SaleCatalogHit[] = [];
+
   await Promise.all(
-    properties.data.map(async (property) => {
+    Array.from(propertyMap.values()).map(async (property) => {
       const rooms = await client.listRooms({
         propertyId: property.id,
         limit: SEARCH_LIMIT,
@@ -86,71 +102,55 @@ async function searchRooms(query: string): Promise<SaleCatalogHit[]> {
     }),
   );
 
-  if (!query) {
-    return hits.slice(0, SEARCH_LIMIT);
-  }
-
-  if (hits.length < SEARCH_LIMIT) {
-    const extraRooms = await client.listRooms({ limit: 50 });
-    for (const room of extraRooms.data) {
-      if (hits.length >= SEARCH_LIMIT) break;
-      if (hits.some((h) => h.kind === 'room' && h.room.id === room.id)) continue;
-
-      let propertyName = propertyMap.get(room.propertyId)?.name;
-      if (!propertyName) {
-        try {
-          const property = await client.getProperty(room.propertyId);
-          propertyName = property.name;
-          propertyMap.set(property.id, property);
-        } catch {
-          propertyName = 'Hébergement';
-        }
-      }
-
-      const label = `${propertyName} — ${room.name}`;
-      if (!matchesQuery(label, query) && !matchesQuery(room.name, query)) continue;
-
-      hits.push({
-        hitId: `room-${room.id}`,
-        kind: 'room',
-        room,
-        propertyName,
-        title: room.name,
-        subtitle: `${propertyName} · ${formatCents(room.basePriceCents, room.currency)} / nuit`,
-        priceCents: room.basePriceCents,
-        currency: room.currency,
-      });
-    }
-  }
-
   return hits.slice(0, SEARCH_LIMIT);
 }
 
 async function searchFlightClasses(query: string): Promise<SaleCatalogHit[]> {
+  const organizationId = requireSelectedOrganizationId();
   const client = await getValidApiClient();
-  const flightsResponse = await client.listFlights({
-    search: query || undefined,
-    limit: SEARCH_LIMIT,
-  });
-
-  const hits: SaleCatalogHit[] = [];
   const flightById = new Map<string, Flight>();
 
-  for (const flight of flightsResponse.data) {
+  const primary = await client.listFlights({
+    search: query || undefined,
+    limit: SEARCH_LIMIT,
+    organizationId,
+  });
+  for (const flight of primary.data) {
     flightById.set(flight.id, flight);
+  }
+
+  // Recherche par nom de classe : élargir via vols org-scopés (pas listFlightClasses global).
+  if (query && flightById.size < SEARCH_LIMIT) {
+    const broader = await client.listFlights({
+      limit: BROAD_PARENT_LIMIT,
+      organizationId,
+    });
+    for (const flight of broader.data) {
+      flightById.set(flight.id, flight);
+    }
+  }
+
+  const hits: SaleCatalogHit[] = [];
+
+  for (const flight of Array.from(flightById.values())) {
+    if (hits.length >= SEARCH_LIMIT) break;
     const classes = await client.listFlightClasses({
       flightId: flight.id,
       limit: 10,
     });
     for (const flightClass of classes.data) {
-      const flightLabel = `${flight.flightNumber}`;
+      if (hits.length >= SEARCH_LIMIT) break;
+      const label = `${flight.flightNumber} ${flightClass.className}`;
+      if (query && !matchesQuery(label, query) && !matchesQuery(flightClass.className, query)) {
+        continue;
+      }
       hits.push({
         hitId: `flight_class-${flightClass.id}`,
         kind: 'flight_class',
         flightClass,
         flight,
-        flightLabel,
-        title: `${flightLabel} · ${flightClass.className}`,
+        flightLabel: flight.flightNumber,
+        title: `${flight.flightNumber} · ${flightClass.className}`,
         subtitle: `À partir de ${formatCents(flightClass.basePriceCents, 'USD')}`,
         priceCents: flightClass.basePriceCents,
         currency: 'USD',
@@ -158,51 +158,16 @@ async function searchFlightClasses(query: string): Promise<SaleCatalogHit[]> {
     }
   }
 
-  if (hits.length >= SEARCH_LIMIT) {
-    return hits.slice(0, SEARCH_LIMIT);
-  }
-
-  const allClasses = await client.listFlightClasses({ limit: 40 });
-  for (const flightClass of allClasses.data) {
-    if (hits.length >= SEARCH_LIMIT) break;
-    if (hits.some((h) => h.kind === 'flight_class' && h.flightClass.id === flightClass.id)) {
-      continue;
-    }
-
-    let flight = flightById.get(flightClass.flightId) ?? null;
-    if (!flight) {
-      try {
-        flight = await client.getFlight(flightClass.flightId);
-        flightById.set(flight.id, flight);
-      } catch {
-        continue;
-      }
-    }
-
-    const label = `${flight.flightNumber} ${flightClass.className}`;
-    if (query && !matchesQuery(label, query)) continue;
-
-    hits.push({
-      hitId: `flight_class-${flightClass.id}`,
-      kind: 'flight_class',
-      flightClass,
-      flight,
-      flightLabel: flight.flightNumber,
-      title: `${flight.flightNumber} · ${flightClass.className}`,
-      subtitle: `À partir de ${formatCents(flightClass.basePriceCents, 'USD')}`,
-      priceCents: flightClass.basePriceCents,
-      currency: 'USD',
-    });
-  }
-
   return hits.slice(0, SEARCH_LIMIT);
 }
 
 async function searchVehicles(query: string): Promise<SaleCatalogHit[]> {
+  const organizationId = requireSelectedOrganizationId();
   const client = await getValidApiClient();
   const response = await client.listVehicles({
     search: query || undefined,
     limit: SEARCH_LIMIT,
+    organizationId,
   });
 
   return response.data.map((vehicle: Vehicle) => ({
@@ -217,8 +182,12 @@ async function searchVehicles(query: string): Promise<SaleCatalogHit[]> {
 }
 
 async function searchCabins(query: string): Promise<SaleCatalogHit[]> {
+  const organizationId = requireSelectedOrganizationId();
   const client = await getValidApiClient();
-  const response = await client.listCabins({ limit: 50 });
+  const response = await client.listCabins({
+    limit: BROAD_PARENT_LIMIT,
+    organizationId,
+  });
 
   const filtered = response.data.filter((cabin: Cabin) => {
     if (!query) return true;

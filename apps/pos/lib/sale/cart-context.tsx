@@ -17,6 +17,7 @@ import {
 } from 'react';
 import { posSalePageConfig } from '../../config/sale';
 import { getValidApiClient } from '../auth/api';
+import { requireSelectedOrganizationId } from '../auth/session';
 import type { SaleCartLine } from './types';
 
 const PREVIEW_DEBOUNCE_MS = 400;
@@ -99,7 +100,12 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
       setPreviewError(null);
 
       void getValidApiClient()
-        .then((client) => client.previewBookingCheckout({ items }))
+        .then((client) =>
+          client.previewBookingCheckout({
+            items,
+            organizationId: requireSelectedOrganizationId(),
+          }),
+        )
         .then((result) => {
           if (cancelled) return;
           setPreview(result);

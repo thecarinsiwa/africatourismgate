@@ -67,6 +67,9 @@ export class Flights extends BaseAuditEntity {
   @Column({ type: 'int', name: 'duration_minutes' })
   durationMinutes!: number;
 
+  @Column({ type: 'varchar', name: 'organization_id', length: 36, nullable: true })
+  organizationId!: string | null;
+
 }
 
 @Entity('flight_classes')
