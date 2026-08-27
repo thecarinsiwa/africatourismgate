@@ -4,7 +4,7 @@ export const posSalePageConfig = {
   backToHomeLabel: 'Retour à l’accueil',
   search: {
     label: 'Rechercher',
-    placeholder: 'Nom d’activité, chambre, vol, véhicule…',
+    placeholder: 'Nom d’activité, chambre, vol, forfait…',
     catalogTitle: 'Catalogue',
     resultsTitle: 'Résultats',
     hint: 'Aucun produit disponible pour le moment.',
@@ -24,6 +24,7 @@ export const posSalePageConfig = {
     flight_class: 'Vol',
     vehicle: 'Véhicule',
     cabin: 'Croisière',
+    package: 'Forfait',
   },
   cart: {
     title: 'Panier',
@@ -82,6 +83,11 @@ export const posSalePageConfig = {
     selectSchedule: 'Choisissez un créneau',
     selectSlot: 'Choisissez un créneau',
     selectSailing: 'Choisissez une croisière',
+    departureDateLabel: 'Date de départ',
+    packageEndDateLabel: 'Date de fin',
+    travelersLabel: 'Voyageurs',
+    packageDurationHint: (days: number) =>
+      days === 1 ? '1 jour' : `${days} jours`,
   },
   payment: {
     cashLabel: 'Espèces',
