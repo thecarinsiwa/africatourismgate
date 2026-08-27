@@ -92,7 +92,7 @@ Employé → apps/pos (login JWT + cookies)
 | Historique ventes du jour | ❌ | Bouton « Bientôt disponible » (`config/home.ts`) |
 | Forfaits (`packageId`) au POS | ❌ | Absents du catalogue caisse |
 | Codes promo / promotions | ❌ | Non branchés dans le panier POS |
-| Client nominatif (`customerUserId`) | ❌ | API prête ; UI POS n’envoie jamais le champ |
+| Client nominatif (`customerUserId`) | ✅ | Sheet Client + passage ; `createBooking` envoie `customerUserId` si sélectionné |
 | Filtre catalogue par organisation | ✅ | Listes + preview/create avec `organizationId` ; `NULL` = partagé |
 | Bookings orphelins `pending_payment` | ✅ | Cancel client POS (échec cash/intent, fermeture sheet, bouton succès) ; pas de cron TTL (risque web) |
 | Tests unit/e2e dans `apps/pos` | ❌ | Aucun Playwright POS |
@@ -112,7 +112,7 @@ Employé → apps/pos (login JWT + cookies)
 |----|----------|--------|----------|
 | D1 | Bookings `pending_payment` orphelins si cash/Stripe échoue après création | Stock bloqué, panier « fantôme » | ✅ POS-2 |
 | D2 | Catalogue non scopé à l’org sélectionnée | Multi-tenant incorrect / fuite de produits | ✅ POS-3 |
-| D3 | Booking souvent au nom de l’employé (pas de client) | Ownership, emails, historique client faux | POS-4 |
+| D3 | Booking souvent au nom de l’employé (pas de client) | Ownership, emails, historique client faux | ✅ POS-4 |
 | D4 | Aucun test POS + hors CI | Régressions silencieuses | ✅ POS-1 (CI) ; E2E → POS-10 |
 | D5 | Doc roadmap globale obsolète sur les reçus | Mauvaises priorités | ✅ POS-0 |
 
@@ -137,7 +137,7 @@ Employé → apps/pos (login JWT + cookies)
 | POS-1 | A | CI — build + lint `apps/pos` | Haute | `chore/ci-pos` | — |
 | POS-2 | A | Annulation / cleanup bookings abandonnés | Haute | `fix/pos-orphan-bookings` | — |
 | POS-3 | A | Catalogue filtré par organisation sélectionnée | Haute | `fix/pos-org-catalog-scope` ✅ | — |
-| POS-4 | B | Sélecteur client (`customerUserId`) | Haute | `feature/pos-customer-select` | — |
+| POS-4 | B | Sélecteur client (`customerUserId`) | Haute | `feature/pos-customer-select` ✅ | — |
 | POS-5 | B | Historique ventes du jour | Haute | `feature/pos-sales-history` | POS-3 |
 | POS-6 | B | Codes promo / remises au panier POS | Moyenne | `feature/pos-promo-codes` | — |
 | POS-7 | B | Forfaits (`packageId`) au POS | Moyenne | `feature/pos-packages` | — |
@@ -298,9 +298,11 @@ Critères : avec 2 orgs seed, la caisse org A ne voit pas les produits exclusifs
 
 ---
 
-### POS-4 — Sélecteur client
+### POS-4 — Sélecteur client (livré)
 
-**Branche :** `feature/pos-customer-select`
+**Statut :** ✅ — barre + sheet Client (passage / recherche `listUsers` audience=client) ; `createBookingFromCart` envoie `customerUserId` ; labels `customer.*` dans `config/sale.ts`.
+
+**Branche historique :** `feature/pos-customer-select`
 
 ```
 Projet : Africa Tourism Gate (pnpm monorepo).
@@ -321,6 +323,12 @@ Critères : booking créé visible côté admin avec le bon user ; emails confir
 
 À la fin : fichiers + test cash avec client sélectionné.
 ```
+
+**Test manuel cash + client :**
+1. POS login (compte avec `users.read` + `bookings.write`) → Nouvelle vente
+2. Client de passage → ajouter produit → Espèces → admin : `userId` = employé
+3. Changer → rechercher un user rôle customer → sélectionner → Espèces → admin : `userId` = client ; email confirmation au client si SMTP OK
+4. Après succès, panier vidé → client revient à « Client de passage »
 
 ---
 
@@ -582,7 +590,7 @@ Script API complémentaire : `pnpm test:pos-sale-cash`
 - [x] POS-1 CI POS
 - [x] POS-2 Orphelins / abandon paiement
 - [x] POS-3 Scope org catalogue
-- [ ] POS-4 Client nominatif
+- [x] POS-4 Client nominatif
 - [ ] POS-5 Historique du jour
 - [ ] POS-6 Promos
 - [ ] POS-7 Forfaits
