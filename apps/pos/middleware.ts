@@ -18,6 +18,7 @@ const SELECT_ORG_PATH = '/select-org';
 const HOME_PATH = '/';
 const SALE_PATH = '/sale';
 const SALE_SUCCESS_PATH = '/sale/success';
+const HISTORY_PATH = '/history';
 
 function isLoginPath(pathname: string): boolean {
   return pathname === LOGIN_PATH;
@@ -30,6 +31,7 @@ function isSelectOrgPath(pathname: string): boolean {
 function isProtectedPosPath(pathname: string): boolean {
   return (
     pathname === HOME_PATH ||
+    pathname === HISTORY_PATH ||
     pathname === SALE_PATH ||
     pathname === SALE_SUCCESS_PATH ||
     pathname.startsWith(`${SALE_PATH}/`)
@@ -143,5 +145,5 @@ export async function middleware(request: NextRequest) {
 
 /** Tableau littéral requis par Next.js pour l’analyse statique du matcher. */
 export const config = {
-  matcher: ['/login', '/select-org', '/', '/sale', '/sale/success'],
+  matcher: ['/login', '/select-org', '/', '/history', '/sale', '/sale/success'],
 };

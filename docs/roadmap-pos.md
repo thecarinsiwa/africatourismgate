@@ -138,7 +138,7 @@ Employé → apps/pos (login JWT + cookies)
 | POS-2 | A | Annulation / cleanup bookings abandonnés | Haute | `fix/pos-orphan-bookings` | — |
 | POS-3 | A | Catalogue filtré par organisation sélectionnée | Haute | `fix/pos-org-catalog-scope` ✅ | — |
 | POS-4 | B | Sélecteur client (`customerUserId`) | Haute | `feature/pos-customer-select` ✅ | — |
-| POS-5 | B | Historique ventes du jour | Haute | `feature/pos-sales-history` | POS-3 |
+| POS-5 | B | Historique ventes du jour | Haute | `feature/pos-sales-history` ✅ | POS-3 |
 | POS-6 | B | Codes promo / remises au panier POS | Moyenne | `feature/pos-promo-codes` | — |
 | POS-7 | B | Forfaits (`packageId`) au POS | Moyenne | `feature/pos-packages` | — |
 | POS-8 | C | Email reçu transactionnel (serveur) | Moyenne | `feature/pos-receipt-email` | 79 (SMTP) |
@@ -591,7 +591,7 @@ Script API complémentaire : `pnpm test:pos-sale-cash`
 - [x] POS-2 Orphelins / abandon paiement
 - [x] POS-3 Scope org catalogue
 - [x] POS-4 Client nominatif
-- [ ] POS-5 Historique du jour
+- [x] POS-5 Historique du jour
 - [ ] POS-6 Promos
 - [ ] POS-7 Forfaits
 - [ ] POS-8 Email reçu

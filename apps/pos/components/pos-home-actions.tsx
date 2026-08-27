@@ -81,23 +81,23 @@ export function PosHomeActions() {
           <span className="mt-0.5 text-xs text-atg-muted">{actions.sale.description}</span>
         </Link>
 
-        <button
-          type="button"
-          disabled
+        <Link
+          href="/history"
           className={cn(
             'flex flex-col items-center justify-center rounded-xl border border-atg-border bg-atg-surface/50 p-5',
-            'cursor-not-allowed text-center opacity-60',
+            'text-center transition-colors hover:border-primary/30 hover:bg-atg-surface',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
           )}
         >
           <span
-            className="flex h-12 w-12 items-center justify-center rounded-xl bg-atg-surface text-atg-muted"
+            className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary"
             aria-hidden
           >
             <HistoryIcon />
           </span>
           <span className="mt-3 text-sm font-semibold text-atg-fg">{actions.history.label}</span>
-          <span className="mt-0.5 text-xs text-atg-muted">{actions.history.comingSoon}</span>
-        </button>
+          <span className="mt-0.5 text-xs text-atg-muted">{actions.history.description}</span>
+        </Link>
 
         <button
           type="button"

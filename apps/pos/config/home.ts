@@ -17,7 +17,6 @@ export const posHomeConfig = {
     history: {
       label: 'Historique',
       description: 'Ventes du jour',
-      comingSoon: 'Bientôt disponible',
     },
     changeOrg: {
       label: 'Changer d’établissement',
