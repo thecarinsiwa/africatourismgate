@@ -135,10 +135,13 @@ export function AccountBookingDetail({
     detail;
   const d = t.account.reservations.detail;
   const isAssisted = assisted;
+  const prefersCash = booking.preferredPaymentMethod === 'cash';
   const canProceedToPayment =
-    booking.status === 'pending_payment' && Boolean(paymentInvited);
-  const canPayImmediate = booking.status === 'pending_payment' && !isAssisted;
+    booking.status === 'pending_payment' && Boolean(paymentInvited) && !prefersCash;
+  const canPayImmediate =
+    booking.status === 'pending_payment' && !isAssisted && !prefersCash;
   const showPayActions = canProceedToPayment || canPayImmediate;
+  const showCashPending = booking.status === 'pending_payment' && prefersCash;
   const canCancel =
     booking.status === 'pending_payment' || booking.status === 'confirmed';
   const canReplyToMessages =
@@ -230,9 +233,15 @@ export function AccountBookingDetail({
         bookingStatus={booking.status}
       />
 
-      {(showPayActions || canCancel || (isAssisted && booking.status === 'pending_payment')) && (
+      {(showPayActions ||
+        showCashPending ||
+        canCancel ||
+        (isAssisted && booking.status === 'pending_payment' && !prefersCash)) && (
         <div className="flex flex-wrap gap-3 rounded-lg border border-atg-border bg-atg-surface p-4 dark:border-atg-border dark:bg-white/5">
           <p className="w-full text-sm font-medium text-atg-fg">{d.actions}</p>
+          {showCashPending ? (
+            <p className="w-full text-sm text-atg-muted">{d.cashPaymentPending}</p>
+          ) : null}
           {canProceedToPayment ? (
             <Button type="button" onClick={() => void handlePay()} disabled={paying}>
               {paying ? d.paying : d.proceedToPayment}
@@ -243,7 +252,10 @@ export function AccountBookingDetail({
               {paying ? d.paying : d.payNow}
             </Button>
           ) : null}
-          {isAssisted && booking.status === 'pending_payment' && !paymentInvited ? (
+          {isAssisted &&
+          booking.status === 'pending_payment' &&
+          !paymentInvited &&
+          !prefersCash ? (
             <p className="w-full text-sm text-atg-muted">{d.paymentInvitePending}</p>
           ) : null}
           {canCancel ? (

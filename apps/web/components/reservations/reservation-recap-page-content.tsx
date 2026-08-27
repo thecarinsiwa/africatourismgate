@@ -1,6 +1,6 @@
 'use client';
 
-import type { PropertyDetail } from '@africatourismgate/types';
+import type { BookingPreferredPaymentMethod, PropertyDetail } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -74,6 +74,8 @@ export function ReservationRecapPageContent({ draft }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [manifestEntries, setManifestEntries] = useState<ManifestEntryDraft[]>([]);
   const [manifestErrors, setManifestErrors] = useState<Record<number, string>>({});
+  const [preferredPaymentMethod, setPreferredPaymentMethod] =
+    useState<BookingPreferredPaymentMethod | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -265,6 +267,10 @@ export function ReservationRecapPageContent({ draft }: Props) {
 
   async function handleCheckout() {
     if (!draft) return;
+    if (!preferredPaymentMethod) {
+      setError(ck.paymentMethodRequired);
+      return;
+    }
     const accessToken = await ensureClientAccessToken();
     if (!accessToken) {
       setError(ck.stripeError.authDescription);
@@ -288,7 +294,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
     setSubmitting(true);
     setError(null);
     try {
-      const payload = buildCheckoutRequest(draft);
+      const payload = buildCheckoutRequest(draft, preferredPaymentMethod);
       if (isAssisted) {
         const response = await requestBooking(accessToken, payload);
 
@@ -327,6 +333,14 @@ export function ReservationRecapPageContent({ draft }: Props) {
         router.push(`/booking/verify?${params.toString()}`);
         return;
       }
+
+      if (preferredPaymentMethod === 'cash') {
+        router.push(
+          `/booking/success?booking_id=${booking.booking.id}&payment=cash`,
+        );
+        return;
+      }
+
       const checkout = await createBookingCheckoutSession(accessToken, booking.booking.id);
       window.location.assign(checkout.url);
     } catch (err: unknown) {
@@ -615,6 +629,57 @@ export function ReservationRecapPageContent({ draft }: Props) {
               />
             )}
 
+            {!loading && canPay ? (
+              <fieldset className="space-y-3 rounded-lg border border-atg-border p-4 dark:border-atg-border">
+                <legend className="px-1 text-sm font-semibold text-atg-fg">
+                  {ck.paymentMethodTitle}
+                </legend>
+                <p className="text-sm text-atg-muted">{ck.paymentMethodHint}</p>
+                <label className="flex cursor-pointer gap-3 rounded-lg border border-atg-border p-3 has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:border-atg-border">
+                  <input
+                    type="radio"
+                    name="preferredPaymentMethod"
+                    value="stripe"
+                    checked={preferredPaymentMethod === 'stripe'}
+                    onChange={() => {
+                      setPreferredPaymentMethod('stripe');
+                      setError(null);
+                    }}
+                    className="mt-1"
+                  />
+                  <span>
+                    <span className="block text-sm font-medium text-atg-fg">
+                      {ck.paymentMethodStripe}
+                    </span>
+                    <span className="block text-xs text-atg-muted">
+                      {ck.paymentMethodStripeHint}
+                    </span>
+                  </span>
+                </label>
+                <label className="flex cursor-pointer gap-3 rounded-lg border border-atg-border p-3 has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:border-atg-border">
+                  <input
+                    type="radio"
+                    name="preferredPaymentMethod"
+                    value="cash"
+                    checked={preferredPaymentMethod === 'cash'}
+                    onChange={() => {
+                      setPreferredPaymentMethod('cash');
+                      setError(null);
+                    }}
+                    className="mt-1"
+                  />
+                  <span>
+                    <span className="block text-sm font-medium text-atg-fg">
+                      {ck.paymentMethodCash}
+                    </span>
+                    <span className="block text-xs text-atg-muted">
+                      {ck.paymentMethodCashHint}
+                    </span>
+                  </span>
+                </label>
+              </fieldset>
+            ) : null}
+
             {!hasToken && (
               <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:bg-amber-500/10 dark:text-amber-300">
                 {isAssisted ? ck.authRequiredRequest : ck.authRequiredPayment}
@@ -638,16 +703,20 @@ export function ReservationRecapPageContent({ draft }: Props) {
               <button
                 type="button"
                 onClick={() => void handleCheckout()}
-                disabled={submitting || !canPay}
+                disabled={submitting || !canPay || !preferredPaymentMethod}
                 className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-white hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {submitting
                   ? isAssisted
                     ? ck.requestSubmitting
-                    : ck.stripeRedirecting
+                    : preferredPaymentMethod === 'cash'
+                      ? ck.cashSubmitting
+                      : ck.stripeRedirecting
                   : isAssisted
                     ? ck.requestBooking
-                    : ck.payWithStripe}
+                    : preferredPaymentMethod === 'cash'
+                      ? ck.payWithCash
+                      : ck.payWithStripe}
               </button>
             </div>
           </div>

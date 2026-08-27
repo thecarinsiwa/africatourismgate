@@ -3,11 +3,11 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { verifyOperation } from '../../lib/api/auth';
+import { createBookingCheckoutSession, getBooking } from '../../lib/api/booking';
 import { getAuthErrorMessage } from '../../lib/auth/api-errors';
 import { completeWebLoginFromAuthResponse } from '../../lib/auth/complete-web-login';
 import { stripDevOriginFromNextPath } from '../../lib/auth/dev-oauth-return';
 import { useDevOAuthReturnRedirect } from '../../lib/auth/use-dev-oauth-return-redirect';
-import { createBookingCheckoutSession } from '../../lib/api/booking';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 
@@ -76,6 +76,14 @@ export function BookingVerifyPageContent() {
       const resolvedBookingId = response.bookingId ?? bookingId;
 
       if (resolvedBookingId) {
+        const detail = await getBooking(response.accessToken, resolvedBookingId);
+        if (detail.booking.preferredPaymentMethod === 'cash') {
+          router.push(
+            `/booking/success?booking_id=${resolvedBookingId}&payment=cash`,
+          );
+          return;
+        }
+
         const checkout = await createBookingCheckoutSession(
           response.accessToken,
           resolvedBookingId,
