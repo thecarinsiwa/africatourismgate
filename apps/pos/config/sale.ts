@@ -36,6 +36,7 @@ export const posSalePageConfig = {
     clearLabel: 'Vider le panier',
     subtotalLabel: 'Sous-total',
     discountLabel: 'Remise',
+    packageDiscountLabel: 'Remise forfait',
     totalLabel: 'Total',
     previewLoadingLabel: 'Calcul du total…',
     previewErrorLabel: 'Impossible de calculer le total',

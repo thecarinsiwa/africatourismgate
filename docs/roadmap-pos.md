@@ -90,7 +90,7 @@ Employé → apps/pos (login JWT + cookies)
 | « PDF » via dialogue d’impression | ✅ | Pas de PDF serveur natif |
 | Email reçu | ⚠️ | `mailto:` local seulement (pas d’email transactionnel serveur) |
 | Historique ventes du jour | ❌ | Bouton « Bientôt disponible » (`config/home.ts`) |
-| Forfaits (`packageId`) au POS | ❌ | Absents du catalogue caisse |
+| Forfaits (`packageId`) au POS | ✅ | Catalogue forfait + checkout assisté request/approve |
 | Codes promo / promotions | ✅ | `SalePromoBar` + seed `POSWELCOME10` |
 | Client nominatif (`customerUserId`) | ✅ | Sheet Client + passage ; `createBooking` envoie `customerUserId` si sélectionné |
 | Filtre catalogue par organisation | ✅ | Listes + preview/create avec `organizationId` ; `NULL` = partagé |
@@ -140,7 +140,7 @@ Employé → apps/pos (login JWT + cookies)
 | POS-4 | B | Sélecteur client (`customerUserId`) | Haute | `feature/pos-customer-select` ✅ | — |
 | POS-5 | B | Historique ventes du jour | Haute | `feature/pos-sales-history` ✅ | POS-3 |
 | POS-6 | B | Codes promo / remises au panier POS | Moyenne | `feature/pos-promo-codes` ✅ | — |
-| POS-7 | B | Forfaits (`packageId`) au POS | Moyenne | `feature/pos-packages` | — |
+| POS-7 | B | Forfaits (`packageId`) au POS | Moyenne | `feature/pos-packages` ✅ | — |
 | POS-8 | C | Email reçu transactionnel (serveur) | Moyenne | `feature/pos-receipt-email` | 79 (SMTP) |
 | POS-9 | C | PDF reçu natif (serveur ou lib) | Basse | `feature/pos-receipt-pdf` | — |
 | POS-10 | D | Tests E2E Playwright POS | Haute | `feature/pos-e2e-playwright` | POS-1 |
@@ -593,7 +593,7 @@ Script API complémentaire : `pnpm test:pos-sale-cash`
 - [x] POS-4 Client nominatif
 - [x] POS-5 Historique du jour
 - [x] POS-6 Promos
-- [ ] POS-7 Forfaits
+- [x] POS-7 Forfaits
 - [ ] POS-8 Email reçu
 - [ ] POS-9 PDF natif
 - [ ] POS-10 E2E Playwright

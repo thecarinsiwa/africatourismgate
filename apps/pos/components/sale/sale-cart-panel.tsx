@@ -29,6 +29,7 @@ export function SaleCartPanel() {
     preview,
     previewLoading,
     previewError,
+    cartAddError,
     removeLine,
     clearCart,
   } = useSaleCart();
@@ -140,6 +141,12 @@ export function SaleCartPanel() {
                   </p>
                 ) : null}
 
+                {cartAddError ? (
+                  <p role="alert" className="text-sm text-amber-800 dark:text-amber-300">
+                    {cartAddError}
+                  </p>
+                ) : null}
+
                 {preview && currency ? (
                   <dl className="space-y-2 text-sm">
                     <div className="flex justify-between gap-2">
@@ -148,11 +155,27 @@ export function SaleCartPanel() {
                         {formatCents(preview.subtotalCents, currency)}
                       </dd>
                     </div>
-                    {preview.discountCents > 0 ? (
+                    {preview.packageDiscountCents > 0 ? (
                       <div className="flex justify-between gap-2">
                         <dt className="text-atg-muted">
-                          {preview.appliedDiscount?.label ?? cartLabels.discountLabel}
+                          {preview.appliedPackageDiscount?.name ??
+                            cartLabels.packageDiscountLabel}
                         </dt>
+                        <dd className="font-medium text-green-700 dark:text-green-400">
+                          −{formatCents(preview.packageDiscountCents, currency)}
+                        </dd>
+                      </div>
+                    ) : null}
+                    {preview.appliedDiscount ? (
+                      <div className="flex justify-between gap-2">
+                        <dt className="text-atg-muted">{preview.appliedDiscount.label}</dt>
+                        <dd className="font-medium text-green-700 dark:text-green-400">
+                          −{formatCents(preview.appliedDiscount.discountCents, currency)}
+                        </dd>
+                      </div>
+                    ) : preview.discountCents > 0 && preview.packageDiscountCents === 0 ? (
+                      <div className="flex justify-between gap-2">
+                        <dt className="text-atg-muted">{cartLabels.discountLabel}</dt>
                         <dd className="font-medium text-green-700 dark:text-green-400">
                           −{formatCents(preview.discountCents, currency)}
                         </dd>
@@ -168,7 +191,7 @@ export function SaleCartPanel() {
                 ) : null}
               </div>
 
-              {lineCount > 1 ? (
+              {lineCount > 0 ? (
                 <Button
                   type="button"
                   variant="ghost"
