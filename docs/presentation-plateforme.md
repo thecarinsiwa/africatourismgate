@@ -200,7 +200,7 @@ Interface de gestion opérationnelle complète pour le staff.
 - Authentification employé + sélection d'organisation
 - Vente rapide multi-produits (toutes les verticales)
 - Paiement espèces ou Stripe
-- Reçu imprimable / export PDF
+- Reçu HTML imprimable + mailto ; PDF via dialogue d’impression navigateur
 
 ---
 

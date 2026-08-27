@@ -68,7 +68,7 @@ Règles :
 | Site web — avis, support, fidélité | ✅ | Tests Playwright présents |
 | Site web — vols / voitures / croisières / tours | ❌ | Onglets UI présents mais **toutes les recherches redirigent vers `/hotels`** |
 | POS — shell, auth, vente rapide | ✅ | Cash + Stripe, multi-types produits |
-| POS — reçus / impression | ❌ | Page succès seulement |
+| POS — reçus / impression | ✅ | HTML + print + mailto (PDF via dialogue impression) ; finitions → [roadmap-pos.md](./roadmap-pos.md) |
 | Tests Playwright web | ✅ | 7 specs dans `apps/web/tests/e2e/` |
 | Tests API e2e | ❌ | Aucun spec Jest/supertest |
 | Tests Playwright admin | ❌ | — |
@@ -101,7 +101,7 @@ Les livrables du document v1 sont **essentiellement réalisés**. Exceptions not
 | 27–33 | Booking + Stripe + promo + refunds | ✅ |
 | 34–41 | Site public | ⚠️ Hôtels OK ; autres verticales manquantes (#67–72) |
 | 42–43 | POS shell + vente | ✅ |
-| 44 | Reçus POS | ❌ → #73 |
+| 44 | Reçus POS | ✅ (HTML + print + mailto) ; finitions → [roadmap-pos.md](./roadmap-pos.md) |
 | 45–47 | Tests API + CI | ❌ → #75–77 |
 | 48 | Observabilité | ⚠️ → #78 |
 | 49 | i18n FR/EN/ES | ⚠️ Web OK (FR/EN/ES), admin FR/EN manquant → #80 |
@@ -118,7 +118,7 @@ Les livrables du document v1 sont **essentiellement réalisés**. Exceptions not
 | **7** | Admin — sections placeholder → CRUD complet |
 | **8** | API publique & site web — verticales au-delà des hôtels |
 | **9** | Sécurité — RBAC étendu & multi-tenant |
-| **10** | POS — reçus & finitions |
+| **10** | POS — finitions (voir [roadmap-pos.md](./roadmap-pos.md)) |
 | **11** | Qualité — tests & CI |
 | **12** | Emails & notifications transactionnelles |
 | **13** | i18n admin & polish UX |
@@ -150,7 +150,7 @@ Les livrables du document v1 sont **essentiellement réalisés**. Exceptions not
 | 70 | 8 | Web — Activités / tours | Moyenne | `feature/web-activities` | 66 |
 | 71 | 8 | Web — Forfaits combinés | Moyenne | `feature/web-packages` | 67, 34 |
 | 72 | 8 | Web — Onglets recherche → routes dédiées | Haute | `feature/web-search-tabs-routing` | 67–70 |
-| 73 | 10 | POS — Reçus imprimables | Moyenne | `feature/pos-receipts` | — |
+| 73 | 10 | POS — Reçus imprimables (base ✅) ; suite → [roadmap-pos.md](./roadmap-pos.md) | — | — | — |
 | 74 | 9 | Upload images propriétés (API + admin) | Moyenne | `feature/property-image-upload` | — |
 | 75 | 11 | Tests API e2e (Jest + supertest) | Haute | `feature/api-e2e-tests` | — |
 | 76 | 11 | Tests E2E admin (Playwright) | Moyenne | `feature/admin-e2e-playwright` | — |
@@ -172,7 +172,7 @@ Objectif : **plateforme multi-verticales en production** avec admin complet et p
 |----------|-----------|
 | **Critique** | 53, 62, 63–64, 67–68, 72, 75, 77, 79, 82 |
 | **Haute** | 54, 65–66, 69–70, 78, 83 |
-| **Moyenne** | 55–58, 73–74, 76, 80 |
+| **Moyenne** | 55–58, 74, 76, 80 |
 | **Basse** | 59–61, 71, 81 |
 
 ### Ordre d'exécution recommandé
@@ -631,26 +631,11 @@ Critères : chaque onglet mène à la bonne route ; params conservés.
 À la fin : fichiers modifiés + test chaque onglet.
 ```
 
-### #73 — POS — Reçus imprimables
+### #73 — POS — Reçus imprimables (livré)
 
-**Branche :** `feature/pos-receipts`
+**Statut :** ✅ base livrée — reçu HTML, `window.print`, « PDF » via dialogue d’impression, email via `mailto:`.
 
-```
-Projet : Africa Tourism Gate (pnpm monorepo).
-Branche : crée et bascule sur `feature/pos-receipts`.
-
-Livrable #73 : POS — Reçus imprimables
-Références : apps/pos/app/(pos)/sale/success/page.tsx, organization branding API.
-
-Après vente réussie :
-- Composant reçu HTML (logo org, lignes, taxes, total, mode paiement, n° booking)
-- Boutons Imprimer (window.print + @media print) et Télécharger PDF (optionnel : html2canvas ou API)
-- Styles print-friendly
-
-Critères : impression navigateur OK sur Chrome ; branding org si configuré.
-
-À la fin : fichiers modifiés + test pnpm dev:pos.
-```
+**Suite :** finitions POS (historique, email serveur, PDF natif, CI, etc.) dans [roadmap-pos.md](./roadmap-pos.md) (livrables POS-1+). Ne pas rouvrir `feature/pos-receipts`.
 
 ### #74 — Upload images propriétés
 
