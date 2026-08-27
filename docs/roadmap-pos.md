@@ -96,7 +96,7 @@ Employé → apps/pos (login JWT + cookies)
 | Filtre catalogue par organisation | ⚠️ | Org = branding ; listes CRUD sans `organizationId` explicite |
 | Bookings orphelins `pending_payment` | ⚠️ | Si paiement abandonné après `POST /bookings` |
 | Tests unit/e2e dans `apps/pos` | ❌ | Aucun Playwright POS |
-| CI GitHub Actions | ❌ | `apps/pos` hors pipeline |
+| CI GitHub Actions | ✅ | Job `pos` (lint + build) ; E2E POS → POS-10 |
 | Déploiement prod | ⚠️ | Optionnel (`ATG_ENABLE_POS=1`, `pos.africatourismgate.org`) |
 | Mode offline | ❌ | Hors scope (réseau API requis) |
 
@@ -113,7 +113,7 @@ Employé → apps/pos (login JWT + cookies)
 | D1 | Bookings `pending_payment` orphelins si cash/Stripe échoue après création | Stock bloqué, panier « fantôme » | POS-2 |
 | D2 | Catalogue non scopé à l’org sélectionnée | Multi-tenant incorrect / fuite de produits | POS-3 |
 | D3 | Booking souvent au nom de l’employé (pas de client) | Ownership, emails, historique client faux | POS-4 |
-| D4 | Aucun test POS + hors CI | Régressions silencieuses | POS-1, POS-10 |
+| D4 | Aucun test POS + hors CI | Régressions silencieuses | ✅ POS-1 (CI) ; E2E → POS-10 |
 | D5 | Doc roadmap globale obsolète sur les reçus | Mauvaises priorités | ✅ POS-0 |
 
 ---
@@ -556,7 +556,7 @@ Script API complémentaire : `pnpm test:pos-sale-cash`
 | Document | Lien POS |
 |----------|----------|
 | [roadmap-development.md](./roadmap-development.md) | Historique #42–44, #73 → ce fichier |
-| [presentation-plateforme.md](./presentation-plateforme.md) | Statut ~85 %, CI POS manquante |
+| [presentation-plateforme.md](./presentation-plateforme.md) | Statut ~85 % ; CI POS lint/build OK |
 | Emails / SMTP (#79) | Prérequis POS-8 |
 | Admin cash-payment | Même endpoint ; cohérence statut bookings |
 
@@ -565,7 +565,7 @@ Script API complémentaire : `pnpm test:pos-sale-cash`
 ## Suivi (cocher au merge)
 
 - [x] POS-0 Doc alignée
-- [ ] POS-1 CI POS
+- [x] POS-1 CI POS
 - [ ] POS-2 Orphelins / abandon paiement
 - [ ] POS-3 Scope org catalogue
 - [ ] POS-4 Client nominatif

@@ -77,3 +77,31 @@ jobs:
 
       - name: API e2e tests
         run: pnpm --filter @africatourismgate/api test:e2e
+
+  pos:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_API_URL: http://localhost:3000/api
+      NEXT_PUBLIC_POS_URL: http://localhost:3003
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared packages
+        run: pnpm --filter @africatourismgate/types build
+
+      - name: Lint POS
+        run: pnpm --filter @africatourismgate/pos lint
+
+      - name: Build POS
+        run: pnpm --filter @africatourismgate/pos build

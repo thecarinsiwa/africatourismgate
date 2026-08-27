@@ -297,7 +297,7 @@ Interface de gestion opérationnelle complète pour le staff.
 
 | Élément | Description |
 |---------|-------------|
-| **CI POS & GAP** | Non buildés/testés dans le pipeline GitHub Actions |
+| **CI POS & GAP** | POS : job `pos` (lint + build) ; GAP encore hors CI ; E2E POS → roadmap-pos POS-10 |
 | **Tests E2E admin** | 1 seul spec (i18n) vs 14 pour le web |
 | **Textes résiduels** | Quelques mentions « coming soon » dans les traductions web |
 | **Doc BDD pédagogique** | Fichier annoncé dans le README mais absent du repo |
@@ -339,9 +339,9 @@ Exemples : polish visuel, micro-interactions, accessibilité, responsive, empty 
 | **API & BDD** | ████████████████████░ 95% | Cœur métier complet ; health check & stats à finaliser |
 | **Admin** | ███████████████████░░ 90% | Quasi complet ; messages standalone + perf dashboard |
 | **Site web** | ████████████████████░ 95% | 6 verticales + checkout + compte client opérationnels |
-| **POS** | ██████████████████░░░ 85% | Vente + reçus OK ; CI & déploiement prod optionnel |
+| **POS** | ██████████████████░░░ 85% | Vente + reçus OK ; CI lint/build OK ; E2E & déploiement optionnel |
 | **GAP** | ██████████████████░░░ 85% | Site + admin OK ; déploiement prod optionnel |
-| **Infra & CI** | █████████████████░░░░ 80% | Pipeline principal OK ; POS/GAP hors CI |
+| **Infra & CI** | ██████████████████░░░ 85% | Pipeline principal + job POS ; GAP hors CI |
 | **Tests** | ███████████████░░░░░░ 75% | Web & API solides ; admin à renforcer |
 | **UX / Design polish** | ██████████░░░░░░░░░░░ 50% | Roadmaps UX documentées, PRs en attente |
 
@@ -376,7 +376,7 @@ Exemples : polish visuel, micro-interactions, accessibilité, responsive, empty 
 ### Moyen terme (1 mois)
 
 5. Health check DB + logs structurés
-6. Étendre la CI aux apps POS et GAP
+6. Étendre la CI à GAP ; ajouter les tests E2E POS (roadmap-pos POS-10)
 7. Ajouter des tests E2E admin (login, CRUD, réservations)
 8. Durcissement production (headers sécurité, rate limiting)
 
