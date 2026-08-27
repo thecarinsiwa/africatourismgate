@@ -297,6 +297,16 @@ export interface RecordCashPaymentRequest {
   note?: string;
 }
 
+export interface SendBookingReceiptEmailRequest {
+  to: string;
+}
+
+export interface SendBookingReceiptEmailResponse {
+  sent: boolean;
+  messageId?: string;
+  previewUrl?: string;
+}
+
 export interface RejectBookingRequest {
   reason?: string;
 }

@@ -140,6 +140,8 @@ import type {
   Review,
   CancelBookingRequest,
   RecordCashPaymentRequest,
+  SendBookingReceiptEmailRequest,
+  SendBookingReceiptEmailResponse,
   UpdateBookingStatusRequest,
   CreatePackageImageRequest,
   CreatePackageDescriptionAssetRequest,
@@ -2817,6 +2819,19 @@ export class ApiClient {
       method: 'POST',
       body: body ?? {},
     });
+  }
+
+  sendBookingReceiptEmail(
+    id: string,
+    body: SendBookingReceiptEmailRequest,
+  ): Promise<SendBookingReceiptEmailResponse> {
+    return this.request<SendBookingReceiptEmailResponse>(
+      `/bookings/${id}/receipt-email`,
+      {
+        method: 'POST',
+        body,
+      },
+    );
   }
 
   createBookingPaymentIntent(id: string): Promise<BookingPaymentIntentResponse> {
