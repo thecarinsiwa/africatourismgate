@@ -26,6 +26,7 @@ type SaleCardPaymentSheetProps = {
   open: boolean;
   bookingId: string;
   intent: BookingPaymentIntentResponse;
+  closing?: boolean;
   onClose: () => void;
   onPaid: () => void;
 };
@@ -34,6 +35,7 @@ export function SaleCardPaymentSheet({
   open,
   bookingId,
   intent,
+  closing = false,
   onClose,
   onPaid,
 }: SaleCardPaymentSheetProps) {
@@ -94,9 +96,11 @@ export function SaleCardPaymentSheet({
             size="lg"
             fullWidth
             className="min-h-[3rem]"
+            disabled={closing}
+            loading={closing}
             onClick={onClose}
           >
-            {labels.closeCardLabel}
+            {closing ? labels.closeCardProcessingLabel : labels.closeCardLabel}
           </Button>
         </div>
       </div>

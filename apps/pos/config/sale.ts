@@ -68,9 +68,12 @@ export const posSalePageConfig = {
     cardSheetTitle: 'Paiement par carte',
     cardSheetSubtitle: 'Saisissez ou présentez la carte du client.',
     closeCardLabel: 'Annuler',
+    closeCardProcessingLabel: 'Annulation…',
     cardUnavailableLabel: 'Paiement carte indisponible (clé Stripe manquante)',
     checkoutErrorLabel: 'Impossible de finaliser la vente',
     cardErrorLabel: 'Le paiement carte a échoué',
+    abandonStockReleasedHint: 'La réservation a été annulée et le stock libéré.',
+    cancelAbandonErrorLabel: 'Impossible d’annuler la réservation en attente',
     previewRequiredHint: 'Attendez le calcul du total',
   },
 } as const;
