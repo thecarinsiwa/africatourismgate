@@ -58,6 +58,11 @@ export interface BookingCheckoutRequest {
   customerUserId?: string;
   /** Required on create/request; optional on checkout-preview. */
   preferredPaymentMethod?: BookingPreferredPaymentMethod;
+  /**
+   * POS / staff: scope catalogue.
+   * Each product must be shared (organizationId null) or match this org.
+   */
+  organizationId?: string;
 }
 
 export interface AppliedPackageCheckoutDiscount {

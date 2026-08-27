@@ -7,6 +7,7 @@ import type {
   BookingPreferredPaymentMethod,
 } from '@africatourismgate/types';
 import { getValidApiClient } from '../auth/api';
+import { requireSelectedOrganizationId } from '../auth/session';
 
 /** Motifs d’annulation POS (historique statut API). */
 export const posAbandonCancelReasons = {
@@ -77,6 +78,7 @@ export async function createBookingFromCart(
     items,
     currency: preview.currency,
     preferredPaymentMethod,
+    organizationId: requireSelectedOrganizationId(),
   });
 }
 

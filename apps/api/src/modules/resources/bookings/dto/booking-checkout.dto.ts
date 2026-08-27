@@ -118,4 +118,13 @@ export class BookingCheckoutDto {
   @IsOptional()
   @IsIn(BOOKING_PREFERRED_PAYMENT_METHODS)
   preferredPaymentMethod?: BookingPreferredPaymentMethod;
+
+  @ApiPropertyOptional({
+    format: 'uuid',
+    description:
+      'Organisation de caisse (POS) : chaque produit doit être partagé (NULL) ou appartenir à cette org',
+  })
+  @IsOptional()
+  @IsUUID('4')
+  organizationId?: string;
 }

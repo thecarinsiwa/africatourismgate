@@ -16,6 +16,8 @@ import {
   Cabins,
   FlightClassAvailability,
   FlightClasses,
+  Flights,
+  Properties,
   RoomAvailability,
   Rooms,
   VehicleAvailability,
@@ -23,6 +25,8 @@ import {
   Vehicles,
 } from '../../../entities/generated';
 import { resolveCheckoutBookingMode } from '@africatourismgate/types';
+import { OrgScopeService } from '../../../common/org-scope/org-scope.service';
+import { toAuthUserDto } from '../../auth/dto/auth-user.dto';
 import { EmailService } from '../../email/email.service';
 import { EmailVerificationService } from '../../email-verification/email-verification.service';
 import {
@@ -32,6 +36,7 @@ import {
 } from '../../public/vehicles/vehicle-dates.util';
 import { enumerateDates, addDaysToDateOnly, visitSpanDays } from '../room-availability/room-availability-date.util';
 import { OrganizationSettingsService } from '../organization-settings/organization-settings.service';
+import { PackagesService } from '../packages/packages.service';
 import {
   BookingCheckoutDto,
   BookingCheckoutItemDto,
@@ -91,9 +96,15 @@ export class BookingEngineService {
     private readonly activitySchedulesRepository: Repository<ActivitySchedules>,
     @InjectRepository(Activities)
     private readonly activitiesRepository: Repository<Activities>,
+    @InjectRepository(Properties)
+    private readonly propertiesRepository: Repository<Properties>,
+    @InjectRepository(Flights)
+    private readonly flightsRepository: Repository<Flights>,
     private readonly statusHistory: BookingStatusHistoryService,
     private readonly checkoutPromo: BookingCheckoutPromoService,
     private readonly packageCheckout: BookingPackageCheckoutService,
+    private readonly packagesService: PackagesService,
+    private readonly orgScopeService: OrgScopeService,
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
     private readonly emailService: EmailService,
@@ -103,8 +114,9 @@ export class BookingEngineService {
 
   async previewCheckout(
     dto: BookingCheckoutDto,
-    _userId: string,
+    userId: string,
   ): Promise<BookingCheckoutPreviewResponseDto> {
+    await this.assertCheckoutOrganizationScope(dto, userId);
     const pricing = await this.resolveCheckoutPricing(dto);
     const modes = await this.organizationSettingsService.getResolvedItemTypeModes();
     const bookingMode = resolveCheckoutBookingMode({
@@ -131,6 +143,7 @@ export class BookingEngineService {
     actorUserId?: string,
   ): Promise<CreateBookingResponseDto> {
     this.assertPreferredPaymentMethod(dto);
+    await this.assertCheckoutOrganizationScope(dto, actorUserId ?? userId);
     const pricing = await this.resolveCheckoutPricing(dto);
 
     const bookingId = await this.bookingsRepository.manager.transaction(
@@ -235,6 +248,7 @@ export class BookingEngineService {
     actorUserId?: string,
   ): Promise<BookingRequestResponseDto> {
     this.assertPreferredPaymentMethod(dto);
+    await this.assertCheckoutOrganizationScope(dto, actorUserId ?? userId);
     const pricing = await this.resolveCheckoutPricing(dto);
 
     const bookingId = await this.bookingsRepository.manager.transaction(
@@ -707,6 +721,294 @@ export class BookingEngineService {
       throw new BadRequestException(
         'Le mode de paiement (preferredPaymentMethod) est obligatoire.',
       );
+    }
+  }
+
+  /**
+   * POS : si `organizationId` est fourni, l’acteur doit y accéder et chaque
+   * produit catalogue doit être partagé (NULL) ou appartenir à cette org.
+   */
+  private async assertCheckoutOrganizationScope(
+    dto: BookingCheckoutDto,
+    actorUserId: string,
+  ): Promise<void> {
+    const organizationId = dto.organizationId?.trim();
+    if (!organizationId) {
+      return;
+    }
+
+    const user = await this.usersRepository.findOne({ where: { id: actorUserId } });
+    if (!user || user.deletedAt) {
+      throw new BadRequestException('Utilisateur introuvable.');
+    }
+
+    await this.orgScopeService.assertCanAccessOrganization(
+      toAuthUserDto(user),
+      organizationId,
+    );
+
+    const seen = new Set<string>();
+    for (const item of dto.items) {
+      if (item.itemType === 'package') {
+        await this.assertPackageCatalogOrganization(
+          item.referenceId,
+          organizationId,
+          seen,
+        );
+        continue;
+      }
+      await this.assertCheckoutItemCatalogOrganization(
+        item,
+        organizationId,
+        seen,
+      );
+    }
+  }
+
+  private assertCatalogProductOrganization(
+    productOrganizationId: string | null | undefined,
+    checkoutOrganizationId: string,
+    label: string,
+  ): void {
+    if (
+      productOrganizationId != null &&
+      productOrganizationId !== checkoutOrganizationId
+    ) {
+      throw new BadRequestException(
+        `Ce produit n’est pas disponible pour l’organisation sélectionnée (${label}).`,
+      );
+    }
+  }
+
+  private async assertCheckoutItemCatalogOrganization(
+    item: BookingCheckoutItemDto,
+    organizationId: string,
+    seen: Set<string>,
+  ): Promise<void> {
+    switch (item.itemType) {
+      case 'room': {
+        const room = await this.roomsRepository.findOne({
+          where: { id: item.referenceId },
+        });
+        if (!room || room.deletedAt) {
+          throw new NotFoundException(`Chambre introuvable : ${item.referenceId}.`);
+        }
+        const key = `property:${room.propertyId}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+        const property = await this.propertiesRepository.findOne({
+          where: { id: room.propertyId },
+        });
+        if (!property || property.deletedAt) {
+          throw new NotFoundException('Hébergement introuvable.');
+        }
+        this.assertCatalogProductOrganization(
+          property.organizationId,
+          organizationId,
+          property.name,
+        );
+        return;
+      }
+      case 'flight_class': {
+        const flightClass = await this.flightClassesRepository.findOne({
+          where: { id: item.referenceId },
+        });
+        if (!flightClass || flightClass.deletedAt) {
+          throw new NotFoundException(
+            `Classe de vol introuvable : ${item.referenceId}.`,
+          );
+        }
+        const key = `flight:${flightClass.flightId}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+        const flight = await this.flightsRepository.findOne({
+          where: { id: flightClass.flightId },
+        });
+        if (!flight || flight.deletedAt) {
+          throw new NotFoundException('Vol introuvable.');
+        }
+        this.assertCatalogProductOrganization(
+          flight.organizationId,
+          organizationId,
+          flight.flightNumber?.trim() || flight.id.slice(0, 8),
+        );
+        return;
+      }
+      case 'vehicle': {
+        const slot = await this.vehicleAvailabilityRepository.findOne({
+          where: { id: item.referenceId },
+        });
+        if (!slot || slot.deletedAt) {
+          throw new NotFoundException(
+            `Créneau véhicule introuvable : ${item.referenceId}.`,
+          );
+        }
+        const key = `vehicle:${slot.vehicleId}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+        const vehicle = await this.vehiclesRepository.findOne({
+          where: { id: slot.vehicleId },
+        });
+        if (!vehicle || vehicle.deletedAt) {
+          throw new NotFoundException('Véhicule introuvable.');
+        }
+        this.assertCatalogProductOrganization(
+          vehicle.organizationId,
+          organizationId,
+          vehicle.licensePlate?.trim() || vehicle.id.slice(0, 8),
+        );
+        return;
+      }
+      case 'cabin': {
+        const availability = await this.cabinAvailabilityRepository.findOne({
+          where: { id: item.referenceId },
+        });
+        if (!availability || availability.deletedAt) {
+          throw new NotFoundException(
+            `Disponibilité cabine introuvable : ${item.referenceId}.`,
+          );
+        }
+        const key = `cabin:${availability.cabinId}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+        const cabin = await this.cabinsRepository.findOne({
+          where: { id: availability.cabinId },
+        });
+        if (!cabin || cabin.deletedAt) {
+          throw new NotFoundException('Cabine introuvable.');
+        }
+        this.assertCatalogProductOrganization(
+          cabin.organizationId,
+          organizationId,
+          cabin.categoryName,
+        );
+        return;
+      }
+      case 'activity_schedule': {
+        const schedule = await this.activitySchedulesRepository.findOne({
+          where: { id: item.referenceId },
+        });
+        if (!schedule || schedule.deletedAt) {
+          throw new NotFoundException(
+            `Créneau activité introuvable : ${item.referenceId}.`,
+          );
+        }
+        const key = `activity:${schedule.activityId}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+        const activity = await this.activitiesRepository.findOne({
+          where: { id: schedule.activityId },
+        });
+        if (!activity || activity.deletedAt) {
+          throw new NotFoundException('Activité introuvable.');
+        }
+        this.assertCatalogProductOrganization(
+          activity.organizationId,
+          organizationId,
+          activity.title,
+        );
+        return;
+      }
+      default:
+        throw new BadRequestException('Type d’item non supporté.');
+    }
+  }
+
+  private async assertPackageCatalogOrganization(
+    packageId: string,
+    organizationId: string,
+    seen: Set<string>,
+  ): Promise<void> {
+    const detail = await this.packagesService.findOneDetail(packageId);
+    for (const pkgItem of detail.items) {
+      const key = `${pkgItem.itemType}:${pkgItem.itemId}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+
+      switch (pkgItem.itemType) {
+        case 'property': {
+          const property = await this.propertiesRepository.findOne({
+            where: { id: pkgItem.itemId },
+          });
+          if (!property || property.deletedAt) {
+            throw new NotFoundException(
+              `Hébergement du forfait introuvable : ${pkgItem.itemId}.`,
+            );
+          }
+          this.assertCatalogProductOrganization(
+            property.organizationId,
+            organizationId,
+            property.name,
+          );
+          break;
+        }
+        case 'flight': {
+          const flight = await this.flightsRepository.findOne({
+            where: { id: pkgItem.itemId },
+          });
+          if (!flight || flight.deletedAt) {
+            throw new NotFoundException(
+              `Vol du forfait introuvable : ${pkgItem.itemId}.`,
+            );
+          }
+          this.assertCatalogProductOrganization(
+            flight.organizationId,
+            organizationId,
+            flight.flightNumber?.trim() || flight.id.slice(0, 8),
+          );
+          break;
+        }
+        case 'vehicle': {
+          const vehicle = await this.vehiclesRepository.findOne({
+            where: { id: pkgItem.itemId },
+          });
+          if (!vehicle || vehicle.deletedAt) {
+            throw new NotFoundException(
+              `Véhicule du forfait introuvable : ${pkgItem.itemId}.`,
+            );
+          }
+          this.assertCatalogProductOrganization(
+            vehicle.organizationId,
+            organizationId,
+            vehicle.licensePlate?.trim() || vehicle.id.slice(0, 8),
+          );
+          break;
+        }
+        case 'cruise': {
+          const cabin = await this.cabinsRepository.findOne({
+            where: { id: pkgItem.itemId },
+          });
+          if (!cabin || cabin.deletedAt) {
+            throw new NotFoundException(
+              `Cabine du forfait introuvable : ${pkgItem.itemId}.`,
+            );
+          }
+          this.assertCatalogProductOrganization(
+            cabin.organizationId,
+            organizationId,
+            cabin.categoryName,
+          );
+          break;
+        }
+        case 'activity': {
+          const activity = await this.activitiesRepository.findOne({
+            where: { id: pkgItem.itemId },
+          });
+          if (!activity || activity.deletedAt) {
+            throw new NotFoundException(
+              `Activité du forfait introuvable : ${pkgItem.itemId}.`,
+            );
+          }
+          this.assertCatalogProductOrganization(
+            activity.organizationId,
+            organizationId,
+            activity.title,
+          );
+          break;
+        }
+        default:
+          break;
+      }
     }
   }
 

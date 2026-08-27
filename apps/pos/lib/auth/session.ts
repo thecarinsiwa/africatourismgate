@@ -176,6 +176,15 @@ export function hasSelectedOrganization(): boolean {
   return Boolean(getSession()?.selectedOrganizationId);
 }
 
+/** Org de caisse requise pour catalogue / checkout POS. */
+export function requireSelectedOrganizationId(): string {
+  const organizationId = getSession()?.selectedOrganizationId?.trim();
+  if (!organizationId) {
+    throw new Error('Organisation de caisse non sélectionnée.');
+  }
+  return organizationId;
+}
+
 export function setSelectedOrganization(
   organization: { id: string; name: string; slug: string },
   remember?: boolean,
