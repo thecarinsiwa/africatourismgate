@@ -102,7 +102,7 @@ Employé → apps/pos (login JWT + cookies)
 
 ### Note sur la roadmap globale (#73)
 
-`docs/roadmap-development.md` marque encore « POS — reçus / impression ❌ ». **C’est obsolète** : l’impression HTML + branding existe. Ce document remplace #73 par des livrables plus fins (PDF serveur, email reçu, historique, etc.).
+`docs/roadmap-development.md` est **aligné (août 2026)** : reçus / impression ✅ (HTML + print + mailto). Le livrable #73 est clos côté base ; les finitions restantes (historique, email serveur, PDF natif, CI, etc.) sont les livrables **POS-1+** de ce document.
 
 ---
 
@@ -114,7 +114,7 @@ Employé → apps/pos (login JWT + cookies)
 | D2 | Catalogue non scopé à l’org sélectionnée | Multi-tenant incorrect / fuite de produits | POS-3 |
 | D3 | Booking souvent au nom de l’employé (pas de client) | Ownership, emails, historique client faux | POS-4 |
 | D4 | Aucun test POS + hors CI | Régressions silencieuses | POS-1, POS-10 |
-| D5 | Doc roadmap globale obsolète sur les reçus | Mauvaises priorités | POS-0 (doc) |
+| D5 | Doc roadmap globale obsolète sur les reçus | Mauvaises priorités | ✅ POS-0 |
 
 ---
 
@@ -564,7 +564,7 @@ Script API complémentaire : `pnpm test:pos-sale-cash`
 
 ## Suivi (cocher au merge)
 
-- [ ] POS-0 Doc alignée
+- [x] POS-0 Doc alignée
 - [ ] POS-1 CI POS
 - [ ] POS-2 Orphelins / abandon paiement
 - [ ] POS-3 Scope org catalogue
