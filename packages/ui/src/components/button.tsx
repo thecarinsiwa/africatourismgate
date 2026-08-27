@@ -21,7 +21,7 @@ export type ButtonProps = ButtonBaseProps &
     | (React.ButtonHTMLAttributes<HTMLButtonElement> & { href?: undefined })
     | (React.AnchorHTMLAttributes<HTMLAnchorElement> & {
         href: string;
-        /** Désactive le lien (aria + pointer-events) — pas natif sur `<a>`. */
+        /** Visually disable the link (pointer-events + aria-disabled). */
         disabled?: boolean;
       })
   );
