@@ -14,12 +14,18 @@ import {
   buildReceiptMailtoUrl,
   type PosReceiptData,
 } from '../lib/sale/receipt';
+import {
+  cancelAbandonedPosBooking,
+  posAbandonCancelReasons,
+  saleApiErrorMessage,
+} from '../lib/sale/sale-checkout';
 import { waitForBookingConfirmed } from '../lib/sale/wait-booking-confirmed';
 
 const {
   title,
   subtitle,
-  pendingSubtitle,
+  timeoutSubtitle,
+  timeoutHint,
   confirmingLabel,
   bookingLabel,
   paymentLabel,
@@ -27,6 +33,11 @@ const {
   paymentCard,
   newSaleLabel,
   backToHomeLabel,
+  refreshLabel,
+  cancelPendingLabel,
+  cancelPendingProcessingLabel,
+  cancelPendingErrorLabel,
+  confirmedMeanwhileLabel,
   receiptTitle,
   printReceiptLabel,
   downloadPdfLabel,
@@ -64,6 +75,9 @@ export function PosSaleSuccessContent() {
   const [receiptData, setReceiptData] = useState<PosReceiptData | null>(null);
   const [customerEmail, setCustomerEmail] = useState('');
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState<string | null>(null);
+  const [infoMessage, setInfoMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!bookingId) {
@@ -103,17 +117,17 @@ export function PosSaleSuccessContent() {
             setDisplaySubtitle(subtitle);
           } else {
             setStatus('pending');
-            setDisplaySubtitle(pendingSubtitle);
+            setDisplaySubtitle(timeoutSubtitle);
           }
           return;
         }
 
         setStatus('pending');
-        setDisplaySubtitle(pendingSubtitle);
+        setDisplaySubtitle(timeoutSubtitle);
       } catch {
         if (!cancelled) {
           setStatus('pending');
-          setDisplaySubtitle(pendingSubtitle);
+          setDisplaySubtitle(timeoutSubtitle);
         }
       }
     }
@@ -159,6 +173,10 @@ export function PosSaleSuccessContent() {
 
   const showSpinner = status === 'loading' && Boolean(bookingId);
   const showReceipt = status === 'confirmed' && receiptData !== null;
+  const showPendingCancel =
+    status === 'pending' &&
+    Boolean(bookingId) &&
+    (bookingDetail?.booking.status === 'pending_payment' || bookingDetail === null);
 
   const mailtoUrl = useMemo(() => {
     if (!receiptData || !isValidEmail(customerEmail)) return '';
@@ -173,6 +191,46 @@ export function PosSaleSuccessContent() {
     setEmailError(null);
     const url = buildReceiptMailtoUrl(customerEmail, receiptData!);
     window.location.href = url;
+  }
+
+  async function handleCancelPending() {
+    if (!bookingId || cancelling) return;
+
+    setCancelling(true);
+    setCancelError(null);
+    setInfoMessage(null);
+
+    try {
+      const latest = await getApiClient().getBooking(bookingId);
+      if (latest.booking.status === 'confirmed') {
+        setBookingDetail(latest);
+        setCustomerEmail((current) => current || latest.client.email || '');
+        setStatus('confirmed');
+        setDisplaySubtitle(subtitle);
+        setInfoMessage(confirmedMeanwhileLabel);
+        return;
+      }
+
+      await cancelAbandonedPosBooking(bookingId, posAbandonCancelReasons.manualAfterTimeout);
+      router.push('/');
+    } catch (error: unknown) {
+      try {
+        const latest = await getApiClient().getBooking(bookingId);
+        if (latest.booking.status === 'confirmed') {
+          setBookingDetail(latest);
+          setCustomerEmail((current) => current || latest.client.email || '');
+          setStatus('confirmed');
+          setDisplaySubtitle(subtitle);
+          setInfoMessage(confirmedMeanwhileLabel);
+          return;
+        }
+      } catch {
+        // keep cancel error below
+      }
+      setCancelError(saleApiErrorMessage(error, cancelPendingErrorLabel));
+    } finally {
+      setCancelling(false);
+    }
   }
 
   return (
@@ -195,6 +253,22 @@ export function PosSaleSuccessContent() {
 
         <h1 className="text-3xl font-bold text-atg-fg md:text-4xl">{title}</h1>
         <p className="mt-3 text-lg text-atg-muted">{displaySubtitle}</p>
+
+        {status === 'pending' ? (
+          <p className="mt-2 text-sm text-atg-muted">{timeoutHint}</p>
+        ) : null}
+
+        {infoMessage ? (
+          <p className="mt-3 text-sm text-primary" role="status">
+            {infoMessage}
+          </p>
+        ) : null}
+
+        {cancelError ? (
+          <p className="mt-3 text-sm text-red-600" role="alert">
+            {cancelError}
+          </p>
+        ) : null}
 
         <dl className="pos-touch mt-10 w-full space-y-4 rounded-2xl border border-atg-border bg-atg-elevated px-6 py-6 text-left">
           <div>
@@ -288,6 +362,33 @@ export function PosSaleSuccessContent() {
         </section>
       ) : null}
 
+      {showPendingCancel ? (
+        <div className="pos-no-print pos-touch mt-8 w-full max-w-md space-y-3">
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            fullWidth
+            className="min-h-[3.5rem] text-lg"
+            disabled={cancelling}
+            loading={cancelling}
+            onClick={() => void handleCancelPending()}
+          >
+            {cancelling ? cancelPendingProcessingLabel : cancelPendingLabel}
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            fullWidth
+            disabled={cancelling}
+            onClick={() => router.refresh()}
+          >
+            {refreshLabel}
+          </Button>
+        </div>
+      ) : null}
+
       <div className="pos-no-print pos-touch mt-10 flex w-full max-w-md flex-col gap-4 sm:flex-row">
         <Button
           variant="primary"
@@ -295,6 +396,7 @@ export function PosSaleSuccessContent() {
           fullWidth
           href="/sale"
           className="min-h-[3.5rem] text-lg"
+          disabled={cancelling}
         >
           {newSaleLabel}
         </Button>
@@ -304,22 +406,11 @@ export function PosSaleSuccessContent() {
           fullWidth
           href="/"
           className="min-h-[3.5rem] text-lg"
+          disabled={cancelling}
         >
           {backToHomeLabel}
         </Button>
       </div>
-
-      {status === 'pending' && paymentMethod === 'card' ? (
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="pos-no-print mt-6"
-          onClick={() => router.refresh()}
-        >
-          Actualiser
-        </Button>
-      ) : null}
     </div>
   );
 }

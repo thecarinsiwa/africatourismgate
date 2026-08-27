@@ -82,6 +82,10 @@ export const posSaleSuccessPageConfig = {
   title: 'Vente enregistrée',
   subtitle: 'La réservation a été confirmée.',
   pendingSubtitle: 'Paiement reçu — confirmation en cours…',
+  timeoutSubtitle:
+    'La confirmation n’est pas encore arrivée. Le stock reste réservé tant que la réservation est en attente.',
+  timeoutHint:
+    'Si le client a déjà payé par carte, attendez ou actualisez. Sinon, annulez pour libérer le stock.',
   confirmingLabel: 'Confirmation de la réservation…',
   bookingLabel: 'N° réservation',
   paymentLabel: 'Mode de paiement',
@@ -89,6 +93,11 @@ export const posSaleSuccessPageConfig = {
   paymentCard: 'Carte bancaire',
   newSaleLabel: 'Nouvelle vente',
   backToHomeLabel: 'Retour à l’accueil',
+  refreshLabel: 'Actualiser',
+  cancelPendingLabel: 'Annuler la réservation',
+  cancelPendingProcessingLabel: 'Annulation…',
+  cancelPendingErrorLabel: 'Impossible d’annuler la réservation',
+  confirmedMeanwhileLabel: 'La réservation a été confirmée entre-temps.',
   receiptTitle: 'Reçu',
   printReceiptLabel: 'Imprimer le reçu',
   downloadPdfLabel: 'Télécharger PDF',
