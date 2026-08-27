@@ -14,6 +14,11 @@ import { posSalePageConfig } from '../../config/sale';
 import { getValidApiClient } from '../../lib/auth/api';
 import { defaultFlightDate, defaultRoomStayDates, formatDisplayDate, formatDisplayDateTime } from '../../lib/sale/dates';
 import { formatCents } from '../../lib/sale/format';
+import {
+  computePackageEndDate,
+  defaultPackageStartDate,
+  parsePackageDurationDays,
+} from '../../lib/sale/package-dates';
 import type { SaleCatalogHit } from '../../lib/sale/types';
 
 const { config: labels } = posSalePageConfig;
@@ -45,6 +50,9 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
   const [cabinSlots, setCabinSlots] = useState<CabinAvailability[]>([]);
   const [selectedCabinSlotId, setSelectedCabinSlotId] = useState<string | null>(null);
 
+  const [packageStartDate, setPackageStartDate] = useState(defaultPackageStartDate);
+  const [packageTravelers, setPackageTravelers] = useState(2);
+
   useEffect(() => {
     if (!open || !hit) return;
 
@@ -58,10 +66,17 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
     setSelectedCabinSlotId(null);
     setRoomDates(defaultRoomStayDates());
     setFlightDate(defaultFlightDate());
+    setPackageStartDate(defaultPackageStartDate());
+    setPackageTravelers(2);
 
     let cancelled = false;
 
     async function load() {
+      if (currentHit.kind === 'package') {
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       const client = await getValidApiClient();
 
@@ -175,6 +190,13 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
     return null;
   }
 
+  const packageDurationDays =
+    hit.kind === 'package' ? parsePackageDurationDays(hit.package) : 0;
+  const packageEndDate =
+    hit.kind === 'package'
+      ? computePackageEndDate(packageStartDate, packageDurationDays)
+      : '';
+
   function buildCheckoutItem(): BookingCheckoutItem | null {
     if (hit!.kind === 'activity') {
       if (!selectedScheduleId) return null;
@@ -217,12 +239,25 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
         quantity,
       };
     }
+    if (hit!.kind === 'package') {
+      const durationDays = parsePackageDurationDays(hit!.package);
+      const endDate = computePackageEndDate(packageStartDate, durationDays);
+      if (!packageStartDate || packageTravelers < 1 || endDate <= packageStartDate) {
+        return null;
+      }
+      return {
+        itemType: 'package',
+        referenceId: hit!.package.id,
+        quantity: packageTravelers,
+        startDate: packageStartDate,
+        endDate,
+      };
+    }
     return null;
   }
 
   function canSubmit(): boolean {
-    const item = buildCheckoutItem();
-    return item !== null && quantity >= 1;
+    return buildCheckoutItem() !== null;
   }
 
   function handleAdd() {
@@ -430,7 +465,43 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
                 </div>
               ) : null}
 
-              {hit.kind !== 'vehicle' ? (
+              {hit.kind === 'package' ? (
+                <div className="space-y-4">
+                  <Input
+                    id="package-start"
+                    type="date"
+                    label={labels.departureDateLabel}
+                    value={packageStartDate}
+                    onChange={(e) => setPackageStartDate(e.target.value)}
+                  />
+                  <Input
+                    id="package-travelers"
+                    type="number"
+                    min={1}
+                    max={50}
+                    label={labels.travelersLabel}
+                    value={String(packageTravelers)}
+                    onChange={(e) =>
+                      setPackageTravelers(
+                        Math.min(50, Math.max(1, Number.parseInt(e.target.value, 10) || 1)),
+                      )
+                    }
+                  />
+                  {packageStartDate && packageEndDate > packageStartDate ? (
+                    <div className="rounded-xl border border-atg-border bg-atg-surface/50 px-4 py-3 text-sm">
+                      <p className="font-medium text-atg-fg">
+                        {labels.packageEndDateLabel} : {formatDisplayDate(packageEndDate)}
+                      </p>
+                      <p className="mt-1 text-atg-muted">
+                        {labels.packageDurationHint(packageDurationDays)} ·{' '}
+                        {formatCents(hit.pricing.totalCents * packageTravelers, hit.currency)} total
+                      </p>
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
+
+              {hit.kind !== 'vehicle' && hit.kind !== 'package' ? (
                 <Input
                   id="qty"
                   type="number"
