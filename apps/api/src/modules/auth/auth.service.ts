@@ -605,8 +605,11 @@ export class AuthService {
     const { session } =
       await this.loadValidatedSessionFromRefreshToken(refreshToken);
     this.assertSessionNotIdleLocked(session);
-    session.lastActivityAt = new Date();
-    await this.sessionsRepo.save(session);
+    // UPDATE explicite : évite les faux négatifs TypeORM/MySQL DATETIME (précision à la seconde).
+    await this.sessionsRepo.update(
+      { id: session.id },
+      { lastActivityAt: new Date() },
+    );
     return { success: true };
   }
 

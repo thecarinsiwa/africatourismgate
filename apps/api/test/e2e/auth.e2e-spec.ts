@@ -389,9 +389,9 @@ describe('Auth (e2e)', () => {
       });
       expect(session).toBeTruthy();
 
-      const stale = new Date(Date.now() - 60_000);
-      session!.lastActivityAt = stale;
-      await repo.save(session!);
+      // Aligner à la seconde (DATETIME MySQL) et reculer clairement pour éviter les flaky.
+      const staleMs = Math.floor((Date.now() - 120_000) / 1000) * 1000;
+      await repo.update({ id: session!.id }, { lastActivityAt: new Date(staleMs) });
 
       await request(app.getHttpServer())
         .post(apiPath('/auth/touch'))
@@ -399,7 +399,8 @@ describe('Auth (e2e)', () => {
         .expect(200);
 
       const updated = await repo.findOne({ where: { id: session!.id } });
-      expect(updated!.lastActivityAt!.getTime()).toBeGreaterThan(stale.getTime());
+      expect(updated!.lastActivityAt).toBeTruthy();
+      expect(updated!.lastActivityAt!.getTime()).toBeGreaterThan(staleMs);
     });
 
     it('POST /auth/refresh returns SESSION_LOCKED after idle timeout', async () => {
