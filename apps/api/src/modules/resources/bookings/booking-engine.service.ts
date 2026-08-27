@@ -148,6 +148,7 @@ export class BookingEngineService {
           currency: pricing.currency,
           promoCodeId: pricing.discount?.promoCodeId ?? null,
           promotionId: pricing.discount?.promotionId ?? null,
+          preferredPaymentMethod: dto.preferredPaymentMethod,
           createdByUserId: actorUserId ?? null,
         } as Bookings);
         await bookingsRepo.save(booking);
@@ -248,6 +249,7 @@ export class BookingEngineService {
           currency: pricing.currency,
           promoCodeId: pricing.discount?.promoCodeId ?? null,
           promotionId: pricing.discount?.promotionId ?? null,
+          preferredPaymentMethod: dto.preferredPaymentMethod,
           createdByUserId: actorUserId ?? null,
         } as Bookings);
         await bookingsRepo.save(booking);

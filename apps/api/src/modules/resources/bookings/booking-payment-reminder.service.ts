@@ -43,6 +43,10 @@ export class BookingPaymentReminderService {
   }
 
   private async resolvePaymentUrl(booking: Bookings): Promise<string | null> {
+    if (booking.preferredPaymentMethod === 'cash') {
+      return null;
+    }
+
     const pending = await this.paymentsRepository.findOne({
       where: {
         bookingId: booking.id,

@@ -143,6 +143,17 @@ export class BookingApprovalService {
     actorUserId: string,
   ): Promise<BookingCheckoutSessionResult> {
     await this.assertApprovalAccess(actorUserId);
+    const booking = await this.bookingsRepository.findOne({
+      where: { id: bookingId, deletedAt: IsNull() },
+    });
+    if (!booking) {
+      throw new BadRequestException('Réservation introuvable.');
+    }
+    if (booking.preferredPaymentMethod === 'cash') {
+      throw new BadRequestException(
+        'Invitation Stripe impossible : le client a choisi le paiement cash sur place.',
+      );
+    }
     const session = await this.stripeService.getOrCreateCheckoutSessionForBooking(
       bookingId,
       actorUserId,
