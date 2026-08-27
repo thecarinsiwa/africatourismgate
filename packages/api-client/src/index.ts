@@ -653,6 +653,51 @@ export class ApiClient {
     return JSON.parse(text) as T;
   }
 
+  /** Binary response (PDF, exports). Does not parse JSON on success. */
+  async requestBlob(path: string, options: RequestOptions = {}): Promise<Blob> {
+    const url = `${this.baseUrl.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`;
+    const isFormData =
+      typeof FormData !== 'undefined' && options.body instanceof FormData;
+    const headers: Record<string, string> = {
+      ...options.headers,
+    };
+    if (!isFormData && options.body !== undefined) {
+      headers['Content-Type'] = 'application/json';
+    }
+
+    if (!options.skipAuth && this.accessToken && !headers.Authorization) {
+      headers.Authorization = `Bearer ${this.accessToken}`;
+    }
+
+    const res = await fetch(url, {
+      method: options.method ?? 'GET',
+      headers,
+      body:
+        options.body === undefined
+          ? undefined
+          : isFormData
+            ? (options.body as FormData)
+            : JSON.stringify(options.body),
+    });
+
+    if (!res.ok) {
+      let body: unknown;
+      try {
+        body = await res.json();
+      } catch {
+        try {
+          body = await res.text();
+        } catch {
+          body = undefined;
+        }
+      }
+      const apiMessage = parseApiErrorMessage(body);
+      throw new ApiHttpError(res.status, res.statusText, body, apiMessage);
+    }
+
+    return res.blob();
+  }
+
   health(): Promise<{ status: string; service: string }> {
     return this.request('/health');
   }
@@ -2832,6 +2877,12 @@ export class ApiClient {
         body,
       },
     );
+  }
+
+  downloadBookingReceiptPdf(id: string): Promise<Blob> {
+    return this.requestBlob(`/bookings/${id}/receipt-pdf`, {
+      method: 'GET',
+    });
   }
 
   createBookingPaymentIntent(id: string): Promise<BookingPaymentIntentResponse> {
