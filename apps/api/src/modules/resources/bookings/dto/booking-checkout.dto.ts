@@ -110,11 +110,12 @@ export class BookingCheckoutDto {
   @IsUUID('4')
   packageId?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     enum: BOOKING_PREFERRED_PAYMENT_METHODS,
     description:
-      'Méthode choisie au checkout : Stripe (immédiat) ou cash (paiement sur place / caisse)',
+      'Requis pour create/request : Stripe (immédiat) ou cash (paiement sur place / caisse). Ignoré sur checkout-preview.',
   })
+  @IsOptional()
   @IsIn(BOOKING_PREFERRED_PAYMENT_METHODS)
-  preferredPaymentMethod!: BookingPreferredPaymentMethod;
+  preferredPaymentMethod?: BookingPreferredPaymentMethod;
 }

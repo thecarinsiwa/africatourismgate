@@ -55,6 +55,7 @@ describe('Stripe booking confirmation (e2e)', () => {
           },
         ],
         currency: 'USD',
+        preferredPaymentMethod: 'stripe',
       })
       .expect(201);
 
@@ -127,6 +128,7 @@ describe('Stripe booking confirmation (e2e)', () => {
           },
         ],
         currency: 'USD',
+        preferredPaymentMethod: 'stripe',
       })
       .expect(201);
 

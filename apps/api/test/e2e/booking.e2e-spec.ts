@@ -17,6 +17,7 @@ const checkoutBody = {
     },
   ],
   currency: 'USD',
+  preferredPaymentMethod: 'stripe',
 };
 
 describe('Bookings (e2e)', () => {
@@ -83,6 +84,7 @@ describe('Bookings (e2e)', () => {
         },
       ],
       currency: 'USD',
+      preferredPaymentMethod: 'stripe',
     };
 
     await ensureRoomAvailabilityForDate(app, accessToken, ASSISTED_BOOKING_E2E_DATE, 3);

@@ -56,8 +56,8 @@ export interface BookingCheckoutRequest {
   packageId?: string;
   /** Staff only (e.g. POS): booking is owned by this user instead of the actor. */
   customerUserId?: string;
-  /** Required: Stripe Checkout vs cash on site. */
-  preferredPaymentMethod: BookingPreferredPaymentMethod;
+  /** Required on create/request; optional on checkout-preview. */
+  preferredPaymentMethod?: BookingPreferredPaymentMethod;
 }
 
 export interface AppliedPackageCheckoutDiscount {
