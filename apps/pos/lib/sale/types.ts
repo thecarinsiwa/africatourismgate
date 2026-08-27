@@ -73,3 +73,11 @@ export type SaleCartLine = {
   label: string;
   item: BookingCheckoutItem;
 };
+
+/** Client nominatif sélectionné (null = client de passage). */
+export type SaleCartCustomer = {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+};

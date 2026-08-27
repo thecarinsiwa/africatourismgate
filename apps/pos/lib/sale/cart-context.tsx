@@ -18,7 +18,7 @@ import {
 import { posSalePageConfig } from '../../config/sale';
 import { getValidApiClient } from '../auth/api';
 import { requireSelectedOrganizationId } from '../auth/session';
-import type { SaleCartLine } from './types';
+import type { SaleCartCustomer, SaleCartLine } from './types';
 
 const PREVIEW_DEBOUNCE_MS = 400;
 const { cart: cartLabels } = posSalePageConfig;
@@ -33,6 +33,9 @@ type SaleCartContextValue = {
   preview: BookingCheckoutPreview | null;
   previewLoading: boolean;
   previewError: string | null;
+  /** null = client de passage (booking au nom de l’employé). */
+  customer: SaleCartCustomer | null;
+  setCustomer: (customer: SaleCartCustomer | null) => void;
   addLine: (item: BookingCheckoutItem, label: string) => void;
   removeLine: (lineId: string) => void;
   clearCart: () => void;
@@ -61,6 +64,7 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
   const [preview, setPreview] = useState<BookingCheckoutPreview | null>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [previewError, setPreviewError] = useState<string | null>(null);
+  const [customer, setCustomerState] = useState<SaleCartCustomer | null>(null);
 
   const addLine = useCallback((item: BookingCheckoutItem, label: string) => {
     setLines((prev) => [
@@ -77,11 +81,16 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
     setLines((prev) => prev.filter((line) => line.id !== lineId));
   }, []);
 
+  const setCustomer = useCallback((next: SaleCartCustomer | null) => {
+    setCustomerState(next);
+  }, []);
+
   const clearCart = useCallback(() => {
     setLines([]);
     setPreview(null);
     setPreviewError(null);
     setPreviewLoading(false);
+    setCustomerState(null);
   }, []);
 
   useEffect(() => {
@@ -142,6 +151,8 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
       preview,
       previewLoading,
       previewError,
+      customer,
+      setCustomer,
       addLine,
       removeLine,
       clearCart,
@@ -152,6 +163,8 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
       preview,
       previewLoading,
       previewError,
+      customer,
+      setCustomer,
       addLine,
       removeLine,
       clearCart,
