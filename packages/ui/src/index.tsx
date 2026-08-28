@@ -61,6 +61,13 @@ export {
 export { DraggableFab, type DraggableFabProps } from './components/draggable-fab';
 export { BookingChatFabIcon } from './components/booking-chat-fab-icon';
 export { Skeleton, type SkeletonProps } from './components/skeleton';
+export { Spinner, type SpinnerProps, type SpinnerSize, type SpinnerVariant } from './components/spinner';
+export {
+  ProgressBar,
+  type ProgressBarProps,
+  type ProgressBarSize,
+  type ProgressBarVariant,
+} from './components/progress-bar';
 export { StarRatingInput, type StarRatingInputProps } from './components/star-rating-input';
 export { StarRatingDisplay, type StarRatingDisplayProps } from './components/star-rating-display';
 export { StarIcon, type StarIconSize } from './components/star-rating-icons';
