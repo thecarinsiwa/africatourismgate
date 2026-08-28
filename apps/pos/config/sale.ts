@@ -108,6 +108,12 @@ export const posSalePageConfig = {
     title: 'Configurer la ligne',
     closeLabel: 'Fermer',
     addLabel: 'Ajouter au panier',
+    addRequestLabel: 'Demander cette réservation',
+    assistedBadge: 'Sur demande',
+    assistedHint:
+      'Réservation sur demande : la date et les attributions seront configurées/confirmées par l’équipe après la demande.',
+    directAvailabilityLabel: 'Disponibilités directes',
+    requestedDateLabel: 'Date souhaitée',
     loadingLabel: 'Chargement…',
     quantityLabel: 'Quantité',
     startDateLabel: 'Arrivée',

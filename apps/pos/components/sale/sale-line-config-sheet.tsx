@@ -3,11 +3,13 @@
 import type {
   ActivitySchedule,
   BookingCheckoutItem,
+  BookingMode,
   CabinAvailability,
   CruiseSailing,
   FlightClassAvailability,
   VehicleAvailability,
 } from '@africatourismgate/types';
+import { resolveBookingModeForItemType } from '@africatourismgate/types';
 import { Button, Input } from '@africatourismgate/ui';
 import { useEffect, useState } from 'react';
 import { posSalePageConfig } from '../../config/sale';
@@ -33,6 +35,7 @@ type SaleLineConfigSheetProps = {
 export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfigSheetProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [bookingMode, setBookingMode] = useState<BookingMode>('immediate');
   const [quantity, setQuantity] = useState(1);
 
   const [roomDates, setRoomDates] = useState(defaultRoomStayDates);
@@ -84,6 +87,7 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
 
     async function load() {
       if (currentHit.kind === 'package') {
+        setBookingMode('assisted');
         setLoading(false);
         return;
       }
@@ -92,6 +96,14 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
       const client = await getValidApiClient();
 
       try {
+        const publicModes = await client.getPublicBookingModes().catch(() => null);
+        if (!cancelled && publicModes) {
+          const itemKey =
+            currentHit.kind === 'activity' ? 'activity_schedule' : currentHit.kind;
+          const resolvedMode = resolveBookingModeForItemType(itemKey, publicModes);
+          setBookingMode(resolvedMode);
+        }
+
         if (currentHit.kind === 'activity') {
           const res = await client.listActivitySchedules({
             activityId: currentHit.activity.id,
@@ -295,14 +307,28 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
         aria-busy={loading}
       >
         <div className="border-b border-atg-border px-5 py-4">
-          <h2 id="sale-config-title" className="text-xl font-bold text-atg-fg">
-            {labels.title}
-          </h2>
+          <div className="flex items-center justify-between gap-2">
+            <h2 id="sale-config-title" className="text-xl font-bold text-atg-fg">
+              {labels.title}
+            </h2>
+            {bookingMode === 'assisted' ? (
+              <span className="rounded-full bg-amber-500/15 px-2.5 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-400">
+                {labels.assistedBadge}
+              </span>
+            ) : null}
+          </div>
           <p className="mt-1 text-base text-atg-muted">{hit.title}</p>
           <p className="text-sm text-atg-muted">{hit.subtitle}</p>
         </div>
 
         <div className="pos-touch flex-1 overflow-y-auto px-5 py-5">
+          {bookingMode === 'assisted' ? (
+            <div className="mb-4 rounded-xl border border-amber-500/20 bg-amber-500/10 p-3.5 text-xs text-amber-800 dark:text-amber-300">
+              <p className="font-semibold">{labels.assistedBadge}</p>
+              <p className="mt-1 leading-relaxed opacity-90">{labels.assistedHint}</p>
+            </div>
+          ) : null}
+
           {error ? (
             <p role="alert" className="text-base text-red-600">
               {error}
@@ -376,31 +402,40 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
                   <Input
                     id="flight-date"
                     type="date"
-                    label={labels.dateLabel}
+                    label={
+                      bookingMode === 'assisted'
+                        ? labels.requestedDateLabel
+                        : labels.dateLabel
+                    }
                     value={flightDate}
                     onChange={(e) => setFlightDate(e.target.value)}
                   />
                   {flightAvailability.length > 0 ? (
-                    <ul className="space-y-2">
-                      {flightAvailability.map((row) => (
-                        <li key={row.id}>
-                          <Button
-                            type="button"
-                            variant={flightDate === row.date ? 'primary' : 'outline'}
-                            size="lg"
-                            fullWidth
-                            className="min-h-[3rem] justify-between"
-                            onClick={() => setFlightDate(row.date)}
-                          >
-                            <span>{formatDisplayDate(row.date)}</span>
-                            <span className="text-sm">
-                              {row.availableSeats} {labels.seatsLabel} ·{' '}
-                              {formatCents(row.priceCents, hit.currency)}
-                            </span>
-                          </Button>
-                        </li>
-                      ))}
-                    </ul>
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-atg-muted">
+                        {labels.directAvailabilityLabel}
+                      </p>
+                      <ul className="space-y-2">
+                        {flightAvailability.map((row) => (
+                          <li key={row.id}>
+                            <Button
+                              type="button"
+                              variant={flightDate === row.date ? 'primary' : 'outline'}
+                              size="lg"
+                              fullWidth
+                              className="min-h-[3rem] justify-between"
+                              onClick={() => setFlightDate(row.date)}
+                            >
+                              <span>{formatDisplayDate(row.date)}</span>
+                              <span className="text-sm">
+                                {row.availableSeats} {labels.seatsLabel} ·{' '}
+                                {formatCents(row.priceCents, hit.currency)}
+                              </span>
+                            </Button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   ) : null}
                 </div>
               ) : null}
@@ -556,7 +591,7 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
             disabled={!canSubmit() || loading}
             onClick={handleAdd}
           >
-            {labels.addLabel}
+            {bookingMode === 'assisted' ? labels.addRequestLabel : labels.addLabel}
           </Button>
         </div>
       </div>

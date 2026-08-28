@@ -392,6 +392,7 @@ import type {
   UserRoleAssignmentsListQuery,
   User,
   UsersListQuery,
+  ResolvedBookingItemTypeModes,
 } from '@africatourismgate/types';
 export type { PaginationQuery } from '@africatourismgate/types';
 export { SESSION_LOCKED_CODE } from '@africatourismgate/types';
@@ -1276,6 +1277,17 @@ export class ApiClient {
       method: 'PUT',
       body,
     });
+  }
+
+  getPublicBookingModes(query?: { organizationSlug?: string }): Promise<ResolvedBookingItemTypeModes> {
+    const params = new URLSearchParams();
+    if (query?.organizationSlug) {
+      params.set('organizationSlug', query.organizationSlug);
+    }
+    const q = params.toString();
+    return this.request<ResolvedBookingItemTypeModes>(
+      `/organization-settings/public/booking-modes${q ? `?${q}` : ''}`,
+    );
   }
 
   previewEmail(body: EmailPreviewRequest): Promise<EmailPreviewResponse> {
