@@ -30,6 +30,7 @@ export function SalePaymentBar() {
     customer,
     appliedPromoCode,
     cartPackageId,
+    manifestEntries,
     clearCart,
     setIsCheckingOut,
   } = useSaleCart();
@@ -75,6 +76,7 @@ export function SalePaymentBar() {
       customerUserId: customer?.id,
       promoCode: appliedPromoCode,
       packageId: cartPackageId,
+      manifestEntries,
     };
   }
 

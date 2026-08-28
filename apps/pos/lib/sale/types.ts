@@ -140,11 +140,7 @@ export function estimateCartTravelersCount(lines: SaleCartLine[]): number {
   if (lines.length === 0) return 0;
   let count = 0;
   for (const line of lines) {
-    if (line.item.itemType === 'package') {
-      count += line.item.travelers ?? line.item.quantity ?? 1;
-    } else {
-      count += line.item.quantity ?? 1;
-    }
+    count += line.item.quantity ?? 1;
   }
   return Math.max(1, count);
 }
