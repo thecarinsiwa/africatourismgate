@@ -20,7 +20,7 @@ import {
 import { formatPackagePrice } from '../../lib/packages/listings';
 import type { PackageItemEnriched } from '../../lib/packages/types';
 import type { Translations } from '../../lib/i18n/translations';
-import { ProductGallery } from '../shared';
+import { ProductGallery, RichText } from '../shared';
 import { Spinner } from '@africatourismgate/ui';
 
 type PackageItemDetailModalProps = {
@@ -178,7 +178,7 @@ function ItemDetailBody({
           <ProductGallery images={detail.images} name={detail.title} labels={labels} />
         ) : null}
         {detail.description ? (
-          <p className="text-sm leading-relaxed text-atg-muted">{detail.description}</p>
+          <RichText content={detail.description} />
         ) : null}
         <dl className="grid gap-3 sm:grid-cols-2">
           <MetaCell label={a.destination} value={detail.destination} />
@@ -226,7 +226,7 @@ function ItemDetailBody({
           <ProductGallery images={detail.images} name={detail.name} labels={labels} />
         ) : null}
         {detail.description ? (
-          <p className="text-sm leading-relaxed text-atg-muted">{detail.description}</p>
+          <RichText content={detail.description} />
         ) : null}
         <dl className="grid gap-3 sm:grid-cols-2">
           <MetaCell label={a.destination} value={detail.destinationName} />

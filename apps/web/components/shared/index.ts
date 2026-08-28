@@ -83,3 +83,5 @@ export {
   BookingSidebarMobileBar,
   useBookingSidebarTrustHints,
 } from './booking-sidebar-shell';
+export { RichText, hasHtmlMarkup, stripHtml, type RichTextProps } from './rich-text';
+

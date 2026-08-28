@@ -18,6 +18,7 @@ import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { DetailPageSkeletonShell } from '../shared/loading-skeletons';
+import { RichText } from '../shared/rich-text';
 import { scrollToBookingSidebar } from '../shared/booking-sidebar-shell';
 import { HotelAmenitiesSection } from './hotel-amenities-section';
 import { HotelBookingMobileBar, HotelBookingSidebar } from './hotel-booking-sidebar';
@@ -313,9 +314,7 @@ export function HotelDetailPageContent({
                 <h2 className="mb-3 text-lg font-bold text-atg-fg">
                   {h.descriptionTitle}
                 </h2>
-                <p className="whitespace-pre-line text-sm leading-relaxed text-atg-muted">
-                  {detail.description}
-                </p>
+                <RichText content={detail.description} />
               </section>
             )}
 

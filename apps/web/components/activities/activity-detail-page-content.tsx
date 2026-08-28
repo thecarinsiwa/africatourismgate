@@ -22,7 +22,7 @@ import { buildReservationQuery, isActivityScheduleOfferBookable } from '../../li
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { DetailPageSkeletonShell } from '../shared/loading-skeletons';
-import { ProductGallery } from '../shared';
+import { ProductGallery, RichText } from '../shared';
 import { ActivityBookingMobileBar, ActivityBookingSidebar } from './activity-booking-sidebar';
 import { ActivitySchedulesSection } from './activity-schedules-section';
 import { ActivityItinerarySection } from './activity-itinerary-section';
@@ -313,9 +313,7 @@ export function ActivityDetailPageContent({
                 <h2 className="mb-3 text-lg font-bold text-atg-fg">
                   {a.descriptionTitle}
                 </h2>
-                <p className="text-sm leading-relaxed text-atg-muted">
-                  {detail.description}
-                </p>
+                <RichText content={detail.description} />
               </section>
             )}
 
