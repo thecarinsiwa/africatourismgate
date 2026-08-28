@@ -4,8 +4,8 @@ import type { PosReceiptContext } from '../resources/bookings/pos-receipt.contex
 import { pdfPrimaryColor } from '../resources/properties/accommodation-reports/pdf/pdf-layout.utils';
 import { formatMoney } from './email.templates';
 
-const RECEIPT_WIDTH_PT = 226.77;
-const PAGE_MARGIN = 12;
+const RECEIPT_WIDTH_PT = 280;
+const PAGE_MARGIN = 16;
 const CONTENT_WIDTH = RECEIPT_WIDTH_PT - PAGE_MARGIN * 2;
 const MUTED_COLOR = '#5c6d66';
 const TEXT_COLOR = '#0f1a16';
@@ -29,10 +29,10 @@ function formatIssuedAtLabel(iso: string): string {
 
 function estimatePageHeight(context: PosReceiptContext): number {
   const itemBlocks = context.items.reduce((sum, item) => {
-    const titleLines = Math.max(1, Math.ceil(item.title.length / 28));
-    return sum + 16 + titleLines * 11;
+    const titleLines = Math.max(1, Math.ceil(item.title.length / 32));
+    return sum + 18 + titleLines * 12;
   }, 0);
-  return Math.max(380, PAGE_MARGIN * 2 + 120 + 88 + itemBlocks + 96 + 36);
+  return Math.max(450, PAGE_MARGIN * 2 + 130 + 105 + itemBlocks + 115 + 45);
 }
 
 function drawDashedRule(doc: InstanceType<typeof PDFDocument>): void {
@@ -54,20 +54,29 @@ function drawMetaRow(
   value: string,
 ): void {
   const startY = doc.y;
+  const labelWidth = CONTENT_WIDTH * 0.38;
+  const valueWidth = CONTENT_WIDTH * 0.62;
+
+  const valueHeight = doc.heightOfString(value, {
+    width: valueWidth,
+    align: 'right',
+  });
+
   doc
     .fillColor(MUTED_COLOR)
     .fontSize(8)
     .font('Helvetica')
-    .text(label, PAGE_MARGIN, startY, { width: CONTENT_WIDTH * 0.42 });
+    .text(label, PAGE_MARGIN, startY, { width: labelWidth });
   doc
     .fillColor(TEXT_COLOR)
-    .fontSize(8.5)
+    .fontSize(8)
     .font('Helvetica-Bold')
-    .text(value, PAGE_MARGIN + CONTENT_WIDTH * 0.42, startY, {
-      width: CONTENT_WIDTH * 0.58,
+    .text(value, PAGE_MARGIN + labelWidth, startY, {
+      width: valueWidth,
       align: 'right',
     });
-  doc.moveDown(0.35);
+  
+  doc.y = startY + Math.max(12, valueHeight) + 3;
 }
 
 export function renderPosReceiptPdf(input: PosReceiptPdfInput): Promise<Buffer> {
@@ -100,11 +109,13 @@ export function renderPosReceiptPdf(input: PosReceiptPdfInput): Promise<Buffer> 
 
   if (logoPath) {
     try {
-      doc.image(logoPath, PAGE_MARGIN + CONTENT_WIDTH / 2 - 40, doc.y, {
-        fit: [80, 32],
+      const logoWidth = 90;
+      const logoHeight = 36;
+      doc.image(logoPath, PAGE_MARGIN + (CONTENT_WIDTH - logoWidth) / 2, doc.y, {
+        fit: [logoWidth, logoHeight],
         align: 'center',
       });
-      doc.moveDown(0.2);
+      doc.moveDown(0.3);
     } catch {
       // skip broken logo
     }
@@ -218,22 +229,23 @@ export function renderPosReceiptPdf(input: PosReceiptPdfInput): Promise<Buffer> 
     .fillColor(TEXT_COLOR)
     .fontSize(10)
     .font('Helvetica-Bold')
-    .text('Total TTC', PAGE_MARGIN, totalY, { width: CONTENT_WIDTH * 0.55 });
+    .text('Total TTC', PAGE_MARGIN, totalY, { width: CONTENT_WIDTH * 0.5 });
   doc
     .fillColor(primary)
     .fontSize(12)
     .font('Helvetica-Bold')
-    .text(total, PAGE_MARGIN + CONTENT_WIDTH * 0.45, totalY, {
-      width: CONTENT_WIDTH * 0.55,
+    .text(total, PAGE_MARGIN + CONTENT_WIDTH * 0.5, totalY, {
+      width: CONTENT_WIDTH * 0.5,
       align: 'right',
     });
-  doc.moveDown(0.5);
+  doc.moveDown(0.4);
 
   doc
     .fillColor(MUTED_COLOR)
     .fontSize(7.5)
     .font('Helvetica')
     .text('Montants TTC — TVA incluse', { width: CONTENT_WIDTH, align: 'right' });
+  doc.moveDown(0.3);
 
   drawMetaRow(doc, 'Paiement', context.paymentMethodLabel);
 
