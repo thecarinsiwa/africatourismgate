@@ -29,7 +29,6 @@ export function FlightClassAvailabilityPage({
   const { vols: getVolsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.flights.sections.availability');
   const tDetail = useTranslations('modules.flights.detail');
-  const tCommon = useTranslations('modules.common');
   const classLabels = useFlightClassLabels();
   const { toast } = useToast();
   const tToast = useTranslations('modules.common.toast');

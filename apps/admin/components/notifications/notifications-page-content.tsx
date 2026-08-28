@@ -1,10 +1,9 @@
 'use client';
 
 import { useId, useMemo, useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Button, Card, EmptyState, Input, PageHeader, cn } from '@africatourismgate/ui';
+import { Button, Card, EmptyState, PageHeader, cn } from '@africatourismgate/ui';
 import type {
   AdminNotificationCategory,
   AdminNotificationItem,
@@ -213,7 +212,6 @@ export function NotificationsPageContent() {
     loading,
     refresh,
     markAsRead,
-    markAsUnread,
     toggleRead,
     markAllAsRead,
   } = useAdminNotifications();

@@ -18,10 +18,6 @@ export function useAdminEditPageMeta({
   entityLabel,
   breadcrumbTail,
 }: UseAdminEditPageMetaOptions): void {
-  const tailKey =
-    breadcrumbTail?.map((item) => `${item.href ?? ''}:${item.label}`).join('|') ??
-    (entityLabel ? `:${entityLabel}` : '');
-
   const pageMeta = useMemo(() => {
     if (!ready) return {};
     const tail =

@@ -24,7 +24,6 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
   const tPage = useTranslations('pages.hebergements.id.chambres.roomId.disponibilites');
   const tAvailability = useTranslations('modules.properties.sections.availability');
   const tDetail = useTranslations('modules.properties.detail');
-  const tCommon = useTranslations('modules.common');
   const tToast = useTranslations('modules.common.toast');
   const { toast } = useToast();
   const [yearMonth, setYearMonth] = useState(currentYearMonth);
