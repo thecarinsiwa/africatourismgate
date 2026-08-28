@@ -59,5 +59,33 @@
       "escape": "Close the palette or this help",
       "help": "Show this help"
     }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "openLabel": "Open notifications",
+    "closeLabel": "Close notifications",
+    "markAllAsRead": "Mark all as read",
+    "refresh": "Refresh",
+    "empty": "No notifications",
+    "emptyHint": "You are all caught up, no pending actions.",
+    "unreadBadge": "unread",
+    "viewAll": "View all",
+    "tabs": {
+      "all": "All",
+      "booking": "Bookings",
+      "message": "Messages",
+      "review": "Reviews",
+      "support": "Support"
+    },
+    "categories": {
+      "booking": "Booking",
+      "message": "Customer message",
+      "review": "Review",
+      "support": "Support"
+    },
+    "justNow": "Just now",
+    "minutesAgo": "{count}m ago",
+    "hoursAgo": "{count}h ago",
+    "daysAgo": "{count}d ago"
   }
 }

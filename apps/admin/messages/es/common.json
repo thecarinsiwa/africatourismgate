@@ -59,5 +59,33 @@
       "escape": "Cerrar la paleta o esta ayuda",
       "help": "Mostrar esta ayuda"
     }
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "openLabel": "Abrir notificaciones",
+    "closeLabel": "Cerrar notificaciones",
+    "markAllAsRead": "Marcar todo como leído",
+    "refresh": "Actualizar",
+    "empty": "Sin notificaciones",
+    "emptyHint": "Todo está al día, no hay acciones pendientes.",
+    "unreadBadge": "no leída(s)",
+    "viewAll": "Ver todo",
+    "tabs": {
+      "all": "Todas",
+      "booking": "Reservas",
+      "message": "Mensajes",
+      "review": "Opiniones",
+      "support": "Soporte"
+    },
+    "categories": {
+      "booking": "Reserva",
+      "message": "Mensaje de cliente",
+      "review": "Opinión",
+      "support": "Soporte"
+    },
+    "justNow": "Hace un momento",
+    "minutesAgo": "hace {count} min",
+    "hoursAgo": "hace {count} h",
+    "daysAgo": "hace {count} d"
   }
 }
