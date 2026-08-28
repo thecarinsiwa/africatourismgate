@@ -118,10 +118,17 @@ export class EmailService implements OnModuleInit {
   async sendPosReceiptEmail(
     payload: PosReceiptEmailPayload,
     organizationId: string,
+    options?: { attachments?: EmailAttachment[] },
   ): Promise<SendMailResult> {
     const branding = await this.resolveBrandingForOrganization(organizationId);
     const { subject, html, text } = renderPosReceiptEmail(payload, branding);
-    return this.send('service', { to: payload.to, subject, html, text });
+    return this.send('service', {
+      to: payload.to,
+      subject,
+      html,
+      text,
+      attachments: options?.attachments,
+    });
   }
 
   async sendOperationAlert(
