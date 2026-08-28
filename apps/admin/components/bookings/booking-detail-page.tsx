@@ -499,7 +499,10 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       </section>
 
       <Card variant="dashboard" padding="md">
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <Tabs
+          value={activeTab}
+          onValueChange={(val) => setActiveTab(val as typeof activeTab)}
+        >
           <TabsList aria-label={t('tabs.ariaLabel')}>
             <TabsTrigger value="manifest">{t('tabs.manifest')}</TabsTrigger>
             <TabsTrigger value="guides">{t('tabs.guides')}</TabsTrigger>
