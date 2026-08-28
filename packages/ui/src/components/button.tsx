@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import { cn } from '../lib/cn';
+import { SpinnerDotsIcon } from './spinner';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -79,10 +80,7 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
     const content = (
       <>
         {loading ? (
-          <span
-            className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent"
-            aria-hidden
-          />
+          <SpinnerDotsIcon className="h-4 w-4 shrink-0 text-current" />
         ) : (
           leftIcon
         )}

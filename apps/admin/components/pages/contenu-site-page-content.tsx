@@ -28,7 +28,11 @@ export function ContenuSitePageContent() {
 
   return (
     <AdminIntroPage routePath="contenu/site">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs
+        value={activeTab}
+        onValueChange={(val) => setActiveTab(val as typeof activeTab)}
+        className="space-y-6"
+      >
         <TabsList aria-label={t('tabsAria')} className="h-auto flex-wrap">
           <TabsTrigger value="about-pages">{t('tabs.aboutPages')}</TabsTrigger>
           <TabsTrigger value="about-team">{t('tabs.aboutTeam')}</TabsTrigger>

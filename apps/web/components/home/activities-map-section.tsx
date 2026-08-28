@@ -11,6 +11,7 @@ import {
 import type { ActivitySearchResult } from '../../lib/activities/types';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { useScrollAnimation } from './use-scroll-animation';
+import { Spinner } from '@africatourismgate/ui';
 
 const ActivitiesMapInner = dynamic(
   () => import('./activities-map-inner').then((m) => m.ActivitiesMapInner),
@@ -142,10 +143,13 @@ export function ActivitiesMapSection() {
         <div className={`${isVisible ? 'animate-fade-in-up delay-200' : 'opacity-0'}`}>
           {loading ? (
             <div
-              className="h-[420px] w-full animate-pulse rounded-xl bg-atg-surface sm:h-[480px]"
+              className="flex h-[420px] w-full flex-col items-center justify-center gap-3 rounded-xl border border-atg-border bg-atg-surface sm:h-[480px]"
+              role="status"
               aria-busy="true"
               aria-label={t.activitiesMap.loading}
-            />
+            >
+              <Spinner size="lg" variant="primary" label={t.activitiesMap.loading} showLabel />
+            </div>
           ) : error ? (
             <p className="text-center text-sm text-atg-muted" role="alert">
               {t.activitiesMap.loadError}

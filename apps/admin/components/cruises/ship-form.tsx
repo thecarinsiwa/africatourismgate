@@ -48,6 +48,7 @@ export function ShipForm({ mode, shipId, initialShip }: ShipFormProps) {
   const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
   const tForm = useTranslations('modules.cruises.form.ship');
   const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
   const tSelect = useTranslations('modules.common.select');
   const router = useRouter();
   const lineId = useId();
@@ -142,10 +143,10 @@ export function ShipForm({ mode, shipId, initialShip }: ShipFormProps) {
         onChange={(e) => updateField('builtYear', e.target.value)}
       />
       <div className="flex gap-3">
-        <Button type="submit" loading={submitting}>
+        <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
           {mode === 'create' ? tForm('submitCreate') : tActions('save')}
         </Button>
-        <Button href="/produits/croisieres/navires" variant="outline">
+        <Button href="/produits/croisieres/navires" variant="outline" disabled={submitting}>
           {tActions('cancel')}
         </Button>
       </div>

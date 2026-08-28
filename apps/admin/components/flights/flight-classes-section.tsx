@@ -46,6 +46,7 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
   const { vols: getVolsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.flights.sections.classes');
   const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
   const tCommon = useTranslations('modules.common');
   const classLabels = useFlightClassLabels();
   const classOptions = useFlightClassOptions();
@@ -258,7 +259,7 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
             />
           </div>
           <div className="flex gap-3 pt-1">
-            <Button type="submit" loading={submitting}>
+            <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
               {editing ? tActions('save') : t('addClass')}
             </Button>
             <Button

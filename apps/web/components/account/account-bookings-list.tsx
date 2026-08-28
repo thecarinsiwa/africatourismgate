@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import type { BookingListItem, BookingStatus } from '@africatourismgate/types';
-import { EmptyState } from '@africatourismgate/ui';
+import { EmptyState, Spinner } from '@africatourismgate/ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
 import {
@@ -115,7 +115,11 @@ export function AccountBookingsList() {
   ];
 
   if (loading) {
-    return <p className="text-sm text-atg-muted">{t.account.loading}</p>;
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Spinner size="md" variant="primary" label={t.account.loading} showLabel />
+      </div>
+    );
   }
 
   if (error) {

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import type { BookingDetail } from '@africatourismgate/types';
+import { Spinner } from '@africatourismgate/ui';
 import { getBooking } from '../../lib/api/booking';
 import { ensureClientAccessToken } from '../../lib/auth/client-session';
 import { formatHotelPrice } from '../../lib/hotels/listings';
@@ -80,7 +81,12 @@ export function ReservationRequestSuccessPageContent() {
           <p>
             <span className="font-semibold">{s.bookingIdLabel}</span> {bookingId ?? '—'}
           </p>
-          {status === 'loading' && <p className="text-atg-muted">{s.verifying}</p>}
+          {status === 'loading' && (
+            <div className="flex items-center gap-2.5 py-2 text-atg-muted">
+              <Spinner size="sm" variant="primary" />
+              <span>{s.verifying}</span>
+            </div>
+          )}
           {status === 'ready' && booking && (
             <>
               <p>

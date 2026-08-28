@@ -240,15 +240,15 @@ export function WhyUsItemForm({
 
         <div className="flex flex-wrap gap-3">
           {canWrite ? (
-            <Button type="submit" disabled={saving}>
-              {saving
-                ? t('saving')
-                : mode === 'create'
-                  ? t('createButton')
-                  : t('saveButton')}
+            <Button
+              type="submit"
+              loading={saving}
+              loadingText={t('saving')}
+            >
+              {mode === 'create' ? t('createButton') : t('saveButton')}
             </Button>
           ) : null}
-          <Button type="button" variant="outline" href={cancelHref}>
+          <Button type="button" variant="outline" href={cancelHref} disabled={saving}>
             {t('cancelButton')}
           </Button>
         </div>

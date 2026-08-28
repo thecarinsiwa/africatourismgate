@@ -1,6 +1,7 @@
 'use client';
 
 import type { LoyaltyAccount, LoyaltyTier } from '@africatourismgate/types';
+import { Spinner } from '@africatourismgate/ui';
 import { useCallback, useEffect, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
 import { useTranslations } from '../../lib/i18n/locale-provider';
@@ -44,7 +45,11 @@ export function AccountLoyaltyPanel() {
   }, [load]);
 
   if (loading) {
-    return <p className="text-sm text-atg-muted">{t.account.loading}</p>;
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Spinner size="md" variant="primary" label={t.account.loading} showLabel />
+      </div>
+    );
   }
 
   if (error) {

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { Spinner } from '@africatourismgate/ui';
 import { getVehicleDetail } from '../../lib/api/public';
 import type { VehicleDetail } from '../../lib/cars/types';
 import type { Translations } from '../../lib/i18n/translations';
@@ -99,7 +100,10 @@ export function PackageVehicleConfigItem({
       ) : null}
 
       {pickupDate && returnDate && returnDate > pickupDate && loading && (
-        <p className="text-sm text-atg-muted">{t.loadingVehicleAvailability}</p>
+        <div className="flex items-center gap-2.5 py-3">
+          <Spinner size="sm" variant="primary" />
+          <span className="text-sm text-atg-muted">{t.loadingVehicleAvailability}</span>
+        </div>
       )}
 
       {pickupDate && returnDate && returnDate > pickupDate && error && (

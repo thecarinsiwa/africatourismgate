@@ -50,6 +50,7 @@ export function ActivitySchedulesSection({
   const tColumns = useTranslations('modules.common.columns');
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -260,7 +261,7 @@ export function ActivitySchedulesSection({
             disabled={submitting}
           />
           <div className="flex flex-wrap gap-3 pt-2">
-            <Button type="submit" loading={submitting}>
+            <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
               {editing ? tActions('save') : tActions('create')}
             </Button>
             <Button

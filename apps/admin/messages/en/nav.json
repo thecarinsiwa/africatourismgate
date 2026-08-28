@@ -11,6 +11,7 @@
     "system": "System"
   },
   "links": {
+    "notifications": "Notifications",
     "users": "Users",
     "employees": "Employees",
     "departments": "Departments",
@@ -102,6 +103,7 @@
   },
   "userMenu": {
     "dashboard": "Dashboard",
+    "notifications": "Notifications",
     "settings": "Settings",
     "defaultUser": "User"
   },

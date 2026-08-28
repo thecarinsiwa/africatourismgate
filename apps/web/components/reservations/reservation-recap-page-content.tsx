@@ -1,6 +1,7 @@
 'use client';
 
 import type { BookingPreferredPaymentMethod, PropertyDetail } from '@africatourismgate/types';
+import { Button, Spinner } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -420,7 +421,11 @@ export function ReservationRecapPageContent({ draft }: Props) {
 
         {draft && (
           <div className="mt-6 space-y-4 rounded-xl border border-atg-border bg-atg-elevated p-5 dark:border-atg-border dark:bg-atg-elevated">
-            {loading && <p className="text-sm text-atg-muted">{ck.loading}</p>}
+            {loading && (
+              <div className="flex items-center justify-center py-10">
+                <Spinner size="md" variant="primary" label={ck.loading} showLabel />
+              </div>
+            )}
 
             {!loading && isRoomReservationDraft(draft) && hotelDetail && room && (
               <CheckoutRecapLine
@@ -700,24 +705,25 @@ export function ReservationRecapPageContent({ draft }: Props) {
               >
                 {ck.backToCart}
               </Link>
-              <button
+              <Button
                 type="button"
                 onClick={() => void handleCheckout()}
-                disabled={submitting || !canPay || !preferredPaymentMethod}
-                className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-white hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {submitting
-                  ? isAssisted
+                disabled={!canPay || !preferredPaymentMethod}
+                loading={submitting}
+                loadingText={
+                  isAssisted
                     ? ck.requestSubmitting
                     : preferredPaymentMethod === 'cash'
                       ? ck.cashSubmitting
                       : ck.stripeRedirecting
-                  : isAssisted
-                    ? ck.requestBooking
-                    : preferredPaymentMethod === 'cash'
-                      ? ck.payWithCash
-                      : ck.payWithStripe}
-              </button>
+                }
+              >
+                {isAssisted
+                  ? ck.requestBooking
+                  : preferredPaymentMethod === 'cash'
+                    ? ck.payWithCash
+                    : ck.payWithStripe}
+              </Button>
             </div>
           </div>
         )}

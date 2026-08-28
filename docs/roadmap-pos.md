@@ -597,5 +597,5 @@ Script API complémentaire : `pnpm test:pos-sale-cash`
 - [x] POS-8 Email reçu
 - [x] POS-9 PDF natif
 - [x] POS-10 E2E Playwright
-- [ ] POS-11 UX polish
+- [x] POS-11 UX polish
 - [ ] POS-12 Prod enable

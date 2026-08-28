@@ -207,7 +207,10 @@ export function TourGuideViewPage({ guideId }: TourGuideViewPageProps) {
       </div>
 
       <Card variant="dashboard" padding="sm">
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <Tabs
+          value={activeTab}
+          onValueChange={(val) => setActiveTab(val as typeof activeTab)}
+        >
           <TabsList aria-label={tView('tabsAria')}>
             <TabsTrigger value="profile">{tView('tabs.profile')}</TabsTrigger>
             <TabsTrigger value="schedule">{tView('tabs.schedule')}</TabsTrigger>

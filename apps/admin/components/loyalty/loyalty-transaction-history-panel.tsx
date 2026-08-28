@@ -1,6 +1,6 @@
 'use client';
 
-import { Drawer } from '@africatourismgate/ui';
+import { Drawer, Spinner } from '@africatourismgate/ui';
 import type { AdminLoyaltyAccountListItem } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
@@ -119,7 +119,9 @@ export function LoyaltyTransactionHistoryPanel({
           </div>
 
           {loading ? (
-            <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
+            <div className="flex items-center justify-center py-8">
+              <Spinner size="md" variant="primary" label={tCommon('loading')} showLabel />
+            </div>
           ) : !apiAvailable ? (
             <p
               role="status"

@@ -18,16 +18,12 @@ export function useAdminEditPageMeta({
   entityLabel,
   breadcrumbTail,
 }: UseAdminEditPageMetaOptions): void {
-  const tailKey =
-    breadcrumbTail?.map((item) => `${item.href ?? ''}:${item.label}`).join('|') ??
-    (entityLabel ? `:${entityLabel}` : '');
-
   const pageMeta = useMemo(() => {
     if (!ready) return {};
     const tail =
       breadcrumbTail ?? (entityLabel ? [{ label: entityLabel }] : undefined);
     return { title, breadcrumbTail: tail };
-  }, [ready, title, entityLabel, breadcrumbTail, tailKey]);
+  }, [ready, title, entityLabel, breadcrumbTail]);
 
   useSetAdminPageMeta(pageMeta);
 }

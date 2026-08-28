@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, DataTableBadge, Drawer } from '@africatourismgate/ui';
+import { Button, DataTableBadge, Drawer, Spinner } from '@africatourismgate/ui';
 import type { PaymentAdminDetail, RefundPaymentResponse } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
@@ -113,7 +113,9 @@ export function PaymentDetailDrawer({
     >
       <div className="space-y-6 px-4 py-4">
         {loading ? (
-          <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
+          <div className="flex items-center justify-center py-12">
+            <Spinner size="md" variant="primary" label={tCommon('loading')} showLabel />
+          </div>
         ) : error ? (
           <p className="text-sm text-red-600 dark:text-red-400" role="alert">
             {error}

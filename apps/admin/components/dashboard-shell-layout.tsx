@@ -27,6 +27,7 @@ import { SessionSync } from './session-sync';
 import { SessionIdleLock } from './session-idle-lock';
 import { useBrowserSessionLifecycle } from '../lib/auth/browser-lifecycle';
 import { LanguageSwitcher } from './language-switcher';
+import { AdminNotificationsMenu } from './notifications/admin-notifications-menu';
 import { CommandPalette } from './command-palette';
 import { KeyboardShortcutsHelp } from './keyboard-shortcuts-help';
 
@@ -119,7 +120,12 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
           <Breadcrumb items={breadcrumbItems} ariaLabel={tShell('breadcrumb')} />
         ) : undefined
       }
-      headerActions={<LanguageSwitcher />}
+      headerActions={
+        <>
+          <AdminNotificationsMenu />
+          <LanguageSwitcher />
+        </>
+      }
       openMenuLabel={tShell('openMenu')}
       closeMenuLabel={tShell('closeMenu')}
       logo={{
@@ -134,6 +140,7 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
         loggingOutLabel: tShell('loggingOut'),
         menuLinks: [
           { href: '/dashboard', label: tNav('userMenu.dashboard') },
+          { href: '/notifications', label: tNav('userMenu.notifications') },
           { href: '/parametres', label: tNav('userMenu.settings') },
         ],
       }}

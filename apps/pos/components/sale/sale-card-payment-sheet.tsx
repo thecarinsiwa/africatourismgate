@@ -4,7 +4,7 @@ import type { BookingPaymentIntentResponse } from '@africatourismgate/types';
 import { Button } from '@africatourismgate/ui';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe, type Stripe } from '@stripe/stripe-js';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { posSalePageConfig } from '../../config/sale';
 import { getStripePublishableKey } from '../../lib/sale/stripe-publishable';
 import { SaleStripePaymentForm } from './sale-stripe-payment-form';
@@ -42,6 +42,17 @@ export function SaleCardPaymentSheet({
   const [error, setError] = useState<string | null>(null);
   const stripePromise = useMemo(() => getStripePromise(), []);
 
+  useEffect(() => {
+    if (!open) return;
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape' && !closing) {
+        onClose();
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [open, closing, onClose]);
+
   if (!open) {
     return null;
   }
@@ -56,8 +67,16 @@ export function SaleCardPaymentSheet({
       role="dialog"
       aria-modal="true"
       aria-labelledby="sale-card-pay-title"
+      onClick={(e) => {
+        if (e.target === e.currentTarget && !closing) {
+          onClose();
+        }
+      }}
     >
-      <div className="flex max-h-[calc(100dvh-8px)] w-full max-w-lg flex-col rounded-t-2xl border border-atg-border bg-atg-elevated shadow-xl sm:max-h-[92vh] sm:rounded-2xl">
+      <div
+        className="flex max-h-[calc(100dvh-8px)] w-full max-w-lg flex-col rounded-t-2xl border border-atg-border bg-atg-elevated shadow-xl sm:max-h-[92vh] sm:rounded-2xl"
+        aria-busy={closing}
+      >
         <div className="border-b border-atg-border px-4 py-4 sm:px-5">
           <h2 id="sale-card-pay-title" className="text-xl font-bold text-atg-fg">
             {labels.cardSheetTitle}

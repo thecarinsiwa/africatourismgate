@@ -1,6 +1,7 @@
 import type {
   Activity,
   BookingCheckoutItem,
+  BookingManifestSex,
   Cabin,
   Flight,
   FlightClass,
@@ -110,3 +111,36 @@ export type SaleCartCustomer = {
   firstName: string;
   lastName: string;
 };
+
+/** Entrée du manifeste renseignée à la caisse. */
+export type SaleManifestDraftEntry = {
+  fullName: string;
+  age?: number;
+  sex?: BookingManifestSex;
+  nationality?: string;
+  idNumber?: string;
+  conditions?: string;
+  comment?: string;
+};
+
+export function emptySaleManifestEntry(): SaleManifestDraftEntry {
+  return {
+    fullName: '',
+    age: undefined,
+    sex: undefined,
+    nationality: '',
+    idNumber: '',
+    conditions: '',
+    comment: '',
+  };
+}
+
+/** Calcule le nombre de voyageurs attendus selon les articles du panier. */
+export function estimateCartTravelersCount(lines: SaleCartLine[]): number {
+  if (lines.length === 0) return 0;
+  let count = 0;
+  for (const line of lines) {
+    count += line.item.quantity ?? 1;
+  }
+  return Math.max(1, count);
+}

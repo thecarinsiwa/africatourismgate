@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Card, Input, useToast } from '@africatourismgate/ui';
+import { Button, Card, Input, Spinner, useToast } from '@africatourismgate/ui';
 import type { RoomAvailability } from '@africatourismgate/types';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -376,7 +376,9 @@ export function RoomAvailabilityGrid({
 
       <Card variant="dashboard" padding="md" className="min-w-0 overflow-hidden">
         {loading ? (
-          <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
+          <div className="flex items-center justify-center py-12">
+            <Spinner size="md" variant="primary" label={tCommon('loading')} showLabel />
+          </div>
         ) : (
           <>
             <ul className="divide-y divide-atg-border md:hidden">

@@ -59,5 +59,55 @@
       "escape": "Fermer la palette ou l’aide",
       "help": "Afficher cette aide"
     }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "subtitle": "Consultez, filtrez et traitez toutes les alertes, demandes et messages de votre organisation.",
+    "openLabel": "Ouvrir les notifications",
+    "closeLabel": "Fermer les notifications",
+    "markAllAsRead": "Tout marquer comme lu",
+    "refresh": "Actualiser",
+    "empty": "Aucune notification",
+    "emptyHint": "Vous êtes à jour, aucune action en attente.",
+    "emptyFiltered": "Aucune notification ne correspond à vos filtres.",
+    "unreadBadge": "non lue(s)",
+    "viewAll": "Voir tout",
+    "searchPlaceholder": "Rechercher par client, réservation, sujet...",
+    "filterAll": "Toutes",
+    "filterUnreadOnly": "Non lues uniquement",
+    "markAsRead": "Marquer comme lu",
+    "markAsUnread": "Marquer comme non lu",
+    "openAction": "Ouvrir / Traiter",
+    "resetFilters": "Réinitialiser les filtres",
+    "tabs": {
+      "all": "Toutes",
+      "booking": "Réservations",
+      "message": "Messages",
+      "review": "Avis",
+      "support": "Support"
+    },
+    "categories": {
+      "booking": "Demande de réservation",
+      "message": "Message client",
+      "review": "Avis client",
+      "support": "Ticket support"
+    },
+    "priority": {
+      "high": "Priorité haute",
+      "normal": "Normale",
+      "low": "Basse"
+    },
+    "stats": {
+      "total": "Total alertes",
+      "unread": "Non lues",
+      "booking": "Réservations",
+      "message": "Messages clients",
+      "review": "Avis à modérer",
+      "support": "Tickets support"
+    },
+    "justNow": "À l'instant",
+    "minutesAgo": "il y a {count} min",
+    "hoursAgo": "il y a {count} h",
+    "daysAgo": "il y a {count} j"
   }
 }

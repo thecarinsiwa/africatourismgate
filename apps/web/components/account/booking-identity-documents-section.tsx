@@ -202,8 +202,8 @@ export function BookingIdentityDocumentsSection({
               {error}
             </p>
           ) : null}
-          <Button type="submit" disabled={uploading}>
-            {uploading ? id.uploading : id.upload}
+          <Button type="submit" loading={uploading} loadingText={id.uploading}>
+            {id.upload}
           </Button>
         </form>
       ) : null}

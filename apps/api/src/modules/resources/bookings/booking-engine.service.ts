@@ -1196,21 +1196,26 @@ export class BookingEngineService {
       throw new NotFoundException(`Classe de vol introuvable : ${item.referenceId}.`);
     }
 
+    const modes = await this.organizationSettingsService.getResolvedItemTypeModes();
+    const isAssisted = modes.flight_class === 'assisted';
+
     const availability = await this.flightAvailabilityRepository.findOne({
       where: { flightClassId: item.referenceId, date: item.date },
     });
+
     if (!availability || availability.deletedAt) {
-      throw new BadRequestException(
-        `Aucune disponibilité pour la classe ${flightClass.className} le ${item.date}.`,
-      );
-    }
-    if (availability.availableSeats < item.quantity) {
+      if (!isAssisted) {
+        throw new BadRequestException(
+          `Aucune disponibilité pour la classe ${flightClass.className} le ${item.date}.`,
+        );
+      }
+    } else if (availability.availableSeats < item.quantity && !isAssisted) {
       throw new BadRequestException(
         `Sièges insuffisants (${item.quantity} demandés, ${availability.availableSeats} disponibles).`,
       );
     }
 
-    const unitPriceCents = availability.priceCents;
+    const unitPriceCents = availability?.priceCents ?? flightClass.basePriceCents;
     const title = `Vol ${flightClass.className} (${item.date})`;
 
     return [
@@ -1224,11 +1229,15 @@ export class BookingEngineService {
         currency: 'USD',
         startDate: item.date,
         endDate: item.date,
-        stock: {
-          kind: 'flight_class',
-          flightClassId: item.referenceId,
-          date: item.date,
-        },
+        ...(availability && availability.availableSeats >= item.quantity
+          ? {
+              stock: {
+                kind: 'flight_class',
+                flightClassId: item.referenceId,
+                date: item.date,
+              },
+            }
+          : {}),
       },
     ];
   }

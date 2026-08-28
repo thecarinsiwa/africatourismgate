@@ -3,7 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import type { OrganizationListItem } from '@africatourismgate/types';
-import { AlertDialog } from '@africatourismgate/ui';
+import { AlertDialog, Spinner } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
@@ -105,9 +105,11 @@ export function OrganizationSettingsPage() {
   if (!organizationId) {
     return (
       <ParametresPageLayout>
-        <div className="min-w-0">
+        <div className="min-w-0 space-y-6">
           <AdminListPageHeader routePath="parametres" />
-          <p className="text-sm text-atg-muted">{t('form.loading')}</p>
+          <div className="flex items-center justify-center py-16">
+            <Spinner size="lg" variant="primary" label={t('form.loading')} showLabel />
+          </div>
         </div>
       </ParametresPageLayout>
     );

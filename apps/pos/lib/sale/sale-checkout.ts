@@ -9,6 +9,7 @@ import type {
 } from '@africatourismgate/types';
 import { getValidApiClient } from '../auth/api';
 import { requireSelectedOrganizationId } from '../auth/session';
+import type { SaleManifestDraftEntry } from './types';
 
 /** Motifs d’annulation POS (historique statut API). */
 export const posAbandonCancelReasons = {
@@ -26,6 +27,7 @@ export type CheckoutCartOptions = {
   customerUserId?: string | null;
   promoCode?: string | null;
   packageId?: string | null;
+  manifestEntries?: SaleManifestDraftEntry[];
 };
 
 function buildCheckoutBody({
@@ -123,13 +125,37 @@ export async function approveAssistedPosBooking(
   await client.approveBooking(bookingId, { totalCents });
 }
 
+export async function saveBookingManifestEntries(
+  bookingId: string,
+  entries: SaleManifestDraftEntry[],
+): Promise<void> {
+  const validEntries = entries.filter((e) => e.fullName.trim().length > 0);
+  if (validEntries.length === 0) return;
+
+  const client = await getValidApiClient();
+  for (let i = 0; i < validEntries.length; i++) {
+    const entry = validEntries[i]!;
+    await client.createBookingManifestEntry(bookingId, {
+      fullName: entry.fullName.trim(),
+      age: entry.age,
+      sex: entry.sex,
+      nationality: entry.nationality?.trim() || undefined,
+      idNumber: entry.idNumber?.trim() || undefined,
+      conditions: entry.conditions?.trim() || undefined,
+      comment: entry.comment?.trim() || undefined,
+      sortOrder: i,
+    });
+  }
+}
+
 /**
- * Crée la réservation (immédiate ou assistée).
- * Forfait assisté : request → approve staff → retourne l’id pour paiement.
+ * Crée la réservation (immédiate ou assistée) et enregistre le manifeste si renseigné.
+ * Forfait assisté : request → approve staff → manifeste → retourne l’id pour paiement.
  */
 export async function checkoutBookingFromCart(
   options: CheckoutCartOptions,
 ): Promise<string> {
+  let bookingId: string;
   if (options.preview.bookingMode === 'assisted') {
     const requested = await requestBookingFromCart(options);
     try {
@@ -145,11 +171,30 @@ export async function checkoutBookingFromCart(
       }
       throw error;
     }
-    return requested.bookingId;
+    bookingId = requested.bookingId;
+  } else {
+    const created = await createBookingFromCart(options);
+    bookingId = created.booking.id;
   }
 
-  const created = await createBookingFromCart(options);
-  return created.booking.id;
+  if (options.manifestEntries && options.manifestEntries.length > 0) {
+    try {
+      await saveBookingManifestEntries(bookingId, options.manifestEntries);
+    } catch (error: unknown) {
+      // En cas d'échec sur la création du manifeste, on annule la réservation pour libérer le stock
+      try {
+        await cancelAbandonedPosBooking(
+          bookingId,
+          'Abandon caisse — échec enregistrement manifeste',
+        );
+      } catch {
+        // ignore cancel failure; surface original manifest error
+      }
+      throw error;
+    }
+  }
+
+  return bookingId;
 }
 
 export async function payBookingCash(bookingId: string): Promise<BookingDetail> {

@@ -1,6 +1,7 @@
 import type { SidebarNavEntry } from '@africatourismgate/ui';
 import {
   SidebarActivityIcon,
+  SidebarBellIcon,
   SidebarBookingsIcon,
   SidebarCarIcon,
   SidebarChatIcon,
@@ -49,6 +50,7 @@ export {
 
 const iconMap: Record<string, ReactNode> = {
   dashboard: <SidebarDashboardIcon />,
+  bell: <SidebarBellIcon />,
   users: <SidebarUsersIcon />,
   userCircle: <SidebarUserCircleIcon />,
   mapPin: <SidebarMapPinIcon />,

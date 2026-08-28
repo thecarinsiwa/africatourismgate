@@ -1,4 +1,4 @@
-import { adminDashboardNavConfig, flattenAdminNavHrefs } from './dashboard-nav';
+import { adminDashboardNavConfig, flattenAdminNavHrefs } from './dashboard-nav.config';
 
 export const adminDashboardConfig = {
   logo: {

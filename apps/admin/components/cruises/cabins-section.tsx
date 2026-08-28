@@ -42,6 +42,7 @@ export function CabinsSection({ shipId, embedded = false }: CabinsSectionProps) 
   const tForm = useTranslations('modules.cruises.form.cabin');
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -232,7 +233,7 @@ export function CabinsSection({ shipId, embedded = false }: CabinsSectionProps) 
             >
               {tActions('cancel')}
             </Button>
-            <Button type="submit" loading={submitting}>
+            <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
               {editing ? tActions('save') : tActions('create')}
             </Button>
           </div>

@@ -20,7 +20,8 @@ export function SaleCatalogItem({ hit, kindLabel, onSelect }: SaleCatalogItemPro
       onClick={() => onSelect(hit)}
       className={cn(
         'group flex w-full flex-col rounded-xl border border-atg-border bg-atg-surface/40 p-4 text-left',
-        'transition-all duration-200 hover:border-primary/35 hover:bg-primary/[0.04] hover:shadow-md hover:shadow-black/5',
+        'touch-manipulation select-none transition-all duration-150 active:scale-[0.99]',
+        'hover:border-primary/35 hover:bg-primary/[0.04] hover:shadow-md hover:shadow-black/5',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-elevated',
         'dark:hover:shadow-black/30',
       )}

@@ -31,6 +31,7 @@ export function ItinerariesSection({ shipId, embedded = false }: ItinerariesSect
   const tColumns = useTranslations('modules.cruises.columns');
   const tCommonColumns = useTranslations('modules.common.columns');
   const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -230,7 +231,7 @@ export function ItinerariesSection({ shipId, embedded = false }: ItinerariesSect
             >
               {tActions('cancel')}
             </Button>
-            <Button type="submit" loading={submitting}>
+            <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
               {editing ? tActions('save') : tActions('create')}
             </Button>
           </div>

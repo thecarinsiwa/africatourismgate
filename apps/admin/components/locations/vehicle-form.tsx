@@ -68,6 +68,7 @@ export function VehicleForm({
   const { locations: getLocationsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.locations.form');
   const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
   const tCommon = useTranslations('modules.common');
   const router = useRouter();
   const agencyId = useId();
@@ -246,10 +247,10 @@ export function VehicleForm({
       )}
 
       <div className="flex flex-wrap gap-3 pt-2">
-        <Button type="submit" loading={submitting}>
+        <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
           {mode === 'create' ? t('submitCreate') : tActions('save')}
         </Button>
-        <Button type="button" variant="outline" href="/produits/locations">
+        <Button type="button" variant="outline" href="/produits/locations" disabled={submitting}>
           {tActions('cancel')}
         </Button>
       </div>

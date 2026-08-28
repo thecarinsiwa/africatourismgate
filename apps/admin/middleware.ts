@@ -103,6 +103,8 @@ export const config = {
     '/register/:path*',
     '/dashboard',
     '/dashboard/:path*',
+    '/notifications',
+    '/notifications/:path*',
     '/utilisateurs',
     '/utilisateurs/:path*',
     '/fidelite',

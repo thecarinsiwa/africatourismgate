@@ -41,6 +41,7 @@ export function AmenitiesList() {
   const tCommon = useTranslations('modules.common');
   const tDataTable = useTranslations('modules.common.dataTable');
   const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
   const tToast = useTranslations('modules.common.toast');
   const { toast } = useToast();
   const tNav = useTranslations('nav.links');
@@ -396,7 +397,7 @@ export function AmenitiesList() {
             >
               {tActions('cancel')}
             </Button>
-            <Button type="submit" loading={submitting}>
+            <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
               {editing ? tActions('save') : tActions('create')}
             </Button>
           </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import type { PropertyDetail } from '@africatourismgate/types';
+import { Spinner } from '@africatourismgate/ui';
 import { useEffect, useMemo, useState } from 'react';
 import { getAccommodationDetail } from '../../lib/api/public';
 import { addDays } from '../../lib/hotels/dates';
@@ -93,7 +94,10 @@ export function PackagePropertyConfigItem({
       ) : null}
 
       {loading && (
-        <p className="text-sm text-atg-muted">{t.loadingPropertyRooms}</p>
+        <div className="flex items-center gap-2.5 py-3">
+          <Spinner size="sm" variant="primary" />
+          <span className="text-sm text-atg-muted">{t.loadingPropertyRooms}</span>
+        </div>
       )}
 
       {error && (

@@ -180,8 +180,14 @@ export function DestinationHeroImageSection({
                 placeholder={tCommonForm('urlPlaceholder')}
               />
             </div>
-            <Button type="submit" variant="outline" disabled={saving || uploading}>
-              {saving ? t('saving') : t('saveUrl')}
+            <Button
+              type="submit"
+              variant="outline"
+              loading={saving}
+              loadingText={t('saving')}
+              disabled={uploading}
+            >
+              {t('saveUrl')}
             </Button>
           </form>
         </div>

@@ -47,6 +47,17 @@ export function SaleCustomerSheet({
 
   useEffect(() => {
     if (!open) return;
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [open, onClose]);
+
+  useEffect(() => {
+    if (!open) return;
     setQuery('');
     setResults([]);
     setError(null);
@@ -127,8 +138,16 @@ export function SaleCustomerSheet({
       role="dialog"
       aria-modal="true"
       aria-labelledby="sale-customer-title"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
     >
-      <div className="flex max-h-[calc(100dvh-8px)] w-full max-w-lg flex-col rounded-t-2xl border border-atg-border bg-atg-elevated shadow-xl sm:max-h-[92vh] sm:rounded-2xl">
+      <div
+        className="flex max-h-[calc(100dvh-8px)] w-full max-w-lg flex-col rounded-t-2xl border border-atg-border bg-atg-elevated shadow-xl sm:max-h-[92vh] sm:rounded-2xl"
+        aria-busy={loading}
+      >
         <div className="border-b border-atg-border px-4 py-4 sm:px-5">
           <h2 id="sale-customer-title" className="text-xl font-bold text-atg-fg">
             {labels.sheetTitle}

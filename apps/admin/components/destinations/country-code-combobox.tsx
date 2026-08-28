@@ -139,12 +139,13 @@ export function CountryCodeCombobox({
       <button
         id={id}
         type="button"
+        role="combobox"
         name={name}
         disabled={disabled}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listboxId}
-        aria-invalid={hasError || undefined}
+        aria-invalid={hasError ? true : undefined}
         aria-describedby={hasError ? `${id}-error` : hint ? `${id}-hint` : undefined}
         onClick={() => {
           if (!disabled) setOpen((prev) => !prev);

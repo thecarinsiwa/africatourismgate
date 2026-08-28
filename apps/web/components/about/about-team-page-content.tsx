@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import type { PublicTeamMember } from '@africatourismgate/types';
+import { Spinner } from '@africatourismgate/ui';
 import { browseTeamMembersForLocale } from '../../lib/api/public';
 import { useAppLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { useScrollAnimation } from '../home/use-scroll-animation';
@@ -41,7 +42,11 @@ export function AboutTeamPageContent() {
   }, [locale]);
 
   if (loading) {
-    return <p className="text-sm text-atg-muted">{a.loading}</p>;
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Spinner size="md" variant="primary" label={a.loading} showLabel />
+      </div>
+    );
   }
 
   if (members.length === 0) {

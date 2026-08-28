@@ -14,7 +14,7 @@ function formatCustomerDisplay(firstName: string, lastName: string, email: strin
 }
 
 export function SaleCustomerBar() {
-  const { customer, setCustomer } = useSaleCart();
+  const { customer, setCustomer, isCheckingOut } = useSaleCart();
   const [sheetOpen, setSheetOpen] = useState(false);
 
   const title = customer
@@ -37,7 +37,8 @@ export function SaleCustomerBar() {
             type="button"
             variant="secondary"
             size="sm"
-            className="shrink-0 !min-h-[2.75rem] px-3"
+            disabled={isCheckingOut}
+            className="shrink-0 !min-h-[2.75rem] px-3 disabled:opacity-50"
             onClick={() => setSheetOpen(true)}
           >
             {labels.changeLabel}

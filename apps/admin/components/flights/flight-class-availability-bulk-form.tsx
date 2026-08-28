@@ -24,6 +24,7 @@ export function FlightClassAvailabilityBulkForm({
   const { vols: getVolsErrorMessage } = useAdminErrorMessages();
   const tCalendar = useTranslations('modules.common.availabilityCalendar');
   const tCommon = useTranslations('modules.common');
+  const tLoading = useTranslations('common.loading');
   const [dateFrom, setDateFrom] = useState(startOfMonth(yearMonth));
   const [dateTo, setDateTo] = useState(endOfMonth(yearMonth));
   const [availableSeats, setAvailableSeats] = useState('10');
@@ -124,7 +125,7 @@ export function FlightClassAvailabilityBulkForm({
             onChange={(e) => setPriceCents(e.target.value)}
           />
         </div>
-        <Button type="submit" loading={submitting}>
+        <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
           {tCalendar('applyToRange')}
         </Button>
       </form>

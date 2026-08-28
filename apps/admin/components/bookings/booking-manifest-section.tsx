@@ -297,7 +297,7 @@ export function BookingManifestSection({
           ]
         : []),
     ],
-    [canWrite, deletingId, t, tActions, tCommon],
+    [canWrite, deletingId, sexLabel, t, tActions, tCommon],
   );
 
   const Wrapper = embedded ? 'div' : 'section';

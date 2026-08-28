@@ -5,6 +5,7 @@ import { posSalePageConfig } from '../../config/sale';
 import { formatCents } from '../../lib/sale/format';
 import { useSaleCart } from '../../lib/sale/cart-context';
 import { SaleCustomerBar } from './sale-customer-bar';
+import { SaleManifestBar } from './sale-manifest-bar';
 import { SalePaymentBar } from './sale-payment-bar';
 import { SalePromoBar } from './sale-promo-bar';
 
@@ -29,7 +30,9 @@ export function SaleCartPanel() {
     preview,
     previewLoading,
     previewError,
+    retryPreview,
     cartAddError,
+    isCheckingOut,
     removeLine,
     clearCart,
   } = useSaleCart();
@@ -114,7 +117,8 @@ export function SaleCartPanel() {
                           type="button"
                           variant="ghost"
                           size="sm"
-                          className="shrink-0 !min-h-0 px-2 py-1 text-xs text-atg-muted hover:text-red-600"
+                          disabled={isCheckingOut}
+                          className="shrink-0 !min-h-0 px-2 py-1 text-xs text-atg-muted hover:text-red-600 disabled:opacity-50"
                           onClick={() => removeLine(line.id)}
                           aria-label={`${cartLabels.removeLabel} ${line.label}`}
                         >
@@ -126,6 +130,8 @@ export function SaleCartPanel() {
                 })}
               </ul>
 
+              <SaleManifestBar />
+
               <SalePromoBar />
 
               <div className="mt-5 space-y-2 rounded-xl bg-atg-surface/60 p-4">
@@ -136,9 +142,23 @@ export function SaleCartPanel() {
                 ) : null}
 
                 {previewError ? (
-                  <p role="alert" className="text-sm text-red-600">
-                    {previewError}
-                  </p>
+                  <div
+                    role="alert"
+                    className="flex flex-col gap-2 rounded-lg bg-red-500/10 p-3 text-sm text-red-600 dark:text-red-400"
+                  >
+                    <p className="font-medium">{previewError}</p>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      className="self-start !min-h-[2.25rem] px-3 text-xs"
+                      disabled={previewLoading || isCheckingOut}
+                      loading={previewLoading}
+                      onClick={retryPreview}
+                    >
+                      {cartLabels.retryPreviewLabel}
+                    </Button>
+                  </div>
                 ) : null}
 
                 {cartAddError ? (
@@ -197,7 +217,8 @@ export function SaleCartPanel() {
                   variant="ghost"
                   size="sm"
                   fullWidth
-                  className="mt-3 !min-h-0 text-atg-muted"
+                  disabled={isCheckingOut}
+                  className="mt-3 !min-h-0 text-atg-muted disabled:opacity-50"
                   onClick={clearCart}
                 >
                   {cartLabels.clearLabel}

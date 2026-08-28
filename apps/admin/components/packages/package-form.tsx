@@ -65,6 +65,7 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
   const t = useTranslations('modules.packages.form');
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
   const router = useRouter();
   const [values, setValues] = useState<PackageFormValues>(() =>
     initialPackage ? packageToFormValues(initialPackage) : defaultValues,
@@ -240,10 +241,10 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
       </div>
 
       <div className="flex flex-wrap gap-3 pt-2">
-        <Button type="submit" loading={submitting}>
+        <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
           {mode === 'create' ? t('submitCreate') : tActions('save')}
         </Button>
-        <Button type="button" variant="outline" href="/produits/forfaits">
+        <Button type="button" variant="outline" href="/produits/forfaits" disabled={submitting}>
           {tActions('cancel')}
         </Button>
       </div>

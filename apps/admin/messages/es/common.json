@@ -59,5 +59,55 @@
       "escape": "Cerrar la paleta o esta ayuda",
       "help": "Mostrar esta ayuda"
     }
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "subtitle": "Consulte, filtre y gestione todas las alertas, solicitudes y mensajes de su organización.",
+    "openLabel": "Abrir notificaciones",
+    "closeLabel": "Cerrar notificaciones",
+    "markAllAsRead": "Marcar todo como leído",
+    "refresh": "Actualizar",
+    "empty": "Sin notificaciones",
+    "emptyHint": "Todo está al día, no hay acciones pendientes.",
+    "emptyFiltered": "Ninguna notificación coincide con sus filtros.",
+    "unreadBadge": "no leída(s)",
+    "viewAll": "Ver todo",
+    "searchPlaceholder": "Buscar por cliente, reserva, asunto...",
+    "filterAll": "Todas",
+    "filterUnreadOnly": "No leídas únicamente",
+    "markAsRead": "Marcar como leído",
+    "markAsUnread": "Marcar como no leído",
+    "openAction": "Abrir / Gestionar",
+    "resetFilters": "Restablecer filtros",
+    "tabs": {
+      "all": "Todas",
+      "booking": "Reservas",
+      "message": "Mensajes",
+      "review": "Opiniones",
+      "support": "Soporte"
+    },
+    "categories": {
+      "booking": "Solicitud de reserva",
+      "message": "Mensaje de cliente",
+      "review": "Opinión de cliente",
+      "support": "Ticket de soporte"
+    },
+    "priority": {
+      "high": "Prioridad alta",
+      "normal": "Normal",
+      "low": "Baja"
+    },
+    "stats": {
+      "total": "Total de alertas",
+      "unread": "No leídas",
+      "booking": "Reservas",
+      "message": "Mensajes de clientes",
+      "review": "Opiniones por moderar",
+      "support": "Tickets de soporte"
+    },
+    "justNow": "Hace un momento",
+    "minutesAgo": "hace {count} min",
+    "hoursAgo": "hace {count} h",
+    "daysAgo": "hace {count} d"
   }
 }

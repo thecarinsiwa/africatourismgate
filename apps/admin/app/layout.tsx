@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Montserrat } from 'next/font/google';
+import NextTopLoader from 'nextjs-toploader';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages, getTranslations } from 'next-intl/server';
 import { ThemeProvider, ToastProvider } from '@africatourismgate/ui';
@@ -37,6 +38,18 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} className={montserrat.variable} suppressHydrationWarning>
       <body className="font-sans">
+        <NextTopLoader
+          color="#0B6E4F"
+          initialPosition={0.08}
+          crawlSpeed={200}
+          height={3}
+          crawl={true}
+          showSpinner={false}
+          easing="ease"
+          speed={200}
+          shadow="0 0 10px #0B6E4F,0 0 5px #0B6E4F"
+          zIndex={99999}
+        />
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeProvider defaultTheme="system">
             <ToastProvider>{children}</ToastProvider>

@@ -246,7 +246,7 @@ export function PropertiesList() {
         cell: ({ row }) => renderPropertyActions(row.original),
       },
     ],
-    [deletingId, destinationNameById, propertyTypeLabels, renderPropertyActions, tColumns, tCommonColumns],
+    [destinationNameById, propertyTypeLabels, renderPropertyActions, tColumns, tCommonColumns],
   );
 
   const properties = state.status === 'ready' ? state.properties : [];

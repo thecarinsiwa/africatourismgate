@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Card, Input, useToast } from '@africatourismgate/ui';
+import { Button, Card, Input, Spinner, useToast } from '@africatourismgate/ui';
 import type { FlightClassAvailability } from '@africatourismgate/types';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -378,7 +378,9 @@ export function FlightClassAvailabilityGrid({
 
       <Card variant="dashboard" padding="md">
         {loading ? (
-          <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
+          <div className="flex items-center justify-center py-12">
+            <Spinner size="md" variant="primary" label={tCommon('loading')} showLabel />
+          </div>
         ) : (
           <div
             ref={gridRef}

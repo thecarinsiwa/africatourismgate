@@ -226,7 +226,7 @@ export function BookingAssistedApprovalPanel({
     } finally {
       setManifestLoading(false);
     }
-  }, [bookingId, status, basePricesPerTraveler]);
+  }, [bookingId, basePricesPerTraveler]);
 
   useEffect(() => {
     void loadManifest();

@@ -37,6 +37,7 @@ export function DepartmentsList() {
   const tCommon = useTranslations('modules.common');
   const tPagination = useTranslations('modules.common.pagination');
   const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
   const tFilters = useTranslations('modules.common.filters');
   const emptyDash = tCommon('empty.dash');
   const orgFilterId = useId();
@@ -267,6 +268,7 @@ export function DepartmentsList() {
       emptyDash,
       handleDeleteRequest,
       isSuperAdmin,
+      openForm,
       orgNameById,
       tCommon,
     ],
@@ -387,7 +389,7 @@ export function DepartmentsList() {
               <Button type="button" variant="outline" onClick={resetForm} disabled={submitting}>
                 {tActions('cancel')}
               </Button>
-              <Button type="submit" loading={submitting}>
+              <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
                 {editing ? tActions('save') : tActions('create')}
               </Button>
             </div>

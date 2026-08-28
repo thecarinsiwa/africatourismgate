@@ -173,8 +173,8 @@ export function WhyUsSectionForm({ locale, onSaved }: WhyUsSectionFormProps) {
         {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
         {canWrite ? (
-          <Button type="submit" disabled={saving}>
-            {saving ? t('saving') : t('saveButton')}
+          <Button type="submit" loading={saving} loadingText={t('saving')}>
+            {t('saveButton')}
           </Button>
         ) : null}
       </form>

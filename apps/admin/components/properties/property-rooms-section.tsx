@@ -378,7 +378,7 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
         ),
       },
     ],
-    [deletingId, emptyDash, handleDeleteRequest, propertyId, t, tColumns, tCommon],
+    [deletingId, emptyDash, handleDeleteRequest, openEdit, propertyId, t, tColumns, tCommon],
   );
 
   const rooms = state.status === 'ready' ? state.rooms : [];

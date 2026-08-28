@@ -319,7 +319,7 @@ export function OrganizationSettingsForm({
     return () => {
       cancelled = true;
     };
-  }, [organizationId]);
+  }, [getOrganizationSettingsErrorMessage, organizationId]);
 
   function validate(): boolean {
     const errors: Partial<Record<keyof SettingsFormValues, string>> = {};

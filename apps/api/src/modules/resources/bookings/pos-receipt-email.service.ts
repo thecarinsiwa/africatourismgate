@@ -1,7 +1,9 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
@@ -14,6 +16,7 @@ import {
   type PosReceiptContext,
   toPosReceiptEmailPayload,
 } from './pos-receipt.context';
+import { PosReceiptPdfService } from './pos-receipt-pdf.service';
 
 @Injectable()
 export class PosReceiptEmailService {
@@ -24,6 +27,8 @@ export class PosReceiptEmailService {
     private readonly organizationsRepository: Repository<Organizations>,
     private readonly bookingsService: BookingsService,
     private readonly emailService: EmailService,
+    @Inject(forwardRef(() => PosReceiptPdfService))
+    private readonly posReceiptPdfService: PosReceiptPdfService,
   ) {}
 
   async sendReceiptEmail(
@@ -38,9 +43,30 @@ export class PosReceiptEmailService {
       organizationId,
     );
 
+    let attachments:
+      | Array<{ filename: string; content: Buffer; contentType?: string }>
+      | undefined;
+
+    try {
+      const pdfFile = await this.posReceiptPdfService.generateFromContext(
+        context,
+        organizationId,
+      );
+      attachments = [
+        {
+          filename: pdfFile.filename,
+          content: pdfFile.buffer,
+          contentType: pdfFile.contentType,
+        },
+      ];
+    } catch {
+      // Si la génération du PDF échoue exceptionnellement, on envoie l'e-mail sans PJ
+    }
+
     return this.emailService.sendPosReceiptEmail(
       toPosReceiptEmailPayload(context, to),
       context.organizationId,
+      { attachments },
     );
   }
 

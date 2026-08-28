@@ -1,5 +1,5 @@
 import type { AuthTokens } from '@africatourismgate/types';
-import { getApiBaseUrl } from './api';
+import { getApiBaseUrl } from './api-url';
 
 export type RefreshAccessTokenResult = AuthTokens | 'locked' | null;
 

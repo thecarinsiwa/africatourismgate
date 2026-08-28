@@ -700,5 +700,10 @@
         "metaTitle": "Détail réservation"
       }
     }
+  },
+  "notifications": {
+    "title": "Centre de notifications",
+    "description": "Consultez, filtrez et traitez toutes les alertes, demandes de réservation, messages et tickets.",
+    "metaTitle": "Centre de notifications"
   }
 }
