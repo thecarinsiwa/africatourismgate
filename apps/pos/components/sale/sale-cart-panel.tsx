@@ -5,6 +5,7 @@ import { posSalePageConfig } from '../../config/sale';
 import { formatCents } from '../../lib/sale/format';
 import { useSaleCart } from '../../lib/sale/cart-context';
 import { SaleCustomerBar } from './sale-customer-bar';
+import { SaleManifestBar } from './sale-manifest-bar';
 import { SalePaymentBar } from './sale-payment-bar';
 import { SalePromoBar } from './sale-promo-bar';
 
@@ -128,6 +129,8 @@ export function SaleCartPanel() {
                   );
                 })}
               </ul>
+
+              <SaleManifestBar />
 
               <SalePromoBar />
 
