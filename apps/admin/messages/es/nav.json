@@ -11,6 +11,7 @@
     "system": "Sistema"
   },
   "links": {
+    "notifications": "Notificaciones",
     "users": "Usuarios",
     "employees": "Empleados",
     "departments": "Departamentos",
@@ -102,6 +103,7 @@
   },
   "userMenu": {
     "dashboard": "Panel de control",
+    "notifications": "Notificaciones",
     "settings": "Configuración",
     "defaultUser": "Usuario"
   },

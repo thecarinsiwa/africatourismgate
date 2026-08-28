@@ -36,6 +36,12 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
     iconKey: 'dashboard',
   },
   {
+    type: 'link',
+    href: '/notifications',
+    labelKey: 'notifications',
+    iconKey: 'bell',
+  },
+  {
     type: 'group',
     id: 'users-auth',
     iconKey: 'users',

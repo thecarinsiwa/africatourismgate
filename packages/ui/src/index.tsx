@@ -12,6 +12,7 @@ export {
 } from './components/sidebar';
 export {
   SidebarActivityIcon,
+  SidebarBellIcon,
   SidebarBookingsIcon,
   SidebarCarIcon,
   SidebarChatIcon,

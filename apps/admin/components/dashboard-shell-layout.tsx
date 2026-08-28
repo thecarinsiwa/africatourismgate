@@ -140,6 +140,7 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
         loggingOutLabel: tShell('loggingOut'),
         menuLinks: [
           { href: '/dashboard', label: tNav('userMenu.dashboard') },
+          { href: '/notifications', label: tNav('userMenu.notifications') },
           { href: '/parametres', label: tNav('userMenu.settings') },
         ],
       }}
