@@ -29,6 +29,7 @@ export function SaleCartPanel() {
     preview,
     previewLoading,
     previewError,
+    retryPreview,
     cartAddError,
     isCheckingOut,
     removeLine,
@@ -138,9 +139,23 @@ export function SaleCartPanel() {
                 ) : null}
 
                 {previewError ? (
-                  <p role="alert" className="text-sm text-red-600">
-                    {previewError}
-                  </p>
+                  <div
+                    role="alert"
+                    className="flex flex-col gap-2 rounded-lg bg-red-500/10 p-3 text-sm text-red-600 dark:text-red-400"
+                  >
+                    <p className="font-medium">{previewError}</p>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      className="self-start !min-h-[2.25rem] px-3 text-xs"
+                      disabled={previewLoading || isCheckingOut}
+                      loading={previewLoading}
+                      onClick={retryPreview}
+                    >
+                      {cartLabels.retryPreviewLabel}
+                    </Button>
+                  </div>
                 ) : null}
 
                 {cartAddError ? (

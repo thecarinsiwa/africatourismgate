@@ -38,6 +38,7 @@ type SaleCartContextValue = {
   preview: BookingCheckoutPreview | null;
   previewLoading: boolean;
   previewError: string | null;
+  retryPreview: () => void;
   /** Erreur ajout panier (ex. mix forfait + produit). */
   cartAddError: string | null;
   clearCartAddError: () => void;
@@ -85,6 +86,12 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
   const [customer, setCustomerState] = useState<SaleCartCustomer | null>(null);
   const [cartAddError, setCartAddError] = useState<string | null>(null);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [retryNonce, setRetryNonce] = useState(0);
+
+  const retryPreview = useCallback(() => {
+    setPreviewError(null);
+    setRetryNonce((n) => n + 1);
+  }, []);
 
   const cartPackageId = useMemo(
     () => getCartPackageId(lines) ?? null,
@@ -198,7 +205,7 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [lines, appliedPromoCode]);
+  }, [lines, appliedPromoCode, retryNonce]);
 
   const linesWithPricing = useMemo((): SaleCartLineWithPricing[] => {
     return lines.map((line, index) => ({
@@ -214,6 +221,7 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
       preview,
       previewLoading,
       previewError,
+      retryPreview,
       cartAddError,
       clearCartAddError,
       cartPackageId,
@@ -234,6 +242,7 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
       preview,
       previewLoading,
       previewError,
+      retryPreview,
       cartAddError,
       clearCartAddError,
       cartPackageId,

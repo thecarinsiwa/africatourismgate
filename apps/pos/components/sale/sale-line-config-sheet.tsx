@@ -54,6 +54,17 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
   const [packageTravelers, setPackageTravelers] = useState(2);
 
   useEffect(() => {
+    if (!open) return;
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [open, onClose]);
+
+  useEffect(() => {
     if (!open || !hit) return;
 
     const currentHit = hit;
@@ -273,8 +284,16 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
       role="dialog"
       aria-modal="true"
       aria-labelledby="sale-config-title"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
     >
-      <div className="flex max-h-[90vh] w-full max-w-lg flex-col rounded-t-2xl border border-atg-border bg-atg-elevated shadow-xl sm:rounded-2xl">
+      <div
+        className="flex max-h-[90vh] w-full max-w-lg flex-col rounded-t-2xl border border-atg-border bg-atg-elevated shadow-xl sm:rounded-2xl"
+        aria-busy={loading}
+      >
         <div className="border-b border-atg-border px-5 py-4">
           <h2 id="sale-config-title" className="text-xl font-bold text-atg-fg">
             {labels.title}

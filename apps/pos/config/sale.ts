@@ -14,6 +14,7 @@ export const posSalePageConfig = {
     loadingLabel: 'Recherche…',
     emptyLabel: 'Aucun produit trouvé',
     emptyHint: 'Essayez un autre mot-clé ou changez le filtre.',
+    clearSearchLabel: 'Effacer la recherche',
     errorLabel: 'Impossible de charger le catalogue',
     errorHint: 'Vérifiez votre connexion ou reconnectez-vous.',
   },
@@ -40,6 +41,7 @@ export const posSalePageConfig = {
     totalLabel: 'Total',
     previewLoadingLabel: 'Calcul du total…',
     previewErrorLabel: 'Impossible de calculer le total',
+    retryPreviewLabel: 'Réessayer le calcul',
     packageMixError:
       'Un forfait ne peut pas être combiné avec d’autres produits. Retirez le forfait ou videz le panier.',
   },
@@ -108,6 +110,7 @@ export const posSalePageConfig = {
     abandonStockReleasedHint: 'La réservation a été annulée et le stock libéré.',
     cancelAbandonErrorLabel: 'Impossible d’annuler la réservation en attente',
     previewRequiredHint: 'Attendez le calcul du total',
+    dismissErrorLabel: 'Fermer',
   },
 } as const;
 

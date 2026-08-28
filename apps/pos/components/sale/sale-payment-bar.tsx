@@ -191,9 +191,20 @@ export function SalePaymentBar() {
         ) : null}
 
         {checkoutError ? (
-          <p role="alert" className="text-sm text-red-600">
-            {checkoutError}
-          </p>
+          <div
+            role="alert"
+            className="flex items-start justify-between gap-2 rounded-lg bg-red-500/10 p-3 text-sm text-red-600 dark:text-red-400"
+          >
+            <p className="min-w-0 flex-1">{checkoutError}</p>
+            <button
+              type="button"
+              onClick={() => setCheckoutError(null)}
+              className="shrink-0 rounded px-1 text-xs font-semibold underline hover:opacity-80"
+              aria-label={labels.dismissErrorLabel}
+            >
+              {labels.dismissErrorLabel}
+            </button>
+          </div>
         ) : null}
 
         <div className="grid grid-cols-2 gap-3">

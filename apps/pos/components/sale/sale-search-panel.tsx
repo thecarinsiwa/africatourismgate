@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, Input } from '@africatourismgate/ui';
+import { Button, Card, Input } from '@africatourismgate/ui';
 import { useEffect, useState } from 'react';
 import { posSalePageConfig } from '../../config/sale';
 import { useSaleCart } from '../../lib/sale/cart-context';
@@ -154,6 +154,18 @@ export function SaleSearchPanel() {
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-atg-border bg-atg-surface/30 px-6 py-12 text-center">
             <p className="text-base font-medium text-atg-fg">{searchLabels.emptyLabel}</p>
             <p className="mt-2 text-sm text-atg-muted">{searchLabels.emptyHint}</p>
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              className="mt-4 !min-h-[2.25rem] px-3.5 text-xs font-semibold"
+              onClick={() => {
+                setQuery('');
+                setFilter('all');
+              }}
+            >
+              {searchLabels.clearSearchLabel}
+            </Button>
           </div>
         ) : null}
 
