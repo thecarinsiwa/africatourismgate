@@ -103,7 +103,7 @@ function formatRelativeTime(
 }
 
 export function AdminNotificationsMenu() {
-  const t = useTranslations('notifications');
+  const t = useTranslations('common.notifications');
   const router = useRouter();
   const menuId = useId();
   const [open, setOpen] = useState(false);
@@ -318,7 +318,7 @@ export function AdminNotificationsMenu() {
                             item.unread ? 'text-atg-fg' : 'text-atg-muted',
                           )}
                         >
-                          {item.title}
+                          {t(`categories.${item.category}`)}
                         </p>
                         <span className="shrink-0 text-[11px] text-atg-muted">
                           {formatRelativeTime(item.createdAt, t)}

@@ -78,10 +78,10 @@
       "support": "Support"
     },
     "categories": {
-      "booking": "Booking",
+      "booking": "Booking request",
       "message": "Customer message",
-      "review": "Review",
-      "support": "Support"
+      "review": "Customer review",
+      "support": "Support ticket"
     },
     "justNow": "Just now",
     "minutesAgo": "{count}m ago",

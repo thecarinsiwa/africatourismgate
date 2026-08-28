@@ -78,10 +78,10 @@
       "support": "Support"
     },
     "categories": {
-      "booking": "Réservation",
+      "booking": "Demande de réservation",
       "message": "Message client",
-      "review": "Avis",
-      "support": "Support"
+      "review": "Avis client",
+      "support": "Ticket support"
     },
     "justNow": "À l'instant",
     "minutesAgo": "il y a {count} min",
