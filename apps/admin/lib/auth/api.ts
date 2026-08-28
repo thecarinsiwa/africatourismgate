@@ -1,4 +1,5 @@
 import { ApiClient, ApiHttpError } from '@africatourismgate/api-client';
+import { getApiBaseUrl, resolveApiBaseUrl } from './api-url';
 import { getSessionFromDocumentCookies } from './cookies';
 import { refreshAccessToken } from './refresh';
 import {
@@ -11,41 +12,9 @@ import {
 } from './session';
 import { setSessionLocked } from './session-idle';
 
-/** Aligné sur API_PORT (défaut 3000) — voir packages/config/dev-api-url.mjs */
-const DEFAULT_DEV_API_URL = 'http://localhost:3000/api';
-const PRODUCTION_API_URL = 'https://app-africatourismgate.org/api';
+export { getApiBaseUrl, resolveApiBaseUrl };
 
 let refreshInFlight: Promise<StoredSession | null> | null = null;
-
-function isLocalApiUrl(url: string): boolean {
-  return url.includes('localhost') || url.includes('127.0.0.1');
-}
-
-/** URL API côté serveur / middleware (pas de `window`). */
-export function getApiBaseUrl(): string {
-  const fromEnv = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '');
-
-  if (process.env.NODE_ENV === 'production') {
-    return fromEnv && !isLocalApiUrl(fromEnv) ? fromEnv : PRODUCTION_API_URL;
-  }
-
-  return fromEnv || DEFAULT_DEV_API_URL;
-}
-
-/**
- * URL de l’API dans le navigateur.
- * Repli production si le build a encore localhost (oubli de .env au `pnpm build`).
- */
-export function resolveApiBaseUrl(): string {
-  if (typeof window !== 'undefined') {
-    const host = window.location.hostname;
-    if (host === 'app-africatourismgate.org' || host.endsWith('.africatourismgate.org')) {
-      return PRODUCTION_API_URL;
-    }
-  }
-
-  return getApiBaseUrl();
-}
 
 function syncSessionFromCookies(): StoredSession | null {
   const fromCookies = getSessionFromDocumentCookies();

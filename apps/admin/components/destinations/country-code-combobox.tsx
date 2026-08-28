@@ -139,6 +139,7 @@ export function CountryCodeCombobox({
       <button
         id={id}
         type="button"
+        role="combobox"
         name={name}
         disabled={disabled}
         aria-haspopup="listbox"
