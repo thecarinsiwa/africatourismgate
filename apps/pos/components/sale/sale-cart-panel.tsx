@@ -30,6 +30,7 @@ export function SaleCartPanel() {
     previewLoading,
     previewError,
     cartAddError,
+    isCheckingOut,
     removeLine,
     clearCart,
   } = useSaleCart();
@@ -114,7 +115,8 @@ export function SaleCartPanel() {
                           type="button"
                           variant="ghost"
                           size="sm"
-                          className="shrink-0 !min-h-0 px-2 py-1 text-xs text-atg-muted hover:text-red-600"
+                          disabled={isCheckingOut}
+                          className="shrink-0 !min-h-0 px-2 py-1 text-xs text-atg-muted hover:text-red-600 disabled:opacity-50"
                           onClick={() => removeLine(line.id)}
                           aria-label={`${cartLabels.removeLabel} ${line.label}`}
                         >
@@ -197,7 +199,8 @@ export function SaleCartPanel() {
                   variant="ghost"
                   size="sm"
                   fullWidth
-                  className="mt-3 !min-h-0 text-atg-muted"
+                  disabled={isCheckingOut}
+                  className="mt-3 !min-h-0 text-atg-muted disabled:opacity-50"
                   onClick={clearCart}
                 >
                   {cartLabels.clearLabel}

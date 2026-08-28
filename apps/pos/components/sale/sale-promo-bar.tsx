@@ -15,6 +15,7 @@ export function SalePromoBar() {
     preview,
     previewLoading,
     previewError,
+    isCheckingOut,
   } = useSaleCart();
   const [draft, setDraft] = useState('');
 
@@ -56,7 +57,8 @@ export function SalePromoBar() {
             type="button"
             variant="ghost"
             size="sm"
-            className="shrink-0 !min-h-[2.75rem] px-3 text-atg-muted"
+            disabled={isCheckingOut}
+            className="shrink-0 !min-h-[2.75rem] px-3 text-atg-muted disabled:opacity-50"
             onClick={handleClear}
           >
             {labels.removeLabel}
@@ -69,6 +71,7 @@ export function SalePromoBar() {
             autoComplete="off"
             spellCheck={false}
             value={draft}
+            disabled={isCheckingOut}
             placeholder={labels.placeholder}
             className="min-h-[2.75rem] flex-1"
             aria-label={labels.sectionLabel}
@@ -80,7 +83,8 @@ export function SalePromoBar() {
               type="button"
               variant="ghost"
               size="sm"
-              className="shrink-0 !min-h-[2.75rem] px-3 text-atg-muted"
+              disabled={isCheckingOut}
+              className="shrink-0 !min-h-[2.75rem] px-3 text-atg-muted disabled:opacity-50"
               onClick={handleClear}
             >
               {labels.removeLabel}
@@ -91,7 +95,7 @@ export function SalePromoBar() {
             variant="secondary"
             size="sm"
             className="shrink-0 !min-h-[2.75rem] px-4"
-            disabled={previewLoading}
+            disabled={previewLoading || isCheckingOut}
             onClick={handleApply}
           >
             {labels.applyLabel}

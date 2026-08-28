@@ -53,6 +53,9 @@ type SaleCartContextValue = {
   addLine: (item: BookingCheckoutItem, label: string) => void;
   removeLine: (lineId: string) => void;
   clearCart: () => void;
+  /** True quand un paiement (cash ou card) ou finalisation est en cours. */
+  isCheckingOut: boolean;
+  setIsCheckingOut: (checkingOut: boolean) => void;
 };
 
 const SaleCartContext = createContext<SaleCartContextValue | null>(null);
@@ -81,6 +84,7 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
   const [appliedPromoCode, setAppliedPromoCode] = useState<string | null>(null);
   const [customer, setCustomerState] = useState<SaleCartCustomer | null>(null);
   const [cartAddError, setCartAddError] = useState<string | null>(null);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const cartPackageId = useMemo(
     () => getCartPackageId(lines) ?? null,
@@ -221,6 +225,8 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
       addLine,
       removeLine,
       clearCart,
+      isCheckingOut,
+      setIsCheckingOut,
     }),
     [
       lines,
@@ -239,6 +245,7 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
       addLine,
       removeLine,
       clearCart,
+      isCheckingOut,
     ],
   );
 

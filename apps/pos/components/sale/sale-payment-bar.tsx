@@ -3,7 +3,7 @@
 import type { BookingPaymentIntentResponse } from '@africatourismgate/types';
 import { Button } from '@africatourismgate/ui';
 import { useRouter } from 'next/navigation';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { posSalePageConfig } from '../../config/sale';
 import { useSaleCart } from '../../lib/sale/cart-context';
 import { isStripeConfigured } from '../../lib/sale/stripe-publishable';
@@ -22,8 +22,18 @@ const { payment: labels } = posSalePageConfig;
 
 export function SalePaymentBar() {
   const router = useRouter();
-  const { lines, preview, previewLoading, previewError, customer, appliedPromoCode, cartPackageId, clearCart } =
-    useSaleCart();
+  const {
+    lines,
+    preview,
+    previewLoading,
+    previewError,
+    customer,
+    appliedPromoCode,
+    cartPackageId,
+    clearCart,
+    setIsCheckingOut,
+  } = useSaleCart();
+  const isSubmittingRef = useRef(false);
   const [processing, setProcessing] = useState<'cash' | 'card' | null>(null);
   const [closingCard, setClosingCard] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
@@ -45,15 +55,17 @@ export function SalePaymentBar() {
   const finishSale = useCallback(
     (bookingId: string, payment: 'cash' | 'card') => {
       clearCart();
+      setIsCheckingOut(false);
       router.push(buildSuccessUrl(bookingId, payment));
     },
-    [clearCart, router],
+    [clearCart, router, setIsCheckingOut],
   );
 
   const clearCardSheet = useCallback(() => {
     setCardBookingId(null);
     setCardIntent(null);
-  }, []);
+    setIsCheckingOut(false);
+  }, [setIsCheckingOut]);
 
   function checkoutOptions(preferredPaymentMethod: 'cash' | 'stripe') {
     return {
@@ -67,10 +79,12 @@ export function SalePaymentBar() {
   }
 
   async function handleCash() {
-    if (!preview || lines.length === 0) return;
+    if (!preview || lines.length === 0 || isSubmittingRef.current) return;
 
+    isSubmittingRef.current = true;
     setCheckoutError(null);
     setProcessing('cash');
+    setIsCheckingOut(true);
     let createdBookingId: string | null = null;
 
     try {
@@ -95,16 +109,20 @@ export function SalePaymentBar() {
       } else {
         setCheckoutError(saleApiErrorMessage(error, labels.checkoutErrorLabel));
       }
+      setIsCheckingOut(false);
     } finally {
+      isSubmittingRef.current = false;
       setProcessing(null);
     }
   }
 
   async function handleCard() {
-    if (!preview || lines.length === 0 || !stripeReady) return;
+    if (!preview || lines.length === 0 || !stripeReady || isSubmittingRef.current) return;
 
+    isSubmittingRef.current = true;
     setCheckoutError(null);
     setProcessing('card');
+    setIsCheckingOut(true);
     let createdBookingId: string | null = null;
 
     try {
@@ -130,7 +148,9 @@ export function SalePaymentBar() {
       } else {
         setCheckoutError(saleApiErrorMessage(error, labels.checkoutErrorLabel));
       }
+      setIsCheckingOut(false);
     } finally {
+      isSubmittingRef.current = false;
       setProcessing(null);
     }
   }
