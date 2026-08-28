@@ -284,7 +284,7 @@ export function AirlinesList() {
         />
       </DataTableActions>
     ),
-    [deletingId, handleDeleteRequest],
+    [deletingId, handleDeleteRequest, openForm],
   );
 
   const columns = useMemo<ColumnDef<Airline, unknown>[]>(

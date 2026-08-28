@@ -143,9 +143,7 @@ export function DashboardRecentActivity({ className }: { className?: string }) {
       cancelled = true;
     };
   }, [
-    access.canReadBookings,
-    access.canReadReviews,
-    access.canReadSupportTickets,
+    access,
     canShow,
     getDashboardKpiErrorMessage,
     permissionsLoading,

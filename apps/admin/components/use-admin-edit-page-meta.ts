@@ -27,7 +27,7 @@ export function useAdminEditPageMeta({
     const tail =
       breadcrumbTail ?? (entityLabel ? [{ label: entityLabel }] : undefined);
     return { title, breadcrumbTail: tail };
-  }, [ready, title, entityLabel, breadcrumbTail, tailKey]);
+  }, [ready, title, entityLabel, breadcrumbTail]);
 
   useSetAdminPageMeta(pageMeta);
 }

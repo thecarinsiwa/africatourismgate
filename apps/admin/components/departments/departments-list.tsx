@@ -267,6 +267,7 @@ export function DepartmentsList() {
       emptyDash,
       handleDeleteRequest,
       isSuperAdmin,
+      openForm,
       orgNameById,
       tCommon,
     ],
