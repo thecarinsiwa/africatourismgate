@@ -6,6 +6,7 @@ import { getBlogPostBySlugForLocale } from '../../lib/api/public';
 import { useAppLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { formatRelativeReviewDate } from '../../lib/i18n/format-relative-date';
 import type { PublicBlogPostDetail } from '@africatourismgate/types';
+import { Spinner } from '@africatourismgate/ui';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { PageHero } from '../shared/page-hero';
@@ -52,8 +53,8 @@ export function BlogDetailPageContent({ slug }: BlogDetailPageContentProps) {
       <HomeHeader />
       <main className="flex-1">
         {loading ? (
-          <div className="mx-auto max-w-3xl px-4 py-16 text-center text-atg-muted">
-            {b.loading}
+          <div className="flex items-center justify-center py-24">
+            <Spinner size="lg" variant="primary" label={b.loading} showLabel />
           </div>
         ) : error || !post ? (
           <div className="mx-auto max-w-3xl px-4 py-16 text-center">

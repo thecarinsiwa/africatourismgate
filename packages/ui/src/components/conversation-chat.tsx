@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useId, useRef } from 'react';
 import { cn } from '../lib/cn';
 import { Button } from './button';
+import { Spinner } from './spinner';
 
 export type ConversationChatMessage = {
   id: string;
@@ -119,7 +120,9 @@ export function ConversationChat({
         aria-busy={loading}
       >
         {loading ? (
-          <p className="text-sm text-atg-muted">{labels.loading}</p>
+          <div className="flex h-32 items-center justify-center">
+            <Spinner size="md" variant="primary" label={labels.loading} showLabel />
+          </div>
         ) : messages.length === 0 ? (
           <p className="text-sm text-atg-muted">{labels.empty}</p>
         ) : (

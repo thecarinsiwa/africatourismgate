@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Montserrat } from 'next/font/google';
+import NextTopLoader from 'nextjs-toploader';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import './globals.css';
@@ -231,6 +232,18 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         className="bg-atg-surface font-sans text-atg-fg antialiased transition-colors duration-300"
         style={themeStyle}
       >
+        <NextTopLoader
+          color={branding.primaryColor || '#0B6E4F'}
+          initialPosition={0.08}
+          crawlSpeed={200}
+          height={3}
+          crawl={true}
+          showSpinner={false}
+          easing="ease"
+          speed={200}
+          shadow={`0 0 10px ${branding.primaryColor || '#0B6E4F'},0 0 5px ${branding.primaryColor || '#0B6E4F'}`}
+          zIndex={99999}
+        />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script dangerouslySetInnerHTML={{ __html: localeInitScript }} />
         <NextIntlClientProvider locale={locale} messages={messages}>

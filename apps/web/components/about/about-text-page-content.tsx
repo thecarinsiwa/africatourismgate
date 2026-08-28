@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import type { AboutPageSectionKey } from '@africatourismgate/types';
 import type { PublicAboutPage } from '@africatourismgate/types';
+import { Spinner } from '@africatourismgate/ui';
 import { getAboutPageBySectionKeyForLocale } from '../../lib/api/public';
 import { useAppLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { useScrollAnimation } from '../home/use-scroll-animation';
@@ -52,7 +53,11 @@ export function AboutTextPageContent({ sectionKey }: AboutTextPageContentProps) 
   }, [sectionKey, locale]);
 
   if (loading) {
-    return <p className="text-sm text-atg-muted">{a.loading}</p>;
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Spinner size="md" variant="primary" label={a.loading} showLabel />
+      </div>
+    );
   }
 
   if (error || !page) {

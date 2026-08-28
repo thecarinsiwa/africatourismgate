@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Button } from '@africatourismgate/ui';
+import { Button, Spinner } from '@africatourismgate/ui';
 import type { BookingDetail } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
@@ -115,7 +115,11 @@ export function AccountBookingDetail({
   }, [detail]);
 
   if (loading) {
-    return <p className="text-sm text-atg-muted">{t.account.loading}</p>;
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Spinner size="md" variant="primary" label={t.account.loading} showLabel />
+      </div>
+    );
   }
 
   if (error || !detail) {

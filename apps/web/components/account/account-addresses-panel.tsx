@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Input } from '@africatourismgate/ui';
+import { Button, Input, Spinner } from '@africatourismgate/ui';
 import type { UserAddress } from '@africatourismgate/types';
 import { useCallback, useEffect, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
@@ -82,7 +82,11 @@ export function AccountAddressesPanel() {
   }
 
   if (loading) {
-    return <p className="text-sm text-atg-muted">{t.account.loading}</p>;
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Spinner size="md" variant="primary" label={t.account.loading} showLabel />
+      </div>
+    );
   }
 
   return (

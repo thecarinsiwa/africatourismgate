@@ -1,6 +1,6 @@
 'use client';
 
-import { Skeleton, cn } from '@africatourismgate/ui';
+import { Skeleton, Spinner, cn } from '@africatourismgate/ui';
 import type { ReactNode } from 'react';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
@@ -53,9 +53,10 @@ export function ListingCardsSkeleton({
 }: ListingCardsSkeletonProps) {
   return (
     <>
-      <p className="sr-only" aria-live="polite">
-        {loadingLabel}
-      </p>
+      <div className="mb-4 flex items-center gap-2.5" role="status" aria-live="polite">
+        <Spinner size="sm" variant="primary" />
+        <span className="text-sm font-medium text-atg-muted">{loadingLabel}</span>
+      </div>
       <div
         className={cn(
           variant === 'grid'
@@ -151,9 +152,10 @@ export function DetailPageSkeleton({
 }: DetailPageSkeletonProps) {
   return (
     <>
-      <p className="sr-only" aria-live="polite">
-        {loadingLabel}
-      </p>
+      <div className="mb-4 flex items-center gap-2.5" role="status" aria-live="polite">
+        <Spinner size="sm" variant="primary" />
+        <span className="text-sm font-medium text-atg-muted">{loadingLabel}</span>
+      </div>
       {layout === 'package' ? (
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
           <DetailMainColumnSkeleton />

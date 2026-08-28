@@ -21,6 +21,7 @@ import { formatPackagePrice } from '../../lib/packages/listings';
 import type { PackageItemEnriched } from '../../lib/packages/types';
 import type { Translations } from '../../lib/i18n/translations';
 import { ProductGallery } from '../shared';
+import { Spinner } from '@africatourismgate/ui';
 
 type PackageItemDetailModalProps = {
   item: PackageItemEnriched | null;
@@ -440,7 +441,9 @@ export function PackageItemDetailModal({
 
         <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-5">
           {loading ? (
-            <p className="text-sm text-atg-muted">{t.itemDetailLoading}</p>
+            <div className="flex items-center justify-center py-12">
+              <Spinner size="md" variant="primary" label={t.itemDetailLoading} showLabel />
+            </div>
           ) : null}
 
           {error ? (
