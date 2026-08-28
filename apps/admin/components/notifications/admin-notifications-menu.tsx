@@ -342,7 +342,7 @@ export function AdminNotificationsMenu() {
           {/* Footer */}
           <div className="border-t border-atg-border bg-atg-surface/30 px-4 py-2.5 text-center">
             <Link
-              href="/reservations"
+              href="/notifications"
               onClick={() => setOpen(false)}
               className="text-xs font-semibold text-primary hover:underline"
             >

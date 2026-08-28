@@ -62,14 +62,23 @@
   },
   "notifications": {
     "title": "Notifications",
+    "subtitle": "View, filter, and process all alerts, requests, and messages for your organization.",
     "openLabel": "Open notifications",
     "closeLabel": "Close notifications",
     "markAllAsRead": "Mark all as read",
     "refresh": "Refresh",
     "empty": "No notifications",
     "emptyHint": "You are all caught up, no pending actions.",
+    "emptyFiltered": "No notifications match your filters.",
     "unreadBadge": "unread",
     "viewAll": "View all",
+    "searchPlaceholder": "Search by customer, booking, subject...",
+    "filterAll": "All",
+    "filterUnreadOnly": "Unread only",
+    "markAsRead": "Mark as read",
+    "markAsUnread": "Mark as unread",
+    "openAction": "Open / Process",
+    "resetFilters": "Reset filters",
     "tabs": {
       "all": "All",
       "booking": "Bookings",
@@ -82,6 +91,19 @@
       "message": "Customer message",
       "review": "Customer review",
       "support": "Support ticket"
+    },
+    "priority": {
+      "high": "High priority",
+      "normal": "Normal",
+      "low": "Low"
+    },
+    "stats": {
+      "total": "Total alerts",
+      "unread": "Unread",
+      "booking": "Bookings",
+      "message": "Customer messages",
+      "review": "Reviews to moderate",
+      "support": "Support tickets"
     },
     "justNow": "Just now",
     "minutesAgo": "{count}m ago",

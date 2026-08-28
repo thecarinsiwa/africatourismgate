@@ -37,5 +37,7 @@ export type AdminNotificationsState = {
   lastFetchedAt: Date | null;
   refresh: () => Promise<void>;
   markAsRead: (id: string) => void;
+  markAsUnread: (id: string) => void;
+  toggleRead: (id: string) => void;
   markAllAsRead: () => void;
 };

@@ -700,5 +700,10 @@
         "metaTitle": "Booking detail"
       }
     }
+  },
+  "notifications": {
+    "title": "Notification Center",
+    "description": "View, filter, and process all alerts, booking requests, messages, and tickets.",
+    "metaTitle": "Notification Center"
   }
 }

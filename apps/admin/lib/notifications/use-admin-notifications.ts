@@ -244,6 +244,29 @@ export function useAdminNotifications(): AdminNotificationsState {
     });
   }, []);
 
+  const markAsUnread = useCallback((id: string) => {
+    setReadIds((prev) => {
+      if (!prev.has(id)) return prev;
+      const next = new Set(prev);
+      next.delete(id);
+      saveStoredReadIds(next);
+      return next;
+    });
+  }, []);
+
+  const toggleRead = useCallback((id: string) => {
+    setReadIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      saveStoredReadIds(next);
+      return next;
+    });
+  }, []);
+
   const markAllAsRead = useCallback(() => {
     setReadIds((prev) => {
       const next = new Set(prev);
@@ -295,6 +318,8 @@ export function useAdminNotifications(): AdminNotificationsState {
     lastFetchedAt,
     refresh: fetchNotifications,
     markAsRead,
+    markAsUnread,
+    toggleRead,
     markAllAsRead,
   };
 }
