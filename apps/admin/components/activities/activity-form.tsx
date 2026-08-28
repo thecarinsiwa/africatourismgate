@@ -88,6 +88,7 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
   const tValidation = useTranslations('modules.activities.form.validation');
   const tCommonForm = useTranslations('modules.common.form');
   const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
   const tSelect = useTranslations('modules.common.select');
   const difficultyOptions = useActivityDifficultyOptions();
   const router = useRouter();
@@ -283,10 +284,10 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
         />
       </div>
       <div className="flex flex-wrap gap-3 pt-2">
-        <Button type="submit" loading={submitting}>
+        <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
           {mode === 'create' ? tForm('submitCreate') : tActions('save')}
         </Button>
-        <Button type="button" variant="outline" href="/produits/activites">
+        <Button type="button" variant="outline" href="/produits/activites" disabled={submitting}>
           {tActions('cancel')}
         </Button>
       </div>

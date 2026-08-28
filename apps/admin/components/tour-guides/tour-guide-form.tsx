@@ -145,6 +145,7 @@ export function TourGuideForm({
   const t = useTranslations('modules.tourGuides.form');
   const tToast = useTranslations('modules.common.toast');
   const tCommonForm = useTranslations('modules.common.form');
+  const tLoading = useTranslations('common.loading');
   const tValidation = useTranslations('modules.common.validation');
   const typeLabels = useTourGuideTypeLabels();
   const statusLabels = useTourGuideStatusLabels();
@@ -695,7 +696,13 @@ export function TourGuideForm({
         </>
       ) : null}
 
-      <Button type="submit" variant="primary" loading={submitting}>
+      <Button
+        type="submit"
+        variant="primary"
+        loading={submitting}
+        loadingText={tLoading('submit')}
+        disabled={uploadingPhoto}
+      >
         {mode === 'create' ? t('submitCreate') : t('submitUpdate')}
       </Button>
     </form>

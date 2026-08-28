@@ -479,10 +479,15 @@ export function GapActivityForm({
 
       {canWrite ? (
         <div className="flex flex-wrap gap-3">
-          <Button type="submit" disabled={saving || uploadingImage}>
-            {saving ? t('saving') : mode === 'create' ? t('createButton') : t('saveButton')}
+          <Button
+            type="submit"
+            loading={saving}
+            loadingText={t('saving')}
+            disabled={uploadingImage}
+          >
+            {mode === 'create' ? t('createButton') : t('saveButton')}
           </Button>
-          <Button type="button" variant="outline" href="/gap/activites">
+          <Button type="button" variant="outline" href="/gap/activites" disabled={saving || uploadingImage}>
             {t('cancelButton')}
           </Button>
         </div>

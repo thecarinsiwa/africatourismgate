@@ -48,6 +48,7 @@ export function ItineraryPortsSection({
   const tCommon = useTranslations('modules.common');
   const tSelect = useTranslations('modules.common.select');
   const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
   const emptyDash = tCommon('empty.dash');
   const portSelectId = useId();
   const [ports, setPorts] = useState<CruisePort[]>([]);
@@ -337,10 +338,10 @@ export function ItineraryPortsSection({
                 />
               </div>
               <div className="flex gap-3">
-                <Button type="submit" loading={submitting}>
+                <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
                   {editing ? tActions('save') : tActions('create')}
                 </Button>
-                <Button type="button" variant="outline" onClick={resetForm}>
+                <Button type="button" variant="outline" onClick={resetForm} disabled={submitting}>
                   {tActions('cancel')}
                 </Button>
               </div>

@@ -445,10 +445,15 @@ export function GapMediaItemForm({
 
       {canWrite ? (
         <div className="flex flex-wrap gap-3">
-          <Button type="submit" disabled={busy}>
-            {saving ? t('saving') : mode === 'create' ? t('createButton') : t('saveButton')}
+          <Button
+            type="submit"
+            loading={saving}
+            loadingText={t('saving')}
+            disabled={busy}
+          >
+            {mode === 'create' ? t('createButton') : t('saveButton')}
           </Button>
-          <Button type="button" variant="outline" href="/gap/medias">
+          <Button type="button" variant="outline" href="/gap/medias" disabled={busy}>
             {t('cancelButton')}
           </Button>
         </div>

@@ -83,6 +83,7 @@ export function FlightForm({
   const { vols: getVolsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.flights.form');
   const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
   const tCommon = useTranslations('modules.common');
   const router = useRouter();
   const airlineId = useId();
@@ -315,10 +316,10 @@ export function FlightForm({
       )}
 
       <div className="flex flex-wrap gap-3 pt-2">
-        <Button type="submit" loading={submitting}>
+        <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
           {mode === 'create' ? t('submitCreate') : tActions('save')}
         </Button>
-        <Button type="button" variant="outline" href="/produits/vols">
+        <Button type="button" variant="outline" href="/produits/vols" disabled={submitting}>
           {tActions('cancel')}
         </Button>
       </div>

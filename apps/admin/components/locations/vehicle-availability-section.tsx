@@ -100,6 +100,7 @@ export function VehicleAvailabilitySection({
   const t = useTranslations('modules.locations.sections.availability');
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
   const emptyDash = tCommon('empty.dash');
   const statusLabels = useVehicleAvailabilityStatusLabels();
   const statusOptions = useVehicleAvailabilityStatusOptions();
@@ -510,7 +511,7 @@ export function VehicleAvailabilitySection({
           <Button type="button" variant="outline" onClick={resetForm} disabled={submitting}>
             {tActions('cancel')}
           </Button>
-          <Button type="submit" loading={submitting}>
+          <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
             {editing ? tActions('save') : tActions('create')}
           </Button>
         </div>

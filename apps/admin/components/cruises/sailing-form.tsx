@@ -48,6 +48,7 @@ export function SailingForm({ mode, sailingId, initialSailing }: SailingFormProp
   const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
   const tForm = useTranslations('modules.cruises.form.sailing');
   const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
   const tSelect = useTranslations('modules.common.select');
   const router = useRouter();
   const itinerarySelectId = useId();
@@ -163,10 +164,10 @@ export function SailingForm({ mode, sailingId, initialSailing }: SailingFormProp
         required
       />
       <div className="flex gap-3">
-        <Button type="submit" loading={submitting}>
+        <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
           {mode === 'create' ? tForm('submitCreate') : tActions('save')}
         </Button>
-        <Button href="/produits/croisieres" variant="outline">
+        <Button href="/produits/croisieres" variant="outline" disabled={submitting}>
           {tActions('cancel')}
         </Button>
       </div>

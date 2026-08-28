@@ -405,8 +405,8 @@ export function HappyCustomersSectionForm({ locale }: HappyCustomersSectionFormP
         {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
         {canWrite ? (
-          <Button type="submit" disabled={busy}>
-            {saving ? t('saving') : t('saveButton')}
+          <Button type="submit" loading={saving} loadingText={t('saving')} disabled={busy}>
+            {t('saveButton')}
           </Button>
         ) : null}
       </form>

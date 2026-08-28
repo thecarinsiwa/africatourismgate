@@ -55,6 +55,7 @@ export function PackageItemsSection({
   const t = useTranslations('modules.packages.sections.items');
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
   const tPagination = useTranslations('modules.common.pagination');
   const paginationLabels = useDataTablePaginationLabels();
   const itemTypeOptions = usePackageItemTypeOptions();
@@ -369,7 +370,7 @@ export function PackageItemsSection({
             </select>
           </div>
           <div className="flex flex-wrap gap-3 pt-2">
-            <Button type="submit" loading={submitting}>
+            <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
               {tActions('create')}
             </Button>
             <Button type="button" variant="outline" onClick={resetForm} disabled={submitting}>

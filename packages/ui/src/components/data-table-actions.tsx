@@ -2,6 +2,7 @@
 
 import { forwardRef } from 'react';
 import { cn } from '../lib/cn';
+import { SpinnerDotsIcon } from './spinner';
 import {
   DataTableAdjustIcon,
   DataTableCalendarIcon,
@@ -76,10 +77,7 @@ export const DataTableActionButton = forwardRef<
   const content = (
     <>
       {loading ? (
-        <span
-          className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
-          aria-hidden
-        />
+        <SpinnerDotsIcon className="h-4 w-4 shrink-0 text-current" />
       ) : (
         <Icon className="h-4 w-4" />
       )}
@@ -151,10 +149,7 @@ export function DataTableAdjustButton({
       {...props}
     >
       {loading ? (
-        <span
-          className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
-          aria-hidden
-        />
+        <SpinnerDotsIcon className="h-4 w-4 shrink-0 text-current" />
       ) : (
         <DataTableAdjustIcon className="h-4 w-4" />
       )}

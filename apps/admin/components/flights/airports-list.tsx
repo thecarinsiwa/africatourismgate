@@ -69,6 +69,7 @@ export function AirportsList() {
   const tCommon = useTranslations('modules.common');
   const tPagination = useTranslations('modules.common.pagination');
   const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
   const tValidation = useTranslations('modules.common.validation');
   const tToast = useTranslations('modules.common.toast');
   const tDataTable = useTranslations('modules.common.dataTable');
@@ -504,7 +505,7 @@ export function AirportsList() {
               >
                 {tActions('cancel')}
               </Button>
-              <Button type="submit" loading={submitting}>
+              <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
                 {editing ? tActions('save') : tActions('create')}
               </Button>
             </div>

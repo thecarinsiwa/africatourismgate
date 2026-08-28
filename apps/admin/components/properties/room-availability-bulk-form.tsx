@@ -24,6 +24,7 @@ export function RoomAvailabilityBulkForm({
   const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
   const tCalendar = useTranslations('modules.common.availabilityCalendar');
   const tCommon = useTranslations('modules.common');
+  const tLoading = useTranslations('common.loading');
   const [dateFrom, setDateFrom] = useState(startOfMonth(yearMonth));
   const [dateTo, setDateTo] = useState(endOfMonth(yearMonth));
   const [availableUnits, setAvailableUnits] = useState('5');
@@ -129,7 +130,7 @@ export function RoomAvailabilityBulkForm({
             required
           />
         </div>
-        <Button type="submit" loading={submitting}>
+        <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
           {tCommon('filters.apply')}
         </Button>
       </form>

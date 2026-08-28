@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Card, DataTableBadge, Input, useToast } from '@africatourismgate/ui';
+import { Button, Card, DataTableBadge, Input, Spinner, useToast } from '@africatourismgate/ui';
 import type { Amenity } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -158,7 +158,9 @@ export function PropertyAmenitiesSection({
 
       <Card variant="dashboard" padding="sm">
         {loading ? (
-          <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
+          <div className="flex items-center justify-center py-8">
+            <Spinner size="md" variant="primary" label={tCommon('loading')} showLabel />
+          </div>
         ) : amenities.length === 0 ? (
           <p className="text-sm text-atg-muted">
             {t('emptyGlobal')}{' '}

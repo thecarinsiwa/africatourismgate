@@ -342,11 +342,20 @@ export function DonationForm({
 
         <div className="flex flex-wrap gap-2">
           {canWrite ? (
-            <Button type="submit" disabled={saving}>
-              {saving ? t('saving') : t('saveButton')}
+            <Button
+              type="submit"
+              loading={saving}
+              loadingText={t('saving')}
+            >
+              {mode === 'create' ? t('createButton') : t('saveButton')}
             </Button>
           ) : null}
-          <Button type="button" variant="outline" onClick={() => router.push('/parametres/dons')}>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={saving}
+            onClick={() => router.push('/parametres/dons')}
+          >
             {t('cancelButton')}
           </Button>
         </div>

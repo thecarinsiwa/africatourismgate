@@ -3,7 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import type { RoomAvailability } from '@africatourismgate/types';
-import { AlertDialog, useToast } from '@africatourismgate/ui';
+import { AlertDialog, Skeleton, Spinner, useToast } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
@@ -150,7 +150,16 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
   const propertyBackHref = `/hebergements/${propertyId}?tab=chambres`;
 
   if (state.status === 'loading') {
-    return <p className="text-sm text-atg-muted">{tCommon('loading')}</p>;
+    return (
+      <div className="min-w-0 space-y-6">
+        <div className="flex items-center gap-3">
+          <Spinner size="sm" variant="primary" />
+          <Skeleton className="h-6 w-48 rounded" />
+        </div>
+        <Skeleton className="h-48 w-full rounded-xl" />
+        <Skeleton className="h-64 w-full rounded-xl" />
+      </div>
+    );
   }
 
   if (state.status === 'error') {

@@ -362,11 +362,16 @@ export function HeroSlideForm({
 
         <div className="flex flex-wrap gap-3">
           {canWrite ? (
-            <Button type="submit" disabled={busy}>
-              {busy ? t('saving') : mode === 'create' ? t('createButton') : t('saveButton')}
+            <Button
+              type="submit"
+              loading={saving}
+              loadingText={t('saving')}
+              disabled={busy}
+            >
+              {mode === 'create' ? t('createButton') : t('saveButton')}
             </Button>
           ) : null}
-          <Button type="button" variant="outline" href={cancelHref}>
+          <Button type="button" variant="outline" href={cancelHref} disabled={busy}>
             {t('cancelButton')}
           </Button>
         </div>
