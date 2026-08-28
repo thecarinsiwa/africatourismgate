@@ -18,9 +18,14 @@ import {
 import { posSalePageConfig } from '../../config/sale';
 import { getValidApiClient } from '../auth/api';
 import { requireSelectedOrganizationId } from '../auth/session';
-import type { SaleCartCustomer, SaleCartLine } from './types';
+import type {
+  SaleCartCustomer,
+  SaleCartLine,
+  SaleManifestDraftEntry,
+} from './types';
 import {
   cartHasPackage,
+  estimateCartTravelersCount,
   getCartPackageId,
   isPackageCheckoutItem,
 } from './types';
@@ -54,6 +59,11 @@ type SaleCartContextValue = {
   addLine: (item: BookingCheckoutItem, label: string) => void;
   removeLine: (lineId: string) => void;
   clearCart: () => void;
+  /** Manifeste des voyageurs pour la vente. */
+  manifestEntries: SaleManifestDraftEntry[];
+  setManifestEntries: (entries: SaleManifestDraftEntry[]) => void;
+  /** Nombre estimé de voyageurs requis selon les articles du panier. */
+  expectedTravelersCount: number;
   /** True quand un paiement (cash ou card) ou finalisation est en cours. */
   isCheckingOut: boolean;
   setIsCheckingOut: (checkingOut: boolean) => void;
@@ -85,6 +95,7 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
   const [appliedPromoCode, setAppliedPromoCode] = useState<string | null>(null);
   const [customer, setCustomerState] = useState<SaleCartCustomer | null>(null);
   const [cartAddError, setCartAddError] = useState<string | null>(null);
+  const [manifestEntries, setManifestEntriesState] = useState<SaleManifestDraftEntry[]>([]);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [retryNonce, setRetryNonce] = useState(0);
 
@@ -97,6 +108,15 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
     () => getCartPackageId(lines) ?? null,
     [lines],
   );
+
+  const expectedTravelersCount = useMemo(
+    () => estimateCartTravelersCount(lines),
+    [lines],
+  );
+
+  const setManifestEntries = useCallback((entries: SaleManifestDraftEntry[]) => {
+    setManifestEntriesState(entries);
+  }, []);
 
   const addLine = useCallback((item: BookingCheckoutItem, label: string) => {
     if (isPackageCheckoutItem(item)) {
@@ -158,6 +178,7 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
     setAppliedPromoCode(null);
     setCustomerState(null);
     setCartAddError(null);
+    setManifestEntriesState([]);
   }, []);
 
   useEffect(() => {
@@ -233,6 +254,9 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
       addLine,
       removeLine,
       clearCart,
+      manifestEntries,
+      setManifestEntries,
+      expectedTravelersCount,
       isCheckingOut,
       setIsCheckingOut,
     }),
@@ -254,6 +278,9 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
       addLine,
       removeLine,
       clearCart,
+      manifestEntries,
+      setManifestEntries,
+      expectedTravelersCount,
       isCheckingOut,
     ],
   );
