@@ -1,13 +1,17 @@
 import { Skeleton, Spinner } from '@africatourismgate/ui';
+import { getTranslations } from 'next-intl/server';
 
 /** Fallback Next.js route — feedback immédiat avec spinner et squelette (LD1). */
-export default function Loading() {
+export default async function Loading() {
+  const t = await getTranslations('loading');
+
   return (
     <main
       className="min-h-screen bg-atg-surface px-4 py-8 dark:bg-atg-surface sm:px-6 lg:px-8"
       aria-busy="true"
-      aria-label="Chargement du contenu"
+      aria-label={t('ariaLabel')}
     >
+      <p className="sr-only">{t('srOnly')}</p>
       <div className="mx-auto max-w-7xl space-y-8">
         <div className="flex items-center gap-3">
           <Spinner size="md" variant="primary" />

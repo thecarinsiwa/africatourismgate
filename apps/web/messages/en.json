@@ -107,6 +107,17 @@
       "invalidPassword": "Incorrect password.",
       "genericError": "Could not unlock the session. Please try again.",
       "idleHint": "Automatic lock after {minutes} min of inactivity."
+    },
+    "checkout": {
+      "title": "Booking checkout",
+      "subtitle": "You are almost done. Confirm your stay details and continue to secure payment.",
+      "propertyIdLabel": "Property ID:",
+      "roomIdLabel": "Room ID:",
+      "notAvailable": "N/A",
+      "pendingNote": "Full checkout integration is being finalized. Our team can still confirm your reservation manually.",
+      "contactCta": "Contact booking team",
+      "contactEmailSubject": "Booking request",
+      "backToHotels": "Back to hotels"
     }
   },
   "hotelsDetail": {
@@ -122,6 +133,20 @@
     "calendarLegendAvailable": "Available",
     "calendarLegendSelected": "Selected dates",
     "calendarLegendUnavailable": "Unavailable"
+  },
+  "errors": {
+    "title": "Something went wrong",
+    "unexpected": "An unexpected error occurred.",
+    "critical": "A critical error occurred.",
+    "tryAgain": "Try again"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "backHome": "Back to home"
+  },
+  "loading": {
+    "srOnly": "Loading page",
+    "ariaLabel": "Loading content"
   },
   "donate": {
     "title": "Support our work",
