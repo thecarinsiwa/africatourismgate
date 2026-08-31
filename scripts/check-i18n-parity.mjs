@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -110,6 +111,38 @@ for (const moduleName of ADMIN_MODULE_NAMES) {
   if (modOk) {
     console.log(`modules.${moduleName}.* parity OK (${frModKeys.size} keys)`);
   }
+}
+
+const WEB_LOCALES = ['fr', 'en', 'es'];
+const webMessages = Object.fromEntries(
+  WEB_LOCALES.map((locale) => [
+    locale,
+    JSON.parse(readFileSync(join(root, 'apps/web/messages', `${locale}.json`), 'utf8')),
+  ]),
+);
+const webFrKeys = new Set(flattenKeys(webMessages.fr));
+let webOk = true;
+
+for (const locale of WEB_LOCALES.filter((l) => l !== referenceLocale)) {
+  const keys = new Set(flattenKeys(webMessages[locale]));
+  for (const key of webFrKeys) {
+    if (!keys.has(key)) {
+      console.error(`Missing web.${key} in ${locale}`);
+      webOk = false;
+      ok = false;
+    }
+  }
+  for (const key of keys) {
+    if (!webFrKeys.has(key)) {
+      console.error(`Extra web.${key} in ${locale}`);
+      webOk = false;
+      ok = false;
+    }
+  }
+}
+
+if (webOk) {
+  console.log(`web.* parity OK (${webFrKeys.size} keys × ${WEB_LOCALES.length} locales)`);
 }
 
 if (!ok) {

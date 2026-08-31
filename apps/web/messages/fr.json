@@ -107,6 +107,17 @@
       "invalidPassword": "Mot de passe incorrect.",
       "genericError": "Impossible de déverrouiller la session. Réessayez.",
       "idleHint": "Verrouillage automatique après {minutes} min d'inactivité."
+    },
+    "checkout": {
+      "title": "Finalisation de la réservation",
+      "subtitle": "Vous y êtes presque. Confirmez les détails de votre séjour et poursuivez vers le paiement sécurisé.",
+      "propertyIdLabel": "ID établissement :",
+      "roomIdLabel": "ID chambre :",
+      "notAvailable": "N/D",
+      "pendingNote": "L'intégration complète du paiement est en cours de finalisation. Notre équipe peut toutefois confirmer votre réservation manuellement.",
+      "contactCta": "Contacter l'équipe réservation",
+      "contactEmailSubject": "Demande de réservation",
+      "backToHotels": "Retour aux hôtels"
     }
   },
   "hotelsDetail": {
@@ -122,6 +133,20 @@
     "calendarLegendAvailable": "Disponible",
     "calendarLegendSelected": "Dates sélectionnées",
     "calendarLegendUnavailable": "Indisponible"
+  },
+  "errors": {
+    "title": "Une erreur est survenue",
+    "unexpected": "Une erreur inattendue s'est produite.",
+    "critical": "Une erreur critique s'est produite.",
+    "tryAgain": "Réessayer"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "backHome": "Retour à l'accueil"
+  },
+  "loading": {
+    "srOnly": "Chargement de la page",
+    "ariaLabel": "Chargement du contenu"
   },
   "donate": {
     "title": "Soutenir nos actions",

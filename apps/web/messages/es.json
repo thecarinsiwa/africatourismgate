@@ -53,7 +53,12 @@
         "network": "No se pudo conectar con el servidor. Compruebe su conexión.",
         "generic": "Algo salió mal. Inténtelo de nuevo.",
         "envMissing": "Falta la configuración de la API (NEXT_PUBLIC_API_URL).",
-        "unauthorized": "Correo o contraseña incorrectos."
+        "unauthorized": "Correo o contraseña incorrectos.",
+        "googleAuthFailed": "El inicio de sesión con Google falló. Inténtelo de nuevo o use su correo.",
+        "googleAuthError": "Error al iniciar sesión con Google. Inténtelo más tarde.",
+        "googleNoEmail": "Su cuenta de Google no compartió un correo electrónico. Autorice el acceso al correo o inicie sesión con contraseña.",
+        "googleAccountInactive": "Esta cuenta está suspendida o inactiva. Contacte con soporte.",
+        "googleSignupUnavailable": "No se pudo completar el registro con Google por ahora. Inténtelo más tarde o cree una cuenta con correo."
       }
     },
     "register": {
@@ -102,6 +107,17 @@
       "invalidPassword": "Contraseña incorrecta.",
       "genericError": "No se pudo desbloquear la sesión. Inténtelo de nuevo.",
       "idleHint": "Bloqueo automático tras {minutes} min de inactividad."
+    },
+    "checkout": {
+      "title": "Finalizar reserva",
+      "subtitle": "Ya casi termina. Confirme los detalles de su estancia y continúe con el pago seguro.",
+      "propertyIdLabel": "ID del establecimiento:",
+      "roomIdLabel": "ID de habitación:",
+      "notAvailable": "N/D",
+      "pendingNote": "La integración completa del pago está en fase de finalización. Nuestro equipo puede confirmar su reserva manualmente.",
+      "contactCta": "Contactar al equipo de reservas",
+      "contactEmailSubject": "Solicitud de reserva",
+      "backToHotels": "Volver a hoteles"
     }
   },
   "hotelsDetail": {
@@ -117,6 +133,20 @@
     "calendarLegendAvailable": "Disponible",
     "calendarLegendSelected": "Fechas seleccionadas",
     "calendarLegendUnavailable": "No disponible"
+  },
+  "errors": {
+    "title": "Algo salió mal",
+    "unexpected": "Se produjo un error inesperado.",
+    "critical": "Se produjo un error crítico.",
+    "tryAgain": "Reintentar"
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "backHome": "Volver al inicio"
+  },
+  "loading": {
+    "srOnly": "Cargando página",
+    "ariaLabel": "Cargando contenido"
   },
   "donate": {
     "title": "Apoye nuestras acciones",
