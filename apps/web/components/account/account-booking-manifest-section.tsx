@@ -183,6 +183,14 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
       setActionError(m.fullNameRequired);
       return;
     }
+    if (!form.nationality.trim()) {
+      setActionError(m.nationalityRequired);
+      return;
+    }
+    if (!form.idNumber.trim()) {
+      setActionError(m.idNumberRequired);
+      return;
+    }
     setSaving(true);
     setActionError(null);
     try {
@@ -405,6 +413,7 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
               <div>
                 <label className="block text-sm font-medium text-atg-fg" htmlFor="manifest-nationality">
                   {m.fields.nationality}
+                  <span className="ml-1 text-red-500">*</span>
                 </label>
                 <input
                   id="manifest-nationality"
@@ -414,12 +423,15 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
                     setForm((prev) => ({ ...prev, nationality: e.target.value }))
                   }
                   className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
+                  required
+                  aria-required="true"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-atg-fg" htmlFor="manifest-idNumber">
                   {m.fields.idNumber}
+                  <span className="ml-1 text-red-500">*</span>
                 </label>
                 <input
                   id="manifest-idNumber"
@@ -429,6 +441,8 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
                     setForm((prev) => ({ ...prev, idNumber: e.target.value }))
                   }
                   className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm font-mono text-atg-fg dark:border-atg-border"
+                  required
+                  aria-required="true"
                 />
               </div>
 

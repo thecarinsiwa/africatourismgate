@@ -1080,6 +1080,8 @@ export type Translations = {
           editTitle: string;
           formHint: string;
           fullNameRequired: string;
+          nationalityRequired: string;
+          idNumberRequired: string;
           save: string;
           saving: string;
           saveError: string;
@@ -2540,8 +2542,11 @@ const fr: Translations = {
           docsLoadError: 'Impossible de charger les documents.',
           addTitle: 'Ajouter un voyageur',
           editTitle: 'Modifier le voyageur',
-          formHint: 'Seul le nom complet est obligatoire.',
+          formHint:
+            'Nom, nationalité et n° de pièce sont obligatoires. Le genre est optionnel.',
           fullNameRequired: 'Le nom complet est obligatoire.',
+          nationalityRequired: 'La nationalité est obligatoire.',
+          idNumberRequired: "Le n° de pièce d'identité est obligatoire.",
           save: 'Enregistrer',
           saving: 'Enregistrement…',
           saveError: "Impossible d'enregistrer le voyageur.",
@@ -4062,8 +4067,11 @@ const en: Translations = {
           docsLoadError: 'Could not load documents.',
           addTitle: 'Add a traveler',
           editTitle: 'Edit traveler',
-          formHint: 'Only the full name is required.',
+          formHint:
+            'Full name, nationality and ID / passport number are required. Gender is optional.',
           fullNameRequired: 'Full name is required.',
+          nationalityRequired: 'Nationality is required.',
+          idNumberRequired: 'ID / passport number is required.',
           save: 'Save',
           saving: 'Saving?',
           saveError: 'Could not save the traveler.',

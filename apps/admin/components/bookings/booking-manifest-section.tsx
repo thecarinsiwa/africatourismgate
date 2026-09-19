@@ -160,6 +160,14 @@ export function BookingManifestSection({
       setActionError(t('fullNameRequired'));
       return;
     }
+    if (!form.nationality.trim()) {
+      setActionError(t('nationalityRequired'));
+      return;
+    }
+    if (!form.idNumber.trim()) {
+      setActionError(t('idNumberRequired'));
+      return;
+    }
     setSaving(true);
     setActionError(null);
     try {
@@ -363,6 +371,7 @@ export function BookingManifestSection({
           <Input
             className="sm:col-span-2"
             label={t('fields.fullName')}
+            labelExtra={<span className="text-red-500" aria-hidden="true">*</span>}
             name="fullName"
             value={form.fullName}
             onChange={(e) => setForm((prev) => ({ ...prev, fullName: e.target.value }))}
@@ -404,17 +413,21 @@ export function BookingManifestSection({
           />
           <Input
             label={t('fields.nationality')}
+            labelExtra={<span className="text-red-500" aria-hidden="true">*</span>}
             name="nationality"
             value={form.nationality}
             onChange={(e) =>
               setForm((prev) => ({ ...prev, nationality: e.target.value }))
             }
+            required
           />
           <Input
             label={t('fields.idNumber')}
+            labelExtra={<span className="text-red-500" aria-hidden="true">*</span>}
             name="idNumber"
             value={form.idNumber}
             onChange={(e) => setForm((prev) => ({ ...prev, idNumber: e.target.value }))}
+            required
           />
           <label className="block text-sm sm:col-span-2" htmlFor={conditionsId}>
             <span className="font-medium text-atg-fg">{t('fields.conditions')}</span>

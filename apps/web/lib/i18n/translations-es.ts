@@ -1218,8 +1218,11 @@ export const es: Translations = {
           docsLoadError: 'No se pudieron cargar los documentos.',
           addTitle: 'Añadir un viajero',
           editTitle: 'Editar viajero',
-          formHint: 'Solo el nombre completo es obligatorio.',
+          formHint:
+            'Nombre, nacionalidad y n.º de documento son obligatorios. El género es opcional.',
           fullNameRequired: 'El nombre completo es obligatorio.',
+          nationalityRequired: 'La nacionalidad es obligatoria.',
+          idNumberRequired: 'El n.º de documento de identidad es obligatorio.',
           save: 'Guardar',
           saving: 'Guardando…',
           saveError: 'No se pudo guardar el viajero.',
