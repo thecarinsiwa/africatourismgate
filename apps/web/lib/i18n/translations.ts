@@ -2892,7 +2892,7 @@ const fr: Translations = {
       typeCard: 'Carte bancaire',
       typePaypal: 'PayPal',
       typeOther: 'Autre',
-      provider: 'Partenaire (ex. visa)',
+      provider: 'Prestataire (ex. visa)',
       lastFour: '4 derniers chiffres',
     },
     loyalty: {

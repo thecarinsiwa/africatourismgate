@@ -103,7 +103,7 @@ export function UserPaymentMethodsList({
       },
       {
         id: 'provider',
-        header: tColumns('provider'),
+        header: tColumns('paymentProvider'),
         cell: ({ row }) => row.original.provider?.trim() || tEmpty('dash'),
       },
       {
