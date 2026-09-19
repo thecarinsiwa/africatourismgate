@@ -67,6 +67,7 @@ import { PermissionsService } from '../rbac/permissions.service';
 import { EmailService } from '../email/email.service';
 import { EmailVerificationService } from '../email-verification/email-verification.service';
 import { BookingEngineService } from '../resources/bookings/booking-engine.service';
+import { BookingAssistedEmailService } from '../resources/bookings/booking-assisted-email.service';
 import { VerifyOperationDto } from './dto/verify-operation.dto';
 import { EmailOperationVerifications } from '../../entities/email-operation-verification.entity';
 import type { EmailOperationPurpose } from '../../entities/email-operation-verification.entity';
@@ -98,6 +99,8 @@ export class AuthService {
     private readonly emailVerification: EmailVerificationService,
     @Inject(forwardRef(() => BookingEngineService))
     private readonly bookingEngine: BookingEngineService,
+    @Inject(forwardRef(() => BookingAssistedEmailService))
+    private readonly assistedEmail: BookingAssistedEmailService,
   ) {
     this.accessSecret = this.requireSecret('JWT_ACCESS_SECRET');
     this.refreshSecret = this.requireSecret('JWT_REFRESH_SECRET');
@@ -419,6 +422,9 @@ export class AuthService {
     if (row.purpose === 'booking') {
       await this.bookingEngine.activateDraftBooking(row.referenceId);
       const booking = await this.bookingEngine.getBookingDetail(row.referenceId);
+      if (booking.booking.preferredPaymentMethod === 'bank_transfer') {
+        this.assistedEmail.notifyBankTransferInstructions(row.referenceId);
+      }
       const user = await this.usersRepo.findOne({
         where: { id: booking.booking.userId, deletedAt: IsNull() },
       });

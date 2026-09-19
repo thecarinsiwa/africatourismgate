@@ -99,6 +99,19 @@ export type BookingPaymentInviteEmailPayload = AssistedBookingEmailBase & {
   travelerPricing?: Array<{ fullName: string; priceCents: number }>;
 };
 
+export type BookingBankTransferAccount = {
+  bankName: string;
+  accountName: string;
+  accountNumber: string;
+  swiftBic?: string | null;
+  currency: string;
+};
+
+export type BookingBankTransferInstructionsEmailPayload = AssistedBookingEmailBase & {
+  accounts: BookingBankTransferAccount[];
+  accountUrl: string;
+};
+
 export type BookingStaffMessageEmailPayload = AssistedBookingEmailBase & {
   chatUrl: string;
   messagePreview: string;

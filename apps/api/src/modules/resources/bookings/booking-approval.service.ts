@@ -67,6 +67,12 @@ export class BookingApprovalService {
     }
 
     this.assistedEmail.notifyApproved(bookingId);
+    const booking = await this.bookingsRepository.findOne({
+      where: { id: bookingId, deletedAt: IsNull() },
+    });
+    if (booking?.preferredPaymentMethod === 'bank_transfer') {
+      this.assistedEmail.notifyBankTransferInstructions(bookingId);
+    }
 
     return this.bookingsService.getAdminDetail(bookingId);
   }
@@ -149,9 +155,14 @@ export class BookingApprovalService {
     if (!booking) {
       throw new BadRequestException('Réservation introuvable.');
     }
-    if (booking.preferredPaymentMethod === 'cash') {
+    if (
+      booking.preferredPaymentMethod === 'cash' ||
+      booking.preferredPaymentMethod === 'bank_transfer'
+    ) {
       throw new BadRequestException(
-        'Invitation Stripe impossible : le client a choisi le paiement cash sur place.',
+        booking.preferredPaymentMethod === 'cash'
+          ? 'Invitation Stripe impossible : le client a choisi le paiement cash sur place.'
+          : 'Invitation Stripe impossible : le client a choisi le paiement par virement bancaire.',
       );
     }
     const session = await this.stripeService.getOrCreateCheckoutSessionForBooking(

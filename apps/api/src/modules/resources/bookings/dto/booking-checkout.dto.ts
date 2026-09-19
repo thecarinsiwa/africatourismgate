@@ -113,7 +113,7 @@ export class BookingCheckoutDto {
   @ApiPropertyOptional({
     enum: BOOKING_PREFERRED_PAYMENT_METHODS,
     description:
-      'Requis pour create/request : Stripe (immédiat) ou cash (paiement sur place / caisse). Ignoré sur checkout-preview.',
+      'Requis pour create/request : Stripe (immédiat), cash (sur place) ou bank_transfer (virement). Ignoré sur checkout-preview.',
   })
   @IsOptional()
   @IsIn(BOOKING_PREFERRED_PAYMENT_METHODS)

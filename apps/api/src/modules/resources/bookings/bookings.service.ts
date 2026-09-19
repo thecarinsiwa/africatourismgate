@@ -68,7 +68,14 @@ export class BookingsService extends CrudService<Bookings> {
   ): Promise<BookingDetailDto> {
     await this.assertStaffOnlyCustomerUserId(dto, actorUserId);
     const ownerUserId = await this.resolveCheckoutOwnerUserId(dto, actorUserId);
-    return this.bookingEngine.createBooking(dto, ownerUserId, actorUserId);
+    const detail = await this.bookingEngine.createBooking(dto, ownerUserId, actorUserId);
+    if (
+      detail.booking.status === 'pending_payment' &&
+      detail.booking.preferredPaymentMethod === 'bank_transfer'
+    ) {
+      this.assistedEmail.notifyBankTransferInstructions(detail.booking.id);
+    }
+    return detail;
   }
 
   async requestFromCheckout(

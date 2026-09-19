@@ -322,6 +322,20 @@ export interface RecordCashPaymentRequest {
   note?: string;
 }
 
+export interface RecordBankTransferPaymentRequest {
+  note?: string;
+}
+
+export interface PublicPaymentBankAccount {
+  id: string;
+  bankName: string;
+  accountName: string;
+  accountNumber: string;
+  swiftBic: string | null;
+  currency: string;
+  isDefault: boolean;
+}
+
 export interface SendBookingReceiptEmailRequest {
   to: string;
 }

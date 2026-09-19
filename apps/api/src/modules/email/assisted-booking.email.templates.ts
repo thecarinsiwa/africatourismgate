@@ -4,6 +4,7 @@ import type { BookingDetailPdfLocale } from './booking-detail-pdf.labels';
 import type {
   BookingApprovedChatEmailPayload,
   BookingPaymentInviteEmailPayload,
+  BookingBankTransferInstructionsEmailPayload,
   BookingPaymentReminderEmailPayload,
   BookingRejectedEmailPayload,
   BookingRequestReceivedEmailPayload,
@@ -225,6 +226,59 @@ ${button(payload.paymentUrl, 'Payer maintenant', branding)}
     { webUrl: payload.webUrl },
   );
   const text = `Bonjour ${payload.firstName},\n\nRéglez votre réservation ${payload.bookingId.slice(0, 8)} (${formatMoney(payload.totalCents, payload.currency)}) : ${payload.paymentUrl}${travelerPricingText(payload.travelerPricing ?? [], payload.currency)}`;
+  return { subject, html, text };
+}
+
+export function renderBookingBankTransferInstructionsEmail(
+  payload: BookingBankTransferInstructionsEmailPayload,
+  branding: EmailBrandingValue,
+): { subject: string; html: string; text: string } {
+  const name = escapeHtml(payload.firstName.trim() || 'Client');
+  const subject = `Instructions de virement — réservation ${payload.bookingId.slice(0, 8)}`;
+  const total = escapeHtml(formatMoney(payload.totalCents, payload.currency));
+  const ref = bookingRef(payload.bookingId);
+  const accountsHtml =
+    payload.accounts.length === 0
+      ? `<p style="margin:0 0 16px;line-height:1.6;color:#b45309;">Aucun compte bancaire n'est configuré pour le moment. Contactez-nous pour obtenir les coordonnées.</p>`
+      : `<ul style="margin:8px 0 16px;padding-left:0;list-style:none;line-height:1.6;">${payload.accounts
+          .map((account) => {
+            const swift = account.swiftBic?.trim()
+              ? `<br/>SWIFT/BIC : <strong>${escapeHtml(account.swiftBic.trim())}</strong>`
+              : '';
+            return `<li style="margin:0 0 12px;padding:12px 16px;background:#f4f6f5;border-radius:8px;">
+<strong>${escapeHtml(account.bankName)}</strong><br/>
+Titulaire : ${escapeHtml(account.accountName)}<br/>
+N° de compte / IBAN : <strong>${escapeHtml(account.accountNumber)}</strong><br/>
+Devise : ${escapeHtml(account.currency)}${swift}
+</li>`;
+          })
+          .join('')}</ul>`;
+
+  const accountsText =
+    payload.accounts.length === 0
+      ? 'Aucun compte bancaire configuré — contactez-nous.'
+      : payload.accounts
+          .map((account) => {
+            const swift = account.swiftBic?.trim()
+              ? `, SWIFT/BIC ${account.swiftBic.trim()}`
+              : '';
+            return `- ${account.bankName} — ${account.accountName} — ${account.accountNumber} (${account.currency})${swift}`;
+          })
+          .join('\n');
+
+  const html = layout(
+    subject,
+    `<h1 style="margin:0 0 16px;font-size:22px;">Paiement par virement</h1>
+<p style="margin:0 0 16px;line-height:1.6;">Bonjour ${name},</p>
+<p style="margin:0 0 16px;line-height:1.6;">Votre réservation <strong>${ref}</strong> est en attente de virement pour un montant de <strong>${total}</strong>.</p>
+<p style="margin:0 0 16px;line-height:1.6;">Indiquez la référence <strong>${ref}</strong> dans le libellé du virement. La réservation restera en attente de paiement jusqu'à validation par notre équipe.</p>
+${itemListHtml(payload.itemTitles)}
+${accountsHtml}
+${button(payload.accountUrl, 'Voir ma réservation', branding)}`,
+    branding,
+    { webUrl: payload.webUrl },
+  );
+  const text = `Bonjour ${payload.firstName},\n\nVirement pour la réservation ${payload.bookingId.slice(0, 8)} (${formatMoney(payload.totalCents, payload.currency)}).\nRéférence à indiquer : ${payload.bookingId.slice(0, 8)}\n\nComptes :\n${accountsText}\n\nEspace client : ${payload.accountUrl}`;
   return { subject, html, text };
 }
 

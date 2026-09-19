@@ -29,6 +29,7 @@ import { BookingManifestEntries } from '../../../entities/booking-manifest-entry
 import { EmailVerificationModule } from '../../email-verification/email-verification.module';
 import { PackagesModule } from '../packages/packages.module';
 import { OrganizationSettingsModule } from '../organization-settings/organization-settings.module';
+import { OrganizationBankAccountsModule } from '../organization-bank-accounts/organization-bank-accounts.module';
 import { BookingCheckoutPromoService } from './booking-checkout-promo.service';
 import { BookingEngineService } from './booking-engine.service';
 import { BookingPackageCheckoutService } from './booking-package-checkout.service';
@@ -52,6 +53,7 @@ import { PosReceiptPdfService } from './pos-receipt-pdf.service';
     forwardRef(() => StripeModule),
     EmailVerificationModule,
     OrganizationSettingsModule,
+    OrganizationBankAccountsModule,
     forwardRef(() => TourGuidesModule),
     ReviewsModule,
     PackagesModule,
@@ -103,6 +105,7 @@ import { PosReceiptPdfService } from './pos-receipt-pdf.service';
     BookingManifestService,
     BookingStatusHistoryService,
     BookingPaymentReminderService,
+    BookingAssistedEmailService,
   ],
 })
 export class BookingsModule {}

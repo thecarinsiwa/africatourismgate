@@ -32,6 +32,7 @@ import { BookingRequestResponseDto } from './dto/booking-request-response.dto';
 import { BookingsListQueryDto } from './dto/bookings-list-query.dto';
 import { CancelBookingDto } from './dto/cancel-booking.dto';
 import { RecordCashPaymentDto } from './dto/record-cash-payment.dto';
+import { RecordBankTransferPaymentDto } from './dto/record-bank-transfer-payment.dto';
 import { SendReceiptEmailDto } from './dto/send-receipt-email.dto';
 import { SendReceiptEmailResponseDto } from './dto/send-receipt-email-response.dto';
 import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
@@ -535,6 +536,20 @@ export class BookingsController {
   ) {
     await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
     return this.bookingEngine.recordCashPayment(id, user.id, dto.note);
+  }
+
+  @Post(':id/bank-transfer-payment')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({
+    summary: 'Record bank transfer payment and confirm booking (staff)',
+  })
+  async recordBankTransferPayment(
+    @Param('id') id: string,
+    @Body() dto: RecordBankTransferPaymentDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
+    return this.bookingEngine.recordBankTransferPayment(id, user.id, dto.note);
   }
 
   @Post(':id/receipt-email')

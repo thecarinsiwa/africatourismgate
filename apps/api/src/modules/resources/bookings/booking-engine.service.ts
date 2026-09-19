@@ -647,6 +647,52 @@ export class BookingEngineService {
     return this.confirmBooking(bookingId, actorUserId, confirmReason);
   }
 
+  async recordBankTransferPayment(
+    bookingId: string,
+    actorUserId?: string,
+    note?: string,
+  ): Promise<BookingDetailDto> {
+    const booking = await this.findBookingOrThrow(bookingId);
+    if (booking.status !== 'pending_payment') {
+      throw new BadRequestException(
+        `Enregistrement du virement impossible : statut actuel « ${booking.status} ».`,
+      );
+    }
+    if (booking.totalCents < 1) {
+      throw new BadRequestException('Montant de réservation invalide.');
+    }
+
+    const existingSucceeded = await this.paymentsRepository.findOne({
+      where: { bookingId, status: 'succeeded', deletedAt: IsNull() },
+    });
+    if (existingSucceeded) {
+      throw new BadRequestException(
+        'Un paiement a déjà été enregistré pour cette réservation.',
+      );
+    }
+
+    const paymentId = newId();
+    const trimmedNote = note?.trim();
+    const confirmReason = trimmedNote
+      ? `Virement bancaire reçu — ${trimmedNote}`
+      : 'Virement bancaire reçu';
+
+    await this.paymentsRepository.save(
+      this.paymentsRepository.create({
+        id: paymentId,
+        bookingId,
+        amountCents: booking.totalCents,
+        currency: booking.currency,
+        status: 'succeeded',
+        provider: 'bank_transfer',
+        externalId: `bank-transfer-${paymentId}`,
+        createdByUserId: actorUserId ?? null,
+      } as DeepPartial<Payments>),
+    );
+
+    return this.confirmBooking(bookingId, actorUserId, confirmReason);
+  }
+
   async cancelBooking(
     id: string,
     actorUserId?: string,

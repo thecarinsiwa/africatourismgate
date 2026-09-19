@@ -6,11 +6,17 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { containsMaskChars } from '../../../common/masking/mask-account-number';
-import { OrgScopeService } from '../../../common/org-scope/org-scope.service';
+import {
+  OrgScopeService,
+  PLATFORM_ORG_ID,
+} from '../../../common/org-scope/org-scope.service';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { newId } from '../../../common/utils/uuid';
 import { CrudService } from '../../../common/crud/crud.service';
-import { OrganizationBankAccounts } from '../../../entities/generated';
+import {
+  OrganizationBankAccounts,
+  Organizations,
+} from '../../../entities/generated';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { PermissionsService } from '../../rbac/permissions.service';
 import { CreateOrganizationBankAccountDto } from './dto/create-organization-bank-account.dto';
@@ -19,6 +25,10 @@ import {
   toOrganizationBankAccountDto,
 } from './dto/organization-bank-account.dto';
 import { OrganizationBankAccountsListQueryDto } from './dto/organization-bank-accounts-list-query.dto';
+import {
+  PublicPaymentBankAccountDto,
+  toPublicPaymentBankAccountDto,
+} from './dto/public-payment-bank-account.dto';
 import { UpdateOrganizationBankAccountDto } from './dto/update-organization-bank-account.dto';
 
 @Injectable()
@@ -26,10 +36,24 @@ export class OrganizationBankAccountsService extends CrudService<OrganizationBan
   constructor(
     @InjectRepository(OrganizationBankAccounts)
     private readonly accountsRepository: Repository<OrganizationBankAccounts>,
+    @InjectRepository(Organizations)
+    private readonly organizationsRepository: Repository<Organizations>,
     private readonly orgScopeService: OrgScopeService,
     private readonly permissionsService: PermissionsService,
   ) {
     super(accountsRepository);
+  }
+
+  /** Active accounts for public bank-transfer instructions (full account number). */
+  async listPublicForPayment(
+    organizationSlug?: string,
+  ): Promise<PublicPaymentBankAccountDto[]> {
+    const organization = await this.resolvePublicOrganization(organizationSlug);
+    const rows = await this.accountsRepository.find({
+      where: { organizationId: organization.id, deletedAt: IsNull() },
+      order: { isDefault: 'DESC', createdAt: 'ASC' },
+    });
+    return rows.map(toPublicPaymentBankAccountDto);
   }
 
   async list(
@@ -163,6 +187,29 @@ export class OrganizationBankAccountsService extends CrudService<OrganizationBan
     const row = await this.requireAccount(id);
     this.orgScopeService.assertRowBelongsToOrg(row.organizationId, organizationId);
     await this.remove(id, user.id);
+  }
+
+  private async resolvePublicOrganization(
+    organizationSlug?: string,
+  ): Promise<Organizations> {
+    const slug = organizationSlug?.trim();
+    if (slug) {
+      const organization = await this.organizationsRepository.findOne({
+        where: { slug, deletedAt: IsNull(), status: 'active' },
+      });
+      if (!organization) {
+        throw new NotFoundException('Organisation introuvable.');
+      }
+      return organization;
+    }
+
+    const platform = await this.organizationsRepository.findOne({
+      where: { id: PLATFORM_ORG_ID, deletedAt: IsNull() },
+    });
+    if (!platform) {
+      throw new NotFoundException('Organisation plateforme introuvable.');
+    }
+    return platform;
   }
 
   private async requireAccount(id: string): Promise<OrganizationBankAccounts> {

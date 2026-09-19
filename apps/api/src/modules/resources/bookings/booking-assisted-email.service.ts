@@ -9,6 +9,7 @@ import { webBase } from '../../email/email.templates';
 import type { AssistedBookingEmailBase } from '../../email/email.types';
 import { BookingEngineService } from './booking-engine.service';
 import { BookingManifestService } from './booking-manifest.service';
+import { OrganizationBankAccountsService } from '../organization-bank-accounts/organization-bank-accounts.service';
 
 @Injectable()
 export class BookingAssistedEmailService {
@@ -21,6 +22,7 @@ export class BookingAssistedEmailService {
     private readonly manifestService: BookingManifestService,
     private readonly emailService: EmailService,
     private readonly bookingDetailPdf: BookingDetailPdfService,
+    private readonly bankAccountsService: OrganizationBankAccountsService,
   ) {}
 
   notifyRequestReceived(bookingId: string): void {
@@ -37,6 +39,10 @@ export class BookingAssistedEmailService {
 
   notifyPaymentInvite(bookingId: string, paymentUrl: string): void {
     void this.sendPaymentInvite(bookingId, paymentUrl).catch(() => undefined);
+  }
+
+  notifyBankTransferInstructions(bookingId: string): void {
+    void this.sendBankTransferInstructions(bookingId).catch(() => undefined);
   }
 
   notifyStaffMessage(bookingId: string, messageBody: string): void {
@@ -189,6 +195,25 @@ export class BookingAssistedEmailService {
       ...base,
       paymentUrl,
       travelerPricing: travelerPricing.length > 0 ? travelerPricing : undefined,
+    });
+  }
+
+  private async sendBankTransferInstructions(bookingId: string): Promise<void> {
+    const base = await this.buildBasePayload(bookingId);
+    if (!base) {
+      return;
+    }
+    const accounts = await this.bankAccountsService.listPublicForPayment();
+    await this.emailService.sendBookingBankTransferInstructions({
+      ...base,
+      accounts: accounts.map((account) => ({
+        bankName: account.bankName,
+        accountName: account.accountName,
+        accountNumber: account.accountNumber,
+        swiftBic: account.swiftBic,
+        currency: account.currency,
+      })),
+      accountUrl: `${webBase(base.webUrl)}/account/reservations/${bookingId}`,
     });
   }
 

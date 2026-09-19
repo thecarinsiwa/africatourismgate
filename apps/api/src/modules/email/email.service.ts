@@ -16,6 +16,7 @@ import {
 import {
   renderBookingApprovedChatEmail,
   renderBookingPaymentInviteEmail,
+  renderBookingBankTransferInstructionsEmail,
   renderBookingPaymentReminderEmail,
   renderBookingRejectedEmail,
   renderBookingRequestReceivedEmail,
@@ -33,6 +34,7 @@ import type {
   OperationAlertEmailPayload,
   BookingApprovedChatEmailPayload,
   BookingPaymentInviteEmailPayload,
+  BookingBankTransferInstructionsEmailPayload,
   BookingPaymentReminderEmailPayload,
   BookingRejectedEmailPayload,
   BookingRequestReceivedEmailPayload,
@@ -200,6 +202,17 @@ export class EmailService implements OnModuleInit {
   ): Promise<SendMailResult> {
     const branding = await this.resolveBranding();
     const { subject, html, text } = renderBookingPaymentInviteEmail(payload, branding);
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendBookingBankTransferInstructions(
+    payload: BookingBankTransferInstructionsEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderBookingBankTransferInstructionsEmail(
+      payload,
+      branding,
+    );
     return this.send('service', { to: payload.to, subject, html, text });
   }
 

@@ -141,6 +141,8 @@ import type {
   Review,
   CancelBookingRequest,
   RecordCashPaymentRequest,
+  RecordBankTransferPaymentRequest,
+  PublicPaymentBankAccount,
   SendBookingReceiptEmailRequest,
   SendBookingReceiptEmailResponse,
   UpdateBookingStatusRequest,
@@ -2877,6 +2879,29 @@ export class ApiClient {
       method: 'POST',
       body: body ?? {},
     });
+  }
+
+  recordBookingBankTransferPayment(
+    id: string,
+    body?: RecordBankTransferPaymentRequest,
+  ): Promise<BookingDetail> {
+    return this.request<BookingDetail>(`/bookings/${id}/bank-transfer-payment`, {
+      method: 'POST',
+      body: body ?? {},
+    });
+  }
+
+  listPublicPaymentBankAccounts(query?: {
+    organizationSlug?: string;
+  }): Promise<PublicPaymentBankAccount[]> {
+    const params = new URLSearchParams();
+    if (query?.organizationSlug) {
+      params.set('organizationSlug', query.organizationSlug);
+    }
+    const qs = params.toString();
+    return this.request<PublicPaymentBankAccount[]>(
+      `/public/payment-bank-accounts${qs ? `?${qs}` : ''}`,
+    );
   }
 
   sendBookingReceiptEmail(
