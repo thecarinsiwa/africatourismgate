@@ -37,6 +37,17 @@ export class BookingAdminDetailDto {
   @ApiProperty()
   currency!: string;
 
+  @ApiProperty({ description: 'Somme des paiements succeeded (centimes)' })
+  paidCents!: number;
+
+  @ApiProperty({ description: 'Solde restant (centimes)' })
+  balanceCents!: number;
+
+  @ApiProperty({
+    description: 'Montant du premier encaissement attendu (acompte ou total)',
+  })
+  depositRequiredCents!: number;
+
   @ApiProperty({ type: BookingClientDto })
   client!: BookingClientDto;
 

@@ -664,20 +664,29 @@ export class BookingsController {
 
   @Post(':id/cash-payment')
   @RequirePermissions('bookings.write')
-  @ApiOperation({ summary: 'Record cash payment and confirm booking (POS)' })
+  @ApiOperation({
+    summary:
+      'Record cash payment (partial or full); confirm only when fully paid',
+  })
   async recordCashPayment(
     @Param('id') id: string,
     @Body() dto: RecordCashPaymentDto,
     @CurrentUser() user: AuthUserDto,
   ) {
     await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
-    return this.bookingEngine.recordCashPayment(id, user.id, dto.note);
+    return this.bookingEngine.recordCashPayment(
+      id,
+      user.id,
+      dto.note,
+      dto.amountCents,
+    );
   }
 
   @Post(':id/bank-transfer-payment')
   @RequirePermissions('bookings.write')
   @ApiOperation({
-    summary: 'Record bank transfer payment and confirm booking (staff)',
+    summary:
+      'Record bank transfer / Mobile Money payment (partial or full); confirm only when fully paid',
   })
   async recordBankTransferPayment(
     @Param('id') id: string,
@@ -685,7 +694,12 @@ export class BookingsController {
     @CurrentUser() user: AuthUserDto,
   ) {
     await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
-    return this.bookingEngine.recordBankTransferPayment(id, user.id, dto.note);
+    return this.bookingEngine.recordBankTransferPayment(
+      id,
+      user.id,
+      dto.note,
+      dto.amountCents,
+    );
   }
 
   @Post(':id/receipt-email')

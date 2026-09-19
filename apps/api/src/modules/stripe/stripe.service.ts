@@ -443,8 +443,8 @@ export class StripeService {
     }
 
     if (payment.status === 'succeeded') {
-      if (booking.status !== 'confirmed') {
-        await this.bookingEngine.confirmBooking(
+      if (booking.status === 'pending_payment') {
+        await this.bookingEngine.confirmBookingIfFullyPaid(
           params.bookingId,
           undefined,
           'Confirmation via webhook Stripe (idempotent)',
@@ -466,7 +466,7 @@ export class StripeService {
     await this.paymentsRepository.save(payment);
 
     if (booking.status === 'pending_payment') {
-      await this.bookingEngine.confirmBooking(
+      await this.bookingEngine.confirmBookingIfFullyPaid(
         params.bookingId,
         undefined,
         'Paiement Stripe confirmé (webhook)',

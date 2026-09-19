@@ -279,7 +279,11 @@ export class BookingPaymentProofsService {
       row.paymentMethod === 'mobile_money'
         ? 'Paiement Mobile Money validé (preuve)'
         : 'Virement bancaire validé (preuve)';
-    return this.bookingEngine.confirmBooking(bookingId, staffUserId, confirmReason);
+    return this.bookingEngine.confirmBookingIfFullyPaid(
+      bookingId,
+      staffUserId,
+      confirmReason,
+    );
   }
 
   async requestResubmit(
@@ -360,6 +364,12 @@ export class BookingPaymentProofsService {
       throw new BadRequestException('Montant de réservation invalide.');
     }
 
+    const paidCents = await this.bookingEngine.sumSucceededPaidCents(booking.id);
+    const balanceCents = Math.max(0, booking.totalCents - paidCents);
+    if (balanceCents < 1) {
+      throw new BadRequestException('Cette réservation est déjà soldée.');
+    }
+
     const existing = await this.paymentsRepository.findOne({
       where: {
         bookingId: booking.id,
@@ -370,6 +380,11 @@ export class BookingPaymentProofsService {
       order: { createdAt: 'DESC' },
     });
     if (existing) {
+      if (existing.amountCents !== balanceCents) {
+        existing.amountCents = balanceCents;
+        existing.updatedByUserId = actorUserId ?? null;
+        return this.paymentsRepository.save(existing);
+      }
       return existing;
     }
 
@@ -379,7 +394,7 @@ export class BookingPaymentProofsService {
     const payment = this.paymentsRepository.create({
       id: paymentId,
       bookingId: booking.id,
-      amountCents: booking.totalCents,
+      amountCents: balanceCents,
       currency: booking.currency,
       status: 'pending',
       provider,
@@ -405,24 +420,21 @@ export class BookingPaymentProofsService {
       if (linked) {
         if (linked.status === 'succeeded') {
           throw new BadRequestException(
-            'Un paiement a déjà été enregistré pour cette réservation.',
+            'Cette preuve est déjà liée à un paiement réussi.',
           );
+        }
+        const paidCents = await this.bookingEngine.sumSucceededPaidCents(
+          booking.id,
+        );
+        const balanceCents = Math.max(0, booking.totalCents - paidCents);
+        if (balanceCents < 1) {
+          throw new BadRequestException('Cette réservation est déjà soldée.');
+        }
+        if (linked.amountCents !== balanceCents) {
+          linked.amountCents = balanceCents;
         }
         return linked;
       }
-    }
-
-    const succeeded = await this.paymentsRepository.findOne({
-      where: {
-        bookingId: booking.id,
-        status: 'succeeded',
-        deletedAt: IsNull(),
-      },
-    });
-    if (succeeded) {
-      throw new BadRequestException(
-        'Un paiement a déjà été enregistré pour cette réservation.',
-      );
     }
 
     return this.ensurePendingPayment(

@@ -25,7 +25,7 @@ import {
   Users,
   Vehicles,
 } from '../../../entities/generated';
-import { resolveCheckoutBookingMode } from '@africatourismgate/types';
+import { resolveCheckoutBookingMode, computeDepositRequiredCents } from '@africatourismgate/types';
 import { OrgScopeService } from '../../../common/org-scope/org-scope.service';
 import { toAuthUserDto } from '../../auth/dto/auth-user.dto';
 import { BookingDetailPdfService } from '../../email/booking-detail-pdf.service';
@@ -524,6 +524,27 @@ export class BookingEngineService {
   }
 
   /**
+   * Confirme la réservation uniquement si la somme des paiements succeeded
+   * couvre le total. Sinon renvoie le détail sans changer le statut
+   * (`pending_payment` tant que solde > 0).
+   */
+  async confirmBookingIfFullyPaid(
+    id: string,
+    actorUserId?: string,
+    reason?: string,
+  ): Promise<BookingDetailDto> {
+    const booking = await this.findBookingOrThrow(id);
+    if (booking.status !== 'pending_payment') {
+      return this.getBookingDetail(id);
+    }
+    const paidCents = await this.sumSucceededPaidCents(id);
+    if (paidCents < booking.totalCents) {
+      return this.getBookingDetail(id);
+    }
+    return this.confirmBooking(id, actorUserId, reason);
+  }
+
+  /**
    * Same PDF payload as the confirmation email attachment.
    * Caller must enforce auth / status when exposing via HTTP.
    */
@@ -611,6 +632,7 @@ export class BookingEngineService {
     bookingId: string,
     actorUserId?: string,
     note?: string,
+    amountCents?: number,
   ): Promise<BookingDetailDto> {
     const booking = await this.findBookingOrThrow(bookingId);
     if (booking.status !== 'pending_payment') {
@@ -622,12 +644,12 @@ export class BookingEngineService {
       throw new BadRequestException('Montant de réservation invalide.');
     }
 
-    const existingSucceeded = await this.paymentsRepository.findOne({
-      where: { bookingId, status: 'succeeded', deletedAt: IsNull() },
-    });
-    if (existingSucceeded) {
+    const { paidCents, balanceCents, amount } =
+      await this.resolvePartialPaymentAmount(booking, amountCents);
+
+    if (balanceCents < 1) {
       throw new BadRequestException(
-        'Un paiement a déjà été enregistré pour cette réservation.',
+        'Cette réservation est déjà soldée.',
       );
     }
 
@@ -635,13 +657,15 @@ export class BookingEngineService {
     const trimmedNote = note?.trim();
     const confirmReason = trimmedNote
       ? `Paiement cash caisse — ${trimmedNote}`
-      : 'Paiement cash caisse';
+      : paidCents === 0 && amount < booking.totalCents
+        ? 'Acompte cash caisse'
+        : 'Paiement cash caisse';
 
     await this.paymentsRepository.save(
       this.paymentsRepository.create({
         id: paymentId,
         bookingId,
-        amountCents: booking.totalCents,
+        amountCents: amount,
         currency: booking.currency,
         status: 'succeeded',
         provider: 'cash',
@@ -650,13 +674,18 @@ export class BookingEngineService {
       } as DeepPartial<Payments>),
     );
 
-    return this.confirmBooking(bookingId, actorUserId, confirmReason);
+    return this.confirmBookingIfFullyPaid(
+      bookingId,
+      actorUserId,
+      confirmReason,
+    );
   }
 
   async recordBankTransferPayment(
     bookingId: string,
     actorUserId?: string,
     note?: string,
+    amountCents?: number,
   ): Promise<BookingDetailDto> {
     const booking = await this.findBookingOrThrow(bookingId);
     if (booking.status !== 'pending_payment') {
@@ -674,12 +703,12 @@ export class BookingEngineService {
       throw new BadRequestException('Montant de réservation invalide.');
     }
 
-    const existingSucceeded = await this.paymentsRepository.findOne({
-      where: { bookingId, status: 'succeeded', deletedAt: IsNull() },
-    });
-    if (existingSucceeded) {
+    const { paidCents, balanceCents, amount } =
+      await this.resolvePartialPaymentAmount(booking, amountCents);
+
+    if (balanceCents < 1) {
       throw new BadRequestException(
-        'Un paiement a déjà été enregistré pour cette réservation.',
+        'Cette réservation est déjà soldée.',
       );
     }
 
@@ -694,16 +723,22 @@ export class BookingEngineService {
     });
 
     const trimmedNote = note?.trim();
+    const isPartial = amount < booking.totalCents || paidCents > 0;
     const confirmReason =
       provider === 'mobile_money'
         ? trimmedNote
           ? `Paiement Mobile Money reçu — ${trimmedNote}`
-          : 'Paiement Mobile Money reçu'
+          : isPartial && paidCents === 0
+            ? 'Acompte Mobile Money reçu'
+            : 'Paiement Mobile Money reçu'
         : trimmedNote
           ? `Virement bancaire reçu — ${trimmedNote}`
-          : 'Virement bancaire reçu';
+          : isPartial && paidCents === 0
+            ? 'Acompte virement reçu'
+            : 'Virement bancaire reçu';
 
     if (pending) {
+      pending.amountCents = amount;
       pending.status = 'succeeded';
       pending.updatedByUserId = actorUserId ?? null;
       await this.paymentsRepository.save(pending);
@@ -715,7 +750,7 @@ export class BookingEngineService {
         this.paymentsRepository.create({
           id: paymentId,
           bookingId,
-          amountCents: booking.totalCents,
+          amountCents: amount,
           currency: booking.currency,
           status: 'succeeded',
           provider,
@@ -725,7 +760,11 @@ export class BookingEngineService {
       );
     }
 
-    return this.confirmBooking(bookingId, actorUserId, confirmReason);
+    return this.confirmBookingIfFullyPaid(
+      bookingId,
+      actorUserId,
+      confirmReason,
+    );
   }
 
   async cancelBooking(
@@ -868,12 +907,88 @@ export class BookingEngineService {
       .addOrderBy('bi.createdAt', 'ASC')
       .getMany();
 
+    const paymentSummary = await this.getBookingPaymentSummary(booking);
+
     return {
       booking,
       items,
       totalCents: booking.totalCents,
       currency: booking.currency,
+      paidCents: paymentSummary.paidCents,
+      balanceCents: paymentSummary.balanceCents,
+      depositRequiredCents: paymentSummary.depositRequiredCents,
     };
+  }
+
+  async sumSucceededPaidCents(bookingId: string): Promise<number> {
+    const result = await this.paymentsRepository
+      .createQueryBuilder('p')
+      .select('COALESCE(SUM(p.amountCents), 0)', 'sum')
+      .where('p.bookingId = :bookingId', { bookingId })
+      .andWhere('p.status = :status', { status: 'succeeded' })
+      .andWhere('p.deletedAt IS NULL')
+      .getRawOne<{ sum: string | number | null }>();
+
+    const raw = result?.sum ?? 0;
+    const sum = typeof raw === 'string' ? Number.parseInt(raw, 10) : Number(raw);
+    return Number.isFinite(sum) ? sum : 0;
+  }
+
+  private async getBookingPaymentSummary(booking: Bookings): Promise<{
+    paidCents: number;
+    balanceCents: number;
+    depositRequiredCents: number;
+  }> {
+    const paidCents = await this.sumSucceededPaidCents(booking.id);
+    const balanceCents = Math.max(0, booking.totalCents - paidCents);
+    const deposits =
+      await this.organizationSettingsService.getResolvedBookingDeposits();
+    const depositRequiredCents = computeDepositRequiredCents(
+      booking.totalCents,
+      deposits,
+    );
+    return { paidCents, balanceCents, depositRequiredCents };
+  }
+
+  private async resolvePartialPaymentAmount(
+    booking: Bookings,
+    amountCents?: number,
+  ): Promise<{ paidCents: number; balanceCents: number; amount: number }> {
+    const paidCents = await this.sumSucceededPaidCents(booking.id);
+    const balanceCents = Math.max(0, booking.totalCents - paidCents);
+
+    let amount: number;
+    if (amountCents !== undefined && amountCents !== null) {
+      if (
+        typeof amountCents !== 'number' ||
+        !Number.isInteger(amountCents) ||
+        amountCents < 1
+      ) {
+        throw new BadRequestException(
+          'amountCents doit être un entier positif.',
+        );
+      }
+      amount = amountCents;
+    } else {
+      const deposits =
+        await this.organizationSettingsService.getResolvedBookingDeposits();
+      const depositRequired = computeDepositRequiredCents(
+        booking.totalCents,
+        deposits,
+      );
+      amount =
+        paidCents === 0 && deposits.enabled
+          ? Math.min(depositRequired, balanceCents)
+          : balanceCents;
+    }
+
+    if (amount > balanceCents) {
+      throw new BadRequestException(
+        `Montant trop élevé : solde restant ${balanceCents} centimes.`,
+      );
+    }
+
+    return { paidCents, balanceCents, amount };
   }
 
   private async assertPreferredPaymentMethod(

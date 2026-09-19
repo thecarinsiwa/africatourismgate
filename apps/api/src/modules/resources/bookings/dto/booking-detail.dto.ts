@@ -10,6 +10,9 @@ export type BookingDetailDto = {
   items: BookingItems[];
   totalCents: number;
   currency: string;
+  paidCents: number;
+  balanceCents: number;
+  depositRequiredCents: number;
   review?: ReviewDto | null;
   canReview?: boolean;
   statusHistory?: BookingStatusHistoryEntry[];

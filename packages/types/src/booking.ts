@@ -287,6 +287,12 @@ export interface BookingDetail {
   items: BookingItem[];
   totalCents: number;
   currency: string;
+  /** Somme des paiements `succeeded` (centimes). */
+  paidCents: number;
+  /** max(0, totalCents - paidCents). */
+  balanceCents: number;
+  /** Montant du premier encaissement attendu (acompte ou total). */
+  depositRequiredCents: number;
   review?: Review | null;
   canReview?: boolean;
   statusHistory?: BookingStatusHistoryEntry[];
@@ -353,10 +359,14 @@ export interface CancelBookingRequest {
 }
 
 export interface RecordCashPaymentRequest {
+  /** Montant en centimes ; défaut = acompte (1er paiement) ou solde restant. */
+  amountCents?: number;
   note?: string;
 }
 
 export interface RecordBankTransferPaymentRequest {
+  /** Montant en centimes ; défaut = acompte (1er paiement) ou solde restant. */
+  amountCents?: number;
   note?: string;
 }
 
