@@ -8,6 +8,7 @@ import {
   Card,
   DataTable,
   DataTableBadge,
+  Input,
   Modal,
   Select,
   Skeleton,
@@ -52,6 +53,32 @@ import { BookingPaymentProofsPanel } from './booking-payment-proofs-panel';
 import { BookingManifestSection } from './booking-manifest-section';
 import { BookingMessagesSection } from './booking-messages-section';
 import { BookingStatusTimeline } from './booking-status-timeline';
+
+function parseMoneyToCents(value: string): number | null {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  const parsed = Number.parseFloat(trimmed.replace(',', '.'));
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return null;
+  }
+  return Math.round(parsed * 100);
+}
+
+function formatCentsToMoney(cents: number): string {
+  return (cents / 100).toFixed(2);
+}
+
+function defaultChargeMajor(detail: BookingAdminDetail): string {
+  const paidCents = detail.paidCents ?? 0;
+  const balanceCents =
+    detail.balanceCents ?? Math.max(0, detail.totalCents - paidCents);
+  const depositRequiredCents = detail.depositRequiredCents ?? detail.totalCents;
+  const chargeCents =
+    paidCents === 0 && depositRequiredCents < detail.totalCents
+      ? Math.min(depositRequiredCents, balanceCents)
+      : balanceCents;
+  return formatCentsToMoney(Math.max(0, chargeCents));
+}
 
 function formatBookingRef(id: string): string {
   return id.slice(0, 8);
@@ -107,8 +134,10 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [cashDialogOpen, setCashDialogOpen] = useState(false);
   const [cashNote, setCashNote] = useState('');
+  const [cashAmount, setCashAmount] = useState('');
   const [bankTransferDialogOpen, setBankTransferDialogOpen] = useState(false);
   const [bankTransferNote, setBankTransferNote] = useState('');
+  const [bankTransferAmount, setBankTransferAmount] = useState('');
   const [activeTab, setActiveTab] = useState('manifest');
   const [manifestSync, setManifestSync] = useState(0);
 
@@ -227,10 +256,13 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
     setActionError(null);
     setActionLoading(true);
     try {
+      const amountCents = parseMoneyToCents(cashAmount);
       await getApiClient().recordBookingCashPayment(bookingId, {
         note: cashNote.trim() || undefined,
+        ...(amountCents != null ? { amountCents } : {}),
       });
       setCashNote('');
+      setCashAmount('');
       await load();
       return true;
     } catch (error) {
@@ -239,17 +271,20 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
     } finally {
       setActionLoading(false);
     }
-  }, [bookingId, cashNote, detail, load, getBookingsErrorMessage]);
+  }, [bookingId, cashAmount, cashNote, detail, load, getBookingsErrorMessage]);
 
   const handleRecordBankTransferPayment = useCallback(async () => {
     if (!detail) return false;
     setActionError(null);
     setActionLoading(true);
     try {
+      const amountCents = parseMoneyToCents(bankTransferAmount);
       await getApiClient().recordBookingBankTransferPayment(bookingId, {
         note: bankTransferNote.trim() || undefined,
+        ...(amountCents != null ? { amountCents } : {}),
       });
       setBankTransferNote('');
+      setBankTransferAmount('');
       await load();
       return true;
     } catch (error) {
@@ -258,7 +293,14 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
     } finally {
       setActionLoading(false);
     }
-  }, [bookingId, bankTransferNote, detail, load, getBookingsErrorMessage]);
+  }, [
+    bankTransferAmount,
+    bankTransferNote,
+    bookingId,
+    detail,
+    load,
+    getBookingsErrorMessage,
+  ]);
 
   const statusOptions = useMemo(() => {
     const current = detail?.booking.status;
@@ -506,6 +548,41 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
                 {formatMoney(detail.totalCents, detail.currency)}
               </p>
               <p className="mt-2 text-xs font-medium uppercase tracking-wide text-atg-muted">
+                {t('clientFields.paid')}
+              </p>
+              <p className="tabular-nums text-sm font-medium text-atg-fg">
+                {formatMoney(detail.paidCents ?? 0, detail.currency)}
+              </p>
+              <p className="mt-2 text-xs font-medium uppercase tracking-wide text-atg-muted">
+                {t('clientFields.balance')}
+              </p>
+              <p className="tabular-nums text-sm font-medium text-atg-fg">
+                {formatMoney(
+                  detail.balanceCents ??
+                    Math.max(0, detail.totalCents - (detail.paidCents ?? 0)),
+                  detail.currency,
+                )}
+              </p>
+              {booking.status === 'pending_payment' &&
+              (detail.depositRequiredCents ?? detail.totalCents) <
+                detail.totalCents &&
+              (detail.paidCents ?? 0) === 0 ? (
+                <>
+                  <p className="mt-2 text-xs font-medium uppercase tracking-wide text-primary/80">
+                    {t('clientFields.depositDue')}
+                  </p>
+                  <p className="tabular-nums text-sm font-semibold text-primary">
+                    {formatMoney(
+                      Math.min(
+                        detail.depositRequiredCents ?? detail.totalCents,
+                        detail.balanceCents ?? detail.totalCents,
+                      ),
+                      detail.currency,
+                    )}
+                  </p>
+                </>
+              ) : null}
+              <p className="mt-2 text-xs font-medium uppercase tracking-wide text-atg-muted">
                 {t('clientFields.preferredPaymentMethod')}
               </p>
               <p className="text-sm font-medium text-atg-fg">{preferredPaymentLabel}</p>
@@ -514,6 +591,15 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
               </p>
             </div>
           </div>
+
+          {booking.status === 'pending_payment' &&
+          ((detail.depositRequiredCents ?? detail.totalCents) < detail.totalCents ||
+            (detail.paidCents ?? 0) > 0) ? (
+            <aside className="rounded-lg border border-amber-200/80 bg-amber-50/70 px-3 py-2 text-sm text-amber-950 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-100">
+              <p className="font-semibold">{t('summary.cancellationPolicyTitle')}</p>
+              <p className="mt-1 opacity-90">{t('summary.cancellationPolicyBody')}</p>
+            </aside>
+          ) : null}
 
           <BookingStatusTimeline
             currentStatus={booking.status}
@@ -673,7 +759,10 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
                 variant="primary"
                 disabled={actionLoading}
                 className="w-full sm:w-auto"
-                onClick={() => setCashDialogOpen(true)}
+                onClick={() => {
+                  if (detail) setCashAmount(defaultChargeMajor(detail));
+                  setCashDialogOpen(true);
+                }}
               >
                 {t('actions.recordCashPayment')}
               </Button>
@@ -684,7 +773,10 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
                 variant="primary"
                 disabled={actionLoading}
                 className="w-full sm:w-auto"
-                onClick={() => setBankTransferDialogOpen(true)}
+                onClick={() => {
+                  if (detail) setBankTransferAmount(defaultChargeMajor(detail));
+                  setBankTransferDialogOpen(true);
+                }}
               >
                 {offlinePaymentActionLabel}
               </Button>
@@ -849,7 +941,10 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
         onOpenChange={(open) => {
           if (!actionLoading) {
             setCashDialogOpen(open);
-            if (!open) setCashNote('');
+            if (!open) {
+              setCashNote('');
+              setCashAmount('');
+            }
           }
         }}
         title={t('cashDialog.title')}
@@ -858,6 +953,15 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
         className="max-w-lg"
       >
         <div className="space-y-4">
+          <Input
+            label={t('cashDialog.amountLabel')}
+            type="text"
+            inputMode="decimal"
+            value={cashAmount}
+            onChange={(e) => setCashAmount(e.target.value)}
+            hint={t('cashDialog.amountHint')}
+            placeholder={detail ? defaultChargeMajor(detail) : '0.00'}
+          />
           <Textarea
             name="cashNote"
             label={t('cashDialog.noteLabel')}
@@ -874,6 +978,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
               onClick={() => {
                 setCashDialogOpen(false);
                 setCashNote('');
+                setCashAmount('');
               }}
             >
               {tActions('cancel')}
@@ -900,7 +1005,10 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
         onOpenChange={(open) => {
           if (!actionLoading) {
             setBankTransferDialogOpen(open);
-            if (!open) setBankTransferNote('');
+            if (!open) {
+              setBankTransferNote('');
+              setBankTransferAmount('');
+            }
           }
         }}
         title={offlinePaymentDialogTitle}
@@ -909,6 +1017,23 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
         className="max-w-lg"
       >
         <div className="space-y-4">
+          <Input
+            label={
+              booking.preferredPaymentMethod === 'mobile_money'
+                ? t('mobileMoneyDialog.amountLabel')
+                : t('bankTransferDialog.amountLabel')
+            }
+            type="text"
+            inputMode="decimal"
+            value={bankTransferAmount}
+            onChange={(e) => setBankTransferAmount(e.target.value)}
+            hint={
+              booking.preferredPaymentMethod === 'mobile_money'
+                ? t('mobileMoneyDialog.amountHint')
+                : t('bankTransferDialog.amountHint')
+            }
+            placeholder={detail ? defaultChargeMajor(detail) : '0.00'}
+          />
           <Textarea
             name="bankTransferNote"
             label={offlinePaymentDialogNoteLabel}
@@ -925,6 +1050,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
               onClick={() => {
                 setBankTransferDialogOpen(false);
                 setBankTransferNote('');
+                setBankTransferAmount('');
               }}
             >
               {tActions('cancel')}

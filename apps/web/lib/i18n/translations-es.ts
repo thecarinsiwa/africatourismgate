@@ -254,6 +254,12 @@ export const es: Translations = {
       statusMobileMoneyPendingHint:
         'Realice la transferencia Mobile Money con la referencia indicada y envíe un comprobante. La reserva se confirmará tras la validación.',
       totalLabel: 'Total:',
+      paidLabel: 'Pagado:',
+      balanceLabel: 'Saldo pendiente:',
+      depositDueLabel: 'A pagar ahora:',
+      cancellationPolicyTitle: 'Política de cancelación (informativa)',
+      cancellationPolicyBody:
+        'Si se paga un anticipo, el saldo debe liquidarse antes de la fecha del servicio. El anticipo generalmente no es reembolsable salvo acuerdo contrario. Este aviso es informativo — contáctenos ante cualquier duda.',
       verifying: 'Verificando estado…',
       statusUnavailable: 'Estado detallado no disponible por ahora. Actualice en un momento.',
       backHome: 'Volver al inicio',
@@ -1191,6 +1197,12 @@ export const es: Translations = {
       detail: {
         bookedOn: 'Reservado el',
         itemsCount: 'Elementos',
+        paidLabel: 'Pagado',
+        balanceLabel: 'Saldo pendiente',
+        depositDueLabel: 'A pagar ahora',
+        cancellationPolicyTitle: 'Política de cancelación (informativa)',
+        cancellationPolicyBody:
+          'Si se paga un anticipo, el saldo debe liquidarse antes de la fecha del servicio. El anticipo generalmente no es reembolsable salvo acuerdo contrario. Este aviso es informativo — contáctenos ante cualquier duda.',
         itemsTitle: 'Detalles de la reserva',
         noItems: 'No hay elementos registrados.',
         item: 'Servicio',

@@ -63,13 +63,18 @@
       "name": "Nombre",
       "organization": "Organización",
       "total": "Total",
+      "paid": "Pagado",
+      "balance": "Saldo pendiente",
+      "depositDue": "A cobrar ahora",
       "createdAt": "Creada el",
       "preferredPaymentMethod": "Método de pago elegido"
     },
     "summary": {
       "createdAt": "Creada el {date}",
       "unreadMessages": "{count, plural, one {# mensaje del cliente sin leer} other {# mensajes del cliente sin leer}}",
-      "preferredPaymentUnspecified": "No especificado"
+      "preferredPaymentUnspecified": "No especificado",
+      "cancellationPolicyTitle": "Política de cancelación (informativa)",
+      "cancellationPolicyBody": "Si se paga un anticipo, el saldo debe liquidarse antes de la fecha del servicio. El anticipo generalmente no es reembolsable salvo acuerdo contrario. Aviso informativo únicamente."
     },
     "tabs": {
       "ariaLabel": "Secciones complementarias",
@@ -101,21 +106,27 @@
     },
     "cashDialog": {
       "title": "Registrar pago en efectivo",
-      "description": "¿Confirmar el cobro en efectivo de esta reserva? Pasará al estado confirmada.",
+      "description": "Registre un cobro (anticipo o saldo). La reserva solo se confirma cuando el saldo está cubierto.",
+      "amountLabel": "Importe cobrado",
+      "amountHint": "Déjelo vacío para el importe debido por defecto (anticipo o saldo).",
       "noteLabel": "Nota (opcional)",
       "notePlaceholder": "Ej. recibo de caja, número de recibo…",
       "confirm": "Cobrar"
     },
     "bankTransferDialog": {
       "title": "Marcar transferencia recibida",
-      "description": "¿Confirmar la recepción de la transferencia de esta reserva? Pasará al estado confirmada.",
+      "description": "Registre una transferencia (anticipo o saldo). La reserva solo se confirma cuando el saldo está cubierto.",
+      "amountLabel": "Importe recibido",
+      "amountHint": "Déjelo vacío para el importe debido por defecto (anticipo o saldo).",
       "noteLabel": "Nota (opcional)",
       "notePlaceholder": "Ej. referencia bancaria, fecha de recepción…",
       "confirm": "Confirmar transferencia"
     },
     "mobileMoneyDialog": {
       "title": "Marcar pago Mobile Money recibido",
-      "description": "¿Confirmar la recepción del pago Mobile Money de esta reserva? Pasará al estado confirmada.",
+      "description": "Registre un pago Mobile Money (anticipo o saldo). La reserva solo se confirma cuando el saldo está cubierto.",
+      "amountLabel": "Importe recibido",
+      "amountHint": "Déjelo vacío para el importe debido por defecto (anticipo o saldo).",
       "noteLabel": "Nota (opcional)",
       "notePlaceholder": "Ej. referencia del operador, fecha de recepción…",
       "confirm": "Confirmar pago"

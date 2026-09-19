@@ -208,7 +208,7 @@ function toFormValues(
   );
   const deposits = normalizeBookingDeposits(
     settingByKey(settings, 'deposits') as
-      | { enabled?: boolean; depositPercent?: number; depositFixedCents?: number }
+      | { enabled: boolean; depositPercent?: number; depositFixedCents?: number }
       | undefined,
   );
 

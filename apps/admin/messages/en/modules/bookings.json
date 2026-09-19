@@ -63,13 +63,18 @@
       "name": "Name",
       "organization": "Organization",
       "total": "Total",
+      "paid": "Paid",
+      "balance": "Balance due",
+      "depositDue": "Due now",
       "createdAt": "Created on",
       "preferredPaymentMethod": "Chosen payment method"
     },
     "summary": {
       "createdAt": "Created on {date}",
       "unreadMessages": "{count, plural, one {# unread customer message} other {# unread customer messages}}",
-      "preferredPaymentUnspecified": "Not specified"
+      "preferredPaymentUnspecified": "Not specified",
+      "cancellationPolicyTitle": "Cancellation policy (informational)",
+      "cancellationPolicyBody": "When a deposit is paid, the remaining balance must be settled before the service date. Deposits are generally non-refundable unless otherwise agreed. Informational notice only."
     },
     "tabs": {
       "ariaLabel": "Additional sections",
@@ -101,21 +106,27 @@
     },
     "cashDialog": {
       "title": "Record cash payment",
-      "description": "Confirm cash collection for this booking? It will move to confirmed status.",
+      "description": "Record a cash collection (deposit or balance). The booking is confirmed only when the balance is covered.",
+      "amountLabel": "Amount collected",
+      "amountHint": "Leave empty for the default amount due (deposit or balance).",
       "noteLabel": "Note (optional)",
       "notePlaceholder": "E.g. till receipt, receipt number…",
       "confirm": "Collect cash"
     },
     "bankTransferDialog": {
       "title": "Mark bank transfer received",
-      "description": "Confirm that the bank transfer for this booking was received? It will move to confirmed status.",
+      "description": "Record a bank transfer (deposit or balance). The booking is confirmed only when the balance is covered.",
+      "amountLabel": "Amount received",
+      "amountHint": "Leave empty for the default amount due (deposit or balance).",
       "noteLabel": "Note (optional)",
       "notePlaceholder": "E.g. bank reference, receipt date…",
       "confirm": "Confirm transfer"
     },
     "mobileMoneyDialog": {
       "title": "Mark Mobile Money payment received",
-      "description": "Confirm that the Mobile Money payment for this booking was received? It will move to confirmed status.",
+      "description": "Record a Mobile Money payment (deposit or balance). The booking is confirmed only when the balance is covered.",
+      "amountLabel": "Amount received",
+      "amountHint": "Leave empty for the default amount due (deposit or balance).",
       "noteLabel": "Note (optional)",
       "notePlaceholder": "E.g. operator reference, receipt date…",
       "confirm": "Confirm payment"

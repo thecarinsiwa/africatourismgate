@@ -213,6 +213,11 @@ export type Translations = {
       statusMobileMoneyPending: string;
       statusMobileMoneyPendingHint: string;
       totalLabel: string;
+      paidLabel: string;
+      balanceLabel: string;
+      depositDueLabel: string;
+      cancellationPolicyTitle: string;
+      cancellationPolicyBody: string;
       verifying: string;
       statusUnavailable: string;
       backHome: string;
@@ -1043,6 +1048,11 @@ export type Translations = {
       detail: {
         bookedOn: string;
         itemsCount: string;
+        paidLabel: string;
+        balanceLabel: string;
+        depositDueLabel: string;
+        cancellationPolicyTitle: string;
+        cancellationPolicyBody: string;
         itemsTitle: string;
         noItems: string;
         item: string;
@@ -1685,6 +1695,12 @@ const fr: Translations = {
       statusMobileMoneyPendingHint:
         'Effectuez le transfert Mobile Money avec la référence indiquée, puis envoyez une preuve. La réservation sera confirmée après validation.',
       totalLabel: 'Total :',
+      paidLabel: 'Déjà payé :',
+      balanceLabel: 'Solde restant :',
+      depositDueLabel: 'À régler maintenant :',
+      cancellationPolicyTitle: 'Politique d’annulation (indicative)',
+      cancellationPolicyBody:
+        'En cas d’acompte, le solde doit être réglé avant la date de service. L’acompte n’est généralement pas remboursable sauf accord contraire. Cette mention est informative — contactez-nous pour toute question.',
       verifying: 'Vérification du statut en cours…',
       statusUnavailable:
         'Statut détaillé indisponible pour le moment. Rechargez la page dans quelques instants.',
@@ -2626,6 +2642,12 @@ const fr: Translations = {
       detail: {
         bookedOn: 'Réservée le',
         itemsCount: 'Articles',
+        paidLabel: 'Déjà payé',
+        balanceLabel: 'Solde restant',
+        depositDueLabel: 'À régler maintenant',
+        cancellationPolicyTitle: 'Politique d’annulation (indicative)',
+        cancellationPolicyBody:
+          'En cas d’acompte, le solde doit être réglé avant la date de service. L’acompte n’est généralement pas remboursable sauf accord contraire. Cette mention est informative — contactez-nous pour toute question.',
         itemsTitle: 'Détail de la réservation',
         noItems: 'Aucun article enregistré.',
         item: 'Prestation',
@@ -3343,6 +3365,12 @@ const en: Translations = {
       statusMobileMoneyPendingHint:
         'Complete the Mobile Money transfer with the reference shown, then upload a proof. The booking will be confirmed after staff validation.',
       totalLabel: 'Total:',
+      paidLabel: 'Paid:',
+      balanceLabel: 'Balance due:',
+      depositDueLabel: 'Due now:',
+      cancellationPolicyTitle: 'Cancellation policy (informational)',
+      cancellationPolicyBody:
+        'When a deposit is paid, the remaining balance must be settled before the service date. Deposits are generally non-refundable unless otherwise agreed. This notice is informational — contact us with any questions.',
       verifying: 'Checking status?',
       statusUnavailable: 'Detailed status is unavailable for now. Refresh in a moment.',
       backHome: 'Back to home',
@@ -4275,6 +4303,12 @@ const en: Translations = {
       detail: {
         bookedOn: 'Booked on',
         itemsCount: 'Items',
+        paidLabel: 'Paid',
+        balanceLabel: 'Balance due',
+        depositDueLabel: 'Due now',
+        cancellationPolicyTitle: 'Cancellation policy (informational)',
+        cancellationPolicyBody:
+          'When a deposit is paid, the remaining balance must be settled before the service date. Deposits are generally non-refundable unless otherwise agreed. This notice is informational — contact us with any questions.',
         itemsTitle: 'Booking details',
         noItems: 'No items recorded.',
         item: 'Service',
