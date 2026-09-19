@@ -101,6 +101,7 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
 
   const doc = new PDFDocument({
     size: 'A4',
+    compress: false,
     margins: {
       top: PAGE_MARGIN,
       bottom: PAGE_MARGIN,
