@@ -144,6 +144,7 @@ import type {
   RecordCashPaymentRequest,
   RecordBankTransferPaymentRequest,
   PublicPaymentBankAccount,
+  PublicMobileMoneyCountry,
   SendBookingReceiptEmailRequest,
   SendBookingReceiptEmailResponse,
   UpdateBookingStatusRequest,
@@ -3136,6 +3137,19 @@ export class ApiClient {
     const qs = params.toString();
     return this.request<PublicPaymentBankAccount[]>(
       `/public/payment-bank-accounts${qs ? `?${qs}` : ''}`,
+    );
+  }
+
+  listPublicMobileMoneyConfig(query?: {
+    organizationSlug?: string;
+  }): Promise<PublicMobileMoneyCountry[]> {
+    const params = new URLSearchParams();
+    if (query?.organizationSlug) {
+      params.set('organizationSlug', query.organizationSlug);
+    }
+    const qs = params.toString();
+    return this.request<PublicMobileMoneyCountry[]>(
+      `/public/mobile-money-config${qs ? `?${qs}` : ''}`,
     );
   }
 

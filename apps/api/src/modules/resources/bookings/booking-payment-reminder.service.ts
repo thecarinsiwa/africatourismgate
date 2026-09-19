@@ -45,7 +45,8 @@ export class BookingPaymentReminderService {
   private async resolvePaymentUrl(booking: Bookings): Promise<string | null> {
     if (
       booking.preferredPaymentMethod === 'cash' ||
-      booking.preferredPaymentMethod === 'bank_transfer'
+      booking.preferredPaymentMethod === 'bank_transfer' ||
+      booking.preferredPaymentMethod === 'mobile_money'
     ) {
       return null;
     }

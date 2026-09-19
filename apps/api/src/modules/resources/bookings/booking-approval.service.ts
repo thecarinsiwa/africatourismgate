@@ -157,12 +157,15 @@ export class BookingApprovalService {
     }
     if (
       booking.preferredPaymentMethod === 'cash' ||
-      booking.preferredPaymentMethod === 'bank_transfer'
+      booking.preferredPaymentMethod === 'bank_transfer' ||
+      booking.preferredPaymentMethod === 'mobile_money'
     ) {
       throw new BadRequestException(
         booking.preferredPaymentMethod === 'cash'
           ? 'Invitation Stripe impossible : le client a choisi le paiement cash sur place.'
-          : 'Invitation Stripe impossible : le client a choisi le paiement par virement bancaire.',
+          : booking.preferredPaymentMethod === 'mobile_money'
+            ? 'Invitation Stripe impossible : le client a choisi le paiement Mobile Money.'
+            : 'Invitation Stripe impossible : le client a choisi le paiement par virement bancaire.',
       );
     }
     const session = await this.stripeService.getOrCreateCheckoutSessionForBooking(

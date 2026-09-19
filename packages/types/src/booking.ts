@@ -10,7 +10,11 @@ export type BookingStatus =
   | 'refunded';
 
 /** Chosen at checkout; null on legacy bookings. */
-export type BookingPreferredPaymentMethod = 'stripe' | 'cash' | 'bank_transfer';
+export type BookingPreferredPaymentMethod =
+  | 'stripe'
+  | 'cash'
+  | 'bank_transfer'
+  | 'mobile_money';
 
 export type BookingCheckoutItemType =
   | 'room'

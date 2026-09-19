@@ -2,10 +2,15 @@
 
 import Link from 'next/link';
 import { Button, Spinner } from '@africatourismgate/ui';
-import type { BookingDetail, PublicPaymentBankAccount } from '@africatourismgate/types';
+import type {
+  BookingDetail,
+  PublicMobileMoneyCountry,
+  PublicPaymentBankAccount,
+} from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
 import { listPublicPaymentBankAccounts } from '../../lib/api/public-payment-bank-accounts';
+import { listPublicMobileMoneyConfig } from '../../lib/api/public-mobile-money';
 import {
   bookingItemTypeLabels,
   bookingStatusLabels,
@@ -23,6 +28,7 @@ import { BookingStatusBadge } from './booking-status-badge';
 import { BookingStatusTimeline, isAssistedBookingDetail } from './booking-status-timeline';
 import { AccountBookingManifestSection } from './account-booking-manifest-section';
 import { BankTransferAccountsPanel } from '../reservations/bank-transfer-accounts-panel';
+import { MobileMoneyInstructionsPanel } from '../reservations/mobile-money-instructions-panel';
 import { PaymentProofPanel } from '../reservations/payment-proof-panel';
 
 type Props = {
@@ -49,6 +55,9 @@ export function AccountBookingDetail({
   const [downloadingPdf, setDownloadingPdf] = useState(false);
   const [reviewJustPublished, setReviewJustPublished] = useState(false);
   const [bankAccounts, setBankAccounts] = useState<PublicPaymentBankAccount[]>([]);
+  const [mobileMoneyCountries, setMobileMoneyCountries] = useState<
+    PublicMobileMoneyCountry[]
+  >([]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -87,6 +96,27 @@ export function AccountBookingDetail({
       })
       .catch(() => {
         if (!cancelled) setBankAccounts([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [detail]);
+
+  useEffect(() => {
+    if (
+      !detail ||
+      detail.booking.status !== 'pending_payment' ||
+      detail.booking.preferredPaymentMethod !== 'mobile_money'
+    ) {
+      return;
+    }
+    let cancelled = false;
+    void listPublicMobileMoneyConfig()
+      .then((countries) => {
+        if (!cancelled) setMobileMoneyCountries(countries);
+      })
+      .catch(() => {
+        if (!cancelled) setMobileMoneyCountries([]);
       });
     return () => {
       cancelled = true;
@@ -189,7 +219,9 @@ export function AccountBookingDetail({
   const isAssisted = assisted;
   const prefersCash = booking.preferredPaymentMethod === 'cash';
   const prefersBankTransfer = booking.preferredPaymentMethod === 'bank_transfer';
-  const prefersOfflinePayment = prefersCash || prefersBankTransfer;
+  const prefersMobileMoney = booking.preferredPaymentMethod === 'mobile_money';
+  const prefersOfflinePayment =
+    prefersCash || prefersBankTransfer || prefersMobileMoney;
   const canProceedToPayment =
     booking.status === 'pending_payment' && Boolean(paymentInvited) && !prefersOfflinePayment;
   const canPayImmediate =
@@ -197,6 +229,7 @@ export function AccountBookingDetail({
   const showPayActions = canProceedToPayment || canPayImmediate;
   const showCashPending = booking.status === 'pending_payment' && prefersCash;
   const showBankTransferPending = booking.status === 'pending_payment' && prefersBankTransfer;
+  const showMobileMoneyPending = booking.status === 'pending_payment' && prefersMobileMoney;
   const canCancel =
     booking.status === 'pending_payment' || booking.status === 'confirmed';
   const canDownloadConfirmation = booking.status === 'confirmed';
@@ -292,6 +325,7 @@ export function AccountBookingDetail({
       {(showPayActions ||
         showCashPending ||
         showBankTransferPending ||
+        showMobileMoneyPending ||
         canCancel ||
         canDownloadConfirmation ||
         (isAssisted && booking.status === 'pending_payment' && !prefersOfflinePayment)) && (
@@ -320,6 +354,36 @@ export function AccountBookingDetail({
                 bookingId={booking.id}
                 bookingStatus={booking.status}
                 paymentMethod="bank_transfer"
+                proofs={detail.paymentProofs ?? []}
+                labels={d.paymentProofs}
+                onUpdated={async () => {
+                  await load();
+                }}
+              />
+            </div>
+          ) : null}
+          {showMobileMoneyPending ? (
+            <div className="w-full space-y-3">
+              <p className="text-sm text-atg-muted">{d.mobileMoneyPaymentPending}</p>
+              <MobileMoneyInstructionsPanel
+                countries={mobileMoneyCountries}
+                bookingRef={booking.id}
+                labels={{
+                  title: t.checkout.mobileMoneyTitle,
+                  empty: t.checkout.mobileMoneyEmpty,
+                  country: t.checkout.mobileMoneyCountry,
+                  operator: t.checkout.mobileMoneyOperator,
+                  phone: t.checkout.mobileMoneyPhone,
+                  label: t.checkout.mobileMoneyLabel,
+                  referenceHint: t.checkout.mobileMoneyReferenceHint,
+                  selectCountry: t.checkout.mobileMoneySelectCountry,
+                  selectOperator: t.checkout.mobileMoneySelectOperator,
+                }}
+              />
+              <PaymentProofPanel
+                bookingId={booking.id}
+                bookingStatus={booking.status}
+                paymentMethod="mobile_money"
                 proofs={detail.paymentProofs ?? []}
                 labels={d.paymentProofs}
                 onUpdated={async () => {

@@ -3,6 +3,7 @@
 import type {
   BookingPreferredPaymentMethod,
   PropertyDetail,
+  PublicMobileMoneyCountry,
   PublicPaymentBankAccount,
 } from '@africatourismgate/types';
 import { Button, Spinner } from '@africatourismgate/ui';
@@ -11,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { createBooking, createBookingCheckoutSession, requestBooking } from '../../lib/api/booking';
 import { listPublicPaymentBankAccounts } from '../../lib/api/public-payment-bank-accounts';
+import { listPublicMobileMoneyConfig } from '../../lib/api/public-mobile-money';
 import { uploadBookingIdentityDocument } from '../../lib/api/booking-identity-documents';
 import { formatCarPrice } from '../../lib/cars/listings';
 import type { VehicleDetail } from '../../lib/cars/types';
@@ -55,6 +57,7 @@ import { CheckoutManifestForm, emptyManifestEntryDraft, manifestDraftToPayload, 
 import { CheckoutRecapLine } from './checkout-recap-line';
 import { StripePaymentError } from './stripe-payment-error';
 import { BankTransferAccountsPanel } from './bank-transfer-accounts-panel';
+import { MobileMoneyInstructionsPanel } from './mobile-money-instructions-panel';
 import { createApiClient } from '@africatourismgate/api-client';
 
 type Props = {
@@ -86,6 +89,10 @@ export function ReservationRecapPageContent({ draft }: Props) {
     useState<BookingPreferredPaymentMethod | null>(null);
   const [bankAccounts, setBankAccounts] = useState<PublicPaymentBankAccount[]>([]);
   const [bankAccountsLoading, setBankAccountsLoading] = useState(false);
+  const [mobileMoneyCountries, setMobileMoneyCountries] = useState<
+    PublicMobileMoneyCountry[]
+  >([]);
+  const [mobileMoneyLoading, setMobileMoneyLoading] = useState(false);
   const paymentMethods = useWebPaymentMethods();
 
   useEffect(() => {
@@ -112,6 +119,27 @@ export function ReservationRecapPageContent({ draft }: Props) {
       })
       .finally(() => {
         if (!cancelled) setBankAccountsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [preferredPaymentMethod]);
+
+  useEffect(() => {
+    if (preferredPaymentMethod !== 'mobile_money') {
+      return;
+    }
+    let cancelled = false;
+    setMobileMoneyLoading(true);
+    void listPublicMobileMoneyConfig()
+      .then((countries) => {
+        if (!cancelled) setMobileMoneyCountries(countries);
+      })
+      .catch(() => {
+        if (!cancelled) setMobileMoneyCountries([]);
+      })
+      .finally(() => {
+        if (!cancelled) setMobileMoneyLoading(false);
       });
     return () => {
       cancelled = true;
@@ -430,6 +458,13 @@ export function ReservationRecapPageContent({ draft }: Props) {
       if (preferredPaymentMethod === 'bank_transfer') {
         router.push(
           `/booking/success?booking_id=${booking.booking.id}&payment=bank_transfer`,
+        );
+        return;
+      }
+
+      if (preferredPaymentMethod === 'mobile_money') {
+        router.push(
+          `/booking/success?booking_id=${booking.booking.id}&payment=mobile_money`,
         );
         return;
       }
@@ -801,6 +836,29 @@ export function ReservationRecapPageContent({ draft }: Props) {
                     </span>
                   </label>
                 ) : null}
+                {paymentMethods.mobile_money ? (
+                  <label className="flex cursor-pointer gap-3 rounded-lg border border-atg-border p-3 has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:border-atg-border">
+                    <input
+                      type="radio"
+                      name="preferredPaymentMethod"
+                      value="mobile_money"
+                      checked={preferredPaymentMethod === 'mobile_money'}
+                      onChange={() => {
+                        setPreferredPaymentMethod('mobile_money');
+                        setError(null);
+                      }}
+                      className="mt-1"
+                    />
+                    <span>
+                      <span className="block text-sm font-medium text-atg-fg">
+                        {ck.paymentMethodMobileMoney}
+                      </span>
+                      <span className="block text-xs text-atg-muted">
+                        {ck.paymentMethodMobileMoneyHint}
+                      </span>
+                    </span>
+                  </label>
+                ) : null}
                 {preferredPaymentMethod === 'bank_transfer' ? (
                   <BankTransferAccountsPanel
                     accounts={bankAccounts}
@@ -813,6 +871,23 @@ export function ReservationRecapPageContent({ draft }: Props) {
                       swift: ck.bankTransferSwift,
                       currency: ck.bankTransferCurrency,
                       referenceHint: ck.bankTransferReferenceHint,
+                    }}
+                  />
+                ) : null}
+                {preferredPaymentMethod === 'mobile_money' ? (
+                  <MobileMoneyInstructionsPanel
+                    countries={mobileMoneyCountries}
+                    loading={mobileMoneyLoading}
+                    labels={{
+                      title: ck.mobileMoneyTitle,
+                      empty: ck.mobileMoneyEmpty,
+                      country: ck.mobileMoneyCountry,
+                      operator: ck.mobileMoneyOperator,
+                      phone: ck.mobileMoneyPhone,
+                      label: ck.mobileMoneyLabel,
+                      referenceHint: ck.mobileMoneyReferenceHint,
+                      selectCountry: ck.mobileMoneySelectCountry,
+                      selectOperator: ck.mobileMoneySelectOperator,
                     }}
                   />
                 ) : null}
@@ -851,7 +926,9 @@ export function ReservationRecapPageContent({ draft }: Props) {
                       ? ck.cashSubmitting
                       : preferredPaymentMethod === 'bank_transfer'
                         ? ck.bankTransferSubmitting
-                        : ck.stripeRedirecting
+                        : preferredPaymentMethod === 'mobile_money'
+                          ? ck.mobileMoneySubmitting
+                          : ck.stripeRedirecting
                 }
               >
                 {isAssisted
@@ -860,7 +937,9 @@ export function ReservationRecapPageContent({ draft }: Props) {
                     ? ck.payWithCash
                     : preferredPaymentMethod === 'bank_transfer'
                       ? ck.payWithBankTransfer
-                      : ck.payWithStripe}
+                      : preferredPaymentMethod === 'mobile_money'
+                        ? ck.payWithMobileMoney
+                        : ck.payWithStripe}
               </Button>
             </div>
           </div>

@@ -27,7 +27,12 @@ export const BOOKING_CHECKOUT_ITEM_TYPES = [
 
 export type BookingCheckoutItemType = (typeof BOOKING_CHECKOUT_ITEM_TYPES)[number];
 
-export const BOOKING_PREFERRED_PAYMENT_METHODS = ['stripe', 'cash', 'bank_transfer'] as const;
+export const BOOKING_PREFERRED_PAYMENT_METHODS = [
+  'stripe',
+  'cash',
+  'bank_transfer',
+  'mobile_money',
+] as const;
 
 export type BookingPreferredPaymentMethod =
   (typeof BOOKING_PREFERRED_PAYMENT_METHODS)[number];
@@ -113,7 +118,7 @@ export class BookingCheckoutDto {
   @ApiPropertyOptional({
     enum: BOOKING_PREFERRED_PAYMENT_METHODS,
     description:
-      'Requis pour create/request : Stripe (immédiat), cash (sur place) ou bank_transfer (virement). Ignoré sur checkout-preview.',
+      'Requis pour create/request : Stripe (immédiat), cash (sur place), bank_transfer (virement) ou mobile_money. Ignoré sur checkout-preview.',
   })
   @IsOptional()
   @IsIn(BOOKING_PREFERRED_PAYMENT_METHODS)

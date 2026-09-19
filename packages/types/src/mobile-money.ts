@@ -31,6 +31,27 @@ export interface MobileMoneyPaymentNumber {
   updatedAt: string | null;
 }
 
+/** Public checkout tree: active countries → operators → numbers. */
+export interface PublicMobileMoneyPaymentNumber {
+  id: string;
+  phoneE164: string;
+  label: string | null;
+}
+
+export interface PublicMobileMoneyOperator {
+  id: string;
+  name: string;
+  logoUrl: string | null;
+  numbers: PublicMobileMoneyPaymentNumber[];
+}
+
+export interface PublicMobileMoneyCountry {
+  id: string;
+  code: string;
+  name: string;
+  operators: PublicMobileMoneyOperator[];
+}
+
 export interface MobileMoneyCountriesListQuery {
   page?: number;
   limit?: number;

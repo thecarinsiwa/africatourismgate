@@ -95,6 +95,7 @@
       "cancelBooking": "Cancel booking",
       "recordCashPayment": "Record cash payment",
       "recordBankTransferPayment": "Mark bank transfer received",
+      "recordMobileMoneyPayment": "Mark Mobile Money received",
       "readOnly": "Editing requires the bookings.write permission.",
       "assistedStatusHint": "Use the Assisted validation panel to approve or reject this request."
     },
@@ -111,6 +112,13 @@
       "noteLabel": "Note (optional)",
       "notePlaceholder": "E.g. bank reference, receipt date…",
       "confirm": "Confirm transfer"
+    },
+    "mobileMoneyDialog": {
+      "title": "Mark Mobile Money payment received",
+      "description": "Confirm that the Mobile Money payment for this booking was received? It will move to confirmed status.",
+      "noteLabel": "Note (optional)",
+      "notePlaceholder": "E.g. operator reference, receipt date…",
+      "confirm": "Confirm payment"
     },
     "linesEmpty": "No lines.",
     "linesAriaLabel": "Booking lines",
@@ -277,6 +285,7 @@
     "invitePayment": "Invite to pay",
     "cashPaymentHint": "The customer chose cash on site. Record the payment from the actions bar.",
     "bankTransferPaymentHint": "The customer chose bank transfer. Review the proof in the Documents tab, or mark the transfer as received from the actions bar.",
+    "mobileMoneyPaymentHint": "The customer chose Mobile Money. Review the proof in the Documents tab, or mark the payment as received from the actions bar.",
     "totalLabel": "Total ({currency})",
     "totalHint": "Adjust the total if needed before approval.",
     "totalOverrideHint": "Auto-calculated from traveler prices. Edit to apply a manual override.",

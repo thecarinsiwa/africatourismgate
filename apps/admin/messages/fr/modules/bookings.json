@@ -95,6 +95,7 @@
       "cancelBooking": "Annuler la réservation",
       "recordCashPayment": "Enregistrer paiement cash",
       "recordBankTransferPayment": "Marquer virement reçu",
+      "recordMobileMoneyPayment": "Marquer Mobile Money reçu",
       "readOnly": "Modification réservée aux comptes avec la permission bookings.write.",
       "assistedStatusHint": "Utilisez le panneau « Validation assistée » pour approuver ou refuser cette demande."
     },
@@ -111,6 +112,13 @@
       "noteLabel": "Note (optionnel)",
       "notePlaceholder": "Ex. référence bancaire, date de réception…",
       "confirm": "Confirmer le virement"
+    },
+    "mobileMoneyDialog": {
+      "title": "Marquer le paiement Mobile Money reçu",
+      "description": "Confirmer la réception du paiement Mobile Money pour cette réservation ? Elle passera au statut confirmée.",
+      "noteLabel": "Note (optionnel)",
+      "notePlaceholder": "Ex. référence opérateur, date de réception…",
+      "confirm": "Confirmer le paiement"
     },
     "linesEmpty": "Aucune ligne.",
     "linesAriaLabel": "Lignes de réservation",
@@ -277,6 +285,7 @@
     "invitePayment": "Inviter au paiement",
     "cashPaymentHint": "Le client a choisi le paiement cash sur place. Enregistrez l'encaissement depuis la barre d'actions.",
     "bankTransferPaymentHint": "Le client a choisi le virement bancaire. Vérifiez la preuve dans l'onglet Documents, ou marquez le virement reçu depuis la barre d'actions.",
+    "mobileMoneyPaymentHint": "Le client a choisi Mobile Money. Vérifiez la preuve dans l'onglet Documents, ou marquez le paiement reçu depuis la barre d'actions.",
     "totalLabel": "Total ({currency})",
     "totalHint": "Ajustez le total si nécessaire avant approbation.",
     "totalOverrideHint": "Calculé automatiquement à partir des prix voyageurs. Modifiez pour forcer un total manuel.",

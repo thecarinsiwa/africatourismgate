@@ -3,14 +3,21 @@
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import type { BookingDetail, BookingStatus, PublicPaymentBankAccount } from '@africatourismgate/types';
+import type {
+  BookingDetail,
+  BookingStatus,
+  PublicMobileMoneyCountry,
+  PublicPaymentBankAccount,
+} from '@africatourismgate/types';
 import { Spinner } from '@africatourismgate/ui';
 import { getBooking, syncBookingPayment } from '../../lib/api/booking';
 import { listPublicPaymentBankAccounts } from '../../lib/api/public-payment-bank-accounts';
+import { listPublicMobileMoneyConfig } from '../../lib/api/public-mobile-money';
 import { ensureClientAccessToken } from '../../lib/auth/client-session';
 import { formatHotelPrice } from '../../lib/hotels/listings';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import { BankTransferAccountsPanel } from './bank-transfer-accounts-panel';
+import { MobileMoneyInstructionsPanel } from './mobile-money-instructions-panel';
 import { PaymentProofPanel } from './payment-proof-panel';
 import { CheckoutPageShell } from './checkout-page-shell';
 
@@ -31,8 +38,10 @@ function isOfflinePayment(
   return (
     paymentParam === 'cash' ||
     paymentParam === 'bank_transfer' ||
+    paymentParam === 'mobile_money' ||
     preferred === 'cash' ||
-    preferred === 'bank_transfer'
+    preferred === 'bank_transfer' ||
+    preferred === 'mobile_money'
   );
 }
 
@@ -48,6 +57,9 @@ export function ReservationSuccessPageContent() {
   const paymentParam = searchParams.get('payment');
   const [booking, setBooking] = useState<BookingDetail | null>(null);
   const [bankAccounts, setBankAccounts] = useState<PublicPaymentBankAccount[]>([]);
+  const [mobileMoneyCountries, setMobileMoneyCountries] = useState<
+    PublicMobileMoneyCountry[]
+  >([]);
   const [status, setStatus] = useState<'idle' | 'loading' | 'confirming' | 'ready' | 'error'>(
     'idle',
   );
@@ -135,6 +147,9 @@ export function ReservationSuccessPageContent() {
   const prefersBankTransfer =
     paymentParam === 'bank_transfer' ||
     booking?.booking.preferredPaymentMethod === 'bank_transfer';
+  const prefersMobileMoney =
+    paymentParam === 'mobile_money' ||
+    booking?.booking.preferredPaymentMethod === 'mobile_money';
 
   useEffect(() => {
     if (!prefersBankTransfer || status !== 'ready') return;
@@ -151,6 +166,21 @@ export function ReservationSuccessPageContent() {
     };
   }, [prefersBankTransfer, status]);
 
+  useEffect(() => {
+    if (!prefersMobileMoney || status !== 'ready') return;
+    let cancelled = false;
+    void listPublicMobileMoneyConfig()
+      .then((countries) => {
+        if (!cancelled) setMobileMoneyCountries(countries);
+      })
+      .catch(() => {
+        if (!cancelled) setMobileMoneyCountries([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [prefersMobileMoney, status]);
+
   const isConfirmed = booking?.booking.status === CONFIRMED;
   const isCashPending =
     !isConfirmed &&
@@ -158,23 +188,30 @@ export function ReservationSuccessPageContent() {
     booking?.booking.status === 'pending_payment';
   const isBankTransferPending =
     !isConfirmed && prefersBankTransfer && booking?.booking.status === 'pending_payment';
-  const isOfflinePending = isCashPending || isBankTransferPending;
+  const isMobileMoneyPending =
+    !isConfirmed && prefersMobileMoney && booking?.booking.status === 'pending_payment';
+  const isOfflinePending =
+    isCashPending || isBankTransferPending || isMobileMoneyPending;
   const isPendingPayment = booking?.booking.status === 'pending_payment' && !isOfflinePending;
 
   const pageTitle = isConfirmed
     ? s.titleConfirmed
-    : isBankTransferPending
-      ? s.titleBankTransferPending
-      : isCashPending
-        ? s.titleCashPending
-        : s.title;
+    : isMobileMoneyPending
+      ? s.titleMobileMoneyPending
+      : isBankTransferPending
+        ? s.titleBankTransferPending
+        : isCashPending
+          ? s.titleCashPending
+          : s.title;
   const pageSubtitle = isConfirmed
     ? s.subtitleConfirmed
-    : isBankTransferPending
-      ? s.subtitleBankTransferPending
-      : isCashPending
-        ? s.subtitleCashPending
-        : s.subtitle;
+    : isMobileMoneyPending
+      ? s.subtitleMobileMoneyPending
+      : isBankTransferPending
+        ? s.subtitleBankTransferPending
+        : isCashPending
+          ? s.subtitleCashPending
+          : s.subtitle;
 
   return (
     <CheckoutPageShell
@@ -201,13 +238,15 @@ export function ReservationSuccessPageContent() {
                 <span className="font-semibold">{s.statusLabel}</span>{' '}
                 {isConfirmed
                   ? s.statusConfirmed
-                  : isBankTransferPending
-                    ? s.statusBankTransferPending
-                    : isCashPending
-                      ? s.statusCashPending
-                      : isPendingPayment
-                        ? s.statusPendingPayment
-                        : booking.booking.status}
+                  : isMobileMoneyPending
+                    ? s.statusMobileMoneyPending
+                    : isBankTransferPending
+                      ? s.statusBankTransferPending
+                      : isCashPending
+                        ? s.statusCashPending
+                        : isPendingPayment
+                          ? s.statusPendingPayment
+                          : booking.booking.status}
               </p>
               <p>
                 <span className="font-semibold">{s.totalLabel}</span>{' '}
@@ -219,6 +258,11 @@ export function ReservationSuccessPageContent() {
               {isBankTransferPending ? (
                 <p className="text-amber-700 dark:text-amber-300">
                   {s.statusBankTransferPendingHint}
+                </p>
+              ) : null}
+              {isMobileMoneyPending ? (
+                <p className="text-amber-700 dark:text-amber-300">
+                  {s.statusMobileMoneyPendingHint}
                 </p>
               ) : null}
               {isPendingPayment ? (
@@ -262,12 +306,47 @@ export function ReservationSuccessPageContent() {
           </div>
         ) : null}
 
+        {isMobileMoneyPending && booking && bookingId ? (
+          <div className="mt-5 space-y-3">
+            <MobileMoneyInstructionsPanel
+              countries={mobileMoneyCountries}
+              bookingRef={bookingId}
+              labels={{
+                title: ck.mobileMoneyTitle,
+                empty: ck.mobileMoneyEmpty,
+                country: ck.mobileMoneyCountry,
+                operator: ck.mobileMoneyOperator,
+                phone: ck.mobileMoneyPhone,
+                label: ck.mobileMoneyLabel,
+                referenceHint: ck.mobileMoneyReferenceHint,
+                selectCountry: ck.mobileMoneySelectCountry,
+                selectOperator: ck.mobileMoneySelectOperator,
+              }}
+            />
+            <PaymentProofPanel
+              bookingId={bookingId}
+              bookingStatus={booking.booking.status}
+              paymentMethod="mobile_money"
+              proofs={booking.paymentProofs ?? []}
+              labels={t.account.reservations.detail.paymentProofs}
+              onUpdated={async () => {
+                const token = await ensureClientAccessToken();
+                if (!token) return;
+                const data = await getBooking(token, bookingId);
+                setBooking(data);
+              }}
+            />
+          </div>
+        ) : null}
+
         <section className="mt-6 rounded-lg bg-atg-surface px-4 py-3 dark:bg-atg-surface">
           <h2 className="text-sm font-bold uppercase tracking-wide text-atg-fg">
             {s.nextStepsTitle}
           </h2>
           <ul className="mt-2 space-y-1 text-sm text-atg-muted">
-            {isBankTransferPending ? (
+            {isMobileMoneyPending ? (
+              <li>• {s.nextStepMobileMoney}</li>
+            ) : isBankTransferPending ? (
               <li>• {s.nextStepBankTransfer}</li>
             ) : isCashPending ? (
               <li>• {s.nextStepCash}</li>

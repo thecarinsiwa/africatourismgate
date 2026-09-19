@@ -65,11 +65,12 @@
         "modeImmediate": "Inmediato (pago)",
         "modeAssisted": "Asistido (solicitud)",
         "paymentMethodsTitle": "Métodos de pago (sitio público)",
-        "paymentMethodsDescription": "Seleccione los métodos ofrecidos en el checkout web. El POS no se ve afectado. La transferencia también requiere cuentas bancarias publicadas.",
+        "paymentMethodsDescription": "Seleccione los métodos ofrecidos en el checkout web. El POS no se ve afectado. La transferencia también requiere cuentas bancarias publicadas. Mobile Money requiere países, operadores y números configurados.",
         "paymentMethods": {
           "stripe": "Tarjeta (Stripe)",
           "cash": "Efectivo en el lugar",
-          "bank_transfer": "Transferencia bancaria"
+          "bank_transfer": "Transferencia bancaria",
+          "mobile_money": "Mobile Money"
         },
         "itemTypes": {
           "room": "Alojamiento (habitación)",

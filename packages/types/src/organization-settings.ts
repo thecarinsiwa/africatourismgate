@@ -155,7 +155,7 @@ export const DEFAULT_LOYALTY_ONEKEY_SETTING: LoyaltyOneKeySettingValue = {
  * `organization_settings` group `booking`, key `payment_methods`.
  * Le POS n’est pas soumis à ce réglage.
  */
-export type WebPaymentMethodKey = 'stripe' | 'cash' | 'bank_transfer';
+export type WebPaymentMethodKey = 'stripe' | 'cash' | 'bank_transfer' | 'mobile_money';
 
 export type WebPaymentMethodsSettingValue = Partial<
   Record<WebPaymentMethodKey, boolean>
@@ -167,13 +167,15 @@ export const WEB_PAYMENT_METHOD_KEYS = [
   'stripe',
   'cash',
   'bank_transfer',
+  'mobile_money',
 ] as const satisfies readonly WebPaymentMethodKey[];
 
-/** Stripe + cash on par défaut ; virement désactivé jusqu’à activation admin. */
+/** Stripe + cash on par défaut ; virement / Mobile Money désactivés jusqu’à activation admin. */
 export const DEFAULT_WEB_PAYMENT_METHODS: ResolvedWebPaymentMethods = {
   stripe: true,
   cash: true,
   bank_transfer: false,
+  mobile_money: false,
 };
 
 export function normalizeWebPaymentMethods(

@@ -661,7 +661,13 @@ export class BookingEngineService {
     const booking = await this.findBookingOrThrow(bookingId);
     if (booking.status !== 'pending_payment') {
       throw new BadRequestException(
-        `Enregistrement du virement impossible : statut actuel « ${booking.status} ».`,
+        `Enregistrement du paiement hors ligne impossible : statut actuel « ${booking.status} ».`,
+      );
+    }
+    const provider = booking.preferredPaymentMethod;
+    if (provider !== 'bank_transfer' && provider !== 'mobile_money') {
+      throw new BadRequestException(
+        'Cette réservation n’est pas en attente d’un virement ou d’un paiement Mobile Money.',
       );
     }
     if (booking.totalCents < 1) {
@@ -681,16 +687,21 @@ export class BookingEngineService {
       where: {
         bookingId,
         status: 'pending',
-        provider: 'bank_transfer',
+        provider,
         deletedAt: IsNull(),
       },
       order: { createdAt: 'DESC' },
     });
 
     const trimmedNote = note?.trim();
-    const confirmReason = trimmedNote
-      ? `Virement bancaire reçu — ${trimmedNote}`
-      : 'Virement bancaire reçu';
+    const confirmReason =
+      provider === 'mobile_money'
+        ? trimmedNote
+          ? `Paiement Mobile Money reçu — ${trimmedNote}`
+          : 'Paiement Mobile Money reçu'
+        : trimmedNote
+          ? `Virement bancaire reçu — ${trimmedNote}`
+          : 'Virement bancaire reçu';
 
     if (pending) {
       pending.status = 'succeeded';
@@ -698,6 +709,8 @@ export class BookingEngineService {
       await this.paymentsRepository.save(pending);
     } else {
       const paymentId = newId();
+      const externalPrefix =
+        provider === 'mobile_money' ? 'mobile-money' : 'bank-transfer';
       await this.paymentsRepository.save(
         this.paymentsRepository.create({
           id: paymentId,
@@ -705,8 +718,8 @@ export class BookingEngineService {
           amountCents: booking.totalCents,
           currency: booking.currency,
           status: 'succeeded',
-          provider: 'bank_transfer',
-          externalId: `bank-transfer-${paymentId}`,
+          provider,
+          externalId: `${externalPrefix}-${paymentId}`,
           createdByUserId: actorUserId ?? null,
         } as DeepPartial<Payments>),
       );

@@ -8,7 +8,8 @@
   "providers": {
     "stripe": "Stripe",
     "cash": "Efectivo",
-    "bank_transfer": "Transferencia"
+    "bank_transfer": "Transferencia",
+    "mobile_money": "Mobile Money"
   },
   "refundLabels": {
     "partial": "Reembolso parcial",

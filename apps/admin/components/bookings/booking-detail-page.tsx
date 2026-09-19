@@ -400,9 +400,37 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const canCollectOfflinePayment =
     canWrite && booking.status === 'pending_payment' && !hasSucceededPayment;
   const canCollectCash =
-    canCollectOfflinePayment && booking.preferredPaymentMethod !== 'bank_transfer';
+    canCollectOfflinePayment &&
+    booking.preferredPaymentMethod !== 'bank_transfer' &&
+    booking.preferredPaymentMethod !== 'mobile_money';
   const canRecordBankTransfer =
-    canCollectOfflinePayment && booking.preferredPaymentMethod === 'bank_transfer';
+    canCollectOfflinePayment &&
+    (booking.preferredPaymentMethod === 'bank_transfer' ||
+      booking.preferredPaymentMethod === 'mobile_money');
+  const offlinePaymentActionLabel =
+    booking.preferredPaymentMethod === 'mobile_money'
+      ? t('actions.recordMobileMoneyPayment')
+      : t('actions.recordBankTransferPayment');
+  const offlinePaymentDialogTitle =
+    booking.preferredPaymentMethod === 'mobile_money'
+      ? t('mobileMoneyDialog.title')
+      : t('bankTransferDialog.title');
+  const offlinePaymentDialogDescription =
+    booking.preferredPaymentMethod === 'mobile_money'
+      ? t('mobileMoneyDialog.description')
+      : t('bankTransferDialog.description');
+  const offlinePaymentDialogConfirm =
+    booking.preferredPaymentMethod === 'mobile_money'
+      ? t('mobileMoneyDialog.confirm')
+      : t('bankTransferDialog.confirm');
+  const offlinePaymentDialogNoteLabel =
+    booking.preferredPaymentMethod === 'mobile_money'
+      ? t('mobileMoneyDialog.noteLabel')
+      : t('bankTransferDialog.noteLabel');
+  const offlinePaymentDialogNotePlaceholder =
+    booking.preferredPaymentMethod === 'mobile_money'
+      ? t('mobileMoneyDialog.notePlaceholder')
+      : t('bankTransferDialog.notePlaceholder');
   const preferredPaymentLabel = booking.preferredPaymentMethod
     ? formatPaymentProvider(booking.preferredPaymentMethod, providerLabels, emptyDash)
     : t('summary.preferredPaymentUnspecified');
@@ -657,7 +685,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
                 className="w-full sm:w-auto"
                 onClick={() => setBankTransferDialogOpen(true)}
               >
-                {t('actions.recordBankTransferPayment')}
+                {offlinePaymentActionLabel}
               </Button>
             ) : null}
             {canRecordBankTransfer && hasPendingPaymentProof ? (
@@ -874,19 +902,19 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
             if (!open) setBankTransferNote('');
           }
         }}
-        title={t('bankTransferDialog.title')}
-        description={t('bankTransferDialog.description')}
+        title={offlinePaymentDialogTitle}
+        description={offlinePaymentDialogDescription}
         showClose
         className="max-w-lg"
       >
         <div className="space-y-4">
           <Textarea
             name="bankTransferNote"
-            label={t('bankTransferDialog.noteLabel')}
+            label={offlinePaymentDialogNoteLabel}
             rows={3}
             value={bankTransferNote}
             onChange={(e) => setBankTransferNote(e.target.value)}
-            placeholder={t('bankTransferDialog.notePlaceholder')}
+            placeholder={offlinePaymentDialogNotePlaceholder}
           />
           <div className="flex flex-wrap justify-end gap-2">
             <Button
@@ -911,7 +939,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
                 });
               }}
             >
-              {t('bankTransferDialog.confirm')}
+              {offlinePaymentDialogConfirm}
             </Button>
           </div>
         </div>

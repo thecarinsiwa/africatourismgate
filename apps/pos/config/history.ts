@@ -27,6 +27,7 @@ export const posHistoryPageConfig = {
     cash: 'Espèces',
     stripe: 'Carte',
     bank_transfer: 'Virement',
+    mobile_money: 'Mobile Money',
   } satisfies Record<BookingPreferredPaymentMethod, string>,
   paymentUnknown: '—',
 } as const;

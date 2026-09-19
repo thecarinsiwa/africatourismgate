@@ -65,11 +65,12 @@
         "modeImmediate": "Immédiat (paiement)",
         "modeAssisted": "Assisté (demande)",
         "paymentMethodsTitle": "Moyens de paiement (site public)",
-        "paymentMethodsDescription": "Cochez les moyens proposés au checkout web. Le POS n’est pas concerné. Le virement nécessite aussi des comptes bancaires publiés.",
+        "paymentMethodsDescription": "Cochez les moyens proposés au checkout web. Le POS n’est pas concerné. Le virement nécessite aussi des comptes bancaires publiés. Mobile Money nécessite pays, opérateurs et numéros configurés.",
         "paymentMethods": {
           "stripe": "Carte (Stripe)",
           "cash": "Espèces sur place",
-          "bank_transfer": "Virement bancaire"
+          "bank_transfer": "Virement bancaire",
+          "mobile_money": "Mobile Money"
         },
         "itemTypes": {
           "room": "Hébergement (chambre)",

@@ -95,6 +95,7 @@
       "cancelBooking": "Cancelar la reserva",
       "recordCashPayment": "Registrar pago en efectivo",
       "recordBankTransferPayment": "Marcar transferencia recibida",
+      "recordMobileMoneyPayment": "Marcar Mobile Money recibido",
       "readOnly": "La edición requiere el permiso bookings.write.",
       "assistedStatusHint": "Use el panel de validación asistida para aprobar o rechazar esta solicitud."
     },
@@ -111,6 +112,13 @@
       "noteLabel": "Nota (opcional)",
       "notePlaceholder": "Ej. referencia bancaria, fecha de recepción…",
       "confirm": "Confirmar transferencia"
+    },
+    "mobileMoneyDialog": {
+      "title": "Marcar pago Mobile Money recibido",
+      "description": "¿Confirmar la recepción del pago Mobile Money de esta reserva? Pasará al estado confirmada.",
+      "noteLabel": "Nota (opcional)",
+      "notePlaceholder": "Ej. referencia del operador, fecha de recepción…",
+      "confirm": "Confirmar pago"
     },
     "linesEmpty": "Ninguna línea.",
     "linesAriaLabel": "Líneas de reserva",
@@ -277,6 +285,7 @@
     "invitePayment": "Invitar al pago",
     "cashPaymentHint": "El cliente eligió pago en efectivo. Registre el cobro desde la barra de acciones.",
     "bankTransferPaymentHint": "El cliente eligió transferencia bancaria. Revise el comprobante en la pestaña Documentos, o márquela como recibida desde la barra de acciones.",
+    "mobileMoneyPaymentHint": "El cliente eligió Mobile Money. Revise el comprobante en la pestaña Documentos, o márquelo como recibido desde la barra de acciones.",
     "totalLabel": "Total ({currency})",
     "totalHint": "Ajuste el total si es necesario antes de aprobar.",
     "totalOverrideHint": "Calculado automáticamente a partir de los precios por viajero. Edite para aplicar un total manual.",

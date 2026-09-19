@@ -89,6 +89,12 @@ export function BookingVerifyPageContent() {
           );
           return;
         }
+        if (detail.booking.preferredPaymentMethod === 'mobile_money') {
+          router.push(
+            `/booking/success?booking_id=${resolvedBookingId}&payment=mobile_money`,
+          );
+          return;
+        }
 
         const checkout = await createBookingCheckoutSession(
           response.accessToken,

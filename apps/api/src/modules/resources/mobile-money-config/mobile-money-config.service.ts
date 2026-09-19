@@ -5,10 +5,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
-import { OrgScopeService } from '../../../common/org-scope/org-scope.service';
+import { OrgScopeService, PLATFORM_ORG_ID } from '../../../common/org-scope/org-scope.service';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { newId } from '../../../common/utils/uuid';
 import { CrudService } from '../../../common/crud/crud.service';
+import { Organizations } from '../../../entities/generated';
 import { MobileMoneyCountries } from '../../../entities/mobile-money-country.entity';
 import { MobileMoneyOperators } from '../../../entities/mobile-money-operator.entity';
 import { MobileMoneyPaymentNumbers } from '../../../entities/mobile-money-payment-number.entity';
@@ -29,6 +30,7 @@ import {
   toMobileMoneyOperatorDto,
   toMobileMoneyPaymentNumberDto,
 } from './dto/mobile-money.dto';
+import { PublicMobileMoneyCountryDto } from './dto/public-mobile-money.dto';
 import { UpdateMobileMoneyCountryDto } from './dto/update-mobile-money-country.dto';
 import { UpdateMobileMoneyOperatorDto } from './dto/update-mobile-money-operator.dto';
 import { UpdateMobileMoneyPaymentNumberDto } from './dto/update-mobile-money-payment-number.dto';
@@ -42,9 +44,95 @@ export class MobileMoneyConfigService extends CrudService<MobileMoneyCountries> 
     private readonly operatorsRepository: Repository<MobileMoneyOperators>,
     @InjectRepository(MobileMoneyPaymentNumbers)
     private readonly numbersRepository: Repository<MobileMoneyPaymentNumbers>,
+    @InjectRepository(Organizations)
+    private readonly organizationsRepository: Repository<Organizations>,
     private readonly orgScopeService: OrgScopeService,
   ) {
     super(countriesRepository);
+  }
+
+  /** Active countries → operators → numbers for public Mobile Money checkout. */
+  async listPublicForPayment(
+    organizationSlug?: string,
+  ): Promise<PublicMobileMoneyCountryDto[]> {
+    const organization = await this.resolvePublicOrganization(organizationSlug);
+    const countries = await this.countriesRepository.find({
+      where: {
+        organizationId: organization.id,
+        isActive: true,
+        deletedAt: IsNull(),
+      },
+      order: { sortOrder: 'ASC', name: 'ASC' },
+    });
+    if (countries.length === 0) {
+      return [];
+    }
+
+    const countryIds = countries.map((c) => c.id);
+    const operators = await this.operatorsRepository
+      .createQueryBuilder('op')
+      .where('op.country_id IN (:...countryIds)', { countryIds })
+      .andWhere('op.is_active = 1')
+      .andWhere('op.deleted_at IS NULL')
+      .orderBy('op.sort_order', 'ASC')
+      .addOrderBy('op.name', 'ASC')
+      .getMany();
+
+    const operatorIds = operators.map((o) => o.id);
+    const numbers =
+      operatorIds.length === 0
+        ? []
+        : await this.numbersRepository
+            .createQueryBuilder('num')
+            .where('num.operator_id IN (:...operatorIds)', { operatorIds })
+            .andWhere('num.is_active = 1')
+            .andWhere('num.deleted_at IS NULL')
+            .orderBy('num.sort_order', 'ASC')
+            .addOrderBy('num.created_at', 'ASC')
+            .getMany();
+
+    const numbersByOperator = new Map<string, typeof numbers>();
+    for (const number of numbers) {
+      const list = numbersByOperator.get(number.operatorId) ?? [];
+      list.push(number);
+      numbersByOperator.set(number.operatorId, list);
+    }
+
+    const operatorsByCountry = new Map<string, typeof operators>();
+    for (const operator of operators) {
+      const list = operatorsByCountry.get(operator.countryId) ?? [];
+      list.push(operator);
+      operatorsByCountry.set(operator.countryId, list);
+    }
+
+    return countries
+      .map((country) => {
+        const countryOperators = (operatorsByCountry.get(country.id) ?? [])
+          .map((operator) => {
+            const opsNumbers = numbersByOperator.get(operator.id) ?? [];
+            if (opsNumbers.length === 0) return null;
+            return {
+              id: operator.id,
+              name: operator.name,
+              logoUrl: operator.logoUrl ?? null,
+              numbers: opsNumbers.map((n) => ({
+                id: n.id,
+                phoneE164: n.phoneE164,
+                label: n.label ?? null,
+              })),
+            };
+          })
+          .filter((op): op is NonNullable<typeof op> => op !== null);
+
+        if (countryOperators.length === 0) return null;
+        return {
+          id: country.id,
+          code: country.code,
+          name: country.name,
+          operators: countryOperators,
+        };
+      })
+      .filter((c): c is NonNullable<typeof c> => c !== null);
   }
 
   // ── Countries ──────────────────────────────────────────────────────────
@@ -469,5 +557,28 @@ export class MobileMoneyConfigService extends CrudService<MobileMoneyCountries> 
     }
     await this.requireOperatorInOrg(row.operatorId, organizationId);
     return row;
+  }
+
+  private async resolvePublicOrganization(
+    organizationSlug?: string,
+  ): Promise<Organizations> {
+    const slug = organizationSlug?.trim();
+    if (slug) {
+      const organization = await this.organizationsRepository.findOne({
+        where: { slug, deletedAt: IsNull(), status: 'active' },
+      });
+      if (!organization) {
+        throw new NotFoundException('Organisation introuvable.');
+      }
+      return organization;
+    }
+
+    const platform = await this.organizationsRepository.findOne({
+      where: { id: PLATFORM_ORG_ID, deletedAt: IsNull() },
+    });
+    if (!platform) {
+      throw new NotFoundException('Organisation plateforme introuvable.');
+    }
+    return platform;
   }
 }

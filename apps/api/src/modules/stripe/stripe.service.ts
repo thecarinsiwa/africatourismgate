@@ -496,12 +496,15 @@ export class StripeService {
     }
     if (
       booking.preferredPaymentMethod === 'cash' ||
-      booking.preferredPaymentMethod === 'bank_transfer'
+      booking.preferredPaymentMethod === 'bank_transfer' ||
+      booking.preferredPaymentMethod === 'mobile_money'
     ) {
       throw new BadRequestException(
         booking.preferredPaymentMethod === 'cash'
           ? 'Paiement Stripe impossible : cette réservation est en paiement cash sur place.'
-          : 'Paiement Stripe impossible : cette réservation est en paiement par virement bancaire.',
+          : booking.preferredPaymentMethod === 'mobile_money'
+            ? 'Paiement Stripe impossible : cette réservation est en paiement Mobile Money.'
+            : 'Paiement Stripe impossible : cette réservation est en paiement par virement bancaire.',
       );
     }
     if (booking.totalCents < 1) {
