@@ -11,12 +11,15 @@ import type {
   AuthVisualDecorIcon,
   PublicAuthVisual,
   PublicAuthVisualIcon,
+  ResolvedBookingDeposits,
   ResolvedBookingItemTypeModes,
   ResolvedWebPaymentMethods,
 } from '@africatourismgate/types';
 import {
+  DEFAULT_BOOKING_DEPOSITS,
   DEFAULT_BOOKING_ITEM_TYPE_MODES,
   DEFAULT_WEB_PAYMENT_METHODS,
+  normalizeBookingDeposits,
   normalizeBookingItemTypeModes,
   normalizeWebPaymentMethods,
 } from '@africatourismgate/types';
@@ -404,6 +407,35 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
 
     return normalizeWebPaymentMethods(
       setting.settingValue as Partial<ResolvedWebPaymentMethods>,
+    );
+  }
+
+  async getResolvedBookingDeposits(
+    organizationId: string = PLATFORM_ORG_ID,
+  ): Promise<ResolvedBookingDeposits> {
+    const setting = await this.settingsRepository.findOne({
+      where: {
+        organizationId,
+        settingGroup: 'booking',
+        settingKey: 'deposits',
+        deletedAt: IsNull(),
+      },
+    });
+
+    if (
+      !setting?.settingValue ||
+      typeof setting.settingValue !== 'object' ||
+      Array.isArray(setting.settingValue)
+    ) {
+      return { ...DEFAULT_BOOKING_DEPOSITS };
+    }
+
+    return normalizeBookingDeposits(
+      setting.settingValue as {
+        enabled: boolean;
+        depositPercent?: number;
+        depositFixedCents?: number;
+      },
     );
   }
 

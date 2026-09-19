@@ -201,6 +201,98 @@ export function isWebPaymentMethodEnabled(
   return methods[method] === true;
 }
 
+/**
+ * Acomptes checkout — `organization_settings` group `booking`, key `deposits`.
+ * Exactement un de `depositPercent` | `depositFixedCents` quand `enabled`.
+ * Statut réservation : reste `pending_payment` jusqu’au solde intégral.
+ */
+export type BookingDepositsMode = 'percent' | 'fixed';
+
+export interface BookingDepositsSettingValue {
+  enabled: boolean;
+  /** Entier 1–100. Mutuellement exclusif avec `depositFixedCents`. */
+  depositPercent?: number;
+  /** Montant fixe en centimes. Mutuellement exclusif avec `depositPercent`. */
+  depositFixedCents?: number;
+}
+
+export interface ResolvedBookingDeposits {
+  enabled: boolean;
+  depositPercent: number | null;
+  depositFixedCents: number | null;
+}
+
+export const DEFAULT_BOOKING_DEPOSITS: ResolvedBookingDeposits = {
+  enabled: false,
+  depositPercent: null,
+  depositFixedCents: null,
+};
+
+export function normalizeBookingDeposits(
+  value?: BookingDepositsSettingValue | null,
+): ResolvedBookingDeposits {
+  if (!value || typeof value !== 'object') {
+    return { ...DEFAULT_BOOKING_DEPOSITS };
+  }
+
+  const enabled = value.enabled === true;
+  let depositPercent: number | null = null;
+  let depositFixedCents: number | null = null;
+
+  if (
+    typeof value.depositPercent === 'number' &&
+    Number.isInteger(value.depositPercent) &&
+    value.depositPercent >= 1 &&
+    value.depositPercent <= 100
+  ) {
+    depositPercent = value.depositPercent;
+  }
+
+  if (
+    typeof value.depositFixedCents === 'number' &&
+    Number.isInteger(value.depositFixedCents) &&
+    value.depositFixedCents > 0
+  ) {
+    depositFixedCents = value.depositFixedCents;
+  }
+
+  // Données incohérentes : préférer le pourcentage.
+  if (depositPercent != null && depositFixedCents != null) {
+    depositFixedCents = null;
+  }
+
+  return { enabled, depositPercent, depositFixedCents };
+}
+
+/** Montant du premier encaissement (acompte ou total si acomptes désactivés). */
+export function computeDepositRequiredCents(
+  totalCents: number,
+  deposits: ResolvedBookingDeposits = DEFAULT_BOOKING_DEPOSITS,
+): number {
+  if (!Number.isFinite(totalCents) || totalCents <= 0) {
+    return 0;
+  }
+  if (!deposits.enabled) {
+    return totalCents;
+  }
+  if (deposits.depositFixedCents != null) {
+    return Math.min(deposits.depositFixedCents, totalCents);
+  }
+  if (deposits.depositPercent != null) {
+    return Math.min(
+      Math.max(1, Math.round((totalCents * deposits.depositPercent) / 100)),
+      totalCents,
+    );
+  }
+  return totalCents;
+}
+
+export function bookingDepositsMode(
+  deposits: ResolvedBookingDeposits,
+): BookingDepositsMode {
+  return deposits.depositFixedCents != null ? 'fixed' : 'percent';
+}
+
 export interface OrganizationSetting {
   id: string;
   organizationId: string;

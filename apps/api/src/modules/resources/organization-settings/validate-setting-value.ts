@@ -8,6 +8,7 @@ import {
   BOOKING_ITEM_TYPE_KEYS,
   WEB_PAYMENT_METHOD_KEYS,
   isBookingMode,
+  normalizeBookingDeposits,
   normalizeBookingItemTypeModes,
   normalizeWebPaymentMethods,
   type BookingMode,
@@ -316,6 +317,78 @@ export function validateSettingValue(
         );
       }
       return normalized;
+    }
+    case 'deposits': {
+      const enabled = value.enabled;
+      if (typeof enabled !== 'boolean') {
+        throw new BadRequestException('enabled doit être un booléen.');
+      }
+
+      const hasPercent =
+        value.depositPercent !== undefined && value.depositPercent !== null;
+      const hasFixed =
+        value.depositFixedCents !== undefined &&
+        value.depositFixedCents !== null;
+
+      if (hasPercent && hasFixed) {
+        throw new BadRequestException(
+          'Indiquez soit depositPercent, soit depositFixedCents — pas les deux.',
+        );
+      }
+
+      let depositPercent: number | undefined;
+      let depositFixedCents: number | undefined;
+
+      if (hasPercent) {
+        const percent = value.depositPercent;
+        if (
+          typeof percent !== 'number' ||
+          !Number.isInteger(percent) ||
+          percent < 1 ||
+          percent > 100
+        ) {
+          throw new BadRequestException(
+            'depositPercent doit être un entier entre 1 et 100.',
+          );
+        }
+        depositPercent = percent;
+      }
+
+      if (hasFixed) {
+        const fixed = value.depositFixedCents;
+        if (
+          typeof fixed !== 'number' ||
+          !Number.isInteger(fixed) ||
+          fixed < 1
+        ) {
+          throw new BadRequestException(
+            'depositFixedCents doit être un entier positif (centimes).',
+          );
+        }
+        depositFixedCents = fixed;
+      }
+
+      if (enabled && !hasPercent && !hasFixed) {
+        throw new BadRequestException(
+          'Lorsque les acomptes sont activés, indiquez depositPercent ou depositFixedCents.',
+        );
+      }
+
+      const normalized = normalizeBookingDeposits({
+        enabled,
+        ...(depositPercent !== undefined ? { depositPercent } : {}),
+        ...(depositFixedCents !== undefined ? { depositFixedCents } : {}),
+      });
+
+      return {
+        enabled: normalized.enabled,
+        ...(normalized.depositPercent != null
+          ? { depositPercent: normalized.depositPercent }
+          : {}),
+        ...(normalized.depositFixedCents != null
+          ? { depositFixedCents: normalized.depositFixedCents }
+          : {}),
+      };
     }
     default:
       return value;

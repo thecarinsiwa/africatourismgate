@@ -36,7 +36,9 @@
       "displayNameRequired": "El nombre mostrado es obligatorio.",
       "loyaltyRateInvalid": "La tasa de puntos debe ser un entero positivo o cero.",
       "programCodeInvalid": "El código de programa es obligatorio (máx. 32 caracteres).",
-      "paymentMethodsRequired": "Active al menos un método de pago."
+      "paymentMethodsRequired": "Active al menos un método de pago.",
+      "depositPercentInvalid": "El porcentaje de anticipo debe ser un entero entre 1 y 100.",
+      "depositFixedInvalid": "El importe fijo de anticipo debe ser un número positivo (p. ej. 50.00)."
     },
     "sections": {
       "contact": {
@@ -72,6 +74,16 @@
           "bank_transfer": "Transferencia bancaria",
           "mobile_money": "Mobile Money"
         },
+        "depositsTitle": "Anticipos",
+        "depositsDescription": "Si está activado, el checkout cobra primero un anticipo (porcentaje o importe fijo). La reserva permanece pendiente de pago hasta saldar el total.",
+        "depositsEnabled": "Activar anticipos en el checkout",
+        "depositsMode": "Tipo de anticipo",
+        "depositsModePercent": "Porcentaje del total",
+        "depositsModeFixed": "Importe fijo",
+        "depositPercent": "Porcentaje de anticipo (%)",
+        "depositPercentHint": "Entero entre 1 y 100 (p. ej. 30).",
+        "depositFixed": "Importe fijo de anticipo",
+        "depositFixedHint": "Importe en {currency} (p. ej. 50.00). Limitado al total de la reserva.",
         "itemTypes": {
           "room": "Alojamiento (habitación)",
           "flight_class": "Vuelo",

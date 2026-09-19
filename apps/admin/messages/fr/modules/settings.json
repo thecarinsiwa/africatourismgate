@@ -36,7 +36,9 @@
       "displayNameRequired": "Le nom affiché est obligatoire.",
       "loyaltyRateInvalid": "Le taux de points doit être un entier positif ou nul.",
       "programCodeInvalid": "Le code programme est obligatoire (32 caractères max).",
-      "paymentMethodsRequired": "Activez au moins un moyen de paiement."
+      "paymentMethodsRequired": "Activez au moins un moyen de paiement.",
+      "depositPercentInvalid": "Le pourcentage d’acompte doit être un entier entre 1 et 100.",
+      "depositFixedInvalid": "Le montant fixe d’acompte doit être un nombre positif (ex. 50.00)."
     },
     "sections": {
       "contact": {
@@ -72,6 +74,16 @@
           "bank_transfer": "Virement bancaire",
           "mobile_money": "Mobile Money"
         },
+        "depositsTitle": "Acomptes",
+        "depositsDescription": "Si activé, le checkout encaisse d’abord un acompte (pourcentage ou montant fixe). La réservation reste en attente de paiement jusqu’au solde intégral.",
+        "depositsEnabled": "Activer les acomptes au checkout",
+        "depositsMode": "Type d’acompte",
+        "depositsModePercent": "Pourcentage du total",
+        "depositsModeFixed": "Montant fixe",
+        "depositPercent": "Pourcentage d’acompte (%)",
+        "depositPercentHint": "Entier entre 1 et 100 (ex. 30).",
+        "depositFixed": "Montant fixe d’acompte",
+        "depositFixedHint": "Montant en {currency} (ex. 50.00). Plafonné au total de la réservation.",
         "itemTypes": {
           "room": "Hébergement (chambre)",
           "flight_class": "Vol",
