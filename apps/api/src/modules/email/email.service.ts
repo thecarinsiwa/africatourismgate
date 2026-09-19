@@ -106,13 +106,20 @@ export class EmailService implements OnModuleInit {
 
   async sendBookingConfirmation(
     payload: BookingConfirmationEmailPayload,
+    options?: { attachments?: EmailAttachment[] },
   ): Promise<SendMailResult> {
     const branding = await this.resolveBranding();
     const { subject, html, text } = renderBookingConfirmationEmail(
       payload,
       branding,
     );
-    return this.send('service', { to: payload.to, subject, html, text });
+    return this.send('service', {
+      to: payload.to,
+      subject,
+      html,
+      text,
+      attachments: options?.attachments,
+    });
   }
 
   async sendPosReceiptEmail(

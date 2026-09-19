@@ -539,6 +539,13 @@ export function renderBookingConfirmationEmail(
       { label: 'Montant total', value: total, highlight: true },
     ];
 
+  const pdfNoteHtml = payload.hasPdfAttachment
+    ? `<p style="margin:0 0 16px;line-height:1.6;font-size:14px;color:${BRAND.muted};">Un récapitulatif PDF de votre réservation est joint à cet e-mail.</p>`
+    : '';
+  const pdfNoteText = payload.hasPdfAttachment
+    ? '\nUn récapitulatif PDF de votre réservation est joint à cet e-mail.\n'
+    : '';
+
   const subject = applySubjectTemplate(
     branding.bookingSubject ?? 'Confirmation de réservation — {ref}',
     { displayName: branding.displayName, ref: refShort },
@@ -548,6 +555,7 @@ export function renderBookingConfirmationEmail(
     `${headline('Réservation confirmée', branding)}
 ${paragraph(`Bonjour <strong>${name}</strong>,`)}
 ${paragraph('Bonne nouvelle — votre réservation est confirmée. Retrouvez le récapitulatif ci-dessous et conservez cet e-mail pour vos archives.')}
+${pdfNoteHtml}
 ${infoCard(cardRows, branding)}
 ${ctaButton(reservationsUrl, 'Voir ma réservation', branding)}
 <p style="margin:0;font-size:13px;line-height:1.55;color:${BRAND.muted};">Une question ? Écrivez-nous à ${mutedLink('mailto:support@africatourismgate.org', 'support@africatourismgate.org')}</p>`,
@@ -561,7 +569,7 @@ ${ctaButton(reservationsUrl, 'Voir ma réservation', branding)}
     payload.itemTitles.length > 0
       ? payload.itemTitles.map((t, i) => `  ${i + 1}. ${t}`).join('\n')
       : '';
-  const text = `Bonjour ${payload.firstName},\n\nRéservation ${payload.bookingId} confirmée le ${formatDateFr(payload.confirmedAt)}.\n\n${itemsText}\n\nTotal : ${formatMoney(payload.totalCents, payload.currency)}\n\nVoir : ${reservationsUrl}`;
+  const text = `Bonjour ${payload.firstName},\n\nRéservation ${payload.bookingId} confirmée le ${formatDateFr(payload.confirmedAt)}.${pdfNoteText}\n\n${itemsText}\n\nTotal : ${formatMoney(payload.totalCents, payload.currency)}\n\nVoir : ${reservationsUrl}`;
   return { subject, html, text };
 }
 

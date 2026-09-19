@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -27,7 +28,9 @@ import {
 import { resolveCheckoutBookingMode } from '@africatourismgate/types';
 import { OrgScopeService } from '../../../common/org-scope/org-scope.service';
 import { toAuthUserDto } from '../../auth/dto/auth-user.dto';
+import { BookingDetailPdfService } from '../../email/booking-detail-pdf.service';
 import { EmailService } from '../../email/email.service';
+import type { EmailAttachment } from '../../email/email.types';
 import { EmailVerificationService } from '../../email-verification/email-verification.service';
 import {
   assertValidVehicleDates,
@@ -52,6 +55,7 @@ import {
   BookingRequestResponseDto,
 } from './dto/booking-request-response.dto';
 import { BookingCheckoutPromoService } from './booking-checkout-promo.service';
+import { BookingManifestService } from './booking-manifest.service';
 import { BookingPackageCheckoutService } from './booking-package-checkout.service';
 import { BookingStatusHistoryService } from './booking-status-history.service';
 import type { PackageResolvedLineDto } from '../../public/packages/dto/package-resolved-line.dto';
@@ -69,6 +73,8 @@ type ResolvedBookingLine = BookingCheckoutLineDto & { stock?: StockTarget };
 
 @Injectable()
 export class BookingEngineService {
+  private readonly logger = new Logger(BookingEngineService.name);
+
   constructor(
     @InjectRepository(Bookings)
     private readonly bookingsRepository: Repository<Bookings>,
@@ -110,6 +116,8 @@ export class BookingEngineService {
     private readonly emailService: EmailService,
     private readonly emailVerification: EmailVerificationService,
     private readonly organizationSettingsService: OrganizationSettingsService,
+    private readonly bookingDetailPdf: BookingDetailPdfService,
+    private readonly manifestService: BookingManifestService,
   ) {}
 
   async previewCheckout(
@@ -522,17 +530,55 @@ export class BookingEngineService {
       .map((item) => item.titleSnapshot?.trim())
       .filter((title): title is string => Boolean(title));
 
+    const webUrl = process.env.NEXT_PUBLIC_WEB_URL;
+    const manifest = await this.manifestService.listForBooking(bookingId);
+
+    let attachments: EmailAttachment[] | undefined;
+    let hasPdfAttachment = false;
+
+    try {
+      const pdf = await this.bookingDetailPdf.generate({
+        detail,
+        manifest,
+        customer: {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          preferredLanguage: user.preferredLanguage,
+          organizationId: user.organizationId,
+        },
+        webUrl,
+      });
+      attachments = [
+        {
+          filename: pdf.filename,
+          content: pdf.buffer,
+          contentType: 'application/pdf',
+        },
+      ];
+      hasPdfAttachment = true;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.warn(
+        `PDF récapitulatif non généré pour la confirmation ${bookingId} : ${message}`,
+      );
+    }
+
     const confirmedAt = detail.booking.updatedAt ?? detail.booking.createdAt;
-    await this.emailService.sendBookingConfirmation({
-      to: user.email,
-      firstName: user.firstName,
-      bookingId: detail.booking.id,
-      totalCents: detail.totalCents,
-      currency: detail.currency,
-      itemTitles,
-      confirmedAt: confirmedAt.toISOString(),
-      webUrl: process.env.NEXT_PUBLIC_WEB_URL,
-    });
+    await this.emailService.sendBookingConfirmation(
+      {
+        to: user.email,
+        firstName: user.firstName,
+        bookingId: detail.booking.id,
+        totalCents: detail.totalCents,
+        currency: detail.currency,
+        itemTitles,
+        confirmedAt: confirmedAt.toISOString(),
+        webUrl,
+        hasPdfAttachment,
+      },
+      { attachments },
+    );
   }
 
   async recordCashPayment(
