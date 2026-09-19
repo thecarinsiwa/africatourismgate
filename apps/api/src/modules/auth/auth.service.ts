@@ -422,8 +422,11 @@ export class AuthService {
     if (row.purpose === 'booking') {
       await this.bookingEngine.activateDraftBooking(row.referenceId);
       const booking = await this.bookingEngine.getBookingDetail(row.referenceId);
-      if (booking.booking.preferredPaymentMethod === 'bank_transfer') {
-        this.assistedEmail.notifyBankTransferInstructions(row.referenceId);
+      if (
+        booking.booking.preferredPaymentMethod === 'bank_transfer' ||
+        booking.booking.preferredPaymentMethod === 'mobile_money'
+      ) {
+        this.assistedEmail.notifyOfflinePaymentInstructions(row.referenceId);
       }
       const user = await this.usersRepo.findOne({
         where: { id: booking.booking.userId, deletedAt: IsNull() },

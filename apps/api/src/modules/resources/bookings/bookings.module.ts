@@ -31,6 +31,7 @@ import { EmailVerificationModule } from '../../email-verification/email-verifica
 import { PackagesModule } from '../packages/packages.module';
 import { OrganizationSettingsModule } from '../organization-settings/organization-settings.module';
 import { OrganizationBankAccountsModule } from '../organization-bank-accounts/organization-bank-accounts.module';
+import { MobileMoneyConfigModule } from '../mobile-money-config/mobile-money-config.module';
 import { BookingCheckoutPromoService } from './booking-checkout-promo.service';
 import { BookingEngineService } from './booking-engine.service';
 import { BookingPackageCheckoutService } from './booking-package-checkout.service';
@@ -56,6 +57,7 @@ import { PosReceiptPdfService } from './pos-receipt-pdf.service';
     EmailVerificationModule,
     OrganizationSettingsModule,
     OrganizationBankAccountsModule,
+    MobileMoneyConfigModule,
     forwardRef(() => TourGuidesModule),
     ReviewsModule,
     PackagesModule,

@@ -5,6 +5,7 @@ import type {
   BookingApprovedChatEmailPayload,
   BookingPaymentInviteEmailPayload,
   BookingBankTransferInstructionsEmailPayload,
+  BookingMobileMoneyInstructionsEmailPayload,
   BookingPaymentReminderEmailPayload,
   BookingRejectedEmailPayload,
   BookingRequestReceivedEmailPayload,
@@ -279,6 +280,65 @@ ${button(payload.accountUrl, 'Voir ma réservation', branding)}`,
     { webUrl: payload.webUrl },
   );
   const text = `Bonjour ${payload.firstName},\n\nVirement pour la réservation ${payload.bookingId.slice(0, 8)} (${formatMoney(payload.totalCents, payload.currency)}).\nRéférence à indiquer : ${payload.bookingId.slice(0, 8)}\n\nComptes :\n${accountsText}\n\nEspace client : ${payload.accountUrl}`;
+  return { subject, html, text };
+}
+
+export function renderBookingMobileMoneyInstructionsEmail(
+  payload: BookingMobileMoneyInstructionsEmailPayload,
+  branding: EmailBrandingValue,
+): { subject: string; html: string; text: string } {
+  const name = escapeHtml(payload.firstName.trim() || 'Client');
+  const subject = `Instructions Mobile Money — réservation ${payload.bookingId.slice(0, 8)}`;
+  const total = escapeHtml(formatMoney(payload.totalCents, payload.currency));
+  const ref = bookingRef(payload.bookingId);
+
+  const operatorsHtml =
+    payload.operators.length === 0
+      ? `<p style="margin:0 0 16px;line-height:1.6;color:#b45309;">Aucune configuration Mobile Money n'est publiée pour le moment. Contactez-nous pour obtenir les numéros.</p>`
+      : `<ul style="margin:8px 0 16px;padding-left:0;list-style:none;line-height:1.6;">${payload.operators
+          .map((operator) => {
+            const numbers = operator.numbers
+              .map((number) => {
+                const label = number.label?.trim()
+                  ? ` (${escapeHtml(number.label.trim())})`
+                  : '';
+                return `<br/>Numéro : <strong>${escapeHtml(number.phoneE164)}</strong>${label}`;
+              })
+              .join('');
+            return `<li style="margin:0 0 12px;padding:12px 16px;background:#f4f6f5;border-radius:8px;">
+<strong>${escapeHtml(operator.operatorName)}</strong> — ${escapeHtml(operator.countryName)} (${escapeHtml(operator.countryCode)})${numbers}
+</li>`;
+          })
+          .join('')}</ul>`;
+
+  const operatorsText =
+    payload.operators.length === 0
+      ? 'Aucune configuration Mobile Money publiée — contactez-nous.'
+      : payload.operators
+          .map((operator) => {
+            const numbers = operator.numbers
+              .map((number) => {
+                const label = number.label?.trim() ? ` (${number.label.trim()})` : '';
+                return `${number.phoneE164}${label}`;
+              })
+              .join(', ');
+            return `- ${operator.operatorName} — ${operator.countryName} (${operator.countryCode}) : ${numbers}`;
+          })
+          .join('\n');
+
+  const html = layout(
+    subject,
+    `<h1 style="margin:0 0 16px;font-size:22px;">Paiement Mobile Money</h1>
+<p style="margin:0 0 16px;line-height:1.6;">Bonjour ${name},</p>
+<p style="margin:0 0 16px;line-height:1.6;">Votre réservation <strong>${ref}</strong> est en attente de paiement Mobile Money pour un montant de <strong>${total}</strong>.</p>
+<p style="margin:0 0 16px;line-height:1.6;">Indiquez la référence <strong>${ref}</strong> dans le message du transfert, puis envoyez une preuve depuis votre espace client. La réservation restera en attente jusqu'à validation par notre équipe.</p>
+${itemListHtml(payload.itemTitles)}
+${operatorsHtml}
+${button(payload.accountUrl, 'Voir ma réservation', branding)}`,
+    branding,
+    { webUrl: payload.webUrl },
+  );
+  const text = `Bonjour ${payload.firstName},\n\nMobile Money pour la réservation ${payload.bookingId.slice(0, 8)} (${formatMoney(payload.totalCents, payload.currency)}).\nRéférence à indiquer : ${payload.bookingId.slice(0, 8)}\n\nOpérateurs :\n${operatorsText}\n\nEspace client : ${payload.accountUrl}`;
   return { subject, html, text };
 }
 

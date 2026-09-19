@@ -70,8 +70,11 @@ export class BookingApprovalService {
     const booking = await this.bookingsRepository.findOne({
       where: { id: bookingId, deletedAt: IsNull() },
     });
-    if (booking?.preferredPaymentMethod === 'bank_transfer') {
-      this.assistedEmail.notifyBankTransferInstructions(bookingId);
+    if (
+      booking?.preferredPaymentMethod === 'bank_transfer' ||
+      booking?.preferredPaymentMethod === 'mobile_money'
+    ) {
+      this.assistedEmail.notifyOfflinePaymentInstructions(bookingId);
     }
 
     return this.bookingsService.getAdminDetail(bookingId);

@@ -74,9 +74,10 @@ export class BookingsService extends CrudService<Bookings> {
     const detail = await this.bookingEngine.createBooking(dto, ownerUserId, actorUserId);
     if (
       detail.booking.status === 'pending_payment' &&
-      detail.booking.preferredPaymentMethod === 'bank_transfer'
+      (detail.booking.preferredPaymentMethod === 'bank_transfer' ||
+        detail.booking.preferredPaymentMethod === 'mobile_money')
     ) {
-      this.assistedEmail.notifyBankTransferInstructions(detail.booking.id);
+      this.assistedEmail.notifyOfflinePaymentInstructions(detail.booking.id);
     }
     return detail;
   }
