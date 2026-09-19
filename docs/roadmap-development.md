@@ -2,7 +2,8 @@
 
 > **Mise à jour : juin 2026** — Document pour guider les PRs et les sessions Cursor Agent.  
 > Branche de base : `main`. **Une PR = un livrable = une branche.**  
-> Document précédent (obsolète) : [roadmap-prompts.md](./roadmap-prompts.md)
+> Document précédent (obsolète) : [roadmap-prompts.md](./roadmap-prompts.md)  
+> **Suite post-réunion août 2026** (corrections + paiements + manifeste + V2) : [roadmap-post-reunion-08-2026.md](./roadmap-post-reunion-08-2026.md)
 
 ---
 

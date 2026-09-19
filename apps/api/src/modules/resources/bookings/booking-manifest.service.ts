@@ -105,18 +105,28 @@ export class BookingManifestService {
         throw new BadRequestException('Le nom du voyageur est obligatoire.');
       }
 
-      const created = await this.create(
+      // Pricing-only stub: nationality/idNumber must be completed via manifest CRUD.
+      // Persist via repository so staff can add a priced traveler before docs are ready.
+      const stub = this.repository.create({
+        id: newId(),
         bookingId,
-        {
-          fullName,
-          age: traveler.age,
-          sex: traveler.sex,
-          priceCents: traveler.priceCents,
-          sortOrder: index,
-        },
-        actorUserId,
-      );
-      results.push(created);
+        sortOrder: index,
+        priceCents: traveler.priceCents,
+        fullName,
+        age: traveler.age ?? null,
+        sex: traveler.sex ?? null,
+        nationality: null,
+        idNumber: null,
+        conditions: null,
+        comment: null,
+        other: null,
+        createdByUserId: actorUserId,
+        updatedByUserId: actorUserId,
+        deletedByUserId: null,
+        deletedAt: null,
+      });
+      await this.repository.save(stub);
+      results.push(toDto(stub));
     }
 
     const keptIds = new Set(results.map((entry) => entry.id));
@@ -141,6 +151,15 @@ export class BookingManifestService {
       dto.sortOrder ??
       (await this.nextSortOrder(bookingId));
 
+    const nationality = dto.nationality.trim();
+    const idNumber = dto.idNumber.trim();
+    if (!nationality) {
+      throw new BadRequestException('La nationalité est obligatoire.');
+    }
+    if (!idNumber) {
+      throw new BadRequestException("Le numéro de pièce d'identité est obligatoire.");
+    }
+
     const row = this.repository.create({
       id: newId(),
       bookingId,
@@ -149,8 +168,8 @@ export class BookingManifestService {
       fullName: dto.fullName.trim(),
       age: dto.age ?? null,
       sex: dto.sex ?? null,
-      nationality: normalizeOptionalText(dto.nationality),
-      idNumber: normalizeOptionalText(dto.idNumber),
+      nationality,
+      idNumber,
       conditions: normalizeOptionalText(dto.conditions),
       comment: normalizeOptionalText(dto.comment),
       other: normalizeOptionalText(dto.other),
@@ -170,14 +189,42 @@ export class BookingManifestService {
     actorUserId: string,
   ): Promise<BookingManifestEntryDto> {
     const row = await this.findActiveRow(bookingId, entryId);
-    row.fullName = dto.fullName.trim();
-    row.age = dto.age ?? null;
-    row.sex = dto.sex ?? null;
-    row.nationality = normalizeOptionalText(dto.nationality);
-    row.idNumber = normalizeOptionalText(dto.idNumber);
-    row.conditions = normalizeOptionalText(dto.conditions);
-    row.comment = normalizeOptionalText(dto.comment);
-    row.other = normalizeOptionalText(dto.other);
+    if (dto.fullName !== undefined) {
+      const fullName = dto.fullName.trim();
+      if (!fullName) {
+        throw new BadRequestException('Le nom complet est obligatoire.');
+      }
+      row.fullName = fullName;
+    }
+    if (dto.age !== undefined) {
+      row.age = dto.age ?? null;
+    }
+    if (dto.sex !== undefined) {
+      row.sex = dto.sex ?? null;
+    }
+    if (dto.nationality !== undefined) {
+      const nationality = dto.nationality.trim();
+      if (!nationality) {
+        throw new BadRequestException('La nationalité est obligatoire.');
+      }
+      row.nationality = nationality;
+    }
+    if (dto.idNumber !== undefined) {
+      const idNumber = dto.idNumber.trim();
+      if (!idNumber) {
+        throw new BadRequestException("Le numéro de pièce d'identité est obligatoire.");
+      }
+      row.idNumber = idNumber;
+    }
+    if (dto.conditions !== undefined) {
+      row.conditions = normalizeOptionalText(dto.conditions);
+    }
+    if (dto.comment !== undefined) {
+      row.comment = normalizeOptionalText(dto.comment);
+    }
+    if (dto.other !== undefined) {
+      row.other = normalizeOptionalText(dto.other);
+    }
     if (dto.priceCents !== undefined) {
       row.priceCents = dto.priceCents;
     }

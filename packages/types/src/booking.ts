@@ -211,18 +211,21 @@ export interface BookingManifestEntry {
 
 export interface CreateBookingManifestEntryRequest {
   fullName: string;
+  /** Required on create (checkout / admin / POS). */
+  nationality: string;
+  /** Required on create — passport or national ID number. */
+  idNumber: string;
   priceCents?: number;
   age?: number;
   sex?: BookingManifestSex;
-  nationality?: string;
-  idNumber?: string;
   conditions?: string;
   comment?: string;
   other?: string;
   sortOrder?: number;
 }
 
-export type UpdateBookingManifestEntryRequest = CreateBookingManifestEntryRequest;
+/** Partial update — omit fields that should stay unchanged. */
+export type UpdateBookingManifestEntryRequest = Partial<CreateBookingManifestEntryRequest>;
 
 export interface BookingDetail {
   booking: Booking;

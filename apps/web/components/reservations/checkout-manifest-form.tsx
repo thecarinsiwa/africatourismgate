@@ -26,8 +26,8 @@ export function manifestDraftToPayload(
     fullName: entry.fullName.trim(),
     age: !Number.isNaN(age) && age >= 0 ? age : undefined,
     sex: entry.sex || undefined,
-    nationality: entry.nationality.trim() || undefined,
-    idNumber: entry.idNumber.trim() || undefined,
+    nationality: entry.nationality.trim(),
+    idNumber: entry.idNumber.trim(),
     conditions: entry.conditions.trim() || undefined,
     sortOrder,
   };

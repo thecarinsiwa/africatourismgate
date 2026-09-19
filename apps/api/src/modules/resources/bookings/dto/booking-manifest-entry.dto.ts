@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import {
   IsIn,
   IsInt,
@@ -33,9 +33,11 @@ export class BookingManifestEntryDto {
   @ApiPropertyOptional({ enum: ['M', 'F', 'other'] })
   sex?: BookingManifestSex | null;
 
+  /** May be null on legacy rows created before nationality became required. */
   @ApiPropertyOptional()
   nationality?: string | null;
 
+  /** May be null on legacy rows created before idNumber became required. */
   @ApiPropertyOptional()
   idNumber?: string | null;
 
@@ -64,7 +66,7 @@ export class CreateBookingManifestEntryDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Le nom complet est obligatoire.' })
   @MaxLength(200)
   fullName!: string;
 
@@ -80,17 +82,17 @@ export class CreateBookingManifestEntryDto {
   @IsIn(['M', 'F', 'other'])
   sex?: BookingManifestSex;
 
-  @ApiPropertyOptional()
-  @IsOptional()
+  @ApiProperty()
   @IsString()
+  @IsNotEmpty({ message: 'La nationalité est obligatoire.' })
   @MaxLength(100)
-  nationality?: string;
+  nationality!: string;
 
-  @ApiPropertyOptional()
-  @IsOptional()
+  @ApiProperty()
   @IsString()
+  @IsNotEmpty({ message: "Le numéro de pièce d'identité est obligatoire." })
   @MaxLength(64)
-  idNumber?: string;
+  idNumber!: string;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -118,4 +120,7 @@ export class CreateBookingManifestEntryDto {
   sortOrder?: number;
 }
 
-export class UpdateBookingManifestEntryDto extends CreateBookingManifestEntryDto {}
+/** Partial update — pricing flows may patch price without resending nationality/idNumber. */
+export class UpdateBookingManifestEntryDto extends PartialType(
+  CreateBookingManifestEntryDto,
+) {}

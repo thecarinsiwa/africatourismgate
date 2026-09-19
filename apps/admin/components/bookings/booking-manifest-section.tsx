@@ -77,8 +77,8 @@ function formToPayload(form: FormState) {
       priceParsed != null && !Number.isNaN(priceParsed) && priceParsed >= 0
         ? priceParsed
         : undefined,
-    nationality: form.nationality.trim() || undefined,
-    idNumber: form.idNumber.trim() || undefined,
+    nationality: form.nationality.trim(),
+    idNumber: form.idNumber.trim(),
     conditions: form.conditions.trim() || undefined,
     comment: form.comment.trim() || undefined,
     other: form.other.trim() || undefined,
