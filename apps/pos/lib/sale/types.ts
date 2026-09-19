@@ -121,6 +121,11 @@ export type SaleManifestDraftEntry = {
   idNumber?: string;
   conditions?: string;
   comment?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  emergencyContactEmail?: string;
+  emergencyContactCountry?: string;
+  emergencyContactAddress?: string;
 };
 
 export function emptySaleManifestEntry(): SaleManifestDraftEntry {
@@ -132,6 +137,11 @@ export function emptySaleManifestEntry(): SaleManifestDraftEntry {
     idNumber: '',
     conditions: '',
     comment: '',
+    emergencyContactName: '',
+    emergencyContactPhone: '',
+    emergencyContactEmail: '',
+    emergencyContactCountry: '',
+    emergencyContactAddress: '',
   };
 }
 

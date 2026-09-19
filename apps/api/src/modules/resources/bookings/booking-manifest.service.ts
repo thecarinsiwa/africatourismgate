@@ -25,6 +25,11 @@ function toDto(row: BookingManifestEntries): BookingManifestEntryDto {
     sex: row.sex,
     nationality: row.nationality,
     idNumber: row.idNumber,
+    emergencyContactName: row.emergencyContactName,
+    emergencyContactPhone: row.emergencyContactPhone,
+    emergencyContactEmail: row.emergencyContactEmail,
+    emergencyContactCountry: row.emergencyContactCountry,
+    emergencyContactAddress: row.emergencyContactAddress,
     conditions: row.conditions,
     comment: row.comment,
     other: row.other,
@@ -105,7 +110,7 @@ export class BookingManifestService {
         throw new BadRequestException('Le nom du voyageur est obligatoire.');
       }
 
-      // Pricing-only stub: nationality/idNumber must be completed via manifest CRUD.
+      // Pricing-only stub: nationality/idNumber/emergency must be completed via manifest CRUD.
       // Persist via repository so staff can add a priced traveler before docs are ready.
       const stub = this.repository.create({
         id: newId(),
@@ -117,6 +122,11 @@ export class BookingManifestService {
         sex: traveler.sex ?? null,
         nationality: null,
         idNumber: null,
+        emergencyContactName: null,
+        emergencyContactPhone: null,
+        emergencyContactEmail: null,
+        emergencyContactCountry: null,
+        emergencyContactAddress: null,
         conditions: null,
         comment: null,
         other: null,
@@ -153,11 +163,19 @@ export class BookingManifestService {
 
     const nationality = dto.nationality.trim();
     const idNumber = dto.idNumber.trim();
+    const emergencyContactName = dto.emergencyContactName.trim();
+    const emergencyContactPhone = dto.emergencyContactPhone.trim();
     if (!nationality) {
       throw new BadRequestException('La nationalité est obligatoire.');
     }
     if (!idNumber) {
       throw new BadRequestException("Le numéro de pièce d'identité est obligatoire.");
+    }
+    if (!emergencyContactName) {
+      throw new BadRequestException("Le nom du contact d'urgence est obligatoire.");
+    }
+    if (!emergencyContactPhone) {
+      throw new BadRequestException("Le téléphone du contact d'urgence est obligatoire.");
     }
 
     const row = this.repository.create({
@@ -170,6 +188,11 @@ export class BookingManifestService {
       sex: dto.sex ?? null,
       nationality,
       idNumber,
+      emergencyContactName,
+      emergencyContactPhone,
+      emergencyContactEmail: normalizeOptionalText(dto.emergencyContactEmail),
+      emergencyContactCountry: normalizeOptionalText(dto.emergencyContactCountry),
+      emergencyContactAddress: normalizeOptionalText(dto.emergencyContactAddress),
       conditions: normalizeOptionalText(dto.conditions),
       comment: normalizeOptionalText(dto.comment),
       other: normalizeOptionalText(dto.other),
@@ -215,6 +238,29 @@ export class BookingManifestService {
         throw new BadRequestException("Le numéro de pièce d'identité est obligatoire.");
       }
       row.idNumber = idNumber;
+    }
+    if (dto.emergencyContactName !== undefined) {
+      const emergencyContactName = dto.emergencyContactName.trim();
+      if (!emergencyContactName) {
+        throw new BadRequestException("Le nom du contact d'urgence est obligatoire.");
+      }
+      row.emergencyContactName = emergencyContactName;
+    }
+    if (dto.emergencyContactPhone !== undefined) {
+      const emergencyContactPhone = dto.emergencyContactPhone.trim();
+      if (!emergencyContactPhone) {
+        throw new BadRequestException("Le téléphone du contact d'urgence est obligatoire.");
+      }
+      row.emergencyContactPhone = emergencyContactPhone;
+    }
+    if (dto.emergencyContactEmail !== undefined) {
+      row.emergencyContactEmail = normalizeOptionalText(dto.emergencyContactEmail);
+    }
+    if (dto.emergencyContactCountry !== undefined) {
+      row.emergencyContactCountry = normalizeOptionalText(dto.emergencyContactCountry);
+    }
+    if (dto.emergencyContactAddress !== undefined) {
+      row.emergencyContactAddress = normalizeOptionalText(dto.emergencyContactAddress);
     }
     if (dto.conditions !== undefined) {
       row.conditions = normalizeOptionalText(dto.conditions);

@@ -116,7 +116,9 @@ export function SaleManifestSheet({
         e.idNumber?.trim() ||
         e.nationality?.trim() ||
         e.conditions?.trim() ||
-        e.comment?.trim(),
+        e.comment?.trim() ||
+        e.emergencyContactName?.trim() ||
+        e.emergencyContactPhone?.trim(),
     );
 
     if (filtered.length === 0) {
@@ -138,6 +140,14 @@ export function SaleManifestSheet({
       }
       if (!entry.idNumber?.trim()) {
         setValidationError(labels.idNumberRequired(n));
+        return;
+      }
+      if (!entry.emergencyContactName?.trim()) {
+        setValidationError(labels.emergencyContactNameRequired(n));
+        return;
+      }
+      if (!entry.emergencyContactPhone?.trim()) {
+        setValidationError(labels.emergencyContactPhoneRequired(n));
         return;
       }
     }
@@ -284,6 +294,62 @@ export function SaleManifestSheet({
                   value={entry.conditions ?? ''}
                   onChange={(e) => updateEntry(index, { conditions: e.target.value })}
                 />
+
+                <div className="space-y-3 rounded-lg border border-atg-border p-3">
+                  <p className="text-sm font-bold text-atg-fg">{labels.emergencyContactSection}</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Input
+                      id={`manifest-em-name-${index}`}
+                      label={labels.emergencyContactNameLabel}
+                      labelExtra={requiredMark}
+                      value={entry.emergencyContactName ?? ''}
+                      onChange={(e) =>
+                        updateEntry(index, { emergencyContactName: e.target.value })
+                      }
+                      required
+                    />
+                    <Input
+                      id={`manifest-em-phone-${index}`}
+                      label={labels.emergencyContactPhoneLabel}
+                      labelExtra={requiredMark}
+                      type="tel"
+                      value={entry.emergencyContactPhone ?? ''}
+                      onChange={(e) =>
+                        updateEntry(index, { emergencyContactPhone: e.target.value })
+                      }
+                      required
+                    />
+                    <Input
+                      id={`manifest-em-email-${index}`}
+                      label={labels.emergencyContactEmailLabel}
+                      type="email"
+                      value={entry.emergencyContactEmail ?? ''}
+                      onChange={(e) =>
+                        updateEntry(index, { emergencyContactEmail: e.target.value })
+                      }
+                    />
+                    <PosNationalitySelect
+                      id={`manifest-em-country-${index}`}
+                      label={labels.emergencyContactCountryLabel}
+                      value={entry.emergencyContactCountry ?? ''}
+                      onChange={(code) =>
+                        updateEntry(index, { emergencyContactCountry: code })
+                      }
+                      placeholder={labels.nationalityPlaceholder}
+                      searchPlaceholder={labels.nationalitySearch}
+                      emptyMessage={labels.nationalityEmpty}
+                    />
+                  </div>
+                  <Input
+                    id={`manifest-em-addr-${index}`}
+                    label={labels.emergencyContactAddressLabel}
+                    placeholder={labels.emergencyContactAddressPlaceholder}
+                    value={entry.emergencyContactAddress ?? ''}
+                    onChange={(e) =>
+                      updateEntry(index, { emergencyContactAddress: e.target.value })
+                    }
+                  />
+                </div>
               </div>
             </div>
           ))}

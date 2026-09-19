@@ -133,7 +133,35 @@ test('manifeste checkout: bloqué si n° pièce manquant', async ({ page }) => {
   await expect(page).toHaveURL(/\/booking\/recap/);
 });
 
-test('manifeste checkout: OK avec nom + nationalité + n° pièce (genre vide)', async ({ page }) => {
+test('manifeste checkout: bloqué si téléphone urgence manquant', async ({ page }) => {
+  test.setTimeout(60_000);
+  await gotoPackageRecap(page);
+
+  await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();
+  await fillCheckoutManifest(page);
+
+  const emPhoneInputs = page.getByLabel(/^t[ée]l[ée]phone$|^phone$|^tel[ée]fono$/i);
+  const phoneCount = await emPhoneInputs.count();
+  expect(phoneCount).toBeGreaterThan(0);
+  for (let i = 0; i < phoneCount; i += 1) {
+    await emPhoneInputs.nth(i).fill('');
+  }
+
+  await page
+    .getByRole('button', { name: /demander une r[ée]servation|request a booking|solicitar una reserva/i })
+    .click();
+
+  await expect(
+    page.getByRole('alert').filter({
+      hasText: /t[ée]l[ée]phone.*urgence|emergency contact phone|tel[ée]fono.*emergencia/i,
+    }),
+  ).toBeVisible();
+  await expect(page).toHaveURL(/\/booking\/recap/);
+});
+
+test('manifeste checkout: OK avec nom + nationalité + n° pièce + urgence (genre vide)', async ({
+  page,
+}) => {
   test.setTimeout(60_000);
   await gotoPackageRecap(page);
 

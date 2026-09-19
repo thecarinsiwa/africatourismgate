@@ -133,7 +133,9 @@ export async function saveBookingManifestEntries(
     (e) =>
       e.fullName.trim().length > 0 &&
       (e.nationality?.trim().length ?? 0) > 0 &&
-      (e.idNumber?.trim().length ?? 0) > 0,
+      (e.idNumber?.trim().length ?? 0) > 0 &&
+      (e.emergencyContactName?.trim().length ?? 0) > 0 &&
+      (e.emergencyContactPhone?.trim().length ?? 0) > 0,
   );
   if (validEntries.length === 0) return;
 
@@ -146,6 +148,11 @@ export async function saveBookingManifestEntries(
       sex: entry.sex,
       nationality: entry.nationality?.trim() ?? '',
       idNumber: entry.idNumber?.trim() ?? '',
+      emergencyContactName: entry.emergencyContactName?.trim() ?? '',
+      emergencyContactPhone: entry.emergencyContactPhone?.trim() ?? '',
+      emergencyContactEmail: entry.emergencyContactEmail?.trim() || undefined,
+      emergencyContactCountry: entry.emergencyContactCountry?.trim() || undefined,
+      emergencyContactAddress: entry.emergencyContactAddress?.trim() || undefined,
       conditions: entry.conditions?.trim() || undefined,
       comment: entry.comment?.trim() || undefined,
       sortOrder: i,

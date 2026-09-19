@@ -76,11 +76,29 @@ function sexLabel(
   return '—';
 }
 
-function travelerNotes(traveler: BookingDetailPdfInput['travelers'][number]): string {
-  return [traveler.conditions, traveler.comment, traveler.other]
+function travelerNotes(
+  traveler: BookingDetailPdfInput['travelers'][number],
+  labels: BookingDetailPdfLabels,
+  locale: BookingDetailPdfInput['locale'],
+): string {
+  const medical = [traveler.conditions, traveler.comment, traveler.other]
     .map((value) => value?.trim())
-    .filter(Boolean)
-    .join(' · ');
+    .filter(Boolean);
+
+  const emergencyParts = [
+    traveler.emergencyContactName?.trim(),
+    traveler.emergencyContactPhone?.trim(),
+    traveler.emergencyContactEmail?.trim(),
+    formatNationalityDisplay(traveler.emergencyContactCountry, locale) ||
+      traveler.emergencyContactCountry?.trim(),
+    traveler.emergencyContactAddress?.trim(),
+  ].filter(Boolean);
+
+  const parts = [...medical];
+  if (emergencyParts.length > 0) {
+    parts.push(`${labels.emergencyContactPrefix}: ${emergencyParts.join(' · ')}`);
+  }
+  return parts.join(' · ');
 }
 
 function guideRoleLabel(
@@ -322,7 +340,7 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
         traveler.priceCents != null
           ? formatMoney(traveler.priceCents, input.currency)
           : '—';
-      const notes = travelerNotes(traveler) || '—';
+      const notes = travelerNotes(traveler, labels, input.locale) || '—';
       const cells = [
         String(index + 1),
         traveler.fullName,
