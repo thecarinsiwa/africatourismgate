@@ -41,6 +41,15 @@ const nextConfig = {
     ADMIN_PORT: adminPort,
     ATG_REMOTE_API_URL: remoteProxy ? getRemoteApiTargetUrl() : '',
   },
+  async redirects() {
+    return [
+      {
+        source: '/produits/activites/fournisseurs',
+        destination: '/produits/activites/partenaires',
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     return [
       {

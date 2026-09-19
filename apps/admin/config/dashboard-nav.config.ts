@@ -153,7 +153,7 @@ export const adminBreadcrumbExtraRoutes: AdminBreadcrumbRouteConfig[] = [
   { href: '/produits/locations/agences', labelKey: 'rentalAgencies' },
   { href: '/produits/locations/categories', labelKey: 'vehicleCategories' },
   { href: '/produits/locations/nouveau', labelKey: 'newVehicle' },
-  { href: '/produits/activites/fournisseurs', labelKey: 'activityProviders' },
+  { href: '/produits/activites/partenaires', labelKey: 'activityProviders' },
   { href: '/produits/activites/nouveau', labelKey: 'newActivity' },
   { href: '/produits/destinations/nouveau', labelKey: 'newDestination' },
   { href: '/produits/forfaits/nouveau', labelKey: 'newPackage' },

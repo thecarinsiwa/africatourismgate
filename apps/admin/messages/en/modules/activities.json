@@ -24,7 +24,7 @@
     "priceCents": "Price (cents)",
     "descriptionPlaceholder": "Describe the activity, itinerary, conditions…",
     "validation": {
-      "providerRequired": "Provider is required.",
+      "providerRequired": "Partner is required.",
       "titleRequired": "Title is required.",
       "invalidPrice": "Invalid price.",
       "currencyThreeLetters": "Currency must be 3 letters.",

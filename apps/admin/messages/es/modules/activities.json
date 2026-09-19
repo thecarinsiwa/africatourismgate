@@ -24,7 +24,7 @@
     "priceCents": "Precio (centavos)",
     "descriptionPlaceholder": "Describa la actividad, el programa, las condiciones…",
     "validation": {
-      "providerRequired": "El proveedor es obligatorio.",
+      "providerRequired": "El socio es obligatorio.",
       "titleRequired": "El título es obligatorio.",
       "invalidPrice": "Precio inválido.",
       "currencyThreeLetters": "La moneda debe tener 3 letras.",

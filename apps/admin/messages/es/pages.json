@@ -137,7 +137,7 @@
         "description": "Cree una experiencia y luego añada horarios en la página de edición.",
         "backLabel": "Volver a actividades"
       },
-      "fournisseurs": {
+      "partenaires": {
         "title": "Socios de actividades",
         "description": "Operadores vinculados a destinos."
       },

@@ -137,7 +137,7 @@
         "description": "Create an experience then add schedules on the edit page.",
         "backLabel": "Back to activities"
       },
-      "fournisseurs": {
+      "partenaires": {
         "title": "Activity partners",
         "description": "Operators linked to destinations."
       },
