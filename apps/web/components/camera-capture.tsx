@@ -90,7 +90,6 @@ export function CameraCapture({ onCapture, onClose, labels }: Props) {
           className={`h-full w-full object-cover ${snapshot ? 'hidden' : ''}`}
         />
         {snapshot ? (
-          // eslint-disable-next-line @next/next/no-img-element -- camera snapshot preview
           <img src={snapshot} alt="" className="h-full w-full object-cover" />
         ) : null}
         {error ? (

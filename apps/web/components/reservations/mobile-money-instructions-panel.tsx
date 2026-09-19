@@ -129,7 +129,6 @@ export function MobileMoneyInstructionsPanel({
             <div className="rounded-lg border border-atg-border/80 px-3 py-3 text-sm text-atg-fg dark:border-atg-border">
               <div className="flex items-center gap-3">
                 {logoSrc ? (
-                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={logoSrc}
                     alt=""

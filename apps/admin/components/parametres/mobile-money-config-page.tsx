@@ -593,7 +593,6 @@ export function MobileMoneyConfigPage() {
             ? resolveMediaUrl(row.original.logoUrl)
             : null;
           return url ? (
-            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={url}
               alt=""
@@ -924,7 +923,6 @@ export function MobileMoneyConfigPage() {
           <div className="space-y-2">
             <span className="text-sm font-medium text-atg-fg">{tMm('form.logo')}</span>
             {operatorLogoSrc ? (
-              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={operatorLogoSrc}
                 alt=""
