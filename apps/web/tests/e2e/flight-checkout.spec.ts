@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { fillCheckoutManifest, mockManifestApi } from './helpers/fill-manifest';
 
 const FLIGHT_ID = '00000000-0000-4000-8000-000000003020';
 const FLIGHT_CLASS_ECO = '00000000-0000-4000-8000-000000003022';
@@ -157,7 +158,9 @@ test('vol FIH→NBO: fiche -> panier -> recap -> Stripe -> confirmation', async 
   await expect(page.getByRole('heading', { name: /recapitulatif/i })).toBeVisible();
   await expect(page.getByText('KQ550')).toBeVisible();
 
+  await mockManifestApi(page);
   await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();
+  await fillCheckoutManifest(page);
   await expect(page.getByRole('button', { name: /payer avec stripe|pay with stripe|pagar con stripe/i })).toBeEnabled();
   await page.getByRole('button', { name: /payer avec stripe|pay with stripe|pagar con stripe/i }).click();
   await expect(page).toHaveURL(new RegExp(`/booking/success\\?booking_id=${BOOKING_ID}`), {

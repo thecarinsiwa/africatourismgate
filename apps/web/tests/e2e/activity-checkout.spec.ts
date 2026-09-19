@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { fillCheckoutManifest, mockManifestApi } from './helpers/fill-manifest';
 
 const ACTIVITY_ID = '00000000-0000-4000-8000-000000004031';
 const SCHEDULE_MORNING = '00000000-0000-4000-8000-000000004033';
@@ -119,6 +120,8 @@ test('activité Gombe City Tour: créneau complet grisé, panier -> recap -> dem
     });
   });
 
+  await mockManifestApi(page);
+
   await page.goto(`/activities/${ACTIVITY_ID}?date=${DATE}&participants=${PARTICIPANTS}`);
 
   await expect(page.getByRole('heading', { name: 'Gombe City Tour' })).toBeVisible();
@@ -154,11 +157,7 @@ test('activité Gombe City Tour: créneau complet grisé, panier -> recap -> dem
   await expect(page.getByText('Tourism Gate Experiences Kinshasa')).toBeVisible();
 
   await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();
-  const nameInputs = page.getByLabel(/nom complet|full name|nombre completo/i);
-  const nameCount = await nameInputs.count();
-  for (let i = 0; i < nameCount; i += 1) {
-    await nameInputs.nth(i).fill(`Voyageur ${i + 1}`);
-  }
+  await fillCheckoutManifest(page);
 
   await expect(
     page.getByRole('button', { name: /demander une r[ée]servation|request a booking|solicitar una reserva/i }),

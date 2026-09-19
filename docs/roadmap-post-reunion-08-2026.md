@@ -183,6 +183,8 @@ Critères d’acceptation :
 - Messages i18n mis à jour (supprimer « Only the full name is required » si encore présent).
 - Tests manuels ou Playwright sur le parcours manifeste.
 
+Scénario de test : docs/pr-01-manifest-validation-test.md
+
 À la fin : fichiers modifiés + scénario de test.
 ```
 

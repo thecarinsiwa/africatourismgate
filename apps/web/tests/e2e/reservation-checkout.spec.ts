@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { fillCheckoutManifest, mockManifestApi } from './helpers/fill-manifest';
 
 test('panier -> recap -> Stripe -> confirmation', async ({ page }) => {
   await page.addInitScript(() => {
@@ -125,6 +126,8 @@ test('panier -> recap -> Stripe -> confirmation', async ({ page }) => {
     });
   });
 
+  await mockManifestApi(page);
+
   await page.goto(
     '/hotels/test-hotel?checkIn=2026-08-10&checkOut=2026-08-12&guests=2&roomId=room-e2e',
   );
@@ -136,6 +139,7 @@ test('panier -> recap -> Stripe -> confirmation', async ({ page }) => {
   await expect(page).toHaveURL(/\/booking\/recap\?/);
 
   await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();
+  await fillCheckoutManifest(page);
   await page.getByRole('button', { name: /payer avec stripe|pay with stripe|pagar con stripe/i }).click();
   await expect(page).toHaveURL(/\/booking\/success\?booking_id=booking-e2e/);
 
@@ -261,6 +265,8 @@ test('panier -> recap -> cash -> attente paiement sur place', async ({ page }) =
     });
   });
 
+  await mockManifestApi(page);
+
   await page.goto(
     '/hotels/test-hotel?checkIn=2026-08-10&checkOut=2026-08-12&guests=2&roomId=room-e2e',
   );
@@ -272,6 +278,7 @@ test('panier -> recap -> cash -> attente paiement sur place', async ({ page }) =
   await expect(page).toHaveURL(/\/booking\/recap\?/);
 
   await page.locator('input[name="preferredPaymentMethod"][value="cash"]').check();
+  await fillCheckoutManifest(page);
   await page
     .getByRole('button', {
       name: /confirmer — paiement sur place|confirm — pay on site|confirmar — pago en efectivo/i,
