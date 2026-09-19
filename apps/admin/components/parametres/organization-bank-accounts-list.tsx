@@ -5,11 +5,10 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 import {
   AlertDialog,
   Button,
-  DataTable,
+  Card,
   DataTableActionButton,
   DataTableActions,
   DataTableBadge,
-  type ColumnDef,
 } from '@africatourismgate/ui';
 import type { OrganizationBankAccount, OrganizationListItem } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
@@ -25,9 +24,7 @@ import { BankAccountsStatCards } from './bank-accounts-stat-cards';
 import { OrganizationBankAccountCreateModal } from './organization-bank-account-create-modal';
 import { OrganizationBankAccountEditModal } from './organization-bank-account-edit-modal';
 import { ParametresPageLayout } from './parametres-subnav';
-import {
-  resolveInitialOrganizationId,
-} from './organization-settings-form';
+import { resolveInitialOrganizationId } from './organization-settings-form';
 
 export function OrganizationBankAccountsList() {
   const { organizationSettings: getOrganizationSettingsErrorMessage } = useAdminErrorMessages();
@@ -55,22 +52,25 @@ export function OrganizationBankAccountsList() {
 
   useSetAdminPageMeta({ title: tBank('page.title') });
 
-  const loadAccounts = useCallback(async (orgId: string, superAdmin = false) => {
-    setLoading(true);
-    setListError(null);
-    try {
-      const result = await getApiClient().listOrganizationBankAccounts({
-        ...(superAdmin ? { organizationId: orgId } : {}),
-        page: 1,
-        limit: 100,
-      });
-      setAccounts(result.data);
-    } catch (error) {
-      setListError(getOrganizationSettingsErrorMessage(error));
-    } finally {
-      setLoading(false);
-    }
-  }, [getOrganizationSettingsErrorMessage]);
+  const loadAccounts = useCallback(
+    async (orgId: string, superAdmin = false) => {
+      setLoading(true);
+      setListError(null);
+      try {
+        const result = await getApiClient().listOrganizationBankAccounts({
+          ...(superAdmin ? { organizationId: orgId } : {}),
+          page: 1,
+          limit: 100,
+        });
+        setAccounts(result.data);
+      } catch (error) {
+        setListError(getOrganizationSettingsErrorMessage(error));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [getOrganizationSettingsErrorMessage],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -138,7 +138,15 @@ export function OrganizationBankAccountsList() {
       }
       applyChange();
     },
-    [router, searchParams, loadAccounts, isSuperAdmin, editFormDirty, createFormDirty, requestAction],
+    [
+      router,
+      searchParams,
+      loadAccounts,
+      isSuperAdmin,
+      editFormDirty,
+      createFormDirty,
+      requestAction,
+    ],
   );
 
   const handleCreateModalOpenChange = useCallback(
@@ -213,64 +221,21 @@ export function OrganizationBankAccountsList() {
     } finally {
       setDeletingId(null);
     }
-  }, [deleteTarget, organizationId, isSuperAdmin, loadAccounts, getOrganizationSettingsErrorMessage]);
+  }, [
+    deleteTarget,
+    organizationId,
+    isSuperAdmin,
+    loadAccounts,
+    getOrganizationSettingsErrorMessage,
+  ]);
 
-  const columns = useMemo<ColumnDef<OrganizationBankAccount, unknown>[]>(
-    () => [
-      {
-        accessorKey: 'bankName',
-        header: tBank('list.columns.bank'),
-        cell: ({ row }) => <span className="text-atg-fg">{row.original.bankName}</span>,
-      },
-      {
-        accessorKey: 'accountName',
-        header: tBank('list.columns.account'),
-        cell: ({ row }) => <span className="text-atg-fg">{row.original.accountName}</span>,
-      },
-      {
-        id: 'accountNumber',
-        header: tBank('list.columns.accountNumber'),
-        cell: ({ row }) => (
-          <span className="font-mono text-sm">
-            {maskAccountNumberForDisplay(row.original.accountNumber)}
-          </span>
-        ),
-      },
-      {
-        accessorKey: 'currency',
-        header: tBank('list.columns.currency'),
-        cell: ({ row }) => row.original.currency,
-      },
-      {
-        id: 'isDefault',
-        header: tBank('list.columns.isDefault'),
-        meta: { align: 'center' },
-        cell: ({ row }) =>
-          row.original.isDefault ? (
-            <DataTableBadge variant="success">{tCommon('boolean.yes')}</DataTableBadge>
-          ) : (
-            <span className="text-atg-muted">{tCommon('empty.dash')}</span>
-          ),
-      },
-      {
-        id: 'actions',
-        header: '',
-        cell: ({ row }) => (
-          <DataTableActions>
-            <DataTableActionButton
-              action="edit"
-              onClick={() => handleEditRequest(row.original)}
-            />
-            <DataTableActionButton
-              action="delete"
-              loading={deletingId === row.original.id}
-              onClick={() => handleDeleteRequest(row.original)}
-            />
-          </DataTableActions>
-        ),
-      },
-    ],
-    [deletingId, handleDeleteRequest, handleEditRequest, tBank, tCommon],
+  const sortedAccounts = useMemo(
+    () =>
+      [...accounts].sort((a, b) => {
+        if (a.isDefault !== b.isDefault) return a.isDefault ? -1 : 1;
+        return a.bankName.localeCompare(b.bankName, undefined, { sensitivity: 'base' });
+      }),
+    [accounts],
   );
 
   if (accessError) {
@@ -301,7 +266,9 @@ export function OrganizationBankAccountsList() {
     <>
       <ParametresPageLayout
         onSubnavNavigate={
-          editFormDirty || createFormDirty ? (_href, proceed) => requestAction(proceed) : undefined
+          editFormDirty || createFormDirty
+            ? (_href, proceed) => requestAction(proceed)
+            : undefined
         }
       >
         <div className="min-w-0 space-y-6">
@@ -314,12 +281,6 @@ export function OrganizationBankAccountsList() {
             }
           />
 
-          <BankAccountsStatCards
-            accounts={accounts}
-            loading={loading}
-            error={listError}
-          />
-
           {isSuperAdmin && organizations.length > 0 ? (
             <OrganizationOrgSelector
               organizations={organizations}
@@ -330,9 +291,110 @@ export function OrganizationBankAccountsList() {
             />
           ) : null}
 
-        {!loading && !listError ? (
-          <DataTable columns={columns} data={accounts} emptyMessage={tBank('list.empty')} />
-        ) : null}
+          <BankAccountsStatCards
+            accounts={accounts}
+            loading={loading}
+            error={listError}
+          />
+
+          <Card variant="dashboard" padding="sm" className="min-w-0">
+            <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h2 className="text-sm font-semibold text-atg-fg">
+                  {tBank('list.sectionTitle')}
+                </h2>
+                <p className="text-xs text-atg-muted">{tBank('list.sectionHint')}</p>
+              </div>
+              {!editing && !creating ? (
+                <Button size="sm" onClick={() => setCreating(true)}>
+                  {tBank('list.newButton')}
+                </Button>
+              ) : null}
+            </div>
+
+            {listError && !loading ? (
+              <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+                {listError}
+              </p>
+            ) : null}
+
+            {loading ? (
+              <p className="text-sm text-atg-muted">{t('form.loading')}</p>
+            ) : sortedAccounts.length === 0 && !listError ? (
+              <div className="rounded-lg border border-dashed border-atg-border px-4 py-10 text-center">
+                <p className="text-sm text-atg-muted">{tBank('list.empty')}</p>
+                <div className="mt-4">
+                  <Button size="sm" onClick={() => setCreating(true)}>
+                    {tBank('list.newButton')}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <ul className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+                {sortedAccounts.map((account) => (
+                  <li key={account.id}>
+                    <div
+                      className={[
+                        'flex h-full flex-col gap-3 rounded-lg border px-4 py-3 transition-colors',
+                        account.isDefault
+                          ? 'border-primary/40 bg-primary/5 ring-1 ring-primary/15'
+                          : 'border-atg-border bg-atg-surface hover:border-atg-border',
+                      ].join(' ')}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h3 className="truncate text-sm font-semibold text-atg-fg">
+                              {account.bankName}
+                            </h3>
+                            <span className="rounded-md bg-atg-elevated px-1.5 py-0.5 font-mono text-xs font-semibold uppercase text-atg-fg">
+                              {account.currency}
+                            </span>
+                            {account.isDefault ? (
+                              <DataTableBadge variant="success">
+                                {tBank('list.defaultBadge')}
+                              </DataTableBadge>
+                            ) : null}
+                          </div>
+                          <p className="mt-1 truncate text-sm text-atg-muted">
+                            {account.accountName}
+                          </p>
+                        </div>
+                        <DataTableActions>
+                          <DataTableActionButton
+                            action="edit"
+                            onClick={() => handleEditRequest(account)}
+                          />
+                          <DataTableActionButton
+                            action="delete"
+                            loading={deletingId === account.id}
+                            onClick={() => handleDeleteRequest(account)}
+                          />
+                        </DataTableActions>
+                      </div>
+
+                      <dl className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
+                        <div className="min-w-0">
+                          <dt className="text-xs text-atg-muted">
+                            {tBank('list.columns.accountNumber')}
+                          </dt>
+                          <dd className="mt-0.5 font-mono text-atg-fg">
+                            {maskAccountNumberForDisplay(account.accountNumber)}
+                          </dd>
+                        </div>
+                        <div className="min-w-0">
+                          <dt className="text-xs text-atg-muted">{tBank('form.swiftBic')}</dt>
+                          <dd className="mt-0.5 font-mono text-atg-fg">
+                            {account.swiftBic?.trim() || tCommon('empty.dash')}
+                          </dd>
+                        </div>
+                      </dl>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Card>
         </div>
       </ParametresPageLayout>
       {organizationId ? (
@@ -377,7 +439,9 @@ export function OrganizationBankAccountsList() {
       />
       <AlertDialog
         open={!!deleteTarget}
-        onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
         title={tBank('list.deleteTitle')}
         description={tBank('list.deleteConfirm')}
         confirmLabel={tBank('list.deleteConfirmButton')}

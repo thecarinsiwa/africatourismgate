@@ -260,7 +260,10 @@
       },
       "newButton": "Nueva cuenta",
       "orgSelectAria": "Organización",
-      "empty": "No hay cuentas bancarias aún."
+      "empty": "No hay cuentas bancarias aún.",
+      "sectionTitle": "Cuentas registradas",
+      "sectionHint": "Cuentas mostradas en el checkout por transferencia y en las instrucciones de pago.",
+      "defaultBadge": "Predeterminada"
     },
     "stats": {
       "total": {

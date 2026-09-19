@@ -260,7 +260,10 @@
       },
       "newButton": "Nouveau compte",
       "orgSelectAria": "Organisation",
-      "empty": "Aucun compte bancaire."
+      "empty": "Aucun compte bancaire.",
+      "sectionTitle": "Comptes enregistrés",
+      "sectionHint": "Comptes affichés au checkout virement et dans les instructions de paiement.",
+      "defaultBadge": "Par défaut"
     },
     "stats": {
       "total": {

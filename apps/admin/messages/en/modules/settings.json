@@ -260,7 +260,10 @@
       },
       "newButton": "New account",
       "orgSelectAria": "Organization",
-      "empty": "No bank accounts yet."
+      "empty": "No bank accounts yet.",
+      "sectionTitle": "Registered accounts",
+      "sectionHint": "Accounts shown on bank-transfer checkout and in payment instructions.",
+      "defaultBadge": "Default"
     },
     "stats": {
       "total": {
