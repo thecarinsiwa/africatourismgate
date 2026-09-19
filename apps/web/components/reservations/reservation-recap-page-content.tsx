@@ -45,7 +45,7 @@ import {
 import { PackagePriceDisplay } from '../packages/package-price-display';
 import { PackageReservationSummary } from '../packages/package-reservation-summary';
 import { CheckoutPageShell } from './checkout-page-shell';
-import { CheckoutManifestForm, manifestDraftToPayload, type ManifestEntryDraft } from './checkout-manifest-form';
+import { CheckoutManifestForm, emptyManifestEntryDraft, manifestDraftToPayload, type ManifestEntryDraft, type ManifestFieldErrors } from './checkout-manifest-form';
 import { CheckoutRecapLine } from './checkout-recap-line';
 import { StripePaymentError } from './stripe-payment-error';
 import { createApiClient } from '@africatourismgate/api-client';
@@ -74,7 +74,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [manifestEntries, setManifestEntries] = useState<ManifestEntryDraft[]>([]);
-  const [manifestErrors, setManifestErrors] = useState<Record<number, string>>({});
+  const [manifestErrors, setManifestErrors] = useState<Record<number, ManifestFieldErrors>>({});
   const [preferredPaymentMethod, setPreferredPaymentMethod] =
     useState<BookingPreferredPaymentMethod | null>(null);
 
@@ -266,6 +266,66 @@ export function ReservationRecapPageContent({ draft }: Props) {
     return 1;
   }, [draft]);
 
+  async function persistManifestEntries(accessToken: string, bookingId: string) {
+    const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api').replace(
+      /\/$/,
+      '',
+    );
+    const apiClient = createApiClient({ baseUrl: apiBaseUrl, accessToken });
+    await Promise.all(
+      manifestEntries.map((entry, i) =>
+        apiClient.createBookingManifestEntry(bookingId, manifestDraftToPayload(entry, i)),
+      ),
+    );
+    const filesToUpload = manifestEntries.filter((e) => e.file);
+    if (filesToUpload.length > 0) {
+      await Promise.allSettled(
+        filesToUpload.map((entry) =>
+          uploadBookingIdentityDocument(bookingId, entry.file!, 'passport'),
+        ),
+      );
+    }
+  }
+
+  function validateManifestEntries(): boolean {
+    if (travelerCount < 1) {
+      setManifestErrors({});
+      return true;
+    }
+    const errors: Record<number, ManifestFieldErrors> = {};
+    const entries =
+      manifestEntries.length >= travelerCount
+        ? manifestEntries
+        : Array.from(
+            { length: travelerCount },
+            (_, i) => manifestEntries[i] ?? emptyManifestEntryDraft(),
+          );
+
+    entries.slice(0, travelerCount).forEach((entry, i) => {
+      const n = String(i + 1);
+      const fieldErrors: ManifestFieldErrors = {};
+      if (!entry.fullName.trim()) {
+        fieldErrors.fullName = ck.manifest.fullNameRequired.replace('{n}', n);
+      }
+      if (!entry.nationality.trim()) {
+        fieldErrors.nationality = ck.manifest.nationalityRequired.replace('{n}', n);
+      }
+      if (!entry.idNumber.trim()) {
+        fieldErrors.idNumber = ck.manifest.idNumberRequired.replace('{n}', n);
+      }
+      if (Object.keys(fieldErrors).length > 0) {
+        errors[i] = fieldErrors;
+      }
+    });
+
+    if (Object.keys(errors).length > 0) {
+      setManifestErrors(errors);
+      return false;
+    }
+    setManifestErrors({});
+    return true;
+  }
+
   async function handleCheckout() {
     if (!draft) return;
     if (!preferredPaymentMethod) {
@@ -278,18 +338,8 @@ export function ReservationRecapPageContent({ draft }: Props) {
       return;
     }
 
-    if (isAssisted) {
-      const errors: Record<number, string> = {};
-      manifestEntries.forEach((entry, i) => {
-        if (!entry.fullName.trim()) {
-          errors[i] = ck.manifest.fullNameRequired.replace('{n}', String(i + 1));
-        }
-      });
-      if (Object.keys(errors).length > 0) {
-        setManifestErrors(errors);
-        return;
-      }
-      setManifestErrors({});
+    if (!validateManifestEntries()) {
+      return;
     }
 
     setSubmitting(true);
@@ -298,33 +348,16 @@ export function ReservationRecapPageContent({ draft }: Props) {
       const payload = buildCheckoutRequest(draft, preferredPaymentMethod);
       if (isAssisted) {
         const response = await requestBooking(accessToken, payload);
-
-        const apiBaseUrl =
-          (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api').replace(/\/$/, '');
-        const apiClient = createApiClient({ baseUrl: apiBaseUrl, accessToken });
-        const filled = manifestEntries.filter((e) => e.fullName.trim());
-        await Promise.all(
-          filled.map((entry, i) =>
-            apiClient.createBookingManifestEntry(
-              response.bookingId,
-              manifestDraftToPayload(entry, i),
-            ),
-          ),
-        );
-        const filesToUpload = filled.filter((e) => e.file);
-        if (filesToUpload.length > 0) {
-          await Promise.allSettled(
-            filesToUpload.map((entry) =>
-              uploadBookingIdentityDocument(response.bookingId, entry.file!, 'passport'),
-            ),
-          );
-        }
-
+        await persistManifestEntries(accessToken, response.bookingId);
         router.push(`/booking/request-success?booking_id=${response.bookingId}`);
         return;
       }
 
       const booking = await createBooking(accessToken, payload);
+      if (travelerCount >= 1) {
+        await persistManifestEntries(accessToken, booking.booking.id);
+      }
+
       if (booking.requiresVerification && booking.verificationId) {
         const params = new URLSearchParams({
           verificationId: booking.verificationId,
@@ -621,7 +654,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
               </p>
             )}
 
-            {isAssisted && !loading && canPay && (
+            {!loading && canPay && travelerCount >= 1 && (
               <CheckoutManifestForm
                 count={travelerCount}
                 entries={manifestEntries}

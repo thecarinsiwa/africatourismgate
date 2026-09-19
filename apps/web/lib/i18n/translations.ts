@@ -224,6 +224,8 @@ export type Translations = {
       conditions: string;
       conditionsPlaceholder: string;
       fullNameRequired: string;
+      nationalityRequired: string;
+      idNumberRequired: string;
       idDocument: string;
       idDocumentHint: string;
       idDocumentSelected: string;
@@ -1562,7 +1564,8 @@ const fr: Translations = {
     },
     manifest: {
       title: 'Informations des voyageurs',
-      subtitle: 'Renseignez les informations de chaque voyageur. Seul le nom complet est obligatoire.',
+      subtitle:
+        'Renseignez les informations de chaque voyageur. Nom, nationalité et n° de pièce sont obligatoires. Le genre est optionnel.',
       travelerN: 'Voyageur {n}',
       fullName: 'Nom complet',
       age: 'Âge',
@@ -1576,6 +1579,8 @@ const fr: Translations = {
       conditions: 'Conditions médicales',
       conditionsPlaceholder: 'Allergies, traitements, besoins particuliers…',
       fullNameRequired: 'Le nom complet du voyageur {n} est obligatoire.',
+      nationalityRequired: 'La nationalité du voyageur {n} est obligatoire.',
+      idNumberRequired: "Le n° de pièce d'identité du voyageur {n} est obligatoire.",
       idDocument: "Pièce d'identité",
       idDocumentHint: 'JPEG, PNG, WebP ou PDF — 10 Mo max.',
       idDocumentSelected: 'Choisir un fichier',
@@ -3086,7 +3091,8 @@ const en: Translations = {
     },
     manifest: {
       title: 'Traveler information',
-      subtitle: 'Fill in the details for each traveler. Only the full name is required.',
+      subtitle:
+        'Fill in the details for each traveler. Full name, nationality and ID / passport number are required. Gender is optional.',
       travelerN: 'Traveler {n}',
       fullName: 'Full name',
       age: 'Age',
@@ -3100,6 +3106,8 @@ const en: Translations = {
       conditions: 'Medical conditions',
       conditionsPlaceholder: 'Allergies, treatments, special needs?',
       fullNameRequired: 'Full name of traveler {n} is required.',
+      nationalityRequired: 'Nationality of traveler {n} is required.',
+      idNumberRequired: 'ID / passport number of traveler {n} is required.',
       idDocument: 'Identity document',
       idDocumentHint: 'JPEG, PNG, WebP or PDF ? 10 MB max.',
       idDocumentSelected: 'Choose a file',

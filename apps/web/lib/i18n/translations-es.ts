@@ -244,7 +244,8 @@ export const es: Translations = {
     },
     manifest: {
       title: 'Información de los viajeros',
-      subtitle: 'Complete los datos de cada viajero. Solo el nombre completo es obligatorio.',
+      subtitle:
+        'Complete los datos de cada viajero. Nombre, nacionalidad y n.º de documento son obligatorios. El género es opcional.',
       travelerN: 'Viajero {n}',
       fullName: 'Nombre completo',
       age: 'Edad',
@@ -258,6 +259,8 @@ export const es: Translations = {
       conditions: 'Condiciones médicas',
       conditionsPlaceholder: 'Alergias, tratamientos, necesidades especiales…',
       fullNameRequired: 'El nombre completo del viajero {n} es obligatorio.',
+      nationalityRequired: 'La nacionalidad del viajero {n} es obligatoria.',
+      idNumberRequired: 'El n.º de documento del viajero {n} es obligatorio.',
       idDocument: 'Documento de identidad',
       idDocumentHint: 'JPEG, PNG, WebP o PDF — 10 MB máx.',
       idDocumentSelected: 'Elegir archivo',
