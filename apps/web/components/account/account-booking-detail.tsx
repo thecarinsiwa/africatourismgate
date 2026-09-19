@@ -43,6 +43,7 @@ export function AccountBookingDetail({
   const [actionError, setActionError] = useState<string | null>(null);
   const [paying, setPaying] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
   const [reviewJustPublished, setReviewJustPublished] = useState(false);
 
   const load = useCallback(async () => {
@@ -109,6 +110,28 @@ export function AccountBookingDetail({
     }
   }
 
+  async function handleDownloadConfirmation() {
+    setActionError(null);
+    setDownloadingPdf(true);
+    try {
+      const client = await getAccountApiClient();
+      const blob = await client.downloadBookingConfirmationPdf(bookingId);
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `reservation-${bookingId.slice(0, 8)}.pdf`;
+      anchor.rel = 'noopener';
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 0);
+    } catch {
+      setActionError(t.account.reservations.detail.downloadConfirmationError);
+    } finally {
+      setDownloadingPdf(false);
+    }
+  }
+
   const assisted = useMemo(() => {
     if (!detail) return false;
     return isAssistedBookingDetail(detail.booking.status, detail.statusHistory ?? []);
@@ -148,6 +171,7 @@ export function AccountBookingDetail({
   const showCashPending = booking.status === 'pending_payment' && prefersCash;
   const canCancel =
     booking.status === 'pending_payment' || booking.status === 'confirmed';
+  const canDownloadConfirmation = booking.status === 'confirmed';
   const canReplyToMessages =
     booking.status !== 'cancelled' && booking.status !== 'refunded';
 
@@ -240,6 +264,7 @@ export function AccountBookingDetail({
       {(showPayActions ||
         showCashPending ||
         canCancel ||
+        canDownloadConfirmation ||
         (isAssisted && booking.status === 'pending_payment' && !prefersCash)) && (
         <div className="flex flex-wrap gap-3 rounded-lg border border-atg-border bg-atg-surface p-4 dark:border-atg-border dark:bg-white/5">
           <p className="w-full text-sm font-medium text-atg-fg">{d.actions}</p>
@@ -254,6 +279,16 @@ export function AccountBookingDetail({
           {canPayImmediate ? (
             <Button type="button" onClick={() => void handlePay()} disabled={paying}>
               {paying ? d.paying : d.payNow}
+            </Button>
+          ) : null}
+          {canDownloadConfirmation ? (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => void handleDownloadConfirmation()}
+              disabled={downloadingPdf}
+            >
+              {downloadingPdf ? d.downloadingConfirmation : d.downloadConfirmation}
             </Button>
           ) : null}
           {isAssisted &&
