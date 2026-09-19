@@ -49,6 +49,8 @@ export type BookingConfirmationEmailPayload = {
   /** ISO 8601 date of confirmation (e.g. booking.updatedAt). */
   confirmedAt: string;
   webUrl?: string;
+  /** When true, copy mentions that a PDF summary is attached. */
+  hasPdfAttachment?: boolean;
 };
 
 export type OperationAlertEmailPayload = {

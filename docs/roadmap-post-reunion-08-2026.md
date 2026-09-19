@@ -78,7 +78,7 @@ Règles :
 | Validation manifeste stricte (passeport, etc.) | ⚠️ Seul le nom complet est vraiment requis | `checkout-manifest-form.tsx`, `booking-manifest-entry.dto.ts`, `booking-manifest-entry.entity.ts` |
 | Contact d’urgence | ❌ Absent | — |
 | Conditions médicales structurées | ⚠️ Texte libre `conditions` | `booking_manifest_entries.conditions` |
-| PDF confirmation fiable (prod) | ⚠️ Génération OK ; PJ email fragile en démo | `apps/api/src/modules/email/booking-detail-pdf*.ts` |
+| PDF confirmation fiable (prod) | ✅ PJ confirmation + logo durci (voir [pr-02-pdf-confirmation-fix.md](./pr-02-pdf-confirmation-fix.md)) | `booking-detail-pdf*.ts`, `booking-engine.service.ts`, `email-attachments.ts` |
 | Téléchargement PDF côté compte client | ❌ PJ email seulement | — |
 | Virement bancaire au checkout | ❌ Comptes org CRUD seulement | `organization-bank-accounts/`, `preferredPaymentMethod: stripe \| cash` |
 | Acomptes / paiements partiels | ❌ | `payments`, Stripe refund partiel seulement |
@@ -217,6 +217,8 @@ Critères d’acceptation :
 - Après confirmation, l’email client contient une PJ PDF ouvrable.
 - Logo présent quand configuré ; fallback propre sinon.
 - Spec unitaires passent.
+
+Cause racine + retest : docs/pr-02-pdf-confirmation-fix.md
 
 À la fin : cause racine documentée en 3–5 lignes + fichiers + comment retester l’email.
 ```
