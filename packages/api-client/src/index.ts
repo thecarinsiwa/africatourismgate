@@ -99,7 +99,6 @@ import type {
   BookingCheckoutRequest,
   BookingCheckoutSessionResponse,
   BookingDetail,
-  BookingPreferredPaymentMethod,
   BookingIdentityDocument,
   ReviewBookingIdentityDocumentRequest,
   RequestIdentityDocumentUploadRequest,
