@@ -94,6 +94,7 @@
       "cancelReasonPlaceholder": "E.g. customer request, unavailability…",
       "cancelBooking": "Cancel booking",
       "recordCashPayment": "Record cash payment",
+      "recordBankTransferPayment": "Mark bank transfer received",
       "readOnly": "Editing requires the bookings.write permission.",
       "assistedStatusHint": "Use the Assisted validation panel to approve or reject this request."
     },
@@ -103,6 +104,13 @@
       "noteLabel": "Note (optional)",
       "notePlaceholder": "E.g. till receipt, receipt number…",
       "confirm": "Collect cash"
+    },
+    "bankTransferDialog": {
+      "title": "Mark bank transfer received",
+      "description": "Confirm that the bank transfer for this booking was received? It will move to confirmed status.",
+      "noteLabel": "Note (optional)",
+      "notePlaceholder": "E.g. bank reference, receipt date…",
+      "confirm": "Confirm transfer"
     },
     "linesEmpty": "No lines.",
     "linesAriaLabel": "Booking lines",
@@ -236,6 +244,7 @@
     "reject": "Reject",
     "invitePayment": "Invite to pay",
     "cashPaymentHint": "The customer chose cash on site. Record the payment from the actions bar.",
+    "bankTransferPaymentHint": "The customer chose bank transfer. Mark the transfer as received from the actions bar once funds are credited.",
     "totalLabel": "Total ({currency})",
     "totalHint": "Adjust the total if needed before approval.",
     "totalOverrideHint": "Auto-calculated from traveler prices. Edit to apply a manual override.",

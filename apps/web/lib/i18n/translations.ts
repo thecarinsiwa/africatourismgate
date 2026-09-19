@@ -141,6 +141,17 @@ export type Translations = {
     paymentMethodStripeHint: string;
     paymentMethodCash: string;
     paymentMethodCashHint: string;
+    paymentMethodBankTransfer: string;
+    paymentMethodBankTransferHint: string;
+    payWithBankTransfer: string;
+    bankTransferSubmitting: string;
+    bankTransferAccountsTitle: string;
+    bankTransferAccountsEmpty: string;
+    bankTransferHolder: string;
+    bankTransferAccountNumber: string;
+    bankTransferSwift: string;
+    bankTransferCurrency: string;
+    bankTransferReferenceHint: string;
     requestBooking: string;
     requestSubmitting: string;
     stripeRedirecting: string;
@@ -170,9 +181,11 @@ export type Translations = {
       title: string;
       titleConfirmed: string;
       titleCashPending: string;
+      titleBankTransferPending: string;
       subtitle: string;
       subtitleConfirmed: string;
       subtitleCashPending: string;
+      subtitleBankTransferPending: string;
       bookingIdLabel: string;
       statusLabel: string;
       statusConfirmed: string;
@@ -180,6 +193,8 @@ export type Translations = {
       statusPendingHint: string;
       statusCashPending: string;
       statusCashPendingHint: string;
+      statusBankTransferPending: string;
+      statusBankTransferPendingHint: string;
       totalLabel: string;
       verifying: string;
       statusUnavailable: string;
@@ -191,6 +206,7 @@ export type Translations = {
       nextStepEmail: string;
       nextStepAccount: string;
       nextStepCash: string;
+      nextStepBankTransfer: string;
     };
     requestSuccess: {
       title: string;
@@ -1058,6 +1074,7 @@ export type Translations = {
         proceedToPayment: string;
         paymentInvitePending: string;
         cashPaymentPending: string;
+        bankTransferPaymentPending: string;
         identityDocuments: {
           title: string;
           subtitle: string;
@@ -1531,6 +1548,19 @@ const fr: Translations = {
     paymentMethodStripeHint: 'Paiement sécurisé en ligne immédiat.',
     paymentMethodCash: 'Espèces sur place',
     paymentMethodCashHint: 'Réservation en attente — paiement en agence ou à l’arrivée.',
+    paymentMethodBankTransfer: 'Virement bancaire',
+    paymentMethodBankTransferHint:
+      'Réservation en attente — réglez par virement ; validation par notre équipe.',
+    payWithBankTransfer: 'Confirmer — paiement par virement',
+    bankTransferSubmitting: 'Enregistrement…',
+    bankTransferAccountsTitle: 'Coordonnées bancaires',
+    bankTransferAccountsEmpty:
+      'Aucun compte bancaire n’est publié pour le moment. Contactez-nous pour obtenir les coordonnées.',
+    bankTransferHolder: 'Titulaire',
+    bankTransferAccountNumber: 'N° de compte / IBAN',
+    bankTransferSwift: 'SWIFT / BIC',
+    bankTransferCurrency: 'Devise',
+    bankTransferReferenceHint: 'Indiquez la référence {ref} dans le libellé du virement.',
     requestBooking: 'Demander une réservation',
     requestSubmitting: 'Envoi de la demande…',
     stripeRedirecting: 'Redirection Stripe…',
@@ -1560,12 +1590,15 @@ const fr: Translations = {
       title: 'Confirmation en cours',
       titleConfirmed: 'Réservation confirmée',
       titleCashPending: 'Réservation enregistrée',
+      titleBankTransferPending: 'Réservation enregistrée',
       subtitle:
         'Votre paiement Stripe est reçu. Nous finalisons la confirmation de votre réservation…',
       subtitleConfirmed:
         'Votre paiement a été reçu et votre réservation est confirmée.',
       subtitleCashPending:
         'Vous avez choisi de payer en espèces. Votre réservation est en attente jusqu’à l’encaissement en agence.',
+      subtitleBankTransferPending:
+        'Vous avez choisi le virement bancaire. Votre réservation reste en attente jusqu’à validation du virement par notre équipe.',
       bookingIdLabel: 'Réf. réservation :',
       statusLabel: 'Statut :',
       statusConfirmed: 'Confirmée',
@@ -1575,6 +1608,9 @@ const fr: Translations = {
       statusCashPending: 'En attente de paiement cash',
       statusCashPendingHint:
         'Présentez-vous en agence ou réglez à l’arrivée. Notre équipe confirmera la réservation après encaissement.',
+      statusBankTransferPending: 'En attente de virement',
+      statusBankTransferPendingHint:
+        'Effectuez le virement avec la référence indiquée. La réservation sera confirmée après validation par notre équipe.',
       totalLabel: 'Total :',
       verifying: 'Vérification du statut en cours…',
       statusUnavailable:
@@ -1587,6 +1623,8 @@ const fr: Translations = {
       nextStepEmail: 'Un e-mail de confirmation vous sera envoyé sous peu.',
       nextStepAccount: 'Consultez vos réservations depuis votre espace compte.',
       nextStepCash: 'Préparez le montant en espèces pour le règlement sur place.',
+      nextStepBankTransfer:
+        'Effectuez le virement en indiquant la référence de réservation dans le libellé.',
     },
     requestSuccess: {
       title: 'Demande envoyée',
@@ -2565,6 +2603,8 @@ const fr: Translations = {
           'Vous recevrez un e-mail avec le lien de paiement dès que votre demande sera validée.',
         cashPaymentPending:
           'Vous avez choisi le paiement en espèces. Réglez sur place ou en agence — la réservation sera confirmée après encaissement.',
+        bankTransferPaymentPending:
+          'Vous avez choisi le virement bancaire. Effectuez le virement avec la référence de réservation — validation par notre équipe requise.',
         identityDocuments: {
           title: "Pièce d'identité",
           subtitle:
@@ -3108,6 +3148,19 @@ const en: Translations = {
     paymentMethodStripeHint: 'Secure online payment now.',
     paymentMethodCash: 'Cash on site',
     paymentMethodCashHint: 'Booking held — pay at the agency or on arrival.',
+    paymentMethodBankTransfer: 'Bank transfer',
+    paymentMethodBankTransferHint:
+      'Booking held — pay by transfer; our team confirms after receipt.',
+    payWithBankTransfer: 'Confirm — pay by bank transfer',
+    bankTransferSubmitting: 'Saving…',
+    bankTransferAccountsTitle: 'Bank details',
+    bankTransferAccountsEmpty:
+      'No bank account is published yet. Contact us to get the transfer details.',
+    bankTransferHolder: 'Account holder',
+    bankTransferAccountNumber: 'Account number / IBAN',
+    bankTransferSwift: 'SWIFT / BIC',
+    bankTransferCurrency: 'Currency',
+    bankTransferReferenceHint: 'Include reference {ref} in the transfer description.',
     requestBooking: 'Request a booking',
     requestSubmitting: 'Submitting request?',
     stripeRedirecting: 'Redirecting to Stripe?',
@@ -3137,11 +3190,14 @@ const en: Translations = {
       title: 'Confirming booking',
       titleConfirmed: 'Booking confirmed',
       titleCashPending: 'Booking registered',
+      titleBankTransferPending: 'Booking registered',
       subtitle:
         'Your Stripe payment was received. We are finalizing your booking confirmation?',
       subtitleConfirmed: 'Your payment was received and your booking is confirmed.',
       subtitleCashPending:
         'You chose to pay in cash. Your booking stays pending until payment is collected at the agency.',
+      subtitleBankTransferPending:
+        'You chose bank transfer. Your booking stays pending until our team validates the transfer.',
       bookingIdLabel: 'Booking ref:',
       statusLabel: 'Status:',
       statusConfirmed: 'Confirmed',
@@ -3151,6 +3207,9 @@ const en: Translations = {
       statusCashPending: 'Awaiting cash payment',
       statusCashPendingHint:
         'Pay at the agency or on arrival. Our team will confirm the booking after collection.',
+      statusBankTransferPending: 'Awaiting bank transfer',
+      statusBankTransferPendingHint:
+        'Complete the transfer with the reference shown. The booking will be confirmed after staff validation.',
       totalLabel: 'Total:',
       verifying: 'Checking status?',
       statusUnavailable: 'Detailed status is unavailable for now. Refresh in a moment.',
@@ -3162,6 +3221,8 @@ const en: Translations = {
       nextStepEmail: 'A confirmation email will be sent shortly.',
       nextStepAccount: 'View your bookings in your account area.',
       nextStepCash: 'Have the cash amount ready for on-site payment.',
+      nextStepBankTransfer:
+        'Make the transfer and include the booking reference in the description.',
     },
     requestSuccess: {
       title: 'Request submitted',
@@ -4132,6 +4193,8 @@ const en: Translations = {
           'You will receive an email with the payment link once your request is approved.',
         cashPaymentPending:
           'You chose to pay in cash. Pay on site or at the agency — the booking will be confirmed after collection.',
+        bankTransferPaymentPending:
+          'You chose bank transfer. Complete the transfer with the booking reference — staff validation is required.',
         identityDocuments: {
           title: 'Identity document',
           subtitle:

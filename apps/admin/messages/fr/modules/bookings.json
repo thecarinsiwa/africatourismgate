@@ -94,6 +94,7 @@
       "cancelReasonPlaceholder": "Ex. demande client, indisponibilité…",
       "cancelBooking": "Annuler la réservation",
       "recordCashPayment": "Enregistrer paiement cash",
+      "recordBankTransferPayment": "Marquer virement reçu",
       "readOnly": "Modification réservée aux comptes avec la permission bookings.write.",
       "assistedStatusHint": "Utilisez le panneau « Validation assistée » pour approuver ou refuser cette demande."
     },
@@ -103,6 +104,13 @@
       "noteLabel": "Note (optionnel)",
       "notePlaceholder": "Ex. reçu en caisse, numéro de reçu…",
       "confirm": "Encaisser"
+    },
+    "bankTransferDialog": {
+      "title": "Marquer le virement reçu",
+      "description": "Confirmer la réception du virement pour cette réservation ? Elle passera au statut confirmée.",
+      "noteLabel": "Note (optionnel)",
+      "notePlaceholder": "Ex. référence bancaire, date de réception…",
+      "confirm": "Confirmer le virement"
     },
     "linesEmpty": "Aucune ligne.",
     "linesAriaLabel": "Lignes de réservation",
@@ -236,6 +244,7 @@
     "reject": "Refuser",
     "invitePayment": "Inviter au paiement",
     "cashPaymentHint": "Le client a choisi le paiement cash sur place. Enregistrez l'encaissement depuis la barre d'actions.",
+    "bankTransferPaymentHint": "Le client a choisi le virement bancaire. Marquez le virement reçu depuis la barre d'actions une fois les fonds crédités.",
     "totalLabel": "Total ({currency})",
     "totalHint": "Ajustez le total si nécessaire avant approbation.",
     "totalOverrideHint": "Calculé automatiquement à partir des prix voyageurs. Modifiez pour forcer un total manuel.",

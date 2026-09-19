@@ -7,7 +7,8 @@
   },
   "providers": {
     "stripe": "Stripe",
-    "cash": "Espèces"
+    "cash": "Espèces",
+    "bank_transfer": "Virement"
   },
   "refundLabels": {
     "partial": "Remboursement partiel",

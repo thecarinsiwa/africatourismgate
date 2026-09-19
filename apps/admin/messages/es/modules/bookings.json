@@ -94,6 +94,7 @@
       "cancelReasonPlaceholder": "Ej. solicitud del cliente, no disponibilidad…",
       "cancelBooking": "Cancelar la reserva",
       "recordCashPayment": "Registrar pago en efectivo",
+      "recordBankTransferPayment": "Marcar transferencia recibida",
       "readOnly": "La edición requiere el permiso bookings.write.",
       "assistedStatusHint": "Use el panel de validación asistida para aprobar o rechazar esta solicitud."
     },
@@ -103,6 +104,13 @@
       "noteLabel": "Nota (opcional)",
       "notePlaceholder": "Ej. recibo de caja, número de recibo…",
       "confirm": "Cobrar"
+    },
+    "bankTransferDialog": {
+      "title": "Marcar transferencia recibida",
+      "description": "¿Confirmar la recepción de la transferencia de esta reserva? Pasará al estado confirmada.",
+      "noteLabel": "Nota (opcional)",
+      "notePlaceholder": "Ej. referencia bancaria, fecha de recepción…",
+      "confirm": "Confirmar transferencia"
     },
     "linesEmpty": "Ninguna línea.",
     "linesAriaLabel": "Líneas de reserva",
@@ -236,6 +244,7 @@
     "reject": "Rechazar",
     "invitePayment": "Invitar al pago",
     "cashPaymentHint": "El cliente eligió pago en efectivo. Registre el cobro desde la barra de acciones.",
+    "bankTransferPaymentHint": "El cliente eligió transferencia bancaria. Marque la transferencia como recibida desde la barra de acciones una vez acreditados los fondos.",
     "totalLabel": "Total ({currency})",
     "totalHint": "Ajuste el total si es necesario antes de aprobar.",
     "totalOverrideHint": "Calculado automáticamente a partir de los precios por viajero. Edite para aplicar un total manual.",

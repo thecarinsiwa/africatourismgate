@@ -83,6 +83,12 @@ export function BookingVerifyPageContent() {
           );
           return;
         }
+        if (detail.booking.preferredPaymentMethod === 'bank_transfer') {
+          router.push(
+            `/booking/success?booking_id=${resolvedBookingId}&payment=bank_transfer`,
+          );
+          return;
+        }
 
         const checkout = await createBookingCheckoutSession(
           response.accessToken,

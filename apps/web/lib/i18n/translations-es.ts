@@ -170,6 +170,19 @@ export const es: Translations = {
     paymentMethodStripeHint: 'Pago seguro en línea inmediato.',
     paymentMethodCash: 'Efectivo en el lugar',
     paymentMethodCashHint: 'Reserva en espera — pague en agencia o a la llegada.',
+    paymentMethodBankTransfer: 'Transferencia bancaria',
+    paymentMethodBankTransferHint:
+      'Reserva en espera — pague por transferencia; nuestro equipo confirma al recibirla.',
+    payWithBankTransfer: 'Confirmar — pago por transferencia',
+    bankTransferSubmitting: 'Guardando…',
+    bankTransferAccountsTitle: 'Datos bancarios',
+    bankTransferAccountsEmpty:
+      'No hay ninguna cuenta bancaria publicada. Contáctenos para obtener los datos.',
+    bankTransferHolder: 'Titular',
+    bankTransferAccountNumber: 'N.º de cuenta / IBAN',
+    bankTransferSwift: 'SWIFT / BIC',
+    bankTransferCurrency: 'Divisa',
+    bankTransferReferenceHint: 'Indique la referencia {ref} en el concepto de la transferencia.',
     requestBooking: 'Solicitar una reserva',
     requestSubmitting: 'Enviando solicitud…',
     stripeRedirecting: 'Redirigiendo a Stripe…',
@@ -199,11 +212,14 @@ export const es: Translations = {
       title: 'Confirmación en curso',
       titleConfirmed: 'Reserva confirmada',
       titleCashPending: 'Reserva registrada',
+      titleBankTransferPending: 'Reserva registrada',
       subtitle:
         'Su pago Stripe fue recibido. Estamos finalizando la confirmación de su reserva…',
       subtitleConfirmed: 'Su pago fue recibido y su reserva está confirmada.',
       subtitleCashPending:
         'Ha elegido pagar en efectivo. Su reserva permanece pendiente hasta el cobro en agencia.',
+      subtitleBankTransferPending:
+        'Ha elegido transferencia bancaria. Su reserva permanece pendiente hasta que nuestro equipo valide la transferencia.',
       bookingIdLabel: 'Ref. reserva:',
       statusLabel: 'Estado:',
       statusConfirmed: 'Confirmada',
@@ -213,6 +229,9 @@ export const es: Translations = {
       statusCashPending: 'Pendiente de pago en efectivo',
       statusCashPendingHint:
         'Pague en agencia o a la llegada. Nuestro equipo confirmará la reserva tras el cobro.',
+      statusBankTransferPending: 'Pendiente de transferencia',
+      statusBankTransferPendingHint:
+        'Realice la transferencia con la referencia indicada. La reserva se confirmará tras la validación del personal.',
       totalLabel: 'Total:',
       verifying: 'Verificando estado…',
       statusUnavailable: 'Estado detallado no disponible por ahora. Actualice en un momento.',
@@ -224,6 +243,8 @@ export const es: Translations = {
       nextStepEmail: 'Recibirá un correo de confirmación en breve.',
       nextStepAccount: 'Consulte sus reservas en su área de cuenta.',
       nextStepCash: 'Prepare el importe en efectivo para el pago en el lugar.',
+      nextStepBankTransfer:
+        'Realice la transferencia e indique la referencia de reserva en el concepto.',
     },
     requestSuccess: {
       title: 'Solicitud enviada',
@@ -1199,6 +1220,8 @@ export const es: Translations = {
           'Recibirá un correo con el enlace de pago cuando su solicitud sea validada.',
         cashPaymentPending:
           'Ha elegido pagar en efectivo. Pague en el lugar o en agencia — la reserva se confirmará tras el cobro.',
+        bankTransferPaymentPending:
+          'Ha elegido transferencia bancaria. Realice la transferencia con la referencia de reserva — se requiere validación del personal.',
         identityDocuments: {
           title: 'Documento de identidad',
           subtitle:

@@ -106,6 +106,8 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [cashDialogOpen, setCashDialogOpen] = useState(false);
   const [cashNote, setCashNote] = useState('');
+  const [bankTransferDialogOpen, setBankTransferDialogOpen] = useState(false);
+  const [bankTransferNote, setBankTransferNote] = useState('');
   const [activeTab, setActiveTab] = useState('manifest');
   const [manifestSync, setManifestSync] = useState(0);
 
@@ -236,6 +238,25 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       setActionLoading(false);
     }
   }, [bookingId, cashNote, detail, load, getBookingsErrorMessage]);
+
+  const handleRecordBankTransferPayment = useCallback(async () => {
+    if (!detail) return false;
+    setActionError(null);
+    setActionLoading(true);
+    try {
+      await getApiClient().recordBookingBankTransferPayment(bookingId, {
+        note: bankTransferNote.trim() || undefined,
+      });
+      setBankTransferNote('');
+      await load();
+      return true;
+    } catch (error) {
+      setActionError(getBookingsErrorMessage(error));
+      return false;
+    } finally {
+      setActionLoading(false);
+    }
+  }, [bookingId, bankTransferNote, detail, load, getBookingsErrorMessage]);
 
   const statusOptions = useMemo(() => {
     const current = detail?.booking.status;
@@ -374,8 +395,12 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const hasSucceededPayment = detail.payments.some(
     (payment) => payment.status === 'succeeded',
   );
-  const canCollectCash =
+  const canCollectOfflinePayment =
     canWrite && booking.status === 'pending_payment' && !hasSucceededPayment;
+  const canCollectCash =
+    canCollectOfflinePayment && booking.preferredPaymentMethod !== 'bank_transfer';
+  const canRecordBankTransfer =
+    canCollectOfflinePayment && booking.preferredPaymentMethod === 'bank_transfer';
   const preferredPaymentLabel = booking.preferredPaymentMethod
     ? formatPaymentProvider(booking.preferredPaymentMethod, providerLabels, emptyDash)
     : t('summary.preferredPaymentUnspecified');
@@ -389,7 +414,11 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const clientName = `${client.firstName} ${client.lastName}`.trim();
   const showActionsBar =
     canWrite &&
-    (showManualStatusChange || canCancel || canCollectCash || booking.status === 'pending_approval');
+    (showManualStatusChange ||
+      canCancel ||
+      canCollectCash ||
+      canRecordBankTransfer ||
+      booking.status === 'pending_approval');
 
   return (
     <div className={`min-w-0 space-y-6${showActionsBar ? ' pb-24' : ''}`}>
@@ -595,6 +624,17 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
                 {t('actions.recordCashPayment')}
               </Button>
             ) : null}
+            {canRecordBankTransfer ? (
+              <Button
+                type="button"
+                variant="primary"
+                disabled={actionLoading}
+                className="w-full sm:w-auto"
+                onClick={() => setBankTransferDialogOpen(true)}
+              >
+                {t('actions.recordBankTransferPayment')}
+              </Button>
+            ) : null}
             {canCancel ? (
               <Button
                 type="button"
@@ -791,6 +831,57 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
               }}
             >
               {t('cashDialog.confirm')}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        open={bankTransferDialogOpen}
+        onOpenChange={(open) => {
+          if (!actionLoading) {
+            setBankTransferDialogOpen(open);
+            if (!open) setBankTransferNote('');
+          }
+        }}
+        title={t('bankTransferDialog.title')}
+        description={t('bankTransferDialog.description')}
+        showClose
+        className="max-w-lg"
+      >
+        <div className="space-y-4">
+          <Textarea
+            name="bankTransferNote"
+            label={t('bankTransferDialog.noteLabel')}
+            rows={3}
+            value={bankTransferNote}
+            onChange={(e) => setBankTransferNote(e.target.value)}
+            placeholder={t('bankTransferDialog.notePlaceholder')}
+          />
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={actionLoading}
+              onClick={() => {
+                setBankTransferDialogOpen(false);
+                setBankTransferNote('');
+              }}
+            >
+              {tActions('cancel')}
+            </Button>
+            <Button
+              type="button"
+              variant="primary"
+              disabled={actionLoading}
+              loading={actionLoading}
+              onClick={() => {
+                void handleRecordBankTransferPayment().then((ok) => {
+                  if (ok) setBankTransferDialogOpen(false);
+                });
+              }}
+            >
+              {t('bankTransferDialog.confirm')}
             </Button>
           </div>
         </div>

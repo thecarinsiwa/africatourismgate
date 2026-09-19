@@ -3,12 +3,14 @@
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import type { BookingDetail, BookingStatus } from '@africatourismgate/types';
+import type { BookingDetail, BookingStatus, PublicPaymentBankAccount } from '@africatourismgate/types';
 import { Spinner } from '@africatourismgate/ui';
 import { getBooking, syncBookingPayment } from '../../lib/api/booking';
+import { listPublicPaymentBankAccounts } from '../../lib/api/public-payment-bank-accounts';
 import { ensureClientAccessToken } from '../../lib/auth/client-session';
 import { formatHotelPrice } from '../../lib/hotels/listings';
 import { useTranslations } from '../../lib/i18n/locale-provider';
+import { BankTransferAccountsPanel } from './bank-transfer-accounts-panel';
 import { CheckoutPageShell } from './checkout-page-shell';
 
 const CONFIRMED: BookingStatus = 'confirmed';
@@ -19,6 +21,18 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
     window.setTimeout(resolve, ms);
   });
+}
+
+function isOfflinePayment(
+  paymentParam: string | null,
+  preferred: string | null | undefined,
+): boolean {
+  return (
+    paymentParam === 'cash' ||
+    paymentParam === 'bank_transfer' ||
+    preferred === 'cash' ||
+    preferred === 'bank_transfer'
+  );
 }
 
 export function ReservationSuccessPageContent() {
@@ -32,6 +46,7 @@ export function ReservationSuccessPageContent() {
   const bookingId = searchParams.get('booking_id');
   const paymentParam = searchParams.get('payment');
   const [booking, setBooking] = useState<BookingDetail | null>(null);
+  const [bankAccounts, setBankAccounts] = useState<PublicPaymentBankAccount[]>([]);
   const [status, setStatus] = useState<'idle' | 'loading' | 'confirming' | 'ready' | 'error'>(
     'idle',
   );
@@ -58,9 +73,11 @@ export function ReservationSuccessPageContent() {
         return detail;
       }
 
-      const isCash =
-        paymentParam === 'cash' || detail.booking.preferredPaymentMethod === 'cash';
-      if (isCash || detail.booking.status !== 'pending_payment') {
+      const offline = isOfflinePayment(
+        paymentParam,
+        detail.booking.preferredPaymentMethod,
+      );
+      if (offline || detail.booking.status !== 'pending_payment') {
         return detail;
       }
 
@@ -114,24 +131,49 @@ export function ReservationSuccessPageContent() {
     };
   }, [bookingId, pathname, paymentParam, router, searchParams]);
 
+  const prefersBankTransfer =
+    paymentParam === 'bank_transfer' ||
+    booking?.booking.preferredPaymentMethod === 'bank_transfer';
+
+  useEffect(() => {
+    if (!prefersBankTransfer || status !== 'ready') return;
+    let cancelled = false;
+    void listPublicPaymentBankAccounts()
+      .then((accounts) => {
+        if (!cancelled) setBankAccounts(accounts);
+      })
+      .catch(() => {
+        if (!cancelled) setBankAccounts([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [prefersBankTransfer, status]);
+
   const isConfirmed = booking?.booking.status === CONFIRMED;
   const isCashPending =
     !isConfirmed &&
-    (paymentParam === 'cash' ||
-      booking?.booking.preferredPaymentMethod === 'cash') &&
+    (paymentParam === 'cash' || booking?.booking.preferredPaymentMethod === 'cash') &&
     booking?.booking.status === 'pending_payment';
-  const isPendingPayment = booking?.booking.status === 'pending_payment' && !isCashPending;
+  const isBankTransferPending =
+    !isConfirmed && prefersBankTransfer && booking?.booking.status === 'pending_payment';
+  const isOfflinePending = isCashPending || isBankTransferPending;
+  const isPendingPayment = booking?.booking.status === 'pending_payment' && !isOfflinePending;
 
   const pageTitle = isConfirmed
     ? s.titleConfirmed
-    : isCashPending
-      ? s.titleCashPending
-      : s.title;
+    : isBankTransferPending
+      ? s.titleBankTransferPending
+      : isCashPending
+        ? s.titleCashPending
+        : s.title;
   const pageSubtitle = isConfirmed
     ? s.subtitleConfirmed
-    : isCashPending
-      ? s.subtitleCashPending
-      : s.subtitle;
+    : isBankTransferPending
+      ? s.subtitleBankTransferPending
+      : isCashPending
+        ? s.subtitleCashPending
+        : s.subtitle;
 
   return (
     <CheckoutPageShell
@@ -158,11 +200,13 @@ export function ReservationSuccessPageContent() {
                 <span className="font-semibold">{s.statusLabel}</span>{' '}
                 {isConfirmed
                   ? s.statusConfirmed
-                  : isCashPending
-                    ? s.statusCashPending
-                    : isPendingPayment
-                      ? s.statusPendingPayment
-                      : booking.booking.status}
+                  : isBankTransferPending
+                    ? s.statusBankTransferPending
+                    : isCashPending
+                      ? s.statusCashPending
+                      : isPendingPayment
+                        ? s.statusPendingPayment
+                        : booking.booking.status}
               </p>
               <p>
                 <span className="font-semibold">{s.totalLabel}</span>{' '}
@@ -170,6 +214,11 @@ export function ReservationSuccessPageContent() {
               </p>
               {isCashPending ? (
                 <p className="text-amber-700 dark:text-amber-300">{s.statusCashPendingHint}</p>
+              ) : null}
+              {isBankTransferPending ? (
+                <p className="text-amber-700 dark:text-amber-300">
+                  {s.statusBankTransferPendingHint}
+                </p>
               ) : null}
               {isPendingPayment ? (
                 <p className="text-amber-700 dark:text-amber-300">{s.statusPendingHint}</p>
@@ -181,12 +230,36 @@ export function ReservationSuccessPageContent() {
           )}
         </div>
 
+        {isBankTransferPending ? (
+          <div className="mt-5">
+            <BankTransferAccountsPanel
+              accounts={bankAccounts}
+              bookingRef={bookingId}
+              labels={{
+                title: ck.bankTransferAccountsTitle,
+                empty: ck.bankTransferAccountsEmpty,
+                holder: ck.bankTransferHolder,
+                accountNumber: ck.bankTransferAccountNumber,
+                swift: ck.bankTransferSwift,
+                currency: ck.bankTransferCurrency,
+                referenceHint: ck.bankTransferReferenceHint,
+              }}
+            />
+          </div>
+        ) : null}
+
         <section className="mt-6 rounded-lg bg-atg-surface px-4 py-3 dark:bg-atg-surface">
           <h2 className="text-sm font-bold uppercase tracking-wide text-atg-fg">
             {s.nextStepsTitle}
           </h2>
           <ul className="mt-2 space-y-1 text-sm text-atg-muted">
-            {isCashPending ? <li>• {s.nextStepCash}</li> : <li>• {s.nextStepEmail}</li>}
+            {isBankTransferPending ? (
+              <li>• {s.nextStepBankTransfer}</li>
+            ) : isCashPending ? (
+              <li>• {s.nextStepCash}</li>
+            ) : (
+              <li>• {s.nextStepEmail}</li>
+            )}
             <li>• {s.nextStepAccount}</li>
           </ul>
         </section>

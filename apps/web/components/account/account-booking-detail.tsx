@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import { Button, Spinner } from '@africatourismgate/ui';
-import type { BookingDetail } from '@africatourismgate/types';
+import type { BookingDetail, PublicPaymentBankAccount } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
+import { listPublicPaymentBankAccounts } from '../../lib/api/public-payment-bank-accounts';
 import {
   bookingItemTypeLabels,
   bookingStatusLabels,
@@ -21,6 +22,7 @@ import { BookingReviewForm } from './booking-review-form';
 import { BookingStatusBadge } from './booking-status-badge';
 import { BookingStatusTimeline, isAssistedBookingDetail } from './booking-status-timeline';
 import { AccountBookingManifestSection } from './account-booking-manifest-section';
+import { BankTransferAccountsPanel } from '../reservations/bank-transfer-accounts-panel';
 
 type Props = {
   bookingId: string;
@@ -45,6 +47,7 @@ export function AccountBookingDetail({
   const [cancelling, setCancelling] = useState(false);
   const [downloadingPdf, setDownloadingPdf] = useState(false);
   const [reviewJustPublished, setReviewJustPublished] = useState(false);
+  const [bankAccounts, setBankAccounts] = useState<PublicPaymentBankAccount[]>([]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -67,6 +70,27 @@ export function AccountBookingDetail({
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    if (
+      !detail ||
+      detail.booking.status !== 'pending_payment' ||
+      detail.booking.preferredPaymentMethod !== 'bank_transfer'
+    ) {
+      return;
+    }
+    let cancelled = false;
+    void listPublicPaymentBankAccounts()
+      .then((accounts) => {
+        if (!cancelled) setBankAccounts(accounts);
+      })
+      .catch(() => {
+        if (!cancelled) setBankAccounts([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [detail]);
 
   useEffect(() => {
     if (!detail || loading) return;
@@ -163,12 +187,15 @@ export function AccountBookingDetail({
   const d = t.account.reservations.detail;
   const isAssisted = assisted;
   const prefersCash = booking.preferredPaymentMethod === 'cash';
+  const prefersBankTransfer = booking.preferredPaymentMethod === 'bank_transfer';
+  const prefersOfflinePayment = prefersCash || prefersBankTransfer;
   const canProceedToPayment =
-    booking.status === 'pending_payment' && Boolean(paymentInvited) && !prefersCash;
+    booking.status === 'pending_payment' && Boolean(paymentInvited) && !prefersOfflinePayment;
   const canPayImmediate =
-    booking.status === 'pending_payment' && !isAssisted && !prefersCash;
+    booking.status === 'pending_payment' && !isAssisted && !prefersOfflinePayment;
   const showPayActions = canProceedToPayment || canPayImmediate;
   const showCashPending = booking.status === 'pending_payment' && prefersCash;
+  const showBankTransferPending = booking.status === 'pending_payment' && prefersBankTransfer;
   const canCancel =
     booking.status === 'pending_payment' || booking.status === 'confirmed';
   const canDownloadConfirmation = booking.status === 'confirmed';
@@ -263,13 +290,32 @@ export function AccountBookingDetail({
 
       {(showPayActions ||
         showCashPending ||
+        showBankTransferPending ||
         canCancel ||
         canDownloadConfirmation ||
-        (isAssisted && booking.status === 'pending_payment' && !prefersCash)) && (
+        (isAssisted && booking.status === 'pending_payment' && !prefersOfflinePayment)) && (
         <div className="flex flex-wrap gap-3 rounded-lg border border-atg-border bg-atg-surface p-4 dark:border-atg-border dark:bg-white/5">
           <p className="w-full text-sm font-medium text-atg-fg">{d.actions}</p>
           {showCashPending ? (
             <p className="w-full text-sm text-atg-muted">{d.cashPaymentPending}</p>
+          ) : null}
+          {showBankTransferPending ? (
+            <div className="w-full space-y-3">
+              <p className="text-sm text-atg-muted">{d.bankTransferPaymentPending}</p>
+              <BankTransferAccountsPanel
+                accounts={bankAccounts}
+                bookingRef={booking.id}
+                labels={{
+                  title: t.checkout.bankTransferAccountsTitle,
+                  empty: t.checkout.bankTransferAccountsEmpty,
+                  holder: t.checkout.bankTransferHolder,
+                  accountNumber: t.checkout.bankTransferAccountNumber,
+                  swift: t.checkout.bankTransferSwift,
+                  currency: t.checkout.bankTransferCurrency,
+                  referenceHint: t.checkout.bankTransferReferenceHint,
+                }}
+              />
+            </div>
           ) : null}
           {canProceedToPayment ? (
             <Button type="button" onClick={() => void handlePay()} disabled={paying}>
@@ -294,7 +340,7 @@ export function AccountBookingDetail({
           {isAssisted &&
           booking.status === 'pending_payment' &&
           !paymentInvited &&
-          !prefersCash ? (
+          !prefersOfflinePayment ? (
             <p className="w-full text-sm text-atg-muted">{d.paymentInvitePending}</p>
           ) : null}
           {canCancel ? (

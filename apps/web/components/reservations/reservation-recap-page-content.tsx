@@ -1,11 +1,16 @@
 'use client';
 
-import type { BookingPreferredPaymentMethod, PropertyDetail } from '@africatourismgate/types';
+import type {
+  BookingPreferredPaymentMethod,
+  PropertyDetail,
+  PublicPaymentBankAccount,
+} from '@africatourismgate/types';
 import { Button, Spinner } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { createBooking, createBookingCheckoutSession, requestBooking } from '../../lib/api/booking';
+import { listPublicPaymentBankAccounts } from '../../lib/api/public-payment-bank-accounts';
 import { uploadBookingIdentityDocument } from '../../lib/api/booking-identity-documents';
 import { formatCarPrice } from '../../lib/cars/listings';
 import type { VehicleDetail } from '../../lib/cars/types';
@@ -48,6 +53,7 @@ import { CheckoutPageShell } from './checkout-page-shell';
 import { CheckoutManifestForm, emptyManifestEntryDraft, manifestDraftToPayload, type ManifestEntryDraft, type ManifestFieldErrors } from './checkout-manifest-form';
 import { CheckoutRecapLine } from './checkout-recap-line';
 import { StripePaymentError } from './stripe-payment-error';
+import { BankTransferAccountsPanel } from './bank-transfer-accounts-panel';
 import { createApiClient } from '@africatourismgate/api-client';
 
 type Props = {
@@ -77,6 +83,29 @@ export function ReservationRecapPageContent({ draft }: Props) {
   const [manifestErrors, setManifestErrors] = useState<Record<number, ManifestFieldErrors>>({});
   const [preferredPaymentMethod, setPreferredPaymentMethod] =
     useState<BookingPreferredPaymentMethod | null>(null);
+  const [bankAccounts, setBankAccounts] = useState<PublicPaymentBankAccount[]>([]);
+  const [bankAccountsLoading, setBankAccountsLoading] = useState(false);
+
+  useEffect(() => {
+    if (preferredPaymentMethod !== 'bank_transfer') {
+      return;
+    }
+    let cancelled = false;
+    setBankAccountsLoading(true);
+    void listPublicPaymentBankAccounts()
+      .then((accounts) => {
+        if (!cancelled) setBankAccounts(accounts);
+      })
+      .catch(() => {
+        if (!cancelled) setBankAccounts([]);
+      })
+      .finally(() => {
+        if (!cancelled) setBankAccountsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [preferredPaymentMethod]);
 
   useEffect(() => {
     let cancelled = false;
@@ -383,6 +412,13 @@ export function ReservationRecapPageContent({ draft }: Props) {
       if (preferredPaymentMethod === 'cash') {
         router.push(
           `/booking/success?booking_id=${booking.booking.id}&payment=cash`,
+        );
+        return;
+      }
+
+      if (preferredPaymentMethod === 'bank_transfer') {
+        router.push(
+          `/booking/success?booking_id=${booking.booking.id}&payment=bank_transfer`,
         );
         return;
       }
@@ -727,6 +763,42 @@ export function ReservationRecapPageContent({ draft }: Props) {
                     </span>
                   </span>
                 </label>
+                <label className="flex cursor-pointer gap-3 rounded-lg border border-atg-border p-3 has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:border-atg-border">
+                  <input
+                    type="radio"
+                    name="preferredPaymentMethod"
+                    value="bank_transfer"
+                    checked={preferredPaymentMethod === 'bank_transfer'}
+                    onChange={() => {
+                      setPreferredPaymentMethod('bank_transfer');
+                      setError(null);
+                    }}
+                    className="mt-1"
+                  />
+                  <span>
+                    <span className="block text-sm font-medium text-atg-fg">
+                      {ck.paymentMethodBankTransfer}
+                    </span>
+                    <span className="block text-xs text-atg-muted">
+                      {ck.paymentMethodBankTransferHint}
+                    </span>
+                  </span>
+                </label>
+                {preferredPaymentMethod === 'bank_transfer' ? (
+                  <BankTransferAccountsPanel
+                    accounts={bankAccounts}
+                    loading={bankAccountsLoading}
+                    labels={{
+                      title: ck.bankTransferAccountsTitle,
+                      empty: ck.bankTransferAccountsEmpty,
+                      holder: ck.bankTransferHolder,
+                      accountNumber: ck.bankTransferAccountNumber,
+                      swift: ck.bankTransferSwift,
+                      currency: ck.bankTransferCurrency,
+                      referenceHint: ck.bankTransferReferenceHint,
+                    }}
+                  />
+                ) : null}
               </fieldset>
             ) : null}
 
@@ -760,14 +832,18 @@ export function ReservationRecapPageContent({ draft }: Props) {
                     ? ck.requestSubmitting
                     : preferredPaymentMethod === 'cash'
                       ? ck.cashSubmitting
-                      : ck.stripeRedirecting
+                      : preferredPaymentMethod === 'bank_transfer'
+                        ? ck.bankTransferSubmitting
+                        : ck.stripeRedirecting
                 }
               >
                 {isAssisted
                   ? ck.requestBooking
                   : preferredPaymentMethod === 'cash'
                     ? ck.payWithCash
-                    : ck.payWithStripe}
+                    : preferredPaymentMethod === 'bank_transfer'
+                      ? ck.payWithBankTransfer
+                      : ck.payWithStripe}
               </Button>
             </div>
           </div>
