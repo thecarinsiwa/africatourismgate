@@ -1,4 +1,5 @@
 import PDFDocument from 'pdfkit';
+import { formatNationalityDisplay } from '@africatourismgate/utils';
 import type { BookingDetailPdfInput } from './booking-detail-pdf.types';
 import { formatMoney } from './email.templates';
 import { formatEmailFooter } from './email-footer.utils';
@@ -123,6 +124,7 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
   let headerX = PAGE_MARGIN;
   let headerTop = PAGE_MARGIN;
   const logoHeight = 48;
+  let logoDrawn = false;
   if (input.logoPath) {
     try {
       const logoWidth = 120;
@@ -131,8 +133,9 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
       });
       headerX = PAGE_MARGIN + logoWidth + 10;
       headerTop = PAGE_MARGIN;
+      logoDrawn = true;
     } catch {
-      // logo optional
+      // logo optional — ne pas réserver d'espace si le rendu échoue
     }
   }
 
@@ -153,7 +156,7 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
 
   doc.y = Math.max(
     doc.y,
-    input.logoPath ? PAGE_MARGIN + logoHeight + 4 : PAGE_MARGIN + 44,
+    logoDrawn ? PAGE_MARGIN + logoHeight + 4 : PAGE_MARGIN + 44,
   );
   doc
     .fillColor(mutedColor)
@@ -324,7 +327,7 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
         traveler.fullName,
         age,
         sexLabel(traveler.sex, labels),
-        traveler.nationality?.trim() || '—',
+        formatNationalityDisplay(traveler.nationality, input.locale) || '—',
         traveler.idNumber?.trim() || '—',
         price,
         notes,

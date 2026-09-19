@@ -1,20 +1,24 @@
 import { existsSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { Logger } from '@nestjs/common';
 import {
   brandingUploadUrl,
   getApiBaseUrl,
   normalizeBrandingAssetUrl,
 } from '../../common/utils/public-asset-url';
 
+const logger = new Logger('EmailAttachments');
+
 const LOGO_FILENAMES = ['atg-logo.png', 'atg-email-logo.png'];
-/** URL HTTPS publique du logo (inline dans le HTML, jamais en pièce jointe). */
-const PRODUCTION_LOGO_URL =
-  'https://app-africatourismgate.org/api/email-assets/atg-logo.png';
+const LOGO_FETCH_TIMEOUT_MS = 5_000;
 const PRODUCTION_LOGO_FALLBACK =
   'https://app-africatourismgate.org/api/uploads/branding/1779898371337-64a7d630-0e1c-4e0e-8813-baa68e6dd1ba.png';
 
-function brandingUploadsDir(): string {
-  return join(process.cwd(), 'uploads', 'branding');
+function brandingUploadsDirs(): string[] {
+  return [
+    join(process.cwd(), 'uploads', 'branding'),
+    join(process.cwd(), 'apps', 'api', 'uploads', 'branding'),
+  ];
 }
 
 /** Extrait le nom de fichier depuis une URL ou un chemin de logo branding. */
@@ -51,12 +55,38 @@ export function resolveLogoFilePathFromUrl(logoUrl?: string | null): string | nu
   }
 
   const filename = extractBrandingUploadFilename(logoUrl);
-  if (filename) {
-    const path = join(brandingUploadsDir(), filename);
+  if (!filename) {
+    return null;
+  }
+
+  for (const dir of brandingUploadsDirs()) {
+    const path = join(dir, filename);
     if (existsSync(path)) return path;
   }
 
   return null;
+}
+
+async function fetchLogoBuffer(url: string): Promise<Buffer | null> {
+  try {
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(LOGO_FETCH_TIMEOUT_MS),
+    });
+    if (!response.ok) {
+      logger.warn(`Logo PDF: fetch HTTP ${response.status} pour ${url}`);
+      return null;
+    }
+    const buffer = Buffer.from(await response.arrayBuffer());
+    if (buffer.length === 0) {
+      logger.warn(`Logo PDF: buffer vide pour ${url}`);
+      return null;
+    }
+    return buffer;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    logger.warn(`Logo PDF: fetch échoué pour ${url} — ${message}`);
+    return null;
+  }
 }
 
 /**
@@ -70,31 +100,43 @@ export async function resolveLogoForPdf(
 
   if (logoUrl?.trim()) {
     const remoteUrl = normalizeBrandingAssetUrl(logoUrl) ?? logoUrl.trim();
-    try {
-      const response = await fetch(remoteUrl);
-      if (response.ok) {
-        const buffer = Buffer.from(await response.arrayBuffer());
-        if (buffer.length > 0) return buffer;
-      }
-    } catch {
-      // optional remote logo
-    }
+    const remote = await fetchLogoBuffer(remoteUrl);
+    if (remote) return remote;
+    logger.warn(
+      `Logo PDF: fichier local introuvable pour branding URL « ${logoUrl.trim()} »`,
+    );
   }
 
-  return resolveLogoFilePath();
+  const envLogoUrl = normalizeBrandingAssetUrl(process.env.EMAIL_LOGO_URL);
+  if (envLogoUrl && !isLocalhostUrl(envLogoUrl)) {
+    const envRemote = await fetchLogoBuffer(envLogoUrl);
+    if (envRemote) return envRemote;
+  }
+
+  const fallback = resolveLogoFilePath();
+  if (!fallback) {
+    logger.warn(
+      'Logo PDF: aucun logo résolu (local, remote, EMAIL_LOGO_URL, assets) — PDF sans logo',
+    );
+  }
+  return fallback;
 }
 
 function latestBrandingPngFilename(): string | null {
-  const dir = brandingUploadsDir();
-  if (!existsSync(dir)) return null;
+  const candidates: Array<{ name: string; path: string; mtimeMs: number }> = [];
 
-  const pngs = readdirSync(dir)
-    .filter((name) => name.toLowerCase().endsWith('.png'))
-    .map((name) => ({ name, path: join(dir, name) }))
-    .filter(({ path }) => existsSync(path))
-    .sort((a, b) => statSync(b.path).mtimeMs - statSync(a.path).mtimeMs);
+  for (const dir of brandingUploadsDirs()) {
+    if (!existsSync(dir)) continue;
+    for (const name of readdirSync(dir)) {
+      if (!name.toLowerCase().endsWith('.png')) continue;
+      const path = join(dir, name);
+      if (!existsSync(path)) continue;
+      candidates.push({ name, path, mtimeMs: statSync(path).mtimeMs });
+    }
+  }
 
-  return pngs[0]?.name ?? null;
+  candidates.sort((a, b) => b.mtimeMs - a.mtimeMs);
+  return candidates[0]?.name ?? null;
 }
 
 function isLocalhostUrl(url: string): boolean {
@@ -149,21 +191,32 @@ export function emailLogoImgHtml(
   return `<img src="${src}" alt="${safeAlt}" width="${size}" height="${size}" style="display:block;width:${size}px;height:${size}px;max-width:${size}px;border-radius:50%;object-fit:cover;border:0;outline:none;text-decoration:none;" />`;
 }
 
+/** Chemins candidats pour les assets logo email (cwd monorepo, apps/api, dist). */
+function logoAssetRoots(): string[] {
+  return [
+    join(process.cwd(), 'src', 'modules', 'email', 'assets'),
+    join(process.cwd(), 'dist', 'modules', 'email', 'assets'),
+    join(process.cwd(), 'apps', 'api', 'src', 'modules', 'email', 'assets'),
+    join(process.cwd(), 'apps', 'api', 'dist', 'modules', 'email', 'assets'),
+    join(__dirname, 'assets'),
+    join(__dirname, '..', 'assets'),
+  ];
+}
+
 /** Chemin local du fichier logo (copie vers uploads / assets statiques API). */
 export function resolveLogoFilePath(): string | null {
   const envPath = process.env.EMAIL_LOGO_PATH?.trim();
   if (envPath && existsSync(envPath)) return envPath;
 
   const uploaded = latestBrandingPngFilename();
-  if (uploaded) return join(brandingUploadsDir(), uploaded);
+  if (uploaded) {
+    for (const dir of brandingUploadsDirs()) {
+      const path = join(dir, uploaded);
+      if (existsSync(path)) return path;
+    }
+  }
 
-  const roots = [
-    join(process.cwd(), 'src', 'modules', 'email', 'assets'),
-    join(process.cwd(), 'apps', 'api', 'src', 'modules', 'email', 'assets'),
-    join(__dirname, 'assets'),
-  ];
-
-  for (const root of roots) {
+  for (const root of logoAssetRoots()) {
     for (const name of LOGO_FILENAMES) {
       const path = join(root, name);
       if (existsSync(path)) return path;
@@ -174,13 +227,7 @@ export function resolveLogoFilePath(): string | null {
 }
 
 export function getEmailAssetsDir(): string | null {
-  const roots = [
-    join(process.cwd(), 'dist', 'modules', 'email', 'assets'),
-    join(process.cwd(), 'src', 'modules', 'email', 'assets'),
-    join(process.cwd(), 'apps', 'api', 'dist', 'modules', 'email', 'assets'),
-    join(process.cwd(), 'apps', 'api', 'src', 'modules', 'email', 'assets'),
-  ];
-  for (const root of roots) {
+  for (const root of logoAssetRoots()) {
     if (existsSync(root)) return root;
   }
   return null;
