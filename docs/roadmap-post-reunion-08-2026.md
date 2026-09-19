@@ -82,7 +82,7 @@ Règles :
 | Téléchargement PDF côté compte client | ✅ Endpoint + bouton compte (voir [pr-03-pdf-client-download.md](./pr-03-pdf-client-download.md)) | `GET /bookings/:id/confirmation-pdf`, `AccountBookingDetail` |
 | Virement bancaire au checkout | ✅ `bank_transfer` + activation admin + comptes + **preuves** (voir [pr-06-bank-transfer-test.md](./pr-06-bank-transfer-test.md), [pr-06b-payment-proofs-test.md](./pr-06b-payment-proofs-test.md)) | `payment_methods`, `booking_payment_proofs`, checkout web, admin Documents |
 | Acomptes / paiements partiels | ✅ Setting `booking/deposits` + multi-paiements ; `pending_payment` jusqu’au solde ; Stripe/cash/virement/preuves partiels (voir [pr-07-deposits-test.md](./pr-07-deposits-test.md)) | `organization_settings.deposits`, `paidCents` / `balanceCents`, `booking-engine`, `stripe.service` |
-| Politique cash web | ⚠️ `cash` disponible côté web | `packages/types/src/booking.ts`, checkout web |
+| Politique cash web | ✅ `payment_methods.cash` défaut **false** ; POS/admin inchangés (voir [pr-08-cash-policy-test.md](./pr-08-cash-policy-test.md)) | `DEFAULT_WEB_PAYMENT_METHODS`, migration `set_web_payment_methods_cash_default_false.sql`, checkout web |
 | Liaison document ID ↔ voyageur | ❌ Upload non lié à l’entrée manifeste | `booking_identity_documents` |
 | Portail / onboarding partenaire | ❌ OAuth Gmail staff/client OK ; pas de portail B2B | `apps/api/src/modules/auth/`, `activity-providers` = catalogue |
 | Notifications staff persistées | ⚠️ Poll client + `localStorage` | `apps/admin/lib/notifications/use-admin-notifications.ts` |
@@ -105,7 +105,7 @@ Règles :
 | PR-05 | 1 | Conditions médicales structurées | Moyenne | `feature/pr-05-medical-conditions` | PR-04 (optionnel) |
 | PR-06 | 1 | Paiement par virement bancaire | Haute | `feature/pr-06-bank-transfer` | — |
 | PR-07 | 1 | Acomptes / paiements partiels — **livré** (voir [pr-07-deposits-test.md](./pr-07-deposits-test.md)) | Haute | `feature/pr-07-booking-deposits` | PR-06 |
-| PR-08 | 1 | Politique cash (restreindre web) | Haute | `feature/pr-08-cash-policy` | — |
+| PR-08 | 1 | Politique cash (restreindre web) — **livré** (voir [pr-08-cash-policy-test.md](./pr-08-cash-policy-test.md)) | Haute | `feature/pr-08-cash-policy` | — |
 | PR-09 | 2 | Clarifier Partenaire vs Staff vs Client (UI + RBAC) | Moyenne | `feature/pr-09-partner-roles` | — |
 | PR-10 | 2 | Onboarding partenaires (questionnaire + invitation Gmail) | Moyenne | `feature/pr-10-partner-onboarding` | PR-09 |
 | PR-11 | 2 | Liaison document identité ↔ entrée manifeste | Moyenne | `feature/pr-11-manifest-doc-link` | — |
@@ -413,7 +413,10 @@ Critères d’acceptation :
 ### PR-08 — Politique cash (restreindre web)
 
 **Branche :** `feature/pr-08-cash-policy`  
-**Priorité :** Haute
+**Priorité :** Haute  
+**Statut :** ✅ Livré — scénario de test : [pr-08-cash-policy-test.md](./pr-08-cash-policy-test.md)
+
+**Modèle retenu :** pas de nouveau setting `allow_web_cash` — le booléen existant `booking` / `payment_methods.cash` **est** l’autorisation cash web (défaut `false`). POS et `recordCashPayment` admin hors gate. Migration `set_web_payment_methods_cash_default_false.sql` aligne les rows existantes.
 
 ```
 Projet : Africa Tourism Gate (pnpm monorepo).
@@ -422,19 +425,22 @@ Branche : crée et bascule sur `feature/pr-08-cash-policy`.
 Livrable PR-08 : Restreindre cash on site pour les réservations web
 Références :
 - Checkout web preferredPaymentMethod
+- Setting org booking/payment_methods.cash (= allow_web_cash)
 - POS sale-payment (cash reste autorisé)
 - Flux assisté admin
+- docs/pr-08-cash-policy-test.md
 
 Objectif (position Andy : cash seul = dangereux) :
-1. Sur le site web public : ne plus proposer cash comme seul moyen sans engagement, OU le masquer complètement au profit de stripe / bank_transfer / acompte.
+1. Sur le site web public : ne plus proposer cash par défaut ; réactivation explicite via Paramètres (`payment_methods.cash`).
 2. Conserver cash sur POS et enregistrement staff (back-office).
 3. Message clair si un ancien booking cash existe.
-4. Setting org optionnel : allow_web_cash (default false).
+4. Setting org : payment_methods.cash (default false) — alias produit « allow_web_cash ».
 
 Critères d’acceptation :
 - Parcours web immédiat : pas de cash (sauf setting explicitement activé).
 - POS : cash toujours possible.
 - i18n des messages.
+- Doc de test : docs/pr-08-cash-policy-test.md
 
 À la fin : diff UI + setting si ajouté.
 ```
@@ -691,5 +697,6 @@ Critères d’acceptation :
 | -------- | ---- |
 | [roadmap-development.md](./roadmap-development.md) | Socle produit & livrables historiques |
 | [roadmap-development-client-enhance.md](./roadmap-development-client-enhance.md) | Guides + réservation assistée (largement livré) |
-| [roadmap-pos.md](./roadmap-pos.md) | POS — cash reste légitime ici (PR-08) |
+| [roadmap-pos.md](./roadmap-pos.md) | POS — cash reste légitime ici ([PR-08](./pr-08-cash-policy-test.md)) |
+| [pr-08-cash-policy-test.md](./pr-08-cash-policy-test.md) | Scénario de test — cash web off par défaut |
 | [presentation-plateforme-08-29-2026.html](./presentation-plateforme-08-29-2026.html) | Support de la réunion source |
