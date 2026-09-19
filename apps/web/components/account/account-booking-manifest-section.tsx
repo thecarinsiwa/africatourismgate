@@ -2,10 +2,12 @@
 
 import { Button } from '@africatourismgate/ui';
 import type { BookingIdentityDocument, BookingManifestEntry, BookingManifestSex, BookingStatus } from '@africatourismgate/types';
+import { formatNationalityDisplay } from '@africatourismgate/utils';
 import { useCallback, useEffect, useId, useState } from 'react';
 import { fetchBookingIdentityDocumentBlob } from '../../lib/api/booking-identity-documents';
 import { getAccountApiClient } from '../../lib/api/account';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import { NationalitySelect } from '../reservations/nationality-select';
 
 type FormState = {
   fullName: string;
@@ -49,8 +51,8 @@ function formToPayload(form: FormState) {
     fullName: form.fullName.trim(),
     age: ageParsed != null && !Number.isNaN(ageParsed) ? ageParsed : undefined,
     sex: form.sex || undefined,
-    nationality: form.nationality.trim() || undefined,
-    idNumber: form.idNumber.trim() || undefined,
+    nationality: form.nationality.trim(),
+    idNumber: form.idNumber.trim(),
     conditions: form.conditions.trim() || undefined,
     comment: form.comment.trim() || undefined,
     other: form.other.trim() || undefined,
@@ -72,6 +74,7 @@ type Props = {
 
 export function AccountBookingManifestSection({ bookingId, bookingStatus }: Props) {
   const t = useTranslations();
+  const { locale } = useLocale();
   const m = t.account.reservations.detail.manifest;
 
   const conditionsId = useId();
@@ -183,6 +186,14 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
       setActionError(m.fullNameRequired);
       return;
     }
+    if (!form.nationality.trim()) {
+      setActionError(m.nationalityRequired);
+      return;
+    }
+    if (!form.idNumber.trim()) {
+      setActionError(m.idNumberRequired);
+      return;
+    }
     setSaving(true);
     setActionError(null);
     try {
@@ -288,7 +299,9 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
                     {entry.nationality ? (
                       <div>
                         <dt className="text-xs text-atg-muted">{m.fields.nationality}</dt>
-                        <dd className="text-atg-fg">{entry.nationality}</dd>
+                        <dd className="text-atg-fg">
+                          {formatNationalityDisplay(entry.nationality, locale)}
+                        </dd>
                       </div>
                     ) : null}
                     {entry.idNumber ? (
@@ -403,23 +416,23 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-atg-fg" htmlFor="manifest-nationality">
-                  {m.fields.nationality}
-                </label>
-                <input
+                <NationalitySelect
                   id="manifest-nationality"
-                  type="text"
+                  label={m.fields.nationality}
                   value={form.nationality}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, nationality: e.target.value }))
-                  }
-                  className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
+                  onChange={(code) => setForm((prev) => ({ ...prev, nationality: code }))}
+                  locale={locale}
+                  required
+                  placeholder={m.fields.nationalityPlaceholder}
+                  searchPlaceholder={m.fields.nationalitySearch}
+                  emptyMessage={m.fields.nationalityEmpty}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-atg-fg" htmlFor="manifest-idNumber">
                   {m.fields.idNumber}
+                  <span className="ml-1 text-red-500">*</span>
                 </label>
                 <input
                   id="manifest-idNumber"
@@ -429,6 +442,8 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
                     setForm((prev) => ({ ...prev, idNumber: e.target.value }))
                   }
                   className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm font-mono text-atg-fg dark:border-atg-border"
+                  required
+                  aria-required="true"
                 />
               </div>
 

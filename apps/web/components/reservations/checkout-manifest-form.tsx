@@ -2,6 +2,8 @@
 
 import type { BookingManifestSex, CreateBookingManifestEntryRequest } from '@africatourismgate/types';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { useLocale } from '../../lib/i18n/locale-provider';
+import { NationalitySelect } from './nationality-select';
 
 export type ManifestEntryDraft = {
   fullName: string;
@@ -26,8 +28,8 @@ export function manifestDraftToPayload(
     fullName: entry.fullName.trim(),
     age: !Number.isNaN(age) && age >= 0 ? age : undefined,
     sex: entry.sex || undefined,
-    nationality: entry.nationality.trim() || undefined,
-    idNumber: entry.idNumber.trim() || undefined,
+    nationality: entry.nationality.trim(),
+    idNumber: entry.idNumber.trim(),
     conditions: entry.conditions.trim() || undefined,
     sortOrder,
   };
@@ -181,6 +183,12 @@ function CameraCapture({ onCapture, onClose, labels }: CameraCaptureProps) {
 // Main component
 // ---------------------------------------------------------------------------
 
+export type ManifestFieldErrors = {
+  fullName?: string;
+  nationality?: string;
+  idNumber?: string;
+};
+
 type Labels = {
   title: string;
   subtitle: string;
@@ -193,6 +201,9 @@ type Labels = {
   sexF: string;
   sexOther: string;
   nationality: string;
+  nationalityPlaceholder: string;
+  nationalitySearch: string;
+  nationalityEmpty: string;
   idNumber: string;
   conditions: string;
   conditionsPlaceholder: string;
@@ -214,11 +225,12 @@ type Props = {
   entries: ManifestEntryDraft[];
   onChange: (entries: ManifestEntryDraft[]) => void;
   labels: Labels;
-  validationErrors: Record<number, string>;
+  validationErrors: Record<number, ManifestFieldErrors>;
 };
 
 export function CheckoutManifestForm({ count, entries, onChange, labels, validationErrors }: Props) {
   const baseId = useId();
+  const { locale } = useLocale();
   const [cameraIndex, setCameraIndex] = useState<number | null>(null);
   const [previewFile, setPreviewFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -323,7 +335,7 @@ export function CheckoutManifestForm({ count, entries, onChange, labels, validat
         {entries.map((entry, index) => {
           const idPrefix = `${baseId}-t${index}`;
           const travellerLabel = labels.travelerN.replace('{n}', String(index + 1));
-          const error = validationErrors[index];
+          const fieldErrors = validationErrors[index];
           return (
             <fieldset
               key={index}
@@ -335,7 +347,9 @@ export function CheckoutManifestForm({ count, entries, onChange, labels, validat
                 <div className="sm:col-span-2">
                   <label htmlFor={`${idPrefix}-name`} className="block text-sm font-medium text-atg-fg">
                     {labels.fullName}
-                    <span className="ml-1 text-red-500" aria-hidden="true">*</span>
+                    <span className="ml-1 text-red-500" aria-hidden="true">
+                      *
+                    </span>
                   </label>
                   <input
                     id={`${idPrefix}-name`}
@@ -344,9 +358,14 @@ export function CheckoutManifestForm({ count, entries, onChange, labels, validat
                     onChange={(e) => update(index, { fullName: e.target.value })}
                     className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
                     autoComplete="name"
+                    required
+                    aria-required="true"
+                    aria-invalid={Boolean(fieldErrors?.fullName)}
                   />
-                  {error ? (
-                    <p role="alert" className="mt-1 text-xs text-red-600 dark:text-red-400">{error}</p>
+                  {fieldErrors?.fullName ? (
+                    <p role="alert" className="mt-1 text-xs text-red-600 dark:text-red-400">
+                      {fieldErrors.fullName}
+                    </p>
                   ) : null}
                 </div>
 
@@ -383,21 +402,26 @@ export function CheckoutManifestForm({ count, entries, onChange, labels, validat
                 </div>
 
                 <div>
-                  <label htmlFor={`${idPrefix}-nat`} className="block text-sm font-medium text-atg-fg">
-                    {labels.nationality}
-                  </label>
-                  <input
+                  <NationalitySelect
                     id={`${idPrefix}-nat`}
-                    type="text"
+                    label={labels.nationality}
                     value={entry.nationality}
-                    onChange={(e) => update(index, { nationality: e.target.value })}
-                    className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
+                    onChange={(code) => update(index, { nationality: code })}
+                    locale={locale}
+                    required
+                    error={fieldErrors?.nationality}
+                    placeholder={labels.nationalityPlaceholder}
+                    searchPlaceholder={labels.nationalitySearch}
+                    emptyMessage={labels.nationalityEmpty}
                   />
                 </div>
 
                 <div>
                   <label htmlFor={`${idPrefix}-id`} className="block text-sm font-medium text-atg-fg">
                     {labels.idNumber}
+                    <span className="ml-1 text-red-500" aria-hidden="true">
+                      *
+                    </span>
                   </label>
                   <input
                     id={`${idPrefix}-id`}
@@ -405,7 +429,15 @@ export function CheckoutManifestForm({ count, entries, onChange, labels, validat
                     value={entry.idNumber}
                     onChange={(e) => update(index, { idNumber: e.target.value })}
                     className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 font-mono text-sm text-atg-fg dark:border-atg-border"
+                    required
+                    aria-required="true"
+                    aria-invalid={Boolean(fieldErrors?.idNumber)}
                   />
+                  {fieldErrors?.idNumber ? (
+                    <p role="alert" className="mt-1 text-xs text-red-600 dark:text-red-400">
+                      {fieldErrors.idNumber}
+                    </p>
+                  ) : null}
                 </div>
 
                 <div className="sm:col-span-2">

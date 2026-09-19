@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { fillCheckoutManifest, mockManifestApi } from './helpers/fill-manifest';
 
 const PACKAGE_ID = '00000000-0000-4000-8000-000000005001';
 const BOOKING_ID = 'booking-e2e-package';
@@ -127,6 +128,8 @@ test('forfait activités: réserver sans créneaux, panier -> recap -> demande a
     });
   });
 
+  await mockManifestApi(page);
+
   await page.goto(
     `/packages/${PACKAGE_ID}?startDate=${DATE}&travelers=${TRAVELERS}#configure`,
   );
@@ -153,11 +156,7 @@ test('forfait activités: réserver sans créneaux, panier -> recap -> demande a
   await expect(page.getByRole('heading', { name: /recapitulatif/i })).toBeVisible();
 
   await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();
-  const nameInputs = page.getByLabel(/nom complet|full name|nombre completo/i);
-  const nameCount = await nameInputs.count();
-  for (let i = 0; i < nameCount; i += 1) {
-    await nameInputs.nth(i).fill(`Voyageur ${i + 1}`);
-  }
+  await fillCheckoutManifest(page);
 
   await expect(
     page.getByRole('button', { name: /demander une r[ée]servation|request a booking|solicitar una reserva/i }),

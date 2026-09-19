@@ -20,9 +20,11 @@ import type {
   BookingManifestEntry,
   BookingManifestSex,
 } from '@africatourismgate/types';
-import { useTranslations } from 'next-intl';
+import { formatNationalityDisplay } from '@africatourismgate/utils';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { CountryCodeCombobox } from '../destinations/country-code-combobox';
 
 type FormState = {
   fullName: string;
@@ -77,8 +79,8 @@ function formToPayload(form: FormState) {
       priceParsed != null && !Number.isNaN(priceParsed) && priceParsed >= 0
         ? priceParsed
         : undefined,
-    nationality: form.nationality.trim() || undefined,
-    idNumber: form.idNumber.trim() || undefined,
+    nationality: form.nationality.trim(),
+    idNumber: form.idNumber.trim(),
     conditions: form.conditions.trim() || undefined,
     comment: form.comment.trim() || undefined,
     other: form.other.trim() || undefined,
@@ -106,6 +108,7 @@ export function BookingManifestSection({
   const t = useTranslations('modules.bookings.manifest');
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
+  const locale = useLocale();
   const { toast } = useToast();
 
   const conditionsId = useId();
@@ -158,6 +161,14 @@ export function BookingManifestSection({
   async function handleSave() {
     if (!form.fullName.trim()) {
       setActionError(t('fullNameRequired'));
+      return;
+    }
+    if (!form.nationality.trim()) {
+      setActionError(t('nationalityRequired'));
+      return;
+    }
+    if (!form.idNumber.trim()) {
+      setActionError(t('idNumberRequired'));
       return;
     }
     setSaving(true);
@@ -240,7 +251,9 @@ export function BookingManifestSection({
       {
         accessorKey: 'nationality',
         header: t('columns.nationality'),
-        cell: ({ row }) => row.original.nationality ?? tCommon('empty.dash'),
+        cell: ({ row }) =>
+          formatNationalityDisplay(row.original.nationality, locale) ||
+          tCommon('empty.dash'),
       },
       {
         accessorKey: 'idNumber',
@@ -297,7 +310,7 @@ export function BookingManifestSection({
           ]
         : []),
     ],
-    [canWrite, deletingId, sexLabel, t, tActions, tCommon],
+    [canWrite, deletingId, locale, sexLabel, t, tActions, tCommon],
   );
 
   const Wrapper = embedded ? 'div' : 'section';
@@ -363,6 +376,7 @@ export function BookingManifestSection({
           <Input
             className="sm:col-span-2"
             label={t('fields.fullName')}
+            labelExtra={<span className="text-red-500" aria-hidden="true">*</span>}
             name="fullName"
             value={form.fullName}
             onChange={(e) => setForm((prev) => ({ ...prev, fullName: e.target.value }))}
@@ -402,19 +416,20 @@ export function BookingManifestSection({
             onChange={(e) => setForm((prev) => ({ ...prev, price: e.target.value }))}
             placeholder={t('fields.pricePlaceholder')}
           />
-          <Input
+          <CountryCodeCombobox
             label={t('fields.nationality')}
             name="nationality"
             value={form.nationality}
-            onChange={(e) =>
-              setForm((prev) => ({ ...prev, nationality: e.target.value }))
-            }
+            onChange={(code) => setForm((prev) => ({ ...prev, nationality: code }))}
+            required
           />
           <Input
             label={t('fields.idNumber')}
+            labelExtra={<span className="text-red-500" aria-hidden="true">*</span>}
             name="idNumber"
             value={form.idNumber}
             onChange={(e) => setForm((prev) => ({ ...prev, idNumber: e.target.value }))}
+            required
           />
           <label className="block text-sm sm:col-span-2" htmlFor={conditionsId}>
             <span className="font-medium text-atg-fg">{t('fields.conditions')}</span>

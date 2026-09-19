@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Africa Tourism Gate — Rapport d'Avancement & Synthèse (29 Août 2026)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <style>
+    :root {
+      --primary: #1b5e4a;
+      --primary-dark: #0d382c;
+      --primary-light: #2d8a6e;
+      --primary-soft: #e8f4f0;
+      --accent: #d4a017;
+      --accent-light: #fdf3d8;
+      --accent-dark: #b0820f;
+      --bg: #f8faf9;
+      --card-bg: #ffffff;
+      --text: #1a202c;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --success-bg: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-bg: #fffbeb;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --info-bg: #eff6ff;
+      --radius: 12px;
+      --radius-lg: 18px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow: 0 4px 20px rgba(27, 94, 74, 0.08);
+      --shadow-lg: 0 12px 36px rgba(27, 94, 74, 0.14);
+      --font-heading: 'Montserrat', system-ui, sans-serif;
+      --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: var(--font-body);
+      background-color: var(--primary-dark);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Deck & Slides container */
+    .deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px) scale(0.99);
+      transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: clamp(1.5rem, 4vw, 3.5rem);
+      padding-bottom: 5.5rem;
+      background: var(--bg);
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+      z-index: 2;
+    }
+
+    .slide.prev {
+      transform: translateY(-20px) scale(0.99);
+    }
+
+    .slide-inner {
+      width: 100%;
+      max-width: 1280px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Slide Hero Theme */
+    .slide--hero {
+      background: radial-gradient(circle at top right, #1f6e57, #0d382c 70%);
+      color: #ffffff;
+      text-align: center;
+    }
+
+    .slide--hero .slide-inner {
+      align-items: center;
+      max-width: 960px;
+      gap: 1.75rem;
+    }
+
+    .slide--dark {
+      background: #0f2c23;
+      color: #ffffff;
+    }
+
+    .slide--dark h2, .slide--dark h3 {
+      color: #ffffff;
+    }
+
+    /* Typography */
+    h1, h2, h3, h4 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+      letter-spacing: -0.02em;
+      color: #ffffff;
+    }
+
+    h2 {
+      font-size: clamp(1.75rem, 3vw, 2.4rem);
+      color: var(--primary-dark);
+      letter-spacing: -0.01em;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      color: var(--primary);
+    }
+
+    p.lead {
+      font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .slide--hero p.lead {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Header & Badges */
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.75rem;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .slide-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      width: fit-content;
+    }
+
+    .badge--accent {
+      background: var(--accent);
+      color: #0d382c;
+    }
+
+    .badge--success {
+      background: var(--success-bg);
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .badge--warning {
+      background: var(--warning-bg);
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .badge--info {
+      background: var(--info-bg);
+      color: #1e40af;
+      border: 1px solid #bfdbfe;
+    }
+
+    /* Grids & Cards */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 1.35rem;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .card--highlight {
+      border-left: 4px solid var(--primary);
+    }
+
+    .card--success {
+      border-left: 4px solid var(--success);
+      background: #fcfdfd;
+    }
+
+    .card--warning {
+      border-left: 4px solid var(--warning);
+      background: #fffdf9;
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-desc {
+      font-size: 0.92rem;
+      color: #475569;
+      line-height: 1.55;
+    }
+
+    .card-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-size: 0.88rem;
+    }
+
+    .card-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      line-height: 1.4;
+    }
+
+    .icon {
+      width: 1.2rem;
+      height: 1.2rem;
+      flex-shrink: 0;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .icon--success { stroke: var(--success); }
+    .icon--warning { stroke: var(--warning); }
+    .icon--primary { stroke: var(--primary); }
+
+    /* Comparison Table / Status Matrix */
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    .matrix-table th {
+      background: #f1f5f9;
+      color: var(--primary-dark);
+      font-family: var(--font-heading);
+      font-weight: 700;
+      text-align: left;
+      padding: 0.85rem 1.1rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .matrix-table td {
+      padding: 0.85rem 1.1rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+
+    .matrix-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .matrix-table tr:hover td {
+      background: #f8fafc;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      white-space: nowrap;
+    }
+
+    .status-pill--done {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-pill--pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-pill--action {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    /* Agenda Timeline (Meeting Plan 1h) */
+    .timeline-agenda {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .agenda-slot {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      position: relative;
+    }
+
+    .agenda-time {
+      font-family: var(--font-heading);
+      font-weight: 800;
+      color: var(--accent-dark);
+      font-size: 1.1rem;
+    }
+
+    .agenda-title {
+      font-weight: 700;
+      color: var(--primary-dark);
+      font-size: 0.95rem;
+    }
+
+    .agenda-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* Metrics Bar */
+    .metrics-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .metric-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      text-align: center;
+      color: #fff;
+    }
+
+    .metric-value {
+      font-family: var(--font-heading);
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1.1;
+    }
+
+    .metric-label {
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.85);
+      margin-top: 0.35rem;
+      font-weight: 500;
+    }
+
+    /* Tabs for Live Demo */
+    .tabs-nav {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 0.5rem 1rem;
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .tab-content {
+      display: none;
+      background: #fff;
+      padding: 1.25rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      min-height: 220px;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Navigation Bar */
+    .nav-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4.5rem;
+      background: rgba(13, 56, 44, 0.96);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      z-index: 1000;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--accent);
+      color: #0d382c;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 0.6rem 1.4rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.2s ease, opacity 0.2s;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background: #e6b422;
+      transform: translateY(-1px);
+    }
+
+    .nav-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .nav-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .progress-track {
+      width: min(320px, 40vw);
+      height: 5px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+
+    .nav-hint {
+      position: fixed;
+      bottom: 4.75rem;
+      right: 2rem;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.5);
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    @media (max-width: 768px) {
+      .grid-2, .grid-3, .metrics-bar, .timeline-agenda {
+        grid-template-columns: 1fr;
+      }
+      .nav-bar {
+        padding: 0 1rem;
+      }
+      .nav-btn span {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SVG Icons Sprite -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <symbol id="icon-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="icon-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></symbol>
+    <symbol id="icon-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="icon-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+    <symbol id="icon-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+    <symbol id="icon-file" viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></symbol>
+    <symbol id="icon-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+    <symbol id="icon-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+    <symbol id="icon-card" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></symbol>
+    <symbol id="icon-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></symbol>
+    <symbol id="icon-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+  </svg>
+
+  <div class="deck" id="deck">
+
+    <!-- SLIDE 1 : Titre & Accueil -->
+    <section class="slide slide--hero active" data-slide="1">
+      <div class="slide-inner">
+        <span class="badge badge--accent">Comité de Suivi Projet · 29 Août 2026</span>
+        <h1>Africa Tourism Gate</h1>
+        <p class="lead" style="max-width: 800px; margin: 0 auto;">
+          Rapport d’avancement &amp; Synthèse des réalisations post-réunion du 11 Juillet 2026.
+          Revue des correctifs, des livrables opérationnels et des prochaines étapes.
+        </p>
+        
+        <div class="metrics-bar" style="width: 100%; max-width: 960px; margin-top: 1rem;">
+          <div class="metric-card">
+            <div class="metric-value">100%</div>
+            <div class="metric-label">Traductions FR / i18n Résolues</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">Complet</div>
+            <div class="metric-label">Manifeste Passagers &amp; IDs</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">Opérationnel</div>
+            <div class="metric-label">Flux Réservation Assistée</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">Intégré</div>
+            <div class="metric-label">Système Notifications Staff</div>
+          </div>
+        </div>
+
+        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 1rem;">
+          Session de présentation calibrée pour <strong>1 Heure</strong> (Revue · Démonstration Live · Décisions)
+        </p>
+      </div>
+    </section>
+
+    <!-- SLIDE 2 : Ordre du Jour de la Réunion (Plan 1h) -->
+    <section class="slide" data-slide="2">
+      <div class="slide-inner">
+        <div class="slide-header">
+          <div class="slide-title-wrap">
+            <span class="badge badge--info">Déroulement · 60 Minutes</span>
+            <h2>Ordre du Jour &amp; Timing de la Séance</h2>
+          </div>
+          <p class="lead" style="font-size: 0.95rem;">Une heure structurée pour maximiser la clarté et valider les orientations.</p>
+        </div>
+
+        <div class="timeline-agenda">
+          <div class="agenda-slot" style="border-top: 4px solid var(--primary);">
+            <span class="agenda-time">00 - 10 min</span>
+            <div class="agenda-title">1. Introduction &amp; Rappel 11 Juillet</div>
+            <p class="agenda-desc">Rappel des attentes exprimées lors du précédent point et synthèse des priorités convenues.</p>
+          </div>
+
+          <div class="agenda-slot" style="border-top: 4px solid var(--success);">
+            <span class="agenda-time">10 - 25 min</span>
+            <div class="agenda-title">2. Rapport : Ce qui a été Réalisé</div>
+            <p class="agenda-desc">Revue détaillée des fonctionnalités livrées : i18n, Manifeste, Notifications, POS et Workflow.</p>
+          </div>
+
+          <div class="agenda-slot" style="border-top: 4px solid var(--accent-dark);">
+            <span class="agenda-time">25 - 40 min</span>
+            <div class="agenda-title">3. Démonstration Live interactive</div>
+            <p class="agenda-desc">Parcours voyageur (formulaire &amp; pièces jointes) + Traitement Back-office et Caisse POS.</p>
+          </div>
+
+          <div class="agenda-slot" style="border-top: 4px solid var(--warning);">
+            <span class="agenda-time">40 - 50 min</span>
+            <div class="agenda-title">4. Choix Stratégiques V1 &amp; Roadmap</div>
+            <p class="agenda-desc">Justification du report des APIs fournisseurs (réalité terrain), cartographie et onboarding.</p>
+          </div>
+
+          <div class="agenda-slot" style="border-top: 4px solid #6366f1;">
+            <span class="agenda-time">50 - 60 min</span>
+            <div class="agenda-title">5. Plan d'Action, Calendrier &amp; Q&amp;A</div>
+            <p class="agenda-desc">Validation des livrables, calendrier de sortie (novembre/décembre) et décisions finales.</p>
+          </div>
+        </div>
+
+        <div class="card card--highlight" style="margin-top: 0.5rem; padding: 1rem;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <svg class="icon icon--primary"><use href="#icon-target"/></svg>
+            <strong style="font-size: 0.92rem; color: var(--primary-dark);">Objectif clé de la réunion :</strong>
+            <span style="font-size: 0.88rem; color: #334155;">Confirmer la conformité des modules livrés, valider le modèle opérationnel V1 et acter le calendrier de lancement.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3 : Tableau Comparatif Global (Ce qui a été fait vs Non fait) -->
+    <section class="slide" data-slide="3">
+      <div class="slide-inner">
+        <div class="slide-header">
+          <div class="slide-title-wrap">
+            <span class="badge badge--accent">Bilan Exhaustif</span>
+            <h2>Analyse Comparative : Demandes du 11 Juillet vs Réalisations</h2>
+          </div>
+          <span class="badge badge--success">90% des actions techniques livrées</span>
+        </div>
+
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th style="width: 28%;">Demande Initiale (Meet 11/07)</th>
+              <th style="width: 44%;">Réalisations &amp; Implémentations dans le Code</th>
+              <th style="width: 14%;">Statut</th>
+              <th style="width: 14%;">Impact</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Traductions &amp; Localisation</strong><br><small style="color:var(--text-muted)">Incohérences FR et textes manquants</small></td>
+              <td>Audit complet i18n sur Web, Admin &amp; POS. Harmonisation des tables, formulaires, emails, RBAC et dons.</td>
+              <td><span class="status-pill status-pill--done"><svg class="icon icon--success"><use href="#icon-check"/></svg> Fait</span></td>
+              <td><span class="badge badge--success">Confort UI</span></td>
+            </tr>
+            <tr>
+              <td><strong>Captation Données &amp; Manifeste</strong><br><small style="color:var(--text-muted)">Passeports, IDs, Fièvre Jaune, Multi-passagers</small></td>
+              <td>Module Manifeste complet (Web, POS, Admin), ajout de passagers dynamiques, téléversement de documents &amp; capture caméra directe.</td>
+              <td><span class="status-pill status-pill--done"><svg class="icon icon--success"><use href="#icon-check"/></svg> Fait</span></td>
+              <td><span class="badge badge--success">Critique</span></td>
+            </tr>
+            <tr>
+              <td><strong>Créneaux &amp; Réservation Assistée</strong><br><small style="color:var(--text-muted)">Pas de blocage sans créneau, bouton devis</small></td>
+              <td>Double parcours : réservation immédiate + demande assistée (`pending_approval`), messagerie intégrée par réservation, validation staff.</td>
+              <td><span class="status-pill status-pill--done"><svg class="icon icon--success"><use href="#icon-check"/></svg> Fait</span></td>
+              <td><span class="badge badge--success">Conversion</span></td>
+            </tr>
+            <tr>
+              <td><strong>Distinction Rôles &amp; Partenaires</strong><br><small style="color:var(--text-muted)">Renommer Fournisseur vs Partenaire/Staff</small></td>
+              <td>Renommage "Partner" dans l'UI/API, séparation nette comptes clients/internes, gestion RBAC et départements avec modales dédiées.</td>
+              <td><span class="status-pill status-pill--done"><svg class="icon icon--success"><use href="#icon-check"/></svg> Fait</span></td>
+              <td><span class="badge badge--success">Gouvernance</span></td>
+            </tr>
+            <tr>
+              <td><strong>Accusés &amp; Notifications Staff</strong><br><small style="color:var(--text-muted)">Routage interne et alertes automatiques</small></td>
+              <td>Centre de notifications Top-bar back-office, page `/notifications`, badge dynamique non-lus, emails transactionnels instantanés.</td>
+              <td><span class="status-pill status-pill--done"><svg class="icon icon--success"><use href="#icon-check"/></svg> Fait</span></td>
+              <td><span class="badge badge--success">Opérations</span></td>
+            </tr>
+            <tr>
+              <td><strong>Synchronisation Fournisseurs (API)</strong><br><small style="color:var(--text-muted)">Modèle dropshipping / connecteurs directs</small></td>
+              <td><strong>Non retenu pour la V1 (Choix Stratégique Terrain) :</strong> La majorité des agences et hôtels de la région ne disposent pas de systèmes automatisés. Imposer des APIs causerait des pannes et blocages. Le <em>Back-Office + Réservation Assistée</em> gère 100% des flux sans risque.</td>
+              <td><span class="status-pill status-pill--pending" style="background:#fef3c7;color:#92400e;"><svg class="icon icon--warning"><use href="#icon-clock"/></svg> Reporté V2</span></td>
+              <td><span class="badge badge--warning">Réalisme Terrain</span></td>
+            </tr>
+            <tr>
+              <td><strong>Cartographie &amp; Import Google Maps</strong><br><small style="color:var(--text-muted)">Tracé visuel des étapes d'activités</small></td>
+              <td>Coordonnées GPS (Lat/Long) enregistrées ; interface de tracé vectoriel dynamique et import direct d'URL en roadmap Phase 2.</td>
+              <td><span class="status-pill status-pill--action"><svg class="icon icon--alert"><use href="#icon-target"/></svg> En cours</span></td>
+              <td><span class="badge badge--info">Évolution</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SLIDE 4 : Focus Réalisations Majeures 1 - Manifeste & Sécurité -->
+    <section class="slide" data-slide="4">
+      <div class="slide-inner">
+        <div class="slide-header">
+          <div class="slide-title-wrap">
+            <span class="badge badge--success">Livrable Majeur 1</span>
+            <h2>Manifeste Voyageurs &amp; Captation Sécurisée des IDs</h2>
+          </div>
+          <p class="lead" style="font-size: 0.95rem;">Réponse directe aux impératifs légaux et aux exigences des autorités touristiques.</p>
+        </div>
+
+        <div class="grid-3">
+          <div class="card card--success">
+            <div class="card-head">
+              <span class="card-title">
+                <svg class="icon icon--success"><use href="#icon-users"/></svg>
+                Multi-Passagers Dynamique
+              </span>
+              <span class="badge badge--success">Prêt</span>
+            </div>
+            <p class="card-desc">Possibilité d'ajouter et configurer individuellement chaque voyageur associé au dossier :</p>
+            <ul class="card-list">
+              <li><svg class="icon icon--success"><use href="#icon-check"/></svg> Nom complet, date de naissance, nationalité</li>
+              <li><svg class="icon icon--success"><use href="#icon-check"/></svg> Numéro de passeport / Carte d'identité</li>
+              <li><svg class="icon icon--success"><use href="#icon-check"/></svg> Contact d'urgence et préférences</li>
+            </ul>
+          </div>
+
+          <div class="card card--success">
+            <div class="card-head">
+              <span class="card-title">
+                <svg class="icon icon--success"><use href="#icon-camera"/></svg>
+                Scan Pièces &amp; Fièvre Jaune
+              </span>
+              <span class="badge badge--success">Prêt</span>
+            </div>
+            <p class="card-desc">Captation simplifiée et intuitive des justificatifs obligatoires :</p>
+            <ul class="card-list">
+              <li><svg class="icon icon--success"><use href="#icon-check"/></svg> Téléversement direct (PDF, PNG, JPEG)</li>
+              <li><svg class="icon icon--success"><use href="#icon-check"/></svg> Prise de photo directe via caméra mobile/PC</li>
+              <li><svg class="icon icon--success"><use href="#icon-check"/></svg> Case dédiée pour certificat Fièvre Jaune</li>
+            </ul>
+          </div>
+
+          <div class="card card--success">
+            <div class="card-head">
+              <span class="card-title">
+                <svg class="icon icon--success"><use href="#icon-shield"/></svg>
+                Contrôle &amp; Validation Staff
+              </span>
+              <span class="badge badge--success">Prêt</span>
+            </div>
+            <p class="card-desc">Visualiseur intégré dans l'espace d'administration :</p>
+            <ul class="card-list">
+              <li><svg class="icon icon--success"><use href="#icon-check"/></svg> Prévisualisation des pièces dans le dossier</li>
+              <li><svg class="icon icon--success"><use href="#icon-check"/></svg> Vérification de conformité avant validation</li>
+              <li><svg class="icon icon--success"><use href="#icon-check"/></svg> Intégration sur le Point de Vente (POS)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card" style="background: #f0fdf4; border-color: #bbf7d0;">
+          <p style="font-size: 0.9rem; color: #166534; line-height: 1.5;">
+            <strong>Bénéfice opérationnel :</strong> Zéro ressaisie manuelle pour l'équipe agence. Le client transmet directement ses pièces avant le départ ou lors de la commande en ligne.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5 : Focus Réalisations Majeures 2 - Réservation Assistée & Workflow -->
+    <section class="slide" data-slide="5">
+      <div class="slide-inner">
+        <div class="slide-header">
+          <div class="slide-title-wrap">
+            <span class="badge badge--success">Livrable Majeur 2</span>
+            <h2>Workflow de Réservation Assistée &amp; Paiement Flex</h2>
+          </div>
+          <p class="lead" style="font-size: 0.95rem;">Ne plus perdre un client lorsque les disponibilités nécessitent confirmation manuelle.</p>
+        </div>
+
+        <div class="grid-2">
+          <div class="card card--highlight">
+            <h3 style="display: flex; align-items: center; gap: 0.5rem;">
+              <svg class="icon icon--primary"><use href="#icon-target"/></svg>
+              Le Parcours Voyageur "Demande de Devis / Assistée"
+            </h3>
+            <p class="card-desc">
+              Lorsque l'activité ou l'hébergement requiert une validation de stock ou un guide spécifique :
+            </p>
+            <ol style="padding-left: 1.25rem; font-size: 0.88rem; display: flex; flex-direction: column; gap: 0.5rem; color: #334155;">
+              <li><strong>Soumission de la demande</strong> sans débit bancaire immédiat (statut <code>pending_approval</code>).</li>
+              <li><strong>Attribution interne</strong> à un agent de voyages ou assignation d'un guide touristique certifié.</li>
+              <li><strong>Messagerie dédiée</strong> intégrée au compte voyageur pour affiner les besoins particuliers.</li>
+              <li><strong>Validation staff</strong> générant un lien sécurisé de paiement (Stripe en ligne ou encaissement agence).</li>
+            </ol>
+          </div>
+
+          <div class="card card--success">
+            <h3 style="display: flex; align-items: center; gap: 0.5rem;">
+              <svg class="icon icon--success"><use href="#icon-card"/></svg>
+              Point de Vente (POS) &amp; Reçus Dématérialisés
+            </h3>
+            <p class="card-desc">
+              Déploiement complet de l'application Point de Vente pour les agences physiques :
+            </p>
+            <ul class="card-list">
+              <li><svg class="icon icon--success"><use href="#icon-check"/></svg> Choix du mode de paiement (Espèces vs Carte Bancaire)</li>
+              <li><svg class="icon icon--success"><use href="#icon-check"/></svg> Génération automatique du Reçu de Caisse au format PDF</li>
+              <li><svg class="icon icon--success"><use href="#icon-check"/></svg> Envoi direct du reçu par e-mail avec identité de marque</li>
+              <li><svg class="icon icon--success"><use href="#icon-check"/></svg> Application immédiate des forfaits combinés et codes promos</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6 : Focus Réalisations Majeures 3 - Back-office, WYSIWYG & Notifications -->
+    <section class="slide" data-slide="6">
+      <div class="slide-inner">
+        <div class="slide-header">
+          <div class="slide-title-wrap">
+            <span class="badge badge--success">Livrable Majeur 3</span>
+            <h2>Productivité Back-Office &amp; Système de Notifications</h2>
+          </div>
+          <p class="lead" style="font-size: 0.95rem;">Un outil professionnel conçu pour la réactivité des équipes au quotidien.</p>
+        </div>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="card-head">
+              <span class="card-title">
+                <svg class="icon icon--primary"><use href="#icon-bell"/></svg>
+                Notifications Staff
+              </span>
+              <span class="status-pill status-pill--done">Déployé</span>
+            </div>
+            <p class="card-desc">
+              Barre supérieure enrichie d'un popover interactif, filtrage par urgence, compteurs d'éléments non lus et page dédiée <code>/notifications</code>.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <span class="card-title">
+                <svg class="icon icon--primary"><use href="#icon-edit"/></svg>
+                Éditeur WYSIWYG
+              </span>
+              <span class="status-pill status-pill--done">Déployé</span>
+            </div>
+            <p class="card-desc">
+              Mise en page riche pour la création d'activités, articles de blog, campagnes de dons et pages d'impact (gras, listes, téléversement d'images).
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <span class="card-title">
+                <svg class="icon icon--primary"><use href="#icon-shield"/></svg>
+                Gouvernance RBAC
+              </span>
+              <span class="status-pill status-pill--done">Déployé</span>
+            </div>
+            <p class="card-desc">
+              Matrice de permissions par rôle, modales d'attribution sécurisées, gestion des départements et séparation étanche comptes staff / clients.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 0.5rem;">
+          <div class="card card--highlight" style="padding: 1rem;">
+            <strong style="color: var(--primary-dark); font-size: 0.95rem;">Localisation &amp; i18n 100% harmonisée :</strong>
+            <p style="font-size: 0.88rem; color: #475569; margin-top: 0.25rem;">
+              Résolution de toutes les clés manquantes en français, harmonisation des libellés de statuts, formulaires et messages système sur les 5 applications.
+            </p>
+          </div>
+          <div class="card card--highlight" style="padding: 1rem;">
+            <strong style="color: var(--primary-dark); font-size: 0.95rem;">Indicateurs de Chargement &amp; UX :</strong>
+            <p style="font-size: 0.88rem; color: #475569; margin-top: 0.25rem;">
+              Ajout de la Top Progress Bar, squelettes de chargement et spinners sur l'ensemble des écrans pour une expérience fluide digne des standards internationaux.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7 : Ce qui n'a pas été fait / En attente (Transparence) -->
+    <section class="slide" data-slide="7">
+      <div class="slide-inner">
+        <div class="slide-header">
+          <div class="slide-title-wrap">
+            <span class="badge badge--warning">Analyse des Écarts</span>
+            <h2>Ce qui Reste à Faire &amp; Dépendances Externes</h2>
+          </div>
+          <p class="lead" style="font-size: 0.95rem;">Identification claire des sujets en cours et des éléments requis pour avancer.</p>
+        </div>
+
+        <div class="grid-2">
+          <div class="card card--warning">
+            <div class="card-head">
+              <span class="card-title" style="color: #92400e;">
+                <svg class="icon icon--warning"><use href="#icon-clock"/></svg>
+                1. APIs Fournisseurs : Exclues de la V1 (Choix Stratégique)
+              </span>
+              <span class="badge badge--warning">Réalisme Régional</span>
+            </div>
+            <p class="card-desc">
+              <strong>Constat terrain :</strong> La majorité des agences, guides et hébergements de notre région ne possèdent pas de système informatique automatisé ou d'API stable.
+            </p>
+            <p class="card-desc">
+              <strong>Risque évité :</strong> Forcer une synchronisation API en V1 provoquerait des désynchronisations de stock, des rejets de réservations et bloquerait les prestataires locaux.
+            </p>
+            <div style="background: #fffbeb; padding: 0.75rem; border-radius: 8px; font-size: 0.82rem; color: #78350f;">
+              <strong>Solution V1 éprouvée :</strong> Gestion centralisée via le Back-Office &amp; flux de <strong>Réservation Assistée</strong> (confirmation humaine rapide), garantissant 100% de fiabilité commerciale sans dépendance technique fragile.
+            </div>
+          </div>
+
+          <div class="card card--warning">
+            <div class="card-head">
+              <span class="card-title" style="color: #92400e;">
+                <svg class="icon icon--alert"><use href="#icon-target"/></svg>
+                2. Cartographie Interactive &amp; Import Google Maps
+              </span>
+              <span class="badge badge--info">En Roadmap S2</span>
+            </div>
+            <p class="card-desc">
+              <strong>Ce qui a été fait :</strong> Stockage des coordonnées latitude/longitude par étape d'itinéraire d'activité.
+            </p>
+            <p class="card-desc">
+              <strong>Ce qui reste à faire :</strong> Le visualiseur interactif de tracé vectoriel (Mapbox / Leaflet) et l'import automatique via lien Google Maps.
+            </p>
+            <div style="background: #eff6ff; padding: 0.75rem; border-radius: 8px; font-size: 0.82rem; color: #1e40af;">
+              <strong>Prochaine étape technique :</strong> Intégration de la clé d'API cartographique lors du sprint UX de septembre.
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="border-left: 4px solid #6366f1;">
+          <h4 style="color: #4338ca; font-size: 0.95rem;">3. Questionnaire Hôtels &amp; Grille Budgétaire (Action Siwa) :</h4>
+          <p style="font-size: 0.88rem; color: #334155; margin-top: 0.25rem;">
+            Présentation lors de cette réunion du modèle de questionnaire pour standardiser les attributs des hébergements partenaires et estimation du calendrier de déploiement d'ici fin 2026.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8 : Démonstration Live (Guide pour l'orateur) -->
+    <section class="slide" data-slide="8">
+      <div class="slide-inner">
+        <div class="slide-header">
+          <div class="slide-title-wrap">
+            <span class="badge badge--accent">Démonstration Pratique · 15 min</span>
+            <h2>Scénarios de Démonstration en Direct</h2>
+          </div>
+          <p class="lead" style="font-size: 0.95rem;">Déroulé pas à pas pour illustrer les modifications demandées.</p>
+        </div>
+
+        <div class="tabs-nav">
+          <button class="tab-btn active" onclick="switchDemo(event, 'demo-manifest')">Scénario 1 : Manifeste &amp; Réservation</button>
+          <button class="tab-btn" onclick="switchDemo(event, 'demo-admin')">Scénario 2 : Back-Office &amp; Validation</button>
+          <button class="tab-btn" onclick="switchDemo(event, 'demo-pos')">Scénario 3 : Caisse Agence (POS)</button>
+        </div>
+
+        <div id="demo-manifest" class="tab-content active">
+          <h3 style="margin-bottom: 0.5rem; color: var(--primary);">Parcours Voyageur Web : Devis &amp; Manifeste</h3>
+          <ul class="card-list" style="font-size: 0.92rem;">
+            <li><strong>1. Choix de l'activité / hôtel :</strong> Montrer la clarté du calendrier de réservation et le bouton "Demander une réservation".</li>
+            <li><strong>2. Saisie du Manifeste :</strong> Ajouter 2 passagers, remplir les numéros de passeport et cocher l'obligation vaccinale.</li>
+            <li><strong>3. Téléversement de pièces :</strong> Démonstration de l'ajout d'une pièce d'identité (ou simulation caméra).</li>
+            <li><strong>4. Confirmation de la demande :</strong> Le voyageur visualise son statut <code>En attente de validation</code> dans son espace compte.</li>
+          </ul>
+        </div>
+
+        <div id="demo-admin" class="tab-content">
+          <h3 style="margin-bottom: 0.5rem; color: var(--primary);">Espace Staff : Traitement &amp; Notifications</h3>
+          <ul class="card-list" style="font-size: 0.92rem;">
+            <li><strong>1. Notification temps réel :</strong> Montrer l'alerte dans la cloche supérieure pour la nouvelle demande.</li>
+            <li><strong>2. Examen du dossier :</strong> Consultation des pièces jointes d'identité directement dans la fiche réservation.</li>
+            <li><strong>3. Assignation &amp; Validation :</strong> Attribution d'un guide et passage de la demande à "Prêt pour paiement".</li>
+            <li><strong>4. Gestion de contenu :</strong> Aperçu de l'éditeur WYSIWYG sur une fiche d'activité.</li>
+          </ul>
+        </div>
+
+        <div id="demo-pos" class="tab-content">
+          <h3 style="margin-bottom: 0.5rem; color: var(--primary);">Point de Vente Physique (POS) : Encaissement &amp; Reçu</h3>
+          <ul class="card-list" style="font-size: 0.92rem;">
+            <li><strong>1. Vente au comptoir :</strong> Sélection d'un forfait combiné avec code promo pour un client de passage.</li>
+            <li><strong>2. Choix de paiement :</strong> Encaissement en espèces ou carte avec confirmation sécurisée.</li>
+            <li><strong>3. Reçu de caisse :</strong> Génération du PDF ticket de caisse et envoi immédiat par e-mail au client.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9 : Roadmap & Objectifs Fin d'Année 2026 -->
+    <section class="slide" data-slide="9">
+      <div class="slide-inner">
+        <div class="slide-header">
+          <div class="slide-title-wrap">
+            <span class="badge badge--info">Planning &amp; Perspectives</span>
+            <h2>Trajectoire de Lancement (Septembre - Décembre 2026)</h2>
+          </div>
+          <p class="lead" style="font-size: 0.95rem;">Cap vers un produit fini, professionnel et aux standards internationaux.</p>
+        </div>
+
+        <div class="grid-3">
+          <div class="card" style="border-top: 4px solid var(--primary);">
+            <div class="badge badge--accent" style="margin-bottom: 0.5rem;">Septembre 2026</div>
+            <h3 style="font-size: 1.1rem; color: var(--primary-dark);">Phase 1 : Onboarding Prestataires</h3>
+            <ul class="card-list" style="font-size: 0.85rem;">
+              <li>• Standardisation des formulaires hôtels &amp; activités</li>
+              <li>• Saisie du catalogue initial via le Back-Office</li>
+              <li>• Tests de charge et audit sécurité</li>
+            </ul>
+          </div>
+
+          <div class="card" style="border-top: 4px solid var(--accent-dark);">
+            <div class="badge badge--info" style="margin-bottom: 0.5rem;">Octobre 2026</div>
+            <h3 style="font-size: 1.1rem; color: var(--primary-dark);">Phase 2 : Cartographie &amp; Formation</h3>
+            <ul class="card-list" style="font-size: 0.85rem;">
+              <li>• Intégration cartographie vectorielle interactive</li>
+              <li>• Formation des équipes opérationnelles &amp; partenaires</li>
+              <li>• Rodage du flux de réservation assistée</li>
+            </ul>
+          </div>
+
+          <div class="card" style="border-top: 4px solid var(--success);">
+            <div class="badge badge--success" style="margin-bottom: 0.5rem;">Nov - Déc 2026</div>
+            <h3 style="font-size: 1.1rem; color: var(--primary-dark);">Phase 3 : Lancement Officiel</h3>
+            <ul class="card-list" style="font-size: 0.85rem;">
+              <li>• Ouverture au grand public international</li>
+              <li>• Campagnes marketing &amp; programme GAP</li>
+              <li>• Suivi opérationnel 24/7 &amp; support</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card card--success" style="padding: 1.1rem; margin-top: 0.5rem;">
+          <h4 style="color: #065f46; font-size: 0.95rem;">Décisions attendues à l'issue de la séance :</h4>
+          <p style="font-size: 0.88rem; color: #334155; margin-top: 0.25rem;">
+            1. Validation formelle des modules livrés (Manifeste, Notifications, POS, i18n).<br>
+            2. Confirmation de l'approche V1 sans dépendance aux APIs fournisseurs externes (gestion directe Back-Office).<br>
+            3. Approbation du calendrier de déploiement et d'onboarding pour fin 2026.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10 : Clôture & Échanges (Q&A) -->
+    <section class="slide slide--hero" data-slide="10">
+      <div class="slide-inner">
+        <span class="badge badge--accent">Session d'Échange</span>
+        <h1>Questions &amp; Réponses</h1>
+        <p class="lead" style="max-width: 700px; margin: 0 auto;">
+          Merci pour votre attention et votre confiance.<br>
+          La parole est aux membres du comité pour leurs retours et arbitrages.
+        </p>
+
+        <div style="background: rgba(255,255,255,0.08); padding: 1.5rem; border-radius: 12px; max-width: 600px; margin: 1.5rem auto 0; border: 1px solid rgba(255,255,255,0.15);">
+          <strong style="color: var(--accent); font-size: 1.1rem;">Plateforme Africa Tourism Gate</strong>
+          <p style="font-size: 0.85rem; color: rgba(255,255,255,0.8); margin-top: 0.5rem;">
+            Environnements de test disponibles : Web · Admin · POS · GAP · API REST
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <p class="nav-hint">Navigation : Flèches ← → ou Barre Espace · Touche F : Plein écran</p>
+
+  <!-- Navigation Bar -->
+  <nav class="nav-bar" aria-label="Contrôle de la présentation">
+    <button class="nav-btn" id="btnPrev" aria-label="Slide précédente">
+      ← <span>Précédent</span>
+    </button>
+    
+    <div class="nav-center">
+      <span id="navCounter">1 / 10</span>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <button class="nav-btn" id="btnNext" aria-label="Slide suivante">
+      <span>Suivant</span> →
+    </button>
+  </nav>
+
+  <script>
+    (function () {
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const total = slides.length;
+      let current = 0;
+
+      const btnPrev = document.getElementById("btnPrev");
+      const btnNext = document.getElementById("btnNext");
+      const navCounter = document.getElementById("navCounter");
+      const progressFill = document.getElementById("progressFill");
+
+      function updateSlide(index) {
+        if (index < 0 || index >= total) return;
+
+        slides[current].classList.remove("active", "prev");
+        if (index < current) slides[current].classList.add("prev");
+
+        current = index;
+        slides[current].classList.add("active");
+        slides[current].classList.remove("prev");
+
+        navCounter.textContent = (current + 1) + " / " + total;
+        progressFill.style.width = (((current + 1) / total) * 100) + "%";
+
+        btnPrev.disabled = current === 0;
+        btnNext.disabled = current === total - 1;
+
+        history.replaceState(null, "", "#slide-" + (current + 1));
+      }
+
+      function next() { updateSlide(current + 1); }
+      function prev() { updateSlide(current - 1); }
+
+      btnNext.addEventListener("click", next);
+      btnPrev.addEventListener("click", prev);
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
+          e.preventDefault();
+          next();
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+          e.preventDefault();
+          prev();
+        } else if (e.key === "Home") {
+          updateSlide(0);
+        } else if (e.key === "End") {
+          updateSlide(total - 1);
+        } else if (e.key === "f" || e.key === "F") {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(() => {});
+          } else {
+            document.exitFullscreen();
+          }
+        }
+      });
+
+      document.getElementById("deck").addEventListener("click", function (e) {
+        if (e.target.closest("button, a, summary, .tab-btn, .matrix-table")) return;
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        if (x > rect.width / 2) next(); else prev();
+      });
+
+      const hash = location.hash.match(/^#slide-(\d+)$/);
+      if (hash) {
+        updateSlide(Math.min(parseInt(hash[1], 10) - 1, total - 1));
+      } else {
+        updateSlide(0);
+      }
+    })();
+
+    function switchDemo(event, demoId) {
+      document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+      document.querySelectorAll(".tab-content").forEach(content => content.classList.remove("active"));
+      event.currentTarget.classList.add("active");
+      document.getElementById(demoId).classList.add("active");
+    }
+  </script>
+</body>
+</html>

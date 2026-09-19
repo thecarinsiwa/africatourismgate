@@ -6,8 +6,15 @@ import { useEffect, useState } from 'react';
 import { posSalePageConfig } from '../../config/sale';
 import type { SaleCartCustomer, SaleManifestDraftEntry } from '../../lib/sale/types';
 import { emptySaleManifestEntry } from '../../lib/sale/types';
+import { PosNationalitySelect } from './pos-nationality-select';
 
 const { manifest: labels } = posSalePageConfig;
+
+const requiredMark = (
+  <span className="text-red-500" aria-hidden="true">
+    *
+  </span>
+);
 
 type SaleManifestSheetProps = {
   open: boolean;
@@ -27,6 +34,7 @@ export function SaleManifestSheet({
   onSave,
 }: SaleManifestSheetProps) {
   const [drafts, setDrafts] = useState<SaleManifestDraftEntry[]>([]);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -41,6 +49,7 @@ export function SaleManifestSheet({
 
   useEffect(() => {
     if (!open) return;
+    setValidationError(null);
 
     if (entries.length > 0) {
       setDrafts(entries.map((e) => ({ ...e })));
@@ -70,6 +79,7 @@ export function SaleManifestSheet({
   }
 
   function updateEntry(index: number, patch: Partial<SaleManifestDraftEntry>) {
+    setValidationError(null);
     setDrafts((prev) => {
       const next = [...prev];
       if (!next[index]) return prev;
@@ -79,10 +89,12 @@ export function SaleManifestSheet({
   }
 
   function addTraveler() {
+    setValidationError(null);
     setDrafts((prev) => [...prev, emptySaleManifestEntry()]);
   }
 
   function removeTraveler(index: number) {
+    setValidationError(null);
     setDrafts((prev) => {
       if (prev.length <= 1) {
         return [emptySaleManifestEntry()];
@@ -98,7 +110,6 @@ export function SaleManifestSheet({
   }
 
   function handleSave() {
-    // Ne garder que les entrées qui ont au moins le nom ou une info renseignée
     const filtered = drafts.filter(
       (e) =>
         e.fullName.trim() ||
@@ -107,6 +118,31 @@ export function SaleManifestSheet({
         e.conditions?.trim() ||
         e.comment?.trim(),
     );
+
+    if (filtered.length === 0) {
+      onSave([]);
+      onClose();
+      return;
+    }
+
+    for (let i = 0; i < filtered.length; i++) {
+      const entry = filtered[i]!;
+      const n = i + 1;
+      if (!entry.fullName.trim()) {
+        setValidationError(labels.fullNameRequired(n));
+        return;
+      }
+      if (!entry.nationality?.trim()) {
+        setValidationError(labels.nationalityRequired(n));
+        return;
+      }
+      if (!entry.idNumber?.trim()) {
+        setValidationError(labels.idNumberRequired(n));
+        return;
+      }
+    }
+
+    setValidationError(null);
     onSave(filtered);
     onClose();
   }
@@ -171,9 +207,11 @@ export function SaleManifestSheet({
                 <Input
                   id={`manifest-name-${index}`}
                   label={labels.fullNameLabel}
+                  labelExtra={requiredMark}
                   placeholder={labels.fullNamePlaceholder}
                   value={entry.fullName}
                   onChange={(e) => updateEntry(index, { fullName: e.target.value })}
+                  required
                 />
 
                 <div className="grid grid-cols-2 gap-3">
@@ -206,7 +244,7 @@ export function SaleManifestSheet({
                           sex: (e.target.value || undefined) as BookingManifestSex | undefined,
                         })
                       }
-                      className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary min-h-[3rem]"
+                      className="min-h-[3rem] w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                     >
                       <option value="">{labels.sexOptions.empty}</option>
                       <option value="M">{labels.sexOptions.M}</option>
@@ -217,20 +255,25 @@ export function SaleManifestSheet({
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <Input
+                  <PosNationalitySelect
                     id={`manifest-nat-${index}`}
                     label={labels.nationalityLabel}
-                    placeholder={labels.nationalityPlaceholder}
                     value={entry.nationality ?? ''}
-                    onChange={(e) => updateEntry(index, { nationality: e.target.value })}
+                    onChange={(code) => updateEntry(index, { nationality: code })}
+                    required
+                    placeholder={labels.nationalityPlaceholder}
+                    searchPlaceholder={labels.nationalitySearch}
+                    emptyMessage={labels.nationalityEmpty}
                   />
 
                   <Input
                     id={`manifest-id-${index}`}
                     label={labels.idNumberLabel}
+                    labelExtra={requiredMark}
                     placeholder={labels.idNumberPlaceholder}
                     value={entry.idNumber ?? ''}
                     onChange={(e) => updateEntry(index, { idNumber: e.target.value })}
+                    required
                   />
                 </div>
 
@@ -257,12 +300,18 @@ export function SaleManifestSheet({
           </Button>
         </div>
 
+        {validationError ? (
+          <p role="alert" className="px-4 text-sm text-red-600 sm:px-5">
+            {validationError}
+          </p>
+        ) : null}
+
         <div className="flex gap-3 border-t border-atg-border px-4 py-4 sm:px-5">
           <Button
             type="button"
             variant="outline"
             size="lg"
-            className="flex-1 min-h-[3rem]"
+            className="min-h-[3rem] flex-1"
             onClick={onClose}
           >
             {labels.closeLabel}
@@ -271,7 +320,7 @@ export function SaleManifestSheet({
             type="button"
             variant="primary"
             size="lg"
-            className="flex-1 min-h-[3rem]"
+            className="min-h-[3rem] flex-1"
             onClick={handleSave}
           >
             {labels.saveLabel}

@@ -220,10 +220,15 @@ export type Translations = {
       sexF: string;
       sexOther: string;
       nationality: string;
+      nationalityPlaceholder: string;
+      nationalitySearch: string;
+      nationalityEmpty: string;
       idNumber: string;
       conditions: string;
       conditionsPlaceholder: string;
       fullNameRequired: string;
+      nationalityRequired: string;
+      idNumberRequired: string;
       idDocument: string;
       idDocumentHint: string;
       idDocumentSelected: string;
@@ -1078,6 +1083,8 @@ export type Translations = {
           editTitle: string;
           formHint: string;
           fullNameRequired: string;
+          nationalityRequired: string;
+          idNumberRequired: string;
           save: string;
           saving: string;
           saveError: string;
@@ -1099,6 +1106,9 @@ export type Translations = {
             age: string;
             sex: string;
             nationality: string;
+            nationalityPlaceholder: string;
+            nationalitySearch: string;
+            nationalityEmpty: string;
             idNumber: string;
             conditions: string;
             conditionsPlaceholder: string;
@@ -1562,7 +1572,8 @@ const fr: Translations = {
     },
     manifest: {
       title: 'Informations des voyageurs',
-      subtitle: 'Renseignez les informations de chaque voyageur. Seul le nom complet est obligatoire.',
+      subtitle:
+        'Renseignez les informations de chaque voyageur. Nom, nationalité et n° de pièce sont obligatoires. Le genre est optionnel.',
       travelerN: 'Voyageur {n}',
       fullName: 'Nom complet',
       age: 'Âge',
@@ -1572,10 +1583,15 @@ const fr: Translations = {
       sexF: 'Femme',
       sexOther: 'Autre',
       nationality: 'Nationalité',
+      nationalityPlaceholder: 'Choisir un pays',
+      nationalitySearch: 'Rechercher un pays…',
+      nationalityEmpty: 'Aucun pays trouvé.',
       idNumber: "N° pièce d'identité",
       conditions: 'Conditions médicales',
       conditionsPlaceholder: 'Allergies, traitements, besoins particuliers…',
       fullNameRequired: 'Le nom complet du voyageur {n} est obligatoire.',
+      nationalityRequired: 'La nationalité du voyageur {n} est obligatoire.',
+      idNumberRequired: "Le n° de pièce d'identité du voyageur {n} est obligatoire.",
       idDocument: "Pièce d'identité",
       idDocumentHint: 'JPEG, PNG, WebP ou PDF — 10 Mo max.',
       idDocumentSelected: 'Choisir un fichier',
@@ -2535,8 +2551,11 @@ const fr: Translations = {
           docsLoadError: 'Impossible de charger les documents.',
           addTitle: 'Ajouter un voyageur',
           editTitle: 'Modifier le voyageur',
-          formHint: 'Seul le nom complet est obligatoire.',
+          formHint:
+            'Nom, nationalité et n° de pièce sont obligatoires. Le genre est optionnel.',
           fullNameRequired: 'Le nom complet est obligatoire.',
+          nationalityRequired: 'La nationalité est obligatoire.',
+          idNumberRequired: "Le n° de pièce d'identité est obligatoire.",
           save: 'Enregistrer',
           saving: 'Enregistrement…',
           saveError: "Impossible d'enregistrer le voyageur.",
@@ -2558,6 +2577,9 @@ const fr: Translations = {
             age: 'Âge',
             sex: 'Genre',
             nationality: 'Nationalité',
+            nationalityPlaceholder: 'Choisir un pays',
+            nationalitySearch: 'Rechercher un pays…',
+            nationalityEmpty: 'Aucun pays trouvé.',
             idNumber: "N° pièce d'identité",
             conditions: 'Conditions médicales',
             conditionsPlaceholder: 'Allergies, traitements en cours, besoins particuliers?',
@@ -3086,7 +3108,8 @@ const en: Translations = {
     },
     manifest: {
       title: 'Traveler information',
-      subtitle: 'Fill in the details for each traveler. Only the full name is required.',
+      subtitle:
+        'Fill in the details for each traveler. Full name, nationality and ID / passport number are required. Gender is optional.',
       travelerN: 'Traveler {n}',
       fullName: 'Full name',
       age: 'Age',
@@ -3096,10 +3119,15 @@ const en: Translations = {
       sexF: 'Female',
       sexOther: 'Other',
       nationality: 'Nationality',
+      nationalityPlaceholder: 'Select a country',
+      nationalitySearch: 'Search for a country…',
+      nationalityEmpty: 'No country found.',
       idNumber: 'ID / Passport number',
       conditions: 'Medical conditions',
       conditionsPlaceholder: 'Allergies, treatments, special needs?',
       fullNameRequired: 'Full name of traveler {n} is required.',
+      nationalityRequired: 'Nationality of traveler {n} is required.',
+      idNumberRequired: 'ID / passport number of traveler {n} is required.',
       idDocument: 'Identity document',
       idDocumentHint: 'JPEG, PNG, WebP or PDF ? 10 MB max.',
       idDocumentSelected: 'Choose a file',
@@ -4054,8 +4082,11 @@ const en: Translations = {
           docsLoadError: 'Could not load documents.',
           addTitle: 'Add a traveler',
           editTitle: 'Edit traveler',
-          formHint: 'Only the full name is required.',
+          formHint:
+            'Full name, nationality and ID / passport number are required. Gender is optional.',
           fullNameRequired: 'Full name is required.',
+          nationalityRequired: 'Nationality is required.',
+          idNumberRequired: 'ID / passport number is required.',
           save: 'Save',
           saving: 'Saving?',
           saveError: 'Could not save the traveler.',
@@ -4077,6 +4108,9 @@ const en: Translations = {
             age: 'Age',
             sex: 'Gender',
             nationality: 'Nationality',
+            nationalityPlaceholder: 'Select a country',
+            nationalitySearch: 'Search for a country…',
+            nationalityEmpty: 'No country found.',
             idNumber: 'ID / Passport number',
             conditions: 'Medical conditions',
             conditionsPlaceholder: 'Allergies, ongoing treatments, special needs?',

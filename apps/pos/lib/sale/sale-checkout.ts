@@ -129,7 +129,12 @@ export async function saveBookingManifestEntries(
   bookingId: string,
   entries: SaleManifestDraftEntry[],
 ): Promise<void> {
-  const validEntries = entries.filter((e) => e.fullName.trim().length > 0);
+  const validEntries = entries.filter(
+    (e) =>
+      e.fullName.trim().length > 0 &&
+      (e.nationality?.trim().length ?? 0) > 0 &&
+      (e.idNumber?.trim().length ?? 0) > 0,
+  );
   if (validEntries.length === 0) return;
 
   const client = await getValidApiClient();
@@ -139,8 +144,8 @@ export async function saveBookingManifestEntries(
       fullName: entry.fullName.trim(),
       age: entry.age,
       sex: entry.sex,
-      nationality: entry.nationality?.trim() || undefined,
-      idNumber: entry.idNumber?.trim() || undefined,
+      nationality: entry.nationality?.trim() ?? '',
+      idNumber: entry.idNumber?.trim() ?? '',
       conditions: entry.conditions?.trim() || undefined,
       comment: entry.comment?.trim() || undefined,
       sortOrder: i,
