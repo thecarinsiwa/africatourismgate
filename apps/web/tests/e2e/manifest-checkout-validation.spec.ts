@@ -113,9 +113,11 @@ test('manifeste checkout: bloqué si n° pièce manquant', async ({ page }) => {
     await nameInputs.nth(i).fill(`Voyageur ${i + 1}`);
   }
 
-  const nationalityInputs = page.getByLabel(/^nationalit[eé]$|^nationality$|^nacionalidad$/i);
-  for (let i = 0; i < (await nationalityInputs.count()); i += 1) {
-    await nationalityInputs.nth(i).fill('Congolaise');
+  for (let i = 0; i < count; i += 1) {
+    const nat = page.getByLabel(/^nationalit[eé]$|^nationality$|^nacionalidad$/i).nth(i);
+    await nat.click();
+    await page.locator('input[type="search"]').last().fill('Congo');
+    await page.getByRole('option').filter({ hasText: /\(CD\)/i }).first().click();
   }
   // Leave idNumber empty on purpose
 

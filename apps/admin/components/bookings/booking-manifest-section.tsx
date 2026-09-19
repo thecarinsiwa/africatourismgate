@@ -20,9 +20,11 @@ import type {
   BookingManifestEntry,
   BookingManifestSex,
 } from '@africatourismgate/types';
-import { useTranslations } from 'next-intl';
+import { formatNationalityDisplay } from '@africatourismgate/utils';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { CountryCodeCombobox } from '../destinations/country-code-combobox';
 
 type FormState = {
   fullName: string;
@@ -106,6 +108,7 @@ export function BookingManifestSection({
   const t = useTranslations('modules.bookings.manifest');
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
+  const locale = useLocale();
   const { toast } = useToast();
 
   const conditionsId = useId();
@@ -248,7 +251,9 @@ export function BookingManifestSection({
       {
         accessorKey: 'nationality',
         header: t('columns.nationality'),
-        cell: ({ row }) => row.original.nationality ?? tCommon('empty.dash'),
+        cell: ({ row }) =>
+          formatNationalityDisplay(row.original.nationality, locale) ||
+          tCommon('empty.dash'),
       },
       {
         accessorKey: 'idNumber',
@@ -305,7 +310,7 @@ export function BookingManifestSection({
           ]
         : []),
     ],
-    [canWrite, deletingId, sexLabel, t, tActions, tCommon],
+    [canWrite, deletingId, locale, sexLabel, t, tActions, tCommon],
   );
 
   const Wrapper = embedded ? 'div' : 'section';
@@ -411,14 +416,11 @@ export function BookingManifestSection({
             onChange={(e) => setForm((prev) => ({ ...prev, price: e.target.value }))}
             placeholder={t('fields.pricePlaceholder')}
           />
-          <Input
+          <CountryCodeCombobox
             label={t('fields.nationality')}
-            labelExtra={<span className="text-red-500" aria-hidden="true">*</span>}
             name="nationality"
             value={form.nationality}
-            onChange={(e) =>
-              setForm((prev) => ({ ...prev, nationality: e.target.value }))
-            }
+            onChange={(code) => setForm((prev) => ({ ...prev, nationality: code }))}
             required
           />
           <Input

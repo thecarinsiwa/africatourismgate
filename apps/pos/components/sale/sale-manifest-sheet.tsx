@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { posSalePageConfig } from '../../config/sale';
 import type { SaleCartCustomer, SaleManifestDraftEntry } from '../../lib/sale/types';
 import { emptySaleManifestEntry } from '../../lib/sale/types';
+import { PosNationalitySelect } from './pos-nationality-select';
 
 const { manifest: labels } = posSalePageConfig;
 
@@ -254,14 +255,15 @@ export function SaleManifestSheet({
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <Input
+                  <PosNationalitySelect
                     id={`manifest-nat-${index}`}
                     label={labels.nationalityLabel}
-                    labelExtra={requiredMark}
-                    placeholder={labels.nationalityPlaceholder}
                     value={entry.nationality ?? ''}
-                    onChange={(e) => updateEntry(index, { nationality: e.target.value })}
+                    onChange={(code) => updateEntry(index, { nationality: code })}
                     required
+                    placeholder={labels.nationalityPlaceholder}
+                    searchPlaceholder={labels.nationalitySearch}
+                    emptyMessage={labels.nationalityEmpty}
                   />
 
                   <Input

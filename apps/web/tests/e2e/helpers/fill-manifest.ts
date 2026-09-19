@@ -30,6 +30,14 @@ export async function mockManifestApi(page: Page): Promise<void> {
   });
 }
 
+async function selectNationality(page: Page, index: number, countryQuery: string) {
+  const nat = page.getByLabel(/^nationalit[eé]$|^nationality$|^nacionalidad$/i).nth(index);
+  await nat.click();
+  const search = page.locator('input[type="search"]').last();
+  await search.fill(countryQuery);
+  await page.getByRole('option').filter({ hasText: /\(CD\)/i }).first().click();
+}
+
 /** Fill required checkout manifest fields for every traveler shown on recap. */
 export async function fillCheckoutManifest(page: Page): Promise<number> {
   const nameInputs = page.getByLabel(/nom complet|full name|nombre completo/i);
@@ -38,10 +46,8 @@ export async function fillCheckoutManifest(page: Page): Promise<number> {
     await nameInputs.nth(i).fill(`Voyageur ${i + 1}`);
   }
 
-  const nationalityInputs = page.getByLabel(/^nationalit[eé]$|^nationality$|^nacionalidad$/i);
-  const nationalityCount = await nationalityInputs.count();
-  for (let i = 0; i < nationalityCount; i += 1) {
-    await nationalityInputs.nth(i).fill('Congolaise');
+  for (let i = 0; i < count; i += 1) {
+    await selectNationality(page, i, 'Congo');
   }
 
   const idInputs = page.getByLabel(

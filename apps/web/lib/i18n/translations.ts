@@ -220,6 +220,9 @@ export type Translations = {
       sexF: string;
       sexOther: string;
       nationality: string;
+      nationalityPlaceholder: string;
+      nationalitySearch: string;
+      nationalityEmpty: string;
       idNumber: string;
       conditions: string;
       conditionsPlaceholder: string;
@@ -1103,6 +1106,9 @@ export type Translations = {
             age: string;
             sex: string;
             nationality: string;
+            nationalityPlaceholder: string;
+            nationalitySearch: string;
+            nationalityEmpty: string;
             idNumber: string;
             conditions: string;
             conditionsPlaceholder: string;
@@ -1577,6 +1583,9 @@ const fr: Translations = {
       sexF: 'Femme',
       sexOther: 'Autre',
       nationality: 'Nationalité',
+      nationalityPlaceholder: 'Choisir un pays',
+      nationalitySearch: 'Rechercher un pays…',
+      nationalityEmpty: 'Aucun pays trouvé.',
       idNumber: "N° pièce d'identité",
       conditions: 'Conditions médicales',
       conditionsPlaceholder: 'Allergies, traitements, besoins particuliers…',
@@ -2568,6 +2577,9 @@ const fr: Translations = {
             age: 'Âge',
             sex: 'Genre',
             nationality: 'Nationalité',
+            nationalityPlaceholder: 'Choisir un pays',
+            nationalitySearch: 'Rechercher un pays…',
+            nationalityEmpty: 'Aucun pays trouvé.',
             idNumber: "N° pièce d'identité",
             conditions: 'Conditions médicales',
             conditionsPlaceholder: 'Allergies, traitements en cours, besoins particuliers?',
@@ -3107,6 +3119,9 @@ const en: Translations = {
       sexF: 'Female',
       sexOther: 'Other',
       nationality: 'Nationality',
+      nationalityPlaceholder: 'Select a country',
+      nationalitySearch: 'Search for a country…',
+      nationalityEmpty: 'No country found.',
       idNumber: 'ID / Passport number',
       conditions: 'Medical conditions',
       conditionsPlaceholder: 'Allergies, treatments, special needs?',
@@ -4093,6 +4108,9 @@ const en: Translations = {
             age: 'Age',
             sex: 'Gender',
             nationality: 'Nationality',
+            nationalityPlaceholder: 'Select a country',
+            nationalitySearch: 'Search for a country…',
+            nationalityEmpty: 'No country found.',
             idNumber: 'ID / Passport number',
             conditions: 'Medical conditions',
             conditionsPlaceholder: 'Allergies, ongoing treatments, special needs?',
