@@ -6,8 +6,10 @@ import {
 } from './auth-visual.constants';
 import {
   BOOKING_ITEM_TYPE_KEYS,
+  WEB_PAYMENT_METHOD_KEYS,
   isBookingMode,
   normalizeBookingItemTypeModes,
+  normalizeWebPaymentMethods,
   type BookingMode,
 } from '@africatourismgate/types';
 import type { AuthVisualDecorIcon } from '@africatourismgate/types';
@@ -293,6 +295,27 @@ export function validateSettingValue(
         modes[key] = mode;
       }
       return normalizeBookingItemTypeModes(modes);
+    }
+    case 'payment_methods': {
+      const flags: Partial<Record<(typeof WEB_PAYMENT_METHOD_KEYS)[number], boolean>> =
+        {};
+      for (const key of WEB_PAYMENT_METHOD_KEYS) {
+        const flag = value[key];
+        if (flag === undefined || flag === null) {
+          continue;
+        }
+        if (typeof flag !== 'boolean') {
+          throw new BadRequestException(`${key} doit être un booléen.`);
+        }
+        flags[key] = flag;
+      }
+      const normalized = normalizeWebPaymentMethods(flags);
+      if (!WEB_PAYMENT_METHOD_KEYS.some((key) => normalized[key])) {
+        throw new BadRequestException(
+          'Au moins un moyen de paiement doit être activé.',
+        );
+      }
+      return normalized;
     }
     default:
       return value;

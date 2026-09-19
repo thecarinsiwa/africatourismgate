@@ -12,10 +12,13 @@ import type {
   PublicAuthVisual,
   PublicAuthVisualIcon,
   ResolvedBookingItemTypeModes,
+  ResolvedWebPaymentMethods,
 } from '@africatourismgate/types';
 import {
   DEFAULT_BOOKING_ITEM_TYPE_MODES,
+  DEFAULT_WEB_PAYMENT_METHODS,
   normalizeBookingItemTypeModes,
+  normalizeWebPaymentMethods,
 } from '@africatourismgate/types';
 import { OrgScopeService, PLATFORM_ORG_ID } from '../../../common/org-scope/org-scope.service';
 import { CrudService } from '../../../common/crud/crud.service';
@@ -34,6 +37,7 @@ import {
 import { PublicBrandingDto } from './dto/public-branding.dto';
 import { PublicContactDto } from './dto/public-contact.dto';
 import { PublicBookingModesDto } from './dto/public-booking-modes.dto';
+import { PublicPaymentMethodsDto } from './dto/public-payment-methods.dto';
 import { OrganizationSettingsListQueryDto } from './dto/organization-settings-list-query.dto';
 import { validateSettingValue } from './validate-setting-value';
 
@@ -346,6 +350,13 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
     return this.getResolvedItemTypeModes(organization.id);
   }
 
+  async findPublicPaymentMethods(
+    organizationSlug?: string,
+  ): Promise<PublicPaymentMethodsDto> {
+    const organization = await this.resolvePublicOrganization(organizationSlug);
+    return this.getResolvedWebPaymentMethods(organization.id);
+  }
+
   async getResolvedItemTypeModes(
     organizationId: string = PLATFORM_ORG_ID,
   ): Promise<ResolvedBookingItemTypeModes> {
@@ -368,6 +379,31 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
 
     return normalizeBookingItemTypeModes(
       setting.settingValue as Partial<ResolvedBookingItemTypeModes>,
+    );
+  }
+
+  async getResolvedWebPaymentMethods(
+    organizationId: string = PLATFORM_ORG_ID,
+  ): Promise<ResolvedWebPaymentMethods> {
+    const setting = await this.settingsRepository.findOne({
+      where: {
+        organizationId,
+        settingGroup: 'booking',
+        settingKey: 'payment_methods',
+        deletedAt: IsNull(),
+      },
+    });
+
+    if (
+      !setting?.settingValue ||
+      typeof setting.settingValue !== 'object' ||
+      Array.isArray(setting.settingValue)
+    ) {
+      return { ...DEFAULT_WEB_PAYMENT_METHODS };
+    }
+
+    return normalizeWebPaymentMethods(
+      setting.settingValue as Partial<ResolvedWebPaymentMethods>,
     );
   }
 

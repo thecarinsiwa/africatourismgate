@@ -34,7 +34,8 @@
       "holdMinutesInvalid": "Durée de retenue invalide (entier positif).",
       "displayNameRequired": "Le nom affiché est obligatoire.",
       "loyaltyRateInvalid": "Le taux de points doit être un entier positif ou nul.",
-      "programCodeInvalid": "Le code programme est obligatoire (32 caractères max)."
+      "programCodeInvalid": "Le code programme est obligatoire (32 caractères max).",
+      "paymentMethodsRequired": "Activez au moins un moyen de paiement."
     },
     "sections": {
       "contact": {
@@ -62,6 +63,13 @@
         "modesDescription": "Immédiat : paiement Stripe au checkout. Assisté : demande en attente de validation (CE-3).",
         "modeImmediate": "Immédiat (paiement)",
         "modeAssisted": "Assisté (demande)",
+        "paymentMethodsTitle": "Moyens de paiement (site public)",
+        "paymentMethodsDescription": "Cochez les moyens proposés au checkout web. Le POS n’est pas concerné. Le virement nécessite aussi des comptes bancaires publiés.",
+        "paymentMethods": {
+          "stripe": "Carte (Stripe)",
+          "cash": "Espèces sur place",
+          "bank_transfer": "Virement bancaire"
+        },
         "itemTypes": {
           "room": "Hébergement (chambre)",
           "flight_class": "Vol",

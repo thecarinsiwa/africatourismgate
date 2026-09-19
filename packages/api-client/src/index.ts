@@ -396,6 +396,7 @@ import type {
   User,
   UsersListQuery,
   ResolvedBookingItemTypeModes,
+  ResolvedWebPaymentMethods,
 } from '@africatourismgate/types';
 export type { PaginationQuery } from '@africatourismgate/types';
 export { SESSION_LOCKED_CODE } from '@africatourismgate/types';
@@ -1290,6 +1291,19 @@ export class ApiClient {
     const q = params.toString();
     return this.request<ResolvedBookingItemTypeModes>(
       `/organization-settings/public/booking-modes${q ? `?${q}` : ''}`,
+    );
+  }
+
+  getPublicPaymentMethods(query?: {
+    organizationSlug?: string;
+  }): Promise<ResolvedWebPaymentMethods> {
+    const params = new URLSearchParams();
+    if (query?.organizationSlug) {
+      params.set('organizationSlug', query.organizationSlug);
+    }
+    const q = params.toString();
+    return this.request<ResolvedWebPaymentMethods>(
+      `/organization-settings/public/payment-methods${q ? `?${q}` : ''}`,
     );
   }
 

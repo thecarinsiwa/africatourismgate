@@ -34,7 +34,8 @@
       "holdMinutesInvalid": "Invalid hold duration (positive integer).",
       "displayNameRequired": "Display name is required.",
       "loyaltyRateInvalid": "Points rate must be a non-negative integer.",
-      "programCodeInvalid": "Program code is required (max 32 characters)."
+      "programCodeInvalid": "Program code is required (max 32 characters).",
+      "paymentMethodsRequired": "Enable at least one payment method."
     },
     "sections": {
       "contact": {
@@ -62,6 +63,13 @@
         "modesDescription": "Immediate: Stripe payment at checkout. Assisted: request pending staff approval.",
         "modeImmediate": "Immediate (payment)",
         "modeAssisted": "Assisted (request)",
+        "paymentMethodsTitle": "Payment methods (public site)",
+        "paymentMethodsDescription": "Select the methods offered on web checkout. POS is not affected. Bank transfer also needs published bank accounts.",
+        "paymentMethods": {
+          "stripe": "Card (Stripe)",
+          "cash": "Cash on site",
+          "bank_transfer": "Bank transfer"
+        },
         "itemTypes": {
           "room": "Accommodation (room)",
           "flight_class": "Flight",

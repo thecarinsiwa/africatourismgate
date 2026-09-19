@@ -26,6 +26,7 @@ import { formatCruisePrice } from '../../lib/cruises/listings';
 import type { CruiseSailingDetail } from '../../lib/cruises/types';
 import { ensureClientAccessToken, getClientAccessToken } from '../../lib/auth/client-session';
 import { useBookingItemTypeModes } from '../../components/booking-modes-provider';
+import { useWebPaymentMethods } from '../../components/payment-methods-provider';
 import { isAssistedBookingDraft } from '../../lib/bookings/booking-mode';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatHotelPrice } from '../../lib/hotels/listings';
@@ -85,6 +86,16 @@ export function ReservationRecapPageContent({ draft }: Props) {
     useState<BookingPreferredPaymentMethod | null>(null);
   const [bankAccounts, setBankAccounts] = useState<PublicPaymentBankAccount[]>([]);
   const [bankAccountsLoading, setBankAccountsLoading] = useState(false);
+  const paymentMethods = useWebPaymentMethods();
+
+  useEffect(() => {
+    if (
+      preferredPaymentMethod &&
+      !paymentMethods[preferredPaymentMethod]
+    ) {
+      setPreferredPaymentMethod(null);
+    }
+  }, [paymentMethods, preferredPaymentMethod]);
 
   useEffect(() => {
     if (preferredPaymentMethod !== 'bank_transfer') {
@@ -721,69 +732,75 @@ export function ReservationRecapPageContent({ draft }: Props) {
                   {ck.paymentMethodTitle}
                 </legend>
                 <p className="text-sm text-atg-muted">{ck.paymentMethodHint}</p>
-                <label className="flex cursor-pointer gap-3 rounded-lg border border-atg-border p-3 has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:border-atg-border">
-                  <input
-                    type="radio"
-                    name="preferredPaymentMethod"
-                    value="stripe"
-                    checked={preferredPaymentMethod === 'stripe'}
-                    onChange={() => {
-                      setPreferredPaymentMethod('stripe');
-                      setError(null);
-                    }}
-                    className="mt-1"
-                  />
-                  <span>
-                    <span className="block text-sm font-medium text-atg-fg">
-                      {ck.paymentMethodStripe}
+                {paymentMethods.stripe ? (
+                  <label className="flex cursor-pointer gap-3 rounded-lg border border-atg-border p-3 has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:border-atg-border">
+                    <input
+                      type="radio"
+                      name="preferredPaymentMethod"
+                      value="stripe"
+                      checked={preferredPaymentMethod === 'stripe'}
+                      onChange={() => {
+                        setPreferredPaymentMethod('stripe');
+                        setError(null);
+                      }}
+                      className="mt-1"
+                    />
+                    <span>
+                      <span className="block text-sm font-medium text-atg-fg">
+                        {ck.paymentMethodStripe}
+                      </span>
+                      <span className="block text-xs text-atg-muted">
+                        {ck.paymentMethodStripeHint}
+                      </span>
                     </span>
-                    <span className="block text-xs text-atg-muted">
-                      {ck.paymentMethodStripeHint}
+                  </label>
+                ) : null}
+                {paymentMethods.cash ? (
+                  <label className="flex cursor-pointer gap-3 rounded-lg border border-atg-border p-3 has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:border-atg-border">
+                    <input
+                      type="radio"
+                      name="preferredPaymentMethod"
+                      value="cash"
+                      checked={preferredPaymentMethod === 'cash'}
+                      onChange={() => {
+                        setPreferredPaymentMethod('cash');
+                        setError(null);
+                      }}
+                      className="mt-1"
+                    />
+                    <span>
+                      <span className="block text-sm font-medium text-atg-fg">
+                        {ck.paymentMethodCash}
+                      </span>
+                      <span className="block text-xs text-atg-muted">
+                        {ck.paymentMethodCashHint}
+                      </span>
                     </span>
-                  </span>
-                </label>
-                <label className="flex cursor-pointer gap-3 rounded-lg border border-atg-border p-3 has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:border-atg-border">
-                  <input
-                    type="radio"
-                    name="preferredPaymentMethod"
-                    value="cash"
-                    checked={preferredPaymentMethod === 'cash'}
-                    onChange={() => {
-                      setPreferredPaymentMethod('cash');
-                      setError(null);
-                    }}
-                    className="mt-1"
-                  />
-                  <span>
-                    <span className="block text-sm font-medium text-atg-fg">
-                      {ck.paymentMethodCash}
+                  </label>
+                ) : null}
+                {paymentMethods.bank_transfer ? (
+                  <label className="flex cursor-pointer gap-3 rounded-lg border border-atg-border p-3 has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:border-atg-border">
+                    <input
+                      type="radio"
+                      name="preferredPaymentMethod"
+                      value="bank_transfer"
+                      checked={preferredPaymentMethod === 'bank_transfer'}
+                      onChange={() => {
+                        setPreferredPaymentMethod('bank_transfer');
+                        setError(null);
+                      }}
+                      className="mt-1"
+                    />
+                    <span>
+                      <span className="block text-sm font-medium text-atg-fg">
+                        {ck.paymentMethodBankTransfer}
+                      </span>
+                      <span className="block text-xs text-atg-muted">
+                        {ck.paymentMethodBankTransferHint}
+                      </span>
                     </span>
-                    <span className="block text-xs text-atg-muted">
-                      {ck.paymentMethodCashHint}
-                    </span>
-                  </span>
-                </label>
-                <label className="flex cursor-pointer gap-3 rounded-lg border border-atg-border p-3 has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:border-atg-border">
-                  <input
-                    type="radio"
-                    name="preferredPaymentMethod"
-                    value="bank_transfer"
-                    checked={preferredPaymentMethod === 'bank_transfer'}
-                    onChange={() => {
-                      setPreferredPaymentMethod('bank_transfer');
-                      setError(null);
-                    }}
-                    className="mt-1"
-                  />
-                  <span>
-                    <span className="block text-sm font-medium text-atg-fg">
-                      {ck.paymentMethodBankTransfer}
-                    </span>
-                    <span className="block text-xs text-atg-muted">
-                      {ck.paymentMethodBankTransferHint}
-                    </span>
-                  </span>
-                </label>
+                  </label>
+                ) : null}
                 {preferredPaymentMethod === 'bank_transfer' ? (
                   <BankTransferAccountsPanel
                     accounts={bankAccounts}

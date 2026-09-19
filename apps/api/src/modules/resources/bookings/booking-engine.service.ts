@@ -150,11 +150,13 @@ export class BookingEngineService {
     userId: string,
     actorUserId?: string,
   ): Promise<CreateBookingResponseDto> {
-    this.assertPreferredPaymentMethod(dto);
-    await this.assertCheckoutOrganizationScope(dto, actorUserId ?? userId);
-    const pricing = await this.resolveCheckoutPricing(dto);
     const isPosStaffCheckout =
       Boolean(actorUserId?.trim()) && Boolean(dto.organizationId?.trim());
+    await this.assertPreferredPaymentMethod(dto, {
+      skipWebPaymentGate: isPosStaffCheckout,
+    });
+    await this.assertCheckoutOrganizationScope(dto, actorUserId ?? userId);
+    const pricing = await this.resolveCheckoutPricing(dto);
     const initialStatus = isPosStaffCheckout ? 'pending_payment' : 'draft';
 
     const bookingId = await this.bookingsRepository.manager.transaction(
@@ -268,7 +270,11 @@ export class BookingEngineService {
     userId: string,
     actorUserId?: string,
   ): Promise<BookingRequestResponseDto> {
-    this.assertPreferredPaymentMethod(dto);
+    const isPosStaffCheckout =
+      Boolean(actorUserId?.trim()) && Boolean(dto.organizationId?.trim());
+    await this.assertPreferredPaymentMethod(dto, {
+      skipWebPaymentGate: isPosStaffCheckout,
+    });
     await this.assertCheckoutOrganizationScope(dto, actorUserId ?? userId);
     const pricing = await this.resolveCheckoutPricing(dto);
 
@@ -841,10 +847,23 @@ export class BookingEngineService {
     };
   }
 
-  private assertPreferredPaymentMethod(dto: BookingCheckoutDto): void {
+  private async assertPreferredPaymentMethod(
+    dto: BookingCheckoutDto,
+    options?: { skipWebPaymentGate?: boolean },
+  ): Promise<void> {
     if (!dto.preferredPaymentMethod) {
       throw new BadRequestException(
         'Le mode de paiement (preferredPaymentMethod) est obligatoire.',
+      );
+    }
+    if (options?.skipWebPaymentGate) {
+      return;
+    }
+    const methods =
+      await this.organizationSettingsService.getResolvedWebPaymentMethods();
+    if (!methods[dto.preferredPaymentMethod]) {
+      throw new BadRequestException(
+        `Le mode de paiement « ${dto.preferredPaymentMethod} » n'est pas activé pour le site public.`,
       );
     }
   }

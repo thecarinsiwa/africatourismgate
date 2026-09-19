@@ -606,8 +606,22 @@ export type {
   AuthVisualIconPreset,
   AuthVisualIconSize,
   AuthVisualSettingValue,
+  ResolvedWebPaymentMethods,
   UpdateOrganizationBankAccountRequest,
   UpsertOrganizationSettingItem,
+  WebPaymentMethodKey,
+  WebPaymentMethodsSettingValue,
+} from './organization-settings.js';
+
+export {
+  DEFAULT_AUTH_VISUAL_ICONS,
+  DEFAULT_EMAIL_BRANDING,
+  DEFAULT_LOYALTY_ONEKEY_SETTING,
+  DEFAULT_PUBLIC_CONTACT,
+  DEFAULT_WEB_PAYMENT_METHODS,
+  WEB_PAYMENT_METHOD_KEYS,
+  isWebPaymentMethodEnabled,
+  normalizeWebPaymentMethods,
 } from './organization-settings.js';
 
 export type {
