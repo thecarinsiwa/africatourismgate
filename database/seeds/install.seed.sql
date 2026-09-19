@@ -266,7 +266,7 @@ INSERT INTO `organization_settings` (
   '00000000-0000-4000-8000-000000000001',
   'booking',
   'payment_methods',
-  '{"stripe":true,"cash":true,"bank_transfer":false}',
+  '{"stripe":true,"cash":false,"bank_transfer":false}',
   '00000000-0000-4000-8000-000000000010'
 ),
 (
