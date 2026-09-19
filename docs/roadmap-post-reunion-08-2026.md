@@ -83,8 +83,9 @@ Règles :
 | Virement bancaire au checkout | ✅ `bank_transfer` + activation admin + comptes + **preuves** (voir [pr-06-bank-transfer-test.md](./pr-06-bank-transfer-test.md), [pr-06b-payment-proofs-test.md](./pr-06b-payment-proofs-test.md)) | `payment_methods`, `booking_payment_proofs`, checkout web, admin Documents |
 | Acomptes / paiements partiels | ✅ Setting `booking/deposits` + multi-paiements ; `pending_payment` jusqu’au solde ; Stripe/cash/virement/preuves partiels (voir [pr-07-deposits-test.md](./pr-07-deposits-test.md)) | `organization_settings.deposits`, `paidCents` / `balanceCents`, `booking-engine`, `stripe.service` |
 | Politique cash web | ✅ `payment_methods.cash` défaut **false** ; POS/admin inchangés (voir [pr-08-cash-policy-test.md](./pr-08-cash-policy-test.md)) | `DEFAULT_WEB_PAYMENT_METHODS`, migration `set_web_payment_methods_cash_default_false.sql`, checkout web |
+| Partenaire vs Staff vs Client | ✅ Vocabulaire + RBAC catalogue (PR-09) ; compte auth partenaire = **PR-10** | `activity_providers`, `/produits/activites/partenaires`, `activities.read/write` |
 | Liaison document ID ↔ voyageur | ❌ Upload non lié à l’entrée manifeste | `booking_identity_documents` |
-| Portail / onboarding partenaire | ❌ OAuth Gmail staff/client OK ; pas de portail B2B | `apps/api/src/modules/auth/`, `activity-providers` = catalogue |
+| Portail / onboarding partenaire | ❌ Catalogue `activity_providers` ≠ compte auth ; OAuth Gmail staff/client OK ; pas de rôle `partner` ni portail B2B (PR-10) | `apps/api/src/modules/auth/`, `activity-providers` |
 | Notifications staff persistées | ⚠️ Poll client + `localStorage` | `apps/admin/lib/notifications/use-admin-notifications.ts` |
 | Google Maps | ❌ Leaflet + OSM | `apps/web/components/maps/*`, `coordinate-picker-map.tsx` |
 | Sync API fournisseurs | ❌ Exclu V1 volontairement | — |
@@ -106,7 +107,7 @@ Règles :
 | PR-06 | 1 | Paiement par virement bancaire | Haute | `feature/pr-06-bank-transfer` | — |
 | PR-07 | 1 | Acomptes / paiements partiels — **livré** (voir [pr-07-deposits-test.md](./pr-07-deposits-test.md)) | Haute | `feature/pr-07-booking-deposits` | PR-06 |
 | PR-08 | 1 | Politique cash (restreindre web) — **livré** (voir [pr-08-cash-policy-test.md](./pr-08-cash-policy-test.md)) | Haute | `feature/pr-08-cash-policy` | — |
-| PR-09 | 2 | Clarifier Partenaire vs Staff vs Client (UI + RBAC) | Moyenne | `feature/pr-09-partner-roles` | — |
+| PR-09 | 2 | Clarifier Partenaire vs Staff vs Client (UI + RBAC) — **livré** | Moyenne | `feature/pr-09-partner-roles` | — |
 | PR-10 | 2 | Onboarding partenaires (questionnaire + invitation Gmail) | Moyenne | `feature/pr-10-partner-onboarding` | PR-09 |
 | PR-11 | 2 | Liaison document identité ↔ entrée manifeste | Moyenne | `feature/pr-11-manifest-doc-link` | — |
 | PR-12 | 2 | Notifications admin persistées (serveur) | Basse | `feature/pr-12-notifications-persist` | — |
@@ -450,7 +451,21 @@ Critères d’acceptation :
 ### PR-09 — Clarifier Partenaire vs Staff vs Client
 
 **Branche :** `feature/pr-09-partner-roles`  
-**Priorité :** Moyenne
+**Priorité :** Moyenne  
+**Statut :** ✅ Livré
+
+#### Modèle retenu (Client / Staff / Partenaire)
+
+| Concept | Aujourd’hui | Notes |
+| ------- | ----------- | ----- |
+| **Client** | Rôle auth `customer` | Compte voyageur (web) ; inscription → `customer` |
+| **Staff** | Rôles internes (`org_admin`, `support`, `super_admin`, …) + permissions RBAC | Employés / utilisateurs admin ; pas un seul code `staff` |
+| **Partenaire** | Fiche catalogue `activity_providers` (UI : Partenaires d’activités) | **≠** compte auth ; pas de rôle `partner` en seed |
+| Compte auth partenaire | **PR-10** | Invitation / onboarding Gmail ; hors PR-09 |
+
+- API technique : routes `/activity-providers`, permissions réutilisées `activities.read` / `activities.write`.
+- URL admin : `/produits/activites/partenaires` (redirect depuis l’ancienne URL `fournisseurs`).
+- Paiement : libellé **Prestataire** (`paymentProvider`) — ne pas confondre avec Partenaire catalogue.
 
 ```
 Projet : Africa Tourism Gate (pnpm monorepo).
@@ -461,7 +476,7 @@ Références :
 - Présentation 08-29 (renommage Fournisseur → Partenaire)
 - activity-providers (catalogue)
 - Admin users / employees / roles / departments
-- Labels UI admin FR
+- Labels UI admin FR / EN / ES
 
 Objectif :
 1. Audit terminologique : remplacer libellés « fournisseur » ambigus par « partenaire » là où il s’agit d’un prestataire métier.
@@ -473,6 +488,7 @@ Critères d’acceptation :
 - UI admin cohérente (pas de mélange Fournisseur/Partenaire sur le même concept).
 - Aucune régression auth.
 - Note courte dans ce roadmap ou presentation users.
+- API activity-providers protégée (activities.read/write) ; UI write gated.
 
 À la fin : liste des chaînes renommées + captures si utile.
 ```
@@ -699,4 +715,5 @@ Critères d’acceptation :
 | [roadmap-development-client-enhance.md](./roadmap-development-client-enhance.md) | Guides + réservation assistée (largement livré) |
 | [roadmap-pos.md](./roadmap-pos.md) | POS — cash reste légitime ici ([PR-08](./pr-08-cash-policy-test.md)) |
 | [pr-08-cash-policy-test.md](./pr-08-cash-policy-test.md) | Scénario de test — cash web off par défaut |
+| [presentation-plateforme-users.md](./presentation-plateforme-users.md) | Vue utilisateurs — catalogue partenaires ≠ compte auth (PR-09) |
 | [presentation-plateforme-08-29-2026.html](./presentation-plateforme-08-29-2026.html) | Support de la réunion source |

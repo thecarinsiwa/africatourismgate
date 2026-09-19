@@ -128,7 +128,7 @@ Vous pouvez **ajouter, modifier et supprimer** tous vos produits :
 | Vols | Compagnies, aéroports, horaires, classes |
 | Locations | Agences, véhicules, catégories |
 | Croisières | Lignes, navires, cabines, itinéraires |
-| Activités | Tours, horaires, fournisseurs |
+| Activités | Tours, horaires, partenaires (catalogue — pas un compte auth ; voir roadmap PR-09 / PR-10) |
 | Forfaits | Combinaisons de produits avec remise |
 
 ### Réservations
