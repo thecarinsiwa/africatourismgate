@@ -76,7 +76,7 @@ Règles :
 | Besoin (réunion) | État actuel | Fichiers / tables clés |
 | ---------------- | ----------- | ---------------------- |
 | Validation manifeste stricte (passeport, etc.) | ⚠️ Seul le nom complet est vraiment requis | `checkout-manifest-form.tsx`, `booking-manifest-entry.dto.ts`, `booking-manifest-entry.entity.ts` |
-| Contact d’urgence | ❌ Absent | — |
+| Contact d’urgence | ✅ Name + phone requis checkout ; PDF + i18n (voir [pr-04-emergency-contact-test.md](./pr-04-emergency-contact-test.md)) | `emergency_contact_*`, manifeste Web/Admin/POS, `booking-detail-pdf*` |
 | Conditions médicales structurées | ⚠️ Texte libre `conditions` | `booking_manifest_entries.conditions` |
 | PDF confirmation fiable (prod) | ✅ PJ confirmation + logo durci (voir [pr-02-pdf-confirmation-fix.md](./pr-02-pdf-confirmation-fix.md)) | `booking-detail-pdf*.ts`, `booking-engine.service.ts`, `email-attachments.ts` |
 | Téléchargement PDF côté compte client | ✅ Endpoint + bouton compte (voir [pr-03-pdf-client-download.md](./pr-03-pdf-client-download.md)) | `GET /bookings/:id/confirmation-pdf`, `AccountBookingDetail` |
@@ -289,6 +289,8 @@ Critères d’acceptation :
 - Checkout refuse une entrée sans nom + téléphone d’urgence.
 - Visible en admin et dans le PDF.
 - i18n FR/EN/ES.
+
+Scénario de test : docs/pr-04-emergency-contact-test.md
 
 À la fin : migration SQL + fichiers + scénario test.
 ```
