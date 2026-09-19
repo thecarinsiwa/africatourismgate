@@ -63,7 +63,7 @@ jobs:
         run: pnpm lint
 
       - name: Build shared packages
-        run: pnpm --filter @africatourismgate/types build
+        run: pnpm --filter @africatourismgate/types --filter @africatourismgate/utils build
 
       - name: Build API, admin, web
         run: >-
@@ -125,7 +125,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build shared packages
-        run: pnpm --filter @africatourismgate/types build
+        run: pnpm --filter @africatourismgate/types --filter @africatourismgate/utils build
 
       - name: Lint POS
         run: pnpm --filter @africatourismgate/pos lint
