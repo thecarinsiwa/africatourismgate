@@ -23,6 +23,7 @@ import { BookingStatusBadge } from './booking-status-badge';
 import { BookingStatusTimeline, isAssistedBookingDetail } from './booking-status-timeline';
 import { AccountBookingManifestSection } from './account-booking-manifest-section';
 import { BankTransferAccountsPanel } from '../reservations/bank-transfer-accounts-panel';
+import { PaymentProofPanel } from '../reservations/payment-proof-panel';
 
 type Props = {
   bookingId: string;
@@ -313,6 +314,16 @@ export function AccountBookingDetail({
                   swift: t.checkout.bankTransferSwift,
                   currency: t.checkout.bankTransferCurrency,
                   referenceHint: t.checkout.bankTransferReferenceHint,
+                }}
+              />
+              <PaymentProofPanel
+                bookingId={booking.id}
+                bookingStatus={booking.status}
+                paymentMethod="bank_transfer"
+                proofs={detail.paymentProofs ?? []}
+                labels={d.paymentProofs}
+                onUpdated={async () => {
+                  await load();
                 }}
               />
             </div>

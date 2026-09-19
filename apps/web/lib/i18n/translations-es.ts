@@ -1222,6 +1222,39 @@ export const es: Translations = {
           'Ha elegido pagar en efectivo. Pague en el lugar o en agencia — la reserva se confirmará tras el cobro.',
         bankTransferPaymentPending:
           'Ha elegido transferencia bancaria. Realice la transferencia con la referencia de reserva — se requiere validación del personal.',
+        paymentProofs: {
+          title: 'Comprobante de pago',
+          subtitle:
+            'Suba el justificante o una foto del recibo. Nuestro equipo validará el pago.',
+          empty: 'Ningún comprobante subido por el momento.',
+          upload: 'Enviar un archivo',
+          uploading: 'Enviando…',
+          takePhoto: 'Tomar una foto',
+          fileHint: 'JPEG, PNG, WebP o PDF — 10 MB máx.',
+          uploadError: 'No se pudo enviar el comprobante.',
+          fileTooLarge: 'Archivo demasiado grande (10 MB máx.).',
+          view: 'Ver',
+          viewing: 'Abriendo…',
+          viewError: 'No se pudo abrir el comprobante.',
+          statusLabel: 'Estado',
+          methods: {
+            bank_transfer: 'Transferencia bancaria',
+            mobile_money: 'Mobile Money',
+          },
+          statuses: {
+            pending_review: 'Pendiente de verificación',
+            approved: 'Aprobado',
+            resubmit_requested: 'Nuevo comprobante solicitado',
+            rejected: 'Rechazado',
+          },
+          camera: {
+            capture: 'Tomar foto',
+            retake: 'Repetir',
+            confirm: 'Usar esta foto',
+            cancel: 'Cancelar',
+            cameraError: 'No se pudo acceder a la cámara.',
+          },
+        },
         identityDocuments: {
           title: 'Documento de identidad',
           subtitle:

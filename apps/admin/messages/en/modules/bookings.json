@@ -237,6 +237,38 @@
       "rejected": "Rejected"
     }
   },
+  "paymentProofs": {
+    "title": "Payment proofs",
+    "subtitle": "Receipts uploaded by the customer — approve to confirm the booking, or request a new proof.",
+    "empty": "No proofs uploaded.",
+    "statusLabel": "Status",
+    "view": "View",
+    "viewing": "Opening…",
+    "approve": "Approve payment",
+    "approveSuccess": "Proof approved — booking confirmed.",
+    "requestResubmit": "Request new proof",
+    "resubmitDialogTitle": "Request a new proof",
+    "resubmitDialogDescription": "Tell the customer what is missing (unreadable amount, wrong reference…).",
+    "reject": "Reject",
+    "rejectDialogTitle": "Reject proof",
+    "rejectDialogDescription": "The booking will stay pending payment. The customer can upload another proof.",
+    "rejectConfirm": "Reject",
+    "rejectSuccess": "Proof rejected.",
+    "staffNoteLabel": "Message to customer",
+    "staffNotePlaceholder": "E.g. The amount does not match the booking total.",
+    "resubmitConfirm": "Send request",
+    "resubmitSuccess": "Resubmit request recorded.",
+    "methods": {
+      "bank_transfer": "Bank transfer",
+      "mobile_money": "Mobile Money"
+    },
+    "statuses": {
+      "pending_review": "Awaiting verification",
+      "approved": "Approved",
+      "resubmit_requested": "New proof requested",
+      "rejected": "Rejected"
+    }
+  },
   "approval": {
     "title": "Assisted booking validation",
     "intro": "Approve the request, reject it with a reason, or send the payment link once validated.",
@@ -244,7 +276,7 @@
     "reject": "Reject",
     "invitePayment": "Invite to pay",
     "cashPaymentHint": "The customer chose cash on site. Record the payment from the actions bar.",
-    "bankTransferPaymentHint": "The customer chose bank transfer. Mark the transfer as received from the actions bar once funds are credited.",
+    "bankTransferPaymentHint": "The customer chose bank transfer. Review the proof in the Documents tab, or mark the transfer as received from the actions bar.",
     "totalLabel": "Total ({currency})",
     "totalHint": "Adjust the total if needed before approval.",
     "totalOverrideHint": "Auto-calculated from traveler prices. Edit to apply a manual override.",

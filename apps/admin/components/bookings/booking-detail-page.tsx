@@ -48,6 +48,7 @@ import { BookingItemTypeIcon } from './booking-item-type-icon';
 import { BookingGuidesSection } from './booking-guides-section';
 import { BookingAssistedApprovalPanel } from './booking-assisted-approval-panel';
 import { BookingIdentityDocumentsPanel } from './booking-identity-documents-panel';
+import { BookingPaymentProofsPanel } from './booking-payment-proofs-panel';
 import { BookingManifestSection } from './booking-manifest-section';
 import { BookingMessagesSection } from './booking-messages-section';
 import { BookingStatusTimeline } from './booking-status-timeline';
@@ -148,13 +149,14 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
 
   useEffect(() => {
     if (
-      detail?.identityDocuments?.some((doc) => doc.status === 'pending_review')
+      detail?.identityDocuments?.some((doc) => doc.status === 'pending_review') ||
+      detail?.paymentProofs?.some((proof) => proof.status === 'pending_review')
     ) {
       setActiveTab('documents');
     } else {
       setActiveTab('manifest');
     }
-  }, [bookingId, detail?.booking.id, detail?.identityDocuments]);
+  }, [bookingId, detail?.booking.id, detail?.identityDocuments, detail?.paymentProofs]);
 
   useEffect(() => {
     let cancelled = false;
@@ -407,9 +409,15 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const statusUnchanged = newStatus === booking.status;
   const trimmedStatusReason = statusReason.trim();
   const identityDocuments = detail.identityDocuments ?? [];
+  const paymentProofs = detail.paymentProofs ?? [];
   const pendingDocumentCount = identityDocuments.filter(
     (doc) => doc.status === 'pending_review',
   ).length;
+  const pendingProofCount = paymentProofs.filter(
+    (proof) => proof.status === 'pending_review',
+  ).length;
+  const pendingReviewCount = pendingDocumentCount + pendingProofCount;
+  const hasPendingPaymentProof = pendingProofCount > 0;
   const unreadMessageCount = detail.unreadCustomerMessageCount ?? 0;
   const clientName = `${client.firstName} ${client.lastName}`.trim();
   const showActionsBar =
@@ -536,8 +544,8 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
             <TabsTrigger value="manifest">{t('tabs.manifest')}</TabsTrigger>
             <TabsTrigger value="guides">{t('tabs.guides')}</TabsTrigger>
             <TabsTrigger value="documents">
-              {pendingDocumentCount > 0
-                ? t('tabs.documentsPending', { count: pendingDocumentCount })
+              {pendingReviewCount > 0
+                ? t('tabs.documentsPending', { count: pendingReviewCount })
                 : t('tabs.documents')}
             </TabsTrigger>
             <TabsTrigger value="history">{t('tabs.history')}</TabsTrigger>
@@ -564,13 +572,30 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
           </TabsContent>
 
           <TabsContent value="documents">
-            <BookingIdentityDocumentsPanel
-              bookingId={bookingId}
-              documents={identityDocuments}
-              canReview={canApprove}
-              onUpdated={load}
-              embedded
-            />
+            <div className="space-y-8">
+              <BookingIdentityDocumentsPanel
+                bookingId={bookingId}
+                documents={identityDocuments}
+                canReview={canApprove}
+                onUpdated={load}
+                embedded
+              />
+              <div className="border-t border-atg-border pt-6">
+                <h3 className="mb-3 text-base font-semibold text-atg-fg">
+                  {t('paymentProofs.title')}
+                </h3>
+                <p className="mb-4 text-sm text-atg-muted">
+                  {t('paymentProofs.subtitle')}
+                </p>
+                <BookingPaymentProofsPanel
+                  bookingId={bookingId}
+                  proofs={paymentProofs}
+                  canReview={canApprove || canWrite}
+                  onUpdated={load}
+                  embedded
+                />
+              </div>
+            </div>
           </TabsContent>
 
           <TabsContent value="history">
@@ -624,7 +649,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
                 {t('actions.recordCashPayment')}
               </Button>
             ) : null}
-            {canRecordBankTransfer ? (
+            {canRecordBankTransfer && !hasPendingPaymentProof ? (
               <Button
                 type="button"
                 variant="primary"
@@ -634,6 +659,11 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
               >
                 {t('actions.recordBankTransferPayment')}
               </Button>
+            ) : null}
+            {canRecordBankTransfer && hasPendingPaymentProof ? (
+              <p className="mr-auto text-sm text-atg-muted">
+                {t('paymentProofs.subtitle')}
+              </p>
             ) : null}
             {canCancel ? (
               <Button

@@ -237,6 +237,38 @@
       "rejected": "Refusé"
     }
   },
+  "paymentProofs": {
+    "title": "Preuves de paiement",
+    "subtitle": "Justificatifs déposés par le client — validez pour confirmer la réservation, ou demandez une nouvelle preuve.",
+    "empty": "Aucune preuve déposée.",
+    "statusLabel": "Statut",
+    "view": "Voir",
+    "viewing": "Ouverture…",
+    "approve": "Valider le paiement",
+    "approveSuccess": "Preuve validée — réservation confirmée.",
+    "requestResubmit": "Demander une nouvelle preuve",
+    "resubmitDialogTitle": "Demander une nouvelle preuve",
+    "resubmitDialogDescription": "Indiquez au client ce qui manque (montant illisible, mauvaise référence…).",
+    "reject": "Rejeter",
+    "rejectDialogTitle": "Rejeter la preuve",
+    "rejectDialogDescription": "La réservation restera en attente de paiement. Le client pourra déposer une autre preuve.",
+    "rejectConfirm": "Rejeter",
+    "rejectSuccess": "Preuve rejetée.",
+    "staffNoteLabel": "Message au client",
+    "staffNotePlaceholder": "Ex. Le montant ne correspond pas au total de la réservation.",
+    "resubmitConfirm": "Envoyer la demande",
+    "resubmitSuccess": "Demande de nouvelle preuve enregistrée.",
+    "methods": {
+      "bank_transfer": "Virement bancaire",
+      "mobile_money": "Mobile Money"
+    },
+    "statuses": {
+      "pending_review": "En attente de vérification",
+      "approved": "Validée",
+      "resubmit_requested": "Nouvelle preuve demandée",
+      "rejected": "Refusée"
+    }
+  },
   "approval": {
     "title": "Validation assistée",
     "intro": "Approuvez la demande, refusez-la avec un motif, ou envoyez le lien de paiement une fois validée.",
@@ -244,7 +276,7 @@
     "reject": "Refuser",
     "invitePayment": "Inviter au paiement",
     "cashPaymentHint": "Le client a choisi le paiement cash sur place. Enregistrez l'encaissement depuis la barre d'actions.",
-    "bankTransferPaymentHint": "Le client a choisi le virement bancaire. Marquez le virement reçu depuis la barre d'actions une fois les fonds crédités.",
+    "bankTransferPaymentHint": "Le client a choisi le virement bancaire. Vérifiez la preuve dans l'onglet Documents, ou marquez le virement reçu depuis la barre d'actions.",
     "totalLabel": "Total ({currency})",
     "totalHint": "Ajustez le total si nécessaire avant approbation.",
     "totalOverrideHint": "Calculé automatiquement à partir des prix voyageurs. Modifiez pour forcer un total manuel.",

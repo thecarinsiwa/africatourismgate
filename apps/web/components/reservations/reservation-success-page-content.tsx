@@ -11,6 +11,7 @@ import { ensureClientAccessToken } from '../../lib/auth/client-session';
 import { formatHotelPrice } from '../../lib/hotels/listings';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import { BankTransferAccountsPanel } from './bank-transfer-accounts-panel';
+import { PaymentProofPanel } from './payment-proof-panel';
 import { CheckoutPageShell } from './checkout-page-shell';
 
 const CONFIRMED: BookingStatus = 'confirmed';
@@ -230,8 +231,8 @@ export function ReservationSuccessPageContent() {
           )}
         </div>
 
-        {isBankTransferPending ? (
-          <div className="mt-5">
+        {isBankTransferPending && booking && bookingId ? (
+          <div className="mt-5 space-y-3">
             <BankTransferAccountsPanel
               accounts={bankAccounts}
               bookingRef={bookingId}
@@ -243,6 +244,19 @@ export function ReservationSuccessPageContent() {
                 swift: ck.bankTransferSwift,
                 currency: ck.bankTransferCurrency,
                 referenceHint: ck.bankTransferReferenceHint,
+              }}
+            />
+            <PaymentProofPanel
+              bookingId={bookingId}
+              bookingStatus={booking.booking.status}
+              paymentMethod="bank_transfer"
+              proofs={booking.paymentProofs ?? []}
+              labels={t.account.reservations.detail.paymentProofs}
+              onUpdated={async () => {
+                const token = await ensureClientAccessToken();
+                if (!token) return;
+                const data = await getBooking(token, bookingId);
+                setBooking(data);
               }}
             />
           </div>

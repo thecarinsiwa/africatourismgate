@@ -237,6 +237,38 @@
       "rejected": "Rechazado"
     }
   },
+  "paymentProofs": {
+    "title": "Comprobantes de pago",
+    "subtitle": "Justificantes subidos por el cliente — apruebe para confirmar la reserva, o solicite un nuevo comprobante.",
+    "empty": "Ningún comprobante subido.",
+    "statusLabel": "Estado",
+    "view": "Ver",
+    "viewing": "Abriendo…",
+    "approve": "Validar el pago",
+    "approveSuccess": "Comprobante aprobado — reserva confirmada.",
+    "requestResubmit": "Solicitar nuevo comprobante",
+    "resubmitDialogTitle": "Solicitar nuevo comprobante",
+    "resubmitDialogDescription": "Indique al cliente qué falta (importe ilegible, referencia incorrecta…).",
+    "reject": "Rechazar",
+    "rejectDialogTitle": "Rechazar comprobante",
+    "rejectDialogDescription": "La reserva seguirá pendiente de pago. El cliente podrá subir otro comprobante.",
+    "rejectConfirm": "Rechazar",
+    "rejectSuccess": "Comprobante rechazado.",
+    "staffNoteLabel": "Mensaje al cliente",
+    "staffNotePlaceholder": "Ej. El importe no coincide con el total de la reserva.",
+    "resubmitConfirm": "Enviar solicitud",
+    "resubmitSuccess": "Solicitud de nuevo comprobante registrada.",
+    "methods": {
+      "bank_transfer": "Transferencia bancaria",
+      "mobile_money": "Mobile Money"
+    },
+    "statuses": {
+      "pending_review": "Pendiente de verificación",
+      "approved": "Aprobado",
+      "resubmit_requested": "Nuevo comprobante solicitado",
+      "rejected": "Rechazado"
+    }
+  },
   "approval": {
     "title": "Validación de reserva asistida",
     "intro": "Apruebe la solicitud, rechácela con un motivo o envíe el enlace de pago una vez validada.",
@@ -244,7 +276,7 @@
     "reject": "Rechazar",
     "invitePayment": "Invitar al pago",
     "cashPaymentHint": "El cliente eligió pago en efectivo. Registre el cobro desde la barra de acciones.",
-    "bankTransferPaymentHint": "El cliente eligió transferencia bancaria. Marque la transferencia como recibida desde la barra de acciones una vez acreditados los fondos.",
+    "bankTransferPaymentHint": "El cliente eligió transferencia bancaria. Revise el comprobante en la pestaña Documentos, o márquela como recibida desde la barra de acciones.",
     "totalLabel": "Total ({currency})",
     "totalHint": "Ajuste el total si es necesario antes de aprobar.",
     "totalOverrideHint": "Calculado automáticamente a partir de los precios por viajero. Edite para aplicar un total manual.",

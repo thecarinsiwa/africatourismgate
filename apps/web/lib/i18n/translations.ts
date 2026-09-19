@@ -1075,6 +1075,38 @@ export type Translations = {
         paymentInvitePending: string;
         cashPaymentPending: string;
         bankTransferPaymentPending: string;
+        paymentProofs: {
+          title: string;
+          subtitle: string;
+          empty: string;
+          upload: string;
+          uploading: string;
+          takePhoto: string;
+          fileHint: string;
+          uploadError: string;
+          fileTooLarge: string;
+          view: string;
+          viewing: string;
+          viewError: string;
+          statusLabel: string;
+          methods: {
+            bank_transfer: string;
+            mobile_money: string;
+          };
+          statuses: {
+            pending_review: string;
+            approved: string;
+            resubmit_requested: string;
+            rejected: string;
+          };
+          camera: {
+            capture: string;
+            retake: string;
+            confirm: string;
+            cancel: string;
+            cameraError: string;
+          };
+        };
         identityDocuments: {
           title: string;
           subtitle: string;
@@ -2605,6 +2637,39 @@ const fr: Translations = {
           'Vous avez choisi le paiement en espèces. Réglez sur place ou en agence — la réservation sera confirmée après encaissement.',
         bankTransferPaymentPending:
           'Vous avez choisi le virement bancaire. Effectuez le virement avec la référence de réservation — validation par notre équipe requise.',
+        paymentProofs: {
+          title: 'Preuve de paiement',
+          subtitle:
+            'Déposez le bordereau ou une photo du justificatif. Notre équipe validera le paiement.',
+          empty: 'Aucune preuve déposée pour le moment.',
+          upload: 'Envoyer un fichier',
+          uploading: 'Envoi…',
+          takePhoto: 'Prendre une photo',
+          fileHint: 'JPEG, PNG, WebP ou PDF — 10 Mo max.',
+          uploadError: "Impossible d'envoyer la preuve.",
+          fileTooLarge: 'Fichier trop volumineux (10 Mo max).',
+          view: 'Voir',
+          viewing: 'Ouverture…',
+          viewError: "Impossible d'ouvrir la preuve.",
+          statusLabel: 'Statut',
+          methods: {
+            bank_transfer: 'Virement bancaire',
+            mobile_money: 'Mobile Money',
+          },
+          statuses: {
+            pending_review: 'En attente de vérification',
+            approved: 'Validée',
+            resubmit_requested: 'Nouvelle preuve demandée',
+            rejected: 'Refusée',
+          },
+          camera: {
+            capture: 'Prendre la photo',
+            retake: 'Reprendre',
+            confirm: 'Utiliser cette photo',
+            cancel: 'Annuler',
+            cameraError: "Impossible d'accéder à la caméra.",
+          },
+        },
         identityDocuments: {
           title: "Pièce d'identité",
           subtitle:
@@ -4195,6 +4260,39 @@ const en: Translations = {
           'You chose to pay in cash. Pay on site or at the agency — the booking will be confirmed after collection.',
         bankTransferPaymentPending:
           'You chose bank transfer. Complete the transfer with the booking reference — staff validation is required.',
+        paymentProofs: {
+          title: 'Payment proof',
+          subtitle:
+            'Upload the transfer slip or a photo of the receipt. Our team will validate the payment.',
+          empty: 'No proof uploaded yet.',
+          upload: 'Upload a file',
+          uploading: 'Uploading…',
+          takePhoto: 'Take a photo',
+          fileHint: 'JPEG, PNG, WebP or PDF — 10 MB max.',
+          uploadError: 'Could not upload the proof.',
+          fileTooLarge: 'File too large (10 MB max).',
+          view: 'View',
+          viewing: 'Opening…',
+          viewError: 'Could not open the proof.',
+          statusLabel: 'Status',
+          methods: {
+            bank_transfer: 'Bank transfer',
+            mobile_money: 'Mobile Money',
+          },
+          statuses: {
+            pending_review: 'Awaiting verification',
+            approved: 'Approved',
+            resubmit_requested: 'New proof requested',
+            rejected: 'Rejected',
+          },
+          camera: {
+            capture: 'Take photo',
+            retake: 'Retake',
+            confirm: 'Use this photo',
+            cancel: 'Cancel',
+            cameraError: 'Could not access the camera.',
+          },
+        },
         identityDocuments: {
           title: 'Identity document',
           subtitle:
