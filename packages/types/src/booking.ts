@@ -190,6 +190,35 @@ export interface RequestIdentityDocumentUploadResponse {
   sent: boolean;
 }
 
+export type BookingPaymentProofMethod = 'bank_transfer' | 'mobile_money';
+
+export type BookingPaymentProofStatus =
+  | 'pending_review'
+  | 'approved'
+  | 'resubmit_requested'
+  | 'rejected';
+
+export interface BookingPaymentProof {
+  id: string;
+  bookingId: string;
+  paymentId: string | null;
+  userId: string;
+  paymentMethod: BookingPaymentProofMethod;
+  originalFilename: string;
+  mimeType: string;
+  fileSizeBytes: number;
+  status: BookingPaymentProofStatus;
+  staffNote?: string | null;
+  reviewedByUserId?: string | null;
+  reviewedAt?: string | null;
+  version: number;
+  createdAt: string;
+}
+
+export interface ReviewBookingPaymentProofRequest {
+  staffNote?: string;
+}
+
 export type BookingManifestSex = 'M' | 'F' | 'other';
 
 export interface BookingManifestEntry {
@@ -262,6 +291,7 @@ export interface BookingDetail {
   /** Post-stay guide rating invitations (CE-13). */
   guideReviewInvites?: GuideReviewInvite[];
   identityDocuments?: BookingIdentityDocument[];
+  paymentProofs?: BookingPaymentProof[];
   /** Unread staff messages for the booking owner (assisted booking chat). */
   unreadStaffMessageCount?: number;
 }

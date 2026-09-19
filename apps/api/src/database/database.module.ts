@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'node:path';
 import * as entities from '../entities/generated';
 import { BookingIdentityDocuments } from '../entities/booking-identity-document.entity';
+import { BookingPaymentProofs } from '../entities/booking-payment-proof.entity';
 import { BookingManifestEntries } from '../entities/booking-manifest-entry.entity';
 import { AboutPages } from '../entities/about-page.entity';
 import { AboutResources } from '../entities/about-resource.entity';
@@ -47,6 +48,7 @@ const entityList = [
   Donations,
   HeroSlides,
   BookingIdentityDocuments,
+  BookingPaymentProofs,
   BookingManifestEntries,
 ] as (new () => unknown)[];
 
