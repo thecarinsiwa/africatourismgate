@@ -934,6 +934,26 @@ export class BookingEngineService {
     return Number.isFinite(sum) ? sum : 0;
   }
 
+  /**
+   * Montant Stripe / offline à encaisser maintenant :
+   * acompte si 1er paiement + acomptes activés, sinon solde restant.
+   */
+  async getNextChargeAmountCents(booking: Bookings): Promise<{
+    paidCents: number;
+    balanceCents: number;
+    depositRequiredCents: number;
+    chargeCents: number;
+  }> {
+    const summary = await this.getBookingPaymentSummary(booking);
+    const deposits =
+      await this.organizationSettingsService.getResolvedBookingDeposits();
+    const chargeCents =
+      summary.paidCents === 0 && deposits.enabled
+        ? Math.min(summary.depositRequiredCents, summary.balanceCents)
+        : summary.balanceCents;
+    return { ...summary, chargeCents };
+  }
+
   private async getBookingPaymentSummary(booking: Bookings): Promise<{
     paidCents: number;
     balanceCents: number;
@@ -954,8 +974,8 @@ export class BookingEngineService {
     booking: Bookings,
     amountCents?: number,
   ): Promise<{ paidCents: number; balanceCents: number; amount: number }> {
-    const paidCents = await this.sumSucceededPaidCents(booking.id);
-    const balanceCents = Math.max(0, booking.totalCents - paidCents);
+    const next = await this.getNextChargeAmountCents(booking);
+    const { paidCents, balanceCents } = next;
 
     let amount: number;
     if (amountCents !== undefined && amountCents !== null) {
@@ -970,16 +990,7 @@ export class BookingEngineService {
       }
       amount = amountCents;
     } else {
-      const deposits =
-        await this.organizationSettingsService.getResolvedBookingDeposits();
-      const depositRequired = computeDepositRequiredCents(
-        booking.totalCents,
-        deposits,
-      );
-      amount =
-        paidCents === 0 && deposits.enabled
-          ? Math.min(depositRequired, balanceCents)
-          : balanceCents;
+      amount = next.chargeCents;
     }
 
     if (amount > balanceCents) {
