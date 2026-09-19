@@ -3,6 +3,7 @@ import { ReviewDto } from '../../reviews/dto/review.dto';
 import type { BookingStatusHistoryEntry } from '../booking-status-history.service';
 import type { GuideReviewInviteDto } from './guide-review-invite.dto';
 import type { BookingIdentityDocumentDto } from './booking-identity-document.dto';
+import type { BookingPaymentProofDto } from './booking-payment-proof.dto';
 
 export type BookingDetailDto = {
   booking: Bookings;
@@ -15,5 +16,6 @@ export type BookingDetailDto = {
   paymentInvited?: boolean;
   guideReviewInvites?: GuideReviewInviteDto[];
   identityDocuments?: BookingIdentityDocumentDto[];
+  paymentProofs?: BookingPaymentProofDto[];
   unreadStaffMessageCount?: number;
 };

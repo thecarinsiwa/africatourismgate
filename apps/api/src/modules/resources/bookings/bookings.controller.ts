@@ -61,9 +61,20 @@ import {
   bookingIdentityDocumentStorage,
 } from './booking-identity-documents.service';
 import {
+  BOOKING_PAYMENT_PROOF_MAX_BYTES,
+  BookingPaymentProofsService,
+  bookingPaymentProofFileFilter,
+  bookingPaymentProofStorage,
+} from './booking-payment-proofs.service';
+import {
   BookingIdentityDocumentDto,
   ReviewBookingIdentityDocumentDto,
 } from './dto/booking-identity-document.dto';
+import {
+  BookingPaymentProofDto,
+  ReviewBookingPaymentProofDto,
+} from './dto/booking-payment-proof.dto';
+import type { BookingDetailDto } from './dto/booking-detail.dto';
 import {
   RequestIdentityDocumentUploadDto,
   RequestIdentityDocumentUploadResponseDto,
@@ -102,6 +113,7 @@ export class BookingsController {
     private readonly bookingMessagesService: BookingMessagesService,
     private readonly bookingApprovalService: BookingApprovalService,
     private readonly bookingIdentityDocumentsService: BookingIdentityDocumentsService,
+    private readonly bookingPaymentProofsService: BookingPaymentProofsService,
     private readonly bookingManifestService: BookingManifestService,
     private readonly posReceiptEmailService: PosReceiptEmailService,
     private readonly posReceiptPdfService: PosReceiptPdfService,
@@ -424,6 +436,130 @@ export class BookingsController {
     return this.bookingIdentityDocumentsService.reject(
       id,
       documentId,
+      user.id,
+      dto.staffNote,
+    );
+  }
+
+  @Get(':id/payment-proofs')
+  @RequirePermissions('bookings.read')
+  @ApiOperation({ summary: 'List payment proofs for a booking' })
+  async listPaymentProofs(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingPaymentProofDto[]> {
+    await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
+    return this.bookingPaymentProofsService.listForBooking(id);
+  }
+
+  @Get(':id/payment-proofs/:proofId/file')
+  @RequirePermissions('bookings.read')
+  @ApiOperation({ summary: 'Download a payment proof file (authenticated)' })
+  async downloadPaymentProof(
+    @Param('id') id: string,
+    @Param('proofId') proofId: string,
+    @CurrentUser() user: AuthUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
+    const { stream, mimeType, filename } =
+      await this.bookingPaymentProofsService.getFileStream(id, proofId);
+    res.setHeader('Content-Type', mimeType);
+    res.setHeader(
+      'Content-Disposition',
+      `inline; filename="${encodeURIComponent(filename)}"`,
+    );
+    return stream;
+  }
+
+  @Post(':id/payment-proofs')
+  @HttpCode(HttpStatus.CREATED)
+  @RequirePermissions('bookings.write')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage(bookingPaymentProofStorage()),
+      limits: { fileSize: BOOKING_PAYMENT_PROOF_MAX_BYTES },
+      fileFilter: bookingPaymentProofFileFilter,
+    }),
+  )
+  @ApiOperation({
+    summary:
+      'Upload a payment proof (JPEG, PNG, WebP or PDF, max 10 MB) and create a pending payment',
+  })
+  async uploadPaymentProof(
+    @Param('id') id: string,
+    @Body('paymentMethod') paymentMethodRaw: string,
+    @UploadedFile() file: Express.Multer.File | undefined,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingPaymentProofDto> {
+    const booking = await this.bookingsService.assertBookingOwnerOrStaff(
+      id,
+      user.id,
+    );
+    if (!file) {
+      throw new BadRequestException(
+        'Fichier requis (JPEG, PNG, WebP ou PDF, max 10 Mo).',
+      );
+    }
+    const paymentMethod =
+      BookingPaymentProofsService.parsePaymentMethod(paymentMethodRaw);
+    return this.bookingPaymentProofsService.upload(
+      booking,
+      user.id,
+      paymentMethod,
+      file,
+    );
+  }
+
+  @Post(':id/payment-proofs/:proofId/approve')
+  @RequirePermissions('bookings.approve', 'bookings.write')
+  @ApiOperation({
+    summary:
+      'Approve a payment proof, mark payment succeeded, and confirm the booking (staff)',
+  })
+  approvePaymentProof(
+    @Param('id') id: string,
+    @Param('proofId') proofId: string,
+    @Body() dto: ReviewBookingPaymentProofDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingDetailDto> {
+    return this.bookingPaymentProofsService.approve(
+      id,
+      proofId,
+      user.id,
+      dto.staffNote,
+    );
+  }
+
+  @Post(':id/payment-proofs/:proofId/request-resubmit')
+  @RequirePermissions('bookings.approve', 'bookings.write')
+  @ApiOperation({ summary: 'Request a clearer payment proof (staff)' })
+  requestPaymentProofResubmit(
+    @Param('id') id: string,
+    @Param('proofId') proofId: string,
+    @Body() dto: ReviewBookingPaymentProofDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingPaymentProofDto> {
+    return this.bookingPaymentProofsService.requestResubmit(
+      id,
+      proofId,
+      user.id,
+      dto.staffNote,
+    );
+  }
+
+  @Post(':id/payment-proofs/:proofId/reject')
+  @RequirePermissions('bookings.approve', 'bookings.write')
+  @ApiOperation({ summary: 'Reject a payment proof (staff)' })
+  rejectPaymentProof(
+    @Param('id') id: string,
+    @Param('proofId') proofId: string,
+    @Body() dto: ReviewBookingPaymentProofDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingPaymentProofDto> {
+    return this.bookingPaymentProofsService.reject(
+      id,
+      proofId,
       user.id,
       dto.staffNote,
     );

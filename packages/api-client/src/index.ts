@@ -103,6 +103,8 @@ import type {
   ReviewBookingIdentityDocumentRequest,
   RequestIdentityDocumentUploadRequest,
   RequestIdentityDocumentUploadResponse,
+  BookingPaymentProof,
+  ReviewBookingPaymentProofRequest,
   BookingManifestEntry,
   CreateBookingManifestEntryRequest,
   UpdateBookingManifestEntryRequest,
@@ -2836,6 +2838,45 @@ export class ApiClient {
   ): Promise<BookingIdentityDocument> {
     return this.request<BookingIdentityDocument>(
       `/bookings/${bookingId}/identity-documents/${documentId}/reject`,
+      { method: 'POST', body: body ?? {} },
+    );
+  }
+
+  listBookingPaymentProofs(bookingId: string): Promise<BookingPaymentProof[]> {
+    return this.request<BookingPaymentProof[]>(
+      `/bookings/${bookingId}/payment-proofs`,
+    );
+  }
+
+  approveBookingPaymentProof(
+    bookingId: string,
+    proofId: string,
+    body?: ReviewBookingPaymentProofRequest,
+  ): Promise<BookingDetail> {
+    return this.request<BookingDetail>(
+      `/bookings/${bookingId}/payment-proofs/${proofId}/approve`,
+      { method: 'POST', body: body ?? {} },
+    );
+  }
+
+  requestBookingPaymentProofResubmit(
+    bookingId: string,
+    proofId: string,
+    body: ReviewBookingPaymentProofRequest,
+  ): Promise<BookingPaymentProof> {
+    return this.request<BookingPaymentProof>(
+      `/bookings/${bookingId}/payment-proofs/${proofId}/request-resubmit`,
+      { method: 'POST', body },
+    );
+  }
+
+  rejectBookingPaymentProof(
+    bookingId: string,
+    proofId: string,
+    body?: ReviewBookingPaymentProofRequest,
+  ): Promise<BookingPaymentProof> {
+    return this.request<BookingPaymentProof>(
+      `/bookings/${bookingId}/payment-proofs/${proofId}/reject`,
       { method: 'POST', body: body ?? {} },
     );
   }

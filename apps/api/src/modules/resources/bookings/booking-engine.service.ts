@@ -677,24 +677,40 @@ export class BookingEngineService {
       );
     }
 
-    const paymentId = newId();
+    const pending = await this.paymentsRepository.findOne({
+      where: {
+        bookingId,
+        status: 'pending',
+        provider: 'bank_transfer',
+        deletedAt: IsNull(),
+      },
+      order: { createdAt: 'DESC' },
+    });
+
     const trimmedNote = note?.trim();
     const confirmReason = trimmedNote
       ? `Virement bancaire reçu — ${trimmedNote}`
       : 'Virement bancaire reçu';
 
-    await this.paymentsRepository.save(
-      this.paymentsRepository.create({
-        id: paymentId,
-        bookingId,
-        amountCents: booking.totalCents,
-        currency: booking.currency,
-        status: 'succeeded',
-        provider: 'bank_transfer',
-        externalId: `bank-transfer-${paymentId}`,
-        createdByUserId: actorUserId ?? null,
-      } as DeepPartial<Payments>),
-    );
+    if (pending) {
+      pending.status = 'succeeded';
+      pending.updatedByUserId = actorUserId ?? null;
+      await this.paymentsRepository.save(pending);
+    } else {
+      const paymentId = newId();
+      await this.paymentsRepository.save(
+        this.paymentsRepository.create({
+          id: paymentId,
+          bookingId,
+          amountCents: booking.totalCents,
+          currency: booking.currency,
+          status: 'succeeded',
+          provider: 'bank_transfer',
+          externalId: `bank-transfer-${paymentId}`,
+          createdByUserId: actorUserId ?? null,
+        } as DeepPartial<Payments>),
+      );
+    }
 
     return this.confirmBooking(bookingId, actorUserId, confirmReason);
   }
