@@ -1250,7 +1250,7 @@ export const es: Translations = {
         paymentProofs: {
           title: 'Comprobante de pago',
           subtitle:
-            'Suba el justificante o una foto del recibo. Nuestro equipo validará el pago.',
+            'Suba el justificante o una foto del recibo (anticipo o saldo). Nuestro equipo validará el pago.',
           empty: 'Ningún comprobante subido por el momento.',
           upload: 'Enviar un archivo',
           uploading: 'Enviando…',
@@ -1262,6 +1262,7 @@ export const es: Translations = {
           viewing: 'Abriendo…',
           viewError: 'No se pudo abrir el comprobante.',
           statusLabel: 'Estado',
+          amountLabel: 'Importe',
           methods: {
             bank_transfer: 'Transferencia bancaria',
             mobile_money: 'Mobile Money',

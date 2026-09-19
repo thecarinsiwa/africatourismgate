@@ -208,6 +208,8 @@ export interface BookingPaymentProof {
   paymentId: string | null;
   userId: string;
   paymentMethod: BookingPaymentProofMethod;
+  /** Montant du paiement lié (centimes), si connu. */
+  amountCents?: number | null;
   originalFilename: string;
   mimeType: string;
   fileSizeBytes: number;
@@ -221,6 +223,8 @@ export interface BookingPaymentProof {
 
 export interface ReviewBookingPaymentProofRequest {
   staffNote?: string;
+  /** Montant validé en centimes (défaut = montant du paiement lié / acompte ou solde). */
+  amountCents?: number;
 }
 
 export type BookingManifestSex = 'M' | 'F' | 'other';

@@ -515,7 +515,7 @@ export class BookingsController {
   @RequirePermissions('bookings.approve', 'bookings.write')
   @ApiOperation({
     summary:
-      'Approve a payment proof, mark payment succeeded, and confirm the booking (staff)',
+      'Approve a payment proof and mark its payment succeeded (confirm only when fully paid)',
   })
   approvePaymentProof(
     @Param('id') id: string,
@@ -528,6 +528,7 @@ export class BookingsController {
       proofId,
       user.id,
       dto.staffNote,
+      dto.amountCents,
     );
   }
 

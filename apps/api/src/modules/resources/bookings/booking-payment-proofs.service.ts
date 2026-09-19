@@ -9,7 +9,7 @@ import {
   StreamableFile,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, IsNull, Repository } from 'typeorm';
+import { DeepPartial, In, IsNull, Repository } from 'typeorm';
 import { newId } from '../../../common/utils/uuid';
 import {
   BookingPaymentProofs,
@@ -40,6 +40,7 @@ const OFFLINE_PROOF_METHODS: BookingPaymentProofMethod[] = [
 
 export function toBookingPaymentProofDto(
   row: BookingPaymentProofs,
+  amountCents?: number | null,
 ): BookingPaymentProofDto {
   return {
     id: row.id,
@@ -47,6 +48,7 @@ export function toBookingPaymentProofDto(
     paymentId: row.paymentId,
     userId: row.userId,
     paymentMethod: row.paymentMethod,
+    amountCents: amountCents ?? null,
     originalFilename: row.originalFilename,
     mimeType: row.mimeType,
     fileSizeBytes: row.fileSizeBytes,
@@ -131,7 +133,17 @@ export class BookingPaymentProofsService {
       where: { bookingId, deletedAt: IsNull() },
       order: { version: 'DESC', createdAt: 'DESC' },
     });
-    return rows.map(toBookingPaymentProofDto);
+    const amountByPaymentId = await this.loadPaymentAmounts(
+      rows
+        .map((row) => row.paymentId)
+        .filter((id): id is string => typeof id === 'string' && id.length > 0),
+    );
+    return rows.map((row) =>
+      toBookingPaymentProofDto(
+        row,
+        row.paymentId ? amountByPaymentId.get(row.paymentId) ?? null : null,
+      ),
+    );
   }
 
   async upload(
@@ -173,6 +185,11 @@ export class BookingPaymentProofsService {
       );
     }
 
+    const next = await this.bookingEngine.getNextChargeAmountCents(booking);
+    if (next.balanceCents < 1) {
+      throw new BadRequestException('Cette réservation est déjà soldée.');
+    }
+
     const latest = await this.repository.findOne({
       where: { bookingId: booking.id, paymentMethod, deletedAt: IsNull() },
       order: { version: 'DESC' },
@@ -183,20 +200,12 @@ export class BookingPaymentProofsService {
       );
     }
 
-    const existingSucceeded = await this.paymentsRepository.findOne({
-      where: {
-        bookingId: booking.id,
-        status: 'succeeded',
-        deletedAt: IsNull(),
-      },
-    });
-    if (existingSucceeded) {
-      throw new BadRequestException(
-        'Un paiement a déjà été enregistré pour cette réservation.',
-      );
-    }
-
-    const payment = await this.ensurePendingPayment(booking, paymentMethod, userId);
+    const payment = await this.ensurePendingPayment(
+      booking,
+      paymentMethod,
+      userId,
+      next.chargeCents,
+    );
 
     const storedFilename = file.filename;
     const version = (latest?.version ?? 0) + 1;
@@ -219,7 +228,7 @@ export class BookingPaymentProofsService {
       deletedAt: null,
     });
     await this.repository.save(row);
-    return toBookingPaymentProofDto(row);
+    return toBookingPaymentProofDto(row, payment.amountCents);
   }
 
   async getFileStream(
@@ -243,6 +252,7 @@ export class BookingPaymentProofsService {
     proofId: string,
     staffUserId: string,
     staffNote?: string,
+    amountCents?: number,
   ): Promise<BookingDetailDto> {
     const row = await this.findActiveRow(bookingId, proofId);
     if (row.status !== 'pending_review' && row.status !== 'resubmit_requested') {
@@ -263,7 +273,38 @@ export class BookingPaymentProofsService {
       );
     }
 
-    const payment = await this.resolvePaymentForApproval(booking, row, staffUserId);
+    const next = await this.bookingEngine.getNextChargeAmountCents(booking);
+    if (next.balanceCents < 1) {
+      throw new BadRequestException('Cette réservation est déjà soldée.');
+    }
+
+    const payment = await this.resolvePaymentForApproval(
+      booking,
+      row,
+      staffUserId,
+      next.chargeCents,
+    );
+
+    let amount = payment.amountCents;
+    if (amountCents !== undefined && amountCents !== null) {
+      if (
+        typeof amountCents !== 'number' ||
+        !Number.isInteger(amountCents) ||
+        amountCents < 1
+      ) {
+        throw new BadRequestException(
+          'amountCents doit être un entier positif.',
+        );
+      }
+      amount = amountCents;
+    }
+    if (amount > next.balanceCents) {
+      throw new BadRequestException(
+        `Montant trop élevé : solde restant ${next.balanceCents} centimes.`,
+      );
+    }
+
+    payment.amountCents = amount;
     payment.status = 'succeeded';
     payment.updatedByUserId = staffUserId;
     await this.paymentsRepository.save(payment);
@@ -275,10 +316,19 @@ export class BookingPaymentProofsService {
     row.paymentId = payment.id;
     await this.repository.save(row);
 
+    const isPartial =
+      next.paidCents === 0
+        ? amount < booking.totalCents
+        : next.paidCents + amount < booking.totalCents;
     const confirmReason =
       row.paymentMethod === 'mobile_money'
-        ? 'Paiement Mobile Money validé (preuve)'
-        : 'Virement bancaire validé (preuve)';
+        ? isPartial
+          ? 'Acompte Mobile Money validé (preuve)'
+          : 'Paiement Mobile Money validé (preuve)'
+        : isPartial
+          ? 'Acompte virement validé (preuve)'
+          : 'Virement bancaire validé (preuve)';
+
     return this.bookingEngine.confirmBookingIfFullyPaid(
       bookingId,
       staffUserId,
@@ -309,7 +359,13 @@ export class BookingPaymentProofsService {
     row.reviewedByUserId = staffUserId;
     row.reviewedAt = new Date();
     await this.repository.save(row);
-    return toBookingPaymentProofDto(row);
+    const amountByPaymentId = await this.loadPaymentAmounts(
+      row.paymentId ? [row.paymentId] : [],
+    );
+    return toBookingPaymentProofDto(
+      row,
+      row.paymentId ? amountByPaymentId.get(row.paymentId) ?? null : null,
+    );
   }
 
   async reject(
@@ -329,7 +385,13 @@ export class BookingPaymentProofsService {
     row.reviewedByUserId = staffUserId;
     row.reviewedAt = new Date();
     await this.repository.save(row);
-    return toBookingPaymentProofDto(row);
+    const amountByPaymentId = await this.loadPaymentAmounts(
+      row.paymentId ? [row.paymentId] : [],
+    );
+    return toBookingPaymentProofDto(
+      row,
+      row.paymentId ? amountByPaymentId.get(row.paymentId) ?? null : null,
+    );
   }
 
   static parsePaymentMethod(value: unknown): BookingPaymentProofMethod {
@@ -355,19 +417,30 @@ export class BookingPaymentProofsService {
     return row;
   }
 
+  private async loadPaymentAmounts(
+    paymentIds: string[],
+  ): Promise<Map<string, number>> {
+    const map = new Map<string, number>();
+    if (paymentIds.length === 0) {
+      return map;
+    }
+    const payments = await this.paymentsRepository.find({
+      where: { id: In(paymentIds), deletedAt: IsNull() },
+    });
+    for (const payment of payments) {
+      map.set(payment.id, payment.amountCents);
+    }
+    return map;
+  }
+
   private async ensurePendingPayment(
     booking: Bookings,
     provider: BookingPaymentProofMethod,
-    actorUserId?: string,
+    actorUserId: string | undefined,
+    chargeCents: number,
   ): Promise<Payments> {
-    if (booking.totalCents < 1) {
+    if (booking.totalCents < 1 || chargeCents < 1) {
       throw new BadRequestException('Montant de réservation invalide.');
-    }
-
-    const paidCents = await this.bookingEngine.sumSucceededPaidCents(booking.id);
-    const balanceCents = Math.max(0, booking.totalCents - paidCents);
-    if (balanceCents < 1) {
-      throw new BadRequestException('Cette réservation est déjà soldée.');
     }
 
     const existing = await this.paymentsRepository.findOne({
@@ -380,8 +453,8 @@ export class BookingPaymentProofsService {
       order: { createdAt: 'DESC' },
     });
     if (existing) {
-      if (existing.amountCents !== balanceCents) {
-        existing.amountCents = balanceCents;
+      if (existing.amountCents !== chargeCents) {
+        existing.amountCents = chargeCents;
         existing.updatedByUserId = actorUserId ?? null;
         return this.paymentsRepository.save(existing);
       }
@@ -394,7 +467,7 @@ export class BookingPaymentProofsService {
     const payment = this.paymentsRepository.create({
       id: paymentId,
       bookingId: booking.id,
-      amountCents: balanceCents,
+      amountCents: chargeCents,
       currency: booking.currency,
       status: 'pending',
       provider,
@@ -408,6 +481,7 @@ export class BookingPaymentProofsService {
     booking: Bookings,
     proof: BookingPaymentProofs,
     staffUserId: string,
+    chargeCents: number,
   ): Promise<Payments> {
     if (proof.paymentId) {
       const linked = await this.paymentsRepository.findOne({
@@ -423,16 +497,6 @@ export class BookingPaymentProofsService {
             'Cette preuve est déjà liée à un paiement réussi.',
           );
         }
-        const paidCents = await this.bookingEngine.sumSucceededPaidCents(
-          booking.id,
-        );
-        const balanceCents = Math.max(0, booking.totalCents - paidCents);
-        if (balanceCents < 1) {
-          throw new BadRequestException('Cette réservation est déjà soldée.');
-        }
-        if (linked.amountCents !== balanceCents) {
-          linked.amountCents = balanceCents;
-        }
         return linked;
       }
     }
@@ -441,6 +505,7 @@ export class BookingPaymentProofsService {
       booking,
       proof.paymentMethod,
       staffUserId,
+      chargeCents,
     );
   }
 }

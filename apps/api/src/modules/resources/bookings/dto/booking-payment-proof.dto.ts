@@ -1,5 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, MaxLength } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsInt,
+  IsOptional,
+  IsString,
+  MaxLength,
+  Min,
+} from 'class-validator';
 import type {
   BookingPaymentProofMethod,
   BookingPaymentProofStatus,
@@ -20,6 +27,12 @@ export class BookingPaymentProofDto {
 
   @ApiProperty({ enum: ['bank_transfer', 'mobile_money'] })
   paymentMethod!: BookingPaymentProofMethod;
+
+  @ApiPropertyOptional({
+    nullable: true,
+    description: 'Montant du paiement lié (centimes)',
+  })
+  amountCents?: number | null;
 
   @ApiProperty()
   originalFilename!: string;
@@ -59,4 +72,15 @@ export class ReviewBookingPaymentProofDto {
   @IsString()
   @MaxLength(2000)
   staffNote?: string;
+
+  @ApiPropertyOptional({
+    description:
+      'Montant validé en centimes. Défaut : montant du paiement lié (acompte ou solde).',
+    minimum: 1,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt({ message: 'amountCents doit être un entier.' })
+  @Min(1, { message: 'amountCents doit être au moins 1.' })
+  amountCents?: number;
 }

@@ -1108,6 +1108,7 @@ export type Translations = {
           viewing: string;
           viewError: string;
           statusLabel: string;
+          amountLabel: string;
           methods: {
             bank_transfer: string;
             mobile_money: string;
@@ -2684,7 +2685,7 @@ const fr: Translations = {
         paymentProofs: {
           title: 'Preuve de paiement',
           subtitle:
-            'Déposez le bordereau ou une photo du justificatif. Notre équipe validera le paiement.',
+            'Déposez le bordereau ou une photo du justificatif (acompte ou solde). Notre équipe validera le paiement.',
           empty: 'Aucune preuve déposée pour le moment.',
           upload: 'Envoyer un fichier',
           uploading: 'Envoi…',
@@ -2696,6 +2697,7 @@ const fr: Translations = {
           viewing: 'Ouverture…',
           viewError: "Impossible d'ouvrir la preuve.",
           statusLabel: 'Statut',
+          amountLabel: 'Montant',
           methods: {
             bank_transfer: 'Virement bancaire',
             mobile_money: 'Mobile Money',
@@ -4332,7 +4334,7 @@ const en: Translations = {
         paymentProofs: {
           title: 'Payment proof',
           subtitle:
-            'Upload the transfer slip or a photo of the receipt. Our team will validate the payment.',
+            'Upload the transfer slip or a photo of the receipt (deposit or balance). Our team will validate the payment.',
           empty: 'No proof uploaded yet.',
           upload: 'Upload a file',
           uploading: 'Uploading…',
@@ -4344,6 +4346,7 @@ const en: Translations = {
           viewing: 'Opening…',
           viewError: 'Could not open the proof.',
           statusLabel: 'Status',
+          amountLabel: 'Amount',
           methods: {
             bank_transfer: 'Bank transfer',
             mobile_money: 'Mobile Money',

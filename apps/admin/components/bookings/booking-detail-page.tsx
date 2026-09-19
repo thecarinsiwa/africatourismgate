@@ -618,6 +618,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
                 <BookingPaymentProofsPanel
                   bookingId={bookingId}
                   proofs={paymentProofs}
+                  currency={detail.currency}
                   canReview={canApprove || canWrite}
                   onUpdated={load}
                   embedded

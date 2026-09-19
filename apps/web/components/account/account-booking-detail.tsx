@@ -355,6 +355,7 @@ export function AccountBookingDetail({
                 bookingStatus={booking.status}
                 paymentMethod="bank_transfer"
                 proofs={detail.paymentProofs ?? []}
+                currency={detail.currency}
                 labels={d.paymentProofs}
                 onUpdated={async () => {
                   await load();
@@ -385,6 +386,7 @@ export function AccountBookingDetail({
                 bookingStatus={booking.status}
                 paymentMethod="mobile_money"
                 proofs={detail.paymentProofs ?? []}
+                currency={detail.currency}
                 labels={d.paymentProofs}
                 onUpdated={async () => {
                   await load();

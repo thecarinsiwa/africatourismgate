@@ -295,6 +295,7 @@ export function ReservationSuccessPageContent() {
               bookingStatus={booking.booking.status}
               paymentMethod="bank_transfer"
               proofs={booking.paymentProofs ?? []}
+              currency={booking.currency}
               labels={t.account.reservations.detail.paymentProofs}
               onUpdated={async () => {
                 const token = await ensureClientAccessToken();
@@ -328,6 +329,7 @@ export function ReservationSuccessPageContent() {
               bookingStatus={booking.booking.status}
               paymentMethod="mobile_money"
               proofs={booking.paymentProofs ?? []}
+              currency={booking.currency}
               labels={t.account.reservations.detail.paymentProofs}
               onUpdated={async () => {
                 const token = await ensureClientAccessToken();
