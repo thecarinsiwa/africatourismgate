@@ -67,10 +67,10 @@
         "modeImmediate": "Immediate (payment)",
         "modeAssisted": "Assisted (request)",
         "paymentMethodsTitle": "Payment methods (public site)",
-        "paymentMethodsDescription": "Select the methods offered on web checkout. POS is not affected. Bank transfer also needs published bank accounts. Mobile Money needs countries, operators and numbers configured.",
+        "paymentMethodsDescription": "Select the methods offered on web checkout. POS and staff cash collection are not affected. Cash on site is off by default (risky if cash is the only commitment) — re-enable only if you accept that risk. Bank transfer also needs published bank accounts. Mobile Money needs countries, operators and numbers configured.",
         "paymentMethods": {
           "stripe": "Card (Stripe)",
-          "cash": "Cash on site",
+          "cash": "Cash on site (public site)",
           "bank_transfer": "Bank transfer",
           "mobile_money": "Mobile Money"
         },
