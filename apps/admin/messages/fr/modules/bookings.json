@@ -295,7 +295,7 @@
     "approve": "Approuver",
     "reject": "Refuser",
     "invitePayment": "Inviter au paiement",
-    "cashPaymentHint": "Le client a choisi le paiement cash sur place. Enregistrez l'encaissement depuis la barre d'actions.",
+    "cashPaymentHint": "Le client a choisi (ou conserve) le paiement cash sur place. Enregistrez l'encaissement depuis la barre d'actions — le cash n'est plus proposé par défaut au checkout web.",
     "bankTransferPaymentHint": "Le client a choisi le virement bancaire. Vérifiez la preuve dans l'onglet Documents, ou marquez le virement reçu depuis la barre d'actions.",
     "mobileMoneyPaymentHint": "Le client a choisi Mobile Money. Vérifiez la preuve dans l'onglet Documents, ou marquez le paiement reçu depuis la barre d'actions.",
     "totalLabel": "Total ({currency})",

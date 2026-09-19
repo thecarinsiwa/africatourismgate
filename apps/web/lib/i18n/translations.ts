@@ -1674,7 +1674,7 @@ const fr: Translations = {
       subtitleConfirmed:
         'Votre paiement a été reçu et votre réservation est confirmée.',
       subtitleCashPending:
-        'Vous avez choisi de payer en espèces. Votre réservation est en attente jusqu’à l’encaissement en agence.',
+        'Cette réservation est en paiement espèces. Elle reste en attente jusqu’à l’encaissement en agence (même si le cash n’est plus proposé au checkout web).',
       subtitleBankTransferPending:
         'Vous avez choisi le virement bancaire. Votre réservation reste en attente jusqu’à validation du virement par notre équipe.',
       subtitleMobileMoneyPending:
@@ -1687,7 +1687,7 @@ const fr: Translations = {
         'La confirmation prend plus de temps que prévu. Consultez votre compte dans quelques instants ou contactez le support si le statut ne change pas.',
       statusCashPending: 'En attente de paiement cash',
       statusCashPendingHint:
-        'Présentez-vous en agence ou réglez à l’arrivée. Notre équipe confirmera la réservation après encaissement.',
+        'Présentez-vous en agence ou réglez à l’arrivée avec le montant dû. Notre équipe confirmera la réservation après encaissement.',
       statusBankTransferPending: 'En attente de virement',
       statusBankTransferPendingHint:
         'Effectuez le virement avec la référence indiquée. La réservation sera confirmée après validation par notre équipe.',
@@ -1711,7 +1711,8 @@ const fr: Translations = {
       nextStepsTitle: 'Prochaines étapes',
       nextStepEmail: 'Un e-mail de confirmation vous sera envoyé sous peu.',
       nextStepAccount: 'Consultez vos réservations depuis votre espace compte.',
-      nextStepCash: 'Préparez le montant en espèces pour le règlement sur place.',
+      nextStepCash:
+        'Préparez le montant en espèces pour le règlement en agence ou à l’arrivée — la confirmation suit l’encaissement.',
       nextStepBankTransfer:
         'Effectuez le virement en indiquant la référence de réservation dans le libellé.',
       nextStepMobileMoney:
@@ -2699,7 +2700,7 @@ const fr: Translations = {
         paymentInvitePending:
           'Vous recevrez un e-mail avec le lien de paiement dès que votre demande sera validée.',
         cashPaymentPending:
-          'Vous avez choisi le paiement en espèces. Réglez sur place ou en agence — la réservation sera confirmée après encaissement.',
+          'Cette réservation est en paiement espèces. Réglez en agence ou à l’arrivée — confirmation après encaissement (le cash n’est plus proposé par défaut au checkout web).',
         bankTransferPaymentPending:
           'Vous avez choisi le virement bancaire. Effectuez le virement avec la référence de réservation — validation par notre équipe requise.',
         mobileMoneyPaymentPending:
@@ -3344,7 +3345,7 @@ const en: Translations = {
         'Your Stripe payment was received. We are finalizing your booking confirmation?',
       subtitleConfirmed: 'Your payment was received and your booking is confirmed.',
       subtitleCashPending:
-        'You chose to pay in cash. Your booking stays pending until payment is collected at the agency.',
+        'This booking is set to cash payment. It stays pending until collection at the agency (even if cash is no longer offered on web checkout).',
       subtitleBankTransferPending:
         'You chose bank transfer. Your booking stays pending until our team validates the transfer.',
       subtitleMobileMoneyPending:
@@ -3357,7 +3358,7 @@ const en: Translations = {
         'Confirmation is taking longer than expected. Check your account shortly or contact support if the status does not update.',
       statusCashPending: 'Awaiting cash payment',
       statusCashPendingHint:
-        'Pay at the agency or on arrival. Our team will confirm the booking after collection.',
+        'Pay at the agency or on arrival with the amount due. Our team will confirm the booking after collection.',
       statusBankTransferPending: 'Awaiting bank transfer',
       statusBankTransferPendingHint:
         'Complete the transfer with the reference shown. The booking will be confirmed after staff validation.',
@@ -3380,7 +3381,8 @@ const en: Translations = {
       nextStepsTitle: 'What happens next',
       nextStepEmail: 'A confirmation email will be sent shortly.',
       nextStepAccount: 'View your bookings in your account area.',
-      nextStepCash: 'Have the cash amount ready for on-site payment.',
+      nextStepCash:
+        'Have the cash amount ready for payment at the agency or on arrival — confirmation follows collection.',
       nextStepBankTransfer:
         'Make the transfer and include the booking reference in the description.',
       nextStepMobileMoney:
@@ -4360,7 +4362,7 @@ const en: Translations = {
         paymentInvitePending:
           'You will receive an email with the payment link once your request is approved.',
         cashPaymentPending:
-          'You chose to pay in cash. Pay on site or at the agency — the booking will be confirmed after collection.',
+          'This booking is set to cash payment. Pay at the agency or on arrival — confirmation after collection (cash is no longer offered by default on web checkout).',
         bankTransferPaymentPending:
           'You chose bank transfer. Complete the transfer with the booking reference — staff validation is required.',
         mobileMoneyPaymentPending:

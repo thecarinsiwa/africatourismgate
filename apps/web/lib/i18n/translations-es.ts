@@ -233,7 +233,7 @@ export const es: Translations = {
         'Su pago Stripe fue recibido. Estamos finalizando la confirmación de su reserva…',
       subtitleConfirmed: 'Su pago fue recibido y su reserva está confirmada.',
       subtitleCashPending:
-        'Ha elegido pagar en efectivo. Su reserva permanece pendiente hasta el cobro en agencia.',
+        'Esta reserva está en pago en efectivo. Permanece pendiente hasta el cobro en agencia (aunque el efectivo ya no se ofrezca en el checkout web).',
       subtitleBankTransferPending:
         'Ha elegido transferencia bancaria. Su reserva permanece pendiente hasta que nuestro equipo valide la transferencia.',
       subtitleMobileMoneyPending:
@@ -246,7 +246,7 @@ export const es: Translations = {
         'La confirmación tarda más de lo esperado. Consulte su cuenta en unos instantes o contacte al soporte si el estado no cambia.',
       statusCashPending: 'Pendiente de pago en efectivo',
       statusCashPendingHint:
-        'Pague en agencia o a la llegada. Nuestro equipo confirmará la reserva tras el cobro.',
+        'Pague en agencia o a la llegada el importe debido. Nuestro equipo confirmará la reserva tras el cobro.',
       statusBankTransferPending: 'Pendiente de transferencia',
       statusBankTransferPendingHint:
         'Realice la transferencia con la referencia indicada. La reserva se confirmará tras la validación del personal.',
@@ -269,7 +269,8 @@ export const es: Translations = {
       nextStepsTitle: 'Próximos pasos',
       nextStepEmail: 'Recibirá un correo de confirmación en breve.',
       nextStepAccount: 'Consulte sus reservas en su área de cuenta.',
-      nextStepCash: 'Prepare el importe en efectivo para el pago en el lugar.',
+      nextStepCash:
+        'Prepare el importe en efectivo para el pago en agencia o a la llegada — la confirmación sigue al cobro.',
       nextStepBankTransfer:
         'Realice la transferencia e indique la referencia de reserva en el concepto.',
       nextStepMobileMoney:
@@ -1254,7 +1255,7 @@ export const es: Translations = {
         paymentInvitePending:
           'Recibirá un correo con el enlace de pago cuando su solicitud sea validada.',
         cashPaymentPending:
-          'Ha elegido pagar en efectivo. Pague en el lugar o en agencia — la reserva se confirmará tras el cobro.',
+          'Esta reserva está en pago en efectivo. Pague en agencia o a la llegada — confirmación tras el cobro (el efectivo ya no se ofrece por defecto en el checkout web).',
         bankTransferPaymentPending:
           'Ha elegido transferencia bancaria. Realice la transferencia con la referencia de reserva — se requiere validación del personal.',
         mobileMoneyPaymentPending:

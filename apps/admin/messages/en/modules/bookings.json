@@ -295,7 +295,7 @@
     "approve": "Approve",
     "reject": "Reject",
     "invitePayment": "Invite to pay",
-    "cashPaymentHint": "The customer chose cash on site. Record the payment from the actions bar.",
+    "cashPaymentHint": "The customer chose (or still has) cash on site. Record the payment from the actions bar — cash is no longer offered by default on web checkout.",
     "bankTransferPaymentHint": "The customer chose bank transfer. Review the proof in the Documents tab, or mark the transfer as received from the actions bar.",
     "mobileMoneyPaymentHint": "The customer chose Mobile Money. Review the proof in the Documents tab, or mark the payment as received from the actions bar.",
     "totalLabel": "Total ({currency})",
