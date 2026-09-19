@@ -80,7 +80,7 @@ Règles :
 | Conditions médicales structurées | ✅ 4 champs optionnels + legacy `conditions` (voir [pr-05-medical-conditions-test.md](./pr-05-medical-conditions-test.md)) | `allergies`, `serious_medical_conditions`, `current_medications`, `dietary_notes`, manifeste Web/Admin/POS, `booking-detail-pdf*` |
 | PDF confirmation fiable (prod) | ✅ PJ confirmation + logo durci (voir [pr-02-pdf-confirmation-fix.md](./pr-02-pdf-confirmation-fix.md)) | `booking-detail-pdf*.ts`, `booking-engine.service.ts`, `email-attachments.ts` |
 | Téléchargement PDF côté compte client | ✅ Endpoint + bouton compte (voir [pr-03-pdf-client-download.md](./pr-03-pdf-client-download.md)) | `GET /bookings/:id/confirmation-pdf`, `AccountBookingDetail` |
-| Virement bancaire au checkout | ✅ `bank_transfer` + activation admin `payment_methods` + comptes publics + marquage (voir [pr-06-bank-transfer-test.md](./pr-06-bank-transfer-test.md)) | `organization_settings.payment_methods`, checkout web, `recordBankTransferPayment` |
+| Virement bancaire au checkout | ✅ `bank_transfer` + activation admin + comptes + **preuves** (voir [pr-06-bank-transfer-test.md](./pr-06-bank-transfer-test.md), [pr-06b-payment-proofs-test.md](./pr-06b-payment-proofs-test.md)) | `payment_methods`, `booking_payment_proofs`, checkout web, admin Documents |
 | Acomptes / paiements partiels | ❌ | `payments`, Stripe refund partiel seulement |
 | Politique cash web | ⚠️ `cash` disponible côté web | `packages/types/src/booking.ts`, checkout web |
 | Liaison document ID ↔ voyageur | ❌ Upload non lié à l’entrée manifeste | `booking_identity_documents` |
@@ -364,7 +364,8 @@ Critères d’acceptation :
 - Réservation non confirmed tant que staff n’a pas enregistré le paiement.
 - Migration enum MySQL + types + Swagger + api-client.
 
-Scénario de test : docs/pr-06-bank-transfer-test.md
+Scénario de test : docs/pr-06-bank-transfer-test.md  
+Preuves de paiement (upload client + review admin) : docs/pr-06b-payment-proofs-test.md
 
 À la fin : scénario web + admin + fichiers.
 ```

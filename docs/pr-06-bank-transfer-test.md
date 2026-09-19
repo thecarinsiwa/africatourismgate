@@ -114,3 +114,5 @@ Assert : 2e appel → 400 (paiement déjà enregistré) ; Stripe checkout / invi
 - [ ] Email instructions de virement
 - [ ] i18n FR / EN / ES (web + admin)
 - [ ] POS non bloqué par le setting web
+
+Suite (preuves upload / review) : [pr-06b-payment-proofs-test.md](./pr-06b-payment-proofs-test.md)
