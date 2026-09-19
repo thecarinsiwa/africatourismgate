@@ -85,6 +85,8 @@ const RESOURCE_QUERY_KEYS = [
   'propertyType',
   'itemType',
   'bookingId',
+  'countryId',
+  'operatorId',
   'locale',
   'sectionKey',
   'mediaType',
