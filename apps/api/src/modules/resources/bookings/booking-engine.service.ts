@@ -517,6 +517,38 @@ export class BookingEngineService {
     return this.getBookingDetail(id);
   }
 
+  /**
+   * Same PDF payload as the confirmation email attachment.
+   * Caller must enforce auth / status when exposing via HTTP.
+   */
+  async generateConfirmationPdf(
+    bookingId: string,
+  ): Promise<{ buffer: Buffer; filename: string }> {
+    const detail = await this.getBookingDetail(bookingId);
+    const user = await this.usersRepository.findOne({
+      where: { id: detail.booking.userId, deletedAt: IsNull() },
+    });
+    if (!user?.email) {
+      throw new NotFoundException(
+        'Client de la réservation introuvable ou sans e-mail.',
+      );
+    }
+
+    const manifest = await this.manifestService.listForBooking(bookingId);
+    return this.bookingDetailPdf.generate({
+      detail,
+      manifest,
+      customer: {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        preferredLanguage: user.preferredLanguage,
+        organizationId: user.organizationId,
+      },
+      webUrl: process.env.NEXT_PUBLIC_WEB_URL,
+    });
+  }
+
   private async notifyBookingConfirmed(bookingId: string): Promise<void> {
     const detail = await this.getBookingDetail(bookingId);
     const user = await this.usersRepository.findOne({
@@ -531,24 +563,12 @@ export class BookingEngineService {
       .filter((title): title is string => Boolean(title));
 
     const webUrl = process.env.NEXT_PUBLIC_WEB_URL;
-    const manifest = await this.manifestService.listForBooking(bookingId);
 
     let attachments: EmailAttachment[] | undefined;
     let hasPdfAttachment = false;
 
     try {
-      const pdf = await this.bookingDetailPdf.generate({
-        detail,
-        manifest,
-        customer: {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          preferredLanguage: user.preferredLanguage,
-          organizationId: user.organizationId,
-        },
-        webUrl,
-      });
+      const pdf = await this.generateConfirmationPdf(bookingId);
       attachments = [
         {
           filename: pdf.filename,

@@ -2897,6 +2897,12 @@ export class ApiClient {
     });
   }
 
+  downloadBookingConfirmationPdf(id: string): Promise<Blob> {
+    return this.requestBlob(`/bookings/${id}/confirmation-pdf`, {
+      method: 'GET',
+    });
+  }
+
   createBookingPaymentIntent(id: string): Promise<BookingPaymentIntentResponse> {
     return this.request<BookingPaymentIntentResponse>(`/bookings/${id}/payment-intent`, {
       method: 'POST',

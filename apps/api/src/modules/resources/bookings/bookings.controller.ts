@@ -473,6 +473,31 @@ export class BookingsController {
     await this.bookingManifestService.remove(id, entryId, user.id);
   }
 
+  @Get(':id/confirmation-pdf')
+  @RequirePermissions('bookings.read')
+  @ApiOperation({ summary: 'Download booking confirmation PDF (owner or staff)' })
+  async downloadConfirmationPdf(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthUserDto,
+    @Res() res: Response,
+  ): Promise<void> {
+    const booking = await this.bookingsService.assertBookingOwnerOrStaff(
+      id,
+      user.id,
+    );
+    if (booking.status !== 'confirmed') {
+      throw new BadRequestException(
+        `Téléchargement du PDF de confirmation impossible : statut actuel « ${booking.status} ».`,
+      );
+    }
+    const pdf = await this.bookingEngine.generateConfirmationPdf(id);
+    sendReceiptPdfFile(res, {
+      buffer: pdf.buffer,
+      filename: pdf.filename,
+      contentType: 'application/pdf',
+    });
+  }
+
   @Get(':id')
   @RequirePermissions('bookings.read')
   @ApiOperation({ summary: 'Get booking detail with client, items, payments, status history' })

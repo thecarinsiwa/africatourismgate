@@ -1007,6 +1007,9 @@ export type Translations = {
         cancelling: string;
         cancelConfirm: string;
         cancelError: string;
+        downloadConfirmation: string;
+        downloadingConfirmation: string;
+        downloadConfirmationError: string;
         title: string;
         leaveReview: string;
         leaveReviewHint: string;
@@ -2473,6 +2476,9 @@ const fr: Translations = {
         cancelling: 'Annulation…',
         cancelConfirm: 'Annuler cette réservation ?',
         cancelError: "Impossible d'annuler la réservation.",
+        downloadConfirmation: 'Télécharger la confirmation',
+        downloadingConfirmation: 'Téléchargement…',
+        downloadConfirmationError: 'Impossible de télécharger le PDF de confirmation.',
         title: 'Détail de la réservation',
         leaveReview: 'Laisser un avis',
         leaveReviewHint: 'Partagez votre expérience après votre séjour.',
@@ -4004,6 +4010,9 @@ const en: Translations = {
         cancelling: 'Cancelling?',
         cancelConfirm: 'Cancel this booking?',
         cancelError: 'Could not cancel the booking.',
+        downloadConfirmation: 'Download confirmation',
+        downloadingConfirmation: 'Downloading…',
+        downloadConfirmationError: 'Could not download the confirmation PDF.',
         title: 'Booking details',
         leaveReview: 'Leave a review',
         leaveReviewHint: 'Share your experience after your stay.',

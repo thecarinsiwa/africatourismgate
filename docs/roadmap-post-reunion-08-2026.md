@@ -79,7 +79,7 @@ Règles :
 | Contact d’urgence | ❌ Absent | — |
 | Conditions médicales structurées | ⚠️ Texte libre `conditions` | `booking_manifest_entries.conditions` |
 | PDF confirmation fiable (prod) | ✅ PJ confirmation + logo durci (voir [pr-02-pdf-confirmation-fix.md](./pr-02-pdf-confirmation-fix.md)) | `booking-detail-pdf*.ts`, `booking-engine.service.ts`, `email-attachments.ts` |
-| Téléchargement PDF côté compte client | ❌ PJ email seulement | — |
+| Téléchargement PDF côté compte client | ✅ Endpoint + bouton compte (voir [pr-03-pdf-client-download.md](./pr-03-pdf-client-download.md)) | `GET /bookings/:id/confirmation-pdf`, `AccountBookingDetail` |
 | Virement bancaire au checkout | ❌ Comptes org CRUD seulement | `organization-bank-accounts/`, `preferredPaymentMethod: stripe \| cash` |
 | Acomptes / paiements partiels | ❌ | `payments`, Stripe refund partiel seulement |
 | Politique cash web | ⚠️ `cash` disponible côté web | `packages/types/src/booking.ts`, checkout web |
@@ -251,6 +251,8 @@ Critères d’acceptation :
 - Un client connecté télécharge le PDF de SA réservation uniquement (403 sinon).
 - Même contenu que la PJ email (réutiliser le service PDF).
 - i18n du libellé bouton.
+
+Curl + chemin UI + test manuel : docs/pr-03-pdf-client-download.md
 
 À la fin : curl + chemin UI + test manuel.
 ```
