@@ -218,7 +218,7 @@ describe('booking-detail-pdf', () => {
             nationality: 'CD',
             idNumber: 'P100001',
             priceCents: 30750,
-            conditions: 'Allergie pollen',
+            allergies: 'Allergie pollen',
             emergencyContactName: 'Paul Urgence',
             emergencyContactPhone: '+243900000001',
             emergencyContactEmail: 'paul@example.com',
@@ -228,10 +228,66 @@ describe('booking-detail-pdf', () => {
     );
 
     expect(buffer.subarray(0, 4).toString()).toBe('%PDF');
+    expect(pdfContentIncludes(buffer, 'Allergies')).toBe(true);
     expect(pdfContentIncludes(buffer, 'Allergie pollen')).toBe(true);
     expect(pdfContentIncludes(buffer, 'Urgence')).toBe(true);
     expect(pdfContentIncludes(buffer, 'Paul Urgence')).toBe(true);
     expect(pdfContentIncludes(buffer, '+243900000001')).toBe(true);
+  });
+
+  it('includes structured medical fields in traveler notes', async () => {
+    const buffer = await renderBookingDetailPdf(
+      sampleInput({
+        locale: 'fr',
+        logoPath: null,
+        travelers: [
+          {
+            fullName: 'Marie Dupont',
+            age: 34,
+            nationality: 'CD',
+            idNumber: 'P100001',
+            priceCents: 30750,
+            allergies: 'Arachides',
+            seriousMedicalConditions: 'Asthme',
+            currentMedications: 'Ventoline',
+            dietaryNotes: 'Sans gluten',
+          },
+        ],
+      }),
+    );
+
+    expect(buffer.subarray(0, 4).toString()).toBe('%PDF');
+    expect(pdfContentIncludes(buffer, 'Allergies')).toBe(true);
+    expect(pdfContentIncludes(buffer, 'Arachides')).toBe(true);
+    expect(pdfContentIncludes(buffer, 'Conditions graves')).toBe(true);
+    expect(pdfContentIncludes(buffer, 'Asthme')).toBe(true);
+    expect(pdfContentIncludes(buffer, 'Traitements')).toBe(true);
+    expect(pdfContentIncludes(buffer, 'Ventoline')).toBe(true);
+    expect(pdfContentIncludes(buffer, 'Alimentation')).toBe(true);
+    expect(pdfContentIncludes(buffer, 'Sans gluten')).toBe(true);
+  });
+
+  it('includes legacy conditions text when structured medical fields are empty', async () => {
+    const buffer = await renderBookingDetailPdf(
+      sampleInput({
+        locale: 'fr',
+        logoPath: null,
+        travelers: [
+          {
+            fullName: 'Marie Dupont',
+            age: 34,
+            nationality: 'CD',
+            idNumber: 'P100001',
+            priceCents: 30750,
+            conditions: 'Note libre historique',
+          },
+        ],
+      }),
+    );
+
+    expect(buffer.subarray(0, 4).toString()).toBe('%PDF');
+    expect(pdfContentIncludes(buffer, 'Anciennes notes')).toBe(true);
+    expect(pdfContentIncludes(buffer, 'Note libre historique')).toBe(true);
   });
 
   it('accepts a minimal PNG logo buffer without crashing', async () => {

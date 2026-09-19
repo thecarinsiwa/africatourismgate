@@ -19,6 +19,10 @@ export type BookingDetailPdfTraveler = {
   idNumber?: string | null;
   priceCents?: number | null;
   conditions?: string | null;
+  allergies?: string | null;
+  seriousMedicalConditions?: string | null;
+  currentMedications?: string | null;
+  dietaryNotes?: string | null;
   comment?: string | null;
   other?: string | null;
   emergencyContactName?: string | null;
