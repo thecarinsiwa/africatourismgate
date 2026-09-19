@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { fillCheckoutManifest, mockManifestApi } from './helpers/fill-manifest';
+import { mockWebPaymentMethods } from './helpers/mock-web-payment-methods';
 
 test('panier -> recap -> Stripe -> confirmation', async ({ page }) => {
   await page.addInitScript(() => {
@@ -151,6 +152,9 @@ test('panier -> recap -> Stripe -> confirmation', async ({ page }) => {
 });
 
 test('panier -> recap -> cash -> attente paiement sur place', async ({ page }) => {
+  // PR-08: cash web is off by default — enable explicitly for this scenario.
+  await mockWebPaymentMethods(page, { cash: true });
+
   await page.addInitScript(() => {
     window.sessionStorage.setItem(
       'atg.web.session',
@@ -277,7 +281,9 @@ test('panier -> recap -> cash -> attente paiement sur place', async ({ page }) =
   await page.getByRole('link', { name: /continuer vers r[ée]cap/i }).click();
   await expect(page).toHaveURL(/\/booking\/recap\?/);
 
-  await page.locator('input[name="preferredPaymentMethod"][value="cash"]').check();
+  const cashRadio = page.locator('input[name="preferredPaymentMethod"][value="cash"]');
+  await expect(cashRadio).toBeVisible();
+  await cashRadio.check();
   await fillCheckoutManifest(page);
   await page
     .getByRole('button', {
