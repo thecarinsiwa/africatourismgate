@@ -38,10 +38,10 @@ export class Bookings extends BaseAuditEntity {
   @Column({
     type: 'enum',
     name: 'preferred_payment_method',
-    enum: ['stripe', 'cash'],
+    enum: ['stripe', 'cash', 'bank_transfer'],
     nullable: true,
   })
-  preferredPaymentMethod!: 'stripe' | 'cash' | null;
+  preferredPaymentMethod!: 'stripe' | 'cash' | 'bank_transfer' | null;
 
 }
 

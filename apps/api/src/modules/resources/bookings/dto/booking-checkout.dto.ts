@@ -27,7 +27,7 @@ export const BOOKING_CHECKOUT_ITEM_TYPES = [
 
 export type BookingCheckoutItemType = (typeof BOOKING_CHECKOUT_ITEM_TYPES)[number];
 
-export const BOOKING_PREFERRED_PAYMENT_METHODS = ['stripe', 'cash'] as const;
+export const BOOKING_PREFERRED_PAYMENT_METHODS = ['stripe', 'cash', 'bank_transfer'] as const;
 
 export type BookingPreferredPaymentMethod =
   (typeof BOOKING_PREFERRED_PAYMENT_METHODS)[number];

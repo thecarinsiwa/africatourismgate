@@ -10,7 +10,7 @@ export type BookingStatus =
   | 'refunded';
 
 /** Chosen at checkout; null on legacy bookings. */
-export type BookingPreferredPaymentMethod = 'stripe' | 'cash';
+export type BookingPreferredPaymentMethod = 'stripe' | 'cash' | 'bank_transfer';
 
 export type BookingCheckoutItemType =
   | 'room'
@@ -32,7 +32,7 @@ export interface Booking {
   currency: string;
   promoCodeId: string | null;
   promotionId?: string | null;
-  /** Stripe Checkout vs cash on site; null for bookings before this field. */
+  /** Stripe Checkout vs cash on site vs bank transfer; null for bookings before this field. */
   preferredPaymentMethod?: BookingPreferredPaymentMethod | null;
   createdAt: string;
   updatedAt: string | null;
