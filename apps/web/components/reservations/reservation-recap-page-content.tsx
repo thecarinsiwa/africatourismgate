@@ -313,6 +313,18 @@ export function ReservationRecapPageContent({ draft }: Props) {
       if (!entry.idNumber.trim()) {
         fieldErrors.idNumber = ck.manifest.idNumberRequired.replace('{n}', n);
       }
+      if (!entry.emergencyContactName.trim()) {
+        fieldErrors.emergencyContactName = ck.manifest.emergencyContactNameRequired.replace(
+          '{n}',
+          n,
+        );
+      }
+      if (!entry.emergencyContactPhone.trim()) {
+        fieldErrors.emergencyContactPhone = ck.manifest.emergencyContactPhoneRequired.replace(
+          '{n}',
+          n,
+        );
+      }
       if (Object.keys(fieldErrors).length > 0) {
         errors[i] = fieldErrors;
       }

@@ -226,9 +226,18 @@ export type Translations = {
       idNumber: string;
       conditions: string;
       conditionsPlaceholder: string;
+      emergencyContactSection: string;
+      emergencyContactName: string;
+      emergencyContactPhone: string;
+      emergencyContactEmail: string;
+      emergencyContactCountry: string;
+      emergencyContactAddress: string;
+      emergencyContactAddressPlaceholder: string;
       fullNameRequired: string;
       nationalityRequired: string;
       idNumberRequired: string;
+      emergencyContactNameRequired: string;
+      emergencyContactPhoneRequired: string;
       idDocument: string;
       idDocumentHint: string;
       idDocumentSelected: string;
@@ -1088,6 +1097,8 @@ export type Translations = {
           fullNameRequired: string;
           nationalityRequired: string;
           idNumberRequired: string;
+          emergencyContactNameRequired: string;
+          emergencyContactPhoneRequired: string;
           save: string;
           saving: string;
           saveError: string;
@@ -1115,6 +1126,13 @@ export type Translations = {
             idNumber: string;
             conditions: string;
             conditionsPlaceholder: string;
+            emergencyContactSection: string;
+            emergencyContactName: string;
+            emergencyContactPhone: string;
+            emergencyContactEmail: string;
+            emergencyContactCountry: string;
+            emergencyContactAddress: string;
+            emergencyContactAddressPlaceholder: string;
             comment: string;
             commentPlaceholder: string;
             other: string;
@@ -1576,7 +1594,7 @@ const fr: Translations = {
     manifest: {
       title: 'Informations des voyageurs',
       subtitle:
-        'Renseignez les informations de chaque voyageur. Nom, nationalité et n° de pièce sont obligatoires. Le genre est optionnel.',
+        'Renseignez les informations de chaque voyageur. Nom, nationalité, n° de pièce et contact d’urgence (nom + téléphone) sont obligatoires. Le genre est optionnel.',
       travelerN: 'Voyageur {n}',
       fullName: 'Nom complet',
       age: 'Âge',
@@ -1592,9 +1610,20 @@ const fr: Translations = {
       idNumber: "N° pièce d'identité",
       conditions: 'Conditions médicales',
       conditionsPlaceholder: 'Allergies, traitements, besoins particuliers…',
+      emergencyContactSection: "Contact d'urgence",
+      emergencyContactName: 'Nom du contact',
+      emergencyContactPhone: 'Téléphone',
+      emergencyContactEmail: 'E-mail',
+      emergencyContactCountry: 'Pays',
+      emergencyContactAddress: 'Adresse',
+      emergencyContactAddressPlaceholder: 'Rue, ville…',
       fullNameRequired: 'Le nom complet du voyageur {n} est obligatoire.',
       nationalityRequired: 'La nationalité du voyageur {n} est obligatoire.',
       idNumberRequired: "Le n° de pièce d'identité du voyageur {n} est obligatoire.",
+      emergencyContactNameRequired:
+        "Le nom du contact d'urgence du voyageur {n} est obligatoire.",
+      emergencyContactPhoneRequired:
+        "Le téléphone du contact d'urgence du voyageur {n} est obligatoire.",
       idDocument: "Pièce d'identité",
       idDocumentHint: 'JPEG, PNG, WebP ou PDF — 10 Mo max.',
       idDocumentSelected: 'Choisir un fichier',
@@ -2558,10 +2587,12 @@ const fr: Translations = {
           addTitle: 'Ajouter un voyageur',
           editTitle: 'Modifier le voyageur',
           formHint:
-            'Nom, nationalité et n° de pièce sont obligatoires. Le genre est optionnel.',
+            'Nom, nationalité, n° de pièce et contact d’urgence (nom + téléphone) sont obligatoires. Le genre est optionnel.',
           fullNameRequired: 'Le nom complet est obligatoire.',
           nationalityRequired: 'La nationalité est obligatoire.',
           idNumberRequired: "Le n° de pièce d'identité est obligatoire.",
+          emergencyContactNameRequired: "Le nom du contact d'urgence est obligatoire.",
+          emergencyContactPhoneRequired: "Le téléphone du contact d'urgence est obligatoire.",
           save: 'Enregistrer',
           saving: 'Enregistrement…',
           saveError: "Impossible d'enregistrer le voyageur.",
@@ -2589,6 +2620,13 @@ const fr: Translations = {
             idNumber: "N° pièce d'identité",
             conditions: 'Conditions médicales',
             conditionsPlaceholder: 'Allergies, traitements en cours, besoins particuliers?',
+            emergencyContactSection: "Contact d'urgence",
+            emergencyContactName: 'Nom du contact',
+            emergencyContactPhone: 'Téléphone',
+            emergencyContactEmail: 'E-mail',
+            emergencyContactCountry: 'Pays',
+            emergencyContactAddress: 'Adresse',
+            emergencyContactAddressPlaceholder: 'Rue, ville…',
             comment: 'Commentaire',
             commentPlaceholder: 'Informations complémentaires…',
             other: 'Autres informations',
@@ -3115,7 +3153,7 @@ const en: Translations = {
     manifest: {
       title: 'Traveler information',
       subtitle:
-        'Fill in the details for each traveler. Full name, nationality and ID / passport number are required. Gender is optional.',
+        'Fill in the details for each traveler. Full name, nationality, ID / passport number and emergency contact (name + phone) are required. Gender is optional.',
       travelerN: 'Traveler {n}',
       fullName: 'Full name',
       age: 'Age',
@@ -3131,9 +3169,18 @@ const en: Translations = {
       idNumber: 'ID / Passport number',
       conditions: 'Medical conditions',
       conditionsPlaceholder: 'Allergies, treatments, special needs?',
+      emergencyContactSection: 'Emergency contact',
+      emergencyContactName: 'Contact name',
+      emergencyContactPhone: 'Phone',
+      emergencyContactEmail: 'Email',
+      emergencyContactCountry: 'Country',
+      emergencyContactAddress: 'Address',
+      emergencyContactAddressPlaceholder: 'Street, city…',
       fullNameRequired: 'Full name of traveler {n} is required.',
       nationalityRequired: 'Nationality of traveler {n} is required.',
       idNumberRequired: 'ID / passport number of traveler {n} is required.',
+      emergencyContactNameRequired: 'Emergency contact name of traveler {n} is required.',
+      emergencyContactPhoneRequired: 'Emergency contact phone of traveler {n} is required.',
       idDocument: 'Identity document',
       idDocumentHint: 'JPEG, PNG, WebP or PDF ? 10 MB max.',
       idDocumentSelected: 'Choose a file',
@@ -4092,10 +4139,12 @@ const en: Translations = {
           addTitle: 'Add a traveler',
           editTitle: 'Edit traveler',
           formHint:
-            'Full name, nationality and ID / passport number are required. Gender is optional.',
+            'Full name, nationality, ID / passport number and emergency contact (name + phone) are required. Gender is optional.',
           fullNameRequired: 'Full name is required.',
           nationalityRequired: 'Nationality is required.',
           idNumberRequired: 'ID / passport number is required.',
+          emergencyContactNameRequired: 'Emergency contact name is required.',
+          emergencyContactPhoneRequired: 'Emergency contact phone is required.',
           save: 'Save',
           saving: 'Saving?',
           saveError: 'Could not save the traveler.',
@@ -4123,6 +4172,13 @@ const en: Translations = {
             idNumber: 'ID / Passport number',
             conditions: 'Medical conditions',
             conditionsPlaceholder: 'Allergies, ongoing treatments, special needs?',
+            emergencyContactSection: 'Emergency contact',
+            emergencyContactName: 'Contact name',
+            emergencyContactPhone: 'Phone',
+            emergencyContactEmail: 'Email',
+            emergencyContactCountry: 'Country',
+            emergencyContactAddress: 'Address',
+            emergencyContactAddressPlaceholder: 'Street, city…',
             comment: 'Comment',
             commentPlaceholder: 'Additional information?',
             other: 'Other information',

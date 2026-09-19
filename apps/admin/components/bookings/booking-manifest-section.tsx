@@ -34,6 +34,11 @@ type FormState = {
   nationality: string;
   idNumber: string;
   conditions: string;
+  emergencyContactName: string;
+  emergencyContactPhone: string;
+  emergencyContactEmail: string;
+  emergencyContactCountry: string;
+  emergencyContactAddress: string;
   comment: string;
   other: string;
 };
@@ -46,6 +51,11 @@ const EMPTY_FORM: FormState = {
   nationality: '',
   idNumber: '',
   conditions: '',
+  emergencyContactName: '',
+  emergencyContactPhone: '',
+  emergencyContactEmail: '',
+  emergencyContactCountry: '',
+  emergencyContactAddress: '',
   comment: '',
   other: '',
 };
@@ -59,6 +69,11 @@ function entryToForm(entry: BookingManifestEntry): FormState {
     nationality: entry.nationality ?? '',
     idNumber: entry.idNumber ?? '',
     conditions: entry.conditions ?? '',
+    emergencyContactName: entry.emergencyContactName ?? '',
+    emergencyContactPhone: entry.emergencyContactPhone ?? '',
+    emergencyContactEmail: entry.emergencyContactEmail ?? '',
+    emergencyContactCountry: entry.emergencyContactCountry ?? '',
+    emergencyContactAddress: entry.emergencyContactAddress ?? '',
     comment: entry.comment ?? '',
     other: entry.other ?? '',
   };
@@ -81,6 +96,11 @@ function formToPayload(form: FormState) {
         : undefined,
     nationality: form.nationality.trim(),
     idNumber: form.idNumber.trim(),
+    emergencyContactName: form.emergencyContactName.trim(),
+    emergencyContactPhone: form.emergencyContactPhone.trim(),
+    emergencyContactEmail: form.emergencyContactEmail.trim() || undefined,
+    emergencyContactCountry: form.emergencyContactCountry.trim() || undefined,
+    emergencyContactAddress: form.emergencyContactAddress.trim() || undefined,
     conditions: form.conditions.trim() || undefined,
     comment: form.comment.trim() || undefined,
     other: form.other.trim() || undefined,
@@ -169,6 +189,14 @@ export function BookingManifestSection({
     }
     if (!form.idNumber.trim()) {
       setActionError(t('idNumberRequired'));
+      return;
+    }
+    if (!form.emergencyContactName.trim()) {
+      setActionError(t('emergencyContactNameRequired'));
+      return;
+    }
+    if (!form.emergencyContactPhone.trim()) {
+      setActionError(t('emergencyContactPhoneRequired'));
       return;
     }
     setSaving(true);
@@ -444,6 +472,57 @@ export function BookingManifestSection({
               placeholder={t('fields.conditionsPlaceholder')}
             />
           </label>
+          <p className="sm:col-span-2 text-sm font-semibold text-atg-fg">
+            {t('fields.emergencyContactSection')}
+          </p>
+          <Input
+            label={t('fields.emergencyContactName')}
+            labelExtra={<span className="text-red-500" aria-hidden="true">*</span>}
+            name="emergencyContactName"
+            value={form.emergencyContactName}
+            onChange={(e) =>
+              setForm((prev) => ({ ...prev, emergencyContactName: e.target.value }))
+            }
+            required
+          />
+          <Input
+            label={t('fields.emergencyContactPhone')}
+            labelExtra={<span className="text-red-500" aria-hidden="true">*</span>}
+            name="emergencyContactPhone"
+            type="tel"
+            value={form.emergencyContactPhone}
+            onChange={(e) =>
+              setForm((prev) => ({ ...prev, emergencyContactPhone: e.target.value }))
+            }
+            required
+          />
+          <Input
+            label={t('fields.emergencyContactEmail')}
+            name="emergencyContactEmail"
+            type="email"
+            value={form.emergencyContactEmail}
+            onChange={(e) =>
+              setForm((prev) => ({ ...prev, emergencyContactEmail: e.target.value }))
+            }
+          />
+          <CountryCodeCombobox
+            label={t('fields.emergencyContactCountry')}
+            name="emergencyContactCountry"
+            value={form.emergencyContactCountry}
+            onChange={(code) =>
+              setForm((prev) => ({ ...prev, emergencyContactCountry: code }))
+            }
+          />
+          <Input
+            className="sm:col-span-2"
+            label={t('fields.emergencyContactAddress')}
+            name="emergencyContactAddress"
+            value={form.emergencyContactAddress}
+            onChange={(e) =>
+              setForm((prev) => ({ ...prev, emergencyContactAddress: e.target.value }))
+            }
+            placeholder={t('fields.emergencyContactAddressPlaceholder')}
+          />
           <label className="block text-sm sm:col-span-2" htmlFor={commentId}>
             <span className="font-medium text-atg-fg">{t('fields.comment')}</span>
             <textarea

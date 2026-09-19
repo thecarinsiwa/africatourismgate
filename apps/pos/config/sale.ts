@@ -71,7 +71,7 @@ export const posSalePageConfig = {
     editLabel: 'Modifier',
     sheetTitle: 'Manifeste des voyageurs',
     sheetSubtitle:
-      'Nom, nationalité et n° de pièce sont obligatoires pour chaque voyageur. Le genre est optionnel.',
+      'Nom, nationalité, n° de pièce et contact d’urgence (nom + téléphone) sont obligatoires pour chaque voyageur. Le genre est optionnel.',
     travelerHeading: (n: number) => `Voyageur ${n}`,
     addTravelerLabel: 'Ajouter un voyageur',
     removeTravelerLabel: 'Supprimer',
@@ -95,12 +95,23 @@ export const posSalePageConfig = {
     idNumberPlaceholder: 'Ex. AB123456',
     conditionsLabel: 'Conditions particulières / Santé',
     conditionsPlaceholder: 'Ex. Allergies, régime spécifique...',
+    emergencyContactSection: "Contact d'urgence",
+    emergencyContactNameLabel: 'Nom du contact',
+    emergencyContactPhoneLabel: 'Téléphone',
+    emergencyContactEmailLabel: 'E-mail',
+    emergencyContactCountryLabel: 'Pays',
+    emergencyContactAddressLabel: 'Adresse',
+    emergencyContactAddressPlaceholder: 'Rue, ville…',
     commentLabel: 'Remarques',
     commentPlaceholder: 'Notes...',
     fullNameRequired: (n: number) => `Le nom complet du voyageur ${n} est obligatoire.`,
     nationalityRequired: (n: number) => `La nationalité du voyageur ${n} est obligatoire.`,
     idNumberRequired: (n: number) =>
       `Le n° de pièce d’identité du voyageur ${n} est obligatoire.`,
+    emergencyContactNameRequired: (n: number) =>
+      `Le nom du contact d'urgence du voyageur ${n} est obligatoire.`,
+    emergencyContactPhoneRequired: (n: number) =>
+      `Le téléphone du contact d'urgence du voyageur ${n} est obligatoire.`,
     saveLabel: 'Enregistrer le manifeste',
     closeLabel: 'Fermer',
   },
