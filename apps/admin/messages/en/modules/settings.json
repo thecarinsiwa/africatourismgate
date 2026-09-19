@@ -36,7 +36,9 @@
       "displayNameRequired": "Display name is required.",
       "loyaltyRateInvalid": "Points rate must be a non-negative integer.",
       "programCodeInvalid": "Program code is required (max 32 characters).",
-      "paymentMethodsRequired": "Enable at least one payment method."
+      "paymentMethodsRequired": "Enable at least one payment method.",
+      "depositPercentInvalid": "Deposit percent must be an integer between 1 and 100.",
+      "depositFixedInvalid": "Fixed deposit amount must be a positive number (e.g. 50.00)."
     },
     "sections": {
       "contact": {
@@ -72,6 +74,16 @@
           "bank_transfer": "Bank transfer",
           "mobile_money": "Mobile Money"
         },
+        "depositsTitle": "Deposits",
+        "depositsDescription": "When enabled, checkout first collects a deposit (percent or fixed amount). The booking stays pending payment until the balance is fully paid.",
+        "depositsEnabled": "Enable deposits at checkout",
+        "depositsMode": "Deposit type",
+        "depositsModePercent": "Percent of total",
+        "depositsModeFixed": "Fixed amount",
+        "depositPercent": "Deposit percent (%)",
+        "depositPercentHint": "Integer between 1 and 100 (e.g. 30).",
+        "depositFixed": "Fixed deposit amount",
+        "depositFixedHint": "Amount in {currency} (e.g. 50.00). Capped at the booking total.",
         "itemTypes": {
           "room": "Accommodation (room)",
           "flight_class": "Flight",

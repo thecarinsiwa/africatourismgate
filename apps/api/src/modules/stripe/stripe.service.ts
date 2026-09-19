@@ -106,9 +106,14 @@ export class StripeService {
     actorUserId?: string,
   ): Promise<BookingPaymentIntentResult> {
     const booking = await this.findPayableBooking(bookingId);
+    const { chargeCents, paidCents } =
+      await this.resolveStripeChargeAmount(booking);
 
     const pending = await this.findPendingStripePayment(bookingId);
-    if (pending?.externalId?.startsWith('pi_')) {
+    if (
+      pending?.externalId?.startsWith('pi_') &&
+      pending.amountCents === chargeCents
+    ) {
       const stripe = this.getStripe();
       const existing = await stripe.paymentIntents.retrieve(pending.externalId);
       if (
@@ -120,19 +125,30 @@ export class StripeService {
           paymentId: pending.id,
           paymentIntentId: existing.id,
           clientSecret: existing.client_secret,
-          amountCents: booking.totalCents,
+          amountCents: chargeCents,
           currency: booking.currency,
         };
       }
     }
 
+    if (pending) {
+      await this.invalidatePendingStripePayment(pending, actorUserId);
+    }
+
     const paymentId = newId();
     const stripe = this.getStripe();
+    const description = this.stripeChargeDescription(
+      bookingId,
+      booking.totalCents,
+      chargeCents,
+      paidCents,
+    );
 
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: booking.totalCents,
+      amount: chargeCents,
       currency: booking.currency.toLowerCase(),
       automatic_payment_methods: { enabled: true },
+      description,
       metadata: {
         [STRIPE_METADATA_BOOKING_ID]: bookingId,
         [STRIPE_METADATA_PAYMENT_ID]: paymentId,
@@ -142,7 +158,7 @@ export class StripeService {
     const payment = this.paymentsRepository.create({
       id: paymentId,
       bookingId,
-      amountCents: booking.totalCents,
+      amountCents: chargeCents,
       currency: booking.currency,
       status: 'pending',
       provider: 'stripe',
@@ -159,7 +175,7 @@ export class StripeService {
       paymentId,
       paymentIntentId: paymentIntent.id,
       clientSecret: paymentIntent.client_secret,
-      amountCents: booking.totalCents,
+      amountCents: chargeCents,
       currency: booking.currency,
     };
   }
@@ -176,9 +192,14 @@ export class StripeService {
     actorUserId?: string,
   ): Promise<BookingCheckoutSessionResult> {
     const booking = await this.findPayableBooking(bookingId);
+    const { chargeCents, paidCents } =
+      await this.resolveStripeChargeAmount(booking);
 
     const pending = await this.findPendingStripePayment(bookingId);
-    if (pending?.externalId?.startsWith('cs_')) {
+    if (
+      pending?.externalId?.startsWith('cs_') &&
+      pending.amountCents === chargeCents
+    ) {
       const stripe = this.getStripe();
       const existing = await stripe.checkout.sessions.retrieve(pending.externalId);
       if (existing.status === 'open' && existing.url) {
@@ -186,10 +207,14 @@ export class StripeService {
           paymentId: pending.id,
           sessionId: existing.id,
           url: existing.url,
-          amountCents: booking.totalCents,
+          amountCents: chargeCents,
           currency: booking.currency,
         };
       }
+    }
+
+    if (pending) {
+      await this.invalidatePendingStripePayment(pending, actorUserId);
     }
 
     const paymentId = newId();
@@ -200,6 +225,12 @@ export class StripeService {
         ? 'https://africatourismgate.org'
         : 'http://localhost:3002';
     const webUrl = (process.env.NEXT_PUBLIC_WEB_URL ?? defaultWebUrl).replace(/\/$/, '');
+    const productName = this.stripeChargeDescription(
+      bookingId,
+      booking.totalCents,
+      chargeCents,
+      paidCents,
+    );
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -208,9 +239,9 @@ export class StripeService {
           quantity: 1,
           price_data: {
             currency: booking.currency.toLowerCase(),
-            unit_amount: booking.totalCents,
+            unit_amount: chargeCents,
             product_data: {
-              name: `Réservation ${bookingId.slice(0, 8)}`,
+              name: productName,
             },
           },
         },
@@ -222,6 +253,7 @@ export class StripeService {
         [STRIPE_METADATA_PAYMENT_ID]: paymentId,
       },
       payment_intent_data: {
+        description: productName,
         metadata: {
           [STRIPE_METADATA_BOOKING_ID]: bookingId,
           [STRIPE_METADATA_PAYMENT_ID]: paymentId,
@@ -232,7 +264,7 @@ export class StripeService {
     const payment = this.paymentsRepository.create({
       id: paymentId,
       bookingId,
-      amountCents: booking.totalCents,
+      amountCents: chargeCents,
       currency: booking.currency,
       status: 'pending',
       provider: 'stripe',
@@ -249,7 +281,7 @@ export class StripeService {
       paymentId,
       sessionId: session.id,
       url: session.url,
-      amountCents: booking.totalCents,
+      amountCents: chargeCents,
       currency: booking.currency,
     };
   }
@@ -443,8 +475,8 @@ export class StripeService {
     }
 
     if (payment.status === 'succeeded') {
-      if (booking.status !== 'confirmed') {
-        await this.bookingEngine.confirmBooking(
+      if (booking.status === 'pending_payment') {
+        await this.bookingEngine.confirmBookingIfFullyPaid(
           params.bookingId,
           undefined,
           'Confirmation via webhook Stripe (idempotent)',
@@ -466,7 +498,7 @@ export class StripeService {
     await this.paymentsRepository.save(payment);
 
     if (booking.status === 'pending_payment') {
-      await this.bookingEngine.confirmBooking(
+      await this.bookingEngine.confirmBookingIfFullyPaid(
         params.bookingId,
         undefined,
         'Paiement Stripe confirmé (webhook)',
@@ -526,7 +558,7 @@ export class StripeService {
   }
 
   /**
-   * Repli lorsque le webhook Stripe n'a pas encore confirmé la réservation
+   * Repli lorsque le webhook Stripe n'a pas encore confirmé le paiement
    * (typique en dev local sans `stripe listen`).
    * @returns true si la réservation est confirmée (ou l'était déjà).
    */
@@ -568,22 +600,23 @@ export class StripeService {
       }
       const intent = await stripe.paymentIntents.retrieve(paymentIntentId);
       await this.handlePaymentIntentSucceeded(intent);
-      return true;
-    }
-
-    if (externalId.startsWith('pi_')) {
+    } else if (externalId.startsWith('pi_')) {
       const intent = await stripe.paymentIntents.retrieve(externalId);
       if (intent.status !== 'succeeded') {
         return false;
       }
       await this.handlePaymentIntentSucceeded(intent);
-      return true;
+    } else {
+      return false;
     }
 
-    return false;
+    const updated = await this.bookingsRepository.findOne({
+      where: { id: bookingId, deletedAt: IsNull() },
+    });
+    return updated?.status === 'confirmed';
   }
 
-  /** Expire une session Checkout obsolète si le total de la réservation a changé. */
+  /** Expire une session Checkout / PI obsolète si le montant dû a changé. */
   async invalidateStalePendingCheckoutSessions(
     bookingId: string,
     actorUserId?: string,
@@ -596,10 +629,56 @@ export class StripeService {
     }
 
     const pending = await this.findPendingStripePayment(bookingId);
-    if (!pending || pending.amountCents === booking.totalCents) {
+    if (!pending) {
       return;
     }
 
+    const { chargeCents } = await this.bookingEngine.getNextChargeAmountCents(
+      booking,
+    );
+    if (pending.amountCents === chargeCents) {
+      return;
+    }
+
+    await this.invalidatePendingStripePayment(pending, actorUserId);
+  }
+
+  private async resolveStripeChargeAmount(booking: Bookings): Promise<{
+    chargeCents: number;
+    paidCents: number;
+    balanceCents: number;
+  }> {
+    const next = await this.bookingEngine.getNextChargeAmountCents(booking);
+    if (next.balanceCents < 1 || next.chargeCents < 1) {
+      throw new BadRequestException('Cette réservation est déjà soldée.');
+    }
+    return {
+      chargeCents: next.chargeCents,
+      paidCents: next.paidCents,
+      balanceCents: next.balanceCents,
+    };
+  }
+
+  private stripeChargeDescription(
+    bookingId: string,
+    totalCents: number,
+    chargeCents: number,
+    paidCents: number,
+  ): string {
+    const shortId = bookingId.slice(0, 8);
+    if (paidCents === 0 && chargeCents < totalCents) {
+      return `Acompte — réservation ${shortId}`;
+    }
+    if (paidCents > 0 || chargeCents < totalCents) {
+      return `Solde — réservation ${shortId}`;
+    }
+    return `Réservation ${shortId}`;
+  }
+
+  private async invalidatePendingStripePayment(
+    pending: Payments,
+    actorUserId?: string,
+  ): Promise<void> {
     const externalId = pending.externalId?.trim();
     if (externalId?.startsWith('cs_')) {
       try {
@@ -612,6 +691,19 @@ export class StripeService {
         const message = err instanceof Error ? err.message : String(err);
         this.logger.warn(
           `Impossible d'expirer la session Checkout ${externalId} : ${message}`,
+        );
+      }
+    } else if (externalId?.startsWith('pi_')) {
+      try {
+        const stripe = this.getStripe();
+        const intent = await stripe.paymentIntents.retrieve(externalId);
+        if (intent.status !== 'canceled' && intent.status !== 'succeeded') {
+          await stripe.paymentIntents.cancel(externalId);
+        }
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        this.logger.warn(
+          `Impossible d'annuler le PaymentIntent ${externalId} : ${message}`,
         );
       }
     }

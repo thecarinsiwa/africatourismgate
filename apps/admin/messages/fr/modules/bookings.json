@@ -63,13 +63,18 @@
       "name": "Nom",
       "organization": "Organisation",
       "total": "Total",
+      "paid": "Déjà payé",
+      "balance": "Solde restant",
+      "depositDue": "À encaisser maintenant",
       "createdAt": "Créée le",
       "preferredPaymentMethod": "Mode de paiement choisi"
     },
     "summary": {
       "createdAt": "Créée le {date}",
       "unreadMessages": "{count, plural, one {# message client non lu} other {# messages client non lus}}",
-      "preferredPaymentUnspecified": "Non spécifié"
+      "preferredPaymentUnspecified": "Non spécifié",
+      "cancellationPolicyTitle": "Politique d’annulation (indicative)",
+      "cancellationPolicyBody": "En cas d’acompte, le solde doit être réglé avant la date de service. L’acompte n’est généralement pas remboursable sauf accord contraire. Mention informative uniquement."
     },
     "tabs": {
       "ariaLabel": "Sections complémentaires",
@@ -101,21 +106,27 @@
     },
     "cashDialog": {
       "title": "Enregistrer un paiement cash",
-      "description": "Confirmer l'encaissement en espèces pour cette réservation ? Elle passera au statut confirmée.",
+      "description": "Enregistrez un encaissement (acompte ou solde). La réservation n’est confirmée que lorsque le solde est couvert.",
+      "amountLabel": "Montant encaissé",
+      "amountHint": "Laissez vide pour le montant dû par défaut (acompte ou solde).",
       "noteLabel": "Note (optionnel)",
       "notePlaceholder": "Ex. reçu en caisse, numéro de reçu…",
       "confirm": "Encaisser"
     },
     "bankTransferDialog": {
       "title": "Marquer le virement reçu",
-      "description": "Confirmer la réception du virement pour cette réservation ? Elle passera au statut confirmée.",
+      "description": "Enregistrez un virement (acompte ou solde). La réservation n’est confirmée que lorsque le solde est couvert.",
+      "amountLabel": "Montant reçu",
+      "amountHint": "Laissez vide pour le montant dû par défaut (acompte ou solde).",
       "noteLabel": "Note (optionnel)",
       "notePlaceholder": "Ex. référence bancaire, date de réception…",
       "confirm": "Confirmer le virement"
     },
     "mobileMoneyDialog": {
       "title": "Marquer le paiement Mobile Money reçu",
-      "description": "Confirmer la réception du paiement Mobile Money pour cette réservation ? Elle passera au statut confirmée.",
+      "description": "Enregistrez un paiement Mobile Money (acompte ou solde). La réservation n’est confirmée que lorsque le solde est couvert.",
+      "amountLabel": "Montant reçu",
+      "amountHint": "Laissez vide pour le montant dû par défaut (acompte ou solde).",
       "noteLabel": "Note (optionnel)",
       "notePlaceholder": "Ex. référence opérateur, date de réception…",
       "confirm": "Confirmer le paiement"
@@ -247,13 +258,14 @@
   },
   "paymentProofs": {
     "title": "Preuves de paiement",
-    "subtitle": "Justificatifs déposés par le client — validez pour confirmer la réservation, ou demandez une nouvelle preuve.",
+    "subtitle": "Justificatifs déposés par le client — validez pour enregistrer le paiement (acompte ou solde). La réservation n’est confirmée que lorsque le solde est couvert.",
     "empty": "Aucune preuve déposée.",
     "statusLabel": "Statut",
     "view": "Voir",
     "viewing": "Ouverture…",
     "approve": "Valider le paiement",
-    "approveSuccess": "Preuve validée — réservation confirmée.",
+    "approveSuccess": "Preuve validée. La réservation est confirmée si le solde est couvert.",
+    "amountLabel": "Montant",
     "requestResubmit": "Demander une nouvelle preuve",
     "resubmitDialogTitle": "Demander une nouvelle preuve",
     "resubmitDialogDescription": "Indiquez au client ce qui manque (montant illisible, mauvaise référence…).",

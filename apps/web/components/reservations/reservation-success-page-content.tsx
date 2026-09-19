@@ -252,6 +252,48 @@ export function ReservationSuccessPageContent() {
                 <span className="font-semibold">{s.totalLabel}</span>{' '}
                 {formatHotelPrice(booking.totalCents, booking.currency)}
               </p>
+              {(booking.paidCents > 0 ||
+                booking.balanceCents > 0 ||
+                isPendingPayment) && (
+                <>
+                  <p>
+                    <span className="font-semibold">{s.paidLabel}</span>{' '}
+                    {formatHotelPrice(booking.paidCents ?? 0, booking.currency)}
+                  </p>
+                  <p>
+                    <span className="font-semibold">{s.balanceLabel}</span>{' '}
+                    {formatHotelPrice(
+                      booking.balanceCents ??
+                        Math.max(0, booking.totalCents - (booking.paidCents ?? 0)),
+                      booking.currency,
+                    )}
+                  </p>
+                  {isPendingPayment &&
+                  (booking.depositRequiredCents ?? booking.totalCents) <
+                    booking.totalCents &&
+                  (booking.paidCents ?? 0) === 0 ? (
+                    <p>
+                      <span className="font-semibold">{s.depositDueLabel}</span>{' '}
+                      {formatHotelPrice(
+                        Math.min(
+                          booking.depositRequiredCents ?? booking.totalCents,
+                          booking.balanceCents ?? booking.totalCents,
+                        ),
+                        booking.currency,
+                      )}
+                    </p>
+                  ) : null}
+                </>
+              )}
+              {isPendingPayment &&
+              ((booking.depositRequiredCents ?? booking.totalCents) <
+                booking.totalCents ||
+                (booking.paidCents ?? 0) > 0) ? (
+                <aside className="mt-3 rounded-lg border border-amber-200/80 bg-amber-50/80 px-3 py-2 text-amber-950 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-100">
+                  <p className="font-semibold">{s.cancellationPolicyTitle}</p>
+                  <p className="mt-1 text-sm opacity-90">{s.cancellationPolicyBody}</p>
+                </aside>
+              ) : null}
               {isCashPending ? (
                 <p className="text-amber-700 dark:text-amber-300">{s.statusCashPendingHint}</p>
               ) : null}
@@ -295,6 +337,7 @@ export function ReservationSuccessPageContent() {
               bookingStatus={booking.booking.status}
               paymentMethod="bank_transfer"
               proofs={booking.paymentProofs ?? []}
+              currency={booking.currency}
               labels={t.account.reservations.detail.paymentProofs}
               onUpdated={async () => {
                 const token = await ensureClientAccessToken();
@@ -328,6 +371,7 @@ export function ReservationSuccessPageContent() {
               bookingStatus={booking.booking.status}
               paymentMethod="mobile_money"
               proofs={booking.paymentProofs ?? []}
+              currency={booking.currency}
               labels={t.account.reservations.detail.paymentProofs}
               onUpdated={async () => {
                 const token = await ensureClientAccessToken();

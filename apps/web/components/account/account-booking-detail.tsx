@@ -213,9 +213,30 @@ export function AccountBookingDetail({
     );
   }
 
-  const { booking, items, totalCents, currency, review, canReview, statusHistory, paymentInvited, guideReviewInvites } =
-    detail;
+  const {
+    booking,
+    items,
+    totalCents,
+    currency,
+    paidCents = 0,
+    balanceCents = Math.max(0, totalCents - paidCents),
+    depositRequiredCents = totalCents,
+    review,
+    canReview,
+    statusHistory,
+    paymentInvited,
+    guideReviewInvites,
+  } = detail;
   const d = t.account.reservations.detail;
+  const dueNowCents =
+    paidCents === 0 && depositRequiredCents < totalCents
+      ? Math.min(depositRequiredCents, balanceCents)
+      : balanceCents;
+  const showPaymentBreakdown =
+    booking.status === 'pending_payment' || paidCents > 0 || balanceCents > 0;
+  const showCancellationPolicy =
+    booking.status === 'pending_payment' &&
+    (depositRequiredCents < totalCents || paidCents > 0);
   const isAssisted = assisted;
   const prefersCash = booking.preferredPaymentMethod === 'cash';
   const prefersBankTransfer = booking.preferredPaymentMethod === 'bank_transfer';
@@ -281,7 +302,7 @@ export function AccountBookingDetail({
         }}
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-lg border border-atg-border bg-atg-surface p-4 dark:border-atg-border dark:bg-white/5">
           <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
             {t.account.reservations.status}
@@ -296,7 +317,7 @@ export function AccountBookingDetail({
           </p>
           <p className="mt-1 text-sm font-semibold text-atg-fg">{items.length}</p>
         </div>
-        <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 sm:col-span-2 lg:col-span-1">
+        <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
           <p className="text-xs font-medium uppercase tracking-wide text-primary/80">
             {t.account.reservations.total}
           </p>
@@ -304,7 +325,44 @@ export function AccountBookingDetail({
             {formatBookingMoney(totalCents, currency)}
           </p>
         </div>
+        {showPaymentBreakdown ? (
+          <div className="rounded-lg border border-atg-border bg-atg-surface p-4 dark:border-atg-border dark:bg-white/5">
+            <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+              {d.paidLabel}
+            </p>
+            <p className="mt-1 text-sm font-semibold text-atg-fg">
+              {formatBookingMoney(paidCents, currency)}
+            </p>
+            <p className="mt-2 text-xs font-medium uppercase tracking-wide text-atg-muted">
+              {d.balanceLabel}
+            </p>
+            <p className="mt-1 text-sm font-semibold text-atg-fg">
+              {formatBookingMoney(balanceCents, currency)}
+            </p>
+            {booking.status === 'pending_payment' &&
+            dueNowCents > 0 &&
+            dueNowCents !== balanceCents ? (
+              <>
+                <p className="mt-2 text-xs font-medium uppercase tracking-wide text-primary/80">
+                  {d.depositDueLabel}
+                </p>
+                <p className="mt-1 text-sm font-bold text-primary">
+                  {formatBookingMoney(dueNowCents, currency)}
+                </p>
+              </>
+            ) : null}
+          </div>
+        ) : null}
       </div>
+
+      {showCancellationPolicy ? (
+        <aside className="rounded-lg border border-amber-200/80 bg-amber-50/80 px-4 py-3 text-sm text-amber-950 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-100">
+          <p className="font-semibold">{d.cancellationPolicyTitle}</p>
+          <p className="mt-1 text-amber-900/90 dark:text-amber-100/90">
+            {d.cancellationPolicyBody}
+          </p>
+        </aside>
+      ) : null}
 
       {isAssisted ? (
         <BookingMessagesSection
@@ -355,6 +413,7 @@ export function AccountBookingDetail({
                 bookingStatus={booking.status}
                 paymentMethod="bank_transfer"
                 proofs={detail.paymentProofs ?? []}
+                currency={detail.currency}
                 labels={d.paymentProofs}
                 onUpdated={async () => {
                   await load();
@@ -385,6 +444,7 @@ export function AccountBookingDetail({
                 bookingStatus={booking.status}
                 paymentMethod="mobile_money"
                 proofs={detail.paymentProofs ?? []}
+                currency={detail.currency}
                 labels={d.paymentProofs}
                 onUpdated={async () => {
                   await load();

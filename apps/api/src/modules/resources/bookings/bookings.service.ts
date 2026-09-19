@@ -428,6 +428,9 @@ export class BookingsService extends CrudService<Bookings> {
       items: base.items,
       totalCents: base.totalCents,
       currency: base.currency,
+      paidCents: base.paidCents,
+      balanceCents: base.balanceCents,
+      depositRequiredCents: base.depositRequiredCents,
       client: {
         id: clientUser.id,
         email: clientUser.email,

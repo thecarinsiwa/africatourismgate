@@ -81,7 +81,7 @@ Règles :
 | PDF confirmation fiable (prod) | ✅ PJ confirmation + logo durci (voir [pr-02-pdf-confirmation-fix.md](./pr-02-pdf-confirmation-fix.md)) | `booking-detail-pdf*.ts`, `booking-engine.service.ts`, `email-attachments.ts` |
 | Téléchargement PDF côté compte client | ✅ Endpoint + bouton compte (voir [pr-03-pdf-client-download.md](./pr-03-pdf-client-download.md)) | `GET /bookings/:id/confirmation-pdf`, `AccountBookingDetail` |
 | Virement bancaire au checkout | ✅ `bank_transfer` + activation admin + comptes + **preuves** (voir [pr-06-bank-transfer-test.md](./pr-06-bank-transfer-test.md), [pr-06b-payment-proofs-test.md](./pr-06b-payment-proofs-test.md)) | `payment_methods`, `booking_payment_proofs`, checkout web, admin Documents |
-| Acomptes / paiements partiels | ❌ | `payments`, Stripe refund partiel seulement |
+| Acomptes / paiements partiels | ✅ Setting `booking/deposits` + multi-paiements ; `pending_payment` jusqu’au solde ; Stripe/cash/virement/preuves partiels (voir [pr-07-deposits-test.md](./pr-07-deposits-test.md)) | `organization_settings.deposits`, `paidCents` / `balanceCents`, `booking-engine`, `stripe.service` |
 | Politique cash web | ⚠️ `cash` disponible côté web | `packages/types/src/booking.ts`, checkout web |
 | Liaison document ID ↔ voyageur | ❌ Upload non lié à l’entrée manifeste | `booking_identity_documents` |
 | Portail / onboarding partenaire | ❌ OAuth Gmail staff/client OK ; pas de portail B2B | `apps/api/src/modules/auth/`, `activity-providers` = catalogue |
@@ -104,7 +104,7 @@ Règles :
 | PR-04 | 1 | Contact d’urgence sur manifeste | Haute | `feature/pr-04-emergency-contact` | — |
 | PR-05 | 1 | Conditions médicales structurées | Moyenne | `feature/pr-05-medical-conditions` | PR-04 (optionnel) |
 | PR-06 | 1 | Paiement par virement bancaire | Haute | `feature/pr-06-bank-transfer` | — |
-| PR-07 | 1 | Acomptes / paiements partiels | Haute | `feature/pr-07-booking-deposits` | PR-06 |
+| PR-07 | 1 | Acomptes / paiements partiels — **livré** (voir [pr-07-deposits-test.md](./pr-07-deposits-test.md)) | Haute | `feature/pr-07-booking-deposits` | PR-06 |
 | PR-08 | 1 | Politique cash (restreindre web) | Haute | `feature/pr-08-cash-policy` | — |
 | PR-09 | 2 | Clarifier Partenaire vs Staff vs Client (UI + RBAC) | Moyenne | `feature/pr-09-partner-roles` | — |
 | PR-10 | 2 | Onboarding partenaires (questionnaire + invitation Gmail) | Moyenne | `feature/pr-10-partner-onboarding` | PR-09 |
@@ -376,7 +376,10 @@ Preuves de paiement (upload client + review admin) : docs/pr-06b-payment-proofs-
 
 **Branche :** `feature/pr-07-booking-deposits`  
 **Priorité :** Haute  
-**Dépend de :** PR-06
+**Dépend de :** PR-06  
+**Statut :** ✅ Livré — scénario de test : [pr-07-deposits-test.md](./pr-07-deposits-test.md)
+
+**Modèle retenu :** pas de `confirmed_deposit` ; rester `pending_payment` tant que `sum(succeeded) < total` ; passer à `confirmed` uniquement quand soldé. Exposer `paidCents` / `balanceCents` / `depositRequiredCents`. Politique d’annulation = texte i18n informatif uniquement.
 
 ```
 Projet : Africa Tourism Gate (pnpm monorepo).
@@ -387,6 +390,7 @@ Références :
 - Module payments / Stripe
 - booking-engine + booking-approval
 - Organization settings (nouveau % acompte configurable)
+- docs/pr-07-deposits-test.md
 
 Objectif :
 1. Paramètre org : deposit_percent (ex. 30 ou 50) ou montant fixe optionnel.
@@ -396,9 +400,10 @@ Objectif :
 5. Documenter la règle d’annulation (non-remboursement total si délai non respecté) en texte produit / i18n — pas un moteur juridique.
 
 Critères d’acceptation :
-- Une réservation peut avoir plusieurs payments liés ; somme < total ⇒ pas confirmed (ou confirmed_deposit selon modèle choisi — documenter le choix dans la PR).
-- Stripe Checkout peut encaisser l’acompte.
-- Staff peut enregistrer un paiement partiel bank_transfer/cash.
+- Une réservation peut avoir plusieurs payments liés ; somme < total ⇒ pas confirmed (pending_payment) ; confirmed uniquement si soldé.
+- Stripe Checkout peut encaisser l’acompte puis le solde.
+- Staff peut enregistrer un paiement partiel bank_transfer/cash/mobile_money.
+- Doc de test : docs/pr-07-deposits-test.md
 
 À la fin : modèle de statuts choisi + migration + tests.
 ```

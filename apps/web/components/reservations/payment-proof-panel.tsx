@@ -30,6 +30,7 @@ export type PaymentProofPanelLabels = {
   viewing: string;
   viewError: string;
   statusLabel: string;
+  amountLabel: string;
   methods: {
     bank_transfer: string;
     mobile_money: string;
@@ -63,7 +64,8 @@ function latestProof(
 function canUploadNewVersion(proof: BookingPaymentProof | null): boolean {
   if (!proof) return true;
   if (proof.status === 'pending_review') return false;
-  return proof.status === 'resubmit_requested' || proof.status === 'rejected';
+  // resubmit / rejected / approved (prochaine tranche si solde restant)
+  return true;
 }
 
 type Props = {
@@ -71,6 +73,7 @@ type Props = {
   bookingStatus: BookingStatus;
   paymentMethod?: BookingPaymentProofMethod;
   proofs: BookingPaymentProof[];
+  currency?: string;
   labels: PaymentProofPanelLabels;
   onUpdated: () => Promise<void>;
 };
@@ -80,6 +83,7 @@ export function PaymentProofPanel({
   bookingStatus,
   paymentMethod = 'bank_transfer',
   proofs,
+  currency,
   labels,
   onUpdated,
 }: Props) {
@@ -149,6 +153,12 @@ export function PaymentProofPanel({
             <span className="font-medium">{labels.statusLabel} : </span>
             {labels.statuses[latest.status]}
           </p>
+          {latest.amountCents != null && currency ? (
+            <p className="mt-1 text-sm text-atg-fg">
+              <span className="font-medium">{labels.amountLabel} : </span>
+              {(latest.amountCents / 100).toFixed(2)} {currency}
+            </p>
+          ) : null}
           {latest.staffNote ? (
             <p className="mt-2 rounded-md bg-amber-50 px-2 py-1 text-sm text-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
               {latest.staffNote}

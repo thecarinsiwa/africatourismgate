@@ -588,6 +588,8 @@ export type {
 
 export type {
   BookingDefaultsValue,
+  BookingDepositsMode,
+  BookingDepositsSettingValue,
   BrandingPlatformValue,
   BulkUpsertOrganizationSettingsRequest,
   ContactWebSettingValue,
@@ -607,6 +609,7 @@ export type {
   PublicAuthVisualIcon,
   AuthVisualDecorIcon,
   AuthVisualIconPosition,
+  ResolvedBookingDeposits,
   AuthVisualIconPreset,
   AuthVisualIconSize,
   AuthVisualSettingValue,
@@ -637,12 +640,16 @@ export type {
 
 export {
   DEFAULT_AUTH_VISUAL_ICONS,
+  DEFAULT_BOOKING_DEPOSITS,
   DEFAULT_EMAIL_BRANDING,
   DEFAULT_LOYALTY_ONEKEY_SETTING,
   DEFAULT_PUBLIC_CONTACT,
   DEFAULT_WEB_PAYMENT_METHODS,
   WEB_PAYMENT_METHOD_KEYS,
+  bookingDepositsMode,
+  computeDepositRequiredCents,
   isWebPaymentMethodEnabled,
+  normalizeBookingDeposits,
   normalizeWebPaymentMethods,
 } from './organization-settings.js';
 

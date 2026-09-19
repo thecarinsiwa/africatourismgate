@@ -7,6 +7,7 @@ import type {
   AuthVisualDecorIcon,
   AuthVisualSettingValue,
   BookingDefaultsValue,
+  BookingDepositsMode,
   BookingMode,
   BrandingPlatformValue,
   ContactWebSettingValue,
@@ -14,6 +15,7 @@ import type {
   LoyaltyOneKeySettingValue,
   Organization,
   OrganizationSetting,
+  ResolvedBookingDeposits,
   ResolvedBookingItemTypeModes,
   ResolvedWebPaymentMethods,
   WebPaymentMethodKey,
@@ -24,9 +26,12 @@ import {
   normalizeBookingItemTypeModes,
 } from '@africatourismgate/types/tour-guide';
 import {
+  DEFAULT_BOOKING_DEPOSITS,
   DEFAULT_LOYALTY_ONEKEY_SETTING,
   DEFAULT_WEB_PAYMENT_METHODS,
   WEB_PAYMENT_METHOD_KEYS,
+  bookingDepositsMode,
+  normalizeBookingDeposits,
   normalizeWebPaymentMethods,
 } from '@africatourismgate/types/organization-settings';
 import { useTranslations } from 'next-intl';
@@ -112,7 +117,43 @@ type SettingsFormValues = {
   authVisualIcons: AuthVisualDecorIcon[];
   itemTypeModes: ResolvedBookingItemTypeModes;
   paymentMethods: ResolvedWebPaymentMethods;
+  depositsEnabled: boolean;
+  depositsMode: BookingDepositsMode;
+  depositPercent: string;
+  depositFixedMajor: string;
 };
+
+function centsToMajorString(cents: number | null): string {
+  if (cents == null || !Number.isFinite(cents)) {
+    return '';
+  }
+  return (cents / 100).toFixed(2);
+}
+
+function majorStringToCents(raw: string): number | null {
+  const trimmed = raw.trim().replace(',', '.');
+  if (!trimmed) {
+    return null;
+  }
+  const parsed = Number.parseFloat(trimmed);
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return null;
+  }
+  return Math.round(parsed * 100);
+}
+
+function depositsToFormFields(deposits: ResolvedBookingDeposits): Pick<
+  SettingsFormValues,
+  'depositsEnabled' | 'depositsMode' | 'depositPercent' | 'depositFixedMajor'
+> {
+  return {
+    depositsEnabled: deposits.enabled,
+    depositsMode: bookingDepositsMode(deposits),
+    depositPercent:
+      deposits.depositPercent != null ? String(deposits.depositPercent) : '30',
+    depositFixedMajor: centsToMajorString(deposits.depositFixedCents),
+  };
+}
 
 const defaultValues: SettingsFormValues = {
   contactEmail: '',
@@ -137,6 +178,7 @@ const defaultValues: SettingsFormValues = {
   authVisualIcons: [],
   itemTypeModes: { ...DEFAULT_BOOKING_ITEM_TYPE_MODES },
   paymentMethods: { ...DEFAULT_WEB_PAYMENT_METHODS },
+  ...depositsToFormFields(DEFAULT_BOOKING_DEPOSITS),
 };
 
 function settingByKey(
@@ -163,6 +205,11 @@ function toFormValues(
   );
   const paymentMethods = normalizeWebPaymentMethods(
     settingByKey(settings, 'payment_methods') as Partial<ResolvedWebPaymentMethods> | undefined,
+  );
+  const deposits = normalizeBookingDeposits(
+    settingByKey(settings, 'deposits') as
+      | { enabled: boolean; depositPercent?: number; depositFixedCents?: number }
+      | undefined,
   );
 
   return {
@@ -191,6 +238,7 @@ function toFormValues(
     authVisualIcons: authVisualFromSetting(authVisual).map((icon) => ({ ...icon })),
     itemTypeModes,
     paymentMethods,
+    ...depositsToFormFields(deposits),
   };
 }
 
@@ -227,6 +275,14 @@ export function OrganizationSettingsForm({
     () => [
       { value: 'immediate', label: t('sections.booking.modeImmediate') },
       { value: 'assisted', label: t('sections.booking.modeAssisted') },
+    ],
+    [t],
+  );
+
+  const depositsModeOptions = useMemo(
+    () => [
+      { value: 'percent', label: t('sections.booking.depositsModePercent') },
+      { value: 'fixed', label: t('sections.booking.depositsModeFixed') },
     ],
     [t],
   );
@@ -361,6 +417,19 @@ export function OrganizationSettingsForm({
     if (!WEB_PAYMENT_METHOD_KEYS.some((key) => values.paymentMethods[key])) {
       errors.paymentMethods = t('validation.paymentMethodsRequired');
     }
+    if (values.depositsEnabled) {
+      if (values.depositsMode === 'percent') {
+        const percent = Number(values.depositPercent);
+        if (!Number.isInteger(percent) || percent < 1 || percent > 100) {
+          errors.depositPercent = t('validation.depositPercentInvalid');
+        }
+      } else {
+        const fixedCents = majorStringToCents(values.depositFixedMajor);
+        if (fixedCents == null) {
+          errors.depositFixedMajor = t('validation.depositFixedInvalid');
+        }
+      }
+    }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   }
@@ -422,6 +491,29 @@ export function OrganizationSettingsForm({
             settingGroup: 'booking',
             settingKey: 'payment_methods',
             settingValue: values.paymentMethods,
+          },
+          {
+            settingGroup: 'booking',
+            settingKey: 'deposits',
+            settingValue: (() => {
+              const enabled = values.depositsEnabled;
+              if (values.depositsMode === 'fixed') {
+                const depositFixedCents = majorStringToCents(values.depositFixedMajor);
+                return {
+                  enabled,
+                  ...(depositFixedCents != null ? { depositFixedCents } : {}),
+                };
+              }
+              const depositPercent = Number(values.depositPercent);
+              return {
+                enabled,
+                ...(Number.isInteger(depositPercent) &&
+                depositPercent >= 1 &&
+                depositPercent <= 100
+                  ? { depositPercent }
+                  : {}),
+              };
+            })(),
           },
           {
             settingGroup: 'branding',
@@ -739,6 +831,57 @@ export function OrganizationSettingsForm({
                   {fieldErrors.paymentMethods}
                 </p>
               ) : null}
+            </div>
+            <div className="space-y-3 border-t border-atg-border pt-4">
+              <p className="text-sm font-medium text-atg-fg">
+                {t('sections.booking.depositsTitle')}
+              </p>
+              <p className="text-xs text-atg-muted">
+                {t('sections.booking.depositsDescription')}
+              </p>
+              <label className="flex items-center gap-2 text-sm text-atg-fg">
+                <input
+                  type="checkbox"
+                  checked={values.depositsEnabled}
+                  onChange={(e) => updateField('depositsEnabled', e.target.checked)}
+                  className="rounded border-atg-border"
+                />
+                {t('sections.booking.depositsEnabled')}
+              </label>
+              <Select
+                label={t('sections.booking.depositsMode')}
+                options={depositsModeOptions}
+                value={values.depositsMode}
+                onChange={(e) =>
+                  updateField('depositsMode', e.target.value as BookingDepositsMode)
+                }
+              />
+              {values.depositsMode === 'percent' ? (
+                <Input
+                  label={t('sections.booking.depositPercent')}
+                  type="number"
+                  min={1}
+                  max={100}
+                  step={1}
+                  value={values.depositPercent}
+                  onChange={(e) => updateField('depositPercent', e.target.value)}
+                  error={fieldErrors.depositPercent}
+                  hint={t('sections.booking.depositPercentHint')}
+                />
+              ) : (
+                <Input
+                  label={t('sections.booking.depositFixed')}
+                  type="text"
+                  inputMode="decimal"
+                  value={values.depositFixedMajor}
+                  onChange={(e) => updateField('depositFixedMajor', e.target.value)}
+                  error={fieldErrors.depositFixedMajor}
+                  hint={t('sections.booking.depositFixedHint', {
+                    currency: values.currency.trim().toUpperCase() || 'USD',
+                  })}
+                  placeholder="50.00"
+                />
+              )}
             </div>
           </Card>
 

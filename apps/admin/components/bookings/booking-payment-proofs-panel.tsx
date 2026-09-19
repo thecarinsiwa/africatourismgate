@@ -8,10 +8,12 @@ import { useTranslations } from 'next-intl';
 import { useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { fetchBookingPaymentProofBlobAdmin } from '../../lib/booking-payment-proofs';
+import { formatMoney } from '../../lib/format-money';
 
 type Props = {
   bookingId: string;
   proofs: BookingPaymentProof[];
+  currency: string;
   canReview: boolean;
   onUpdated: () => Promise<void>;
   embedded?: boolean;
@@ -20,6 +22,7 @@ type Props = {
 export function BookingPaymentProofsPanel({
   bookingId,
   proofs,
+  currency,
   canReview,
   onUpdated,
   embedded = false,
@@ -112,6 +115,11 @@ export function BookingPaymentProofsPanel({
                   <p className="mt-1 text-sm">
                     {t('statusLabel')}: {t(`statuses.${proof.status}`)}
                   </p>
+                  {proof.amountCents != null ? (
+                    <p className="mt-1 text-sm text-atg-fg">
+                      {t('amountLabel')}: {formatMoney(proof.amountCents, currency)}
+                    </p>
+                  ) : null}
                   {proof.staffNote ? (
                     <p className="mt-2 text-sm text-atg-muted">{proof.staffNote}</p>
                   ) : null}

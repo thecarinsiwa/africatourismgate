@@ -208,6 +208,8 @@ export interface BookingPaymentProof {
   paymentId: string | null;
   userId: string;
   paymentMethod: BookingPaymentProofMethod;
+  /** Montant du paiement lié (centimes), si connu. */
+  amountCents?: number | null;
   originalFilename: string;
   mimeType: string;
   fileSizeBytes: number;
@@ -221,6 +223,8 @@ export interface BookingPaymentProof {
 
 export interface ReviewBookingPaymentProofRequest {
   staffNote?: string;
+  /** Montant validé en centimes (défaut = montant du paiement lié / acompte ou solde). */
+  amountCents?: number;
 }
 
 export type BookingManifestSex = 'M' | 'F' | 'other';
@@ -287,6 +291,12 @@ export interface BookingDetail {
   items: BookingItem[];
   totalCents: number;
   currency: string;
+  /** Somme des paiements `succeeded` (centimes). */
+  paidCents: number;
+  /** max(0, totalCents - paidCents). */
+  balanceCents: number;
+  /** Montant du premier encaissement attendu (acompte ou total). */
+  depositRequiredCents: number;
   review?: Review | null;
   canReview?: boolean;
   statusHistory?: BookingStatusHistoryEntry[];
@@ -353,10 +363,14 @@ export interface CancelBookingRequest {
 }
 
 export interface RecordCashPaymentRequest {
+  /** Montant en centimes ; défaut = acompte (1er paiement) ou solde restant. */
+  amountCents?: number;
   note?: string;
 }
 
 export interface RecordBankTransferPaymentRequest {
+  /** Montant en centimes ; défaut = acompte (1er paiement) ou solde restant. */
+  amountCents?: number;
   note?: string;
 }
 
