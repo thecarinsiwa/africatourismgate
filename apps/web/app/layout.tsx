@@ -12,10 +12,16 @@ import {
   normalizeBookingItemTypeModes,
   type ResolvedBookingItemTypeModes,
 } from '@africatourismgate/types/tour-guide';
-import { DEFAULT_PUBLIC_CONTACT } from '@africatourismgate/types/organization-settings';
+import {
+  DEFAULT_PUBLIC_CONTACT,
+  DEFAULT_WEB_PAYMENT_METHODS,
+  normalizeWebPaymentMethods,
+  type ResolvedWebPaymentMethods,
+} from '@africatourismgate/types/organization-settings';
 import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import { BrandingProvider } from '../components/branding-provider';
 import { BookingModesProvider } from '../components/booking-modes-provider';
+import { PaymentMethodsProvider } from '../components/payment-methods-provider';
 import { ContactProvider } from '../components/contact-provider';
 import { DonationProvider } from '../components/donation-provider';
 import { Providers } from '../components/providers';
@@ -211,12 +217,27 @@ async function getPublicBookingModes(): Promise<ResolvedBookingItemTypeModes> {
   }
 }
 
+async function getPublicPaymentMethods(): Promise<ResolvedWebPaymentMethods> {
+  try {
+    const response = await fetch(
+      `${apiUrl}/organization-settings/public/payment-methods`,
+      { cache: 'no-store' },
+    );
+    if (!response.ok) return DEFAULT_WEB_PAYMENT_METHODS;
+    const methods = (await response.json()) as Partial<ResolvedWebPaymentMethods>;
+    return normalizeWebPaymentMethods(methods);
+  } catch {
+    return DEFAULT_WEB_PAYMENT_METHODS;
+  }
+}
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
   const messages = await getMessages();
   const branding = await getPublicBranding();
   const contact = await getPublicContact();
   const bookingModes = await getPublicBookingModes();
+  const paymentMethods = await getPublicPaymentMethods();
   const donations = await getPublicDonationsForLocale(locale, 'web').catch(() => null);
   const themeStyle = {
     '--atg-primary': branding.primaryColor,
@@ -256,9 +277,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <ContactProvider contact={contact}>
               <DonationProvider donations={donations}>
                 <BookingModesProvider modes={bookingModes}>
-                  <Providers>
-                    <AppShell>{children}</AppShell>
-                  </Providers>
+                  <PaymentMethodsProvider methods={paymentMethods}>
+                    <Providers>
+                      <AppShell>{children}</AppShell>
+                    </Providers>
+                  </PaymentMethodsProvider>
                 </BookingModesProvider>
               </DonationProvider>
             </ContactProvider>

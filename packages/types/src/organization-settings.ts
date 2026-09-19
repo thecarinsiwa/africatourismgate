@@ -150,6 +150,57 @@ export const DEFAULT_LOYALTY_ONEKEY_SETTING: LoyaltyOneKeySettingValue = {
   programCode: 'ONEKEY',
 };
 
+/**
+ * Moyens de paiement du site public (checkout web).
+ * `organization_settings` group `booking`, key `payment_methods`.
+ * Le POS n’est pas soumis à ce réglage.
+ */
+export type WebPaymentMethodKey = 'stripe' | 'cash' | 'bank_transfer' | 'mobile_money';
+
+export type WebPaymentMethodsSettingValue = Partial<
+  Record<WebPaymentMethodKey, boolean>
+>;
+
+export type ResolvedWebPaymentMethods = Record<WebPaymentMethodKey, boolean>;
+
+export const WEB_PAYMENT_METHOD_KEYS = [
+  'stripe',
+  'cash',
+  'bank_transfer',
+  'mobile_money',
+] as const satisfies readonly WebPaymentMethodKey[];
+
+/** Stripe + cash on par défaut ; virement / Mobile Money désactivés jusqu’à activation admin. */
+export const DEFAULT_WEB_PAYMENT_METHODS: ResolvedWebPaymentMethods = {
+  stripe: true,
+  cash: true,
+  bank_transfer: false,
+  mobile_money: false,
+};
+
+export function normalizeWebPaymentMethods(
+  value?: WebPaymentMethodsSettingValue | null,
+): ResolvedWebPaymentMethods {
+  const resolved = { ...DEFAULT_WEB_PAYMENT_METHODS };
+  if (!value || typeof value !== 'object') {
+    return resolved;
+  }
+  for (const key of WEB_PAYMENT_METHOD_KEYS) {
+    const flag = value[key];
+    if (typeof flag === 'boolean') {
+      resolved[key] = flag;
+    }
+  }
+  return resolved;
+}
+
+export function isWebPaymentMethodEnabled(
+  method: WebPaymentMethodKey,
+  methods: ResolvedWebPaymentMethods = DEFAULT_WEB_PAYMENT_METHODS,
+): boolean {
+  return methods[method] === true;
+}
+
 export interface OrganizationSetting {
   id: string;
   organizationId: string;

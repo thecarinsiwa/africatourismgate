@@ -158,6 +158,20 @@ const PERMISSION_UPSERTS: Array<{
     action: 'write',
     description: 'Manage departments',
   },
+  {
+    id: '00000000-0000-4000-8000-000000001054',
+    code: 'mobile_money.read',
+    resource: 'mobile_money',
+    action: 'read',
+    description: 'View Mobile Money payment config',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001055',
+    code: 'mobile_money.write',
+    resource: 'mobile_money',
+    action: 'write',
+    description: 'Manage Mobile Money payment config',
+  },
 ];
 
 /** Full org_admin set (install.seed.sql) — repairs partial or missing grants. */
@@ -195,6 +209,8 @@ const ORG_ADMIN_PERMISSION_IDS = [
   '00000000-0000-4000-8000-000000001051',
   '00000000-0000-4000-8000-000000001052',
   '00000000-0000-4000-8000-000000001053',
+  '00000000-0000-4000-8000-000000001054',
+  '00000000-0000-4000-8000-000000001055',
 ];
 
 async function platformOrgExists(config: ConfigService): Promise<boolean> {

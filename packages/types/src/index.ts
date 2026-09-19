@@ -235,6 +235,8 @@ export type {
   RefundPaymentResponse,
   CancelBookingRequest,
   RecordCashPaymentRequest,
+  RecordBankTransferPaymentRequest,
+  PublicPaymentBankAccount,
   SendBookingReceiptEmailRequest,
   SendBookingReceiptEmailResponse,
   UpdateBookingStatusRequest,
@@ -250,6 +252,10 @@ export type {
   ReviewBookingIdentityDocumentRequest,
   RequestIdentityDocumentUploadRequest,
   RequestIdentityDocumentUploadResponse,
+  BookingPaymentProof,
+  BookingPaymentProofMethod,
+  BookingPaymentProofStatus,
+  ReviewBookingPaymentProofRequest,
   BookingManifestEntry,
   BookingManifestSex,
   CreateBookingManifestEntryRequest,
@@ -604,8 +610,40 @@ export type {
   AuthVisualIconPreset,
   AuthVisualIconSize,
   AuthVisualSettingValue,
+  ResolvedWebPaymentMethods,
   UpdateOrganizationBankAccountRequest,
   UpsertOrganizationSettingItem,
+  WebPaymentMethodKey,
+  WebPaymentMethodsSettingValue,
+} from './organization-settings.js';
+
+export type {
+  CreateMobileMoneyCountryRequest,
+  CreateMobileMoneyOperatorRequest,
+  CreateMobileMoneyPaymentNumberRequest,
+  MobileMoneyCountriesListQuery,
+  MobileMoneyCountry,
+  MobileMoneyOperator,
+  MobileMoneyOperatorsListQuery,
+  MobileMoneyPaymentNumber,
+  MobileMoneyPaymentNumbersListQuery,
+  PublicMobileMoneyCountry,
+  PublicMobileMoneyOperator,
+  PublicMobileMoneyPaymentNumber,
+  UpdateMobileMoneyCountryRequest,
+  UpdateMobileMoneyOperatorRequest,
+  UpdateMobileMoneyPaymentNumberRequest,
+} from './mobile-money.js';
+
+export {
+  DEFAULT_AUTH_VISUAL_ICONS,
+  DEFAULT_EMAIL_BRANDING,
+  DEFAULT_LOYALTY_ONEKEY_SETTING,
+  DEFAULT_PUBLIC_CONTACT,
+  DEFAULT_WEB_PAYMENT_METHODS,
+  WEB_PAYMENT_METHOD_KEYS,
+  isWebPaymentMethodEnabled,
+  normalizeWebPaymentMethods,
 } from './organization-settings.js';
 
 export type {

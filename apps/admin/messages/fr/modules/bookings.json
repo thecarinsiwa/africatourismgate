@@ -94,6 +94,8 @@
       "cancelReasonPlaceholder": "Ex. demande client, indisponibilité…",
       "cancelBooking": "Annuler la réservation",
       "recordCashPayment": "Enregistrer paiement cash",
+      "recordBankTransferPayment": "Marquer virement reçu",
+      "recordMobileMoneyPayment": "Marquer Mobile Money reçu",
       "readOnly": "Modification réservée aux comptes avec la permission bookings.write.",
       "assistedStatusHint": "Utilisez le panneau « Validation assistée » pour approuver ou refuser cette demande."
     },
@@ -103,6 +105,20 @@
       "noteLabel": "Note (optionnel)",
       "notePlaceholder": "Ex. reçu en caisse, numéro de reçu…",
       "confirm": "Encaisser"
+    },
+    "bankTransferDialog": {
+      "title": "Marquer le virement reçu",
+      "description": "Confirmer la réception du virement pour cette réservation ? Elle passera au statut confirmée.",
+      "noteLabel": "Note (optionnel)",
+      "notePlaceholder": "Ex. référence bancaire, date de réception…",
+      "confirm": "Confirmer le virement"
+    },
+    "mobileMoneyDialog": {
+      "title": "Marquer le paiement Mobile Money reçu",
+      "description": "Confirmer la réception du paiement Mobile Money pour cette réservation ? Elle passera au statut confirmée.",
+      "noteLabel": "Note (optionnel)",
+      "notePlaceholder": "Ex. référence opérateur, date de réception…",
+      "confirm": "Confirmer le paiement"
     },
     "linesEmpty": "Aucune ligne.",
     "linesAriaLabel": "Lignes de réservation",
@@ -229,6 +245,38 @@
       "rejected": "Refusé"
     }
   },
+  "paymentProofs": {
+    "title": "Preuves de paiement",
+    "subtitle": "Justificatifs déposés par le client — validez pour confirmer la réservation, ou demandez une nouvelle preuve.",
+    "empty": "Aucune preuve déposée.",
+    "statusLabel": "Statut",
+    "view": "Voir",
+    "viewing": "Ouverture…",
+    "approve": "Valider le paiement",
+    "approveSuccess": "Preuve validée — réservation confirmée.",
+    "requestResubmit": "Demander une nouvelle preuve",
+    "resubmitDialogTitle": "Demander une nouvelle preuve",
+    "resubmitDialogDescription": "Indiquez au client ce qui manque (montant illisible, mauvaise référence…).",
+    "reject": "Rejeter",
+    "rejectDialogTitle": "Rejeter la preuve",
+    "rejectDialogDescription": "La réservation restera en attente de paiement. Le client pourra déposer une autre preuve.",
+    "rejectConfirm": "Rejeter",
+    "rejectSuccess": "Preuve rejetée.",
+    "staffNoteLabel": "Message au client",
+    "staffNotePlaceholder": "Ex. Le montant ne correspond pas au total de la réservation.",
+    "resubmitConfirm": "Envoyer la demande",
+    "resubmitSuccess": "Demande de nouvelle preuve enregistrée.",
+    "methods": {
+      "bank_transfer": "Virement bancaire",
+      "mobile_money": "Mobile Money"
+    },
+    "statuses": {
+      "pending_review": "En attente de vérification",
+      "approved": "Validée",
+      "resubmit_requested": "Nouvelle preuve demandée",
+      "rejected": "Refusée"
+    }
+  },
   "approval": {
     "title": "Validation assistée",
     "intro": "Approuvez la demande, refusez-la avec un motif, ou envoyez le lien de paiement une fois validée.",
@@ -236,6 +284,8 @@
     "reject": "Refuser",
     "invitePayment": "Inviter au paiement",
     "cashPaymentHint": "Le client a choisi le paiement cash sur place. Enregistrez l'encaissement depuis la barre d'actions.",
+    "bankTransferPaymentHint": "Le client a choisi le virement bancaire. Vérifiez la preuve dans l'onglet Documents, ou marquez le virement reçu depuis la barre d'actions.",
+    "mobileMoneyPaymentHint": "Le client a choisi Mobile Money. Vérifiez la preuve dans l'onglet Documents, ou marquez le paiement reçu depuis la barre d'actions.",
     "totalLabel": "Total ({currency})",
     "totalHint": "Ajustez le total si nécessaire avant approbation.",
     "totalOverrideHint": "Calculé automatiquement à partir des prix voyageurs. Modifiez pour forcer un total manuel.",

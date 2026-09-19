@@ -103,6 +103,8 @@ import type {
   ReviewBookingIdentityDocumentRequest,
   RequestIdentityDocumentUploadRequest,
   RequestIdentityDocumentUploadResponse,
+  BookingPaymentProof,
+  ReviewBookingPaymentProofRequest,
   BookingManifestEntry,
   CreateBookingManifestEntryRequest,
   UpdateBookingManifestEntryRequest,
@@ -140,6 +142,9 @@ import type {
   Review,
   CancelBookingRequest,
   RecordCashPaymentRequest,
+  RecordBankTransferPaymentRequest,
+  PublicPaymentBankAccount,
+  PublicMobileMoneyCountry,
   SendBookingReceiptEmailRequest,
   SendBookingReceiptEmailResponse,
   UpdateBookingStatusRequest,
@@ -369,13 +374,25 @@ import type {
   UpdatePointOfInterestRequest,
   BulkUpsertOrganizationSettingsRequest,
   CreateOrganizationBankAccountRequest,
+  CreateMobileMoneyCountryRequest,
+  CreateMobileMoneyOperatorRequest,
+  CreateMobileMoneyPaymentNumberRequest,
   EmailPreviewRequest,
   EmailPreviewResponse,
   OrganizationBankAccount,
   OrganizationBankAccountsListQuery,
   OrganizationSetting,
   OrganizationSettingsListQuery,
+  MobileMoneyCountriesListQuery,
+  MobileMoneyCountry,
+  MobileMoneyOperator,
+  MobileMoneyOperatorsListQuery,
+  MobileMoneyPaymentNumber,
+  MobileMoneyPaymentNumbersListQuery,
   UpdateOrganizationBankAccountRequest,
+  UpdateMobileMoneyCountryRequest,
+  UpdateMobileMoneyOperatorRequest,
+  UpdateMobileMoneyPaymentNumberRequest,
   UpdateOrganizationRequest,
   UpdateProfileRequest,
   UpdateRoleRequest,
@@ -393,6 +410,7 @@ import type {
   User,
   UsersListQuery,
   ResolvedBookingItemTypeModes,
+  ResolvedWebPaymentMethods,
 } from '@africatourismgate/types';
 export type { PaginationQuery } from '@africatourismgate/types';
 export { SESSION_LOCKED_CODE } from '@africatourismgate/types';
@@ -483,6 +501,9 @@ export type {
   UpdateDepartmentRequest,
   BulkUpsertOrganizationSettingsRequest,
   CreateOrganizationBankAccountRequest,
+  CreateMobileMoneyCountryRequest,
+  CreateMobileMoneyOperatorRequest,
+  CreateMobileMoneyPaymentNumberRequest,
   EmailBrandingValue,
   EmailPreviewRequest,
   EmailPreviewResponse,
@@ -491,7 +512,16 @@ export type {
   OrganizationBankAccountsListQuery,
   OrganizationSetting,
   OrganizationSettingsListQuery,
+  MobileMoneyCountriesListQuery,
+  MobileMoneyCountry,
+  MobileMoneyOperator,
+  MobileMoneyOperatorsListQuery,
+  MobileMoneyPaymentNumber,
+  MobileMoneyPaymentNumbersListQuery,
   UpdateOrganizationBankAccountRequest,
+  UpdateMobileMoneyCountryRequest,
+  UpdateMobileMoneyOperatorRequest,
+  UpdateMobileMoneyPaymentNumberRequest,
   UpdateOrganizationRequest,
   UpdateRoleRequest,
   CreateUserRequest,
@@ -1290,6 +1320,19 @@ export class ApiClient {
     );
   }
 
+  getPublicPaymentMethods(query?: {
+    organizationSlug?: string;
+  }): Promise<ResolvedWebPaymentMethods> {
+    const params = new URLSearchParams();
+    if (query?.organizationSlug) {
+      params.set('organizationSlug', query.organizationSlug);
+    }
+    const q = params.toString();
+    return this.request<ResolvedWebPaymentMethods>(
+      `/organization-settings/public/payment-methods${q ? `?${q}` : ''}`,
+    );
+  }
+
   previewEmail(body: EmailPreviewRequest): Promise<EmailPreviewResponse> {
     return this.request<EmailPreviewResponse>('/email/preview', {
       method: 'POST',
@@ -1350,6 +1393,163 @@ export class ApiClient {
       ? `?organizationId=${encodeURIComponent(organizationId)}`
       : '';
     return this.request<void>(`/organization-bank-accounts/${id}${qs}`, {
+      method: 'DELETE',
+    });
+  }
+
+  listMobileMoneyCountries(
+    query?: MobileMoneyCountriesListQuery,
+  ): Promise<PaginatedResponse<MobileMoneyCountry>> {
+    return fetchPaginated<MobileMoneyCountry>(
+      this,
+      '/mobile-money/countries',
+      query,
+    );
+  }
+
+  createMobileMoneyCountry(
+    body: CreateMobileMoneyCountryRequest,
+  ): Promise<MobileMoneyCountry> {
+    return this.request<MobileMoneyCountry>('/mobile-money/countries', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateMobileMoneyCountry(
+    id: string,
+    body: UpdateMobileMoneyCountryRequest,
+    organizationId?: string,
+  ): Promise<MobileMoneyCountry> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<MobileMoneyCountry>(
+      `/mobile-money/countries/${id}${qs}`,
+      { method: 'PATCH', body },
+    );
+  }
+
+  deleteMobileMoneyCountry(
+    id: string,
+    organizationId?: string,
+  ): Promise<void> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<void>(`/mobile-money/countries/${id}${qs}`, {
+      method: 'DELETE',
+    });
+  }
+
+  listMobileMoneyOperators(
+    query: MobileMoneyOperatorsListQuery,
+  ): Promise<PaginatedResponse<MobileMoneyOperator>> {
+    return fetchPaginated<MobileMoneyOperator>(
+      this,
+      '/mobile-money/operators',
+      query,
+    );
+  }
+
+  createMobileMoneyOperator(
+    body: CreateMobileMoneyOperatorRequest,
+    organizationId?: string,
+  ): Promise<MobileMoneyOperator> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<MobileMoneyOperator>(
+      `/mobile-money/operators${qs}`,
+      { method: 'POST', body },
+    );
+  }
+
+  updateMobileMoneyOperator(
+    id: string,
+    body: UpdateMobileMoneyOperatorRequest,
+    organizationId?: string,
+  ): Promise<MobileMoneyOperator> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<MobileMoneyOperator>(
+      `/mobile-money/operators/${id}${qs}`,
+      { method: 'PATCH', body },
+    );
+  }
+
+  uploadMobileMoneyOperatorLogo(
+    id: string,
+    body: FormData,
+    organizationId?: string,
+  ): Promise<{ url: string }> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<{ url: string }>(
+      `/mobile-money/operators/${id}/upload-logo${qs}`,
+      { method: 'POST', body },
+    );
+  }
+
+  deleteMobileMoneyOperator(
+    id: string,
+    organizationId?: string,
+  ): Promise<void> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<void>(`/mobile-money/operators/${id}${qs}`, {
+      method: 'DELETE',
+    });
+  }
+
+  listMobileMoneyPaymentNumbers(
+    query: MobileMoneyPaymentNumbersListQuery,
+  ): Promise<PaginatedResponse<MobileMoneyPaymentNumber>> {
+    return fetchPaginated<MobileMoneyPaymentNumber>(
+      this,
+      '/mobile-money/numbers',
+      query,
+    );
+  }
+
+  createMobileMoneyPaymentNumber(
+    body: CreateMobileMoneyPaymentNumberRequest,
+    organizationId?: string,
+  ): Promise<MobileMoneyPaymentNumber> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<MobileMoneyPaymentNumber>(
+      `/mobile-money/numbers${qs}`,
+      { method: 'POST', body },
+    );
+  }
+
+  updateMobileMoneyPaymentNumber(
+    id: string,
+    body: UpdateMobileMoneyPaymentNumberRequest,
+    organizationId?: string,
+  ): Promise<MobileMoneyPaymentNumber> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<MobileMoneyPaymentNumber>(
+      `/mobile-money/numbers/${id}${qs}`,
+      { method: 'PATCH', body },
+    );
+  }
+
+  deleteMobileMoneyPaymentNumber(
+    id: string,
+    organizationId?: string,
+  ): Promise<void> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<void>(`/mobile-money/numbers/${id}${qs}`, {
       method: 'DELETE',
     });
   }
@@ -2824,6 +3024,45 @@ export class ApiClient {
     );
   }
 
+  listBookingPaymentProofs(bookingId: string): Promise<BookingPaymentProof[]> {
+    return this.request<BookingPaymentProof[]>(
+      `/bookings/${bookingId}/payment-proofs`,
+    );
+  }
+
+  approveBookingPaymentProof(
+    bookingId: string,
+    proofId: string,
+    body?: ReviewBookingPaymentProofRequest,
+  ): Promise<BookingDetail> {
+    return this.request<BookingDetail>(
+      `/bookings/${bookingId}/payment-proofs/${proofId}/approve`,
+      { method: 'POST', body: body ?? {} },
+    );
+  }
+
+  requestBookingPaymentProofResubmit(
+    bookingId: string,
+    proofId: string,
+    body: ReviewBookingPaymentProofRequest,
+  ): Promise<BookingPaymentProof> {
+    return this.request<BookingPaymentProof>(
+      `/bookings/${bookingId}/payment-proofs/${proofId}/request-resubmit`,
+      { method: 'POST', body },
+    );
+  }
+
+  rejectBookingPaymentProof(
+    bookingId: string,
+    proofId: string,
+    body?: ReviewBookingPaymentProofRequest,
+  ): Promise<BookingPaymentProof> {
+    return this.request<BookingPaymentProof>(
+      `/bookings/${bookingId}/payment-proofs/${proofId}/reject`,
+      { method: 'POST', body: body ?? {} },
+    );
+  }
+
   requestBookingIdentityDocumentUpload(
     bookingId: string,
     body: RequestIdentityDocumentUploadRequest,
@@ -2876,6 +3115,42 @@ export class ApiClient {
       method: 'POST',
       body: body ?? {},
     });
+  }
+
+  recordBookingBankTransferPayment(
+    id: string,
+    body?: RecordBankTransferPaymentRequest,
+  ): Promise<BookingDetail> {
+    return this.request<BookingDetail>(`/bookings/${id}/bank-transfer-payment`, {
+      method: 'POST',
+      body: body ?? {},
+    });
+  }
+
+  listPublicPaymentBankAccounts(query?: {
+    organizationSlug?: string;
+  }): Promise<PublicPaymentBankAccount[]> {
+    const params = new URLSearchParams();
+    if (query?.organizationSlug) {
+      params.set('organizationSlug', query.organizationSlug);
+    }
+    const qs = params.toString();
+    return this.request<PublicPaymentBankAccount[]>(
+      `/public/payment-bank-accounts${qs ? `?${qs}` : ''}`,
+    );
+  }
+
+  listPublicMobileMoneyConfig(query?: {
+    organizationSlug?: string;
+  }): Promise<PublicMobileMoneyCountry[]> {
+    const params = new URLSearchParams();
+    if (query?.organizationSlug) {
+      params.set('organizationSlug', query.organizationSlug);
+    }
+    const qs = params.toString();
+    return this.request<PublicMobileMoneyCountry[]>(
+      `/public/mobile-money-config${qs ? `?${qs}` : ''}`,
+    );
   }
 
   sendBookingReceiptEmail(

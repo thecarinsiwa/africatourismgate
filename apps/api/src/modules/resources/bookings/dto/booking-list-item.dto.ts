@@ -21,11 +21,11 @@ export class BookingListItemDto {
   promoCodeId!: string | null;
 
   @ApiPropertyOptional({
-    enum: ['stripe', 'cash'],
+    enum: ['stripe', 'cash', 'bank_transfer', 'mobile_money'],
     nullable: true,
     description: 'Preferred payment method chosen at checkout',
   })
-  preferredPaymentMethod!: 'stripe' | 'cash' | null;
+  preferredPaymentMethod!: 'stripe' | 'cash' | 'bank_transfer' | 'mobile_money' | null;
 
   @ApiProperty()
   createdAt!: Date;

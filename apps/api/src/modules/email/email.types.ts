@@ -99,6 +99,37 @@ export type BookingPaymentInviteEmailPayload = AssistedBookingEmailBase & {
   travelerPricing?: Array<{ fullName: string; priceCents: number }>;
 };
 
+export type BookingBankTransferAccount = {
+  bankName: string;
+  accountName: string;
+  accountNumber: string;
+  swiftBic?: string | null;
+  currency: string;
+};
+
+export type BookingBankTransferInstructionsEmailPayload = AssistedBookingEmailBase & {
+  accounts: BookingBankTransferAccount[];
+  accountUrl: string;
+};
+
+export type BookingMobileMoneyNumber = {
+  phoneE164: string;
+  label?: string | null;
+};
+
+export type BookingMobileMoneyOperator = {
+  countryCode: string;
+  countryName: string;
+  operatorName: string;
+  logoUrl?: string | null;
+  numbers: BookingMobileMoneyNumber[];
+};
+
+export type BookingMobileMoneyInstructionsEmailPayload = AssistedBookingEmailBase & {
+  operators: BookingMobileMoneyOperator[];
+  accountUrl: string;
+};
+
 export type BookingStaffMessageEmailPayload = AssistedBookingEmailBase & {
   chatUrl: string;
   messagePreview: string;

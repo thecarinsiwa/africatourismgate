@@ -27,6 +27,8 @@ import { CreateBookingReviewDto } from '../reviews/dto/create-booking-review.dto
 import { ReviewDto } from '../reviews/dto/review.dto';
 import { BookingIdentityDocumentsService } from './booking-identity-documents.service';
 import type { BookingIdentityDocumentDto } from './dto/booking-identity-document.dto';
+import { BookingPaymentProofsService } from './booking-payment-proofs.service';
+import type { BookingPaymentProofDto } from './dto/booking-payment-proof.dto';
 import {
   RequestIdentityDocumentUploadDto,
   RequestIdentityDocumentUploadResponseDto,
@@ -50,6 +52,7 @@ export class BookingsService extends CrudService<Bookings> {
     private readonly assistedEmail: BookingAssistedEmailService,
     private readonly notifications: BookingNotificationsService,
     private readonly identityDocuments: BookingIdentityDocumentsService,
+    private readonly paymentProofs: BookingPaymentProofsService,
   ) {
     super(bookingsRepository);
   }
@@ -68,7 +71,15 @@ export class BookingsService extends CrudService<Bookings> {
   ): Promise<BookingDetailDto> {
     await this.assertStaffOnlyCustomerUserId(dto, actorUserId);
     const ownerUserId = await this.resolveCheckoutOwnerUserId(dto, actorUserId);
-    return this.bookingEngine.createBooking(dto, ownerUserId, actorUserId);
+    const detail = await this.bookingEngine.createBooking(dto, ownerUserId, actorUserId);
+    if (
+      detail.booking.status === 'pending_payment' &&
+      (detail.booking.preferredPaymentMethod === 'bank_transfer' ||
+        detail.booking.preferredPaymentMethod === 'mobile_money')
+    ) {
+      this.assistedEmail.notifyOfflinePaymentInstructions(detail.booking.id);
+    }
+    return detail;
   }
 
   async requestFromCheckout(
@@ -270,7 +281,7 @@ export class BookingsService extends CrudService<Bookings> {
       ? false
       : await this.reviewsService.canReview(id, currentUserId);
 
-    const [statusHistory, pendingStripePayments, guideReviewInvites, identityDocuments, unreadStaffMessageCount] =
+    const [statusHistory, pendingStripePayments, guideReviewInvites, identityDocuments, paymentProofs, unreadStaffMessageCount] =
       await Promise.all([
       this.statusHistory.listByBookingId(id),
       this.paymentsRepository.find({
@@ -284,6 +295,7 @@ export class BookingsService extends CrudService<Bookings> {
       }),
       this.reviewsService.listGuideReviewInvitesForBooking(id, currentUserId),
       this.identityDocuments.listForBooking(id),
+      this.paymentProofs.listForBooking(id),
       this.notifications.countUnreadStaffMessages(id),
     ]);
 
@@ -295,6 +307,7 @@ export class BookingsService extends CrudService<Bookings> {
       paymentInvited: pendingStripePayments.length > 0,
       guideReviewInvites,
       identityDocuments,
+      paymentProofs,
       unreadStaffMessageCount,
     };
   }
@@ -406,6 +419,7 @@ export class BookingsService extends CrudService<Bookings> {
     }
 
     const identityDocuments = await this.identityDocuments.listForBooking(id);
+    const paymentProofs = await this.paymentProofs.listForBooking(id);
     const unreadCustomerMessageCount =
       await this.notifications.countUnreadCustomerMessages(id);
 
@@ -425,6 +439,7 @@ export class BookingsService extends CrudService<Bookings> {
       payments,
       statusHistory,
       identityDocuments,
+      paymentProofs,
       unreadCustomerMessageCount,
     };
   }

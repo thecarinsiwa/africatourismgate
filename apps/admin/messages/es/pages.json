@@ -671,6 +671,11 @@
       "description": "Cuentas B2B de la organización para transferencias y pagos fuera de línea.",
       "metaTitle": "Cuentas bancarias"
     },
+    "mobile-money": {
+      "title": "Mobile Money",
+      "description": "Países, operadores y números de pago para transferencias Mobile Money fuera de línea.",
+      "metaTitle": "Mobile Money"
+    },
     "dons": {
       "title": "Campañas de donación",
       "description": "Gestione varios llamados a donación según el contexto. Solo uno puede destacarse en la barra de navegación (web y GAP).",

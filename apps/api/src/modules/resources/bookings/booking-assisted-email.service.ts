@@ -9,6 +9,8 @@ import { webBase } from '../../email/email.templates';
 import type { AssistedBookingEmailBase } from '../../email/email.types';
 import { BookingEngineService } from './booking-engine.service';
 import { BookingManifestService } from './booking-manifest.service';
+import { OrganizationBankAccountsService } from '../organization-bank-accounts/organization-bank-accounts.service';
+import { MobileMoneyConfigService } from '../mobile-money-config/mobile-money-config.service';
 
 @Injectable()
 export class BookingAssistedEmailService {
@@ -21,6 +23,8 @@ export class BookingAssistedEmailService {
     private readonly manifestService: BookingManifestService,
     private readonly emailService: EmailService,
     private readonly bookingDetailPdf: BookingDetailPdfService,
+    private readonly bankAccountsService: OrganizationBankAccountsService,
+    private readonly mobileMoneyConfigService: MobileMoneyConfigService,
   ) {}
 
   notifyRequestReceived(bookingId: string): void {
@@ -37,6 +41,19 @@ export class BookingAssistedEmailService {
 
   notifyPaymentInvite(bookingId: string, paymentUrl: string): void {
     void this.sendPaymentInvite(bookingId, paymentUrl).catch(() => undefined);
+  }
+
+  notifyBankTransferInstructions(bookingId: string): void {
+    void this.sendBankTransferInstructions(bookingId).catch(() => undefined);
+  }
+
+  notifyMobileMoneyInstructions(bookingId: string): void {
+    void this.sendMobileMoneyInstructions(bookingId).catch(() => undefined);
+  }
+
+  /** Sends bank transfer or Mobile Money instructions based on preferred method. */
+  notifyOfflinePaymentInstructions(bookingId: string): void {
+    void this.sendOfflinePaymentInstructions(bookingId).catch(() => undefined);
   }
 
   notifyStaffMessage(bookingId: string, messageBody: string): void {
@@ -190,6 +207,62 @@ export class BookingAssistedEmailService {
       paymentUrl,
       travelerPricing: travelerPricing.length > 0 ? travelerPricing : undefined,
     });
+  }
+
+  private async sendBankTransferInstructions(bookingId: string): Promise<void> {
+    const base = await this.buildBasePayload(bookingId);
+    if (!base) {
+      return;
+    }
+    const accounts = await this.bankAccountsService.listPublicForPayment();
+    await this.emailService.sendBookingBankTransferInstructions({
+      ...base,
+      accounts: accounts.map((account) => ({
+        bankName: account.bankName,
+        accountName: account.accountName,
+        accountNumber: account.accountNumber,
+        swiftBic: account.swiftBic,
+        currency: account.currency,
+      })),
+      accountUrl: `${webBase(base.webUrl)}/account/reservations/${bookingId}`,
+    });
+  }
+
+  private async sendMobileMoneyInstructions(bookingId: string): Promise<void> {
+    const base = await this.buildBasePayload(bookingId);
+    if (!base) {
+      return;
+    }
+    const countries = await this.mobileMoneyConfigService.listPublicForPayment();
+    const operators = countries.flatMap((country) =>
+      country.operators.map((operator) => ({
+        countryCode: country.code,
+        countryName: country.name,
+        operatorName: operator.name,
+        logoUrl: operator.logoUrl,
+        numbers: operator.numbers.map((number) => ({
+          phoneE164: number.phoneE164,
+          label: number.label,
+        })),
+      })),
+    );
+    await this.emailService.sendBookingMobileMoneyInstructions({
+      ...base,
+      operators,
+      accountUrl: `${webBase(base.webUrl)}/account/reservations/${bookingId}`,
+    });
+  }
+
+  private async sendOfflinePaymentInstructions(bookingId: string): Promise<void> {
+    const detail = await this.bookingEngine.getBookingDetail(bookingId);
+    const method = detail.booking.preferredPaymentMethod;
+    if (method === 'bank_transfer') {
+      await this.sendBankTransferInstructions(bookingId);
+      return;
+    }
+    if (method === 'mobile_money') {
+      await this.sendMobileMoneyInstructions(bookingId);
+    }
   }
 
   private messagePreview(body: string): string {

@@ -839,6 +839,14 @@ export function BookingAssistedApprovalPanel({
               </Button>
               {preferredPaymentMethod === 'cash' ? (
                 <p className="w-full text-sm text-atg-muted">{t('cashPaymentHint')}</p>
+              ) : preferredPaymentMethod === 'bank_transfer' ? (
+                <p className="w-full text-sm text-atg-muted">
+                  {t('bankTransferPaymentHint')}
+                </p>
+              ) : preferredPaymentMethod === 'mobile_money' ? (
+                <p className="w-full text-sm text-atg-muted">
+                  {t('mobileMoneyPaymentHint')}
+                </p>
               ) : (
                 <Button
                   type="button"

@@ -25,10 +25,13 @@ import {
 } from '../../../entities/generated';
 import { ReviewsModule } from '../reviews/reviews.module';
 import { BookingIdentityDocuments } from '../../../entities/booking-identity-document.entity';
+import { BookingPaymentProofs } from '../../../entities/booking-payment-proof.entity';
 import { BookingManifestEntries } from '../../../entities/booking-manifest-entry.entity';
 import { EmailVerificationModule } from '../../email-verification/email-verification.module';
 import { PackagesModule } from '../packages/packages.module';
 import { OrganizationSettingsModule } from '../organization-settings/organization-settings.module';
+import { OrganizationBankAccountsModule } from '../organization-bank-accounts/organization-bank-accounts.module';
+import { MobileMoneyConfigModule } from '../mobile-money-config/mobile-money-config.module';
 import { BookingCheckoutPromoService } from './booking-checkout-promo.service';
 import { BookingEngineService } from './booking-engine.service';
 import { BookingPackageCheckoutService } from './booking-package-checkout.service';
@@ -42,6 +45,7 @@ import { BookingNotificationsService } from './booking-notifications.service';
 import { BookingPaymentReminderService } from './booking-payment-reminder.service';
 import { BookingsController } from './bookings.controller';
 import { BookingIdentityDocumentsService } from './booking-identity-documents.service';
+import { BookingPaymentProofsService } from './booking-payment-proofs.service';
 import { BookingManifestService } from './booking-manifest.service';
 import { BookingsService } from './bookings.service';
 import { PosReceiptEmailService } from './pos-receipt-email.service';
@@ -52,6 +56,8 @@ import { PosReceiptPdfService } from './pos-receipt-pdf.service';
     forwardRef(() => StripeModule),
     EmailVerificationModule,
     OrganizationSettingsModule,
+    OrganizationBankAccountsModule,
+    MobileMoneyConfigModule,
     forwardRef(() => TourGuidesModule),
     ReviewsModule,
     PackagesModule,
@@ -78,6 +84,7 @@ import { PosReceiptPdfService } from './pos-receipt-pdf.service';
       Activities,
       Properties,
       BookingIdentityDocuments,
+      BookingPaymentProofs,
       BookingManifestEntries,
     ]),
   ],
@@ -94,6 +101,7 @@ import { PosReceiptPdfService } from './pos-receipt-pdf.service';
     BookingNotificationsService,
     BookingPaymentReminderService,
     BookingIdentityDocumentsService,
+    BookingPaymentProofsService,
     BookingManifestService,
     PosReceiptEmailService,
     PosReceiptPdfService,
@@ -103,6 +111,7 @@ import { PosReceiptPdfService } from './pos-receipt-pdf.service';
     BookingManifestService,
     BookingStatusHistoryService,
     BookingPaymentReminderService,
+    BookingAssistedEmailService,
   ],
 })
 export class BookingsModule {}

@@ -26,6 +26,8 @@ export const posHistoryPageConfig = {
   paymentLabels: {
     cash: 'Espèces',
     stripe: 'Carte',
+    bank_transfer: 'Virement',
+    mobile_money: 'Mobile Money',
   } satisfies Record<BookingPreferredPaymentMethod, string>,
   paymentUnknown: '—',
 } as const;
@@ -37,7 +39,6 @@ export function getHistoryStatusLabel(status: BookingStatus): string {
 export function getHistoryPaymentLabel(
   method: BookingPreferredPaymentMethod | null | undefined,
 ): string {
-  if (method === 'cash') return posHistoryPageConfig.paymentLabels.cash;
-  if (method === 'stripe') return posHistoryPageConfig.paymentLabels.stripe;
-  return posHistoryPageConfig.paymentUnknown;
+  if (!method) return posHistoryPageConfig.paymentUnknown;
+  return posHistoryPageConfig.paymentLabels[method] ?? posHistoryPageConfig.paymentUnknown;
 }

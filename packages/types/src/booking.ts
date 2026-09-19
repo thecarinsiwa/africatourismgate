@@ -10,7 +10,11 @@ export type BookingStatus =
   | 'refunded';
 
 /** Chosen at checkout; null on legacy bookings. */
-export type BookingPreferredPaymentMethod = 'stripe' | 'cash';
+export type BookingPreferredPaymentMethod =
+  | 'stripe'
+  | 'cash'
+  | 'bank_transfer'
+  | 'mobile_money';
 
 export type BookingCheckoutItemType =
   | 'room'
@@ -32,7 +36,7 @@ export interface Booking {
   currency: string;
   promoCodeId: string | null;
   promotionId?: string | null;
-  /** Stripe Checkout vs cash on site; null for bookings before this field. */
+  /** Stripe Checkout vs cash on site vs bank transfer; null for bookings before this field. */
   preferredPaymentMethod?: BookingPreferredPaymentMethod | null;
   createdAt: string;
   updatedAt: string | null;
@@ -190,6 +194,35 @@ export interface RequestIdentityDocumentUploadResponse {
   sent: boolean;
 }
 
+export type BookingPaymentProofMethod = 'bank_transfer' | 'mobile_money';
+
+export type BookingPaymentProofStatus =
+  | 'pending_review'
+  | 'approved'
+  | 'resubmit_requested'
+  | 'rejected';
+
+export interface BookingPaymentProof {
+  id: string;
+  bookingId: string;
+  paymentId: string | null;
+  userId: string;
+  paymentMethod: BookingPaymentProofMethod;
+  originalFilename: string;
+  mimeType: string;
+  fileSizeBytes: number;
+  status: BookingPaymentProofStatus;
+  staffNote?: string | null;
+  reviewedByUserId?: string | null;
+  reviewedAt?: string | null;
+  version: number;
+  createdAt: string;
+}
+
+export interface ReviewBookingPaymentProofRequest {
+  staffNote?: string;
+}
+
 export type BookingManifestSex = 'M' | 'F' | 'other';
 
 export interface BookingManifestEntry {
@@ -262,6 +295,7 @@ export interface BookingDetail {
   /** Post-stay guide rating invitations (CE-13). */
   guideReviewInvites?: GuideReviewInvite[];
   identityDocuments?: BookingIdentityDocument[];
+  paymentProofs?: BookingPaymentProof[];
   /** Unread staff messages for the booking owner (assisted booking chat). */
   unreadStaffMessageCount?: number;
 }
@@ -320,6 +354,20 @@ export interface CancelBookingRequest {
 
 export interface RecordCashPaymentRequest {
   note?: string;
+}
+
+export interface RecordBankTransferPaymentRequest {
+  note?: string;
+}
+
+export interface PublicPaymentBankAccount {
+  id: string;
+  bankName: string;
+  accountName: string;
+  accountNumber: string;
+  swiftBic: string | null;
+  currency: string;
+  isDefault: boolean;
 }
 
 export interface SendBookingReceiptEmailRequest {

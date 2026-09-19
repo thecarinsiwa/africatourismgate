@@ -48,6 +48,7 @@ import { BookingItemTypeIcon } from './booking-item-type-icon';
 import { BookingGuidesSection } from './booking-guides-section';
 import { BookingAssistedApprovalPanel } from './booking-assisted-approval-panel';
 import { BookingIdentityDocumentsPanel } from './booking-identity-documents-panel';
+import { BookingPaymentProofsPanel } from './booking-payment-proofs-panel';
 import { BookingManifestSection } from './booking-manifest-section';
 import { BookingMessagesSection } from './booking-messages-section';
 import { BookingStatusTimeline } from './booking-status-timeline';
@@ -106,6 +107,8 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [cashDialogOpen, setCashDialogOpen] = useState(false);
   const [cashNote, setCashNote] = useState('');
+  const [bankTransferDialogOpen, setBankTransferDialogOpen] = useState(false);
+  const [bankTransferNote, setBankTransferNote] = useState('');
   const [activeTab, setActiveTab] = useState('manifest');
   const [manifestSync, setManifestSync] = useState(0);
 
@@ -146,13 +149,14 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
 
   useEffect(() => {
     if (
-      detail?.identityDocuments?.some((doc) => doc.status === 'pending_review')
+      detail?.identityDocuments?.some((doc) => doc.status === 'pending_review') ||
+      detail?.paymentProofs?.some((proof) => proof.status === 'pending_review')
     ) {
       setActiveTab('documents');
     } else {
       setActiveTab('manifest');
     }
-  }, [bookingId, detail?.booking.id, detail?.identityDocuments]);
+  }, [bookingId, detail?.booking.id, detail?.identityDocuments, detail?.paymentProofs]);
 
   useEffect(() => {
     let cancelled = false;
@@ -236,6 +240,25 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       setActionLoading(false);
     }
   }, [bookingId, cashNote, detail, load, getBookingsErrorMessage]);
+
+  const handleRecordBankTransferPayment = useCallback(async () => {
+    if (!detail) return false;
+    setActionError(null);
+    setActionLoading(true);
+    try {
+      await getApiClient().recordBookingBankTransferPayment(bookingId, {
+        note: bankTransferNote.trim() || undefined,
+      });
+      setBankTransferNote('');
+      await load();
+      return true;
+    } catch (error) {
+      setActionError(getBookingsErrorMessage(error));
+      return false;
+    } finally {
+      setActionLoading(false);
+    }
+  }, [bookingId, bankTransferNote, detail, load, getBookingsErrorMessage]);
 
   const statusOptions = useMemo(() => {
     const current = detail?.booking.status;
@@ -374,22 +397,64 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const hasSucceededPayment = detail.payments.some(
     (payment) => payment.status === 'succeeded',
   );
-  const canCollectCash =
+  const canCollectOfflinePayment =
     canWrite && booking.status === 'pending_payment' && !hasSucceededPayment;
+  const canCollectCash =
+    canCollectOfflinePayment &&
+    booking.preferredPaymentMethod !== 'bank_transfer' &&
+    booking.preferredPaymentMethod !== 'mobile_money';
+  const canRecordBankTransfer =
+    canCollectOfflinePayment &&
+    (booking.preferredPaymentMethod === 'bank_transfer' ||
+      booking.preferredPaymentMethod === 'mobile_money');
+  const offlinePaymentActionLabel =
+    booking.preferredPaymentMethod === 'mobile_money'
+      ? t('actions.recordMobileMoneyPayment')
+      : t('actions.recordBankTransferPayment');
+  const offlinePaymentDialogTitle =
+    booking.preferredPaymentMethod === 'mobile_money'
+      ? t('mobileMoneyDialog.title')
+      : t('bankTransferDialog.title');
+  const offlinePaymentDialogDescription =
+    booking.preferredPaymentMethod === 'mobile_money'
+      ? t('mobileMoneyDialog.description')
+      : t('bankTransferDialog.description');
+  const offlinePaymentDialogConfirm =
+    booking.preferredPaymentMethod === 'mobile_money'
+      ? t('mobileMoneyDialog.confirm')
+      : t('bankTransferDialog.confirm');
+  const offlinePaymentDialogNoteLabel =
+    booking.preferredPaymentMethod === 'mobile_money'
+      ? t('mobileMoneyDialog.noteLabel')
+      : t('bankTransferDialog.noteLabel');
+  const offlinePaymentDialogNotePlaceholder =
+    booking.preferredPaymentMethod === 'mobile_money'
+      ? t('mobileMoneyDialog.notePlaceholder')
+      : t('bankTransferDialog.notePlaceholder');
   const preferredPaymentLabel = booking.preferredPaymentMethod
     ? formatPaymentProvider(booking.preferredPaymentMethod, providerLabels, emptyDash)
     : t('summary.preferredPaymentUnspecified');
   const statusUnchanged = newStatus === booking.status;
   const trimmedStatusReason = statusReason.trim();
   const identityDocuments = detail.identityDocuments ?? [];
+  const paymentProofs = detail.paymentProofs ?? [];
   const pendingDocumentCount = identityDocuments.filter(
     (doc) => doc.status === 'pending_review',
   ).length;
+  const pendingProofCount = paymentProofs.filter(
+    (proof) => proof.status === 'pending_review',
+  ).length;
+  const pendingReviewCount = pendingDocumentCount + pendingProofCount;
+  const hasPendingPaymentProof = pendingProofCount > 0;
   const unreadMessageCount = detail.unreadCustomerMessageCount ?? 0;
   const clientName = `${client.firstName} ${client.lastName}`.trim();
   const showActionsBar =
     canWrite &&
-    (showManualStatusChange || canCancel || canCollectCash || booking.status === 'pending_approval');
+    (showManualStatusChange ||
+      canCancel ||
+      canCollectCash ||
+      canRecordBankTransfer ||
+      booking.status === 'pending_approval');
 
   return (
     <div className={`min-w-0 space-y-6${showActionsBar ? ' pb-24' : ''}`}>
@@ -507,8 +572,8 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
             <TabsTrigger value="manifest">{t('tabs.manifest')}</TabsTrigger>
             <TabsTrigger value="guides">{t('tabs.guides')}</TabsTrigger>
             <TabsTrigger value="documents">
-              {pendingDocumentCount > 0
-                ? t('tabs.documentsPending', { count: pendingDocumentCount })
+              {pendingReviewCount > 0
+                ? t('tabs.documentsPending', { count: pendingReviewCount })
                 : t('tabs.documents')}
             </TabsTrigger>
             <TabsTrigger value="history">{t('tabs.history')}</TabsTrigger>
@@ -535,13 +600,30 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
           </TabsContent>
 
           <TabsContent value="documents">
-            <BookingIdentityDocumentsPanel
-              bookingId={bookingId}
-              documents={identityDocuments}
-              canReview={canApprove}
-              onUpdated={load}
-              embedded
-            />
+            <div className="space-y-8">
+              <BookingIdentityDocumentsPanel
+                bookingId={bookingId}
+                documents={identityDocuments}
+                canReview={canApprove}
+                onUpdated={load}
+                embedded
+              />
+              <div className="border-t border-atg-border pt-6">
+                <h3 className="mb-3 text-base font-semibold text-atg-fg">
+                  {t('paymentProofs.title')}
+                </h3>
+                <p className="mb-4 text-sm text-atg-muted">
+                  {t('paymentProofs.subtitle')}
+                </p>
+                <BookingPaymentProofsPanel
+                  bookingId={bookingId}
+                  proofs={paymentProofs}
+                  canReview={canApprove || canWrite}
+                  onUpdated={load}
+                  embedded
+                />
+              </div>
+            </div>
           </TabsContent>
 
           <TabsContent value="history">
@@ -594,6 +676,22 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
               >
                 {t('actions.recordCashPayment')}
               </Button>
+            ) : null}
+            {canRecordBankTransfer && !hasPendingPaymentProof ? (
+              <Button
+                type="button"
+                variant="primary"
+                disabled={actionLoading}
+                className="w-full sm:w-auto"
+                onClick={() => setBankTransferDialogOpen(true)}
+              >
+                {offlinePaymentActionLabel}
+              </Button>
+            ) : null}
+            {canRecordBankTransfer && hasPendingPaymentProof ? (
+              <p className="mr-auto text-sm text-atg-muted">
+                {t('paymentProofs.subtitle')}
+              </p>
             ) : null}
             {canCancel ? (
               <Button
@@ -791,6 +889,57 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
               }}
             >
               {t('cashDialog.confirm')}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        open={bankTransferDialogOpen}
+        onOpenChange={(open) => {
+          if (!actionLoading) {
+            setBankTransferDialogOpen(open);
+            if (!open) setBankTransferNote('');
+          }
+        }}
+        title={offlinePaymentDialogTitle}
+        description={offlinePaymentDialogDescription}
+        showClose
+        className="max-w-lg"
+      >
+        <div className="space-y-4">
+          <Textarea
+            name="bankTransferNote"
+            label={offlinePaymentDialogNoteLabel}
+            rows={3}
+            value={bankTransferNote}
+            onChange={(e) => setBankTransferNote(e.target.value)}
+            placeholder={offlinePaymentDialogNotePlaceholder}
+          />
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={actionLoading}
+              onClick={() => {
+                setBankTransferDialogOpen(false);
+                setBankTransferNote('');
+              }}
+            >
+              {tActions('cancel')}
+            </Button>
+            <Button
+              type="button"
+              variant="primary"
+              disabled={actionLoading}
+              loading={actionLoading}
+              onClick={() => {
+                void handleRecordBankTransferPayment().then((ok) => {
+                  if (ok) setBankTransferDialogOpen(false);
+                });
+              }}
+            >
+              {offlinePaymentDialogConfirm}
             </Button>
           </div>
         </div>

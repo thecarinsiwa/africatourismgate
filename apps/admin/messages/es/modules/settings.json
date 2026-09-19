@@ -4,7 +4,8 @@
     "settings": "Ajustes",
     "emails": "Correos",
     "donations": "Donaciones",
-    "bankAccounts": "Cuentas bancarias"
+    "bankAccounts": "Cuentas bancarias",
+    "mobileMoney": "Mobile Money"
   },
   "page": {
     "title": "Ajustes",
@@ -34,7 +35,8 @@
       "holdMinutesInvalid": "Duración de retención no válida (entero positivo).",
       "displayNameRequired": "El nombre mostrado es obligatorio.",
       "loyaltyRateInvalid": "La tasa de puntos debe ser un entero positivo o cero.",
-      "programCodeInvalid": "El código de programa es obligatorio (máx. 32 caracteres)."
+      "programCodeInvalid": "El código de programa es obligatorio (máx. 32 caracteres).",
+      "paymentMethodsRequired": "Active al menos un método de pago."
     },
     "sections": {
       "contact": {
@@ -62,6 +64,14 @@
         "modesDescription": "Inmediato: pago Stripe en el checkout. Asistido: solicitud pendiente de validación.",
         "modeImmediate": "Inmediato (pago)",
         "modeAssisted": "Asistido (solicitud)",
+        "paymentMethodsTitle": "Métodos de pago (sitio público)",
+        "paymentMethodsDescription": "Seleccione los métodos ofrecidos en el checkout web. El POS no se ve afectado. La transferencia también requiere cuentas bancarias publicadas. Mobile Money requiere países, operadores y números configurados.",
+        "paymentMethods": {
+          "stripe": "Tarjeta (Stripe)",
+          "cash": "Efectivo en el lugar",
+          "bank_transfer": "Transferencia bancaria",
+          "mobile_money": "Mobile Money"
+        },
         "itemTypes": {
           "room": "Alojamiento (habitación)",
           "flight_class": "Vuelo",
@@ -283,6 +293,67 @@
       "saving": "Guardando…",
       "dirty": "Cambios no guardados",
       "clean": "Ningún cambio pendiente"
+    }
+  },
+  "mobileMoney": {
+    "page": {
+      "title": "Mobile Money",
+      "intro": "Países, operadores y números de pago para transferencias Mobile Money fuera de línea.",
+      "denied": "No tiene permiso para ver la configuración de Mobile Money."
+    },
+    "sections": {
+      "countries": "Países",
+      "operators": "Operadores",
+      "numbers": "Números de pago"
+    },
+    "list": {
+      "orgSelectAria": "Organización",
+      "newCountry": "Nuevo país",
+      "newOperator": "Nuevo operador",
+      "newNumber": "Nuevo número",
+      "emptyCountries": "Ningún país configurado.",
+      "emptyOperators": "Ningún operador para este país.",
+      "emptyNumbers": "Ningún número para este operador.",
+      "selectCountry": "Seleccione un país para gestionar sus operadores.",
+      "selectOperator": "Seleccione un operador para gestionar sus números.",
+      "deleteTitle": "Eliminar",
+      "deleteConfirm": "Este elemento será eliminado. Los operadores y números relacionados también se eliminarán cuando corresponda.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar"
+    },
+    "columns": {
+      "code": "Código",
+      "country": "País",
+      "operator": "Operador",
+      "logo": "Logo",
+      "phone": "Número",
+      "label": "Etiqueta",
+      "active": "Activo"
+    },
+    "form": {
+      "createCountry": "Nuevo país",
+      "editCountry": "Editar país",
+      "createOperator": "Nuevo operador",
+      "editOperator": "Editar operador",
+      "createNumber": "Nuevo número",
+      "editNumber": "Editar número",
+      "code": "Código ISO (2 letras)",
+      "name": "Nombre",
+      "phone": "Número E.164",
+      "label": "Etiqueta",
+      "logo": "Logo",
+      "logoHint": "JPEG, PNG o WebP, máx. 2 MB.",
+      "logoInvalid": "Formato de imagen no válido (JPEG, PNG o WebP).",
+      "logoTooLarge": "Imagen demasiado pesada (máx. 2 MB).",
+      "sortOrder": "Orden",
+      "isActive": "Activo",
+      "codeInvalid": "El código de país debe tener 2 letras (ej. CD, KE).",
+      "nameRequired": "El nombre es obligatorio.",
+      "operatorNameRequired": "El nombre del operador es obligatorio.",
+      "phoneInvalid": "El número debe estar en formato E.164 (ej. +243970000000).",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "saving": "Guardando…"
     }
   },
   "donations": {

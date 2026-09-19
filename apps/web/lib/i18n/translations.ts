@@ -141,6 +141,30 @@ export type Translations = {
     paymentMethodStripeHint: string;
     paymentMethodCash: string;
     paymentMethodCashHint: string;
+    paymentMethodBankTransfer: string;
+    paymentMethodBankTransferHint: string;
+    payWithBankTransfer: string;
+    bankTransferSubmitting: string;
+    bankTransferAccountsTitle: string;
+    bankTransferAccountsEmpty: string;
+    bankTransferHolder: string;
+    bankTransferAccountNumber: string;
+    bankTransferSwift: string;
+    bankTransferCurrency: string;
+    bankTransferReferenceHint: string;
+    paymentMethodMobileMoney: string;
+    paymentMethodMobileMoneyHint: string;
+    payWithMobileMoney: string;
+    mobileMoneySubmitting: string;
+    mobileMoneyTitle: string;
+    mobileMoneyEmpty: string;
+    mobileMoneyCountry: string;
+    mobileMoneyOperator: string;
+    mobileMoneyPhone: string;
+    mobileMoneyLabel: string;
+    mobileMoneyReferenceHint: string;
+    mobileMoneySelectCountry: string;
+    mobileMoneySelectOperator: string;
     requestBooking: string;
     requestSubmitting: string;
     stripeRedirecting: string;
@@ -170,9 +194,13 @@ export type Translations = {
       title: string;
       titleConfirmed: string;
       titleCashPending: string;
+      titleBankTransferPending: string;
+      titleMobileMoneyPending: string;
       subtitle: string;
       subtitleConfirmed: string;
       subtitleCashPending: string;
+      subtitleBankTransferPending: string;
+      subtitleMobileMoneyPending: string;
       bookingIdLabel: string;
       statusLabel: string;
       statusConfirmed: string;
@@ -180,6 +208,10 @@ export type Translations = {
       statusPendingHint: string;
       statusCashPending: string;
       statusCashPendingHint: string;
+      statusBankTransferPending: string;
+      statusBankTransferPendingHint: string;
+      statusMobileMoneyPending: string;
+      statusMobileMoneyPendingHint: string;
       totalLabel: string;
       verifying: string;
       statusUnavailable: string;
@@ -191,6 +223,8 @@ export type Translations = {
       nextStepEmail: string;
       nextStepAccount: string;
       nextStepCash: string;
+      nextStepBankTransfer: string;
+      nextStepMobileMoney: string;
     };
     requestSuccess: {
       title: string;
@@ -1058,6 +1092,40 @@ export type Translations = {
         proceedToPayment: string;
         paymentInvitePending: string;
         cashPaymentPending: string;
+        bankTransferPaymentPending: string;
+        mobileMoneyPaymentPending: string;
+        paymentProofs: {
+          title: string;
+          subtitle: string;
+          empty: string;
+          upload: string;
+          uploading: string;
+          takePhoto: string;
+          fileHint: string;
+          uploadError: string;
+          fileTooLarge: string;
+          view: string;
+          viewing: string;
+          viewError: string;
+          statusLabel: string;
+          methods: {
+            bank_transfer: string;
+            mobile_money: string;
+          };
+          statuses: {
+            pending_review: string;
+            approved: string;
+            resubmit_requested: string;
+            rejected: string;
+          };
+          camera: {
+            capture: string;
+            retake: string;
+            confirm: string;
+            cancel: string;
+            cameraError: string;
+          };
+        };
         identityDocuments: {
           title: string;
           subtitle: string;
@@ -1531,6 +1599,34 @@ const fr: Translations = {
     paymentMethodStripeHint: 'Paiement sécurisé en ligne immédiat.',
     paymentMethodCash: 'Espèces sur place',
     paymentMethodCashHint: 'Réservation en attente — paiement en agence ou à l’arrivée.',
+    paymentMethodBankTransfer: 'Virement bancaire',
+    paymentMethodBankTransferHint:
+      'Réservation en attente — réglez par virement ; validation par notre équipe.',
+    payWithBankTransfer: 'Confirmer — paiement par virement',
+    bankTransferSubmitting: 'Enregistrement…',
+    bankTransferAccountsTitle: 'Coordonnées bancaires',
+    bankTransferAccountsEmpty:
+      'Aucun compte bancaire n’est publié pour le moment. Contactez-nous pour obtenir les coordonnées.',
+    bankTransferHolder: 'Titulaire',
+    bankTransferAccountNumber: 'N° de compte / IBAN',
+    bankTransferSwift: 'SWIFT / BIC',
+    bankTransferCurrency: 'Devise',
+    bankTransferReferenceHint: 'Indiquez la référence {ref} dans le libellé du virement.',
+    paymentMethodMobileMoney: 'Mobile Money',
+    paymentMethodMobileMoneyHint:
+      'Réservation en attente — payez via Mobile Money puis envoyez une preuve.',
+    payWithMobileMoney: 'Confirmer — paiement Mobile Money',
+    mobileMoneySubmitting: 'Enregistrement…',
+    mobileMoneyTitle: 'Paiement Mobile Money',
+    mobileMoneyEmpty:
+      'Aucune configuration Mobile Money n’est publiée pour le moment. Contactez-nous pour obtenir les numéros.',
+    mobileMoneyCountry: 'Pays',
+    mobileMoneyOperator: 'Opérateur',
+    mobileMoneyPhone: 'Numéro',
+    mobileMoneyLabel: 'Libellé',
+    mobileMoneyReferenceHint: 'Indiquez la référence {ref} dans le message du transfert.',
+    mobileMoneySelectCountry: 'Sélectionner un pays',
+    mobileMoneySelectOperator: 'Sélectionner un opérateur',
     requestBooking: 'Demander une réservation',
     requestSubmitting: 'Envoi de la demande…',
     stripeRedirecting: 'Redirection Stripe…',
@@ -1560,12 +1656,18 @@ const fr: Translations = {
       title: 'Confirmation en cours',
       titleConfirmed: 'Réservation confirmée',
       titleCashPending: 'Réservation enregistrée',
+      titleBankTransferPending: 'Réservation enregistrée',
+      titleMobileMoneyPending: 'Réservation enregistrée',
       subtitle:
         'Votre paiement Stripe est reçu. Nous finalisons la confirmation de votre réservation…',
       subtitleConfirmed:
         'Votre paiement a été reçu et votre réservation est confirmée.',
       subtitleCashPending:
         'Vous avez choisi de payer en espèces. Votre réservation est en attente jusqu’à l’encaissement en agence.',
+      subtitleBankTransferPending:
+        'Vous avez choisi le virement bancaire. Votre réservation reste en attente jusqu’à validation du virement par notre équipe.',
+      subtitleMobileMoneyPending:
+        'Vous avez choisi Mobile Money. Votre réservation reste en attente jusqu’à validation du paiement par notre équipe.',
       bookingIdLabel: 'Réf. réservation :',
       statusLabel: 'Statut :',
       statusConfirmed: 'Confirmée',
@@ -1575,6 +1677,12 @@ const fr: Translations = {
       statusCashPending: 'En attente de paiement cash',
       statusCashPendingHint:
         'Présentez-vous en agence ou réglez à l’arrivée. Notre équipe confirmera la réservation après encaissement.',
+      statusBankTransferPending: 'En attente de virement',
+      statusBankTransferPendingHint:
+        'Effectuez le virement avec la référence indiquée. La réservation sera confirmée après validation par notre équipe.',
+      statusMobileMoneyPending: 'En attente de paiement Mobile Money',
+      statusMobileMoneyPendingHint:
+        'Effectuez le transfert Mobile Money avec la référence indiquée, puis envoyez une preuve. La réservation sera confirmée après validation.',
       totalLabel: 'Total :',
       verifying: 'Vérification du statut en cours…',
       statusUnavailable:
@@ -1587,6 +1695,10 @@ const fr: Translations = {
       nextStepEmail: 'Un e-mail de confirmation vous sera envoyé sous peu.',
       nextStepAccount: 'Consultez vos réservations depuis votre espace compte.',
       nextStepCash: 'Préparez le montant en espèces pour le règlement sur place.',
+      nextStepBankTransfer:
+        'Effectuez le virement en indiquant la référence de réservation dans le libellé.',
+      nextStepMobileMoney:
+        'Effectuez le transfert Mobile Money puis envoyez une preuve de paiement.',
     },
     requestSuccess: {
       title: 'Demande envoyée',
@@ -2565,6 +2677,43 @@ const fr: Translations = {
           'Vous recevrez un e-mail avec le lien de paiement dès que votre demande sera validée.',
         cashPaymentPending:
           'Vous avez choisi le paiement en espèces. Réglez sur place ou en agence — la réservation sera confirmée après encaissement.',
+        bankTransferPaymentPending:
+          'Vous avez choisi le virement bancaire. Effectuez le virement avec la référence de réservation — validation par notre équipe requise.',
+        mobileMoneyPaymentPending:
+          'Vous avez choisi Mobile Money. Effectuez le transfert avec la référence de réservation puis envoyez une preuve — validation par notre équipe requise.',
+        paymentProofs: {
+          title: 'Preuve de paiement',
+          subtitle:
+            'Déposez le bordereau ou une photo du justificatif. Notre équipe validera le paiement.',
+          empty: 'Aucune preuve déposée pour le moment.',
+          upload: 'Envoyer un fichier',
+          uploading: 'Envoi…',
+          takePhoto: 'Prendre une photo',
+          fileHint: 'JPEG, PNG, WebP ou PDF — 10 Mo max.',
+          uploadError: "Impossible d'envoyer la preuve.",
+          fileTooLarge: 'Fichier trop volumineux (10 Mo max).',
+          view: 'Voir',
+          viewing: 'Ouverture…',
+          viewError: "Impossible d'ouvrir la preuve.",
+          statusLabel: 'Statut',
+          methods: {
+            bank_transfer: 'Virement bancaire',
+            mobile_money: 'Mobile Money',
+          },
+          statuses: {
+            pending_review: 'En attente de vérification',
+            approved: 'Validée',
+            resubmit_requested: 'Nouvelle preuve demandée',
+            rejected: 'Refusée',
+          },
+          camera: {
+            capture: 'Prendre la photo',
+            retake: 'Reprendre',
+            confirm: 'Utiliser cette photo',
+            cancel: 'Annuler',
+            cameraError: "Impossible d'accéder à la caméra.",
+          },
+        },
         identityDocuments: {
           title: "Pièce d'identité",
           subtitle:
@@ -3108,6 +3257,34 @@ const en: Translations = {
     paymentMethodStripeHint: 'Secure online payment now.',
     paymentMethodCash: 'Cash on site',
     paymentMethodCashHint: 'Booking held — pay at the agency or on arrival.',
+    paymentMethodBankTransfer: 'Bank transfer',
+    paymentMethodBankTransferHint:
+      'Booking held — pay by transfer; our team confirms after receipt.',
+    payWithBankTransfer: 'Confirm — pay by bank transfer',
+    bankTransferSubmitting: 'Saving…',
+    bankTransferAccountsTitle: 'Bank details',
+    bankTransferAccountsEmpty:
+      'No bank account is published yet. Contact us to get the transfer details.',
+    bankTransferHolder: 'Account holder',
+    bankTransferAccountNumber: 'Account number / IBAN',
+    bankTransferSwift: 'SWIFT / BIC',
+    bankTransferCurrency: 'Currency',
+    bankTransferReferenceHint: 'Include reference {ref} in the transfer description.',
+    paymentMethodMobileMoney: 'Mobile Money',
+    paymentMethodMobileMoneyHint:
+      'Booking held — pay via Mobile Money then upload a proof.',
+    payWithMobileMoney: 'Confirm — pay with Mobile Money',
+    mobileMoneySubmitting: 'Saving…',
+    mobileMoneyTitle: 'Mobile Money payment',
+    mobileMoneyEmpty:
+      'No Mobile Money configuration is published yet. Contact us to get the payment numbers.',
+    mobileMoneyCountry: 'Country',
+    mobileMoneyOperator: 'Operator',
+    mobileMoneyPhone: 'Number',
+    mobileMoneyLabel: 'Label',
+    mobileMoneyReferenceHint: 'Include reference {ref} in the transfer message.',
+    mobileMoneySelectCountry: 'Select a country',
+    mobileMoneySelectOperator: 'Select an operator',
     requestBooking: 'Request a booking',
     requestSubmitting: 'Submitting request?',
     stripeRedirecting: 'Redirecting to Stripe?',
@@ -3137,11 +3314,17 @@ const en: Translations = {
       title: 'Confirming booking',
       titleConfirmed: 'Booking confirmed',
       titleCashPending: 'Booking registered',
+      titleBankTransferPending: 'Booking registered',
+      titleMobileMoneyPending: 'Booking registered',
       subtitle:
         'Your Stripe payment was received. We are finalizing your booking confirmation?',
       subtitleConfirmed: 'Your payment was received and your booking is confirmed.',
       subtitleCashPending:
         'You chose to pay in cash. Your booking stays pending until payment is collected at the agency.',
+      subtitleBankTransferPending:
+        'You chose bank transfer. Your booking stays pending until our team validates the transfer.',
+      subtitleMobileMoneyPending:
+        'You chose Mobile Money. Your booking stays pending until our team validates the payment.',
       bookingIdLabel: 'Booking ref:',
       statusLabel: 'Status:',
       statusConfirmed: 'Confirmed',
@@ -3151,6 +3334,12 @@ const en: Translations = {
       statusCashPending: 'Awaiting cash payment',
       statusCashPendingHint:
         'Pay at the agency or on arrival. Our team will confirm the booking after collection.',
+      statusBankTransferPending: 'Awaiting bank transfer',
+      statusBankTransferPendingHint:
+        'Complete the transfer with the reference shown. The booking will be confirmed after staff validation.',
+      statusMobileMoneyPending: 'Awaiting Mobile Money payment',
+      statusMobileMoneyPendingHint:
+        'Complete the Mobile Money transfer with the reference shown, then upload a proof. The booking will be confirmed after staff validation.',
       totalLabel: 'Total:',
       verifying: 'Checking status?',
       statusUnavailable: 'Detailed status is unavailable for now. Refresh in a moment.',
@@ -3162,6 +3351,10 @@ const en: Translations = {
       nextStepEmail: 'A confirmation email will be sent shortly.',
       nextStepAccount: 'View your bookings in your account area.',
       nextStepCash: 'Have the cash amount ready for on-site payment.',
+      nextStepBankTransfer:
+        'Make the transfer and include the booking reference in the description.',
+      nextStepMobileMoney:
+        'Complete the Mobile Money transfer then upload a payment proof.',
     },
     requestSuccess: {
       title: 'Request submitted',
@@ -4132,6 +4325,43 @@ const en: Translations = {
           'You will receive an email with the payment link once your request is approved.',
         cashPaymentPending:
           'You chose to pay in cash. Pay on site or at the agency — the booking will be confirmed after collection.',
+        bankTransferPaymentPending:
+          'You chose bank transfer. Complete the transfer with the booking reference — staff validation is required.',
+        mobileMoneyPaymentPending:
+          'You chose Mobile Money. Complete the transfer with the booking reference then upload a proof — staff validation is required.',
+        paymentProofs: {
+          title: 'Payment proof',
+          subtitle:
+            'Upload the transfer slip or a photo of the receipt. Our team will validate the payment.',
+          empty: 'No proof uploaded yet.',
+          upload: 'Upload a file',
+          uploading: 'Uploading…',
+          takePhoto: 'Take a photo',
+          fileHint: 'JPEG, PNG, WebP or PDF — 10 MB max.',
+          uploadError: 'Could not upload the proof.',
+          fileTooLarge: 'File too large (10 MB max).',
+          view: 'View',
+          viewing: 'Opening…',
+          viewError: 'Could not open the proof.',
+          statusLabel: 'Status',
+          methods: {
+            bank_transfer: 'Bank transfer',
+            mobile_money: 'Mobile Money',
+          },
+          statuses: {
+            pending_review: 'Awaiting verification',
+            approved: 'Approved',
+            resubmit_requested: 'New proof requested',
+            rejected: 'Rejected',
+          },
+          camera: {
+            capture: 'Take photo',
+            retake: 'Retake',
+            confirm: 'Use this photo',
+            cancel: 'Cancel',
+            cameraError: 'Could not access the camera.',
+          },
+        },
         identityDocuments: {
           title: 'Identity document',
           subtitle:

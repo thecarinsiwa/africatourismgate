@@ -671,6 +671,11 @@
       "description": "Organization B2B accounts for transfers and offline payments.",
       "metaTitle": "Bank accounts"
     },
+    "mobile-money": {
+      "title": "Mobile Money",
+      "description": "Countries, operators and payment numbers for offline Mobile Money transfers.",
+      "metaTitle": "Mobile Money"
+    },
     "dons": {
       "title": "Donation campaigns",
       "description": "Manage multiple donation appeals by context. Only one can be featured in the navigation bar (web and GAP).",

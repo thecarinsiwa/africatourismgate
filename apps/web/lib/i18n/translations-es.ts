@@ -170,6 +170,34 @@ export const es: Translations = {
     paymentMethodStripeHint: 'Pago seguro en línea inmediato.',
     paymentMethodCash: 'Efectivo en el lugar',
     paymentMethodCashHint: 'Reserva en espera — pague en agencia o a la llegada.',
+    paymentMethodBankTransfer: 'Transferencia bancaria',
+    paymentMethodBankTransferHint:
+      'Reserva en espera — pague por transferencia; nuestro equipo confirma al recibirla.',
+    payWithBankTransfer: 'Confirmar — pago por transferencia',
+    bankTransferSubmitting: 'Guardando…',
+    bankTransferAccountsTitle: 'Datos bancarios',
+    bankTransferAccountsEmpty:
+      'No hay ninguna cuenta bancaria publicada. Contáctenos para obtener los datos.',
+    bankTransferHolder: 'Titular',
+    bankTransferAccountNumber: 'N.º de cuenta / IBAN',
+    bankTransferSwift: 'SWIFT / BIC',
+    bankTransferCurrency: 'Divisa',
+    bankTransferReferenceHint: 'Indique la referencia {ref} en el concepto de la transferencia.',
+    paymentMethodMobileMoney: 'Mobile Money',
+    paymentMethodMobileMoneyHint:
+      'Reserva en espera — pague por Mobile Money y envíe un comprobante.',
+    payWithMobileMoney: 'Confirmar — pago Mobile Money',
+    mobileMoneySubmitting: 'Guardando…',
+    mobileMoneyTitle: 'Pago Mobile Money',
+    mobileMoneyEmpty:
+      'No hay ninguna configuración Mobile Money publicada. Contáctenos para obtener los números.',
+    mobileMoneyCountry: 'País',
+    mobileMoneyOperator: 'Operador',
+    mobileMoneyPhone: 'Número',
+    mobileMoneyLabel: 'Etiqueta',
+    mobileMoneyReferenceHint: 'Indique la referencia {ref} en el mensaje de la transferencia.',
+    mobileMoneySelectCountry: 'Seleccionar un país',
+    mobileMoneySelectOperator: 'Seleccionar un operador',
     requestBooking: 'Solicitar una reserva',
     requestSubmitting: 'Enviando solicitud…',
     stripeRedirecting: 'Redirigiendo a Stripe…',
@@ -199,11 +227,17 @@ export const es: Translations = {
       title: 'Confirmación en curso',
       titleConfirmed: 'Reserva confirmada',
       titleCashPending: 'Reserva registrada',
+      titleBankTransferPending: 'Reserva registrada',
+      titleMobileMoneyPending: 'Reserva registrada',
       subtitle:
         'Su pago Stripe fue recibido. Estamos finalizando la confirmación de su reserva…',
       subtitleConfirmed: 'Su pago fue recibido y su reserva está confirmada.',
       subtitleCashPending:
         'Ha elegido pagar en efectivo. Su reserva permanece pendiente hasta el cobro en agencia.',
+      subtitleBankTransferPending:
+        'Ha elegido transferencia bancaria. Su reserva permanece pendiente hasta que nuestro equipo valide la transferencia.',
+      subtitleMobileMoneyPending:
+        'Ha elegido Mobile Money. Su reserva permanece pendiente hasta que nuestro equipo valide el pago.',
       bookingIdLabel: 'Ref. reserva:',
       statusLabel: 'Estado:',
       statusConfirmed: 'Confirmada',
@@ -213,6 +247,12 @@ export const es: Translations = {
       statusCashPending: 'Pendiente de pago en efectivo',
       statusCashPendingHint:
         'Pague en agencia o a la llegada. Nuestro equipo confirmará la reserva tras el cobro.',
+      statusBankTransferPending: 'Pendiente de transferencia',
+      statusBankTransferPendingHint:
+        'Realice la transferencia con la referencia indicada. La reserva se confirmará tras la validación del personal.',
+      statusMobileMoneyPending: 'Pendiente de pago Mobile Money',
+      statusMobileMoneyPendingHint:
+        'Realice la transferencia Mobile Money con la referencia indicada y envíe un comprobante. La reserva se confirmará tras la validación.',
       totalLabel: 'Total:',
       verifying: 'Verificando estado…',
       statusUnavailable: 'Estado detallado no disponible por ahora. Actualice en un momento.',
@@ -224,6 +264,10 @@ export const es: Translations = {
       nextStepEmail: 'Recibirá un correo de confirmación en breve.',
       nextStepAccount: 'Consulte sus reservas en su área de cuenta.',
       nextStepCash: 'Prepare el importe en efectivo para el pago en el lugar.',
+      nextStepBankTransfer:
+        'Realice la transferencia e indique la referencia de reserva en el concepto.',
+      nextStepMobileMoney:
+        'Realice la transferencia Mobile Money y envíe un comprobante de pago.',
     },
     requestSuccess: {
       title: 'Solicitud enviada',
@@ -1199,6 +1243,43 @@ export const es: Translations = {
           'Recibirá un correo con el enlace de pago cuando su solicitud sea validada.',
         cashPaymentPending:
           'Ha elegido pagar en efectivo. Pague en el lugar o en agencia — la reserva se confirmará tras el cobro.',
+        bankTransferPaymentPending:
+          'Ha elegido transferencia bancaria. Realice la transferencia con la referencia de reserva — se requiere validación del personal.',
+        mobileMoneyPaymentPending:
+          'Ha elegido Mobile Money. Realice la transferencia con la referencia de reserva y envíe un comprobante — se requiere validación del personal.',
+        paymentProofs: {
+          title: 'Comprobante de pago',
+          subtitle:
+            'Suba el justificante o una foto del recibo. Nuestro equipo validará el pago.',
+          empty: 'Ningún comprobante subido por el momento.',
+          upload: 'Enviar un archivo',
+          uploading: 'Enviando…',
+          takePhoto: 'Tomar una foto',
+          fileHint: 'JPEG, PNG, WebP o PDF — 10 MB máx.',
+          uploadError: 'No se pudo enviar el comprobante.',
+          fileTooLarge: 'Archivo demasiado grande (10 MB máx.).',
+          view: 'Ver',
+          viewing: 'Abriendo…',
+          viewError: 'No se pudo abrir el comprobante.',
+          statusLabel: 'Estado',
+          methods: {
+            bank_transfer: 'Transferencia bancaria',
+            mobile_money: 'Mobile Money',
+          },
+          statuses: {
+            pending_review: 'Pendiente de verificación',
+            approved: 'Aprobado',
+            resubmit_requested: 'Nuevo comprobante solicitado',
+            rejected: 'Rechazado',
+          },
+          camera: {
+            capture: 'Tomar foto',
+            retake: 'Repetir',
+            confirm: 'Usar esta foto',
+            cancel: 'Cancelar',
+            cameraError: 'No se pudo acceder a la cámara.',
+          },
+        },
         identityDocuments: {
           title: 'Documento de identidad',
           subtitle:

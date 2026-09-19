@@ -1355,7 +1355,7 @@ CREATE TABLE `bookings` (
   `customer_thread_presence_at` DATETIME DEFAULT NULL,
   `staff_thread_last_seen_at` DATETIME DEFAULT NULL,
   `payment_reminder_sent_at` DATETIME DEFAULT NULL,
-  `preferred_payment_method` ENUM('stripe','cash') DEFAULT NULL,
+  `preferred_payment_method` ENUM('stripe','cash','bank_transfer') DEFAULT NULL,
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,
   `deleted_by_user_id` CHAR(36) DEFAULT NULL,

@@ -94,6 +94,8 @@
       "cancelReasonPlaceholder": "E.g. customer request, unavailability…",
       "cancelBooking": "Cancel booking",
       "recordCashPayment": "Record cash payment",
+      "recordBankTransferPayment": "Mark bank transfer received",
+      "recordMobileMoneyPayment": "Mark Mobile Money received",
       "readOnly": "Editing requires the bookings.write permission.",
       "assistedStatusHint": "Use the Assisted validation panel to approve or reject this request."
     },
@@ -103,6 +105,20 @@
       "noteLabel": "Note (optional)",
       "notePlaceholder": "E.g. till receipt, receipt number…",
       "confirm": "Collect cash"
+    },
+    "bankTransferDialog": {
+      "title": "Mark bank transfer received",
+      "description": "Confirm that the bank transfer for this booking was received? It will move to confirmed status.",
+      "noteLabel": "Note (optional)",
+      "notePlaceholder": "E.g. bank reference, receipt date…",
+      "confirm": "Confirm transfer"
+    },
+    "mobileMoneyDialog": {
+      "title": "Mark Mobile Money payment received",
+      "description": "Confirm that the Mobile Money payment for this booking was received? It will move to confirmed status.",
+      "noteLabel": "Note (optional)",
+      "notePlaceholder": "E.g. operator reference, receipt date…",
+      "confirm": "Confirm payment"
     },
     "linesEmpty": "No lines.",
     "linesAriaLabel": "Booking lines",
@@ -229,6 +245,38 @@
       "rejected": "Rejected"
     }
   },
+  "paymentProofs": {
+    "title": "Payment proofs",
+    "subtitle": "Receipts uploaded by the customer — approve to confirm the booking, or request a new proof.",
+    "empty": "No proofs uploaded.",
+    "statusLabel": "Status",
+    "view": "View",
+    "viewing": "Opening…",
+    "approve": "Approve payment",
+    "approveSuccess": "Proof approved — booking confirmed.",
+    "requestResubmit": "Request new proof",
+    "resubmitDialogTitle": "Request a new proof",
+    "resubmitDialogDescription": "Tell the customer what is missing (unreadable amount, wrong reference…).",
+    "reject": "Reject",
+    "rejectDialogTitle": "Reject proof",
+    "rejectDialogDescription": "The booking will stay pending payment. The customer can upload another proof.",
+    "rejectConfirm": "Reject",
+    "rejectSuccess": "Proof rejected.",
+    "staffNoteLabel": "Message to customer",
+    "staffNotePlaceholder": "E.g. The amount does not match the booking total.",
+    "resubmitConfirm": "Send request",
+    "resubmitSuccess": "Resubmit request recorded.",
+    "methods": {
+      "bank_transfer": "Bank transfer",
+      "mobile_money": "Mobile Money"
+    },
+    "statuses": {
+      "pending_review": "Awaiting verification",
+      "approved": "Approved",
+      "resubmit_requested": "New proof requested",
+      "rejected": "Rejected"
+    }
+  },
   "approval": {
     "title": "Assisted booking validation",
     "intro": "Approve the request, reject it with a reason, or send the payment link once validated.",
@@ -236,6 +284,8 @@
     "reject": "Reject",
     "invitePayment": "Invite to pay",
     "cashPaymentHint": "The customer chose cash on site. Record the payment from the actions bar.",
+    "bankTransferPaymentHint": "The customer chose bank transfer. Review the proof in the Documents tab, or mark the transfer as received from the actions bar.",
+    "mobileMoneyPaymentHint": "The customer chose Mobile Money. Review the proof in the Documents tab, or mark the payment as received from the actions bar.",
     "totalLabel": "Total ({currency})",
     "totalHint": "Adjust the total if needed before approval.",
     "totalOverrideHint": "Auto-calculated from traveler prices. Edit to apply a manual override.",

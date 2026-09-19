@@ -1,11 +1,18 @@
 'use client';
 
-import type { BookingPreferredPaymentMethod, PropertyDetail } from '@africatourismgate/types';
+import type {
+  BookingPreferredPaymentMethod,
+  PropertyDetail,
+  PublicMobileMoneyCountry,
+  PublicPaymentBankAccount,
+} from '@africatourismgate/types';
 import { Button, Spinner } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { createBooking, createBookingCheckoutSession, requestBooking } from '../../lib/api/booking';
+import { listPublicPaymentBankAccounts } from '../../lib/api/public-payment-bank-accounts';
+import { listPublicMobileMoneyConfig } from '../../lib/api/public-mobile-money';
 import { uploadBookingIdentityDocument } from '../../lib/api/booking-identity-documents';
 import { formatCarPrice } from '../../lib/cars/listings';
 import type { VehicleDetail } from '../../lib/cars/types';
@@ -21,6 +28,7 @@ import { formatCruisePrice } from '../../lib/cruises/listings';
 import type { CruiseSailingDetail } from '../../lib/cruises/types';
 import { ensureClientAccessToken, getClientAccessToken } from '../../lib/auth/client-session';
 import { useBookingItemTypeModes } from '../../components/booking-modes-provider';
+import { useWebPaymentMethods } from '../../components/payment-methods-provider';
 import { isAssistedBookingDraft } from '../../lib/bookings/booking-mode';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatHotelPrice } from '../../lib/hotels/listings';
@@ -48,6 +56,8 @@ import { CheckoutPageShell } from './checkout-page-shell';
 import { CheckoutManifestForm, emptyManifestEntryDraft, manifestDraftToPayload, type ManifestEntryDraft, type ManifestFieldErrors } from './checkout-manifest-form';
 import { CheckoutRecapLine } from './checkout-recap-line';
 import { StripePaymentError } from './stripe-payment-error';
+import { BankTransferAccountsPanel } from './bank-transfer-accounts-panel';
+import { MobileMoneyInstructionsPanel } from './mobile-money-instructions-panel';
 import { createApiClient } from '@africatourismgate/api-client';
 
 type Props = {
@@ -77,6 +87,64 @@ export function ReservationRecapPageContent({ draft }: Props) {
   const [manifestErrors, setManifestErrors] = useState<Record<number, ManifestFieldErrors>>({});
   const [preferredPaymentMethod, setPreferredPaymentMethod] =
     useState<BookingPreferredPaymentMethod | null>(null);
+  const [bankAccounts, setBankAccounts] = useState<PublicPaymentBankAccount[]>([]);
+  const [bankAccountsLoading, setBankAccountsLoading] = useState(false);
+  const [mobileMoneyCountries, setMobileMoneyCountries] = useState<
+    PublicMobileMoneyCountry[]
+  >([]);
+  const [mobileMoneyLoading, setMobileMoneyLoading] = useState(false);
+  const paymentMethods = useWebPaymentMethods();
+
+  useEffect(() => {
+    if (
+      preferredPaymentMethod &&
+      !paymentMethods[preferredPaymentMethod]
+    ) {
+      setPreferredPaymentMethod(null);
+    }
+  }, [paymentMethods, preferredPaymentMethod]);
+
+  useEffect(() => {
+    if (preferredPaymentMethod !== 'bank_transfer') {
+      return;
+    }
+    let cancelled = false;
+    setBankAccountsLoading(true);
+    void listPublicPaymentBankAccounts()
+      .then((accounts) => {
+        if (!cancelled) setBankAccounts(accounts);
+      })
+      .catch(() => {
+        if (!cancelled) setBankAccounts([]);
+      })
+      .finally(() => {
+        if (!cancelled) setBankAccountsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [preferredPaymentMethod]);
+
+  useEffect(() => {
+    if (preferredPaymentMethod !== 'mobile_money') {
+      return;
+    }
+    let cancelled = false;
+    setMobileMoneyLoading(true);
+    void listPublicMobileMoneyConfig()
+      .then((countries) => {
+        if (!cancelled) setMobileMoneyCountries(countries);
+      })
+      .catch(() => {
+        if (!cancelled) setMobileMoneyCountries([]);
+      })
+      .finally(() => {
+        if (!cancelled) setMobileMoneyLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [preferredPaymentMethod]);
 
   useEffect(() => {
     let cancelled = false;
@@ -387,6 +455,20 @@ export function ReservationRecapPageContent({ draft }: Props) {
         return;
       }
 
+      if (preferredPaymentMethod === 'bank_transfer') {
+        router.push(
+          `/booking/success?booking_id=${booking.booking.id}&payment=bank_transfer`,
+        );
+        return;
+      }
+
+      if (preferredPaymentMethod === 'mobile_money') {
+        router.push(
+          `/booking/success?booking_id=${booking.booking.id}&payment=mobile_money`,
+        );
+        return;
+      }
+
       const checkout = await createBookingCheckoutSession(accessToken, booking.booking.id);
       window.location.assign(checkout.url);
     } catch (err: unknown) {
@@ -685,48 +767,130 @@ export function ReservationRecapPageContent({ draft }: Props) {
                   {ck.paymentMethodTitle}
                 </legend>
                 <p className="text-sm text-atg-muted">{ck.paymentMethodHint}</p>
-                <label className="flex cursor-pointer gap-3 rounded-lg border border-atg-border p-3 has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:border-atg-border">
-                  <input
-                    type="radio"
-                    name="preferredPaymentMethod"
-                    value="stripe"
-                    checked={preferredPaymentMethod === 'stripe'}
-                    onChange={() => {
-                      setPreferredPaymentMethod('stripe');
-                      setError(null);
+                {paymentMethods.stripe ? (
+                  <label className="flex cursor-pointer gap-3 rounded-lg border border-atg-border p-3 has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:border-atg-border">
+                    <input
+                      type="radio"
+                      name="preferredPaymentMethod"
+                      value="stripe"
+                      checked={preferredPaymentMethod === 'stripe'}
+                      onChange={() => {
+                        setPreferredPaymentMethod('stripe');
+                        setError(null);
+                      }}
+                      className="mt-1"
+                    />
+                    <span>
+                      <span className="block text-sm font-medium text-atg-fg">
+                        {ck.paymentMethodStripe}
+                      </span>
+                      <span className="block text-xs text-atg-muted">
+                        {ck.paymentMethodStripeHint}
+                      </span>
+                    </span>
+                  </label>
+                ) : null}
+                {paymentMethods.cash ? (
+                  <label className="flex cursor-pointer gap-3 rounded-lg border border-atg-border p-3 has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:border-atg-border">
+                    <input
+                      type="radio"
+                      name="preferredPaymentMethod"
+                      value="cash"
+                      checked={preferredPaymentMethod === 'cash'}
+                      onChange={() => {
+                        setPreferredPaymentMethod('cash');
+                        setError(null);
+                      }}
+                      className="mt-1"
+                    />
+                    <span>
+                      <span className="block text-sm font-medium text-atg-fg">
+                        {ck.paymentMethodCash}
+                      </span>
+                      <span className="block text-xs text-atg-muted">
+                        {ck.paymentMethodCashHint}
+                      </span>
+                    </span>
+                  </label>
+                ) : null}
+                {paymentMethods.bank_transfer ? (
+                  <label className="flex cursor-pointer gap-3 rounded-lg border border-atg-border p-3 has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:border-atg-border">
+                    <input
+                      type="radio"
+                      name="preferredPaymentMethod"
+                      value="bank_transfer"
+                      checked={preferredPaymentMethod === 'bank_transfer'}
+                      onChange={() => {
+                        setPreferredPaymentMethod('bank_transfer');
+                        setError(null);
+                      }}
+                      className="mt-1"
+                    />
+                    <span>
+                      <span className="block text-sm font-medium text-atg-fg">
+                        {ck.paymentMethodBankTransfer}
+                      </span>
+                      <span className="block text-xs text-atg-muted">
+                        {ck.paymentMethodBankTransferHint}
+                      </span>
+                    </span>
+                  </label>
+                ) : null}
+                {paymentMethods.mobile_money ? (
+                  <label className="flex cursor-pointer gap-3 rounded-lg border border-atg-border p-3 has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:border-atg-border">
+                    <input
+                      type="radio"
+                      name="preferredPaymentMethod"
+                      value="mobile_money"
+                      checked={preferredPaymentMethod === 'mobile_money'}
+                      onChange={() => {
+                        setPreferredPaymentMethod('mobile_money');
+                        setError(null);
+                      }}
+                      className="mt-1"
+                    />
+                    <span>
+                      <span className="block text-sm font-medium text-atg-fg">
+                        {ck.paymentMethodMobileMoney}
+                      </span>
+                      <span className="block text-xs text-atg-muted">
+                        {ck.paymentMethodMobileMoneyHint}
+                      </span>
+                    </span>
+                  </label>
+                ) : null}
+                {preferredPaymentMethod === 'bank_transfer' ? (
+                  <BankTransferAccountsPanel
+                    accounts={bankAccounts}
+                    loading={bankAccountsLoading}
+                    labels={{
+                      title: ck.bankTransferAccountsTitle,
+                      empty: ck.bankTransferAccountsEmpty,
+                      holder: ck.bankTransferHolder,
+                      accountNumber: ck.bankTransferAccountNumber,
+                      swift: ck.bankTransferSwift,
+                      currency: ck.bankTransferCurrency,
+                      referenceHint: ck.bankTransferReferenceHint,
                     }}
-                    className="mt-1"
                   />
-                  <span>
-                    <span className="block text-sm font-medium text-atg-fg">
-                      {ck.paymentMethodStripe}
-                    </span>
-                    <span className="block text-xs text-atg-muted">
-                      {ck.paymentMethodStripeHint}
-                    </span>
-                  </span>
-                </label>
-                <label className="flex cursor-pointer gap-3 rounded-lg border border-atg-border p-3 has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:border-atg-border">
-                  <input
-                    type="radio"
-                    name="preferredPaymentMethod"
-                    value="cash"
-                    checked={preferredPaymentMethod === 'cash'}
-                    onChange={() => {
-                      setPreferredPaymentMethod('cash');
-                      setError(null);
+                ) : null}
+                {preferredPaymentMethod === 'mobile_money' ? (
+                  <MobileMoneyInstructionsPanel
+                    countries={mobileMoneyCountries}
+                    loading={mobileMoneyLoading}
+                    labels={{
+                      title: ck.mobileMoneyTitle,
+                      empty: ck.mobileMoneyEmpty,
+                      country: ck.mobileMoneyCountry,
+                      operator: ck.mobileMoneyOperator,
+                      phone: ck.mobileMoneyPhone,
+                      label: ck.mobileMoneyLabel,
+                      referenceHint: ck.mobileMoneyReferenceHint,
+                      selectCountry: ck.mobileMoneySelectCountry,
+                      selectOperator: ck.mobileMoneySelectOperator,
                     }}
-                    className="mt-1"
                   />
-                  <span>
-                    <span className="block text-sm font-medium text-atg-fg">
-                      {ck.paymentMethodCash}
-                    </span>
-                    <span className="block text-xs text-atg-muted">
-                      {ck.paymentMethodCashHint}
-                    </span>
-                  </span>
-                </label>
+                ) : null}
               </fieldset>
             ) : null}
 
@@ -760,14 +924,22 @@ export function ReservationRecapPageContent({ draft }: Props) {
                     ? ck.requestSubmitting
                     : preferredPaymentMethod === 'cash'
                       ? ck.cashSubmitting
-                      : ck.stripeRedirecting
+                      : preferredPaymentMethod === 'bank_transfer'
+                        ? ck.bankTransferSubmitting
+                        : preferredPaymentMethod === 'mobile_money'
+                          ? ck.mobileMoneySubmitting
+                          : ck.stripeRedirecting
                 }
               >
                 {isAssisted
                   ? ck.requestBooking
                   : preferredPaymentMethod === 'cash'
                     ? ck.payWithCash
-                    : ck.payWithStripe}
+                    : preferredPaymentMethod === 'bank_transfer'
+                      ? ck.payWithBankTransfer
+                      : preferredPaymentMethod === 'mobile_money'
+                        ? ck.payWithMobileMoney
+                        : ck.payWithStripe}
               </Button>
             </div>
           </div>

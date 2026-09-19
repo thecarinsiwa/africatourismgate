@@ -83,6 +83,18 @@ export function BookingVerifyPageContent() {
           );
           return;
         }
+        if (detail.booking.preferredPaymentMethod === 'bank_transfer') {
+          router.push(
+            `/booking/success?booking_id=${resolvedBookingId}&payment=bank_transfer`,
+          );
+          return;
+        }
+        if (detail.booking.preferredPaymentMethod === 'mobile_money') {
+          router.push(
+            `/booking/success?booking_id=${resolvedBookingId}&payment=mobile_money`,
+          );
+          return;
+        }
 
         const checkout = await createBookingCheckoutSession(
           response.accessToken,

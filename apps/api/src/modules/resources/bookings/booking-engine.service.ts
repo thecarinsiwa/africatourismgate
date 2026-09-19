@@ -150,11 +150,13 @@ export class BookingEngineService {
     userId: string,
     actorUserId?: string,
   ): Promise<CreateBookingResponseDto> {
-    this.assertPreferredPaymentMethod(dto);
-    await this.assertCheckoutOrganizationScope(dto, actorUserId ?? userId);
-    const pricing = await this.resolveCheckoutPricing(dto);
     const isPosStaffCheckout =
       Boolean(actorUserId?.trim()) && Boolean(dto.organizationId?.trim());
+    await this.assertPreferredPaymentMethod(dto, {
+      skipWebPaymentGate: isPosStaffCheckout,
+    });
+    await this.assertCheckoutOrganizationScope(dto, actorUserId ?? userId);
+    const pricing = await this.resolveCheckoutPricing(dto);
     const initialStatus = isPosStaffCheckout ? 'pending_payment' : 'draft';
 
     const bookingId = await this.bookingsRepository.manager.transaction(
@@ -268,7 +270,11 @@ export class BookingEngineService {
     userId: string,
     actorUserId?: string,
   ): Promise<BookingRequestResponseDto> {
-    this.assertPreferredPaymentMethod(dto);
+    const isPosStaffCheckout =
+      Boolean(actorUserId?.trim()) && Boolean(dto.organizationId?.trim());
+    await this.assertPreferredPaymentMethod(dto, {
+      skipWebPaymentGate: isPosStaffCheckout,
+    });
     await this.assertCheckoutOrganizationScope(dto, actorUserId ?? userId);
     const pricing = await this.resolveCheckoutPricing(dto);
 
@@ -647,6 +653,81 @@ export class BookingEngineService {
     return this.confirmBooking(bookingId, actorUserId, confirmReason);
   }
 
+  async recordBankTransferPayment(
+    bookingId: string,
+    actorUserId?: string,
+    note?: string,
+  ): Promise<BookingDetailDto> {
+    const booking = await this.findBookingOrThrow(bookingId);
+    if (booking.status !== 'pending_payment') {
+      throw new BadRequestException(
+        `Enregistrement du paiement hors ligne impossible : statut actuel « ${booking.status} ».`,
+      );
+    }
+    const provider = booking.preferredPaymentMethod;
+    if (provider !== 'bank_transfer' && provider !== 'mobile_money') {
+      throw new BadRequestException(
+        'Cette réservation n’est pas en attente d’un virement ou d’un paiement Mobile Money.',
+      );
+    }
+    if (booking.totalCents < 1) {
+      throw new BadRequestException('Montant de réservation invalide.');
+    }
+
+    const existingSucceeded = await this.paymentsRepository.findOne({
+      where: { bookingId, status: 'succeeded', deletedAt: IsNull() },
+    });
+    if (existingSucceeded) {
+      throw new BadRequestException(
+        'Un paiement a déjà été enregistré pour cette réservation.',
+      );
+    }
+
+    const pending = await this.paymentsRepository.findOne({
+      where: {
+        bookingId,
+        status: 'pending',
+        provider,
+        deletedAt: IsNull(),
+      },
+      order: { createdAt: 'DESC' },
+    });
+
+    const trimmedNote = note?.trim();
+    const confirmReason =
+      provider === 'mobile_money'
+        ? trimmedNote
+          ? `Paiement Mobile Money reçu — ${trimmedNote}`
+          : 'Paiement Mobile Money reçu'
+        : trimmedNote
+          ? `Virement bancaire reçu — ${trimmedNote}`
+          : 'Virement bancaire reçu';
+
+    if (pending) {
+      pending.status = 'succeeded';
+      pending.updatedByUserId = actorUserId ?? null;
+      await this.paymentsRepository.save(pending);
+    } else {
+      const paymentId = newId();
+      const externalPrefix =
+        provider === 'mobile_money' ? 'mobile-money' : 'bank-transfer';
+      await this.paymentsRepository.save(
+        this.paymentsRepository.create({
+          id: paymentId,
+          bookingId,
+          amountCents: booking.totalCents,
+          currency: booking.currency,
+          status: 'succeeded',
+          provider,
+          externalId: `${externalPrefix}-${paymentId}`,
+          createdByUserId: actorUserId ?? null,
+        } as DeepPartial<Payments>),
+      );
+    }
+
+    return this.confirmBooking(bookingId, actorUserId, confirmReason);
+  }
+
   async cancelBooking(
     id: string,
     actorUserId?: string,
@@ -795,10 +876,23 @@ export class BookingEngineService {
     };
   }
 
-  private assertPreferredPaymentMethod(dto: BookingCheckoutDto): void {
+  private async assertPreferredPaymentMethod(
+    dto: BookingCheckoutDto,
+    options?: { skipWebPaymentGate?: boolean },
+  ): Promise<void> {
     if (!dto.preferredPaymentMethod) {
       throw new BadRequestException(
         'Le mode de paiement (preferredPaymentMethod) est obligatoire.',
+      );
+    }
+    if (options?.skipWebPaymentGate) {
+      return;
+    }
+    const methods =
+      await this.organizationSettingsService.getResolvedWebPaymentMethods();
+    if (!methods[dto.preferredPaymentMethod]) {
+      throw new BadRequestException(
+        `Le mode de paiement « ${dto.preferredPaymentMethod} » n'est pas activé pour le site public.`,
       );
     }
   }

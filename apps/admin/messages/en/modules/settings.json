@@ -4,7 +4,8 @@
     "settings": "Settings",
     "emails": "Emails",
     "donations": "Donations",
-    "bankAccounts": "Bank accounts"
+    "bankAccounts": "Bank accounts",
+    "mobileMoney": "Mobile Money"
   },
   "page": {
     "title": "Settings",
@@ -34,7 +35,8 @@
       "holdMinutesInvalid": "Invalid hold duration (positive integer).",
       "displayNameRequired": "Display name is required.",
       "loyaltyRateInvalid": "Points rate must be a non-negative integer.",
-      "programCodeInvalid": "Program code is required (max 32 characters)."
+      "programCodeInvalid": "Program code is required (max 32 characters).",
+      "paymentMethodsRequired": "Enable at least one payment method."
     },
     "sections": {
       "contact": {
@@ -62,6 +64,14 @@
         "modesDescription": "Immediate: Stripe payment at checkout. Assisted: request pending staff approval.",
         "modeImmediate": "Immediate (payment)",
         "modeAssisted": "Assisted (request)",
+        "paymentMethodsTitle": "Payment methods (public site)",
+        "paymentMethodsDescription": "Select the methods offered on web checkout. POS is not affected. Bank transfer also needs published bank accounts. Mobile Money needs countries, operators and numbers configured.",
+        "paymentMethods": {
+          "stripe": "Card (Stripe)",
+          "cash": "Cash on site",
+          "bank_transfer": "Bank transfer",
+          "mobile_money": "Mobile Money"
+        },
         "itemTypes": {
           "room": "Accommodation (room)",
           "flight_class": "Flight",
@@ -283,6 +293,67 @@
       "saving": "Saving…",
       "dirty": "Unsaved changes",
       "clean": "No pending changes"
+    }
+  },
+  "mobileMoney": {
+    "page": {
+      "title": "Mobile Money",
+      "intro": "Countries, operators and payment numbers for offline Mobile Money transfers.",
+      "denied": "You do not have permission to view Mobile Money configuration."
+    },
+    "sections": {
+      "countries": "Countries",
+      "operators": "Operators",
+      "numbers": "Payment numbers"
+    },
+    "list": {
+      "orgSelectAria": "Organization",
+      "newCountry": "New country",
+      "newOperator": "New operator",
+      "newNumber": "New number",
+      "emptyCountries": "No countries configured.",
+      "emptyOperators": "No operators for this country.",
+      "emptyNumbers": "No numbers for this operator.",
+      "selectCountry": "Select a country to manage its operators.",
+      "selectOperator": "Select an operator to manage its numbers.",
+      "deleteTitle": "Delete",
+      "deleteConfirm": "This item will be deleted. Related operators and numbers will also be removed when applicable.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel"
+    },
+    "columns": {
+      "code": "Code",
+      "country": "Country",
+      "operator": "Operator",
+      "logo": "Logo",
+      "phone": "Number",
+      "label": "Label",
+      "active": "Active"
+    },
+    "form": {
+      "createCountry": "New country",
+      "editCountry": "Edit country",
+      "createOperator": "New operator",
+      "editOperator": "Edit operator",
+      "createNumber": "New number",
+      "editNumber": "Edit number",
+      "code": "ISO code (2 letters)",
+      "name": "Name",
+      "phone": "E.164 number",
+      "label": "Label",
+      "logo": "Logo",
+      "logoHint": "JPEG, PNG or WebP, max 2 MB.",
+      "logoInvalid": "Invalid image format (JPEG, PNG or WebP).",
+      "logoTooLarge": "Image too large (max 2 MB).",
+      "sortOrder": "Order",
+      "isActive": "Active",
+      "codeInvalid": "Country code must be 2 letters (e.g. CD, KE).",
+      "nameRequired": "Name is required.",
+      "operatorNameRequired": "Operator name is required.",
+      "phoneInvalid": "Number must be E.164 format (e.g. +243970000000).",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving…"
     }
   },
   "donations": {

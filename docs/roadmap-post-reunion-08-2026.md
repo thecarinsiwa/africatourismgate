@@ -18,7 +18,7 @@ Ce document couvre les **corrections** constatées en démo et les **intégratio
 | ----- | -------- |
 | Sync API fournisseurs | **Hors V1** — back-office + réservation assistée ; sync en V2 |
 | Paiements | Carte (Stripe) + **virement** + **acompte** ; cash on site seul = risqué pour le web |
-| Mobile money | Phase ultérieure (Est-Afrique) |
+| Mobile money | **V1 offline livré** (numéro + preuve) ; intégration PSP API = V2 (Est-Afrique) |
 | Contact d’urgence | À intégrer au manifeste |
 | Cartographie | OSM/Leaflet OK ; Google Maps = budget / phase ultérieure |
 | Auth partenaires | Piste Gmail / OAuth pour onboarding |
@@ -77,10 +77,10 @@ Règles :
 | ---------------- | ----------- | ---------------------- |
 | Validation manifeste stricte (passeport, etc.) | ⚠️ Seul le nom complet est vraiment requis | `checkout-manifest-form.tsx`, `booking-manifest-entry.dto.ts`, `booking-manifest-entry.entity.ts` |
 | Contact d’urgence | ✅ Name + phone requis checkout ; PDF + i18n (voir [pr-04-emergency-contact-test.md](./pr-04-emergency-contact-test.md)) | `emergency_contact_*`, manifeste Web/Admin/POS, `booking-detail-pdf*` |
-| Conditions médicales structurées | ⚠️ Texte libre `conditions` | `booking_manifest_entries.conditions` |
+| Conditions médicales structurées | ✅ 4 champs optionnels + legacy `conditions` (voir [pr-05-medical-conditions-test.md](./pr-05-medical-conditions-test.md)) | `allergies`, `serious_medical_conditions`, `current_medications`, `dietary_notes`, manifeste Web/Admin/POS, `booking-detail-pdf*` |
 | PDF confirmation fiable (prod) | ✅ PJ confirmation + logo durci (voir [pr-02-pdf-confirmation-fix.md](./pr-02-pdf-confirmation-fix.md)) | `booking-detail-pdf*.ts`, `booking-engine.service.ts`, `email-attachments.ts` |
 | Téléchargement PDF côté compte client | ✅ Endpoint + bouton compte (voir [pr-03-pdf-client-download.md](./pr-03-pdf-client-download.md)) | `GET /bookings/:id/confirmation-pdf`, `AccountBookingDetail` |
-| Virement bancaire au checkout | ❌ Comptes org CRUD seulement | `organization-bank-accounts/`, `preferredPaymentMethod: stripe \| cash` |
+| Virement bancaire au checkout | ✅ `bank_transfer` + activation admin + comptes + **preuves** (voir [pr-06-bank-transfer-test.md](./pr-06-bank-transfer-test.md), [pr-06b-payment-proofs-test.md](./pr-06b-payment-proofs-test.md)) | `payment_methods`, `booking_payment_proofs`, checkout web, admin Documents |
 | Acomptes / paiements partiels | ❌ | `payments`, Stripe refund partiel seulement |
 | Politique cash web | ⚠️ `cash` disponible côté web | `packages/types/src/booking.ts`, checkout web |
 | Liaison document ID ↔ voyageur | ❌ Upload non lié à l’entrée manifeste | `booking_identity_documents` |
@@ -88,7 +88,7 @@ Règles :
 | Notifications staff persistées | ⚠️ Poll client + `localStorage` | `apps/admin/lib/notifications/use-admin-notifications.ts` |
 | Google Maps | ❌ Leaflet + OSM | `apps/web/components/maps/*`, `coordinate-picker-map.tsx` |
 | Sync API fournisseurs | ❌ Exclu V1 volontairement | — |
-| Mobile money | ❌ | — |
+| Mobile money | ✅ Offline (pays/opérateur/numéro + preuves + email) — voir [pr-13-mobile-money-test.md](./pr-13-mobile-money-test.md) ; PSP API reporté | `mobile_money_*`, `payment_methods.mobile_money`, checkout web, admin Paramètres |
 | Réservation immédiate / assistée | ✅ Mature | `booking-engine.service.ts`, `booking-approval.service.ts` |
 | Assignation guides | ✅ Mature | `booking-guide-assignments.service.ts` |
 
@@ -110,7 +110,7 @@ Règles :
 | PR-10 | 2 | Onboarding partenaires (questionnaire + invitation Gmail) | Moyenne | `feature/pr-10-partner-onboarding` | PR-09 |
 | PR-11 | 2 | Liaison document identité ↔ entrée manifeste | Moyenne | `feature/pr-11-manifest-doc-link` | — |
 | PR-12 | 2 | Notifications admin persistées (serveur) | Basse | `feature/pr-12-notifications-persist` | — |
-| PR-13 | 3 | Mobile money (Est-Afrique) | Basse | `feature/pr-13-mobile-money` | PR-07 |
+| PR-13 | 3 | Mobile money offline (Est-Afrique) — **config + checkout + preuves livrés** ; PSP API V2 | Basse | `feature/pr-13-mobile-money` | PR-06 / preuves |
 | PR-14 | 3 | Google Maps (clé API + import / enrichissement) | Basse | `feature/pr-14-google-maps` | — |
 | PR-15 | 3 | Sync inventaire fournisseurs (Excel/FTP puis API) | Basse | `feature/pr-15-supplier-sync` | PR-10 |
 
@@ -328,6 +328,8 @@ Critères d’acceptation :
 - Anciennes résas avec `conditions` restent lisibles.
 - i18n.
 
+Scénario de test : docs/pr-05-medical-conditions-test.md
+
 À la fin : migration + mapping rétrocompat + test.
 ```
 
@@ -361,6 +363,9 @@ Critères d’acceptation :
 - Client peut choisir virement et voit les coordonnées bancaires.
 - Réservation non confirmed tant que staff n’a pas enregistré le paiement.
 - Migration enum MySQL + types + Swagger + api-client.
+
+Scénario de test : docs/pr-06-bank-transfer-test.md  
+Preuves de paiement (upload client + review admin) : docs/pr-06b-payment-proofs-test.md
 
 À la fin : scénario web + admin + fichiers.
 ```
@@ -558,30 +563,32 @@ Critères d’acceptation :
 
 **Branche :** `feature/pr-13-mobile-money`  
 **Priorité :** Basse  
-**Dépend de :** PR-07
+**Dépend de :** PR-06 / preuves (pattern offline)  
+**État V1 :** ✅ **Livré en mode offline** (config org + checkout + preuves + emails + guards). Intégration PSP (Flutterwave / MoMo API) **reportée** en V2.
+
+Scénario de test : [pr-13-mobile-money-test.md](./pr-13-mobile-money-test.md)
 
 ```
 Projet : Africa Tourism Gate (pnpm monorepo).
-Branche : crée et bascule sur `feature/pr-13-mobile-money`.
+Branche : `feature/pr-13-mobile-money`.
 
-Livrable PR-13 : Mobile money
-Références :
-- Module stripe/payments patterns
-- preferredPaymentMethod
-- Contrainte : un provider concret doit être choisi (ex. Flutterwave, Africa's Talking, MoMo API) — fixer le provider dans la PR description avant code.
+Livrable PR-13 (V1 — offline, livré) :
+- preferredPaymentMethod 'mobile_money' + setting payment_methods.mobile_money
+- Tables mobile_money_countries / operators / payment_numbers + CRUD admin + logos
+- Checkout web : pays → opérateur → numéro + preuve (même pipeline que bank_transfer)
+- Emails d’instructions + guards Stripe / invite / rappel
+- Admin : Marquer Mobile Money reçu ou valider preuve
 
-Objectif :
-1. Ajouter preferredPaymentMethod 'mobile_money' (ou provider-specific).
-2. Intégrer checkout / webhook / confirmation comme Stripe.
-3. Couvrir au moins un pays cible (RW/UG/BI/CD) selon le provider.
-4. Admin : statut paiement visible.
+Hors scope V1 / V2 :
+1. Choisir un provider PSP (Flutterwave, Africa's Talking, MoMo API) — fixer avant code.
+2. Checkout / webhook / confirmation comme Stripe.
+3. Sandbox + runbook env vars + idempotence webhook.
 
-Critères d’acceptation :
-- Paiement test sandbox → booking confirmed.
-- Webhook idempotent.
-- Documentation env vars.
+Critères d’acceptation V1 :
+- Setting off → MM absent du checkout ; setting on + config → instructions + preuve → confirmed.
+- Voir docs/pr-13-mobile-money-test.md.
 
-À la fin : provider choisi + runbook + fichiers.
+À la fin (V1) : doc test + fichiers listés dans pr-13-mobile-money-test.md.
 ```
 
 ---

@@ -2,6 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { BookingItems, Bookings, Payments } from '../../../../entities/generated';
 import type { BookingStatusHistoryEntry } from '../booking-status-history.service';
 import type { BookingIdentityDocumentDto } from './booking-identity-document.dto';
+import type { BookingPaymentProofDto } from './booking-payment-proof.dto';
 
 export class BookingClientDto {
   @ApiProperty({ format: 'uuid' })
@@ -47,6 +48,9 @@ export class BookingAdminDetailDto {
 
   @ApiPropertyOptional({ type: [Object] })
   identityDocuments?: BookingIdentityDocumentDto[];
+
+  @ApiPropertyOptional({ type: [Object] })
+  paymentProofs?: BookingPaymentProofDto[];
 
   @ApiPropertyOptional({
     description: 'Unread customer messages for staff on this booking thread.',

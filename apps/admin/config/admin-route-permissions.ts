@@ -40,6 +40,7 @@ export const ADMIN_ROUTE_ACCESS_RULES: RouteAccessRule[] = [
   { prefix: '/contenu/tickets', permission: 'support_tickets.read' },
   { prefix: '/contenu/messages', permission: 'support_tickets.write' },
   { prefix: '/parametres/comptes', permission: 'organization_bank_accounts.read' },
+  { prefix: '/parametres/mobile-money', permission: 'mobile_money.read' },
   { prefix: '/parametres/emails', permission: 'organization_settings.read' },
   { prefix: '/parametres', permission: 'organization_settings.read' },
   { prefix: '/notifications', authenticatedOnly: true },

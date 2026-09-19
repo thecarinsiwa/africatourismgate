@@ -38,6 +38,7 @@ import { OrganizationSettingsListQueryDto } from './dto/organization-settings-li
 import { PublicBrandingDto } from './dto/public-branding.dto';
 import { PublicBrandingQueryDto } from './dto/public-branding-query.dto';
 import { PublicBookingModesDto } from './dto/public-booking-modes.dto';
+import { PublicPaymentMethodsDto } from './dto/public-payment-methods.dto';
 import { PublicContactDto } from './dto/public-contact.dto';
 import { OrganizationSettingsService } from './organization-settings.service';
 
@@ -90,6 +91,18 @@ export class OrganizationSettingsController {
     @Query() query: PublicBrandingQueryDto,
   ): Promise<PublicBookingModesDto> {
     return this.service.findPublicBookingModes(query.organizationSlug);
+  }
+
+  @Public()
+  @Get('public/payment-methods')
+  @ApiOperation({
+    summary: 'Get enabled payment methods for the public web checkout',
+  })
+  @ApiOkResponse({ type: PublicPaymentMethodsDto })
+  findPublicPaymentMethods(
+    @Query() query: PublicBrandingQueryDto,
+  ): Promise<PublicPaymentMethodsDto> {
+    return this.service.findPublicPaymentMethods(query.organizationSlug);
   }
 
   @Put('bulk')

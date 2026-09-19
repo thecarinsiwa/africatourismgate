@@ -4,7 +4,8 @@
     "settings": "Paramètres",
     "emails": "E-mails",
     "donations": "Dons",
-    "bankAccounts": "Comptes bancaires"
+    "bankAccounts": "Comptes bancaires",
+    "mobileMoney": "Mobile Money"
   },
   "page": {
     "title": "Paramètres",
@@ -34,7 +35,8 @@
       "holdMinutesInvalid": "Durée de retenue invalide (entier positif).",
       "displayNameRequired": "Le nom affiché est obligatoire.",
       "loyaltyRateInvalid": "Le taux de points doit être un entier positif ou nul.",
-      "programCodeInvalid": "Le code programme est obligatoire (32 caractères max)."
+      "programCodeInvalid": "Le code programme est obligatoire (32 caractères max).",
+      "paymentMethodsRequired": "Activez au moins un moyen de paiement."
     },
     "sections": {
       "contact": {
@@ -62,6 +64,14 @@
         "modesDescription": "Immédiat : paiement Stripe au checkout. Assisté : demande en attente de validation (CE-3).",
         "modeImmediate": "Immédiat (paiement)",
         "modeAssisted": "Assisté (demande)",
+        "paymentMethodsTitle": "Moyens de paiement (site public)",
+        "paymentMethodsDescription": "Cochez les moyens proposés au checkout web. Le POS n’est pas concerné. Le virement nécessite aussi des comptes bancaires publiés. Mobile Money nécessite pays, opérateurs et numéros configurés.",
+        "paymentMethods": {
+          "stripe": "Carte (Stripe)",
+          "cash": "Espèces sur place",
+          "bank_transfer": "Virement bancaire",
+          "mobile_money": "Mobile Money"
+        },
         "itemTypes": {
           "room": "Hébergement (chambre)",
           "flight_class": "Vol",
@@ -283,6 +293,67 @@
       "saving": "Enregistrement…",
       "dirty": "Modifications non enregistrées",
       "clean": "Aucune modification en attente"
+    }
+  },
+  "mobileMoney": {
+    "page": {
+      "title": "Mobile Money",
+      "intro": "Pays, opérateurs et numéros de paiement pour les transferts Mobile Money hors ligne.",
+      "denied": "Vous n'avez pas la permission de consulter la configuration Mobile Money."
+    },
+    "sections": {
+      "countries": "Pays",
+      "operators": "Opérateurs",
+      "numbers": "Numéros de paiement"
+    },
+    "list": {
+      "orgSelectAria": "Organisation",
+      "newCountry": "Nouveau pays",
+      "newOperator": "Nouvel opérateur",
+      "newNumber": "Nouveau numéro",
+      "emptyCountries": "Aucun pays configuré.",
+      "emptyOperators": "Aucun opérateur pour ce pays.",
+      "emptyNumbers": "Aucun numéro pour cet opérateur.",
+      "selectCountry": "Sélectionnez un pays pour gérer ses opérateurs.",
+      "selectOperator": "Sélectionnez un opérateur pour gérer ses numéros.",
+      "deleteTitle": "Supprimer",
+      "deleteConfirm": "Cet élément sera supprimé. Les opérateurs et numéros liés le seront aussi le cas échéant.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler"
+    },
+    "columns": {
+      "code": "Code",
+      "country": "Pays",
+      "operator": "Opérateur",
+      "logo": "Logo",
+      "phone": "Numéro",
+      "label": "Libellé",
+      "active": "Actif"
+    },
+    "form": {
+      "createCountry": "Nouveau pays",
+      "editCountry": "Modifier le pays",
+      "createOperator": "Nouvel opérateur",
+      "editOperator": "Modifier l'opérateur",
+      "createNumber": "Nouveau numéro",
+      "editNumber": "Modifier le numéro",
+      "code": "Code ISO (2 lettres)",
+      "name": "Nom",
+      "phone": "Numéro E.164",
+      "label": "Libellé",
+      "logo": "Logo",
+      "logoHint": "JPEG, PNG ou WebP, max 2 Mo.",
+      "logoInvalid": "Format d'image invalide (JPEG, PNG ou WebP).",
+      "logoTooLarge": "Image trop lourde (max 2 Mo).",
+      "sortOrder": "Ordre",
+      "isActive": "Actif",
+      "codeInvalid": "Le code pays doit comporter 2 lettres (ex. CD, KE).",
+      "nameRequired": "Le nom est obligatoire.",
+      "operatorNameRequired": "Le nom de l'opérateur est obligatoire.",
+      "phoneInvalid": "Le numéro doit être au format E.164 (ex. +243970000000).",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…"
     }
   },
   "donations": {

@@ -15,13 +15,20 @@ import type {
   Organization,
   OrganizationSetting,
   ResolvedBookingItemTypeModes,
+  ResolvedWebPaymentMethods,
+  WebPaymentMethodKey,
 } from '@africatourismgate/types';
 import {
   BOOKING_ITEM_TYPE_KEYS,
   DEFAULT_BOOKING_ITEM_TYPE_MODES,
   normalizeBookingItemTypeModes,
 } from '@africatourismgate/types/tour-guide';
-import { DEFAULT_LOYALTY_ONEKEY_SETTING } from '@africatourismgate/types/organization-settings';
+import {
+  DEFAULT_LOYALTY_ONEKEY_SETTING,
+  DEFAULT_WEB_PAYMENT_METHODS,
+  WEB_PAYMENT_METHOD_KEYS,
+  normalizeWebPaymentMethods,
+} from '@africatourismgate/types/organization-settings';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -104,6 +111,7 @@ type SettingsFormValues = {
   loyaltyProgramCode: string;
   authVisualIcons: AuthVisualDecorIcon[];
   itemTypeModes: ResolvedBookingItemTypeModes;
+  paymentMethods: ResolvedWebPaymentMethods;
 };
 
 const defaultValues: SettingsFormValues = {
@@ -128,6 +136,7 @@ const defaultValues: SettingsFormValues = {
   loyaltyProgramCode: DEFAULT_LOYALTY_ONEKEY_SETTING.programCode,
   authVisualIcons: [],
   itemTypeModes: { ...DEFAULT_BOOKING_ITEM_TYPE_MODES },
+  paymentMethods: { ...DEFAULT_WEB_PAYMENT_METHODS },
 };
 
 function settingByKey(
@@ -151,6 +160,9 @@ function toFormValues(
   const authVisual = settingByKey(settings, 'auth_visual') as AuthVisualSettingValue | undefined;
   const itemTypeModes = normalizeBookingItemTypeModes(
     settingByKey(settings, 'item_type_modes') as Partial<ResolvedBookingItemTypeModes> | undefined,
+  );
+  const paymentMethods = normalizeWebPaymentMethods(
+    settingByKey(settings, 'payment_methods') as Partial<ResolvedWebPaymentMethods> | undefined,
   );
 
   return {
@@ -178,6 +190,7 @@ function toFormValues(
       onekey?.programCode ?? DEFAULT_LOYALTY_ONEKEY_SETTING.programCode,
     authVisualIcons: authVisualFromSetting(authVisual).map((icon) => ({ ...icon })),
     itemTypeModes,
+    paymentMethods,
   };
 }
 
@@ -345,6 +358,9 @@ export function OrganizationSettingsForm({
     if (!programCode || programCode.length > 32) {
       errors.loyaltyProgramCode = t('validation.programCodeInvalid');
     }
+    if (!WEB_PAYMENT_METHOD_KEYS.some((key) => values.paymentMethods[key])) {
+      errors.paymentMethods = t('validation.paymentMethodsRequired');
+    }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   }
@@ -401,6 +417,11 @@ export function OrganizationSettingsForm({
             settingGroup: 'booking',
             settingKey: 'item_type_modes',
             settingValue: values.itemTypeModes,
+          },
+          {
+            settingGroup: 'booking',
+            settingKey: 'payment_methods',
+            settingValue: values.paymentMethods,
           },
           {
             settingGroup: 'branding',
@@ -684,6 +705,40 @@ export function OrganizationSettingsForm({
                   />
                 ))}
               </div>
+            </div>
+            <div className="space-y-3 border-t border-atg-border pt-4">
+              <p className="text-sm font-medium text-atg-fg">
+                {t('sections.booking.paymentMethodsTitle')}
+              </p>
+              <p className="text-xs text-atg-muted">
+                {t('sections.booking.paymentMethodsDescription')}
+              </p>
+              <div className="space-y-2">
+                {WEB_PAYMENT_METHOD_KEYS.map((method) => (
+                  <label
+                    key={method}
+                    className="flex items-center gap-2 text-sm text-atg-fg"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={values.paymentMethods[method]}
+                      onChange={(e) =>
+                        updateField('paymentMethods', {
+                          ...values.paymentMethods,
+                          [method]: e.target.checked,
+                        })
+                      }
+                      className="rounded border-atg-border"
+                    />
+                    {t(`sections.booking.paymentMethods.${method as WebPaymentMethodKey}`)}
+                  </label>
+                ))}
+              </div>
+              {fieldErrors.paymentMethods ? (
+                <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+                  {fieldErrors.paymentMethods}
+                </p>
+              ) : null}
             </div>
           </Card>
 

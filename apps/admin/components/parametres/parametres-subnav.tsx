@@ -11,6 +11,7 @@ const linkKeys = [
   { href: '/parametres/emails', labelKey: 'emails' as const },
   { href: '/parametres/dons', labelKey: 'donations' as const },
   { href: '/parametres/comptes', labelKey: 'bankAccounts' as const },
+  { href: '/parametres/mobile-money', labelKey: 'mobileMoney' as const },
 ] as const;
 
 export function isParametresLinkActive(pathname: string, href: string): boolean {

@@ -212,6 +212,8 @@ export function usePaymentProviderLabels() {
     () => ({
       stripe: t('stripe'),
       cash: t('cash'),
+      bank_transfer: t('bank_transfer'),
+      mobile_money: t('mobile_money'),
     }),
     [t],
   );
