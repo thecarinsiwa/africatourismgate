@@ -30,6 +30,7 @@ export type BookingDetailPdfLabels = {
   colIdNumber: string;
   colTravelerPrice: string;
   colTravelerNotes: string;
+  emergencyContactPrefix: string;
   guidesSection: string;
   colGuideName: string;
   colGuideRole: string;
@@ -85,6 +86,7 @@ const LABELS: Record<BookingDetailPdfLocale, BookingDetailPdfLabels> = {
     colIdNumber: 'N° document',
     colTravelerPrice: 'Montant',
     colTravelerNotes: 'Notes',
+    emergencyContactPrefix: 'Urgence',
     guidesSection: 'Guides assignés',
     colGuideName: 'Guide',
     colGuideRole: 'Rôle',
@@ -146,6 +148,7 @@ const LABELS: Record<BookingDetailPdfLocale, BookingDetailPdfLabels> = {
     colIdNumber: 'ID no.',
     colTravelerPrice: 'Amount',
     colTravelerNotes: 'Notes',
+    emergencyContactPrefix: 'Emergency',
     guidesSection: 'Assigned guides',
     colGuideName: 'Guide',
     colGuideRole: 'Role',
@@ -207,6 +210,7 @@ const LABELS: Record<BookingDetailPdfLocale, BookingDetailPdfLabels> = {
     colIdNumber: 'N.º documento',
     colTravelerPrice: 'Importe',
     colTravelerNotes: 'Notas',
+    emergencyContactPrefix: 'Emergencia',
     guidesSection: 'Guías asignados',
     colGuideName: 'Guía',
     colGuideRole: 'Rol',

@@ -21,6 +21,11 @@ export type BookingDetailPdfTraveler = {
   conditions?: string | null;
   comment?: string | null;
   other?: string | null;
+  emergencyContactName?: string | null;
+  emergencyContactPhone?: string | null;
+  emergencyContactEmail?: string | null;
+  emergencyContactCountry?: string | null;
+  emergencyContactAddress?: string | null;
 };
 
 export type BookingDetailPdfItineraryStep = {

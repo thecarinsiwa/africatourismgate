@@ -12,6 +12,11 @@ export async function mockManifestApi(page: Page): Promise<void> {
       nationality?: string;
       idNumber?: string;
       sortOrder?: number;
+      emergencyContactName?: string;
+      emergencyContactPhone?: string;
+      emergencyContactEmail?: string;
+      emergencyContactCountry?: string;
+      emergencyContactAddress?: string;
     };
     await route.fulfill({
       status: 201,
@@ -23,6 +28,11 @@ export async function mockManifestApi(page: Page): Promise<void> {
         fullName: body.fullName ?? '',
         nationality: body.nationality ?? null,
         idNumber: body.idNumber ?? null,
+        emergencyContactName: body.emergencyContactName ?? null,
+        emergencyContactPhone: body.emergencyContactPhone ?? null,
+        emergencyContactEmail: body.emergencyContactEmail ?? null,
+        emergencyContactCountry: body.emergencyContactCountry ?? null,
+        emergencyContactAddress: body.emergencyContactAddress ?? null,
         createdAt: new Date().toISOString(),
         updatedAt: null,
       }),
@@ -56,6 +66,18 @@ export async function fillCheckoutManifest(page: Page): Promise<number> {
   const idCount = await idInputs.count();
   for (let i = 0; i < idCount; i += 1) {
     await idInputs.nth(i).fill(`P${100000 + i}`);
+  }
+
+  const emNameInputs = page.getByLabel(/nom du contact|contact name|nombre del contacto/i);
+  const emNameCount = await emNameInputs.count();
+  for (let i = 0; i < emNameCount; i += 1) {
+    await emNameInputs.nth(i).fill(`Contact Urgence ${i + 1}`);
+  }
+
+  const emPhoneInputs = page.getByLabel(/^t[ée]l[ée]phone$|^phone$|^tel[ée]fono$/i);
+  const emPhoneCount = await emPhoneInputs.count();
+  for (let i = 0; i < emPhoneCount; i += 1) {
+    await emPhoneInputs.nth(i).fill(`+24390000000${i}`);
   }
 
   return count;
