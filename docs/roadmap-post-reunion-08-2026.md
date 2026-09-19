@@ -77,7 +77,7 @@ Règles :
 | ---------------- | ----------- | ---------------------- |
 | Validation manifeste stricte (passeport, etc.) | ⚠️ Seul le nom complet est vraiment requis | `checkout-manifest-form.tsx`, `booking-manifest-entry.dto.ts`, `booking-manifest-entry.entity.ts` |
 | Contact d’urgence | ✅ Name + phone requis checkout ; PDF + i18n (voir [pr-04-emergency-contact-test.md](./pr-04-emergency-contact-test.md)) | `emergency_contact_*`, manifeste Web/Admin/POS, `booking-detail-pdf*` |
-| Conditions médicales structurées | ⚠️ Texte libre `conditions` | `booking_manifest_entries.conditions` |
+| Conditions médicales structurées | ✅ 4 champs optionnels + legacy `conditions` (voir [pr-05-medical-conditions-test.md](./pr-05-medical-conditions-test.md)) | `allergies`, `serious_medical_conditions`, `current_medications`, `dietary_notes`, manifeste Web/Admin/POS, `booking-detail-pdf*` |
 | PDF confirmation fiable (prod) | ✅ PJ confirmation + logo durci (voir [pr-02-pdf-confirmation-fix.md](./pr-02-pdf-confirmation-fix.md)) | `booking-detail-pdf*.ts`, `booking-engine.service.ts`, `email-attachments.ts` |
 | Téléchargement PDF côté compte client | ✅ Endpoint + bouton compte (voir [pr-03-pdf-client-download.md](./pr-03-pdf-client-download.md)) | `GET /bookings/:id/confirmation-pdf`, `AccountBookingDetail` |
 | Virement bancaire au checkout | ❌ Comptes org CRUD seulement | `organization-bank-accounts/`, `preferredPaymentMethod: stripe \| cash` |
@@ -327,6 +327,8 @@ Critères d’acceptation :
 - Formulaire clair, champs optionnels sauf si produit décide autrement.
 - Anciennes résas avec `conditions` restent lisibles.
 - i18n.
+
+Scénario de test : docs/pr-05-medical-conditions-test.md
 
 À la fin : migration + mapping rétrocompat + test.
 ```
