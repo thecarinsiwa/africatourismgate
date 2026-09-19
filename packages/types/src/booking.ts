@@ -202,6 +202,11 @@ export interface BookingManifestEntry {
   sex?: BookingManifestSex | null;
   nationality?: string | null;
   idNumber?: string | null;
+  emergencyContactName?: string | null;
+  emergencyContactPhone?: string | null;
+  emergencyContactEmail?: string | null;
+  emergencyContactCountry?: string | null;
+  emergencyContactAddress?: string | null;
   conditions?: string | null;
   comment?: string | null;
   other?: string | null;
@@ -215,9 +220,16 @@ export interface CreateBookingManifestEntryRequest {
   nationality: string;
   /** Required on create — passport or national ID number. */
   idNumber: string;
+  /** Required on create — emergency contact full name. */
+  emergencyContactName: string;
+  /** Required on create — emergency contact phone. */
+  emergencyContactPhone: string;
   priceCents?: number;
   age?: number;
   sex?: BookingManifestSex;
+  emergencyContactEmail?: string;
+  emergencyContactCountry?: string;
+  emergencyContactAddress?: string;
   conditions?: string;
   comment?: string;
   other?: string;

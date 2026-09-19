@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import {
+  IsEmail,
   IsIn,
   IsInt,
   IsNotEmpty,
@@ -40,6 +41,22 @@ export class BookingManifestEntryDto {
   /** May be null on legacy rows created before idNumber became required. */
   @ApiPropertyOptional()
   idNumber?: string | null;
+
+  /** May be null on legacy rows created before emergency contact became required. */
+  @ApiPropertyOptional()
+  emergencyContactName?: string | null;
+
+  @ApiPropertyOptional()
+  emergencyContactPhone?: string | null;
+
+  @ApiPropertyOptional()
+  emergencyContactEmail?: string | null;
+
+  @ApiPropertyOptional()
+  emergencyContactCountry?: string | null;
+
+  @ApiPropertyOptional()
+  emergencyContactAddress?: string | null;
 
   @ApiPropertyOptional()
   conditions?: string | null;
@@ -93,6 +110,36 @@ export class CreateBookingManifestEntryDto {
   @IsNotEmpty({ message: "Le numéro de pièce d'identité est obligatoire." })
   @MaxLength(64)
   idNumber!: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty({ message: "Le nom du contact d'urgence est obligatoire." })
+  @MaxLength(200)
+  emergencyContactName!: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty({ message: "Le téléphone du contact d'urgence est obligatoire." })
+  @MaxLength(40)
+  emergencyContactPhone!: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsEmail({}, { message: "L'e-mail du contact d'urgence est invalide." })
+  @MaxLength(255)
+  emergencyContactEmail?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  emergencyContactCountry?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  emergencyContactAddress?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
