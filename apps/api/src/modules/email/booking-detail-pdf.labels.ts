@@ -31,6 +31,11 @@ export type BookingDetailPdfLabels = {
   colTravelerPrice: string;
   colTravelerNotes: string;
   emergencyContactPrefix: string;
+  allergiesPrefix: string;
+  seriousMedicalPrefix: string;
+  medicationsPrefix: string;
+  dietaryPrefix: string;
+  legacyConditionsPrefix: string;
   guidesSection: string;
   colGuideName: string;
   colGuideRole: string;
@@ -87,6 +92,11 @@ const LABELS: Record<BookingDetailPdfLocale, BookingDetailPdfLabels> = {
     colTravelerPrice: 'Montant',
     colTravelerNotes: 'Notes',
     emergencyContactPrefix: 'Urgence',
+    allergiesPrefix: 'Allergies',
+    seriousMedicalPrefix: 'Conditions graves',
+    medicationsPrefix: 'Traitements',
+    dietaryPrefix: 'Alimentation',
+    legacyConditionsPrefix: 'Anciennes notes',
     guidesSection: 'Guides assignés',
     colGuideName: 'Guide',
     colGuideRole: 'Rôle',
@@ -149,6 +159,11 @@ const LABELS: Record<BookingDetailPdfLocale, BookingDetailPdfLabels> = {
     colTravelerPrice: 'Amount',
     colTravelerNotes: 'Notes',
     emergencyContactPrefix: 'Emergency',
+    allergiesPrefix: 'Allergies',
+    seriousMedicalPrefix: 'Serious conditions',
+    medicationsPrefix: 'Medications',
+    dietaryPrefix: 'Diet',
+    legacyConditionsPrefix: 'Legacy notes',
     guidesSection: 'Assigned guides',
     colGuideName: 'Guide',
     colGuideRole: 'Role',
@@ -211,6 +226,11 @@ const LABELS: Record<BookingDetailPdfLocale, BookingDetailPdfLabels> = {
     colTravelerPrice: 'Importe',
     colTravelerNotes: 'Notas',
     emergencyContactPrefix: 'Emergencia',
+    allergiesPrefix: 'Alergias',
+    seriousMedicalPrefix: 'Condiciones graves',
+    medicationsPrefix: 'Medicamentos',
+    dietaryPrefix: 'Alimentación',
+    legacyConditionsPrefix: 'Notas antiguas',
     guidesSection: 'Guías asignados',
     colGuideName: 'Guía',
     colGuideRole: 'Rol',

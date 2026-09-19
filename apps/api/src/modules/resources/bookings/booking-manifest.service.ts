@@ -31,6 +31,10 @@ function toDto(row: BookingManifestEntries): BookingManifestEntryDto {
     emergencyContactCountry: row.emergencyContactCountry,
     emergencyContactAddress: row.emergencyContactAddress,
     conditions: row.conditions,
+    allergies: row.allergies,
+    seriousMedicalConditions: row.seriousMedicalConditions,
+    currentMedications: row.currentMedications,
+    dietaryNotes: row.dietaryNotes,
     comment: row.comment,
     other: row.other,
     createdAt: row.createdAt.toISOString(),
@@ -128,6 +132,10 @@ export class BookingManifestService {
         emergencyContactCountry: null,
         emergencyContactAddress: null,
         conditions: null,
+        allergies: null,
+        seriousMedicalConditions: null,
+        currentMedications: null,
+        dietaryNotes: null,
         comment: null,
         other: null,
         createdByUserId: actorUserId,
@@ -193,9 +201,16 @@ export class BookingManifestService {
       emergencyContactEmail: normalizeOptionalText(dto.emergencyContactEmail),
       emergencyContactCountry: normalizeOptionalText(dto.emergencyContactCountry),
       emergencyContactAddress: normalizeOptionalText(dto.emergencyContactAddress),
-      conditions: normalizeOptionalText(dto.conditions),
+      // Legacy `conditions` is read-only; do not persist new writes to that column.
+      conditions: null,
+      allergies: normalizeOptionalText(dto.allergies),
+      seriousMedicalConditions: normalizeOptionalText(dto.seriousMedicalConditions),
+      currentMedications: normalizeOptionalText(dto.currentMedications),
+      dietaryNotes: normalizeOptionalText(dto.dietaryNotes),
       comment: normalizeOptionalText(dto.comment),
-      other: normalizeOptionalText(dto.other),
+      other:
+        normalizeOptionalText(dto.other) ??
+        normalizeOptionalText(dto.conditions),
       createdByUserId: actorUserId,
       updatedByUserId: actorUserId,
       deletedByUserId: null,
@@ -262,14 +277,30 @@ export class BookingManifestService {
     if (dto.emergencyContactAddress !== undefined) {
       row.emergencyContactAddress = normalizeOptionalText(dto.emergencyContactAddress);
     }
-    if (dto.conditions !== undefined) {
-      row.conditions = normalizeOptionalText(dto.conditions);
+    // `conditions` is legacy read-only — ignore write attempts.
+    if (dto.allergies !== undefined) {
+      row.allergies = normalizeOptionalText(dto.allergies);
+    }
+    if (dto.seriousMedicalConditions !== undefined) {
+      row.seriousMedicalConditions = normalizeOptionalText(dto.seriousMedicalConditions);
+    }
+    if (dto.currentMedications !== undefined) {
+      row.currentMedications = normalizeOptionalText(dto.currentMedications);
+    }
+    if (dto.dietaryNotes !== undefined) {
+      row.dietaryNotes = normalizeOptionalText(dto.dietaryNotes);
     }
     if (dto.comment !== undefined) {
       row.comment = normalizeOptionalText(dto.comment);
     }
     if (dto.other !== undefined) {
       row.other = normalizeOptionalText(dto.other);
+    } else if (dto.conditions !== undefined) {
+      // Deprecated body field: fold into `other` only when other was not sent.
+      const legacy = normalizeOptionalText(dto.conditions);
+      if (legacy && !row.other) {
+        row.other = legacy;
+      }
     }
     if (dto.priceCents !== undefined) {
       row.priceCents = dto.priceCents;

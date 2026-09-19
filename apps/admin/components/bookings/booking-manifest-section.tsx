@@ -33,7 +33,10 @@ type FormState = {
   price: string;
   nationality: string;
   idNumber: string;
-  conditions: string;
+  allergies: string;
+  seriousMedicalConditions: string;
+  currentMedications: string;
+  dietaryNotes: string;
   emergencyContactName: string;
   emergencyContactPhone: string;
   emergencyContactEmail: string;
@@ -50,7 +53,10 @@ const EMPTY_FORM: FormState = {
   price: '',
   nationality: '',
   idNumber: '',
-  conditions: '',
+  allergies: '',
+  seriousMedicalConditions: '',
+  currentMedications: '',
+  dietaryNotes: '',
   emergencyContactName: '',
   emergencyContactPhone: '',
   emergencyContactEmail: '',
@@ -68,7 +74,10 @@ function entryToForm(entry: BookingManifestEntry): FormState {
     price: entry.priceCents != null ? (entry.priceCents / 100).toFixed(2) : '',
     nationality: entry.nationality ?? '',
     idNumber: entry.idNumber ?? '',
-    conditions: entry.conditions ?? '',
+    allergies: entry.allergies ?? '',
+    seriousMedicalConditions: entry.seriousMedicalConditions ?? '',
+    currentMedications: entry.currentMedications ?? '',
+    dietaryNotes: entry.dietaryNotes ?? '',
     emergencyContactName: entry.emergencyContactName ?? '',
     emergencyContactPhone: entry.emergencyContactPhone ?? '',
     emergencyContactEmail: entry.emergencyContactEmail ?? '',
@@ -101,7 +110,10 @@ function formToPayload(form: FormState) {
     emergencyContactEmail: form.emergencyContactEmail.trim() || undefined,
     emergencyContactCountry: form.emergencyContactCountry.trim() || undefined,
     emergencyContactAddress: form.emergencyContactAddress.trim() || undefined,
-    conditions: form.conditions.trim() || undefined,
+    allergies: form.allergies.trim() || undefined,
+    seriousMedicalConditions: form.seriousMedicalConditions.trim() || undefined,
+    currentMedications: form.currentMedications.trim() || undefined,
+    dietaryNotes: form.dietaryNotes.trim() || undefined,
     comment: form.comment.trim() || undefined,
     other: form.other.trim() || undefined,
   };
@@ -131,7 +143,10 @@ export function BookingManifestSection({
   const locale = useLocale();
   const { toast } = useToast();
 
-  const conditionsId = useId();
+  const allergiesId = useId();
+  const seriousMedId = useId();
+  const medicationsId = useId();
+  const dietaryId = useId();
   const commentId = useId();
   const otherId = useId();
 
@@ -304,13 +319,30 @@ export function BookingManifestSection({
         ),
       },
       {
-        accessorKey: 'conditions',
-        header: t('columns.conditions'),
-        cell: ({ row }) => (
-          <span className="line-clamp-2 max-w-[12rem] text-sm text-atg-muted">
-            {row.original.conditions ?? tCommon('empty.dash')}
-          </span>
-        ),
+        id: 'medical',
+        header: t('columns.medical'),
+        cell: ({ row }) => {
+          const e = row.original;
+          const summary = [
+            e.allergies,
+            e.seriousMedicalConditions,
+            e.currentMedications,
+            e.dietaryNotes,
+            !e.allergies &&
+            !e.seriousMedicalConditions &&
+            !e.currentMedications &&
+            !e.dietaryNotes
+              ? e.conditions
+              : null,
+          ]
+            .filter(Boolean)
+            .join(' · ');
+          return (
+            <span className="line-clamp-2 max-w-[12rem] text-sm text-atg-muted">
+              {summary || tCommon('empty.dash')}
+            </span>
+          );
+        },
       },
       ...(canWrite
         ? [
@@ -459,17 +491,55 @@ export function BookingManifestSection({
             onChange={(e) => setForm((prev) => ({ ...prev, idNumber: e.target.value }))}
             required
           />
-          <label className="block text-sm sm:col-span-2" htmlFor={conditionsId}>
-            <span className="font-medium text-atg-fg">{t('fields.conditions')}</span>
+          <p className="sm:col-span-2 text-sm font-semibold text-atg-fg">
+            {t('fields.medicalSection')}
+          </p>
+          <label className="block text-sm sm:col-span-2" htmlFor={allergiesId}>
+            <span className="font-medium text-atg-fg">{t('fields.allergies')}</span>
             <textarea
-              id={conditionsId}
+              id={allergiesId}
               rows={2}
-              value={form.conditions}
+              value={form.allergies}
+              onChange={(e) => setForm((prev) => ({ ...prev, allergies: e.target.value }))}
+              className="mt-1 w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg"
+              placeholder={t('fields.allergiesPlaceholder')}
+            />
+          </label>
+          <label className="block text-sm sm:col-span-2" htmlFor={seriousMedId}>
+            <span className="font-medium text-atg-fg">{t('fields.seriousMedicalConditions')}</span>
+            <textarea
+              id={seriousMedId}
+              rows={2}
+              value={form.seriousMedicalConditions}
               onChange={(e) =>
-                setForm((prev) => ({ ...prev, conditions: e.target.value }))
+                setForm((prev) => ({ ...prev, seriousMedicalConditions: e.target.value }))
               }
               className="mt-1 w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg"
-              placeholder={t('fields.conditionsPlaceholder')}
+              placeholder={t('fields.seriousMedicalConditionsPlaceholder')}
+            />
+          </label>
+          <label className="block text-sm" htmlFor={medicationsId}>
+            <span className="font-medium text-atg-fg">{t('fields.currentMedications')}</span>
+            <textarea
+              id={medicationsId}
+              rows={2}
+              value={form.currentMedications}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, currentMedications: e.target.value }))
+              }
+              className="mt-1 w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg"
+              placeholder={t('fields.currentMedicationsPlaceholder')}
+            />
+          </label>
+          <label className="block text-sm" htmlFor={dietaryId}>
+            <span className="font-medium text-atg-fg">{t('fields.dietaryNotes')}</span>
+            <textarea
+              id={dietaryId}
+              rows={2}
+              value={form.dietaryNotes}
+              onChange={(e) => setForm((prev) => ({ ...prev, dietaryNotes: e.target.value }))}
+              className="mt-1 w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg"
+              placeholder={t('fields.dietaryNotesPlaceholder')}
             />
           </label>
           <p className="sm:col-span-2 text-sm font-semibold text-atg-fg">

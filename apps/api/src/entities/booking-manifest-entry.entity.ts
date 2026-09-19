@@ -51,8 +51,21 @@ export class BookingManifestEntries {
   @Column({ type: 'varchar', name: 'emergency_contact_address', length: 500, nullable: true })
   emergencyContactAddress!: string | null;
 
+  /** Legacy free-text medical notes — kept for read compatibility; new forms write structured fields. */
   @Column({ type: 'text', name: 'conditions', nullable: true })
   conditions!: string | null;
+
+  @Column({ type: 'text', name: 'allergies', nullable: true })
+  allergies!: string | null;
+
+  @Column({ type: 'text', name: 'serious_medical_conditions', nullable: true })
+  seriousMedicalConditions!: string | null;
+
+  @Column({ type: 'text', name: 'current_medications', nullable: true })
+  currentMedications!: string | null;
+
+  @Column({ type: 'text', name: 'dietary_notes', nullable: true })
+  dietaryNotes!: string | null;
 
   @Column({ type: 'text', name: 'comment', nullable: true })
   comment!: string | null;

@@ -81,7 +81,30 @@ function travelerNotes(
   labels: BookingDetailPdfLabels,
   locale: BookingDetailPdfInput['locale'],
 ): string {
-  const medical = [traveler.conditions, traveler.comment, traveler.other]
+  const medicalLabeled: string[] = [];
+  const allergies = traveler.allergies?.trim();
+  if (allergies) {
+    medicalLabeled.push(`${labels.allergiesPrefix}: ${allergies}`);
+  }
+  const serious = traveler.seriousMedicalConditions?.trim();
+  if (serious) {
+    medicalLabeled.push(`${labels.seriousMedicalPrefix}: ${serious}`);
+  }
+  const meds = traveler.currentMedications?.trim();
+  if (meds) {
+    medicalLabeled.push(`${labels.medicationsPrefix}: ${meds}`);
+  }
+  const dietary = traveler.dietaryNotes?.trim();
+  if (dietary) {
+    medicalLabeled.push(`${labels.dietaryPrefix}: ${dietary}`);
+  }
+
+  const legacyConditions = traveler.conditions?.trim();
+  if (legacyConditions) {
+    medicalLabeled.push(`${labels.legacyConditionsPrefix}: ${legacyConditions}`);
+  }
+
+  const extras = [traveler.comment, traveler.other]
     .map((value) => value?.trim())
     .filter(Boolean);
 
@@ -94,7 +117,7 @@ function travelerNotes(
     traveler.emergencyContactAddress?.trim(),
   ].filter(Boolean);
 
-  const parts = [...medical];
+  const parts = [...medicalLabeled, ...extras];
   if (emergencyParts.length > 0) {
     parts.push(`${labels.emergencyContactPrefix}: ${emergencyParts.join(' · ')}`);
   }

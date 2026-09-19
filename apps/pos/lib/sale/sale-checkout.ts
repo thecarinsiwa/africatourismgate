@@ -153,7 +153,10 @@ export async function saveBookingManifestEntries(
       emergencyContactEmail: entry.emergencyContactEmail?.trim() || undefined,
       emergencyContactCountry: entry.emergencyContactCountry?.trim() || undefined,
       emergencyContactAddress: entry.emergencyContactAddress?.trim() || undefined,
-      conditions: entry.conditions?.trim() || undefined,
+      allergies: entry.allergies?.trim() || undefined,
+      seriousMedicalConditions: entry.seriousMedicalConditions?.trim() || undefined,
+      currentMedications: entry.currentMedications?.trim() || undefined,
+      dietaryNotes: entry.dietaryNotes?.trim() || undefined,
       comment: entry.comment?.trim() || undefined,
       sortOrder: i,
     });

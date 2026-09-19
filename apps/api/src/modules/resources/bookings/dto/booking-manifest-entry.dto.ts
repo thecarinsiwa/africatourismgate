@@ -58,8 +58,21 @@ export class BookingManifestEntryDto {
   @ApiPropertyOptional()
   emergencyContactAddress?: string | null;
 
+  /** Legacy free-text medical notes — read-only; prefer structured fields below. */
   @ApiPropertyOptional()
   conditions?: string | null;
+
+  @ApiPropertyOptional()
+  allergies?: string | null;
+
+  @ApiPropertyOptional()
+  seriousMedicalConditions?: string | null;
+
+  @ApiPropertyOptional()
+  currentMedications?: string | null;
+
+  @ApiPropertyOptional()
+  dietaryNotes?: string | null;
 
   @ApiPropertyOptional()
   comment?: string | null;
@@ -141,11 +154,39 @@ export class CreateBookingManifestEntryDto {
   @MaxLength(500)
   emergencyContactAddress?: string;
 
-  @ApiPropertyOptional()
+  /**
+   * @deprecated Legacy free-text — ignored for persistence; use structured medical fields.
+   * Accepted so older clients are not rejected by forbidNonWhitelisted.
+   */
+  @ApiPropertyOptional({ deprecated: true })
   @IsOptional()
   @IsString()
   @MaxLength(5000)
   conditions?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @MaxLength(5000)
+  allergies?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @MaxLength(5000)
+  seriousMedicalConditions?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @MaxLength(5000)
+  currentMedications?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @MaxLength(5000)
+  dietaryNotes?: string;
 
   @ApiPropertyOptional()
   @IsOptional()

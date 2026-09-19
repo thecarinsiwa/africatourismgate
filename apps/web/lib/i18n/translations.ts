@@ -224,8 +224,15 @@ export type Translations = {
       nationalitySearch: string;
       nationalityEmpty: string;
       idNumber: string;
-      conditions: string;
-      conditionsPlaceholder: string;
+      medicalSection: string;
+      allergies: string;
+      allergiesPlaceholder: string;
+      seriousMedicalConditions: string;
+      seriousMedicalConditionsPlaceholder: string;
+      currentMedications: string;
+      currentMedicationsPlaceholder: string;
+      dietaryNotes: string;
+      dietaryNotesPlaceholder: string;
       emergencyContactSection: string;
       emergencyContactName: string;
       emergencyContactPhone: string;
@@ -1124,8 +1131,16 @@ export type Translations = {
             nationalitySearch: string;
             nationalityEmpty: string;
             idNumber: string;
-            conditions: string;
-            conditionsPlaceholder: string;
+            medicalSection: string;
+            allergies: string;
+            allergiesPlaceholder: string;
+            seriousMedicalConditions: string;
+            seriousMedicalConditionsPlaceholder: string;
+            currentMedications: string;
+            currentMedicationsPlaceholder: string;
+            dietaryNotes: string;
+            dietaryNotesPlaceholder: string;
+            legacyConditions: string;
             emergencyContactSection: string;
             emergencyContactName: string;
             emergencyContactPhone: string;
@@ -1608,8 +1623,15 @@ const fr: Translations = {
       nationalitySearch: 'Rechercher un pays…',
       nationalityEmpty: 'Aucun pays trouvé.',
       idNumber: "N° pièce d'identité",
-      conditions: 'Conditions médicales',
-      conditionsPlaceholder: 'Allergies, traitements, besoins particuliers…',
+      medicalSection: 'Informations médicales',
+      allergies: 'Allergies',
+      allergiesPlaceholder: 'Ex. pollen, arachides…',
+      seriousMedicalConditions: 'Conditions médicales graves',
+      seriousMedicalConditionsPlaceholder: 'Ex. asthme, diabète…',
+      currentMedications: 'Traitements en cours',
+      currentMedicationsPlaceholder: 'Ex. médicaments quotidiens…',
+      dietaryNotes: 'Notes alimentaires',
+      dietaryNotesPlaceholder: 'Ex. végétarien, sans gluten…',
       emergencyContactSection: "Contact d'urgence",
       emergencyContactName: 'Nom du contact',
       emergencyContactPhone: 'Téléphone',
@@ -2618,8 +2640,16 @@ const fr: Translations = {
             nationalitySearch: 'Rechercher un pays…',
             nationalityEmpty: 'Aucun pays trouvé.',
             idNumber: "N° pièce d'identité",
-            conditions: 'Conditions médicales',
-            conditionsPlaceholder: 'Allergies, traitements en cours, besoins particuliers?',
+            medicalSection: 'Informations médicales',
+            allergies: 'Allergies',
+            allergiesPlaceholder: 'Ex. pollen, arachides…',
+            seriousMedicalConditions: 'Conditions médicales graves',
+            seriousMedicalConditionsPlaceholder: 'Ex. asthme, diabète…',
+            currentMedications: 'Traitements en cours',
+            currentMedicationsPlaceholder: 'Ex. médicaments quotidiens…',
+            dietaryNotes: 'Notes alimentaires',
+            dietaryNotesPlaceholder: 'Ex. végétarien, sans gluten…',
+            legacyConditions: 'Anciennes notes',
             emergencyContactSection: "Contact d'urgence",
             emergencyContactName: 'Nom du contact',
             emergencyContactPhone: 'Téléphone',
@@ -3167,8 +3197,15 @@ const en: Translations = {
       nationalitySearch: 'Search for a country…',
       nationalityEmpty: 'No country found.',
       idNumber: 'ID / Passport number',
-      conditions: 'Medical conditions',
-      conditionsPlaceholder: 'Allergies, treatments, special needs?',
+      medicalSection: 'Medical information',
+      allergies: 'Allergies',
+      allergiesPlaceholder: 'e.g. pollen, peanuts…',
+      seriousMedicalConditions: 'Serious medical conditions',
+      seriousMedicalConditionsPlaceholder: 'e.g. asthma, diabetes…',
+      currentMedications: 'Current medications',
+      currentMedicationsPlaceholder: 'e.g. daily medication…',
+      dietaryNotes: 'Dietary notes',
+      dietaryNotesPlaceholder: 'e.g. vegetarian, gluten-free…',
       emergencyContactSection: 'Emergency contact',
       emergencyContactName: 'Contact name',
       emergencyContactPhone: 'Phone',
@@ -4170,8 +4207,16 @@ const en: Translations = {
             nationalitySearch: 'Search for a country…',
             nationalityEmpty: 'No country found.',
             idNumber: 'ID / Passport number',
-            conditions: 'Medical conditions',
-            conditionsPlaceholder: 'Allergies, ongoing treatments, special needs?',
+            medicalSection: 'Medical information',
+            allergies: 'Allergies',
+            allergiesPlaceholder: 'e.g. pollen, peanuts…',
+            seriousMedicalConditions: 'Serious medical conditions',
+            seriousMedicalConditionsPlaceholder: 'e.g. asthma, diabetes…',
+            currentMedications: 'Current medications',
+            currentMedicationsPlaceholder: 'e.g. daily medication…',
+            dietaryNotes: 'Dietary notes',
+            dietaryNotesPlaceholder: 'e.g. vegetarian, gluten-free…',
+            legacyConditions: 'Legacy notes',
             emergencyContactSection: 'Emergency contact',
             emergencyContactName: 'Contact name',
             emergencyContactPhone: 'Phone',

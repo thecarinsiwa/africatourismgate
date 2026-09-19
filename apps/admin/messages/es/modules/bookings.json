@@ -162,7 +162,7 @@
       "nationality": "Nacionalidad",
       "idNumber": "N.º ID",
       "price": "Precio",
-      "conditions": "Condiciones"
+      "medical": "Médico"
     },
     "fields": {
       "fullName": "Nombre completo",
@@ -172,8 +172,15 @@
       "pricePlaceholder": "0,00",
       "nationality": "Nacionalidad",
       "idNumber": "Número ID",
-      "conditions": "Condiciones",
-      "conditionsPlaceholder": "Alergias, dieta, accesibilidad…",
+      "medicalSection": "Información médica",
+      "allergies": "Alergias",
+      "allergiesPlaceholder": "Ej. polen, cacahuetes…",
+      "seriousMedicalConditions": "Condiciones médicas graves",
+      "seriousMedicalConditionsPlaceholder": "Ej. asma, diabetes…",
+      "currentMedications": "Medicamentos actuales",
+      "currentMedicationsPlaceholder": "Ej. medicación diaria…",
+      "dietaryNotes": "Notas alimentarias",
+      "dietaryNotesPlaceholder": "Ej. vegetariano, sin gluten…",
       "emergencyContactSection": "Contacto de emergencia",
       "emergencyContactName": "Nombre del contacto",
       "emergencyContactPhone": "Teléfono",

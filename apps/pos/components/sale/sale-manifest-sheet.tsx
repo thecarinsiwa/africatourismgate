@@ -115,7 +115,10 @@ export function SaleManifestSheet({
         e.fullName.trim() ||
         e.idNumber?.trim() ||
         e.nationality?.trim() ||
-        e.conditions?.trim() ||
+        e.allergies?.trim() ||
+        e.seriousMedicalConditions?.trim() ||
+        e.currentMedications?.trim() ||
+        e.dietaryNotes?.trim() ||
         e.comment?.trim() ||
         e.emergencyContactName?.trim() ||
         e.emergencyContactPhone?.trim(),
@@ -287,13 +290,43 @@ export function SaleManifestSheet({
                   />
                 </div>
 
-                <Input
-                  id={`manifest-conditions-${index}`}
-                  label={labels.conditionsLabel}
-                  placeholder={labels.conditionsPlaceholder}
-                  value={entry.conditions ?? ''}
-                  onChange={(e) => updateEntry(index, { conditions: e.target.value })}
-                />
+                <div className="space-y-3 rounded-lg border border-atg-border p-3">
+                  <p className="text-sm font-bold text-atg-fg">{labels.medicalSection}</p>
+                  <Input
+                    id={`manifest-allergies-${index}`}
+                    label={labels.allergiesLabel}
+                    placeholder={labels.allergiesPlaceholder}
+                    value={entry.allergies ?? ''}
+                    onChange={(e) => updateEntry(index, { allergies: e.target.value })}
+                  />
+                  <Input
+                    id={`manifest-serious-med-${index}`}
+                    label={labels.seriousMedicalConditionsLabel}
+                    placeholder={labels.seriousMedicalConditionsPlaceholder}
+                    value={entry.seriousMedicalConditions ?? ''}
+                    onChange={(e) =>
+                      updateEntry(index, { seriousMedicalConditions: e.target.value })
+                    }
+                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <Input
+                      id={`manifest-meds-${index}`}
+                      label={labels.currentMedicationsLabel}
+                      placeholder={labels.currentMedicationsPlaceholder}
+                      value={entry.currentMedications ?? ''}
+                      onChange={(e) =>
+                        updateEntry(index, { currentMedications: e.target.value })
+                      }
+                    />
+                    <Input
+                      id={`manifest-dietary-${index}`}
+                      label={labels.dietaryNotesLabel}
+                      placeholder={labels.dietaryNotesPlaceholder}
+                      value={entry.dietaryNotes ?? ''}
+                      onChange={(e) => updateEntry(index, { dietaryNotes: e.target.value })}
+                    />
+                  </div>
+                </div>
 
                 <div className="space-y-3 rounded-lg border border-atg-border p-3">
                   <p className="text-sm font-bold text-atg-fg">{labels.emergencyContactSection}</p>
