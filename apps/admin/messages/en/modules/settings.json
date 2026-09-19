@@ -318,6 +318,19 @@
       "operators": "Operators",
       "numbers": "Payment numbers"
     },
+    "stats": {
+      "countries": "Countries",
+      "countriesHint": "Configured for the organization",
+      "operators": "Operators",
+      "operatorsHint": "In {name}",
+      "numbers": "Numbers",
+      "numbersHint": "At {name}"
+    },
+    "panels": {
+      "countriesHint": "Click a country to see its operators",
+      "operatorsFor": "For {name}",
+      "numbersFor": "For {name}"
+    },
     "list": {
       "orgSelectAria": "Organization",
       "newCountry": "New country",
