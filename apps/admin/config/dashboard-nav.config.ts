@@ -179,6 +179,7 @@ export const adminBreadcrumbExtraRoutes: AdminBreadcrumbRouteConfig[] = [
   { href: '/paiements/codes-promo/nouveau', labelKey: 'newPromoCode' },
   { href: '/guides/nouveau', labelKey: 'newTourGuide' },
   { href: '/parametres/comptes', labelKey: 'bankAccounts' },
+  { href: '/parametres/mobile-money', labelKey: 'mobileMoney' },
   { href: '/parametres/dons', labelKey: 'donations' },
   { href: '/parametres/dons/nouveau', labelKey: 'newDonation' },
   { href: '/parametres/emails', labelKey: 'emails' },

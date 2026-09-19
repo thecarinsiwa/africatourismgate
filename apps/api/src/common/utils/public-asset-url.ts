@@ -33,6 +33,10 @@ export function airlineUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/airlines/${filename}`;
 }
 
+export function mobileMoneyUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/mobile-money/${filename}`;
+}
+
 export function vehicleUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/vehicles/${filename}`;
 }

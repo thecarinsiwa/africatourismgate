@@ -617,6 +617,21 @@ export type {
   WebPaymentMethodsSettingValue,
 } from './organization-settings.js';
 
+export type {
+  CreateMobileMoneyCountryRequest,
+  CreateMobileMoneyOperatorRequest,
+  CreateMobileMoneyPaymentNumberRequest,
+  MobileMoneyCountriesListQuery,
+  MobileMoneyCountry,
+  MobileMoneyOperator,
+  MobileMoneyOperatorsListQuery,
+  MobileMoneyPaymentNumber,
+  MobileMoneyPaymentNumbersListQuery,
+  UpdateMobileMoneyCountryRequest,
+  UpdateMobileMoneyOperatorRequest,
+  UpdateMobileMoneyPaymentNumberRequest,
+} from './mobile-money.js';
+
 export {
   DEFAULT_AUTH_VISUAL_ICONS,
   DEFAULT_EMAIL_BRANDING,

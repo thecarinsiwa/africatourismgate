@@ -373,13 +373,25 @@ import type {
   UpdatePointOfInterestRequest,
   BulkUpsertOrganizationSettingsRequest,
   CreateOrganizationBankAccountRequest,
+  CreateMobileMoneyCountryRequest,
+  CreateMobileMoneyOperatorRequest,
+  CreateMobileMoneyPaymentNumberRequest,
   EmailPreviewRequest,
   EmailPreviewResponse,
   OrganizationBankAccount,
   OrganizationBankAccountsListQuery,
   OrganizationSetting,
   OrganizationSettingsListQuery,
+  MobileMoneyCountriesListQuery,
+  MobileMoneyCountry,
+  MobileMoneyOperator,
+  MobileMoneyOperatorsListQuery,
+  MobileMoneyPaymentNumber,
+  MobileMoneyPaymentNumbersListQuery,
   UpdateOrganizationBankAccountRequest,
+  UpdateMobileMoneyCountryRequest,
+  UpdateMobileMoneyOperatorRequest,
+  UpdateMobileMoneyPaymentNumberRequest,
   UpdateOrganizationRequest,
   UpdateProfileRequest,
   UpdateRoleRequest,
@@ -488,6 +500,9 @@ export type {
   UpdateDepartmentRequest,
   BulkUpsertOrganizationSettingsRequest,
   CreateOrganizationBankAccountRequest,
+  CreateMobileMoneyCountryRequest,
+  CreateMobileMoneyOperatorRequest,
+  CreateMobileMoneyPaymentNumberRequest,
   EmailBrandingValue,
   EmailPreviewRequest,
   EmailPreviewResponse,
@@ -496,7 +511,16 @@ export type {
   OrganizationBankAccountsListQuery,
   OrganizationSetting,
   OrganizationSettingsListQuery,
+  MobileMoneyCountriesListQuery,
+  MobileMoneyCountry,
+  MobileMoneyOperator,
+  MobileMoneyOperatorsListQuery,
+  MobileMoneyPaymentNumber,
+  MobileMoneyPaymentNumbersListQuery,
   UpdateOrganizationBankAccountRequest,
+  UpdateMobileMoneyCountryRequest,
+  UpdateMobileMoneyOperatorRequest,
+  UpdateMobileMoneyPaymentNumberRequest,
   UpdateOrganizationRequest,
   UpdateRoleRequest,
   CreateUserRequest,
@@ -1368,6 +1392,163 @@ export class ApiClient {
       ? `?organizationId=${encodeURIComponent(organizationId)}`
       : '';
     return this.request<void>(`/organization-bank-accounts/${id}${qs}`, {
+      method: 'DELETE',
+    });
+  }
+
+  listMobileMoneyCountries(
+    query?: MobileMoneyCountriesListQuery,
+  ): Promise<PaginatedResponse<MobileMoneyCountry>> {
+    return fetchPaginated<MobileMoneyCountry>(
+      this,
+      '/mobile-money/countries',
+      query,
+    );
+  }
+
+  createMobileMoneyCountry(
+    body: CreateMobileMoneyCountryRequest,
+  ): Promise<MobileMoneyCountry> {
+    return this.request<MobileMoneyCountry>('/mobile-money/countries', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateMobileMoneyCountry(
+    id: string,
+    body: UpdateMobileMoneyCountryRequest,
+    organizationId?: string,
+  ): Promise<MobileMoneyCountry> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<MobileMoneyCountry>(
+      `/mobile-money/countries/${id}${qs}`,
+      { method: 'PATCH', body },
+    );
+  }
+
+  deleteMobileMoneyCountry(
+    id: string,
+    organizationId?: string,
+  ): Promise<void> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<void>(`/mobile-money/countries/${id}${qs}`, {
+      method: 'DELETE',
+    });
+  }
+
+  listMobileMoneyOperators(
+    query: MobileMoneyOperatorsListQuery,
+  ): Promise<PaginatedResponse<MobileMoneyOperator>> {
+    return fetchPaginated<MobileMoneyOperator>(
+      this,
+      '/mobile-money/operators',
+      query,
+    );
+  }
+
+  createMobileMoneyOperator(
+    body: CreateMobileMoneyOperatorRequest,
+    organizationId?: string,
+  ): Promise<MobileMoneyOperator> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<MobileMoneyOperator>(
+      `/mobile-money/operators${qs}`,
+      { method: 'POST', body },
+    );
+  }
+
+  updateMobileMoneyOperator(
+    id: string,
+    body: UpdateMobileMoneyOperatorRequest,
+    organizationId?: string,
+  ): Promise<MobileMoneyOperator> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<MobileMoneyOperator>(
+      `/mobile-money/operators/${id}${qs}`,
+      { method: 'PATCH', body },
+    );
+  }
+
+  uploadMobileMoneyOperatorLogo(
+    id: string,
+    body: FormData,
+    organizationId?: string,
+  ): Promise<{ url: string }> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<{ url: string }>(
+      `/mobile-money/operators/${id}/upload-logo${qs}`,
+      { method: 'POST', body },
+    );
+  }
+
+  deleteMobileMoneyOperator(
+    id: string,
+    organizationId?: string,
+  ): Promise<void> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<void>(`/mobile-money/operators/${id}${qs}`, {
+      method: 'DELETE',
+    });
+  }
+
+  listMobileMoneyPaymentNumbers(
+    query: MobileMoneyPaymentNumbersListQuery,
+  ): Promise<PaginatedResponse<MobileMoneyPaymentNumber>> {
+    return fetchPaginated<MobileMoneyPaymentNumber>(
+      this,
+      '/mobile-money/numbers',
+      query,
+    );
+  }
+
+  createMobileMoneyPaymentNumber(
+    body: CreateMobileMoneyPaymentNumberRequest,
+    organizationId?: string,
+  ): Promise<MobileMoneyPaymentNumber> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<MobileMoneyPaymentNumber>(
+      `/mobile-money/numbers${qs}`,
+      { method: 'POST', body },
+    );
+  }
+
+  updateMobileMoneyPaymentNumber(
+    id: string,
+    body: UpdateMobileMoneyPaymentNumberRequest,
+    organizationId?: string,
+  ): Promise<MobileMoneyPaymentNumber> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<MobileMoneyPaymentNumber>(
+      `/mobile-money/numbers/${id}${qs}`,
+      { method: 'PATCH', body },
+    );
+  }
+
+  deleteMobileMoneyPaymentNumber(
+    id: string,
+    organizationId?: string,
+  ): Promise<void> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<void>(`/mobile-money/numbers/${id}${qs}`, {
       method: 'DELETE',
     });
   }

@@ -6,6 +6,9 @@ import * as entities from '../entities/generated';
 import { BookingIdentityDocuments } from '../entities/booking-identity-document.entity';
 import { BookingPaymentProofs } from '../entities/booking-payment-proof.entity';
 import { BookingManifestEntries } from '../entities/booking-manifest-entry.entity';
+import { MobileMoneyCountries } from '../entities/mobile-money-country.entity';
+import { MobileMoneyOperators } from '../entities/mobile-money-operator.entity';
+import { MobileMoneyPaymentNumbers } from '../entities/mobile-money-payment-number.entity';
 import { AboutPages } from '../entities/about-page.entity';
 import { AboutResources } from '../entities/about-resource.entity';
 import { BlogPosts } from '../entities/blog-post.entity';
@@ -50,6 +53,9 @@ const entityList = [
   BookingIdentityDocuments,
   BookingPaymentProofs,
   BookingManifestEntries,
+  MobileMoneyCountries,
+  MobileMoneyOperators,
+  MobileMoneyPaymentNumbers,
 ] as (new () => unknown)[];
 
 @Module({
