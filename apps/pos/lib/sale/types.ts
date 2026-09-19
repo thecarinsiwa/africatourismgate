@@ -119,7 +119,10 @@ export type SaleManifestDraftEntry = {
   sex?: BookingManifestSex;
   nationality?: string;
   idNumber?: string;
-  conditions?: string;
+  allergies?: string;
+  seriousMedicalConditions?: string;
+  currentMedications?: string;
+  dietaryNotes?: string;
   comment?: string;
   emergencyContactName?: string;
   emergencyContactPhone?: string;
@@ -135,7 +138,10 @@ export function emptySaleManifestEntry(): SaleManifestDraftEntry {
     sex: undefined,
     nationality: '',
     idNumber: '',
-    conditions: '',
+    allergies: '',
+    seriousMedicalConditions: '',
+    currentMedications: '',
+    dietaryNotes: '',
     comment: '',
     emergencyContactName: '',
     emergencyContactPhone: '',

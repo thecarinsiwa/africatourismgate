@@ -11,7 +11,10 @@ export type ManifestEntryDraft = {
   sex: '' | BookingManifestSex;
   nationality: string;
   idNumber: string;
-  conditions: string;
+  allergies: string;
+  seriousMedicalConditions: string;
+  currentMedications: string;
+  dietaryNotes: string;
   emergencyContactName: string;
   emergencyContactPhone: string;
   emergencyContactEmail: string;
@@ -27,7 +30,10 @@ export function emptyManifestEntryDraft(): ManifestEntryDraft {
     sex: '',
     nationality: '',
     idNumber: '',
-    conditions: '',
+    allergies: '',
+    seriousMedicalConditions: '',
+    currentMedications: '',
+    dietaryNotes: '',
     emergencyContactName: '',
     emergencyContactPhone: '',
     emergencyContactEmail: '',
@@ -48,7 +54,10 @@ export function manifestDraftToPayload(
     sex: entry.sex || undefined,
     nationality: entry.nationality.trim(),
     idNumber: entry.idNumber.trim(),
-    conditions: entry.conditions.trim() || undefined,
+    allergies: entry.allergies.trim() || undefined,
+    seriousMedicalConditions: entry.seriousMedicalConditions.trim() || undefined,
+    currentMedications: entry.currentMedications.trim() || undefined,
+    dietaryNotes: entry.dietaryNotes.trim() || undefined,
     emergencyContactName: entry.emergencyContactName.trim(),
     emergencyContactPhone: entry.emergencyContactPhone.trim(),
     emergencyContactEmail: entry.emergencyContactEmail.trim() || undefined,
@@ -230,8 +239,15 @@ type Labels = {
   nationalitySearch: string;
   nationalityEmpty: string;
   idNumber: string;
-  conditions: string;
-  conditionsPlaceholder: string;
+  medicalSection: string;
+  allergies: string;
+  allergiesPlaceholder: string;
+  seriousMedicalConditions: string;
+  seriousMedicalConditionsPlaceholder: string;
+  currentMedications: string;
+  currentMedicationsPlaceholder: string;
+  dietaryNotes: string;
+  dietaryNotesPlaceholder: string;
   emergencyContactSection: string;
   emergencyContactName: string;
   emergencyContactPhone: string;
@@ -472,18 +488,65 @@ export function CheckoutManifestForm({ count, entries, onChange, labels, validat
                   ) : null}
                 </div>
 
-                <div className="sm:col-span-2">
-                  <label htmlFor={`${idPrefix}-cond`} className="block text-sm font-medium text-atg-fg">
-                    {labels.conditions}
-                  </label>
-                  <textarea
-                    id={`${idPrefix}-cond`}
-                    rows={2}
-                    value={entry.conditions}
-                    onChange={(e) => update(index, { conditions: e.target.value })}
-                    placeholder={labels.conditionsPlaceholder}
-                    className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
-                  />
+                <div className="sm:col-span-2 space-y-3 rounded-lg border border-atg-border/80 p-3 dark:border-atg-border">
+                  <p className="text-sm font-semibold text-atg-fg">{labels.medicalSection}</p>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="sm:col-span-2">
+                      <label htmlFor={`${idPrefix}-allergies`} className="block text-sm font-medium text-atg-fg">
+                        {labels.allergies}
+                      </label>
+                      <textarea
+                        id={`${idPrefix}-allergies`}
+                        rows={2}
+                        value={entry.allergies}
+                        onChange={(e) => update(index, { allergies: e.target.value })}
+                        placeholder={labels.allergiesPlaceholder}
+                        className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label
+                        htmlFor={`${idPrefix}-serious-med`}
+                        className="block text-sm font-medium text-atg-fg"
+                      >
+                        {labels.seriousMedicalConditions}
+                      </label>
+                      <textarea
+                        id={`${idPrefix}-serious-med`}
+                        rows={2}
+                        value={entry.seriousMedicalConditions}
+                        onChange={(e) => update(index, { seriousMedicalConditions: e.target.value })}
+                        placeholder={labels.seriousMedicalConditionsPlaceholder}
+                        className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor={`${idPrefix}-meds`} className="block text-sm font-medium text-atg-fg">
+                        {labels.currentMedications}
+                      </label>
+                      <textarea
+                        id={`${idPrefix}-meds`}
+                        rows={2}
+                        value={entry.currentMedications}
+                        onChange={(e) => update(index, { currentMedications: e.target.value })}
+                        placeholder={labels.currentMedicationsPlaceholder}
+                        className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor={`${idPrefix}-dietary`} className="block text-sm font-medium text-atg-fg">
+                        {labels.dietaryNotes}
+                      </label>
+                      <textarea
+                        id={`${idPrefix}-dietary`}
+                        rows={2}
+                        value={entry.dietaryNotes}
+                        onChange={(e) => update(index, { dietaryNotes: e.target.value })}
+                        placeholder={labels.dietaryNotesPlaceholder}
+                        className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="sm:col-span-2 space-y-3 rounded-lg border border-atg-border/80 p-3 dark:border-atg-border">

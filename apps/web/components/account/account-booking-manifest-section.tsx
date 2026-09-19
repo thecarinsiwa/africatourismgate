@@ -15,7 +15,10 @@ type FormState = {
   sex: '' | BookingManifestSex;
   nationality: string;
   idNumber: string;
-  conditions: string;
+  allergies: string;
+  seriousMedicalConditions: string;
+  currentMedications: string;
+  dietaryNotes: string;
   emergencyContactName: string;
   emergencyContactPhone: string;
   emergencyContactEmail: string;
@@ -31,7 +34,10 @@ const EMPTY_FORM: FormState = {
   sex: '',
   nationality: '',
   idNumber: '',
-  conditions: '',
+  allergies: '',
+  seriousMedicalConditions: '',
+  currentMedications: '',
+  dietaryNotes: '',
   emergencyContactName: '',
   emergencyContactPhone: '',
   emergencyContactEmail: '',
@@ -48,7 +54,10 @@ function entryToForm(entry: BookingManifestEntry): FormState {
     sex: entry.sex ?? '',
     nationality: entry.nationality ?? '',
     idNumber: entry.idNumber ?? '',
-    conditions: entry.conditions ?? '',
+    allergies: entry.allergies ?? '',
+    seriousMedicalConditions: entry.seriousMedicalConditions ?? '',
+    currentMedications: entry.currentMedications ?? '',
+    dietaryNotes: entry.dietaryNotes ?? '',
     emergencyContactName: entry.emergencyContactName ?? '',
     emergencyContactPhone: entry.emergencyContactPhone ?? '',
     emergencyContactEmail: entry.emergencyContactEmail ?? '',
@@ -73,7 +82,10 @@ function formToPayload(form: FormState) {
     emergencyContactEmail: form.emergencyContactEmail.trim() || undefined,
     emergencyContactCountry: form.emergencyContactCountry.trim() || undefined,
     emergencyContactAddress: form.emergencyContactAddress.trim() || undefined,
-    conditions: form.conditions.trim() || undefined,
+    allergies: form.allergies.trim() || undefined,
+    seriousMedicalConditions: form.seriousMedicalConditions.trim() || undefined,
+    currentMedications: form.currentMedications.trim() || undefined,
+    dietaryNotes: form.dietaryNotes.trim() || undefined,
     comment: form.comment.trim() || undefined,
     other: form.other.trim() || undefined,
   };
@@ -97,7 +109,10 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
   const { locale } = useLocale();
   const m = t.account.reservations.detail.manifest;
 
-  const conditionsId = useId();
+  const allergiesId = useId();
+  const seriousMedId = useId();
+  const medicationsId = useId();
+  const dietaryId = useId();
   const commentId = useId();
   const otherId = useId();
 
@@ -338,10 +353,53 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
                         <dd className="font-mono text-xs text-atg-fg">{entry.idNumber}</dd>
                       </div>
                     ) : null}
-                    {entry.conditions ? (
+                    {entry.allergies ||
+                    entry.seriousMedicalConditions ||
+                    entry.currentMedications ||
+                    entry.dietaryNotes ||
+                    entry.conditions ? (
                       <div className="col-span-2 sm:col-span-3">
-                        <dt className="text-xs text-atg-muted">{m.fields.conditions}</dt>
-                        <dd className="text-atg-fg">{entry.conditions}</dd>
+                        <dt className="text-xs text-atg-muted">{m.fields.medicalSection}</dt>
+                        <dd className="text-atg-fg space-y-1">
+                          {entry.allergies ? (
+                            <p>
+                              <span className="text-atg-muted">{m.fields.allergies}: </span>
+                              {entry.allergies}
+                            </p>
+                          ) : null}
+                          {entry.seriousMedicalConditions ? (
+                            <p>
+                              <span className="text-atg-muted">
+                                {m.fields.seriousMedicalConditions}:{' '}
+                              </span>
+                              {entry.seriousMedicalConditions}
+                            </p>
+                          ) : null}
+                          {entry.currentMedications ? (
+                            <p>
+                              <span className="text-atg-muted">
+                                {m.fields.currentMedications}:{' '}
+                              </span>
+                              {entry.currentMedications}
+                            </p>
+                          ) : null}
+                          {entry.dietaryNotes ? (
+                            <p>
+                              <span className="text-atg-muted">{m.fields.dietaryNotes}: </span>
+                              {entry.dietaryNotes}
+                            </p>
+                          ) : null}
+                          {entry.conditions &&
+                          !entry.allergies &&
+                          !entry.seriousMedicalConditions &&
+                          !entry.currentMedications &&
+                          !entry.dietaryNotes ? (
+                            <p>
+                              <span className="text-atg-muted">{m.fields.legacyConditions}: </span>
+                              {entry.conditions}
+                            </p>
+                          ) : null}
+                        </dd>
                       </div>
                     ) : null}
                     {entry.emergencyContactName || entry.emergencyContactPhone ? (
@@ -495,20 +553,73 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
                 />
               </div>
 
-              <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-atg-fg" htmlFor={conditionsId}>
-                  {m.fields.conditions}
-                </label>
-                <textarea
-                  id={conditionsId}
-                  rows={2}
-                  value={form.conditions}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, conditions: e.target.value }))
-                  }
-                  className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
-                  placeholder={m.fields.conditionsPlaceholder}
-                />
+              <div className="sm:col-span-2 space-y-3 rounded-lg border border-atg-border/80 p-3 dark:border-atg-border">
+                <p className="text-sm font-semibold text-atg-fg">{m.fields.medicalSection}</p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="sm:col-span-2">
+                    <label className="block text-sm font-medium text-atg-fg" htmlFor={allergiesId}>
+                      {m.fields.allergies}
+                    </label>
+                    <textarea
+                      id={allergiesId}
+                      rows={2}
+                      value={form.allergies}
+                      onChange={(e) =>
+                        setForm((prev) => ({ ...prev, allergies: e.target.value }))
+                      }
+                      className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
+                      placeholder={m.fields.allergiesPlaceholder}
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-sm font-medium text-atg-fg" htmlFor={seriousMedId}>
+                      {m.fields.seriousMedicalConditions}
+                    </label>
+                    <textarea
+                      id={seriousMedId}
+                      rows={2}
+                      value={form.seriousMedicalConditions}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          seriousMedicalConditions: e.target.value,
+                        }))
+                      }
+                      className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
+                      placeholder={m.fields.seriousMedicalConditionsPlaceholder}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-atg-fg" htmlFor={medicationsId}>
+                      {m.fields.currentMedications}
+                    </label>
+                    <textarea
+                      id={medicationsId}
+                      rows={2}
+                      value={form.currentMedications}
+                      onChange={(e) =>
+                        setForm((prev) => ({ ...prev, currentMedications: e.target.value }))
+                      }
+                      className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
+                      placeholder={m.fields.currentMedicationsPlaceholder}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-atg-fg" htmlFor={dietaryId}>
+                      {m.fields.dietaryNotes}
+                    </label>
+                    <textarea
+                      id={dietaryId}
+                      rows={2}
+                      value={form.dietaryNotes}
+                      onChange={(e) =>
+                        setForm((prev) => ({ ...prev, dietaryNotes: e.target.value }))
+                      }
+                      className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
+                      placeholder={m.fields.dietaryNotesPlaceholder}
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="sm:col-span-2 space-y-3 rounded-lg border border-atg-border/80 p-3 dark:border-atg-border">
