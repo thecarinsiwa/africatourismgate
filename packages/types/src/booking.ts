@@ -207,7 +207,12 @@ export interface BookingManifestEntry {
   emergencyContactEmail?: string | null;
   emergencyContactCountry?: string | null;
   emergencyContactAddress?: string | null;
+  /** Legacy free-text medical notes — read-only; prefer structured fields. */
   conditions?: string | null;
+  allergies?: string | null;
+  seriousMedicalConditions?: string | null;
+  currentMedications?: string | null;
+  dietaryNotes?: string | null;
   comment?: string | null;
   other?: string | null;
   createdAt: string;
@@ -230,7 +235,12 @@ export interface CreateBookingManifestEntryRequest {
   emergencyContactEmail?: string;
   emergencyContactCountry?: string;
   emergencyContactAddress?: string;
+  /** @deprecated Ignored for persistence; use structured medical fields or `other`. */
   conditions?: string;
+  allergies?: string;
+  seriousMedicalConditions?: string;
+  currentMedications?: string;
+  dietaryNotes?: string;
   comment?: string;
   other?: string;
   sortOrder?: number;
