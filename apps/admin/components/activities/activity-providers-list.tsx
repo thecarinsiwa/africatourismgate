@@ -58,6 +58,24 @@ export function ActivityProvidersList() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<ActivityProvider | null>(null);
+  const [canWrite, setCanWrite] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    void getApiClient()
+      .getAuthMe()
+      .then((me) => {
+        if (!cancelled) {
+          setCanWrite(me.isSuperAdmin || me.permissions.includes('activities.write'));
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setCanWrite(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     void getApiClient()
@@ -114,6 +132,7 @@ export function ActivityProvidersList() {
   }
 
   function openCreate() {
+    if (!canWrite) return;
     setEditing(null);
     setFormValues(emptyForm);
     setFormError(null);
@@ -121,6 +140,7 @@ export function ActivityProvidersList() {
   }
 
   function openEdit(provider: ActivityProvider) {
+    if (!canWrite) return;
     setEditing(provider);
     setFormValues({
       name: provider.name,
@@ -132,6 +152,7 @@ export function ActivityProvidersList() {
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    if (!canWrite) return;
     setFormError(null);
     if (!formValues.name.trim()) {
       setFormError(tCommon('validation.nameRequired'));
@@ -166,7 +187,7 @@ export function ActivityProvidersList() {
   }, []);
 
   const handleDeleteConfirm = useCallback(async () => {
-    if (!confirmTarget) return;
+    if (!confirmTarget || !canWrite) return;
     const provider = confirmTarget;
     setConfirmTarget(null);
     setDeleteError(null);
@@ -179,7 +200,7 @@ export function ActivityProvidersList() {
     } finally {
       setDeletingId(null);
     }
-  }, [confirmTarget, getActivitiesErrorMessage, load]);
+  }, [canWrite, confirmTarget, getActivitiesErrorMessage, load]);
 
   const columns = useMemo<ColumnDef<ActivityProvider, unknown>[]>(
     () => [
@@ -208,27 +229,31 @@ export function ActivityProvidersList() {
         meta: { align: 'center' },
         cell: () => <ActivityProviderRating />,
       },
-      {
-        id: 'actions',
-        header: tColumns('actions'),
-        meta: { align: 'right' },
-        cell: ({ row }) => (
-          <DataTableActions>
-            <DataTableActionButton
-              action="edit"
-              onClick={() => openEdit(row.original)}
-            />
-            <DataTableActionButton
-              action="delete"
-              onClick={() => handleDeleteRequest(row.original)}
-              disabled={deletingId === row.original.id}
-              loading={deletingId === row.original.id}
-            />
-          </DataTableActions>
-        ),
-      },
+      ...(canWrite
+        ? [
+            {
+              id: 'actions',
+              header: tColumns('actions'),
+              meta: { align: 'right' as const },
+              cell: ({ row }: { row: { original: ActivityProvider } }) => (
+                <DataTableActions>
+                  <DataTableActionButton
+                    action="edit"
+                    onClick={() => openEdit(row.original)}
+                  />
+                  <DataTableActionButton
+                    action="delete"
+                    onClick={() => handleDeleteRequest(row.original)}
+                    disabled={deletingId === row.original.id}
+                    loading={deletingId === row.original.id}
+                  />
+                </DataTableActions>
+              ),
+            } satisfies ColumnDef<ActivityProvider, unknown>,
+          ]
+        : []),
     ],
-    [deletingId, destById, emptyDash, handleDeleteRequest, tColumns, tList],
+    [canWrite, deletingId, destById, emptyDash, handleDeleteRequest, tColumns, tList],
   );
 
   const providers = state.status === 'ready' ? state.providers : [];
@@ -346,9 +371,11 @@ export function ActivityProvidersList() {
               </select>
             </div>
           </div>
-          <Button type="button" onClick={openCreate}>
-            {t('new')}
-          </Button>
+          {canWrite ? (
+            <Button type="button" onClick={openCreate}>
+              {t('new')}
+            </Button>
+          ) : null}
         </div>
 
         {state.status === 'error' ? (
