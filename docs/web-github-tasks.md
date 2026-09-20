@@ -88,7 +88,7 @@ node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 | i18n | ⚠️ | Migration next-intl inachevée ; textes EN en dur sur certaines pages |
 | Routes legacy `/reservations/*` | ⚠️ | Doublons sans guards auth |
 | Stub `/booking` (sans `/cart`) | ✅ | **WEB-003 Option A** : redirect serveur → `/booking/cart` si draft URL valide, sinon `/hotels` |
-| Copy « demo / coming soon » | ⚠️ | Incohérent avec checkout opérationnel |
+| Copy « demo / coming soon » | ✅ | **WEB-004** : copy live sans « coming soon » ; trust demo gated (dev / flag) |
 | Tests unitaires composants | ❌ | Seulement logique `lib/` |
 | Tests E2E | ⚠️ | Bonne couverture checkout ; i18n E2E limité à `/` + login (voir WEB-I18N-06) |
 | Design / cohérence visuelle | ⚠️ | Voir [web-design-improvements.md](./web-design-improvements.md) |
@@ -102,7 +102,7 @@ node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 | WEB-001 | Migrer i18n legacy vers next-intl | Haute | Refactoring | L |
 | WEB-002 | Supprimer routes legacy `/reservations/*` | Haute | Cleanup | S |
 | WEB-003 | Corriger stub `/booking` — ✅ Option A (redirect) | Haute | Bug | S |
-| WEB-004 | Aligner copy UX (demo, coming soon, trust hints) | Haute | Enhancement | M |
+| WEB-004 | Aligner copy UX (demo, coming soon, trust hints) — ✅ | Haute | Enhancement | M |
 | WEB-005 | Internationaliser metadata SEO | Moyenne | Enhancement | M |
 | WEB-006 | Stabiliser pipeline E2E (build + Playwright CI) | Haute | Testing | M |
 | WEB-007 | E2E checkout location voiture | Moyenne | Testing | S |
@@ -291,10 +291,20 @@ Choisir **une** des options (documenter le choix dans la PR) :
 
 ### WEB-004 — Aligner copy UX (demo, coming soon, trust hints)
 
+**Statut :** ✅ fait  
 **Labels :** `web`, `enhancement`, `priority:high`  
 **Branche suggérée :** `fix/web-copy-demo-trust-hints`
 
-#### Modèle GitHub
+#### Livré
+
+- Trust hint `trustDemoCatalog` : gate via [`shouldShowDemoTrustHints`](../apps/web/lib/bookings/show-demo-trust-hints.ts) (`NODE_ENV=development` ou `NEXT_PUBLIC_SHOW_DEMO_TRUST_HINTS=true`) dans [`useBookingSidebarTrustHints`](../apps/web/components/shared/booking-sidebar-shell.tsx)
+- Copy fr/en/es : `bookingSidebar.trustDemoCatalog` (aperçu interne) + `hotels.previewNotice` (prix min/nuit, sans « coming soon ») dans `messages/*.json`
+- [`/coming-soon/[vertical]`](../apps/web/app/coming-soon/[vertical]/page.tsx) : redirect vers la route live si `IMPLEMENTED_SEARCH_VERTICALS` ; page coming-soon uniquement si vertical non implémenté
+- CTA packages : [`useBookingCtaLabel('package')`](../apps/web/components/packages/package-booking-sidebar.tsx) (aligné autres sidebars)
+
+Hors scope volontaire : `comingSoon.*` (verticals non live), empty CMS / legal « Content coming soon ».
+
+#### Modèle GitHub (historique)
 
 ```markdown
 ## Contexte
@@ -304,22 +314,23 @@ Plusieurs textes indiquent encore un catalogue « demo » ou « coming soon » a
 ## Objectif
 
 1. Auditer et corriger les messages dans :
-   - `lib/i18n/translations.ts` / `messages/*.json` (ex. « Demo catalogue — online booking coming soon »)
-   - `components/reservations/booking-sidebar-shell.tsx` (`trustDemoCatalog`)
+   - `messages/*.json` (ex. « Demo catalogue — online booking coming soon »)
+   - `components/shared/booking-sidebar-shell.tsx` (`trustDemoCatalog`)
    - Pages `coming-soon` si des verticals sont marquées implémentées dans `lib/search/route.ts`
-2. Afficher les **trust hints demo** uniquement en environnement dev ou si flag org explicite
+2. Afficher les **trust hints demo** uniquement en environnement dev ou si flag explicite (`NEXT_PUBLIC_SHOW_DEMO_TRUST_HINTS`)
 3. Harmoniser CTA sidebar selon mode booking (immédiat vs assisté) via `use-booking-cta.ts`
 
 ## Critères d'acceptation
 
-- [ ] Aucun message « coming soon » sur un vertical avec checkout actif
-- [ ] Trust hints conditionnels (pas de badge demo en prod)
-- [ ] i18n fr/en/es pour tout nouveau texte
-- [ ] Parcours hôtel + activité testés manuellement
+- [x] Aucun message « coming soon » sur un vertical avec checkout actif
+- [x] Trust hints conditionnels (pas de badge demo en prod)
+- [x] i18n fr/en/es pour tout nouveau texte
+- [ ] Parcours hôtel + activité testés manuellement (smoke local recommandé)
 
 ## Références
 
 - `apps/web/lib/bookings/use-booking-cta.ts`
+- `apps/web/lib/bookings/show-demo-trust-hints.ts`
 - `apps/web/lib/search/route.ts` (`IMPLEMENTED_SEARCH_VERTICALS`)
 ```
 
@@ -858,7 +869,7 @@ Fiches (IDs demo à documenter dans l'issue) :
 - Cartes produit (meta, prix « à partir de », CTA)
 - Sidebars réservation (dates, CTA immédiat vs « Demander une réservation »)
 - Empty states (aucun résultat)
-- Messages « demo / coming soon » (signaler pour WEB-004)
+- Messages « demo / coming soon » : ✅ WEB-004 (surfaces live corrigées)
 
 ## Critères d'acceptation
 
@@ -1130,7 +1141,7 @@ WEB-012 (README) → WEB-006 (CI E2E) → WEB-002 + WEB-003 (cleanup routes)
 | WEB-001 | | | ☐ |
 | WEB-002 | | | ☐ |
 | WEB-003 | | | ☐ |
-| WEB-004 | | | ☐ |
+| WEB-004 | | | ✅ |
 | WEB-005 | | | ☐ |
 | WEB-006 | | | ☐ |
 | WEB-007 | | | ☐ |
