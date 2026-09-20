@@ -1,1 +1,5 @@
-export { default } from '../../reservations/cancel/page';
+import { ReservationCancelPageContent } from '../../../components/reservations/reservation-cancel-page-content';
+
+export default function BookingCancelPage() {
+  return <ReservationCancelPageContent />;
+}
