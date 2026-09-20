@@ -56,7 +56,7 @@ export function buildBookingRegisterFormConfig(
     },
     terms: {
       label: t('termsLabel'),
-      href: '#',
+      href: '/legal/terms',
       linkLabel: t('termsLink'),
       required: true,
     },

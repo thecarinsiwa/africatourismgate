@@ -75,7 +75,7 @@ export const defaultRegisterFormConfig: RegisterFormConfig = {
   },
   terms: {
     label: "J'accepte les",
-    href: '#',
+    href: '/legal/terms',
     linkLabel: "conditions d'utilisation",
     required: true,
   },

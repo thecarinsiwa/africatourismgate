@@ -404,6 +404,7 @@ export type Translations = {
     contact: string;
     location: string;
     privacy: string;
+    termsOfUse: string;
     about: string;
     aboutPages: string;
     gap: string;
@@ -1420,6 +1421,18 @@ export type Translations = {
       { title: string; description: string }
     >;
   };
+  legal: {
+    termsOfUseTitle: string;
+    termsOfUseSubtitle: string;
+    breadcrumbHome: string;
+    loading: string;
+    emptyPage: string;
+    emptyPageHint: string;
+    localeFallback: string;
+    meta: {
+      termsOfUse: { title: string; description: string };
+    };
+  };
   comingSoon: {
     badge: string;
     title: string;
@@ -1976,6 +1989,7 @@ const fr: Translations = {
     contact: 'Contact',
     location: 'Kinshasa, RD Congo',
     privacy: 'Politique de Confidentialité',
+    termsOfUse: "Conditions d'utilisation",
     about: 'À propos',
     aboutPages: 'À propos',
     gap: 'GAP',
@@ -3104,6 +3118,25 @@ const fr: Translations = {
       },
     },
   },
+  legal: {
+    termsOfUseTitle: "Conditions d'utilisation",
+    termsOfUseSubtitle:
+      'Les règles qui encadrent l’utilisation de la plateforme Africa Tourism Gate.',
+    breadcrumbHome: 'Accueil',
+    loading: 'Chargement…',
+    emptyPage: 'Contenu en cours de préparation',
+    emptyPageHint:
+      'Les conditions d’utilisation seront bientôt disponibles. Contactez le support pour en savoir plus.',
+    localeFallback:
+      'Contenu affiché dans une autre langue — la version dans votre langue sera publiée prochainement.',
+    meta: {
+      termsOfUse: {
+        title: "Conditions d'utilisation",
+        description:
+          "Conditions d'utilisation de la plateforme Africa Tourism Gate — règles d'accès, compte client et réservations.",
+      },
+    },
+  },
   comingSoon: {
     badge: 'Bient?t disponible',
     title: 'Bient?t disponible',
@@ -3653,6 +3686,7 @@ const en: Translations = {
     contact: 'Contact',
     location: 'Kinshasa, DR Congo',
     privacy: 'Privacy Policy',
+    termsOfUse: 'Terms of use',
     about: 'About',
     aboutPages: 'About us',
     gap: 'GAP',
@@ -4771,6 +4805,24 @@ const en: Translations = {
         title: 'Contact us',
         description:
           'Reach the Africa Tourism Gate team by phone, email or support form.',
+      },
+    },
+  },
+  legal: {
+    termsOfUseTitle: 'Terms of use',
+    termsOfUseSubtitle: 'The rules that govern the use of the Africa Tourism Gate platform.',
+    breadcrumbHome: 'Home',
+    loading: 'Loading…',
+    emptyPage: 'Content coming soon',
+    emptyPageHint:
+      'Terms of use will be available shortly. Contact support to learn more.',
+    localeFallback:
+      'Showing content in another language — your language version will be published soon.',
+    meta: {
+      termsOfUse: {
+        title: 'Terms of use',
+        description:
+          'Terms of use for the Africa Tourism Gate platform — access rules, customer accounts and bookings.',
       },
     },
   },

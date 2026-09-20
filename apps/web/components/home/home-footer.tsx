@@ -9,6 +9,7 @@ import { useResolvedPublicContact } from '../../lib/contact/use-resolved-public-
 import { buildSocialLinks } from '../../lib/contact/social-links';
 import { buildVerticalListRoute } from '../../lib/search/route';
 import { ABOUT_NAV_ITEMS, ABOUT_PATHS } from '../../lib/about/routes';
+import { LEGAL_PATHS } from '../../lib/legal/routes';
 
 export function HomeFooter() {
   const t = useTranslations();
@@ -203,6 +204,10 @@ export function HomeFooter() {
             <a href="#" className="hover:text-white transition-colors">
               {t.footer.privacy}
             </a>
+            <span className="mx-2">|</span>
+            <Link href={LEGAL_PATHS.termsOfUse} className="hover:text-white transition-colors">
+              {t.footer.termsOfUse}
+            </Link>
             <span className="mx-2">|</span>
             <Link href={ABOUT_PATHS.whoWeAre} className="hover:text-white transition-colors">
               {t.footer.about}

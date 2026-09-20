@@ -519,6 +519,7 @@ export const es: Translations = {
     contact: 'Contacto',
     location: 'Kinshasa, RD Congo',
     privacy: 'Política de privacidad',
+    termsOfUse: 'Condiciones de uso',
     about: 'Acerca de',
     aboutPages: 'Sobre nosotros',
     gap: 'GAP',
@@ -1640,6 +1641,25 @@ export const es: Translations = {
         title: 'Contáctenos',
         description:
           'Comuníquese con el equipo de Africa Tourism Gate por teléfono, correo o formulario.',
+      },
+    },
+  },
+  legal: {
+    termsOfUseTitle: 'Condiciones de uso',
+    termsOfUseSubtitle:
+      'Las reglas que rigen el uso de la plataforma Africa Tourism Gate.',
+    breadcrumbHome: 'Inicio',
+    loading: 'Cargando…',
+    emptyPage: 'Contenido en preparación',
+    emptyPageHint:
+      'Las condiciones de uso estarán disponibles en breve. Contacte con soporte para más información.',
+    localeFallback:
+      'Mostrando contenido en otro idioma — la versión en su idioma se publicará pronto.',
+    meta: {
+      termsOfUse: {
+        title: 'Condiciones de uso',
+        description:
+          'Condiciones de uso de la plataforma Africa Tourism Gate — reglas de acceso, cuenta de cliente y reservas.',
       },
     },
   },
