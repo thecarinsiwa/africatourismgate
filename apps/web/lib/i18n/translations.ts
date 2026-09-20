@@ -1422,21 +1422,6 @@ export type Translations = {
       { title: string; description: string }
     >;
   };
-  legal: {
-    termsOfUseTitle: string;
-    termsOfUseSubtitle: string;
-    privacyPolicyTitle: string;
-    privacyPolicySubtitle: string;
-    breadcrumbHome: string;
-    loading: string;
-    emptyPage: string;
-    emptyPageHint: string;
-    localeFallback: string;
-    meta: {
-      termsOfUse: { title: string; description: string };
-      privacyPolicy: { title: string; description: string };
-    };
-  };
   comingSoon: {
     badge: string;
     title: string;
@@ -3123,33 +3108,6 @@ const fr: Translations = {
       },
     },
   },
-  legal: {
-    termsOfUseTitle: "Conditions d'utilisation",
-    termsOfUseSubtitle:
-      'Les règles qui encadrent l’utilisation de la plateforme Africa Tourism Gate.',
-    privacyPolicyTitle: 'Politique de confidentialité',
-    privacyPolicySubtitle:
-      'Comment Africa Tourism Gate collecte, utilise et protège vos données personnelles.',
-    breadcrumbHome: 'Accueil',
-    loading: 'Chargement…',
-    emptyPage: 'Contenu en cours de préparation',
-    emptyPageHint:
-      'Ce document sera bientôt disponible. Contactez le support pour en savoir plus.',
-    localeFallback:
-      'Contenu affiché dans une autre langue — la version dans votre langue sera publiée prochainement.',
-    meta: {
-      termsOfUse: {
-        title: "Conditions d'utilisation",
-        description:
-          "Conditions d'utilisation de la plateforme Africa Tourism Gate — règles d'accès, compte client et réservations.",
-      },
-      privacyPolicy: {
-        title: 'Politique de confidentialité',
-        description:
-          'Politique de confidentialité Africa Tourism Gate — collecte, usage et protection des données personnelles.',
-      },
-    },
-  },
   comingSoon: {
     badge: 'Bient?t disponible',
     title: 'Bient?t disponible',
@@ -4819,31 +4777,6 @@ const en: Translations = {
         title: 'Contact us',
         description:
           'Reach the Africa Tourism Gate team by phone, email or support form.',
-      },
-    },
-  },
-  legal: {
-    termsOfUseTitle: 'Terms of use',
-    termsOfUseSubtitle: 'The rules that govern the use of the Africa Tourism Gate platform.',
-    privacyPolicyTitle: 'Privacy policy',
-    privacyPolicySubtitle:
-      'How Africa Tourism Gate collects, uses and protects your personal data.',
-    breadcrumbHome: 'Home',
-    loading: 'Loading…',
-    emptyPage: 'Content coming soon',
-    emptyPageHint: 'This document will be available shortly. Contact support to learn more.',
-    localeFallback:
-      'Showing content in another language — your language version will be published soon.',
-    meta: {
-      termsOfUse: {
-        title: 'Terms of use',
-        description:
-          'Terms of use for the Africa Tourism Gate platform — access rules, customer accounts and bookings.',
-      },
-      privacyPolicy: {
-        title: 'Privacy policy',
-        description:
-          'Africa Tourism Gate privacy policy — collection, use and protection of personal data.',
       },
     },
   },

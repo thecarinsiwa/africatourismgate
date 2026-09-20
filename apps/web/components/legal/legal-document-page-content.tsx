@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import type { LegalPageSectionKey, PublicLegalPage } from '@africatourismgate/types';
 import { Spinner } from '@africatourismgate/ui';
+import { useLocale, useTranslations } from 'next-intl';
 import { getLegalPageBySectionKeyForLocale } from '../../lib/api/public';
-import { useAppLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { useScrollAnimation } from '../home/use-scroll-animation';
 import { LegalShell } from './legal-shell';
 
@@ -19,9 +19,8 @@ export function LegalDocumentPageContent({
   fallbackTitle,
   fallbackSubtitle,
 }: LegalDocumentPageContentProps) {
-  const locale = useAppLocale();
-  const t = useTranslations();
-  const legal = t.legal;
+  const locale = useLocale();
+  const t = useTranslations('legal');
   const { ref, isVisible } = useScrollAnimation(0.08);
 
   const [page, setPage] = useState<PublicLegalPage | null>(null);
@@ -64,7 +63,7 @@ export function LegalDocumentPageContent({
     return (
       <LegalShell title={fallbackTitle} description={fallbackSubtitle}>
         <div className="flex items-center justify-center py-16">
-          <Spinner size="md" variant="primary" label={legal.loading} showLabel />
+          <Spinner size="md" variant="primary" label={t('loading')} showLabel />
         </div>
       </LegalShell>
     );
@@ -74,8 +73,8 @@ export function LegalDocumentPageContent({
     return (
       <LegalShell title={fallbackTitle} description={fallbackSubtitle}>
         <div className="rounded-lg border border-atg-border bg-atg-elevated/50 px-4 py-8 text-center">
-          <p className="font-medium text-atg-fg">{legal.emptyPage}</p>
-          <p className="mt-2 text-sm text-atg-muted">{legal.emptyPageHint}</p>
+          <p className="font-medium text-atg-fg">{t('emptyPage')}</p>
+          <p className="mt-2 text-sm text-atg-muted">{t('emptyPageHint')}</p>
         </div>
       </LegalShell>
     );
@@ -89,7 +88,7 @@ export function LegalDocumentPageContent({
       >
         {localeFallback ? (
           <p className="mb-6 rounded-lg border border-amber-200/60 bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-200">
-            {legal.localeFallback}
+            {t('localeFallback')}
           </p>
         ) : null}
 

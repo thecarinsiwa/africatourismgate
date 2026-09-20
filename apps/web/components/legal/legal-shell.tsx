@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
-import { useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { PageHero } from '../shared/page-hero';
@@ -14,8 +14,7 @@ type LegalShellProps = {
 };
 
 export function LegalShell({ children, title, description }: LegalShellProps) {
-  const t = useTranslations();
-  const legal = t.legal;
+  const t = useTranslations('legal');
 
   return (
     <div className="flex min-h-screen flex-col bg-atg-bg text-atg-fg">
@@ -27,7 +26,7 @@ export function LegalShell({ children, title, description }: LegalShellProps) {
               <ol className="flex flex-wrap items-center gap-2 text-sm text-white/70">
                 <li>
                   <Link href="/" className="hover:text-white">
-                    {legal.breadcrumbHome}
+                    {t('breadcrumbHome')}
                   </Link>
                 </li>
                 <li aria-hidden>/</li>

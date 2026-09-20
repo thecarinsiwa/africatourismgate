@@ -115,5 +115,26 @@
     "intro": "Several donation campaigns are available depending on the context. Choose the one that fits your commitment.",
     "allCampaigns": "All campaigns",
     "empty": "No donation campaigns are available at the moment."
+  },
+  "legal": {
+    "termsOfUseTitle": "Terms of use",
+    "termsOfUseSubtitle": "The rules that govern the use of the Africa Tourism Gate platform.",
+    "privacyPolicyTitle": "Privacy policy",
+    "privacyPolicySubtitle": "How Africa Tourism Gate collects, uses and protects your personal data.",
+    "breadcrumbHome": "Home",
+    "loading": "Loading…",
+    "emptyPage": "Content coming soon",
+    "emptyPageHint": "This document will be available shortly. Contact support to learn more.",
+    "localeFallback": "Showing content in another language — your language version will be published soon.",
+    "meta": {
+      "termsOfUse": {
+        "title": "Terms of use",
+        "description": "Terms of use for the Africa Tourism Gate platform — access rules, customer accounts and bookings."
+      },
+      "privacyPolicy": {
+        "title": "Privacy policy",
+        "description": "Africa Tourism Gate privacy policy — collection, use and protection of personal data."
+      }
+    }
   }
 }

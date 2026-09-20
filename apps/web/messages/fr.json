@@ -115,5 +115,26 @@
     "intro": "Plusieurs campagnes de don sont disponibles selon le contexte. Choisissez celle qui correspond à votre engagement.",
     "allCampaigns": "Toutes les campagnes",
     "empty": "Aucune campagne de don disponible pour le moment."
+  },
+  "legal": {
+    "termsOfUseTitle": "Conditions d'utilisation",
+    "termsOfUseSubtitle": "Les règles qui encadrent l’utilisation de la plateforme Africa Tourism Gate.",
+    "privacyPolicyTitle": "Politique de confidentialité",
+    "privacyPolicySubtitle": "Comment Africa Tourism Gate collecte, utilise et protège vos données personnelles.",
+    "breadcrumbHome": "Accueil",
+    "loading": "Chargement…",
+    "emptyPage": "Contenu en cours de préparation",
+    "emptyPageHint": "Ce document sera bientôt disponible. Contactez le support pour en savoir plus.",
+    "localeFallback": "Contenu affiché dans une autre langue — la version dans votre langue sera publiée prochainement.",
+    "meta": {
+      "termsOfUse": {
+        "title": "Conditions d'utilisation",
+        "description": "Conditions d'utilisation de la plateforme Africa Tourism Gate — règles d'accès, compte client et réservations."
+      },
+      "privacyPolicy": {
+        "title": "Politique de confidentialité",
+        "description": "Politique de confidentialité Africa Tourism Gate — collecte, usage et protection des données personnelles."
+      }
+    }
   }
 }
