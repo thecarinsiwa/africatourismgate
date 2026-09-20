@@ -85,14 +85,25 @@ export function UserIdFilterBar({
       setLoadingUsers(true);
       setUsersError(null);
       try {
-        const result = await getApiClient().listUsers({
+        const client = getApiClient();
+        const result = await client.listUsers({
           page: 1,
           limit: 100,
           status: 'active',
         });
+        let loaded = result.data;
+        const selectedId = (searchParams.get('userId') ?? '').trim();
+        if (selectedId && !loaded.some((user) => user.id === selectedId)) {
+          try {
+            const selected = await client.getUser(selectedId);
+            loaded = [selected, ...loaded];
+          } catch {
+            // Keep filter value even if the user cannot be resolved for the dropdown.
+          }
+        }
         if (!cancelled) {
-          setUsers(result.data);
-          onUsersLoaded?.(result.data);
+          setUsers(loaded);
+          onUsersLoaded?.(loaded);
         }
       } catch (error) {
         if (!cancelled) {
@@ -108,7 +119,7 @@ export function UserIdFilterBar({
     return () => {
       cancelled = true;
     };
-  }, [usersProp, onUsersLoaded, getUsersErrorMessage]);
+  }, [usersProp, onUsersLoaded, getUsersErrorMessage, searchParams]);
 
   const syncUrl = useCallback(
     (next: { userId?: string; dateFrom?: string; dateTo?: string }) => {
@@ -195,6 +206,9 @@ export function UserIdFilterBar({
                 {user.firstName} {user.lastName} — {user.email}
               </option>
             ))}
+            {userId && !users.some((user) => user.id === userId) ? (
+              <option value={userId}>{userId}</option>
+            ) : null}
           </select>
         </div>
         {showDateRange ? (

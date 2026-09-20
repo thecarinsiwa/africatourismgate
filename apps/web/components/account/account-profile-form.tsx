@@ -120,7 +120,6 @@ export function AccountProfileForm() {
     return () => {
       mounted = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- load once on mount
   }, [t.account.profile.loadError]);
 
   function handleReset() {
@@ -207,7 +206,6 @@ export function AccountProfileForm() {
         <div className="flex items-center gap-4">
           <div className="relative shrink-0">
             {avatarSrc ? (
-              // eslint-disable-next-line @next/next/no-img-element -- remote upload URL from API
               <img
                 src={avatarSrc}
                 alt=""

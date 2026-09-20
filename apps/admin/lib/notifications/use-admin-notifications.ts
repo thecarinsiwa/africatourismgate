@@ -144,7 +144,8 @@ export function useAdminNotifications(): AdminNotificationsState {
       });
   }, [fetchNotifications]);
 
-  const markAsUnread = useCallback((_id: string) => {
+  const markAsUnread = useCallback((id: string) => {
+    void id;
     // Server API is write-once for read_at in V1; unread stays until next server event.
   }, []);
 

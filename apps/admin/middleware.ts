@@ -68,7 +68,8 @@ async function handleAuth(request: NextRequest): Promise<NextResponse | null> {
   if (isProtectedPath(pathname)) {
     if (!valid) {
       const loginUrl = new URL('/login', request.url);
-      loginUrl.searchParams.set('next', pathname);
+      const nextPath = `${pathname}${request.nextUrl.search}`;
+      loginUrl.searchParams.set('next', nextPath);
       const response = NextResponse.redirect(loginUrl);
       clearSessionCookies(response);
       return response;
@@ -127,5 +128,8 @@ export const config = {
     '/parametres/:path*',
     '/gap',
     '/gap/:path*',
+    '/profil',
+    '/guides',
+    '/guides/:path*',
   ],
 };

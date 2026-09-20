@@ -92,7 +92,6 @@ export function AdminProfilePage() {
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- load once
   }, [t]);
 
   async function handlePhotoChange(file: File | undefined) {
@@ -196,7 +195,6 @@ export function AdminProfilePage() {
         <p className="mt-1 text-xs text-atg-muted">{t('photoHint')}</p>
         <div className="mt-4 flex flex-wrap items-center gap-4">
           {avatarSrc ? (
-            // eslint-disable-next-line @next/next/no-img-element -- remote upload URL from API
             <img
               src={avatarSrc}
               alt=""
