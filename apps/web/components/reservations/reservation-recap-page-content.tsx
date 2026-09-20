@@ -462,7 +462,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
         const params = new URLSearchParams({
           verificationId: booking.verificationId,
           bookingId: booking.booking.id,
-          next: '/reservations/recap',
+          next: '/booking/recap',
         });
         router.push(`/booking/verify?${params.toString()}`);
         return;
