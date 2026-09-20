@@ -113,7 +113,7 @@ node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 | WEB-011 | Gestion erreurs API sur pages listing — ✅ | Moyenne | Bug | M |
 | WEB-012 | Créer README local `apps/web` — ✅ | Basse | Docs | S |
 | WEB-013 | Nettoyer code `@deprecated` — ✅ | Basse | Cleanup | S |
-| WEB-014 | E2E flux register + verify OTP | Moyenne | Testing | M |
+| WEB-014 | E2E flux register + verify OTP — ✅ | Moyenne | Testing | M |
 | WEB-015 | E2E erreurs Stripe / échecs API | Moyenne | Testing | M |
 | WEB-I18N-01 | QA manuelle i18n — Accueil & navigation | Haute | i18n / QA | S |
 | WEB-I18N-02 | QA manuelle i18n — Verticales (6 listings + fiches) | Haute | i18n / QA | M |
@@ -736,6 +736,7 @@ Plusieurs helpers et routes sont marqués `@deprecated` :
 
 ### WEB-014 — E2E flux register + verify OTP
 
+**Statut :** ✅ livré (2026-09-20)
 **Labels :** `web`, `testing`, `priority:medium`  
 **Branche suggérée :** `feature/web-e2e-register-verify`
 
@@ -755,9 +756,13 @@ Spec E2E :
 
 ## Critères d'acceptation
 
-- [ ] Spec stable sans flake (> 3 runs locaux OK)
-- [ ] Utilise helpers auth existants
+- [x] Spec stable sans flake (> 3 runs locaux OK)
+- [x] Utilise helpers auth existants
 ```
+
+**Livré :**
+- Helpers : `mockRegisterRequiresVerification`, `mockVerifyOperationSuccess` dans [`mock-checkout-auth.ts`](../apps/web/tests/e2e/helpers/mock-checkout-auth.ts)
+- Spec : [`booking-register-verify.spec.ts`](../apps/web/tests/e2e/booking-register-verify.spec.ts) — register → OTP → `/booking/cart` + session (`--repeat-each=3` vert)
 
 ---
 
@@ -1260,7 +1265,7 @@ WEB-012 (README) → WEB-006 (CI E2E) → WEB-002 + WEB-003 (cleanup routes)
 | WEB-011 | | | ✅ |
 | WEB-012 | | | ✅ |
 | WEB-013 | | | ✅ |
-| WEB-014 | | | ☐ |
+| WEB-014 | | | ✅ |
 | WEB-015 | | | ☐ |
 | WEB-I18N-01 | | | ☐ |
 | WEB-I18N-02 | | | ☐ |
