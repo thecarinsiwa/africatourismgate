@@ -189,7 +189,11 @@
     "siteBody": "Cette section du site est en cours de préparation. Revenez bientôt pour découvrir de nouvelles fonctionnalités sur Africa Tourism Gate.",
     "body": "La réservation en ligne pour cette catégorie arrive prochainement. Vos critères de recherche ont été conservés dans l'URL.",
     "backToSearch": "Modifier ma recherche",
-    "backHome": "Retour à l'accueil"
+    "backHome": "Retour à l'accueil",
+    "metaTitle": "Bientôt disponible",
+    "metaDescription": "Africa Tourism Gate — section en cours de préparation.",
+    "verticalMetaTitle": "{label} — Bientôt disponible",
+    "verticalMetaDescription": "La réservation en ligne {label} arrive bientôt sur Africa Tourism Gate."
   },
   "blog": {
     "metaTitle": "Blog voyage en Afrique",
@@ -635,6 +639,8 @@
     "noResults": "Aucun résultat pour cette recherche.",
     "noResultsHint": "Modifiez vos critères ou revenez à l'accueil.",
     "continue": "Continuer",
+    "metaTitle": "Recherche {label}",
+    "metaDescription": "Explorez les options {label} sur Africa Tourism Gate.",
     "verticals": {
       "hotels": "Hébergements",
       "flights": "Vols",

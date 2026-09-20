@@ -1,24 +1,17 @@
 import type { Metadata } from 'next';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { notFound, redirect } from 'next/navigation';
 import { VerticalComingSoonPage } from '../../../components/vertical-coming-soon-page';
 import {
   buildSearchRoute,
   isSearchVertical,
   isSearchVerticalImplemented,
-  type SearchVertical,
 } from '../../../lib/search/route';
+import { buildPageMetadata, PRIVATE_PAGE_ROBOTS } from '../../../lib/seo/metadata';
 
 type PageProps = {
   params: { vertical: string };
   searchParams: Record<string, string | string[] | undefined>;
-};
-
-const VERTICAL_LABELS: Record<SearchVertical, string> = {
-  hotels: 'Hébergements',
-  flights: 'Vols',
-  cars: 'Location de voitures',
-  cruises: 'Croisières',
-  tours: 'Activités & tours',
 };
 
 function toURLSearchParams(
@@ -36,21 +29,36 @@ function toURLSearchParams(
   return params;
 }
 
-export function generateMetadata({ params }: PageProps): Metadata {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const path = `/coming-soon/${params.vertical}`;
+  const [t, tSearch, locale] = await Promise.all([
+    getTranslations('comingSoon'),
+    getTranslations('verticalSearch'),
+    getLocale(),
+  ]);
+
   if (!isSearchVertical(params.vertical)) {
-    return { title: 'Bientôt disponible' };
+    return buildPageMetadata({
+      title: t('metaTitle'),
+      description: t('metaDescription'),
+      path,
+      locale,
+      robots: PRIVATE_PAGE_ROBOTS,
+    });
   }
 
   if (isSearchVerticalImplemented(params.vertical)) {
-    return { robots: { index: false, follow: false } };
+    return { robots: PRIVATE_PAGE_ROBOTS };
   }
 
-  const label = VERTICAL_LABELS[params.vertical];
-  return {
-    title: `${label} — Bientôt disponible`,
-    description: `La réservation en ligne ${label.toLowerCase()} arrive bientôt sur Africa Tourism Gate.`,
-    robots: { index: false, follow: false },
-  };
+  const label = tSearch(`verticals.${params.vertical}`);
+  return buildPageMetadata({
+    title: t('verticalMetaTitle', { label }),
+    description: t('verticalMetaDescription', { label }),
+    path,
+    locale,
+    robots: PRIVATE_PAGE_ROBOTS,
+  });
 }
 
 export default function VerticalComingSoonRoute({ params, searchParams }: PageProps) {

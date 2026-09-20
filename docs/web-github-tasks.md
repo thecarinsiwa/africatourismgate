@@ -103,7 +103,7 @@ node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 | WEB-002 | Supprimer routes legacy `/reservations/*` | Haute | Cleanup | S |
 | WEB-003 | Corriger stub `/booking` — ✅ Option A (redirect) | Haute | Bug | S |
 | WEB-004 | Aligner copy UX (demo, coming soon, trust hints) — ✅ | Haute | Enhancement | M |
-| WEB-005 | Internationaliser metadata SEO | Moyenne | Enhancement | M |
+| WEB-005 | Internationaliser metadata SEO — ✅ | Moyenne | Enhancement | M |
 | WEB-006 | Stabiliser pipeline E2E (build + Playwright CI) | Haute | Testing | M |
 | WEB-007 | E2E checkout location voiture | Moyenne | Testing | S |
 | WEB-008 | E2E smoke blog, donate, about | Basse | Testing | M |
@@ -338,10 +338,18 @@ Plusieurs textes indiquent encore un catalogue « demo » ou « coming soon » a
 
 ### WEB-005 — Internationaliser metadata SEO
 
+**Statut :** ✅ fait  
 **Labels :** `web`, `enhancement`, `i18n`, `priority:medium`  
 **Branche suggérée :** `feature/web-i18n-metadata`
 
-#### Modèle GitHub
+#### Livré
+
+- Helper partagé [`apps/web/lib/seo/metadata.ts`](../apps/web/lib/seo/metadata.ts) (`buildPageMetadata`, listings, détail, private/noindex, OG images)
+- Layout root i18n : `meta.defaultTitle` / `defaultDescription` / `keywords` + `openGraph.locale` via cookie `atg-locale`
+- Listings (6) + fiches détail (6) + account/booking (noindex) + coming-soon + `/search/[type]`
+- Pattern documenté dans [`apps/web/README.md`](../apps/web/README.md) § SEO metadata
+
+#### Modèle GitHub (historique)
 
 ```markdown
 ## Contexte
@@ -356,14 +364,17 @@ Les métadonnées (`title`, `description`, Open Graph) sont souvent **hardcodée
 
 ## Critères d'acceptation
 
-- [ ] Title/description cohérents en fr, en, es (test manuel changement langue)
-- [ ] Pas de régression build (`pnpm --filter @africatourismgate/web build`)
-- [ ] Documenter le pattern dans un commentaire ou README web
+- [x] Title/description cohérents en fr, en, es (test manuel changement langue recommandé)
+- [x] Pas de régression build (`pnpm --filter @africatourismgate/web build`)
+- [x] Documenter le pattern dans un commentaire ou README web
 
-## Fichiers probables
+## Fichiers
 
+- `apps/web/lib/seo/metadata.ts`
 - `apps/web/app/layout.tsx`
-- `apps/web/app/**/page.tsx` (generateMetadata)
+- `apps/web/app/**/page.tsx` (`generateMetadata`)
+- `apps/web/messages/{fr,en,es}.json`
+- `apps/web/README.md`
 ```
 
 ---
@@ -1142,7 +1153,7 @@ WEB-012 (README) → WEB-006 (CI E2E) → WEB-002 + WEB-003 (cleanup routes)
 | WEB-002 | | | ☐ |
 | WEB-003 | | | ☐ |
 | WEB-004 | | | ✅ |
-| WEB-005 | | | ☐ |
+| WEB-005 | | | ✅ |
 | WEB-006 | | | ☐ |
 | WEB-007 | | | ☐ |
 | WEB-008 | | | ☐ |

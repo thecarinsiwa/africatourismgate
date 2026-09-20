@@ -14,6 +14,10 @@ const REQUIRED_COMING_SOON_KEYS = [
   'body',
   'backToSearch',
   'backHome',
+  'metaTitle',
+  'metaDescription',
+  'verticalMetaTitle',
+  'verticalMetaDescription',
 ] as const;
 
 const REQUIRED_RESERVATION_EMPTY_KEYS = [

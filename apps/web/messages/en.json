@@ -189,7 +189,11 @@
     "siteBody": "This section of the site is being prepared. Check back soon for new features on Africa Tourism Gate.",
     "body": "Online booking for this category is launching soon. Your search criteria have been kept in the URL.",
     "backToSearch": "Change my search",
-    "backHome": "Back to home"
+    "backHome": "Back to home",
+    "metaTitle": "Coming soon",
+    "metaDescription": "Africa Tourism Gate — section under preparation.",
+    "verticalMetaTitle": "{label} — Coming soon",
+    "verticalMetaDescription": "Online booking for {label} is coming soon on Africa Tourism Gate."
   },
   "blog": {
     "metaTitle": "Africa travel blog",
@@ -635,6 +639,8 @@
     "noResults": "No results found for this search.",
     "noResultsHint": "Adjust your criteria or return to the homepage.",
     "continue": "Continue",
+    "metaTitle": "{label} search",
+    "metaDescription": "Explore {label} options on Africa Tourism Gate.",
     "verticals": {
       "hotels": "Hotels",
       "flights": "Flights",
