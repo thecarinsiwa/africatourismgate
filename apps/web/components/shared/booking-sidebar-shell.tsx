@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 import { useEffect, useId, useRef } from 'react';
 import { useTranslations } from 'next-intl';
+import { shouldShowDemoTrustHints } from '../../lib/bookings/show-demo-trust-hints';
 
 export const BOOKING_DRAWER_OPEN_EVENT = 'atg:open-booking-drawer';
 
@@ -399,9 +400,10 @@ export function BookingSidebarMobileBar({
 
 export function useBookingSidebarTrustHints(): string[] {
   const t = useTranslations('bookingSidebar');
-  return [
-    t('trustDemoCatalog'),
-    t('trustTransparentPricing'),
-    t('trustSupport'),
-  ];
+  const hints: string[] = [];
+  if (shouldShowDemoTrustHints()) {
+    hints.push(t('trustDemoCatalog'));
+  }
+  hints.push(t('trustTransparentPricing'), t('trustSupport'));
+  return hints;
 }
