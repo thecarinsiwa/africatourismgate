@@ -82,6 +82,12 @@
         "submit": "Create my account",
         "submitLoading": "Creating account…"
       },
+      "terms": {
+        "modalTitle": "Terms of use",
+        "loading": "Loading terms…",
+        "loadError": "Terms of use are not available yet. Please try again later or contact support.",
+        "close": "Close"
+      },
       "errors": {
         "emailAlreadyRegistered": "This email is already in use. Sign in or use a different address.",
         "network": "Could not reach the server. Check your connection.",

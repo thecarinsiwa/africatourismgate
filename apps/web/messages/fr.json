@@ -82,6 +82,12 @@
         "submit": "Créer mon compte",
         "submitLoading": "Création du compte…"
       },
+      "terms": {
+        "modalTitle": "Conditions d'utilisation",
+        "loading": "Chargement des conditions…",
+        "loadError": "Les conditions d'utilisation ne sont pas encore disponibles. Réessayez plus tard ou contactez le support.",
+        "close": "Fermer"
+      },
       "errors": {
         "emailAlreadyRegistered": "Cette adresse e-mail est déjà utilisée. Connectez-vous ou utilisez une autre adresse.",
         "network": "Impossible de joindre le serveur. Vérifiez votre connexion.",

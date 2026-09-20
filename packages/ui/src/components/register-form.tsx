@@ -97,6 +97,8 @@ export type RegisterFormData = {
 export type RegisterFormProps = {
   config?: Partial<RegisterFormConfig>;
   onSubmit?: (data: RegisterFormData) => void | Promise<void>;
+  /** When set, the terms link opens a modal (or custom UI) instead of navigating. */
+  onTermsClick?: () => void;
   className?: string;
   submitButtonVariant?: React.ComponentProps<typeof Button>['variant'];
   submitButtonRightIcon?: React.ReactNode;
@@ -123,6 +125,7 @@ function isRequired(value: boolean | undefined, defaultValue: boolean): boolean 
 export function RegisterForm({
   config: configPartial,
   onSubmit,
+  onTermsClick,
   className,
   submitButtonVariant = 'primary',
   submitButtonRightIcon = <span aria-hidden>→</span>,
@@ -258,7 +261,19 @@ export function RegisterForm({
         label={
           <span>
             {config.terms.label}{' '}
-            <TextLink href={config.terms.href} className="inline">
+            <TextLink
+              href={config.terms.href}
+              className="inline"
+              onClick={
+                onTermsClick
+                  ? (event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      onTermsClick();
+                    }
+                  : undefined
+              }
+            >
               {config.terms.linkLabel}
             </TextLink>
             {termsRequired ? (
