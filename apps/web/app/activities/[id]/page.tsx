@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { ActivityDetailPageContent } from '../../../components/activities/activity-detail-page-content';
 import { getActivityDetail } from '../../../lib/api/public';
 import {
@@ -6,6 +7,12 @@ import {
   parseParticipantsParam,
   toActivityDetailQuery,
 } from '../../../lib/activities/listings';
+import {
+  buildDetailFallbackMetadata,
+  buildPageMetadata,
+  pickOgImages,
+  truncateMetaDescription,
+} from '../../../lib/seo/metadata';
 
 type PageProps = {
   params: { id: string };
@@ -13,26 +20,32 @@ type PageProps = {
 };
 
 export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
+  const path = `/activities/${params.id}`;
   const normalized = normalizeActivitiesSearchParams(searchParams);
 
   if (!normalized.date) {
-    return {
-      title: 'Activité',
-      description: 'Fiche activité — Africa Tourism Gate',
-    };
+    return buildDetailFallbackMetadata('activities', path);
   }
 
   try {
-    const detail = await getActivityDetail(params.id, toActivityDetailQuery(normalized));
-    return {
+    const [detail, t, locale] = await Promise.all([
+      getActivityDetail(params.id, toActivityDetailQuery(normalized)),
+      getTranslations('activities'),
+      getLocale(),
+    ]);
+    const description = detail.description
+      ? truncateMetaDescription(detail.description)
+      : t('detailMetaDescription', { name: detail.title });
+    return buildPageMetadata({
       title: detail.title,
-      description: detail.description ?? `Activité ${detail.title} avec Africa Tourism Gate.`,
-    };
+      description,
+      path,
+      locale,
+      images: pickOgImages(detail.images),
+      twitterCard: 'summary_large_image',
+    });
   } catch {
-    return {
-      title: 'Activité',
-      description: 'Fiche activité — Africa Tourism Gate',
-    };
+    return buildDetailFallbackMetadata('activities', path);
   }
 }
 

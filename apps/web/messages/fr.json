@@ -654,6 +654,8 @@
     "reviews": "avis",
     "featuredBadge": "Coup de cœur",
     "detailMetaDescription": "Réservez votre séjour à {name}. Galerie, équipements et chambres.",
+    "detailMetaFallbackTitle": "Hébergement",
+    "detailMetaFallbackDescription": "Fiche produit hébergement — Africa Tourism Gate",
     "galleryAria": "Galerie photos",
     "galleryOpenLightbox": "Agrandir la photo",
     "galleryClose": "Fermer la galerie",
@@ -701,6 +703,9 @@
   "flights": {
     "metaTitle": "Vols en Afrique",
     "metaDescription": "Comparez et réservez des vols vers les principales destinations africaines avec Africa Tourism Gate.",
+    "detailMetaDescription": "Réservez {flightNumber} de {from} vers {to}.",
+    "detailMetaFallbackTitle": "Vol",
+    "detailMetaFallbackDescription": "Fiche vol — Africa Tourism Gate",
     "breadcrumbHome": "Accueil",
     "breadcrumbFlights": "Vols",
     "breadcrumbFlightsDetail": "Vols",
@@ -771,6 +776,9 @@
   "cars": {
     "metaTitle": "Location de voitures en Afrique",
     "metaDescription": "Comparez et réservez des véhicules de location aux principales destinations africaines avec Africa Tourism Gate.",
+    "detailMetaDescription": "Louez {name} à {city} avec Africa Tourism Gate.",
+    "detailMetaFallbackTitle": "Véhicule",
+    "detailMetaFallbackDescription": "Fiche véhicule — Africa Tourism Gate",
     "breadcrumbHome": "Accueil",
     "breadcrumbCars": "Voitures",
     "breadcrumbCarsDetail": "Locations",
@@ -855,6 +863,9 @@
   "cruises": {
     "metaTitle": "Croisières fluviales en Afrique",
     "metaDescription": "Comparez et réservez des croisières sur le fleuve Congo et les côtes africaines avec Africa Tourism Gate.",
+    "detailMetaDescription": "Croisière {name} à bord du {ship} avec Africa Tourism Gate.",
+    "detailMetaFallbackTitle": "Croisière",
+    "detailMetaFallbackDescription": "Fiche croisière — Africa Tourism Gate",
     "breadcrumbHome": "Accueil",
     "breadcrumbCruises": "Croisières",
     "breadcrumbCruisesDetail": "Croisières",
@@ -930,6 +941,9 @@
   "activities": {
     "metaTitle": "Activités et tours en Afrique",
     "metaDescription": "Réservez des activités et tours guidés en Afrique avec Africa Tourism Gate.",
+    "detailMetaDescription": "Activité {name} avec Africa Tourism Gate.",
+    "detailMetaFallbackTitle": "Activité",
+    "detailMetaFallbackDescription": "Fiche activité — Africa Tourism Gate",
     "breadcrumbHome": "Accueil",
     "breadcrumbActivities": "Activités",
     "heroTitle": "Activités & tours en Afrique",
@@ -1008,6 +1022,9 @@
   "packages": {
     "metaTitle": "Forfaits combinés en Afrique",
     "metaDescription": "Économisez avec nos forfaits combinés : activités, hébergements et plus sur Africa Tourism Gate.",
+    "detailMetaDescription": "Forfait combiné {name} — Africa Tourism Gate.",
+    "detailMetaFallbackTitle": "Forfait",
+    "detailMetaFallbackDescription": "Fiche forfait — Africa Tourism Gate",
     "breadcrumbHome": "Accueil",
     "breadcrumbPackages": "Forfaits",
     "heroTitle": "Forfaits combinés en Afrique",

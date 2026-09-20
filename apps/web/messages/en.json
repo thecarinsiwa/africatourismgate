@@ -654,6 +654,8 @@
     "reviews": "reviews",
     "featuredBadge": "Top pick",
     "detailMetaDescription": "Book your stay at {name}. Gallery, amenities and rooms.",
+    "detailMetaFallbackTitle": "Stay",
+    "detailMetaFallbackDescription": "Accommodation details — Africa Tourism Gate",
     "galleryAria": "Photo gallery",
     "galleryOpenLightbox": "Enlarge photo",
     "galleryClose": "Close gallery",
@@ -701,6 +703,9 @@
   "flights": {
     "metaTitle": "Flights in Africa",
     "metaDescription": "Compare and book flights to major African destinations with Africa Tourism Gate.",
+    "detailMetaDescription": "Book {flightNumber} from {from} to {to}.",
+    "detailMetaFallbackTitle": "Flight",
+    "detailMetaFallbackDescription": "Flight details — Africa Tourism Gate",
     "breadcrumbHome": "Home",
     "breadcrumbFlights": "Flights",
     "breadcrumbFlightsDetail": "Flights",
@@ -771,6 +776,9 @@
   "cars": {
     "metaTitle": "Car rental in Africa",
     "metaDescription": "Compare and book rental cars at major African destinations with Africa Tourism Gate.",
+    "detailMetaDescription": "Rent {name} in {city} with Africa Tourism Gate.",
+    "detailMetaFallbackTitle": "Vehicle",
+    "detailMetaFallbackDescription": "Vehicle details — Africa Tourism Gate",
     "breadcrumbHome": "Home",
     "breadcrumbCars": "Cars",
     "breadcrumbCarsDetail": "Car rental",
@@ -855,6 +863,9 @@
   "cruises": {
     "metaTitle": "River & coastal cruises in Africa",
     "metaDescription": "Compare and book Congo River and African coastal cruises with Africa Tourism Gate.",
+    "detailMetaDescription": "Cruise {name} aboard {ship} with Africa Tourism Gate.",
+    "detailMetaFallbackTitle": "Cruise",
+    "detailMetaFallbackDescription": "Cruise details — Africa Tourism Gate",
     "breadcrumbHome": "Home",
     "breadcrumbCruises": "Cruises",
     "breadcrumbCruisesDetail": "Cruises",
@@ -930,6 +941,9 @@
   "activities": {
     "metaTitle": "Activities & tours in Africa",
     "metaDescription": "Book guided activities and tours in Africa with Africa Tourism Gate.",
+    "detailMetaDescription": "Activity {name} with Africa Tourism Gate.",
+    "detailMetaFallbackTitle": "Activity",
+    "detailMetaFallbackDescription": "Activity details — Africa Tourism Gate",
     "breadcrumbHome": "Home",
     "breadcrumbActivities": "Activities",
     "heroTitle": "Activities & tours in Africa",
@@ -1008,6 +1022,9 @@
   "packages": {
     "metaTitle": "Combined packages in Africa",
     "metaDescription": "Save with bundled travel packages ? activities, stays and more on Africa Tourism Gate.",
+    "detailMetaDescription": "Combined package {name} — Africa Tourism Gate.",
+    "detailMetaFallbackTitle": "Package",
+    "detailMetaFallbackDescription": "Package details — Africa Tourism Gate",
     "breadcrumbHome": "Home",
     "breadcrumbPackages": "Packages",
     "heroTitle": "Combined packages in Africa",

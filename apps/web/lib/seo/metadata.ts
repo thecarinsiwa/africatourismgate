@@ -106,3 +106,36 @@ export async function buildListingPageMetadata(
     locale,
   });
 }
+
+/** Fallback metadata when a product detail cannot be loaded. */
+export async function buildDetailFallbackMetadata(
+  namespace: ListingMetaNamespace,
+  path: string,
+): Promise<Metadata> {
+  const [t, locale] = await Promise.all([
+    getTranslations(namespace),
+    getLocale(),
+  ]);
+  return buildPageMetadata({
+    title: t('detailMetaFallbackTitle'),
+    description: t('detailMetaFallbackDescription'),
+    path,
+    locale,
+  });
+}
+
+/** First usable image URL from gallery arrays and/or a cover URL. */
+export function pickOgImages(
+  images?: ReadonlyArray<{ url?: string | null }> | null,
+  coverUrl?: string | null,
+): string[] | undefined {
+  if (coverUrl?.trim()) return [coverUrl.trim()];
+  const first = images?.find((image) => image.url?.trim())?.url?.trim();
+  return first ? [first] : undefined;
+}
+
+export function truncateMetaDescription(text: string, max = 160): string {
+  const trimmed = text.trim().replace(/\s+/g, ' ');
+  if (trimmed.length <= max) return trimmed;
+  return `${trimmed.slice(0, max - 1).trimEnd()}…`;
+}

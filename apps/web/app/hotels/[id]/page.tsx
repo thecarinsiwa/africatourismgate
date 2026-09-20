@@ -1,6 +1,12 @@
 import type { Metadata } from 'next';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { HotelDetailPageContent } from '../../../components/hotels/hotel-detail-page-content';
 import { getAccommodationDetail } from '../../../lib/api/public';
+import {
+  buildDetailFallbackMetadata,
+  buildPageMetadata,
+  pickOgImages,
+} from '../../../lib/seo/metadata';
 
 type PageProps = {
   params: { id: string };
@@ -14,17 +20,23 @@ function pickParam(value: string | string[] | undefined): string | undefined {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const path = `/hotels/${params.id}`;
   try {
-    const detail = await getAccommodationDetail(params.id);
-    return {
+    const [detail, t, locale] = await Promise.all([
+      getAccommodationDetail(params.id),
+      getTranslations('hotels'),
+      getLocale(),
+    ]);
+    return buildPageMetadata({
       title: detail.name,
-      description: `Réservez votre séjour à ${detail.name}. Galerie, équipements et chambres.`,
-    };
+      description: t('detailMetaDescription', { name: detail.name }),
+      path,
+      locale,
+      images: pickOgImages(detail.images),
+      twitterCard: 'summary_large_image',
+    });
   } catch {
-    return {
-      title: 'Hébergement',
-      description: 'Fiche produit hébergement — Africa Tourism Gate',
-    };
+    return buildDetailFallbackMetadata('hotels', path);
   }
 }
 
