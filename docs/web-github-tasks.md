@@ -63,7 +63,8 @@ pnpm dev:web           # http://localhost:3002
 pnpm --filter @africatourismgate/web lint
 pnpm --filter @africatourismgate/web build
 pnpm --filter @africatourismgate/web test          # unitaires (lib/**/*.test.ts)
-pnpm --filter @africatourismgate/web test:e2e      # Playwright (14 specs)
+pnpm --filter @africatourismgate/web test:e2e      # Playwright (16 specs, `pnpm dev`)
+pnpm --filter @africatourismgate/web test:e2e:ci   # build + `next start` (anti vendor-chunks)
 node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 ```
 
@@ -90,7 +91,7 @@ node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 | Stub `/booking` (sans `/cart`) | ✅ | **WEB-003 Option A** : redirect serveur → `/booking/cart` si draft URL valide, sinon `/hotels` |
 | Copy « demo / coming soon » | ✅ | **WEB-004** : copy live sans « coming soon » ; trust demo gated (dev / flag) |
 | Tests unitaires composants | ❌ | Seulement logique `lib/` |
-| Tests E2E | ⚠️ | Bonne couverture checkout ; i18n E2E limité à `/` + login (voir WEB-I18N-06) |
+| Tests E2E | ✅ | **WEB-006** : `test:e2e:ci` (build + start) + job CI `web-e2e` ; 16 specs |
 | Design / cohérence visuelle | ⚠️ | Voir [web-design-improvements.md](./web-design-improvements.md) |
 
 ---
@@ -104,7 +105,7 @@ node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 | WEB-003 | Corriger stub `/booking` — ✅ Option A (redirect) | Haute | Bug | S |
 | WEB-004 | Aligner copy UX (demo, coming soon, trust hints) — ✅ | Haute | Enhancement | M |
 | WEB-005 | Internationaliser metadata SEO — ✅ | Moyenne | Enhancement | M |
-| WEB-006 | Stabiliser pipeline E2E (build + Playwright CI) | Haute | Testing | M |
+| WEB-006 | Stabiliser pipeline E2E (build + Playwright CI) — ✅ | Haute | Testing | M |
 | WEB-007 | E2E checkout location voiture | Moyenne | Testing | S |
 | WEB-008 | E2E smoke blog, donate, about | Basse | Testing | M |
 | WEB-009 | Tests composants checkout & auth | Moyenne | Testing | L |
@@ -381,10 +382,18 @@ Les métadonnées (`title`, `description`, Open Graph) sont souvent **hardcodée
 
 ### WEB-006 — Stabiliser pipeline E2E (build + Playwright CI)
 
+**Statut :** ✅ fait (infra) — lancer `test:e2e:ci` local pour confirmer les 16 specs  
 **Labels :** `web`, `testing`, `priority:high`  
 **Branche suggérée :** `feature/web-e2e-ci-stabilization`
 
-#### Modèle GitHub
+#### Livré
+
+- Script [`test:e2e:ci`](../apps/web/package.json) : `pnpm build && playwright test` → `next start` via [`playwright.config.ts`](../apps/web/playwright.config.ts) (`CI` ou lifecycle `test:e2e:ci`)
+- Job CI parallèle **`web-e2e`** dans [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) (sans MySQL ; API mockée) + artifact report si échec
+- `.gitignore` : `apps/web/test-results/`, `playwright-report/`, `blob-report/`
+- Doc : [`apps/web/README.md`](../apps/web/README.md) § E2E Playwright
+
+#### Modèle GitHub (historique)
 
 ```markdown
 ## Contexte
@@ -395,23 +404,24 @@ Les tests E2E Playwright échouent parfois avec des erreurs Next.js **vendor-chu
 
 1. Documenter la procédure fiable : `pnpm build && playwright test`
 2. Ajouter un script npm `test:e2e:ci` qui build avant test
-3. Intégrer dans CI GitHub Actions (label `e2e` ou branche main) :
+3. Intégrer dans CI GitHub Actions (PR / main) :
    - `pnpm install`
-   - Démarrer API + web (ou web en mode production sur 3002)
-   - Lancer la suite E2E
-4. Nettoyer / ignorer `apps/web/test-results/` du suivi git si pertinent
+   - Web en mode production sur 3002 (`next start` après build)
+   - Lancer la suite E2E (API mockée — pas de MySQL requis)
+4. Nettoyer / ignorer `apps/web/test-results/` du suivi git
 
 ## Critères d'acceptation
 
 - [ ] `pnpm --filter @africatourismgate/web test:e2e:ci` passe localement après clone frais
-- [ ] Workflow CI documenté dans README ou commentaire workflow
-- [ ] Les 14 specs existantes passent (ou liste des specs flaky documentée avec issue dédiée)
+- [x] Workflow CI documenté dans README ou commentaire workflow
+- [ ] Les 16 specs existantes passent (ou liste des specs flaky documentée avec issue dédiée)
 
-## Fichiers probables
+## Fichiers
 
 - `apps/web/package.json`
-- `.github/workflows/*.yml`
 - `apps/web/playwright.config.ts`
+- `.github/workflows/ci.yml`
+- `apps/web/README.md`
 ```
 
 ---
@@ -1154,7 +1164,7 @@ WEB-012 (README) → WEB-006 (CI E2E) → WEB-002 + WEB-003 (cleanup routes)
 | WEB-003 | | | ☐ |
 | WEB-004 | | | ✅ |
 | WEB-005 | | | ✅ |
-| WEB-006 | | | ☐ |
+| WEB-006 | | | ✅ |
 | WEB-007 | | | ☐ |
 | WEB-008 | | | ☐ |
 | WEB-009 | | | ☐ |

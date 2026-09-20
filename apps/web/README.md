@@ -36,3 +36,29 @@ Helpers in [`lib/seo/metadata.ts`](./lib/seo/metadata.ts):
 | `openGraphLocale` | `fr_FR` / `en_US` / `es_ES` |
 
 Root defaults live under `messages.*.meta` (`defaultTitle`, `defaultDescription`, `keywords`) and are wired in [`app/layout.tsx`](./app/layout.tsx).
+
+## E2E Playwright
+
+Specs live in [`tests/e2e/`](./tests/e2e/) (16 files). Most routes mock the API with Playwright `page.route` — no local MySQL/API required for the default suite.
+
+### Why `test:e2e:ci`?
+
+Running against a stale `.next` cache under `pnpm dev` can throw Next.js **vendor-chunks** errors (e.g. on `package-checkout.spec.ts`). The reliable path is **build then production server**:
+
+| Command | Server | When |
+| --- | --- | --- |
+| `pnpm test:e2e` | `pnpm dev` (:3002) | Local DX / iteration |
+| `pnpm test:e2e:ci` | `pnpm build` then `pnpm start` | Local CI parity / before PR |
+| `pnpm test:e2e:loyalty` | build + `next start` :3099 | Isolated loyalty spec |
+
+From the monorepo root:
+
+```bash
+pnpm --filter @africatourismgate/web test:e2e:ci
+```
+
+[`playwright.config.ts`](./playwright.config.ts) selects `pnpm start` when `CI=true` or when the npm lifecycle is `test:e2e:ci`.
+
+### GitHub Actions
+
+Job **`web-e2e`** in [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml) (PR + `main`): install → build `types`/`utils` → Playwright Chromium → `test:e2e:ci`. On failure, uploads `playwright-report/` and `test-results/` (7-day artifact).
