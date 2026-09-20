@@ -208,6 +208,7 @@ export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
                 message: f.loadError,
                 retryLabel: f.retry,
                 onRetry: () => setFetchId((value) => value + 1),
+                backHomeLabel: f.backHome,
               }
             : null
         }

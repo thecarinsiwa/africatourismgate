@@ -295,6 +295,7 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
                 message: h.loadError,
                 retryLabel: h.retry,
                 onRetry: () => setFetchId((k) => k + 1),
+                backHomeLabel: h.backHome,
               }
             : null
         }

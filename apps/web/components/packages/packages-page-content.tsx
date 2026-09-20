@@ -207,6 +207,7 @@ export function PackagesPageContent({ initialSearch }: PackagesPageContentProps)
                 message: p.loadError,
                 retryLabel: p.retry,
                 onRetry: () => setFetchId((value) => value + 1),
+                backHomeLabel: p.backHome,
               }
             : null
         }

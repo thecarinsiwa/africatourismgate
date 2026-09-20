@@ -189,6 +189,7 @@ export function CruisesPageContent({ initialSearch }: CruisesPageContentProps) {
                 message: c.loadError,
                 retryLabel: c.retry,
                 onRetry: () => setFetchId((value) => value + 1),
+                backHomeLabel: c.backHome,
               }
             : null
         }

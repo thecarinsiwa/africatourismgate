@@ -192,6 +192,7 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
                 message: a.loadError,
                 retryLabel: a.retry,
                 onRetry: () => setFetchId((value) => value + 1),
+                backHomeLabel: a.backHome,
               }
             : null
         }

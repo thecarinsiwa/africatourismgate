@@ -182,6 +182,7 @@ export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
                 message: c.loadError,
                 retryLabel: c.retry,
                 onRetry: () => setFetchId((value) => value + 1),
+                backHomeLabel: c.backHome,
               }
             : null
         }
