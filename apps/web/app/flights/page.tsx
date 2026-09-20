@@ -4,24 +4,15 @@ import {
   type FlightsSearchParams,
 } from '../../components/flights/flights-page-content';
 import { normalizeFlightsSearchParams } from '../../lib/flights/listings';
+import { buildListingPageMetadata } from '../../lib/seo/metadata';
 
 type PageProps = {
   searchParams: Record<string, string | string[] | undefined>;
 };
 
-export const metadata: Metadata = {
-  title: 'Vols en Afrique',
-  description:
-    'Comparez et réservez des vols vers les principales destinations africaines avec Africa Tourism Gate.',
-  alternates: {
-    canonical: '/flights',
-    languages: {
-      fr: '/flights?lang=fr',
-      en: '/flights?lang=en',
-      es: '/flights?lang=es',
-    },
-  },
-};
+export function generateMetadata(): Promise<Metadata> {
+  return buildListingPageMetadata('flights', '/flights');
+}
 
 export default function FlightsPage({ searchParams }: PageProps) {
   const initialSearch: FlightsSearchParams = normalizeFlightsSearchParams(searchParams);

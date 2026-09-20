@@ -9,8 +9,17 @@
  * See `apps/web/README.md` § SEO metadata.
  */
 import type { Metadata } from 'next';
+import { getLocale, getTranslations } from 'next-intl/server';
 
 export const SEO_LOCALES = ['fr', 'en', 'es'] as const;
+
+export type ListingMetaNamespace =
+  | 'hotels'
+  | 'flights'
+  | 'cars'
+  | 'cruises'
+  | 'activities'
+  | 'packages';
 
 export function openGraphLocale(locale: string): string {
   if (locale === 'en') return 'en_US';
@@ -79,4 +88,21 @@ export function buildPageMetadata(input: BuildPageMetadataInput): Metadata {
     },
     ...(robots ? { robots } : {}),
   };
+}
+
+/** Listing pages: `metaTitle` / `metaDescription` from the vertical namespace. */
+export async function buildListingPageMetadata(
+  namespace: ListingMetaNamespace,
+  path: string,
+): Promise<Metadata> {
+  const [t, locale] = await Promise.all([
+    getTranslations(namespace),
+    getLocale(),
+  ]);
+  return buildPageMetadata({
+    title: t('metaTitle'),
+    description: t('metaDescription'),
+    path,
+    locale,
+  });
 }
