@@ -168,7 +168,7 @@ export function BookingRegisterPageContent({ nextPath }: Props) {
         title={termsTitle}
         showClose
         closeAriaLabel={tTerms('close')}
-        className="max-w-2xl"
+        className="max-w-2xl overflow-x-hidden"
       >
         {termsState.status === 'loading' || termsState.status === 'idle' ? (
           <p className="text-sm text-atg-muted">{tTerms('loading')}</p>
@@ -179,10 +179,12 @@ export function BookingRegisterPageContent({ nextPath }: Props) {
           </p>
         ) : null}
         {termsState.status === 'ready' ? (
-          <RichText
-            content={termsState.page.content}
-            className="text-atg-fg [&_h2]:mt-4 [&_h2]:text-base [&_h2]:font-semibold [&_h3]:mt-3 [&_h3]:text-sm [&_h3]:font-semibold [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5"
-          />
+          <div className="min-w-0 max-w-full overflow-x-hidden">
+            <RichText
+              content={termsState.page.content}
+              className="max-w-full whitespace-normal break-words text-sm leading-relaxed text-atg-fg [overflow-wrap:anywhere] [&_code]:break-words [&_code]:whitespace-pre-wrap [&_h2]:mt-4 [&_h2]:text-base [&_h2]:font-semibold [&_h3]:mt-3 [&_h3]:text-sm [&_h3]:font-semibold [&_p]:my-2 [&_p]:whitespace-normal [&_p]:break-words [&_pre]:max-w-full [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_pre]:rounded-lg [&_pre]:bg-transparent [&_pre]:p-0 [&_pre]:font-sans [&_pre]:text-sm [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5"
+            />
+          </div>
         ) : null}
       </Modal>
     </div>

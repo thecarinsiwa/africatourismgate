@@ -111,7 +111,7 @@ export function Modal({
           tabIndex={-1}
           onClick={(event) => event.stopPropagation()}
           className={cn(
-            'relative z-10 my-auto w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain rounded-xl border border-atg-border bg-atg-elevated p-6 shadow-xl shadow-black/10 dark:shadow-black/40',
+            'relative z-10 my-auto w-full min-w-0 max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto overflow-x-hidden overscroll-contain rounded-xl border border-atg-border bg-atg-elevated p-6 shadow-xl shadow-black/10 dark:shadow-black/40',
             'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface',
             className,
           )}
