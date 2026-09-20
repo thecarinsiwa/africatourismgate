@@ -359,6 +359,7 @@ export class BookingsController {
   async uploadIdentityDocument(
     @Param('id') id: string,
     @Body('documentType') documentTypeRaw: string,
+    @Body('manifestEntryId') manifestEntryIdRaw: string,
     @UploadedFile() file: Express.Multer.File | undefined,
     @CurrentUser() user: AuthUserDto,
   ): Promise<BookingIdentityDocumentDto> {
@@ -375,6 +376,7 @@ export class BookingsController {
       user.id,
       documentType,
       file,
+      manifestEntryIdRaw,
     );
   }
 

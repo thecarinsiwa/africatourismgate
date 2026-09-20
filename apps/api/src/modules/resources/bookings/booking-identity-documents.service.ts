@@ -16,6 +16,7 @@ import {
   type BookingIdentityDocumentStatus,
   type BookingIdentityDocumentType,
 } from '../../../entities/booking-identity-document.entity';
+import { BookingManifestEntries } from '../../../entities/booking-manifest-entry.entity';
 import { Bookings } from '../../../entities/generated';
 import { BookingIdentityDocumentDto } from './dto/booking-identity-document.dto';
 
@@ -70,6 +71,8 @@ export class BookingIdentityDocumentsService {
     private readonly repository: Repository<BookingIdentityDocuments>,
     @InjectRepository(Bookings)
     private readonly bookingsRepository: Repository<Bookings>,
+    @InjectRepository(BookingManifestEntries)
+    private readonly manifestEntriesRepository: Repository<BookingManifestEntries>,
   ) {}
 
   async listForBooking(bookingId: string): Promise<BookingIdentityDocumentDto[]> {
@@ -85,6 +88,7 @@ export class BookingIdentityDocumentsService {
     userId: string,
     documentType: BookingIdentityDocumentType,
     file: Express.Multer.File,
+    manifestEntryId: string,
   ): Promise<BookingIdentityDocumentDto> {
     if (booking.userId !== userId) {
       throw new ForbiddenException('Access denied.');
@@ -93,6 +97,26 @@ export class BookingIdentityDocumentsService {
       throw new BadRequestException('Fichier requis.');
     }
     assertAllowedUpload(file);
+
+    const entryId = typeof manifestEntryId === 'string' ? manifestEntryId.trim() : '';
+    if (!entryId) {
+      throw new BadRequestException(
+        'manifestEntryId est requis pour rattacher le document au voyageur.',
+      );
+    }
+
+    const manifestEntry = await this.manifestEntriesRepository.findOne({
+      where: {
+        id: entryId,
+        bookingId: booking.id,
+        deletedAt: IsNull(),
+      },
+    });
+    if (!manifestEntry) {
+      throw new BadRequestException(
+        'Entrée manifeste introuvable pour cette réservation.',
+      );
+    }
 
     const allowedStatuses: Bookings['status'][] = [
       'pending_approval',
@@ -106,12 +130,17 @@ export class BookingIdentityDocumentsService {
     }
 
     const latest = await this.repository.findOne({
-      where: { bookingId: booking.id, documentType, deletedAt: IsNull() },
+      where: {
+        bookingId: booking.id,
+        manifestEntryId: entryId,
+        documentType,
+        deletedAt: IsNull(),
+      },
       order: { version: 'DESC' },
     });
     if (latest?.status === 'pending_review') {
       throw new BadRequestException(
-        'Un document de ce type est déjà en cours de vérification.',
+        'Un document de ce type est déjà en cours de vérification pour ce voyageur.',
       );
     }
 
@@ -125,6 +154,7 @@ export class BookingIdentityDocumentsService {
     const row = this.repository.create({
       id: newId(),
       bookingId: booking.id,
+      manifestEntryId: entryId,
       userId,
       documentType,
       originalFilename: file.originalname,

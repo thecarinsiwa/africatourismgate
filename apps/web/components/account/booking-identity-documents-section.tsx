@@ -82,10 +82,23 @@ export function BookingIdentityDocumentsSection({
       setError(id.fileTooLarge);
       return;
     }
+    const manifestEntryId =
+      latest.find((d) => d.documentType === documentType)?.manifestEntryId ??
+      documents.find((d) => d.manifestEntryId)?.manifestEntryId ??
+      null;
+    if (!manifestEntryId) {
+      setError(id.uploadError);
+      return;
+    }
     setUploading(true);
     setError(null);
     try {
-      await uploadBookingIdentityDocument(bookingId, file, documentType);
+      await uploadBookingIdentityDocument(
+        bookingId,
+        file,
+        documentType,
+        manifestEntryId,
+      );
       await onUpdated();
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (err: unknown) {
