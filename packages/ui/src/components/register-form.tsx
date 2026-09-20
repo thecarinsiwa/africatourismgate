@@ -11,30 +11,25 @@ import { TextLink } from './text-link';
 export type RegisterFormConfig = {
   firstName: {
     label: string;
-    placeholder: string;
   };
   lastName: {
     label: string;
-    placeholder: string;
   };
   email: {
     label: string;
-    placeholder: string;
   };
   phone: {
     label: string;
-    placeholder: string;
     hint?: string;
   };
   password: {
     label: string;
-    placeholder: string;
+    hint?: string;
     showPasswordLabel?: string;
     hidePasswordLabel?: string;
   };
   confirmPassword: {
     label: string;
-    placeholder: string;
     showPasswordLabel?: string;
     hidePasswordLabel?: string;
     mismatchError: string;
@@ -53,30 +48,25 @@ export type RegisterFormConfig = {
 export const defaultRegisterFormConfig: RegisterFormConfig = {
   firstName: {
     label: 'Prénom',
-    placeholder: 'Jean',
   },
   lastName: {
     label: 'Nom',
-    placeholder: 'Dupont',
   },
   email: {
     label: 'Adresse email',
-    placeholder: 'vous@exemple.com',
   },
   phone: {
     label: 'Téléphone',
-    placeholder: '+243 000 000 000',
     hint: 'Optionnel',
   },
   password: {
     label: 'Mot de passe',
-    placeholder: '••••••••',
+    hint: 'Minimum 8 caractères',
     showPasswordLabel: 'Afficher le mot de passe',
     hidePasswordLabel: 'Masquer le mot de passe',
   },
   confirmPassword: {
     label: 'Confirmer le mot de passe',
-    placeholder: '••••••••',
     showPasswordLabel: 'Afficher le mot de passe',
     hidePasswordLabel: 'Masquer le mot de passe',
     mismatchError: 'Les mots de passe ne correspondent pas',
@@ -167,7 +157,6 @@ export function RegisterForm({
           type="text"
           autoComplete="given-name"
           label={config.firstName.label}
-          placeholder={config.firstName.placeholder}
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
           required
@@ -178,7 +167,6 @@ export function RegisterForm({
           type="text"
           autoComplete="family-name"
           label={config.lastName.label}
-          placeholder={config.lastName.placeholder}
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
           required
@@ -191,7 +179,6 @@ export function RegisterForm({
         type="email"
         autoComplete="email"
         label={config.email.label}
-        placeholder={config.email.placeholder}
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
@@ -203,7 +190,6 @@ export function RegisterForm({
         type="tel"
         autoComplete="tel"
         label={config.phone.label}
-        placeholder={config.phone.placeholder}
         hint={config.phone.hint}
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
@@ -214,7 +200,7 @@ export function RegisterForm({
         name="password"
         autoComplete="new-password"
         label={config.password.label}
-        placeholder={config.password.placeholder}
+        hint={config.password.hint}
         value={password}
         onChange={(e) => {
           setPassword(e.target.value);
@@ -231,7 +217,6 @@ export function RegisterForm({
         name="confirmPassword"
         autoComplete="new-password"
         label={config.confirmPassword.label}
-        placeholder={config.confirmPassword.placeholder}
         value={confirmPassword}
         onChange={(e) => {
           setConfirmPassword(e.target.value);

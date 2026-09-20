@@ -4,18 +4,13 @@ type RegisterFormTranslator = {
   (
     key:
       | 'firstNameLabel'
-      | 'firstNamePlaceholder'
       | 'lastNameLabel'
-      | 'lastNamePlaceholder'
       | 'emailLabel'
-      | 'emailPlaceholder'
       | 'phoneLabel'
-      | 'phonePlaceholder'
       | 'phoneHint'
       | 'passwordLabel'
-      | 'passwordPlaceholder'
+      | 'passwordHint'
       | 'confirmPasswordLabel'
-      | 'confirmPasswordPlaceholder'
       | 'confirmPasswordMismatch'
       | 'termsLabel'
       | 'termsLink'
@@ -32,28 +27,23 @@ export function getAdminRegisterFormConfig(t: RegisterFormTranslator): RegisterF
   return {
     firstName: {
       label: t('firstNameLabel'),
-      placeholder: t('firstNamePlaceholder'),
     },
     lastName: {
       label: t('lastNameLabel'),
-      placeholder: t('lastNamePlaceholder'),
     },
     email: {
       label: t('emailLabel'),
-      placeholder: t('emailPlaceholder'),
     },
     phone: {
       label: t('phoneLabel'),
-      placeholder: t('phonePlaceholder'),
       hint: t('phoneHint'),
     },
     password: {
       label: t('passwordLabel'),
-      placeholder: t('passwordPlaceholder'),
+      hint: t('passwordHint'),
     },
     confirmPassword: {
       label: t('confirmPasswordLabel'),
-      placeholder: t('confirmPasswordPlaceholder'),
       mismatchError: t('confirmPasswordMismatch'),
     },
     terms: {
