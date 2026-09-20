@@ -3,6 +3,13 @@ import { defineConfig } from '@playwright/test';
 const port = 3002;
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${port}`;
 
+/**
+ * Production server after `pnpm build` avoids Next.js vendor-chunks errors
+ * from a stale `.next` cache under `pnpm dev` (see WEB-006 / test:e2e:ci).
+ */
+const useProdServer =
+  Boolean(process.env.CI) || process.env.npm_lifecycle_event === 'test:e2e:ci';
+
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
@@ -13,10 +20,10 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: 'pnpm dev',
+    command: useProdServer ? 'pnpm start' : 'pnpm dev',
     url: `${baseURL}/`,
     cwd: __dirname,
-    reuseExistingServer: true,
+    reuseExistingServer: !useProdServer,
     timeout: 120_000,
   },
 });
