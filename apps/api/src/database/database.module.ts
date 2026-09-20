@@ -12,6 +12,7 @@ import { MobileMoneyPaymentNumbers } from '../entities/mobile-money-payment-numb
 import { AboutPages } from '../entities/about-page.entity';
 import { AboutResources } from '../entities/about-resource.entity';
 import { BlogPosts } from '../entities/blog-post.entity';
+import { LegalPages } from '../entities/legal-page.entity';
 import { AboutTimelineMilestones } from '../entities/about-timeline-milestone.entity';
 import { TeamMembers } from '../entities/team-member.entity';
 import { WhyUsItems } from '../entities/why-us-item.entity';
@@ -37,6 +38,7 @@ const entityList = [
   EmailOperationVerifications,
   BlogPosts,
   AboutPages,
+  LegalPages,
   TeamMembers,
   AboutTimelineMilestones,
   AboutResources,
