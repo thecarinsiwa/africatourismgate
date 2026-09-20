@@ -1,0 +1,54 @@
+{
+  "sections": {
+    "terms-of-use": "Terms of use",
+    "privacy-policy": "Privacy policy"
+  },
+  "pages": {
+    "list": {
+      "deleteTitle": "Delete page",
+      "deleteConfirm": "Page \"{title}\" will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
+      "columns": {
+        "section": "Section",
+        "title": "Title",
+        "locale": "Language",
+        "publishedAt": "Published"
+      },
+      "emptySearch": "No pages match your search.",
+      "emptyDefault": "No legal pages yet.",
+      "searchPlaceholder": "Search by title…",
+      "searchAria": "Search legal pages",
+      "newButton": "New page",
+      "tableAria": "Legal pages list",
+      "paginationItem": "page"
+    },
+    "edit": {
+      "pageTitle": "Edit legal page"
+    },
+    "form": {
+      "info": {
+        "sectionLocaleUnique": "Each section + language combination is unique.",
+        "publishedAtHint": "When publishing, the date is set automatically if left empty. Only published content appears in the registration modal."
+      },
+      "validation": {
+        "contentRequired": "Content is required."
+      },
+      "fields": {
+        "section": "Section",
+        "title": "Title",
+        "content": "Content",
+        "contentPlaceholder": "Write the terms of use…",
+        "locale": "Language",
+        "publishedAtOptional": "Publication date (optional)"
+      },
+      "hints": {
+        "publishedAt": "Leave empty to use the current date when publishing."
+      },
+      "saving": "Saving…",
+      "createButton": "Create page",
+      "saveButton": "Save",
+      "cancelButton": "Cancel"
+    }
+  }
+}

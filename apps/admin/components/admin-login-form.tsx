@@ -2,7 +2,7 @@
 
 import { LoginForm } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { getAdminLoginErrors, getAdminLoginFormConfig } from '../config/login';
 import { getAuthErrorMessage } from '../lib/auth/api-errors';
@@ -11,8 +11,16 @@ import { authResponseToStoredSession, saveSession } from '../lib/auth/session';
 import { applyLocaleFromUser } from '../lib/i18n/preferred-language';
 import { withClientInstanceId } from '@africatourismgate/utils';
 
+function resolvePostLoginPath(next: string | null): string {
+  if (!next || !next.startsWith('/') || next.startsWith('//')) {
+    return '/dashboard';
+  }
+  return next;
+}
+
 export function AdminLoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const tForm = useTranslations('auth.login.form');
   const tErrors = useTranslations('auth.login.errors');
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +43,7 @@ export function AdminLoginForm() {
             saveSession(session);
             applyLocaleFromUser(session.user);
             router.refresh();
-            router.push('/dashboard');
+            router.push(resolvePostLoginPath(searchParams.get('next')));
           } catch (err) {
             setError(getAuthErrorMessage(err, loginErrorMessages));
           }

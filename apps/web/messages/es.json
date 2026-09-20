@@ -64,23 +64,24 @@
       "backToHotels": "Volver a hoteles",
       "form": {
         "firstNameLabel": "Nombre",
-        "firstNamePlaceholder": "Juan",
         "lastNameLabel": "Apellido",
-        "lastNamePlaceholder": "García",
         "emailLabel": "Correo electrónico",
-        "emailPlaceholder": "usted@ejemplo.com",
         "phoneLabel": "Teléfono",
-        "phonePlaceholder": "+34 600 000 000",
         "phoneHint": "Opcional",
         "passwordLabel": "Contraseña",
-        "passwordPlaceholder": "••••••••",
+        "passwordHint": "Mínimo 8 caracteres",
         "confirmPasswordLabel": "Confirmar contraseña",
-        "confirmPasswordPlaceholder": "••••••••",
         "confirmPasswordMismatch": "Las contraseñas no coinciden",
         "termsLabel": "Acepto las",
         "termsLink": "condiciones de uso",
         "submit": "Crear mi cuenta",
         "submitLoading": "Creando cuenta…"
+      },
+      "terms": {
+        "modalTitle": "Condiciones de uso",
+        "loading": "Cargando las condiciones…",
+        "loadError": "Las condiciones de uso aún no están disponibles. Inténtelo más tarde o contacte con soporte.",
+        "close": "Cerrar"
       },
       "errors": {
         "emailAlreadyRegistered": "Este correo ya está en uso. Inicie sesión o use otra dirección.",

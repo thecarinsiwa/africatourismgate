@@ -1,6 +1,7 @@
 {
   "list": {
     "newUser": "New user",
+    "myProfile": "My profile",
     "emptyDefault": "No internal users yet.",
     "emptyFiltered": "No internal users match your filters.",
     "emptyClients": "No customer accounts yet.",

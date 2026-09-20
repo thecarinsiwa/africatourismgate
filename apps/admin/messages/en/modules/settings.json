@@ -67,10 +67,10 @@
         "modeImmediate": "Immediate (payment)",
         "modeAssisted": "Assisted (request)",
         "paymentMethodsTitle": "Payment methods (public site)",
-        "paymentMethodsDescription": "Select the methods offered on web checkout. POS is not affected. Bank transfer also needs published bank accounts. Mobile Money needs countries, operators and numbers configured.",
+        "paymentMethodsDescription": "Select the methods offered on web checkout. POS and staff cash collection are not affected. Cash on site is off by default (risky if cash is the only commitment) — re-enable only if you accept that risk. Bank transfer also needs published bank accounts. Mobile Money needs countries, operators and numbers configured.",
         "paymentMethods": {
           "stripe": "Card (Stripe)",
-          "cash": "Cash on site",
+          "cash": "Cash on site (public site)",
           "bank_transfer": "Bank transfer",
           "mobile_money": "Mobile Money"
         },
@@ -260,7 +260,10 @@
       },
       "newButton": "New account",
       "orgSelectAria": "Organization",
-      "empty": "No bank accounts yet."
+      "empty": "No bank accounts yet.",
+      "sectionTitle": "Registered accounts",
+      "sectionHint": "Accounts shown on bank-transfer checkout and in payment instructions.",
+      "defaultBadge": "Default"
     },
     "stats": {
       "total": {
@@ -317,6 +320,19 @@
       "countries": "Countries",
       "operators": "Operators",
       "numbers": "Payment numbers"
+    },
+    "stats": {
+      "countries": "Countries",
+      "countriesHint": "Configured for the organization",
+      "operators": "Operators",
+      "operatorsHint": "In {name}",
+      "numbers": "Numbers",
+      "numbersHint": "At {name}"
+    },
+    "panels": {
+      "countriesHint": "Click a country to see its operators",
+      "operatorsFor": "For {name}",
+      "numbersFor": "For {name}"
     },
     "list": {
       "orgSelectAria": "Organization",

@@ -63,6 +63,59 @@ export class PermissionsService {
     return rows.filter((row) => row.email?.trim());
   }
 
+  /**
+   * Active users who have any of the given permission codes via a role,
+   * plus all active super_admins.
+   */
+  async listUserIdsWithAnyPermission(codes: string[]): Promise<string[]> {
+    const ids = new Set<string>();
+    const now = new Date();
+
+    if (codes.length > 0) {
+      const withPerm = await this.assignmentsRepo
+        .createQueryBuilder('ura')
+        .innerJoin(Roles, 'role', 'role.id = ura.roleId')
+        .innerJoin(RolePermissions, 'rp', 'rp.roleId = role.id')
+        .innerJoin(Permissions, 'perm', 'perm.id = rp.permissionId')
+        .innerJoin(Users, 'user', 'user.id = ura.userId')
+        .select('user.id', 'id')
+        .distinct(true)
+        .where('ura.deletedAt IS NULL')
+        .andWhere('ura.revokedAt IS NULL')
+        .andWhere('(ura.expiresAt IS NULL OR ura.expiresAt > :now)', { now })
+        .andWhere('role.deletedAt IS NULL')
+        .andWhere('rp.deletedAt IS NULL')
+        .andWhere('perm.deletedAt IS NULL')
+        .andWhere('perm.code IN (:...codes)', { codes })
+        .andWhere('user.deletedAt IS NULL')
+        .andWhere('user.status = :status', { status: 'active' })
+        .getRawMany<{ id: string }>();
+      for (const row of withPerm) {
+        if (row.id) ids.add(row.id);
+      }
+    }
+
+    const superAdmins = await this.assignmentsRepo
+      .createQueryBuilder('ura')
+      .innerJoin(Roles, 'role', 'role.id = ura.roleId')
+      .innerJoin(Users, 'user', 'user.id = ura.userId')
+      .select('user.id', 'id')
+      .distinct(true)
+      .where('ura.deletedAt IS NULL')
+      .andWhere('ura.revokedAt IS NULL')
+      .andWhere('(ura.expiresAt IS NULL OR ura.expiresAt > :now)', { now })
+      .andWhere('role.code = :code', { code: SUPER_ADMIN_ROLE_CODE })
+      .andWhere('role.deletedAt IS NULL')
+      .andWhere('user.deletedAt IS NULL')
+      .andWhere('user.status = :status', { status: 'active' })
+      .getRawMany<{ id: string }>();
+    for (const row of superAdmins) {
+      if (row.id) ids.add(row.id);
+    }
+
+    return Array.from(ids);
+  }
+
   async getUserPermissionCodes(userId: string): Promise<Set<string>> {
     const rows = await this.assignmentsRepo
       .createQueryBuilder('ura')

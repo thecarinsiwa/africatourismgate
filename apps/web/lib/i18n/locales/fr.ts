@@ -212,6 +212,7 @@ export const fr: Translations = {
     about: 'À propos',
     faq: 'FAQ',
     designedBy: 'Conçu par',
+    designedByNames: 'Carin Siwa et Ruth Bahizi',
   },
   hotels: {
     metaTitle: 'Hébergements en Afrique',

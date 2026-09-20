@@ -10,7 +10,7 @@ export function JournauxSecuritePageContent() {
         showSubnav={false}
         showFilterBar={false}
         variant="simple"
-        pageSize={5}
+        pageSize={10}
       />
     </AdminIntroPage>
   );

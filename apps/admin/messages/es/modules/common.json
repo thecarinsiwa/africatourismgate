@@ -42,6 +42,7 @@
     "country": "País",
     "default": "Predeterminado",
     "provider": "Socio",
+    "paymentProvider": "Proveedor",
     "method": "Método",
     "role": "Rol",
     "quantityShort": "Cant.",

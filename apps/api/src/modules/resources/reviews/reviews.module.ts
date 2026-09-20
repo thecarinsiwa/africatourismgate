@@ -10,11 +10,13 @@ import {
   TourGuides,
   Users,
 } from '../../../entities/generated';
+import { NotificationsModule } from '../notifications/notifications.module';
 import { ReviewsController } from './reviews.controller';
 import { ReviewsService } from './reviews.service';
 
 @Module({
   imports: [
+    NotificationsModule,
     TypeOrmModule.forFeature([
       Reviews,
       Bookings,

@@ -27,6 +27,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import { RoleBadge } from '../rbac/role-badge';
 import { UserRoleAssignmentsPanel } from '../rbac/user-role-assignments-panel';
 import { UserAddressesList } from './user-addresses-list';
@@ -235,6 +236,7 @@ export function UserViewPage({ userId }: UserViewPageProps) {
               email={user.email}
               firstName={user.firstName}
               lastName={user.lastName}
+              src={user.avatarUrl ? resolveMediaUrl(user.avatarUrl) : null}
               size="lg"
               className="shrink-0 ring-2 ring-atg-border/60 ring-offset-2 ring-offset-atg-elevated"
             />

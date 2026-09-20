@@ -1,20 +1,23 @@
 'use client';
 
 import { ApiHttpError } from '@africatourismgate/api-client';
-import { RegisterForm } from '@africatourismgate/ui';
+import { Modal, RegisterForm } from '@africatourismgate/ui';
+import type { PublicLegalPage } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   buildBookingRegisterErrorMessages,
   buildBookingRegisterFormConfig,
 } from '../../config/booking-register';
 import { registerCustomer } from '../../lib/api/auth';
+import { getLegalPageBySectionKeyForLocale } from '../../lib/api/public';
 import { getAuthErrorMessage } from '../../lib/auth/api-errors';
 import { completeWebLoginFromAuthResponse } from '../../lib/auth/complete-web-login';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
+import { RichText } from '../shared/rich-text';
 
 type Props = {
   nextPath?: string;
@@ -36,10 +39,18 @@ export function BookingRegisterPageContent({ nextPath }: Props) {
   const t = useTranslations('booking.register');
   const tForm = useTranslations('booking.register.form');
   const tErrors = useTranslations('booking.register.errors');
+  const tTerms = useTranslations('booking.register.terms');
   const locale = useLocale();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [emailConflict, setEmailConflict] = useState(false);
+  const [termsOpen, setTermsOpen] = useState(false);
+  const [termsState, setTermsState] = useState<
+    | { status: 'idle' }
+    | { status: 'loading' }
+    | { status: 'ready'; page: PublicLegalPage }
+    | { status: 'error' }
+  >({ status: 'idle' });
   const safeNext = useMemo(() => normalizeNextPath(nextPath), [nextPath]);
   const loginHref = useMemo(() => buildLoginHref(safeNext), [safeNext]);
   const formConfig = useMemo(() => buildBookingRegisterFormConfig(tForm), [tForm]);
@@ -50,6 +61,21 @@ export function BookingRegisterPageContent({ nextPath }: Props) {
     }),
     [tErrors],
   );
+
+  const openTerms = useCallback(() => {
+    setTermsOpen(true);
+    setTermsState({ status: 'loading' });
+    void getLegalPageBySectionKeyForLocale('terms-of-use', locale)
+      .then((page) => {
+        setTermsState({ status: 'ready', page });
+      })
+      .catch(() => {
+        setTermsState({ status: 'error' });
+      });
+  }, [locale]);
+
+  const termsTitle =
+    termsState.status === 'ready' ? termsState.page.title : tTerms('modalTitle');
 
   return (
     <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
@@ -79,6 +105,7 @@ export function BookingRegisterPageContent({ nextPath }: Props) {
           <div className="mt-6">
             <RegisterForm
               config={formConfig}
+              onTermsClick={openTerms}
               onSubmit={async ({ firstName, lastName, email, phone, password }) => {
                 setError(null);
                 setEmailConflict(false);
@@ -134,6 +161,32 @@ export function BookingRegisterPageContent({ nextPath }: Props) {
         </section>
       </main>
       <HomeFooter />
+
+      <Modal
+        open={termsOpen}
+        onOpenChange={setTermsOpen}
+        title={termsTitle}
+        showClose
+        closeAriaLabel={tTerms('close')}
+        className="max-w-2xl overflow-x-hidden"
+      >
+        {termsState.status === 'loading' || termsState.status === 'idle' ? (
+          <p className="text-sm text-atg-muted">{tTerms('loading')}</p>
+        ) : null}
+        {termsState.status === 'error' ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {tTerms('loadError')}
+          </p>
+        ) : null}
+        {termsState.status === 'ready' ? (
+          <div className="min-w-0 max-w-full overflow-x-hidden">
+            <RichText
+              content={termsState.page.content}
+              className="max-w-full whitespace-normal break-words text-sm leading-relaxed text-atg-fg [overflow-wrap:anywhere] [&_code]:break-words [&_code]:whitespace-pre-wrap [&_h2]:mt-4 [&_h2]:text-base [&_h2]:font-semibold [&_h3]:mt-3 [&_h3]:text-sm [&_h3]:font-semibold [&_p]:my-2 [&_p]:whitespace-normal [&_p]:break-words [&_pre]:max-w-full [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_pre]:rounded-lg [&_pre]:bg-transparent [&_pre]:p-0 [&_pre]:font-sans [&_pre]:text-sm [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5"
+            />
+          </div>
+        ) : null}
+      </Modal>
     </div>
   );
 }

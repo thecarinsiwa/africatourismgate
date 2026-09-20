@@ -109,7 +109,7 @@ const LABELS: Record<BookingDetailPdfLocale, BookingDetailPdfLabels> = {
     colPaymentDate: 'Date',
     colPaymentAmount: 'Montant',
     colPaymentStatus: 'Statut',
-    colPaymentProvider: 'Fournisseur',
+    colPaymentProvider: 'Prestataire',
     sexM: 'H',
     sexF: 'F',
     sexOther: 'Autre',

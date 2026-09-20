@@ -69,23 +69,24 @@
       "backToHotels": "Back to hotels",
       "form": {
         "firstNameLabel": "First name",
-        "firstNamePlaceholder": "Jane",
         "lastNameLabel": "Last name",
-        "lastNamePlaceholder": "Doe",
         "emailLabel": "Email address",
-        "emailPlaceholder": "you@example.com",
         "phoneLabel": "Phone",
-        "phonePlaceholder": "+1 555 000 0000",
         "phoneHint": "Optional",
         "passwordLabel": "Password",
-        "passwordPlaceholder": "••••••••",
+        "passwordHint": "Minimum 8 characters",
         "confirmPasswordLabel": "Confirm password",
-        "confirmPasswordPlaceholder": "••••••••",
         "confirmPasswordMismatch": "Passwords do not match",
         "termsLabel": "I accept the",
         "termsLink": "terms of use",
         "submit": "Create my account",
         "submitLoading": "Creating account…"
+      },
+      "terms": {
+        "modalTitle": "Terms of use",
+        "loading": "Loading terms…",
+        "loadError": "Terms of use are not available yet. Please try again later or contact support.",
+        "close": "Close"
       },
       "errors": {
         "emailAlreadyRegistered": "This email is already in use. Sign in or use a different address.",

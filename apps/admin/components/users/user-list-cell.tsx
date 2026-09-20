@@ -1,5 +1,6 @@
 import type { User } from '@africatourismgate/types';
 import { Avatar } from '@africatourismgate/ui';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
 
 export function UserListCell({
   userId,
@@ -17,6 +18,7 @@ export function UserListCell({
           email={user.email}
           firstName={user.firstName}
           lastName={user.lastName}
+          src={user.avatarUrl ? resolveMediaUrl(user.avatarUrl) : null}
           size="sm"
         />
         <div className="min-w-0">

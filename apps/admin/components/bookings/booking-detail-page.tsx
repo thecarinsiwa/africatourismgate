@@ -395,7 +395,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       },
       {
         accessorKey: 'provider',
-        header: tCommon('columns.provider'),
+        header: tCommon('columns.paymentProvider'),
         cell: ({ row }) =>
           formatPaymentProvider(row.original.provider, providerLabels, emptyDash),
       },

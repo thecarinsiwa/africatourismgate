@@ -58,6 +58,7 @@ export interface UpdateProfileRequest {
   lastName?: string;
   phone?: string | null;
   preferredLanguage?: string | null;
+  avatarUrl?: string | null;
 }
 
 export type LoyaltyTier = 'member' | 'silver' | 'gold' | 'platinum';

@@ -37,7 +37,7 @@
     "rentalAgencies": "Rental agencies",
     "vehicleCategories": "Vehicle categories",
     "newVehicle": "New vehicle",
-    "activityProviders": "Activity providers",
+    "activityProviders": "Activity partners",
     "newActivity": "New activity",
     "newDestination": "New destination",
     "newPackage": "New package",
@@ -84,6 +84,8 @@
     "promotions": "Promotions",
     "blog": "Blog",
     "sitePresentation": "Site & presentation",
+    "legalPages": "Legal pages",
+    "newLegalPage": "New legal page",
     "aboutPages": "About pages",
     "aboutTeam": "Team",
     "aboutTimeline": "Timeline",
@@ -104,6 +106,7 @@
   },
   "userMenu": {
     "dashboard": "Dashboard",
+    "profile": "My profile",
     "notifications": "Notifications",
     "settings": "Settings",
     "defaultUser": "User"

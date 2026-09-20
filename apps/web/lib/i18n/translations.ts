@@ -404,11 +404,13 @@ export type Translations = {
     contact: string;
     location: string;
     privacy: string;
+    termsOfUse: string;
     about: string;
     aboutPages: string;
     gap: string;
     faq: string;
     designedBy: string;
+    designedByNames: string;
   };
   hotels: {
     metaTitle: string;
@@ -993,6 +995,13 @@ export type Translations = {
       saveError: string;
       personalInfo: string;
       personalInfoHint: string;
+      photo: string;
+      photoHint: string;
+      photoAdd: string;
+      photoChange: string;
+      photoUploading: string;
+      photoUploadError: string;
+      photoTooLarge: string;
       preferences: string;
       preferencesHint: string;
       emailHint: string;
@@ -1141,6 +1150,11 @@ export type Translations = {
           title: string;
           subtitle: string;
           empty: string;
+          loading: string;
+          traveler: string;
+          travelerRequired: string;
+          travelerEmpty: string;
+          unlinkedTitle: string;
           documentType: string;
           file: string;
           fileHint: string;
@@ -1177,6 +1191,7 @@ export type Translations = {
           docsTitle: string;
           docsEmpty: string;
           docsLoadError: string;
+          docsUnlinkedTitle: string;
           addTitle: string;
           editTitle: string;
           formHint: string;
@@ -1406,6 +1421,21 @@ export type Translations = {
       | 'contact',
       { title: string; description: string }
     >;
+  };
+  legal: {
+    termsOfUseTitle: string;
+    termsOfUseSubtitle: string;
+    privacyPolicyTitle: string;
+    privacyPolicySubtitle: string;
+    breadcrumbHome: string;
+    loading: string;
+    emptyPage: string;
+    emptyPageHint: string;
+    localeFallback: string;
+    meta: {
+      termsOfUse: { title: string; description: string };
+      privacyPolicy: { title: string; description: string };
+    };
   };
   comingSoon: {
     badge: string;
@@ -1674,7 +1704,7 @@ const fr: Translations = {
       subtitleConfirmed:
         'Votre paiement a été reçu et votre réservation est confirmée.',
       subtitleCashPending:
-        'Vous avez choisi de payer en espèces. Votre réservation est en attente jusqu’à l’encaissement en agence.',
+        'Cette réservation est en paiement espèces. Elle reste en attente jusqu’à l’encaissement en agence (même si le cash n’est plus proposé au checkout web).',
       subtitleBankTransferPending:
         'Vous avez choisi le virement bancaire. Votre réservation reste en attente jusqu’à validation du virement par notre équipe.',
       subtitleMobileMoneyPending:
@@ -1687,7 +1717,7 @@ const fr: Translations = {
         'La confirmation prend plus de temps que prévu. Consultez votre compte dans quelques instants ou contactez le support si le statut ne change pas.',
       statusCashPending: 'En attente de paiement cash',
       statusCashPendingHint:
-        'Présentez-vous en agence ou réglez à l’arrivée. Notre équipe confirmera la réservation après encaissement.',
+        'Présentez-vous en agence ou réglez à l’arrivée avec le montant dû. Notre équipe confirmera la réservation après encaissement.',
       statusBankTransferPending: 'En attente de virement',
       statusBankTransferPendingHint:
         'Effectuez le virement avec la référence indiquée. La réservation sera confirmée après validation par notre équipe.',
@@ -1711,7 +1741,8 @@ const fr: Translations = {
       nextStepsTitle: 'Prochaines étapes',
       nextStepEmail: 'Un e-mail de confirmation vous sera envoyé sous peu.',
       nextStepAccount: 'Consultez vos réservations depuis votre espace compte.',
-      nextStepCash: 'Préparez le montant en espèces pour le règlement sur place.',
+      nextStepCash:
+        'Préparez le montant en espèces pour le règlement en agence ou à l’arrivée — la confirmation suit l’encaissement.',
       nextStepBankTransfer:
         'Effectuez le virement en indiquant la référence de réservation dans le libellé.',
       nextStepMobileMoney:
@@ -1962,11 +1993,13 @@ const fr: Translations = {
     contact: 'Contact',
     location: 'Kinshasa, RD Congo',
     privacy: 'Politique de Confidentialité',
+    termsOfUse: "Conditions d'utilisation",
     about: 'À propos',
     aboutPages: 'À propos',
     gap: 'GAP',
     faq: 'FAQ',
     designedBy: 'Conçu par',
+    designedByNames: 'Carin Siwa et Ruth Bahizi',
   },
   hotels: {
     metaTitle: 'Hébergements en Afrique',
@@ -2585,6 +2618,13 @@ const fr: Translations = {
       saveError: 'Impossible de mettre à jour le profil.',
       personalInfo: 'Informations personnelles',
       personalInfoHint: 'Vos coordonnées utilisées pour les réservations.',
+      photo: 'Photo de profil',
+      photoHint: 'JPEG, PNG ou WebP — 5 Mo max.',
+      photoAdd: 'Ajouter une photo',
+      photoChange: 'Changer la photo',
+      photoUploading: 'Envoi…',
+      photoUploadError: "Impossible d'envoyer la photo.",
+      photoTooLarge: 'Fichier trop volumineux (5 Mo max).',
       preferences: 'Préférences',
       preferencesHint: "Langue d'affichage du site et des communications.",
       emailHint: "L'adresse e-mail ne peut pas être modifiée ici.",
@@ -2699,7 +2739,7 @@ const fr: Translations = {
         paymentInvitePending:
           'Vous recevrez un e-mail avec le lien de paiement dès que votre demande sera validée.',
         cashPaymentPending:
-          'Vous avez choisi le paiement en espèces. Réglez sur place ou en agence — la réservation sera confirmée après encaissement.',
+          'Cette réservation est en paiement espèces. Réglez en agence ou à l’arrivée — confirmation après encaissement (le cash n’est plus proposé par défaut au checkout web).',
         bankTransferPaymentPending:
           'Vous avez choisi le virement bancaire. Effectuez le virement avec la référence de réservation — validation par notre équipe requise.',
         mobileMoneyPaymentPending:
@@ -2741,17 +2781,22 @@ const fr: Translations = {
         identityDocuments: {
           title: "Pièce d'identité",
           subtitle:
-            "Déposez une pièce d'identité lisible (passeport, carte d'identité…) pour valider votre réservation.",
+            "Déposez une pièce d'identité lisible (passeport, carte d'identité…) pour chaque voyageur.",
           empty: 'Aucun document déposé pour le moment.',
+          loading: 'Chargement…',
+          traveler: 'Voyageur',
+          travelerRequired: 'Sélectionnez un voyageur.',
+          travelerEmpty: 'Aucun document pour ce voyageur.',
+          unlinkedTitle: 'Documents non rattachés',
           documentType: 'Type de document',
           file: 'Fichier',
-          fileHint: 'JPEG, PNG, WebP ou PDF ? 10 Mo max.',
+          fileHint: 'JPEG, PNG, WebP ou PDF — 10 Mo max.',
           upload: 'Envoyer le document',
-          uploading: 'Envoi?',
+          uploading: 'Envoi…',
           uploadError: "Impossible d'envoyer le document.",
           fileTooLarge: 'Fichier trop volumineux (10 Mo max).',
           view: 'Voir',
-          viewing: 'Ouverture?',
+          viewing: 'Ouverture…',
           viewError: "Impossible d'ouvrir le document.",
           statusLabel: 'Statut',
           types: {
@@ -2779,6 +2824,7 @@ const fr: Translations = {
           docsTitle: 'Documents déposés',
           docsEmpty: 'Aucun document déposé pour cette réservation.',
           docsLoadError: 'Impossible de charger les documents.',
+          docsUnlinkedTitle: 'Documents non rattachés',
           addTitle: 'Ajouter un voyageur',
           editTitle: 'Modifier le voyageur',
           formHint:
@@ -2891,7 +2937,7 @@ const fr: Translations = {
       typeCard: 'Carte bancaire',
       typePaypal: 'PayPal',
       typeOther: 'Autre',
-      provider: 'Partenaire (ex. visa)',
+      provider: 'Prestataire (ex. visa)',
       lastFour: '4 derniers chiffres',
     },
     loyalty: {
@@ -3074,6 +3120,33 @@ const fr: Translations = {
         title: 'Nous contacter',
         description:
           'Contactez l??quipe Africa Tourism Gate par t?l?phone, e-mail ou formulaire de support.',
+      },
+    },
+  },
+  legal: {
+    termsOfUseTitle: "Conditions d'utilisation",
+    termsOfUseSubtitle:
+      'Les règles qui encadrent l’utilisation de la plateforme Africa Tourism Gate.',
+    privacyPolicyTitle: 'Politique de confidentialité',
+    privacyPolicySubtitle:
+      'Comment Africa Tourism Gate collecte, utilise et protège vos données personnelles.',
+    breadcrumbHome: 'Accueil',
+    loading: 'Chargement…',
+    emptyPage: 'Contenu en cours de préparation',
+    emptyPageHint:
+      'Ce document sera bientôt disponible. Contactez le support pour en savoir plus.',
+    localeFallback:
+      'Contenu affiché dans une autre langue — la version dans votre langue sera publiée prochainement.',
+    meta: {
+      termsOfUse: {
+        title: "Conditions d'utilisation",
+        description:
+          "Conditions d'utilisation de la plateforme Africa Tourism Gate — règles d'accès, compte client et réservations.",
+      },
+      privacyPolicy: {
+        title: 'Politique de confidentialité',
+        description:
+          'Politique de confidentialité Africa Tourism Gate — collecte, usage et protection des données personnelles.',
       },
     },
   },
@@ -3344,7 +3417,7 @@ const en: Translations = {
         'Your Stripe payment was received. We are finalizing your booking confirmation?',
       subtitleConfirmed: 'Your payment was received and your booking is confirmed.',
       subtitleCashPending:
-        'You chose to pay in cash. Your booking stays pending until payment is collected at the agency.',
+        'This booking is set to cash payment. It stays pending until collection at the agency (even if cash is no longer offered on web checkout).',
       subtitleBankTransferPending:
         'You chose bank transfer. Your booking stays pending until our team validates the transfer.',
       subtitleMobileMoneyPending:
@@ -3357,7 +3430,7 @@ const en: Translations = {
         'Confirmation is taking longer than expected. Check your account shortly or contact support if the status does not update.',
       statusCashPending: 'Awaiting cash payment',
       statusCashPendingHint:
-        'Pay at the agency or on arrival. Our team will confirm the booking after collection.',
+        'Pay at the agency or on arrival with the amount due. Our team will confirm the booking after collection.',
       statusBankTransferPending: 'Awaiting bank transfer',
       statusBankTransferPendingHint:
         'Complete the transfer with the reference shown. The booking will be confirmed after staff validation.',
@@ -3380,7 +3453,8 @@ const en: Translations = {
       nextStepsTitle: 'What happens next',
       nextStepEmail: 'A confirmation email will be sent shortly.',
       nextStepAccount: 'View your bookings in your account area.',
-      nextStepCash: 'Have the cash amount ready for on-site payment.',
+      nextStepCash:
+        'Have the cash amount ready for payment at the agency or on arrival — confirmation follows collection.',
       nextStepBankTransfer:
         'Make the transfer and include the booking reference in the description.',
       nextStepMobileMoney:
@@ -3625,11 +3699,13 @@ const en: Translations = {
     contact: 'Contact',
     location: 'Kinshasa, DR Congo',
     privacy: 'Privacy Policy',
+    termsOfUse: 'Terms of use',
     about: 'About',
     aboutPages: 'About us',
     gap: 'GAP',
     faq: 'FAQ',
     designedBy: 'Designed by',
+    designedByNames: 'Carin Siwa and Ruth Bahizi',
   },
   hotels: {
     metaTitle: 'Stays in Africa',
@@ -4246,6 +4322,13 @@ const en: Translations = {
       saveError: 'Could not update profile.',
       personalInfo: 'Personal information',
       personalInfoHint: 'Your contact details used for bookings.',
+      photo: 'Profile photo',
+      photoHint: 'JPEG, PNG or WebP — 5 MB max.',
+      photoAdd: 'Add a photo',
+      photoChange: 'Change photo',
+      photoUploading: 'Uploading…',
+      photoUploadError: 'Could not upload the photo.',
+      photoTooLarge: 'File too large (5 MB max).',
       preferences: 'Preferences',
       preferencesHint: 'Site display language and communications.',
       emailHint: 'Email address cannot be changed here.',
@@ -4360,7 +4443,7 @@ const en: Translations = {
         paymentInvitePending:
           'You will receive an email with the payment link once your request is approved.',
         cashPaymentPending:
-          'You chose to pay in cash. Pay on site or at the agency — the booking will be confirmed after collection.',
+          'This booking is set to cash payment. Pay at the agency or on arrival — confirmation after collection (cash is no longer offered by default on web checkout).',
         bankTransferPaymentPending:
           'You chose bank transfer. Complete the transfer with the booking reference — staff validation is required.',
         mobileMoneyPaymentPending:
@@ -4402,17 +4485,22 @@ const en: Translations = {
         identityDocuments: {
           title: 'Identity document',
           subtitle:
-            'Upload a readable identity document (passport, national ID?) to validate your booking.',
+            'Upload a readable identity document (passport, national ID…) for each traveler.',
           empty: 'No document uploaded yet.',
+          loading: 'Loading…',
+          traveler: 'Traveler',
+          travelerRequired: 'Select a traveler.',
+          travelerEmpty: 'No document for this traveler.',
+          unlinkedTitle: 'Unlinked documents',
           documentType: 'Document type',
           file: 'File',
-          fileHint: 'JPEG, PNG, WebP or PDF ? 10 MB max.',
+          fileHint: 'JPEG, PNG, WebP or PDF — 10 MB max.',
           upload: 'Upload document',
-          uploading: 'Uploading?',
+          uploading: 'Uploading…',
           uploadError: 'Could not upload the document.',
           fileTooLarge: 'File too large (10 MB max).',
           view: 'View',
-          viewing: 'Opening?',
+          viewing: 'Opening…',
           viewError: 'Could not open the document.',
           statusLabel: 'Status',
           types: {
@@ -4432,7 +4520,7 @@ const en: Translations = {
           title: 'Traveler list',
           subtitle: 'Fill in the details for each traveler included in this booking.',
           empty: 'No travelers added yet.',
-          loading: 'Loading?',
+          loading: 'Loading…',
           loadError: 'Could not load the traveler list.',
           addTraveler: 'Add traveler',
           viewDocuments: 'Attachments',
@@ -4440,6 +4528,7 @@ const en: Translations = {
           docsTitle: 'Uploaded documents',
           docsEmpty: 'No documents uploaded for this booking.',
           docsLoadError: 'Could not load documents.',
+          docsUnlinkedTitle: 'Unlinked documents',
           addTitle: 'Add a traveler',
           editTitle: 'Edit traveler',
           formHint:
@@ -4730,6 +4819,31 @@ const en: Translations = {
         title: 'Contact us',
         description:
           'Reach the Africa Tourism Gate team by phone, email or support form.',
+      },
+    },
+  },
+  legal: {
+    termsOfUseTitle: 'Terms of use',
+    termsOfUseSubtitle: 'The rules that govern the use of the Africa Tourism Gate platform.',
+    privacyPolicyTitle: 'Privacy policy',
+    privacyPolicySubtitle:
+      'How Africa Tourism Gate collects, uses and protects your personal data.',
+    breadcrumbHome: 'Home',
+    loading: 'Loading…',
+    emptyPage: 'Content coming soon',
+    emptyPageHint: 'This document will be available shortly. Contact support to learn more.',
+    localeFallback:
+      'Showing content in another language — your language version will be published soon.',
+    meta: {
+      termsOfUse: {
+        title: 'Terms of use',
+        description:
+          'Terms of use for the Africa Tourism Gate platform — access rules, customer accounts and bookings.',
+      },
+      privacyPolicy: {
+        title: 'Privacy policy',
+        description:
+          'Africa Tourism Gate privacy policy — collection, use and protection of personal data.',
       },
     },
   },

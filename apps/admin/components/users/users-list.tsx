@@ -25,6 +25,7 @@ import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { exportCsv } from '../../lib/export-csv';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import { UserRoleModal } from './user-role-modal';
 
 const PAGE_SIZE = 10;
@@ -227,6 +228,7 @@ export function UsersList() {
                 email={user.email}
                 firstName={user.firstName}
                 lastName={user.lastName}
+                src={user.avatarUrl ? resolveMediaUrl(user.avatarUrl) : null}
                 size="md"
               />
               <div className="min-w-0">
@@ -481,6 +483,9 @@ export function UsersList() {
         onClear={handleClearFilters}
         actions={
           <div className="flex flex-wrap items-center gap-2">
+            <Button href="/profil" variant="outline" size="sm">
+              {tList('myProfile')}
+            </Button>
             <Button
               type="button"
               variant="outline"

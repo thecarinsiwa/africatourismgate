@@ -1,16 +1,16 @@
-'use client';
+﻿'use client';
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 import {
   AlertDialog,
   Button,
-  DataTable,
+  Card,
   DataTableActionButton,
   DataTableActions,
   DataTableBadge,
   Input,
   Modal,
-  type ColumnDef,
+  StatCard,
 } from '@africatourismgate/ui';
 import type {
   MobileMoneyCountry,
@@ -19,7 +19,7 @@ import type {
   OrganizationListItem,
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { AdminListPageHeader } from '../pages/admin-list-page-header';
@@ -28,6 +28,15 @@ import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import { OrganizationOrgSelector } from '../organizations/organization-org-selector';
 import { ParametresPageLayout } from './parametres-subnav';
 import { resolveInitialOrganizationId } from './organization-settings-form';
+
+function selectableRowClass(selected: boolean): string {
+  return [
+    'group flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-colors',
+    selected
+      ? 'border-primary/40 bg-primary/5 ring-1 ring-primary/20'
+      : 'border-transparent hover:border-atg-border hover:bg-atg-surface',
+  ].join(' ');
+}
 
 const LOGO_MAX_BYTES = 2 * 1024 * 1024;
 const ALLOWED_LOGO_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -516,187 +525,9 @@ export function MobileMoneyConfigPage() {
     setPendingLogo(file);
   }
 
-  const countryColumns = useMemo<ColumnDef<MobileMoneyCountry, unknown>[]>(
-    () => [
-      {
-        accessorKey: 'code',
-        header: tMm('columns.code'),
-        cell: ({ row }) => (
-          <button
-            type="button"
-            className={`font-mono text-sm ${
-              selectedCountryId === row.original.id
-                ? 'font-semibold text-primary'
-                : 'text-atg-fg hover:text-primary'
-            }`}
-            onClick={() => setSelectedCountryId(row.original.id)}
-          >
-            {row.original.code}
-          </button>
-        ),
-      },
-      {
-        accessorKey: 'name',
-        header: tMm('columns.country'),
-        cell: ({ row }) => (
-          <button
-            type="button"
-            className={`text-left text-sm ${
-              selectedCountryId === row.original.id
-                ? 'font-semibold text-primary'
-                : 'text-atg-fg hover:text-primary'
-            }`}
-            onClick={() => setSelectedCountryId(row.original.id)}
-          >
-            {row.original.name}
-          </button>
-        ),
-      },
-      {
-        id: 'active',
-        header: tMm('columns.active'),
-        cell: ({ row }) =>
-          row.original.isActive ? (
-            <DataTableBadge variant="success">{tCommon('boolean.yes')}</DataTableBadge>
-          ) : (
-            <DataTableBadge variant="muted">{tCommon('boolean.no')}</DataTableBadge>
-          ),
-      },
-      {
-        id: 'actions',
-        header: '',
-        cell: ({ row }) =>
-          canWrite ? (
-            <DataTableActions>
-              <DataTableActionButton
-                action="edit"
-                onClick={() => openCountryModal('edit', row.original)}
-              />
-              <DataTableActionButton
-                action="delete"
-                onClick={() => setDeleteTarget({ kind: 'country', row: row.original })}
-              />
-            </DataTableActions>
-          ) : null,
-      },
-    ],
-    [canWrite, selectedCountryId, tCommon, tMm],
-  );
+  const selectedCountry = countries.find((c) => c.id === selectedCountryId) ?? null;
+  const selectedOperator = operators.find((o) => o.id === selectedOperatorId) ?? null;
 
-  const operatorColumns = useMemo<ColumnDef<MobileMoneyOperator, unknown>[]>(
-    () => [
-      {
-        id: 'logo',
-        header: tMm('columns.logo'),
-        cell: ({ row }) => {
-          const url = row.original.logoUrl
-            ? resolveMediaUrl(row.original.logoUrl)
-            : null;
-          return url ? (
-            <img
-              src={url}
-              alt=""
-              className="h-8 w-8 rounded object-contain"
-            />
-          ) : (
-            <span className="text-atg-muted">{tCommon('empty.dash')}</span>
-          );
-        },
-      },
-      {
-        accessorKey: 'name',
-        header: tMm('columns.operator'),
-        cell: ({ row }) => (
-          <button
-            type="button"
-            className={`text-left text-sm ${
-              selectedOperatorId === row.original.id
-                ? 'font-semibold text-primary'
-                : 'text-atg-fg hover:text-primary'
-            }`}
-            onClick={() => setSelectedOperatorId(row.original.id)}
-          >
-            {row.original.name}
-          </button>
-        ),
-      },
-      {
-        id: 'active',
-        header: tMm('columns.active'),
-        cell: ({ row }) =>
-          row.original.isActive ? (
-            <DataTableBadge variant="success">{tCommon('boolean.yes')}</DataTableBadge>
-          ) : (
-            <DataTableBadge variant="muted">{tCommon('boolean.no')}</DataTableBadge>
-          ),
-      },
-      {
-        id: 'actions',
-        header: '',
-        cell: ({ row }) =>
-          canWrite ? (
-            <DataTableActions>
-              <DataTableActionButton
-                action="edit"
-                onClick={() => openOperatorModal('edit', row.original)}
-              />
-              <DataTableActionButton
-                action="delete"
-                onClick={() => setDeleteTarget({ kind: 'operator', row: row.original })}
-              />
-            </DataTableActions>
-          ) : null,
-      },
-    ],
-    [canWrite, selectedOperatorId, tCommon, tMm],
-  );
-
-  const numberColumns = useMemo<ColumnDef<MobileMoneyPaymentNumber, unknown>[]>(
-    () => [
-      {
-        accessorKey: 'phoneE164',
-        header: tMm('columns.phone'),
-        cell: ({ row }) => (
-          <span className="font-mono text-sm">{row.original.phoneE164}</span>
-        ),
-      },
-      {
-        accessorKey: 'label',
-        header: tMm('columns.label'),
-        cell: ({ row }) => row.original.label || tCommon('empty.dash'),
-      },
-      {
-        id: 'active',
-        header: tMm('columns.active'),
-        cell: ({ row }) =>
-          row.original.isActive ? (
-            <DataTableBadge variant="success">{tCommon('boolean.yes')}</DataTableBadge>
-          ) : (
-            <DataTableBadge variant="muted">{tCommon('boolean.no')}</DataTableBadge>
-          ),
-      },
-      {
-        id: 'actions',
-        header: '',
-        cell: ({ row }) =>
-          canWrite ? (
-            <DataTableActions>
-              <DataTableActionButton
-                action="edit"
-                onClick={() => openNumberModal('edit', row.original)}
-              />
-              <DataTableActionButton
-                action="delete"
-                onClick={() => setDeleteTarget({ kind: 'number', row: row.original })}
-              />
-            </DataTableActions>
-          ) : null,
-      },
-    ],
-    [canWrite, tCommon, tMm],
-  );
-
-  const selectedOperator = operators.find((o) => o.id === selectedOperatorId);
   const operatorLogoSrc =
     logoPreview ||
     (selectedOperator?.logoUrl && operatorModal === 'edit'
@@ -732,7 +563,7 @@ export function MobileMoneyConfigPage() {
   return (
     <>
       <ParametresPageLayout>
-        <div className="min-w-0 space-y-8">
+        <div className="min-w-0 space-y-6">
           <AdminListPageHeader routePath="parametres/mobile-money" />
 
           {isSuperAdmin && organizations.length > 0 ? (
@@ -751,75 +582,374 @@ export function MobileMoneyConfigPage() {
             </p>
           ) : null}
 
-          <section className="space-y-3">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-base font-semibold text-atg-fg">
-                {tMm('sections.countries')}
-              </h2>
-              {canWrite ? (
-                <Button onClick={() => openCountryModal('create')}>
-                  {tMm('list.newCountry')}
-                </Button>
-              ) : null}
-            </div>
-            {!loadingCountries ? (
-              <DataTable
-                columns={countryColumns}
-                data={countries}
-                emptyMessage={tMm('list.emptyCountries')}
-              />
-            ) : (
-              <p className="text-sm text-atg-muted">{t('form.loading')}</p>
-            )}
-          </section>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <StatCard
+              label={tMm('stats.countries')}
+              value={String(countries.length)}
+              status={loadingCountries ? 'loading' : 'ready'}
+              subtitle={tMm('stats.countriesHint')}
+              iconClassName="bg-atg-info-light text-atg-info"
+              icon={
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.75}
+                    d="M12 21a9 9 0 100-18 9 9 0 000 18zM3.6 9h16.8M3.6 15h16.8M12 3a15 15 0 010 18M12 3a15 15 0 000 18"
+                  />
+                </svg>
+              }
+            />
+            <StatCard
+              label={tMm('stats.operators')}
+              value={selectedCountryId ? String(operators.length) : '-'}
+              status={
+                !selectedCountryId
+                  ? 'ready'
+                  : loadingOperators
+                    ? 'loading'
+                    : 'ready'
+              }
+              subtitle={
+                selectedCountry
+                  ? tMm('stats.operatorsHint', { name: selectedCountry.name })
+                  : tMm('list.selectCountry')
+              }
+              iconClassName="bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300"
+              icon={
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.75}
+                    d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"
+                  />
+                </svg>
+              }
+            />
+            <StatCard
+              label={tMm('stats.numbers')}
+              value={selectedOperatorId ? String(numbers.length) : '-'}
+              status={
+                !selectedOperatorId
+                  ? 'ready'
+                  : loadingNumbers
+                    ? 'loading'
+                    : 'ready'
+              }
+              subtitle={
+                selectedOperator
+                  ? tMm('stats.numbersHint', { name: selectedOperator.name })
+                  : tMm('list.selectOperator')
+              }
+              iconClassName="bg-atg-success-light text-atg-success"
+              icon={
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.75}
+                    d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"
+                  />
+                </svg>
+              }
+            />
+          </div>
 
-          <section className="space-y-3">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-base font-semibold text-atg-fg">
-                {tMm('sections.operators')}
-              </h2>
-              {canWrite && selectedCountryId ? (
-                <Button onClick={() => openOperatorModal('create')}>
-                  {tMm('list.newOperator')}
-                </Button>
+          {(selectedCountry || selectedOperator) && (
+            <p className="text-sm text-atg-muted">
+              <span className="font-medium text-atg-fg">{tMm('sections.countries')}</span>
+              {selectedCountry ? (
+                <>
+                  <span className="mx-1.5 text-atg-border" aria-hidden>
+                    /
+                  </span>
+                  <span className="font-medium text-atg-fg">
+                    {selectedCountry.name}
+                  </span>
+                  <span className="ml-1.5 font-mono text-xs uppercase text-atg-muted">
+                    ({selectedCountry.code})
+                  </span>
+                </>
               ) : null}
-            </div>
-            {!selectedCountryId ? (
-              <p className="text-sm text-atg-muted">{tMm('list.selectCountry')}</p>
-            ) : loadingOperators ? (
-              <p className="text-sm text-atg-muted">{t('form.loading')}</p>
-            ) : (
-              <DataTable
-                columns={operatorColumns}
-                data={operators}
-                emptyMessage={tMm('list.emptyOperators')}
-              />
-            )}
-          </section>
+              {selectedOperator ? (
+                <>
+                  <span className="mx-1.5 text-atg-border" aria-hidden>
+                    /
+                  </span>
+                  <span className="font-medium text-atg-fg">
+                    {selectedOperator.name}
+                  </span>
+                </>
+              ) : null}
+            </p>
+          )}
 
-          <section className="space-y-3">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-base font-semibold text-atg-fg">
-                {tMm('sections.numbers')}
-              </h2>
-              {canWrite && selectedOperatorId ? (
-                <Button onClick={() => openNumberModal('create')}>
-                  {tMm('list.newNumber')}
-                </Button>
-              ) : null}
-            </div>
-            {!selectedOperatorId ? (
-              <p className="text-sm text-atg-muted">{tMm('list.selectOperator')}</p>
-            ) : loadingNumbers ? (
-              <p className="text-sm text-atg-muted">{t('form.loading')}</p>
-            ) : (
-              <DataTable
-                columns={numberColumns}
-                data={numbers}
-                emptyMessage={tMm('list.emptyNumbers')}
-              />
-            )}
-          </section>
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-3 xl:items-start">
+            <Card variant="dashboard" padding="sm" className="min-w-0">
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <div>
+                  <h2 className="text-sm font-semibold text-atg-fg">
+                    {tMm('sections.countries')}
+                  </h2>
+                  <p className="text-xs text-atg-muted">{tMm('panels.countriesHint')}</p>
+                </div>
+                {canWrite ? (
+                  <Button size="sm" onClick={() => openCountryModal('create')}>
+                    {tMm('list.newCountry')}
+                  </Button>
+                ) : null}
+              </div>
+              {loadingCountries ? (
+                <p className="text-sm text-atg-muted">{t('form.loading')}</p>
+              ) : countries.length === 0 ? (
+                <p className="rounded-lg border border-dashed border-atg-border px-3 py-6 text-center text-sm text-atg-muted">
+                  {tMm('list.emptyCountries')}
+                </p>
+              ) : (
+                <ul className="max-h-[28rem] space-y-1 overflow-y-auto">
+                  {countries.map((country) => {
+                    const selected = country.id === selectedCountryId;
+                    return (
+                      <li key={country.id}>
+                        <div className={selectableRowClass(selected)}>
+                          <button
+                            type="button"
+                            className="min-w-0 flex-1 text-left"
+                            onClick={() => {
+                              setSelectedCountryId(country.id);
+                              setSelectedOperatorId(null);
+                              setNumbers([]);
+                            }}
+                            aria-pressed={selected}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="rounded bg-atg-surface px-1.5 py-0.5 font-mono text-xs font-semibold uppercase text-atg-fg">
+                                {country.code}
+                              </span>
+                              <span
+                                className={`truncate text-sm ${
+                                  selected ? 'font-semibold text-atg-fg' : 'text-atg-fg'
+                                }`}
+                              >
+                                {country.name}
+                              </span>
+                            </div>
+                            <div className="mt-1">
+                              {country.isActive ? (
+                                <DataTableBadge variant="success">
+                                  {tCommon('boolean.yes')}
+                                </DataTableBadge>
+                              ) : (
+                                <DataTableBadge variant="muted">
+                                  {tCommon('boolean.no')}
+                                </DataTableBadge>
+                              )}
+                            </div>
+                          </button>
+                          {canWrite ? (
+                            <div
+                              className="shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100"
+                              onClick={(e) => e.stopPropagation()}
+                              onKeyDown={(e) => e.stopPropagation()}
+                            >
+                              <DataTableActions>
+                                <DataTableActionButton
+                                  action="edit"
+                                  onClick={() => openCountryModal('edit', country)}
+                                />
+                                <DataTableActionButton
+                                  action="delete"
+                                  onClick={() =>
+                                    setDeleteTarget({ kind: 'country', row: country })
+                                  }
+                                />
+                              </DataTableActions>
+                            </div>
+                          ) : null}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </Card>
+
+            <Card variant="dashboard" padding="sm" className="min-w-0">
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <h2 className="text-sm font-semibold text-atg-fg">
+                    {tMm('sections.operators')}
+                  </h2>
+                  <p className="truncate text-xs text-atg-muted">
+                    {selectedCountry
+                      ? tMm('panels.operatorsFor', { name: selectedCountry.name })
+                      : tMm('list.selectCountry')}
+                  </p>
+                </div>
+                {canWrite && selectedCountryId ? (
+                  <Button size="sm" onClick={() => openOperatorModal('create')}>
+                    {tMm('list.newOperator')}
+                  </Button>
+                ) : null}
+              </div>
+              {!selectedCountryId ? (
+                <p className="rounded-lg border border-dashed border-atg-border px-3 py-6 text-center text-sm text-atg-muted">
+                  {tMm('list.selectCountry')}
+                </p>
+              ) : loadingOperators ? (
+                <p className="text-sm text-atg-muted">{t('form.loading')}</p>
+              ) : operators.length === 0 ? (
+                <p className="rounded-lg border border-dashed border-atg-border px-3 py-6 text-center text-sm text-atg-muted">
+                  {tMm('list.emptyOperators')}
+                </p>
+              ) : (
+                <ul className="max-h-[28rem] space-y-1 overflow-y-auto">
+                  {operators.map((operator) => {
+                    const selected = operator.id === selectedOperatorId;
+                    const logoUrl = operator.logoUrl
+                      ? resolveMediaUrl(operator.logoUrl)
+                      : null;
+                    return (
+                      <li key={operator.id}>
+                        <div className={selectableRowClass(selected)}>
+                          <button
+                            type="button"
+                            className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                            onClick={() => setSelectedOperatorId(operator.id)}
+                            aria-pressed={selected}
+                          >
+                            {logoUrl ? (
+                              <img
+                                src={logoUrl}
+                                alt=""
+                                className="h-9 w-9 shrink-0 rounded-md border border-atg-border bg-atg-surface object-contain p-0.5"
+                              />
+                            ) : (
+                              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-dashed border-atg-border text-xs text-atg-muted">
+                                {tCommon('empty.dash')}
+                              </span>
+                            )}
+                            <span className="min-w-0 flex-1">
+                              <span
+                                className={`block truncate text-sm ${
+                                  selected ? 'font-semibold text-atg-fg' : 'text-atg-fg'
+                                }`}
+                              >
+                                {operator.name}
+                              </span>
+                              <span className="mt-1 block">
+                                {operator.isActive ? (
+                                  <DataTableBadge variant="success">
+                                    {tCommon('boolean.yes')}
+                                  </DataTableBadge>
+                                ) : (
+                                  <DataTableBadge variant="muted">
+                                    {tCommon('boolean.no')}
+                                  </DataTableBadge>
+                                )}
+                              </span>
+                            </span>
+                          </button>
+                          {canWrite ? (
+                            <div className="shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
+                              <DataTableActions>
+                                <DataTableActionButton
+                                  action="edit"
+                                  onClick={() => openOperatorModal('edit', operator)}
+                                />
+                                <DataTableActionButton
+                                  action="delete"
+                                  onClick={() =>
+                                    setDeleteTarget({ kind: 'operator', row: operator })
+                                  }
+                                />
+                              </DataTableActions>
+                            </div>
+                          ) : null}
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </Card>
+
+            <Card variant="dashboard" padding="sm" className="min-w-0">
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <h2 className="text-sm font-semibold text-atg-fg">
+                    {tMm('sections.numbers')}
+                  </h2>
+                  <p className="truncate text-xs text-atg-muted">
+                    {selectedOperator
+                      ? tMm('panels.numbersFor', { name: selectedOperator.name })
+                      : tMm('list.selectOperator')}
+                  </p>
+                </div>
+                {canWrite && selectedOperatorId ? (
+                  <Button size="sm" onClick={() => openNumberModal('create')}>
+                    {tMm('list.newNumber')}
+                  </Button>
+                ) : null}
+              </div>
+              {!selectedOperatorId ? (
+                <p className="rounded-lg border border-dashed border-atg-border px-3 py-6 text-center text-sm text-atg-muted">
+                  {tMm('list.selectOperator')}
+                </p>
+              ) : loadingNumbers ? (
+                <p className="text-sm text-atg-muted">{t('form.loading')}</p>
+              ) : numbers.length === 0 ? (
+                <p className="rounded-lg border border-dashed border-atg-border px-3 py-6 text-center text-sm text-atg-muted">
+                  {tMm('list.emptyNumbers')}
+                </p>
+              ) : (
+                <ul className="max-h-[28rem] space-y-1 overflow-y-auto">
+                  {numbers.map((number) => (
+                    <li key={number.id}>
+                      <div className="flex items-center gap-3 rounded-lg border border-transparent px-3 py-2.5 hover:border-atg-border hover:bg-atg-surface">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-mono text-sm text-atg-fg">
+                            {number.phoneE164}
+                          </p>
+                          <p className="mt-0.5 truncate text-xs text-atg-muted">
+                            {number.label || tCommon('empty.dash')}
+                          </p>
+                          <div className="mt-1">
+                            {number.isActive ? (
+                              <DataTableBadge variant="success">
+                                {tCommon('boolean.yes')}
+                              </DataTableBadge>
+                            ) : (
+                              <DataTableBadge variant="muted">
+                                {tCommon('boolean.no')}
+                              </DataTableBadge>
+                            )}
+                          </div>
+                        </div>
+                        {canWrite ? (
+                          <div className="shrink-0">
+                            <DataTableActions>
+                              <DataTableActionButton
+                                action="edit"
+                                onClick={() => openNumberModal('edit', number)}
+                              />
+                              <DataTableActionButton
+                                action="delete"
+                                onClick={() =>
+                                  setDeleteTarget({ kind: 'number', row: number })
+                                }
+                              />
+                            </DataTableActions>
+                          </div>
+                        ) : null}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Card>
+          </div>
         </div>
       </ParametresPageLayout>
 

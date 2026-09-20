@@ -50,7 +50,7 @@ const CRUISES_DESCRIPTION =
 const CRUISE_PORTS_DESCRIPTION = /Référentiel des escales|Ports directory|Referencia de escalas/i;
 const CRUISE_LINES_DESCRIPTION = /Référentiel des compagnies|Cruise lines directory|Referencia de líneas/i;
 const ACTIVITY_PROVIDERS_HEADING =
-  /^Partenaires d'activités$|^Activity providers$|^Socios de actividades$/i;
+  /^Partenaires d'activités$|^Activity partners$|^Socios de actividades$/i;
 const GAP_SETTINGS_DESCRIPTION =
   /Paramètres du site GAP|GAP site settings|Configuración del sitio GAP/i;
 const GAP_PAGES_TABLE = /Liste des pages GAP|GAP pages list|Lista de páginas GAP/i;
@@ -261,8 +261,8 @@ test.describe('Phase 4 QA — smoke navigation verticals', () => {
     await expect(page.getByRole('table').first()).toBeVisible();
   });
 
-  test('/produits/activites/fournisseurs', async ({ page }) => {
-    await page.goto('/produits/activites/fournisseurs');
+  test('/produits/activites/partenaires', async ({ page }) => {
+    await page.goto('/produits/activites/partenaires');
     await waitForPageIdle(page);
     await expect(
       page.getByRole('heading', { name: ACTIVITY_PROVIDERS_HEADING }).first(),

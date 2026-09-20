@@ -170,10 +170,10 @@ export const WEB_PAYMENT_METHOD_KEYS = [
   'mobile_money',
 ] as const satisfies readonly WebPaymentMethodKey[];
 
-/** Stripe + cash on par défaut ; virement / Mobile Money désactivés jusqu’à activation admin. */
+/** Stripe on by default ; cash / virement / Mobile Money off until admin enables (PR-08: cash web off). */
 export const DEFAULT_WEB_PAYMENT_METHODS: ResolvedWebPaymentMethods = {
   stripe: true,
-  cash: true,
+  cash: false,
   bank_transfer: false,
   mobile_money: false,
 };

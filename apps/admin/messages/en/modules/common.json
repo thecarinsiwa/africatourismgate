@@ -42,6 +42,7 @@
     "country": "Country",
     "default": "Default",
     "provider": "Partner",
+    "paymentProvider": "Provider",
     "method": "Method",
     "role": "Role",
     "quantityShort": "Qty",

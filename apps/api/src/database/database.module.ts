@@ -12,6 +12,7 @@ import { MobileMoneyPaymentNumbers } from '../entities/mobile-money-payment-numb
 import { AboutPages } from '../entities/about-page.entity';
 import { AboutResources } from '../entities/about-resource.entity';
 import { BlogPosts } from '../entities/blog-post.entity';
+import { LegalPages } from '../entities/legal-page.entity';
 import { AboutTimelineMilestones } from '../entities/about-timeline-milestone.entity';
 import { TeamMembers } from '../entities/team-member.entity';
 import { WhyUsItems } from '../entities/why-us-item.entity';
@@ -26,6 +27,7 @@ import { GapSiteSettings } from '../entities/gap-site-settings.entity';
 import { Donations } from '../entities/donation.entity';
 import { HeroSlides } from '../entities/hero-slide.entity';
 import { EmailOperationVerifications } from '../entities/email-operation-verification.entity';
+import { Notifications } from '../entities/notification.entity';
 import { ensureMigrations } from './ensure-migrations';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
 import { ensureSchema } from './ensure-schema';
@@ -36,6 +38,7 @@ const entityList = [
   EmailOperationVerifications,
   BlogPosts,
   AboutPages,
+  LegalPages,
   TeamMembers,
   AboutTimelineMilestones,
   AboutResources,
@@ -56,6 +59,7 @@ const entityList = [
   MobileMoneyCountries,
   MobileMoneyOperators,
   MobileMoneyPaymentNumbers,
+  Notifications,
 ] as (new () => unknown)[];
 
 @Module({

@@ -25,6 +25,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     trailing,
     className,
     id: idProp,
+    required,
     ...props
   },
   ref,
@@ -40,6 +41,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           {label && (
             <label htmlFor={id} className="text-sm font-medium text-atg-fg">
               {label}
+              {required ? (
+                <span className="ml-1 text-red-500" aria-hidden="true">
+                  *
+                </span>
+              ) : null}
             </label>
           )}
           {labelExtra}
@@ -49,6 +55,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         <input
           ref={ref}
           id={id}
+          required={required}
+          aria-required={required || undefined}
           aria-invalid={hasError || undefined}
           aria-describedby={hasError ? `${id}-error` : hint ? `${id}-hint` : undefined}
           className={cn(

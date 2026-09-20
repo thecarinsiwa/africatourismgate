@@ -18,6 +18,8 @@ import type {
   PublicTeamMember,
   PublicAboutResourcesListQuery,
   PublicTeamMembersListQuery,
+  PublicLegalPage,
+  LegalPageSectionKey,
   PublicWhyUsContent,
   PublicWhyUsListQuery,
   PublicHappyCustomersContent,
@@ -514,7 +516,7 @@ export async function getBlogPostBySlugForLocale(
   }
 }
 
-export type { PublicAboutPage, PublicAboutResource, PublicTeamMember };
+export type { PublicAboutPage, PublicAboutResource, PublicTeamMember, PublicLegalPage };
 
 export async function getAboutPageBySectionKey(
   sectionKey: AboutPageSectionKey,
@@ -538,6 +540,31 @@ export async function getAboutPageBySectionKeyForLocale(
     return await getAboutPageBySectionKey(sectionKey, locale);
   } catch {
     return getAboutPageBySectionKey(sectionKey);
+  }
+}
+
+export async function getLegalPageBySectionKey(
+  sectionKey: LegalPageSectionKey,
+  locale?: string,
+): Promise<PublicLegalPage> {
+  const qs = locale ? `?locale=${encodeURIComponent(locale)}` : '';
+  return fetchPublic<PublicLegalPage>(
+    `/public/legal-pages/${encodeURIComponent(sectionKey)}${qs}`,
+  );
+}
+
+export async function getLegalPageBySectionKeyForLocale(
+  sectionKey: LegalPageSectionKey = 'terms-of-use',
+  locale?: string,
+): Promise<PublicLegalPage> {
+  if (!locale) {
+    return getLegalPageBySectionKey(sectionKey);
+  }
+
+  try {
+    return await getLegalPageBySectionKey(sectionKey, locale);
+  } catch {
+    return getLegalPageBySectionKey(sectionKey);
   }
 }
 

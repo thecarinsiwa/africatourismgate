@@ -7,34 +7,24 @@ import { Input } from './input';
 import { PasswordInput } from './password-input';
 import { TextLink } from './text-link';
 
+type FieldConfig = {
+  label: string;
+  /** When true, field is required and shows a red asterisk. Defaults to true for identity/password fields. */
+  required?: boolean;
+  hint?: string;
+};
+
 /** Configuration textuelle du formulaire d'inscription (i18n, white-label). */
 export type RegisterFormConfig = {
-  firstName: {
-    label: string;
-    placeholder: string;
-  };
-  lastName: {
-    label: string;
-    placeholder: string;
-  };
-  email: {
-    label: string;
-    placeholder: string;
-  };
-  phone: {
-    label: string;
-    placeholder: string;
-    hint?: string;
-  };
-  password: {
-    label: string;
-    placeholder: string;
+  firstName: FieldConfig;
+  lastName: FieldConfig;
+  email: FieldConfig;
+  phone: FieldConfig;
+  password: FieldConfig & {
     showPasswordLabel?: string;
     hidePasswordLabel?: string;
   };
-  confirmPassword: {
-    label: string;
-    placeholder: string;
+  confirmPassword: FieldConfig & {
     showPasswordLabel?: string;
     hidePasswordLabel?: string;
     mismatchError: string;
@@ -43,6 +33,7 @@ export type RegisterFormConfig = {
     label: string;
     href: string;
     linkLabel: string;
+    required?: boolean;
   };
   submit: {
     label: string;
@@ -53,38 +44,40 @@ export type RegisterFormConfig = {
 export const defaultRegisterFormConfig: RegisterFormConfig = {
   firstName: {
     label: 'Prénom',
-    placeholder: 'Jean',
+    required: true,
   },
   lastName: {
     label: 'Nom',
-    placeholder: 'Dupont',
+    required: true,
   },
   email: {
     label: 'Adresse email',
-    placeholder: 'vous@exemple.com',
+    required: true,
   },
   phone: {
     label: 'Téléphone',
-    placeholder: '+243 000 000 000',
+    required: false,
     hint: 'Optionnel',
   },
   password: {
     label: 'Mot de passe',
-    placeholder: '••••••••',
+    required: true,
+    hint: 'Minimum 8 caractères',
     showPasswordLabel: 'Afficher le mot de passe',
     hidePasswordLabel: 'Masquer le mot de passe',
   },
   confirmPassword: {
     label: 'Confirmer le mot de passe',
-    placeholder: '••••••••',
+    required: true,
     showPasswordLabel: 'Afficher le mot de passe',
     hidePasswordLabel: 'Masquer le mot de passe',
     mismatchError: 'Les mots de passe ne correspondent pas',
   },
   terms: {
     label: "J'accepte les",
-    href: '#',
+    href: '/legal/terms',
     linkLabel: "conditions d'utilisation",
+    required: true,
   },
   submit: {
     label: 'Créer mon compte',
@@ -104,6 +97,8 @@ export type RegisterFormData = {
 export type RegisterFormProps = {
   config?: Partial<RegisterFormConfig>;
   onSubmit?: (data: RegisterFormData) => void | Promise<void>;
+  /** When set, the terms link opens a modal (or custom UI) instead of navigating. */
+  onTermsClick?: () => void;
   className?: string;
   submitButtonVariant?: React.ComponentProps<typeof Button>['variant'];
   submitButtonRightIcon?: React.ReactNode;
@@ -123,9 +118,14 @@ function mergeConfig(partial?: Partial<RegisterFormConfig>): RegisterFormConfig 
   };
 }
 
+function isRequired(value: boolean | undefined, defaultValue: boolean): boolean {
+  return value ?? defaultValue;
+}
+
 export function RegisterForm({
   config: configPartial,
   onSubmit,
+  onTermsClick,
   className,
   submitButtonVariant = 'primary',
   submitButtonRightIcon = <span aria-hidden>→</span>,
@@ -140,6 +140,14 @@ export function RegisterForm({
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState<string | undefined>();
+
+  const firstNameRequired = isRequired(config.firstName.required, true);
+  const lastNameRequired = isRequired(config.lastName.required, true);
+  const emailRequired = isRequired(config.email.required, true);
+  const phoneRequired = isRequired(config.phone.required, false);
+  const passwordRequired = isRequired(config.password.required, true);
+  const confirmPasswordRequired = isRequired(config.confirmPassword.required, true);
+  const termsRequired = isRequired(config.terms.required, true);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -167,10 +175,10 @@ export function RegisterForm({
           type="text"
           autoComplete="given-name"
           label={config.firstName.label}
-          placeholder={config.firstName.placeholder}
+          hint={config.firstName.hint}
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
-          required
+          required={firstNameRequired}
         />
         <Input
           id="lastName"
@@ -178,10 +186,10 @@ export function RegisterForm({
           type="text"
           autoComplete="family-name"
           label={config.lastName.label}
-          placeholder={config.lastName.placeholder}
+          hint={config.lastName.hint}
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
-          required
+          required={lastNameRequired}
         />
       </div>
 
@@ -191,10 +199,10 @@ export function RegisterForm({
         type="email"
         autoComplete="email"
         label={config.email.label}
-        placeholder={config.email.placeholder}
+        hint={config.email.hint}
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        required
+        required={emailRequired}
       />
 
       <Input
@@ -203,10 +211,10 @@ export function RegisterForm({
         type="tel"
         autoComplete="tel"
         label={config.phone.label}
-        placeholder={config.phone.placeholder}
         hint={config.phone.hint}
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
+        required={phoneRequired}
       />
 
       <PasswordInput
@@ -214,13 +222,13 @@ export function RegisterForm({
         name="password"
         autoComplete="new-password"
         label={config.password.label}
-        placeholder={config.password.placeholder}
+        hint={config.password.hint}
         value={password}
         onChange={(e) => {
           setPassword(e.target.value);
           if (confirmPasswordError) setConfirmPasswordError(undefined);
         }}
-        required
+        required={passwordRequired}
         minLength={8}
         showPasswordLabel={config.password.showPasswordLabel}
         hidePasswordLabel={config.password.hidePasswordLabel}
@@ -231,13 +239,13 @@ export function RegisterForm({
         name="confirmPassword"
         autoComplete="new-password"
         label={config.confirmPassword.label}
-        placeholder={config.confirmPassword.placeholder}
+        hint={config.confirmPassword.hint}
         value={confirmPassword}
         onChange={(e) => {
           setConfirmPassword(e.target.value);
           if (confirmPasswordError) setConfirmPasswordError(undefined);
         }}
-        required
+        required={confirmPasswordRequired}
         minLength={8}
         error={confirmPasswordError}
         showPasswordLabel={config.confirmPassword.showPasswordLabel}
@@ -249,13 +257,30 @@ export function RegisterForm({
         name="acceptTerms"
         checked={acceptTerms}
         onChange={(e) => setAcceptTerms(e.target.checked)}
-        required
+        required={termsRequired}
         label={
           <span>
             {config.terms.label}{' '}
-            <TextLink href={config.terms.href} className="inline">
+            <TextLink
+              href={config.terms.href}
+              className="inline"
+              onClick={
+                onTermsClick
+                  ? (event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      onTermsClick();
+                    }
+                  : undefined
+              }
+            >
               {config.terms.linkLabel}
             </TextLink>
+            {termsRequired ? (
+              <span className="ml-1 text-red-500" aria-hidden="true">
+                *
+              </span>
+            ) : null}
           </span>
         }
       />

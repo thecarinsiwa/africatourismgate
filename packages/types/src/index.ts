@@ -346,6 +346,17 @@ export type {
 } from './about-page.js';
 
 export type {
+  LegalPage,
+  LegalPageSectionKey,
+  LegalPageStatus,
+  LegalPagesListQuery,
+  CreateLegalPageRequest,
+  PublicLegalPage,
+  PublicLegalPagesListQuery,
+  UpdateLegalPageRequest,
+} from './legal-page.js';
+
+export type {
   AboutResource,
   AboutResourceStatus,
   AboutResourceType,
@@ -675,6 +686,15 @@ export type {
   DepartmentsListQuery,
   UpdateDepartmentRequest,
 } from './department.js';
+
+export type {
+  StaffNotification,
+  StaffNotificationPayload,
+  StaffNotificationPriority,
+  StaffNotificationsListQuery,
+  StaffNotificationsUnreadCount,
+  StaffNotificationType,
+} from './notification.js';
 
 export type {
   CreateRoleRequest,

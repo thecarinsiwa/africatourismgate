@@ -360,6 +360,10 @@ export function RbacAuditLogsList({
   const urlUserId = searchParams.get('userId')?.trim() ?? '';
   const urlDateFrom = searchParams.get('dateFrom')?.trim() ?? '';
   const urlDateTo = searchParams.get('dateTo')?.trim() ?? '';
+
+  useEffect(() => {
+    setPage(1);
+  }, [urlUserId, urlDateFrom, urlDateTo]);
   const [access, setAccess] = useState<
     | { status: 'checking' }
     | { status: 'denied' }

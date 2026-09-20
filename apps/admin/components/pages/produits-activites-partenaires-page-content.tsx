@@ -6,12 +6,12 @@ import { ActivityProvidersList } from '../activities/activity-providers-list';
 import { ActivitiesStatCards } from '../activities/activities-stat-cards';
 import { AdminListPageHeader } from './admin-list-page-header';
 
-export function FournisseursActivitesPageContent() {
+export function PartenairesActivitesPageContent() {
   const tNav = useTranslations('nav.links');
   return (
     <div className="min-w-0">
       <AdminListPageHeader
-        routePath="produits/activites/fournisseurs"
+        routePath="produits/activites/partenaires"
         actions={
           <Button href="/produits/activites" variant="outline">
             {tNav('activities')}

@@ -67,10 +67,10 @@
         "modeImmediate": "Inmediato (pago)",
         "modeAssisted": "Asistido (solicitud)",
         "paymentMethodsTitle": "Métodos de pago (sitio público)",
-        "paymentMethodsDescription": "Seleccione los métodos ofrecidos en el checkout web. El POS no se ve afectado. La transferencia también requiere cuentas bancarias publicadas. Mobile Money requiere países, operadores y números configurados.",
+        "paymentMethodsDescription": "Seleccione los métodos ofrecidos en el checkout web. El POS y el cobro en caja del personal no se ven afectados. El efectivo en el lugar está desactivado por defecto (riesgo si el efectivo es el único compromiso) — reactívelo solo si acepta ese riesgo. La transferencia también requiere cuentas bancarias publicadas. Mobile Money requiere países, operadores y números configurados.",
         "paymentMethods": {
           "stripe": "Tarjeta (Stripe)",
-          "cash": "Efectivo en el lugar",
+          "cash": "Efectivo en el lugar (sitio público)",
           "bank_transfer": "Transferencia bancaria",
           "mobile_money": "Mobile Money"
         },
@@ -260,7 +260,10 @@
       },
       "newButton": "Nueva cuenta",
       "orgSelectAria": "Organización",
-      "empty": "No hay cuentas bancarias aún."
+      "empty": "No hay cuentas bancarias aún.",
+      "sectionTitle": "Cuentas registradas",
+      "sectionHint": "Cuentas mostradas en el checkout por transferencia y en las instrucciones de pago.",
+      "defaultBadge": "Predeterminada"
     },
     "stats": {
       "total": {
@@ -317,6 +320,19 @@
       "countries": "Países",
       "operators": "Operadores",
       "numbers": "Números de pago"
+    },
+    "stats": {
+      "countries": "Países",
+      "countriesHint": "Configurados para la organización",
+      "operators": "Operadores",
+      "operatorsHint": "En {name}",
+      "numbers": "Números",
+      "numbersHint": "En {name}"
+    },
+    "panels": {
+      "countriesHint": "Haga clic en un país para ver sus operadores",
+      "operatorsFor": "Para {name}",
+      "numbersFor": "Para {name}"
     },
     "list": {
       "orgSelectAria": "Organización",

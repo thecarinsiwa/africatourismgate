@@ -22,6 +22,7 @@ import {
   UserSessions,
 } from '../../entities/generated/users.entity';
 import { newId } from '../../common/utils/uuid';
+import { userAvatarUploadUrl } from '../../common/utils/public-asset-url';
 import {
   ACCESS_TOKEN_TYPE,
   BCRYPT_ROUNDS,
@@ -571,7 +572,26 @@ export class AuthService {
     if (dto.preferredLanguage !== undefined) {
       user.preferredLanguage = dto.preferredLanguage?.trim() ?? '';
     }
+    if (dto.avatarUrl !== undefined) {
+      const trimmed = dto.avatarUrl?.trim() ?? '';
+      user.avatarUrl = trimmed || null;
+    }
 
+    await this.usersRepo.save(user);
+    return toAuthUserDto(user);
+  }
+
+  async uploadAvatar(
+    userId: string,
+    file: Express.Multer.File,
+  ): Promise<AuthUserDto> {
+    const user = await this.usersRepo.findOne({
+      where: { id: userId, deletedAt: IsNull() },
+    });
+    if (!user || user.status !== 'active') {
+      throw new UnauthorizedException();
+    }
+    user.avatarUrl = userAvatarUploadUrl(file.filename);
     await this.usersRepo.save(user);
     return toAuthUserDto(user);
   }

@@ -67,10 +67,10 @@
         "modeImmediate": "Immédiat (paiement)",
         "modeAssisted": "Assisté (demande)",
         "paymentMethodsTitle": "Moyens de paiement (site public)",
-        "paymentMethodsDescription": "Cochez les moyens proposés au checkout web. Le POS n’est pas concerné. Le virement nécessite aussi des comptes bancaires publiés. Mobile Money nécessite pays, opérateurs et numéros configurés.",
+        "paymentMethodsDescription": "Cochez les moyens proposés au checkout web. Le POS et l’encaissement staff ne sont pas concernés. Les espèces sur place sont désactivées par défaut (risque si cash seul sans engagement) — réactivez-les uniquement si vous acceptez ce risque. Le virement nécessite aussi des comptes bancaires publiés. Mobile Money nécessite pays, opérateurs et numéros configurés.",
         "paymentMethods": {
           "stripe": "Carte (Stripe)",
-          "cash": "Espèces sur place",
+          "cash": "Espèces sur place (site public)",
           "bank_transfer": "Virement bancaire",
           "mobile_money": "Mobile Money"
         },
@@ -260,7 +260,10 @@
       },
       "newButton": "Nouveau compte",
       "orgSelectAria": "Organisation",
-      "empty": "Aucun compte bancaire."
+      "empty": "Aucun compte bancaire.",
+      "sectionTitle": "Comptes enregistrés",
+      "sectionHint": "Comptes affichés au checkout virement et dans les instructions de paiement.",
+      "defaultBadge": "Par défaut"
     },
     "stats": {
       "total": {
@@ -317,6 +320,19 @@
       "countries": "Pays",
       "operators": "Opérateurs",
       "numbers": "Numéros de paiement"
+    },
+    "stats": {
+      "countries": "Pays",
+      "countriesHint": "Configurés pour l'organisation",
+      "operators": "Opérateurs",
+      "operatorsHint": "Dans {name}",
+      "numbers": "Numéros",
+      "numbersHint": "Chez {name}"
+    },
+    "panels": {
+      "countriesHint": "Cliquez un pays pour voir ses opérateurs",
+      "operatorsFor": "Pour {name}",
+      "numbersFor": "Pour {name}"
     },
     "list": {
       "orgSelectAria": "Organisation",

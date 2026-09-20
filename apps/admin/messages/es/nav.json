@@ -37,7 +37,7 @@
     "rentalAgencies": "Agencias de alquiler",
     "vehicleCategories": "Categorías de vehículos",
     "newVehicle": "Nuevo vehículo",
-    "activityProviders": "Proveedores de actividades",
+    "activityProviders": "Socios de actividades",
     "newActivity": "Nueva actividad",
     "newDestination": "Nuevo destino",
     "newPackage": "Nuevo paquete",
@@ -84,6 +84,8 @@
     "promotions": "Promociones",
     "blog": "Blog",
     "sitePresentation": "Sitio y presentación",
+    "legalPages": "Páginas legales",
+    "newLegalPage": "Nueva página legal",
     "aboutPages": "Páginas Acerca de",
     "aboutTeam": "Equipo",
     "aboutTimeline": "Línea de tiempo",
@@ -104,6 +106,7 @@
   },
   "userMenu": {
     "dashboard": "Panel de control",
+    "profile": "Mi perfil",
     "notifications": "Notificaciones",
     "settings": "Configuración",
     "defaultUser": "Usuario"

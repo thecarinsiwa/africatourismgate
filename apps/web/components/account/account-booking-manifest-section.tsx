@@ -859,30 +859,91 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
               ) : documents.length === 0 ? (
                 <p className="text-sm text-atg-muted">{m.docsEmpty}</p>
               ) : (
-                <ul className="space-y-3">
-                  {documents.map((doc) => (
-                    <li
-                      key={doc.id}
-                      className="flex items-center gap-3 rounded-lg border border-atg-border bg-white/50 px-3 py-3 dark:bg-black/10"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-atg-fg">{doc.originalFilename}</p>
-                        <p className="text-xs text-atg-muted">
-                          {doc.documentType} · v{doc.version}
+                <div className="space-y-4">
+                  {entries.map((entry, index) => {
+                    const entryDocs = documents.filter(
+                      (doc) => doc.manifestEntryId === entry.id,
+                    );
+                    if (entryDocs.length === 0) return null;
+                    return (
+                      <div key={entry.id}>
+                        <p className="mb-2 text-sm font-medium text-atg-fg">
+                          <span className="mr-2 text-xs text-atg-muted tabular-nums">
+                            {index + 1}.
+                          </span>
+                          {entry.fullName}
                         </p>
+                        <ul className="space-y-3">
+                          {entryDocs.map((doc) => (
+                            <li
+                              key={doc.id}
+                              className="flex items-center gap-3 rounded-lg border border-atg-border bg-white/50 px-3 py-3 dark:bg-black/10"
+                            >
+                              <div className="min-w-0 flex-1">
+                                <p className="text-sm font-medium text-atg-fg">
+                                  {doc.originalFilename}
+                                </p>
+                                <p className="text-xs text-atg-muted">
+                                  {doc.documentType} · v{doc.version}
+                                </p>
+                              </div>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                disabled={previewLoading && previewDoc?.id === doc.id}
+                                onClick={() => void openPreview(doc)}
+                              >
+                                {previewLoading && previewDoc?.id === doc.id
+                                  ? m.loading
+                                  : m.viewDocument}
+                              </Button>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        disabled={previewLoading && previewDoc?.id === doc.id}
-                        onClick={() => void openPreview(doc)}
-                      >
-                        {previewLoading && previewDoc?.id === doc.id ? m.loading : m.viewDocument}
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
+                    );
+                  })}
+                  {(() => {
+                    const orphans = documents.filter((doc) => !doc.manifestEntryId);
+                    if (orphans.length === 0) return null;
+                    return (
+                      <div>
+                        <p className="mb-2 text-sm font-medium text-atg-fg">
+                          {m.docsUnlinkedTitle}
+                        </p>
+                        <ul className="space-y-3">
+                          {orphans.map((doc) => (
+                            <li
+                              key={doc.id}
+                              className="flex items-center gap-3 rounded-lg border border-atg-border bg-white/50 px-3 py-3 dark:bg-black/10"
+                            >
+                              <div className="min-w-0 flex-1">
+                                <p className="text-sm font-medium text-atg-fg">
+                                  {doc.originalFilename}
+                                </p>
+                                <p className="text-xs text-atg-muted">
+                                  {doc.documentType} · v{doc.version}
+                                </p>
+                              </div>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                disabled={previewLoading && previewDoc?.id === doc.id}
+                                onClick={() => void openPreview(doc)}
+                              >
+                                {previewLoading && previewDoc?.id === doc.id
+                                  ? m.loading
+                                  : m.viewDocument}
+                              </Button>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    );
+                  })()}
+                </div>
               )}
 
               {/* Preview inline */}

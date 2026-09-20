@@ -1,6 +1,7 @@
 'use client';
 
 import { Breadcrumb, DashboardShell } from '@africatourismgate/ui';
+import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import { useTranslations } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -102,8 +103,9 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
           session.user.email,
         ),
         email: session.user.email,
+        avatarSrc: normalizeBrandingAssetUrl(session.user.avatarUrl ?? null),
       }
-    : { displayName: tNav('userMenu.defaultUser'), email: '' };
+    : { displayName: tNav('userMenu.defaultUser'), email: '', avatarSrc: null };
 
   const handleLogout = useCallback(async () => {
     await logout();
@@ -139,6 +141,7 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
         logoutLabel: tShell('logout'),
         loggingOutLabel: tShell('loggingOut'),
         menuLinks: [
+          { href: '/profil', label: tNav('userMenu.profile') },
           { href: '/dashboard', label: tNav('userMenu.dashboard') },
           { href: '/notifications', label: tNav('userMenu.notifications') },
           { href: '/parametres', label: tNav('userMenu.settings') },

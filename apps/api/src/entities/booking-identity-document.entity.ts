@@ -20,6 +20,9 @@ export class BookingIdentityDocuments {
   @Column({ type: 'varchar', name: 'booking_id', length: 36 })
   bookingId!: string;
 
+  @Column({ type: 'varchar', name: 'manifest_entry_id', length: 36, nullable: true })
+  manifestEntryId!: string | null;
+
   @Column({ type: 'varchar', name: 'user_id', length: 36 })
   userId!: string;
 

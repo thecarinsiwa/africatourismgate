@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -11,19 +12,28 @@ import {
   Req,
   Res,
   SetMetadata,
+  UploadedFile,
   UseFilters,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import {
   ApiBadRequestResponse,
+  ApiBody,
   ApiConflictResponse,
+  ApiConsumes,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { diskStorage } from 'multer';
+import { randomUUID } from 'node:crypto';
+import { existsSync, mkdirSync } from 'node:fs';
+import { extname, join } from 'node:path';
 import { IS_PUBLIC_KEY, Public } from './decorators/public.decorator';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
@@ -180,6 +190,65 @@ export class AuthController {
     @Body() dto: UpdateProfileDto,
   ): Promise<AuthUserDto> {
     return this.authService.updateProfile(user.id, dto);
+  }
+
+  @Post('me/avatar')
+  @SetMetadata(IS_PUBLIC_KEY, false)
+  @HttpCode(HttpStatus.OK)
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: { type: 'string', format: 'binary' },
+      },
+      required: ['file'],
+    },
+  })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: (_req, _file, cb) => {
+          const uploadDir = join(process.cwd(), 'uploads', 'avatars');
+          if (!existsSync(uploadDir)) {
+            mkdirSync(uploadDir, { recursive: true });
+          }
+          cb(null, uploadDir);
+        },
+        filename: (_req, file, cb) => {
+          const extension = extname(file.originalname || '').toLowerCase();
+          cb(null, `${Date.now()}-${randomUUID()}${extension}`);
+        },
+      }),
+      limits: { fileSize: 5 * 1024 * 1024 },
+      fileFilter: (_req, file, cb) => {
+        const extension = extname(file.originalname || '').toLowerCase();
+        const allowedMimes = new Set(['image/jpeg', 'image/png', 'image/webp']);
+        const allowedExt = new Set(['.jpg', '.jpeg', '.png', '.webp']);
+        if (!allowedMimes.has(file.mimetype) || !allowedExt.has(extension)) {
+          cb(null, false);
+          return;
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  @ApiOperation({
+    summary: 'Upload current user profile photo (JPEG, PNG or WebP, max 5 Mo)',
+  })
+  @ApiOkResponse({ type: AuthUserDto })
+  @ApiUnauthorizedResponse()
+  @ApiBadRequestResponse()
+  uploadAvatar(
+    @CurrentUser() user: AuthUserDto,
+    @UploadedFile() file: Express.Multer.File | undefined,
+  ): Promise<AuthUserDto> {
+    if (!file) {
+      throw new BadRequestException(
+        'Fichier image requis (JPEG, PNG ou WebP, max 5 Mo).',
+      );
+    }
+    return this.authService.uploadAvatar(user.id, file);
   }
 
   @Post('login')

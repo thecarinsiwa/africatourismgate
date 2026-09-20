@@ -2,7 +2,8 @@
 
 import { Button, Input, Spinner } from '@africatourismgate/ui';
 import type { AuthUser, UserStatus } from '@africatourismgate/types';
-import { useEffect, useMemo, useState } from 'react';
+import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
 import {
   formatProfileDisplayName,
@@ -18,6 +19,9 @@ import {
   syncSessionUserPreferredLanguage,
 } from '../../lib/i18n/preferred-language';
 import { LOCALES } from '../../lib/i18n/types';
+
+const AVATAR_MAX_BYTES = 5 * 1024 * 1024;
+const AVATAR_ACCEPT = 'image/jpeg,image/png,image/webp';
 
 const statusStyles: Record<UserStatus, string> = {
   active: 'bg-green-100 text-green-800 dark:bg-green-950/50 dark:text-green-300',
@@ -44,6 +48,7 @@ function ProfileStatusBadge({
 export function AccountProfileForm() {
   const t = useTranslations();
   const { setLocale } = useLocale();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [user, setUser] = useState<AuthUser | null>(null);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -51,6 +56,7 @@ export function AccountProfileForm() {
   const [preferredLanguage, setPreferredLanguage] = useState('fr');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -64,6 +70,11 @@ export function AccountProfileForm() {
     return getProfileInitials(firstName, lastName, user.email);
   }, [user, firstName, lastName]);
 
+  const avatarSrc = useMemo(
+    () => normalizeBrandingAssetUrl(user?.avatarUrl ?? null),
+    [user?.avatarUrl],
+  );
+
   const isDirty = useMemo(() => {
     if (!user) return false;
     return (
@@ -74,6 +85,23 @@ export function AccountProfileForm() {
     );
   }, [user, firstName, lastName, phone, preferredLanguage]);
 
+  function applyUser(updated: AuthUser) {
+    setUser(updated);
+    setFirstName(updated.firstName);
+    setLastName(updated.lastName);
+    setPhone(updated.phone ?? '');
+    setPreferredLanguage(updated.preferredLanguage ?? 'fr');
+    const session = getWebSession();
+    if (session) {
+      saveWebSession({ ...session, user: updated });
+    }
+    syncSessionUserPreferredLanguage(updated);
+    const savedLocale = localeFromPreferredLanguage(updated.preferredLanguage);
+    if (savedLocale) {
+      setLocale(savedLocale, { persist: false });
+    }
+  }
+
   useEffect(() => {
     let mounted = true;
     async function load() {
@@ -81,16 +109,7 @@ export function AccountProfileForm() {
         const client = await getAccountApiClient();
         const me = await client.getAuthMe();
         if (!mounted) return;
-        setUser(me.user);
-        setFirstName(me.user.firstName);
-        setLastName(me.user.lastName);
-        setPhone(me.user.phone ?? '');
-        setPreferredLanguage(me.user.preferredLanguage ?? 'fr');
-        syncSessionUserPreferredLanguage(me.user);
-        const loadedLocale = localeFromPreferredLanguage(me.user.preferredLanguage);
-        if (loadedLocale) {
-          setLocale(loadedLocale, { persist: false });
-        }
+        applyUser(me.user);
       } catch {
         if (mounted) setError(t.account.profile.loadError);
       } finally {
@@ -113,6 +132,30 @@ export function AccountProfileForm() {
     setError(null);
   }
 
+  async function handlePhotoChange(file: File | undefined) {
+    if (!file) return;
+    if (file.size > AVATAR_MAX_BYTES) {
+      setError(t.account.profile.photoTooLarge);
+      return;
+    }
+    setUploadingPhoto(true);
+    setMessage(null);
+    setError(null);
+    try {
+      const client = await getAccountApiClient();
+      const form = new FormData();
+      form.append('file', file);
+      const updated = await client.uploadAuthAvatar(form);
+      applyUser(updated);
+      setMessage(t.account.profile.saved);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    } catch {
+      setError(t.account.profile.photoUploadError);
+    } finally {
+      setUploadingPhoto(false);
+    }
+  }
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setSaving(true);
@@ -126,19 +169,7 @@ export function AccountProfileForm() {
         phone: phone.trim() || null,
         preferredLanguage: preferredLanguage.trim() || null,
       });
-      setUser(updated);
-      setFirstName(updated.firstName);
-      setLastName(updated.lastName);
-      setPhone(updated.phone ?? '');
-      setPreferredLanguage(updated.preferredLanguage ?? 'fr');
-      const session = getWebSession();
-      if (session) {
-        saveWebSession({ ...session, user: updated });
-      }
-      const savedLocale = localeFromPreferredLanguage(updated.preferredLanguage);
-      if (savedLocale) {
-        setLocale(savedLocale, { persist: false });
-      }
+      applyUser(updated);
       setMessage(t.account.profile.saved);
     } catch {
       setError(t.account.profile.saveError);
@@ -173,11 +204,21 @@ export function AccountProfileForm() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 rounded-xl border border-atg-border bg-gradient-to-br from-primary/5 via-white to-white p-5 sm:flex-row sm:items-center sm:justify-between dark:border-atg-border dark:from-primary/10 dark:via-atg-elevated dark:to-atg-elevated">
         <div className="flex items-center gap-4">
-          <div
-            className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary text-xl font-bold text-white shadow-sm"
-            aria-hidden
-          >
-            {initials}
+          <div className="relative shrink-0">
+            {avatarSrc ? (
+              <img
+                src={avatarSrc}
+                alt=""
+                className="h-16 w-16 rounded-2xl object-cover shadow-sm"
+              />
+            ) : (
+              <div
+                className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-xl font-bold text-white shadow-sm"
+                aria-hidden
+              >
+                {initials}
+              </div>
+            )}
           </div>
           <div className="min-w-0">
             <p className="truncate text-lg font-semibold text-atg-fg">
@@ -216,6 +257,32 @@ export function AccountProfileForm() {
           {error}
         </div>
       ) : null}
+
+      <section className="max-w-2xl rounded-lg border border-atg-border p-4 dark:border-atg-border">
+        <h3 className="text-sm font-semibold text-atg-fg">{t.account.profile.photo}</h3>
+        <p className="mt-1 text-xs text-atg-muted">{t.account.profile.photoHint}</p>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept={AVATAR_ACCEPT}
+            className="sr-only"
+            id="profile-avatar-input"
+            disabled={uploadingPhoto}
+            onChange={(e) => void handlePhotoChange(e.target.files?.[0])}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            loading={uploadingPhoto}
+            loadingText={t.account.profile.photoUploading}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            {avatarSrc ? t.account.profile.photoChange : t.account.profile.photoAdd}
+          </Button>
+        </div>
+      </section>
 
       <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
           <section className="rounded-lg border border-atg-border p-4 dark:border-atg-border">

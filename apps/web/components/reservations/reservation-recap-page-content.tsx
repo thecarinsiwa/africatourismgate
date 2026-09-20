@@ -340,18 +340,36 @@ export function ReservationRecapPageContent({ draft }: Props) {
       '',
     );
     const apiClient = createApiClient({ baseUrl: apiBaseUrl, accessToken });
-    await Promise.all(
-      manifestEntries.map((entry, i) =>
-        apiClient.createBookingManifestEntry(bookingId, manifestDraftToPayload(entry, i)),
+    const createdEntries: { entryId: string; file: File | null }[] = [];
+    for (let i = 0; i < manifestEntries.length; i++) {
+      const entry = manifestEntries[i]!;
+      const created = await apiClient.createBookingManifestEntry(
+        bookingId,
+        manifestDraftToPayload(entry, i),
+      );
+      createdEntries.push({ entryId: created.id, file: entry.file ?? null });
+    }
+    const filesToUpload = createdEntries.filter((e) => e.file);
+    if (filesToUpload.length === 0) return;
+
+    const results = await Promise.allSettled(
+      filesToUpload.map((entry) =>
+        uploadBookingIdentityDocument(
+          bookingId,
+          entry.file!,
+          'passport',
+          entry.entryId,
+        ),
       ),
     );
-    const filesToUpload = manifestEntries.filter((e) => e.file);
-    if (filesToUpload.length > 0) {
-      await Promise.allSettled(
-        filesToUpload.map((entry) =>
-          uploadBookingIdentityDocument(bookingId, entry.file!, 'passport'),
-        ),
-      );
+    const firstFailure = results.find(
+      (r): r is PromiseRejectedResult => r.status === 'rejected',
+    );
+    if (firstFailure) {
+      const reason = firstFailure.reason;
+      throw reason instanceof Error
+        ? reason
+        : new Error(typeof reason === 'string' ? reason : 'Upload failed');
     }
   }
 

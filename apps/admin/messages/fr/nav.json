@@ -84,6 +84,8 @@
     "promotions": "Promotions",
     "blog": "Blog",
     "sitePresentation": "Site & présentation",
+    "legalPages": "Pages légales",
+    "newLegalPage": "Nouvelle page légale",
     "aboutPages": "Pages À propos",
     "aboutTeam": "Équipe",
     "aboutTimeline": "Frise chronologique",
@@ -104,6 +106,7 @@
   },
   "userMenu": {
     "dashboard": "Tableau de bord",
+    "profile": "Mon profil",
     "notifications": "Notifications",
     "settings": "Paramètres",
     "defaultUser": "Utilisateur"

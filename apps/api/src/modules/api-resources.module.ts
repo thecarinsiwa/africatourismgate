@@ -68,7 +68,9 @@ import { PromotionsModule } from './resources/promotions/promotions.module';
 import { ReviewsModule } from './resources/reviews/reviews.module';
 import { SupportTicketsModule } from './resources/support-tickets/support-tickets.module';
 import { SupportMessagesModule } from './resources/support-messages/support-messages.module';
+import { NotificationsModule } from './resources/notifications/notifications.module';
 import { AboutPagesModule } from './resources/about-pages/about-pages.module';
+import { LegalPagesModule } from './resources/legal-pages/legal-pages.module';
 import { TeamMembersModule } from './resources/team-members/team-members.module';
 import { AboutTimelineMilestonesModule } from './resources/about-timeline-milestones/about-timeline-milestones.module';
 import { AboutResourcesModule } from './resources/about-resources/about-resources.module';
@@ -158,7 +160,9 @@ import { Module } from '@nestjs/common';
     ReviewsModule,
     SupportTicketsModule,
     SupportMessagesModule,
+    NotificationsModule,
     AboutPagesModule,
+    LegalPagesModule,
     TeamMembersModule,
     AboutTimelineMilestonesModule,
     AboutResourcesModule,

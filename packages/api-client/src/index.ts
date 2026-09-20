@@ -103,6 +103,9 @@ import type {
   ReviewBookingIdentityDocumentRequest,
   RequestIdentityDocumentUploadRequest,
   RequestIdentityDocumentUploadResponse,
+  StaffNotification,
+  StaffNotificationsListQuery,
+  StaffNotificationsUnreadCount,
   BookingPaymentProof,
   ReviewBookingPaymentProofRequest,
   BookingManifestEntry,
@@ -209,6 +212,13 @@ import type {
   AboutPagesListQuery,
   CreateAboutPageRequest,
   UpdateAboutPageRequest,
+  LegalPage,
+  LegalPagesListQuery,
+  CreateLegalPageRequest,
+  UpdateLegalPageRequest,
+  PublicLegalPage,
+  PublicLegalPagesListQuery,
+  LegalPageSectionKey,
   TeamMember,
   TeamMembersListQuery,
   CreateTeamMemberRequest,
@@ -776,6 +786,13 @@ export class ApiClient {
   updateAuthProfile(body: UpdateProfileRequest): Promise<AuthUser> {
     return this.request<AuthUser>('/auth/me', {
       method: 'PATCH',
+      body,
+    });
+  }
+
+  uploadAuthAvatar(body: FormData): Promise<AuthUser> {
+    return this.request<AuthUser>('/auth/me/avatar', {
+      method: 'POST',
       body,
     });
   }
@@ -1758,6 +1775,58 @@ export class ApiClient {
 
   deleteAboutPage(id: string): Promise<void> {
     return this.request<void>(`/about-pages/${id}`, { method: 'DELETE' });
+  }
+
+  listLegalPages(
+    query?: LegalPagesListQuery,
+  ): Promise<PaginatedResponse<LegalPage>> {
+    return fetchPaginated<LegalPage>(this, '/legal-pages', query);
+  }
+
+  getLegalPage(id: string): Promise<LegalPage> {
+    return this.request<LegalPage>(`/legal-pages/${id}`);
+  }
+
+  createLegalPage(body: CreateLegalPageRequest): Promise<LegalPage> {
+    return this.request<LegalPage>('/legal-pages', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateLegalPage(id: string, body: UpdateLegalPageRequest): Promise<LegalPage> {
+    return this.request<LegalPage>(`/legal-pages/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteLegalPage(id: string): Promise<void> {
+    return this.request<void>(`/legal-pages/${id}`, { method: 'DELETE' });
+  }
+
+  listPublicLegalPages(
+    query?: PublicLegalPagesListQuery,
+  ): Promise<PublicLegalPage[]> {
+    const params = new URLSearchParams();
+    if (query?.sectionKey) params.set('sectionKey', query.sectionKey);
+    if (query?.locale) params.set('locale', query.locale);
+    const qs = params.toString();
+    return this.request<PublicLegalPage[]>(
+      `/public/legal-pages${qs ? `?${qs}` : ''}`,
+      { skipAuth: true },
+    );
+  }
+
+  getPublicLegalPageBySectionKey(
+    sectionKey: LegalPageSectionKey,
+    locale?: string,
+  ): Promise<PublicLegalPage> {
+    const qs = locale ? `?locale=${encodeURIComponent(locale)}` : '';
+    return this.request<PublicLegalPage>(
+      `/public/legal-pages/${encodeURIComponent(sectionKey)}${qs}`,
+      { skipAuth: true },
+    );
   }
 
   listTeamMembers(
@@ -2989,6 +3058,40 @@ export class ApiClient {
     return this.request<BookingIdentityDocument[]>(
       `/bookings/${bookingId}/identity-documents`,
     );
+  }
+
+  listStaffNotifications(
+    query?: StaffNotificationsListQuery,
+  ): Promise<StaffNotification[]> {
+    const params = new URLSearchParams();
+    if (query?.unreadOnly === true) {
+      params.set('unreadOnly', 'true');
+    }
+    if (query?.limit != null) {
+      params.set('limit', String(query.limit));
+    }
+    const qs = params.toString();
+    return this.request<StaffNotification[]>(
+      `/notifications${qs ? `?${qs}` : ''}`,
+    );
+  }
+
+  getStaffNotificationsUnreadCount(): Promise<StaffNotificationsUnreadCount> {
+    return this.request<StaffNotificationsUnreadCount>(
+      '/notifications/unread-count',
+    );
+  }
+
+  markStaffNotificationRead(id: string): Promise<StaffNotification> {
+    return this.request<StaffNotification>(`/notifications/${id}/read`, {
+      method: 'PATCH',
+    });
+  }
+
+  markAllStaffNotificationsRead(): Promise<{ updated: number }> {
+    return this.request<{ updated: number }>('/notifications/mark-all-read', {
+      method: 'POST',
+    });
   }
 
   approveBookingIdentityDocument(

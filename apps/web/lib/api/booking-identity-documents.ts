@@ -17,6 +17,7 @@ export async function uploadBookingIdentityDocument(
   bookingId: string,
   file: File,
   documentType: BookingIdentityDocumentType,
+  manifestEntryId: string,
 ): Promise<BookingIdentityDocument> {
   const accessToken = await ensureClientAccessToken();
   if (!accessToken) {
@@ -25,6 +26,7 @@ export async function uploadBookingIdentityDocument(
   const form = new FormData();
   form.append('file', file);
   form.append('documentType', documentType);
+  form.append('manifestEntryId', manifestEntryId);
 
   const res = await fetch(
     `${getApiBaseUrl()}/bookings/${encodeURIComponent(bookingId)}/identity-documents`,

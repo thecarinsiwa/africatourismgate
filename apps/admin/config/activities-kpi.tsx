@@ -25,7 +25,7 @@ export const activitiesKpis = [
     key: 'providers',
     labelKey: 'stats.providers.label',
     subtitleKey: 'stats.providers.subtitle',
-    href: '/produits/activites/fournisseurs',
+    href: '/produits/activites/partenaires',
     iconClass: 'bg-violet-100 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>

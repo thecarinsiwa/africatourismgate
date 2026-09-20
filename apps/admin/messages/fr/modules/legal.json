@@ -1,0 +1,54 @@
+{
+  "sections": {
+    "terms-of-use": "Conditions d'utilisation",
+    "privacy-policy": "Politique de confidentialité"
+  },
+  "pages": {
+    "list": {
+      "deleteTitle": "Supprimer la page",
+      "deleteConfirm": "La page « {title} » sera supprimée définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
+      "columns": {
+        "section": "Section",
+        "title": "Titre",
+        "locale": "Langue",
+        "publishedAt": "Publication"
+      },
+      "emptySearch": "Aucune page ne correspond à votre recherche.",
+      "emptyDefault": "Aucune page légale pour le moment.",
+      "searchPlaceholder": "Rechercher par titre…",
+      "searchAria": "Rechercher une page légale",
+      "newButton": "Nouvelle page",
+      "tableAria": "Liste des pages légales",
+      "paginationItem": "page"
+    },
+    "edit": {
+      "pageTitle": "Modifier la page légale"
+    },
+    "form": {
+      "info": {
+        "sectionLocaleUnique": "Chaque combinaison section + langue est unique.",
+        "publishedAtHint": "À la publication, la date est renseignée automatiquement si elle est vide. Seul le contenu publié est visible dans la modal d'inscription."
+      },
+      "validation": {
+        "contentRequired": "Le contenu est obligatoire."
+      },
+      "fields": {
+        "section": "Section",
+        "title": "Titre",
+        "content": "Contenu",
+        "contentPlaceholder": "Rédigez les conditions d'utilisation…",
+        "locale": "Langue",
+        "publishedAtOptional": "Date de publication (optionnel)"
+      },
+      "hints": {
+        "publishedAt": "Laisser vide pour utiliser la date actuelle à la publication."
+      },
+      "saving": "Enregistrement…",
+      "createButton": "Créer la page",
+      "saveButton": "Enregistrer",
+      "cancelButton": "Annuler"
+    }
+  }
+}

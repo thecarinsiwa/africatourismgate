@@ -69,23 +69,24 @@
       "backToHotels": "Retour aux hôtels",
       "form": {
         "firstNameLabel": "Prénom",
-        "firstNamePlaceholder": "Jean",
         "lastNameLabel": "Nom",
-        "lastNamePlaceholder": "Dupont",
         "emailLabel": "Adresse e-mail",
-        "emailPlaceholder": "vous@exemple.com",
         "phoneLabel": "Téléphone",
-        "phonePlaceholder": "+243 000 000 000",
         "phoneHint": "Optionnel",
         "passwordLabel": "Mot de passe",
-        "passwordPlaceholder": "••••••••",
+        "passwordHint": "Minimum 8 caractères",
         "confirmPasswordLabel": "Confirmer le mot de passe",
-        "confirmPasswordPlaceholder": "••••••••",
         "confirmPasswordMismatch": "Les mots de passe ne correspondent pas",
         "termsLabel": "J'accepte les",
         "termsLink": "conditions d'utilisation",
         "submit": "Créer mon compte",
         "submitLoading": "Création du compte…"
+      },
+      "terms": {
+        "modalTitle": "Conditions d'utilisation",
+        "loading": "Chargement des conditions…",
+        "loadError": "Les conditions d'utilisation ne sont pas encore disponibles. Réessayez plus tard ou contactez le support.",
+        "close": "Fermer"
       },
       "errors": {
         "emailAlreadyRegistered": "Cette adresse e-mail est déjà utilisée. Connectez-vous ou utilisez une autre adresse.",

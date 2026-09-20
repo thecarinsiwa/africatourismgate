@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { Suspense } from 'react';
 import { LoginPageContent } from '../../../components/auth/login-page-content';
+import { AdminPageLoading } from '../../../components/pages/admin-page-loading';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('auth.login');
@@ -11,5 +13,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function LoginPage() {
-  return <LoginPageContent />;
+  return (
+    <Suspense fallback={<AdminPageLoading />}>
+      <LoginPageContent />
+    </Suspense>
+  );
 }

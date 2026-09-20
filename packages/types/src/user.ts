@@ -8,6 +8,7 @@ export interface User {
   lastName: string;
   phone?: string | null;
   preferredLanguage?: string | null;
+  avatarUrl?: string | null;
   organizationId?: string | null;
   status: UserStatus;
   createdAt: string;

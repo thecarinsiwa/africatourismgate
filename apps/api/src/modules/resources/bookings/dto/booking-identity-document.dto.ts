@@ -12,6 +12,12 @@ export class BookingIdentityDocumentDto {
   @ApiProperty()
   bookingId!: string;
 
+  @ApiPropertyOptional({
+    nullable: true,
+    description: 'Manifest traveler entry this document belongs to (null for legacy uploads)',
+  })
+  manifestEntryId!: string | null;
+
   @ApiProperty()
   userId!: string;
 

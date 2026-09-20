@@ -1,27 +1,56 @@
 import type { BookingIdentityDocument } from '@africatourismgate/types';
 
-/** Stable order for index-based traveler ↔ document association (oldest first). */
-export function sortDocumentsForTravelerIndex(
+/** Documents linked to a manifest traveler entry (all versions / types). */
+export function documentsForManifestEntry(
   documents: BookingIdentityDocument[],
+  manifestEntryId: string | null | undefined,
 ): BookingIdentityDocument[] {
-  return [...documents].sort((a, b) => {
-    const byCreatedAt =
-      new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-    if (byCreatedAt !== 0) {
-      return byCreatedAt;
+  if (!manifestEntryId) {
+    return [];
+  }
+  return documents
+    .filter((doc) => doc.manifestEntryId === manifestEntryId)
+    .sort(
+      (a, b) =>
+        a.documentType.localeCompare(b.documentType) ||
+        b.version - a.version ||
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+}
+
+/**
+ * Latest document for a traveler entry (highest version, then newest createdAt).
+ * Replaces the former index-based heuristic.
+ */
+export function latestDocumentForManifestEntry(
+  documents: BookingIdentityDocument[],
+  manifestEntryId: string | null | undefined,
+): BookingIdentityDocument | null {
+  const matched = documentsForManifestEntry(documents, manifestEntryId);
+  if (matched.length === 0) {
+    return null;
+  }
+  return matched.reduce((best, doc) => {
+    if (doc.version > best.version) {
+      return doc;
     }
-    return a.id.localeCompare(b.id);
+    if (doc.version < best.version) {
+      return best;
+    }
+    return new Date(doc.createdAt).getTime() > new Date(best.createdAt).getTime()
+      ? doc
+      : best;
   });
 }
 
-/** Returns the document associated with traveler row `index` (0-based), or null. */
-export function documentForTravelerIndex(
+/** Historical documents not linked to any manifest entry. */
+export function unlinkedIdentityDocuments(
   documents: BookingIdentityDocument[],
-  index: number,
-): BookingIdentityDocument | null {
-  if (index < 0) {
-    return null;
-  }
-  const sorted = sortDocumentsForTravelerIndex(documents);
-  return sorted[index] ?? null;
+): BookingIdentityDocument[] {
+  return documents
+    .filter((doc) => !doc.manifestEntryId)
+    .sort(
+      (a, b) =>
+        a.documentType.localeCompare(b.documentType) || b.version - a.version,
+    );
 }

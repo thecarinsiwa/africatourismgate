@@ -93,6 +93,10 @@ export function tourGuideUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/tour-guides/${filename}`;
 }
 
+export function userAvatarUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/avatars/${filename}`;
+}
+
 export function aboutResourceUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/about/resources/${filename}`;
 }

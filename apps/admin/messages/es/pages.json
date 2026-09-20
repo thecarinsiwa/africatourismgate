@@ -137,7 +137,7 @@
         "description": "Cree una experiencia y luego añada horarios en la página de edición.",
         "backLabel": "Volver a actividades"
       },
-      "fournisseurs": {
+      "partenaires": {
         "title": "Socios de actividades",
         "description": "Operadores vinculados a destinos."
       },
@@ -515,6 +515,20 @@
         }
       }
     },
+    "legal": {
+      "title": "Páginas legales",
+      "description": "Condiciones de uso editables con WYSIWYG, mostradas en el modal de registro. Acceso: content.read / content.write.",
+      "nouveau": {
+        "metaTitle": "Nueva página legal",
+        "description": "Redacte las condiciones de uso para un idioma.",
+        "backLabel": "Volver a las páginas legales"
+      },
+      "id": {
+        "metaTitle": "Editar página legal",
+        "description": "Actualice el contenido TipTap y el estado de publicación.",
+        "backLabel": "Volver a las páginas legales"
+      }
+    },
     "tickets": {
       "description": "Solicitudes de asistencia al cliente. Filtre por estado y prioridad. Acceso: support_tickets.read / support_tickets.write.",
       "id": {
@@ -710,5 +724,20 @@
     "title": "Centro de notificaciones",
     "description": "Consulte, filtre y gestione todas las alertas, solicitudes de reserva, mensajes y tickets.",
     "metaTitle": "Centro de notificaciones"
+  },
+  "profil": {
+    "title": "Mi perfil",
+    "description": "Actualice sus datos y foto de perfil.",
+    "metaTitle": "Mi perfil",
+    "backLabel": "Volver al panel",
+    "photo": "Foto de perfil",
+    "photoHint": "JPEG, PNG o WebP — 5 MB máx.",
+    "photoAdd": "Añadir una foto",
+    "photoChange": "Cambiar foto",
+    "photoUploading": "Enviando…",
+    "photoUploadError": "No se pudo enviar la foto.",
+    "saved": "Perfil actualizado.",
+    "loadError": "No se pudo cargar el perfil.",
+    "saveError": "No se pudo guardar el perfil."
   }
 }

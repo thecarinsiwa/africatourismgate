@@ -33,6 +33,9 @@ export function saveSession(session: StoredSession): void {
   localStorage.removeItem(STORAGE_KEY);
   setClientSessionCookies(session);
   resetSessionActivity();
+  window.dispatchEvent(
+    new CustomEvent(AUTH_CHANGED_EVENT, { detail: { loggedIn: true } }),
+  );
 }
 
 export function getSession(): StoredSession | null {

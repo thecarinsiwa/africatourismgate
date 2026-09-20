@@ -4,18 +4,13 @@ type BookingRegisterFormTranslator = {
   (
     key:
       | 'firstNameLabel'
-      | 'firstNamePlaceholder'
       | 'lastNameLabel'
-      | 'lastNamePlaceholder'
       | 'emailLabel'
-      | 'emailPlaceholder'
       | 'phoneLabel'
-      | 'phonePlaceholder'
       | 'phoneHint'
       | 'passwordLabel'
-      | 'passwordPlaceholder'
+      | 'passwordHint'
       | 'confirmPasswordLabel'
-      | 'confirmPasswordPlaceholder'
       | 'confirmPasswordMismatch'
       | 'termsLabel'
       | 'termsLink'
@@ -34,34 +29,36 @@ export function buildBookingRegisterFormConfig(
   return {
     firstName: {
       label: t('firstNameLabel'),
-      placeholder: t('firstNamePlaceholder'),
+      required: true,
     },
     lastName: {
       label: t('lastNameLabel'),
-      placeholder: t('lastNamePlaceholder'),
+      required: true,
     },
     email: {
       label: t('emailLabel'),
-      placeholder: t('emailPlaceholder'),
+      required: true,
     },
     phone: {
       label: t('phoneLabel'),
-      placeholder: t('phonePlaceholder'),
+      required: false,
       hint: t('phoneHint'),
     },
     password: {
       label: t('passwordLabel'),
-      placeholder: t('passwordPlaceholder'),
+      required: true,
+      hint: t('passwordHint'),
     },
     confirmPassword: {
       label: t('confirmPasswordLabel'),
-      placeholder: t('confirmPasswordPlaceholder'),
+      required: true,
       mismatchError: t('confirmPasswordMismatch'),
     },
     terms: {
       label: t('termsLabel'),
-      href: '#',
+      href: '/legal/terms',
       linkLabel: t('termsLink'),
+      required: true,
     },
     submit: {
       label: t('submit'),

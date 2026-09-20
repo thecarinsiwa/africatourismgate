@@ -13,6 +13,7 @@ import { BookingAssistedEmailService } from './booking-assisted-email.service';
 import { BookingNotificationsService } from './booking-notifications.service';
 import { BookingMessageDto, BookingMessagesListDto } from './dto/booking-message.dto';
 import { CreateBookingMessageDto } from './dto/create-booking-message.dto';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class BookingMessagesService {
@@ -26,6 +27,7 @@ export class BookingMessagesService {
     private readonly permissionsService: PermissionsService,
     private readonly notifications: BookingNotificationsService,
     private readonly assistedEmail: BookingAssistedEmailService,
+    private readonly staffNotifications: NotificationsService,
   ) {}
 
   async listByBookingId(
@@ -113,6 +115,27 @@ export class BookingMessagesService {
       isStaff && !this.notifications.isCustomerOnlineOnThread(booking);
     if (customerNotifiedByEmail) {
       this.assistedEmail.notifyStaffMessage(bookingId, body);
+    }
+
+    if (!isStaff) {
+      const author = await this.usersRepository.findOne({
+        where: { id: actorUserId },
+      });
+      const authorName =
+        `${author?.firstName ?? ''} ${author?.lastName ?? ''}`.trim() ||
+        author?.email ||
+        undefined;
+      void this.staffNotifications.fanOut(
+        'booking_client_message',
+        {
+          href: `/reservations/${bookingId}`,
+          priority: 'normal',
+          bookingId,
+          messageId,
+          authorName,
+        },
+        ['bookings.read'],
+      );
     }
 
     return {

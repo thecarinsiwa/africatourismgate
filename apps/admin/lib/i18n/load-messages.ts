@@ -20,6 +20,7 @@ export const ADMIN_MODULE_NAMES = [
   'reviews',
   'blog',
   'about',
+  'legal',
   'support',
   'loyalty',
   'promotions',

@@ -137,7 +137,7 @@
         "description": "Create an experience then add schedules on the edit page.",
         "backLabel": "Back to activities"
       },
-      "fournisseurs": {
+      "partenaires": {
         "title": "Activity partners",
         "description": "Operators linked to destinations."
       },
@@ -515,6 +515,20 @@
         }
       }
     },
+    "legal": {
+      "title": "Legal pages",
+      "description": "Terms of use editable with WYSIWYG, shown in the registration modal. Access: content.read / content.write.",
+      "nouveau": {
+        "metaTitle": "New legal page",
+        "description": "Write the terms of use for one language.",
+        "backLabel": "Back to legal pages"
+      },
+      "id": {
+        "metaTitle": "Edit legal page",
+        "description": "Update TipTap content and publication status.",
+        "backLabel": "Back to legal pages"
+      }
+    },
     "tickets": {
       "description": "Customer support requests. Filter by status and priority. Access: support_tickets.read / support_tickets.write.",
       "id": {
@@ -710,5 +724,20 @@
     "title": "Notification Center",
     "description": "View, filter, and process all alerts, booking requests, messages, and tickets.",
     "metaTitle": "Notification Center"
+  },
+  "profil": {
+    "title": "My profile",
+    "description": "Update your details and profile photo.",
+    "metaTitle": "My profile",
+    "backLabel": "Back to dashboard",
+    "photo": "Profile photo",
+    "photoHint": "JPEG, PNG or WebP — 5 MB max.",
+    "photoAdd": "Add a photo",
+    "photoChange": "Change photo",
+    "photoUploading": "Uploading…",
+    "photoUploadError": "Could not upload the photo.",
+    "saved": "Profile updated.",
+    "loadError": "Could not load the profile.",
+    "saveError": "Could not save the profile."
   }
 }
