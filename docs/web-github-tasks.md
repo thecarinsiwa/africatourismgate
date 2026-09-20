@@ -63,7 +63,7 @@ pnpm dev:web           # http://localhost:3002
 pnpm --filter @africatourismgate/web lint
 pnpm --filter @africatourismgate/web build
 pnpm --filter @africatourismgate/web test          # unitaires (lib/**/*.test.ts)
-pnpm --filter @africatourismgate/web test:e2e      # Playwright (17 specs, `pnpm dev`)
+pnpm --filter @africatourismgate/web test:e2e      # Playwright (18 specs, `pnpm dev`)
 pnpm --filter @africatourismgate/web test:e2e:ci   # build + `next start` (anti vendor-chunks)
 node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 ```
@@ -91,7 +91,7 @@ node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 | Stub `/booking` (sans `/cart`) | ✅ | **WEB-003 Option A** : redirect serveur → `/booking/cart` si draft URL valide, sinon `/hotels` |
 | Copy « demo / coming soon » | ✅ | **WEB-004** : copy live sans « coming soon » ; trust demo gated (dev / flag) |
 | Tests unitaires composants | ❌ | Seulement logique `lib/` |
-| Tests E2E | ✅ | **WEB-006** : `test:e2e:ci` (build + start) + job CI `web-e2e` ; **WEB-007** car-checkout ; 17 specs / 48 tests |
+| Tests E2E | ✅ | **WEB-006**–**008** : `test:e2e:ci` + car-checkout + marketing smoke ; 18 specs / 49 tests |
 | Design / cohérence visuelle | ⚠️ | Voir [web-design-improvements.md](./web-design-improvements.md) |
 
 ---
@@ -107,7 +107,7 @@ node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 | WEB-005 | Internationaliser metadata SEO — ✅ | Moyenne | Enhancement | M |
 | WEB-006 | Stabiliser pipeline E2E (build + Playwright CI) — ✅ | Haute | Testing | M |
 | WEB-007 | E2E checkout location voiture — ✅ | Moyenne | Testing | S |
-| WEB-008 | E2E smoke blog, donate, about | Basse | Testing | M |
+| WEB-008 | E2E smoke blog, donate, about — ✅ | Basse | Testing | M |
 | WEB-009 | Tests composants checkout & auth | Moyenne | Testing | L |
 | WEB-010 | Audit accessibilité (a11y) | Moyenne | A11y | L |
 | WEB-011 | Gestion erreurs API sur pages listing | Moyenne | Bug | M |
@@ -382,7 +382,7 @@ Les métadonnées (`title`, `description`, Open Graph) sont souvent **hardcodée
 
 ### WEB-006 — Stabiliser pipeline E2E (build + Playwright CI)
 
-**Statut :** ✅ infra livrée — suite locale **verte** (**48/48**, 2026-09-20)
+**Statut :** ✅ infra livrée — suite locale **verte** (**49/49**, 2026-09-20)
 **Labels :** `web`, `testing`, `priority:high`  
 **Branche suggérée :** `feature/web-e2e-ci-stabilization`
 
@@ -399,7 +399,7 @@ Les métadonnées (`title`, `description`, Open Graph) sont souvent **hardcodée
 Commande : `PLAYWRIGHT_PORT=3012` + `pnpm --filter @africatourismgate/web test:e2e:ci`  
 (port **3012** : `:3002` déjà occupé localement → `EADDRINUSE` au 1er essai)
 
-**Résultat (après isolation `.next-e2e` + WEB-007 car-checkout + flakes profil/i18n) :** **48 passed / 0 failed** (~2,7 min hors rebuild, workers=1).
+**Résultat (après isolation `.next-e2e` + WEB-007/008 + flakes profil/i18n) :** **49 passed / 0 failed** (~3 min hors rebuild, workers=1).
 
 Cause systémique observée précédemment : `[WebServer] TypeError: Cannot read properties of undefined (reading 'call')` dans `webpack-runtime.js` — `.next` partagé avec un `next` concurrent sur `:3002`. Correctif : `NEXT_DIST_DIR=.next-e2e`.
 
@@ -437,9 +437,9 @@ Les tests E2E Playwright échouent parfois avec des erreurs Next.js **vendor-chu
 
 ## Critères d'acceptation
 
-- [x] `pnpm --filter @africatourismgate/web test:e2e:ci` passe localement — **48/48** (2026-09-20, port 3012)
+- [x] `pnpm --filter @africatourismgate/web test:e2e:ci` passe localement — **49/49** (2026-09-20, port 3012)
 - [x] Workflow CI documenté dans README ou commentaire workflow
-- [x] Les specs listées (17 fichiers) ; suite verte après isolation `.next-e2e`
+- [x] Les specs listées (18 fichiers) ; suite verte après isolation `.next-e2e`
 - [x] Isolation build E2E (`.next-e2e`) vs `pnpm dev` (`.next`)
 
 ## Fichiers
@@ -467,7 +467,7 @@ Les tests E2E Playwright échouent parfois avec des erreurs Next.js **vendor-chu
 
 #### Critères
 
-- [x] Spec verte en local / `test:e2e:ci` (incluse dans **48/48**)
+- [x] Spec verte en local / `test:e2e:ci` (incluse dans **49/49**)
 - [x] Couvre mode paiement immédiat (`vehicle` → immediate par défaut)
 - [x] Pas de dépendance à un ID live fragile (fixtures + `page.route`)
 
@@ -501,10 +501,23 @@ Créer `apps/web/tests/e2e/car-checkout.spec.ts` sur le modèle de `reservation-
 
 ### WEB-008 — E2E smoke blog, donate, about
 
+**Statut :** ✅ livré (2026-09-20)  
 **Labels :** `web`, `testing`, `priority:low`  
 **Branche suggérée :** `feature/web-e2e-marketing-smoke`
 
-#### Modèle GitHub
+#### Livré
+
+- Spec [`marketing-pages.spec.ts`](../apps/web/tests/e2e/marketing-pages.spec.ts) : `/blog`, `/blog/[slug]`, `/donate`, `/about/who-we-are`, `/about/team`, `/support` (FAQ)
+- Mocks CMS empty (`blog`, `about-pages`, `team-members`) ; donate SSR tolère empty naturel
+- Shell : nav principale + footer ; empty states graceful (pas de crash API)
+- Durée smoke ~12–20 s (&lt; 2 min) ; suite `test:e2e:ci` **49/49**
+
+#### Critères
+
+- [x] Spec smoke &lt; 2 min
+- [x] Tolère API indisponible avec assertion graceful (empty state, pas crash)
+
+#### Modèle GitHub (historique)
 
 ```markdown
 ## Contexte
@@ -520,8 +533,8 @@ Ajouter une spec smoke `marketing-pages.spec.ts` :
 
 ## Critères d'acceptation
 
-- [ ] Spec smoke < 2 min
-- [ ] Tolère API indisponible avec assertion graceful (empty state, pas crash)
+- [x] Spec smoke < 2 min
+- [x] Tolère API indisponible avec assertion graceful (empty state, pas crash)
 ```
 
 ---
@@ -1206,7 +1219,7 @@ WEB-012 (README) → WEB-006 (CI E2E) → WEB-002 + WEB-003 (cleanup routes)
 | WEB-005 | | | ✅ |
 | WEB-006 | | | ✅ |
 | WEB-007 | | | ✅ |
-| WEB-008 | | | ☐ |
+| WEB-008 | | | ✅ |
 | WEB-009 | | | ☐ |
 | WEB-010 | | | ☐ |
 | WEB-011 | | | ☐ |
