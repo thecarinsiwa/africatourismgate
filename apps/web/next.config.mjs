@@ -68,6 +68,17 @@ const nextConfig = {
   async redirects() {
     const redirects = [];
 
+    // Checkout legacy → /booking/* (must precede ADMIN_ONLY /reservations catch-all)
+    const legacyCheckoutRedirects = [
+      ['/reservations/cart', '/booking/cart'],
+      ['/reservations/recap', '/booking/recap'],
+      ['/reservations/success', '/booking/success'],
+      ['/reservations/cancel', '/booking/cancel'],
+    ];
+    for (const [source, destination] of legacyCheckoutRedirects) {
+      redirects.push({ source, destination, permanent: true });
+    }
+
     for (const path of ADMIN_ONLY_PATHS) {
       redirects.push({
         source: path,
