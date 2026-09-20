@@ -102,24 +102,73 @@ export function ListingLoadingState({ message }: ListingLoadingStateProps) {
   );
 }
 
-export type ListingErrorBannerProps = {
+export type ListingErrorStateProps = {
   message: string;
+  description?: string;
   retryLabel: string;
   onRetry: () => void;
+  backHomeLabel?: string;
+  backHomeHref?: string;
+  icon?: ReactNode;
 };
 
-export function ListingErrorBanner({ message, retryLabel, onRetry }: ListingErrorBannerProps) {
+/** État erreur API listing : EmptyState + réessayer (+ retour accueil optionnel). */
+export function ListingErrorState({
+  message,
+  description,
+  retryLabel,
+  onRetry,
+  backHomeLabel,
+  backHomeHref = '/',
+  icon,
+}: ListingErrorStateProps) {
   return (
-    <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200">
-      <p>{message}</p>
-      <button
-        type="button"
-        onClick={onRetry}
-        className="mt-3 min-h-[44px] rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primary-hover"
-      >
-        {retryLabel}
-      </button>
-    </div>
+    <EmptyState
+      title={message}
+      description={description}
+      icon={icon ?? <ListingDefaultErrorIcon />}
+      action={
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={onRetry}
+            className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface"
+          >
+            {retryLabel}
+          </button>
+          {backHomeLabel ? (
+            <Link
+              href={backHomeHref}
+              className="inline-flex min-h-[44px] items-center rounded-lg border border-atg-border px-6 py-2 text-sm font-semibold text-atg-fg transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface dark:border-atg-border dark:text-white"
+            >
+              {backHomeLabel}
+            </Link>
+          ) : null}
+        </div>
+      }
+      className="rounded-2xl border-atg-border bg-atg-elevated dark:bg-atg-elevated"
+    />
+  );
+}
+
+/** @deprecated Prefer ListingErrorState — kept for call-site compatibility. */
+export type ListingErrorBannerProps = ListingErrorStateProps;
+
+/** @deprecated Prefer ListingErrorState. */
+export function ListingErrorBanner(props: ListingErrorBannerProps) {
+  return <ListingErrorState {...props} />;
+}
+
+export function ListingDefaultErrorIcon() {
+  return (
+    <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+      />
+    </svg>
   );
 }
 
@@ -235,7 +284,7 @@ export function ListingFiltersAside({
 
 export type ListingPageBodyProps = {
   notice?: ReactNode;
-  error?: ListingErrorBannerProps | null;
+  error?: ListingErrorStateProps | null;
   loading?: boolean;
   loadingMessage?: string;
   loadingSkeletonCount?: number;
@@ -302,7 +351,6 @@ export function ListingPageBody({
   return (
     <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
       {notice}
-      {error ? <ListingErrorBanner {...error} /> : null}
 
       <div className={cn('flex flex-col gap-8', filters ? 'lg:flex-row' : undefined)}>
         {filters}
@@ -314,6 +362,8 @@ export function ListingPageBody({
               variant={resultsVariant}
               loadingLabel={loadingMessage ?? 'Loading results'}
             />
+          ) : error ? (
+            <ListingErrorState {...error} />
           ) : isEmpty && empty ? (
             <ListingEmptyState {...empty} />
           ) : (
