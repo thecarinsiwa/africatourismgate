@@ -36,6 +36,7 @@ function toDto(row: BookingIdentityDocuments): BookingIdentityDocumentDto {
   return {
     id: row.id,
     bookingId: row.bookingId,
+    manifestEntryId: row.manifestEntryId ?? null,
     userId: row.userId,
     documentType: row.documentType,
     originalFilename: row.originalFilename,

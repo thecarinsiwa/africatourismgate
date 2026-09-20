@@ -167,6 +167,8 @@ export type BookingIdentityDocumentStatus =
 export interface BookingIdentityDocument {
   id: string;
   bookingId: string;
+  /** Null for legacy uploads before PR-11. */
+  manifestEntryId: string | null;
   userId: string;
   documentType: BookingIdentityDocumentType;
   originalFilename: string;
