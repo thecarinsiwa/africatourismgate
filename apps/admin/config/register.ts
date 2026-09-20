@@ -27,29 +27,36 @@ export function getAdminRegisterFormConfig(t: RegisterFormTranslator): RegisterF
   return {
     firstName: {
       label: t('firstNameLabel'),
+      required: true,
     },
     lastName: {
       label: t('lastNameLabel'),
+      required: true,
     },
     email: {
       label: t('emailLabel'),
+      required: true,
     },
     phone: {
       label: t('phoneLabel'),
+      required: false,
       hint: t('phoneHint'),
     },
     password: {
       label: t('passwordLabel'),
+      required: true,
       hint: t('passwordHint'),
     },
     confirmPassword: {
       label: t('confirmPasswordLabel'),
+      required: true,
       mismatchError: t('confirmPasswordMismatch'),
     },
     terms: {
       label: t('termsLabel'),
       href: '#',
       linkLabel: t('termsLink'),
+      required: true,
     },
     submit: {
       label: t('submit'),
