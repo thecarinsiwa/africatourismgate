@@ -29,6 +29,7 @@ import { PropertyReviewSummaryDto, ReviewDto } from './dto/review.dto';
 import { ReviewsListQueryDto } from './dto/reviews-list-query.dto';
 import { isStayEnded } from './review-stay.util';
 import type { GuideReviewInviteDto } from '../bookings/dto/guide-review-invite.dto';
+import { NotificationsService } from '../notifications/notifications.service';
 
 type ReviewRow = {
   id: string;
@@ -76,6 +77,7 @@ export class ReviewsService extends CrudService<Reviews> {
     private readonly guideAssignmentsRepository: Repository<BookingGuideAssignments>,
     @InjectRepository(TourGuides)
     private readonly tourGuidesRepository: Repository<TourGuides>,
+    private readonly staffNotifications: NotificationsService,
   ) {
     super(reviewsRepository);
   }
@@ -207,6 +209,17 @@ export class ReviewsService extends CrudService<Reviews> {
       const author = await this.usersRepository.findOne({
         where: { id: userId },
       });
+      void this.staffNotifications.fanOut(
+        'review_pending',
+        {
+          href: '/contenu/avis',
+          priority: 'normal',
+          reviewId: saved.id,
+          bookingId,
+          authorName: author?.firstName ?? undefined,
+        },
+        ['reviews.read'],
+      );
       return this.toReviewDto(saved, author?.firstName ?? null);
     } catch (error) {
       if (
@@ -355,6 +368,17 @@ export class ReviewsService extends CrudService<Reviews> {
       const author = await this.usersRepository.findOne({
         where: { id: userId },
       });
+      void this.staffNotifications.fanOut(
+        'review_pending',
+        {
+          href: '/contenu/avis',
+          priority: 'normal',
+          reviewId: saved.id,
+          bookingId,
+          authorName: author?.firstName ?? undefined,
+        },
+        ['reviews.read'],
+      );
       return this.toReviewDto(saved, author?.firstName ?? null);
     } catch (error) {
       if (

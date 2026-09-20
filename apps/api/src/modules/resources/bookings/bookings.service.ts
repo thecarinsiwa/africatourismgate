@@ -33,6 +33,7 @@ import {
   RequestIdentityDocumentUploadDto,
   RequestIdentityDocumentUploadResponseDto,
 } from './dto/request-identity-document-upload.dto';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class BookingsService extends CrudService<Bookings> {
@@ -53,6 +54,7 @@ export class BookingsService extends CrudService<Bookings> {
     private readonly notifications: BookingNotificationsService,
     private readonly identityDocuments: BookingIdentityDocumentsService,
     private readonly paymentProofs: BookingPaymentProofsService,
+    private readonly staffNotifications: NotificationsService,
   ) {
     super(bookingsRepository);
   }
@@ -90,6 +92,18 @@ export class BookingsService extends CrudService<Bookings> {
     const ownerUserId = await this.resolveCheckoutOwnerUserId(dto, actorUserId);
     const result = await this.bookingEngine.createBookingRequest(dto, ownerUserId, actorUserId);
     this.assistedEmail.notifyRequestReceived(result.bookingId);
+    void this.staffNotifications.fanOut(
+      'booking_pending_approval',
+      {
+        href: `/reservations?search=${result.bookingId}`,
+        priority: 'high',
+        bookingId: result.bookingId,
+        status: result.status,
+        amountCents: result.totalCents,
+        currency: result.currency,
+      },
+      ['bookings.read'],
+    );
     return result;
   }
 

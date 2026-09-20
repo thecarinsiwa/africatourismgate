@@ -1,11 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { SupportTickets } from '../../../entities/generated';
+import { SupportTickets, Users } from '../../../entities/generated';
+import { NotificationsModule } from '../notifications/notifications.module';
 import { SupportTicketsController } from './support-tickets.controller';
 import { SupportTicketsService } from './support-tickets.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([SupportTickets])],
+  imports: [
+    NotificationsModule,
+    TypeOrmModule.forFeature([SupportTickets, Users]),
+  ],
   controllers: [SupportTicketsController],
   providers: [SupportTicketsService],
 })
