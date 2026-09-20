@@ -7,6 +7,8 @@ type MockBookingCheckoutOptions = {
   onPosted?: (body: unknown) => void;
   /** Also mock GET /bookings/:id for success pages. */
   detailStatus?: string;
+  /** Fail POST checkout-session with a user-safe API error body. */
+  checkoutSessionError?: { status: number; message: string };
 };
 
 function bookingsPathEndsWith(url: string, suffix: string): boolean {
@@ -82,6 +84,15 @@ export async function mockBookingCheckoutRoutes(
   });
 
   await page.route(`**/api/bookings/${options.bookingId}/checkout-session`, async (route) => {
+    if (options.checkoutSessionError) {
+      await route.fulfill({
+        status: options.checkoutSessionError.status,
+        contentType: 'application/json',
+        body: JSON.stringify({ message: options.checkoutSessionError.message }),
+      });
+      return;
+    }
+
     await route.fulfill({
       status: 201,
       contentType: 'application/json',
