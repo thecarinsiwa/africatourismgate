@@ -45,7 +45,7 @@ import {
   type PaymentRefundConfirmParams,
 } from './payment-refund-modal';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
 
 type StatusFilter = '' | PaymentStatus;
