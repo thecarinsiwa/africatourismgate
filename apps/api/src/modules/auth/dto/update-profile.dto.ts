@@ -35,4 +35,15 @@ export class UpdateProfileDto {
     message: 'La langue préférée ne doit pas dépasser 2 caractères.',
   })
   preferredLanguage?: string | null;
+
+  @ApiPropertyOptional({
+    nullable: true,
+    description: 'URL publique de la photo de profil (après upload)',
+  })
+  @IsOptional()
+  @IsString({ message: "L'URL de l'avatar doit être une chaîne de caractères." })
+  @MaxLength(512, {
+    message: "L'URL de l'avatar ne doit pas dépasser 512 caractères.",
+  })
+  avatarUrl?: string | null;
 }

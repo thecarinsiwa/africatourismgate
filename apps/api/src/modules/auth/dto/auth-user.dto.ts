@@ -20,6 +20,9 @@ export class AuthUserDto {
   @ApiPropertyOptional({ example: 'fr' })
   preferredLanguage?: string | null;
 
+  @ApiPropertyOptional({ nullable: true })
+  avatarUrl?: string | null;
+
   @ApiPropertyOptional({ format: 'uuid' })
   organizationId?: string | null;
 
@@ -35,6 +38,7 @@ export function toAuthUserDto(user: Users): AuthUserDto {
     lastName: user.lastName,
     phone: user.phone ?? null,
     preferredLanguage: user.preferredLanguage ?? null,
+    avatarUrl: user.avatarUrl ?? null,
     organizationId: user.organizationId ?? null,
     status: user.status,
   };

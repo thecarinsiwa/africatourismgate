@@ -783,6 +783,13 @@ export class ApiClient {
     });
   }
 
+  uploadAuthAvatar(body: FormData): Promise<AuthUser> {
+    return this.request<AuthUser>('/auth/me/avatar', {
+      method: 'POST',
+      body,
+    });
+  }
+
   refresh(refreshToken: string): Promise<AuthTokens> {
     return this.request<AuthTokens>('/auth/refresh', {
       method: 'POST',

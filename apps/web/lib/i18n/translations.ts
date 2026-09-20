@@ -993,6 +993,13 @@ export type Translations = {
       saveError: string;
       personalInfo: string;
       personalInfoHint: string;
+      photo: string;
+      photoHint: string;
+      photoAdd: string;
+      photoChange: string;
+      photoUploading: string;
+      photoUploadError: string;
+      photoTooLarge: string;
       preferences: string;
       preferencesHint: string;
       emailHint: string;
@@ -2592,6 +2599,13 @@ const fr: Translations = {
       saveError: 'Impossible de mettre à jour le profil.',
       personalInfo: 'Informations personnelles',
       personalInfoHint: 'Vos coordonnées utilisées pour les réservations.',
+      photo: 'Photo de profil',
+      photoHint: 'JPEG, PNG ou WebP — 5 Mo max.',
+      photoAdd: 'Ajouter une photo',
+      photoChange: 'Changer la photo',
+      photoUploading: 'Envoi…',
+      photoUploadError: "Impossible d'envoyer la photo.",
+      photoTooLarge: 'Fichier trop volumineux (5 Mo max).',
       preferences: 'Préférences',
       preferencesHint: "Langue d'affichage du site et des communications.",
       emailHint: "L'adresse e-mail ne peut pas être modifiée ici.",
@@ -4260,6 +4274,13 @@ const en: Translations = {
       saveError: 'Could not update profile.',
       personalInfo: 'Personal information',
       personalInfoHint: 'Your contact details used for bookings.',
+      photo: 'Profile photo',
+      photoHint: 'JPEG, PNG or WebP — 5 MB max.',
+      photoAdd: 'Add a photo',
+      photoChange: 'Change photo',
+      photoUploading: 'Uploading…',
+      photoUploadError: 'Could not upload the photo.',
+      photoTooLarge: 'File too large (5 MB max).',
       preferences: 'Preferences',
       preferencesHint: 'Site display language and communications.',
       emailHint: 'Email address cannot be changed here.',
