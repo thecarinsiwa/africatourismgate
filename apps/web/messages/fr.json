@@ -33,6 +33,52 @@
     "signOut": "Se déconnecter"
   },
   "booking": {
+    "meta": {
+      "index": {
+        "title": "Réservation",
+        "description": "Poursuivez votre réservation sur Africa Tourism Gate."
+      },
+      "login": {
+        "title": "Connexion client",
+        "description": "Connectez-vous pour poursuivre votre réservation."
+      },
+      "register": {
+        "title": "Créer un compte client",
+        "description": "Inscrivez-vous pour réserver et suivre vos voyages."
+      },
+      "cart": {
+        "title": "Panier réservation",
+        "description": "Vérifiez votre sélection avant le récapitulatif."
+      },
+      "recap": {
+        "title": "Récapitulatif",
+        "description": "Confirmez les détails et choisissez votre mode de paiement."
+      },
+      "success": {
+        "title": "Réservation confirmée",
+        "description": "Votre paiement a bien été enregistré."
+      },
+      "requestSuccess": {
+        "title": "Demande envoyée",
+        "description": "Votre demande de réservation a bien été transmise."
+      },
+      "cancel": {
+        "title": "Paiement annulé",
+        "description": "Le paiement a été annulé — vous pouvez réessayer."
+      },
+      "verify": {
+        "title": "Vérification du compte",
+        "description": "Confirmez votre adresse e-mail pour activer votre compte."
+      },
+      "logout": {
+        "title": "Déconnexion",
+        "description": "Vous êtes en cours de déconnexion."
+      },
+      "oauthCallback": {
+        "title": "Connexion en cours",
+        "description": "Finalisation de la connexion sécurisée."
+      }
+    },
     "login": {
       "title": "Connexion client",
       "subtitle": "Connectez-vous avec votre e-mail et mot de passe, ou utilisez Google pour poursuivre votre réservation.",
@@ -1183,6 +1229,40 @@
     "browseSite": "Explorer les hébergements",
     "navAria": "Navigation du compte",
     "loading": "Chargement…",
+    "meta": {
+      "home": {
+        "title": "Mon compte",
+        "description": "Espace client Africa Tourism Gate — profil, réservations et préférences."
+      },
+      "profile": {
+        "title": "Profil",
+        "description": "Gérez vos informations personnelles et votre langue préférée."
+      },
+      "addresses": {
+        "title": "Adresses",
+        "description": "Gérez vos adresses enregistrées pour les réservations."
+      },
+      "reservations": {
+        "title": "Mes réservations",
+        "description": "Consultez et suivez vos réservations Africa Tourism Gate."
+      },
+      "reservationDetail": {
+        "title": "Détail de la réservation",
+        "description": "Suivi, documents et messages liés à votre réservation."
+      },
+      "reservationChat": {
+        "title": "Messagerie réservation",
+        "description": "Échangez avec l'équipe à propos de votre réservation."
+      },
+      "loyalty": {
+        "title": "Fidélité OneKey",
+        "description": "Consultez vos points et avantages OneKey."
+      },
+      "paymentMethods": {
+        "title": "Moyens de paiement",
+        "description": "Gérez vos moyens de paiement enregistrés."
+      }
+    },
     "nav": {
       "profile": "Profil",
       "addresses": "Adresses",

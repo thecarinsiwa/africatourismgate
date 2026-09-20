@@ -33,6 +33,52 @@
     "signOut": "Sign out"
   },
   "booking": {
+    "meta": {
+      "index": {
+        "title": "Booking",
+        "description": "Continue your booking on Africa Tourism Gate."
+      },
+      "login": {
+        "title": "Customer sign in",
+        "description": "Sign in to continue your booking."
+      },
+      "register": {
+        "title": "Create a customer account",
+        "description": "Sign up to book and track your trips."
+      },
+      "cart": {
+        "title": "Booking cart",
+        "description": "Review your selection before the summary."
+      },
+      "recap": {
+        "title": "Booking summary",
+        "description": "Confirm the details and choose your payment method."
+      },
+      "success": {
+        "title": "Booking confirmed",
+        "description": "Your payment has been recorded successfully."
+      },
+      "requestSuccess": {
+        "title": "Request sent",
+        "description": "Your booking request has been submitted."
+      },
+      "cancel": {
+        "title": "Payment cancelled",
+        "description": "Payment was cancelled — you can try again."
+      },
+      "verify": {
+        "title": "Account verification",
+        "description": "Confirm your email address to activate your account."
+      },
+      "logout": {
+        "title": "Sign out",
+        "description": "You are being signed out."
+      },
+      "oauthCallback": {
+        "title": "Signing in",
+        "description": "Completing secure sign-in."
+      }
+    },
     "login": {
       "title": "Customer sign in",
       "subtitle": "Sign in with your email and password, or use Google to continue your booking.",
@@ -1183,6 +1229,40 @@
     "browseSite": "Browse accommodations",
     "navAria": "Account navigation",
     "loading": "Loading?",
+    "meta": {
+      "home": {
+        "title": "My account",
+        "description": "Africa Tourism Gate customer area — profile, bookings and preferences."
+      },
+      "profile": {
+        "title": "Profile",
+        "description": "Manage your personal details and preferred language."
+      },
+      "addresses": {
+        "title": "Addresses",
+        "description": "Manage your saved addresses for bookings."
+      },
+      "reservations": {
+        "title": "My bookings",
+        "description": "View and track your Africa Tourism Gate bookings."
+      },
+      "reservationDetail": {
+        "title": "Booking details",
+        "description": "Status, documents and messages for your booking."
+      },
+      "reservationChat": {
+        "title": "Booking messages",
+        "description": "Chat with the team about your booking."
+      },
+      "loyalty": {
+        "title": "OneKey loyalty",
+        "description": "View your OneKey points and benefits."
+      },
+      "paymentMethods": {
+        "title": "Payment methods",
+        "description": "Manage your saved payment methods."
+      }
+    },
     "nav": {
       "profile": "Profile",
       "addresses": "Addresses",

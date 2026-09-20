@@ -33,6 +33,52 @@
     "signOut": "Cerrar sesión"
   },
   "booking": {
+    "meta": {
+      "index": {
+        "title": "Reserva",
+        "description": "Continúe su reserva en Africa Tourism Gate."
+      },
+      "login": {
+        "title": "Inicio de sesión del cliente",
+        "description": "Inicie sesión para continuar su reserva."
+      },
+      "register": {
+        "title": "Crear una cuenta de cliente",
+        "description": "Regístrese para reservar y seguir sus viajes."
+      },
+      "cart": {
+        "title": "Carrito de reserva",
+        "description": "Revise su selección antes del resumen."
+      },
+      "recap": {
+        "title": "Resumen de la reserva",
+        "description": "Confirme los detalles y elija su método de pago."
+      },
+      "success": {
+        "title": "Reserva confirmada",
+        "description": "Su pago se ha registrado correctamente."
+      },
+      "requestSuccess": {
+        "title": "Solicitud enviada",
+        "description": "Su solicitud de reserva se ha enviado correctamente."
+      },
+      "cancel": {
+        "title": "Pago cancelado",
+        "description": "El pago se canceló — puede intentarlo de nuevo."
+      },
+      "verify": {
+        "title": "Verificación de la cuenta",
+        "description": "Confirme su correo electrónico para activar su cuenta."
+      },
+      "logout": {
+        "title": "Cerrar sesión",
+        "description": "Se está cerrando su sesión."
+      },
+      "oauthCallback": {
+        "title": "Inicio de sesión en curso",
+        "description": "Finalizando el inicio de sesión seguro."
+      }
+    },
     "login": {
       "title": "Inicio de sesión del cliente",
       "subtitle": "Inicie sesión con su correo y contraseña, o use Google para continuar su reserva.",
@@ -1183,6 +1229,40 @@
     "browseSite": "Explorar alojamientos",
     "navAria": "Navegación de cuenta",
     "loading": "Cargando…",
+    "meta": {
+      "home": {
+        "title": "Mi cuenta",
+        "description": "Área de cliente de Africa Tourism Gate — perfil, reservas y preferencias."
+      },
+      "profile": {
+        "title": "Perfil",
+        "description": "Gestione sus datos personales y su idioma preferido."
+      },
+      "addresses": {
+        "title": "Direcciones",
+        "description": "Gestione sus direcciones guardadas para las reservas."
+      },
+      "reservations": {
+        "title": "Mis reservas",
+        "description": "Consulte y siga sus reservas de Africa Tourism Gate."
+      },
+      "reservationDetail": {
+        "title": "Detalle de la reserva",
+        "description": "Seguimiento, documentos y mensajes de su reserva."
+      },
+      "reservationChat": {
+        "title": "Mensajes de la reserva",
+        "description": "Chatee con el equipo sobre su reserva."
+      },
+      "loyalty": {
+        "title": "Fidelidad OneKey",
+        "description": "Consulte sus puntos y ventajas OneKey."
+      },
+      "paymentMethods": {
+        "title": "Métodos de pago",
+        "description": "Gestione sus métodos de pago guardados."
+      }
+    },
     "nav": {
       "profile": "Perfil",
       "addresses": "Direcciones",

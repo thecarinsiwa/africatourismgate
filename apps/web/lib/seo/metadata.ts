@@ -124,6 +124,30 @@ export async function buildDetailFallbackMetadata(
   });
 }
 
+export const PRIVATE_PAGE_ROBOTS: NonNullable<Metadata['robots']> = {
+  index: false,
+  follow: false,
+};
+
+/** Account / booking flows: i18n title + noindex. */
+export async function buildPrivatePageMetadata(
+  namespace: 'account' | 'booking',
+  metaKey: string,
+  path: string,
+): Promise<Metadata> {
+  const [t, locale] = await Promise.all([
+    getTranslations(namespace),
+    getLocale(),
+  ]);
+  return buildPageMetadata({
+    title: t(`meta.${metaKey}.title`),
+    description: t(`meta.${metaKey}.description`),
+    path,
+    locale,
+    robots: PRIVATE_PAGE_ROBOTS,
+  });
+}
+
 /** First usable image URL from gallery arrays and/or a cover URL. */
 export function pickOgImages(
   images?: ReadonlyArray<{ url?: string | null }> | null,
