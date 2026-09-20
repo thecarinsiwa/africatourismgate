@@ -167,7 +167,7 @@ export function AdminProfilePage() {
 
   return (
     <div className="mx-auto w-full max-w-2xl space-y-6">
-      <AdminPageBackLink href="/dashboard" label={t('backLabel')} className="block" />
+      <AdminPageBackLink href="/utilisateurs" label={t('backLabel')} className="block" />
       <div>
         <h2 className="text-xl font-semibold text-atg-fg">{t('title')}</h2>
         <p className="mt-1 text-sm text-atg-muted">{t('description')}</p>
