@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 import { useEffect, useId, useRef } from 'react';
 import { useTranslations } from 'next-intl';
+import { getInitialFocusElement, trapFocus } from '@africatourismgate/ui';
 import { shouldShowDemoTrustHints } from '../../lib/bookings/show-demo-trust-hints';
 
 export const BOOKING_DRAWER_OPEN_EVENT = 'atg:open-booking-drawer';
@@ -48,27 +49,43 @@ export function BookingSidebarMobileDrawer({
   const t = useTranslations('bookingSidebar');
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!open) return;
 
+    previouslyFocusedRef.current = document.activeElement as HTMLElement | null;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+
+    const frame = window.requestAnimationFrame(() => {
+      const panel = panelRef.current;
+      if (!panel) return;
+      const initialFocus = getInitialFocusElement(panel);
+      if (initialFocus) {
+        initialFocus.focus();
+      } else {
+        panel.focus();
+      }
+    });
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.preventDefault();
         onClose();
+        return;
       }
+      const panel = panelRef.current;
+      if (panel) trapFocus(panel, event);
     };
 
     document.addEventListener('keydown', onKeyDown);
-    const frame = window.requestAnimationFrame(() => panelRef.current?.focus());
 
     return () => {
       window.cancelAnimationFrame(frame);
       document.body.style.overflow = previousOverflow;
       document.removeEventListener('keydown', onKeyDown);
+      previouslyFocusedRef.current?.focus?.();
     };
   }, [open, onClose]);
 
@@ -78,6 +95,7 @@ export function BookingSidebarMobileDrawer({
     <div className="fixed inset-0 z-50 lg:hidden" role="presentation">
       <button
         type="button"
+        tabIndex={-1}
         className="absolute inset-0 bg-atg-fg/40 backdrop-blur-[2px]"
         aria-label={t('closeDrawer')}
         onClick={onClose}
@@ -88,7 +106,7 @@ export function BookingSidebarMobileDrawer({
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className="absolute inset-x-0 bottom-0 max-h-[min(85vh,640px)] overflow-y-auto rounded-t-2xl border border-atg-border bg-atg-elevated p-5 pb-safe shadow-2xl outline-none dark:border-atg-border dark:bg-atg-elevated"
+        className="absolute inset-x-0 bottom-0 max-h-[min(85vh,640px)] overflow-y-auto rounded-t-2xl border border-atg-border bg-atg-elevated p-5 pb-safe shadow-2xl outline-none focus-visible:ring-2 focus-visible:ring-primary dark:border-atg-border dark:bg-atg-elevated"
       >
         <p id={titleId} className="sr-only">
           {title}
@@ -97,7 +115,7 @@ export function BookingSidebarMobileDrawer({
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-atg-border text-atg-muted transition-colors hover:border-primary hover:text-primary"
+            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-atg-border text-atg-muted transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label={t('closeDrawer')}
           >
             <span aria-hidden className="text-xl leading-none">
