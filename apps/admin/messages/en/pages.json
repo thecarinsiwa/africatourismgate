@@ -715,6 +715,7 @@
     "title": "My profile",
     "description": "Update your details and profile photo.",
     "metaTitle": "My profile",
+    "backLabel": "Back to dashboard",
     "photo": "Profile photo",
     "photoHint": "JPEG, PNG or WebP — 5 MB max.",
     "photoAdd": "Add a photo",

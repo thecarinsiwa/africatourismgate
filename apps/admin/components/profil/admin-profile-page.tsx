@@ -12,6 +12,7 @@ import {
   localeFromPreferredLanguage,
 } from '../../lib/i18n/preferred-language';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
+import { AdminPageBackLink } from '../admin-page-back-link';
 
 const AVATAR_MAX_BYTES = 5 * 1024 * 1024;
 const AVATAR_ACCEPT = 'image/jpeg,image/png,image/webp';
@@ -166,6 +167,7 @@ export function AdminProfilePage() {
 
   return (
     <div className="mx-auto w-full max-w-2xl space-y-6">
+      <AdminPageBackLink href="/dashboard" label={t('backLabel')} className="block" />
       <div>
         <h2 className="text-xl font-semibold text-atg-fg">{t('title')}</h2>
         <p className="mt-1 text-sm text-atg-muted">{t('description')}</p>
