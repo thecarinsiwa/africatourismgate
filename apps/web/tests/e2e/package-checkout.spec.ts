@@ -146,7 +146,12 @@ test('forfait activités: réserver sans créneaux, panier -> recap -> demande a
     page.getByRole('heading', { name: /r[ée]capitulatif du forfait|package summary|resumen del paquete/i }),
   ).toBeVisible();
 
-  await page.getByRole('button', { name: /ajouter au panier|add to cart|a[ñn]adir al carrito/i }).click();
+  // Assisted packages use request-booking CTA (WEB-004), not « add to cart ».
+  await page
+    .getByRole('button', {
+      name: /demander une r[ée]servation|request a booking|solicitar una reserva|ajouter au panier|add to cart|a[ñn]adir al carrito/i,
+    })
+    .click();
 
   await expect(page).toHaveURL(/\/booking\/cart\?.*kind=package/, { timeout: 15_000 });
 
@@ -185,6 +190,8 @@ test('forfait activités: réserver sans créneaux, panier -> recap -> demande a
     ],
   });
 
-  await expect(page.getByText(/demande envoy[ée]e|request submitted|solicitud enviada/i)).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: /demande envoy[ée]e|request submitted|solicitud enviada/i }),
+  ).toBeVisible();
   await expect(page.getByText(/r[ée]f\. demande|request ref|ref\. solicitud/i)).toBeVisible();
 });

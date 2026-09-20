@@ -388,9 +388,10 @@ Les métadonnées (`title`, `description`, Open Graph) sont souvent **hardcodée
 
 #### Livré
 
-- Script [`test:e2e:ci`](../apps/web/package.json) : `pnpm build && playwright test` → `next start` via [`playwright.config.ts`](../apps/web/playwright.config.ts) (`CI` ou lifecycle `test:e2e:ci` ; port via `PLAYWRIGHT_PORT`)
+- Script [`test:e2e:ci`](../apps/web/package.json) : build + Playwright via [`with-e2e-dist.mjs`](../apps/web/scripts/with-e2e-dist.mjs) → `NEXT_DIST_DIR=.next-e2e` + `next start` ([`playwright.config.ts`](../apps/web/playwright.config.ts) ; port via `PLAYWRIGHT_PORT`)
+- Isolation **`.next-e2e`** : évite la corruption `webpack-runtime` quand `pnpm dev` tourne en parallèle sur le même `apps/web/.next`
 - Job CI parallèle **`web-e2e`** dans [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) (sans MySQL ; API mockée) + artifact report si échec
-- `.gitignore` : `apps/web/test-results/`, `playwright-report/`, `blob-report/`
+- `.gitignore` : `apps/web/test-results/`, `playwright-report/`, `blob-report/`, `.next-e2e`
 - Doc : [`apps/web/README.md`](../apps/web/README.md) § E2E Playwright
 
 #### Validation locale (2026-09-20)
@@ -398,20 +399,22 @@ Les métadonnées (`title`, `description`, Open Graph) sont souvent **hardcodée
 Commande : `PLAYWRIGHT_PORT=3012` + `pnpm --filter @africatourismgate/web test:e2e:ci`  
 (port **3012** : `:3002` déjà occupé localement → `EADDRINUSE` au 1er essai)
 
-**Résultat :** **33 passed / 14 failed** (~12 min, workers=1, retries=1)
+**Résultat (après isolation `.next-e2e` + fix CTA package + OAuth callback) :** **47 passed / 0 failed** (~3 min hors rebuild, workers=1).
 
-Échecs (à traiter hors WEB-006 ou issue dédiée) :
+Cause systémique observée précédemment : `[WebServer] TypeError: Cannot read properties of undefined (reading 'call')` dans `webpack-runtime.js` — `.next` partagé avec un `next` concurrent sur `:3002`. Correctif : `NEXT_DIST_DIR=.next-e2e`.
+
+Échecs historiques (résolus ou reclassés) :
 
 | Spec | Tests en échec | Notes |
 | --- | --- | --- |
-| `booking-google-oauth.spec.ts` | 1 | Timeout / assertion OAuth callback |
-| `customer-booking-conversation.spec.ts` | 2 | Chat assisté + invite paiement |
-| `customer-loyalty.spec.ts` | 2 | Préférer `test:e2e:loyalty` (:3099) ; flaky dans la suite principale |
-| `flight-checkout.spec.ts` | 1 | Timeout parcours Stripe |
-| `i18n-switch.spec.ts` | 2 | `coming-soon`, `booking/cancel` après switch EN |
-| `package-checkout.spec.ts` | 1 | Demande assistée forfait |
-| `reservation-checkout.spec.ts` | 2 | Erreurs runtime `webpack-runtime` / `reading 'call'` sous `next start` (proche vendor-chunks) |
-| `reviews.spec.ts` | 3 | Rating / formulaire avis (timeouts sélecteurs) |
+| `booking-google-oauth.spec.ts` | 1 | Redirect prod trop rapide pour le heading intermédiaire — assertion sur `/booking/cart` + session |
+| `customer-booking-conversation.spec.ts` | 2 | OK après isolation |
+| `customer-loyalty.spec.ts` | 2 | OK après isolation (sinon `test:e2e:loyalty` :3099) |
+| `flight-checkout.spec.ts` | 1 | OK après isolation |
+| `i18n-switch.spec.ts` | 2 | OK après isolation |
+| `package-checkout.spec.ts` | 1 | CTA assisté « Demander une réservation » (WEB-004) — spec corrigée |
+| `reservation-checkout.spec.ts` | 2 | OK après isolation (était `webpack-runtime`) |
+| `reviews.spec.ts` | 3 | OK après isolation |
 
 Specs OK en smoke : activity/cruise checkout, booking login/register/index-redirect, customer-account, manifest-validation, support, majorité i18n-switch.
 
@@ -434,9 +437,10 @@ Les tests E2E Playwright échouent parfois avec des erreurs Next.js **vendor-chu
 
 ## Critères d'acceptation
 
-- [ ] `pnpm --filter @africatourismgate/web test:e2e:ci` passe localement après clone frais — **33/47** au 2026-09-20 (voir tableau échecs)
+- [x] `pnpm --filter @africatourismgate/web test:e2e:ci` passe localement — **47/47** (2026-09-20, port 3012)
 - [x] Workflow CI documenté dans README ou commentaire workflow
 - [x] Les 16 specs listées ; échecs documentés (tableau ci-dessus) — issue de stabilisation suite recommandée
+- [x] Isolation build E2E (`.next-e2e`) vs `pnpm dev` (`.next`)
 
 ## Fichiers
 

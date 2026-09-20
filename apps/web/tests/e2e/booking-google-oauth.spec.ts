@@ -31,8 +31,11 @@ test('google oauth callback stores session and redirects to next', async ({ page
     '/booking/oauth/callback?accessToken=access_google&refreshToken=refresh_google&expiresIn=900&next=%2Fbooking%2Fcart',
   );
 
-  await expect(page.getByRole('heading', { name: /Connexion Google|Google sign-in/i })).toBeVisible();
+  // Prod `next start` can finish the client redirect before the intermediate
+  // « Connexion Google » heading is observable — assert the destination instead.
   await expect(page).toHaveURL(/\/booking\/cart$/, { timeout: 20_000 });
+  await expect(page.getByRole('heading', { name: /Panier|Cart|Carrito/i })).toBeVisible();
+
   const stored = await page.evaluate(() => ({
     session: window.sessionStorage.getItem('atg.web.session'),
     local: window.localStorage.getItem('atg.web.session'),
