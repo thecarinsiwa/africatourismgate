@@ -5,7 +5,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { type CruisesSearchParams } from '../../lib/cruises/listings';
 import { CRUISE_PORT_OPTIONS } from '../../lib/cruises/ports';
 import { addDays, todayISODate } from '../../lib/hotels/dates';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations } from 'next-intl';
+import { useTranslations as useLegacyTranslations } from '../../lib/i18n/locale-provider';
 import { buildSearchRoute } from '../../lib/search/route';
 import {
   SearchFormInput,
@@ -21,9 +22,9 @@ type CruisesSearchFormProps = {
 
 export function CruisesSearchForm({ initialValues }: CruisesSearchFormProps) {
   const router = useRouter();
-  const t = useTranslations();
-  const c = t.cruises;
-  const s = t.search;
+  const t = useTranslations('search');
+  const legacy = useLegacyTranslations();
+  const c = legacy.cruises;
 
   const [sailFrom, setSailFrom] = useState(initialValues.sailFrom ?? '');
   const [sailTo, setSailTo] = useState(initialValues.sailTo ?? '');
@@ -65,7 +66,7 @@ export function CruisesSearchForm({ initialValues }: CruisesSearchFormProps) {
     }
 
     if (sailFrom === sailTo) {
-      setError(s.cruisesSamePort);
+      setError(t('cruisesSamePort'));
       return;
     }
 
@@ -92,7 +93,7 @@ export function CruisesSearchForm({ initialValues }: CruisesSearchFormProps) {
           <SearchFormLabel>{c.sailFrom}</SearchFormLabel>
           <SearchFormOptionDatalistInput
             name="sailFrom"
-            placeholder={s.allPorts}
+            placeholder={t('allPorts')}
             options={portOptions}
             value={sailFrom}
             onChange={(value) => {
@@ -106,7 +107,7 @@ export function CruisesSearchForm({ initialValues }: CruisesSearchFormProps) {
           <SearchFormLabel>{c.sailTo}</SearchFormLabel>
           <SearchFormOptionDatalistInput
             name="sailTo"
-            placeholder={s.allDestinations}
+            placeholder={t('allDestinations')}
             options={portOptions}
             value={sailTo}
             onChange={(value) => {
@@ -160,7 +161,7 @@ export function CruisesSearchForm({ initialValues }: CruisesSearchFormProps) {
         </div>
 
         <div className="flex items-end">
-          <SearchFormSubmit label={s.search} />
+          <SearchFormSubmit label={t('search')} />
         </div>
       </div>
 

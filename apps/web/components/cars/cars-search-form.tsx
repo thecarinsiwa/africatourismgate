@@ -5,7 +5,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { countRentalDays, type CarsSearchParams } from '../../lib/cars/listings';
 import { useVehiclePickupLocations } from '../../lib/cars/use-vehicle-pickup-locations';
 import { addDays, todayISODate } from '../../lib/hotels/dates';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations } from 'next-intl';
+import { useTranslations as useLegacyTranslations } from '../../lib/i18n/locale-provider';
 import { buildSearchRoute } from '../../lib/search/route';
 import {
   SearchFormDatalistInput,
@@ -21,9 +22,9 @@ type CarsSearchFormProps = {
 
 export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
   const router = useRouter();
-  const t = useTranslations();
-  const c = t.cars;
-  const s = t.search;
+  const t = useTranslations('search');
+  const legacy = useLegacyTranslations();
+  const c = legacy.cars;
 
   const [pickupLocation, setPickupLocation] = useState(initialValues.pickupLocation ?? '');
   const [pickupDate, setPickupDate] = useState(initialValues.pickupDate ?? '');
@@ -63,12 +64,12 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
 
     const hasPartialDates = Boolean(pickupDate) !== Boolean(returnDate);
     if (hasPartialDates) {
-      setError(s.carsRequired);
+      setError(t('carsRequired'));
       return;
     }
 
     if (pickupDate && returnDate && returnDate <= pickupDate) {
-      setError(s.carsReturnAfterPickup);
+      setError(t('carsReturnAfterPickup'));
       return;
     }
 
@@ -91,7 +92,7 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
             {rentalDaysLabel}
           </span>
         ) : (
-          <span className="text-sm text-atg-muted">{s.carsDurationHint}</span>
+          <span className="text-sm text-atg-muted">{t('carsDurationHint')}</span>
         )}
       </div>
 
@@ -112,7 +113,7 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
         </div>
 
         <div>
-          <SearchFormLabel>{s.pickUp}</SearchFormLabel>
+          <SearchFormLabel>{t('pickUp')}</SearchFormLabel>
           <SearchFormInput
             type="date"
             name="pickupDate"
@@ -129,7 +130,7 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
         </div>
 
         <div>
-          <SearchFormLabel>{s.dropOff}</SearchFormLabel>
+          <SearchFormLabel>{t('dropOff')}</SearchFormLabel>
           <SearchFormInput
             type="date"
             name="returnDate"
@@ -143,7 +144,7 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
         </div>
 
         <div className="flex items-end">
-          <SearchFormSubmit label={s.search} />
+          <SearchFormSubmit label={t('search')} />
         </div>
       </div>
 

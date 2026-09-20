@@ -13,6 +13,7 @@ import { usePublicAirports } from '../../lib/flights/use-public-airports';
 import type { FlightSearchResult } from '../../lib/flights/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations as useIntlTranslations } from 'next-intl';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { ListingPageBody, ListingPaginationBar, ListingSortBar } from '../shared/listing-patterns';
@@ -31,6 +32,7 @@ type FlightsPageContentProps = {
 
 export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
   const t = useTranslations();
+  const tSearch = useIntlTranslations('search');
   const f = t.flights;
   const l = t.listing;
   const { locale } = useLocale();
@@ -112,7 +114,7 @@ export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
   const paginationLabels = useMemo(() => toListingPaginationLabels(l), [l]);
 
   const searchSummary = [
-    hasRouteFilter || hasDateFilter ? (initialSearch.returnDate ? t.search.roundTrip : t.search.oneWay) : null,
+    hasRouteFilter || hasDateFilter ? (initialSearch.returnDate ? tSearch('roundTrip') : tSearch('oneWay')) : null,
     initialSearch.departureDate &&
       `${f.departureDate}: ${formatDisplayDate(initialSearch.departureDate, locale)}`,
     initialSearch.returnDate &&

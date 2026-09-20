@@ -163,4 +163,31 @@ test.describe('Language switch (FR/EN/ES)', () => {
 
     await expect(page.getByRole('heading', { name: 'Coming soon' })).toBeVisible();
   });
+
+  test('home search tabs and why-us show English after switch', async ({ page }) => {
+    await page.goto('/');
+
+    await expect(page.getByRole('tab', { name: 'Hôtels' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Pourquoi nous choisir' })).toBeVisible();
+
+    await switchLanguage(page, /English/i);
+
+    await expect(page.getByRole('tab', { name: 'Hotels' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Why choose us' })).toBeVisible();
+  });
+
+  test('home footer shows English after switch', async ({ page }) => {
+    await page.goto('/');
+
+    await expect(
+      page.getByText(/passerelle vers les meilleures expériences/i),
+    ).toBeVisible();
+
+    await switchLanguage(page, /English/i);
+
+    await expect(
+      page.getByText(/gateway to the best travel experiences/i),
+    ).toBeVisible();
+    await expect(page.getByText('Carin Siwa and Ruth Bwiza')).toBeVisible();
+  });
 });

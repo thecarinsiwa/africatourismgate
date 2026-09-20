@@ -3,9 +3,9 @@
 import Link from 'next/link';
 import { useEffect, useState, type ReactNode } from 'react';
 import type { PublicWhyUsContent, PublicWhyUsItem, WhyUsIconKey } from '@africatourismgate/types';
+import { useLocale, useTranslations } from 'next-intl';
 import { ABOUT_PATHS } from '../../lib/about/routes';
 import { getPublicWhyUsForLocale } from '../../lib/api/public';
-import { useAppLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { useScrollAnimation } from './use-scroll-animation';
 
 const WHY_US_ICONS: Record<WhyUsIconKey, ReactNode> = {
@@ -92,12 +92,15 @@ function toDisplayItems(content: PublicWhyUsContent | null, fallbackItems: Displ
 }
 
 export function WhyUsSection() {
-  const t = useTranslations();
-  const locale = useAppLocale();
+  const t = useTranslations('whyUs');
+  const locale = useLocale();
   const { ref, isVisible } = useScrollAnimation(0.1);
   const [content, setContent] = useState<PublicWhyUsContent | null>(null);
 
-  const fallbackItems = mapFallbackItems(t.whyUs.items, FALLBACK_LINKS);
+  const fallbackItems = mapFallbackItems(
+    t.raw('items') as { title: string; description: string }[],
+    FALLBACK_LINKS,
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -111,8 +114,8 @@ export function WhyUsSection() {
     };
   }, [locale]);
 
-  const title = content?.section?.title ?? t.whyUs.title;
-  const subtitle = content?.section?.subtitle ?? t.whyUs.subtitle;
+  const title = content?.section?.title ?? t('title');
+  const subtitle = content?.section?.subtitle ?? t('subtitle');
   const items = toDisplayItems(content, fallbackItems);
 
   return (
@@ -148,7 +151,7 @@ export function WhyUsSection() {
                 href={item.linkUrl}
                 className="inline-flex items-center gap-1 text-sm font-semibold text-primary transition-colors hover:text-primary-hover hover:underline"
               >
-                {t.whyUs.learnMore}
+                {t('learnMore')}
                 <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>

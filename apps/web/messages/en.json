@@ -288,5 +288,273 @@
         "description": "Reach the Africa Tourism Gate team by phone, email or support form."
       }
     }
+  },
+  "hero": {
+    "slides": [
+      {
+        "subtitle": "Welcome to",
+        "title": "AFRICA TOURISM GATE",
+        "description": "Your gateway to the finest African destinations. Explore, book and enjoy unforgettable experiences."
+      },
+      {
+        "subtitle": "7-day safari",
+        "title": "MAGICAL MASAI MARA",
+        "description": "Witness the wildebeest migration and the Big Five in Africa?\"s most famous reserve."
+      },
+      {
+        "subtitle": "5 days in",
+        "title": "MARRAKECH (Pearl of the South)",
+        "description": "Immerse yourself in souks, riads and the spiced flavors of Morocco?\"s ochre city."
+      },
+      {
+        "subtitle": "12-day cruise",
+        "title": "ZANZIBAR TO MADAGASCAR",
+        "description": "Coastal sailing along the Indian Ocean ?\u001d dream beaches and unique wildlife."
+      }
+    ],
+    "prev": "Previous slide",
+    "next": "Next slide",
+    "goToSlide": "Go to slide {n}"
+  },
+  "search": {
+    "tablistAria": "Search type",
+    "tabs": {
+      "flights": "Flights",
+      "hotels": "Hotels",
+      "cars": "Cars",
+      "cruises": "Cruises",
+      "tours": "Tours"
+    },
+    "search": "Search",
+    "departDate": "Departure date",
+    "returnDate": "Return date",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "from": "From:",
+    "to": "To:",
+    "adults": "Adults:",
+    "destination": "Destination:",
+    "roomType": "Room type:",
+    "pickUp": "Pick-up",
+    "dropOff": "Drop-off",
+    "country": "Country:",
+    "city": "City:",
+    "location": "Location:",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "sailTo": "Sail to:",
+    "sailFrom": "Sail from:",
+    "ship": "Ship:",
+    "days": "Days:",
+    "cityPh": "City",
+    "destinationPh": "Destination or hotel",
+    "selectPh": "Select",
+    "countryPh": "Country",
+    "locationPh": "Location",
+    "allDestinations": "All destinations",
+    "allPorts": "All ports",
+    "shipPh": "Ship",
+    "departCityPh": "Departure city",
+    "destinationPh2": "Destination",
+    "passengers": "Passengers",
+    "airportPh": "Airport",
+    "flightRequired": "Enter departure, destination and departure date.",
+    "flightReturnAfterDeparture": "Return date must be after departure date.",
+    "flightReturnRequired": "Enter a return date for a round trip.",
+    "flightSameAirport": "Departure and destination must be different.",
+    "swapAirports": "Swap departure and arrival",
+    "tripTypeAria": "Trip type",
+    "oneWay": "One way",
+    "roundTrip": "Round trip",
+    "viewAllFlights": "View all available flights",
+    "viewAllHotels": "View all hotels",
+    "carsRequired": "Enter city, pick-up date and return date.",
+    "carsReturnAfterPickup": "Return date must be after pick-up date.",
+    "carsDurationHint": "Select dates to see rental duration",
+    "pickupLocationPh": "City or airport",
+    "viewAllCars": "View all car rentals",
+    "cruisesRequired": "Enter departure and arrival ports plus a date range.",
+    "cruisesEndAfterStart": "End date must be after start date.",
+    "cruisesSamePort": "Departure and arrival ports must be different.",
+    "viewAllCruises": "View all cruises",
+    "viewAllActivities": "View all activities",
+    "toursRequired": "Enter a date.",
+    "participants": "Participants",
+    "roomTypes": [
+      "Double Room",
+      "Single Room",
+      "Suite"
+    ],
+    "countries": [
+      "Kenya",
+      "Tanzania",
+      "Morocco",
+      "South Africa",
+      "Rwanda",
+      "DRC"
+    ],
+    "locations": [
+      "Airport",
+      "City center",
+      "Train station"
+    ]
+  },
+  "footer": {
+    "tagline": "Your gateway to the best travel experiences in Africa. Discover unique destinations and book with confidence.",
+    "learnMore": "Learn more",
+    "specialists": "Travel Specialists",
+    "products": "Our Products",
+    "specialistLinks": {
+      "premium": "Premium Stays",
+      "flights": "First Class Flights",
+      "safaris": "Safaris & Tours",
+      "cruises": "Coastal Cruises",
+      "cars": "Car Rental",
+      "packages": "Packages"
+    },
+    "newsletter": "Newsletter",
+    "newsletterDesc": "Inspiration, travel ideas, deals and news.",
+    "emailPlaceholder": "Email address",
+    "newsletterSubmit": "OK",
+    "contact": "Contact",
+    "location": "Kinshasa, DR Congo",
+    "privacy": "Privacy Policy",
+    "termsOfUse": "Terms of use",
+    "about": "About",
+    "aboutPages": "About us",
+    "gap": "GAP",
+    "faq": "FAQ",
+    "designedBy": "Designed by",
+    "designedByNames": "Carin Siwa and Ruth Bwiza"
+  },
+  "whyUs": {
+    "title": "Why choose us",
+    "subtitle": "Africa Tourism Gate offers a unique travel experience with top services and personalized support to discover Africa.",
+    "learnMore": "Learn more",
+    "items": [
+      {
+        "title": "Amazing Trips",
+        "description": "Hand-picked unique destinations across the African continent for unforgettable experiences."
+      },
+      {
+        "title": "Discoveries",
+        "description": "Explore rich cultures, breathtaking landscapes and Africa?\"s incredible wildlife."
+      },
+      {
+        "title": "Easy Booking",
+        "description": "Book accommodations, flights and activities in a few clicks with our intuitive platform."
+      },
+      {
+        "title": "24/7 Support",
+        "description": "Our travel specialists are available day and night to assist you."
+      }
+    ]
+  },
+  "promo": {
+    "badge": "Special offer",
+    "title": "Kenya Safari ? Holiday Package",
+    "description": "Discover the endless plains of the Masai Mara, spot the Big Five in their natural habitat and enjoy luxury lodges in the heart of the savanna. An experience that will change how you see Africa.",
+    "priceFrom": "From:",
+    "perPerson": "/person",
+    "details": "Details"
+  },
+  "destinations": {
+    "title": "Popular Destinations",
+    "subtitle": "Discover our most sought-after African destinations. From safaris to paradise beaches, every trip is a unique adventure.",
+    "reviews": "Reviews",
+    "details": "Details",
+    "loading": "Loading destinations?",
+    "loadError": "Could not load destinations.",
+    "empty": "No featured destinations at the moment.",
+    "items": [
+      {
+        "title": "Masai Mara Safari",
+        "subtitle": "From Nairobi, Kenya",
+        "description": "7-day safari from Nairobi. Big Five and wildebeest migration."
+      },
+      {
+        "title": "Cape Town Getaway",
+        "subtitle": "Cape Town, South Africa",
+        "description": "Explore Table Mountain, Cape of Good Hope and vineyards."
+      },
+      {
+        "title": "Marrakech Medina",
+        "subtitle": "5 days, Morocco",
+        "description": "Get lost in the souks, savor spices and sleep in a riad."
+      },
+      {
+        "title": "Zanzibar Beaches",
+        "subtitle": "Tanzania, 6 days",
+        "description": "White sand, turquoise waters and spices ?\u001d Indian Ocean paradise."
+      }
+    ]
+  },
+  "customers": {
+    "title": "Happy Customers",
+    "subtitle": "Our travelers?\" satisfaction is our top priority.",
+    "p1": "Since launch, we have helped thousands of travelers discover Africa. Our commitment to excellence and authentic experiences has earned the trust of our growing community.",
+    "p2": "Every positive review motivates us to keep improving and offering ever more memorable journeys across the continent.",
+    "clients": "Clients",
+    "imageAlt": "Happy travelers in Africa",
+    "bars": {
+      "flights": "Flights",
+      "hotels": "Hotels",
+      "cars": "Cars",
+      "cruises": "Cruises"
+    }
+  },
+  "activitiesMap": {
+    "title": "Upcoming Activities",
+    "subtitle": "Explore available experiences across Africa. Click a marker to view details and book.",
+    "loading": "Loading map?",
+    "loadError": "Could not load activities on the map.",
+    "empty": "No activities with location available at the moment.",
+    "browseAll": "Browse all activities",
+    "mapAria": "Map of available activities in Africa",
+    "nextDate": "Next date",
+    "viewActivity": "View activity"
+  },
+  "customerReviews": {
+    "title": "What our travelers say",
+    "subtitle": "Read feedback from guests who explored Africa with Africa Tourism Gate.",
+    "loadError": "Could not load live reviews. Showing default testimonials.",
+    "anonymous": "Traveler",
+    "carouselAria": "Customer reviews carousel",
+    "prev": "Previous review",
+    "next": "Next review",
+    "items": [
+      {
+        "rating": 5,
+        "title": "Unforgettable safari",
+        "body": "Flawless organization from start to finish. The team exceeded our expectations on our first East Africa safari.",
+        "author": "Marie L."
+      },
+      {
+        "rating": 5,
+        "body": "Easy booking, responsive support and quality stays. I highly recommend them for discovering Africa with peace of mind.",
+        "author": "Thomas K."
+      },
+      {
+        "rating": 4,
+        "title": "Wonderful experience",
+        "body": "Varied activities and passionate guides. We loved our Zanzibar trip and the personalized follow-up from the agency.",
+        "author": "Sophie M."
+      },
+      {
+        "rating": 5,
+        "body": "A reliable platform to plan a trip in Africa. Everything went as expected with excellent communication.",
+        "author": "David R."
+      }
+    ]
+  },
+  "gapImpact": {
+    "title": "Our impact",
+    "subtitle": "See the measurable results of the GAP program for communities and conservation.",
+    "cta": "Discover {programName}",
+    "programNameFallback": "GAP"
+  },
+  "meta": {
+    "homeTitle": "Book your trip to Africa",
+    "homeDescription": "Compare hotels, flights and experiences across Africa. Search accommodations and plan your next stay with Africa Tourism Gate."
   }
 }

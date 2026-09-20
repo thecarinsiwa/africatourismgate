@@ -1,14 +1,13 @@
 'use client';
 
-import { useTranslations as useNextIntlTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { ComingSoonShell } from './coming-soon/coming-soon-shell';
-import { useTranslations } from '../lib/i18n/locale-provider';
 import type { SearchVertical } from '../lib/search/route';
 
 export function VerticalComingSoonPage({ vertical }: { vertical: SearchVertical }) {
-  const t = useTranslations();
-  const tComingSoon = useNextIntlTranslations('comingSoon');
-  const verticalLabel = t.search.tabs[vertical];
+  const tComingSoon = useTranslations('comingSoon');
+  const tSearch = useTranslations('search');
+  const verticalLabel = tSearch(`tabs.${vertical}`);
 
   return (
     <ComingSoonShell

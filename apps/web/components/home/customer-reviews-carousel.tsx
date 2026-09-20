@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Review } from '@africatourismgate/types';
+import { useLocale, useTranslations } from 'next-intl';
 import { getPublicFeaturedReviews } from '../../lib/api/public';
-import { useAppLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { useScrollAnimation } from './use-scroll-animation';
 
 const AUTO_PLAY_MS = 6000;
@@ -15,6 +15,13 @@ type ReviewSlide = {
   title: string | null;
   body: string;
   authorName: string;
+};
+
+type ReviewFallbackItem = {
+  rating: number;
+  title?: string;
+  body: string;
+  author: string;
 };
 
 function formatAuthorName(firstName: string | null, anonymousLabel: string): string {
@@ -71,8 +78,8 @@ function ReviewCardSkeleton() {
 }
 
 export function CustomerReviewsCarousel() {
-  const t = useTranslations();
-  const locale = useAppLocale();
+  const t = useTranslations('customerReviews');
+  const locale = useLocale();
   const { ref, isVisible } = useScrollAnimation(0.1);
   const [reviews, setReviews] = useState<ReviewSlide[]>([]);
   const [loading, setLoading] = useState(true);
@@ -80,8 +87,9 @@ export function CustomerReviewsCarousel() {
   useEffect(() => {
     let cancelled = false;
 
+    const fallbackItems = t.raw('items') as ReviewFallbackItem[];
     const buildFallbackSlides = (): ReviewSlide[] =>
-      t.customerReviews.items.map((item, index) => ({
+      fallbackItems.map((item, index) => ({
         id: `fallback-${index}`,
         rating: item.rating,
         title: item.title ?? null,
@@ -94,7 +102,7 @@ export function CustomerReviewsCarousel() {
     void getPublicFeaturedReviews({ limit: FETCH_LIMIT })
       .then((data) => {
         if (cancelled) return;
-        const anonymousLabel = t.customerReviews.anonymous;
+        const anonymousLabel = t('anonymous');
         const slides = data
           .filter((review) => review.body?.trim())
           .map((review: Review) => ({
@@ -118,7 +126,7 @@ export function CustomerReviewsCarousel() {
     return () => {
       cancelled = true;
     };
-  }, [locale]);
+  }, [locale, t]);
 
   const slides = reviews;
 
@@ -220,10 +228,10 @@ export function CustomerReviewsCarousel() {
             id="customer-reviews-heading"
             className="text-2xl font-bold uppercase tracking-wide text-atg-fg sm:text-3xl"
           >
-            {t.customerReviews.title}
+            {t('title')}
           </h2>
           <p className="mt-4 text-sm sm:text-base leading-relaxed text-atg-muted">
-            {t.customerReviews.subtitle}
+            {t('subtitle')}
           </p>
         </div>
 
@@ -231,7 +239,7 @@ export function CustomerReviewsCarousel() {
           className={`relative ${isVisible ? 'animate-fade-in-up delay-150' : 'opacity-0'}`}
           role="region"
           aria-roledescription="carousel"
-          aria-label={t.customerReviews.carouselAria}
+          aria-label={t('carouselAria')}
         >
           {loading ? (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -265,7 +273,7 @@ export function CustomerReviewsCarousel() {
                     type="button"
                     onClick={prev}
                     className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-atg-border bg-atg-elevated text-atg-fg transition-colors hover:border-primary hover:text-primary"
-                    aria-label={t.customerReviews.prev}
+                    aria-label={t('prev')}
                   >
                     <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -291,7 +299,7 @@ export function CustomerReviewsCarousel() {
                     type="button"
                     onClick={next}
                     className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-atg-border bg-atg-elevated text-atg-fg transition-colors hover:border-primary hover:text-primary"
-                    aria-label={t.customerReviews.next}
+                    aria-label={t('next')}
                   >
                     <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

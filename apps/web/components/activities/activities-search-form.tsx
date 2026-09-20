@@ -5,7 +5,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { type ActivitiesSearchParams } from '../../lib/activities/listings';
 import { useActivityDestinations } from '../../lib/activities/use-activity-destinations';
 import { todayISODate } from '../../lib/hotels/dates';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations } from 'next-intl';
+import { useTranslations as useLegacyTranslations } from '../../lib/i18n/locale-provider';
 import { buildSearchRoute } from '../../lib/search/route';
 import {
   SearchFormDatalistInput,
@@ -21,9 +22,9 @@ type ActivitiesSearchFormProps = {
 
 export function ActivitiesSearchForm({ initialValues }: ActivitiesSearchFormProps) {
   const router = useRouter();
-  const t = useTranslations();
-  const a = t.activities;
-  const s = t.search;
+  const t = useTranslations('search');
+  const legacy = useLegacyTranslations();
+  const a = legacy.activities;
   const {
     destinations,
     loading: destinationsLoading,
@@ -53,7 +54,7 @@ export function ActivitiesSearchForm({ initialValues }: ActivitiesSearchFormProp
     setError(null);
 
     if (!date) {
-      setError(s.toursRequired);
+      setError(t('toursRequired'));
       return;
     }
 
@@ -73,7 +74,7 @@ export function ActivitiesSearchForm({ initialValues }: ActivitiesSearchFormProp
           <SearchFormDatalistInput
             name="destination"
             placeholder={
-              destinationsLoading ? a.destinationsLoading : s.allDestinations
+              destinationsLoading ? a.destinationsLoading : t('allDestinations')
             }
             suggestions={destinationOptions}
             value={destination}
@@ -116,7 +117,7 @@ export function ActivitiesSearchForm({ initialValues }: ActivitiesSearchFormProp
         </div>
 
         <div className="flex items-end">
-          <SearchFormSubmit label={s.search} />
+          <SearchFormSubmit label={t('search')} />
         </div>
       </div>
 

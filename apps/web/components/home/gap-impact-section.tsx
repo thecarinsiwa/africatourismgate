@@ -1,19 +1,18 @@
-import { getLocale } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { getPublicGapHomeForLocale } from '../../lib/api/public';
-import { translations } from '../../lib/i18n/translations';
 import { DEFAULT_LOCALE, isLocale } from '../../lib/i18n/types';
 
 export async function GapImpactSection() {
   const rawLocale = await getLocale();
   const locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
-  const t = translations[locale];
+  const t = await getTranslations('gapImpact');
   const gapUrl =
     process.env.NEXT_PUBLIC_GAP_URL?.trim() || 'https://gap.africatourismgate.org';
   const home = await getPublicGapHomeForLocale(locale).catch(() => ({ settings: null, impactStats: [] }));
   const stats = home.impactStats;
   const programName =
-    home.settings?.title?.trim() || t.gapImpact.programNameFallback;
-  const ctaLabel = t.gapImpact.cta.replace('{programName}', programName);
+    home.settings?.title?.trim() || t('programNameFallback');
+  const ctaLabel = t('cta', { programName });
 
   if (stats.length === 0) {
     return null;
@@ -23,8 +22,8 @@ export async function GapImpactSection() {
     <section className="border-y border-atg-border bg-atg-elevated py-14 sm:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-10 max-w-2xl">
-          <h2 className="text-3xl font-bold text-atg-fg sm:text-4xl">{t.gapImpact.title}</h2>
-          <p className="mt-3 text-atg-muted">{t.gapImpact.subtitle}</p>
+          <h2 className="text-3xl font-bold text-atg-fg sm:text-4xl">{t('title')}</h2>
+          <p className="mt-3 text-atg-muted">{t('subtitle')}</p>
           <a
             href={gapUrl}
             target="_blank"

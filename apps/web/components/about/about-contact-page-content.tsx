@@ -4,12 +4,11 @@ import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { useResolvedPublicContact } from '../../lib/contact/use-resolved-public-contact';
 import { buildSocialLinks } from '../../lib/contact/social-links';
-import { useTranslations as useLegacyTranslations } from '../../lib/i18n/locale-provider';
 import { SupportTicketForm } from '../support/support-ticket-form';
 
 export function AboutContactPageContent() {
   const t = useTranslations('about');
-  const tLegacy = useLegacyTranslations();
+  const tFooter = useTranslations('footer');
   const contact = useResolvedPublicContact();
   const socialLinks = useMemo(() => buildSocialLinks(contact), [contact]);
 
@@ -25,7 +24,7 @@ export function AboutContactPageContent() {
           {contact.phone ? (
             <div className="rounded-xl border border-atg-border bg-atg-elevated/50 p-4">
               <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-                {tLegacy.footer.contact}
+                {tFooter('contact')}
               </p>
               <a href={`tel:${contact.phone.replace(/\s/g, '')}`} className="mt-2 block text-lg font-semibold text-atg-fg hover:text-primary">
                 {contact.phone}
@@ -43,7 +42,7 @@ export function AboutContactPageContent() {
           {contact.location ? (
             <div className="rounded-xl border border-atg-border bg-atg-elevated/50 p-4 sm:col-span-2">
               <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-                {tLegacy.footer.location}
+                {tFooter('location')}
               </p>
               <p className="mt-2 text-sm text-atg-fg">{contact.location}</p>
             </div>

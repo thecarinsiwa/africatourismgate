@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import type { SearchVertical } from '../../lib/search/route';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations } from 'next-intl';
+import { useTranslations as useLegacyTranslations } from '../../lib/i18n/locale-provider';
 import { buildVerticalListRoute } from '../../lib/search/route';
 import {
   ListingPageBody,
@@ -28,8 +29,9 @@ export function VerticalSearchPage({
   destination?: string;
   items: VerticalResultItem[];
 }) {
-  const t = useTranslations();
-  const vs = t.verticalSearch;
+  const t = useTranslations('search');
+  const legacy = useLegacyTranslations();
+  const vs = legacy.verticalSearch;
   const verticalLabel = vs.verticals[vertical];
   const listRoute = buildVerticalListRoute(vertical);
 
@@ -58,7 +60,7 @@ export function VerticalSearchPage({
           title: vs.noResults,
           description: vs.noResultsHint,
           backHomeLabel: vs.backHome,
-          modifySearchLabel: t.search.search,
+          modifySearchLabel: t('search'),
           modifySearchHref: '/#search',
         }}
       >

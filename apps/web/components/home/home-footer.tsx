@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { BrandingLogo } from '../branding-mark';
 import { useTranslations } from 'next-intl';
-import { useTranslations as useLegacyTranslations } from '../../lib/i18n/locale-provider';
 import { useResolvedPublicBranding } from '../../lib/branding/use-resolved-public-branding';
 import { useResolvedPublicContact } from '../../lib/contact/use-resolved-public-contact';
 import { buildSocialLinks } from '../../lib/contact/social-links';
@@ -13,7 +12,7 @@ import { ABOUT_NAV_ITEMS, ABOUT_PATHS } from '../../lib/about/routes';
 import { LEGAL_PATHS } from '../../lib/legal/routes';
 
 export function HomeFooter() {
-  const t = useLegacyTranslations();
+  const t = useTranslations('footer');
   const tAbout = useTranslations('about');
   const [email, setEmail] = useState('');
   const gapUrl = process.env.NEXT_PUBLIC_GAP_URL?.trim() || null;
@@ -23,12 +22,12 @@ export function HomeFooter() {
 
   const productLinks = useMemo(
     () => [
-      { href: buildVerticalListRoute('hotels'), label: t.footer.specialistLinks.premium },
-      { href: buildVerticalListRoute('flights'), label: t.footer.specialistLinks.flights },
-      { href: buildVerticalListRoute('cars'), label: t.footer.specialistLinks.cars },
-      { href: buildVerticalListRoute('tours'), label: t.footer.specialistLinks.safaris },
-      { href: buildVerticalListRoute('cruises'), label: t.footer.specialistLinks.cruises },
-      { href: '/packages', label: t.footer.specialistLinks.packages },
+      { href: buildVerticalListRoute('hotels'), label: t('specialistLinks.premium') },
+      { href: buildVerticalListRoute('flights'), label: t('specialistLinks.flights') },
+      { href: buildVerticalListRoute('cars'), label: t('specialistLinks.cars') },
+      { href: buildVerticalListRoute('tours'), label: t('specialistLinks.safaris') },
+      { href: buildVerticalListRoute('cruises'), label: t('specialistLinks.cruises') },
+      { href: '/packages', label: t('specialistLinks.packages') },
     ],
     [t],
   );
@@ -56,18 +55,18 @@ export function HomeFooter() {
                 />
                 <span className="text-lg font-bold">{branding.displayName}</span>
               </Link>
-              <p className="text-sm text-white/60 leading-relaxed mb-5">{t.footer.tagline}</p>
+              <p className="text-sm text-white/60 leading-relaxed mb-5">{t('tagline')}</p>
               <Link
                 href={ABOUT_PATHS.whoWeAre}
                 className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
               >
-                {t.footer.learnMore}
+                {t('learnMore')}
               </Link>
             </div>
 
             <div>
               <h3 className="text-sm font-bold uppercase tracking-wide text-white mb-5">
-                {t.footer.products}
+                {t('products')}
               </h3>
               <ul className="space-y-2.5">
                 {productLinks.map((link) => (
@@ -88,7 +87,7 @@ export function HomeFooter() {
 
             <div>
               <h3 className="text-sm font-bold uppercase tracking-wide text-white mb-5">
-                {t.footer.aboutPages}
+                {t('aboutPages')}
               </h3>
               <ul className="space-y-2.5">
                 {aboutLinks.map((link) => (
@@ -109,9 +108,9 @@ export function HomeFooter() {
 
             <div>
               <h3 className="text-sm font-bold uppercase tracking-wide text-white mb-5">
-                {t.footer.newsletter}
+                {t('newsletter')}
               </h3>
-              <p className="text-sm text-white/60 leading-relaxed mb-4">{t.footer.newsletterDesc}</p>
+              <p className="text-sm text-white/60 leading-relaxed mb-4">{t('newsletterDesc')}</p>
               <form
                 className="flex gap-0 rounded-lg overflow-hidden"
                 onSubmit={(e) => {
@@ -121,7 +120,7 @@ export function HomeFooter() {
               >
                 <input
                   type="email"
-                  placeholder={t.footer.emailPlaceholder}
+                  placeholder={t('emailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="min-h-[42px] min-w-0 flex-1 border-0 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-primary"
@@ -130,7 +129,7 @@ export function HomeFooter() {
                   type="submit"
                   className="shrink-0 bg-primary px-4 text-xs font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
                 >
-                  {t.footer.newsletterSubmit}
+                  {t('newsletterSubmit')}
                 </button>
               </form>
             </div>
@@ -138,7 +137,7 @@ export function HomeFooter() {
             <div id="contact" className="scroll-mt-24">
               <h3 className="text-sm font-bold uppercase tracking-wide text-white mb-5">
                 <Link href={ABOUT_PATHS.contact} className="hover:text-white/90 transition-colors">
-                  {t.footer.contact}
+                  {t('contact')}
                 </Link>
               </h3>
 
@@ -204,23 +203,23 @@ export function HomeFooter() {
             © {new Date().getFullYear()} {branding.displayName}
             <span className="mx-2">|</span>
             <Link href={LEGAL_PATHS.privacyPolicy} className="hover:text-white transition-colors">
-              {t.footer.privacy}
+              {t('privacy')}
             </Link>
             <span className="mx-2">|</span>
             <Link href={LEGAL_PATHS.termsOfUse} className="hover:text-white transition-colors">
-              {t.footer.termsOfUse}
+              {t('termsOfUse')}
             </Link>
             <span className="mx-2">|</span>
             <Link href={ABOUT_PATHS.whoWeAre} className="hover:text-white transition-colors">
-              {t.footer.about}
+              {t('about')}
             </Link>
             <span className="mx-2">|</span>
             <Link href="/support" className="hover:text-white transition-colors">
-              {t.footer.faq}
+              {t('faq')}
             </Link>
             <span className="mx-2">|</span>
             <Link href={ABOUT_PATHS.contact} className="hover:text-white transition-colors">
-              {t.footer.contact}
+              {t('contact')}
             </Link>
             {gapUrl ? (
               <>
@@ -231,14 +230,14 @@ export function HomeFooter() {
                   rel="noopener noreferrer"
                   className="hover:text-white transition-colors"
                 >
-                  {t.footer.gap}
+                  {t('gap')}
                 </a>
               </>
             ) : null}
           </p>
           <p className="text-xs">
-            {t.footer.designedBy}{' '}
-            <strong className="text-white/70">{t.footer.designedByNames}</strong>
+            {t('designedBy')}{' '}
+            <strong className="text-white/70">{t('designedByNames')}</strong>
           </p>
         </div>
       </div>

@@ -5,7 +5,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { toFlightAirportOptions } from '../../lib/flights/airports';
 import type { FlightsSearchParams } from '../../lib/flights/listings';
 import { usePublicAirports } from '../../lib/flights/use-public-airports';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations } from 'next-intl';
+import { useTranslations as useLegacyTranslations } from '../../lib/i18n/locale-provider';
 import { buildSearchRoute } from '../../lib/search/route';
 import {
   SearchFormInput,
@@ -70,9 +71,9 @@ function FlightTripTypeToggle({
 
 export function FlightsSearchForm({ initialValues }: FlightsSearchFormProps) {
   const router = useRouter();
-  const t = useTranslations();
-  const f = t.flights;
-  const s = t.search;
+  const t = useTranslations('search');
+  const legacy = useLegacyTranslations();
+  const f = legacy.flights;
 
   const { airports, loading: airportsLoading, error: airportsError } = usePublicAirports();
   const airportOptions = useMemo(() => toFlightAirportOptions(airports), [airports]);
@@ -122,22 +123,22 @@ export function FlightsSearchForm({ initialValues }: FlightsSearchFormProps) {
     setError(null);
 
     if (!flightFrom || !flightTo || !departDate) {
-      setError(s.flightRequired);
+      setError(t('flightRequired'));
       return;
     }
 
     if (flightFrom === flightTo) {
-      setError(s.flightSameAirport);
+      setError(t('flightSameAirport'));
       return;
     }
 
     if (tripType === 'roundTrip' && !returnDate) {
-      setError(s.flightReturnRequired);
+      setError(t('flightReturnRequired'));
       return;
     }
 
     if (returnDate && returnDate <= departDate) {
-      setError(s.flightReturnAfterDeparture);
+      setError(t('flightReturnAfterDeparture'));
       return;
     }
 
@@ -164,19 +165,19 @@ export function FlightsSearchForm({ initialValues }: FlightsSearchFormProps) {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <FlightTripTypeToggle
           value={tripType}
-          oneWayLabel={s.oneWay}
-          roundTripLabel={s.roundTrip}
-          ariaLabel={s.tripTypeAria}
+          oneWayLabel={t('oneWay')}
+          roundTripLabel={t('roundTrip')}
+          ariaLabel={t('tripTypeAria')}
           onChange={handleTripTypeChange}
         />
       </div>
 
       <div className={`grid gap-4 sm:grid-cols-2 ${gridClass} lg:items-end`}>
         <div>
-          <SearchFormLabel>{s.from}</SearchFormLabel>
+          <SearchFormLabel>{t('from')}</SearchFormLabel>
           <SearchFormOptionDatalistInput
             name="from"
-            placeholder={airportsLoading ? f.loading : s.airportPh}
+            placeholder={airportsLoading ? f.loading : t('airportPh')}
             options={airportOptions.map((airport) => ({
               value: airport.iataCode,
               label: airport.label,
@@ -191,10 +192,10 @@ export function FlightsSearchForm({ initialValues }: FlightsSearchFormProps) {
         </div>
 
         <div>
-          <SearchFormLabel>{s.to}</SearchFormLabel>
+          <SearchFormLabel>{t('to')}</SearchFormLabel>
           <SearchFormOptionDatalistInput
             name="to"
-            placeholder={airportsLoading ? f.loading : s.airportPh}
+            placeholder={airportsLoading ? f.loading : t('airportPh')}
             options={airportOptions.map((airport) => ({
               value: airport.iataCode,
               label: airport.label,
@@ -212,7 +213,7 @@ export function FlightsSearchForm({ initialValues }: FlightsSearchFormProps) {
           <button
             type="button"
             onClick={swapAirports}
-            aria-label={s.swapAirports}
+            aria-label={t('swapAirports')}
             className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-atg-border text-atg-muted transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:hover:text-white"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -222,7 +223,7 @@ export function FlightsSearchForm({ initialValues }: FlightsSearchFormProps) {
         </div>
 
         <div>
-          <SearchFormLabel>{s.departDate}</SearchFormLabel>
+          <SearchFormLabel>{t('departDate')}</SearchFormLabel>
           <SearchFormInput
             type="date"
             name="departureDate"
@@ -236,7 +237,7 @@ export function FlightsSearchForm({ initialValues }: FlightsSearchFormProps) {
 
         {tripType === 'roundTrip' ? (
           <div>
-            <SearchFormLabel>{s.returnDate}</SearchFormLabel>
+            <SearchFormLabel>{t('returnDate')}</SearchFormLabel>
             <SearchFormInput
               type="date"
               name="returnDate"
@@ -251,7 +252,7 @@ export function FlightsSearchForm({ initialValues }: FlightsSearchFormProps) {
         ) : null}
 
         <div>
-          <SearchFormLabel>{s.passengers}</SearchFormLabel>
+          <SearchFormLabel>{t('passengers')}</SearchFormLabel>
           <SearchFormInput
             type="number"
             name="passengers"
@@ -263,7 +264,7 @@ export function FlightsSearchForm({ initialValues }: FlightsSearchFormProps) {
         </div>
 
         <div className="flex items-end">
-          <SearchFormSubmit label={s.search} />
+          <SearchFormSubmit label={t('search')} />
         </div>
       </div>
 
