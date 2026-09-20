@@ -1,7 +1,8 @@
 import { defineConfig } from '@playwright/test';
 
-const port = 3002;
-const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${port}`;
+const port = Number(process.env.PLAYWRIGHT_PORT ?? 3002);
+const baseURL =
+  process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${port}`;
 
 /**
  * Production server after `pnpm build` avoids Next.js vendor-chunks errors
@@ -20,7 +21,9 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   webServer: {
-    command: useProdServer ? 'pnpm start' : 'pnpm dev',
+    command: useProdServer
+      ? `pnpm exec next start -p ${port}`
+      : `pnpm exec next dev -p ${port}`,
     url: `${baseURL}/`,
     cwd: __dirname,
     reuseExistingServer: !useProdServer,

@@ -48,8 +48,10 @@ Running against a stale `.next` cache under `pnpm dev` can throw Next.js **vendo
 | Command | Server | When |
 | --- | --- | --- |
 | `pnpm test:e2e` | `pnpm dev` (:3002) | Local DX / iteration |
-| `pnpm test:e2e:ci` | `pnpm build` then `pnpm start` | Local CI parity / before PR |
+| `pnpm test:e2e:ci` | `pnpm build` then `next start` | Local CI parity / before PR |
 | `pnpm test:e2e:loyalty` | build + `next start` :3099 | Isolated loyalty spec |
+
+Optional: `PLAYWRIGHT_PORT=3012` (and matching `PLAYWRIGHT_BASE_URL`) if `:3002` is already taken.
 
 From the monorepo root:
 
@@ -57,7 +59,9 @@ From the monorepo root:
 pnpm --filter @africatourismgate/web test:e2e:ci
 ```
 
-[`playwright.config.ts`](./playwright.config.ts) selects `pnpm start` when `CI=true` or when the npm lifecycle is `test:e2e:ci`.
+[`playwright.config.ts`](./playwright.config.ts) selects `next start` when `CI=true` or when the npm lifecycle is `test:e2e:ci`.
+
+**Last local run (2026-09-20):** 33 passed / 14 failed — see [WEB-006](../../docs/web-github-tasks.md#web-006--stabiliser-pipeline-e2e-build--playwright-ci) failure table (not a clean green suite yet).
 
 ### GitHub Actions
 
