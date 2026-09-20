@@ -483,6 +483,9 @@ export function UsersList() {
         onClear={handleClearFilters}
         actions={
           <div className="flex flex-wrap items-center gap-2">
+            <Button href="/profil" variant="outline" size="sm">
+              {tList('myProfile')}
+            </Button>
             <Button
               type="button"
               variant="outline"

@@ -1,6 +1,7 @@
 {
   "list": {
     "newUser": "Nuevo usuario",
+    "myProfile": "Mi perfil",
     "emptyDefault": "Ningún usuario interno por el momento.",
     "emptyFiltered": "Ningún usuario interno coincide con tus criterios.",
     "emptyClients": "Ninguna cuenta de cliente por el momento.",
