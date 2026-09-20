@@ -80,9 +80,20 @@ PR checklist : [`docs/web-a11y-checklist.md`](../../docs/web-a11y-checklist.md) 
 
 Helpers focus : `trapFocus` / `getInitialFocusElement` exportés depuis `@africatourismgate/ui`.
 
+## Listing errors (WEB-011)
+
+Quand l’API est down, les listings affichent un `EmptyState` (`ListingErrorState`) avec **Réessayer** + **Retour à l’accueil** — pas de crash 500 ni grille vide trompeuse.
+
+| Surface | Comportement |
+| --- | --- |
+| `/hotels` … `/packages` | Catch client → `ListingErrorState` |
+| `/search/[type]` | SSR `{ items, failed }` → erreur vs empty distincts |
+
+E2E : [`tests/e2e/listing-api-error.spec.ts`](./tests/e2e/listing-api-error.spec.ts) (mock 503 hotels + flights).
+
 ## E2E Playwright
 
-Specs live in [`tests/e2e/`](./tests/e2e/) (18 files). Most routes mock the API with Playwright `page.route` — no local MySQL/API required for the default suite.
+Specs live in [`tests/e2e/`](./tests/e2e/) (19 files). Most routes mock the API with Playwright `page.route` — no local MySQL/API required for the default suite.
 
 ### Why `test:e2e:ci`?
 

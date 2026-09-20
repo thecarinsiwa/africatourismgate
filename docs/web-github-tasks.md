@@ -110,7 +110,7 @@ node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 | WEB-008 | E2E smoke blog, donate, about — ✅ | Basse | Testing | M |
 | WEB-009 | Tests composants checkout & auth — ✅ | Moyenne | Testing | L |
 | WEB-010 | Audit accessibilité (a11y) — ✅ | Moyenne | A11y | L |
-| WEB-011 | Gestion erreurs API sur pages listing | Moyenne | Bug | M |
+| WEB-011 | Gestion erreurs API sur pages listing — ✅ | Moyenne | Bug | M |
 | WEB-012 | Créer README local `apps/web` | Basse | Docs | S |
 | WEB-013 | Nettoyer code `@deprecated` | Basse | Cleanup | S |
 | WEB-014 | E2E flux register + verify OTP | Moyenne | Testing | M |
@@ -628,6 +628,7 @@ Accessibilité partielle : menu mobile, galeries lightbox, formulaires auth et F
 
 ### WEB-011 — Gestion erreurs API sur pages listing
 
+**Statut :** ✅ livré (2026-09-20)
 **Labels :** `web`, `bug`, `priority:medium`  
 **Branche suggérée :** `fix/web-listing-api-error-states`
 
@@ -648,10 +649,17 @@ Quand l'API est indisponible ou renvoie une erreur, certaines pages listing affi
 
 ## Critères d'acceptation
 
-- [ ] Couper l'API en dev → page listing affiche état erreur lisible (pas 500 crash)
-- [ ] i18n fr/en/es
-- [ ] Pas de régression quand API OK
+- [x] Couper l'API en dev → page listing affiche état erreur lisible (pas 500 crash)
+- [x] i18n fr/en/es
+- [x] Pas de régression quand API OK
 ```
+
+**Livré :**
+- `ListingErrorState` (EmptyState + Réessayer + retour accueil) dans [`listing-patterns.tsx`](../apps/web/components/shared/listing-patterns.tsx) ; `ListingPageBody` n’affiche plus bandeau + grille vide
+- 6 listings client : `backHomeLabel` sur l’état erreur
+- `/search/[type]` : `fetchVerticalResults` → `{ items, failed }` ; hotels via `searchAccommodations` ; UI erreur vs empty
+- i18n `verticalSearch.loadError` / `retry` (fr/en/es)
+- E2E : [`listing-api-error.spec.ts`](../apps/web/tests/e2e/listing-api-error.spec.ts) (hotels + flights, mock 503)
 
 ---
 
@@ -1239,7 +1247,7 @@ WEB-012 (README) → WEB-006 (CI E2E) → WEB-002 + WEB-003 (cleanup routes)
 | WEB-008 | | | ✅ |
 | WEB-009 | | | ✅ |
 | WEB-010 | | | ✅ |
-| WEB-011 | | | ☐ |
+| WEB-011 | | | ✅ |
 | WEB-012 | | | ☐ |
 | WEB-013 | | | ☐ |
 | WEB-014 | | | ☐ |
