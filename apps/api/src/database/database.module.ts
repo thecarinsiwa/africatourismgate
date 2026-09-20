@@ -26,6 +26,7 @@ import { GapSiteSettings } from '../entities/gap-site-settings.entity';
 import { Donations } from '../entities/donation.entity';
 import { HeroSlides } from '../entities/hero-slide.entity';
 import { EmailOperationVerifications } from '../entities/email-operation-verification.entity';
+import { Notifications } from '../entities/notification.entity';
 import { ensureMigrations } from './ensure-migrations';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
 import { ensureSchema } from './ensure-schema';
@@ -56,6 +57,7 @@ const entityList = [
   MobileMoneyCountries,
   MobileMoneyOperators,
   MobileMoneyPaymentNumbers,
+  Notifications,
 ] as (new () => unknown)[];
 
 @Module({

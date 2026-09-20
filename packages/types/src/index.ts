@@ -677,6 +677,15 @@ export type {
 } from './department.js';
 
 export type {
+  StaffNotification,
+  StaffNotificationPayload,
+  StaffNotificationPriority,
+  StaffNotificationsListQuery,
+  StaffNotificationsUnreadCount,
+  StaffNotificationType,
+} from './notification.js';
+
+export type {
   CreateRoleRequest,
   CreateUserRoleAssignmentRequest,
   Permission,
