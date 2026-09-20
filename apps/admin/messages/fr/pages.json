@@ -715,7 +715,7 @@
     "title": "Mon profil",
     "description": "Mettez à jour vos informations et votre photo de profil.",
     "metaTitle": "Mon profil",
-    "backLabel": "Retour aux utilisateurs",
+    "backLabel": "Retour au tableau de bord",
     "photo": "Photo de profil",
     "photoHint": "JPEG, PNG ou WebP — 5 Mo max.",
     "photoAdd": "Ajouter une photo",
