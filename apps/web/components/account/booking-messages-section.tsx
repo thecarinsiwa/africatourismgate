@@ -6,7 +6,8 @@ import {
   Modal,
 } from '@africatourismgate/ui';
 import { useEffect, useState } from 'react';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useMessages } from 'next-intl';
+import type { Translations } from '../../lib/i18n/translations';
 import { BookingChatPanel } from './booking-chat-panel';
 
 const FAB_STORAGE_KEY = 'atg-web-booking-chat-fab-position';
@@ -28,8 +29,9 @@ export function BookingMessagesSection({
   initialUnreadCount = 0,
   autoOpen = false,
 }: BookingMessagesSectionProps) {
-  const t = useTranslations();
-  const m = t.account.reservations.detail.messages;
+  const messages = useMessages();
+  const m = (messages as { account: Translations['account'] }).account.reservations.detail
+    .messages;
 
   const [open, setOpen] = useState(autoOpen);
   const [unreadCount, setUnreadCount] = useState(initialUnreadCount);

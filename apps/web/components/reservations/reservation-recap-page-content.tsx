@@ -32,9 +32,9 @@ import { useWebPaymentMethods } from '../../components/payment-methods-provider'
 import { isAssistedBookingDraft } from '../../lib/bookings/booking-mode';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatHotelPrice } from '../../lib/hotels/listings';
-import { useLocale } from 'next-intl';
+import { useLocale, useMessages } from 'next-intl';
+import type { Translations } from '../../lib/i18n/translations';
 import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
-import { useTranslations as useLegacyTranslations } from '../../lib/i18n/locale-provider';
 import {
   buildCheckoutRequest,
   buildDraftBrowseHref,
@@ -69,8 +69,8 @@ type Props = {
 export function ReservationRecapPageContent({ draft }: Props) {
   const router = useRouter();
   const locale = useLocale();
-  const t = useLegacyTranslations();
-  const ck = t.checkout;
+  const messages = useMessages();
+  const ck = (messages as { checkout: Translations['checkout'] }).checkout;
   const f = useNamespaceLabels('flights');
   const c = useNamespaceLabels('cars');
   const cr = useNamespaceLabels('cruises');

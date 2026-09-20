@@ -8,15 +8,16 @@ import { Spinner } from '@africatourismgate/ui';
 import { getBooking } from '../../lib/api/booking';
 import { ensureClientAccessToken } from '../../lib/auth/client-session';
 import { formatHotelPrice } from '../../lib/hotels/listings';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useMessages } from 'next-intl';
+import type { Translations } from '../../lib/i18n/translations';
 import { CheckoutPageShell } from './checkout-page-shell';
 
 export function ReservationRequestSuccessPageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const t = useTranslations();
-  const ck = t.checkout;
+  const messages = useMessages();
+  const ck = (messages as { checkout: Translations['checkout'] }).checkout;
   const s = ck.requestSuccess;
 
   const bookingId = searchParams.get('booking_id');

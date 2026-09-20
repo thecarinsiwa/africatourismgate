@@ -3,6 +3,8 @@
 import { Button, Input, Spinner } from '@africatourismgate/ui';
 import type { AuthUser, UserStatus } from '@africatourismgate/types';
 import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
+import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
 import {
@@ -13,8 +15,8 @@ import {
   getWebSession,
   saveWebSession,
 } from '../../lib/auth/client-session';
-import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import {
+  applyLocaleToDocument,
   localeFromPreferredLanguage,
   syncSessionUserPreferredLanguage,
 } from '../../lib/i18n/preferred-language';
@@ -46,8 +48,8 @@ function ProfileStatusBadge({
 }
 
 export function AccountProfileForm() {
-  const t = useTranslations();
-  const { setLocale } = useLocale();
+  const t = useTranslations('account');
+  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [user, setUser] = useState<AuthUser | null>(null);
   const [firstName, setFirstName] = useState('');
@@ -98,7 +100,8 @@ export function AccountProfileForm() {
     syncSessionUserPreferredLanguage(updated);
     const savedLocale = localeFromPreferredLanguage(updated.preferredLanguage);
     if (savedLocale) {
-      setLocale(savedLocale, { persist: false });
+      applyLocaleToDocument(savedLocale);
+      router.refresh();
     }
   }
 
@@ -111,7 +114,7 @@ export function AccountProfileForm() {
         if (!mounted) return;
         applyUser(me.user);
       } catch {
-        if (mounted) setError(t.account.profile.loadError);
+        if (mounted) setError(t('profile.loadError'));
       } finally {
         if (mounted) setLoading(false);
       }
@@ -120,7 +123,8 @@ export function AccountProfileForm() {
     return () => {
       mounted = false;
     };
-  }, [t.account.profile.loadError]);
+    // Load profile once on mount; `t` is stable for error strings.
+  }, [t]);
 
   function handleReset() {
     if (!user) return;
@@ -135,7 +139,7 @@ export function AccountProfileForm() {
   async function handlePhotoChange(file: File | undefined) {
     if (!file) return;
     if (file.size > AVATAR_MAX_BYTES) {
-      setError(t.account.profile.photoTooLarge);
+      setError(t('profile.photoTooLarge'));
       return;
     }
     setUploadingPhoto(true);
@@ -147,10 +151,10 @@ export function AccountProfileForm() {
       form.append('file', file);
       const updated = await client.uploadAuthAvatar(form);
       applyUser(updated);
-      setMessage(t.account.profile.saved);
+      setMessage(t('profile.saved'));
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch {
-      setError(t.account.profile.photoUploadError);
+      setError(t('profile.photoUploadError'));
     } finally {
       setUploadingPhoto(false);
     }
@@ -170,24 +174,24 @@ export function AccountProfileForm() {
         preferredLanguage: preferredLanguage.trim() || null,
       });
       applyUser(updated);
-      setMessage(t.account.profile.saved);
+      setMessage(t('profile.saved'));
     } catch {
-      setError(t.account.profile.saveError);
+      setError(t('profile.saveError'));
     } finally {
       setSaving(false);
     }
   }
 
   function statusLabel(status: UserStatus): string {
-    if (status === 'active') return t.account.profile.statusActive;
-    if (status === 'suspended') return t.account.profile.statusSuspended;
-    return t.account.profile.statusDeleted;
+    if (status === 'active') return t('profile.statusActive');
+    if (status === 'suspended') return t('profile.statusSuspended');
+    return t('profile.statusDeleted');
   }
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <Spinner size="md" variant="primary" label={t.account.loading} showLabel />
+        <Spinner size="md" variant="primary" label={t('loading')} showLabel />
       </div>
     );
   }
@@ -234,7 +238,7 @@ export function AccountProfileForm() {
         </div>
         <div className="text-left sm:text-right">
           <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-            {t.account.profile.memberId}
+            {t('profile.memberId')}
           </p>
           <p className="mt-1 font-mono text-xs text-atg-fg/80">{user?.id}</p>
         </div>
@@ -259,8 +263,8 @@ export function AccountProfileForm() {
       ) : null}
 
       <section className="max-w-2xl rounded-lg border border-atg-border p-4 dark:border-atg-border">
-        <h3 className="text-sm font-semibold text-atg-fg">{t.account.profile.photo}</h3>
-        <p className="mt-1 text-xs text-atg-muted">{t.account.profile.photoHint}</p>
+        <h3 className="text-sm font-semibold text-atg-fg">{t('profile.photo')}</h3>
+        <p className="mt-1 text-xs text-atg-muted">{t('profile.photoHint')}</p>
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <input
             ref={fileInputRef}
@@ -276,10 +280,10 @@ export function AccountProfileForm() {
             variant="outline"
             size="sm"
             loading={uploadingPhoto}
-            loadingText={t.account.profile.photoUploading}
+            loadingText={t('profile.photoUploading')}
             onClick={() => fileInputRef.current?.click()}
           >
-            {avatarSrc ? t.account.profile.photoChange : t.account.profile.photoAdd}
+            {avatarSrc ? t('profile.photoChange') : t('profile.photoAdd')}
           </Button>
         </div>
       </section>
@@ -287,10 +291,10 @@ export function AccountProfileForm() {
       <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
           <section className="rounded-lg border border-atg-border p-4 dark:border-atg-border">
             <h3 className="text-sm font-semibold text-atg-fg">
-              {t.account.profile.personalInfo}
+              {t('profile.personalInfo')}
             </h3>
             <p className="mt-1 text-xs text-atg-muted">
-              {t.account.profile.personalInfoHint}
+              {t('profile.personalInfoHint')}
             </p>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
@@ -298,11 +302,11 @@ export function AccountProfileForm() {
                   htmlFor="profile-email"
                   className="mb-1 block text-sm font-medium text-atg-fg/80"
                 >
-                  {t.account.profile.email}
+                  {t('profile.email')}
                 </label>
                 <Input id="profile-email" value={user?.email ?? ''} disabled readOnly />
                 <p className="mt-1 text-xs text-atg-muted">
-                  {t.account.profile.emailHint}
+                  {t('profile.emailHint')}
                 </p>
               </div>
               <div>
@@ -310,7 +314,7 @@ export function AccountProfileForm() {
                   htmlFor="profile-first-name"
                   className="mb-1 block text-sm font-medium text-atg-fg/80"
                 >
-                  {t.account.profile.firstName}
+                  {t('profile.firstName')}
                 </label>
                 <Input
                   id="profile-first-name"
@@ -325,7 +329,7 @@ export function AccountProfileForm() {
                   htmlFor="profile-last-name"
                   className="mb-1 block text-sm font-medium text-atg-fg/80"
                 >
-                  {t.account.profile.lastName}
+                  {t('profile.lastName')}
                 </label>
                 <Input
                   id="profile-last-name"
@@ -340,7 +344,7 @@ export function AccountProfileForm() {
                   htmlFor="profile-phone"
                   className="mb-1 block text-sm font-medium text-atg-fg/80"
                 >
-                  {t.account.profile.phone}
+                  {t('profile.phone')}
                 </label>
                 <Input
                   id="profile-phone"
@@ -356,17 +360,17 @@ export function AccountProfileForm() {
 
           <section className="rounded-lg border border-atg-border p-4 dark:border-atg-border">
             <h3 className="text-sm font-semibold text-atg-fg">
-              {t.account.profile.preferences}
+              {t('profile.preferences')}
             </h3>
             <p className="mt-1 text-xs text-atg-muted">
-              {t.account.profile.preferencesHint}
+              {t('profile.preferencesHint')}
             </p>
             <div className="mt-4">
               <label
                 htmlFor="profile-language"
                 className="mb-1 block text-sm font-medium text-atg-fg/80"
               >
-                {t.account.profile.language}
+                {t('profile.language')}
               </label>
               <select
                 id="profile-language"
@@ -387,19 +391,19 @@ export function AccountProfileForm() {
             <Button
               type="submit"
               loading={saving}
-              loadingText={t.account.profile.saving}
+              loadingText={t('profile.saving')}
               disabled={!isDirty}
             >
-              {t.account.profile.save}
+              {t('profile.save')}
             </Button>
             {isDirty ? (
               <Button type="button" variant="outline" onClick={handleReset} disabled={saving}>
-                {t.account.profile.reset}
+                {t('profile.reset')}
               </Button>
             ) : null}
             {isDirty ? (
               <span className="text-xs text-atg-muted">
-                {t.account.profile.unsavedChanges}
+                {t('profile.unsavedChanges')}
               </span>
             ) : null}
           </div>

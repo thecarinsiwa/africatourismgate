@@ -13,7 +13,8 @@ import {
   uploadBookingIdentityDocument,
 } from '../../lib/api/booking-identity-documents';
 import { getAccountApiClient } from '../../lib/api/account';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useMessages } from 'next-intl';
+import type { Translations } from '../../lib/i18n/translations';
 
 const DOCUMENT_TYPES: BookingIdentityDocumentType[] = [
   'passport',
@@ -67,8 +68,9 @@ export function BookingIdentityDocumentsSection({
   documents,
   onUpdated,
 }: Props) {
-  const t = useTranslations();
-  const id = t.account.reservations.detail.identityDocuments;
+  const messages = useMessages();
+  const id = (messages as { account: Translations['account'] }).account.reservations.detail
+    .identityDocuments;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [documentType, setDocumentType] =
     useState<BookingIdentityDocumentType>('passport');

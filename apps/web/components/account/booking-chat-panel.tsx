@@ -5,7 +5,8 @@ import { ConversationChat, useToast } from '@africatourismgate/ui';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
 import { formatBookingDateTime } from '../../lib/bookings/display';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useMessages } from 'next-intl';
+import type { Translations } from '../../lib/i18n/translations';
 
 const POLL_INTERVAL_MS = 20_000;
 
@@ -34,8 +35,9 @@ export function BookingChatPanel({
   active = true,
   className,
 }: BookingChatPanelProps) {
-  const t = useTranslations();
-  const m = t.account.reservations.detail.messages;
+  const intlMessages = useMessages();
+  const m = (intlMessages as { account: Translations['account'] }).account.reservations.detail
+    .messages;
   const { toast } = useToast();
 
   const [messages, setMessages] = useState<BookingMessage[]>([]);

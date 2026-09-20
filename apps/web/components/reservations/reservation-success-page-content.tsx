@@ -15,7 +15,8 @@ import { listPublicPaymentBankAccounts } from '../../lib/api/public-payment-bank
 import { listPublicMobileMoneyConfig } from '../../lib/api/public-mobile-money';
 import { ensureClientAccessToken } from '../../lib/auth/client-session';
 import { formatHotelPrice } from '../../lib/hotels/listings';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useMessages } from 'next-intl';
+import type { Translations } from '../../lib/i18n/translations';
 import { BankTransferAccountsPanel } from './bank-transfer-accounts-panel';
 import { MobileMoneyInstructionsPanel } from './mobile-money-instructions-panel';
 import { PaymentProofPanel } from './payment-proof-panel';
@@ -49,8 +50,9 @@ export function ReservationSuccessPageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const t = useTranslations();
-  const ck = t.checkout;
+  const messages = useMessages();
+  const ck = (messages as { checkout: Translations['checkout'] }).checkout;
+  const account = (messages as { account: Translations['account'] }).account;
   const s = ck.success;
 
   const bookingId = searchParams.get('booking_id');
@@ -338,7 +340,7 @@ export function ReservationSuccessPageContent() {
               paymentMethod="bank_transfer"
               proofs={booking.paymentProofs ?? []}
               currency={booking.currency}
-              labels={t.account.reservations.detail.paymentProofs}
+              labels={account.reservations.detail.paymentProofs}
               onUpdated={async () => {
                 const token = await ensureClientAccessToken();
                 if (!token) return;
@@ -372,7 +374,7 @@ export function ReservationSuccessPageContent() {
               paymentMethod="mobile_money"
               proofs={booking.paymentProofs ?? []}
               currency={booking.currency}
-              labels={t.account.reservations.detail.paymentProofs}
+              labels={account.reservations.detail.paymentProofs}
               onUpdated={async () => {
                 const token = await ensureClientAccessToken();
                 if (!token) return;

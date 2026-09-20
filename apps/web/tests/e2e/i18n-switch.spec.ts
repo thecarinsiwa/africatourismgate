@@ -234,4 +234,61 @@ test.describe('Language switch (FR/EN/ES)', () => {
       page.getByRole('heading', { name: 'Combined packages in Africa' }),
     ).toBeVisible();
   });
+
+  test('booking cancel shows English after switch', async ({ page }) => {
+    await page.goto('/booking/cancel');
+
+    await expect(page.getByRole('heading', { name: 'Paiement annulé' })).toBeVisible();
+
+    await switchLanguage(page, /English/i);
+
+    await expect(page.getByRole('heading', { name: 'Payment cancelled' })).toBeVisible();
+  });
+
+  test('account shell shows English after switch', async ({ page }) => {
+    await page.addInitScript(() => {
+      window.sessionStorage.setItem(
+        'atg.web.session',
+        JSON.stringify({
+          accessToken: 'e2e-i18n-account-token',
+          refreshToken: 'e2e-i18n-account-refresh',
+          expiresAt: Date.now() + 60 * 60 * 1000,
+          user: {
+            id: 'user-e2e-i18n',
+            email: 'i18n@example.com',
+            firstName: 'I18n',
+            lastName: 'Test',
+            organizationId: null,
+            status: 'active',
+          },
+        }),
+      );
+    });
+
+    await page.route('**/api/auth/me', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'user-e2e-i18n',
+          email: 'i18n@example.com',
+          firstName: 'I18n',
+          lastName: 'Test',
+          phone: null,
+          preferredLanguage: 'fr',
+          organizationId: null,
+          status: 'active',
+          avatarUrl: null,
+        }),
+      });
+    });
+
+    await page.goto('/account/profile');
+
+    await expect(page.getByRole('heading', { name: 'Mon compte' })).toBeVisible();
+
+    await switchLanguage(page, /English/i);
+
+    await expect(page.getByRole('heading', { name: 'My account' })).toBeVisible();
+  });
 });

@@ -9,7 +9,9 @@ import {
   formatBookingMoney,
 } from '../../lib/bookings/display';
 import { localeToBcp47 } from '../../lib/i18n/locale-tag';
-import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import type { Locale } from '../../lib/i18n/types';
+import { useLocale, useMessages, useTranslations } from 'next-intl';
+import type { Translations } from '../../lib/i18n/translations';
 import {
   useAssistedBookingsChat,
   type AssistedBookingChatItem,
@@ -31,8 +33,10 @@ function ReservationChatPicker({
   localeTag: string;
   onSelect: (bookingId: string) => void;
 }) {
-  const t = useTranslations();
-  const m = t.account.reservations.detail.messages;
+  const t = useTranslations('account');
+  const messages = useMessages();
+  const m = (messages as { account: Translations['account'] }).account.reservations.detail
+    .messages;
 
   if (loading) {
     return <p className="text-sm text-atg-muted">{m.pickerLoading}</p>;
@@ -68,7 +72,7 @@ function ReservationChatPicker({
                 <BookingStatusBadge status={item.status} size="sm" />
                 {item.actionRequired ? (
                   <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-900 dark:bg-amber-900/40 dark:text-amber-100">
-                    {t.account.reservations.actionRequired}
+                    {t('reservations.actionRequired')}
                   </span>
                 ) : null}
               </div>
@@ -90,10 +94,11 @@ function ReservationChatPicker({
 
 export function GlobalBookingChatFab() {
   const pathname = usePathname();
-  const { locale } = useLocale();
-  const localeTag = localeToBcp47(locale);
-  const t = useTranslations();
-  const m = t.account.reservations.detail.messages;
+  const locale = useLocale();
+  const localeTag = localeToBcp47(locale as Locale);
+  const messages = useMessages();
+  const m = (messages as { account: Translations['account'] }).account.reservations.detail
+    .messages;
   const { items, totalUnread, loading, refresh } = useAssistedBookingsChat();
 
   const [open, setOpen] = useState(false);

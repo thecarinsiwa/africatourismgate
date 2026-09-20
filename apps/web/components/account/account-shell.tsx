@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
-import { useTranslations } from '../../lib/i18n/locale-provider';
 import { PageHero } from '../shared/page-hero';
 import {
   AccountAddressesIcon,
@@ -51,12 +51,20 @@ type Props = {
 
 export function AccountShell({ children }: Props) {
   const pathname = usePathname();
-  const t = useTranslations();
+  const t = useTranslations('account');
+  const tNav = useTranslations('nav');
+  const navLabels: Record<NavKey, string> = {
+    profile: t('nav.profile'),
+    addresses: t('nav.addresses'),
+    reservations: t('nav.reservations'),
+    loyalty: t('nav.loyalty'),
+    paymentMethods: t('nav.paymentMethods'),
+  };
   const pageTitle = resolvePageTitle(
     pathname,
-    t.account.nav,
-    t.account.title,
-    t.account.reservations.detail.title,
+    navLabels,
+    t('title'),
+    t('reservations.detail.title'),
   );
   const onReservationsDetail = isDetailPage(pathname);
 
@@ -66,7 +74,7 @@ export function AccountShell({ children }: Props) {
       aria-label="Breadcrumb"
     >
       <Link href="/" className="transition-colors hover:text-white">
-        {t.nav.home}
+        {tNav('home')}
       </Link>
       <span aria-hidden>/</span>
       <Link
@@ -75,7 +83,7 @@ export function AccountShell({ children }: Props) {
           pathname === '/account/profile' ? 'font-medium text-white' : ''
         }`}
       >
-        {t.account.title}
+        {t('title')}
       </Link>
       {pathname !== '/account' && pathname !== '/account/profile' ? (
         <>
@@ -85,7 +93,7 @@ export function AccountShell({ children }: Props) {
               href="/account/reservations"
               className="transition-colors hover:text-white"
             >
-              {t.account.nav.reservations}
+              {t('nav.reservations')}
             </Link>
           ) : (
             <span className="font-medium text-white">{pageTitle}</span>
@@ -107,12 +115,12 @@ export function AccountShell({ children }: Props) {
         breadcrumb={breadcrumb}
         title={
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            {t.account.title}
+            {t('title')}
           </h1>
         }
         description={
           <p className="max-w-2xl text-base leading-relaxed text-white/80 sm:text-lg">
-            {t.account.subtitle}
+            {t('subtitle')}
           </p>
         }
       />
@@ -122,7 +130,7 @@ export function AccountShell({ children }: Props) {
           <aside className="w-full shrink-0 lg:sticky lg:top-6 lg:w-64">
             <nav
               className="rounded-xl border border-atg-border bg-atg-elevated shadow-sm dark:border-atg-border dark:bg-atg-elevated"
-              aria-label={t.account.navAria}
+              aria-label={t('navAria')}
             >
               <ul className="flex gap-1 overflow-x-auto p-2 lg:flex-col lg:overflow-visible">
                 {NAV.map((item) => {
@@ -143,7 +151,7 @@ export function AccountShell({ children }: Props) {
                         <Icon
                           className={active ? 'text-white' : 'text-primary/80'}
                         />
-                        <span className="whitespace-nowrap">{t.account.nav[item.key]}</span>
+                        <span className="whitespace-nowrap">{t(`nav.${item.key}`)}</span>
                       </Link>
                     </li>
                   );
@@ -155,7 +163,7 @@ export function AccountShell({ children }: Props) {
                   className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/5 lg:px-4"
                 >
                   <AccountBrowseIcon />
-                  <span>{t.account.browseSite}</span>
+                  <span>{t('browseSite')}</span>
                 </Link>
               </div>
             </nav>

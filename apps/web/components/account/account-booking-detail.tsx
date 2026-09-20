@@ -19,7 +19,9 @@ import {
   formatStayRange,
 } from '../../lib/bookings/display';
 import { localeToBcp47 } from '../../lib/i18n/locale-tag';
-import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import type { Locale } from '../../lib/i18n/types';
+import { useLocale, useMessages, useTranslations } from 'next-intl';
+import type { Translations } from '../../lib/i18n/translations';
 import { GuideReviewInvitesSection } from './guide-review-invites-section';
 import { BookingMessagesSection } from './booking-messages-section';
 import { BookingReviewCard } from './booking-review-card';
@@ -43,9 +45,12 @@ export function AccountBookingDetail({
   autoOpenChat = false,
   chatToken = null,
 }: Props) {
-  const t = useTranslations();
-  const { locale } = useLocale();
-  const localeTag = localeToBcp47(locale);
+  const t = useTranslations('account');
+  const tCheckout = useTranslations('checkout');
+  const messages = useMessages();
+  const account = (messages as { account: Translations['account'] }).account;
+  const locale = useLocale();
+  const localeTag = localeToBcp47(locale as Locale);
 
   const [detail, setDetail] = useState<BookingDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -69,14 +74,14 @@ export function AccountBookingDetail({
       if ('booking' in data && 'items' in data) {
         setDetail(data);
       } else {
-        setError(t.account.reservations.notFound);
+        setError(t('reservations.notFound'));
       }
     } catch {
-      setError(t.account.reservations.loadError);
+      setError(t('reservations.loadError'));
     } finally {
       setLoading(false);
     }
-  }, [bookingId, t.account.reservations.loadError, t.account.reservations.notFound]);
+  }, [bookingId, t]);
 
   useEffect(() => {
     void load();
@@ -146,13 +151,13 @@ export function AccountBookingDetail({
       const session = await client.createBookingCheckoutSession(bookingId);
       window.location.href = session.url;
     } catch {
-      setActionError(t.account.reservations.detail.payError);
+      setActionError(t('reservations.detail.payError'));
       setPaying(false);
     }
   }
 
   async function handleCancel() {
-    if (!window.confirm(t.account.reservations.detail.cancelConfirm)) return;
+    if (!window.confirm(t('reservations.detail.cancelConfirm'))) return;
     setActionError(null);
     setCancelling(true);
     try {
@@ -160,7 +165,7 @@ export function AccountBookingDetail({
       const updated = await client.cancelBooking(bookingId);
       setDetail(updated);
     } catch {
-      setActionError(t.account.reservations.detail.cancelError);
+      setActionError(t('reservations.detail.cancelError'));
     } finally {
       setCancelling(false);
     }
@@ -182,7 +187,7 @@ export function AccountBookingDetail({
       anchor.remove();
       window.setTimeout(() => URL.revokeObjectURL(url), 0);
     } catch {
-      setActionError(t.account.reservations.detail.downloadConfirmationError);
+      setActionError(t('reservations.detail.downloadConfirmationError'));
     } finally {
       setDownloadingPdf(false);
     }
@@ -196,7 +201,7 @@ export function AccountBookingDetail({
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <Spinner size="md" variant="primary" label={t.account.loading} showLabel />
+        <Spinner size="md" variant="primary" label={t('loading')} showLabel />
       </div>
     );
   }
@@ -205,10 +210,10 @@ export function AccountBookingDetail({
     return (
       <div className="space-y-4">
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
-          {error ?? t.account.reservations.notFound}
+          {error ?? t('reservations.notFound')}
         </p>
         <Link href="/account/reservations" className="text-sm text-primary hover:underline">
-          ← {t.account.reservations.back}
+          ← {t('reservations.back')}
         </Link>
       </div>
     );
@@ -228,7 +233,7 @@ export function AccountBookingDetail({
     paymentInvited,
     guideReviewInvites,
   } = detail;
-  const d = t.account.reservations.detail;
+  const d = account.reservations.detail;
   const dueNowCents =
     paidCents === 0 && depositRequiredCents < totalCents
       ? Math.min(depositRequiredCents, balanceCents)
@@ -264,13 +269,13 @@ export function AccountBookingDetail({
         href="/account/reservations"
         className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
       >
-        ← {t.account.reservations.back}
+        ← {t('reservations.back')}
       </Link>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-            {t.account.reservations.reference}
+            {t('reservations.reference')}
           </p>
           <p className="mt-1 font-mono text-sm text-atg-fg">{booking.id}</p>
           <p className="mt-2 text-sm text-atg-muted">
@@ -306,7 +311,7 @@ export function AccountBookingDetail({
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-lg border border-atg-border bg-atg-surface p-4 dark:border-atg-border dark:bg-white/5">
           <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-            {t.account.reservations.status}
+            {t('reservations.status')}
           </p>
           <p className="mt-1 text-sm font-semibold text-atg-fg">
             {bookingStatusLabels[booking.status]}
@@ -320,7 +325,7 @@ export function AccountBookingDetail({
         </div>
         <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
           <p className="text-xs font-medium uppercase tracking-wide text-primary/80">
-            {t.account.reservations.total}
+            {t('reservations.total')}
           </p>
           <p className="mt-1 text-xl font-bold text-primary">
             {formatBookingMoney(totalCents, currency)}
@@ -407,13 +412,13 @@ export function AccountBookingDetail({
                 accounts={bankAccounts}
                 bookingRef={booking.id}
                 labels={{
-                  title: t.checkout.bankTransferAccountsTitle,
-                  empty: t.checkout.bankTransferAccountsEmpty,
-                  holder: t.checkout.bankTransferHolder,
-                  accountNumber: t.checkout.bankTransferAccountNumber,
-                  swift: t.checkout.bankTransferSwift,
-                  currency: t.checkout.bankTransferCurrency,
-                  referenceHint: t.checkout.bankTransferReferenceHint,
+                  title: tCheckout('bankTransferAccountsTitle'),
+                  empty: tCheckout('bankTransferAccountsEmpty'),
+                  holder: tCheckout('bankTransferHolder'),
+                  accountNumber: tCheckout('bankTransferAccountNumber'),
+                  swift: tCheckout('bankTransferSwift'),
+                  currency: tCheckout('bankTransferCurrency'),
+                  referenceHint: tCheckout('bankTransferReferenceHint'),
                 }}
               />
               <PaymentProofPanel
@@ -436,15 +441,15 @@ export function AccountBookingDetail({
                 countries={mobileMoneyCountries}
                 bookingRef={booking.id}
                 labels={{
-                  title: t.checkout.mobileMoneyTitle,
-                  empty: t.checkout.mobileMoneyEmpty,
-                  country: t.checkout.mobileMoneyCountry,
-                  operator: t.checkout.mobileMoneyOperator,
-                  phone: t.checkout.mobileMoneyPhone,
-                  label: t.checkout.mobileMoneyLabel,
-                  referenceHint: t.checkout.mobileMoneyReferenceHint,
-                  selectCountry: t.checkout.mobileMoneySelectCountry,
-                  selectOperator: t.checkout.mobileMoneySelectOperator,
+                  title: tCheckout('mobileMoneyTitle'),
+                  empty: tCheckout('mobileMoneyEmpty'),
+                  country: tCheckout('mobileMoneyCountry'),
+                  operator: tCheckout('mobileMoneyOperator'),
+                  phone: tCheckout('mobileMoneyPhone'),
+                  label: tCheckout('mobileMoneyLabel'),
+                  referenceHint: tCheckout('mobileMoneyReferenceHint'),
+                  selectCountry: tCheckout('mobileMoneySelectCountry'),
+                  selectOperator: tCheckout('mobileMoneySelectOperator'),
                 }}
               />
               <PaymentProofPanel
@@ -629,7 +634,7 @@ export function AccountBookingDetail({
                 );
               })}
               <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
-                <span className="font-semibold text-atg-fg">{t.account.reservations.total}</span>
+                <span className="font-semibold text-atg-fg">{t('reservations.total')}</span>
                 <span className="text-base font-bold text-primary">
                   {formatBookingMoney(totalCents, currency)}
                 </span>
@@ -675,7 +680,7 @@ export function AccountBookingDetail({
                 <tfoot className="border-t border-atg-border bg-atg-surface dark:border-atg-border dark:bg-white/5">
                   <tr>
                     <td colSpan={3} className="px-4 py-3 text-right font-semibold text-atg-fg">
-                      {t.account.reservations.total}
+                      {t('reservations.total')}
                     </td>
                     <td className="px-4 py-3 text-right text-base font-bold text-primary">
                       {formatBookingMoney(totalCents, currency)}

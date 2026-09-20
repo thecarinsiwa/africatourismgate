@@ -2,7 +2,7 @@
 
 import type { BookingManifestSex, CreateBookingManifestEntryRequest } from '@africatourismgate/types';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
-import { useLocale } from '../../lib/i18n/locale-provider';
+import { useLocale } from 'next-intl';
 import { NationalitySelect } from './nationality-select';
 
 export type ManifestEntryDraft = {
@@ -278,7 +278,7 @@ type Props = {
 
 export function CheckoutManifestForm({ count, entries, onChange, labels, validationErrors }: Props) {
   const baseId = useId();
-  const { locale } = useLocale();
+  const locale = useLocale();
   const [cameraIndex, setCameraIndex] = useState<number | null>(null);
   const [previewFile, setPreviewFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
