@@ -13,6 +13,8 @@ export type UserMenuLink = {
 export type UserMenuProps = {
   displayName: string;
   email: string;
+  /** Resolved profile photo URL (optional). */
+  avatarSrc?: string | null;
   onLogout: () => void | Promise<void>;
   logoutLabel?: string;
   loggingOutLabel?: string;
@@ -23,6 +25,7 @@ export type UserMenuProps = {
 export function UserMenu({
   displayName,
   email,
+  avatarSrc,
   onLogout,
   logoutLabel = 'Sign out',
   loggingOutLabel = 'Signing out…',
@@ -88,6 +91,7 @@ export function UserMenu({
           email={email}
           firstName={nameParts[0]}
           lastName={nameParts.length > 1 ? nameParts[nameParts.length - 1] : undefined}
+          src={avatarSrc}
           size="sm"
         />
         <span className="hidden max-w-[10rem] truncate text-left sm:inline">

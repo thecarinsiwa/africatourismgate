@@ -21,6 +21,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import { UserRoleAssignmentsPanel } from '../rbac/user-role-assignments-panel';
 import { UserAddressesList } from './user-addresses-list';
 import { UserForm } from './user-form';
@@ -151,6 +152,7 @@ export function UserEditPage({ userId }: UserEditPageProps) {
           email={user.email}
           firstName={user.firstName}
           lastName={user.lastName}
+          src={user.avatarUrl ? resolveMediaUrl(user.avatarUrl) : null}
           size="lg"
         />
         <div className="min-w-0 flex-1">

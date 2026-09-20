@@ -710,5 +710,19 @@
     "title": "Notification Center",
     "description": "View, filter, and process all alerts, booking requests, messages, and tickets.",
     "metaTitle": "Notification Center"
+  },
+  "profil": {
+    "title": "My profile",
+    "description": "Update your details and profile photo.",
+    "metaTitle": "My profile",
+    "photo": "Profile photo",
+    "photoHint": "JPEG, PNG or WebP — 5 MB max.",
+    "photoAdd": "Add a photo",
+    "photoChange": "Change photo",
+    "photoUploading": "Uploading…",
+    "photoUploadError": "Could not upload the photo.",
+    "saved": "Profile updated.",
+    "loadError": "Could not load the profile.",
+    "saveError": "Could not save the profile."
   }
 }

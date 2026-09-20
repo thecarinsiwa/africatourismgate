@@ -104,6 +104,7 @@
   },
   "userMenu": {
     "dashboard": "Dashboard",
+    "profile": "My profile",
     "notifications": "Notifications",
     "settings": "Settings",
     "defaultUser": "User"

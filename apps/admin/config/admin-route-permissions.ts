@@ -44,6 +44,7 @@ export const ADMIN_ROUTE_ACCESS_RULES: RouteAccessRule[] = [
   { prefix: '/parametres/emails', permission: 'organization_settings.read' },
   { prefix: '/parametres', permission: 'organization_settings.read' },
   { prefix: '/notifications', authenticatedOnly: true },
+  { prefix: '/profil', authenticatedOnly: true },
   { prefix: '/organisations', authenticatedOnly: true },
   { prefix: '/systeme/roles', authenticatedOnly: true },
   { prefix: '/dashboard', authenticatedOnly: true },

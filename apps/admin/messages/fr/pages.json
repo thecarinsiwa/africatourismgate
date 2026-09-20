@@ -710,5 +710,19 @@
     "title": "Centre de notifications",
     "description": "Consultez, filtrez et traitez toutes les alertes, demandes de réservation, messages et tickets.",
     "metaTitle": "Centre de notifications"
+  },
+  "profil": {
+    "title": "Mon profil",
+    "description": "Mettez à jour vos informations et votre photo de profil.",
+    "metaTitle": "Mon profil",
+    "photo": "Photo de profil",
+    "photoHint": "JPEG, PNG ou WebP — 5 Mo max.",
+    "photoAdd": "Ajouter une photo",
+    "photoChange": "Changer la photo",
+    "photoUploading": "Envoi…",
+    "photoUploadError": "Impossible d'envoyer la photo.",
+    "saved": "Profil mis à jour.",
+    "loadError": "Impossible de charger le profil.",
+    "saveError": "Impossible d'enregistrer le profil."
   }
 }

@@ -104,6 +104,7 @@
   },
   "userMenu": {
     "dashboard": "Tableau de bord",
+    "profile": "Mon profil",
     "notifications": "Notifications",
     "settings": "Paramètres",
     "defaultUser": "Utilisateur"
