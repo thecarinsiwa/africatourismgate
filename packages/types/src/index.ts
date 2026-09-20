@@ -346,6 +346,17 @@ export type {
 } from './about-page.js';
 
 export type {
+  LegalPage,
+  LegalPageSectionKey,
+  LegalPageStatus,
+  LegalPagesListQuery,
+  CreateLegalPageRequest,
+  PublicLegalPage,
+  PublicLegalPagesListQuery,
+  UpdateLegalPageRequest,
+} from './legal-page.js';
+
+export type {
   AboutResource,
   AboutResourceStatus,
   AboutResourceType,

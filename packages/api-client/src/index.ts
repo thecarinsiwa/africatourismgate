@@ -212,6 +212,13 @@ import type {
   AboutPagesListQuery,
   CreateAboutPageRequest,
   UpdateAboutPageRequest,
+  LegalPage,
+  LegalPagesListQuery,
+  CreateLegalPageRequest,
+  UpdateLegalPageRequest,
+  PublicLegalPage,
+  PublicLegalPagesListQuery,
+  LegalPageSectionKey,
   TeamMember,
   TeamMembersListQuery,
   CreateTeamMemberRequest,
@@ -1768,6 +1775,58 @@ export class ApiClient {
 
   deleteAboutPage(id: string): Promise<void> {
     return this.request<void>(`/about-pages/${id}`, { method: 'DELETE' });
+  }
+
+  listLegalPages(
+    query?: LegalPagesListQuery,
+  ): Promise<PaginatedResponse<LegalPage>> {
+    return fetchPaginated<LegalPage>(this, '/legal-pages', query);
+  }
+
+  getLegalPage(id: string): Promise<LegalPage> {
+    return this.request<LegalPage>(`/legal-pages/${id}`);
+  }
+
+  createLegalPage(body: CreateLegalPageRequest): Promise<LegalPage> {
+    return this.request<LegalPage>('/legal-pages', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateLegalPage(id: string, body: UpdateLegalPageRequest): Promise<LegalPage> {
+    return this.request<LegalPage>(`/legal-pages/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteLegalPage(id: string): Promise<void> {
+    return this.request<void>(`/legal-pages/${id}`, { method: 'DELETE' });
+  }
+
+  listPublicLegalPages(
+    query?: PublicLegalPagesListQuery,
+  ): Promise<PublicLegalPage[]> {
+    const params = new URLSearchParams();
+    if (query?.sectionKey) params.set('sectionKey', query.sectionKey);
+    if (query?.locale) params.set('locale', query.locale);
+    const qs = params.toString();
+    return this.request<PublicLegalPage[]>(
+      `/public/legal-pages${qs ? `?${qs}` : ''}`,
+      { skipAuth: true },
+    );
+  }
+
+  getPublicLegalPageBySectionKey(
+    sectionKey: LegalPageSectionKey,
+    locale?: string,
+  ): Promise<PublicLegalPage> {
+    const qs = locale ? `?locale=${encodeURIComponent(locale)}` : '';
+    return this.request<PublicLegalPage>(
+      `/public/legal-pages/${encodeURIComponent(sectionKey)}${qs}`,
+      { skipAuth: true },
+    );
   }
 
   listTeamMembers(
