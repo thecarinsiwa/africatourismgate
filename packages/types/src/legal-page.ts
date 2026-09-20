@@ -1,6 +1,6 @@
 import type { AuditFields } from './index.js';
 
-export type LegalPageSectionKey = 'terms-of-use';
+export type LegalPageSectionKey = 'terms-of-use' | 'privacy-policy';
 
 export type LegalPageStatus = 'draft' | 'published';
 

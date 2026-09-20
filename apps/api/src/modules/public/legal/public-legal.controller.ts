@@ -5,7 +5,7 @@ import { Public } from '../../auth/decorators/public.decorator';
 import { PublicLegalPagesListQueryDto } from './dto/public-legal-pages-list-query.dto';
 import { PublicLegalService } from './public-legal.service';
 
-const SECTION_KEYS = new Set<LegalPageSectionKey>(['terms-of-use']);
+const SECTION_KEYS = new Set<LegalPageSectionKey>(['terms-of-use', 'privacy-policy']);
 
 function parseSectionKey(value: string): LegalPageSectionKey {
   if (!SECTION_KEYS.has(value as LegalPageSectionKey)) {

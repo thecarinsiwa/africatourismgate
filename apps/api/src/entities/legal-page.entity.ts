@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { BaseAuditEntity } from '../common/entities/base-audit.entity';
 
-export type LegalPageSectionKey = 'terms-of-use';
+export type LegalPageSectionKey = 'terms-of-use' | 'privacy-policy';
 
 export type LegalPageStatus = 'draft' | 'published';
 
@@ -13,7 +13,7 @@ export class LegalPages extends BaseAuditEntity {
   @Column({
     name: 'section_key',
     type: 'enum',
-    enum: ['terms-of-use'],
+    enum: ['terms-of-use', 'privacy-policy'],
   })
   sectionKey!: LegalPageSectionKey;
 
