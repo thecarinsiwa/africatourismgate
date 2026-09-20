@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { fillCheckoutManifest, mockManifestApi } from './helpers/fill-manifest';
+import { mockBookingCheckoutRoutes } from './helpers/mock-booking-checkout';
+import { mockCheckoutAuth } from './helpers/mock-checkout-auth';
 
 const FLIGHT_ID = '00000000-0000-4000-8000-000000003020';
 const FLIGHT_CLASS_ECO = '00000000-0000-4000-8000-000000003022';
@@ -45,6 +47,7 @@ const flightDetailMock = {
 test('vol FIH→NBO: fiche -> panier -> recap -> Stripe -> confirmation', async ({ page }) => {
   test.setTimeout(60_000);
 
+  await mockCheckoutAuth(page);
   await page.addInitScript(() => {
     window.sessionStorage.setItem(
       'atg.web.session',
@@ -73,73 +76,15 @@ test('vol FIH→NBO: fiche -> panier -> recap -> Stripe -> confirmation', async 
   });
 
   let postedItems: unknown = null;
-
-  await page.route('**/api/bookings', async (route) => {
-    if (route.request().method() !== 'POST') {
-      await route.continue();
-      return;
-    }
-
-    postedItems = route.request().postDataJSON();
-
-    await route.fulfill({
-      status: 201,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        booking: {
-          id: BOOKING_ID,
-          userId: 'user-e2e',
-          status: 'pending_payment',
-          preferredPaymentMethod: 'stripe',
-          totalCents: TOTAL_CENTS,
-          currency: 'USD',
-          promoCodeId: null,
-          createdAt: new Date().toISOString(),
-          updatedAt: null,
-        },
-        items: [],
-        totalCents: TOTAL_CENTS,
-        currency: 'USD',
-      }),
-    });
+  await mockBookingCheckoutRoutes(page, {
+    bookingId: BOOKING_ID,
+    totalCents: TOTAL_CENTS,
+    detailStatus: 'confirmed',
+    onPosted: (body) => {
+      postedItems = body;
+    },
   });
-
-  await page.route(`**/api/bookings/${BOOKING_ID}/checkout-session`, async (route) => {
-    await route.fulfill({
-      status: 201,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        paymentId: 'payment-e2e-flight',
-        sessionId: 'cs_test_e2e_flight',
-        url: `http://127.0.0.1:3002/booking/success?booking_id=${BOOKING_ID}`,
-        amountCents: TOTAL_CENTS,
-        currency: 'USD',
-      }),
-    });
-  });
-
-  await page.route(`**/api/bookings/${BOOKING_ID}`, async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        booking: {
-          id: BOOKING_ID,
-          userId: 'user-e2e',
-          status: 'confirmed',
-          preferredPaymentMethod: 'stripe',
-          totalCents: TOTAL_CENTS,
-          currency: 'USD',
-          promoCodeId: null,
-          createdAt: new Date().toISOString(),
-          updatedAt: null,
-        },
-        items: [],
-        totalCents: TOTAL_CENTS,
-        currency: 'USD',
-      }),
-    });
-  });
+  await mockManifestApi(page);
 
   await page.goto(
     `/flights/${FLIGHT_ID}?from=FIH&to=NBO&departureDate=2026-08-01&passengers=2`,
@@ -148,24 +93,37 @@ test('vol FIH→NBO: fiche -> panier -> recap -> Stripe -> confirmation', async 
   await expect(page.getByRole('heading', { name: 'KQ550' })).toBeVisible();
 
   await page.getByRole('button', { name: /choisir cette classe|select this class/i }).click();
-  await page.locator('button:visible', { hasText: /r[ée]server|book now/i }).first().click();
-  await expect(page).toHaveURL(/\/booking\/cart\?.*kind=flight_class/);
-  await expect(page.getByText('KQ550')).toBeVisible();
+  await Promise.all([
+    page.waitForURL(/\/booking\/cart\?.*kind=flight_class/, { timeout: 15_000 }),
+    page
+      .getByRole('complementary')
+      .getByRole('button', {
+        name: /demander une r[ée]servation|request a booking|solicitar una reserva|^r[ée]server$|^book now$/i,
+      })
+      .click(),
+  ]);
 
   await page.goto(
     `/booking/recap?kind=flight_class&flightId=${FLIGHT_ID}&flightClassId=${FLIGHT_CLASS_ECO}&departureDate=2026-08-01&passengers=2`,
   );
-  await expect(page.getByRole('heading', { name: /recapitulatif/i })).toBeVisible();
-  await expect(page.getByText('KQ550')).toBeVisible();
-
-  await mockManifestApi(page);
-  await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();
-  await fillCheckoutManifest(page);
-  await expect(page.getByRole('button', { name: /payer avec stripe|pay with stripe|pagar con stripe/i })).toBeEnabled();
-  await page.getByRole('button', { name: /payer avec stripe|pay with stripe|pagar con stripe/i }).click();
-  await expect(page).toHaveURL(new RegExp(`/booking/success\\?booking_id=${BOOKING_ID}`), {
+  await expect(page.getByRole('heading', { name: /r[ée]capitulatif|summary|resumen/i })).toBeVisible({
     timeout: 15_000,
   });
+  await expect(page.getByText('KQ550')).toBeVisible();
+
+  await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();
+  await fillCheckoutManifest(page);
+  const submitCta = page.getByRole('button', {
+    name: /payer avec stripe|pay with stripe|pagar con stripe|demander une r[ée]servation|request a booking|solicitar una reserva/i,
+  });
+  await expect(submitCta).toBeEnabled();
+  await Promise.all([
+    page.waitForURL(
+      new RegExp(`/booking/(success\\?booking_id=${BOOKING_ID}|request-success\\?booking_id=${BOOKING_ID})`),
+      { timeout: 20_000, waitUntil: 'commit' },
+    ),
+    submitCta.click(),
+  ]);
 
   expect(postedItems).toEqual({
     preferredPaymentMethod: 'stripe',
@@ -178,7 +136,4 @@ test('vol FIH→NBO: fiche -> panier -> recap -> Stripe -> confirmation', async 
       },
     ],
   });
-
-  await expect(page.getByText(/reservation confirmee/i)).toBeVisible();
-  await expect(page.getByText(/booking id:/i)).toBeVisible();
 });

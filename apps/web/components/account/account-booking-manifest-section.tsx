@@ -185,7 +185,7 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
     try {
       const client = await getAccountApiClient();
       const rows = await client.listBookingManifestEntries(bookingId);
-      setEntries(rows);
+      setEntries(Array.isArray(rows) ? rows : []);
     } catch {
       setLoadError(m.loadError);
       setEntries([]);

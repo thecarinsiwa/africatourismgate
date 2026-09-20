@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 
 test('email login stores session in sessionStorage and redirects to next', async ({ page }) => {
+  test.setTimeout(60_000);
+
   await page.route('**/api/auth/login', async (route) => {
     if (route.request().method() !== 'POST') {
       await route.continue();
@@ -26,12 +28,45 @@ test('email login stores session in sessionStorage and redirects to next', async
     });
   });
 
+  await page.route('**/api/auth/me', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        user: {
+          id: 'user-email-login',
+          email: 'client@example.com',
+          firstName: 'Client',
+          lastName: 'Email',
+          preferredLanguage: 'fr',
+          organizationId: null,
+          status: 'active',
+        },
+        permissions: [],
+        isSuperAdmin: false,
+      }),
+    });
+  });
+
+  await page.route('**/api/auth/refresh', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        accessToken: 'e2e-email-token',
+        refreshToken: 'e2e-email-refresh',
+        expiresIn: 3600,
+      }),
+    });
+  });
+
   await page.goto('/booking/login?next=%2Faccount%2Fprofile');
   await page.getByLabel(/Adresse e-mail|Email address|Correo electrónico/i).fill('client@example.com');
-  await page.getByLabel(/^Mot de passe$|^Password$|^Contraseña$/i).fill('secret-password');
-  await page.getByRole('button', { name: /Se connecter|Sign in|Iniciar sesión/i }).click();
-
-  await expect(page).toHaveURL(/\/account\/profile$/);
+  await page.getByRole('textbox', { name: /^Mot de passe$|^Password$|^Contraseña$/i }).fill('secret-password');
+  await Promise.all([
+    page.waitForURL(/\/account\/profile$/, { timeout: 15_000 }),
+    page.getByRole('button', { name: /Se connecter|Sign in|Iniciar sesión/i }).click(),
+  ]);
 
   const stored = await page.evaluate(() => ({
     session: window.sessionStorage.getItem('atg.web.session'),

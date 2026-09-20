@@ -129,7 +129,20 @@ test('booking detail shows post-stay review form when canReview', async ({ page 
 
   await page.route(`**/api/bookings/${BOOKING_ID}**`, async (route) => {
     const url = route.request().url();
-    if (route.request().method() === 'GET' && !url.includes('/reviews')) {
+    const pathname = new URL(url).pathname;
+    const isManifest = pathname.includes('/manifest');
+    if (isManifest) {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: '[]',
+      });
+      return;
+    }
+    const isDetail =
+      pathname.endsWith(`/bookings/${BOOKING_ID}`) ||
+      pathname.endsWith(`/bookings/${BOOKING_ID}/`);
+    if (route.request().method() === 'GET' && isDetail) {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -211,7 +224,9 @@ test('bookings list shows leave review CTA when canReview', async ({ page }) => 
 
   await page.goto('/account/reservations');
   await expect(page.getByRole('link', { name: /Laisser un avis|Leave a review/i })).toBeVisible();
-  await expect(page.getByText(/séjour.*avis|stay.*review/i)).toBeVisible();
+  await expect(
+    page.getByText(/séjour\(s\) terminé|completed stay|estadía\(s\) finalizada|attente d.avis|pending review|pendiente de reseña/i),
+  ).toBeVisible();
 });
 
 test('booking detail submits review via POST /bookings/:id/reviews', async ({ page }) => {
@@ -221,7 +236,36 @@ test('booking detail submits review via POST /bookings/:id/reviews', async ({ pa
 
   await page.route(`**/api/bookings/${BOOKING_ID}**`, async (route) => {
     const url = route.request().url();
-    if (route.request().method() === 'GET' && !url.includes('/reviews')) {
+    const pathname = new URL(url).pathname;
+    if (pathname.includes('/manifest')) {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: '[]',
+      });
+      return;
+    }
+    if (route.request().method() === 'POST' && pathname.includes('/reviews')) {
+      postReviewCalled = true;
+      const body = route.request().postDataJSON() as { rating: number; title?: string };
+      await route.fulfill({
+        status: 201,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'review-new',
+          rating: body.rating,
+          title: body.title ?? null,
+          body: 'E2E comment',
+          authorFirstName: 'Review',
+          createdAt: '2026-06-02T14:00:00.000Z',
+        }),
+      });
+      return;
+    }
+    const isDetail =
+      pathname.endsWith(`/bookings/${BOOKING_ID}`) ||
+      pathname.endsWith(`/bookings/${BOOKING_ID}/`);
+    if (route.request().method() === 'GET' && isDetail) {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -255,23 +299,6 @@ test('booking detail submits review via POST /bookings/:id/reviews', async ({ pa
           currency: 'USD',
           review: null,
           canReview: true,
-        }),
-      });
-      return;
-    }
-    if (route.request().method() === 'POST' && url.includes('/reviews')) {
-      postReviewCalled = true;
-      const body = route.request().postDataJSON() as { rating: number; title?: string };
-      await route.fulfill({
-        status: 201,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          id: 'review-new',
-          rating: body.rating,
-          title: body.title ?? null,
-          body: 'E2E comment',
-          authorFirstName: 'Review',
-          createdAt: '2026-06-02T14:00:00.000Z',
         }),
       });
       return;

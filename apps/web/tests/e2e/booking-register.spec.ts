@@ -27,11 +27,11 @@ test('customer registration stores session and redirects to next', async ({ page
   });
 
   await page.goto('/booking/register?next=%2Faccount%2Fprofile');
-  await page.getByLabel(/^Prénom$|^First name$|^Nombre$/i).fill('New');
-  await page.getByLabel(/^Nom$|^Last name$|^Apellido$/i).fill('Client');
+  await page.getByRole('textbox', { name: /^Prénom$|^First name$|^Nombre$/i }).fill('New');
+  await page.getByRole('textbox', { name: /^Nom$|^Last name$|^Apellido$/i }).fill('Client');
   await page.getByLabel(/Adresse e-mail|Email address|Correo electrónico/i).fill('new.client@example.com');
-  await page.getByLabel(/^Mot de passe$|^Password$|^Contraseña$/i).first().fill('secret-password');
-  await page.getByLabel(/Confirmer le mot de passe|Confirm password|Confirmar contraseña/i).fill(
+  await page.getByRole('textbox', { name: /^Mot de passe$|^Password$|^Contraseña$/i }).fill('secret-password');
+  await page.getByRole('textbox', { name: /Confirmer le mot de passe|Confirm password|Confirmar contraseña/i }).fill(
     'secret-password',
   );
   await page.getByRole('checkbox').check();
@@ -74,11 +74,11 @@ test('shows friendly message when email is already registered', async ({ page })
   });
 
   await page.goto('/booking/register?next=%2Faccount%2Fprofile');
-  await page.getByLabel(/^Prénom$|^First name$|^Nombre$/i).fill('Existing');
-  await page.getByLabel(/^Nom$|^Last name$|^Apellido$/i).fill('User');
+  await page.getByRole('textbox', { name: /^Prénom$|^First name$|^Nombre$/i }).fill('Existing');
+  await page.getByRole('textbox', { name: /^Nom$|^Last name$|^Apellido$/i }).fill('User');
   await page.getByLabel(/Adresse e-mail|Email address|Correo electrónico/i).fill('taken@example.com');
-  await page.getByLabel(/^Mot de passe$|^Password$|^Contraseña$/i).first().fill('secret-password');
-  await page.getByLabel(/Confirmer le mot de passe|Confirm password|Confirmar contraseña/i).fill(
+  await page.getByRole('textbox', { name: /^Mot de passe$|^Password$|^Contraseña$/i }).fill('secret-password');
+  await page.getByRole('textbox', { name: /Confirmer le mot de passe|Confirm password|Confirmar contraseña/i }).fill(
     'secret-password',
   );
   await page.getByRole('checkbox').check();

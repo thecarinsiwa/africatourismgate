@@ -86,10 +86,11 @@ export function BookingIdentityDocumentsSection({
     try {
       const client = await getAccountApiClient();
       const rows = await client.listBookingManifestEntries(bookingId);
-      setEntries(rows);
+      const list = Array.isArray(rows) ? rows : [];
+      setEntries(list);
       setManifestEntryId((prev) => {
-        if (prev && rows.some((e) => e.id === prev)) return prev;
-        return rows[0]?.id ?? '';
+        if (prev && list.some((e) => e.id === prev)) return prev;
+        return list[0]?.id ?? '';
       });
     } catch {
       setEntries([]);

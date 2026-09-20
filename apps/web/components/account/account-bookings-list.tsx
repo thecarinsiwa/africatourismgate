@@ -150,10 +150,7 @@ export function AccountBookingsList() {
           role="status"
         >
           <p className="text-sm text-atg-fg">
-            {t('reservations.reviewPrompt').replace(
-              '{count}',
-              String(pendingReviewCount),
-            )}
+            {t('reservations.reviewPrompt', { count: pendingReviewCount })}
           </p>
         </div>
       ) : null}
