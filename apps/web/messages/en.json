@@ -555,7 +555,10 @@
   },
   "meta": {
     "homeTitle": "Book your trip to Africa",
-    "homeDescription": "Compare hotels, flights and experiences across Africa. Search accommodations and plan your next stay with Africa Tourism Gate."
+    "homeDescription": "Compare hotels, flights and experiences across Africa. Search accommodations and plan your next stay with Africa Tourism Gate.",
+    "defaultTitle": "Book your trip to Africa",
+    "defaultDescription": "Hotels, flights, activities and packages across Africa. Compare and book with {siteName}.",
+    "keywords": "Africa,tourism,hotels,travel,booking,safari,accommodation"
   },
   "listing": {
     "clearFilters": "Clear filters",

@@ -555,7 +555,10 @@
   },
   "meta": {
     "homeTitle": "Réservez votre voyage en Afrique",
-    "homeDescription": "Comparez hôtels, vols et expériences en Afrique. Recherchez des hébergements et planifiez votre prochain séjour avec Africa Tourism Gate."
+    "homeDescription": "Comparez hôtels, vols et expériences en Afrique. Recherchez des hébergements et planifiez votre prochain séjour avec Africa Tourism Gate.",
+    "defaultTitle": "Réservez votre voyage en Afrique",
+    "defaultDescription": "Hôtels, vols, activités et forfaits en Afrique. Comparez et réservez avec {siteName}.",
+    "keywords": "Afrique,tourisme,hôtels,voyage,réservation,safari,hébergement"
   },
   "listing": {
     "clearFilters": "Effacer les filtres",

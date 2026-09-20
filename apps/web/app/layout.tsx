@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Montserrat } from 'next/font/google';
 import NextTopLoader from 'nextjs-toploader';
 import { NextIntlClientProvider } from 'next-intl';
-import { getLocale, getMessages } from 'next-intl/server';
+import { getLocale, getMessages, getTranslations } from 'next-intl/server';
 import './globals.css';
 import { AppShell } from '@africatourismgate/ui';
 import type { CSSProperties } from 'react';
@@ -26,6 +26,11 @@ import { ContactProvider } from '../components/contact-provider';
 import { DonationProvider } from '../components/donation-provider';
 import { Providers } from '../components/providers';
 import { getPublicDonationsForLocale } from '../lib/api/public-donations';
+import {
+  buildLanguageAlternates,
+  openGraphLocale,
+  parseMetaKeywords,
+} from '../lib/seo/metadata';
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -153,39 +158,39 @@ async function getPublicContact(): Promise<PublicContact> {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const branding = await getPublicBranding();
+  const [branding, t, locale] = await Promise.all([
+    getPublicBranding(),
+    getTranslations('meta'),
+    getLocale(),
+  ]);
   const siteName = branding.displayName;
   const icon = branding.faviconUrl || undefined;
+  const defaultTitle = `${siteName} — ${t('defaultTitle')}`;
+  const description = t('defaultDescription', { siteName });
+  const keywords = parseMetaKeywords(t('keywords'));
+
   return {
     metadataBase: new URL(siteUrl),
     title: {
-      default: `${siteName} — Réservez votre voyage en Afrique`,
+      default: defaultTitle,
       template: `%s | ${siteName}`,
     },
-    description: `Hôtels, vols, activités et forfaits en Afrique. Comparez et réservez avec ${siteName}.`,
-    keywords: [
-      'Afrique',
-      'tourisme',
-      'hôtels',
-      'voyage',
-      'réservation',
-      'safari',
-      'hébergement',
-    ],
+    description,
+    keywords,
     authors: [{ name: siteName }],
     openGraph: {
       type: 'website',
-      locale: 'fr_FR',
+      locale: openGraphLocale(locale),
       url: siteUrl,
       siteName,
-      title: `${siteName} — Réservez votre voyage en Afrique`,
-      description: `Hôtels, vols, activités et forfaits en Afrique. Comparez et réservez avec ${siteName}.`,
+      title: defaultTitle,
+      description,
       ...(icon ? { images: [icon] } : {}),
     },
     twitter: {
       card: 'summary_large_image',
       title: siteName,
-      description: `Hôtels, vols, activités et forfaits en Afrique. Comparez et réservez avec ${siteName}.`,
+      description,
       ...(icon ? { images: [icon] } : {}),
     },
     ...(icon ? { icons: { icon, shortcut: icon, apple: icon } } : {}),
@@ -195,11 +200,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     alternates: {
       canonical: '/',
-      languages: {
-        fr: '/?lang=fr',
-        en: '/?lang=en',
-        es: '/?lang=es',
-      },
+      languages: buildLanguageAlternates('/'),
     },
   };
 }

@@ -555,7 +555,10 @@
   },
   "meta": {
     "homeTitle": "Reserve su viaje a África",
-    "homeDescription": "Compare hoteles, vuelos y experiencias en África. Busque alojamientos y planifique su próxima estancia con Africa Tourism Gate."
+    "homeDescription": "Compare hoteles, vuelos y experiencias en África. Busque alojamientos y planifique su próxima estancia con Africa Tourism Gate.",
+    "defaultTitle": "Reserve su viaje a África",
+    "defaultDescription": "Hoteles, vuelos, actividades y paquetes en África. Compare y reserve con {siteName}.",
+    "keywords": "África,turismo,hoteles,viaje,reserva,safari,alojamiento"
   },
   "listing": {
     "clearFilters": "Borrar filtros",
