@@ -20,9 +20,13 @@ export function ParallaxPromo() {
 
   useEffect(() => {
     let cancelled = false;
-    void getFeaturedPackage().then((pkg) => {
-      if (!cancelled) setFeatured(pkg);
-    });
+    void getFeaturedPackage()
+      .then((pkg) => {
+        if (!cancelled) setFeatured(pkg);
+      })
+      .catch(() => {
+        /* keep translation / static fallback */
+      });
     return () => {
       cancelled = true;
     };

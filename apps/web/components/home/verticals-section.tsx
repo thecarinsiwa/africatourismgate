@@ -104,11 +104,15 @@ export function WhyUsSection() {
 
   useEffect(() => {
     let cancelled = false;
-    void getPublicWhyUsForLocale(locale).then(({ content: fetched, usedLocaleFallback }) => {
-      if (!cancelled) {
-        setContent(usedLocaleFallback ? null : fetched);
-      }
-    });
+    void getPublicWhyUsForLocale(locale)
+      .then(({ content: fetched, usedLocaleFallback }) => {
+        if (!cancelled) {
+          setContent(usedLocaleFallback ? null : fetched);
+        }
+      })
+      .catch(() => {
+        /* keep translation fallbacks */
+      });
     return () => {
       cancelled = true;
     };

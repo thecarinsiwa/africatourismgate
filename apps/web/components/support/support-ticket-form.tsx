@@ -27,11 +27,17 @@ export function SupportTicketForm() {
 
   useEffect(() => {
     let mounted = true;
-    void ensureClientAccessToken().then((token) => {
-      if (!mounted) return;
-      setHasSession(Boolean(token));
-      setSessionChecked(true);
-    });
+    void ensureClientAccessToken()
+      .then((token) => {
+        if (!mounted) return;
+        setHasSession(Boolean(token));
+        setSessionChecked(true);
+      })
+      .catch(() => {
+        if (!mounted) return;
+        setHasSession(false);
+        setSessionChecked(true);
+      });
     return () => {
       mounted = false;
     };
