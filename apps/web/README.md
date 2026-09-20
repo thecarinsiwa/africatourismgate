@@ -37,6 +37,34 @@ Helpers in [`lib/seo/metadata.ts`](./lib/seo/metadata.ts):
 
 Root defaults live under `messages.*.meta` (`defaultTitle`, `defaultDescription`, `keywords`) and are wired in [`app/layout.tsx`](./app/layout.tsx).
 
+## Component tests (Vitest + RTL)
+
+Checkout / auth UI is covered with Vitest + React Testing Library (jsdom). Unit logic stays on `pnpm test` (`tsx --test` for `lib/**/*.test.ts`).
+
+| Command | What |
+| --- | --- |
+| `pnpm test:components` | Vitest run (CI / one-shot) |
+| `pnpm test:components:watch` | Vitest watch |
+
+From the monorepo root:
+
+```bash
+pnpm --filter @africatourismgate/web test:components
+```
+
+Suites (WEB-009):
+
+| File | Focus |
+| --- | --- |
+| [`components/reservations/checkout-stepper.test.tsx`](./components/reservations/checkout-stepper.test.tsx) | Stepper steps / current / cancelled |
+| [`components/reservations/stripe-payment-error.test.tsx`](./components/reservations/stripe-payment-error.test.tsx) | Stripe error message rendering |
+| [`components/reservations/booking-auth-guard.test.tsx`](./components/reservations/booking-auth-guard.test.tsx) | Auth guard redirect when unauthenticated |
+| [`lib/bookings/booking-mode.component.test.ts`](./lib/bookings/booking-mode.component.test.ts) | CTA label immediate vs assisted |
+
+Config: [`vitest.config.ts`](./vitest.config.ts), setup [`vitest.setup.ts`](./vitest.setup.ts), helpers [`test/rtl-helpers.tsx`](./test/rtl-helpers.tsx). Component suites use `*.component.test.ts` under `lib/bookings/` so they do not collide with `tsx --test`.
+
+**Last local run (2026-09-20):** **14 passed / 0 failed**.
+
 ## E2E Playwright
 
 Specs live in [`tests/e2e/`](./tests/e2e/) (18 files). Most routes mock the API with Playwright `page.route` — no local MySQL/API required for the default suite.

@@ -108,7 +108,7 @@ node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 | WEB-006 | Stabiliser pipeline E2E (build + Playwright CI) — ✅ | Haute | Testing | M |
 | WEB-007 | E2E checkout location voiture — ✅ | Moyenne | Testing | S |
 | WEB-008 | E2E smoke blog, donate, about — ✅ | Basse | Testing | M |
-| WEB-009 | Tests composants checkout & auth | Moyenne | Testing | L |
+| WEB-009 | Tests composants checkout & auth — ✅ | Moyenne | Testing | L |
 | WEB-010 | Audit accessibilité (a11y) | Moyenne | A11y | L |
 | WEB-011 | Gestion erreurs API sur pages listing | Moyenne | Bug | M |
 | WEB-012 | Créer README local `apps/web` | Basse | Docs | S |
@@ -541,6 +541,7 @@ Ajouter une spec smoke `marketing-pages.spec.ts` :
 
 ### WEB-009 — Tests composants checkout & auth
 
+**Statut :** ✅ livré (2026-09-20)
 **Labels :** `web`, `testing`, `priority:medium`  
 **Branche suggérée :** `feature/web-component-tests`
 
@@ -561,15 +562,23 @@ Introduire un runner de tests composants (React Testing Library + Vitest ou équ
 
 ## Critères d'acceptation
 
-- [ ] Script `pnpm --filter @africatourismgate/web test:components` (ou extension de `test`)
-- [ ] ≥ 4 tests composants significatifs
-- [ ] Documenté dans README web
+- [x] Script `pnpm --filter @africatourismgate/web test:components` (ou extension de `test`)
+- [x] ≥ 4 tests composants significatifs
+- [x] Documenté dans README web
 
 ## Hors scope
 
 - Tests snapshot massifs
 - E2E (déjà couverts ailleurs)
 ```
+
+**Livré :** Vitest + RTL (`vitest.config.ts`, `vitest.setup.ts` avec cleanup). Suites :
+- `components/reservations/checkout-stepper.test.tsx`
+- `components/reservations/stripe-payment-error.test.tsx`
+- `components/reservations/booking-auth-guard.test.tsx`
+- `lib/bookings/booking-mode.component.test.ts` (`getBookingCtaLabel`)
+
+`pnpm test` (tsx) reste sur `lib/**/*.test.ts` ; `test:components` / `test:components:watch` pour Vitest. **14 passed** en local.
 
 ---
 
@@ -1220,7 +1229,7 @@ WEB-012 (README) → WEB-006 (CI E2E) → WEB-002 + WEB-003 (cleanup routes)
 | WEB-006 | | | ✅ |
 | WEB-007 | | | ✅ |
 | WEB-008 | | | ✅ |
-| WEB-009 | | | ☐ |
+| WEB-009 | | | ✅ |
 | WEB-010 | | | ☐ |
 | WEB-011 | | | ☐ |
 | WEB-012 | | | ☐ |
