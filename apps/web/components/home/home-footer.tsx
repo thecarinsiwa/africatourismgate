@@ -235,7 +235,8 @@ export function HomeFooter() {
             ) : null}
           </p>
           <p className="text-xs">
-            {t.footer.designedBy} <strong className="text-white/70">{branding.displayName}</strong>
+            {t.footer.designedBy}{' '}
+            <strong className="text-white/70">{t.footer.designedByNames}</strong>
           </p>
         </div>
       </div>

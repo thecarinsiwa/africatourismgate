@@ -211,6 +211,7 @@ export const en: Translations = {
     about: 'About',
     faq: 'FAQ',
     designedBy: 'Designed by',
+    designedByNames: 'Carin Siwa and Ruth Bahizi',
   },
   hotels: {
     metaTitle: 'Stays in Africa',

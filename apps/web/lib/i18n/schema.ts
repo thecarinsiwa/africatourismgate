@@ -125,6 +125,7 @@ export type Translations = {
     about: string;
     faq: string;
     designedBy: string;
+    designedByNames: string;
   };
   hotels: {
     metaTitle: string;
