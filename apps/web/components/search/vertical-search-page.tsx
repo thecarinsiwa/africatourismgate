@@ -1,14 +1,13 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import type { SearchVertical } from '../../lib/search/route';
-import { useTranslations } from 'next-intl';
 import { buildVerticalListRoute } from '../../lib/search/route';
-import {
-  ListingPageBody,
-} from '../shared/listing-patterns';
+import { ListingPageBody } from '../shared/listing-patterns';
 import { ProductCard } from '../shared/product-card';
 import { PriceDisplay } from '../shared/price-display';
 
@@ -23,11 +22,14 @@ export function VerticalSearchPage({
   vertical,
   destination,
   items,
+  failed = false,
 }: {
   vertical: SearchVertical;
   destination?: string;
   items: VerticalResultItem[];
+  failed?: boolean;
 }) {
+  const router = useRouter();
   const t = useTranslations('search');
   const vs = useTranslations('verticalSearch');
   const verticalLabel = vs(`verticals.${vertical}`);
@@ -53,7 +55,17 @@ export function VerticalSearchPage({
       </section>
 
       <ListingPageBody
-        isEmpty={items.length === 0}
+        error={
+          failed
+            ? {
+                message: vs('loadError'),
+                retryLabel: vs('retry'),
+                onRetry: () => router.refresh(),
+                backHomeLabel: vs('backHome'),
+              }
+            : null
+        }
+        isEmpty={!failed && items.length === 0}
         empty={{
           title: vs('noResults'),
           description: vs('noResultsHint'),

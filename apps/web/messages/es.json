@@ -638,6 +638,8 @@
     "forDestination": "Resultados para {destination}.",
     "noResults": "No hay resultados para esta búsqueda.",
     "noResultsHint": "Ajuste sus criterios o vuelva al inicio.",
+    "loadError": "No se pueden cargar los resultados. Compruebe que la API esté en marcha.",
+    "retry": "Reintentar",
     "continue": "Continuar",
     "metaTitle": "Búsqueda {label}",
     "metaDescription": "Explore las opciones de {label} en Africa Tourism Gate.",

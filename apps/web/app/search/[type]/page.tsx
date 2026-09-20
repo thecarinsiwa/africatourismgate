@@ -39,6 +39,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function VerticalSearchRoute({ params, searchParams }: PageProps) {
   const vertical = params.type;
   const destination = pick(searchParams.destination);
-  const items = await fetchVerticalResults(vertical, destination);
-  return <VerticalSearchPage vertical={vertical} destination={destination} items={items} />;
+  const { items, failed } = await fetchVerticalResults(vertical, destination);
+  return (
+    <VerticalSearchPage
+      vertical={vertical}
+      destination={destination}
+      items={items}
+      failed={failed}
+    />
+  );
 }
