@@ -51,6 +51,9 @@ export function AccountProfileForm() {
   const t = useTranslations('account');
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  /** Prevents a late/duplicate GET /auth/me from clobbering in-progress edits (Strict Mode / slow CI). */
+  const hasHydratedRef = useRef(false);
+
   const [user, setUser] = useState<AuthUser | null>(null);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -112,6 +115,8 @@ export function AccountProfileForm() {
         const client = await getAccountApiClient();
         const me = await client.getAuthMe();
         if (!mounted) return;
+        if (hasHydratedRef.current) return;
+        hasHydratedRef.current = true;
         applyUser(me.user);
       } catch {
         if (mounted) setError(t('profile.loadError'));

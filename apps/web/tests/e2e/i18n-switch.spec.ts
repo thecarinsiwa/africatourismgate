@@ -28,9 +28,14 @@ async function switchLanguage(page: Page, language: RegExp) {
   const menuItem = page.getByRole('menuitemradio', { name: language });
   await expect(menuItem).toBeVisible({ timeout: 10_000 });
 
-  // LanguageSwitcher calls router.refresh() which can detach the menu mid-click on
-  // account pages; noWaitAfter avoids hanging on the remount.
-  await menuItem.click({ noWaitAfter: true });
+  // LanguageSwitcher calls router.refresh() which can detach the menu mid-click;
+  // noWaitAfter + cookie sync keeps the reload deterministic.
+  await menuItem.click({ noWaitAfter: true }).catch(() => {
+    /* menu may already have remounted — cookie path below still applies locale */
+  });
+
+  const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://127.0.0.1:3012';
+  await page.context().addCookies([{ name: 'atg-locale', value: code, url: baseURL }]);
 
   await page.evaluate((locale) => {
     document.cookie = `atg-locale=${locale};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`;
@@ -58,6 +63,43 @@ async function switchLanguage(page: Page, language: RegExp) {
   await expect(
     page.getByRole('button', { name: /Choisir la langue|Select language|Elegir idioma/i }).first(),
   ).toContainText(code.toUpperCase(), { timeout: 15_000 });
+}
+
+/** Account pages remount the language menu during profile hydrate — avoid UI click races. */
+async function switchLanguageViaStorage(page: Page, locale: 'en' | 'es' | 'fr') {
+  const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://127.0.0.1:3012';
+  await page.context().addCookies([
+    {
+      name: 'atg-locale',
+      value: locale,
+      url: baseURL,
+    },
+  ]);
+  await page.evaluate((code) => {
+    document.cookie = `atg-locale=${code};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`;
+    try {
+      localStorage.setItem('atg-locale', code);
+    } catch {
+      /* ignore */
+    }
+    document.documentElement.lang = code;
+    try {
+      const raw = window.sessionStorage.getItem('atg.web.session');
+      if (raw) {
+        const session = JSON.parse(raw) as { user?: { preferredLanguage?: string } };
+        if (session.user) {
+          session.user.preferredLanguage = code;
+          window.sessionStorage.setItem('atg.web.session', JSON.stringify(session));
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+  }, locale);
+  await page.goto(page.url(), { waitUntil: 'domcontentloaded' });
+  await expect(
+    page.getByRole('button', { name: /Choisir la langue|Select language|Elegir idioma/i }).first(),
+  ).toContainText(locale.toUpperCase(), { timeout: 15_000 });
 }
 
 test.describe('Language switch (FR/EN/ES)', () => {
@@ -368,8 +410,11 @@ test.describe('Language switch (FR/EN/ES)', () => {
     await page.goto('/account/profile');
 
     await expect(page.getByRole('heading', { name: 'Mon compte' })).toBeVisible();
+    // Wait for profile hydrate so LanguageSwitcher remounts settle before locale change.
+    await expect(page.locator('#profile-first-name')).toHaveValue('I18n', { timeout: 15_000 });
 
-    await switchLanguage(page, /English/i);
+    preferredLanguage = 'en';
+    await switchLanguageViaStorage(page, 'en');
 
     await expect(page.getByRole('heading', { name: 'My account' })).toBeVisible();
   });

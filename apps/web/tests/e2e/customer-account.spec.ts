@@ -141,18 +141,19 @@ test('profile form submits PATCH /auth/me', async ({ page }) => {
   await page.goto('/account/profile');
   await profileLoaded;
 
-  const firstName = page.getByRole('textbox', { name: /^Prénom$|^First name$|^Nombre$/i });
+  const firstName = page.locator('#profile-first-name');
   await expect(firstName).toHaveValue('Client', { timeout: 15_000 });
 
   const saveBtn = page.getByRole('button', { name: /Enregistrer|Save|Guardar/i });
   await expect(saveBtn).toBeDisabled();
 
-  // pressSequentially updates React controlled state reliably (fill can leave DOM
-  // dirty while isDirty stays false under slow CI).
-  await firstName.click();
-  await firstName.clear();
-  await firstName.pressSequentially('Updated', { delay: 20 });
-  await expect(firstName).toHaveValue('Updated');
+  // Settle: ignore a second Strict-Mode / remount GET before editing.
+  await expect
+    .poll(async () => firstName.inputValue(), { timeout: 3_000, intervals: [200] })
+    .toBe('Client');
+
+  await firstName.fill('Updated');
+  await expect(firstName).toHaveValue('Updated', { timeout: 15_000 });
   await firstName.blur();
 
   await expect(saveBtn).toBeEnabled({ timeout: 15_000 });
