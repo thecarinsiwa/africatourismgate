@@ -1297,8 +1297,13 @@ export const es: Translations = {
         identityDocuments: {
           title: 'Documento de identidad',
           subtitle:
-            'Suba un documento de identidad legible (pasaporte, DNI…) para validar su reserva.',
+            'Suba un documento de identidad legible (pasaporte, DNI…) para cada viajero.',
           empty: 'Ningún documento subido por el momento.',
+          loading: 'Cargando…',
+          traveler: 'Viajero',
+          travelerRequired: 'Seleccione un viajero.',
+          travelerEmpty: 'Ningún documento para este viajero.',
+          unlinkedTitle: 'Documentos sin vincular',
           documentType: 'Tipo de documento',
           file: 'Archivo',
           fileHint: 'JPEG, PNG, WebP o PDF — 10 MB máx.',
@@ -1335,6 +1340,7 @@ export const es: Translations = {
           docsTitle: 'Documentos adjuntos',
           docsEmpty: 'No hay documentos adjuntos para esta reserva.',
           docsLoadError: 'No se pudieron cargar los documentos.',
+          docsUnlinkedTitle: 'Documentos sin vincular',
           addTitle: 'Añadir un viajero',
           editTitle: 'Editar viajero',
           formHint:

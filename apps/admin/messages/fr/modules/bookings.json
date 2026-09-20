@@ -231,6 +231,8 @@
     "title": "Pièces d'identité",
     "subtitle": "Documents déposés par le client — validez ou demandez une version plus claire.",
     "empty": "Aucun document déposé.",
+    "travelerEmpty": "Aucun document pour ce voyageur.",
+    "unlinkedTitle": "Documents non rattachés",
     "statusLabel": "Statut",
     "view": "Voir",
     "viewing": "Ouverture…",

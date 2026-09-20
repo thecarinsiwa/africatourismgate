@@ -4,13 +4,15 @@ import { Button } from '@africatourismgate/ui';
 import type {
   BookingIdentityDocument,
   BookingIdentityDocumentType,
+  BookingManifestEntry,
   BookingStatus,
 } from '@africatourismgate/types';
-import { useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   fetchBookingIdentityDocumentBlob,
   uploadBookingIdentityDocument,
 } from '../../lib/api/booking-identity-documents';
+import { getAccountApiClient } from '../../lib/api/account';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 
 const DOCUMENT_TYPES: BookingIdentityDocumentType[] = [
@@ -70,24 +72,77 @@ export function BookingIdentityDocumentsSection({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [documentType, setDocumentType] =
     useState<BookingIdentityDocumentType>('passport');
+  const [manifestEntryId, setManifestEntryId] = useState('');
+  const [entries, setEntries] = useState<BookingManifestEntry[]>([]);
+  const [entriesLoading, setEntriesLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [viewingId, setViewingId] = useState<string | null>(null);
 
-  const latest = useMemo(() => latestDocumentsByType(documents), [documents]);
+  const loadEntries = useCallback(async () => {
+    setEntriesLoading(true);
+    try {
+      const client = await getAccountApiClient();
+      const rows = await client.listBookingManifestEntries(bookingId);
+      setEntries(rows);
+      setManifestEntryId((prev) => {
+        if (prev && rows.some((e) => e.id === prev)) return prev;
+        return rows[0]?.id ?? '';
+      });
+    } catch {
+      setEntries([]);
+    } finally {
+      setEntriesLoading(false);
+    }
+  }, [bookingId]);
+
+  useEffect(() => {
+    void loadEntries();
+  }, [loadEntries]);
+
+  const docsByEntry = useMemo(() => {
+    const map = new Map<string, BookingIdentityDocument[]>();
+    for (const entry of entries) {
+      map.set(
+        entry.id,
+        latestDocumentsByType(
+          documents.filter((d) => d.manifestEntryId === entry.id),
+        ),
+      );
+    }
+    return map;
+  }, [documents, entries]);
+
+  const unlinked = useMemo(
+    () =>
+      latestDocumentsByType(documents.filter((d) => !d.manifestEntryId)),
+    [documents],
+  );
+
+  const selectedLatest = useMemo(() => {
+    if (!manifestEntryId) return [];
+    return docsByEntry.get(manifestEntryId) ?? [];
+  }, [docsByEntry, manifestEntryId]);
+
   const showUpload = canUploadForStatus(bookingStatus);
+  const hasAnyDocs =
+    documents.length > 0 || entries.length > 0 || unlinked.length > 0;
+
+  if (!showUpload && !hasAnyDocs && !entriesLoading) {
+    return null;
+  }
+
+  const typeLabel = (type: BookingIdentityDocumentType) => id.types[type];
+  const statusLabel = (status: BookingIdentityDocument['status']) =>
+    id.statuses[status];
 
   async function handleUpload(file: File) {
     if (file.size > MAX_BYTES) {
       setError(id.fileTooLarge);
       return;
     }
-    const manifestEntryId =
-      latest.find((d) => d.documentType === documentType)?.manifestEntryId ??
-      documents.find((d) => d.manifestEntryId)?.manifestEntryId ??
-      null;
     if (!manifestEntryId) {
-      setError(id.uploadError);
+      setError(id.travelerRequired);
       return;
     }
     setUploading(true);
@@ -100,6 +155,7 @@ export function BookingIdentityDocumentsSection({
         manifestEntryId,
       );
       await onUpdated();
+      await loadEntries();
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : id.uploadError);
@@ -122,59 +178,87 @@ export function BookingIdentityDocumentsSection({
     }
   }
 
-  if (!showUpload && latest.length === 0) {
-    return null;
+  function renderDocList(docs: BookingIdentityDocument[]) {
+    if (docs.length === 0) {
+      return <p className="mt-2 text-sm text-atg-muted">{id.travelerEmpty}</p>;
+    }
+    return (
+      <ul className="mt-2 space-y-2">
+        {docs.map((doc) => (
+          <li
+            key={doc.id}
+            className="rounded-lg border border-atg-border bg-white/50 p-3 dark:bg-black/10"
+          >
+            <div className="flex flex-wrap items-start justify-between gap-2">
+              <div>
+                <p className="font-medium text-atg-fg">
+                  {typeLabel(doc.documentType)}
+                </p>
+                <p className="text-xs text-atg-muted">
+                  {doc.originalFilename} · v{doc.version}
+                </p>
+                <p className="mt-1 text-sm">
+                  <span className="font-medium">{id.statusLabel} : </span>
+                  {statusLabel(doc.status)}
+                </p>
+                {doc.staffNote ? (
+                  <p className="mt-2 rounded-md bg-amber-50 px-2 py-1 text-sm text-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
+                    {doc.staffNote}
+                  </p>
+                ) : null}
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={viewingId === doc.id}
+                onClick={() => void handleView(doc)}
+              >
+                {viewingId === doc.id ? id.viewing : id.view}
+              </Button>
+            </div>
+          </li>
+        ))}
+      </ul>
+    );
   }
-
-  const typeLabel = (type: BookingIdentityDocumentType) => id.types[type];
-  const statusLabel = (status: BookingIdentityDocument['status']) => id.statuses[status];
 
   return (
     <section className="rounded-lg border border-atg-border bg-atg-surface p-4 dark:border-atg-border dark:bg-white/5">
       <h3 className="text-base font-semibold text-atg-fg">{id.title}</h3>
       <p className="mt-1 text-sm text-atg-muted">{id.subtitle}</p>
 
-      {latest.length > 0 ? (
-        <ul className="mt-4 space-y-3">
-          {latest.map((doc) => (
-            <li
-              key={doc.id}
-              className="rounded-lg border border-atg-border bg-white/50 p-3 dark:bg-black/10"
-            >
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div>
-                  <p className="font-medium text-atg-fg">{typeLabel(doc.documentType)}</p>
-                  <p className="text-xs text-atg-muted">
-                    {doc.originalFilename} · v{doc.version}
-                  </p>
-                  <p className="mt-1 text-sm">
-                    <span className="font-medium">{id.statusLabel} : </span>
-                    {statusLabel(doc.status)}
-                  </p>
-                  {doc.staffNote ? (
-                    <p className="mt-2 rounded-md bg-amber-50 px-2 py-1 text-sm text-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
-                      {doc.staffNote}
-                    </p>
-                  ) : null}
-                </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  disabled={viewingId === doc.id}
-                  onClick={() => void handleView(doc)}
-                >
-                  {viewingId === doc.id ? id.viewing : id.view}
-                </Button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
+      {entriesLoading ? (
+        <p className="mt-4 text-sm text-atg-muted">{id.loading}</p>
+      ) : entries.length === 0 && unlinked.length === 0 ? (
         <p className="mt-4 text-sm text-atg-muted">{id.empty}</p>
+      ) : (
+        <div className="mt-4 space-y-4">
+          {entries.map((entry, index) => (
+            <div key={entry.id}>
+              <p className="text-sm font-medium text-atg-fg">
+                <span className="mr-2 text-xs text-atg-muted tabular-nums">
+                  {index + 1}.
+                </span>
+                {entry.fullName}
+              </p>
+              {renderDocList(docsByEntry.get(entry.id) ?? [])}
+            </div>
+          ))}
+          {unlinked.length > 0 ? (
+            <div>
+              <p className="text-sm font-medium text-atg-fg">{id.unlinkedTitle}</p>
+              {renderDocList(unlinked)}
+            </div>
+          ) : null}
+        </div>
       )}
 
-      {showUpload && canUploadNewVersion(latest.find((d) => d.documentType === documentType)) ? (
+      {showUpload &&
+      entries.length > 0 &&
+      canUploadNewVersion(
+        selectedLatest.find((d) => d.documentType === documentType),
+      ) ? (
         <form
           className="mt-4 space-y-3 border-t border-atg-border pt-4"
           onSubmit={(e) => {
@@ -183,6 +267,21 @@ export function BookingIdentityDocumentsSection({
             if (file) void handleUpload(file);
           }}
         >
+          <label className="block text-sm">
+            <span className="font-medium text-atg-fg">{id.traveler}</span>
+            <select
+              className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm dark:border-atg-border"
+              value={manifestEntryId}
+              onChange={(e) => setManifestEntryId(e.target.value)}
+              required
+            >
+              {entries.map((entry, index) => (
+                <option key={entry.id} value={entry.id}>
+                  {index + 1}. {entry.fullName}
+                </option>
+              ))}
+            </select>
+          </label>
           <label className="block text-sm">
             <span className="font-medium text-atg-fg">{id.documentType}</span>
             <select

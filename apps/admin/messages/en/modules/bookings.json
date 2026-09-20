@@ -231,6 +231,8 @@
     "title": "Identity documents",
     "subtitle": "Documents uploaded by the customer — approve or request a clearer version.",
     "empty": "No documents uploaded.",
+    "travelerEmpty": "No document for this traveler.",
+    "unlinkedTitle": "Unlinked documents",
     "statusLabel": "Status",
     "view": "View",
     "viewing": "Opening…",

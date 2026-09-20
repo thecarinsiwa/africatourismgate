@@ -27,6 +27,7 @@ import { BookingReviewForm } from './booking-review-form';
 import { BookingStatusBadge } from './booking-status-badge';
 import { BookingStatusTimeline, isAssistedBookingDetail } from './booking-status-timeline';
 import { AccountBookingManifestSection } from './account-booking-manifest-section';
+import { BookingIdentityDocumentsSection } from './booking-identity-documents-section';
 import { BankTransferAccountsPanel } from '../reservations/bank-transfer-accounts-panel';
 import { MobileMoneyInstructionsPanel } from '../reservations/mobile-money-instructions-panel';
 import { PaymentProofPanel } from '../reservations/payment-proof-panel';
@@ -378,6 +379,13 @@ export function AccountBookingDetail({
       <AccountBookingManifestSection
         bookingId={bookingId}
         bookingStatus={booking.status}
+      />
+
+      <BookingIdentityDocumentsSection
+        bookingId={bookingId}
+        bookingStatus={booking.status}
+        documents={detail.identityDocuments ?? []}
+        onUpdated={load}
       />
 
       {(showPayActions ||

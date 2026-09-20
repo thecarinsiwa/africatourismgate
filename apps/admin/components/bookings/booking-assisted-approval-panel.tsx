@@ -13,7 +13,7 @@ import type {
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { documentForTravelerIndex } from '../../lib/booking-traveler-documents';
+import { latestDocumentForManifestEntry } from '../../lib/booking-traveler-documents';
 import { formatMoney } from '../../lib/format-money';
 import { BookingTravelerDocumentModal } from './booking-traveler-document-modal';
 
@@ -653,8 +653,10 @@ export function BookingAssistedApprovalPanel({
                           disabled={loading}
                           onClick={() => setDocumentModalTravelerIndex(index)}
                         >
-                          {documentForTravelerIndex(identityDocuments, index)?.status ===
-                          'pending_review'
+                          {latestDocumentForManifestEntry(
+                            identityDocuments,
+                            traveler.id,
+                          )?.status === 'pending_review'
                             ? t('viewDocumentPending')
                             : t('viewDocument')}
                         </Button>
@@ -915,7 +917,10 @@ export function BookingAssistedApprovalPanel({
           bookingId={bookingId}
           travelerName={travelers[documentModalTravelerIndex]?.fullName ?? ''}
           travelerIndex={documentModalTravelerIndex}
-          document={documentForTravelerIndex(identityDocuments, documentModalTravelerIndex)}
+          document={latestDocumentForManifestEntry(
+            identityDocuments,
+            travelers[documentModalTravelerIndex]?.id,
+          )}
           canReview={canApprove}
           open
           onOpenChange={(open) => {

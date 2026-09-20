@@ -231,6 +231,8 @@
     "title": "Documentos de identidad",
     "subtitle": "Documentos subidos por el cliente — valide o solicite una versión más clara.",
     "empty": "Ningún documento subido.",
+    "travelerEmpty": "Ningún documento para este viajero.",
+    "unlinkedTitle": "Documentos sin vincular",
     "statusLabel": "Estado",
     "view": "Ver",
     "viewing": "Abriendo…",

@@ -1141,6 +1141,11 @@ export type Translations = {
           title: string;
           subtitle: string;
           empty: string;
+          loading: string;
+          traveler: string;
+          travelerRequired: string;
+          travelerEmpty: string;
+          unlinkedTitle: string;
           documentType: string;
           file: string;
           fileHint: string;
@@ -1177,6 +1182,7 @@ export type Translations = {
           docsTitle: string;
           docsEmpty: string;
           docsLoadError: string;
+          docsUnlinkedTitle: string;
           addTitle: string;
           editTitle: string;
           formHint: string;
@@ -2742,17 +2748,22 @@ const fr: Translations = {
         identityDocuments: {
           title: "Pièce d'identité",
           subtitle:
-            "Déposez une pièce d'identité lisible (passeport, carte d'identité…) pour valider votre réservation.",
+            "Déposez une pièce d'identité lisible (passeport, carte d'identité…) pour chaque voyageur.",
           empty: 'Aucun document déposé pour le moment.',
+          loading: 'Chargement…',
+          traveler: 'Voyageur',
+          travelerRequired: 'Sélectionnez un voyageur.',
+          travelerEmpty: 'Aucun document pour ce voyageur.',
+          unlinkedTitle: 'Documents non rattachés',
           documentType: 'Type de document',
           file: 'Fichier',
-          fileHint: 'JPEG, PNG, WebP ou PDF ? 10 Mo max.',
+          fileHint: 'JPEG, PNG, WebP ou PDF — 10 Mo max.',
           upload: 'Envoyer le document',
-          uploading: 'Envoi?',
+          uploading: 'Envoi…',
           uploadError: "Impossible d'envoyer le document.",
           fileTooLarge: 'Fichier trop volumineux (10 Mo max).',
           view: 'Voir',
-          viewing: 'Ouverture?',
+          viewing: 'Ouverture…',
           viewError: "Impossible d'ouvrir le document.",
           statusLabel: 'Statut',
           types: {
@@ -2780,6 +2791,7 @@ const fr: Translations = {
           docsTitle: 'Documents déposés',
           docsEmpty: 'Aucun document déposé pour cette réservation.',
           docsLoadError: 'Impossible de charger les documents.',
+          docsUnlinkedTitle: 'Documents non rattachés',
           addTitle: 'Ajouter un voyageur',
           editTitle: 'Modifier le voyageur',
           formHint:
@@ -4404,17 +4416,22 @@ const en: Translations = {
         identityDocuments: {
           title: 'Identity document',
           subtitle:
-            'Upload a readable identity document (passport, national ID?) to validate your booking.',
+            'Upload a readable identity document (passport, national ID…) for each traveler.',
           empty: 'No document uploaded yet.',
+          loading: 'Loading…',
+          traveler: 'Traveler',
+          travelerRequired: 'Select a traveler.',
+          travelerEmpty: 'No document for this traveler.',
+          unlinkedTitle: 'Unlinked documents',
           documentType: 'Document type',
           file: 'File',
-          fileHint: 'JPEG, PNG, WebP or PDF ? 10 MB max.',
+          fileHint: 'JPEG, PNG, WebP or PDF — 10 MB max.',
           upload: 'Upload document',
-          uploading: 'Uploading?',
+          uploading: 'Uploading…',
           uploadError: 'Could not upload the document.',
           fileTooLarge: 'File too large (10 MB max).',
           view: 'View',
-          viewing: 'Opening?',
+          viewing: 'Opening…',
           viewError: 'Could not open the document.',
           statusLabel: 'Status',
           types: {
@@ -4434,7 +4451,7 @@ const en: Translations = {
           title: 'Traveler list',
           subtitle: 'Fill in the details for each traveler included in this booking.',
           empty: 'No travelers added yet.',
-          loading: 'Loading?',
+          loading: 'Loading…',
           loadError: 'Could not load the traveler list.',
           addTraveler: 'Add traveler',
           viewDocuments: 'Attachments',
@@ -4442,6 +4459,7 @@ const en: Translations = {
           docsTitle: 'Uploaded documents',
           docsEmpty: 'No documents uploaded for this booking.',
           docsLoadError: 'Could not load documents.',
+          docsUnlinkedTitle: 'Unlinked documents',
           addTitle: 'Add a traveler',
           editTitle: 'Edit traveler',
           formHint:
