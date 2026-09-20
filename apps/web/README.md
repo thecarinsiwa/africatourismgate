@@ -39,7 +39,7 @@ Root defaults live under `messages.*.meta` (`defaultTitle`, `defaultDescription`
 
 ## E2E Playwright
 
-Specs live in [`tests/e2e/`](./tests/e2e/) (16 files). Most routes mock the API with Playwright `page.route` — no local MySQL/API required for the default suite.
+Specs live in [`tests/e2e/`](./tests/e2e/) (17 files). Most routes mock the API with Playwright `page.route` — no local MySQL/API required for the default suite.
 
 ### Why `test:e2e:ci`?
 
@@ -63,7 +63,7 @@ pnpm --filter @africatourismgate/web test:e2e:ci
 
 [`playwright.config.ts`](./playwright.config.ts) selects `next start` when `CI=true` or when the npm lifecycle is `test:e2e:ci`.
 
-**Last local run (2026-09-20):** **47 passed / 0 failed** (`PLAYWRIGHT_PORT=3012`, `.next-e2e` isolation).
+**Last local run (2026-09-20):** **48 passed / 0 failed** (`PLAYWRIGHT_PORT=3012`, `.next-e2e` isolation ; incl. WEB-007 `car-checkout`).
 
 ### GitHub Actions
 
