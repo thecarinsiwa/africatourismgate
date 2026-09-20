@@ -570,7 +570,7 @@
     "resultItem": "résultat"
   },
   "bookingSidebar": {
-    "trustDemoCatalog": "Tarifs indicatifs — la réservation en ligne arrive bientôt.",
+    "trustDemoCatalog": "Catalogue de démonstration — aperçu interne uniquement.",
     "trustTransparentPricing": "Montant affiché sans frais cachés.",
     "trustSupport": "Une question ? Notre équipe vous accompagne.",
     "mobileConfigure": "Options",
@@ -644,7 +644,7 @@
     "noResults": "Aucun hébergement pour ces critères",
     "noResultsHint": "Élargissez votre recherche ou explorez toutes nos destinations.",
     "backHome": "Retour à l'accueil",
-    "previewNotice": "Prix affichés : minimum par nuit pour votre séjour. La réservation en ligne arrive bientôt.",
+    "previewNotice": "Prix affichés : minimum par nuit pour votre séjour.",
     "stars": "étoiles",
     "allTypes": "Tous les types",
     "allStars": "Toutes",

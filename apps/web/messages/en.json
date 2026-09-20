@@ -570,7 +570,7 @@
     "resultItem": "result"
   },
   "bookingSidebar": {
-    "trustDemoCatalog": "Indicative prices — online booking coming soon.",
+    "trustDemoCatalog": "Demo catalogue — internal preview only.",
     "trustTransparentPricing": "No hidden fees on the amount shown.",
     "trustSupport": "Questions? Our team is here to help.",
     "mobileConfigure": "Options",
@@ -644,7 +644,7 @@
     "noResults": "No properties match your criteria",
     "noResultsHint": "Broaden your search or browse all destinations.",
     "backHome": "Back to home",
-    "previewNotice": "Prices shown are the minimum per night for your stay. Online booking is coming soon.",
+    "previewNotice": "Prices shown are the minimum per night for your stay.",
     "stars": "stars",
     "allTypes": "All types",
     "allStars": "All",

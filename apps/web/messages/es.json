@@ -570,7 +570,7 @@
     "resultItem": "resultado"
   },
   "bookingSidebar": {
-    "trustDemoCatalog": "Precios orientativos — la reserva en línea llegará pronto.",
+    "trustDemoCatalog": "Catálogo de demostración — vista previa interna únicamente.",
     "trustTransparentPricing": "Importe mostrado sin cargos ocultos.",
     "trustSupport": "¿Dudas? Nuestro equipo le acompaña.",
     "mobileConfigure": "Opciones",
@@ -644,7 +644,7 @@
     "noResults": "Ningún alojamiento coincide con sus criterios",
     "noResultsHint": "Amplíe su búsqueda o explore todos los destinos.",
     "backHome": "Volver al inicio",
-    "previewNotice": "Los precios mostrados son el mínimo por noche para su estancia. La reserva en línea llegará pronto.",
+    "previewNotice": "Los precios mostrados son el mínimo por noche para su estancia.",
     "stars": "estrellas",
     "allTypes": "Todos los tipos",
     "allStars": "Todas",
