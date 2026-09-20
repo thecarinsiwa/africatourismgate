@@ -111,7 +111,7 @@ node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 | WEB-009 | Tests composants checkout & auth — ✅ | Moyenne | Testing | L |
 | WEB-010 | Audit accessibilité (a11y) — ✅ | Moyenne | A11y | L |
 | WEB-011 | Gestion erreurs API sur pages listing — ✅ | Moyenne | Bug | M |
-| WEB-012 | Créer README local `apps/web` | Basse | Docs | S |
+| WEB-012 | Créer README local `apps/web` — ✅ | Basse | Docs | S |
 | WEB-013 | Nettoyer code `@deprecated` | Basse | Cleanup | S |
 | WEB-014 | E2E flux register + verify OTP | Moyenne | Testing | M |
 | WEB-015 | E2E erreurs Stripe / échecs API | Moyenne | Testing | M |
@@ -665,6 +665,7 @@ Quand l'API est indisponible ou renvoie une erreur, certaines pages listing affi
 
 ### WEB-012 — Créer README local `apps/web`
 
+**Statut :** ✅ livré (2026-09-20)
 **Labels :** `web`, `documentation`, `priority:low`  
 **Branche suggérée :** `docs/web-readme`
 
@@ -687,9 +688,11 @@ Créer `apps/web/README.md` avec :
 
 ## Critères d'acceptation
 
-- [ ] README ≤ 150 lignes, factuel, à jour
-- [ ] Exemple `.env` minimal documenté
+- [x] README ≤ 150 lignes, factuel, à jour
+- [x] Exemple `.env` minimal documenté
 ```
+
+**Livré :** [`apps/web/README.md`](../apps/web/README.md) (~77 lignes) — rôle, env, commandes, structure, flux recherche→booking→compte, liens docs.
 
 ---
 
@@ -1248,7 +1251,7 @@ WEB-012 (README) → WEB-006 (CI E2E) → WEB-002 + WEB-003 (cleanup routes)
 | WEB-009 | | | ✅ |
 | WEB-010 | | | ✅ |
 | WEB-011 | | | ✅ |
-| WEB-012 | | | ☐ |
+| WEB-012 | | | ✅ |
 | WEB-013 | | | ☐ |
 | WEB-014 | | | ☐ |
 | WEB-015 | | | ☐ |
