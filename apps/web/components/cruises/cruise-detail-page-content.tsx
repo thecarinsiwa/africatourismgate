@@ -14,7 +14,8 @@ import {
 import { formatCruisePortLabel } from '../../lib/cruises/ports';
 import type { CruiseSailingDetail } from '../../lib/cruises/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
-import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import { useLocale } from 'next-intl';
+import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import { buildReservationQuery } from '../../lib/reservations/flow';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
@@ -35,9 +36,8 @@ export function CruiseDetailPageContent({
   sailingId,
   initialSearch,
 }: CruiseDetailPageContentProps) {
-  const t = useTranslations();
-  const c = t.cruises;
-  const { locale } = useLocale();
+  const c = useNamespaceLabels('cruises');
+  const locale = useLocale();
   const router = useRouter();
 
   const [detail, setDetail] = useState<CruiseSailingDetail | null>(null);

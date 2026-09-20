@@ -3,10 +3,10 @@
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatCarPrice } from '../../lib/cars/listings';
 import type { VehicleDetail } from '../../lib/cars/types';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { useState } from 'react';
 import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations } from 'next-intl';
 import {
   BookingSidebarBody,
   BookingSidebarCta,
@@ -106,7 +106,7 @@ export function CarBookingSidebar(props: CarBookingSidebarProps) {
 }
 
 export function CarBookingMobileBar(props: CarBookingSidebarProps) {
-  const { bookingSidebar } = useTranslations();
+  const tBooking = useTranslations('bookingSidebar');
   const [drawerOpen, setDrawerOpen] = useState(false);
   const ctaLabel = useBookingCtaLabel('vehicle');
   const hasDates = Boolean(
@@ -136,7 +136,7 @@ export function CarBookingMobileBar(props: CarBookingSidebarProps) {
         ctaLabel={ctaLabel}
         ctaDisabled={!canReserve}
         onCtaClick={props.onReserve}
-        configureLabel={bookingSidebar.mobileConfigure}
+        configureLabel={tBooking('mobileConfigure')}
         onConfigureClick={() => setDrawerOpen(true)}
       />
     </>

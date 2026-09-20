@@ -4,7 +4,7 @@ import type { Review } from '@africatourismgate/types';
 import { useCallback, useEffect, useState } from 'react';
 import { getPropertyReviews } from '../../lib/api/public';
 import { formatRelativeReviewDate } from '../../lib/i18n/format-relative-date';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { getGuestInitials } from '../../lib/reviews/guest-initials';
 import { StarRating } from './star-rating';
 

@@ -2,9 +2,9 @@
 
 import { Button, Input, Spinner } from '@africatourismgate/ui';
 import type { UserPaymentMethod, UserPaymentMethodType } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
-import { useTranslations } from '../../lib/i18n/locale-provider';
 
 const emptyForm = {
   type: 'card' as UserPaymentMethodType,
@@ -14,7 +14,7 @@ const emptyForm = {
 };
 
 export function AccountPaymentMethodsPanel() {
-  const t = useTranslations();
+  const t = useTranslations('account');
   const [methods, setMethods] = useState<UserPaymentMethod[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,11 +30,11 @@ export function AccountPaymentMethodsPanel() {
       const result = await client.listUserPaymentMethods({ limit: 50 });
       setMethods(result.data);
     } catch {
-      setError(t.account.paymentMethods.loadError);
+      setError(t('paymentMethods.loadError'));
     } finally {
       setLoading(false);
     }
-  }, [t.account.paymentMethods.loadError]);
+  }, [t]);
 
   useEffect(() => {
     void load();
@@ -56,27 +56,27 @@ export function AccountPaymentMethodsPanel() {
       setShowForm(false);
       await load();
     } catch {
-      setError(t.account.paymentMethods.saveError);
+      setError(t('paymentMethods.saveError'));
     } finally {
       setSaving(false);
     }
   }
 
   async function handleDelete(id: string) {
-    if (!window.confirm(t.account.paymentMethods.deleteConfirm)) return;
+    if (!window.confirm(t('paymentMethods.deleteConfirm'))) return;
     try {
       const client = await getAccountApiClient();
       await client.deleteUserPaymentMethod(id);
       await load();
     } catch {
-      setError(t.account.paymentMethods.deleteError);
+      setError(t('paymentMethods.deleteError'));
     }
   }
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <Spinner size="md" variant="primary" label={t.account.loading} showLabel />
+        <Spinner size="md" variant="primary" label={t('loading')} showLabel />
       </div>
     );
   }
@@ -85,7 +85,7 @@ export function AccountPaymentMethodsPanel() {
     <div className="space-y-6">
       {methods.length === 0 && !showForm && (
         <p className="text-sm text-atg-muted">
-          {t.account.paymentMethods.empty}
+          {t('paymentMethods.empty')}
         </p>
       )}
 
@@ -107,7 +107,7 @@ export function AccountPaymentMethodsPanel() {
               )}
               {method.isDefault === 1 && (
                 <span className="mt-1 inline-block text-xs font-medium text-primary">
-                  {t.account.paymentMethods.defaultBadge}
+                  {t('paymentMethods.defaultBadge')}
                 </span>
               )}
             </div>
@@ -117,7 +117,7 @@ export function AccountPaymentMethodsPanel() {
               size="sm"
               onClick={() => void handleDelete(method.id)}
             >
-              {t.account.paymentMethods.delete}
+              {t('paymentMethods.delete')}
             </Button>
           </li>
         ))}
@@ -135,17 +135,17 @@ export function AccountPaymentMethodsPanel() {
             }
             className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-elevated dark:text-white"
           >
-            <option value="card">{t.account.paymentMethods.typeCard}</option>
-            <option value="paypal">{t.account.paymentMethods.typePaypal}</option>
-            <option value="other">{t.account.paymentMethods.typeOther}</option>
+            <option value="card">{t('paymentMethods.typeCard')}</option>
+            <option value="paypal">{t('paymentMethods.typePaypal')}</option>
+            <option value="other">{t('paymentMethods.typeOther')}</option>
           </select>
           <Input
-            placeholder={t.account.paymentMethods.provider}
+            placeholder={t('paymentMethods.provider')}
             value={form.provider}
             onChange={(e) => setForm((f) => ({ ...f, provider: e.target.value }))}
           />
           <Input
-            placeholder={t.account.paymentMethods.lastFour}
+            placeholder={t('paymentMethods.lastFour')}
             value={form.lastFour}
             onChange={(e) => setForm((f) => ({ ...f, lastFour: e.target.value }))}
             maxLength={4}
@@ -156,20 +156,20 @@ export function AccountPaymentMethodsPanel() {
               checked={form.isDefault}
               onChange={(e) => setForm((f) => ({ ...f, isDefault: e.target.checked }))}
             />
-            {t.account.paymentMethods.isDefault}
+            {t('paymentMethods.isDefault')}
           </label>
           <div className="flex gap-2">
-            <Button type="submit" loading={saving} loadingText={t.account.paymentMethods.saving}>
-              {t.account.paymentMethods.add}
+            <Button type="submit" loading={saving} loadingText={t('paymentMethods.saving')}>
+              {t('paymentMethods.add')}
             </Button>
             <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
-              {t.account.paymentMethods.cancel}
+              {t('paymentMethods.cancel')}
             </Button>
           </div>
         </form>
       ) : (
         <Button type="button" onClick={() => setShowForm(true)}>
-          {t.account.paymentMethods.addNew}
+          {t('paymentMethods.addNew')}
         </Button>
       )}
 

@@ -10,7 +10,7 @@ import { CRUISE_PORT_OPTIONS } from '../../lib/cruises/ports';
 import { toFlightAirportOptions, type FlightAirportOption } from '../../lib/flights/airports';
 import { addDays, todayISODate } from '../../lib/hotels/dates';
 import { usePublicAirports } from '../../lib/flights/use-public-airports';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations } from 'next-intl';
 import { buildSearchRoute, type SearchVertical } from '../../lib/search/route';
 import {
   SearchFormDatalistInput,
@@ -147,7 +147,12 @@ function FormCruisePortSelect({
 }
 
 export function SearchTabs() {
-  const t = useTranslations();
+  const t = useTranslations('search');
+  const tFlights = useTranslations('flights');
+  const tCars = useTranslations('cars');
+  const tHotels = useTranslations('hotels');
+  const tCruises = useTranslations('cruises');
+  const tActivities = useTranslations('activities');
   const router = useRouter();
   const { airports, loading: airportsLoading, error: airportsError } = usePublicAirports();
   const {
@@ -171,11 +176,11 @@ export function SearchTabs() {
   );
   const [activeTab, setActiveTab] = useState<SearchTab>('tours');
   const tabs = useMemo(() => ([
-    { id: 'tours' as const, label: t.search.tabs.tours },
-    { id: 'hotels' as const, label: t.search.tabs.hotels },
-    { id: 'flights' as const, label: t.search.tabs.flights },
-    { id: 'cars' as const, label: t.search.tabs.cars },
-    { id: 'cruises' as const, label: t.search.tabs.cruises },
+    { id: 'tours' as const, label: t('tabs.tours') },
+    { id: 'hotels' as const, label: t('tabs.hotels') },
+    { id: 'flights' as const, label: t('tabs.flights') },
+    { id: 'cars' as const, label: t('tabs.cars') },
+    { id: 'cruises' as const, label: t('tabs.cruises') },
   ]), [t]);
 
   const [departDate, setDepartDate] = useState('');
@@ -223,22 +228,22 @@ export function SearchTabs() {
       setFlightError(null);
 
       if (!flightFrom || !flightTo || !departDate) {
-        setFlightError(t.search.flightRequired);
+        setFlightError(t('flightRequired'));
         return;
       }
 
       if (flightFrom === flightTo) {
-        setFlightError(t.search.flightSameAirport);
+        setFlightError(t('flightSameAirport'));
         return;
       }
 
       if (flightTripType === 'roundTrip' && !returnDate) {
-        setFlightError(t.search.flightReturnRequired);
+        setFlightError(t('flightReturnRequired'));
         return;
       }
 
       if (returnDate && returnDate <= departDate) {
-        setFlightError(t.search.flightReturnAfterDeparture);
+        setFlightError(t('flightReturnAfterDeparture'));
         return;
       }
 
@@ -257,12 +262,12 @@ export function SearchTabs() {
       setCarError(null);
 
       if (!destination || !departDate || !returnDate) {
-        setCarError(t.search.carsRequired);
+        setCarError(t('carsRequired'));
         return;
       }
 
       if (returnDate <= departDate) {
-        setCarError(t.search.carsReturnAfterPickup);
+        setCarError(t('carsReturnAfterPickup'));
         return;
       }
 
@@ -277,17 +282,17 @@ export function SearchTabs() {
       setCruiseError(null);
 
       if (!sailFrom || !sailTo || !departDate || !returnDate) {
-        setCruiseError(t.search.cruisesRequired);
+        setCruiseError(t('cruisesRequired'));
         return;
       }
 
       if (sailFrom === sailTo) {
-        setCruiseError(t.search.cruisesSamePort);
+        setCruiseError(t('cruisesSamePort'));
         return;
       }
 
       if (returnDate <= departDate) {
-        setCruiseError(t.search.cruisesEndAfterStart);
+        setCruiseError(t('cruisesEndAfterStart'));
         return;
       }
 
@@ -304,7 +309,7 @@ export function SearchTabs() {
       setToursError(null);
 
       if (!departDate) {
-        setToursError(t.search.toursRequired);
+        setToursError(t('toursRequired'));
         return;
       }
 
@@ -346,9 +351,9 @@ export function SearchTabs() {
   }, [departDate, returnDate]);
   const carRentalDaysLabel =
     carRentalDays === 1
-      ? `1 ${t.cars.daySingular}`
+      ? `1 ${tCars('daySingular')}`
       : carRentalDays > 1
-        ? `${carRentalDays} ${t.cars.dayPlural}`
+        ? `${carRentalDays} ${tCars('dayPlural')}`
         : null;
 
   const handleTabChange = (tabId: string) => {
@@ -364,14 +369,14 @@ export function SearchTabs() {
     icon: <TabIcon tab={tab.id} />,
   }));
 
-  const submitBtn = <SearchFormSubmit label={t.search.search} />;
+  const submitBtn = <SearchFormSubmit label={t('search')} />;
 
   return (
     <SearchFormShell
       tabs={searchTabs}
       activeTab={activeTab}
       onTabChange={handleTabChange}
-      tablistAriaLabel={t.search.tablistAria}
+      tablistAriaLabel={t('tablistAria')}
       onSubmit={handleSubmit}
     >
             {activeTab === 'flights' && (
@@ -379,19 +384,19 @@ export function SearchTabs() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <FlightTripTypeToggle
                     value={flightTripType}
-                    oneWayLabel={t.search.oneWay}
-                    roundTripLabel={t.search.roundTrip}
-                    ariaLabel={t.search.tripTypeAria}
+                    oneWayLabel={t('oneWay')}
+                    roundTripLabel={t('roundTrip')}
+                    ariaLabel={t('tripTypeAria')}
                     onChange={handleFlightTripTypeChange}
                   />
                 </div>
                 <div className={`grid gap-4 sm:grid-cols-2 ${flightTripType === 'roundTrip' ? 'lg:grid-cols-[1fr_1fr_auto_1fr_1fr_0.75fr_auto]' : 'lg:grid-cols-[1fr_1fr_auto_1fr_0.75fr_auto]'} lg:items-end`}>
                   <div>
-                    <SearchFormLabel>{t.search.from}</SearchFormLabel>
+                    <SearchFormLabel>{t('from')}</SearchFormLabel>
                     <FormAirportSelect
                       name="from"
                       placeholder={
-                        airportsLoading ? t.flights.loading : t.search.airportPh
+                        airportsLoading ? tFlights('loading') : t('airportPh')
                       }
                       value={flightFrom}
                       options={airportOptions}
@@ -403,11 +408,11 @@ export function SearchTabs() {
                     />
                   </div>
                   <div className="relative">
-                    <SearchFormLabel>{t.search.to}</SearchFormLabel>
+                    <SearchFormLabel>{t('to')}</SearchFormLabel>
                     <FormAirportSelect
                       name="to"
                       placeholder={
-                        airportsLoading ? t.flights.loading : t.search.airportPh
+                        airportsLoading ? tFlights('loading') : t('airportPh')
                       }
                       value={flightTo}
                       options={airportOptions}
@@ -422,7 +427,7 @@ export function SearchTabs() {
                     <button
                       type="button"
                       onClick={swapFlightAirports}
-                      aria-label={t.search.swapAirports}
+                      aria-label={t('swapAirports')}
                       className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-atg-border text-atg-muted transition-colors hover:border-primary hover:text-primary dark:border-atg-border text-atg-muted dark:hover:text-white"
                     >
                       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -431,7 +436,7 @@ export function SearchTabs() {
                     </button>
                   </div>
                   <div>
-                    <SearchFormLabel>{t.search.departDate}</SearchFormLabel>
+                    <SearchFormLabel>{t('departDate')}</SearchFormLabel>
                     <SearchFormInput
                       type="date"
                       name="departureDate"
@@ -444,7 +449,7 @@ export function SearchTabs() {
                   </div>
                   {flightTripType === 'roundTrip' && (
                     <div>
-                      <SearchFormLabel>{t.search.returnDate}</SearchFormLabel>
+                      <SearchFormLabel>{t('returnDate')}</SearchFormLabel>
                       <SearchFormInput
                         type="date"
                         name="returnDate"
@@ -458,7 +463,7 @@ export function SearchTabs() {
                     </div>
                   )}
                   <div>
-                    <SearchFormLabel>{t.search.passengers}</SearchFormLabel>
+                    <SearchFormLabel>{t('passengers')}</SearchFormLabel>
                     <SearchFormInput
                       type="number"
                       name="passengers"
@@ -472,13 +477,13 @@ export function SearchTabs() {
                     <SearchFormActions
                       submit={submitBtn}
                       viewAllHref="/flights"
-                      viewAllLabel={t.search.viewAllFlights}
+                      viewAllLabel={t('viewAllFlights')}
                     />
                   </div>
                 </div>
                 {airportsError && (
                   <p className="text-sm text-amber-700 dark:text-amber-300" role="status">
-                    {t.flights.loadError}
+                    {tFlights('loadError')}
                   </p>
                 )}
                 {flightError && (
@@ -492,25 +497,25 @@ export function SearchTabs() {
             {activeTab === 'hotels' && (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1.25fr_0.75fr_auto] lg:items-end">
                   <div>
-                    <SearchFormLabel>{t.search.checkIn}</SearchFormLabel>
+                    <SearchFormLabel>{t('checkIn')}</SearchFormLabel>
                     <SearchFormInput type="date" name="checkIn" value={departDate} onChange={setDepartDate} />
                   </div>
                   <div>
-                    <SearchFormLabel>{t.search.checkOut}</SearchFormLabel>
+                    <SearchFormLabel>{t('checkOut')}</SearchFormLabel>
                     <SearchFormInput type="date" name="checkOut" value={returnDate} onChange={setReturnDate} />
                   </div>
                   <div>
-                    <SearchFormLabel>{t.search.destination}</SearchFormLabel>
+                    <SearchFormLabel>{t('destination')}</SearchFormLabel>
                     <SearchFormDatalistInput
                       name="destination"
-                      placeholder={t.search.destinationPh}
+                      placeholder={t('destinationPh')}
                       suggestions={destinationOptions}
                       value={destination}
                       onChange={setDestination}
                     />
                   </div>
                   <div>
-                    <SearchFormLabel>{t.hotels.guests}</SearchFormLabel>
+                    <SearchFormLabel>{tHotels('guests')}</SearchFormLabel>
                     <SearchFormInput
                       name="guests"
                       type="number"
@@ -523,7 +528,7 @@ export function SearchTabs() {
                     <SearchFormActions
                       submit={submitBtn}
                       viewAllHref="/hotels"
-                      viewAllLabel={t.search.viewAllHotels}
+                      viewAllLabel={t('viewAllHotels')}
                     />
                   </div>
                 </div>
@@ -541,17 +546,17 @@ export function SearchTabs() {
                     </span>
                   ) : (
                     <span className="text-sm text-atg-muted">
-                      {t.search.carsDurationHint}
+                      {t('carsDurationHint')}
                     </span>
                   )}
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_1fr_auto] lg:items-end">
                   <div>
-                    <SearchFormLabel>{t.cars.pickupLocation}</SearchFormLabel>
+                    <SearchFormLabel>{tCars('pickupLocation')}</SearchFormLabel>
                     <SearchFormDatalistInput
                       name="pickupLocation"
                       placeholder={
-                        carPickupLoading ? t.cars.loading : t.search.pickupLocationPh
+                        carPickupLoading ? tCars('loading') : t('pickupLocationPh')
                       }
                       suggestions={carPickupOptions}
                       value={destination}
@@ -563,7 +568,7 @@ export function SearchTabs() {
                     />
                   </div>
                   <div>
-                    <SearchFormLabel>{t.search.pickUp}</SearchFormLabel>
+                    <SearchFormLabel>{t('pickUp')}</SearchFormLabel>
                     <SearchFormInput
                       type="date"
                       name="pickUp"
@@ -579,7 +584,7 @@ export function SearchTabs() {
                     />
                   </div>
                   <div>
-                    <SearchFormLabel>{t.search.dropOff}</SearchFormLabel>
+                    <SearchFormLabel>{t('dropOff')}</SearchFormLabel>
                     <SearchFormInput
                       type="date"
                       name="dropOff"
@@ -595,13 +600,13 @@ export function SearchTabs() {
                     <SearchFormActions
                       submit={submitBtn}
                       viewAllHref="/cars"
-                      viewAllLabel={t.search.viewAllCars}
+                      viewAllLabel={t('viewAllCars')}
                     />
                   </div>
                 </div>
                 {carPickupError && (
                   <p className="text-sm text-amber-700 dark:text-amber-300" role="status">
-                    {t.cars.loadError}
+                    {tCars('loadError')}
                   </p>
                 )}
                 {carError && (
@@ -616,10 +621,10 @@ export function SearchTabs() {
               <div className="space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_0.75fr_auto] lg:items-end">
                   <div>
-                    <SearchFormLabel>{t.search.sailFrom}</SearchFormLabel>
+                    <SearchFormLabel>{t('sailFrom')}</SearchFormLabel>
                     <FormCruisePortSelect
                       name="sailFrom"
-                      placeholder={t.search.allPorts}
+                      placeholder={t('allPorts')}
                       value={sailFrom}
                       onChange={(value) => {
                         setSailFrom(value);
@@ -628,10 +633,10 @@ export function SearchTabs() {
                     />
                   </div>
                   <div>
-                    <SearchFormLabel>{t.search.sailTo}</SearchFormLabel>
+                    <SearchFormLabel>{t('sailTo')}</SearchFormLabel>
                     <FormCruisePortSelect
                       name="sailTo"
-                      placeholder={t.search.allDestinations}
+                      placeholder={t('allDestinations')}
                       value={sailTo}
                       onChange={(value) => {
                         setSailTo(value);
@@ -640,7 +645,7 @@ export function SearchTabs() {
                     />
                   </div>
                   <div>
-                    <SearchFormLabel>{t.search.startDate}</SearchFormLabel>
+                    <SearchFormLabel>{t('startDate')}</SearchFormLabel>
                     <SearchFormInput
                       type="date"
                       name="startDate"
@@ -656,7 +661,7 @@ export function SearchTabs() {
                     />
                   </div>
                   <div>
-                    <SearchFormLabel>{t.search.endDate}</SearchFormLabel>
+                    <SearchFormLabel>{t('endDate')}</SearchFormLabel>
                     <SearchFormInput
                       type="date"
                       name="endDate"
@@ -669,7 +674,7 @@ export function SearchTabs() {
                     />
                   </div>
                   <div>
-                    <SearchFormLabel>{t.cruises.guests}</SearchFormLabel>
+                    <SearchFormLabel>{tCruises('guests')}</SearchFormLabel>
                     <SearchFormInput
                       type="number"
                       name="guests"
@@ -681,7 +686,7 @@ export function SearchTabs() {
                     <SearchFormActions
                       submit={submitBtn}
                       viewAllHref="/cruises"
-                      viewAllLabel={t.search.viewAllCruises}
+                      viewAllLabel={t('viewAllCruises')}
                     />
                   </div>
                 </div>
@@ -697,13 +702,13 @@ export function SearchTabs() {
               <div className="space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_0.75fr_auto] lg:items-end">
                   <div>
-                    <SearchFormLabel>{t.search.destination}</SearchFormLabel>
+                    <SearchFormLabel>{t('destination')}</SearchFormLabel>
                     <SearchFormDatalistInput
                       name="destination"
                       placeholder={
                         activityDestinationsLoading
-                          ? t.activities.destinationsLoading
-                          : t.search.allDestinations
+                          ? tActivities('destinationsLoading')
+                          : t('allDestinations')
                       }
                       suggestions={activityDestinationOptions}
                       value={destination}
@@ -715,7 +720,7 @@ export function SearchTabs() {
                     />
                   </div>
                   <div>
-                    <SearchFormLabel>{t.activities.date}</SearchFormLabel>
+                    <SearchFormLabel>{tActivities('date')}</SearchFormLabel>
                     <SearchFormInput
                       type="date"
                       name="date"
@@ -728,7 +733,7 @@ export function SearchTabs() {
                     />
                   </div>
                   <div>
-                    <SearchFormLabel>{t.search.participants}</SearchFormLabel>
+                    <SearchFormLabel>{t('participants')}</SearchFormLabel>
                     <SearchFormInput
                       type="number"
                       name="participants"
@@ -746,13 +751,13 @@ export function SearchTabs() {
                     <SearchFormActions
                       submit={submitBtn}
                       viewAllHref="/activities"
-                      viewAllLabel={t.search.viewAllActivities}
+                      viewAllLabel={t('viewAllActivities')}
                     />
                   </div>
                 </div>
                 {activityDestinationsError && (
                   <p className="text-sm text-amber-700 dark:text-amber-300" role="status">
-                    {t.activities.destinationsLoadError}
+                    {tActivities('destinationsLoadError')}
                   </p>
                 )}
                 {toursError && (

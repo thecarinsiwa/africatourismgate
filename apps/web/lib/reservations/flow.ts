@@ -367,13 +367,6 @@ export function buildReservationQuery(draft: ReservationDraft): string {
   return params.toString();
 }
 
-/** @deprecated Use buildReservationQuery with kind flight_class */
-export function buildFlightReservationQuery(
-  draft: Omit<FlightReservationDraft, 'kind'>,
-): string {
-  return buildReservationQuery({ kind: 'flight_class', ...draft });
-}
-
 export function buildCheckoutItems(draft: ReservationDraft): BookingCheckoutItem[] {
   if (draft.kind === 'package') {
     return [
@@ -469,11 +462,6 @@ export function buildPackageAssistedReservationDraft(
     return null;
   }
   return { kind: 'package', packageId, startDate, endDate, travelers };
-}
-
-/** @deprecated Assisted package drafts no longer require per-line selections. */
-export function buildPackageReservationDraft(): PackageReservationDraft | null {
-  return null;
 }
 
 export function isPackageReservationDraftStructurallyComplete(

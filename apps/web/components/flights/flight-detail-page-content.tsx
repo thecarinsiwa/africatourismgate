@@ -14,7 +14,8 @@ import {
 } from '../../lib/flights/listings';
 import type { FlightDetail } from '../../lib/flights/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
-import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import { useLocale } from 'next-intl';
+import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import { buildReservationQuery } from '../../lib/reservations/flow';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
@@ -36,9 +37,8 @@ export function FlightDetailPageContent({
   flightId,
   initialSearch,
 }: FlightDetailPageContentProps) {
-  const t = useTranslations();
-  const f = t.flights;
-  const { locale } = useLocale();
+  const f = useNamespaceLabels('flights');
+  const locale = useLocale();
   const router = useRouter();
 
   const [detail, setDetail] = useState<FlightDetail | null>(null);

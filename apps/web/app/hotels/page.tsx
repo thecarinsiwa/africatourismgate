@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { HotelsPageContent, type HotelsSearchParams } from '../../components/hotels/hotels-page-content';
+import { buildListingPageMetadata } from '../../lib/seo/metadata';
 
 type PageProps = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -11,19 +12,9 @@ function pickParam(value: string | string[] | undefined): string | undefined {
   return undefined;
 }
 
-export const metadata: Metadata = {
-  title: 'Hébergements en Afrique',
-  description:
-    'Comparez hôtels, lodges et resorts en Afrique. Trouvez le séjour idéal avec Africa Tourism Gate.',
-  alternates: {
-    canonical: '/hotels',
-    languages: {
-      fr: '/hotels?lang=fr',
-      en: '/hotels?lang=en',
-      es: '/hotels?lang=es',
-    },
-  },
-};
+export function generateMetadata(): Promise<Metadata> {
+  return buildListingPageMetadata('hotels', '/hotels');
+}
 
 export default function HotelsPage({ searchParams }: PageProps) {
   const initialSearch: HotelsSearchParams = {

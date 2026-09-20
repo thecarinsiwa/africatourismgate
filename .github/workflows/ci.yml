@@ -62,6 +62,9 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      - name: Check web i18n parity
+        run: pnpm check:web-i18n
+
       - name: Build shared packages
         run: pnpm --filter @africatourismgate/types --filter @africatourismgate/utils build
 
@@ -141,3 +144,45 @@ jobs:
 
       - name: POS E2E tests
         run: pnpm --filter @africatourismgate/pos test:e2e
+
+  # Web E2E: production `next start` after build (avoids stale `.next` / vendor-chunks).
+  # Specs mock the API via Playwright routes — no MySQL/API service required.
+  web-e2e:
+    runs-on: ubuntu-latest
+    env:
+      CI: true
+      NEXT_PUBLIC_API_URL: http://localhost:3000/api
+      NEXT_PUBLIC_WEB_URL: http://localhost:3002
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build shared packages
+        run: pnpm --filter @africatourismgate/types --filter @africatourismgate/utils build
+
+      - name: Install Playwright browsers
+        run: pnpm --filter @africatourismgate/web exec playwright install --with-deps chromium
+
+      - name: Web E2E tests (build + Playwright)
+        run: pnpm --filter @africatourismgate/web test:e2e:ci
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-playwright-report
+          path: |
+            apps/web/playwright-report/
+            apps/web/test-results/
+          retention-days: 7
+          if-no-files-found: ignore

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { CruiseDetailPageContent } from '../../../components/cruises/cruise-detail-page-content';
 import { getCruiseSailingDetail } from '../../../lib/api/public';
 import {
@@ -6,6 +7,11 @@ import {
   parseGuestsParam,
   toCruiseSailingDetailQuery,
 } from '../../../lib/cruises/listings';
+import {
+  buildDetailFallbackMetadata,
+  buildPageMetadata,
+  pickOgImages,
+} from '../../../lib/seo/metadata';
 
 type PageProps = {
   params: { id: string };
@@ -13,20 +19,29 @@ type PageProps = {
 };
 
 export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
+  const path = `/cruises/${params.id}`;
   const normalized = normalizeCruisesSearchParams(searchParams);
   const apiQuery = toCruiseSailingDetailQuery(normalized);
 
   try {
-    const detail = await getCruiseSailingDetail(params.id, apiQuery);
-    return {
+    const [detail, t, locale] = await Promise.all([
+      getCruiseSailingDetail(params.id, apiQuery),
+      getTranslations('cruises'),
+      getLocale(),
+    ]);
+    return buildPageMetadata({
       title: detail.itineraryName,
-      description: `Croisière ${detail.itineraryName} à bord du ${detail.shipName} avec Africa Tourism Gate.`,
-    };
+      description: t('detailMetaDescription', {
+        name: detail.itineraryName,
+        ship: detail.shipName,
+      }),
+      path,
+      locale,
+      images: pickOgImages(detail.images),
+      twitterCard: 'summary_large_image',
+    });
   } catch {
-    return {
-      title: 'Croisière',
-      description: 'Fiche croisière — Africa Tourism Gate',
-    };
+    return buildDetailFallbackMetadata('cruises', path);
   }
 }
 

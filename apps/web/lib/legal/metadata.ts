@@ -1,7 +1,5 @@
 import type { Metadata } from 'next';
-import { getLocale } from 'next-intl/server';
-import { translations } from '../i18n/translations';
-import { isLocale } from '../i18n/types';
+import { getTranslations } from 'next-intl/server';
 import { LEGAL_PATHS } from './routes';
 
 const LANG_ALTERNATES = ['fr', 'en', 'es'] as const;
@@ -36,19 +34,17 @@ function buildLegalMetadata(
 }
 
 export async function buildTermsOfUseMetadata(): Promise<Metadata> {
-  const rawLocale = await getLocale();
-  const locale = isLocale(rawLocale) ? rawLocale : 'fr';
-  return buildLegalMetadata(
-    LEGAL_PATHS.termsOfUse,
-    translations[locale].legal.meta.termsOfUse,
-  );
+  const t = await getTranslations('legal');
+  return buildLegalMetadata(LEGAL_PATHS.termsOfUse, {
+    title: t('meta.termsOfUse.title'),
+    description: t('meta.termsOfUse.description'),
+  });
 }
 
 export async function buildPrivacyPolicyMetadata(): Promise<Metadata> {
-  const rawLocale = await getLocale();
-  const locale = isLocale(rawLocale) ? rawLocale : 'fr';
-  return buildLegalMetadata(
-    LEGAL_PATHS.privacyPolicy,
-    translations[locale].legal.meta.privacyPolicy,
-  );
+  const t = await getTranslations('legal');
+  return buildLegalMetadata(LEGAL_PATHS.privacyPolicy, {
+    title: t('meta.privacyPolicy.title'),
+    description: t('meta.privacyPolicy.description'),
+  });
 }

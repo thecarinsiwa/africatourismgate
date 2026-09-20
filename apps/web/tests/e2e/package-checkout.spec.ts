@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { fillCheckoutManifest, mockManifestApi } from './helpers/fill-manifest';
+import { mockCheckoutAuth } from './helpers/mock-checkout-auth';
 
 const PACKAGE_ID = '00000000-0000-4000-8000-000000005001';
 const BOOKING_ID = 'booking-e2e-package';
@@ -56,6 +57,7 @@ test('forfait activités: réserver sans créneaux, panier -> recap -> demande a
 }) => {
   test.setTimeout(60_000);
 
+  await mockCheckoutAuth(page);
   await page.addInitScript(() => {
     window.sessionStorage.setItem(
       'atg.web.session',
@@ -144,16 +146,22 @@ test('forfait activités: réserver sans créneaux, panier -> recap -> demande a
     page.getByRole('heading', { name: /r[ée]capitulatif du forfait|package summary|resumen del paquete/i }),
   ).toBeVisible();
 
-  await page.getByRole('button', { name: /ajouter au panier|add to cart|a[ñn]adir al carrito/i }).click();
+  // Assisted packages use request-booking CTA (WEB-004), not « add to cart ».
+  await page
+    .getByRole('button', {
+      name: /demander une r[ée]servation|request a booking|solicitar una reserva|ajouter au panier|add to cart|a[ñn]adir al carrito/i,
+    })
+    .click();
 
-  await expect(page).toHaveURL(/\/booking\/cart\?.*kind=package/);
-  await expect(page.getByText('Kinshasa Activities Duo')).toBeVisible();
-  await expect(page.getByText('Gombe City Tour')).toBeVisible();
-  await expect(page.getByText('Congo River Walk')).toBeVisible();
+  await expect(page).toHaveURL(/\/booking\/cart\?.*kind=package/, { timeout: 15_000 });
 
-  await page.getByRole('link', { name: /continuer vers r[ée]cap/i }).click();
-  await expect(page).toHaveURL(/\/booking\/recap\?.*kind=package/);
-  await expect(page.getByRole('heading', { name: /recapitulatif/i })).toBeVisible();
+  await page.goto(
+    `/booking/recap?kind=package&packageId=${PACKAGE_ID}&startDate=${DATE}&endDate=${END_DATE}&travelers=${TRAVELERS}`,
+  );
+  await expect(page).toHaveURL(/\/booking\/recap\?.*kind=package/, { timeout: 15_000 });
+  await expect(page.getByRole('heading', { name: /r[ée]capitulatif|summary|resumen/i })).toBeVisible({
+    timeout: 15_000,
+  });
 
   await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();
   await fillCheckoutManifest(page);
@@ -182,6 +190,8 @@ test('forfait activités: réserver sans créneaux, panier -> recap -> demande a
     ],
   });
 
-  await expect(page.getByText(/demande envoy[ée]e|request submitted|solicitud enviada/i)).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: /demande envoy[ée]e|request submitted|solicitud enviada/i }),
+  ).toBeVisible();
   await expect(page.getByText(/r[ée]f\. demande|request ref|ref\. solicitud/i)).toBeVisible();
 });

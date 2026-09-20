@@ -13,7 +13,8 @@ import {
   uploadBookingIdentityDocument,
 } from '../../lib/api/booking-identity-documents';
 import { getAccountApiClient } from '../../lib/api/account';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useMessages } from 'next-intl';
+import type { Translations } from '../../lib/i18n/message-types';
 
 const DOCUMENT_TYPES: BookingIdentityDocumentType[] = [
   'passport',
@@ -67,8 +68,9 @@ export function BookingIdentityDocumentsSection({
   documents,
   onUpdated,
 }: Props) {
-  const t = useTranslations();
-  const id = t.account.reservations.detail.identityDocuments;
+  const messages = useMessages();
+  const id = (messages as { account: Translations['account'] }).account.reservations.detail
+    .identityDocuments;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [documentType, setDocumentType] =
     useState<BookingIdentityDocumentType>('passport');
@@ -84,10 +86,11 @@ export function BookingIdentityDocumentsSection({
     try {
       const client = await getAccountApiClient();
       const rows = await client.listBookingManifestEntries(bookingId);
-      setEntries(rows);
+      const list = Array.isArray(rows) ? rows : [];
+      setEntries(list);
       setManifestEntryId((prev) => {
-        if (prev && rows.some((e) => e.id === prev)) return prev;
-        return rows[0]?.id ?? '';
+        if (prev && list.some((e) => e.id === prev)) return prev;
+        return list[0]?.id ?? '';
       });
     } catch {
       setEntries([]);

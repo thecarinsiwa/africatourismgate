@@ -1,9 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { translations } from './translations';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import type { Locale } from './types';
 
 const LOCALES = ['fr', 'en', 'es'] as const satisfies readonly Locale[];
+const MESSAGES_DIR = join(process.cwd(), 'messages');
 
 const REQUIRED_COMING_SOON_KEYS = [
   'badge',
@@ -12,6 +14,10 @@ const REQUIRED_COMING_SOON_KEYS = [
   'body',
   'backToSearch',
   'backHome',
+  'metaTitle',
+  'metaDescription',
+  'verticalMetaTitle',
+  'verticalMetaDescription',
 ] as const;
 
 const REQUIRED_RESERVATION_EMPTY_KEYS = [
@@ -21,20 +27,30 @@ const REQUIRED_RESERVATION_EMPTY_KEYS = [
   'emptyFilter',
 ] as const;
 
-test('comingSoon i18n keys are present in fr/en/es', () => {
+function loadMessages(locale: Locale) {
+  return JSON.parse(readFileSync(join(MESSAGES_DIR, `${locale}.json`), 'utf8')) as {
+    comingSoon: Record<string, string>;
+    account: { reservations: Record<string, string> };
+  };
+}
+
+test('comingSoon i18n keys are present in fr/en/es messages', () => {
   for (const locale of LOCALES) {
-    const comingSoon = translations[locale].comingSoon;
+    const comingSoon = loadMessages(locale).comingSoon;
     for (const key of REQUIRED_COMING_SOON_KEYS) {
       assert.ok(comingSoon[key]?.trim(), `${locale}.comingSoon.${key} must be non-empty`);
     }
   }
 });
 
-test('account reservations empty i18n keys are present in fr/en/es', () => {
+test('account reservations empty i18n keys are present in fr/en/es messages', () => {
   for (const locale of LOCALES) {
-    const reservations = translations[locale].account.reservations;
+    const reservations = loadMessages(locale).account.reservations;
     for (const key of REQUIRED_RESERVATION_EMPTY_KEYS) {
-      assert.ok(reservations[key]?.trim(), `${locale}.account.reservations.${key} must be non-empty`);
+      assert.ok(
+        reservations[key]?.trim(),
+        `${locale}.account.reservations.${key} must be non-empty`,
+      );
     }
   }
 });

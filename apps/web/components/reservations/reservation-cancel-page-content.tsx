@@ -1,13 +1,14 @@
 'use client';
 
 import Link from 'next/link';
+import { useMessages } from 'next-intl';
 import { useMemo } from 'react';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import type { Translations } from '../../lib/i18n/message-types';
 import { CheckoutPageShell } from './checkout-page-shell';
 
 export function ReservationCancelPageContent() {
-  const t = useTranslations();
-  const ck = t.checkout;
+  const messages = useMessages();
+  const ck = (messages as { checkout: Translations['checkout'] }).checkout;
   const c = ck.cancel;
 
   const stepperLabels = useMemo(

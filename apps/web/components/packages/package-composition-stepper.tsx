@@ -1,6 +1,6 @@
 'use client';
 
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 
 export type PackageCompositionStep = 'overview' | 'configure' | 'recap';
 

@@ -9,7 +9,7 @@ import {
   type HotelDetailSearchParams,
   type HotelSearchResult,
 } from '../../lib/hotels/listings';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { PriceDisplay, ProductCard, StarRating } from '../shared';
 
 type HotelCardProps = {

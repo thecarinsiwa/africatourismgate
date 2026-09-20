@@ -12,7 +12,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { searchAccommodations } from '../../lib/api/public';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { parseGuestsParam, type HotelSearchResult, type HotelTypeFilter, type HotelsSearchParams } from '../../lib/hotels/listings';
-import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import { useLocale, useTranslations } from 'next-intl';
+import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import { toListingPaginationLabels, scrollListingToTop } from '../../lib/listing/pagination-labels';
 import { useListingPagination } from '../../lib/listing/pagination';
 import { HomeFooter } from '../home/home-footer';
@@ -39,10 +40,9 @@ type HotelsPageContentProps = {
 };
 
 export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
-  const t = useTranslations();
-  const { locale } = useLocale();
-  const h = t.hotels;
-  const l = t.listing;
+  const h = useNamespaceLabels('hotels');
+  const tListing = useTranslations('listing');
+  const locale = useLocale();
 
   const [sort, setSort] = useState<SortKey>('recommended');
   const [starFilter, setStarFilter] = useState<number | 'all'>('all');
@@ -148,7 +148,7 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
     showPagination,
   } = useListingPagination(listings, paginationResetKey);
 
-  const paginationLabels = useMemo(() => toListingPaginationLabels(l), [l]);
+  const paginationLabels = useMemo(() => toListingPaginationLabels(tListing), [tListing]);
 
   const searchSummary = [
     initialSearch.checkIn && `${h.checkIn}: ${formatDisplayDate(initialSearch.checkIn, locale)}`,
@@ -295,6 +295,7 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
                 message: h.loadError,
                 retryLabel: h.retry,
                 onRetry: () => setFetchId((k) => k + 1),
+                backHomeLabel: h.backHome,
               }
             : null
         }
@@ -311,9 +312,9 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
         filters={
           <ListingFiltersAside
             title={h.filters}
-            mobileToggleLabel={l.filtersToggle}
-            clearFiltersLabel={l.clearFilters}
-            applyFiltersLabel={l.applyFilters}
+            mobileToggleLabel={tListing('filtersToggle')}
+            clearFiltersLabel={tListing('clearFilters')}
+            applyFiltersLabel={tListing('applyFilters')}
             activeFilterCount={activeFilterCount}
             onClearFilters={activeFilterCount > 0 ? clearFilters : undefined}
           >
@@ -327,7 +328,7 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
               totalPages={totalPages}
               totalItems={totalItems}
               pageSize={pageSize}
-              itemLabel={l.resultItem}
+              itemLabel={tListing('resultItem')}
               labels={paginationLabels}
               onPageChange={(next) => {
                 setPage(next);

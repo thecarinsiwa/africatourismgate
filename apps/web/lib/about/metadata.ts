@@ -1,19 +1,13 @@
 import type { Metadata } from 'next';
-import { getLocale } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import type { AboutNavLabelKey } from './routes';
-import { translations } from '../i18n/translations';
-import { isLocale } from '../i18n/types';
 
 const LANG_ALTERNATES = ['fr', 'en', 'es'] as const;
 
-export async function buildAboutPageMetadata(
+function buildAboutMetadata(
   canonicalPath: string,
-  metaKey: AboutNavLabelKey,
-): Promise<Metadata> {
-  const rawLocale = await getLocale();
-  const locale = isLocale(rawLocale) ? rawLocale : 'fr';
-  const meta = translations[locale].about.meta[metaKey];
-
+  meta: { title: string; description: string },
+): Metadata {
   const languages = Object.fromEntries(
     LANG_ALTERNATES.map((lang) => [lang, `${canonicalPath}?lang=${lang}`]),
   );
@@ -37,4 +31,15 @@ export async function buildAboutPageMetadata(
       description: meta.description,
     },
   };
+}
+
+export async function buildAboutPageMetadata(
+  canonicalPath: string,
+  metaKey: AboutNavLabelKey,
+): Promise<Metadata> {
+  const t = await getTranslations('about');
+  return buildAboutMetadata(canonicalPath, {
+    title: t(`meta.${metaKey}.title`),
+    description: t(`meta.${metaKey}.description`),
+  });
 }

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import type { BookingListItem, BookingStatus } from '@africatourismgate/types';
 import { EmptyState, Spinner } from '@africatourismgate/ui';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
 import {
@@ -10,7 +11,7 @@ import {
   formatBookingMoney,
 } from '../../lib/bookings/display';
 import { localeToBcp47 } from '../../lib/i18n/locale-tag';
-import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import type { Locale } from '../../lib/i18n/types';
 import { BookingStatusBadge } from './booking-status-badge';
 
 type StatusFilter = 'all' | 'confirmed' | 'pending' | 'cancelled';
@@ -71,9 +72,9 @@ function AccountBookingsEmptyState({
 }
 
 export function AccountBookingsList() {
-  const t = useTranslations();
-  const { locale } = useLocale();
-  const localeTag = localeToBcp47(locale);
+  const t = useTranslations('account');
+  const locale = useLocale();
+  const localeTag = localeToBcp47(locale as Locale);
   const [bookings, setBookings] = useState<BookingListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -87,11 +88,11 @@ export function AccountBookingsList() {
       const result = await client.listBookings({ limit: 50 });
       setBookings(result.data);
     } catch {
-      setError(t.account.reservations.loadError);
+      setError(t('reservations.loadError'));
     } finally {
       setLoading(false);
     }
-  }, [t.account.reservations.loadError]);
+  }, [t]);
 
   useEffect(() => {
     void load();
@@ -108,16 +109,16 @@ export function AccountBookingsList() {
   );
 
   const filterOptions: { id: StatusFilter; label: string }[] = [
-    { id: 'all', label: t.account.reservations.filterAll },
-    { id: 'confirmed', label: t.account.reservations.filterConfirmed },
-    { id: 'pending', label: t.account.reservations.filterPending },
-    { id: 'cancelled', label: t.account.reservations.filterCancelled },
+    { id: 'all', label: t('reservations.filterAll') },
+    { id: 'confirmed', label: t('reservations.filterConfirmed') },
+    { id: 'pending', label: t('reservations.filterPending') },
+    { id: 'cancelled', label: t('reservations.filterCancelled') },
   ];
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <Spinner size="md" variant="primary" label={t.account.loading} showLabel />
+        <Spinner size="md" variant="primary" label={t('loading')} showLabel />
       </div>
     );
   }
@@ -133,9 +134,9 @@ export function AccountBookingsList() {
   if (bookings.length === 0) {
     return (
       <AccountBookingsEmptyState
-        title={t.account.reservations.empty}
-        description={t.account.reservations.emptyDescription}
-        browseLabel={t.account.reservations.emptyBrowse}
+        title={t('reservations.empty')}
+        description={t('reservations.emptyDescription')}
+        browseLabel={t('reservations.emptyBrowse')}
         showBrowse
       />
     );
@@ -149,10 +150,7 @@ export function AccountBookingsList() {
           role="status"
         >
           <p className="text-sm text-atg-fg">
-            {t.account.reservations.reviewPrompt.replace(
-              '{count}',
-              String(pendingReviewCount),
-            )}
+            {t('reservations.reviewPrompt', { count: pendingReviewCount })}
           </p>
         </div>
       ) : null}
@@ -160,7 +158,7 @@ export function AccountBookingsList() {
       <div
         className="flex flex-wrap gap-2"
         role="group"
-        aria-label={t.account.reservations.filterAria}
+        aria-label={t('reservations.filterAria')}
       >
         {filterOptions.map((option) => {
           const active = statusFilter === option.id;
@@ -184,8 +182,8 @@ export function AccountBookingsList() {
 
       {filteredBookings.length === 0 ? (
         <AccountBookingsEmptyState
-          title={t.account.reservations.emptyFilter}
-          browseLabel={t.account.reservations.emptyBrowse}
+          title={t('reservations.emptyFilter')}
+          browseLabel={t('reservations.emptyBrowse')}
           showBrowse={false}
         />
       ) : (
@@ -193,12 +191,12 @@ export function AccountBookingsList() {
           <table className="min-w-full text-left text-sm">
             <thead className="border-b border-atg-border bg-atg-surface dark:border-atg-border dark:bg-white/5">
               <tr>
-                <th className="px-4 py-3 font-medium">{t.account.reservations.reference}</th>
+                <th className="px-4 py-3 font-medium">{t('reservations.reference')}</th>
                 <th className="hidden px-4 py-3 font-medium sm:table-cell">
-                  {t.account.reservations.date}
+                  {t('reservations.date')}
                 </th>
-                <th className="px-4 py-3 font-medium">{t.account.reservations.status}</th>
-                <th className="px-4 py-3 font-medium">{t.account.reservations.total}</th>
+                <th className="px-4 py-3 font-medium">{t('reservations.status')}</th>
+                <th className="px-4 py-3 font-medium">{t('reservations.total')}</th>
                 <th className="px-4 py-3 font-medium" />
               </tr>
             </thead>
@@ -219,12 +217,12 @@ export function AccountBookingsList() {
                       <BookingStatusBadge status={booking.status} size="sm" />
                       {booking.actionRequired ? (
                         <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-900 dark:bg-amber-900/40 dark:text-amber-100">
-                          {t.account.reservations.actionRequired}
+                          {t('reservations.actionRequired')}
                         </span>
                       ) : null}
                       {booking.canReview ? (
                         <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary dark:bg-primary/20">
-                          {t.account.reservations.leaveReviewCta}
+                          {t('reservations.leaveReviewCta')}
                         </span>
                       ) : null}
                     </div>
@@ -239,7 +237,7 @@ export function AccountBookingsList() {
                           href={`/account/reservations/${booking.id}#booking-review`}
                           className="inline-flex min-h-[44px] items-center font-semibold text-primary hover:underline"
                         >
-                          {t.account.reservations.leaveReviewCta}
+                          {t('reservations.leaveReviewCta')}
                         </Link>
                       ) : null}
                       <Link
@@ -250,7 +248,7 @@ export function AccountBookingsList() {
                             : 'font-medium text-primary'
                         }`}
                       >
-                        {t.account.reservations.view}
+                        {t('reservations.view')}
                       </Link>
                     </div>
                   </td>

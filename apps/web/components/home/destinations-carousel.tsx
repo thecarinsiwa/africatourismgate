@@ -3,8 +3,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import { useScrollAnimation } from './use-scroll-animation';
-import { useTranslations, useLocale } from '../../lib/i18n/locale-provider';
 import { useFeaturedDestinations } from '../../lib/destinations/use-featured-destinations';
 
 const PLACEHOLDER_IMAGE =
@@ -34,8 +34,8 @@ function DestinationCardSkeleton() {
 }
 
 export function DestinationsCarousel() {
-  const t = useTranslations();
-  const { locale } = useLocale();
+  const t = useTranslations('destinations');
+  const locale = useLocale();
   const { ref, isVisible } = useScrollAnimation(0.1);
   const { destinations, loading, error } = useFeaturedDestinations(4);
 
@@ -60,9 +60,9 @@ export function DestinationsCarousel() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className={`mb-12 max-w-2xl mx-auto text-center ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
           <h2 id="destinations-heading" className="text-2xl font-bold uppercase tracking-wide text-atg-fg sm:text-3xl">
-            {t.destinations.title}
+            {t('title')}
           </h2>
-          <p className="mt-4 text-sm sm:text-base leading-relaxed text-atg-muted">{t.destinations.subtitle}</p>
+          <p className="mt-4 text-sm sm:text-base leading-relaxed text-atg-muted">{t('subtitle')}</p>
         </div>
 
         {loading ? (
@@ -73,10 +73,10 @@ export function DestinationsCarousel() {
           </div>
         ) : error ? (
           <p className="text-center text-sm text-atg-muted" role="alert">
-            {t.destinations.loadError}
+            {t('loadError')}
           </p>
         ) : cards.length === 0 ? (
-          <p className="text-center text-sm text-atg-muted">{t.destinations.empty}</p>
+          <p className="text-center text-sm text-atg-muted">{t('empty')}</p>
         ) : (
           <div className={`grid gap-8 sm:grid-cols-2 lg:grid-cols-4 ${isVisible ? 'animate-fade-in-up delay-200' : 'opacity-0'}`}>
             {cards.map((dest) => (
@@ -113,7 +113,7 @@ export function DestinationsCarousel() {
 
                   <div className="flex items-center justify-end">
                     <span className="inline-flex items-center rounded-md bg-primary px-3 py-1.5 text-xs font-bold text-white transition-colors hover:bg-primary-hover">
-                      {t.destinations.details}
+                      {t('details')}
                     </span>
                   </div>
                 </div>

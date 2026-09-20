@@ -1,15 +1,15 @@
 'use client';
 
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations } from 'next-intl';
 import { LegalDocumentPageContent } from './legal-document-page-content';
 
 export function LegalPrivacyPageContent() {
-  const legal = useTranslations().legal;
+  const t = useTranslations('legal');
   return (
     <LegalDocumentPageContent
       sectionKey="privacy-policy"
-      fallbackTitle={legal.privacyPolicyTitle}
-      fallbackSubtitle={legal.privacyPolicySubtitle}
+      fallbackTitle={t('privacyPolicyTitle')}
+      fallbackSubtitle={t('privacyPolicySubtitle')}
     />
   );
 }

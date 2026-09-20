@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import { ABOUT_PATHS, findAboutNavItem, normalizeAboutPathname } from '../../lib/about/routes';
-import { useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { PageHero } from '../shared/page-hero';
@@ -16,10 +16,9 @@ type AboutShellProps = {
 
 export function AboutShell({ children }: AboutShellProps) {
   const pathname = normalizeAboutPathname(usePathname());
-  const t = useTranslations();
-  const a = t.about;
+  const t = useTranslations('about');
   const navItem = findAboutNavItem(pathname);
-  const pageTitle = navItem ? a.nav[navItem.labelKey] : a.heroTitle;
+  const pageTitle = navItem ? t(`nav.${navItem.labelKey}`) : t('heroTitle');
 
   return (
     <div className="flex min-h-screen flex-col bg-atg-bg text-atg-fg">
@@ -31,13 +30,13 @@ export function AboutShell({ children }: AboutShellProps) {
               <ol className="flex flex-wrap items-center gap-2 text-sm text-white/70">
                 <li>
                   <Link href="/" className="hover:text-white">
-                    {a.breadcrumbHome}
+                    {t('breadcrumbHome')}
                   </Link>
                 </li>
                 <li aria-hidden>/</li>
                 <li>
                   <Link href={ABOUT_PATHS.whoWeAre} className="hover:text-white">
-                    {a.breadcrumbAbout}
+                    {t('breadcrumbAbout')}
                   </Link>
                 </li>
               </ol>
@@ -46,7 +45,7 @@ export function AboutShell({ children }: AboutShellProps) {
           title={<h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{pageTitle}</h1>}
           description={
             <p className="max-w-2xl text-base leading-relaxed text-white/80 sm:text-lg">
-              {a.heroSubtitle}
+              {t('heroSubtitle')}
             </p>
           }
         />

@@ -6,7 +6,8 @@ import { formatNationalityDisplay } from '@africatourismgate/utils';
 import { useCallback, useEffect, useId, useState } from 'react';
 import { fetchBookingIdentityDocumentBlob } from '../../lib/api/booking-identity-documents';
 import { getAccountApiClient } from '../../lib/api/account';
-import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import { useLocale, useMessages } from 'next-intl';
+import type { Translations } from '../../lib/i18n/message-types';
 import { NationalitySelect } from '../reservations/nationality-select';
 
 type FormState = {
@@ -105,9 +106,10 @@ type Props = {
 };
 
 export function AccountBookingManifestSection({ bookingId, bookingStatus }: Props) {
-  const t = useTranslations();
-  const { locale } = useLocale();
-  const m = t.account.reservations.detail.manifest;
+  const messages = useMessages();
+  const locale = useLocale();
+  const m = (messages as { account: Translations['account'] }).account.reservations.detail
+    .manifest;
 
   const allergiesId = useId();
   const seriousMedId = useId();
@@ -183,7 +185,7 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
     try {
       const client = await getAccountApiClient();
       const rows = await client.listBookingManifestEntries(bookingId);
-      setEntries(rows);
+      setEntries(Array.isArray(rows) ? rows : []);
     } catch {
       setLoadError(m.loadError);
       setEntries([]);

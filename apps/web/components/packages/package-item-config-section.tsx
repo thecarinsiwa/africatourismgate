@@ -2,7 +2,7 @@
 
 import type { PackageItemEnriched } from '../../lib/packages/types';
 import type { PackageLineSelection } from '../../lib/packages/package-lines';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { PackageActivityConfigItem } from './package-activity-config-section';
 import { PackageCruiseConfigItem } from './package-cruise-config-section';
 import { PackageFlightConfigItem } from './package-flight-config-section';

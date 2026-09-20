@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { getActivityDetail } from '../../lib/api/public';
 import { toActivityDetailQuery } from '../../lib/activities/listings';
 import type { ActivityDetail } from '../../lib/activities/types';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { ActivitySchedulesSection } from '../activities/activity-schedules-section';
 
 type PackageActivityConfigItemProps = {

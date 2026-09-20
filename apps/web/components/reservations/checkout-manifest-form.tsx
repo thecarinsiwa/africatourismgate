@@ -1,8 +1,9 @@
 'use client';
 
 import type { BookingManifestSex, CreateBookingManifestEntryRequest } from '@africatourismgate/types';
+import { getInitialFocusElement, trapFocus } from '@africatourismgate/ui';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
-import { useLocale } from '../../lib/i18n/locale-provider';
+import { useLocale } from 'next-intl';
 import { NationalitySelect } from './nationality-select';
 
 export type ManifestEntryDraft = {
@@ -74,15 +75,28 @@ export function manifestDraftToPayload(
 type CameraCaptureProps = {
   onCapture: (file: File) => void;
   onClose: () => void;
-  labels: { capture: string; retake: string; confirm: string; cancel: string; cameraError: string };
+  labels: {
+    dialogLabel: string;
+    capture: string;
+    retake: string;
+    confirm: string;
+    cancel: string;
+    cameraError: string;
+  };
 };
 
 function CameraCapture({ onCapture, onClose, labels }: CameraCaptureProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
   const [snapshot, setSnapshot] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const stopTracks = useCallback(() => {
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+  }, []);
 
   const startCamera = useCallback(async () => {
     try {
@@ -101,9 +115,45 @@ function CameraCapture({ onCapture, onClose, labels }: CameraCaptureProps) {
   useEffect(() => {
     void startCamera();
     return () => {
-      streamRef.current?.getTracks().forEach((t) => t.stop());
+      stopTracks();
     };
-  }, [startCamera]);
+  }, [startCamera, stopTracks]);
+
+  useEffect(() => {
+    previouslyFocusedRef.current = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const frame = window.requestAnimationFrame(() => {
+      const panel = dialogRef.current;
+      if (!panel) return;
+      const initialFocus = getInitialFocusElement(panel);
+      if (initialFocus) {
+        initialFocus.focus();
+      } else {
+        panel.focus();
+      }
+    });
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        stopTracks();
+        onClose();
+        return;
+      }
+      const panel = dialogRef.current;
+      if (panel) trapFocus(panel, event);
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', onKeyDown);
+      previouslyFocusedRef.current?.focus?.();
+    };
+  }, [onClose, stopTracks]);
 
   function takeSnapshot() {
     const video = videoRef.current;
@@ -125,7 +175,7 @@ function CameraCapture({ onCapture, onClose, labels }: CameraCaptureProps) {
       (blob) => {
         if (!blob) return;
         const file = new File([blob], `photo-${Date.now()}.jpg`, { type: 'image/jpeg' });
-        streamRef.current?.getTracks().forEach((t) => t.stop());
+        stopTracks();
         onCapture(file);
       },
       'image/jpeg',
@@ -134,7 +184,14 @@ function CameraCapture({ onCapture, onClose, labels }: CameraCaptureProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-black" role="dialog" aria-modal="true">
+    <div
+      ref={dialogRef}
+      className="fixed inset-0 z-50 flex flex-col bg-black focus:outline-none"
+      role="dialog"
+      aria-modal="true"
+      aria-label={labels.dialogLabel}
+      tabIndex={-1}
+    >
       <div className="relative flex-1 overflow-hidden">
         <video
           ref={videoRef}
@@ -158,10 +215,10 @@ function CameraCapture({ onCapture, onClose, labels }: CameraCaptureProps) {
         <button
           type="button"
           onClick={() => {
-            streamRef.current?.getTracks().forEach((t) => t.stop());
+            stopTracks();
             onClose();
           }}
-          className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white"
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
           aria-label={labels.cancel}
         >
           <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" aria-hidden="true">
@@ -174,7 +231,7 @@ function CameraCapture({ onCapture, onClose, labels }: CameraCaptureProps) {
             type="button"
             onClick={takeSnapshot}
             disabled={Boolean(error)}
-            className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-white bg-white/20 transition-transform active:scale-95 disabled:opacity-40"
+            className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-white bg-white/20 transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-40"
             aria-label={labels.capture}
           >
             <span className="h-10 w-10 rounded-full bg-white" />
@@ -183,7 +240,7 @@ function CameraCapture({ onCapture, onClose, labels }: CameraCaptureProps) {
           <button
             type="button"
             onClick={confirm}
-            className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white"
+            className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             aria-label={labels.confirm}
           >
             <svg viewBox="0 0 20 20" fill="currentColor" className="h-7 w-7" aria-hidden="true">
@@ -196,7 +253,7 @@ function CameraCapture({ onCapture, onClose, labels }: CameraCaptureProps) {
           <button
             type="button"
             onClick={retake}
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white"
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             aria-label={labels.retake}
           >
             <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" aria-hidden="true">
@@ -205,6 +262,99 @@ function CameraCapture({ onCapture, onClose, labels }: CameraCaptureProps) {
           </button>
         ) : (
           <div className="h-12 w-12" />
+        )}
+      </div>
+    </div>
+  );
+}
+
+type DocumentPreviewDialogProps = {
+  file: File;
+  url: string;
+  closeLabel: string;
+  onClose: () => void;
+};
+
+function DocumentPreviewDialog({ file, url, closeLabel, onClose }: DocumentPreviewDialogProps) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    previouslyFocusedRef.current = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const frame = window.requestAnimationFrame(() => {
+      const panel = dialogRef.current;
+      if (!panel) return;
+      const initialFocus = getInitialFocusElement(panel);
+      if (initialFocus) {
+        initialFocus.focus();
+      } else {
+        panel.focus();
+      }
+    });
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+      const panel = dialogRef.current;
+      if (panel) trapFocus(panel, event);
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', onKeyDown);
+      previouslyFocusedRef.current?.focus?.();
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      ref={dialogRef}
+      className="fixed inset-0 z-50 flex flex-col bg-black/80 p-4 focus:outline-none"
+      role="dialog"
+      aria-modal="true"
+      aria-label={file.name}
+      tabIndex={-1}
+      onClick={onClose}
+    >
+      <div className="flex items-center justify-between pb-3">
+        <span className="max-w-[calc(100%-3rem)] truncate text-sm text-white/80">
+          {file.name}
+        </span>
+        <button
+          type="button"
+          onClick={onClose}
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          aria-label={closeLabel}
+        >
+          <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" aria-hidden="true">
+            <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+          </svg>
+        </button>
+      </div>
+      <div
+        className="flex flex-1 items-center justify-center overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {file.type === 'application/pdf' ? (
+          <iframe
+            src={url}
+            title={file.name}
+            className="h-full w-full rounded-lg bg-white"
+          />
+        ) : (
+          <img
+            src={url}
+            alt={file.name}
+            className="max-h-full max-w-full rounded-lg object-contain shadow-xl"
+          />
         )}
       </div>
     </div>
@@ -278,7 +428,7 @@ type Props = {
 
 export function CheckoutManifestForm({ count, entries, onChange, labels, validationErrors }: Props) {
   const baseId = useId();
-  const { locale } = useLocale();
+  const locale = useLocale();
   const [cameraIndex, setCameraIndex] = useState<number | null>(null);
   const [previewFile, setPreviewFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -289,11 +439,17 @@ export function CheckoutManifestForm({ count, entries, onChange, labels, validat
     setPreviewFile(file);
   }
 
-  function closePreview() {
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-    setPreviewUrl(null);
+  const closePreview = useCallback(() => {
+    setPreviewUrl((current) => {
+      if (current) URL.revokeObjectURL(current);
+      return null;
+    });
     setPreviewFile(null);
-  }
+  }, []);
+
+  const closeCamera = useCallback(() => {
+    setCameraIndex(null);
+  }, []);
 
   useEffect(() => {
     if (entries.length === count) return;
@@ -310,6 +466,7 @@ export function CheckoutManifestForm({ count, entries, onChange, labels, validat
   if (entries.length === 0) return null;
 
   const cameraLabels = {
+    dialogLabel: labels.takePhoto,
     capture: labels.cameraCapture,
     retake: labels.cameraRetake,
     confirm: labels.cameraConfirm,
@@ -326,52 +483,17 @@ export function CheckoutManifestForm({ count, entries, onChange, labels, validat
             update(cameraIndex, { file });
             setCameraIndex(null);
           }}
-          onClose={() => setCameraIndex(null)}
+          onClose={closeCamera}
         />
       ) : null}
 
       {previewFile && previewUrl ? (
-        <div
-          className="fixed inset-0 z-50 flex flex-col bg-black/80 p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label={previewFile.name}
-          onClick={closePreview}
-        >
-          <div className="flex items-center justify-between pb-3">
-            <span className="max-w-[calc(100%-3rem)] truncate text-sm text-white/80">
-              {previewFile.name}
-            </span>
-            <button
-              type="button"
-              onClick={closePreview}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
-              aria-label={labels.cameraCancel}
-            >
-              <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" aria-hidden="true">
-                <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
-              </svg>
-            </button>
-          </div>
-          <div
-            className="flex flex-1 items-center justify-center overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {previewFile.type === 'application/pdf' ? (
-              <iframe
-                src={previewUrl}
-                title={previewFile.name}
-                className="h-full w-full rounded-lg bg-white"
-              />
-            ) : (
-              <img
-                src={previewUrl}
-                alt={previewFile.name}
-                className="max-h-full max-w-full rounded-lg object-contain shadow-xl"
-              />
-            )}
-          </div>
-        </div>
+        <DocumentPreviewDialog
+          file={previewFile}
+          url={previewUrl}
+          closeLabel={labels.cameraCancel}
+          onClose={closePreview}
+        />
       ) : null}
 
       <div className="space-y-4 rounded-xl border border-atg-border bg-atg-elevated p-5 dark:border-atg-border dark:bg-atg-elevated">

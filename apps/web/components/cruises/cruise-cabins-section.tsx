@@ -4,7 +4,7 @@ import type { KeyboardEvent } from 'react';
 import { resolveCabinDeck } from '../../lib/cruises/cabins';
 import { formatCruisePrice } from '../../lib/cruises/listings';
 import type { CruiseCabinOffer } from '../../lib/cruises/types';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 
 type CruiseCabinsSectionProps = {
   cabins: CruiseCabinOffer[];

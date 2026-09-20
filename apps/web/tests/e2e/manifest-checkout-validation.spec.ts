@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { fillCheckoutManifest, mockManifestApi } from './helpers/fill-manifest';
+import { mockCheckoutAuth } from './helpers/mock-checkout-auth';
 
 const PACKAGE_ID = '00000000-0000-4000-8000-000000005001';
 const BOOKING_ID = 'booking-e2e-package-manifest';
@@ -46,6 +47,7 @@ const packageDetailMock = {
 };
 
 async function gotoPackageRecap(page: import('@playwright/test').Page) {
+  await mockCheckoutAuth(page);
   await page.addInitScript(() => {
     window.sessionStorage.setItem(
       'atg.web.session',
@@ -96,7 +98,7 @@ async function gotoPackageRecap(page: import('@playwright/test').Page) {
   await page.goto(
     `/booking/recap?kind=package&packageId=${PACKAGE_ID}&startDate=${DATE}&endDate=2026-08-02&travelers=${TRAVELERS}`,
   );
-  await expect(page.getByRole('heading', { name: /recapitulatif/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /r[ée]capitulatif|summary|resumen/i })).toBeVisible();
   await expect(page.getByText(/informations des voyageurs|traveler information|información de los viajeros/i)).toBeVisible();
 }
 
@@ -114,7 +116,11 @@ test('manifeste checkout: bloqué si n° pièce manquant', async ({ page }) => {
   }
 
   for (let i = 0; i < count; i += 1) {
-    const nat = page.getByLabel(/^nationalit[eé]$|^nationality$|^nacionalidad$/i).nth(i);
+    const nat = page
+      .getByRole('button', {
+        name: /choisir un pays|choose a country|elegir un pa[ií]s|nationalit|nationality|nacionalidad/i,
+      })
+      .nth(i);
     await nat.click();
     await page.locator('input[type="search"]').last().fill('Congo');
     await page.getByRole('option').filter({ hasText: /\(CD\)/i }).first().click();
@@ -128,7 +134,7 @@ test('manifeste checkout: bloqué si n° pièce manquant', async ({ page }) => {
   await expect(
     page.getByRole('alert').filter({
       hasText: /pi[eè]ce d.identit|passport number|documento/i,
-    }),
+    }).first(),
   ).toBeVisible();
   await expect(page).toHaveURL(/\/booking\/recap/);
 });
@@ -140,7 +146,7 @@ test('manifeste checkout: bloqué si téléphone urgence manquant', async ({ pag
   await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();
   await fillCheckoutManifest(page);
 
-  const emPhoneInputs = page.getByLabel(/^t[ée]l[ée]phone$|^phone$|^tel[ée]fono$/i);
+  const emPhoneInputs = page.getByLabel(/t[ée]l[ée]phone|phone|tel[ée]fono/i);
   const phoneCount = await emPhoneInputs.count();
   expect(phoneCount).toBeGreaterThan(0);
   for (let i = 0; i < phoneCount; i += 1) {
@@ -154,7 +160,7 @@ test('manifeste checkout: bloqué si téléphone urgence manquant', async ({ pag
   await expect(
     page.getByRole('alert').filter({
       hasText: /t[ée]l[ée]phone.*urgence|emergency contact phone|tel[ée]fono.*emergencia/i,
-    }),
+    }).first(),
   ).toBeVisible();
   await expect(page).toHaveURL(/\/booking\/recap/);
 });

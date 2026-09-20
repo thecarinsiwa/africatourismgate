@@ -19,7 +19,7 @@ import {
 } from '../../lib/packages/package-item-detail-load';
 import { formatPackagePrice } from '../../lib/packages/listings';
 import type { PackageItemEnriched } from '../../lib/packages/types';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { ProductGallery, RichText } from '../shared';
 import { Spinner } from '@africatourismgate/ui';
 

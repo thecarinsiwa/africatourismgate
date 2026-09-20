@@ -9,7 +9,8 @@ import {
 } from '../../lib/cars/listings';
 import type { VehicleSearchResult } from '../../lib/cars/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
-import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import { useLocale, useTranslations } from 'next-intl';
+import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { ListingPageBody, ListingPaginationBar, ListingSortBar } from '../shared/listing-patterns';
@@ -27,10 +28,9 @@ type CarsPageContentProps = {
 };
 
 export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
-  const t = useTranslations();
-  const c = t.cars;
-  const l = t.listing;
-  const { locale } = useLocale();
+  const c = useNamespaceLabels('cars');
+  const tListing = useTranslations('listing');
+  const locale = useLocale();
 
   const [sort, setSort] = useState<SortKey>('recommended');
   const [results, setResults] = useState<VehicleSearchResult[]>([]);
@@ -93,7 +93,7 @@ export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
     showPagination,
   } = useListingPagination(listings, paginationResetKey);
 
-  const paginationLabels = useMemo(() => toListingPaginationLabels(l), [l]);
+  const paginationLabels = useMemo(() => toListingPaginationLabels(tListing), [tListing]);
 
   const searchSummary = [
     initialSearch.pickupDate &&
@@ -182,6 +182,7 @@ export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
                 message: c.loadError,
                 retryLabel: c.retry,
                 onRetry: () => setFetchId((value) => value + 1),
+                backHomeLabel: c.backHome,
               }
             : null
         }
@@ -202,7 +203,7 @@ export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
               totalPages={totalPages}
               totalItems={totalItems}
               pageSize={pageSize}
-              itemLabel={l.resultItem}
+              itemLabel={tListing('resultItem')}
               labels={paginationLabels}
               onPageChange={(next) => {
                 setPage(next);

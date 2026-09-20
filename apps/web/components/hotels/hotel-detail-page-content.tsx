@@ -14,7 +14,9 @@ import {
 } from '../../lib/hotels/listings';
 import { buildReservationQuery } from '../../lib/reservations/flow';
 import { localeToBcp47 } from '../../lib/i18n/locale-tag';
-import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import type { Locale } from '../../lib/i18n/types';
+import { useLocale } from 'next-intl';
+import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { DetailPageSkeletonShell } from '../shared/loading-skeletons';
@@ -39,9 +41,8 @@ export function HotelDetailPageContent({
   propertyId,
   initialSearch,
 }: HotelDetailPageContentProps) {
-  const t = useTranslations();
-  const h = t.hotels;
-  const { locale } = useLocale();
+  const h = useNamespaceLabels('hotels');
+  const locale = useLocale() as Locale;
   const localeTag = localeToBcp47(locale);
   const router = useRouter();
 

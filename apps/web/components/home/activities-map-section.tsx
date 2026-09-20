@@ -3,13 +3,13 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import { browseActivities } from '../../lib/api/public';
 import {
   buildActivityDetailHref,
   formatActivityPrice,
 } from '../../lib/activities/listings';
 import type { ActivitySearchResult } from '../../lib/activities/types';
-import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { useScrollAnimation } from './use-scroll-animation';
 import { Spinner } from '@africatourismgate/ui';
 
@@ -59,8 +59,8 @@ function toDateParam(iso?: string): string {
 }
 
 export function ActivitiesMapSection() {
-  const t = useTranslations();
-  const { locale } = useLocale();
+  const t = useTranslations('activitiesMap');
+  const locale = useLocale();
   const { ref, isVisible } = useScrollAnimation(0.1);
   const [activities, setActivities] = useState<ActivitySearchResult[]>([]);
   const [loading, setLoading] = useState(true);
@@ -92,6 +92,9 @@ export function ActivitiesMapSection() {
     };
   }, []);
 
+  const nextDateLabel = t('nextDate');
+  const viewLabel = t('viewActivity');
+
   const markers = useMemo<ActivityMapMarker[]>(() => {
     return activities.filter(hasMapCoordinates).map((activity) => {
       const date = toDateParam(activity.nextStartDatetime);
@@ -111,12 +114,12 @@ export function ActivitiesMapSection() {
         latitude: activity.latitude,
         longitude: activity.longitude,
         priceLabel: formatActivityPrice(activity.priceCents, activity.currency),
-        nextDateLabel: nextDate ? `${t.activitiesMap.nextDate}: ${nextDate}` : null,
+        nextDateLabel: nextDate ? `${nextDateLabel}: ${nextDate}` : null,
         href: buildActivityDetailHref(activity.id, { date }),
-        viewLabel: t.activitiesMap.viewActivity,
+        viewLabel,
       };
     });
-  }, [activities, locale, t.activitiesMap.nextDate, t.activitiesMap.viewActivity]);
+  }, [activities, locale, nextDateLabel, viewLabel]);
 
   return (
     <section
@@ -133,10 +136,10 @@ export function ActivitiesMapSection() {
             id="activities-map-heading"
             className="text-2xl font-bold uppercase tracking-wide text-atg-fg sm:text-3xl"
           >
-            {t.activitiesMap.title}
+            {t('title')}
           </h2>
           <p className="mt-4 text-sm sm:text-base leading-relaxed text-atg-muted">
-            {t.activitiesMap.subtitle}
+            {t('subtitle')}
           </p>
         </div>
 
@@ -146,27 +149,27 @@ export function ActivitiesMapSection() {
               className="flex h-[420px] w-full flex-col items-center justify-center gap-3 rounded-xl border border-atg-border bg-atg-surface sm:h-[480px]"
               role="status"
               aria-busy="true"
-              aria-label={t.activitiesMap.loading}
+              aria-label={t('loading')}
             >
-              <Spinner size="lg" variant="primary" label={t.activitiesMap.loading} showLabel />
+              <Spinner size="lg" variant="primary" label={t('loading')} showLabel />
             </div>
           ) : error ? (
             <p className="text-center text-sm text-atg-muted" role="alert">
-              {t.activitiesMap.loadError}
+              {t('loadError')}
             </p>
           ) : markers.length === 0 ? (
             <div className="rounded-xl border border-dashed border-atg-border bg-atg-surface px-6 py-16 text-center">
-              <p className="text-sm text-atg-muted">{t.activitiesMap.empty}</p>
+              <p className="text-sm text-atg-muted">{t('empty')}</p>
               <Link
                 href="/activities"
                 className="mt-4 inline-block text-sm font-semibold text-primary hover:underline"
               >
-                {t.activitiesMap.browseAll}
+                {t('browseAll')}
               </Link>
             </div>
           ) : (
             <div className="overflow-hidden rounded-xl border border-atg-border shadow-md">
-              <ActivitiesMapInner markers={markers} ariaLabel={t.activitiesMap.mapAria} />
+              <ActivitiesMapInner markers={markers} ariaLabel={t('mapAria')} />
             </div>
           )}
         </div>

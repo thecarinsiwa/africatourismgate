@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { type CruisesSearchParams } from '../../lib/cruises/listings';
 import { CRUISE_PORT_OPTIONS } from '../../lib/cruises/ports';
 import { addDays, todayISODate } from '../../lib/hotels/dates';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations } from 'next-intl';
 import { buildSearchRoute } from '../../lib/search/route';
 import {
   SearchFormInput,
@@ -21,9 +21,8 @@ type CruisesSearchFormProps = {
 
 export function CruisesSearchForm({ initialValues }: CruisesSearchFormProps) {
   const router = useRouter();
-  const t = useTranslations();
-  const c = t.cruises;
-  const s = t.search;
+  const t = useTranslations('search');
+  const c = useTranslations('cruises');
 
   const [sailFrom, setSailFrom] = useState(initialValues.sailFrom ?? '');
   const [sailTo, setSailTo] = useState(initialValues.sailTo ?? '');
@@ -60,17 +59,17 @@ export function CruisesSearchForm({ initialValues }: CruisesSearchFormProps) {
     setError(null);
 
     if (!sailFrom || !sailTo || !startDate || !endDate) {
-      setError(c.searchRequired);
+      setError(c('searchRequired'));
       return;
     }
 
     if (sailFrom === sailTo) {
-      setError(s.cruisesSamePort);
+      setError(t('cruisesSamePort'));
       return;
     }
 
     if (endDate <= startDate) {
-      setError(c.endAfterStart);
+      setError(c('endAfterStart'));
       return;
     }
 
@@ -89,10 +88,10 @@ export function CruisesSearchForm({ initialValues }: CruisesSearchFormProps) {
     <SearchFormPanel id="cruises-search" onSubmit={handleSubmit}>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_0.75fr_auto] lg:items-end">
         <div>
-          <SearchFormLabel>{c.sailFrom}</SearchFormLabel>
+          <SearchFormLabel>{c('sailFrom')}</SearchFormLabel>
           <SearchFormOptionDatalistInput
             name="sailFrom"
-            placeholder={s.allPorts}
+            placeholder={t('allPorts')}
             options={portOptions}
             value={sailFrom}
             onChange={(value) => {
@@ -103,10 +102,10 @@ export function CruisesSearchForm({ initialValues }: CruisesSearchFormProps) {
         </div>
 
         <div>
-          <SearchFormLabel>{c.sailTo}</SearchFormLabel>
+          <SearchFormLabel>{c('sailTo')}</SearchFormLabel>
           <SearchFormOptionDatalistInput
             name="sailTo"
-            placeholder={s.allDestinations}
+            placeholder={t('allDestinations')}
             options={portOptions}
             value={sailTo}
             onChange={(value) => {
@@ -117,7 +116,7 @@ export function CruisesSearchForm({ initialValues }: CruisesSearchFormProps) {
         </div>
 
         <div>
-          <SearchFormLabel>{c.startDate}</SearchFormLabel>
+          <SearchFormLabel>{c('startDate')}</SearchFormLabel>
           <SearchFormInput
             type="date"
             name="startDate"
@@ -134,7 +133,7 @@ export function CruisesSearchForm({ initialValues }: CruisesSearchFormProps) {
         </div>
 
         <div>
-          <SearchFormLabel>{c.endDate}</SearchFormLabel>
+          <SearchFormLabel>{c('endDate')}</SearchFormLabel>
           <SearchFormInput
             type="date"
             name="endDate"
@@ -148,7 +147,7 @@ export function CruisesSearchForm({ initialValues }: CruisesSearchFormProps) {
         </div>
 
         <div>
-          <SearchFormLabel>{c.guests}</SearchFormLabel>
+          <SearchFormLabel>{c('guests')}</SearchFormLabel>
           <SearchFormInput
             type="number"
             name="guests"
@@ -160,7 +159,7 @@ export function CruisesSearchForm({ initialValues }: CruisesSearchFormProps) {
         </div>
 
         <div className="flex items-end">
-          <SearchFormSubmit label={s.search} />
+          <SearchFormSubmit label={t('search')} />
         </div>
       </div>
 

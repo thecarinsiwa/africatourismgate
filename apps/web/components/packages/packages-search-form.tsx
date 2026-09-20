@@ -6,7 +6,7 @@ import {
   buildPackagesSearchQuery,
   type PackagesSearchParams,
 } from '../../lib/packages/listings';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations } from 'next-intl';
 import {
   SearchFormInput,
   SearchFormLabel,
@@ -20,8 +20,7 @@ type PackagesSearchFormProps = {
 
 export function PackagesSearchForm({ initialValues }: PackagesSearchFormProps) {
   const router = useRouter();
-  const t = useTranslations();
-  const p = t.packages;
+  const p = useTranslations('packages');
 
   const [searchInput, setSearchInput] = useState(initialValues.search ?? '');
 
@@ -44,17 +43,17 @@ export function PackagesSearchForm({ initialValues }: PackagesSearchFormProps) {
     <SearchFormPanel id="packages-search" onSubmit={handleSubmit}>
       <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
         <div>
-          <SearchFormLabel>{p.searchLabel}</SearchFormLabel>
+          <SearchFormLabel>{p('searchLabel')}</SearchFormLabel>
           <SearchFormInput
             type="search"
             name="search"
-            placeholder={p.searchPlaceholder}
+            placeholder={p('searchPlaceholder')}
             value={searchInput}
             onChange={setSearchInput}
           />
         </div>
         <div className="flex items-end">
-          <SearchFormSubmit label={p.searchSubmit} />
+          <SearchFormSubmit label={p('searchSubmit')} />
         </div>
       </div>
     </SearchFormPanel>

@@ -3,35 +3,39 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { getFeaturedPackage } from '../../lib/api/public';
 import { packageDescriptionPreview } from '../../lib/packages/description-preview';
 import { formatPackagePrice } from '../../lib/packages/listings';
 import type { PackageListItem } from '../../lib/packages/types';
-import { useTranslations } from '../../lib/i18n/locale-provider';
 import { useScrollAnimation } from './use-scroll-animation';
 
 const FALLBACK_IMAGE =
   'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg/1280px-Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg';
 
 export function ParallaxPromo() {
-  const t = useTranslations();
+  const t = useTranslations('promo');
   const { ref, isVisible } = useScrollAnimation(0.15);
   const [featured, setFeatured] = useState<PackageListItem | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    void getFeaturedPackage().then((pkg) => {
-      if (!cancelled) setFeatured(pkg);
-    });
+    void getFeaturedPackage()
+      .then((pkg) => {
+        if (!cancelled) setFeatured(pkg);
+      })
+      .catch(() => {
+        /* keep translation / static fallback */
+      });
     return () => {
       cancelled = true;
     };
   }, []);
 
-  const title = featured?.name ?? t.promo.title;
+  const title = featured?.name ?? t('title');
   const description = featured?.description
     ? packageDescriptionPreview(featured.description)
-    : t.promo.description;
+    : t('description');
   const price = featured
     ? formatPackagePrice(featured.pricing.totalCents, featured.pricing.currency)
     : '$159.00';
@@ -60,16 +64,16 @@ export function ParallaxPromo() {
 
             <div className="min-w-0 flex-1 border-l-0 sm:border-l-4 sm:border-secondary sm:pl-4">
               <span className="inline-flex rounded-full bg-secondary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-sm">
-                {t.promo.badge}
+                {t('badge')}
               </span>
               <h2 className="mt-1.5 line-clamp-1 text-base font-bold text-atg-fg sm:text-lg">{title}</h2>
               <p className="mt-0.5 line-clamp-1 text-xs leading-snug text-atg-muted sm:line-clamp-2 sm:text-sm">
                 {description}
               </p>
               <p className="mt-1.5 text-xs text-atg-muted sm:text-sm">
-                {t.promo.priceFrom}{' '}
+                {t('priceFrom')}{' '}
                 <span className="text-base font-bold text-secondary sm:text-lg">{price}</span>
-                <span className="ml-1">{t.promo.perPerson}</span>
+                <span className="ml-1">{t('perPerson')}</span>
               </p>
             </div>
 
@@ -78,7 +82,7 @@ export function ParallaxPromo() {
                 href={detailsHref}
                 className="inline-flex min-h-[40px] w-full items-center justify-center rounded-lg bg-secondary px-5 py-2 text-xs font-bold uppercase tracking-wide text-white shadow-sm transition-colors hover:bg-secondary/90 sm:w-auto sm:text-sm"
               >
-                {t.promo.details}
+                {t('details')}
               </Link>
             </div>
           </div>

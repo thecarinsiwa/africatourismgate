@@ -5,7 +5,7 @@ import { formatPortTime } from '../../lib/cruises/listings';
 import { formatCruisePortLabel } from '../../lib/cruises/ports';
 import type { CruiseItineraryPort, CruiseSailingDetail } from '../../lib/cruises/types';
 import { addDays, formatDisplayDate } from '../../lib/hotels/dates';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 
 type CruiseItinerarySectionProps = {
   detail: CruiseSailingDetail;

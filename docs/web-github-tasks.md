@@ -63,7 +63,8 @@ pnpm dev:web           # http://localhost:3002
 pnpm --filter @africatourismgate/web lint
 pnpm --filter @africatourismgate/web build
 pnpm --filter @africatourismgate/web test          # unitaires (lib/**/*.test.ts)
-pnpm --filter @africatourismgate/web test:e2e      # Playwright (14 specs)
+pnpm --filter @africatourismgate/web test:e2e      # Playwright (18 specs, `pnpm dev`)
+pnpm --filter @africatourismgate/web test:e2e:ci   # build + `next start` (anti vendor-chunks)
 node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 ```
 
@@ -87,10 +88,10 @@ node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 | Compte client `/account/*` | ✅ | Profil, réservations, chat assisté, fidélité OneKey |
 | i18n | ⚠️ | Migration next-intl inachevée ; textes EN en dur sur certaines pages |
 | Routes legacy `/reservations/*` | ⚠️ | Doublons sans guards auth |
-| Stub `/booking` (sans `/cart`) | ⚠️ | Placeholder EN non i18n |
-| Copy « demo / coming soon » | ⚠️ | Incohérent avec checkout opérationnel |
+| Stub `/booking` (sans `/cart`) | ✅ | **WEB-003 Option A** : redirect serveur → `/booking/cart` si draft URL valide, sinon `/hotels` |
+| Copy « demo / coming soon » | ✅ | **WEB-004** : copy live sans « coming soon » ; trust demo gated (dev / flag) |
 | Tests unitaires composants | ❌ | Seulement logique `lib/` |
-| Tests E2E | ⚠️ | Bonne couverture checkout ; i18n E2E limité à `/` + login (voir WEB-I18N-06) |
+| Tests E2E | ✅ | **WEB-006**–**008** : `test:e2e:ci` + car-checkout + marketing smoke ; 18 specs / 49 tests |
 | Design / cohérence visuelle | ⚠️ | Voir [web-design-improvements.md](./web-design-improvements.md) |
 
 ---
@@ -101,19 +102,19 @@ node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 | -- | ----------- | -------- | ---- | ------------- |
 | WEB-001 | Migrer i18n legacy vers next-intl | Haute | Refactoring | L |
 | WEB-002 | Supprimer routes legacy `/reservations/*` | Haute | Cleanup | S |
-| WEB-003 | Corriger stub `/booking` ou rediriger | Haute | Bug | S |
-| WEB-004 | Aligner copy UX (demo, coming soon, trust hints) | Haute | Enhancement | M |
-| WEB-005 | Internationaliser metadata SEO | Moyenne | Enhancement | M |
-| WEB-006 | Stabiliser pipeline E2E (build + Playwright CI) | Haute | Testing | M |
-| WEB-007 | E2E checkout location voiture | Moyenne | Testing | S |
-| WEB-008 | E2E smoke blog, donate, about | Basse | Testing | M |
-| WEB-009 | Tests composants checkout & auth | Moyenne | Testing | L |
-| WEB-010 | Audit accessibilité (a11y) | Moyenne | A11y | L |
-| WEB-011 | Gestion erreurs API sur pages listing | Moyenne | Bug | M |
-| WEB-012 | Créer README local `apps/web` | Basse | Docs | S |
-| WEB-013 | Nettoyer code `@deprecated` | Basse | Cleanup | S |
-| WEB-014 | E2E flux register + verify OTP | Moyenne | Testing | M |
-| WEB-015 | E2E erreurs Stripe / échecs API | Moyenne | Testing | M |
+| WEB-003 | Corriger stub `/booking` — ✅ Option A (redirect) | Haute | Bug | S |
+| WEB-004 | Aligner copy UX (demo, coming soon, trust hints) — ✅ | Haute | Enhancement | M |
+| WEB-005 | Internationaliser metadata SEO — ✅ | Moyenne | Enhancement | M |
+| WEB-006 | Stabiliser pipeline E2E (build + Playwright CI) — ✅ | Haute | Testing | M |
+| WEB-007 | E2E checkout location voiture — ✅ | Moyenne | Testing | S |
+| WEB-008 | E2E smoke blog, donate, about — ✅ | Basse | Testing | M |
+| WEB-009 | Tests composants checkout & auth — ✅ | Moyenne | Testing | L |
+| WEB-010 | Audit accessibilité (a11y) — ✅ | Moyenne | A11y | L |
+| WEB-011 | Gestion erreurs API sur pages listing — ✅ | Moyenne | Bug | M |
+| WEB-012 | Créer README local `apps/web` — ✅ | Basse | Docs | S |
+| WEB-013 | Nettoyer code `@deprecated` — ✅ | Basse | Cleanup | S |
+| WEB-014 | E2E flux register + verify OTP — ✅ | Moyenne | Testing | M |
+| WEB-015 | E2E erreurs Stripe / échecs API — ✅ | Moyenne | Testing | M |
 | WEB-I18N-01 | QA manuelle i18n — Accueil & navigation | Haute | i18n / QA | S |
 | WEB-I18N-02 | QA manuelle i18n — Verticales (6 listings + fiches) | Haute | i18n / QA | M |
 | WEB-I18N-03 | QA manuelle i18n — Parcours booking & auth | Haute | i18n / QA | M |
@@ -239,15 +240,29 @@ pnpm --filter @africatourismgate/web test:e2e
 
 ### WEB-003 — Corriger ou supprimer le stub `/booking`
 
+**Statut :** ✅ fait (**Option A**)  
 **Labels :** `web`, `bug`, `priority:high`  
-**Branche suggérée :** `fix/web-booking-stub-redirect`
+**Branche :** `feature/web-i18n-next-intl-migration` (commits redirect + smoke e2e)
 
-#### Modèle GitHub
+#### Décision (documentée pour la PR)
+
+**Option A retenue** — pas de page hub (C), pas de redirect config aveugle vers le panier (B).
+
+Le panier vit dans la query URL (`parseReservationDraft`). Un redirect serveur conditionnel dans [`apps/web/app/booking/page.tsx`](../apps/web/app/booking/page.tsx) :
+
+- draft URL **valide** → `/booking/cart?${buildReservationQuery(draft)}`
+- sinon (index nu ou query incomplète) → `/hotels`
+
+Évite le placeholder EN, reste cohérent avec le checkout, et n’impose pas le guard auth + « invalid draft » pour une visite vide de `/booking`.
+
+Smoke E2E : [`apps/web/tests/e2e/booking-index-redirect.spec.ts`](../apps/web/tests/e2e/booking-index-redirect.spec.ts).
+
+#### Modèle GitHub (historique)
 
 ```markdown
 ## Contexte
 
-La route `apps/web/app/booking/page.tsx` affiche un **placeholder** en anglais :
+La route `apps/web/app/booking/page.tsx` affichait un **placeholder** en anglais :
 - Titre « Booking Checkout »
 - Message « Full checkout integration is being finalized »
 - CTA mailto manuel
@@ -257,29 +272,40 @@ Or le checkout complet existe via `/booking/cart` → `/booking/recap` → Strip
 ## Objectif
 
 Choisir **une** des options (documenter le choix dans la PR) :
-- **Option A (recommandée)** : redirect `/booking` → `/booking/cart` (ou `/hotels` si panier vide)
+- **Option A (retenue)** : redirect `/booking` → `/booking/cart` (ou `/hotels` si panier / draft vide)
 - **Option B** : supprimer la page et gérer via `next.config.mjs`
 - **Option C** : transformer en page hub i18n avec liens vers panier / compte (si un vrai besoin produit)
 
 ## Critères d'acceptation
 
-- [ ] Plus de texte EN hardcodé « being finalized »
-- [ ] Comportement cohérent avec le flux checkout existant
-- [ ] i18n fr/en/es si contenu conservé
+- [x] Plus de texte EN hardcodé « being finalized »
+- [x] Comportement cohérent avec le flux checkout existant
+- [x] i18n fr/en/es si contenu conservé — N/A (plus de contenu UI ; redirect seul)
 
 ## Fichier
 
 - `apps/web/app/booking/page.tsx`
+- `apps/web/tests/e2e/booking-index-redirect.spec.ts`
 ```
 
 ---
 
 ### WEB-004 — Aligner copy UX (demo, coming soon, trust hints)
 
+**Statut :** ✅ fait  
 **Labels :** `web`, `enhancement`, `priority:high`  
 **Branche suggérée :** `fix/web-copy-demo-trust-hints`
 
-#### Modèle GitHub
+#### Livré
+
+- Trust hint `trustDemoCatalog` : gate via [`shouldShowDemoTrustHints`](../apps/web/lib/bookings/show-demo-trust-hints.ts) (`NODE_ENV=development` ou `NEXT_PUBLIC_SHOW_DEMO_TRUST_HINTS=true`) dans [`useBookingSidebarTrustHints`](../apps/web/components/shared/booking-sidebar-shell.tsx)
+- Copy fr/en/es : `bookingSidebar.trustDemoCatalog` (aperçu interne) + `hotels.previewNotice` (prix min/nuit, sans « coming soon ») dans `messages/*.json`
+- [`/coming-soon/[vertical]`](../apps/web/app/coming-soon/[vertical]/page.tsx) : redirect vers la route live si `IMPLEMENTED_SEARCH_VERTICALS` ; page coming-soon uniquement si vertical non implémenté
+- CTA packages : [`useBookingCtaLabel('package')`](../apps/web/components/packages/package-booking-sidebar.tsx) (aligné autres sidebars)
+
+Hors scope volontaire : `comingSoon.*` (verticals non live), empty CMS / legal « Content coming soon ».
+
+#### Modèle GitHub (historique)
 
 ```markdown
 ## Contexte
@@ -289,22 +315,23 @@ Plusieurs textes indiquent encore un catalogue « demo » ou « coming soon » a
 ## Objectif
 
 1. Auditer et corriger les messages dans :
-   - `lib/i18n/translations.ts` / `messages/*.json` (ex. « Demo catalogue — online booking coming soon »)
-   - `components/reservations/booking-sidebar-shell.tsx` (`trustDemoCatalog`)
+   - `messages/*.json` (ex. « Demo catalogue — online booking coming soon »)
+   - `components/shared/booking-sidebar-shell.tsx` (`trustDemoCatalog`)
    - Pages `coming-soon` si des verticals sont marquées implémentées dans `lib/search/route.ts`
-2. Afficher les **trust hints demo** uniquement en environnement dev ou si flag org explicite
+2. Afficher les **trust hints demo** uniquement en environnement dev ou si flag explicite (`NEXT_PUBLIC_SHOW_DEMO_TRUST_HINTS`)
 3. Harmoniser CTA sidebar selon mode booking (immédiat vs assisté) via `use-booking-cta.ts`
 
 ## Critères d'acceptation
 
-- [ ] Aucun message « coming soon » sur un vertical avec checkout actif
-- [ ] Trust hints conditionnels (pas de badge demo en prod)
-- [ ] i18n fr/en/es pour tout nouveau texte
-- [ ] Parcours hôtel + activité testés manuellement
+- [x] Aucun message « coming soon » sur un vertical avec checkout actif
+- [x] Trust hints conditionnels (pas de badge demo en prod)
+- [x] i18n fr/en/es pour tout nouveau texte
+- [ ] Parcours hôtel + activité testés manuellement (smoke local recommandé)
 
 ## Références
 
 - `apps/web/lib/bookings/use-booking-cta.ts`
+- `apps/web/lib/bookings/show-demo-trust-hints.ts`
 - `apps/web/lib/search/route.ts` (`IMPLEMENTED_SEARCH_VERTICALS`)
 ```
 
@@ -312,10 +339,18 @@ Plusieurs textes indiquent encore un catalogue « demo » ou « coming soon » a
 
 ### WEB-005 — Internationaliser metadata SEO
 
+**Statut :** ✅ fait  
 **Labels :** `web`, `enhancement`, `i18n`, `priority:medium`  
 **Branche suggérée :** `feature/web-i18n-metadata`
 
-#### Modèle GitHub
+#### Livré
+
+- Helper partagé [`apps/web/lib/seo/metadata.ts`](../apps/web/lib/seo/metadata.ts) (`buildPageMetadata`, listings, détail, private/noindex, OG images)
+- Layout root i18n : `meta.defaultTitle` / `defaultDescription` / `keywords` + `openGraph.locale` via cookie `atg-locale`
+- Listings (6) + fiches détail (6) + account/booking (noindex) + coming-soon + `/search/[type]`
+- Pattern documenté dans [`apps/web/README.md`](../apps/web/README.md) § SEO metadata
+
+#### Modèle GitHub (historique)
 
 ```markdown
 ## Contexte
@@ -330,24 +365,60 @@ Les métadonnées (`title`, `description`, Open Graph) sont souvent **hardcodée
 
 ## Critères d'acceptation
 
-- [ ] Title/description cohérents en fr, en, es (test manuel changement langue)
-- [ ] Pas de régression build (`pnpm --filter @africatourismgate/web build`)
-- [ ] Documenter le pattern dans un commentaire ou README web
+- [x] Title/description cohérents en fr, en, es (test manuel changement langue recommandé)
+- [x] Pas de régression build (`pnpm --filter @africatourismgate/web build`)
+- [x] Documenter le pattern dans un commentaire ou README web
 
-## Fichiers probables
+## Fichiers
 
+- `apps/web/lib/seo/metadata.ts`
 - `apps/web/app/layout.tsx`
-- `apps/web/app/**/page.tsx` (generateMetadata)
+- `apps/web/app/**/page.tsx` (`generateMetadata`)
+- `apps/web/messages/{fr,en,es}.json`
+- `apps/web/README.md`
 ```
 
 ---
 
 ### WEB-006 — Stabiliser pipeline E2E (build + Playwright CI)
 
+**Statut :** ✅ infra livrée — suite locale **verte** (**49/49**, 2026-09-20)
 **Labels :** `web`, `testing`, `priority:high`  
 **Branche suggérée :** `feature/web-e2e-ci-stabilization`
 
-#### Modèle GitHub
+#### Livré
+
+- Script [`test:e2e:ci`](../apps/web/package.json) : build + Playwright via [`with-e2e-dist.mjs`](../apps/web/scripts/with-e2e-dist.mjs) → `NEXT_DIST_DIR=.next-e2e` + `next start` ([`playwright.config.ts`](../apps/web/playwright.config.ts) ; port via `PLAYWRIGHT_PORT`)
+- Isolation **`.next-e2e`** : évite la corruption `webpack-runtime` quand `pnpm dev` tourne en parallèle sur le même `apps/web/.next`
+- Job CI parallèle **`web-e2e`** dans [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) (sans MySQL ; API mockée) + artifact report si échec
+- `.gitignore` : `apps/web/test-results/`, `playwright-report/`, `blob-report/`, `.next-e2e`
+- Doc : [`apps/web/README.md`](../apps/web/README.md) § E2E Playwright
+
+#### Validation locale (2026-09-20)
+
+Commande : `PLAYWRIGHT_PORT=3012` + `pnpm --filter @africatourismgate/web test:e2e:ci`  
+(port **3012** : `:3002` déjà occupé localement → `EADDRINUSE` au 1er essai)
+
+**Résultat (après isolation `.next-e2e` + WEB-007/008 + flakes profil/i18n) :** **49 passed / 0 failed** (~3 min hors rebuild, workers=1).
+
+Cause systémique observée précédemment : `[WebServer] TypeError: Cannot read properties of undefined (reading 'call')` dans `webpack-runtime.js` — `.next` partagé avec un `next` concurrent sur `:3002`. Correctif : `NEXT_DIST_DIR=.next-e2e`.
+
+Échecs historiques (résolus ou reclassés) :
+
+| Spec | Tests en échec | Notes |
+| --- | --- | --- |
+| `booking-google-oauth.spec.ts` | 1 | Redirect prod trop rapide pour le heading intermédiaire — assertion sur `/booking/cart` + session |
+| `customer-booking-conversation.spec.ts` | 2 | OK après isolation |
+| `customer-loyalty.spec.ts` | 2 | OK après isolation (sinon `test:e2e:loyalty` :3099) |
+| `flight-checkout.spec.ts` | 1 | OK après isolation |
+| `i18n-switch.spec.ts` | 2 | OK après isolation |
+| `package-checkout.spec.ts` | 1 | CTA assisté « Demander une réservation » (WEB-004) — spec corrigée |
+| `reservation-checkout.spec.ts` | 2 | OK après isolation (était `webpack-runtime`) |
+| `reviews.spec.ts` | 3 | OK après isolation |
+
+Specs OK en smoke : activity/cruise checkout, booking login/register/index-redirect, customer-account, manifest-validation, support, majorité i18n-switch.
+
+#### Modèle GitHub (historique)
 
 ```markdown
 ## Contexte
@@ -358,33 +429,49 @@ Les tests E2E Playwright échouent parfois avec des erreurs Next.js **vendor-chu
 
 1. Documenter la procédure fiable : `pnpm build && playwright test`
 2. Ajouter un script npm `test:e2e:ci` qui build avant test
-3. Intégrer dans CI GitHub Actions (label `e2e` ou branche main) :
+3. Intégrer dans CI GitHub Actions (PR / main) :
    - `pnpm install`
-   - Démarrer API + web (ou web en mode production sur 3002)
-   - Lancer la suite E2E
-4. Nettoyer / ignorer `apps/web/test-results/` du suivi git si pertinent
+   - Web en mode production sur 3002 (`next start` après build)
+   - Lancer la suite E2E (API mockée — pas de MySQL requis)
+4. Nettoyer / ignorer `apps/web/test-results/` du suivi git
 
 ## Critères d'acceptation
 
-- [ ] `pnpm --filter @africatourismgate/web test:e2e:ci` passe localement après clone frais
-- [ ] Workflow CI documenté dans README ou commentaire workflow
-- [ ] Les 14 specs existantes passent (ou liste des specs flaky documentée avec issue dédiée)
+- [x] `pnpm --filter @africatourismgate/web test:e2e:ci` passe localement — **49/49** (2026-09-20, port 3012)
+- [x] Workflow CI documenté dans README ou commentaire workflow
+- [x] Les specs listées (18 fichiers) ; suite verte après isolation `.next-e2e`
+- [x] Isolation build E2E (`.next-e2e`) vs `pnpm dev` (`.next`)
 
-## Fichiers probables
+## Fichiers
 
 - `apps/web/package.json`
-- `.github/workflows/*.yml`
 - `apps/web/playwright.config.ts`
+- `.github/workflows/ci.yml`
+- `apps/web/README.md`
 ```
 
 ---
 
 ### WEB-007 — E2E checkout location voiture
 
+**Statut :** ✅ livré (2026-09-20)  
 **Labels :** `web`, `testing`, `priority:medium`  
 **Branche suggérée :** `feature/web-e2e-car-checkout`
 
-#### Modèle GitHub
+#### Livré
+
+- Spec [`car-checkout.spec.ts`](../apps/web/tests/e2e/car-checkout.spec.ts) : `/cars` (search mock) → fiche → panier `kind=vehicle` → récap → Stripe → `/booking/success`
+- Auth + checkout via helpers existants (`mock-checkout-auth`, `mock-booking-checkout`, `fill-manifest`)
+- Mode **immediate** (CTA « Réserver » / Book now) ; assert POST `itemType: 'vehicle'`, `referenceId` = slot fixture
+- Fixtures seed-alignées (`…004021` / `…004023`) + API entièrement mockée
+
+#### Critères
+
+- [x] Spec verte en local / `test:e2e:ci` (incluse dans **49/49**)
+- [x] Couvre mode paiement immédiat (`vehicle` → immediate par défaut)
+- [x] Pas de dépendance à un ID live fragile (fixtures + `page.route`)
+
+#### Modèle GitHub (historique)
 
 ```markdown
 ## Contexte
@@ -400,9 +487,9 @@ Créer `apps/web/tests/e2e/car-checkout.spec.ts` sur le modèle de `reservation-
 
 ## Critères d'acceptation
 
-- [ ] Spec verte en local avec `pnpm test:e2e`
-- [ ] Couvre mode paiement immédiat (`vehicle` → immediate par défaut)
-- [ ] Pas de dépendance à un ID hardcodé fragile (utiliser fixtures ou recherche API)
+- [x] Spec verte en local avec `pnpm test:e2e`
+- [x] Couvre mode paiement immédiat (`vehicle` → immediate par défaut)
+- [x] Pas de dépendance à un ID hardcodé fragile (utiliser fixtures ou recherche API)
 
 ## Références
 
@@ -414,10 +501,23 @@ Créer `apps/web/tests/e2e/car-checkout.spec.ts` sur le modèle de `reservation-
 
 ### WEB-008 — E2E smoke blog, donate, about
 
+**Statut :** ✅ livré (2026-09-20)  
 **Labels :** `web`, `testing`, `priority:low`  
 **Branche suggérée :** `feature/web-e2e-marketing-smoke`
 
-#### Modèle GitHub
+#### Livré
+
+- Spec [`marketing-pages.spec.ts`](../apps/web/tests/e2e/marketing-pages.spec.ts) : `/blog`, `/blog/[slug]`, `/donate`, `/about/who-we-are`, `/about/team`, `/support` (FAQ)
+- Mocks CMS empty (`blog`, `about-pages`, `team-members`) ; donate SSR tolère empty naturel
+- Shell : nav principale + footer ; empty states graceful (pas de crash API)
+- Durée smoke ~12–20 s (&lt; 2 min) ; suite `test:e2e:ci` **49/49**
+
+#### Critères
+
+- [x] Spec smoke &lt; 2 min
+- [x] Tolère API indisponible avec assertion graceful (empty state, pas crash)
+
+#### Modèle GitHub (historique)
 
 ```markdown
 ## Contexte
@@ -433,14 +533,15 @@ Ajouter une spec smoke `marketing-pages.spec.ts` :
 
 ## Critères d'acceptation
 
-- [ ] Spec smoke < 2 min
-- [ ] Tolère API indisponible avec assertion graceful (empty state, pas crash)
+- [x] Spec smoke < 2 min
+- [x] Tolère API indisponible avec assertion graceful (empty state, pas crash)
 ```
 
 ---
 
 ### WEB-009 — Tests composants checkout & auth
 
+**Statut :** ✅ livré (2026-09-20)
 **Labels :** `web`, `testing`, `priority:medium`  
 **Branche suggérée :** `feature/web-component-tests`
 
@@ -461,9 +562,9 @@ Introduire un runner de tests composants (React Testing Library + Vitest ou équ
 
 ## Critères d'acceptation
 
-- [ ] Script `pnpm --filter @africatourismgate/web test:components` (ou extension de `test`)
-- [ ] ≥ 4 tests composants significatifs
-- [ ] Documenté dans README web
+- [x] Script `pnpm --filter @africatourismgate/web test:components` (ou extension de `test`)
+- [x] ≥ 4 tests composants significatifs
+- [x] Documenté dans README web
 
 ## Hors scope
 
@@ -471,10 +572,19 @@ Introduire un runner de tests composants (React Testing Library + Vitest ou équ
 - E2E (déjà couverts ailleurs)
 ```
 
+**Livré :** Vitest + RTL (`vitest.config.ts`, `vitest.setup.ts` avec cleanup). Suites :
+- `components/reservations/checkout-stepper.test.tsx`
+- `components/reservations/stripe-payment-error.test.tsx`
+- `components/reservations/booking-auth-guard.test.tsx`
+- `lib/bookings/booking-mode.component.test.ts` (`getBookingCtaLabel`)
+
+`pnpm test` (tsx) reste sur `lib/**/*.test.ts` ; `test:components` / `test:components:watch` pour Vitest. **14 passed** en local.
+
 ---
 
 ### WEB-010 — Audit accessibilité (a11y)
 
+**Statut :** ✅ livré (2026-09-20)
 **Labels :** `web`, `a11y`, `priority:medium`  
 **Branche suggérée :** `feature/web-a11y-audit`
 
@@ -497,20 +607,28 @@ Accessibilité partielle : menu mobile, galeries lightbox, formulaires auth et F
 
 ## Critères d'acceptation
 
-- [ ] Navigation clavier complète sur login + galerie hôtel
-- [ ] FAQ : `aria-expanded`, activation clavier Enter/Space
-- [ ] Aucune régression visuelle majeure
-- [ ] Liste des pages corrigées dans la PR
+- [x] Navigation clavier complète sur login + galerie hôtel
+- [x] FAQ : `aria-expanded`, activation clavier Enter/Space
+- [x] Aucune régression visuelle majeure
+- [x] Liste des pages corrigées dans la PR
 
 ## Références
 
 - docs/web-design-improvements.md (WEB-UX-19 M1, WEB-UX-17 SP1)
 ```
 
+**Livré :**
+- Checklist PR : [`docs/web-a11y-checklist.md`](./web-a11y-checklist.md) + section README web
+- Correctifs : header `focus-visible` ; galerie hero/thumbs ; login OAuth non activable sans URL ; accordion `min-h-[44px]` ; stepper `aria-current="step"` ; dialogs manifeste Escape + trap ; drawer booking trap Tab
+- Helpers : `trapFocus` / `getInitialFocusElement` exportés depuis `@africatourismgate/ui`
+
+**Pages / composants corrigés :** home (header), fiche hôtel (galerie), `/booking/login`, `/support` (FAQ), checkout (stepper + manifeste), booking sidebar drawer.
+
 ---
 
 ### WEB-011 — Gestion erreurs API sur pages listing
 
+**Statut :** ✅ livré (2026-09-20)
 **Labels :** `web`, `bug`, `priority:medium`  
 **Branche suggérée :** `fix/web-listing-api-error-states`
 
@@ -531,15 +649,23 @@ Quand l'API est indisponible ou renvoie une erreur, certaines pages listing affi
 
 ## Critères d'acceptation
 
-- [ ] Couper l'API en dev → page listing affiche état erreur lisible (pas 500 crash)
-- [ ] i18n fr/en/es
-- [ ] Pas de régression quand API OK
+- [x] Couper l'API en dev → page listing affiche état erreur lisible (pas 500 crash)
+- [x] i18n fr/en/es
+- [x] Pas de régression quand API OK
 ```
+
+**Livré :**
+- `ListingErrorState` (EmptyState + Réessayer + retour accueil) dans [`listing-patterns.tsx`](../apps/web/components/shared/listing-patterns.tsx) ; `ListingPageBody` n’affiche plus bandeau + grille vide
+- 6 listings client : `backHomeLabel` sur l’état erreur
+- `/search/[type]` : `fetchVerticalResults` → `{ items, failed }` ; hotels via `searchAccommodations` ; UI erreur vs empty
+- i18n `verticalSearch.loadError` / `retry` (fr/en/es)
+- E2E : [`listing-api-error.spec.ts`](../apps/web/tests/e2e/listing-api-error.spec.ts) (hotels + flights, mock 503)
 
 ---
 
 ### WEB-012 — Créer README local `apps/web`
 
+**Statut :** ✅ livré (2026-09-20)
 **Labels :** `web`, `documentation`, `priority:low`  
 **Branche suggérée :** `docs/web-readme`
 
@@ -562,14 +688,17 @@ Créer `apps/web/README.md` avec :
 
 ## Critères d'acceptation
 
-- [ ] README ≤ 150 lignes, factuel, à jour
-- [ ] Exemple `.env` minimal documenté
+- [x] README ≤ 150 lignes, factuel, à jour
+- [x] Exemple `.env` minimal documenté
 ```
+
+**Livré :** [`apps/web/README.md`](../apps/web/README.md) (~77 lignes) — rôle, env, commandes, structure, flux recherche→booking→compte, liens docs.
 
 ---
 
 ### WEB-013 — Nettoyer code `@deprecated`
 
+**Statut :** ✅ livré (2026-09-20)
 **Labels :** `web`, `enhancement`, `priority:low`  
 **Branche suggérée :** `chore/web-remove-deprecated`
 
@@ -592,15 +721,22 @@ Plusieurs helpers et routes sont marqués `@deprecated` :
 
 ## Critères d'acceptation
 
-- [ ] Build et tests passent
-- [ ] Aucun import vers symboles supprimés
-- [ ] PR limitée au cleanup (pas de refonte fonctionnelle)
+- [x] Build et tests passent
+- [x] Aucun import vers symboles supprimés
+- [x] PR limitée au cleanup (pas de refonte fonctionnelle)
 ```
+
+**Livré :**
+- Suppressions : `buildFlightReservationQuery`, `buildPackageReservationDraft`, `LEGACY_ABOUT_REDIRECTS`, `ListingErrorBanner(+Props)`, `parsePackageScheduleSelections`, `buildPackageDetailHrefWithSelections`
+- Packages : `PackagesSearchParams` → `startDate`/`travelers` ; writers alignés ; lecture URL legacy conservée dans `normalizePackagesSearchParams`
+- `locale-provider.tsx` déjà absent (next-intl / `LocaleBootstrap`)
+- Bonus stabilité : `booking-mode.test.ts` (node:test) + typage `AbstractIntlMessages` dans `test/rtl-helpers.tsx`
 
 ---
 
 ### WEB-014 — E2E flux register + verify OTP
 
+**Statut :** ✅ livré (2026-09-20)
 **Labels :** `web`, `testing`, `priority:medium`  
 **Branche suggérée :** `feature/web-e2e-register-verify`
 
@@ -620,14 +756,19 @@ Spec E2E :
 
 ## Critères d'acceptation
 
-- [ ] Spec stable sans flake (> 3 runs locaux OK)
-- [ ] Utilise helpers auth existants
+- [x] Spec stable sans flake (> 3 runs locaux OK)
+- [x] Utilise helpers auth existants
 ```
+
+**Livré :**
+- Helpers : `mockRegisterRequiresVerification`, `mockVerifyOperationSuccess` dans [`mock-checkout-auth.ts`](../apps/web/tests/e2e/helpers/mock-checkout-auth.ts)
+- Spec : [`booking-register-verify.spec.ts`](../apps/web/tests/e2e/booking-register-verify.spec.ts) — register → OTP → `/booking/cart` + session (`--repeat-each=3` vert)
 
 ---
 
 ### WEB-015 — E2E erreurs Stripe / échecs API
 
+**Statut :** ✅ livré (2026-09-20)
 **Labels :** `web`, `testing`, `priority:medium`  
 **Branche suggérée :** `feature/web-e2e-stripe-errors`
 
@@ -646,10 +787,15 @@ Spec E2E :
 
 ## Critères d'acceptation
 
-- [ ] Spec `stripe-checkout-errors.spec.ts` (ou extension checkout existante)
-- [ ] Messages i18n visibles
-- [ ] Pas de fuite d'infos techniques sensibles dans l'UI
+- [x] Spec `stripe-checkout-errors.spec.ts` (ou extension checkout existante)
+- [x] Messages i18n visibles
+- [x] Pas de fuite d'infos techniques sensibles dans l'UI
 ```
+
+**Livré :**
+- Helper `checkoutSessionError` dans [`mock-booking-checkout.ts`](../apps/web/tests/e2e/helpers/mock-booking-checkout.ts)
+- Override E2E modes booking (`__ATG_E2E_BOOKING_MODES__`) pour forcer Stripe immédiat
+- Spec [`stripe-checkout-errors.spec.ts`](../apps/web/tests/e2e/stripe-checkout-errors.spec.ts) — échec API + retry (`--repeat-each=3` vert, 6/6)
 
 ---
 
@@ -731,7 +877,7 @@ Cocher dans l'issue au fur et à mesure. Remplacer `[id]` par un ID seed/API val
 | `/booking/success` | ☐ | ☐ | ☐ | Post-paiement Stripe |
 | `/booking/request-success` | ☐ | ☐ | ☐ | Demande assistée |
 | `/booking/cancel` | ☐ | ☐ | ☐ | Annulation paiement |
-| `/booking` | ☐ | ☐ | ☐ | **Stub EN connu** — à corriger (WEB-003) |
+| `/booking` | ☐ | ☐ | ☐ | ✅ WEB-003 Option A (redirect cart/hotels) |
 | `/reservations/cart` | ☐ | ☐ | ☐ | Legacy — même i18n que booking ? |
 | `/reservations/recap` | ☐ | ☐ | ☐ | |
 | `/reservations/success` | ☐ | ☐ | ☐ | |
@@ -843,7 +989,7 @@ Fiches (IDs demo à documenter dans l'issue) :
 - Cartes produit (meta, prix « à partir de », CTA)
 - Sidebars réservation (dates, CTA immédiat vs « Demander une réservation »)
 - Empty states (aucun résultat)
-- Messages « demo / coming soon » (signaler pour WEB-004)
+- Messages « demo / coming soon » : ✅ WEB-004 (surfaces live corrigées)
 
 ## Critères d'acceptation
 
@@ -874,7 +1020,7 @@ Checkout : `/booking/cart`, `/recap`, `/success`, `/request-success`, `/cancel`
 
 Legacy (si encore actif) : `/reservations/*`
 
-Stub connu : `/booking` (texte EN — ticket WEB-003)
+Stub `/booking` : ✅ WEB-003 Option A (redirect serveur)
 
 ## Scénarios
 
@@ -1025,7 +1171,7 @@ Corriger tous les textes hardcodés / non traduits identifiés :
 
 | Route | Langue | Texte incorrect | Fichier | Statut |
 | ----- | ------ | --------------- | ------- | ------ |
-| `/booking` | all | « Booking Checkout » EN | `app/booking/page.tsx` | ☐ |
+| `/booking` | all | « Booking Checkout » EN (stub) | `app/booking/page.tsx` | ✅ WEB-003 Option A (redirect) |
 | … | | | | |
 
 ## Procédure correction
@@ -1115,18 +1261,18 @@ WEB-012 (README) → WEB-006 (CI E2E) → WEB-002 + WEB-003 (cleanup routes)
 | WEB-001 | | | ☐ |
 | WEB-002 | | | ☐ |
 | WEB-003 | | | ☐ |
-| WEB-004 | | | ☐ |
-| WEB-005 | | | ☐ |
-| WEB-006 | | | ☐ |
-| WEB-007 | | | ☐ |
-| WEB-008 | | | ☐ |
-| WEB-009 | | | ☐ |
-| WEB-010 | | | ☐ |
-| WEB-011 | | | ☐ |
-| WEB-012 | | | ☐ |
-| WEB-013 | | | ☐ |
-| WEB-014 | | | ☐ |
-| WEB-015 | | | ☐ |
+| WEB-004 | | | ✅ |
+| WEB-005 | | | ✅ |
+| WEB-006 | | | ✅ |
+| WEB-007 | | | ✅ |
+| WEB-008 | | | ✅ |
+| WEB-009 | | | ✅ |
+| WEB-010 | | | ✅ |
+| WEB-011 | | | ✅ |
+| WEB-012 | | | ✅ |
+| WEB-013 | | | ✅ |
+| WEB-014 | | | ✅ |
+| WEB-015 | | | ✅ |
 | WEB-I18N-01 | | | ☐ |
 | WEB-I18N-02 | | | ☐ |
 | WEB-I18N-03 | | | ☐ |

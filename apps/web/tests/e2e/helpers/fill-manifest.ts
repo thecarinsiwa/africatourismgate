@@ -4,7 +4,7 @@ import type { Page, Route } from '@playwright/test';
 export async function mockManifestApi(page: Page): Promise<void> {
   await page.route('**/api/bookings/*/manifest-entries', async (route: Route) => {
     if (route.request().method() !== 'POST') {
-      await route.continue();
+      await route.fallback();
       return;
     }
     const body = route.request().postDataJSON() as {
@@ -41,7 +41,8 @@ export async function mockManifestApi(page: Page): Promise<void> {
 }
 
 async function selectNationality(page: Page, index: number, countryQuery: string) {
-  const nat = page.getByLabel(/^nationalit[eé]$|^nationality$|^nacionalidad$/i).nth(index);
+  // Label text includes a required "*", so avoid exact ^…$ getByLabel matches.
+  const nat = page.getByRole('button', { name: /choisir un pays|choose a country|elegir un pa[ií]s|nationalit|nationality|nacionalidad/i }).nth(index);
   await nat.click();
   const search = page.locator('input[type="search"]').last();
   await search.fill(countryQuery);
@@ -74,7 +75,7 @@ export async function fillCheckoutManifest(page: Page): Promise<number> {
     await emNameInputs.nth(i).fill(`Contact Urgence ${i + 1}`);
   }
 
-  const emPhoneInputs = page.getByLabel(/^t[ée]l[ée]phone$|^phone$|^tel[ée]fono$/i);
+  const emPhoneInputs = page.getByLabel(/t[ée]l[ée]phone|phone|tel[ée]fono/i);
   const emPhoneCount = await emPhoneInputs.count();
   for (let i = 0; i < emPhoneCount; i += 1) {
     await emPhoneInputs.nth(i).fill(`+24390000000${i}`);

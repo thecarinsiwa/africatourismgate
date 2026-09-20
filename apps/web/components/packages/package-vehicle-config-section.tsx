@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Spinner } from '@africatourismgate/ui';
 import { getVehicleDetail } from '../../lib/api/public';
 import type { VehicleDetail } from '../../lib/cars/types';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import type { PackageVehicleLineSelection } from '../../lib/packages/package-lines';
 
 type PackageVehicleConfigItemProps = {

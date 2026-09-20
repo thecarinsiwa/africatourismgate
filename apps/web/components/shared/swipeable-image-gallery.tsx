@@ -258,7 +258,7 @@ export function SwipeableImageGallery({ images, name, labels }: SwipeableImageGa
         }}
         onTouchStart={heroSwipe.onTouchStart}
         onTouchEnd={heroSwipe.onTouchEnd}
-        className="group relative aspect-[16/10] w-full max-w-full cursor-zoom-in overflow-hidden rounded-2xl bg-atg-surface touch-pan-y dark:bg-atg-surface sm:aspect-[21/9]"
+        className="group relative aspect-[16/10] w-full max-w-full cursor-zoom-in overflow-hidden rounded-2xl bg-atg-surface touch-pan-y focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface dark:bg-atg-surface sm:aspect-[21/9]"
         aria-label={labels.openLightbox}
       >
         <div
@@ -268,7 +268,10 @@ export function SwipeableImageGallery({ images, name, labels }: SwipeableImageGa
           aria-label={active.caption ?? name}
         />
         {sorted.length > 1 ? (
-          <p className="pointer-events-none absolute bottom-3 right-3 rounded-md bg-atg-fg/60 px-2 py-1 text-xs text-atg-elevated backdrop-blur-sm">
+          <p
+            className="pointer-events-none absolute bottom-3 right-3 rounded-md bg-atg-fg/60 px-2 py-1 text-xs text-atg-elevated backdrop-blur-sm"
+            aria-hidden
+          >
             {labels.counter(activeIndex + 1, sorted.length)}
           </p>
         ) : null}
@@ -286,7 +289,7 @@ export function SwipeableImageGallery({ images, name, labels }: SwipeableImageGa
               key={img.id}
               type="button"
               onClick={() => setActiveIndex(index)}
-              className={`relative h-[4.5rem] w-[5.5rem] shrink-0 snap-start overflow-hidden rounded-lg border-2 transition-colors sm:h-20 sm:w-28 ${
+              className={`relative h-[4.5rem] w-[5.5rem] shrink-0 snap-start overflow-hidden rounded-lg border-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface sm:h-20 sm:w-28 ${
                 index === activeIndex
                   ? 'border-primary ring-2 ring-primary/30'
                   : 'border-transparent opacity-80 hover:opacity-100'

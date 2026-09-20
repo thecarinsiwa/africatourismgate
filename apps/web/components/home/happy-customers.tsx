@@ -7,8 +7,8 @@ import type {
   PublicHappyCustomersContent,
   PublicHappyCustomersStat,
 } from '@africatourismgate/types';
+import { useLocale, useTranslations } from 'next-intl';
 import { getPublicHappyCustomersForLocale } from '../../lib/api/public';
-import { useAppLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { useScrollAnimation } from './use-scroll-animation';
 
 const FALLBACK_IMAGE =
@@ -55,32 +55,38 @@ function toDisplayBars(
 }
 
 export function HappyCustomers() {
-  const t = useTranslations();
-  const locale = useAppLocale();
+  const t = useTranslations('customers');
+  const locale = useLocale();
   const { ref, isVisible } = useScrollAnimation(0.15);
   const [content, setContent] = useState<PublicHappyCustomersContent | null>(null);
 
-  const fallbackBars = mapFallbackBars(t.customers.bars);
+  const fallbackBars = mapFallbackBars(
+    t.raw('bars') as { flights: string; hotels: string; cars: string; cruises: string },
+  );
 
   useEffect(() => {
     let cancelled = false;
-    void getPublicHappyCustomersForLocale(locale).then(({ content: fetched }) => {
-      if (!cancelled) setContent(fetched);
-    });
+    void getPublicHappyCustomersForLocale(locale)
+      .then(({ content: fetched }) => {
+        if (!cancelled) setContent(fetched);
+      })
+      .catch(() => {
+        /* keep translation fallbacks */
+      });
     return () => {
       cancelled = true;
     };
   }, [locale]);
 
   const section = content?.section;
-  const title = section?.title ?? t.customers.title;
-  const subtitle = section?.subtitle ?? t.customers.subtitle;
-  const p1 = section?.paragraph1 ?? t.customers.p1;
-  const p2 = section?.paragraph2 ?? t.customers.p2;
+  const title = section?.title ?? t('title');
+  const subtitle = section?.subtitle ?? t('subtitle');
+  const p1 = section?.paragraph1 ?? t('p1');
+  const p2 = section?.paragraph2 ?? t('p2');
   const imageUrl = section?.imageUrl ?? FALLBACK_IMAGE;
-  const imageAlt = section?.imageAlt ?? t.customers.imageAlt;
+  const imageAlt = section?.imageAlt ?? t('imageAlt');
   const badgeValue = section?.badgeValue ?? '10K+';
-  const badgeLabel = section?.badgeLabel ?? t.customers.clients;
+  const badgeLabel = section?.badgeLabel ?? t('clients');
   const bars = toDisplayBars(content, fallbackBars);
 
   return (

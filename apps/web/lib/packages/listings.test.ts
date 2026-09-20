@@ -2,13 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   buildPackageDetailHref,
-  buildPackageDetailHrefWithSelections,
+  buildPackageDetailHrefWithLines,
   buildPackagesSearchQuery,
   formatPackagePrice,
   hasPackageDiscount,
   isActivityOnlyPackage,
   normalizePackagesSearchParams,
-  parsePackageScheduleSelections,
+  parsePackageLineSelections,
   parseParticipantsParam,
   toPackagesBrowseQuery,
 } from './listings';
@@ -25,15 +25,6 @@ test('normalizePackagesSearchParams maps search and legacy guest params', () => 
       page: undefined,
       startDate: '2026-08-01',
       travelers: '2',
-      date: undefined,
-      participants: undefined,
-      checkIn: '2026-08-01',
-      checkOut: undefined,
-      guests: '2',
-      departureDate: undefined,
-      passengers: undefined,
-      pickupDate: undefined,
-      returnDate: undefined,
       sailingId: undefined,
     },
   );
@@ -47,10 +38,10 @@ test('buildPackageDetailHref builds detail URL with query and hash', () => {
   assert.equal(
     buildPackageDetailHref(
       'pkg-1',
-      { date: '2026-07-20', participants: '2' },
+      { startDate: '2026-07-20', travelers: '2' },
       '#items',
     ),
-    '/packages/pkg-1?date=2026-07-20&participants=2#items',
+    '/packages/pkg-1?startDate=2026-07-20&travelers=2#items',
   );
 });
 
@@ -88,34 +79,67 @@ test('hasPackageDiscount detects positive discount', () => {
   assert.equal(hasPackageDiscount({ discountAmountCents: 0 }), false);
 });
 
-test('parsePackageScheduleSelections reads line params from URL search', () => {
+test('parsePackageLineSelections reads line params from URL search', () => {
   assert.deepEqual(
-    parsePackageScheduleSelections({
-      lineCount: '2',
-      line0_activityId: 'act-a',
-      line0_scheduleId: 'sched-a',
-      line1_activityId: 'act-b',
-      line1_scheduleId: 'sched-b',
-    }),
-    {
-      'act-a': 'sched-a',
-      'act-b': 'sched-b',
-    },
+    parsePackageLineSelections(
+      {
+        lineCount: '2',
+        line0_activityId: 'act-a',
+        line0_scheduleId: 'sched-a',
+        line0_date: '2026-07-20',
+        line0_participants: '2',
+        line1_activityId: 'act-b',
+        line1_scheduleId: 'sched-b',
+        line1_date: '2026-07-21',
+        line1_participants: '2',
+      },
+      2,
+    ),
+    [
+      {
+        lineType: 'activity',
+        itemId: 'act-a',
+        scheduleId: 'sched-a',
+        date: '2026-07-20',
+        participants: 2,
+      },
+      {
+        lineType: 'activity',
+        itemId: 'act-b',
+        scheduleId: 'sched-b',
+        date: '2026-07-21',
+        participants: 2,
+      },
+    ],
   );
-  assert.deepEqual(parsePackageScheduleSelections({ lineCount: '0' }), {});
-  assert.deepEqual(parsePackageScheduleSelections({}), {});
+  assert.deepEqual(parsePackageLineSelections({ lineCount: '0' }, 2), [null, null]);
+  assert.deepEqual(parsePackageLineSelections({}, 2), [null, null]);
 });
 
-test('buildPackageDetailHrefWithSelections encodes multi-line activity selections', () => {
+test('buildPackageDetailHrefWithLines encodes multi-line activity selections', () => {
   assert.equal(
-    buildPackageDetailHrefWithSelections(
+    buildPackageDetailHrefWithLines(
       'pkg-1',
-      { date: '2026-07-20', participants: '2' },
-      ['act-a', 'act-b'],
-      { 'act-a': 'sched-a', 'act-b': 'sched-b' },
+      { startDate: '2026-07-20', travelers: '2' },
+      [
+        {
+          lineType: 'activity',
+          itemId: 'act-a',
+          scheduleId: 'sched-a',
+          date: '2026-07-20',
+          participants: 2,
+        },
+        {
+          lineType: 'activity',
+          itemId: 'act-b',
+          scheduleId: 'sched-b',
+          date: '2026-07-21',
+          participants: 2,
+        },
+      ],
       '#configure',
     ),
-    '/packages/pkg-1?date=2026-07-20&participants=2&lineCount=2&line0_activityId=act-a&line0_scheduleId=sched-a&line1_activityId=act-b&line1_scheduleId=sched-b#configure',
+    '/packages/pkg-1?startDate=2026-07-20&travelers=2&lineCount=2&line0_type=activity&line0_itemId=act-a&line0_activityId=act-a&line0_scheduleId=sched-a&line0_date=2026-07-20&line0_participants=2&line1_type=activity&line1_itemId=act-b&line1_activityId=act-b&line1_scheduleId=sched-b&line1_date=2026-07-21&line1_participants=2#configure',
   );
 });
 

@@ -1,7 +1,8 @@
 'use client';
 
 import type { PackageDetail } from '../../lib/packages/types';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
+import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { packageReservationTotalCents } from '../../lib/reservations/flow';
 import { PackagePriceDisplay } from './package-price-display';
@@ -42,6 +43,7 @@ function PackageBookingContent({
   locale,
 }: PackageBookingSidebarProps) {
   const trustHints = useBookingSidebarTrustHints();
+  const ctaLabel = useBookingCtaLabel('package');
   const displayPricing = {
     ...detail.pricing,
     totalCents: packageReservationTotalCents(detail.pricing, travelers),
@@ -92,7 +94,7 @@ function PackageBookingContent({
         <BookingSidebarHint tone="warning">{t.selectDepartureHint}</BookingSidebarHint>
       )}
 
-      <BookingSidebarCta label={t.addToCart} disabled={!canAddToCart} onClick={onAddToCart} />
+      <BookingSidebarCta label={ctaLabel} disabled={!canAddToCart} onClick={onAddToCart} />
       <BookingSidebarTrustHints items={trustHints} />
     </BookingSidebarBody>
   );
@@ -117,6 +119,7 @@ export function PackageBookingMobileBar({
   t,
   locale,
 }: PackageBookingSidebarProps) {
+  const ctaLabel = useBookingCtaLabel('package');
   const totalCents = packageReservationTotalCents(detail.pricing, travelers);
   const secondaryLine = startDate
     ? `${formatDisplayDate(startDate, locale)} → ${formatDisplayDate(endDate, locale)} · ${travelers} ${t.travelersLabel.toLowerCase()}`
@@ -129,7 +132,7 @@ export function PackageBookingMobileBar({
       priceLabel={t.packagePrice}
       priceAmount={`${(totalCents / 100).toFixed(0)} ${detail.pricing.currency}`}
       secondaryLine={secondaryLine}
-      ctaLabel={t.addToCart}
+      ctaLabel={ctaLabel}
       ctaDisabled={!canAddToCart}
       onCtaClick={onAddToCart}
     />

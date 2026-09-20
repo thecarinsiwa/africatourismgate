@@ -3,8 +3,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 import { getPublicHeroSlidesForLocale } from '../../lib/api/public';
-import { useAppLocale, useTranslations } from '../../lib/i18n/locale-provider';
 
 const FALLBACK_IMAGES = [
   'https://upload.wikimedia.org/wikipedia/commons/d/de/Mountain_gorilla_from_Susa_Group_in_Karisimbi_thicket_of_Volcanoes_National_Park_in_Rwanda._Emmanuel_Kwizera.jpg',
@@ -35,9 +35,10 @@ function buildFallbackSlides(
 }
 
 export function HeroSlider() {
-  const t = useTranslations();
-  const locale = useAppLocale();
-  const fallbackSlides = useMemo(() => buildFallbackSlides(t.hero.slides), [t.hero.slides]);
+  const t = useTranslations('hero');
+  const locale = useLocale();
+  const heroSlides = t.raw('slides') as { subtitle: string; title: string; description: string }[];
+  const fallbackSlides = useMemo(() => buildFallbackSlides(heroSlides), [heroSlides]);
   const [slides, setSlides] = useState<HeroSlideView[]>(fallbackSlides);
   const [current, setCurrent] = useState(0);
   const [reduceMotion, setReduceMotion] = useState(false);
@@ -122,7 +123,7 @@ export function HeroSlider() {
       className="relative h-[520px] overflow-hidden sm:h-[600px] lg:h-[680px]"
       role="region"
       aria-roledescription="carousel"
-      aria-label={t.hero.slides[0]?.title ?? 'Hero'}
+      aria-label={heroSlides[0]?.title ?? 'Hero'}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
@@ -187,7 +188,7 @@ export function HeroSlider() {
               className={`h-3 rounded-full transition-all duration-300 ${
                 i === current ? 'w-8 bg-white' : 'w-3 bg-white/40 hover:bg-white/70'
               }`}
-              aria-label={t.hero.goToSlide.replace('{n}', String(i + 1))}
+              aria-label={t('goToSlide', { n: i + 1 })}
               aria-current={i === current ? 'step' : undefined}
             />
           ))}
@@ -200,7 +201,7 @@ export function HeroSlider() {
             type="button"
             onClick={() => goTo(current - 1)}
             className="absolute left-4 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/30 text-white/80 backdrop-blur-sm transition-all hover:bg-black/50 hover:text-white sm:flex"
-            aria-label={t.hero.prev}
+            aria-label={t('prev')}
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -210,7 +211,7 @@ export function HeroSlider() {
             type="button"
             onClick={() => goTo(current + 1)}
             className="absolute right-4 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/30 text-white/80 backdrop-blur-sm transition-all hover:bg-black/50 hover:text-white sm:flex"
-            aria-label={t.hero.next}
+            aria-label={t('next')}
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

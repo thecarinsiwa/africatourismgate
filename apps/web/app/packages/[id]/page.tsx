@@ -1,7 +1,14 @@
 import type { Metadata } from 'next';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { PackageDetailPageContent } from '../../../components/packages/package-detail-page-content';
 import { getPackageDetail } from '../../../lib/api/public';
 import { normalizePackagesSearchParams } from '../../../lib/packages/listings';
+import {
+  buildDetailFallbackMetadata,
+  buildPageMetadata,
+  pickOgImages,
+  truncateMetaDescription,
+} from '../../../lib/seo/metadata';
 
 type PageProps = {
   params: { id: string };
@@ -9,19 +16,27 @@ type PageProps = {
 };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const path = `/packages/${params.id}`;
   try {
-    const detail = await getPackageDetail(params.id);
-    return {
-      title: detail.package.name,
-      description:
-        detail.package.description ??
-        `Forfait combiné ${detail.package.name} — Africa Tourism Gate.`,
-    };
+    const [detail, t, locale] = await Promise.all([
+      getPackageDetail(params.id),
+      getTranslations('packages'),
+      getLocale(),
+    ]);
+    const name = detail.package.name;
+    const description = detail.package.description
+      ? truncateMetaDescription(detail.package.description)
+      : t('detailMetaDescription', { name });
+    return buildPageMetadata({
+      title: name,
+      description,
+      path,
+      locale,
+      images: pickOgImages(detail.images),
+      twitterCard: 'summary_large_image',
+    });
   } catch {
-    return {
-      title: 'Forfait',
-      description: 'Fiche forfait — Africa Tourism Gate',
-    };
+    return buildDetailFallbackMetadata('packages', path);
   }
 }
 

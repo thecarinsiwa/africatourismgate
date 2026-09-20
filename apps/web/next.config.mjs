@@ -40,6 +40,9 @@ const AUTH_EXACT_PATHS = new Set([
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Isolate E2E prod builds (NEXT_DIST_DIR=.next-e2e) from a concurrent `pnpm dev`
+  // writing the same apps/web/.next — avoids webpack-runtime "reading 'call'" under next start.
+  distDir: process.env.NEXT_DIST_DIR || '.next',
   transpilePackages: ['@africatourismgate/ui', '@africatourismgate/types'],
   env: {
     NEXT_PUBLIC_API_URL: apiUrl,
@@ -67,6 +70,17 @@ const nextConfig = {
   },
   async redirects() {
     const redirects = [];
+
+    // Checkout legacy → /booking/* (must precede ADMIN_ONLY /reservations catch-all)
+    const legacyCheckoutRedirects = [
+      ['/reservations/cart', '/booking/cart'],
+      ['/reservations/recap', '/booking/recap'],
+      ['/reservations/success', '/booking/success'],
+      ['/reservations/cancel', '/booking/cancel'],
+    ];
+    for (const [source, destination] of legacyCheckoutRedirects) {
+      redirects.push({ source, destination, permanent: true });
+    }
 
     for (const path of ADMIN_ONLY_PATHS) {
       redirects.push({

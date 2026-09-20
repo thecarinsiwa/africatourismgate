@@ -80,6 +80,9 @@ export function CheckoutStepper({ currentStep, labels, cancelled = false }: Chec
                           ? 'text-amber-700 dark:text-amber-300'
                           : 'text-atg-muted'
                   }`}
+                  aria-current={
+                    state === 'current' || state === 'cancelled' ? 'step' : undefined
+                  }
                 >
                   {label}
                 </span>

@@ -2,9 +2,9 @@
 
 import { Button, Input, Spinner } from '@africatourismgate/ui';
 import type { UserAddress } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
-import { useTranslations } from '../../lib/i18n/locale-provider';
 
 const emptyForm = {
   label: '',
@@ -18,7 +18,7 @@ const emptyForm = {
 };
 
 export function AccountAddressesPanel() {
-  const t = useTranslations();
+  const t = useTranslations('account');
   const [addresses, setAddresses] = useState<UserAddress[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,11 +34,11 @@ export function AccountAddressesPanel() {
       const result = await client.listUserAddresses({ limit: 50 });
       setAddresses(result.data);
     } catch {
-      setError(t.account.addresses.loadError);
+      setError(t('addresses.loadError'));
     } finally {
       setLoading(false);
     }
-  }, [t.account.addresses.loadError]);
+  }, [t]);
 
   useEffect(() => {
     void load();
@@ -64,27 +64,27 @@ export function AccountAddressesPanel() {
       setShowForm(false);
       await load();
     } catch {
-      setError(t.account.addresses.saveError);
+      setError(t('addresses.saveError'));
     } finally {
       setSaving(false);
     }
   }
 
   async function handleDelete(id: string) {
-    if (!window.confirm(t.account.addresses.deleteConfirm)) return;
+    if (!window.confirm(t('addresses.deleteConfirm'))) return;
     try {
       const client = await getAccountApiClient();
       await client.deleteUserAddress(id);
       await load();
     } catch {
-      setError(t.account.addresses.deleteError);
+      setError(t('addresses.deleteError'));
     }
   }
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <Spinner size="md" variant="primary" label={t.account.loading} showLabel />
+        <Spinner size="md" variant="primary" label={t('loading')} showLabel />
       </div>
     );
   }
@@ -92,7 +92,7 @@ export function AccountAddressesPanel() {
   return (
     <div className="space-y-6">
       {addresses.length === 0 && !showForm && (
-        <p className="text-sm text-atg-muted">{t.account.addresses.empty}</p>
+        <p className="text-sm text-atg-muted">{t('addresses.empty')}</p>
       )}
 
       <ul className="space-y-3">
@@ -117,7 +117,7 @@ export function AccountAddressesPanel() {
                 </p>
                 {addr.isDefault === 1 && (
                   <span className="mt-1 inline-block text-xs font-medium text-primary">
-                    {t.account.addresses.defaultBadge}
+                    {t('addresses.defaultBadge')}
                   </span>
                 )}
               </div>
@@ -127,7 +127,7 @@ export function AccountAddressesPanel() {
                 size="sm"
                 onClick={() => void handleDelete(addr.id)}
               >
-                {t.account.addresses.delete}
+                {t('addresses.delete')}
               </Button>
             </div>
           </li>
@@ -137,30 +137,30 @@ export function AccountAddressesPanel() {
       {showForm ? (
         <form onSubmit={handleCreate} className="max-w-lg space-y-3 rounded-lg border border-atg-border p-4 dark:border-atg-border">
           <Input
-            placeholder={t.account.addresses.label}
+            placeholder={t('addresses.label')}
             value={form.label}
             onChange={(e) => setForm((f) => ({ ...f, label: e.target.value }))}
           />
           <Input
-            placeholder={t.account.addresses.line1}
+            placeholder={t('addresses.line1')}
             value={form.line1}
             onChange={(e) => setForm((f) => ({ ...f, line1: e.target.value }))}
             required
           />
           <Input
-            placeholder={t.account.addresses.line2}
+            placeholder={t('addresses.line2')}
             value={form.line2}
             onChange={(e) => setForm((f) => ({ ...f, line2: e.target.value }))}
           />
           <div className="grid gap-3 sm:grid-cols-2">
             <Input
-              placeholder={t.account.addresses.city}
+              placeholder={t('addresses.city')}
               value={form.city}
               onChange={(e) => setForm((f) => ({ ...f, city: e.target.value }))}
               required
             />
             <Input
-              placeholder={t.account.addresses.countryCode}
+              placeholder={t('addresses.countryCode')}
               value={form.countryCode}
               onChange={(e) => setForm((f) => ({ ...f, countryCode: e.target.value }))}
               required
@@ -173,20 +173,20 @@ export function AccountAddressesPanel() {
               checked={form.isDefault}
               onChange={(e) => setForm((f) => ({ ...f, isDefault: e.target.checked }))}
             />
-            {t.account.addresses.isDefault}
+            {t('addresses.isDefault')}
           </label>
           <div className="flex gap-2">
-            <Button type="submit" loading={saving} loadingText={t.account.addresses.saving}>
-              {t.account.addresses.add}
+            <Button type="submit" loading={saving} loadingText={t('addresses.saving')}>
+              {t('addresses.add')}
             </Button>
             <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
-              {t.account.addresses.cancel}
+              {t('addresses.cancel')}
             </Button>
           </div>
         </form>
       ) : (
         <Button type="button" onClick={() => setShowForm(true)}>
-          {t.account.addresses.addNew}
+          {t('addresses.addNew')}
         </Button>
       )}
 

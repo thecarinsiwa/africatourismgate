@@ -32,7 +32,9 @@ import { useWebPaymentMethods } from '../../components/payment-methods-provider'
 import { isAssistedBookingDraft } from '../../lib/bookings/booking-mode';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatHotelPrice } from '../../lib/hotels/listings';
-import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import { useLocale, useMessages } from 'next-intl';
+import type { Translations } from '../../lib/i18n/message-types';
+import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import {
   buildCheckoutRequest,
   buildDraftBrowseHref,
@@ -66,13 +68,13 @@ type Props = {
 
 export function ReservationRecapPageContent({ draft }: Props) {
   const router = useRouter();
-  const { locale } = useLocale();
-  const t = useTranslations();
-  const ck = t.checkout;
-  const f = t.flights;
-  const c = t.cars;
-  const cr = t.cruises;
-  const p = t.packages;
+  const locale = useLocale();
+  const messages = useMessages();
+  const ck = (messages as { checkout: Translations['checkout'] }).checkout;
+  const f = useNamespaceLabels('flights');
+  const c = useNamespaceLabels('cars');
+  const cr = useNamespaceLabels('cruises');
+  const p = useNamespaceLabels('packages');
 
   const [hotelDetail, setHotelDetail] = useState<PropertyDetail | null>(null);
   const [flightDetail, setFlightDetail] = useState<FlightDetail | null>(null);
@@ -460,7 +462,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
         const params = new URLSearchParams({
           verificationId: booking.verificationId,
           bookingId: booking.booking.id,
-          next: '/reservations/recap',
+          next: '/booking/recap',
         });
         router.push(`/booking/verify?${params.toString()}`);
         return;

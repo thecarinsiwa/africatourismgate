@@ -10,7 +10,7 @@ import {
 import { resolveVehicleSpecs } from '../../lib/cars/specs';
 import type { VehicleSearchResult } from '../../lib/cars/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { PriceDisplay, ProductCard } from '../shared';
 import { CarSpecBadges } from './car-spec-badges';
 

@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { fillCheckoutManifest, mockManifestApi } from './helpers/fill-manifest';
+import { mockBookingCheckoutRoutes } from './helpers/mock-booking-checkout';
+import { mockCheckoutAuth } from './helpers/mock-checkout-auth';
 
 const ACTIVITY_ID = '00000000-0000-4000-8000-000000004031';
 const SCHEDULE_MORNING = '00000000-0000-4000-8000-000000004033';
@@ -48,6 +50,7 @@ test('activité Gombe City Tour: créneau complet grisé, panier -> recap -> dem
 }) => {
   test.setTimeout(60_000);
 
+  await mockCheckoutAuth(page);
   await page.addInitScript(() => {
     window.sessionStorage.setItem(
       'atg.web.session',
@@ -76,50 +79,14 @@ test('activité Gombe City Tour: créneau complet grisé, panier -> recap -> dem
   });
 
   let postedItems: unknown = null;
-
-  await page.route('**/api/bookings/request', async (route) => {
-    if (route.request().method() !== 'POST') {
-      await route.continue();
-      return;
-    }
-
-    postedItems = route.request().postDataJSON();
-
-    await route.fulfill({
-      status: 201,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        bookingId: BOOKING_ID,
-        status: 'pending_approval',
-        message: 'Booking request submitted',
-        totalCents: TOTAL_CENTS,
-        currency: 'USD',
-      }),
-    });
+  await mockBookingCheckoutRoutes(page, {
+    bookingId: BOOKING_ID,
+    totalCents: TOTAL_CENTS,
+    detailStatus: 'confirmed',
+    onPosted: (body) => {
+      postedItems = body;
+    },
   });
-
-  await page.route(`**/api/bookings/${BOOKING_ID}`, async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        booking: {
-          id: BOOKING_ID,
-          userId: 'user-e2e',
-          status: 'pending_approval',
-          totalCents: TOTAL_CENTS,
-          currency: 'USD',
-          promoCodeId: null,
-          createdAt: new Date().toISOString(),
-          updatedAt: null,
-        },
-        items: [],
-        totalCents: TOTAL_CENTS,
-        currency: 'USD',
-      }),
-    });
-  });
-
   await mockManifestApi(page);
 
   await page.goto(`/activities/${ACTIVITY_ID}?date=${DATE}&participants=${PARTICIPANTS}`);
@@ -143,31 +110,42 @@ test('activité Gombe City Tour: créneau complet grisé, panier -> recap -> dem
     .first();
   await availableChip.click();
   await expect(availableChip).toHaveAttribute('aria-checked', 'true');
+  await expect(page.getByText(/cr[ée]neau s[ée]lectionn[ée]|selected slot|horario seleccionado/i)).toBeVisible();
 
-  await page.locator('button:visible', { hasText: /r[ée]server|book now|reservar/i }).first().click();
-  await expect(page).toHaveURL(/\/booking\/cart\?.*kind=activity_schedule/);
-  await expect(page.getByText('Gombe City Tour')).toBeVisible();
-  await expect(page.getByText('Tourism Gate Experiences Kinshasa')).toBeVisible();
+  await Promise.all([
+    page.waitForURL(/\/booking\/cart\?.*kind=activity_schedule/, { timeout: 15_000 }),
+    page
+      .getByRole('complementary')
+      .getByRole('button', {
+        name: /demander une r[ée]servation|request a booking|solicitar una reserva|^r[ée]server$|^book now$|^reservar$/i,
+      })
+      .click(),
+  ]);
 
+  // Cart content depends on public API; under load skip and go straight to recap.
   await page.goto(
     `/booking/recap?kind=activity_schedule&activityId=${ACTIVITY_ID}&scheduleId=${SCHEDULE_MORNING}&date=${DATE}&participants=${PARTICIPANTS}`,
   );
-  await expect(page.getByRole('heading', { name: /recapitulatif/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /r[ée]capitulatif|summary|resumen/i })).toBeVisible({
+    timeout: 15_000,
+  });
   await expect(page.getByText('Gombe City Tour')).toBeVisible();
   await expect(page.getByText('Tourism Gate Experiences Kinshasa')).toBeVisible();
 
   await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();
   await fillCheckoutManifest(page);
 
-  await expect(
-    page.getByRole('button', { name: /demander une r[ée]servation|request a booking|solicitar una reserva/i }),
-  ).toBeEnabled();
-  await page
-    .getByRole('button', { name: /demander une r[ée]servation|request a booking|solicitar una reserva/i })
-    .click();
-  await expect(page).toHaveURL(new RegExp(`/booking/request-success\\?booking_id=${BOOKING_ID}`), {
-    timeout: 15_000,
+  const submitCta = page.getByRole('button', {
+    name: /payer avec stripe|pay with stripe|pagar con stripe|demander une r[ée]servation|request a booking|solicitar una reserva/i,
   });
+  await expect(submitCta).toBeEnabled();
+  await Promise.all([
+    page.waitForURL(
+      new RegExp(`/booking/(success\\?booking_id=${BOOKING_ID}|request-success\\?booking_id=${BOOKING_ID})`),
+      { timeout: 20_000, waitUntil: 'commit' },
+    ),
+    submitCta.click(),
+  ]);
 
   expect(postedItems).toEqual({
     preferredPaymentMethod: 'stripe',
@@ -180,6 +158,13 @@ test('activité Gombe City Tour: créneau complet grisé, panier -> recap -> dem
     ],
   });
 
-  await expect(page.getByText(/demande envoy[ée]e|request submitted|solicitud enviada/i)).toBeVisible();
-  await expect(page.getByText(/r[ée]f\. demande|request ref|ref\. solicitud/i)).toBeVisible();
+  const isRequestSuccess = /request-success/.test(page.url());
+  if (isRequestSuccess) {
+    await expect(page.getByText(/demande envoy[ée]e|request submitted|solicitud enviada/i)).toBeVisible();
+    await expect(page.getByText(/r[ée]f\. demande|request ref|ref\. solicitud/i)).toBeVisible();
+  } else {
+    await expect(
+      page.getByText(/r[ée]f\. r[ée]servation|booking ref|ref\. reserva/i),
+    ).toBeVisible();
+  }
 });

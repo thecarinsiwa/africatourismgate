@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { listPublicDestinations } from '../../lib/api/public';
 import { addDays, countStayNights, todayISODate } from '../../lib/hotels/dates';
 import type { HotelsSearchParams } from '../../lib/hotels/listings';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations } from 'next-intl';
 import { buildSearchRoute } from '../../lib/search/route';
 import {
   SearchFormDatalistInput,
@@ -27,9 +27,8 @@ type HotelsSearchFormProps = {
 
 export function HotelsSearchForm({ initialValues }: HotelsSearchFormProps) {
   const router = useRouter();
-  const t = useTranslations();
-  const h = t.hotels;
-  const s = t.search;
+  const t = useTranslations('search');
+  const h = useTranslations('hotels');
 
   const [destination, setDestination] = useState(initialValues.destination ?? '');
   const [checkIn, setCheckIn] = useState(initialValues.checkIn ?? '');
@@ -77,15 +76,15 @@ export function HotelsSearchForm({ initialValues }: HotelsSearchFormProps) {
     if (!checkIn || !checkOut || checkOut <= checkIn) return null;
     const nights = countStayNights(checkIn, checkOut);
     if (nights <= 0) return null;
-    return nights === 1 ? `1 ${h.nightSingular}` : `${nights} ${h.nightPlural}`;
-  }, [checkIn, checkOut, h.nightSingular, h.nightPlural]);
+    return nights === 1 ? `1 ${h('nightSingular')}` : `${nights} ${h('nightPlural')}`;
+  }, [checkIn, checkOut, h]);
 
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setError(null);
 
     if (checkIn && checkOut && checkOut <= checkIn) {
-      setError(s.cruisesEndAfterStart);
+      setError(t('cruisesEndAfterStart'));
       return;
     }
 
@@ -108,7 +107,7 @@ export function HotelsSearchForm({ initialValues }: HotelsSearchFormProps) {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1.25fr_0.75fr_auto] lg:items-end">
         <div>
-          <SearchFormLabel>{s.checkIn}</SearchFormLabel>
+          <SearchFormLabel>{t('checkIn')}</SearchFormLabel>
           <SearchFormInput
             type="date"
             name="checkIn"
@@ -125,7 +124,7 @@ export function HotelsSearchForm({ initialValues }: HotelsSearchFormProps) {
         </div>
 
         <div>
-          <SearchFormLabel>{s.checkOut}</SearchFormLabel>
+          <SearchFormLabel>{t('checkOut')}</SearchFormLabel>
           <SearchFormInput
             type="date"
             name="checkOut"
@@ -139,10 +138,10 @@ export function HotelsSearchForm({ initialValues }: HotelsSearchFormProps) {
         </div>
 
         <div>
-          <SearchFormLabel>{s.destination}</SearchFormLabel>
+          <SearchFormLabel>{t('destination')}</SearchFormLabel>
           <SearchFormDatalistInput
             name="destination"
-            placeholder={s.destinationPh}
+            placeholder={t('destinationPh')}
             suggestions={destinationOptions}
             value={destination}
             onChange={(value) => {
@@ -153,7 +152,7 @@ export function HotelsSearchForm({ initialValues }: HotelsSearchFormProps) {
         </div>
 
         <div>
-          <SearchFormLabel>{h.guests}</SearchFormLabel>
+          <SearchFormLabel>{h('guests')}</SearchFormLabel>
           <SearchFormInput
             type="number"
             name="guests"
@@ -165,7 +164,7 @@ export function HotelsSearchForm({ initialValues }: HotelsSearchFormProps) {
         </div>
 
         <div className="flex items-end">
-          <SearchFormSubmit label={s.search} />
+          <SearchFormSubmit label={t('search')} />
         </div>
       </div>
 

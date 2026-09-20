@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { countRentalDays, type CarsSearchParams } from '../../lib/cars/listings';
 import { useVehiclePickupLocations } from '../../lib/cars/use-vehicle-pickup-locations';
 import { addDays, todayISODate } from '../../lib/hotels/dates';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations } from 'next-intl';
 import { buildSearchRoute } from '../../lib/search/route';
 import {
   SearchFormDatalistInput,
@@ -21,9 +21,8 @@ type CarsSearchFormProps = {
 
 export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
   const router = useRouter();
-  const t = useTranslations();
-  const c = t.cars;
-  const s = t.search;
+  const t = useTranslations('search');
+  const c = useTranslations('cars');
 
   const [pickupLocation, setPickupLocation] = useState(initialValues.pickupLocation ?? '');
   const [pickupDate, setPickupDate] = useState(initialValues.pickupDate ?? '');
@@ -47,8 +46,8 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
   const rentalDaysLabel = useMemo(() => {
     if (!pickupDate || !returnDate || returnDate <= pickupDate) return null;
     const days = countRentalDays(pickupDate, returnDate);
-    return days === 1 ? `1 ${c.daySingular}` : `${days} ${c.dayPlural}`;
-  }, [pickupDate, returnDate, c.daySingular, c.dayPlural]);
+    return days === 1 ? `1 ${c('daySingular')}` : `${days} ${c('dayPlural')}`;
+  }, [pickupDate, returnDate, c]);
 
   useEffect(() => {
     setPickupLocation(initialValues.pickupLocation ?? '');
@@ -63,12 +62,12 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
 
     const hasPartialDates = Boolean(pickupDate) !== Boolean(returnDate);
     if (hasPartialDates) {
-      setError(s.carsRequired);
+      setError(t('carsRequired'));
       return;
     }
 
     if (pickupDate && returnDate && returnDate <= pickupDate) {
-      setError(s.carsReturnAfterPickup);
+      setError(t('carsReturnAfterPickup'));
       return;
     }
 
@@ -91,16 +90,16 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
             {rentalDaysLabel}
           </span>
         ) : (
-          <span className="text-sm text-atg-muted">{s.carsDurationHint}</span>
+          <span className="text-sm text-atg-muted">{t('carsDurationHint')}</span>
         )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_1fr_auto] lg:items-end">
         <div>
-          <SearchFormLabel>{c.pickupLocation}</SearchFormLabel>
+          <SearchFormLabel>{c('pickupLocation')}</SearchFormLabel>
           <SearchFormDatalistInput
             name="pickupLocation"
-            placeholder={carPickupLoading ? c.loading : c.anyLocation}
+            placeholder={carPickupLoading ? c('loading') : c('anyLocation')}
             suggestions={carPickupOptions}
             value={pickupLocation}
             disabled={carPickupLoading}
@@ -112,7 +111,7 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
         </div>
 
         <div>
-          <SearchFormLabel>{s.pickUp}</SearchFormLabel>
+          <SearchFormLabel>{t('pickUp')}</SearchFormLabel>
           <SearchFormInput
             type="date"
             name="pickupDate"
@@ -129,7 +128,7 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
         </div>
 
         <div>
-          <SearchFormLabel>{s.dropOff}</SearchFormLabel>
+          <SearchFormLabel>{t('dropOff')}</SearchFormLabel>
           <SearchFormInput
             type="date"
             name="returnDate"
@@ -143,13 +142,13 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
         </div>
 
         <div className="flex items-end">
-          <SearchFormSubmit label={s.search} />
+          <SearchFormSubmit label={t('search')} />
         </div>
       </div>
 
       {carPickupError && (
         <p className="mt-3 text-sm text-amber-700 dark:text-amber-300" role="status">
-          {c.loadError}
+          {c('loadError')}
         </p>
       )}
       {error && (

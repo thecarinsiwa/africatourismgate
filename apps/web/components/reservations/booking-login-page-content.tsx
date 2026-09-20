@@ -108,19 +108,25 @@ export function BookingLoginPageContent({ nextPath, oauthError }: Props) {
             </div>
           </div>
 
-          <a
-            href={oauthUrl ?? '#'}
-            aria-disabled={!oauthUrl}
-            onClick={(event) => {
-              if (!oauthUrl) {
-                event.preventDefault();
-              }
-            }}
-            className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg border border-atg-border bg-atg-elevated px-4 py-2 text-sm font-semibold text-atg-fg hover:bg-atg-surface disabled:pointer-events-none disabled:opacity-60 dark:border-atg-border dark:bg-transparent dark:text-white"
-          >
-            <GoogleIcon />
-            {t('google')}
-          </a>
+          {oauthUrl ? (
+            <a
+              href={oauthUrl}
+              className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg border border-atg-border bg-atg-elevated px-4 py-2 text-sm font-semibold text-atg-fg transition-colors hover:bg-atg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface dark:border-atg-border dark:bg-transparent dark:text-white"
+            >
+              <GoogleIcon />
+              {t('google')}
+            </a>
+          ) : (
+            <button
+              type="button"
+              disabled
+              aria-disabled="true"
+              className="inline-flex min-h-[44px] w-full cursor-not-allowed items-center justify-center gap-2 rounded-lg border border-atg-border bg-atg-elevated px-4 py-2 text-sm font-semibold text-atg-fg opacity-60 dark:border-atg-border dark:bg-transparent dark:text-white"
+            >
+              <GoogleIcon />
+              {t('google')}
+            </button>
+          )}
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center" aria-hidden>
@@ -135,13 +141,13 @@ export function BookingLoginPageContent({ nextPath, oauthError }: Props) {
 
           <Link
             href={registerHref}
-            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-lg border border-atg-border bg-atg-elevated px-4 py-2 text-sm font-semibold text-atg-fg hover:bg-atg-surface dark:border-atg-border dark:bg-transparent dark:text-white"
+            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-lg border border-atg-border bg-atg-elevated px-4 py-2 text-sm font-semibold text-atg-fg transition-colors hover:bg-atg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface dark:border-atg-border dark:bg-transparent dark:text-white"
           >
             {t('createAccount')}
           </Link>
           <Link
             href="/hotels"
-            className="mt-3 inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover"
+            className="mt-3 inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface"
           >
             {t('backToHotels')}
           </Link>

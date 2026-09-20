@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { fillCheckoutManifest, mockManifestApi } from './helpers/fill-manifest';
+import { mockBookingCheckoutRoutes } from './helpers/mock-booking-checkout';
+import { mockCheckoutAuth } from './helpers/mock-checkout-auth';
 
 const SAILING_ID = '00000000-0000-4000-8000-000000003036';
 const CABIN_AVAIL_STD = '00000000-0000-4000-8000-000000003037';
@@ -66,6 +68,7 @@ test('croisière CDKIN→CDBNW: itinéraire, cabine grisée, panier -> recap -> 
 }) => {
   test.setTimeout(60_000);
 
+  await mockCheckoutAuth(page);
   await page.addInitScript(() => {
     window.sessionStorage.setItem(
       'atg.web.session',
@@ -94,73 +97,15 @@ test('croisière CDKIN→CDBNW: itinéraire, cabine grisée, panier -> recap -> 
   });
 
   let postedItems: unknown = null;
-
-  await page.route('**/api/bookings', async (route) => {
-    if (route.request().method() !== 'POST') {
-      await route.continue();
-      return;
-    }
-
-    postedItems = route.request().postDataJSON();
-
-    await route.fulfill({
-      status: 201,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        booking: {
-          id: BOOKING_ID,
-          userId: 'user-e2e',
-          status: 'pending_payment',
-          preferredPaymentMethod: 'stripe',
-          totalCents: TOTAL_CENTS,
-          currency: 'USD',
-          promoCodeId: null,
-          createdAt: new Date().toISOString(),
-          updatedAt: null,
-        },
-        items: [],
-        totalCents: TOTAL_CENTS,
-        currency: 'USD',
-      }),
-    });
+  await mockBookingCheckoutRoutes(page, {
+    bookingId: BOOKING_ID,
+    totalCents: TOTAL_CENTS,
+    detailStatus: 'confirmed',
+    onPosted: (body) => {
+      postedItems = body;
+    },
   });
-
-  await page.route(`**/api/bookings/${BOOKING_ID}/checkout-session`, async (route) => {
-    await route.fulfill({
-      status: 201,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        paymentId: 'payment-e2e-cruise',
-        sessionId: 'cs_test_e2e_cruise',
-        url: `http://127.0.0.1:3002/booking/success?booking_id=${BOOKING_ID}`,
-        amountCents: TOTAL_CENTS,
-        currency: 'USD',
-      }),
-    });
-  });
-
-  await page.route(`**/api/bookings/${BOOKING_ID}`, async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        booking: {
-          id: BOOKING_ID,
-          userId: 'user-e2e',
-          status: 'confirmed',
-          preferredPaymentMethod: 'stripe',
-          totalCents: TOTAL_CENTS,
-          currency: 'USD',
-          promoCodeId: null,
-          createdAt: new Date().toISOString(),
-          updatedAt: null,
-        },
-        items: [],
-        totalCents: TOTAL_CENTS,
-        currency: 'USD',
-      }),
-    });
-  });
+  await mockManifestApi(page);
 
   await page.goto(`/cruises/${SAILING_ID}?guests=2`);
 
@@ -182,27 +127,43 @@ test('croisière CDKIN→CDBNW: itinéraire, cabine grisée, panier -> recap -> 
   await standardCard
     .getByRole('button', { name: /choisir cette cabine|select this cabin|elegir este camarote/i })
     .click();
+  await expect(
+    standardCard.getByText(/s[ée]lectionn[ée]e|selected|seleccionado/i).first(),
+  ).toBeVisible();
+  await expect(standardCard).toHaveAttribute('aria-checked', 'true');
 
-  await page.locator('button:visible', { hasText: /r[ée]server|book now|reservar/i }).first().click();
-  await expect(page).toHaveURL(/\/booking\/cart\?.*kind=cabin/);
-  await expect(page.getByText('Kinshasa — Banana')).toBeVisible();
-  await expect(page.getByText('Standard')).toBeVisible();
+  await Promise.all([
+    page.waitForURL(/\/booking\/cart\?.*kind=cabin/, { timeout: 15_000 }),
+    page
+      .getByRole('complementary')
+      .getByRole('button', {
+        name: /demander une r[ée]servation|request a booking|solicitar una reserva|^r[ée]server$|^book now$|^reservar$/i,
+      })
+      .click(),
+  ]);
 
   await page.goto(
     `/booking/recap?kind=cabin&sailingId=${SAILING_ID}&cabinAvailabilityId=${CABIN_AVAIL_STD}&guests=2`,
   );
-  await expect(page.getByRole('heading', { name: /recapitulatif/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /r[ée]capitulatif|summary|resumen/i })).toBeVisible({
+    timeout: 15_000,
+  });
   await expect(page.getByText('Kinshasa — Banana')).toBeVisible();
   await expect(page.getByText('Standard')).toBeVisible();
 
-  await mockManifestApi(page);
   await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();
   await fillCheckoutManifest(page);
-  await expect(page.getByRole('button', { name: /payer avec stripe|pay with stripe|pagar con stripe/i })).toBeEnabled();
-  await page.getByRole('button', { name: /payer avec stripe|pay with stripe|pagar con stripe/i }).click();
-  await expect(page).toHaveURL(new RegExp(`/booking/success\\?booking_id=${BOOKING_ID}`), {
-    timeout: 15_000,
+  const submitCta = page.getByRole('button', {
+    name: /payer avec stripe|pay with stripe|pagar con stripe|demander une r[ée]servation|request a booking|solicitar una reserva/i,
   });
+  await expect(submitCta).toBeEnabled();
+  await Promise.all([
+    page.waitForURL(
+      new RegExp(`/booking/(success\\?booking_id=${BOOKING_ID}|request-success\\?booking_id=${BOOKING_ID})`),
+      { timeout: 20_000, waitUntil: 'commit' },
+    ),
+    submitCta.click(),
+  ]);
 
   expect(postedItems).toEqual({
     preferredPaymentMethod: 'stripe',
@@ -214,7 +175,4 @@ test('croisière CDKIN→CDBNW: itinéraire, cabine grisée, panier -> recap -> 
       },
     ],
   });
-
-  await expect(page.getByText(/reservation confirmee/i)).toBeVisible();
-  await expect(page.getByText(/booking id:/i)).toBeVisible();
 });

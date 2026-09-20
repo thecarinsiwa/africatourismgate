@@ -2,20 +2,19 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations } from 'next-intl';
 import { ABOUT_NAV_ITEMS, normalizeAboutPathname } from '../../lib/about/routes';
 import { cn } from '@africatourismgate/ui';
 
 export function AboutSidebar() {
   const pathname = normalizeAboutPathname(usePathname());
-  const t = useTranslations();
-  const a = t.about;
+  const t = useTranslations('about');
 
   return (
     <>
       <nav
         className="hidden shrink-0 lg:block lg:w-56 xl:w-64"
-        aria-label={a.sidebarAria}
+        aria-label={t('sidebarAria')}
       >
         <ul className="sticky top-24 space-y-1">
           {ABOUT_NAV_ITEMS.map((item) => {
@@ -32,7 +31,7 @@ export function AboutSidebar() {
                   )}
                   aria-current={active ? 'page' : undefined}
                 >
-                  {a.nav[item.labelKey]}
+                  {t(`nav.${item.labelKey}`)}
                 </Link>
               </li>
             );
@@ -42,7 +41,7 @@ export function AboutSidebar() {
 
       <nav
         className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2 lg:hidden"
-        aria-label={a.sidebarAria}
+        aria-label={t('sidebarAria')}
       >
         {ABOUT_NAV_ITEMS.map((item) => {
           const active = pathname === item.href;
@@ -58,7 +57,7 @@ export function AboutSidebar() {
               )}
               aria-current={active ? 'page' : undefined}
             >
-              {a.nav[item.labelKey]}
+              {t(`nav.${item.labelKey}`)}
             </Link>
           );
         })}

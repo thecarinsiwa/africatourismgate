@@ -24,8 +24,12 @@ function mockSession(page: import('@playwright/test').Page) {
 }
 
 test('redirects to login when visiting /account without session', async ({ page }) => {
+  await page.addInitScript(() => {
+    window.localStorage.removeItem('atg.web.session');
+    window.sessionStorage.removeItem('atg.web.session');
+  });
   await page.goto('/account/profile');
-  await expect(page).toHaveURL(/\/booking\/login\?next=%2Faccount%2Fprofile/);
+  await expect(page).toHaveURL(/\/booking\/login\?next=%2Faccount%2Fprofile/, { timeout: 15_000 });
 });
 
 test('shows only current user bookings on /account/reservations', async ({ page }) => {
@@ -68,6 +72,7 @@ test('shows only current user bookings on /account/reservations', async ({ page 
 });
 
 test('profile form submits PATCH /auth/me', async ({ page }) => {
+  test.setTimeout(60_000);
   await mockSession(page);
 
   let patchCalled = false;
@@ -114,10 +119,57 @@ test('profile form submits PATCH /auth/me', async ({ page }) => {
     await route.continue();
   });
 
+  await page.route('**/api/auth/refresh', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        accessToken: 'e2e-account-token',
+        refreshToken: 'e2e-account-refresh',
+        expiresIn: 3600,
+      }),
+    });
+  });
+
+  // Wait for profile hydrate so applyUser cannot overwrite the edit mid-fill.
+  const profileLoaded = page.waitForResponse(
+    (res) =>
+      res.url().includes('/api/auth/me') &&
+      res.request().method() === 'GET' &&
+      res.ok(),
+  );
   await page.goto('/account/profile');
-  await page.locator('input').nth(1).fill('Updated');
-  await page.getByRole('button', { name: /Enregistrer|Save|Guardar/i }).click();
-  await expect(page.getByText(/Profil mis à jour|Profile updated|Perfil actualizado/i)).toBeVisible();
+  await profileLoaded;
+
+  const firstName = page.locator('#profile-first-name');
+  await expect(firstName).toHaveValue('Client', { timeout: 15_000 });
+
+  const saveBtn = page.getByRole('button', { name: /Enregistrer|Save|Guardar/i });
+  await expect(saveBtn).toBeDisabled();
+
+  // Settle: ignore a second Strict-Mode / remount GET before editing.
+  await expect
+    .poll(async () => firstName.inputValue(), { timeout: 3_000, intervals: [200] })
+    .toBe('Client');
+
+  await firstName.fill('Updated');
+  await expect(firstName).toHaveValue('Updated', { timeout: 15_000 });
+  await firstName.blur();
+
+  // Strict Mode / remount can detach the button between enable and click — retry.
+  await expect(async () => {
+    const btn = page.getByRole('button', { name: /Enregistrer|Save|Guardar/i });
+    if (!(await firstName.inputValue()) || (await firstName.inputValue()) !== 'Updated') {
+      await firstName.fill('Updated');
+      await firstName.blur();
+    }
+    await expect(btn).toBeEnabled({ timeout: 5_000 });
+    await btn.click({ timeout: 5_000 });
+  }).toPass({ timeout: 30_000 });
+
+  await expect(page.getByText(/Profil mis à jour|Profile updated|Perfil actualizado/i)).toBeVisible({
+    timeout: 15_000,
+  });
   expect(patchCalled).toBe(true);
 });
 
@@ -156,6 +208,7 @@ test('reservations table shows scoped booking rows only', async ({ page }) => {
 });
 
 test('logout clears session from both storages and redirects to login', async ({ page }) => {
+  test.setTimeout(60_000);
   await mockSession(page);
 
   await page.route('**/api/auth/logout', async (route) => {
@@ -166,8 +219,8 @@ test('logout clears session from both storages and redirects to login', async ({
     });
   });
 
-  await page.goto('/booking/logout');
-  await expect(page).toHaveURL(/\/booking\/login$/);
+  await page.goto('/booking/logout', { waitUntil: 'domcontentloaded' });
+  await expect(page).toHaveURL(/\/booking\/login(\?|$)/, { timeout: 20_000 });
 
   const cleared = await page.evaluate(() => ({
     local: window.localStorage.getItem('atg.web.session'),
