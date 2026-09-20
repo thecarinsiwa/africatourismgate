@@ -1,0 +1,53 @@
+{
+  "sections": {
+    "terms-of-use": "Condiciones de uso"
+  },
+  "pages": {
+    "list": {
+      "deleteTitle": "Eliminar página",
+      "deleteConfirm": "La página « {title} » se eliminará definitivamente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
+      "columns": {
+        "section": "Sección",
+        "title": "Título",
+        "locale": "Idioma",
+        "publishedAt": "Publicación"
+      },
+      "emptySearch": "Ninguna página coincide con su búsqueda.",
+      "emptyDefault": "Aún no hay páginas legales.",
+      "searchPlaceholder": "Buscar por título…",
+      "searchAria": "Buscar páginas legales",
+      "newButton": "Nueva página",
+      "tableAria": "Lista de páginas legales",
+      "paginationItem": "página"
+    },
+    "edit": {
+      "pageTitle": "Editar página legal"
+    },
+    "form": {
+      "info": {
+        "sectionLocaleUnique": "Cada combinación sección + idioma es única.",
+        "publishedAtHint": "Al publicar, la fecha se rellena automáticamente si está vacía. Solo el contenido publicado aparece en el modal de registro."
+      },
+      "validation": {
+        "contentRequired": "El contenido es obligatorio."
+      },
+      "fields": {
+        "section": "Sección",
+        "title": "Título",
+        "content": "Contenido",
+        "contentPlaceholder": "Redacte las condiciones de uso…",
+        "locale": "Idioma",
+        "publishedAtOptional": "Fecha de publicación (opcional)"
+      },
+      "hints": {
+        "publishedAt": "Dejar vacío para usar la fecha actual al publicar."
+      },
+      "saving": "Guardando…",
+      "createButton": "Crear página",
+      "saveButton": "Guardar",
+      "cancelButton": "Cancelar"
+    }
+  }
+}

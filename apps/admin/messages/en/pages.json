@@ -515,6 +515,20 @@
         }
       }
     },
+    "legal": {
+      "title": "Legal pages",
+      "description": "Terms of use editable with WYSIWYG, shown in the registration modal. Access: content.read / content.write.",
+      "nouveau": {
+        "metaTitle": "New legal page",
+        "description": "Write the terms of use for one language.",
+        "backLabel": "Back to legal pages"
+      },
+      "id": {
+        "metaTitle": "Edit legal page",
+        "description": "Update TipTap content and publication status.",
+        "backLabel": "Back to legal pages"
+      }
+    },
     "tickets": {
       "description": "Customer support requests. Filter by status and priority. Access: support_tickets.read / support_tickets.write.",
       "id": {

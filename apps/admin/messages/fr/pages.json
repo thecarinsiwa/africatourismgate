@@ -515,6 +515,20 @@
         }
       }
     },
+    "legal": {
+      "title": "Pages légales",
+      "description": "Conditions d'utilisation éditables en WYSIWYG, affichées dans la modal d'inscription. Accès : content.read / content.write.",
+      "nouveau": {
+        "metaTitle": "Nouvelle page légale",
+        "description": "Rédigez les conditions d'utilisation pour une langue.",
+        "backLabel": "Retour aux pages légales"
+      },
+      "id": {
+        "metaTitle": "Modifier la page légale",
+        "description": "Mettez à jour le contenu TipTap et le statut de publication.",
+        "backLabel": "Retour aux pages légales"
+      }
+    },
     "tickets": {
       "description": "Demandes d'assistance clients. Filtres par statut et priorité. Accès : support_tickets.read / support_tickets.write.",
       "id": {

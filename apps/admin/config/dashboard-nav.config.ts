@@ -113,6 +113,7 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
     children: [
       { href: '/contenu/blog', labelKey: 'blog', iconKey: 'document' },
       { href: '/contenu/site', labelKey: 'sitePresentation', iconKey: 'globe' },
+      { href: '/contenu/legal', labelKey: 'legalPages', iconKey: 'document' },
       { href: '/contenu/avis', labelKey: 'reviews', iconKey: 'star', badgeKey: 'pendingReviews' },
       {
         href: '/contenu/support',
@@ -165,6 +166,7 @@ export const adminBreadcrumbExtraRoutes: AdminBreadcrumbRouteConfig[] = [
   { href: '/systeme/roles/permissions', labelKey: 'permissions' },
   { href: '/paiements/promotions/nouveau', labelKey: 'newPromotion' },
   { href: '/contenu/blog/nouveau', labelKey: 'newBlogPost' },
+  { href: '/contenu/legal/nouveau', labelKey: 'newLegalPage' },
   { href: '/contenu/a-propos/pages/nouveau', labelKey: 'newAboutPage' },
   { href: '/contenu/a-propos/equipe/nouveau', labelKey: 'newTeamMember' },
   { href: '/contenu/a-propos/timeline/nouveau', labelKey: 'newTimelineMilestone' },

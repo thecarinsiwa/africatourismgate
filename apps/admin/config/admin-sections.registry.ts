@@ -182,6 +182,16 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Contenu institutionnel et vitrine du site public.',
     apiResource: 'about-pages',
   },
+  'contenu/legal': {
+    title: 'Pages légales',
+    description: 'Conditions d\'utilisation et textes légaux (WYSIWYG).',
+    apiResource: 'legal-pages',
+  },
+  'contenu/legal/nouveau': {
+    title: 'Nouvelle page légale',
+    description: 'Créer une page légale (CGU, etc.).',
+    apiResource: 'legal-pages',
+  },
   'contenu/support': {
     title: 'Support',
     description: 'Tickets d’assistance et messages clients.',
