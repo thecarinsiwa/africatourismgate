@@ -62,6 +62,9 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      - name: Check web i18n parity
+        run: pnpm check:web-i18n
+
       - name: Build shared packages
         run: pnpm --filter @africatourismgate/types --filter @africatourismgate/utils build
 

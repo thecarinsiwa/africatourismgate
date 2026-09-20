@@ -53,7 +53,12 @@
         "network": "No se pudo conectar con el servidor. Compruebe su conexión.",
         "generic": "Algo salió mal. Inténtelo de nuevo.",
         "envMissing": "Falta la configuración de la API (NEXT_PUBLIC_API_URL).",
-        "unauthorized": "Correo o contraseña incorrectos."
+        "unauthorized": "Correo o contraseña incorrectos.",
+        "googleAuthFailed": "El inicio de sesión con Google falló. Inténtelo de nuevo o use su correo.",
+        "googleAuthError": "Error al iniciar sesión con Google. Inténtelo más tarde.",
+        "googleNoEmail": "Su cuenta de Google no compartió una dirección de correo. Autorice el acceso al correo o inicie sesión con su contraseña.",
+        "googleAccountInactive": "Esta cuenta está suspendida o inactiva. Contacte con el soporte.",
+        "googleSignupUnavailable": "No se pudo completar el registro con Google por ahora. Inténtelo más tarde o cree una cuenta con correo."
       }
     },
     "register": {
@@ -104,20 +109,6 @@
       "genericError": "No se pudo desbloquear la sesión. Inténtelo de nuevo.",
       "idleHint": "Bloqueo automático tras {minutes} min de inactividad."
     }
-  },
-  "hotelsDetail": {
-    "breadcrumbHome": "Inicio",
-    "breadcrumbHotels": "Hoteles",
-    "galleryAria": "Galería de fotos",
-    "galleryOpenLightbox": "Ampliar foto",
-    "galleryClose": "Cerrar galería",
-    "galleryPrevious": "Foto anterior",
-    "galleryNext": "Foto siguiente",
-    "galleryCounter": "Foto {current} de {total}",
-    "calendarLegendTitle": "Leyenda",
-    "calendarLegendAvailable": "Disponible",
-    "calendarLegendSelected": "Fechas seleccionadas",
-    "calendarLegendUnavailable": "No disponible"
   },
   "donate": {
     "title": "Apoye nuestras acciones",

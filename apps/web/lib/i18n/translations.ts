@@ -1999,7 +1999,7 @@ const fr: Translations = {
     gap: 'GAP',
     faq: 'FAQ',
     designedBy: 'Conçu par',
-    designedByNames: 'Carin Siwa et Ruth Bahizi',
+    designedByNames: 'Carin Siwa et Ruth Bwiza',
   },
   hotels: {
     metaTitle: 'Hébergements en Afrique',
@@ -3705,7 +3705,7 @@ const en: Translations = {
     gap: 'GAP',
     faq: 'FAQ',
     designedBy: 'Designed by',
-    designedByNames: 'Carin Siwa and Ruth Bahizi',
+    designedByNames: 'Carin Siwa and Ruth Bwiza',
   },
   hotels: {
     metaTitle: 'Stays in Africa',

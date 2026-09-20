@@ -525,7 +525,7 @@ export const es: Translations = {
     gap: 'GAP',
     faq: 'FAQ',
     designedBy: 'Diseñado por',
-    designedByNames: 'Carin Siwa y Ruth Bahizi',
+    designedByNames: 'Carin Siwa y Ruth Bwiza',
   },
   hotels: {
     metaTitle: 'Estancias en África',

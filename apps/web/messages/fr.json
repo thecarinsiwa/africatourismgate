@@ -110,20 +110,6 @@
       "idleHint": "Verrouillage automatique après {minutes} min d'inactivité."
     }
   },
-  "hotelsDetail": {
-    "breadcrumbHome": "Accueil",
-    "breadcrumbHotels": "Hôtels",
-    "galleryAria": "Galerie photos",
-    "galleryOpenLightbox": "Agrandir la photo",
-    "galleryClose": "Fermer la galerie",
-    "galleryPrevious": "Photo précédente",
-    "galleryNext": "Photo suivante",
-    "galleryCounter": "Photo {current} sur {total}",
-    "calendarLegendTitle": "Légende",
-    "calendarLegendAvailable": "Disponible",
-    "calendarLegendSelected": "Dates sélectionnées",
-    "calendarLegendUnavailable": "Indisponible"
-  },
   "donate": {
     "title": "Soutenir nos actions",
     "intro": "Plusieurs campagnes de don sont disponibles selon le contexte. Choisissez celle qui correspond à votre engagement.",

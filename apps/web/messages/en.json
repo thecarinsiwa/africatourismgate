@@ -110,20 +110,6 @@
       "idleHint": "Automatic lock after {minutes} min of inactivity."
     }
   },
-  "hotelsDetail": {
-    "breadcrumbHome": "Home",
-    "breadcrumbHotels": "Hotels",
-    "galleryAria": "Photo gallery",
-    "galleryOpenLightbox": "Enlarge photo",
-    "galleryClose": "Close gallery",
-    "galleryPrevious": "Previous photo",
-    "galleryNext": "Next photo",
-    "galleryCounter": "Photo {current} of {total}",
-    "calendarLegendTitle": "Legend",
-    "calendarLegendAvailable": "Available",
-    "calendarLegendSelected": "Selected dates",
-    "calendarLegendUnavailable": "Unavailable"
-  },
   "donate": {
     "title": "Support our work",
     "intro": "Several donation campaigns are available depending on the context. Choose the one that fits your commitment.",
