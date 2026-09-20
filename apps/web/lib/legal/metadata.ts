@@ -6,12 +6,10 @@ import { LEGAL_PATHS } from './routes';
 
 const LANG_ALTERNATES = ['fr', 'en', 'es'] as const;
 
-export async function buildTermsOfUseMetadata(): Promise<Metadata> {
-  const rawLocale = await getLocale();
-  const locale = isLocale(rawLocale) ? rawLocale : 'fr';
-  const meta = translations[locale].legal.meta.termsOfUse;
-  const canonicalPath = LEGAL_PATHS.termsOfUse;
-
+function buildLegalMetadata(
+  canonicalPath: string,
+  meta: { title: string; description: string },
+): Metadata {
   const languages = Object.fromEntries(
     LANG_ALTERNATES.map((lang) => [lang, `${canonicalPath}?lang=${lang}`]),
   );
@@ -35,4 +33,22 @@ export async function buildTermsOfUseMetadata(): Promise<Metadata> {
       description: meta.description,
     },
   };
+}
+
+export async function buildTermsOfUseMetadata(): Promise<Metadata> {
+  const rawLocale = await getLocale();
+  const locale = isLocale(rawLocale) ? rawLocale : 'fr';
+  return buildLegalMetadata(
+    LEGAL_PATHS.termsOfUse,
+    translations[locale].legal.meta.termsOfUse,
+  );
+}
+
+export async function buildPrivacyPolicyMetadata(): Promise<Metadata> {
+  const rawLocale = await getLocale();
+  const locale = isLocale(rawLocale) ? rawLocale : 'fr';
+  return buildLegalMetadata(
+    LEGAL_PATHS.privacyPolicy,
+    translations[locale].legal.meta.privacyPolicy,
+  );
 }

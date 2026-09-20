@@ -1424,6 +1424,8 @@ export type Translations = {
   legal: {
     termsOfUseTitle: string;
     termsOfUseSubtitle: string;
+    privacyPolicyTitle: string;
+    privacyPolicySubtitle: string;
     breadcrumbHome: string;
     loading: string;
     emptyPage: string;
@@ -1431,6 +1433,7 @@ export type Translations = {
     localeFallback: string;
     meta: {
       termsOfUse: { title: string; description: string };
+      privacyPolicy: { title: string; description: string };
     };
   };
   comingSoon: {
@@ -3122,11 +3125,14 @@ const fr: Translations = {
     termsOfUseTitle: "Conditions d'utilisation",
     termsOfUseSubtitle:
       'Les règles qui encadrent l’utilisation de la plateforme Africa Tourism Gate.',
+    privacyPolicyTitle: 'Politique de confidentialité',
+    privacyPolicySubtitle:
+      'Comment Africa Tourism Gate collecte, utilise et protège vos données personnelles.',
     breadcrumbHome: 'Accueil',
     loading: 'Chargement…',
     emptyPage: 'Contenu en cours de préparation',
     emptyPageHint:
-      'Les conditions d’utilisation seront bientôt disponibles. Contactez le support pour en savoir plus.',
+      'Ce document sera bientôt disponible. Contactez le support pour en savoir plus.',
     localeFallback:
       'Contenu affiché dans une autre langue — la version dans votre langue sera publiée prochainement.',
     meta: {
@@ -3134,6 +3140,11 @@ const fr: Translations = {
         title: "Conditions d'utilisation",
         description:
           "Conditions d'utilisation de la plateforme Africa Tourism Gate — règles d'accès, compte client et réservations.",
+      },
+      privacyPolicy: {
+        title: 'Politique de confidentialité',
+        description:
+          'Politique de confidentialité Africa Tourism Gate — collecte, usage et protection des données personnelles.',
       },
     },
   },
@@ -4811,11 +4822,13 @@ const en: Translations = {
   legal: {
     termsOfUseTitle: 'Terms of use',
     termsOfUseSubtitle: 'The rules that govern the use of the Africa Tourism Gate platform.',
+    privacyPolicyTitle: 'Privacy policy',
+    privacyPolicySubtitle:
+      'How Africa Tourism Gate collects, uses and protects your personal data.',
     breadcrumbHome: 'Home',
     loading: 'Loading…',
     emptyPage: 'Content coming soon',
-    emptyPageHint:
-      'Terms of use will be available shortly. Contact support to learn more.',
+    emptyPageHint: 'This document will be available shortly. Contact support to learn more.',
     localeFallback:
       'Showing content in another language — your language version will be published soon.',
     meta: {
@@ -4823,6 +4836,11 @@ const en: Translations = {
         title: 'Terms of use',
         description:
           'Terms of use for the Africa Tourism Gate platform — access rules, customer accounts and bookings.',
+      },
+      privacyPolicy: {
+        title: 'Privacy policy',
+        description:
+          'Africa Tourism Gate privacy policy — collection, use and protection of personal data.',
       },
     },
   },

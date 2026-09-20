@@ -201,9 +201,9 @@ export function HomeFooter() {
           <p className="text-xs">
             © {new Date().getFullYear()} {branding.displayName}
             <span className="mx-2">|</span>
-            <a href="#" className="hover:text-white transition-colors">
+            <Link href={LEGAL_PATHS.privacyPolicy} className="hover:text-white transition-colors">
               {t.footer.privacy}
-            </a>
+            </Link>
             <span className="mx-2">|</span>
             <Link href={LEGAL_PATHS.termsOfUse} className="hover:text-white transition-colors">
               {t.footer.termsOfUse}

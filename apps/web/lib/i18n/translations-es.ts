@@ -1648,11 +1648,14 @@ export const es: Translations = {
     termsOfUseTitle: 'Condiciones de uso',
     termsOfUseSubtitle:
       'Las reglas que rigen el uso de la plataforma Africa Tourism Gate.',
+    privacyPolicyTitle: 'Política de privacidad',
+    privacyPolicySubtitle:
+      'Cómo Africa Tourism Gate recopila, utiliza y protege sus datos personales.',
     breadcrumbHome: 'Inicio',
     loading: 'Cargando…',
     emptyPage: 'Contenido en preparación',
     emptyPageHint:
-      'Las condiciones de uso estarán disponibles en breve. Contacte con soporte para más información.',
+      'Este documento estará disponible en breve. Contacte con soporte para más información.',
     localeFallback:
       'Mostrando contenido en otro idioma — la versión en su idioma se publicará pronto.',
     meta: {
@@ -1660,6 +1663,11 @@ export const es: Translations = {
         title: 'Condiciones de uso',
         description:
           'Condiciones de uso de la plataforma Africa Tourism Gate — reglas de acceso, cuenta de cliente y reservas.',
+      },
+      privacyPolicy: {
+        title: 'Política de privacidad',
+        description:
+          'Política de privacidad de Africa Tourism Gate — recogida, uso y protección de datos personales.',
       },
     },
   },
