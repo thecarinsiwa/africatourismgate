@@ -9,7 +9,6 @@ export default defineConfig({
     setupFiles: ['./vitest.setup.ts'],
     include: [
       'components/**/*.{test,spec}.{ts,tsx}',
-      'lib/bookings/**/*.component.test.{ts,tsx}',
       'test/**/*.{test,spec}.{ts,tsx}',
     ],
     exclude: ['node_modules', 'tests/e2e', '.next', '.next-e2e'],

@@ -112,7 +112,7 @@ node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 | WEB-010 | Audit accessibilité (a11y) — ✅ | Moyenne | A11y | L |
 | WEB-011 | Gestion erreurs API sur pages listing — ✅ | Moyenne | Bug | M |
 | WEB-012 | Créer README local `apps/web` — ✅ | Basse | Docs | S |
-| WEB-013 | Nettoyer code `@deprecated` | Basse | Cleanup | S |
+| WEB-013 | Nettoyer code `@deprecated` — ✅ | Basse | Cleanup | S |
 | WEB-014 | E2E flux register + verify OTP | Moyenne | Testing | M |
 | WEB-015 | E2E erreurs Stripe / échecs API | Moyenne | Testing | M |
 | WEB-I18N-01 | QA manuelle i18n — Accueil & navigation | Haute | i18n / QA | S |
@@ -698,6 +698,7 @@ Créer `apps/web/README.md` avec :
 
 ### WEB-013 — Nettoyer code `@deprecated`
 
+**Statut :** ✅ livré (2026-09-20)
 **Labels :** `web`, `enhancement`, `priority:low`  
 **Branche suggérée :** `chore/web-remove-deprecated`
 
@@ -720,10 +721,16 @@ Plusieurs helpers et routes sont marqués `@deprecated` :
 
 ## Critères d'acceptation
 
-- [ ] Build et tests passent
-- [ ] Aucun import vers symboles supprimés
-- [ ] PR limitée au cleanup (pas de refonte fonctionnelle)
+- [x] Build et tests passent
+- [x] Aucun import vers symboles supprimés
+- [x] PR limitée au cleanup (pas de refonte fonctionnelle)
 ```
+
+**Livré :**
+- Suppressions : `buildFlightReservationQuery`, `buildPackageReservationDraft`, `LEGACY_ABOUT_REDIRECTS`, `ListingErrorBanner(+Props)`, `parsePackageScheduleSelections`, `buildPackageDetailHrefWithSelections`
+- Packages : `PackagesSearchParams` → `startDate`/`travelers` ; writers alignés ; lecture URL legacy conservée dans `normalizePackagesSearchParams`
+- `locale-provider.tsx` déjà absent (next-intl / `LocaleBootstrap`)
+- Bonus stabilité : `booking-mode.test.ts` (node:test) + typage `AbstractIntlMessages` dans `test/rtl-helpers.tsx`
 
 ---
 
@@ -1252,7 +1259,7 @@ WEB-012 (README) → WEB-006 (CI E2E) → WEB-002 + WEB-003 (cleanup routes)
 | WEB-010 | | | ✅ |
 | WEB-011 | | | ✅ |
 | WEB-012 | | | ✅ |
-| WEB-013 | | | ☐ |
+| WEB-013 | | | ✅ |
 | WEB-014 | | | ☐ |
 | WEB-015 | | | ☐ |
 | WEB-I18N-01 | | | ☐ |

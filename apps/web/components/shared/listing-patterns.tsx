@@ -151,14 +151,6 @@ export function ListingErrorState({
   );
 }
 
-/** @deprecated Prefer ListingErrorState — kept for call-site compatibility. */
-export type ListingErrorBannerProps = ListingErrorStateProps;
-
-/** @deprecated Prefer ListingErrorState. */
-export function ListingErrorBanner(props: ListingErrorBannerProps) {
-  return <ListingErrorState {...props} />;
-}
-
 export function ListingDefaultErrorIcon() {
   return (
     <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>

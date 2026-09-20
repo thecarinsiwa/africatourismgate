@@ -83,11 +83,9 @@ export function PackageDetailPageContent({
   const [error, setError] = useState(false);
   const [fetchId, setFetchId] = useState(0);
 
-  const [startDate, setStartDate] = useState(
-    initialSearch.startDate ?? initialSearch.date ?? '',
-  );
+  const [startDate, setStartDate] = useState(initialSearch.startDate ?? '');
   const [travelers, setTravelers] = useState(
-    parseParticipantsParam(initialSearch.travelers ?? initialSearch.participants),
+    parseParticipantsParam(initialSearch.travelers),
   );
   const [step, setStep] = useState<PackageCompositionStep>('overview');
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -117,7 +115,7 @@ export function PackageDetailPageContent({
   );
 
   const hydratedPackageKeyRef = useRef<string | null>(null);
-  const initialStartDate = initialSearch.startDate ?? initialSearch.date ?? '';
+  const initialStartDate = initialSearch.startDate ?? '';
 
   useEffect(() => {
     hydratedPackageKeyRef.current = null;

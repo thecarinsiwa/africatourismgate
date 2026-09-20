@@ -1,4 +1,4 @@
-import { NextIntlClientProvider } from 'next-intl';
+import { NextIntlClientProvider, type AbstractIntlMessages } from 'next-intl';
 import { type ReactElement, type ReactNode } from 'react';
 import { render, type RenderOptions } from '@testing-library/react';
 import { vi } from 'vitest';
@@ -21,7 +21,7 @@ export const rtlTestMessages = {
   checkout: {
     requestBooking: 'Request a booking',
   },
-};
+} satisfies AbstractIntlMessages;
 
 export function createRouterMock() {
   return {
@@ -37,7 +37,7 @@ export function createRouterMock() {
 type RtlProvidersProps = {
   children: ReactNode;
   locale?: string;
-  messages?: Record<string, unknown>;
+  messages?: AbstractIntlMessages;
   bookingModes?: ResolvedBookingItemTypeModes;
 };
 
@@ -58,7 +58,7 @@ export function renderWithProviders(
   ui: ReactElement,
   options?: Omit<RenderOptions, 'wrapper'> & {
     locale?: string;
-    messages?: Record<string, unknown>;
+    messages?: AbstractIntlMessages;
     bookingModes?: ResolvedBookingItemTypeModes;
   },
 ) {

@@ -14,20 +14,6 @@ export const ABOUT_PATHS = {
   contact: '/about/contact',
 } as const;
 
-/** @deprecated French URLs — kept for redirects only */
-export const LEGACY_ABOUT_REDIRECTS: Record<string, string> = {
-  '/a-propos': ABOUT_PATHS.whoWeAre,
-  '/a-propos/qui-nous-sommes': ABOUT_PATHS.whoWeAre,
-  '/a-propos/notre-histoire': ABOUT_PATHS.history,
-  '/a-propos/equipe': ABOUT_PATHS.team,
-  '/a-propos/comment-nous-travaillons': ABOUT_PATHS.howWeWork,
-  '/a-propos/gouvernance': ABOUT_PATHS.governance,
-  '/a-propos/rapports-finances': ABOUT_PATHS.reports,
-  '/a-propos/responsabilite': ABOUT_PATHS.responsibility,
-  '/a-propos/medias-ressources': ABOUT_PATHS.media,
-  '/a-propos/contact': ABOUT_PATHS.contact,
-};
-
 export type AboutNavLabelKey =
   | 'whoWeAre'
   | 'history'
