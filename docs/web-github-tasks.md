@@ -114,7 +114,7 @@ node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 | WEB-012 | Créer README local `apps/web` — ✅ | Basse | Docs | S |
 | WEB-013 | Nettoyer code `@deprecated` — ✅ | Basse | Cleanup | S |
 | WEB-014 | E2E flux register + verify OTP — ✅ | Moyenne | Testing | M |
-| WEB-015 | E2E erreurs Stripe / échecs API | Moyenne | Testing | M |
+| WEB-015 | E2E erreurs Stripe / échecs API — ✅ | Moyenne | Testing | M |
 | WEB-I18N-01 | QA manuelle i18n — Accueil & navigation | Haute | i18n / QA | S |
 | WEB-I18N-02 | QA manuelle i18n — Verticales (6 listings + fiches) | Haute | i18n / QA | M |
 | WEB-I18N-03 | QA manuelle i18n — Parcours booking & auth | Haute | i18n / QA | M |
@@ -768,6 +768,7 @@ Spec E2E :
 
 ### WEB-015 — E2E erreurs Stripe / échecs API
 
+**Statut :** ✅ livré (2026-09-20)
 **Labels :** `web`, `testing`, `priority:medium`  
 **Branche suggérée :** `feature/web-e2e-stripe-errors`
 
@@ -786,10 +787,15 @@ Spec E2E :
 
 ## Critères d'acceptation
 
-- [ ] Spec `stripe-checkout-errors.spec.ts` (ou extension checkout existante)
-- [ ] Messages i18n visibles
-- [ ] Pas de fuite d'infos techniques sensibles dans l'UI
+- [x] Spec `stripe-checkout-errors.spec.ts` (ou extension checkout existante)
+- [x] Messages i18n visibles
+- [x] Pas de fuite d'infos techniques sensibles dans l'UI
 ```
+
+**Livré :**
+- Helper `checkoutSessionError` dans [`mock-booking-checkout.ts`](../apps/web/tests/e2e/helpers/mock-booking-checkout.ts)
+- Override E2E modes booking (`__ATG_E2E_BOOKING_MODES__`) pour forcer Stripe immédiat
+- Spec [`stripe-checkout-errors.spec.ts`](../apps/web/tests/e2e/stripe-checkout-errors.spec.ts) — échec API + retry (`--repeat-each=3` vert, 6/6)
 
 ---
 
@@ -1266,7 +1272,7 @@ WEB-012 (README) → WEB-006 (CI E2E) → WEB-002 + WEB-003 (cleanup routes)
 | WEB-012 | | | ✅ |
 | WEB-013 | | | ✅ |
 | WEB-014 | | | ✅ |
-| WEB-015 | | | ☐ |
+| WEB-015 | | | ✅ |
 | WEB-I18N-01 | | | ☐ |
 | WEB-I18N-02 | | | ☐ |
 | WEB-I18N-03 | | | ☐ |

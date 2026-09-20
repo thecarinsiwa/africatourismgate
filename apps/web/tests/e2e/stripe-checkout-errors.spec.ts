@@ -2,11 +2,13 @@ import { expect, test, type Page } from '@playwright/test';
 import { fillCheckoutManifest, mockManifestApi } from './helpers/fill-manifest';
 import { mockBookingCheckoutRoutes } from './helpers/mock-booking-checkout';
 import { mockCheckoutAuth } from './helpers/mock-checkout-auth';
+import { mockBookingModes } from './helpers/mock-booking-modes';
 
 const SAFE_PAYMENT_ERROR = 'Unable to start payment. Please try again.';
 
 async function seedCheckoutSession(page: Page): Promise<void> {
   await mockCheckoutAuth(page);
+  await mockBookingModes(page);
   await page.addInitScript(() => {
     window.sessionStorage.setItem(
       'atg.web.session',
@@ -84,14 +86,15 @@ async function navigateHotelToRecap(page: Page): Promise<void> {
       .click(),
   ]);
 
-  const continueLink = page.getByRole('link', {
-    name: /continuer vers r[ée]cap|continue to (summary|recap)|continuar al resumen/i,
-  });
+  const continueLink = page.getByRole('link', { name: /continuer vers r[ée]cap/i });
   await expect(continueLink).toHaveAttribute('href', /\/booking\/recap\?/);
   await Promise.all([page.waitForURL(/\/booking\/recap\?/), continueLink.click()]);
 
   await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();
   await fillCheckoutManifest(page);
+
+  // Client override applies after mount — wait for immediate Stripe CTA.
+  await expect(payWithStripeButton(page)).toBeVisible({ timeout: 15_000 });
 }
 
 function payWithStripeButton(page: Page) {
@@ -120,9 +123,10 @@ test('checkout-session failure shows StripePaymentError without technical leak',
 
   await expect(page).toHaveURL(/\/booking\/recap\?/, { timeout: 15_000 });
 
-  const alert = page.getByRole('alert');
+  const alert = page.getByRole('alert').filter({
+    hasText: /Paiement refusé|Payment declined|Pago rechazado/i,
+  });
   await expect(alert).toBeVisible();
-  await expect(alert).toContainText(/Paiement refusé|Payment declined|Pago rechazado/i);
   await expect(alert).toContainText(SAFE_PAYMENT_ERROR);
   await expect(alert).toContainText(
     /Vérifiez votre carte|Check your card|Compruebe su tarjeta/i,
@@ -170,7 +174,9 @@ test('dismiss StripePaymentError then retry checkout succeeds', async ({ page })
   await navigateHotelToRecap(page);
   await payWithStripeButton(page).click();
 
-  const alert = page.getByRole('alert');
+  const alert = page.getByRole('alert').filter({
+    hasText: /Paiement refusé|Payment declined|Pago rechazado/i,
+  });
   await expect(alert).toBeVisible({ timeout: 15_000 });
   await alert.getByRole('button', { name: /Fermer|Dismiss|Cerrar/i }).click();
   await expect(alert).toHaveCount(0);
