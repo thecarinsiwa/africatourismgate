@@ -109,7 +109,7 @@ node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 | WEB-007 | E2E checkout location voiture — ✅ | Moyenne | Testing | S |
 | WEB-008 | E2E smoke blog, donate, about — ✅ | Basse | Testing | M |
 | WEB-009 | Tests composants checkout & auth — ✅ | Moyenne | Testing | L |
-| WEB-010 | Audit accessibilité (a11y) | Moyenne | A11y | L |
+| WEB-010 | Audit accessibilité (a11y) — ✅ | Moyenne | A11y | L |
 | WEB-011 | Gestion erreurs API sur pages listing | Moyenne | Bug | M |
 | WEB-012 | Créer README local `apps/web` | Basse | Docs | S |
 | WEB-013 | Nettoyer code `@deprecated` | Basse | Cleanup | S |
@@ -584,6 +584,7 @@ Introduire un runner de tests composants (React Testing Library + Vitest ou équ
 
 ### WEB-010 — Audit accessibilité (a11y)
 
+**Statut :** ✅ livré (2026-09-20)
 **Labels :** `web`, `a11y`, `priority:medium`  
 **Branche suggérée :** `feature/web-a11y-audit`
 
@@ -606,15 +607,22 @@ Accessibilité partielle : menu mobile, galeries lightbox, formulaires auth et F
 
 ## Critères d'acceptation
 
-- [ ] Navigation clavier complète sur login + galerie hôtel
-- [ ] FAQ : `aria-expanded`, activation clavier Enter/Space
-- [ ] Aucune régression visuelle majeure
-- [ ] Liste des pages corrigées dans la PR
+- [x] Navigation clavier complète sur login + galerie hôtel
+- [x] FAQ : `aria-expanded`, activation clavier Enter/Space
+- [x] Aucune régression visuelle majeure
+- [x] Liste des pages corrigées dans la PR
 
 ## Références
 
 - docs/web-design-improvements.md (WEB-UX-19 M1, WEB-UX-17 SP1)
 ```
+
+**Livré :**
+- Checklist PR : [`docs/web-a11y-checklist.md`](./web-a11y-checklist.md) + section README web
+- Correctifs : header `focus-visible` ; galerie hero/thumbs ; login OAuth non activable sans URL ; accordion `min-h-[44px]` ; stepper `aria-current="step"` ; dialogs manifeste Escape + trap ; drawer booking trap Tab
+- Helpers : `trapFocus` / `getInitialFocusElement` exportés depuis `@africatourismgate/ui`
+
+**Pages / composants corrigés :** home (header), fiche hôtel (galerie), `/booking/login`, `/support` (FAQ), checkout (stepper + manifeste), booking sidebar drawer.
 
 ---
 
@@ -1230,7 +1238,7 @@ WEB-012 (README) → WEB-006 (CI E2E) → WEB-002 + WEB-003 (cleanup routes)
 | WEB-007 | | | ✅ |
 | WEB-008 | | | ✅ |
 | WEB-009 | | | ✅ |
-| WEB-010 | | | ☐ |
+| WEB-010 | | | ✅ |
 | WEB-011 | | | ☐ |
 | WEB-012 | | | ☐ |
 | WEB-013 | | | ☐ |

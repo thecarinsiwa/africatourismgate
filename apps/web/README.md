@@ -65,6 +65,21 @@ Config: [`vitest.config.ts`](./vitest.config.ts), setup [`vitest.setup.ts`](./vi
 
 **Last local run (2026-09-20):** **14 passed / 0 failed**.
 
+## Accessibility (a11y)
+
+PR checklist : [`docs/web-a11y-checklist.md`](../../docs/web-a11y-checklist.md) (WEB-010).
+
+| Surface | Notes |
+| --- | --- |
+| Header mobile | Focus trap, Escape, `aria-expanded`, touch ≥ 44px, `focus-visible` |
+| Galerie hôtel | Lightbox dialog + trap ; hero / thumbs `focus-visible` |
+| `/booking/login` | Labels, alertes ; Google OAuth désactivé tant que l’URL n’est pas prête |
+| `/support` FAQ | Accordion `aria-expanded`, Enter/Space, `min-h-[44px]` |
+| Checkout | Stepper `aria-current="step"` ; dialogs manifeste Escape + trap |
+| Booking drawer | Escape + trap Tab (`BookingSidebarMobileDrawer`) |
+
+Helpers focus : `trapFocus` / `getInitialFocusElement` exportés depuis `@africatourismgate/ui`.
+
 ## E2E Playwright
 
 Specs live in [`tests/e2e/`](./tests/e2e/) (18 files). Most routes mock the API with Playwright `page.route` — no local MySQL/API required for the default suite.
