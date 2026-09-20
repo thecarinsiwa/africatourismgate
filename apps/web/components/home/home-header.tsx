@@ -17,6 +17,9 @@ import { useTranslations as useIntlTranslations } from 'next-intl';
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
+const FOCUS_RING =
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface';
+
 function getFocusableElements(container: HTMLElement): HTMLElement[] {
   return Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
     (el) => !el.hasAttribute('disabled') && el.offsetParent !== null,
@@ -68,7 +71,7 @@ function isNavItemActive(
 type NavLinkVariant = 'desktop' | 'desktopChild' | 'mobile' | 'mobileChild';
 
 function navLinkClass(active: boolean, variant: NavLinkVariant): string {
-  const base = 'transition-colors';
+  const base = `transition-colors ${FOCUS_RING}`;
   switch (variant) {
     case 'desktop':
       return active
@@ -221,7 +224,7 @@ export function HomeHeader() {
             {contact.email ? (
               <a
                 href={`mailto:${contact.email}`}
-                className="inline-flex min-h-[44px] items-center gap-1.5 rounded-md px-1 text-atg-muted transition-colors hover:text-primary dark:text-white/90 dark:hover:text-white"
+                className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-md px-1 text-atg-muted transition-colors hover:text-primary dark:text-white/90 dark:hover:text-white ${FOCUS_RING}`}
               >
                 <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -247,7 +250,7 @@ export function HomeHeader() {
                 href={s.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-atg-muted transition-colors hover:bg-primary/10 hover:text-primary dark:text-white/85 dark:hover:bg-white/10 dark:hover:text-white"
+                className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-atg-muted transition-colors hover:bg-primary/10 hover:text-primary dark:text-white/85 dark:hover:bg-white/10 dark:hover:text-white ${FOCUS_RING}`}
                 aria-label={s.label}
               >
                 <span className="h-3.5 w-3.5">{s.icon}</span>
@@ -259,7 +262,7 @@ export function HomeHeader() {
 
       <div className="border-b border-atg-border bg-atg-elevated shadow-sm transition-colors dark:border-atg-border dark:bg-atg-elevated">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-0 sm:px-6 lg:px-8">
-          <Link href="/" className="flex shrink-0 items-center gap-2 py-4">
+          <Link href="/" className={`flex shrink-0 items-center gap-2 rounded-md py-4 ${FOCUS_RING}`}>
             <BrandingMark
               showName
               nameClassName="text-lg font-bold text-atg-fg"
@@ -321,7 +324,7 @@ export function HomeHeader() {
             ) : null}
             <Link
               href={hasSession ? '/account' : '/booking/login?next=%2Faccount'}
-              className={`inline-flex min-h-[44px] items-center whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+              className={`inline-flex min-h-[44px] items-center whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors ${FOCUS_RING} ${
                 onAccountArea
                   ? 'bg-primary/10 text-primary'
                   : 'text-atg-fg hover:text-primary dark:text-white/75 dark:hover:text-white'
@@ -333,7 +336,7 @@ export function HomeHeader() {
             {hasSession ? (
               <Link
                 href="/booking/logout"
-                className="inline-flex min-h-[44px] items-center whitespace-nowrap rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:border-red-300 hover:bg-red-100 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950/60"
+                className={`inline-flex min-h-[44px] items-center whitespace-nowrap rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:border-red-300 hover:bg-red-100 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950/60 ${FOCUS_RING}`}
               >
                 {t('signOut')}
               </Link>
@@ -343,7 +346,7 @@ export function HomeHeader() {
           <button
             type="button"
             onClick={toggleTheme}
-            className="ml-2 mr-2 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-atg-border text-atg-muted transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/75 dark:hover:border-primary dark:hover:text-white lg:ml-2 lg:mr-2"
+            className={`ml-2 mr-2 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-atg-border text-atg-muted transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/75 dark:hover:border-primary dark:hover:text-white lg:ml-2 lg:mr-2 ${FOCUS_RING}`}
             aria-label={theme === 'dark' ? tTheme('enableLight') : tTheme('enableDark')}
             title={theme === 'dark' ? tTheme('lightMode') : tTheme('darkMode')}
           >
@@ -361,7 +364,7 @@ export function HomeHeader() {
           <button
             ref={menuButtonRef}
             type="button"
-            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-atg-muted transition-colors hover:bg-atg-surface hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white lg:hidden"
+            className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-atg-muted transition-colors hover:bg-atg-surface hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white lg:hidden ${FOCUS_RING}`}
             aria-expanded={menuOpen}
             aria-controls="mobile-nav"
             onClick={() => setMenuOpen((o) => !o)}
@@ -398,7 +401,7 @@ export function HomeHeader() {
             <li>
               <Link
                 href={hasSession ? '/account' : '/booking/login?next=%2Faccount'}
-                className={`flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium hover:bg-atg-surface dark:hover:bg-white/5 ${
+                className={`flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium hover:bg-atg-surface dark:hover:bg-white/5 ${FOCUS_RING} ${
                   onAccountArea ? 'bg-primary/10 text-primary' : 'text-primary'
                 }`}
                 aria-current={onAccountArea ? 'page' : undefined}
@@ -411,7 +414,7 @@ export function HomeHeader() {
               <li>
                 <Link
                   href="/booking/logout"
-                  className="flex min-h-[48px] items-center justify-center rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-base font-semibold text-red-700 transition-colors hover:bg-red-100 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950/60"
+                  className={`flex min-h-[48px] items-center justify-center rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-base font-semibold text-red-700 transition-colors hover:bg-red-100 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950/60 ${FOCUS_RING}`}
                   onClick={() => setMenuOpen(false)}
                 >
                   {t('signOut')}
@@ -435,7 +438,7 @@ export function HomeHeader() {
                     {link.children.length > 0 ? (
                       <button
                         type="button"
-                        className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-atg-muted transition-colors hover:bg-atg-surface hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white"
+                        className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-atg-muted transition-colors hover:bg-atg-surface hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white ${FOCUS_RING}`}
                         aria-expanded={groupOpen}
                         aria-label={groupOpen ? `Fermer ${link.label}` : `Ouvrir ${link.label}`}
                         onClick={() =>

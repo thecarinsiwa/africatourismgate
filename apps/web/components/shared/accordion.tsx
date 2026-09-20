@@ -87,7 +87,7 @@ export function Accordion({
                 }}
                 type="button"
                 id={triggerId}
-                className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left text-sm font-medium text-atg-fg hover:bg-atg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset dark:text-white dark:hover:bg-white/5"
+                className="flex min-h-[44px] w-full cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left text-sm font-medium text-atg-fg hover:bg-atg-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset dark:text-white dark:hover:bg-white/5"
                 aria-expanded={expanded}
                 aria-controls={panelId}
                 onClick={() => toggle(item.id)}
