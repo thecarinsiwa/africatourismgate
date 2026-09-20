@@ -87,7 +87,7 @@ node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 | Compte client `/account/*` | ✅ | Profil, réservations, chat assisté, fidélité OneKey |
 | i18n | ⚠️ | Migration next-intl inachevée ; textes EN en dur sur certaines pages |
 | Routes legacy `/reservations/*` | ⚠️ | Doublons sans guards auth |
-| Stub `/booking` (sans `/cart`) | ⚠️ | Placeholder EN non i18n |
+| Stub `/booking` (sans `/cart`) | ✅ | **WEB-003 Option A** : redirect serveur → `/booking/cart` si draft URL valide, sinon `/hotels` |
 | Copy « demo / coming soon » | ⚠️ | Incohérent avec checkout opérationnel |
 | Tests unitaires composants | ❌ | Seulement logique `lib/` |
 | Tests E2E | ⚠️ | Bonne couverture checkout ; i18n E2E limité à `/` + login (voir WEB-I18N-06) |
@@ -101,7 +101,7 @@ node scripts/check-i18n-parity.mjs                 # parité fr/en/es
 | -- | ----------- | -------- | ---- | ------------- |
 | WEB-001 | Migrer i18n legacy vers next-intl | Haute | Refactoring | L |
 | WEB-002 | Supprimer routes legacy `/reservations/*` | Haute | Cleanup | S |
-| WEB-003 | Corriger stub `/booking` ou rediriger | Haute | Bug | S |
+| WEB-003 | Corriger stub `/booking` — ✅ Option A (redirect) | Haute | Bug | S |
 | WEB-004 | Aligner copy UX (demo, coming soon, trust hints) | Haute | Enhancement | M |
 | WEB-005 | Internationaliser metadata SEO | Moyenne | Enhancement | M |
 | WEB-006 | Stabiliser pipeline E2E (build + Playwright CI) | Haute | Testing | M |
@@ -239,15 +239,29 @@ pnpm --filter @africatourismgate/web test:e2e
 
 ### WEB-003 — Corriger ou supprimer le stub `/booking`
 
+**Statut :** ✅ fait (**Option A**)  
 **Labels :** `web`, `bug`, `priority:high`  
-**Branche suggérée :** `fix/web-booking-stub-redirect`
+**Branche :** `feature/web-i18n-next-intl-migration` (commits redirect + smoke e2e)
 
-#### Modèle GitHub
+#### Décision (documentée pour la PR)
+
+**Option A retenue** — pas de page hub (C), pas de redirect config aveugle vers le panier (B).
+
+Le panier vit dans la query URL (`parseReservationDraft`). Un redirect serveur conditionnel dans [`apps/web/app/booking/page.tsx`](../apps/web/app/booking/page.tsx) :
+
+- draft URL **valide** → `/booking/cart?${buildReservationQuery(draft)}`
+- sinon (index nu ou query incomplète) → `/hotels`
+
+Évite le placeholder EN, reste cohérent avec le checkout, et n’impose pas le guard auth + « invalid draft » pour une visite vide de `/booking`.
+
+Smoke E2E : [`apps/web/tests/e2e/booking-index-redirect.spec.ts`](../apps/web/tests/e2e/booking-index-redirect.spec.ts).
+
+#### Modèle GitHub (historique)
 
 ```markdown
 ## Contexte
 
-La route `apps/web/app/booking/page.tsx` affiche un **placeholder** en anglais :
+La route `apps/web/app/booking/page.tsx` affichait un **placeholder** en anglais :
 - Titre « Booking Checkout »
 - Message « Full checkout integration is being finalized »
 - CTA mailto manuel
@@ -257,19 +271,20 @@ Or le checkout complet existe via `/booking/cart` → `/booking/recap` → Strip
 ## Objectif
 
 Choisir **une** des options (documenter le choix dans la PR) :
-- **Option A (recommandée)** : redirect `/booking` → `/booking/cart` (ou `/hotels` si panier vide)
+- **Option A (retenue)** : redirect `/booking` → `/booking/cart` (ou `/hotels` si panier / draft vide)
 - **Option B** : supprimer la page et gérer via `next.config.mjs`
 - **Option C** : transformer en page hub i18n avec liens vers panier / compte (si un vrai besoin produit)
 
 ## Critères d'acceptation
 
-- [ ] Plus de texte EN hardcodé « being finalized »
-- [ ] Comportement cohérent avec le flux checkout existant
-- [ ] i18n fr/en/es si contenu conservé
+- [x] Plus de texte EN hardcodé « being finalized »
+- [x] Comportement cohérent avec le flux checkout existant
+- [x] i18n fr/en/es si contenu conservé — N/A (plus de contenu UI ; redirect seul)
 
 ## Fichier
 
 - `apps/web/app/booking/page.tsx`
+- `apps/web/tests/e2e/booking-index-redirect.spec.ts`
 ```
 
 ---
@@ -731,7 +746,7 @@ Cocher dans l'issue au fur et à mesure. Remplacer `[id]` par un ID seed/API val
 | `/booking/success` | ☐ | ☐ | ☐ | Post-paiement Stripe |
 | `/booking/request-success` | ☐ | ☐ | ☐ | Demande assistée |
 | `/booking/cancel` | ☐ | ☐ | ☐ | Annulation paiement |
-| `/booking` | ☐ | ☐ | ☐ | **Stub EN connu** — à corriger (WEB-003) |
+| `/booking` | ☐ | ☐ | ☐ | ✅ WEB-003 Option A (redirect cart/hotels) |
 | `/reservations/cart` | ☐ | ☐ | ☐ | Legacy — même i18n que booking ? |
 | `/reservations/recap` | ☐ | ☐ | ☐ | |
 | `/reservations/success` | ☐ | ☐ | ☐ | |
@@ -874,7 +889,7 @@ Checkout : `/booking/cart`, `/recap`, `/success`, `/request-success`, `/cancel`
 
 Legacy (si encore actif) : `/reservations/*`
 
-Stub connu : `/booking` (texte EN — ticket WEB-003)
+Stub `/booking` : ✅ WEB-003 Option A (redirect serveur)
 
 ## Scénarios
 
@@ -1025,7 +1040,7 @@ Corriger tous les textes hardcodés / non traduits identifiés :
 
 | Route | Langue | Texte incorrect | Fichier | Statut |
 | ----- | ------ | --------------- | ------- | ------ |
-| `/booking` | all | « Booking Checkout » EN | `app/booking/page.tsx` | ☐ |
+| `/booking` | all | « Booking Checkout » EN (stub) | `app/booking/page.tsx` | ✅ WEB-003 Option A (redirect) |
 | … | | | | |
 
 ## Procédure correction
