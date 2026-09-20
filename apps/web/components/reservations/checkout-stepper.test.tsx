@@ -29,7 +29,10 @@ describe('CheckoutStepper', () => {
     render(<CheckoutStepper currentStep="recap" labels={labels} />);
 
     const nav = screen.getByRole('navigation', { name: 'Checkout steps' });
-    expect(within(nav).getByText('Summary')).toHaveClass('text-atg-fg');
+    const summary = within(nav).getByText('Summary');
+    expect(summary).toHaveClass('text-atg-fg');
+    expect(summary).toHaveAttribute('aria-current', 'step');
+    expect(within(nav).getByText('Cart')).not.toHaveAttribute('aria-current');
     expect(nav.textContent).toContain('✓');
     expect(within(nav).getByText('2')).toBeInTheDocument();
   });
@@ -40,7 +43,9 @@ describe('CheckoutStepper', () => {
     );
 
     const nav = screen.getByRole('navigation', { name: 'Checkout steps' });
-    expect(within(nav).getByText('Cancelled')).toBeInTheDocument();
+    const cancelled = within(nav).getByText('Cancelled');
+    expect(cancelled).toBeInTheDocument();
+    expect(cancelled).toHaveAttribute('aria-current', 'step');
     expect(within(nav).queryByText('Payment')).not.toBeInTheDocument();
   });
 });

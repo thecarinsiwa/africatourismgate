@@ -1,4 +1,9 @@
 export { cn } from './lib/cn';
+export {
+  getFocusableElements,
+  getInitialFocusElement,
+  trapFocus,
+} from './lib/focus-trap';
 
 export { AppShell } from './app-shell';
 export { DashboardShell, type DashboardShellProps } from './components/dashboard-shell';
