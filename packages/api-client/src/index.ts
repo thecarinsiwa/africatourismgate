@@ -103,6 +103,9 @@ import type {
   ReviewBookingIdentityDocumentRequest,
   RequestIdentityDocumentUploadRequest,
   RequestIdentityDocumentUploadResponse,
+  StaffNotification,
+  StaffNotificationsListQuery,
+  StaffNotificationsUnreadCount,
   BookingPaymentProof,
   ReviewBookingPaymentProofRequest,
   BookingManifestEntry,
@@ -2989,6 +2992,40 @@ export class ApiClient {
     return this.request<BookingIdentityDocument[]>(
       `/bookings/${bookingId}/identity-documents`,
     );
+  }
+
+  listStaffNotifications(
+    query?: StaffNotificationsListQuery,
+  ): Promise<StaffNotification[]> {
+    const params = new URLSearchParams();
+    if (query?.unreadOnly === true) {
+      params.set('unreadOnly', 'true');
+    }
+    if (query?.limit != null) {
+      params.set('limit', String(query.limit));
+    }
+    const qs = params.toString();
+    return this.request<StaffNotification[]>(
+      `/notifications${qs ? `?${qs}` : ''}`,
+    );
+  }
+
+  getStaffNotificationsUnreadCount(): Promise<StaffNotificationsUnreadCount> {
+    return this.request<StaffNotificationsUnreadCount>(
+      '/notifications/unread-count',
+    );
+  }
+
+  markStaffNotificationRead(id: string): Promise<StaffNotification> {
+    return this.request<StaffNotification>(`/notifications/${id}/read`, {
+      method: 'PATCH',
+    });
+  }
+
+  markAllStaffNotificationsRead(): Promise<{ updated: number }> {
+    return this.request<{ updated: number }>('/notifications/mark-all-read', {
+      method: 'POST',
+    });
   }
 
   approveBookingIdentityDocument(
