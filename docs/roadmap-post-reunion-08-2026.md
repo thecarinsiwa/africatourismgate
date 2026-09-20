@@ -84,7 +84,7 @@ Règles :
 | Acomptes / paiements partiels | ✅ Setting `booking/deposits` + multi-paiements ; `pending_payment` jusqu’au solde ; Stripe/cash/virement/preuves partiels (voir [pr-07-deposits-test.md](./pr-07-deposits-test.md)) | `organization_settings.deposits`, `paidCents` / `balanceCents`, `booking-engine`, `stripe.service` |
 | Politique cash web | ✅ `payment_methods.cash` défaut **false** ; POS/admin inchangés (voir [pr-08-cash-policy-test.md](./pr-08-cash-policy-test.md)) | `DEFAULT_WEB_PAYMENT_METHODS`, migration `set_web_payment_methods_cash_default_false.sql`, checkout web |
 | Partenaire vs Staff vs Client | ✅ Vocabulaire + RBAC catalogue (PR-09) ; compte auth partenaire = **PR-10** | `activity_providers`, `/produits/activites/partenaires`, `activities.read/write` |
-| Liaison document ID ↔ voyageur | ❌ Upload non lié à l’entrée manifeste | `booking_identity_documents` |
+| Liaison document ID ↔ voyageur | ✅ `manifest_entry_id` + upload / UI par voyageur (voir [pr-11-manifest-doc-link-test.md](./pr-11-manifest-doc-link-test.md)) | `booking_identity_documents`, checkout, compte, admin Documents / assisté |
 | Portail / onboarding partenaire | ❌ Catalogue `activity_providers` ≠ compte auth ; OAuth Gmail staff/client OK ; pas de rôle `partner` ni portail B2B (PR-10) | `apps/api/src/modules/auth/`, `activity-providers` |
 | Notifications staff persistées | ⚠️ Poll client + `localStorage` | `apps/admin/lib/notifications/use-admin-notifications.ts` |
 | Google Maps | ❌ Leaflet + OSM | `apps/web/components/maps/*`, `coordinate-picker-map.tsx` |
@@ -109,7 +109,7 @@ Règles :
 | PR-08 | 1 | Politique cash (restreindre web) — **livré** (voir [pr-08-cash-policy-test.md](./pr-08-cash-policy-test.md)) | Haute | `feature/pr-08-cash-policy` | — |
 | PR-09 | 2 | Clarifier Partenaire vs Staff vs Client (UI + RBAC) — **livré** | Moyenne | `feature/pr-09-partner-roles` | — |
 | PR-10 | 2 | Onboarding partenaires (questionnaire + invitation Gmail) | Moyenne | `feature/pr-10-partner-onboarding` | PR-09 |
-| PR-11 | 2 | Liaison document identité ↔ entrée manifeste | Moyenne | `feature/pr-11-manifest-doc-link` | — |
+| PR-11 | 2 | Liaison document identité ↔ entrée manifeste — **livré** (voir [pr-11-manifest-doc-link-test.md](./pr-11-manifest-doc-link-test.md)) | Moyenne | `feature/pr-11-manifest-doc-link` | — |
 | PR-12 | 2 | Notifications admin persistées (serveur) | Basse | `feature/pr-12-notifications-persist` | — |
 | PR-13 | 3 | Mobile money offline (Est-Afrique) — **config + checkout + preuves livrés** ; PSP API V2 | Basse | `feature/pr-13-mobile-money` | PR-06 / preuves |
 | PR-14 | 3 | Google Maps (clé API + import / enrichissement) | Basse | `feature/pr-14-google-maps` | — |
@@ -530,7 +530,8 @@ Critères d’acceptation :
 ### PR-11 — Liaison document identité ↔ entrée manifeste
 
 **Branche :** `feature/pr-11-manifest-doc-link`  
-**Priorité :** Moyenne
+**Priorité :** Moyenne  
+**Statut :** ✅ Livré — scénario de test : [pr-11-manifest-doc-link-test.md](./pr-11-manifest-doc-link-test.md)
 
 ```
 Projet : Africa Tourism Gate (pnpm monorepo).
