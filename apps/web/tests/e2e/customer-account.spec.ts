@@ -156,8 +156,17 @@ test('profile form submits PATCH /auth/me', async ({ page }) => {
   await expect(firstName).toHaveValue('Updated', { timeout: 15_000 });
   await firstName.blur();
 
-  await expect(saveBtn).toBeEnabled({ timeout: 15_000 });
-  await saveBtn.click();
+  // Strict Mode / remount can detach the button between enable and click — retry.
+  await expect(async () => {
+    const btn = page.getByRole('button', { name: /Enregistrer|Save|Guardar/i });
+    if (!(await firstName.inputValue()) || (await firstName.inputValue()) !== 'Updated') {
+      await firstName.fill('Updated');
+      await firstName.blur();
+    }
+    await expect(btn).toBeEnabled({ timeout: 5_000 });
+    await btn.click({ timeout: 5_000 });
+  }).toPass({ timeout: 30_000 });
+
   await expect(page.getByText(/Profil mis à jour|Profile updated|Perfil actualizado/i)).toBeVisible({
     timeout: 15_000,
   });

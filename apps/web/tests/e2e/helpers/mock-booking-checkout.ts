@@ -99,7 +99,7 @@ export async function mockBookingCheckoutRoutes(
       body: JSON.stringify({
         paymentId: `payment-${options.bookingId}`,
         sessionId: `cs_test_${options.bookingId}`,
-        url: `http://127.0.0.1:3002/booking/success?booking_id=${options.bookingId}`,
+        url: `/booking/success?booking_id=${options.bookingId}`,
         amountCents: options.totalCents,
         currency,
       }),

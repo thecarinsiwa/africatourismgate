@@ -103,6 +103,13 @@ function payWithStripeButton(page: Page) {
   });
 }
 
+/** StripePaymentError only — excludes Next.js `#__next-route-announcer__` (also role=alert). */
+function stripePaymentErrorAlert(page: Page) {
+  return page.locator('[role="alert"]:not(#__next-route-announcer__)').filter({
+    hasText: /Paiement refusé|Payment declined|Pago rechazado/i,
+  });
+}
+
 test('checkout-session failure shows StripePaymentError without technical leak', async ({
   page,
 }) => {
@@ -123,9 +130,7 @@ test('checkout-session failure shows StripePaymentError without technical leak',
 
   await expect(page).toHaveURL(/\/booking\/recap\?/, { timeout: 15_000 });
 
-  const alert = page.getByRole('alert').filter({
-    hasText: /Paiement refusé|Payment declined|Pago rechazado/i,
-  });
+  const alert = stripePaymentErrorAlert(page);
   await expect(alert).toBeVisible();
   await expect(alert).toContainText(SAFE_PAYMENT_ERROR);
   await expect(alert).toContainText(
@@ -164,7 +169,7 @@ test('dismiss StripePaymentError then retry checkout succeeds', async ({ page })
       body: JSON.stringify({
         paymentId: `payment-${bookingId}`,
         sessionId: `cs_test_${bookingId}`,
-        url: `http://127.0.0.1:3002/booking/success?booking_id=${bookingId}`,
+        url: `/booking/success?booking_id=${bookingId}`,
         amountCents: 120000,
         currency: 'USD',
       }),
@@ -174,9 +179,7 @@ test('dismiss StripePaymentError then retry checkout succeeds', async ({ page })
   await navigateHotelToRecap(page);
   await payWithStripeButton(page).click();
 
-  const alert = page.getByRole('alert').filter({
-    hasText: /Paiement refusé|Payment declined|Pago rechazado/i,
-  });
+  const alert = stripePaymentErrorAlert(page);
   await expect(alert).toBeVisible({ timeout: 15_000 });
   await alert.getByRole('button', { name: /Fermer|Dismiss|Cerrar/i }).click();
   await expect(alert).toHaveCount(0);
