@@ -131,14 +131,31 @@ test('profile form submits PATCH /auth/me', async ({ page }) => {
     });
   });
 
+  // Wait for profile hydrate so applyUser cannot overwrite the edit mid-fill.
+  const profileLoaded = page.waitForResponse(
+    (res) =>
+      res.url().includes('/api/auth/me') &&
+      res.request().method() === 'GET' &&
+      res.ok(),
+  );
   await page.goto('/account/profile');
+  await profileLoaded;
+
   const firstName = page.getByRole('textbox', { name: /^Prénom$|^First name$|^Nombre$/i });
-  await expect(firstName).toHaveValue('Client');
-  await firstName.click();
-  await firstName.fill('Updated');
-  await expect(firstName).toHaveValue('Updated');
+  await expect(firstName).toHaveValue('Client', { timeout: 15_000 });
+
   const saveBtn = page.getByRole('button', { name: /Enregistrer|Save|Guardar/i });
-  await expect(saveBtn).toBeEnabled();
+  await expect(saveBtn).toBeDisabled();
+
+  // pressSequentially updates React controlled state reliably (fill can leave DOM
+  // dirty while isDirty stays false under slow CI).
+  await firstName.click();
+  await firstName.clear();
+  await firstName.pressSequentially('Updated', { delay: 20 });
+  await expect(firstName).toHaveValue('Updated');
+  await firstName.blur();
+
+  await expect(saveBtn).toBeEnabled({ timeout: 15_000 });
   await saveBtn.click();
   await expect(page.getByText(/Profil mis à jour|Profile updated|Perfil actualizado/i)).toBeVisible({
     timeout: 15_000,
