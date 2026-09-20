@@ -6,7 +6,6 @@ import { toFlightAirportOptions } from '../../lib/flights/airports';
 import type { FlightsSearchParams } from '../../lib/flights/listings';
 import { usePublicAirports } from '../../lib/flights/use-public-airports';
 import { useTranslations } from 'next-intl';
-import { useTranslations as useLegacyTranslations } from '../../lib/i18n/locale-provider';
 import { buildSearchRoute } from '../../lib/search/route';
 import {
   SearchFormInput,
@@ -72,8 +71,7 @@ function FlightTripTypeToggle({
 export function FlightsSearchForm({ initialValues }: FlightsSearchFormProps) {
   const router = useRouter();
   const t = useTranslations('search');
-  const legacy = useLegacyTranslations();
-  const f = legacy.flights;
+  const f = useTranslations('flights');
 
   const { airports, loading: airportsLoading, error: airportsError } = usePublicAirports();
   const airportOptions = useMemo(() => toFlightAirportOptions(airports), [airports]);
@@ -177,7 +175,7 @@ export function FlightsSearchForm({ initialValues }: FlightsSearchFormProps) {
           <SearchFormLabel>{t('from')}</SearchFormLabel>
           <SearchFormOptionDatalistInput
             name="from"
-            placeholder={airportsLoading ? f.loading : t('airportPh')}
+            placeholder={airportsLoading ? f('loading') : t('airportPh')}
             options={airportOptions.map((airport) => ({
               value: airport.iataCode,
               label: airport.label,
@@ -195,7 +193,7 @@ export function FlightsSearchForm({ initialValues }: FlightsSearchFormProps) {
           <SearchFormLabel>{t('to')}</SearchFormLabel>
           <SearchFormOptionDatalistInput
             name="to"
-            placeholder={airportsLoading ? f.loading : t('airportPh')}
+            placeholder={airportsLoading ? f('loading') : t('airportPh')}
             options={airportOptions.map((airport) => ({
               value: airport.iataCode,
               label: airport.label,
@@ -270,7 +268,7 @@ export function FlightsSearchForm({ initialValues }: FlightsSearchFormProps) {
 
       {airportsError ? (
         <p className="mt-3 text-sm text-amber-700 dark:text-amber-300" role="status">
-          {f.loadError}
+          {f('loadError')}
         </p>
       ) : null}
       {error ? (

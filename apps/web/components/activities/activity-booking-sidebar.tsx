@@ -10,7 +10,7 @@ import { formatDisplayDate } from '../../lib/hotels/dates';
 import type { Translations } from '../../lib/i18n/translations';
 import { useState } from 'react';
 import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations } from 'next-intl';
 import {
   BookingSidebarBody,
   BookingSidebarCta,
@@ -134,7 +134,7 @@ export function ActivityBookingSidebar(props: ActivityBookingSidebarProps) {
 }
 
 export function ActivityBookingMobileBar(props: ActivityBookingSidebarProps) {
-  const { bookingSidebar } = useTranslations();
+  const tBooking = useTranslations('bookingSidebar');
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { detail, selectedSchedule, participants, onReserve, t } = props;
   const ctaLabel = useBookingCtaLabel('activity_schedule');
@@ -163,7 +163,7 @@ export function ActivityBookingMobileBar(props: ActivityBookingSidebarProps) {
         ctaLabel={ctaLabel}
         ctaDisabled={!canReserve}
         onCtaClick={onReserve}
-        configureLabel={bookingSidebar.mobileConfigure}
+        configureLabel={tBooking('mobileConfigure')}
         onConfigureClick={() => setDrawerOpen(true)}
       />
     </>

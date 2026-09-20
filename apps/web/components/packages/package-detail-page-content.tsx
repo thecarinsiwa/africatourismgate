@@ -15,7 +15,8 @@ import {
 } from '../../lib/packages/listings';
 import type { PackageDetail } from '../../lib/packages/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
-import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import { useLocale } from 'next-intl';
+import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import {
   buildPackageAssistedReservationDraft,
   buildReservationQuery,
@@ -67,14 +68,13 @@ export function PackageDetailPageContent({
   packageId,
   initialSearch,
 }: PackageDetailPageContentProps) {
-  const t = useTranslations();
-  const p = t.packages;
-  const a = t.activities;
-  const h = t.hotels;
-  const c = t.cars;
-  const cr = t.cruises;
-  const f = t.flights;
-  const { locale } = useLocale();
+  const p = useNamespaceLabels('packages');
+  const a = useNamespaceLabels('activities');
+  const h = useNamespaceLabels('hotels');
+  const c = useNamespaceLabels('cars');
+  const cr = useNamespaceLabels('cruises');
+  const f = useNamespaceLabels('flights');
+  const locale = useLocale();
   const router = useRouter();
 
   const [detail, setDetail] = useState<PackageDetail | null>(null);

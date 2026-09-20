@@ -6,7 +6,6 @@ import { countRentalDays, type CarsSearchParams } from '../../lib/cars/listings'
 import { useVehiclePickupLocations } from '../../lib/cars/use-vehicle-pickup-locations';
 import { addDays, todayISODate } from '../../lib/hotels/dates';
 import { useTranslations } from 'next-intl';
-import { useTranslations as useLegacyTranslations } from '../../lib/i18n/locale-provider';
 import { buildSearchRoute } from '../../lib/search/route';
 import {
   SearchFormDatalistInput,
@@ -23,8 +22,7 @@ type CarsSearchFormProps = {
 export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
   const router = useRouter();
   const t = useTranslations('search');
-  const legacy = useLegacyTranslations();
-  const c = legacy.cars;
+  const c = useTranslations('cars');
 
   const [pickupLocation, setPickupLocation] = useState(initialValues.pickupLocation ?? '');
   const [pickupDate, setPickupDate] = useState(initialValues.pickupDate ?? '');
@@ -48,8 +46,8 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
   const rentalDaysLabel = useMemo(() => {
     if (!pickupDate || !returnDate || returnDate <= pickupDate) return null;
     const days = countRentalDays(pickupDate, returnDate);
-    return days === 1 ? `1 ${c.daySingular}` : `${days} ${c.dayPlural}`;
-  }, [pickupDate, returnDate, c.daySingular, c.dayPlural]);
+    return days === 1 ? `1 ${c('daySingular')}` : `${days} ${c('dayPlural')}`;
+  }, [pickupDate, returnDate, c]);
 
   useEffect(() => {
     setPickupLocation(initialValues.pickupLocation ?? '');
@@ -98,10 +96,10 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_1fr_auto] lg:items-end">
         <div>
-          <SearchFormLabel>{c.pickupLocation}</SearchFormLabel>
+          <SearchFormLabel>{c('pickupLocation')}</SearchFormLabel>
           <SearchFormDatalistInput
             name="pickupLocation"
-            placeholder={carPickupLoading ? c.loading : c.anyLocation}
+            placeholder={carPickupLoading ? c('loading') : c('anyLocation')}
             suggestions={carPickupOptions}
             value={pickupLocation}
             disabled={carPickupLoading}
@@ -150,7 +148,7 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
 
       {carPickupError && (
         <p className="mt-3 text-sm text-amber-700 dark:text-amber-300" role="status">
-          {c.loadError}
+          {c('loadError')}
         </p>
       )}
       {error && (

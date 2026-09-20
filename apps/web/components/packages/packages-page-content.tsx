@@ -12,7 +12,8 @@ import {
   type PackagesSearchParams,
 } from '../../lib/packages/listings';
 import type { PackageListItem } from '../../lib/packages/types';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations } from 'next-intl';
+import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { ListingPageBody, ListingPaginationBar, ListingSortBar } from '../shared/listing-patterns';
@@ -34,9 +35,8 @@ type PackagesPageContentProps = {
 };
 
 export function PackagesPageContent({ initialSearch }: PackagesPageContentProps) {
-  const t = useTranslations();
-  const p = t.packages;
-  const l = t.listing;
+  const p = useNamespaceLabels('packages');
+  const tListing = useTranslations('listing');
   const ctaLabel = useBookingCtaLabel('package');
 
   const [sort, setSort] = useState<SortKey>('recommended');
@@ -103,7 +103,7 @@ export function PackagesPageContent({ initialSearch }: PackagesPageContentProps)
     showPagination,
   } = useListingPagination(listings, paginationResetKey);
 
-  const paginationLabels = useMemo(() => toListingPaginationLabels(l), [l]);
+  const paginationLabels = useMemo(() => toListingPaginationLabels(tListing), [tListing]);
 
   const searchSummary = initialSearch.search
     ? `${p.searchLabel}: ${initialSearch.search}`
@@ -227,7 +227,7 @@ export function PackagesPageContent({ initialSearch }: PackagesPageContentProps)
               totalPages={totalPages}
               totalItems={totalItems}
               pageSize={pageSize}
-              itemLabel={l.resultItem}
+              itemLabel={tListing('resultItem')}
               labels={paginationLabels}
               onPageChange={(next) => {
                 setPage(next);

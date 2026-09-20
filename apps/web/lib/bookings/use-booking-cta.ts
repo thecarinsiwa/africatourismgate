@@ -1,21 +1,20 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import type { ReservationDraft } from '../reservations/flow';
 import { getBookingCtaLabel } from './booking-mode';
 import { useBookingItemTypeModes } from '../../components/booking-modes-provider';
-import { useTranslations } from '../i18n/locale-provider';
+import { useTranslations as useLegacyTranslations } from '../i18n/locale-provider';
 
 export function useBookingCtaLabel(kind: ReservationDraft['kind']): string {
   const modes = useBookingItemTypeModes();
-  const t = useTranslations();
+  const tHotels = useTranslations('hotels');
+  const legacy = useLegacyTranslations();
+  const bookNow = tHotels('bookNow');
+  const requestBooking = legacy.checkout.requestBooking;
   return useMemo(
-    () =>
-      getBookingCtaLabel(
-        kind,
-        { bookNow: t.hotels.bookNow, requestBooking: t.checkout.requestBooking },
-        modes,
-      ),
-    [kind, modes, t.checkout.requestBooking, t.hotels.bookNow],
+    () => getBookingCtaLabel(kind, { bookNow, requestBooking }, modes),
+    [kind, modes, bookNow, requestBooking],
   );
 }

@@ -6,7 +6,6 @@ import { type ActivitiesSearchParams } from '../../lib/activities/listings';
 import { useActivityDestinations } from '../../lib/activities/use-activity-destinations';
 import { todayISODate } from '../../lib/hotels/dates';
 import { useTranslations } from 'next-intl';
-import { useTranslations as useLegacyTranslations } from '../../lib/i18n/locale-provider';
 import { buildSearchRoute } from '../../lib/search/route';
 import {
   SearchFormDatalistInput,
@@ -23,8 +22,7 @@ type ActivitiesSearchFormProps = {
 export function ActivitiesSearchForm({ initialValues }: ActivitiesSearchFormProps) {
   const router = useRouter();
   const t = useTranslations('search');
-  const legacy = useLegacyTranslations();
-  const a = legacy.activities;
+  const a = useTranslations('activities');
   const {
     destinations,
     loading: destinationsLoading,
@@ -70,11 +68,11 @@ export function ActivitiesSearchForm({ initialValues }: ActivitiesSearchFormProp
     <SearchFormPanel id="activities-search" onSubmit={handleSubmit}>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_0.75fr_auto] lg:items-end">
         <div>
-          <SearchFormLabel>{a.destination}</SearchFormLabel>
+          <SearchFormLabel>{a('destination')}</SearchFormLabel>
           <SearchFormDatalistInput
             name="destination"
             placeholder={
-              destinationsLoading ? a.destinationsLoading : t('allDestinations')
+              destinationsLoading ? a('destinationsLoading') : t('allDestinations')
             }
             suggestions={destinationOptions}
             value={destination}
@@ -87,7 +85,7 @@ export function ActivitiesSearchForm({ initialValues }: ActivitiesSearchFormProp
         </div>
 
         <div>
-          <SearchFormLabel>{a.date}</SearchFormLabel>
+          <SearchFormLabel>{a('date')}</SearchFormLabel>
           <SearchFormInput
             type="date"
             name="date"
@@ -101,7 +99,7 @@ export function ActivitiesSearchForm({ initialValues }: ActivitiesSearchFormProp
         </div>
 
         <div>
-          <SearchFormLabel>{a.participants}</SearchFormLabel>
+          <SearchFormLabel>{a('participants')}</SearchFormLabel>
           <SearchFormInput
             type="number"
             name="participants"
@@ -123,7 +121,7 @@ export function ActivitiesSearchForm({ initialValues }: ActivitiesSearchFormProp
 
       {destinationsError && (
         <p className="mt-3 text-sm text-amber-700 dark:text-amber-300" role="status">
-          {a.destinationsLoadError}
+          {a('destinationsLoadError')}
         </p>
       )}
       {error && (

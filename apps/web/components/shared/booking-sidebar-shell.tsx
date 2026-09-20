@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 import { useEffect, useId, useRef } from 'react';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations } from 'next-intl';
 
 export const BOOKING_DRAWER_OPEN_EVENT = 'atg:open-booking-drawer';
 
@@ -44,7 +44,7 @@ export function BookingSidebarMobileDrawer({
   title,
   children,
 }: BookingSidebarMobileDrawerProps) {
-  const { bookingSidebar } = useTranslations();
+  const t = useTranslations('bookingSidebar');
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -78,7 +78,7 @@ export function BookingSidebarMobileDrawer({
       <button
         type="button"
         className="absolute inset-0 bg-atg-fg/40 backdrop-blur-[2px]"
-        aria-label={bookingSidebar.closeDrawer}
+        aria-label={t('closeDrawer')}
         onClick={onClose}
       />
       <div
@@ -97,7 +97,7 @@ export function BookingSidebarMobileDrawer({
             type="button"
             onClick={onClose}
             className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-atg-border text-atg-muted transition-colors hover:border-primary hover:text-primary"
-            aria-label={bookingSidebar.closeDrawer}
+            aria-label={t('closeDrawer')}
           >
             <span aria-hidden className="text-xl leading-none">
               ×
@@ -398,10 +398,10 @@ export function BookingSidebarMobileBar({
 }
 
 export function useBookingSidebarTrustHints(): string[] {
-  const { bookingSidebar } = useTranslations();
+  const t = useTranslations('bookingSidebar');
   return [
-    bookingSidebar.trustDemoCatalog,
-    bookingSidebar.trustTransparentPricing,
-    bookingSidebar.trustSupport,
+    t('trustDemoCatalog'),
+    t('trustTransparentPricing'),
+    t('trustSupport'),
   ];
 }

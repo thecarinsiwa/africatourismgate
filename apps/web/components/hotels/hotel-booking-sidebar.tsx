@@ -23,8 +23,8 @@ import {
   useBookingDrawerOpenListener,
   useBookingSidebarTrustHints,
 } from '../shared/booking-sidebar-shell';
+import { useTranslations } from 'next-intl';
 import { HOTEL_MAX_GUESTS } from '../../lib/hotels/listings';
-import { useTranslations, useTranslations as useAppTranslations } from '../../lib/i18n/locale-provider';
 
 type HotelBookingSidebarProps = {
   detail: PropertyDetail;
@@ -75,7 +75,7 @@ function HotelBookingContent({
   t,
   locale,
 }: HotelBookingSidebarProps) {
-  const { bookingSidebar } = useAppTranslations();
+  const tBooking = useTranslations('bookingSidebar');
   const trustHints = useBookingSidebarTrustHints();
   const ctaLabel = useBookingCtaLabel('room');
   const hasDates = Boolean(checkIn && checkOut && checkOut > checkIn);
@@ -116,8 +116,8 @@ function HotelBookingContent({
           min={1}
           max={HOTEL_MAX_GUESTS}
           onChange={onGuestsChange}
-          decreaseLabel={bookingSidebar.decreaseGuests}
-          increaseLabel={bookingSidebar.increaseGuests}
+          decreaseLabel={tBooking('decreaseGuests')}
+          increaseLabel={tBooking('increaseGuests')}
         />
       </BookingSidebarField>
 
@@ -175,7 +175,7 @@ export function HotelBookingSidebar(props: HotelBookingSidebarProps) {
 }
 
 export function HotelBookingMobileBar(props: HotelBookingSidebarProps) {
-  const { bookingSidebar } = useTranslations();
+  const tBooking = useTranslations('bookingSidebar');
   const [drawerOpen, setDrawerOpen] = useState(false);
   const ctaLabel = useBookingCtaLabel('room');
   const total = computeTotal(props.detail, props.selectedRoom);
@@ -201,7 +201,7 @@ export function HotelBookingMobileBar(props: HotelBookingSidebarProps) {
         ctaLabel={ctaLabel}
         ctaDisabled={!canReserve}
         onCtaClick={props.onReserve}
-        configureLabel={bookingSidebar.mobileConfigure}
+        configureLabel={tBooking('mobileConfigure')}
         onConfigureClick={() => setDrawerOpen(true)}
       />
     </>

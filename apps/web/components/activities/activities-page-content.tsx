@@ -11,7 +11,8 @@ import {
 } from '../../lib/activities/listings';
 import type { ActivitySearchResult } from '../../lib/activities/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
-import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import { useLocale, useTranslations } from 'next-intl';
+import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { ListingPageBody, ListingPaginationBar, ListingSortBar } from '../shared/listing-patterns';
@@ -29,10 +30,9 @@ type ActivitiesPageContentProps = {
 };
 
 export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentProps) {
-  const t = useTranslations();
-  const a = t.activities;
-  const l = t.listing;
-  const { locale } = useLocale();
+  const a = useNamespaceLabels('activities');
+  const tListing = useTranslations('listing');
+  const locale = useLocale();
 
   const [sort, setSort] = useState<SortKey>('recommended');
   const [results, setResults] = useState<ActivitySearchResult[]>([]);
@@ -113,7 +113,7 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
     showPagination,
   } = useListingPagination(listings, paginationResetKey);
 
-  const paginationLabels = useMemo(() => toListingPaginationLabels(l), [l]);
+  const paginationLabels = useMemo(() => toListingPaginationLabels(tListing), [tListing]);
 
   const searchSummary = [
     initialSearch.destination && `${a.destination}: ${initialSearch.destination}`,
@@ -212,7 +212,7 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
               totalPages={totalPages}
               totalItems={totalItems}
               pageSize={pageSize}
-              itemLabel={l.resultItem}
+              itemLabel={tListing('resultItem')}
               labels={paginationLabels}
               onPageChange={(next) => {
                 setPage(next);

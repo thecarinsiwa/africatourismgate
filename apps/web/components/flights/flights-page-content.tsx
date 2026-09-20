@@ -12,8 +12,8 @@ import {
 import { usePublicAirports } from '../../lib/flights/use-public-airports';
 import type { FlightSearchResult } from '../../lib/flights/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
-import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
-import { useTranslations as useIntlTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { ListingPageBody, ListingPaginationBar, ListingSortBar } from '../shared/listing-patterns';
@@ -31,11 +31,10 @@ type FlightsPageContentProps = {
 };
 
 export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
-  const t = useTranslations();
-  const tSearch = useIntlTranslations('search');
-  const f = t.flights;
-  const l = t.listing;
-  const { locale } = useLocale();
+  const f = useNamespaceLabels('flights');
+  const tListing = useTranslations('listing');
+  const tSearch = useTranslations('search');
+  const locale = useLocale();
   const { airports } = usePublicAirports();
 
   const [sort, setSort] = useState<SortKey>('recommended');
@@ -111,7 +110,7 @@ export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
     showPagination,
   } = useListingPagination(listings, paginationResetKey);
 
-  const paginationLabels = useMemo(() => toListingPaginationLabels(l), [l]);
+  const paginationLabels = useMemo(() => toListingPaginationLabels(tListing), [tListing]);
 
   const searchSummary = [
     hasRouteFilter || hasDateFilter ? (initialSearch.returnDate ? tSearch('roundTrip') : tSearch('oneWay')) : null,
@@ -229,7 +228,7 @@ export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
               totalPages={totalPages}
               totalItems={totalItems}
               pageSize={pageSize}
-              itemLabel={l.resultItem}
+              itemLabel={tListing('resultItem')}
               labels={paginationLabels}
               onPageChange={(next) => {
                 setPage(next);

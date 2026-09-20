@@ -17,7 +17,8 @@ import {
 } from '../../lib/activities/difficulty';
 import type { ActivityDetail } from '../../lib/activities/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
-import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import { useLocale } from 'next-intl';
+import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import { buildReservationQuery, isActivityScheduleOfferBookable } from '../../lib/reservations/flow';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
@@ -38,9 +39,8 @@ export function ActivityDetailPageContent({
   activityId,
   initialSearch,
 }: ActivityDetailPageContentProps) {
-  const t = useTranslations();
-  const a = t.activities;
-  const { locale } = useLocale();
+  const a = useNamespaceLabels('activities');
+  const locale = useLocale();
   const router = useRouter();
 
   const [detail, setDetail] = useState<ActivityDetail | null>(null);

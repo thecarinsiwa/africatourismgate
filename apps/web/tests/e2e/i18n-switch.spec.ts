@@ -190,4 +190,48 @@ test.describe('Language switch (FR/EN/ES)', () => {
     ).toBeVisible();
     await expect(page.getByText('Carin Siwa and Ruth Bwiza')).toBeVisible();
   });
+
+  test('hotels listing shows English after switch', async ({ page }) => {
+    await page.route('**/api/public/accommodations**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ data: [], meta: { total: 0, page: 1, limit: 20 } }),
+      });
+    });
+
+    await page.goto('/hotels');
+
+    await expect(
+      page.getByRole('heading', { name: "Hébergements d'exception en Afrique" }),
+    ).toBeVisible();
+
+    await switchLanguage(page, /English/i);
+
+    await expect(
+      page.getByRole('heading', { name: 'Exceptional stays across Africa' }),
+    ).toBeVisible();
+  });
+
+  test('packages listing shows English after switch', async ({ page }) => {
+    await page.route('**/api/public/packages**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ data: [], meta: { total: 0, page: 1, limit: 20 } }),
+      });
+    });
+
+    await page.goto('/packages');
+
+    await expect(
+      page.getByRole('heading', { name: 'Forfaits combinés en Afrique' }),
+    ).toBeVisible();
+
+    await switchLanguage(page, /English/i);
+
+    await expect(
+      page.getByRole('heading', { name: 'Combined packages in Africa' }),
+    ).toBeVisible();
+  });
 });

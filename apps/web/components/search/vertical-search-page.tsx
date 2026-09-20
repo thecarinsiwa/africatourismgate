@@ -5,7 +5,6 @@ import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import type { SearchVertical } from '../../lib/search/route';
 import { useTranslations } from 'next-intl';
-import { useTranslations as useLegacyTranslations } from '../../lib/i18n/locale-provider';
 import { buildVerticalListRoute } from '../../lib/search/route';
 import {
   ListingPageBody,
@@ -30,9 +29,8 @@ export function VerticalSearchPage({
   items: VerticalResultItem[];
 }) {
   const t = useTranslations('search');
-  const legacy = useLegacyTranslations();
-  const vs = legacy.verticalSearch;
-  const verticalLabel = vs.verticals[vertical];
+  const vs = useTranslations('verticalSearch');
+  const verticalLabel = vs(`verticals.${vertical}`);
   const listRoute = buildVerticalListRoute(vertical);
 
   return (
@@ -41,15 +39,15 @@ export function VerticalSearchPage({
       <section className="border-b border-atg-border bg-atg-elevated py-10 dark:border-atg-border dark:bg-atg-elevated">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Link href="/" className="text-sm font-medium text-primary hover:underline">
-            ← {vs.backHome}
+            ← {vs('backHome')}
           </Link>
           <h1 className="mt-3 text-3xl font-bold text-atg-fg">
-            {verticalLabel} — {vs.resultsTitle}
+            {verticalLabel} — {vs('resultsTitle')}
           </h1>
           <p className="mt-2 text-atg-muted">
             {destination
-              ? vs.forDestination.replace('{destination}', destination)
-              : vs.exploreHint}
+              ? vs('forDestination', { destination })
+              : vs('exploreHint')}
           </p>
         </div>
       </section>
@@ -57,9 +55,9 @@ export function VerticalSearchPage({
       <ListingPageBody
         isEmpty={items.length === 0}
         empty={{
-          title: vs.noResults,
-          description: vs.noResultsHint,
-          backHomeLabel: vs.backHome,
+          title: vs('noResults'),
+          description: vs('noResultsHint'),
+          backHomeLabel: vs('backHome'),
           modifySearchLabel: t('search'),
           modifySearchHref: '/#search',
         }}
@@ -80,7 +78,7 @@ export function VerticalSearchPage({
                 href={listRoute}
                 className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-5 py-2 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
               >
-                {vs.continue}
+                {vs('continue')}
               </Link>
             }
           />

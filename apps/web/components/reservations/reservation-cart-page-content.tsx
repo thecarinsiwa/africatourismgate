@@ -18,7 +18,9 @@ import type { CruiseSailingDetail } from '../../lib/cruises/types';
 import { getClientAccessToken } from '../../lib/auth/client-session';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatHotelPrice } from '../../lib/hotels/listings';
-import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import { useLocale } from 'next-intl';
+import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
+import { useTranslations as useLegacyTranslations } from '../../lib/i18n/locale-provider';
 import {
   buildDraftBrowseHref,
   buildDraftDetailHref,
@@ -45,13 +47,13 @@ type Props = {
 };
 
 export function ReservationCartPageContent({ draft }: Props) {
-  const { locale } = useLocale();
-  const t = useTranslations();
+  const locale = useLocale();
+  const t = useLegacyTranslations();
   const ck = t.checkout;
-  const f = t.flights;
-  const c = t.cars;
-  const cr = t.cruises;
-  const p = t.packages;
+  const f = useNamespaceLabels('flights');
+  const c = useNamespaceLabels('cars');
+  const cr = useNamespaceLabels('cruises');
+  const p = useNamespaceLabels('packages');
 
   const [hotelDetail, setHotelDetail] = useState<PropertyDetail | null>(null);
   const [flightDetail, setFlightDetail] = useState<FlightDetail | null>(null);

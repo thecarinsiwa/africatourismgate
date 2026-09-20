@@ -6,7 +6,7 @@ import type { FlightDetail, FlightDetailClass } from '../../lib/flights/types';
 import type { Translations } from '../../lib/i18n/translations';
 import { useState } from 'react';
 import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations } from 'next-intl';
 import {
   BookingSidebarBody,
   BookingSidebarCta,
@@ -118,7 +118,7 @@ export function FlightBookingSidebar(props: FlightBookingSidebarProps) {
 }
 
 export function FlightBookingMobileBar(props: FlightBookingSidebarProps) {
-  const { bookingSidebar } = useTranslations();
+  const tBooking = useTranslations('bookingSidebar');
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { detail, selectedClass, passengers, onReserve, t } = props;
   const ctaLabel = useBookingCtaLabel('flight_class');
@@ -149,7 +149,7 @@ export function FlightBookingMobileBar(props: FlightBookingSidebarProps) {
         ctaLabel={ctaLabel}
         ctaDisabled={!canReserve}
         onCtaClick={onReserve}
-        configureLabel={bookingSidebar.mobileConfigure}
+        configureLabel={tBooking('mobileConfigure')}
         onConfigureClick={() => setDrawerOpen(true)}
       />
     </>

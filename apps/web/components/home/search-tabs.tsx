@@ -11,7 +11,6 @@ import { toFlightAirportOptions, type FlightAirportOption } from '../../lib/flig
 import { addDays, todayISODate } from '../../lib/hotels/dates';
 import { usePublicAirports } from '../../lib/flights/use-public-airports';
 import { useTranslations } from 'next-intl';
-import { useTranslations as useLegacyTranslations } from '../../lib/i18n/locale-provider';
 import { buildSearchRoute, type SearchVertical } from '../../lib/search/route';
 import {
   SearchFormDatalistInput,
@@ -149,7 +148,11 @@ function FormCruisePortSelect({
 
 export function SearchTabs() {
   const t = useTranslations('search');
-  const legacy = useLegacyTranslations();
+  const tFlights = useTranslations('flights');
+  const tCars = useTranslations('cars');
+  const tHotels = useTranslations('hotels');
+  const tCruises = useTranslations('cruises');
+  const tActivities = useTranslations('activities');
   const router = useRouter();
   const { airports, loading: airportsLoading, error: airportsError } = usePublicAirports();
   const {
@@ -348,9 +351,9 @@ export function SearchTabs() {
   }, [departDate, returnDate]);
   const carRentalDaysLabel =
     carRentalDays === 1
-      ? `1 ${legacy.cars.daySingular}`
+      ? `1 ${tCars('daySingular')}`
       : carRentalDays > 1
-        ? `${carRentalDays} ${legacy.cars.dayPlural}`
+        ? `${carRentalDays} ${tCars('dayPlural')}`
         : null;
 
   const handleTabChange = (tabId: string) => {
@@ -393,7 +396,7 @@ export function SearchTabs() {
                     <FormAirportSelect
                       name="from"
                       placeholder={
-                        airportsLoading ? legacy.flights.loading : t('airportPh')
+                        airportsLoading ? tFlights('loading') : t('airportPh')
                       }
                       value={flightFrom}
                       options={airportOptions}
@@ -409,7 +412,7 @@ export function SearchTabs() {
                     <FormAirportSelect
                       name="to"
                       placeholder={
-                        airportsLoading ? legacy.flights.loading : t('airportPh')
+                        airportsLoading ? tFlights('loading') : t('airportPh')
                       }
                       value={flightTo}
                       options={airportOptions}
@@ -480,7 +483,7 @@ export function SearchTabs() {
                 </div>
                 {airportsError && (
                   <p className="text-sm text-amber-700 dark:text-amber-300" role="status">
-                    {legacy.flights.loadError}
+                    {tFlights('loadError')}
                   </p>
                 )}
                 {flightError && (
@@ -512,7 +515,7 @@ export function SearchTabs() {
                     />
                   </div>
                   <div>
-                    <SearchFormLabel>{legacy.hotels.guests}</SearchFormLabel>
+                    <SearchFormLabel>{tHotels('guests')}</SearchFormLabel>
                     <SearchFormInput
                       name="guests"
                       type="number"
@@ -549,11 +552,11 @@ export function SearchTabs() {
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_1fr_auto] lg:items-end">
                   <div>
-                    <SearchFormLabel>{legacy.cars.pickupLocation}</SearchFormLabel>
+                    <SearchFormLabel>{tCars('pickupLocation')}</SearchFormLabel>
                     <SearchFormDatalistInput
                       name="pickupLocation"
                       placeholder={
-                        carPickupLoading ? legacy.cars.loading : t('pickupLocationPh')
+                        carPickupLoading ? tCars('loading') : t('pickupLocationPh')
                       }
                       suggestions={carPickupOptions}
                       value={destination}
@@ -603,7 +606,7 @@ export function SearchTabs() {
                 </div>
                 {carPickupError && (
                   <p className="text-sm text-amber-700 dark:text-amber-300" role="status">
-                    {legacy.cars.loadError}
+                    {tCars('loadError')}
                   </p>
                 )}
                 {carError && (
@@ -671,7 +674,7 @@ export function SearchTabs() {
                     />
                   </div>
                   <div>
-                    <SearchFormLabel>{legacy.cruises.guests}</SearchFormLabel>
+                    <SearchFormLabel>{tCruises('guests')}</SearchFormLabel>
                     <SearchFormInput
                       type="number"
                       name="guests"
@@ -704,7 +707,7 @@ export function SearchTabs() {
                       name="destination"
                       placeholder={
                         activityDestinationsLoading
-                          ? legacy.activities.destinationsLoading
+                          ? tActivities('destinationsLoading')
                           : t('allDestinations')
                       }
                       suggestions={activityDestinationOptions}
@@ -717,7 +720,7 @@ export function SearchTabs() {
                     />
                   </div>
                   <div>
-                    <SearchFormLabel>{legacy.activities.date}</SearchFormLabel>
+                    <SearchFormLabel>{tActivities('date')}</SearchFormLabel>
                     <SearchFormInput
                       type="date"
                       name="date"
@@ -754,7 +757,7 @@ export function SearchTabs() {
                 </div>
                 {activityDestinationsError && (
                   <p className="text-sm text-amber-700 dark:text-amber-300" role="status">
-                    {legacy.activities.destinationsLoadError}
+                    {tActivities('destinationsLoadError')}
                   </p>
                 )}
                 {toursError && (

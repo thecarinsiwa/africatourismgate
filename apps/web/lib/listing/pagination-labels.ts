@@ -1,16 +1,18 @@
-import type { Translations } from '../i18n/translations';
 import type { DataTablePaginationLabels } from '@africatourismgate/ui';
 
-export function toListingPaginationLabels(
-  listing: Translations['listing'],
-): DataTablePaginationLabels {
+/** next-intl `useTranslations('listing')` translator (ICU templates for range/pageOf/pageAria). */
+export type ListingTranslator = {
+  (key: string, values?: Record<string, string | number>): string;
+};
+
+export function toListingPaginationLabels(t: ListingTranslator): DataTablePaginationLabels {
   return {
-    range: listing.range,
-    pageOf: listing.pageOf,
-    previousPage: listing.previousPage,
-    nextPage: listing.nextPage,
-    navAriaLabel: listing.navAriaLabel,
-    pageAria: listing.pageAria,
+    previousPage: t('previousPage'),
+    nextPage: t('nextPage'),
+    navAriaLabel: t('navAriaLabel'),
+    pageAria: (page) => t('pageAria', { page }),
+    range: (params) => t('range', params),
+    pageOf: (params) => t('pageOf', params),
   };
 }
 

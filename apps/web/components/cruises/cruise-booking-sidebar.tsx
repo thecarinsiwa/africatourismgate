@@ -6,7 +6,7 @@ import { resolveCabinDeck } from '../../lib/cruises/cabins';
 import { formatCruisePortLabel } from '../../lib/cruises/ports';
 import type { CruiseCabinOffer, CruiseSailingDetail } from '../../lib/cruises/types';
 import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations } from 'next-intl';
 import type { Translations } from '../../lib/i18n/translations';
 import { useState } from 'react';
 import {
@@ -128,7 +128,7 @@ export function CruiseBookingSidebar(props: CruiseBookingSidebarProps) {
 }
 
 export function CruiseBookingMobileBar(props: CruiseBookingSidebarProps) {
-  const { bookingSidebar } = useTranslations();
+  const tBooking = useTranslations('bookingSidebar');
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { detail, selectedCabin, guests, onReserve, t } = props;
   const ctaLabel = useBookingCtaLabel('cabin');
@@ -159,7 +159,7 @@ export function CruiseBookingMobileBar(props: CruiseBookingSidebarProps) {
         ctaLabel={ctaLabel}
         ctaDisabled={!canReserve}
         onCtaClick={onReserve}
-        configureLabel={bookingSidebar.mobileConfigure}
+        configureLabel={tBooking('mobileConfigure')}
         onConfigureClick={() => setDrawerOpen(true)}
       />
     </>

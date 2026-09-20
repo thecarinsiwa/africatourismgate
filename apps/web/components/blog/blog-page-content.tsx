@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 import { browseBlogPostsForLocale } from '../../lib/api/public';
-import { useTranslations as useLegacyTranslations } from '../../lib/i18n/locale-provider';
 import { formatRelativeReviewDate } from '../../lib/i18n/format-relative-date';
 import { useListingPagination } from '../../lib/listing/pagination';
 import { toListingPaginationLabels, scrollListingToTop } from '../../lib/listing/pagination-labels';
@@ -17,8 +16,7 @@ import { PageHero } from '../shared/page-hero';
 export function BlogPageContent() {
   const locale = useLocale();
   const t = useTranslations('blog');
-  const tLegacy = useLegacyTranslations();
-  const l = tLegacy.listing;
+  const tListing = useTranslations('listing');
 
   const [posts, setPosts] = useState<PublicBlogPostListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,7 +64,7 @@ export function BlogPageContent() {
     showPagination,
   } = useListingPagination(posts, paginationResetKey);
 
-  const paginationLabels = useMemo(() => toListingPaginationLabels(l), [l]);
+  const paginationLabels = useMemo(() => toListingPaginationLabels(tListing), [tListing]);
 
   return (
     <div className="flex min-h-screen flex-col bg-atg-bg text-atg-fg">
@@ -167,7 +165,7 @@ export function BlogPageContent() {
                   totalPages={totalPages}
                   totalItems={totalItems}
                   pageSize={pageSize}
-                  itemLabel={l.resultItem}
+                  itemLabel={tListing('resultItem')}
                   labels={paginationLabels}
                   onPageChange={(next) => {
                     setPage(next);
