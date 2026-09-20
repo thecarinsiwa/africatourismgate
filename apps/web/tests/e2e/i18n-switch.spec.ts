@@ -20,11 +20,18 @@ function localeCodeFromLabel(language: RegExp): 'en' | 'es' | 'fr' {
 
 async function switchLanguage(page: Page, language: RegExp) {
   const code = localeCodeFromLabel(language);
-  await page
+  const langBtn = page
     .getByRole('button', { name: /Choisir la langue|Select language|Elegir idioma/i })
-    .first()
-    .click();
-  await page.getByRole('menuitemradio', { name: language }).click();
+    .first();
+
+  await langBtn.click();
+  const menuItem = page.getByRole('menuitemradio', { name: language });
+  await expect(menuItem).toBeVisible({ timeout: 10_000 });
+
+  // LanguageSwitcher calls router.refresh() which can detach the menu mid-click on
+  // account pages; noWaitAfter avoids hanging on the remount.
+  await menuItem.click({ noWaitAfter: true });
+
   await page.evaluate((locale) => {
     document.cookie = `atg-locale=${locale};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`;
     try {
@@ -33,7 +40,20 @@ async function switchLanguage(page: Page, language: RegExp) {
       /* ignore */
     }
     document.documentElement.lang = locale;
+    try {
+      const raw = window.sessionStorage.getItem('atg.web.session');
+      if (raw) {
+        const session = JSON.parse(raw) as { user?: { preferredLanguage?: string } };
+        if (session.user) {
+          session.user.preferredLanguage = locale;
+          window.sessionStorage.setItem('atg.web.session', JSON.stringify(session));
+        }
+      }
+    } catch {
+      /* ignore */
+    }
   }, code);
+
   await page.goto(page.url(), { waitUntil: 'domcontentloaded' });
   await expect(
     page.getByRole('button', { name: /Choisir la langue|Select language|Elegir idioma/i }).first(),
@@ -276,6 +296,7 @@ test.describe('Language switch (FR/EN/ES)', () => {
             email: 'i18n@example.com',
             firstName: 'I18n',
             lastName: 'Test',
+            preferredLanguage: 'fr',
             organizationId: null,
             status: 'active',
           },
@@ -283,8 +304,27 @@ test.describe('Language switch (FR/EN/ES)', () => {
       );
     });
 
+    // Profile applyUser() re-applies preferredLanguage from GET — keep it in sync
+    // with PATCH / cookie so a reload does not force FR again.
+    let preferredLanguage: 'fr' | 'en' | 'es' = 'fr';
     await page.route('**/api/auth/me', async (route) => {
+      const cookieHeader = route.request().headers()['cookie'] ?? '';
+      const cookieLocale = /(?:^|;\s*)atg-locale=(en|es|fr)/.exec(cookieHeader)?.[1] as
+        | 'fr'
+        | 'en'
+        | 'es'
+        | undefined;
+
       if (route.request().method() === 'PATCH') {
+        let body: { preferredLanguage?: string } = {};
+        try {
+          body = route.request().postDataJSON() as { preferredLanguage?: string };
+        } catch {
+          /* ignore */
+        }
+        if (body.preferredLanguage === 'en' || body.preferredLanguage === 'es' || body.preferredLanguage === 'fr') {
+          preferredLanguage = body.preferredLanguage;
+        }
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -294,7 +334,7 @@ test.describe('Language switch (FR/EN/ES)', () => {
             firstName: 'I18n',
             lastName: 'Test',
             phone: null,
-            preferredLanguage: 'en',
+            preferredLanguage,
             organizationId: null,
             status: 'active',
             avatarUrl: null,
@@ -302,6 +342,8 @@ test.describe('Language switch (FR/EN/ES)', () => {
         });
         return;
       }
+
+      const lang = cookieLocale ?? preferredLanguage;
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -312,7 +354,7 @@ test.describe('Language switch (FR/EN/ES)', () => {
             firstName: 'I18n',
             lastName: 'Test',
             phone: null,
-            preferredLanguage: 'fr',
+            preferredLanguage: lang,
             organizationId: null,
             status: 'active',
             avatarUrl: null,
