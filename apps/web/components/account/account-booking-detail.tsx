@@ -21,7 +21,7 @@ import {
 import { localeToBcp47 } from '../../lib/i18n/locale-tag';
 import type { Locale } from '../../lib/i18n/types';
 import { useLocale, useMessages, useTranslations } from 'next-intl';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { GuideReviewInvitesSection } from './guide-review-invites-section';
 import { BookingMessagesSection } from './booking-messages-section';
 import { BookingReviewCard } from './booking-review-card';

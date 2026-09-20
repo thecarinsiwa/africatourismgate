@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 import type { VehicleEquipmentKey } from '../../lib/cars/specs';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 
 const EQUIPMENT_ICONS: Record<VehicleEquipmentKey, ReactNode> = {
   airConditioning: (

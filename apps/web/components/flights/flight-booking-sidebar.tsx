@@ -3,7 +3,7 @@
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatFlightPrice } from '../../lib/flights/listings';
 import type { FlightDetail, FlightDetailClass } from '../../lib/flights/types';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { useState } from 'react';
 import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
 import { useTranslations } from 'next-intl';

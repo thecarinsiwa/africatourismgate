@@ -14,7 +14,7 @@ import {
 } from '../../lib/api/booking-identity-documents';
 import { getAccountApiClient } from '../../lib/api/account';
 import { useMessages } from 'next-intl';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 
 const DOCUMENT_TYPES: BookingIdentityDocumentType[] = [
   'passport',

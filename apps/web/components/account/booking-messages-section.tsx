@@ -7,7 +7,7 @@ import {
 } from '@africatourismgate/ui';
 import { useEffect, useState } from 'react';
 import { useMessages } from 'next-intl';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { BookingChatPanel } from './booking-chat-panel';
 
 const FAB_STORAGE_KEY = 'atg-web-booking-chat-fab-position';

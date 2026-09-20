@@ -4,7 +4,7 @@ import type { KeyboardEvent } from 'react';
 import type { FlightClassName } from '@africatourismgate/types';
 import { formatFlightPrice } from '../../lib/flights/listings';
 import type { FlightDetailClass } from '../../lib/flights/types';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 
 type FlightClassesSectionProps = {
   classes: FlightDetailClass[];

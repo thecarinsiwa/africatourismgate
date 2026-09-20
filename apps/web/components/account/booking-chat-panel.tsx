@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
 import { formatBookingDateTime } from '../../lib/bookings/display';
 import { useMessages } from 'next-intl';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 
 const POLL_INTERVAL_MS = 20_000;
 

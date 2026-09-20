@@ -16,7 +16,7 @@ import { listPublicMobileMoneyConfig } from '../../lib/api/public-mobile-money';
 import { ensureClientAccessToken } from '../../lib/auth/client-session';
 import { formatHotelPrice } from '../../lib/hotels/listings';
 import { useMessages } from 'next-intl';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { BankTransferAccountsPanel } from './bank-transfer-accounts-panel';
 import { MobileMoneyInstructionsPanel } from './mobile-money-instructions-panel';
 import { PaymentProofPanel } from './payment-proof-panel';

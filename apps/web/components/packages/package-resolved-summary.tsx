@@ -2,7 +2,7 @@
 
 import type { PackageItemEnriched } from '../../lib/packages/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { PackageItemTypeIcon } from './package-item-type-icon';
 
 type PackageAssistedResolvedSummaryProps = {

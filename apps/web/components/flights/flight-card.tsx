@@ -11,7 +11,7 @@ import {
 } from '../../lib/flights/listings';
 import type { FlightSearchResult } from '../../lib/flights/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { PriceDisplay, ProductCard } from '../shared';
 
 type FlightCardProps = {

@@ -5,7 +5,7 @@ import { Spinner } from '@africatourismgate/ui';
 import { useEffect, useMemo, useState } from 'react';
 import { getAccommodationDetail } from '../../lib/api/public';
 import { addDays } from '../../lib/hotels/dates';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import type { PackagePropertyLineSelection } from '../../lib/packages/package-lines';
 import { HotelRoomsSection } from '../hotels/hotel-rooms-section';
 

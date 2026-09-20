@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useMessages } from 'next-intl';
 import { useMemo } from 'react';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { CheckoutPageShell } from './checkout-page-shell';
 
 export function ReservationCancelPageContent() {

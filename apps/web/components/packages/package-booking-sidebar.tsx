@@ -1,7 +1,7 @@
 'use client';
 
 import type { PackageDetail } from '../../lib/packages/types';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { packageReservationTotalCents } from '../../lib/reservations/flow';
 import { PackagePriceDisplay } from './package-price-display';

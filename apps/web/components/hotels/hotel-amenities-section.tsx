@@ -2,7 +2,7 @@
 
 import type { PropertyDetailAmenity } from '@africatourismgate/types';
 import type { HotelAmenity } from '../../lib/hotels/listings';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 
 const AMENITY_ICONS: Record<HotelAmenity, React.ReactNode> = {
   wifi: (

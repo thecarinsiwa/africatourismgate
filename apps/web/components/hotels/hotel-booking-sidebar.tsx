@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatHotelPrice } from '../../lib/hotels/listings';
 import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import {
   BookingSidebarBody,
   BookingSidebarCta,

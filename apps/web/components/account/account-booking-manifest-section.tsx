@@ -7,7 +7,7 @@ import { useCallback, useEffect, useId, useState } from 'react';
 import { fetchBookingIdentityDocumentBlob } from '../../lib/api/booking-identity-documents';
 import { getAccountApiClient } from '../../lib/api/account';
 import { useLocale, useMessages } from 'next-intl';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { NationalitySelect } from '../reservations/nationality-select';
 
 type FormState = {

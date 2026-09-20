@@ -1,7 +1,7 @@
 'use client';
 
 import type { VehicleSpecs } from '../../lib/cars/specs';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 
 type CarSpecBadgesProps = {
   specs: VehicleSpecs;

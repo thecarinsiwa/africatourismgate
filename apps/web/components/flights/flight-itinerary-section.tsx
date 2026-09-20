@@ -2,7 +2,7 @@
 
 import type { FlightDetail, FlightDetailAirport, FlightLayover } from '../../lib/flights/types';
 import { formatDuration, formatFlightTime } from '../../lib/flights/listings';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 
 type FlightItinerarySectionProps = {
   detail: FlightDetail;

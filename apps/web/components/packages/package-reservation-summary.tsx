@@ -4,7 +4,7 @@ import { formatDisplayDate } from '../../lib/hotels/dates';
 import type { PackageDetail } from '../../lib/packages/types';
 import type { PackageReservationDraft } from '../../lib/reservations/flow';
 import { packageReservationTotalCents } from '../../lib/reservations/flow';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { PackageItemTypeIcon } from './package-item-type-icon';
 import { formatPackagePrice } from '../../lib/packages/listings';
 

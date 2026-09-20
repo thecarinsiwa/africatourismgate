@@ -7,7 +7,7 @@ import {
 } from '../../lib/activities/listings';
 import type { ActivityDetail, ActivityScheduleOffer } from '../../lib/activities/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { useState } from 'react';
 import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
 import { useTranslations } from 'next-intl';

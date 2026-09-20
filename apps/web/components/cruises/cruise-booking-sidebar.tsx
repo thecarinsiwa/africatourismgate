@@ -7,7 +7,7 @@ import { formatCruisePortLabel } from '../../lib/cruises/ports';
 import type { CruiseCabinOffer, CruiseSailingDetail } from '../../lib/cruises/types';
 import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
 import { useTranslations } from 'next-intl';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { useState } from 'react';
 import {
   BookingSidebarBody,

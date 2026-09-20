@@ -19,7 +19,7 @@ import { getClientAccessToken } from '../../lib/auth/client-session';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatHotelPrice } from '../../lib/hotels/listings';
 import { useLocale, useMessages } from 'next-intl';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import {
   buildDraftBrowseHref,

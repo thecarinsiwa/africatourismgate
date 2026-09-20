@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { formatPackagePrice } from '../../lib/packages/listings';
 import type { PackageItemEnriched, PackageItemType } from '../../lib/packages/types';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { PackageItemDetailModal } from './package-item-detail-modal';
 
 const ITEM_TYPE_LABEL_KEYS: Record<

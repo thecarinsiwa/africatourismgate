@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { getCruiseSailingDetail } from '../../lib/api/public';
 import type { CruiseSailingDetail } from '../../lib/cruises/types';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import type { PackageCruiseLineSelection } from '../../lib/packages/package-lines';
 import { CruiseCabinsSection } from '../cruises/cruise-cabins-section';
 

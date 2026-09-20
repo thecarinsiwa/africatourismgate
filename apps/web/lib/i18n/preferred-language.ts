@@ -40,7 +40,7 @@ export async function persistPreferredLanguage(locale: Locale): Promise<void> {
     const updated = await client.updateAuthProfile({ preferredLanguage: locale });
     saveWebSession({ ...session, user: updated });
   } catch {
-    /* UI locale still applied via LocaleProvider */
+    /* UI locale still applied via LanguageSwitcher / LocaleBootstrap */
   }
 }
 

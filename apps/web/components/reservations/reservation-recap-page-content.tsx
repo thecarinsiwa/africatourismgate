@@ -33,7 +33,7 @@ import { isAssistedBookingDraft } from '../../lib/bookings/booking-mode';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatHotelPrice } from '../../lib/hotels/listings';
 import { useLocale, useMessages } from 'next-intl';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import {
   buildCheckoutRequest,

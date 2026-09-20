@@ -10,7 +10,7 @@ import {
   type PackagesSearchParams,
 } from '../../lib/packages/listings';
 import type { PackageListItem } from '../../lib/packages/types';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
 import { ProductCard } from '../shared';
 import { PackagePriceDisplay } from './package-price-display';

@@ -2,7 +2,7 @@
 
 import { useLocale, useMessages, useTranslations } from 'next-intl';
 import { useMemo } from 'react';
-import type { Translations } from './translations';
+import type { Translations } from './message-types';
 
 type Phase3Namespace =
   | 'hotels'

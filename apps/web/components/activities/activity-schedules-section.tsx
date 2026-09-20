@@ -6,7 +6,7 @@ import {
   formatScheduleTime,
 } from '../../lib/activities/listings';
 import type { ActivityScheduleOffer } from '../../lib/activities/types';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { ListingDefaultEmptyIcon } from '../shared';
 
 type ActivitySchedulesSectionProps = {

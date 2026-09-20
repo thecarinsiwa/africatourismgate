@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { getFlightDetail } from '../../lib/api/public';
 import type { FlightDetail } from '../../lib/flights/types';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import type { PackageFlightLineSelection } from '../../lib/packages/package-lines';
 import { FlightClassesSection } from '../flights/flight-classes-section';
 

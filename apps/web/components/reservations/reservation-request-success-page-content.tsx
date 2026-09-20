@@ -9,7 +9,7 @@ import { getBooking } from '../../lib/api/booking';
 import { ensureClientAccessToken } from '../../lib/auth/client-session';
 import { formatHotelPrice } from '../../lib/hotels/listings';
 import { useMessages } from 'next-intl';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/message-types';
 import { CheckoutPageShell } from './checkout-page-shell';
 
 export function ReservationRequestSuccessPageContent() {
