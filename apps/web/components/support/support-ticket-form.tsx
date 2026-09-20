@@ -4,17 +4,16 @@ import { ApiHttpError } from '@africatourismgate/api-client';
 import type { SupportTicketCreated } from '@africatourismgate/types';
 import { Button, Card, cn, Input } from '@africatourismgate/ui';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
 import { ensureClientAccessToken } from '../../lib/auth/client-session';
-import { useTranslations } from '../../lib/i18n/locale-provider';
 
 const messageTextareaClass =
   'w-full rounded-lg border bg-atg-elevated px-4 py-3 text-sm text-atg-fg placeholder:text-atg-muted/70 outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary disabled:opacity-60 dark:bg-atg-surface dark:text-white';
 
 export function SupportTicketForm() {
-  const t = useTranslations();
-  const s = t.support;
+  const t = useTranslations('support');
 
   const [sessionChecked, setSessionChecked] = useState(false);
   const [hasSession, setHasSession] = useState(false);
@@ -49,11 +48,11 @@ export function SupportTicketForm() {
 
     let hasValidationError = false;
     if (!trimmedSubject) {
-      setSubjectError(s.subjectRequired);
+      setSubjectError(t('subjectRequired'));
       hasValidationError = true;
     }
     if (trimmedBody.length < 10) {
-      setBodyError(s.messageTooShort);
+      setBodyError(t('messageTooShort'));
       hasValidationError = true;
     }
     if (hasValidationError) {
@@ -78,13 +77,13 @@ export function SupportTicketForm() {
           'message' in err.body &&
           typeof (err.body as { message: unknown }).message === 'string'
             ? (err.body as { message: string }).message
-            : s.submitError;
+            : t('submitError');
         setError(msg);
       } else if (err instanceof Error && err.message === 'Not authenticated') {
         setHasSession(false);
-        setError(s.signInPrompt);
+        setError(t('signInPrompt'));
       } else {
-        setError(s.submitError);
+        setError(t('submitError'));
       }
     } finally {
       setSubmitting(false);
@@ -93,19 +92,19 @@ export function SupportTicketForm() {
 
   if (!sessionChecked) {
     return (
-      <p className="text-sm text-atg-muted">{s.checkingSession}</p>
+      <p className="text-sm text-atg-muted">{t('checkingSession')}</p>
     );
   }
 
   if (!hasSession) {
     return (
       <Card variant="dashboard" padding="sm">
-        <p className="text-sm text-atg-muted">{s.signInPrompt}</p>
+        <p className="text-sm text-atg-muted">{t('signInPrompt')}</p>
         <Link
           href="/booking/login?next=%2Fsupport"
           className="mt-4 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-[var(--atg-primary-hover)]"
         >
-          {s.signInCta}
+          {t('signInCta')}
         </Link>
       </Card>
     );
@@ -115,10 +114,10 @@ export function SupportTicketForm() {
     return (
       <Card variant="dashboard" padding="sm" role="status">
         <h3 className="text-base font-semibold text-atg-fg">
-          {s.successTitle}
+          {t('successTitle')}
         </h3>
         <p className="mt-2 text-sm text-atg-muted">
-          {s.successMessage.replace('{ticketId}', created.ticket.id)}
+          {t('successMessage', { ticketId: created.ticket.id })}
         </p>
       </Card>
     );
@@ -129,13 +128,13 @@ export function SupportTicketForm() {
       <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
         <Input
           id="support-subject"
-          label={s.subjectLabel}
+          label={t('subjectLabel')}
           value={subject}
           onChange={(e) => {
             setSubject(e.target.value);
             if (subjectError) setSubjectError(null);
           }}
-          placeholder={s.subjectPlaceholder}
+          placeholder={t('subjectPlaceholder')}
           maxLength={255}
           disabled={submitting}
           required
@@ -147,7 +146,7 @@ export function SupportTicketForm() {
             htmlFor="support-message"
             className="mb-2 block text-sm font-medium text-atg-fg"
           >
-            {s.messageLabel}
+            {t('messageLabel')}
           </label>
           <textarea
             id="support-message"
@@ -156,7 +155,7 @@ export function SupportTicketForm() {
               setBody(e.target.value);
               if (bodyError) setBodyError(null);
             }}
-            placeholder={s.messagePlaceholder}
+            placeholder={t('messagePlaceholder')}
             rows={5}
             disabled={submitting}
             required
@@ -187,8 +186,8 @@ export function SupportTicketForm() {
           </p>
         ) : null}
 
-        <Button type="submit" loading={submitting} loadingText={s.submitting}>
-          {s.submit}
+        <Button type="submit" loading={submitting} loadingText={t('submitting')}>
+          {t('submit')}
         </Button>
       </form>
     </Card>

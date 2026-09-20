@@ -1,14 +1,15 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { useResolvedPublicContact } from '../../lib/contact/use-resolved-public-contact';
 import { buildSocialLinks } from '../../lib/contact/social-links';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations as useLegacyTranslations } from '../../lib/i18n/locale-provider';
 import { SupportTicketForm } from '../support/support-ticket-form';
 
 export function AboutContactPageContent() {
-  const t = useTranslations();
-  const a = t.about;
+  const t = useTranslations('about');
+  const tLegacy = useLegacyTranslations();
   const contact = useResolvedPublicContact();
   const socialLinks = useMemo(() => buildSocialLinks(contact), [contact]);
 
@@ -16,15 +17,15 @@ export function AboutContactPageContent() {
     <div className="space-y-10">
       <section aria-labelledby="about-contact-info-heading">
         <h2 id="about-contact-info-heading" className="text-lg font-semibold text-atg-fg">
-          {a.contact.infoTitle}
+          {t('contact.infoTitle')}
         </h2>
-        <p className="mt-1 text-sm text-atg-muted">{a.contact.subtitle}</p>
+        <p className="mt-1 text-sm text-atg-muted">{t('contact.subtitle')}</p>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {contact.phone ? (
             <div className="rounded-xl border border-atg-border bg-atg-elevated/50 p-4">
               <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-                {t.footer.contact}
+                {tLegacy.footer.contact}
               </p>
               <a href={`tel:${contact.phone.replace(/\s/g, '')}`} className="mt-2 block text-lg font-semibold text-atg-fg hover:text-primary">
                 {contact.phone}
@@ -42,7 +43,7 @@ export function AboutContactPageContent() {
           {contact.location ? (
             <div className="rounded-xl border border-atg-border bg-atg-elevated/50 p-4 sm:col-span-2">
               <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-                {t.footer.location}
+                {tLegacy.footer.location}
               </p>
               <p className="mt-2 text-sm text-atg-fg">{contact.location}</p>
             </div>
@@ -69,9 +70,9 @@ export function AboutContactPageContent() {
 
       <section aria-labelledby="about-contact-form-heading">
         <h2 id="about-contact-form-heading" className="text-lg font-semibold text-atg-fg">
-          {a.contact.formTitle}
+          {t('contact.formTitle')}
         </h2>
-        <p className="mt-1 text-sm text-atg-muted">{a.contact.formSubtitle}</p>
+        <p className="mt-1 text-sm text-atg-muted">{t('contact.formSubtitle')}</p>
         <div className="mt-4">
           <SupportTicketForm />
         </div>

@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { BrandingLogo } from '../branding-mark';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations } from 'next-intl';
+import { useTranslations as useLegacyTranslations } from '../../lib/i18n/locale-provider';
 import { useResolvedPublicBranding } from '../../lib/branding/use-resolved-public-branding';
 import { useResolvedPublicContact } from '../../lib/contact/use-resolved-public-contact';
 import { buildSocialLinks } from '../../lib/contact/social-links';
@@ -12,7 +13,8 @@ import { ABOUT_NAV_ITEMS, ABOUT_PATHS } from '../../lib/about/routes';
 import { LEGAL_PATHS } from '../../lib/legal/routes';
 
 export function HomeFooter() {
-  const t = useTranslations();
+  const t = useLegacyTranslations();
+  const tAbout = useTranslations('about');
   const [email, setEmail] = useState('');
   const gapUrl = process.env.NEXT_PUBLIC_GAP_URL?.trim() || null;
   const { branding, logoBroken, setLogoBroken } = useResolvedPublicBranding();
@@ -35,9 +37,9 @@ export function HomeFooter() {
     () =>
       ABOUT_NAV_ITEMS.map((item) => ({
         href: item.href,
-        label: t.about.nav[item.labelKey],
+        label: tAbout(`nav.${item.labelKey}`),
       })),
-    [t],
+    [tAbout],
   );
 
   return (

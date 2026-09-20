@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { getBlogPostBySlugForLocale } from '../../lib/api/public';
-import { useAppLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { formatRelativeReviewDate } from '../../lib/i18n/format-relative-date';
 import type { PublicBlogPostDetail } from '@africatourismgate/types';
 import { Spinner } from '@africatourismgate/ui';
@@ -16,9 +16,8 @@ type BlogDetailPageContentProps = {
 };
 
 export function BlogDetailPageContent({ slug }: BlogDetailPageContentProps) {
-  const locale = useAppLocale();
-  const t = useTranslations();
-  const b = t.blog;
+  const locale = useLocale();
+  const t = useTranslations('blog');
 
   const [post, setPost] = useState<PublicBlogPostDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,16 +53,16 @@ export function BlogDetailPageContent({ slug }: BlogDetailPageContentProps) {
       <main className="flex-1">
         {loading ? (
           <div className="flex items-center justify-center py-24">
-            <Spinner size="lg" variant="primary" label={b.loading} showLabel />
+            <Spinner size="lg" variant="primary" label={t('loading')} showLabel />
           </div>
         ) : error || !post ? (
           <div className="mx-auto max-w-3xl px-4 py-16 text-center">
-            <p className="text-lg font-semibold">{b.noResults}</p>
+            <p className="text-lg font-semibold">{t('noResults')}</p>
             <Link
               href="/blog"
               className="mt-6 inline-flex min-h-[44px] items-center text-primary hover:text-primary/80"
             >
-              {b.backToBlog}
+              {t('backToBlog')}
             </Link>
           </div>
         ) : (
@@ -85,13 +84,13 @@ export function BlogDetailPageContent({ slug }: BlogDetailPageContentProps) {
                 <ol className="flex flex-wrap items-center gap-2">
                   <li>
                     <Link href="/" className="hover:text-primary">
-                      {b.breadcrumbHome}
+                      {t('breadcrumbHome')}
                     </Link>
                   </li>
                   <li aria-hidden>/</li>
                   <li>
                     <Link href="/blog" className="hover:text-primary">
-                      {b.breadcrumbBlog}
+                      {t('breadcrumbBlog')}
                     </Link>
                   </li>
                 </ol>
@@ -99,7 +98,7 @@ export function BlogDetailPageContent({ slug }: BlogDetailPageContentProps) {
 
               {post.publishedAt ? (
                 <p className="text-sm text-atg-muted">
-                  {b.publishedOn}{' '}
+                  {t('publishedOn')}{' '}
                   <time dateTime={post.publishedAt}>
                     {formatRelativeReviewDate(post.publishedAt, locale)}
                   </time>
@@ -126,7 +125,7 @@ export function BlogDetailPageContent({ slug }: BlogDetailPageContentProps) {
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
-                {b.backToBlog}
+                {t('backToBlog')}
               </Link>
             </article>
           </>

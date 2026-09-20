@@ -2,9 +2,9 @@
 
 import type { AboutResourceType } from '@africatourismgate/types';
 import type { PublicAboutResource } from '@africatourismgate/types';
+import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { browseAboutResourcesForLocale } from '../../lib/api/public';
-import { useAppLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { formatRelativeReviewDate } from '../../lib/i18n/format-relative-date';
 
 type AboutResourcesPageContentProps = {
@@ -16,9 +16,8 @@ function resourceHref(resource: PublicAboutResource): string | null {
 }
 
 export function AboutResourcesPageContent({ type }: AboutResourcesPageContentProps) {
-  const locale = useAppLocale();
-  const t = useTranslations();
-  const a = t.about;
+  const locale = useLocale();
+  const t = useTranslations('about');
 
   const [resources, setResources] = useState<PublicAboutResource[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,7 +52,7 @@ export function AboutResourcesPageContent({ type }: AboutResourcesPageContentPro
   }, [locale, type]);
 
   if (loading) {
-    return <p className="text-sm text-atg-muted">{a.loading}</p>;
+    return <p className="text-sm text-atg-muted">{t('loading')}</p>;
   }
 
   if (loadError) {
@@ -62,7 +61,7 @@ export function AboutResourcesPageContent({ type }: AboutResourcesPageContentPro
         className="rounded-lg border border-red-200 bg-red-50 px-4 py-8 text-center dark:border-red-900/40 dark:bg-red-950/30"
         role="alert"
       >
-        <p className="text-sm text-red-800 dark:text-red-200">{a.loadError}</p>
+        <p className="text-sm text-red-800 dark:text-red-200">{t('loadError')}</p>
       </div>
     );
   }
@@ -70,7 +69,7 @@ export function AboutResourcesPageContent({ type }: AboutResourcesPageContentPro
   if (resources.length === 0) {
     return (
       <div className="rounded-lg border border-atg-border bg-atg-elevated/50 px-4 py-8 text-center">
-        <p className="text-sm text-atg-muted">{a.resources.empty}</p>
+        <p className="text-sm text-atg-muted">{t('resources.empty')}</p>
       </div>
     );
   }
@@ -79,7 +78,7 @@ export function AboutResourcesPageContent({ type }: AboutResourcesPageContentPro
     <div className="space-y-4">
       {localeFallback ? (
         <p className="rounded-lg border border-amber-200/60 bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-200">
-          {a.localeFallback}
+          {t('localeFallback')}
         </p>
       ) : null}
 
@@ -97,7 +96,7 @@ export function AboutResourcesPageContent({ type }: AboutResourcesPageContentPro
                 ) : null}
                 {resource.publishedAt ? (
                   <p className="mt-2 text-xs text-atg-muted">
-                    {a.resources.publishedOn}{' '}
+                    {t('resources.publishedOn')}{' '}
                     <time dateTime={resource.publishedAt}>
                       {formatRelativeReviewDate(resource.publishedAt, locale)}
                     </time>
@@ -112,7 +111,7 @@ export function AboutResourcesPageContent({ type }: AboutResourcesPageContentPro
                   download={resource.fileUrl ? true : undefined}
                   className="inline-flex shrink-0 items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-hover"
                 >
-                  {resource.fileUrl ? a.resources.download : a.resources.openLink}
+                  {resource.fileUrl ? t('resources.download') : t('resources.openLink')}
                 </a>
               ) : null}
             </li>

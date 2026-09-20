@@ -136,5 +136,157 @@
         "description": "Política de privacidad de Africa Tourism Gate — recogida, uso y protección de datos personales."
       }
     }
+  },
+  "comingSoon": {
+    "badge": "Próximamente",
+    "title": "Próximamente",
+    "siteBody": "Esta sección del sitio está en preparación. Vuelva pronto para descubrir nuevas funciones en Africa Tourism Gate.",
+    "body": "La reserva en línea para esta categoría llegará pronto. Sus criterios de búsqueda se han conservado en la URL.",
+    "backToSearch": "Modificar mi búsqueda",
+    "backHome": "Volver al inicio"
+  },
+  "blog": {
+    "metaTitle": "Blog de viajes en África",
+    "metaDescription": "Consejos, guías e inspiración para planificar su próximo viaje a África con Africa Tourism Gate.",
+    "heroTitle": "Blog",
+    "heroSubtitle": "Guías, consejos e inspiración para viajar por África.",
+    "readMore": "Leer más",
+    "loading": "Cargando artículos…",
+    "loadError": "No se pudo cargar el blog. Compruebe que la API esté en ejecución.",
+    "retry": "Reintentar",
+    "noResults": "No hay artículos publicados",
+    "noResultsHint": "Vuelva pronto para descubrir nuevo contenido.",
+    "localeFallback": "No hay artículos en su idioma por ahora — se muestran los disponibles en otros idiomas.",
+    "backToBlog": "Volver al blog",
+    "publishedOn": "Publicado el",
+    "breadcrumbHome": "Inicio",
+    "breadcrumbBlog": "Blog"
+  },
+  "support": {
+    "metaTitle": "Ayuda y soporte",
+    "metaDescription": "Consulte las preguntas frecuentes de Africa Tourism Gate o contacte a nuestro equipo sobre reservas y su cuenta.",
+    "pageTitle": "Centro de ayuda",
+    "pageSubtitle": "Preguntas frecuentes y un formulario para contactar a nuestro equipo de soporte.",
+    "faqTitle": "Preguntas frecuentes",
+    "formTitle": "Contactar soporte",
+    "formSubtitle": "Describa su solicitud: abrimos un ticket y respondemos por correo.",
+    "signInPrompt": "Inicie sesión para enviar una solicitud al soporte.",
+    "signInCta": "Iniciar sesión",
+    "checkingSession": "Comprobando sesión…",
+    "subjectLabel": "Asunto",
+    "subjectPlaceholder": "p. ej. Pregunta sobre la reserva #…",
+    "messageLabel": "Mensaje",
+    "messagePlaceholder": "Describa su situación en unas frases…",
+    "submit": "Enviar solicitud",
+    "submitting": "Enviando…",
+    "successTitle": "Solicitud recibida",
+    "successMessage": "Gracias. Su ticket fue creado. Guarde esta referencia: {ticketId}. Nuestro equipo responderá en 1–2 días hábiles.",
+    "subjectRequired": "El asunto es obligatorio.",
+    "messageTooShort": "El mensaje debe tener al menos 10 caracteres.",
+    "submitError": "No se pudo enviar su solicitud. Inténtelo de nuevo.",
+    "faq": {
+      "booking": {
+        "question": "¿Cómo cambio o cancelo una reserva?",
+        "answer": "Abra Mi cuenta → Reservas, seleccione su estancia y use las acciones disponibles (pagar, cancelar). Si falta una opción, contáctenos con su referencia de reserva."
+      },
+      "payment": {
+        "question": "¿Qué métodos de pago aceptan?",
+        "answer": "En el pago se ofrecen pagos seguros con tarjeta en línea (Stripe). Los cargos y facturas dependen del alojamiento y del producto reservado."
+      },
+      "cancellation": {
+        "question": "¿Cuál es su política de cancelación?",
+        "answer": "Las condiciones varían según el alojamiento o proveedor. Consulte la página del producto y su correo de confirmación. Si tiene dudas, abra un ticket con su referencia de reserva."
+      },
+      "account": {
+        "question": "¿Cómo actualizo mi perfil o direcciones?",
+        "answer": "Desde Mi cuenta, use Perfil y Direcciones. Puede cambiar el idioma de visualización en sus preferencias."
+      },
+      "contact": {
+        "question": "¿En cuánto tiempo responde el soporte?",
+        "answer": "Atendemos las solicitudes de lunes a viernes. La mayoría de los tickets reciben una primera respuesta en 1–2 días hábiles."
+      }
+    }
+  },
+  "about": {
+    "heroTitle": "Sobre nosotros",
+    "heroSubtitle": "Descubra nuestra misión, equipo y compromiso con un turismo africano responsable.",
+    "sidebarAria": "Secciones Sobre nosotros",
+    "breadcrumbHome": "Inicio",
+    "breadcrumbAbout": "Sobre nosotros",
+    "loading": "Cargando…",
+    "loadError": "No se pudo cargar el contenido. Compruebe que la API está en ejecución.",
+    "emptyPage": "Contenido en preparación",
+    "emptyPageHint": "Esta sección estará disponible pronto. Contáctenos para más información.",
+    "localeFallback": "Mostrando contenido en otro idioma — la versión en su idioma se publicará pronto.",
+    "nav": {
+      "whoWeAre": "Quiénes somos",
+      "history": "Nuestra historia",
+      "team": "Nuestro equipo",
+      "howWeWork": "Cómo trabajamos",
+      "governance": "Nuestra gobernanza",
+      "reports": "Informes y finanzas",
+      "responsibility": "Responsabilidad",
+      "media": "Medios y recursos",
+      "contact": "Contáctenos"
+    },
+    "team": {
+      "empty": "Aún no hay miembros del equipo publicados."
+    },
+    "timeline": {
+      "intro": "Recorra las etapas clave que dieron forma a Africa Tourism Gate, desde los inicios hasta nuestra visión de futuro.",
+      "empty": "Aún no hay hitos publicados.",
+      "readMore": "Saber más",
+      "sidebarAria": "Períodos de la historia"
+    },
+    "resources": {
+      "empty": "No hay documentos disponibles por el momento.",
+      "download": "Descargar",
+      "openLink": "Abrir enlace",
+      "publishedOn": "Publicado el"
+    },
+    "contact": {
+      "subtitle": "Nuestro equipo está a su disposición para cualquier consulta.",
+      "infoTitle": "Datos de contacto",
+      "formTitle": "Enviar un mensaje",
+      "formSubtitle": "Describa su solicitud — le responderemos lo antes posible."
+    },
+    "meta": {
+      "whoWeAre": {
+        "title": "Quiénes somos",
+        "description": "Descubra Africa Tourism Gate: nuestra misión, visión y compromiso con el turismo en África."
+      },
+      "history": {
+        "title": "Nuestra historia",
+        "description": "Siga los hitos principales del desarrollo de Africa Tourism Gate a través de una línea de tiempo interactiva."
+      },
+      "team": {
+        "title": "Nuestro equipo",
+        "description": "Conozca a las personas que hacen posible Africa Tourism Gate."
+      },
+      "howWeWork": {
+        "title": "Cómo trabajamos",
+        "description": "Nuestro enfoque de calidad, transparencia y alianzas locales para viajar por África."
+      },
+      "governance": {
+        "title": "Nuestra gobernanza",
+        "description": "Estructura de gobernanza, decisiones y transparencia institucional de Africa Tourism Gate."
+      },
+      "reports": {
+        "title": "Informes y finanzas",
+        "description": "Consulte informes de actividad y documentos financieros publicados por Africa Tourism Gate."
+      },
+      "responsibility": {
+        "title": "Responsabilidad",
+        "description": "Nuestros compromisos con un turismo sostenible, ético y responsable en África."
+      },
+      "media": {
+        "title": "Medios y recursos",
+        "description": "Kit de prensa, logotipos y recursos multimedia sobre Africa Tourism Gate."
+      },
+      "contact": {
+        "title": "Contáctenos",
+        "description": "Comuníquese con el equipo de Africa Tourism Gate por teléfono, correo o formulario."
+      }
+    }
   }
 }

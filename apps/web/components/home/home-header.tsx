@@ -13,7 +13,6 @@ import { buildSocialLinks } from '../../lib/contact/social-links';
 import { buildVerticalListRoute } from '../../lib/search/route';
 import { ABOUT_NAV_ITEMS, ABOUT_PATHS } from '../../lib/about/routes';
 import { useTranslations as useIntlTranslations } from 'next-intl';
-import { useTranslations as useLegacyTranslations } from '../../lib/i18n/locale-provider';
 
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -98,7 +97,7 @@ export function HomeHeader() {
   const socialLinks = useMemo(() => buildSocialLinks(contact), [contact]);
   const t = useIntlTranslations('nav');
   const tTheme = useIntlTranslations('theme');
-  const tAbout = useLegacyTranslations().about;
+  const tAbout = useIntlTranslations('about');
   const tLanguage = useIntlTranslations('language');
   const pathname = usePathname();
   const onAccountArea = pathname.startsWith('/account');
@@ -118,7 +117,7 @@ export function HomeHeader() {
         label: t('about'),
         children: ABOUT_NAV_ITEMS.map((item) => ({
           href: item.href,
-          label: tAbout.nav[item.labelKey],
+          label: tAbout(`nav.${item.labelKey}`),
         })),
       },
       { href: '/#gallery', label: t('gallery'), children: [] },

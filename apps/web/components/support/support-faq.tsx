@@ -1,21 +1,17 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Accordion } from '../shared/accordion';
 import { SUPPORT_FAQ_KEYS, type SupportFaqKey } from '../../lib/support/faq-items';
-import { useTranslations } from '../../lib/i18n/locale-provider';
 
 export function SupportFaq() {
-  const t = useTranslations();
-  const s = t.support;
+  const t = useTranslations('support');
 
-  const items = SUPPORT_FAQ_KEYS.map((key: SupportFaqKey) => {
-    const item = s.faq[key];
-    return {
-      id: key,
-      title: item.question,
-      content: <p className="m-0">{item.answer}</p>,
-    };
-  });
+  const items = SUPPORT_FAQ_KEYS.map((key: SupportFaqKey) => ({
+    id: key,
+    title: t(`faq.${key}.question`),
+    content: <p className="m-0">{t(`faq.${key}.answer`)}</p>,
+  }));
 
   return (
     <section aria-labelledby="support-faq-heading">
@@ -23,7 +19,7 @@ export function SupportFaq() {
         id="support-faq-heading"
         className="text-lg font-semibold text-atg-fg"
       >
-        {s.faqTitle}
+        {t('faqTitle')}
       </h2>
       <Accordion
         items={items}

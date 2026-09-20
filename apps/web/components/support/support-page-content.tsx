@@ -1,14 +1,13 @@
 'use client';
 
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations } from 'next-intl';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { SupportFaq } from './support-faq';
 import { SupportTicketForm } from './support-ticket-form';
 
 export function SupportPageContent() {
-  const t = useTranslations();
-  const s = t.support;
+  const t = useTranslations('support');
 
   return (
     <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
@@ -17,9 +16,9 @@ export function SupportPageContent() {
         <div className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
           <header className="mb-10">
             <h1 className="text-2xl font-bold tracking-tight text-atg-fg sm:text-3xl">
-              {s.pageTitle}
+              {t('pageTitle')}
             </h1>
-            <p className="mt-2 text-sm text-atg-muted">{s.pageSubtitle}</p>
+            <p className="mt-2 text-sm text-atg-muted">{t('pageSubtitle')}</p>
           </header>
 
           <div className="space-y-12">
@@ -30,9 +29,9 @@ export function SupportPageContent() {
                 id="support-form-heading"
                 className="text-lg font-semibold text-atg-fg"
               >
-                {s.formTitle}
+                {t('formTitle')}
               </h2>
-              <p className="mt-1 text-sm text-atg-muted">{s.formSubtitle}</p>
+              <p className="mt-1 text-sm text-atg-muted">{t('formSubtitle')}</p>
               <div className="mt-4">
                 <SupportTicketForm />
               </div>

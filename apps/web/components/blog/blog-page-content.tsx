@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 import { browseBlogPostsForLocale } from '../../lib/api/public';
-import { useAppLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations as useLegacyTranslations } from '../../lib/i18n/locale-provider';
 import { formatRelativeReviewDate } from '../../lib/i18n/format-relative-date';
 import { useListingPagination } from '../../lib/listing/pagination';
 import { toListingPaginationLabels, scrollListingToTop } from '../../lib/listing/pagination-labels';
@@ -14,10 +15,10 @@ import { ListingPageBody, ListingPaginationBar } from '../shared/listing-pattern
 import { PageHero } from '../shared/page-hero';
 
 export function BlogPageContent() {
-  const locale = useAppLocale();
-  const t = useTranslations();
-  const b = t.blog;
-  const l = t.listing;
+  const locale = useLocale();
+  const t = useTranslations('blog');
+  const tLegacy = useLegacyTranslations();
+  const l = tLegacy.listing;
 
   const [posts, setPosts] = useState<PublicBlogPostListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -73,37 +74,37 @@ export function BlogPageContent() {
       <main className="flex-1">
         <PageHero
           title={
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{b.heroTitle}</h1>
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('heroTitle')}</h1>
           }
           description={
             <p className="max-w-2xl text-base leading-relaxed text-white/80 sm:text-lg">
-              {b.heroSubtitle}
+              {t('heroSubtitle')}
             </p>
           }
         />
         <ListingPageBody>
           {usedLocaleFallback ? (
             <p className="mb-6 rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-muted">
-              {b.localeFallback}
+              {t('localeFallback')}
             </p>
           ) : null}
           {loading ? (
-            <p className="text-center text-atg-muted">{b.loading}</p>
+            <p className="text-center text-atg-muted">{t('loading')}</p>
           ) : error ? (
             <div className="mx-auto max-w-lg text-center">
-              <p className="text-atg-muted">{b.loadError}</p>
+              <p className="text-atg-muted">{t('loadError')}</p>
               <button
                 type="button"
                 onClick={() => setFetchId((n) => n + 1)}
                 className="mt-4 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
               >
-                {b.retry}
+                {t('retry')}
               </button>
             </div>
           ) : posts.length === 0 ? (
             <div className="mx-auto max-w-lg text-center">
-              <p className="text-lg font-semibold text-atg-fg">{b.noResults}</p>
-              <p className="mt-2 text-atg-muted">{b.noResultsHint}</p>
+              <p className="text-lg font-semibold text-atg-fg">{t('noResults')}</p>
+              <p className="mt-2 text-atg-muted">{t('noResultsHint')}</p>
             </div>
           ) : (
             <>
@@ -150,7 +151,7 @@ export function BlogPageContent() {
                           href={`/blog/${post.slug}`}
                           className="mt-4 inline-flex min-h-[44px] items-center text-sm font-semibold text-primary transition-colors hover:text-primary/80"
                         >
-                          {b.readMore}
+                          {t('readMore')}
                           <svg className="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>

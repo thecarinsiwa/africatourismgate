@@ -101,4 +101,66 @@ test.describe('Language switch (FR/EN/ES)', () => {
       page.getByRole('navigation', { name: 'Breadcrumb' }).getByRole('link', { name: 'Inicio' }),
     ).toBeVisible();
   });
+
+  test('support page shows English labels after switch', async ({ page }) => {
+    await page.goto('/support');
+
+    await expect(page.getByRole('heading', { name: "Centre d'aide", level: 1 })).toBeVisible();
+
+    await switchLanguage(page, /English/i);
+
+    await expect(page.getByRole('heading', { name: 'Help centre', level: 1 })).toBeVisible();
+  });
+
+  test('about page shows Spanish labels after switch', async ({ page }) => {
+    await page.route('**/api/public/about-pages/**', async (route) => {
+      await route.fulfill({
+        status: 404,
+        contentType: 'application/json',
+        body: JSON.stringify({ message: 'Not found' }),
+      });
+    });
+
+    await page.goto('/about/who-we-are');
+
+    await expect(page.getByRole('heading', { name: 'Qui nous sommes', level: 1 })).toBeVisible();
+    await expect(
+      page.getByRole('navigation', { name: 'Breadcrumb' }).getByRole('link', { name: 'À propos' }),
+    ).toBeVisible();
+
+    await switchLanguage(page, /Español/i);
+
+    await expect(page.getByRole('heading', { name: 'Quiénes somos', level: 1 })).toBeVisible();
+    await expect(
+      page.getByRole('navigation', { name: 'Breadcrumb' }).getByRole('link', { name: 'Sobre nosotros' }),
+    ).toBeVisible();
+  });
+
+  test('blog empty state shows English after switch', async ({ page }) => {
+    await page.route('**/api/public/blog**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ data: [], meta: { total: 0, page: 1, limit: 50 } }),
+      });
+    });
+
+    await page.goto('/blog');
+
+    await expect(page.getByText('Aucun article publié')).toBeVisible();
+
+    await switchLanguage(page, /English/i);
+
+    await expect(page.getByText('No published articles')).toBeVisible();
+  });
+
+  test('coming-soon page shows English after switch', async ({ page }) => {
+    await page.goto('/coming-soon');
+
+    await expect(page.getByRole('heading', { name: 'Bientôt disponible' })).toBeVisible();
+
+    await switchLanguage(page, /English/i);
+
+    await expect(page.getByRole('heading', { name: 'Coming soon' })).toBeVisible();
+  });
 });
