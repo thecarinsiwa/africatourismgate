@@ -86,7 +86,7 @@ Règles :
 | Partenaire vs Staff vs Client | ✅ Vocabulaire + RBAC catalogue (PR-09) ; compte auth partenaire = **PR-10** | `activity_providers`, `/produits/activites/partenaires`, `activities.read/write` |
 | Liaison document ID ↔ voyageur | ✅ `manifest_entry_id` + upload / UI par voyageur (voir [pr-11-manifest-doc-link-test.md](./pr-11-manifest-doc-link-test.md)) | `booking_identity_documents`, checkout, compte, admin Documents / assisté |
 | Portail / onboarding partenaire | ❌ Catalogue `activity_providers` ≠ compte auth ; OAuth Gmail staff/client OK ; pas de rôle `partner` ni portail B2B (PR-10) | `apps/api/src/modules/auth/`, `activity-providers` |
-| Notifications staff persistées | ⚠️ Poll client + `localStorage` | `apps/admin/lib/notifications/use-admin-notifications.ts` |
+| Notifications staff persistées | ✅ Table `notifications` + API + hook poll (voir [pr-12-notifications-persist-test.md](./pr-12-notifications-persist-test.md)) | `notifications`, `use-admin-notifications.ts` |
 | Google Maps | ❌ Leaflet + OSM | `apps/web/components/maps/*`, `coordinate-picker-map.tsx` |
 | Sync API fournisseurs | ❌ Exclu V1 volontairement | — |
 | Mobile money | ✅ Offline (pays/opérateur/numéro + preuves + email) — voir [pr-13-mobile-money-test.md](./pr-13-mobile-money-test.md) ; PSP API reporté | `mobile_money_*`, `payment_methods.mobile_money`, checkout web, admin Paramètres |
@@ -110,7 +110,7 @@ Règles :
 | PR-09 | 2 | Clarifier Partenaire vs Staff vs Client (UI + RBAC) — **livré** | Moyenne | `feature/pr-09-partner-roles` | — |
 | PR-10 | 2 | Onboarding partenaires (questionnaire + invitation Gmail) | Moyenne | `feature/pr-10-partner-onboarding` | PR-09 |
 | PR-11 | 2 | Liaison document identité ↔ entrée manifeste — **livré** (voir [pr-11-manifest-doc-link-test.md](./pr-11-manifest-doc-link-test.md)) | Moyenne | `feature/pr-11-manifest-doc-link` | — |
-| PR-12 | 2 | Notifications admin persistées (serveur) | Basse | `feature/pr-12-notifications-persist` | — |
+| PR-12 | 2 | Notifications admin persistées (serveur) — **livré** (voir [pr-12-notifications-persist-test.md](./pr-12-notifications-persist-test.md)) | Basse | `feature/pr-12-notifications-persist` | — |
 | PR-13 | 3 | Mobile money offline (Est-Afrique) — **config + checkout + preuves livrés** ; PSP API V2 | Basse | `feature/pr-13-mobile-money` | PR-06 / preuves |
 | PR-14 | 3 | Google Maps (clé API + import / enrichissement) | Basse | `feature/pr-14-google-maps` | — |
 | PR-15 | 3 | Sync inventaire fournisseurs (Excel/FTP puis API) | Basse | `feature/pr-15-supplier-sync` | PR-10 |
@@ -561,7 +561,8 @@ Critères d’acceptation :
 ### PR-12 — Notifications admin persistées
 
 **Branche :** `feature/pr-12-notifications-persist`  
-**Priorité :** Basse
+**Priorité :** Basse  
+**Statut :** ✅ Livré — scénario de test : [pr-12-notifications-persist-test.md](./pr-12-notifications-persist-test.md)
 
 ```
 Projet : Africa Tourism Gate (pnpm monorepo).
