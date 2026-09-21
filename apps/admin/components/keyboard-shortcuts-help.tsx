@@ -1,8 +1,10 @@
 'use client';
 
 import { Modal } from '@africatourismgate/ui';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
+import { ADMIN_HELP_BASE_PATH } from '../lib/admin-help/routes';
 
 function isEditableTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
@@ -93,6 +95,15 @@ export function KeyboardShortcutsHelp() {
             </li>
           ))}
         </ul>
+        <p>
+          <Link
+            href={ADMIN_HELP_BASE_PATH}
+            className="text-sm font-medium text-primary outline-none hover:underline focus-visible:underline"
+            onClick={() => setOpen(false)}
+          >
+            {t('openHelpCenter')} →
+          </Link>
+        </p>
         <p className="text-xs text-atg-muted">{t('hint')}</p>
       </div>
     </Modal>

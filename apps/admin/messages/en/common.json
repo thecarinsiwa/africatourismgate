@@ -54,6 +54,7 @@
     "description": "Shortcuts available in the admin.",
     "close": "Close",
     "hint": "Shortcuts are ignored while typing in a field.",
+    "openHelpCenter": "Open the Help Center",
     "items": {
       "palette": "Open / close quick navigation",
       "escape": "Close the palette or this help",

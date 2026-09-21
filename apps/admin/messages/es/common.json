@@ -54,6 +54,7 @@
     "description": "Atajos disponibles en el back office.",
     "close": "Cerrar",
     "hint": "Los atajos se ignoran mientras escribe en un campo.",
+    "openHelpCenter": "Abrir el centro de ayuda",
     "items": {
       "palette": "Abrir / cerrar la navegación rápida",
       "escape": "Cerrar la paleta o esta ayuda",

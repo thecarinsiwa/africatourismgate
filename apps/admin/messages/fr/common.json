@@ -54,6 +54,7 @@
     "description": "Raccourcis disponibles dans le back-office.",
     "close": "Fermer",
     "hint": "Les raccourcis sont ignorés pendant la saisie dans un champ.",
+    "openHelpCenter": "Ouvrir le centre d'aide",
     "items": {
       "palette": "Ouvrir / fermer la navigation rapide",
       "escape": "Fermer la palette ou l’aide",
