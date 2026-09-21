@@ -19,7 +19,9 @@
     "relatedTitle": "Articles liés",
     "breadcrumbHome": "Centre d'aide",
     "backToCategory": "Retour au thème",
-    "backToHub": "Retour au centre d'aide"
+    "backToHub": "Retour au centre d'aide",
+    "contextualHelp": "Aide",
+    "openContextualHelp": "Aide pour cette page"
   },
   "categories": {
     "prise-en-main": {

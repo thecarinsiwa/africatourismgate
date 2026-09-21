@@ -19,7 +19,9 @@
     "relatedTitle": "Artículos relacionados",
     "breadcrumbHome": "Centro de ayuda",
     "backToCategory": "Volver al tema",
-    "backToHub": "Volver al centro de ayuda"
+    "backToHub": "Volver al centro de ayuda",
+    "contextualHelp": "Ayuda",
+    "openContextualHelp": "Ayuda para esta página"
   },
   "categories": {
     "prise-en-main": {
