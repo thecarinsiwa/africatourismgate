@@ -19,6 +19,7 @@
     "pages": "Nuestros productos",
     "blog": "Blog",
     "packages": "Paquetes",
+    "help": "Ayuda",
     "hotels": "Hoteles",
     "flights": "Vuelos",
     "cars": "Alquiler de coches",
@@ -572,7 +573,7 @@
     "about": "Acerca de",
     "aboutPages": "Sobre nosotros",
     "gap": "GAP",
-    "faq": "FAQ",
+    "faq": "Centro de ayuda",
     "designedBy": "Diseñado por",
     "designedByNames": "Carin Siwa y Ruth Bwiza"
   },

@@ -123,7 +123,6 @@ export function HomeHeader() {
           label: tAbout(`nav.${item.labelKey}`),
         })),
       },
-      { href: '/#gallery', label: t('gallery'), children: [] },
       {
         href: '/#search',
         label: t('pages'),
@@ -137,6 +136,7 @@ export function HomeHeader() {
       },
       { href: '/blog', label: t('blog'), children: [] },
       { href: '/packages', label: t('packages'), children: [] },
+      { href: '/support', label: t('help'), children: [] },
     ],
     [t, tAbout],
   );
