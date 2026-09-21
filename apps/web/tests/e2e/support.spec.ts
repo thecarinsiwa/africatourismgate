@@ -116,6 +116,37 @@ test('navigates from topic to article', async ({ page }) => {
   ).toBeVisible();
 });
 
+test('opens how-to-book from booking topic list', async ({ page }) => {
+  await page.goto('/support');
+
+  await page
+    .getByRole('link', { name: /Réservations|Bookings|Reservas/i })
+    .first()
+    .click();
+
+  await expect(page).toHaveURL(/\/support\/booking\/?$/);
+
+  await page
+    .getByRole('link', {
+      name: /Comment réserver|How do I book|Cómo reservo/i,
+    })
+    .first()
+    .click();
+
+  await expect(page).toHaveURL(/\/support\/booking\/how-to-book\/?$/);
+
+  await expect(
+    page.getByRole('heading', {
+      name: /Comment réserver|How do I book|Cómo reservo/i,
+      level: 1,
+    }),
+  ).toBeVisible();
+
+  await expect(
+    page.getByText(/\/booking\/cart|My account|Mi cuenta|Mon compte/i).first(),
+  ).toBeVisible();
+});
+
 test('search finds and opens an article', async ({ page }) => {
   await page.goto('/support');
 
