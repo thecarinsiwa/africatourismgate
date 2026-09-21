@@ -64,8 +64,8 @@
   "articles": {
     "naviguer-dans-le-dashboard": {
       "title": "Navegar por el panel",
-      "summary": "Menú lateral, migas de pan y organización de los módulos de administración.",
-      "body": "Tras iniciar sesión, el panel (/dashboard) muestra indicadores y la actividad reciente. El menú lateral izquierdo agrupa los módulos: usuarios, productos, reservas, pagos, contenido, GAP y sistema.\n\nLas migas de pan en la parte superior indican dónde se encuentra y permiten subir un nivel. En móvil, abra el menú con el icono de hamburguesa.\n\nUse el centro de ayuda (/aide) o la paleta de comandos (Ctrl+K) para llegar rápido a una página sin recorrer todo el menú."
+      "summary": "Referencias clave: menú lateral, migas de pan, notificaciones y acceso rápido a la ayuda.",
+      "body": "Tras iniciar sesión, el panel (/dashboard) muestra indicadores y la actividad reciente. El menú lateral izquierdo agrupa los módulos: usuarios, productos, reservas, pagos, contenido, GAP y sistema.\n\nLas migas de pan en la parte superior indican dónde se encuentra y permiten subir un nivel. En móvil, abra el menú con el icono de hamburguesa. El icono de campana abre el centro de notificaciones sin salir de la página actual.\n\nUse el centro de ayuda (/aide) o la paleta de comandos (Ctrl+K) para llegar rápido a una página sin recorrer todo el menú. En cada pantalla, el icono Ayuda del encabezado abre el artículo recomendado para el módulo en curso.\n\nConsejo: empiece por Inicio rápido en /aide (usuarios, reservas, roles, tickets) para dominar los gestos diarios antes de explorar temas avanzados."
     },
     "notifications": {
       "title": "Centro de notificaciones",
@@ -74,8 +74,8 @@
     },
     "palette-commandes": {
       "title": "Paleta de comandos (Ctrl+K)",
-      "summary": "Buscar y abrir cualquier página de administración en pocas pulsaciones.",
-      "body": "Pulse Ctrl+K (o Cmd+K en Mac) para abrir la paleta de comandos. Escriba el inicio de una etiqueta del menú (por ejemplo « alojamientos » o « roles ») para filtrar destinos.\n\nValide con Entrar para navegar de inmediato. La paleta lista las páginas del menú y algunas rutas anidadas fuera del menú (formularios nuevos, ajustes de correo, etc.).\n\nCierre la paleta con Escape. Es la forma más rápida de moverse por la administración a diario."
+      "summary": "Ir a cualquier página de administración en pocas pulsaciones, incluso fuera del menú.",
+      "body": "Pulse Ctrl+K (o Cmd+K en Mac) para abrir la paleta de comandos. Escriba el inicio de una etiqueta del menú (por ejemplo « alojamientos », « roles » o « ayuda ») para filtrar destinos.\n\nValide con Entrar para navegar de inmediato. La paleta lista las páginas del menú y algunas rutas anidadas fuera del menú (formularios nuevos, asignaciones de roles, ajustes de correo, etc.).\n\nCierre la paleta con Escape. Pulse ? para ver la ayuda de atajos de teclado y, si hace falta, siga el enlace al centro de ayuda.\n\nCombine la paleta con el icono Ayuda del encabezado: la primera le teletransporta, la segunda abre la documentación del módulo en el que está."
     },
     "raccourcis-clavier": {
       "title": "Atajos de teclado",
@@ -84,8 +84,8 @@
     },
     "gerer-les-utilisateurs": {
       "title": "Gestionar usuarios",
-      "summary": "Crear, buscar y actualizar las cuentas de la plataforma.",
-      "body": "El módulo Usuarios (/utilisateurs) lista las cuentas de clientes y personal de la plataforma. Filtre por estado u organización y abra una ficha para ver o editar el perfil.\n\nPara crear una cuenta, use Nuevo usuario. Complete los campos obligatorios y guarde. Según sus permisos (users.read / users.write), algunas acciones pueden estar ocultas.\n\nDesde la ficha puede consultar los detalles, vincular un perfil de empleado u orientar hacia sesiones y registros de seguridad para la auditoría de acceso."
+      "summary": "Crear, buscar y actualizar cuentas: la base del acceso a la plataforma.",
+      "body": "El módulo Usuarios (/utilisateurs) lista las cuentas de clientes y personal de la plataforma. Filtre por estado u organización y abra una ficha para ver o editar el perfil.\n\nPara crear una cuenta, use Nuevo usuario. Complete los campos obligatorios y guarde. Según sus permisos (users.read / users.write), algunas acciones pueden estar ocultas.\n\nDesde la ficha puede consultar los detalles, vincular un perfil de empleado u orientar hacia sesiones y registros de seguridad para la auditoría de acceso. Los roles y permisos (Sistema → Roles) determinan después qué puede abrir esa cuenta en la administración.\n\nSi un cliente reporta un problema de cuenta, cruce con Contenido → Soporte (tickets) y revise las sesiones activas antes de restablecer un acceso."
     },
     "employes-et-departements": {
       "title": "Empleados y departamentos",
@@ -124,8 +124,8 @@
     },
     "gerer-les-reservations": {
       "title": "Gestionar reservas",
-      "summary": "Seguir solicitudes, estados, viajeros y pagos relacionados.",
-      "body": "El módulo Reservas (/reservations) centraliza las reservas de clientes. Filtre por estado, fechas o referencia y abra el detalle para ver líneas, viajeros, documentos e historial.\n\nSegún el estado, puede avanzar el tratamiento, consultar pruebas de pago o coordinar con soporte. Se aplican los permisos bookings.read / bookings.write.\n\nPara un pago o un incidente de cliente, cruce con Pagos y Contenido → Soporte (tickets). Las migas de pan y Ctrl+K ayudan a cambiar de pantalla con rapidez."
+      "summary": "Seguir solicitudes, viajeros, estados y pagos relacionados en un solo lugar.",
+      "body": "El módulo Reservas (/reservations) centraliza las reservas de clientes. Filtre por estado, fechas o referencia y abra el detalle para ver líneas, viajeros, documentos e historial.\n\nSegún el estado, puede avanzar el tratamiento, consultar pruebas de pago o coordinar con soporte. Se aplican los permisos bookings.read / bookings.write.\n\nPara un pago o un incidente de cliente, cruce con Pagos y Contenido → Soporte (tickets). Asigne un guía mediante el calendario de guías cuando el producto lo exija.\n\nLas migas de pan, Ctrl+K y el icono Ayuda del encabezado permiten cambiar rápido entre reserva, pago y ticket sin perder el contexto."
     },
     "guides-et-calendrier": {
       "title": "Guías turísticos y calendario",
@@ -179,8 +179,8 @@
     },
     "tickets-support-clients": {
       "title": "Tickets de soporte al cliente",
-      "summary": "Cola de asistencia: prioridades, respuestas y cierre.",
-      "body": "El hub Soporte (/contenu/support) gestiona los tickets de clientes (pestaña Tickets) y prepara la mensajería unificada (pestaña Mensajes). Filtre por estado y prioridad, abra un ticket para leer el hilo y responder.\n\nAsigne el ticket, cambie el estado (abierto → en curso → resuelto / cerrado) y envíe una respuesta de al menos diez caracteres. El badge « tickets abiertos » en la navegación indica la carga restante.\n\nPermisos support_tickets.read / support_tickets.write. No confunda este módulo con el Centro de ayuda de administración (/aide), reservado a la documentación interna."
+      "summary": "Trabajar la cola de asistencia: prioridad, respuesta, estado y cierre.",
+      "body": "El hub Soporte (/contenu/support) gestiona los tickets de clientes (pestaña Tickets) y prepara la mensajería unificada (pestaña Mensajes). Filtre por estado y prioridad, abra un ticket para leer el hilo y responder.\n\nAsigne el ticket, cambie el estado (abierto → en curso → resuelto / cerrado) y envíe una respuesta de al menos diez caracteres. El badge « tickets abiertos » en la navegación indica la carga restante.\n\nPermisos support_tickets.read / support_tickets.write. No confunda este módulo con el Centro de ayuda de administración (/aide), reservado a la documentación interna.\n\nCuando el ticket afecta a una reserva o una cuenta, abra la ficha vinculada (Ctrl+K o Ayuda contextual) para verificar el estado antes de responder al cliente."
     },
     "comptes-fidelite-onekey": {
       "title": "Cuentas de fidelidad OneKey",
@@ -194,8 +194,8 @@
     },
     "roles-et-permissions": {
       "title": "Roles y permisos",
-      "summary": "Controlar quién puede leer o modificar cada módulo.",
-      "body": "En Sistema → Roles (/systeme/roles), defina los roles y los permisos asociados (lectura / escritura por dominio). Cree un rol, marque los permisos necesarios y asígnelo a los usuarios.\n\nLas pantallas de asignaciones y permisos (fuera del menú principal, accesibles por migas de pan o Ctrl+K) vinculan un rol a un usuario con un alcance (global, propiedad, agencia, cola de soporte…).\n\nPrincipio de mínimo privilegio: conceda solo lo útil. Un rol incorrecto puede ocultar menús enteros o abrir demasiado acceso."
+      "summary": "Definir quién puede leer o modificar cada módulo, con mínimo privilegio.",
+      "body": "En Sistema → Roles (/systeme/roles), defina los roles y los permisos asociados (lectura / escritura por dominio). Cree un rol, marque los permisos necesarios y asígnelo a los usuarios.\n\nLas pantallas de asignaciones y permisos (fuera del menú principal, accesibles por migas de pan o Ctrl+K) vinculan un rol a un usuario con un alcance (global, propiedad, agencia, cola de soporte…).\n\nPrincipio de mínimo privilegio: conceda solo lo útil. Un rol incorrecto puede ocultar menús enteros o abrir demasiado acceso.\n\nTras una asignación, pida al usuario que vuelva a iniciar sesión si los menús no se actualizan. Cruce con Sesiones y seguridad si sospecha un acceso abusivo."
     },
     "parametres-systeme": {
       "title": "Ajustes del sistema",

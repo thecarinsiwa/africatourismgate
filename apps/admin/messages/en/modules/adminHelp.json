@@ -64,8 +64,8 @@
   "articles": {
     "naviguer-dans-le-dashboard": {
       "title": "Navigate the dashboard",
-      "summary": "Sidebar menu, breadcrumbs, and how admin modules are organized.",
-      "body": "After you sign in, the dashboard (/dashboard) shows KPIs and recent activity. The left sidebar groups modules: users, products, bookings, payments, content, GAP, and system.\n\nThe breadcrumb at the top of the page shows where you are and lets you move up one level. On mobile, open the menu with the hamburger icon.\n\nUse the Help Center (/aide) or the command palette (Ctrl+K) to reach a page quickly without scanning the whole menu."
+      "summary": "Key landmarks: sidebar, breadcrumbs, notifications, and quick help access.",
+      "body": "After you sign in, the dashboard (/dashboard) shows KPIs and recent activity. The left sidebar groups modules: users, products, bookings, payments, content, GAP, and system.\n\nThe breadcrumb at the top of the page shows where you are and lets you move up one level. On mobile, open the menu with the hamburger icon. The bell icon opens the notification center without leaving the current page.\n\nUse the Help Center (/aide) or the command palette (Ctrl+K) to reach a page quickly without scanning the whole menu. On every screen, the Help icon in the header opens the recommended article for the current module.\n\nTip: start with Quick start on /aide (users, bookings, roles, tickets) to learn the daily actions before exploring advanced topics."
     },
     "notifications": {
       "title": "Notification center",
@@ -74,8 +74,8 @@
     },
     "palette-commandes": {
       "title": "Command palette (Ctrl+K)",
-      "summary": "Search and open any admin page in a few keystrokes.",
-      "body": "Press Ctrl+K (or Cmd+K on Mac) to open the command palette. Type the start of a menu label (for example “accommodations” or “roles”) to filter destinations.\n\nPress Enter to navigate immediately. The palette lists menu pages and some nested routes outside the sidebar (new forms, email settings, and so on).\n\nClose the palette with Escape. It is the fastest way to move around the admin day to day."
+      "summary": "Jump to any admin page in a few keystrokes, including off-menu routes.",
+      "body": "Press Ctrl+K (or Cmd+K on Mac) to open the command palette. Type the start of a menu label (for example “accommodations”, “roles”, or “help”) to filter destinations.\n\nPress Enter to navigate immediately. The palette lists menu pages and some nested routes outside the sidebar (new forms, role assignments, email settings, and so on).\n\nClose the palette with Escape. Press ? to show keyboard-shortcut help, then follow the link to the Help Center if needed.\n\nCombine the palette with the header Help icon: the first teleports you, the second opens docs for the module you are on."
     },
     "raccourcis-clavier": {
       "title": "Keyboard shortcuts",
@@ -84,8 +84,8 @@
     },
     "gerer-les-utilisateurs": {
       "title": "Manage users",
-      "summary": "Create, search, and update platform accounts.",
-      "body": "The Users module (/utilisateurs) lists customer and staff accounts on the platform. Filter by status or organization, then open a record to view or edit the profile.\n\nTo create an account, use New user. Fill in the required fields and save. Depending on your permissions (users.read / users.write), some actions may be hidden.\n\nFrom the record you can review details, link an employee profile, or go to sessions and security logs for access auditing."
+      "summary": "Create, search, and update accounts — the foundation of platform access.",
+      "body": "The Users module (/utilisateurs) lists customer and staff accounts on the platform. Filter by status or organization, then open a record to view or edit the profile.\n\nTo create an account, use New user. Fill in the required fields and save. Depending on your permissions (users.read / users.write), some actions may be hidden.\n\nFrom the record you can review details, link an employee profile, or go to sessions and security logs for access auditing. Roles and permissions (System → Roles) then control what that account can open in the admin.\n\nIf a customer reports an account issue, cross-check Content → Support (tickets) and review active sessions before resetting access."
     },
     "employes-et-departements": {
       "title": "Employees and departments",
@@ -124,8 +124,8 @@
     },
     "gerer-les-reservations": {
       "title": "Manage bookings",
-      "summary": "Track requests, statuses, travelers, and related payments.",
-      "body": "The Bookings module (/reservations) centralizes customer bookings. Filter by status, dates, or reference, then open the detail to see lines, travelers, documents, and history.\n\nDepending on status, you can advance processing, review payment proofs, or coordinate with support. Permissions bookings.read / bookings.write apply.\n\nFor a payment issue or customer incident, cross-check Payments and Content → Support (tickets). Breadcrumbs and Ctrl+K help you switch screens quickly."
+      "summary": "Track requests, travelers, statuses, and related payments in one place.",
+      "body": "The Bookings module (/reservations) centralizes customer bookings. Filter by status, dates, or reference, then open the detail to see lines, travelers, documents, and history.\n\nDepending on status, you can advance processing, review payment proofs, or coordinate with support. Permissions bookings.read / bookings.write apply.\n\nFor a payment issue or customer incident, cross-check Payments and Content → Support (tickets). Assign a guide via the guides calendar when the product requires it.\n\nBreadcrumbs, Ctrl+K, and the header Help icon let you switch quickly between booking, payment, and ticket without losing context."
     },
     "guides-et-calendrier": {
       "title": "Tour guides and calendar",
@@ -179,8 +179,8 @@
     },
     "tickets-support-clients": {
       "title": "Customer support tickets",
-      "summary": "Support queue: priorities, replies, and closure.",
-      "body": "The Support hub (/contenu/support) manages customer tickets (Tickets tab) and prepares unified messaging (Messages tab). Filter by status and priority, then open a ticket to read the thread and reply.\n\nAssign the ticket, change the status (open → pending → resolved / closed), and send a reply of at least ten characters. The “open tickets” badge in the navigation shows remaining workload.\n\nPermissions support_tickets.read / support_tickets.write. Do not confuse this module with the admin Help Center (/aide), which is for internal documentation only."
+      "summary": "Work the support queue: priority, reply, status, and closure.",
+      "body": "The Support hub (/contenu/support) manages customer tickets (Tickets tab) and prepares unified messaging (Messages tab). Filter by status and priority, then open a ticket to read the thread and reply.\n\nAssign the ticket, change the status (open → pending → resolved / closed), and send a reply of at least ten characters. The “open tickets” badge in the navigation shows remaining workload.\n\nPermissions support_tickets.read / support_tickets.write. Do not confuse this module with the admin Help Center (/aide), which is for internal documentation only.\n\nWhen a ticket relates to a booking or account, open the linked record (Ctrl+K or contextual Help) to verify status before you reply to the customer."
     },
     "comptes-fidelite-onekey": {
       "title": "OneKey loyalty accounts",
@@ -194,8 +194,8 @@
     },
     "roles-et-permissions": {
       "title": "Roles and permissions",
-      "summary": "Control who can read or edit each module.",
-      "body": "Under System → Roles (/systeme/roles), define roles and their permissions (read / write per domain). Create a role, select the needed permissions, then assign it to users.\n\nAssignment and permission screens (outside the main menu, reachable via breadcrumb or Ctrl+K) link a role to a user with a scope (global, property, agency, support queue…).\n\nLeast privilege: grant only what is needed. A bad role can hide entire menus or open too much access."
+      "summary": "Decide who can read or edit each module, with least privilege.",
+      "body": "Under System → Roles (/systeme/roles), define roles and their permissions (read / write per domain). Create a role, select the needed permissions, then assign it to users.\n\nAssignment and permission screens (outside the main menu, reachable via breadcrumb or Ctrl+K) link a role to a user with a scope (global, property, agency, support queue…).\n\nLeast privilege: grant only what is needed. A bad role can hide entire menus or open too much access.\n\nAfter an assignment, ask the user to sign in again if menus do not refresh. Cross-check Sessions & security if you suspect abusive access."
     },
     "parametres-systeme": {
       "title": "System settings",

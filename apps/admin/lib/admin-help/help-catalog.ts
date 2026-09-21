@@ -163,7 +163,12 @@ export const ADMIN_HELP_ARTICLES: readonly AdminHelpArticle[] = [
     slug: 'naviguer-dans-le-dashboard',
     categorySlug: 'prise-en-main',
     popular: true,
-    relatedSlugs: ['notifications', 'palette-commandes', 'raccourcis-clavier'],
+    relatedSlugs: [
+      'notifications',
+      'palette-commandes',
+      'raccourcis-clavier',
+      'gerer-les-utilisateurs',
+    ],
   },
   {
     id: 'art-notifications',
@@ -176,7 +181,11 @@ export const ADMIN_HELP_ARTICLES: readonly AdminHelpArticle[] = [
     slug: 'palette-commandes',
     categorySlug: 'prise-en-main',
     popular: true,
-    relatedSlugs: ['raccourcis-clavier', 'naviguer-dans-le-dashboard'],
+    relatedSlugs: [
+      'raccourcis-clavier',
+      'naviguer-dans-le-dashboard',
+      'roles-et-permissions',
+    ],
   },
   {
     id: 'art-raccourcis-clavier',
@@ -193,6 +202,7 @@ export const ADMIN_HELP_ARTICLES: readonly AdminHelpArticle[] = [
       'employes-et-departements',
       'roles-et-permissions',
       'sessions-et-securite',
+      'tickets-support-clients',
     ],
   },
   {
@@ -255,6 +265,7 @@ export const ADMIN_HELP_ARTICLES: readonly AdminHelpArticle[] = [
       'guides-et-calendrier',
       'suivre-les-paiements',
       'tickets-support-clients',
+      'gerer-les-utilisateurs',
     ],
   },
   {
@@ -332,6 +343,7 @@ export const ADMIN_HELP_ARTICLES: readonly AdminHelpArticle[] = [
       'moderer-les-avis',
       'gerer-les-reservations',
       'gerer-les-utilisateurs',
+      'naviguer-dans-le-dashboard',
     ],
   },
   {
@@ -355,6 +367,7 @@ export const ADMIN_HELP_ARTICLES: readonly AdminHelpArticle[] = [
       'organisations',
       'gerer-les-utilisateurs',
       'parametres-systeme',
+      'sessions-et-securite',
     ],
   },
   {
