@@ -1,0 +1,3 @@
+country_code,country_name,operator_name,operator_logo_url,phone_e164,label,is_active,sort_order,notes
+# CD,RD Congo,M-Pesa,https://cdn.exemple.cd/mpesa.png,+243890000001,Caisse principale,true,1,
+# CD,RD Congo,Airtel Money,,+243990000001,Caisse secondaire,true,2,

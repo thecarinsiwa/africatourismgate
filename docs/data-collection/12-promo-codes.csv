@@ -1,0 +1,2 @@
+code,discount_percent,valid_from,valid_until,is_active,organization_slug,notes
+# BIENVENUE10,10,2026-10-01,2026-12-31,true,africa-tourism-gate,Exemple — ne pas réutiliser POSWELCOME10 (code démo)

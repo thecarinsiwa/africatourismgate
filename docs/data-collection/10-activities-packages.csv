@@ -1,0 +1,6 @@
+record_type,provider_name,activity_title,price_cents,currency,duration_minutes,organization_slug,schedule_start,schedule_capacity,package_name,package_item_activity_title,image_urls,notes
+# provider,Experiences Kinshasa,,,,,,,,,,,Prestataire d'activités
+# activity,Experiences Kinshasa,City Tour Gombe,3500,USD,180,africa-tourism-gate,,,,,https://cdn.exemple.cd/tour.jpg,
+# schedule,Experiences Kinshasa,City Tour Gombe,,,,africa-tourism-gate,2026-10-20T09:00:00,12,,,,Créneau
+# package,,,,,,,africa-tourism-gate,,,Duo Kinshasa,,,"Forfait"
+# package_item,,,,,,,africa-tourism-gate,,,Duo Kinshasa,City Tour Gombe,,Lier activité au forfait

@@ -1,0 +1,4 @@
+email,first_name,last_name,role_code,organization_slug,department_name,is_employee,phone,notes
+# admin@exemple.cd,Jean,Admin,super_admin,africa-tourism-gate,,false,+243800000001,Compte bootstrap — MDP via canal sécurisé
+# ops@exemple.cd,Marie,Ops,org_admin,africa-tourism-gate,Operations,true,+243800000002,
+# caisse@exemple.cd,Paul,Caisse,org_admin,africa-tourism-gate,POS,true,+243800000003,Employé guichet POS

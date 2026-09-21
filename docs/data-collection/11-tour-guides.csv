@@ -1,0 +1,3 @@
+full_name,email,phone,guide_type,organization_slug,is_active,notes
+# Marie Exemple,marie.guide@exemple.cd,+243800000010,internal,africa-tourism-gate,true,Guide interne
+# Jean Exemple,jean.guide@exemple.com,+243800000011,external,africa-tourism-gate,true,Guide externe freelance

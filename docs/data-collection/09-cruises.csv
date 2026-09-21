@@ -1,0 +1,8 @@
+record_type,line_name,port_code,port_name,country_code,ship_name,itinerary_name,cabin_name,max_guests,base_price_cents,currency,sailing_start,sailing_end,stock,notes
+# line,Africa River Cruises,,,,,,,,,,,,,
+# port,,CDKIN,Kinshasa Port,CD,,,,,,,,,,
+# port,,CDBNW,Banana Port,CD,,,,,,,,,,
+# ship,Africa River Cruises,,,,Congo River Spirit,,,,,,,,,
+# itinerary,Africa River Cruises,,,,Congo River Spirit,Kinshasa-Banana,,,,,,,,
+# cabin,Africa River Cruises,,,,Congo River Spirit,,Standard,2,50000,USD,,,,
+# sailing,Africa River Cruises,,,,Congo River Spirit,Kinshasa-Banana,,,USD,2026-11-01,2026-11-05,10,Départ commercial

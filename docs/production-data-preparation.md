@@ -505,7 +505,7 @@ docs/data-collection/
   13-cms-content-checklist.csv
 ```
 
-> Si le dossier n’existe pas encore dans le dépôt, le créer lors de la tâche Phase 1 « modèles CSV ».
+Les modèles (en-têtes + exemples commentés) sont disponibles dans ce dossier. Voir aussi `docs/data-collection/README.md`.
 
 ### 6.2 Conventions communes
 
