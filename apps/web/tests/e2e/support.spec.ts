@@ -162,14 +162,14 @@ test('search finds and opens an article', async ({ page }) => {
 
   await results
     .getByRole('link', {
-      name: /moyens de paiement|payment methods|métodos de pago/i,
+      name: /Quels moyens de paiement|Which payment methods|Qué métodos de pago/i,
     })
     .click();
 
   await expect(page).toHaveURL(/\/support\/payment\/payment-methods\/?$/);
   await expect(
     page.getByRole('heading', {
-      name: /moyens de paiement|payment methods|métodos de pago/i,
+      name: /Quels moyens de paiement|Which payment methods|Qué métodos de pago/i,
       level: 1,
     }),
   ).toBeVisible();
