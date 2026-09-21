@@ -15,6 +15,7 @@ import {
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { SupportBreadcrumbs } from './support-breadcrumbs';
+import { SupportSearch } from './support-search';
 
 type SupportArticlePageContentProps = {
   categorySlug: string;
@@ -53,6 +54,10 @@ export function SupportArticlePageContent({
               { label: articleTitle },
             ]}
           />
+
+          <div className="mb-8">
+            <SupportSearch />
+          </div>
 
           <header className="mb-8">
             <p className="text-sm font-medium text-primary">
