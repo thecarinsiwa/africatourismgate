@@ -294,6 +294,21 @@
         }
       },
       "articles": {
+        "how-to-book": {
+          "title": "¿Cómo reservo una estancia o actividad?",
+          "summary": "De la búsqueda a la confirmación, paso a paso.",
+          "body": "En la página de inicio, use la búsqueda para elegir un producto: hoteles, vuelos, coches, cruceros, actividades o paquetes. Abra una ficha, seleccione fechas u opciones y añada al carrito.\n\nContinúe a /booking/cart y al resumen para elegir el método de pago. Tras validar el pago (o enviar la solicitud), encontrará la estancia en Mi cuenta → Reservas."
+        },
+        "cart-and-checkout": {
+          "title": "Carrito y flujo de pago",
+          "summary": "Entender carrito → resumen → confirmación.",
+          "body": "El carrito (/booking/cart) agrupa los elementos seleccionados antes de confirmar. Revise fechas, viajeros e importe, luego pase al resumen para elegir el pago.\n\nDebe iniciar sesión para finalizar. Tras el éxito, aparece una página de confirmación y se envía un correo. También puede reabrir el detalle en Mi cuenta → Reservas."
+        },
+        "request-vs-paid": {
+          "title": "¿Solicitud de reserva o pago inmediato?",
+          "summary": "Diferencia entre confirmación pagada y solicitud pendiente.",
+          "body": "Algunos productos se confirman en cuanto el pago con tarjeta en línea es válido. Otros pasan por una solicitud: completa el flujo hasta /booking/request-success y el equipo o proveedor le responde.\n\nEl estado aparece en Mi cuenta → Reservas. Hasta que el pago se valide o la solicitud se acepte, la estancia no está confirmada del todo."
+        },
         "modify-or-cancel": {
           "title": "¿Cómo cambio o cancelo una reserva?",
           "summary": "Gestione su estancia desde Mi cuenta o contacte al soporte.",
@@ -309,10 +324,25 @@
           "summary": "Revise el spam y encuentre la confirmación en su cuenta.",
           "body": "Revise la carpeta de spam o correo no deseado y luego Mi cuenta → Reservas. Si la reserva no aparece tras unos minutos, abra un ticket con el correo usado en el pago."
         },
+        "booking-chat": {
+          "title": "¿Cómo uso el chat de una reserva?",
+          "summary": "Escriba al equipo sobre una estancia concreta.",
+          "body": "Abra Mi cuenta → Reservas, seleccione la estancia y abra el chat vinculado a esa reserva. Úselo para preguntas sobre esa estancia (fechas, documentos, siguientes pasos).\n\nPara temas generales de cuenta o facturación sin relación con una estancia, use Contactar soporte al final del centro de ayuda."
+        },
         "payment-methods": {
           "title": "¿Qué métodos de pago aceptan?",
           "summary": "Pagos con tarjeta seguros en la confirmación.",
           "body": "En el pago se ofrecen pagos seguros con tarjeta en línea (Stripe). Los cargos y facturas dependen del alojamiento y del producto reservado."
+        },
+        "offline-payments": {
+          "title": "Efectivo, transferencia o mobile money",
+          "summary": "Pagar sin tarjeta cuando se ofrece la opción.",
+          "body": "Según el producto y el resumen, pueden aparecer opciones fuera de tarjeta: efectivo, transferencia bancaria o mobile money. Siga las instrucciones en pantalla tras validar; la confirmación depende de la recepción del pago.\n\nConsulte el estado en Mi cuenta → Reservas. Si una transferencia no está clara, abra un ticket con la referencia y el comprobante."
+        },
+        "saved-cards": {
+          "title": "Gestionar mis métodos de pago guardados",
+          "summary": "Añadir o quitar una tarjeta en Mi cuenta.",
+          "body": "En Mi cuenta → Métodos de pago puede guardar una tarjeta para agilizar próximos pagos o eliminar una tarjeta que ya no use.\n\nLos datos de tarjeta se tratan de forma segura con el proveedor de pago. Nunca comparta códigos en el chat ni en un ticket de soporte."
         },
         "invoice-receipt": {
           "title": "¿Cómo obtengo una factura o recibo?",
@@ -339,10 +369,30 @@
           "summary": "Modifique sus datos personales y preferencias.",
           "body": "Desde Mi cuenta, use Perfil y Direcciones. Puede cambiar el idioma de visualización en sus preferencias."
         },
+        "manage-addresses": {
+          "title": "Gestionar mis direcciones",
+          "summary": "Añadir, editar o eliminar una dirección de facturación o contacto.",
+          "body": "Abra Mi cuenta → Direcciones para guardar una dirección de facturación o contacto. Puede añadir varias y actualizarlas antes de reservar.\n\nUna dirección actualizada facilita facturas y seguimiento. Es distinta de los datos de viajeros del manifiesto de una reserva."
+        },
         "password-security": {
           "title": "Contraseña y seguridad de la cuenta",
           "summary": "Proteja su cuenta y recupere el acceso.",
           "body": "Use una contraseña única y segura. Si la olvida, use «Olvidé mi contraseña» en la página de inicio de sesión. Si sospecha un acceso no autorizado, cambie la contraseña y luego contacte al soporte."
+        },
+        "onekey-loyalty": {
+          "title": "Programa de fidelidad OneKey",
+          "summary": "Consulte beneficios y su nivel en Mi cuenta.",
+          "body": "OneKey agrupa los beneficios de fidelidad ligados a sus estancias en Africa Tourism Gate. Abra Mi cuenta → Fidelidad para ver su nivel y la información disponible.\n\nLas reglas de acumulación y uso siguen el programa vigente. Si faltan puntos, abra un ticket con sus referencias de reserva."
+        },
+        "passenger-manifest": {
+          "title": "Manifiesto y documentos de viajeros",
+          "summary": "Indicar viajeros, contactos de emergencia y documentos de identidad.",
+          "body": "En el detalle de una reserva (Mi cuenta → Reservas), complete el manifiesto de viajeros cuando se solicite: identidad, contactos de emergencia y documentos útiles para la estancia.\n\nFacilite datos exactos antes de la salida. Si falla la carga o un campo, use el chat de la reserva o un ticket de soporte."
+        },
+        "leave-a-review": {
+          "title": "Dejar una reseña tras mi estancia",
+          "summary": "Valorar un producto o guía desde el detalle de la reserva.",
+          "body": "Cuando su estancia lo permita, abra Mi cuenta → Reservas, luego el detalle y la sección de reseñas. Puede valorar la experiencia y, si está disponible, a un guía.\n\nLas reseñas ayudan a otros viajeros. Si el formulario no aparece, la estancia puede no ser elegible aún o el plazo de reseña no ha empezado."
         },
         "response-time": {
           "title": "¿En cuánto tiempo responde el soporte?",

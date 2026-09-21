@@ -294,6 +294,21 @@
         }
       },
       "articles": {
+        "how-to-book": {
+          "title": "How do I book a stay or activity?",
+          "summary": "From search to confirmation, step by step.",
+          "body": "On the home page, use search to pick a product: hotels, flights, cars, cruises, activities, or packages. Open a listing, choose dates or options, then add to cart.\n\nContinue to /booking/cart and the recap to choose a payment method. Once payment is confirmed (or a request is sent), you will find the stay under My account → Bookings."
+        },
+        "cart-and-checkout": {
+          "title": "Cart and checkout flow",
+          "summary": "Understand cart → recap → confirmation.",
+          "body": "The cart (/booking/cart) gathers selected items before you confirm. Check dates, travellers, and the total, then go to the recap to choose payment.\n\nYou must sign in to finish. After success, a confirmation page appears and an email is sent. You can also reopen details under My account → Bookings."
+        },
+        "request-vs-paid": {
+          "title": "Booking request or immediate payment?",
+          "summary": "Difference between a paid confirmation and a pending request.",
+          "body": "Some products confirm as soon as online card payment succeeds. Others go through a request: you complete the flow to /booking/request-success, then the team or provider follows up.\n\nStatus appears under My account → Bookings. Until payment is validated or the request is accepted, the stay is not fully confirmed."
+        },
         "modify-or-cancel": {
           "title": "How do I change or cancel a booking?",
           "summary": "Manage your stay from My account or contact support.",
@@ -309,10 +324,25 @@
           "summary": "Check spam folders and find the confirmation in your account.",
           "body": "Check your spam or junk folder, then My account → Bookings. If the booking still does not appear after a few minutes, open a ticket with the email used at checkout."
         },
+        "booking-chat": {
+          "title": "How do I use booking chat?",
+          "summary": "Message the team about a specific stay.",
+          "body": "Open My account → Bookings, select the stay, then open the chat linked to that booking. Use it for questions about that stay (dates, documents, next steps).\n\nFor general account or billing questions unrelated to a stay, use Contact support at the bottom of the help centre instead."
+        },
         "payment-methods": {
           "title": "Which payment methods do you accept?",
           "summary": "Secure card payments at confirmation.",
           "body": "Secure online card payments (Stripe) are offered at checkout. Charges and invoices depend on the property and product booked."
+        },
+        "offline-payments": {
+          "title": "Cash, bank transfer, or mobile money",
+          "summary": "Pay without a card when the option is offered.",
+          "body": "Depending on the product and recap, non-card options may appear: cash, bank transfer, or mobile money. Follow the on-screen instructions after validation; confirmation depends on payment receipt.\n\nCheck status under My account → Bookings. If a transfer is unclear, open a ticket with the reference and proof of payment."
+        },
+        "saved-cards": {
+          "title": "Manage saved payment methods",
+          "summary": "Add or remove a card in My account.",
+          "body": "Under My account → Payment methods, you can save a card for faster checkouts or remove a card you no longer need.\n\nCard data is handled securely by the payment provider. Never share card codes in chat or a support ticket."
         },
         "invoice-receipt": {
           "title": "How do I get an invoice or receipt?",
@@ -339,10 +369,30 @@
           "summary": "Edit your personal details and preferences.",
           "body": "From My account, use Profile and Addresses. You can change display language in your preferences."
         },
+        "manage-addresses": {
+          "title": "Manage my addresses",
+          "summary": "Add, edit, or remove a billing or contact address.",
+          "body": "Open My account → Addresses to save a billing or contact address. You can add several and update them before booking.\n\nAn up-to-date address helps with invoices and follow-up. It is separate from passenger details on a booking manifest."
+        },
         "password-security": {
           "title": "Password and account security",
           "summary": "Protect your account and recover access.",
           "body": "Use a unique, strong password. If you forget it, use Forgot password on the sign-in page. If you suspect unauthorised access, change your password and then contact support."
+        },
+        "onekey-loyalty": {
+          "title": "OneKey loyalty programme",
+          "summary": "Track benefits and your tier in My account.",
+          "body": "OneKey groups loyalty benefits linked to your stays on Africa Tourism Gate. Open My account → Loyalty to see your tier and available details.\n\nAccumulation and redemption rules follow the current programme. If points seem missing, open a ticket with your booking references."
+        },
+        "passenger-manifest": {
+          "title": "Passenger manifest and travel documents",
+          "summary": "Enter travellers, emergency contacts, and ID documents.",
+          "body": "On a booking detail page (My account → Bookings), complete the passenger manifest when requested: identity, emergency contacts, and documents needed for the stay.\n\nProvide accurate information before departure. If upload or fields fail, use booking chat or a support ticket."
+        },
+        "leave-a-review": {
+          "title": "Leave a review after my stay",
+          "summary": "Rate a product or guide from the booking detail.",
+          "body": "When your stay allows it, open My account → Bookings, then the booking detail and the review section. You can rate the experience and, when offered, a guide.\n\nReviews help other travellers. If the form is missing, the stay may not be eligible yet or the review window has not opened."
         },
         "response-time": {
           "title": "How fast does support reply?",
