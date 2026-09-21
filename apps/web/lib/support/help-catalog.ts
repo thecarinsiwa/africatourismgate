@@ -52,9 +52,13 @@ export const HELP_CATEGORIES: readonly HelpCategory[] = [
     slug: 'booking',
     icon: 'calendar',
     articleSlugs: [
+      'how-to-book',
+      'cart-and-checkout',
+      'request-vs-paid',
       'modify-or-cancel',
       'find-booking',
       'confirmation-email',
+      'booking-chat',
     ],
   },
   {
@@ -85,30 +89,54 @@ export const HELP_CATEGORIES: readonly HelpCategory[] = [
 
 export const HELP_ARTICLES: readonly HelpArticle[] = [
   {
+    id: 'art-how-to-book',
+    slug: 'how-to-book',
+    categorySlug: 'booking',
+    relatedSlugs: ['cart-and-checkout', 'request-vs-paid', 'payment-methods'],
+  },
+  {
+    id: 'art-cart-and-checkout',
+    slug: 'cart-and-checkout',
+    categorySlug: 'booking',
+    relatedSlugs: ['how-to-book', 'payment-methods', 'request-vs-paid'],
+  },
+  {
+    id: 'art-request-vs-paid',
+    slug: 'request-vs-paid',
+    categorySlug: 'booking',
+    relatedSlugs: ['how-to-book', 'cart-and-checkout', 'confirmation-email'],
+  },
+  {
     id: 'art-modify-or-cancel',
     slug: 'modify-or-cancel',
     categorySlug: 'booking',
     popular: true,
-    relatedSlugs: ['find-booking', 'cancellation-policy'],
+    relatedSlugs: ['find-booking', 'cancellation-policy', 'booking-chat'],
   },
   {
     id: 'art-find-booking',
     slug: 'find-booking',
     categorySlug: 'booking',
-    relatedSlugs: ['modify-or-cancel', 'confirmation-email'],
+    relatedSlugs: ['modify-or-cancel', 'confirmation-email', 'booking-chat'],
   },
   {
     id: 'art-confirmation-email',
     slug: 'confirmation-email',
     categorySlug: 'booking',
-    relatedSlugs: ['find-booking', 'how-to-contact'],
+    relatedSlugs: ['find-booking', 'request-vs-paid', 'how-to-contact'],
+  },
+  {
+    id: 'art-booking-chat',
+    slug: 'booking-chat',
+    categorySlug: 'booking',
+    relatedSlugs: ['find-booking', 'how-to-contact', 'modify-or-cancel'],
   },
   {
     id: 'art-payment-methods',
     slug: 'payment-methods',
     categorySlug: 'payment',
     popular: true,
-    relatedSlugs: ['invoice-receipt', 'failed-payment'],
+    relatedSlugs: ['invoice-receipt', 'failed-payment', 'cart-and-checkout'],
   },
   {
     id: 'art-invoice-receipt',
@@ -159,7 +187,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     id: 'art-how-to-contact',
     slug: 'how-to-contact',
     categorySlug: 'contact',
-    relatedSlugs: ['response-time', 'modify-or-cancel'],
+    relatedSlugs: ['response-time', 'booking-chat', 'modify-or-cancel'],
   },
 ] as const;
 
