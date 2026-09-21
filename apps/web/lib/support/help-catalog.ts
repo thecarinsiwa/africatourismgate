@@ -105,6 +105,7 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     id: 'art-how-to-book',
     slug: 'how-to-book',
     categorySlug: 'booking',
+    popular: true,
     relatedSlugs: ['cart-and-checkout', 'request-vs-paid', 'payment-methods'],
   },
   {
@@ -234,7 +235,6 @@ export const HELP_ARTICLES: readonly HelpArticle[] = [
     id: 'art-response-time',
     slug: 'response-time',
     categorySlug: 'contact',
-    popular: true,
     relatedSlugs: ['how-to-contact'],
   },
   {
