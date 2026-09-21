@@ -185,6 +185,7 @@ export const adminBreadcrumbExtraRoutes: AdminBreadcrumbRouteConfig[] = [
   { href: '/parametres/dons', labelKey: 'donations' },
   { href: '/parametres/dons/nouveau', labelKey: 'newDonation' },
   { href: '/parametres/emails', labelKey: 'emails' },
+  { href: '/aide', labelKey: 'adminHelp' },
 ];
 
 export function navGroupMessageKey(groupId: string): string {
