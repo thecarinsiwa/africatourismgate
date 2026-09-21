@@ -16,6 +16,9 @@ coverage
 .vscode/*.log
 *.tsbuildinfo
 
+# Database dumps from prepare-production-db --backup
+database/backups/
+
 # Playwright (apps/web)
 apps/web/test-results/
 apps/web/playwright-report/

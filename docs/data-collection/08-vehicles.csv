@@ -1,0 +1,4 @@
+record_type,agency_name,category_name,license_plate,daily_price_cents,currency,image_urls,avail_start,avail_end,status,notes
+# agency,Rent Kinshasa,,,,,,,,,Agence de location
+# vehicle,Rent Kinshasa,SUV,CD-KIN-123,8000,USD,https://cdn.exemple.cd/suv.jpg,,,,available,
+# availability,Rent Kinshasa,,CD-KIN-123,,,USD,,2026-10-01,2026-10-31,available,Créneau disponibilité

@@ -1,0 +1,11 @@
+section,item_key,language,title_or_label,status,file_or_url,owner,notes
+# hero,slide-1,fr,Bienvenue en Afrique,À demander,assets/hero-1.jpg,Marketing,
+# hero,slide-1,en,Welcome to Africa,À demander,assets/hero-1.jpg,Marketing,
+# about,who-we-are,fr,Qui sommes-nous,À demander,assets/about-fr.md,Direction,
+# legal_terms,cgu,fr,Conditions générales d'utilisation,À demander,assets/cgu-fr.pdf,Juridique,
+# legal_privacy,privacy,fr,Politique de confidentialité,À demander,assets/privacy-fr.pdf,Juridique,
+# why_us,section-main,fr,Pourquoi nous choisir,À demander,,Marketing,
+# happy_customers,stat-clients,fr,Clients satisfaits,À demander,,Marketing,Chiffre réel uniquement
+# blog,post-1,fr,Guide de voyage Kinshasa,À demander,,Contenu,
+# gap,home,fr,Programme GAP,À demander,,GAP,Si programme actif
+# email_branding,footer,fr,Pied de page e-mail,À demander,,Marketing,

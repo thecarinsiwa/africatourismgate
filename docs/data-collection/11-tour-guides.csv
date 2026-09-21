@@ -1,0 +1,3 @@
+display_name,contact_email,type,organization_slug,languages,status,notes
+# Marie Exemple,marie.guide@exemple.cd,internal,africa-tourism-gate,"[""fr"",""en"",""ln""]",active,Guide interne — colonne DB type (pas guide_type)
+# Jean Exemple,jean.guide@exemple.com,external,africa-tourism-gate,"[""fr"",""en""]",active,Guide externe — pas de colonne phone sur tour_guides

@@ -1,0 +1,6 @@
+record_type,airline_iata,airline_name,airport_iata,airport_name,city,country_code,flight_number,departure_airport,arrival_airport,departure_at,arrival_at,class_name,price_cents,currency,seats,notes
+# airline,KQ,Kenya Airways,,,,,,,,,,,,,,,
+# airport,,,FIH,N'djili International Airport,Kinshasa,CD,,,,,,,,,,,
+# airport,,,NBO,Jomo Kenyatta International Airport,Nairobi,KE,,,,,,,,,,,
+# flight,KQ,,FIH,,,,,KQ210,FIH,NBO,2026-10-15T08:00:00,2026-10-15T11:30:00,,,,,
+# flight_class,KQ,,,,,,,KQ210,,,,Economy,25000,USD,20,Classe liée au vol KQ210

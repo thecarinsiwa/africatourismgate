@@ -1,0 +1,4 @@
+record_type,property_name,property_slug,property_type,star_rating,address_line,description,destination_slug,room_name,room_type,max_guests,bed_config,base_price_cents,currency,amenity_codes,image_urls,avail_start,avail_end,avail_stock,notes
+# property,Hotel Exemple,hotel-exemple,hotel,4.0,"Av. du Commerce, Gombe","Hôtel partenaire",kinshasa,,,,,,,,,,,,"Exemple propriété"
+# room,Hotel Exemple,hotel-exemple,,,,,,,Standard Double,standard,2,1 double bed,15000,USD,"wifi,ac",https://cdn.exemple.cd/room1.jpg,,,,
+# availability,Hotel Exemple,hotel-exemple,,,,,,,Standard Double,,,,,USD,,,,2026-10-01,2026-12-31,5,Disponibilités chambres

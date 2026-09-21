@@ -3,19 +3,44 @@
  *
  * Run:
  *   pnpm --filter @africatourismgate/api db:sync
+ *   SEED_PROFILE=prod pnpm db:sync   # skip CMS/demo DML from migrations + seed
  */
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createConnection } from 'mysql2/promise';
+import {
+  INSTALL_SEED_TABLES,
+  PROD_MIGRATION_DATA_TABLES,
+  extractDmlTable,
+  isDataMutationStatement,
+  isProdSeedProfile,
+} from './install-allowed-tables.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '../../..');
 const schemaPath = join(root, 'database/africatourismgate_database.sql');
 const migrationsDir = join(root, 'database/migrations');
-const seedPath = join(root, 'database/seeds/install.seed.sql');
 const migrationsTable = 'schema_migrations';
+const INSTALL_SEED_TABLE_SET = new Set(INSTALL_SEED_TABLES);
+
+function resolveSeedPath() {
+  if (process.env.DATABASE_SEED_FILE) {
+    const custom = process.env.DATABASE_SEED_FILE;
+    const absolute = custom.includes('/') || custom.includes('\\')
+      ? custom
+      : join(root, 'database/seeds', custom);
+    return absolute;
+  }
+
+  const profile = (process.env.SEED_PROFILE ?? 'dev').toLowerCase();
+  const file =
+    profile === 'prod' || profile === 'production'
+      ? 'install.seed.prod.sql'
+      : 'install.seed.sql';
+  return join(root, 'database/seeds', file);
+}
 
 function log(message) {
   console.log(`[db:sync] ${message}`);
@@ -238,7 +263,7 @@ async function appliedMigration(connection, name) {
   return rows[0] ?? null;
 }
 
-async function runMigrations(connection) {
+async function runMigrations(connection, { prodSafe }) {
   await ensureMigrationsTable(connection);
 
   if (!existsSync(migrationsDir)) {
@@ -254,6 +279,15 @@ async function runMigrations(connection) {
     log('No migration files found');
     return;
   }
+
+  if (prodSafe) {
+    log(
+      'Prod seed profile: migration data DML limited to ' +
+        [...PROD_MIGRATION_DATA_TABLES].join(', '),
+    );
+  }
+
+  let skippedDataStatements = 0;
 
   for (const name of migrationFiles) {
     const path = join(migrationsDir, name);
@@ -278,6 +312,22 @@ async function runMigrations(connection) {
 
     log(`Applying migration: ${name}`);
     for (const statement of splitSqlStatements(sql)) {
+      const clean = stripLeadingComments(statement);
+      if (!clean) continue;
+
+      if (prodSafe && isDataMutationStatement(clean)) {
+        const table = extractDmlTable(clean);
+        if (!table || !PROD_MIGRATION_DATA_TABLES.has(table)) {
+          skippedDataStatements += 1;
+          log(
+            `  skip data DML on unauthorized table` +
+              (table ? ` \`${table}\`` : '') +
+              `: ${clean.slice(0, 72)}${clean.length > 72 ? '…' : ''}`,
+          );
+          continue;
+        }
+      }
+
       await connection.query(statement);
     }
 
@@ -286,14 +336,29 @@ async function runMigrations(connection) {
       [name, hash],
     );
   }
+
+  if (prodSafe && skippedDataStatements > 0) {
+    log(
+      `Skipped ${skippedDataStatements} migration data statement(s) outside install-allowed tables`,
+    );
+  }
 }
 
-function seedStatementForInsertOnly(statement) {
+function seedStatementForInsertOnly(statement, { prodSafe }) {
   const clean = stripLeadingComments(statement);
   if (!clean) return null;
 
   if (/^INSERT\s+INTO\b/i.test(clean)) {
-    return statement.replace(/\bINSERT\s+INTO\b/i, 'INSERT IGNORE INTO');
+    if (prodSafe) {
+      const table = extractDmlTable(clean);
+      if (!table || !INSTALL_SEED_TABLE_SET.has(table)) {
+        return { skip: true, reason: table ? `table \`${table}\`` : 'unknown table' };
+      }
+    }
+    return {
+      skip: false,
+      sql: statement.replace(/\bINSERT\s+INTO\b/i, 'INSERT IGNORE INTO'),
+    };
   }
 
   if (/^SET\s+FOREIGN_KEY_CHECKS\b/i.test(clean)) {
@@ -301,13 +366,13 @@ function seedStatementForInsertOnly(statement) {
   }
 
   if (/^SET\s+/i.test(clean)) {
-    return statement;
+    return { skip: false, sql: statement };
   }
 
   return null;
 }
 
-async function syncSeedsInsertOnly(connection) {
+async function syncSeedsInsertOnly(connection, seedPath, { prodSafe }) {
   if (!existsSync(seedPath)) {
     log('No seed file found - skipping seeds');
     return;
@@ -316,30 +381,52 @@ async function syncSeedsInsertOnly(connection) {
   let executed = 0;
   let insertedOrIgnoredRows = 0;
   let skipped = 0;
+  let skippedUnauthorized = 0;
 
-  log('Synchronizing seeds in insert-only mode');
+  log(`Synchronizing seeds in insert-only mode (${seedPath})`);
+  if (prodSafe) {
+    log(
+      'Prod seed profile: seed INSERT limited to ' +
+        INSTALL_SEED_TABLES.join(', '),
+    );
+  }
+
   for (const statement of splitSqlStatements(readFileSync(seedPath, 'utf8'))) {
-    const insertOnlyStatement = seedStatementForInsertOnly(statement);
+    const insertOnlyStatement = seedStatementForInsertOnly(statement, { prodSafe });
     if (!insertOnlyStatement) {
       skipped += 1;
       continue;
     }
+    if (insertOnlyStatement.skip) {
+      skippedUnauthorized += 1;
+      log(`  skip seed INSERT (${insertOnlyStatement.reason})`);
+      continue;
+    }
 
-    const [result] = await connection.query(insertOnlyStatement);
+    const [result] = await connection.query(insertOnlyStatement.sql);
     executed += 1;
     insertedOrIgnoredRows += Number(result?.affectedRows ?? 0);
   }
 
   log(
-    `Seed sync complete (${executed} statements, ${insertedOrIgnoredRows} affected rows, ${skipped} skipped non-insert statements)`,
+    `Seed sync complete (${executed} statements, ${insertedOrIgnoredRows} affected rows, ${skipped} skipped non-insert statements` +
+      (skippedUnauthorized
+        ? `, ${skippedUnauthorized} skipped unauthorized tables`
+        : '') +
+      `)`,
   );
 }
 
 async function main() {
   loadEnv();
   const mysql = getMysqlConfig();
+  const seedPath = resolveSeedPath();
+  const prodSafe = isProdSeedProfile();
 
   log(`Using database "${mysql.database}" on ${mysql.host}:${mysql.port}`);
+  if (prodSafe) {
+    log('SEED_PROFILE=prod — unauthorized table data will not be imported');
+  }
   await ensureDatabaseExists(mysql);
 
   const connection = await createConnection({
@@ -352,8 +439,8 @@ async function main() {
 
   try {
     await importInitialSchema(connection, mysql);
-    await runMigrations(connection);
-    await syncSeedsInsertOnly(connection);
+    await runMigrations(connection, { prodSafe });
+    await syncSeedsInsertOnly(connection, seedPath, { prodSafe });
     log('Database synchronization complete');
   } finally {
     await connection.end();

@@ -1,0 +1,2 @@
+bank_name,account_name,account_number,swift_bic,currency,is_default,notes
+# Rawbank,Africa Tourism Gate SARL,0001234567890,RAWBCDKI,USD,true,Exemple sample — remplacer par le compte réel

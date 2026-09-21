@@ -1,5 +1,7 @@
 # Domaines production
 
+Préparation des **données** avant / pendant le go-live (nettoyage démo, collecte société, modèles CSV) : [production-data-preparation.md](./production-data-preparation.md) · [data-collection/](./data-collection/).
+
 | URL | Application | PM2 | Port interne |
 |-----|-------------|-----|----------------|
 | https://africatourismgate.org | Site public (`apps/web`) | `atg-web` | 3002 |

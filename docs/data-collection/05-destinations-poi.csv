@@ -1,0 +1,3 @@
+record_type,name,slug,country_code,description,is_featured,destination_slug,latitude,longitude,notes
+# destination,Kinshasa,kinshasa,CD,Capitale de la RD Congo,true,,,,Exemple destination
+# poi,Gombe (centre-ville),,,,,kinshasa,-4.3058,15.3000,POI lié à destination_slug=kinshasa
