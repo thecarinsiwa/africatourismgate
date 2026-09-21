@@ -8,6 +8,7 @@ import {
   type AdminHelpArticle,
 } from '../../lib/admin-help/help-catalog';
 import { adminHelpArticlePath } from '../../lib/admin-help/routes';
+import { AdminHelpRichText } from './admin-help-rich-text';
 
 export type AdminHelpArticleBodyProps = {
   article: AdminHelpArticle;
@@ -68,7 +69,7 @@ export function AdminHelpArticleBody({ article }: AdminHelpArticleBodyProps) {
         <div className="space-y-4 text-base leading-relaxed text-atg-fg">
           {paragraphs.map((paragraph, index) => (
             <p key={index} className="m-0 break-words">
-              {paragraph}
+              <AdminHelpRichText text={paragraph} />
             </p>
           ))}
         </div>
