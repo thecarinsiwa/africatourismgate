@@ -254,7 +254,11 @@ const articlesBySlug = new Map(
 );
 
 function normalizeSearchQuery(query: string): string {
-  return query.trim().toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
+  return query
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
 }
 
 function matchesSearch(
