@@ -17,6 +17,9 @@ const DASHBOARD_ARTICLE =
   /Naviguer dans le dashboard|Navigate the dashboard|Navegar por el panel/i;
 const BOOKINGS_ARTICLE =
   /Gérer les réservations|Manage bookings|Gestionar reservas/i;
+const USERS_ARTICLE =
+  /Gérer les utilisateurs|Manage users|Gestionar usuarios/i;
+const USERS_MODULE_LINK = /^(Utilisateurs|Users|Usuarios)$/;
 const RELATED_HEADING =
   /Articles liés|Related articles|Artículos relacionados/i;
 const SEARCH_RESULTS_ARIA =
@@ -253,6 +256,23 @@ test.describe('Admin help center', () => {
         name: /introuvable|not found|no encontrad/i,
       }),
     ).toBeVisible();
+  });
+
+  test('inline article link opens the admin module page', async ({ page }) => {
+    await page.goto('/aide/utilisateurs-acces/gerer-les-utilisateurs');
+
+    await expect(
+      page.getByRole('heading', { name: USERS_ARTICLE, level: 1 }),
+    ).toBeVisible();
+
+    const moduleLink = page
+      .locator('article')
+      .getByRole('link', { name: USERS_MODULE_LINK })
+      .first();
+    await expect(moduleLink).toHaveAttribute('href', '/utilisateurs');
+    await moduleLink.click();
+
+    await expect(page).toHaveURL(/\/utilisateurs\/?$/);
   });
 
   test('hub stays usable on a mobile viewport', async ({ page }) => {
