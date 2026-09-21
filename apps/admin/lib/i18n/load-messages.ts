@@ -29,6 +29,7 @@ export const ADMIN_MODULE_NAMES = [
   'tourGuides',
   'gap',
   'heroSlides',
+  'adminHelp',
 ] as const;
 
 export type AdminModuleName = (typeof ADMIN_MODULE_NAMES)[number];

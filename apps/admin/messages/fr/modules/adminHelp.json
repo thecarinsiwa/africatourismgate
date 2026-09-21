@@ -1,0 +1,199 @@
+{
+  "ui": {
+    "pageTitle": "Centre d'aide",
+    "pageSubtitle": "Comment utiliser l'administration Africa Tourism Gate ?",
+    "searchLabel": "Rechercher dans l'aide",
+    "searchPlaceholder": "Rechercher un article d'aide…",
+    "searchNoResults": "Aucun article ne correspond à votre recherche.",
+    "searchResultsAria": "Résultats de recherche",
+    "categoriesTitle": "Parcourir par thème",
+    "categoriesSubtitle": "Choisissez un sujet pour trouver des réponses détaillées.",
+    "popularTitle": "Articles populaires",
+    "popularSubtitle": "Les sujets les plus utiles pour démarrer.",
+    "articlesInCategory": "{count, plural, one {# article} other {# articles}}",
+    "relatedTitle": "Articles liés",
+    "breadcrumbHome": "Centre d'aide",
+    "backToCategory": "Retour au thème",
+    "backToHub": "Retour au centre d'aide"
+  },
+  "categories": {
+    "prise-en-main": {
+      "title": "Prise en main",
+      "description": "Dashboard, notifications, palette et raccourcis."
+    },
+    "utilisateurs-acces": {
+      "title": "Utilisateurs & accès",
+      "description": "Comptes, employés, sessions et sécurité."
+    },
+    "produits-voyage": {
+      "title": "Produits voyage",
+      "description": "Hébergements, vols, locations, croisières et plus."
+    },
+    "reservations-guides": {
+      "title": "Réservations & guides",
+      "description": "Suivi des réservations et calendrier des guides."
+    },
+    "paiements-promos": {
+      "title": "Paiements & promos",
+      "description": "Paiements, codes promo et promotions."
+    },
+    "gap": {
+      "title": "GAP",
+      "description": "Paramètres, pages, activités, impact et médias."
+    },
+    "contenu-relation": {
+      "title": "Contenu & relation client",
+      "description": "Blog, site, légal, avis et tickets support."
+    },
+    "fidelite": {
+      "title": "Fidélité",
+      "description": "Comptes OneKey et programme de fidélité."
+    },
+    "systeme": {
+      "title": "Système & organisation",
+      "description": "Organisations, rôles, permissions et paramètres."
+    }
+  },
+  "articles": {
+    "naviguer-dans-le-dashboard": {
+      "title": "Naviguer dans le dashboard",
+      "summary": "",
+      "body": ""
+    },
+    "notifications": {
+      "title": "Notifications",
+      "summary": "",
+      "body": ""
+    },
+    "palette-commandes": {
+      "title": "Palette de commandes",
+      "summary": "",
+      "body": ""
+    },
+    "raccourcis-clavier": {
+      "title": "Raccourcis clavier",
+      "summary": "",
+      "body": ""
+    },
+    "gerer-les-utilisateurs": {
+      "title": "Gérer les utilisateurs",
+      "summary": "",
+      "body": ""
+    },
+    "employes-et-departements": {
+      "title": "Employés et départements",
+      "summary": "",
+      "body": ""
+    },
+    "sessions-et-securite": {
+      "title": "Sessions et sécurité",
+      "summary": "",
+      "body": ""
+    },
+    "adresses-et-moyens-paiement": {
+      "title": "Adresses et moyens de paiement",
+      "summary": "",
+      "body": ""
+    },
+    "hebergements": {
+      "title": "Hébergements",
+      "summary": "",
+      "body": ""
+    },
+    "vols-locations-croisieres": {
+      "title": "Vols, locations et croisières",
+      "summary": "",
+      "body": ""
+    },
+    "activites-et-forfaits": {
+      "title": "Activités et forfaits",
+      "summary": "",
+      "body": ""
+    },
+    "destinations": {
+      "title": "Destinations",
+      "summary": "",
+      "body": ""
+    },
+    "gerer-les-reservations": {
+      "title": "Gérer les réservations",
+      "summary": "",
+      "body": ""
+    },
+    "guides-et-calendrier": {
+      "title": "Guides et calendrier",
+      "summary": "",
+      "body": ""
+    },
+    "suivre-les-paiements": {
+      "title": "Suivre les paiements",
+      "summary": "",
+      "body": ""
+    },
+    "codes-promo": {
+      "title": "Codes promo",
+      "summary": "",
+      "body": ""
+    },
+    "promotions": {
+      "title": "Promotions",
+      "summary": "",
+      "body": ""
+    },
+    "parametres-gap": {
+      "title": "Paramètres GAP",
+      "summary": "",
+      "body": ""
+    },
+    "pages-et-activites-gap": {
+      "title": "Pages et activités GAP",
+      "summary": "",
+      "body": ""
+    },
+    "impact-et-medias-gap": {
+      "title": "Impact et médias GAP",
+      "summary": "",
+      "body": ""
+    },
+    "blog-et-site": {
+      "title": "Blog et site",
+      "summary": "",
+      "body": ""
+    },
+    "pages-legales": {
+      "title": "Pages légales",
+      "summary": "",
+      "body": ""
+    },
+    "moderer-les-avis": {
+      "title": "Modérer les avis",
+      "summary": "",
+      "body": ""
+    },
+    "tickets-support-clients": {
+      "title": "Tickets support clients",
+      "summary": "",
+      "body": ""
+    },
+    "comptes-fidelite-onekey": {
+      "title": "Comptes fidélité OneKey",
+      "summary": "",
+      "body": ""
+    },
+    "organisations": {
+      "title": "Organisations",
+      "summary": "",
+      "body": ""
+    },
+    "roles-et-permissions": {
+      "title": "Rôles et permissions",
+      "summary": "",
+      "body": ""
+    },
+    "parametres-systeme": {
+      "title": "Paramètres système",
+      "summary": "",
+      "body": ""
+    }
+  }
+}
