@@ -1,9 +1,10 @@
 'use client';
 
-import { Input } from '@africatourismgate/ui';
+import { Input, cn } from '@africatourismgate/ui';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useId, useState } from 'react';
+import { useId, useState, type KeyboardEvent } from 'react';
 import {
   HELP_ARTICLES,
   searchHelpArticles,
@@ -27,12 +28,67 @@ function useArticleSearchStrings(): Record<string, HelpArticleSearchStrings> {
 
 export function SupportSearch() {
   const t = useTranslations('support');
+  const router = useRouter();
   const inputId = useId();
   const listId = useId();
   const [query, setQuery] = useState('');
+  const [activeIndex, setActiveIndex] = useState(-1);
   const stringsBySlug = useArticleSearchStrings();
   const results = searchHelpArticles(query, stringsBySlug);
   const showResults = query.trim().length > 0;
+  const activeOptionId =
+    activeIndex >= 0 && activeIndex < results.length
+      ? `${listId}-option-${activeIndex}`
+      : undefined;
+
+  function updateQuery(next: string) {
+    setQuery(next);
+    setActiveIndex(-1);
+  }
+
+  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (!showResults || results.length === 0) {
+      if (event.key === 'Escape') {
+        updateQuery('');
+      }
+      return;
+    }
+
+    switch (event.key) {
+      case 'ArrowDown': {
+        event.preventDefault();
+        setActiveIndex((current) =>
+          current < results.length - 1 ? current + 1 : 0,
+        );
+        break;
+      }
+      case 'ArrowUp': {
+        event.preventDefault();
+        setActiveIndex((current) =>
+          current <= 0 ? results.length - 1 : current - 1,
+        );
+        break;
+      }
+      case 'Enter': {
+        if (activeIndex < 0 || activeIndex >= results.length) {
+          return;
+        }
+        event.preventDefault();
+        const article = results[activeIndex];
+        router.push(
+          supportArticlePath(article.categorySlug, article.slug),
+        );
+        break;
+      }
+      case 'Escape': {
+        event.preventDefault();
+        updateQuery('');
+        break;
+      }
+      default:
+        break;
+    }
+  }
 
   return (
     <div className="w-full">
@@ -44,9 +100,11 @@ export function SupportSearch() {
         label={t('searchLabel')}
         placeholder={t('searchPlaceholder')}
         value={query}
-        onChange={(event) => setQuery(event.target.value)}
+        onChange={(event) => updateQuery(event.target.value)}
+        onKeyDown={handleKeyDown}
         aria-controls={showResults ? listId : undefined}
         aria-expanded={showResults}
+        aria-activedescendant={activeOptionId}
         role="combobox"
         aria-autocomplete="list"
         trailing={<HelpSearchIcon className="text-atg-muted" />}
@@ -74,16 +132,27 @@ export function SupportSearch() {
             </div>
           ) : (
             <ul className="divide-y divide-atg-border dark:divide-atg-border">
-              {results.map((article) => {
+              {results.map((article, index) => {
                 const strings = stringsBySlug[article.slug];
+                const optionId = `${listId}-option-${index}`;
+                const isActive = index === activeIndex;
                 return (
-                  <li key={article.id} role="option">
+                  <li
+                    key={article.id}
+                    id={optionId}
+                    role="option"
+                    aria-selected={isActive}
+                  >
                     <Link
                       href={supportArticlePath(
                         article.categorySlug,
                         article.slug,
                       )}
-                      className="block py-3 outline-none transition-colors hover:text-primary focus-visible:text-primary"
+                      className={cn(
+                        'block py-3 outline-none transition-colors hover:text-primary focus-visible:text-primary',
+                        isActive && 'bg-primary/5 text-primary',
+                      )}
+                      onMouseEnter={() => setActiveIndex(index)}
                     >
                       <span className="block text-sm font-medium text-atg-fg">
                         {strings?.title}
