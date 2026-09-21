@@ -8,6 +8,7 @@ import { PageHero } from '../shared/page-hero';
 import {
   AccountAddressesIcon,
   AccountBrowseIcon,
+  AccountHelpIcon,
   AccountLoyaltyIcon,
   AccountPaymentIcon,
   AccountProfileIcon,
@@ -20,6 +21,7 @@ const NAV = [
   { href: '/account/reservations', key: 'reservations' as const, Icon: AccountReservationsIcon },
   { href: '/account/loyalty', key: 'loyalty' as const, Icon: AccountLoyaltyIcon },
   { href: '/account/payment-methods', key: 'paymentMethods' as const, Icon: AccountPaymentIcon },
+  { href: '/support', key: 'help' as const, Icon: AccountHelpIcon },
 ] as const;
 
 type NavKey = (typeof NAV)[number]['key'];
@@ -59,6 +61,7 @@ export function AccountShell({ children }: Props) {
     reservations: t('nav.reservations'),
     loyalty: t('nav.loyalty'),
     paymentMethods: t('nav.paymentMethods'),
+    help: t('nav.help'),
   };
   const pageTitle = resolvePageTitle(
     pathname,
