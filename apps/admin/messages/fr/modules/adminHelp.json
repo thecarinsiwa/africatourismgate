@@ -96,34 +96,34 @@
       "body": "Le module Adresses (/utilisateurs/adresses) affiche les adresses enregistrées par les utilisateurs (facturation, livraison, voyage). Filtrez ou recherchez pour retrouver une entrée liée à un compte.\n\nLes moyens de paiement (/utilisateurs/moyens-paiement) listent les cartes et autres méthodes enregistrées côté utilisateurs. Ces données sont consultatives pour le support et le suivi ; le traitement des paiements de réservation se fait dans le module Paiements.\n\nRespectez la confidentialité : n'exportez et ne partagez ces informations que dans le cadre de vos missions et permissions."
     },
     "hebergements": {
-      "title": "Hébergements",
-      "summary": "",
-      "body": ""
+      "title": "Gérer les hébergements",
+      "summary": "Propriétés, chambres, équipements et disponibilités.",
+      "body": "Le module Hébergements (/hebergements) liste les propriétés (hôtels, lodges, etc.). Filtrez par destination, recherchez par nom, puis ouvrez une fiche pour éditer ou consulter le détail.\n\nCréez une propriété via Nouvel hébergement, puis complétez images, équipements, chambres et disponibilités depuis la page d'édition. Les équipements globaux sont gérés dans le référentiel associé.\n\nLes permissions properties.read / properties.write contrôlent l'accès. Une propriété bien renseignée facilite les réservations et l'affichage côté site public."
     },
     "vols-locations-croisieres": {
       "title": "Vols, locations et croisières",
-      "summary": "",
-      "body": ""
+      "summary": "Catalogue aérien, véhicules et départs de croisière.",
+      "body": "Sous Produits, trois verticales distinctes : Vols (/produits/vols), Locations (/produits/locations) et Croisières (/produits/croisieres).\n\nPour les vols, gérez compagnies, aéroports et offres ; pour les locations, agences, catégories et véhicules avec créneaux ; pour les croisières, navires, lignes, ports et départs (sailings).\n\nUtilisez les écrans « Nouveau… » et les sous-pages (navires, ports, agences…) accessibles depuis le module ou la palette Ctrl+K. Chaque verticale a ses propres permissions (flights, vehicles, cruises)."
     },
     "activites-et-forfaits": {
       "title": "Activités et forfaits",
-      "summary": "",
-      "body": ""
+      "summary": "Expériences, partenaires, créneaux et packages combinés.",
+      "body": "Les activités (/produits/activites) décrivent les expériences et tours. Créez une activité, rattachez une destination et un partenaire, puis ajoutez les créneaux ou options sur la fiche d'édition.\n\nLes forfaits (/produits/forfaits) regroupent plusieurs produits (hébergement, activité, etc.) en une offre packagée. Composez le contenu du forfait puis publiez-le selon le workflow prévu.\n\nPermissions typiques : activities.read/write et packages.read/write. Vérifiez la cohérence des destinations et des prix avant mise en ligne."
     },
     "destinations": {
       "title": "Destinations",
-      "summary": "",
-      "body": ""
+      "summary": "Géographie, points d'intérêt et rattachement des produits.",
+      "body": "Les destinations (/produits/destinations) structurent la géographie de la plateforme (pays, régions, lieux). Recherchez par nom, slug ou code pays.\n\nCréez une destination, puis enrichissez-la avec des points d'intérêt et les coordonnées utiles à la carte. De nombreux produits (hébergements, activités, etc.) s'y rattachent.\n\nPermission destinations.read / destinations.write. Une destination claire améliore la recherche côté site et le filtrage dans l'admin."
     },
     "gerer-les-reservations": {
       "title": "Gérer les réservations",
-      "summary": "",
-      "body": ""
+      "summary": "Suivre les demandes, statuts, voyageurs et paiements liés.",
+      "body": "Le module Réservations (/reservations) centralise les bookings clients. Filtrez par statut, dates ou référence, puis ouvrez le détail pour voir les lignes, voyageurs, documents et historique.\n\nSelon le statut, vous pouvez faire avancer le traitement, consulter les preuves de paiement ou coordonner avec le support. Les permissions bookings.read / bookings.write s'appliquent.\n\nPour un paiement ou un incident client, croisez avec Paiements et Contenu → Support (tickets). Le fil d'Ariane et la palette Ctrl+K aident à basculer rapidement entre ces écrans."
     },
     "guides-et-calendrier": {
-      "title": "Guides et calendrier",
-      "summary": "",
-      "body": ""
+      "title": "Guides touristiques et calendrier",
+      "summary": "Fiches guides, disponibilités et planification.",
+      "body": "Le module Guides (/guides) gère les profils de guides touristiques. Créez un guide, renseignez la bio et les informations utiles, puis suivez son calendrier de disponibilités.\n\nUtilisez les vues de planning pour éviter les conflits d'affectation et aligner les guides avec les réservations ou activités concernées.\n\nPermission guides.read / guides.write. Un guide bien renseigné facilite l'opérationnel terrain et le suivi côté réservations."
     },
     "suivre-les-paiements": {
       "title": "Suivre les paiements",
