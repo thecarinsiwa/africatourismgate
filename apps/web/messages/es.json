@@ -231,7 +231,6 @@
     "breadcrumbHome": "Centro de ayuda",
     "backToCategory": "Volver al tema",
     "backToHub": "Volver al centro de ayuda",
-    "faqTitle": "Preguntas frecuentes",
     "formTitle": "Contactar soporte",
     "formSubtitle": "Describa su solicitud: abrimos un ticket y respondemos por correo.",
     "signInPrompt": "Inicie sesión para enviar una solicitud al soporte.",
@@ -248,28 +247,6 @@
     "subjectRequired": "El asunto es obligatorio.",
     "messageTooShort": "El mensaje debe tener al menos 10 caracteres.",
     "submitError": "No se pudo enviar su solicitud. Inténtelo de nuevo.",
-    "faq": {
-      "booking": {
-        "question": "¿Cómo cambio o cancelo una reserva?",
-        "answer": "Abra Mi cuenta → Reservas, seleccione su estancia y use las acciones disponibles (pagar, cancelar). Si falta una opción, contáctenos con su referencia de reserva."
-      },
-      "payment": {
-        "question": "¿Qué métodos de pago aceptan?",
-        "answer": "En el pago se ofrecen pagos seguros con tarjeta en línea (Stripe). Los cargos y facturas dependen del alojamiento y del producto reservado."
-      },
-      "cancellation": {
-        "question": "¿Cuál es su política de cancelación?",
-        "answer": "Las condiciones varían según el alojamiento o proveedor. Consulte la página del producto y su correo de confirmación. Si tiene dudas, abra un ticket con su referencia de reserva."
-      },
-      "account": {
-        "question": "¿Cómo actualizo mi perfil o direcciones?",
-        "answer": "Desde Mi cuenta, use Perfil y Direcciones. Puede cambiar el idioma de visualización en sus preferencias."
-      },
-      "contact": {
-        "question": "¿En cuánto tiempo responde el soporte?",
-        "answer": "Atendemos las solicitudes de lunes a viernes. La mayoría de los tickets reciben una primera respuesta en 1–2 días hábiles."
-      }
-    },
     "help": {
       "categories": {
         "booking": {

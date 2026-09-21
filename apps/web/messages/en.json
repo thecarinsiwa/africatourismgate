@@ -231,7 +231,6 @@
     "breadcrumbHome": "Help centre",
     "backToCategory": "Back to topic",
     "backToHub": "Back to help centre",
-    "faqTitle": "Frequently asked questions",
     "formTitle": "Contact support",
     "formSubtitle": "Describe your request: we open a ticket and reply by email.",
     "signInPrompt": "Sign in to send a request to support.",
@@ -248,28 +247,6 @@
     "subjectRequired": "Subject is required.",
     "messageTooShort": "Message must be at least 10 characters.",
     "submitError": "Could not send your request. Please try again.",
-    "faq": {
-      "booking": {
-        "question": "How do I change or cancel a booking?",
-        "answer": "Open My account → Bookings, select your stay and use the available actions (pay, cancel). If an option is missing, contact us with your booking reference."
-      },
-      "payment": {
-        "question": "Which payment methods do you accept?",
-        "answer": "Secure online card payments (Stripe) are offered at checkout. Charges and invoices depend on the property and product booked."
-      },
-      "cancellation": {
-        "question": "What is your cancellation policy?",
-        "answer": "Terms vary by property or provider. Check the product page and your confirmation email. If unsure, open a ticket with your booking reference."
-      },
-      "account": {
-        "question": "How do I update my profile or addresses?",
-        "answer": "From My account, use Profile and Addresses. You can change display language in your preferences."
-      },
-      "contact": {
-        "question": "How fast does support reply?",
-        "answer": "We handle requests Monday–Friday. Most tickets get a first reply within 1–2 business days."
-      }
-    },
     "help": {
       "categories": {
         "booking": {
