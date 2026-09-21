@@ -21,6 +21,7 @@ import {
   type AdminHelpArticleSearchStrings,
 } from '../../lib/admin-help/help-catalog';
 import { adminHelpArticlePath } from '../../lib/admin-help/routes';
+import { AdminHelpHighlightText } from './admin-help-highlight';
 
 const EMPTY_SEARCH_QUICK_START_LIMIT = 4;
 const FOCUS_SUGGESTIONS_LIMIT = 5;
@@ -307,11 +308,19 @@ export function AdminHelpSearch() {
                       onMouseEnter={() => setActiveIndex(index)}
                     >
                       <span className="block break-words text-sm font-medium text-atg-fg">
-                        {strings?.title}
+                        {strings?.title ? (
+                          <AdminHelpHighlightText
+                            text={strings.title}
+                            query={debouncedQuery}
+                          />
+                        ) : null}
                       </span>
                       {strings?.summary ? (
                         <span className="mt-0.5 block break-words text-sm text-atg-muted">
-                          {strings.summary}
+                          <AdminHelpHighlightText
+                            text={strings.summary}
+                            query={debouncedQuery}
+                          />
                         </span>
                       ) : null}
                     </Link>
