@@ -127,33 +127,33 @@
     },
     "suivre-les-paiements": {
       "title": "Suivre les paiements",
-      "summary": "",
-      "body": ""
+      "summary": "Statuts, montants et rapprochement avec les réservations.",
+      "body": "Le module Paiements (/paiements) liste les transactions liées aux réservations et autres encaissements. Filtrez par statut, méthode ou période pour retrouver un paiement.\n\nOuvrez le détail pour voir le montant, la référence, le mode (carte, mobile money, hors ligne…) et le lien éventuel vers la réservation. Suivez les échecs ou les paiements en attente de validation.\n\nPermission payments.read (et write selon les actions). Pour un litige client, croisez avec Réservations et les tickets support."
     },
     "codes-promo": {
       "title": "Codes promo",
-      "summary": "",
-      "body": ""
+      "summary": "Créer, limiter et suivre les codes de réduction.",
+      "body": "Les codes promo (/paiements/codes-promo) permettent d'appliquer une réduction au checkout. Créez un code via Nouveau code promo : définissez le type (pourcentage ou montant), la validité, les plafonds d'usage et les conditions.\n\nSurveillez les usages depuis la liste ou la fiche. Désactivez un code dès qu'une campagne se termine pour éviter les abus.\n\nPermission promo_codes.read / promo_codes.write. Testez le code sur un parcours de réservation avant une campagne large."
     },
     "promotions": {
       "title": "Promotions",
-      "summary": "",
-      "body": ""
+      "summary": "Campagnes promotionnelles affichées ou appliquées aux offres.",
+      "body": "Les promotions (/paiements/promotions) couvrent les campagnes plus larges que le simple code (mises en avant, offres saisonnières, etc.). Créez une promotion, renseignez les dates et le périmètre, puis enregistrez.\n\nDistinguez bien promotions (campagne / vitrine) et codes promo (saisie d'un code par le client). Les deux peuvent coexister sur une même période.\n\nPermission promotions.read / promotions.write. Alignez le calendrier promo avec le stock et les tarifs des produits concernés."
     },
     "parametres-gap": {
       "title": "Paramètres GAP",
-      "summary": "",
-      "body": ""
+      "summary": "Configurer le site Gorilla Ambassadors Program.",
+      "body": "GAP (Gorilla Ambassadors) dispose de ses propres paramètres (/gap/parametres). Vous y ajustez la configuration du site GAP (identité, options d'affichage, réglages opérationnels selon ce qui est exposé dans l'écran).\n\nModifiez uniquement les champs que vous maîtrisez, puis enregistrez. Vérifiez l'aperçu ou le site public GAP après un changement sensible.\n\nPermission gap.read / gap.write. Ces réglages sont distincts des paramètres généraux de l'organisation (/parametres)."
     },
     "pages-et-activites-gap": {
       "title": "Pages et activités GAP",
-      "summary": "",
-      "body": ""
+      "summary": "Contenu éditorial et activités du programme ambassadeurs.",
+      "body": "Les pages GAP (/gap/pages) gèrent le contenu éditorial du site ambassadeurs (création, édition, publication). Utilisez Nouvelle page GAP pour démarrer, puis renseignez titre, corps et métadonnées.\n\nLes activités GAP (/gap/activites) décrivent les actions ou expériences liées au programme. Créez et organisez-les comme le catalogue d'activités principal, mais dans le périmètre GAP.\n\nRestez cohérent avec la charte et les paramètres GAP. Permissions gap.read / gap.write."
     },
     "impact-et-medias-gap": {
       "title": "Impact et médias GAP",
-      "summary": "",
-      "body": ""
+      "summary": "Statistiques d'impact et bibliothèque de médias.",
+      "body": "L'impact GAP (/gap/impact) présente les statistiques et indicateurs mis en avant (dons, résultats, jalons). Ajoutez ou mettez à jour une statistique via Nouvelle statistique d'impact.\n\nLes médias GAP (/gap/medias) centralisent images et fichiers réutilisables dans les pages et activités. Téléversez des assets correctement nommés et dimensionnés pour le web.\n\nGardez chiffres et visuels à jour : ils alimentent la crédibilité du programme côté public."
     },
     "blog-et-site": {
       "title": "Blog et site",
