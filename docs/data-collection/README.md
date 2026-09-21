@@ -1,7 +1,8 @@
 # Modèles de collecte de données — Africa Tourism Gate
 
 Fichiers CSV destinés à la **collecte** des données de production auprès de la société.  
-Document parent : [production-data-preparation.md](../production-data-preparation.md) (parties B, C, D).
+Document parent : [production-data-preparation.md](../production-data-preparation.md) (parties B, C, D).  
+Dossier d’envoi société : [TRANSMISSION.md](./TRANSMISSION.md).
 
 **Ces fichiers ne sont pas importés automatiquement.** Après validation (`Validée` dans le formulaire), l’intégration se fait via l’admin et/ou des scripts (Phase 4).
 

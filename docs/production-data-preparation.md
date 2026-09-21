@@ -2,10 +2,10 @@
 
 **Projet :** Africa Tourism Gate  
 **Document :** unique (parties A + B + C + D)  
-**Version :** 1.1  
-**Statut :** Revu tech interne — prêt à transmettre à la société (collecte)  
-**Public :** équipe technique, équipe projet, interlocuteurs société
-**Dernière revue :** 2026-09-21 (Phase 1 — revue interne)
+**Version :** 1.2  
+**Statut :** Collecte **Demandée** — dossier prêt ; envoi effectif à confirmer (voir `docs/data-collection/TRANSMISSION.md`)  
+**Public :** équipe technique, équipe projet, interlocuteurs société  
+**Dernière revue :** 2026-09-21 (Phase 2 — préparation transmission)
 
 ---
 
@@ -370,21 +370,21 @@ L’org seed « Kinshasa Guichet Est » est **de test** : à supprimer, pas à r
 
 | Module | Responsable société | Responsable projet | Statut global | Date cible | Commentaire |
 |--------|---------------------|--------------------|---------------|------------|-------------|
-| Entreprise / branding | | | À demander | | |
-| Utilisateurs / rôles | | | À demander | | |
-| Clients (import) | | | À demander | | |
-| Destinations | | | À demander | | |
-| Hébergement | | | À demander | | |
-| Vols | | | À demander | | |
-| Véhicules | | | À demander | | |
-| Croisières | | | À demander | | |
-| Activités / packages | | | À demander | | |
-| Paiements / banques / MM | | | À demander | | |
-| Paramètres booking | | | À demander | | |
-| CMS / légal | | | À demander | | |
-| GAP | | | À demander | | |
-| Communication (SMTP) | | | À demander | | |
-| POS orgs | | | À demander | | |
+| Entreprise / branding | | | Demandée | | Dossier transmis — voir `docs/data-collection/TRANSMISSION.md` |
+| Utilisateurs / rôles | | | Demandée | | |
+| Clients (import) | | | Demandée | | Facultatif |
+| Destinations | | | Demandée | | |
+| Hébergement | | | Demandée | | Remplir si verticale active |
+| Vols | | | Demandée | | Remplir si verticale active |
+| Véhicules | | | Demandée | | Remplir si verticale active |
+| Croisières | | | Demandée | | Remplir si verticale active |
+| Activités / packages | | | Demandée | | Remplir si verticale active |
+| Paiements / banques / MM | | | Demandée | | Secrets via canal sécurisé |
+| Paramètres booking | | | Demandée | | |
+| CMS / légal | | | Demandée | | CGU / privacy obligatoires |
+| GAP | | | Demandée | | Si programme actif |
+| Communication (SMTP) | | | Demandée | | Secrets via canal sécurisé |
+| POS orgs | | | Demandée | | Si POS multi-guichet |
 
 ### 5.4 Tableaux de collecte détaillés
 
@@ -394,82 +394,82 @@ Colonnes : **Donnée | Description | Format | Obligatoire | Exemple | Service | 
 
 | Donnée | Description | Format | Obligatoire | Exemple | Service | Statut | Date | Commentaire |
 |--------|-------------|--------|-------------|---------|---------|--------|------|-------------|
-| Nom affiché | Marque | Texte | Oui | Africa Tourism Gate | | À demander | | |
-| Raison sociale | Légal | Texte | Oui | … SARL | | À demander | | |
-| Slug | Technique | kebab-case | Oui | africa-tourism-gate | | À demander | | |
-| E-mail contact | Org | E-mail | Oui | contact@… | | À demander | | |
-| Devise | ISO 4217 | Texte | Oui | USD | | À demander | | |
-| Timezone | IANA | Texte | Oui | Africa/Kinshasa | | À demander | | |
-| Langue défaut | Code | Texte | Oui | fr | | À demander | | |
-| Couleur primaire | Hex | Texte | Oui | #0B6E4F | | À demander | | |
-| Couleur secondaire | Hex | Texte | Non | #199a45 | | À demander | | |
-| Logo | Fichier / URL | PNG/SVG | Oui | | | À demander | | |
-| Localisation affichée | Texte | Texte | Oui | Kinshasa, RD Congo | | À demander | | |
-| Facebook / Instagram / X | URL | URL | Non | | | À demander | | |
+| Nom affiché | Marque | Texte | Oui | Africa Tourism Gate | | Demandée | 2026-09-21 | |
+| Raison sociale | Légal | Texte | Oui | … SARL | | Demandée | 2026-09-21 | |
+| Slug | Technique | kebab-case | Oui | africa-tourism-gate | | Demandée | 2026-09-21 | |
+| E-mail contact | Org | E-mail | Oui | contact@… | | Demandée | 2026-09-21 | |
+| Devise | ISO 4217 | Texte | Oui | USD | | Demandée | 2026-09-21 | |
+| Timezone | IANA | Texte | Oui | Africa/Kinshasa | | Demandée | 2026-09-21 | |
+| Langue défaut | Code | Texte | Oui | fr | | Demandée | 2026-09-21 | |
+| Couleur primaire | Hex | Texte | Oui | #0B6E4F | | Demandée | 2026-09-21 | |
+| Couleur secondaire | Hex | Texte | Non | #199a45 | | Demandée | 2026-09-21 | |
+| Logo | Fichier / URL | PNG/SVG | Oui | | | Demandée | 2026-09-21 | |
+| Localisation affichée | Texte | Texte | Oui | Kinshasa, RD Congo | | Demandée | 2026-09-21 | |
+| Facebook / Instagram / X | URL | URL | Non | | | Demandée | 2026-09-21 | |
 
 #### C.2 — Utilisateurs et staff
 
 | Donnée | Description | Format | Obligatoire | Exemple | Service | Statut | Date | Commentaire |
 |--------|-------------|--------|-------------|---------|---------|--------|------|-------------|
-| Super admin | Compte racine | E-mail + MDP | Oui | | IT | À demander | | |
-| Org admins | Liste | CSV ligne | Oui | | Ops | À demander | | |
-| Support | Liste | CSV ligne | Non | | Support | À demander | | |
-| Employés POS | Liste | CSV ligne | Si POS | | Ops | À demander | | |
-| Départements | Liste | Texte | Non | | RH | À demander | | |
-| Guides | Liste | CSV | Non | | Ops | À demander | | |
+| Super admin | Compte racine | E-mail + MDP | Oui | | IT | Demandée | 2026-09-21 | |
+| Org admins | Liste | CSV ligne | Oui | | Ops | Demandée | 2026-09-21 | |
+| Support | Liste | CSV ligne | Non | | Support | Demandée | 2026-09-21 | |
+| Employés POS | Liste | CSV ligne | Si POS | | Ops | Demandée | 2026-09-21 | |
+| Départements | Liste | Texte | Non | | RH | Demandée | 2026-09-21 | |
+| Guides | Liste | CSV | Non | | Ops | Demandée | 2026-09-21 | |
 
 #### C.3 — Paiements
 
 | Donnée | Description | Format | Obligatoire | Exemple | Service | Statut | Date | Commentaire |
 |--------|-------------|--------|-------------|---------|---------|--------|------|-------------|
-| Activer Stripe | Oui/Non | Bool | Oui | Oui | Finance | À demander | | |
-| Activer cash | Oui/Non | Bool | Oui | Non | Finance | À demander | | |
-| Activer virement | Oui/Non | Bool | Oui | Oui | Finance | À demander | | |
-| Activer Mobile Money | Oui/Non | Bool | Oui | Oui | Finance | À demander | | Au moins un moyen doit être `true` |
-| Clés Stripe | Env | Secrets | Si Stripe | | IT / Finance | À demander | | Canal sécurisé |
-| Banque / titulaire / n° / SWIFT / devise | Compte B2B | Texte | Si virement | | Finance | À demander | | |
-| Pays MM | ISO2 + nom | Texte | Si MM | CD | Finance | À demander | | |
-| Opérateurs MM | Noms | Texte | Si MM | M-Pesa | Finance | À demander | | |
-| Numéros MM | E.164 | Téléphone | Si MM | +243… | Finance | À demander | | |
-| Acomptes activés | Oui/Non | Bool | Non | Non | Finance | À demander | | |
+| Activer Stripe | Oui/Non | Bool | Oui | Oui | Finance | Demandée | 2026-09-21 | |
+| Activer cash | Oui/Non | Bool | Oui | Non | Finance | Demandée | 2026-09-21 | |
+| Activer virement | Oui/Non | Bool | Oui | Oui | Finance | Demandée | 2026-09-21 | |
+| Activer Mobile Money | Oui/Non | Bool | Oui | Oui | Finance | Demandée | 2026-09-21 | Au moins un moyen doit être `true` |
+| Clés Stripe | Env | Secrets | Si Stripe | | IT / Finance | Demandée | 2026-09-21 | Canal sécurisé |
+| Banque / titulaire / n° / SWIFT / devise | Compte B2B | Texte | Si virement | | Finance | Demandée | 2026-09-21 | |
+| Pays MM | ISO2 + nom | Texte | Si MM | CD | Finance | Demandée | 2026-09-21 | |
+| Opérateurs MM | Noms | Texte | Si MM | M-Pesa | Finance | Demandée | 2026-09-21 | |
+| Numéros MM | E.164 | Téléphone | Si MM | +243… | Finance | Demandée | 2026-09-21 | |
+| Acomptes activés | Oui/Non | Bool | Non | Non | Finance | Demandée | 2026-09-21 | |
 
 #### C.4 — Catalogue (cocher les verticales actives au lancement)
 
 | Verticale | Active au go-live ? (Oui/Non) | Fichier CSV associé | Statut | Date | Commentaire |
 |-----------|-------------------------------|---------------------|--------|------|-------------|
-| Destinations / POI | | `05-destinations-poi.csv` | À demander | | |
-| Hébergement | | `06-properties-rooms.csv` | À demander | | |
-| Vols | | `07-flights.csv` | À demander | | |
-| Véhicules | | `08-vehicles.csv` | À demander | | |
-| Croisières | | `09-cruises.csv` | À demander | | |
-| Activités / packages | | `10-activities-packages.csv` | À demander | | |
+| Destinations / POI | | `05-destinations-poi.csv` | Demandée | 2026-09-21 | |
+| Hébergement | | `06-properties-rooms.csv` | Demandée | 2026-09-21 | |
+| Vols | | `07-flights.csv` | Demandée | 2026-09-21 | |
+| Véhicules | | `08-vehicles.csv` | Demandée | 2026-09-21 | |
+| Croisières | | `09-cruises.csv` | Demandée | 2026-09-21 | |
+| Activités / packages | | `10-activities-packages.csv` | Demandée | 2026-09-21 | |
 
 #### C.5 — Paramètres booking
 
 | Donnée | Description | Format | Obligatoire | Exemple | Service | Statut | Date | Commentaire |
 |--------|-------------|--------|-------------|---------|---------|--------|------|-------------|
-| holdMinutes | Hold panier | Entier | Oui | 15 | Produit | À demander | | |
-| allowGuestCheckout | Invité | Bool | Oui | true | Produit | À demander | | |
-| Mode room | immediate/assisted | Enum | Oui | immediate | Produit | À demander | | |
-| Mode flight_class | idem | Enum | Oui | immediate | Produit | À demander | | |
-| Mode vehicle | idem | Enum | Oui | immediate | Produit | À demander | | |
-| Mode cabin | idem | Enum | Oui | immediate | Produit | À demander | | |
-| Mode activity_schedule | idem | Enum | Oui | assisted | Produit | À demander | | |
-| Mode package | idem | Enum | Oui | assisted | Produit | À demander | | |
+| holdMinutes | Hold panier | Entier | Oui | 15 | Produit | Demandée | 2026-09-21 | |
+| allowGuestCheckout | Invité | Bool | Oui | true | Produit | Demandée | 2026-09-21 | |
+| Mode room | immediate/assisted | Enum | Oui | immediate | Produit | Demandée | 2026-09-21 | |
+| Mode flight_class | idem | Enum | Oui | immediate | Produit | Demandée | 2026-09-21 | |
+| Mode vehicle | idem | Enum | Oui | immediate | Produit | Demandée | 2026-09-21 | |
+| Mode cabin | idem | Enum | Oui | immediate | Produit | Demandée | 2026-09-21 | |
+| Mode activity_schedule | idem | Enum | Oui | assisted | Produit | Demandée | 2026-09-21 | |
+| Mode package | idem | Enum | Oui | assisted | Produit | Demandée | 2026-09-21 | |
 
 #### C.6 — CMS / légal / GAP / communication
 
 | Donnée | Description | Format | Obligatoire | Service | Statut | Date | Commentaire |
 |--------|-------------|--------|-------------|--------|--------|------|-------------|
-| Hero slides | Contenu + images | Checklist / fichiers | Oui | Marketing | À demander | | |
-| About + équipe | Textes + photos | Fichiers | Oui | Direction | À demander | | |
-| CGU | Texte validé | DOC/PDF/MD | Oui | Juridique | À demander | | |
-| Privacy | Texte validé | DOC/PDF/MD | Oui | Juridique | À demander | | |
-| Blog / Why us / Happy customers | Contenu | Fichiers | Non | Marketing | À demander | | |
-| Contenu GAP | Si programme actif | Fichiers | Si GAP | GAP | À demander | | |
-| SMTP | Config e-mail | Secrets env | Oui | IT | À demander | | |
-| Branding e-mail | JSON / consignes | Texte | Oui | Marketing | À demander | | |
-| Codes promo réels | Liste | CSV | Non | Marketing | À demander | | |
+| Hero slides | Contenu + images | Checklist / fichiers | Oui | Marketing | Demandée | 2026-09-21 | |
+| About + équipe | Textes + photos | Fichiers | Oui | Direction | Demandée | 2026-09-21 | |
+| CGU | Texte validé | DOC/PDF/MD | Oui | Juridique | Demandée | 2026-09-21 | |
+| Privacy | Texte validé | DOC/PDF/MD | Oui | Juridique | Demandée | 2026-09-21 | |
+| Blog / Why us / Happy customers | Contenu | Fichiers | Non | Marketing | Demandée | 2026-09-21 | |
+| Contenu GAP | Si programme actif | Fichiers | Si GAP | GAP | Demandée | 2026-09-21 | |
+| SMTP | Config e-mail | Secrets env | Oui | IT | Demandée | 2026-09-21 | |
+| Branding e-mail | JSON / consignes | Texte | Oui | Marketing | Demandée | 2026-09-21 | |
+| Codes promo réels | Liste | CSV | Non | Marketing | Demandée | 2026-09-21 | |
 
 ### 5.5 Contacts projet
 
@@ -683,6 +683,7 @@ Exemples : `ORG_POS_GUICHET_EST`, `PROP_DEMO_HOTEL`, `ROOM_DEMO_STD`, `FLIGHT_DE
 |---------|------|--------|-------------|
 | 1.0 | 2026-09-20 | Équipe projet | Création document unique A+B+C+D |
 | 1.1 | 2026-09-21 | Équipe projet | Revue tech interne ; corrections schéma / paiements / guides / IDs |
+| 1.2 | 2026-09-21 | Équipe projet | Phase 2 : dossier transmission + statuts → `Demandée` |
 
 ---
 
