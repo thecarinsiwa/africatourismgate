@@ -15,6 +15,7 @@ import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { SupportBreadcrumbs } from './support-breadcrumbs';
 import { HelpTopicIcon } from './support-help-icons';
+import { SupportSearch } from './support-search';
 
 type SupportCategoryPageContentProps = {
   categorySlug: HelpCategorySlug;
@@ -61,6 +62,10 @@ export function SupportCategoryPageContent({
               </p>
             </div>
           </header>
+
+          <div className="mb-8">
+            <SupportSearch />
+          </div>
 
           <ul className="divide-y divide-atg-border border-y border-atg-border dark:divide-atg-border dark:border-atg-border">
             {articles.map((article) => (
