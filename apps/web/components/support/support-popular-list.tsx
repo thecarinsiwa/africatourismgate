@@ -1,0 +1,44 @@
+'use client';
+
+import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { getPopularArticles } from '../../lib/support/help-catalog';
+import { supportArticlePath } from '../../lib/support/routes';
+
+export function SupportPopularList() {
+  const t = useTranslations('support');
+  const articles = getPopularArticles();
+
+  return (
+    <section aria-labelledby="support-popular-heading">
+      <h2
+        id="support-popular-heading"
+        className="text-lg font-semibold text-atg-fg"
+      >
+        {t('popularTitle')}
+      </h2>
+      <p className="mt-1 text-sm text-atg-muted">{t('popularSubtitle')}</p>
+
+      <ul className="mt-4 divide-y divide-atg-border border-y border-atg-border dark:divide-atg-border dark:border-atg-border">
+        {articles.map((article) => (
+          <li key={article.id}>
+            <Link
+              href={supportArticlePath(article.categorySlug, article.slug)}
+              className="flex items-start justify-between gap-4 py-3.5 outline-none transition-colors hover:text-primary focus-visible:text-primary"
+            >
+              <span className="text-sm font-medium text-atg-fg">
+                {t(`help.articles.${article.slug}.title`)}
+              </span>
+              <span
+                aria-hidden
+                className="mt-0.5 shrink-0 text-atg-muted"
+              >
+                →
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}

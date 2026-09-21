@@ -19,6 +19,7 @@
     "pages": "Nos Produits",
     "blog": "Blog",
     "packages": "Forfaits",
+    "help": "Aide",
     "hotels": "Hôtels",
     "flights": "Vols",
     "cars": "Location de Voitures",
@@ -213,11 +214,23 @@
     "breadcrumbBlog": "Blog"
   },
   "support": {
-    "metaTitle": "Aide et support",
-    "metaDescription": "Consultez la FAQ Africa Tourism Gate ou contactez notre équipe pour vos réservations et votre compte.",
+    "metaTitle": "Centre d'aide",
+    "metaDescription": "Parcourez le centre d'aide Africa Tourism Gate : thèmes, articles et contact support pour vos réservations et votre compte.",
     "pageTitle": "Centre d'aide",
-    "pageSubtitle": "Réponses aux questions fréquentes et formulaire pour joindre notre équipe support.",
-    "faqTitle": "Questions fréquentes",
+    "pageSubtitle": "Comment pouvons-nous vous aider ?",
+    "searchLabel": "Rechercher dans l'aide",
+    "searchPlaceholder": "Rechercher un article d'aide…",
+    "searchNoResults": "Aucun article ne correspond à votre recherche.",
+    "searchResultsAria": "Résultats de recherche",
+    "categoriesTitle": "Parcourir par thème",
+    "categoriesSubtitle": "Choisissez un sujet pour trouver des réponses détaillées.",
+    "popularTitle": "Articles populaires",
+    "popularSubtitle": "Les sujets les plus consultés par nos voyageurs.",
+    "articlesInCategory": "{count, plural, one {# article} other {# articles}}",
+    "relatedTitle": "Articles liés",
+    "breadcrumbHome": "Centre d'aide",
+    "backToCategory": "Retour au thème",
+    "backToHub": "Retour au centre d'aide",
     "formTitle": "Contacter le support",
     "formSubtitle": "Décrivez votre demande : nous créons un ticket et vous répondons par e-mail.",
     "signInPrompt": "Connectez-vous pour envoyer une demande au support.",
@@ -234,28 +247,144 @@
     "subjectRequired": "Le sujet est obligatoire.",
     "messageTooShort": "Le message doit contenir au moins 10 caractères.",
     "submitError": "Impossible d'envoyer votre demande. Veuillez réessayer.",
-    "faq": {
-      "booking": {
-        "question": "Comment modifier ou annuler une réservation ?",
-        "answer": "Ouvrez Mon compte → Réservations, sélectionnez votre séjour puis suivez les options disponibles (paiement, annulation). Si le bouton n'apparaît pas, contactez-nous avec votre numéro de réservation."
+    "help": {
+      "categories": {
+        "booking": {
+          "title": "Réservations",
+          "description": "Modifier, retrouver ou confirmer un séjour."
+        },
+        "payment": {
+          "title": "Paiements",
+          "description": "Moyens de paiement, factures et incidents."
+        },
+        "cancellation": {
+          "title": "Annulations & remboursements",
+          "description": "Conditions d'annulation et délais de remboursement."
+        },
+        "account": {
+          "title": "Compte & profil",
+          "description": "Profil, adresses, langue et sécurité."
+        },
+        "contact": {
+          "title": "Nous contacter",
+          "description": "Délais de réponse et comment joindre le support."
+        }
       },
-      "payment": {
-        "question": "Quels moyens de paiement acceptez-vous ?",
-        "answer": "Les paiements en ligne sécurisés (carte bancaire via Stripe) sont proposés au moment de la confirmation. Le débit et la facture dépendent de l'établissement et du type de produit réservé."
-      },
-      "cancellation": {
-        "question": "Quelle est votre politique d'annulation ?",
-        "answer": "Les conditions varient selon l'hébergement ou le prestataire. Consultez les détails sur la fiche produit et dans votre confirmation. En cas de doute, ouvrez un ticket avec votre référence de réservation."
-      },
-      "account": {
-        "question": "Comment mettre à jour mon profil ou mes adresses ?",
-        "answer": "Depuis Mon compte, rubriques Profil et Adresses. La langue d'affichage peut être modifiée dans vos préférences."
-      },
-      "contact": {
-        "question": "Quel délai de réponse du support ?",
-        "answer": "Nous traitons les demandes du lundi au vendredi. La plupart des tickets reçoivent une première réponse sous 24 à 48 h ouvrées."
+      "articles": {
+        "how-to-book": {
+          "title": "Comment réserver un séjour ou une activité ?",
+          "summary": "De la recherche à la confirmation, étape par étape.",
+          "body": "Sur l'accueil, utilisez la recherche pour choisir un produit : hôtels, vols, voitures, croisières, activités ou forfaits. Ouvrez une fiche, sélectionnez vos dates ou options, puis ajoutez au panier.\n\nPoursuivez vers /booking/cart puis le récapitulatif pour choisir le mode de paiement. Une fois le paiement validé (ou la demande envoyée), vous retrouvez le séjour dans Mon compte → Réservations."
+        },
+        "cart-and-checkout": {
+          "title": "Panier et parcours de paiement",
+          "summary": "Comprendre les étapes cart → récap → confirmation.",
+          "body": "Le panier (/booking/cart) regroupe les éléments sélectionnés avant validation. Vérifiez dates, voyageurs et montant, puis passez au récapitulatif pour choisir le paiement.\n\nLa connexion est requise pour finaliser. Après succès, une page de confirmation s'affiche et un e-mail est envoyé. Vous pouvez aussi rouvrir le détail depuis Mon compte → Réservations."
+        },
+        "request-vs-paid": {
+          "title": "Demande de réservation ou paiement immédiat ?",
+          "summary": "Différence entre confirmation payée et demande en attente.",
+          "body": "Certains produits se confirment dès le paiement en ligne (carte). D'autres passent par une demande : vous validez le parcours jusqu'à /booking/request-success, puis l'équipe ou le prestataire revient vers vous.\n\nLe statut apparaît dans Mon compte → Réservations. Tant que le paiement n'est pas validé ou la demande acceptée, le séjour n'est pas définitivement confirmé."
+        },
+        "modify-or-cancel": {
+          "title": "Comment modifier ou annuler une réservation ?",
+          "summary": "Gérez votre séjour depuis Mon compte ou contactez le support.",
+          "body": "Ouvrez Mon compte → Réservations, sélectionnez votre séjour, puis utilisez les actions disponibles (paiement restant, annulation, documents). Les options dépendent du statut et des conditions du produit.\n\nSi un bouton n'apparaît pas, les conditions du prestataire peuvent l'interdire ou exiger une demande manuelle. Ouvrez alors un ticket ou le chat de la réservation avec votre référence.\n\nAvant d'annuler, consultez aussi les articles sur la politique d'annulation et les délais de remboursement."
+        },
+        "find-booking": {
+          "title": "Où retrouver ma réservation ?",
+          "summary": "Accédez à l'historique et au détail de vos séjours.",
+          "body": "Connectez-vous, puis ouvrez Mon compte → Réservations. La liste affiche le statut, les dates et un accès au détail de chaque séjour.\n\nSur le détail, vous trouverez paiement, annulation (si disponible), manifeste voyageurs, avis et chat. Gardez l'e-mail de confirmation pour retrouver le numéro de réservation.\n\nSi rien n'apparaît après un paiement, vérifiez le compte utilisé au checkout ou ouvrez un ticket avec l'e-mail et la date du paiement."
+        },
+        "confirmation-email": {
+          "title": "Je n'ai pas reçu mon e-mail de confirmation",
+          "summary": "Vérifiez vos dossiers et retrouvez la confirmation dans votre compte.",
+          "body": "Vérifiez d'abord les dossiers spam / courrier indésirable, ainsi que l'adresse saisie au checkout. L'e-mail peut mettre quelques minutes à arriver.\n\nEn parallèle, ouvrez Mon compte → Réservations : le séjour y figure souvent même sans e-mail. Vous pouvez aussi consulter la page de succès juste après /booking/success.\n\nSi la réservation est absente après plusieurs minutes, ouvrez un ticket avec l'e-mail utiliséé au paiement et, si possible, la référence affichée à l'écran."
+        },
+        "booking-chat": {
+          "title": "Comment utiliser le chat d'une réservation ?",
+          "summary": "Échangez avec l'équipe au sujet d'un séjour précis.",
+          "body": "Ouvrez Mon compte → Réservations, sélectionnez le séjour concerné, puis le chat lié à cette réservation. Ce canal sert aux questions sur ce séjour (dates, documents, suite du voyage).\n\nPour une demande générale (compte, facturation hors séjour), utilisez plutôt le formulaire Contacter le support en bas du centre d'aide."
+        },
+        "payment-methods": {
+          "title": "Quels moyens de paiement acceptez-vous ?",
+          "summary": "Carte en ligne et, selon le produit, options hors carte.",
+          "body": "Au récapitulatif (/booking/recap), le paiement par carte bancaire sécurisé (Stripe) est proposé pour de nombreuses confirmations immédiates. Le débit et la facture dépendent du produit réservé.\n\nSelon le cas, d’autres options (espèces, virement, mobile money) peuvent apparaître — voir l’article sur les paiements hors carte.\n\nVous pouvez enregistrer une carte dans Mon compte → Moyens de paiement pour accélérer les prochains checkouts."
+        },
+        "offline-payments": {
+          "title": "Espèces, virement ou mobile money",
+          "summary": "Payer hors carte bancaire lorsque l'option est proposée.",
+          "body": "Selon le produit et le récapitulatif, des options hors carte peuvent être proposées : espèces, virement bancaire ou mobile money. Suivez les instructions affichées après validation ; la confirmation dépend de la réception du paiement.\n\nRetrouvez le statut dans Mon compte → Réservations. En cas de doute sur un transfert, ouvrez un ticket avec la référence et la preuve de paiement."
+        },
+        "saved-cards": {
+          "title": "Gérer mes moyens de paiement enregistrés",
+          "summary": "Ajouter ou retirer une carte dans Mon compte.",
+          "body": "Dans Mon compte → Moyens de paiement, vous pouvez enregistrer une carte pour accélérer les prochains checkouts, ou supprimer une carte devenue inutile.\n\nLes données de carte sont traitées de façon sécurisée via le prestataire de paiement. Ne partagez jamais vos codes dans le chat ou un ticket support."
+        },
+        "invoice-receipt": {
+          "title": "Comment obtenir une facture ou un reçu ?",
+          "summary": "Téléchargez ou demandez votre justificatif de paiement.",
+          "body": "Après un paiement réussi, un reçu est en général envoyé par e-mail. Conservez aussi la page /booking/success et le détail dans Mon compte → Réservations.\n\nSur le détail du séjour, un PDF de confirmation peut être disponible selon le produit. Pour une facture nominative (raison sociale, TVA), ouvrez un ticket avec votre référence.\n\nLes justificatifs hors carte suivent les instructions affichées après validation du mode de paiement choisi."
+        },
+        "failed-payment": {
+          "title": "Mon paiement a échoué",
+          "summary": "Que faire si la carte est refusée ou le débit incomplet.",
+          "body": "Sur le récapitulatif ou la page de confirmation, vérifiez le plafond de la carte, la date d'expiration et réessayez. Aucun séjour n'est confirmé tant que le paiement n'est pas validé.\n\nVous pouvez aussi revenir depuis Mon compte → Réservations si un paiement restant est proposé, ou choisir une autre option affichée au checkout.\n\nSi un montant a été réservé sans confirmation, contactez le support avec la date, le montant et la référence éventuelle — ne renvoyez jamais le cryptogramme dans un ticket."
+        },
+        "cancellation-policy": {
+          "title": "Quelle est votre politique d'annulation ?",
+          "summary": "Les conditions dépendent de l'hébergement ou du prestataire.",
+          "body": "Les conditions d'annulation varient selon l'hôtel, le vol, le véhicule, la croisière, l'activité ou le forfait. Elles figurent sur la fiche produit et dans votre e-mail / détail de confirmation.\n\nPour annuler quand c'est autorisé : Mon compte → Réservations → détail du séjour. Si le bouton est absent, une demande via ticket ou chat peut être nécessaire.\n\nAvant d'annuler, lisez aussi les délais de remboursement pour savoir quand et comment les fonds reviennent."
+        },
+        "refund-timeline": {
+          "title": "Combien de temps pour un remboursement ?",
+          "summary": "Délais après une annulation éligible.",
+          "body": "Après une annulation conforme aux conditions du produit, le remboursement est traité par le prestataire et votre banque ou opérateur de paiement. Comptez en général quelques jours ouvrés.\n\nLe statut du séjour se met à jour dans Mon compte → Réservations. Conservez la référence pour tout suivi.\n\nAu-delà du délai indiqué ou en cas d’écart de montant, ouvrez un ticket avec la preuve d’annulation et le relevé concerné."
+        },
+        "update-profile": {
+          "title": "Comment mettre à jour mon profil ?",
+          "summary": "Modifier nom, téléphone, langue et avatar.",
+          "body": "Ouvrez Mon compte → Profil pour mettre à jour vos informations personnelles (nom, téléphone, avatar) et vos préférences d'affichage, y compris la langue.\n\nLes adresses se gèrent séparément dans Mon compte → Adresses. Les voyageurs d'un séjour se renseignent sur le manifeste de la réservation.\n\nAprès enregistrement, les changements s'appliquent aux prochaines réservations et à l'affichage du site."
+        },
+        "manage-addresses": {
+          "title": "Gérer mes adresses",
+          "summary": "Ajouter, modifier ou supprimer une adresse de facturation ou de contact.",
+          "body": "Ouvrez Mon compte → Adresses pour enregistrer une adresse de facturation ou de contact. Vous pouvez en ajouter plusieurs et les mettre à jour avant une réservation.\n\nUne adresse à jour facilite les factures et le suivi. Elle est distincte des informations voyageurs du manifeste sur une réservation."
+        },
+        "password-security": {
+          "title": "Mot de passe et sécurité du compte",
+          "summary": "Protégez votre compte et récupérez l'accès.",
+          "body": "Choisissez un mot de passe unique et fort. Sur la page de connexion (/booking/login), utilisez « Mot de passe oublié » si vous ne pouvez plus vous connecter.\n\nEn cas de suspicion d’accès non autorisé, changez le mot de passe dès que possible, vérifiez Mon compte → Moyens de paiement, puis contactez le support.\n\nNe communiquez jamais votre mot de passe dans le chat réservation ni dans un ticket."
+        },
+        "onekey-loyalty": {
+          "title": "Programme de fidélité OneKey",
+          "summary": "Suivre vos avantages et votre palier dans Mon compte.",
+          "body": "OneKey regroupe vos avantages fidélité liés à vos séjours sur Africa Tourism Gate. Consultez Mon compte → Fidélité pour voir votre palier et les informations disponibles.\n\nLes règles d'accumulation et d'utilisation dépendent du programme en vigueur. Pour une question sur des points manquants, ouvrez un ticket avec vos références de réservation."
+        },
+        "passenger-manifest": {
+          "title": "Manifeste et documents voyageurs",
+          "summary": "Renseigner les voyageurs, contacts d'urgence et pièces d'identité.",
+          "body": "Sur le détail d'une réservation (Mon compte → Réservations), complétez le manifeste voyageurs lorsque demandé : identité, contacts d'urgence et documents utiles au séjour.\n\nFournissez des informations exactes avant le départ. En cas de difficulté d'upload ou de champ manquant, utilisez le chat de la réservation ou un ticket support."
+        },
+        "leave-a-review": {
+          "title": "Laisser un avis après mon séjour",
+          "summary": "Noter un produit ou un guide depuis le détail de réservation.",
+          "body": "Lorsque votre séjour le permet, ouvrez Mon compte → Réservations, puis le détail du séjour et la section avis. Vous pouvez noter l'expérience et, le cas échéant, un guide.\n\nLes avis aident les autres voyageurs. Si le formulaire n'apparaît pas encore, le séjour n'est peut-être pas éligible ou le délai d'ouverture n'est pas atteint."
+        },
+        "response-time": {
+          "title": "Quel délai de réponse du support ?",
+          "summary": "Première réponse sous 24 à 48 h ouvrées en général.",
+          "body": "Nous traitons les tickets du lundi au vendredi. La plupart reçoivent une première réponse sous 24 à 48 h ouvrées.\n\nPour une question urgente liée à un séjour déjà réservé, privilégiez aussi le chat de la réservation (Mon compte → Réservations → détail).\n\nIndiquez toujours votre référence de réservation pour accélérer le traitement."
+        },
+        "how-to-contact": {
+          "title": "Comment contacter le support ?",
+          "summary": "Chat réservation pour un séjour ; ticket pour le reste.",
+          "body": "Deux canaux complémentaires :\n\n• Chat de réservation — pour une question liée à un séjour précis (dates, documents, manifeste, suite du voyage). Ouvrez Mon compte → Réservations → détail du séjour → chat. Les échanges restent attachés à cette réservation.\n\n• Ticket support — pour le compte, la facturation générale, un paiement hors séjour, ou si vous n’avez pas encore de réservation. Connectez-vous, puis utilisez Contacter le support en bas de /support (ancre /support#support-form). Indiquez la référence si vous en avez une.\n\nVous pouvez aussi consulter À propos → Nous contacter pour les coordonnées publiques. Voir aussi l’article sur le chat d’une réservation."
+        }
       }
-    }
+    },
+    "breadcrumbAria": "Fil d’Ariane",
+    "searchContactCta": "Contacter le support"
   },
   "about": {
     "heroTitle": "À propos",
@@ -473,7 +602,7 @@
     "about": "À propos",
     "aboutPages": "À propos",
     "gap": "GAP",
-    "faq": "FAQ",
+    "faq": "Centre d'aide",
     "designedBy": "Conçu par",
     "designedByNames": "Carin Siwa et Ruth Bwiza"
   },
@@ -1276,7 +1405,8 @@
       "addresses": "Adresses",
       "reservations": "Réservations",
       "loyalty": "Fidélité OneKey",
-      "paymentMethods": "Moyens de paiement"
+      "paymentMethods": "Moyens de paiement",
+      "help": "Aide"
     },
     "profile": {
       "email": "E-mail",
