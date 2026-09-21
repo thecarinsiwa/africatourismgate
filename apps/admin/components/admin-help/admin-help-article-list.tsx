@@ -30,16 +30,21 @@ export function AdminHelpArticleList({
           <li key={article.id}>
             <Link
               href={adminHelpArticlePath(article.categorySlug, article.slug)}
-              className="block min-w-0 py-4 outline-none transition-colors hover:text-primary focus-visible:text-primary"
+              className="flex min-w-0 items-start justify-between gap-3 py-4 outline-none transition-colors hover:text-primary focus-visible:text-primary"
             >
-              <span className="block break-words text-sm font-semibold text-atg-fg">
-                {t(`articles.${article.slug}.title`)}
-              </span>
-              {summary ? (
-                <span className="mt-1 block break-words text-sm text-atg-muted">
-                  {summary}
+              <span className="min-w-0">
+                <span className="block break-words text-sm font-semibold text-atg-fg">
+                  {t(`articles.${article.slug}.title`)}
                 </span>
-              ) : null}
+                {summary ? (
+                  <span className="mt-1 block break-words text-sm text-atg-muted">
+                    {summary}
+                  </span>
+                ) : null}
+              </span>
+              <span aria-hidden className="mt-0.5 shrink-0 text-atg-muted">
+                →
+              </span>
             </Link>
           </li>
         );

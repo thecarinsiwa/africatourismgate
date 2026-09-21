@@ -38,9 +38,14 @@ function AdminHelpRelatedArticles({ article }: { article: AdminHelpArticle }) {
           <li key={item.id}>
             <Link
               href={adminHelpArticlePath(item.categorySlug, item.slug)}
-              className="block py-3.5 text-sm font-medium text-atg-fg outline-none transition-colors hover:text-primary focus-visible:text-primary"
+              className="flex min-w-0 items-start justify-between gap-3 py-3.5 outline-none transition-colors hover:text-primary focus-visible:text-primary"
             >
-              {t(`articles.${item.slug}.title`)}
+              <span className="min-w-0 break-words text-sm font-medium text-atg-fg">
+                {t(`articles.${item.slug}.title`)}
+              </span>
+              <span aria-hidden className="mt-0.5 shrink-0 text-atg-muted">
+                →
+              </span>
             </Link>
           </li>
         ))}
