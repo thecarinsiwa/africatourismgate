@@ -213,10 +213,23 @@
     "breadcrumbBlog": "Blog"
   },
   "support": {
-    "metaTitle": "Ayuda y soporte",
-    "metaDescription": "Consulte las preguntas frecuentes de Africa Tourism Gate o contacte a nuestro equipo sobre reservas y su cuenta.",
+    "metaTitle": "Centro de ayuda",
+    "metaDescription": "Consulte el centro de ayuda de Africa Tourism Gate: temas, artículos y contacto de soporte para reservas y su cuenta.",
     "pageTitle": "Centro de ayuda",
-    "pageSubtitle": "Preguntas frecuentes y un formulario para contactar a nuestro equipo de soporte.",
+    "pageSubtitle": "¿Cómo podemos ayudarle?",
+    "searchLabel": "Buscar en la ayuda",
+    "searchPlaceholder": "Buscar artículos de ayuda…",
+    "searchNoResults": "Ningún artículo coincide con su búsqueda.",
+    "searchResultsAria": "Resultados de búsqueda",
+    "categoriesTitle": "Explorar por tema",
+    "categoriesSubtitle": "Elija un tema para encontrar respuestas detalladas.",
+    "popularTitle": "Artículos populares",
+    "popularSubtitle": "Los temas más consultados por los viajeros.",
+    "articlesInCategory": "{count, plural, one {# artículo} other {# artículos}}",
+    "relatedTitle": "Artículos relacionados",
+    "breadcrumbHome": "Centro de ayuda",
+    "backToCategory": "Volver al tema",
+    "backToHub": "Volver al centro de ayuda",
     "faqTitle": "Preguntas frecuentes",
     "formTitle": "Contactar soporte",
     "formSubtitle": "Describa su solicitud: abrimos un ticket y respondemos por correo.",
@@ -254,6 +267,92 @@
       "contact": {
         "question": "¿En cuánto tiempo responde el soporte?",
         "answer": "Atendemos las solicitudes de lunes a viernes. La mayoría de los tickets reciben una primera respuesta en 1–2 días hábiles."
+      }
+    },
+    "help": {
+      "categories": {
+        "booking": {
+          "title": "Reservas",
+          "description": "Modificar, encontrar o confirmar una estancia."
+        },
+        "payment": {
+          "title": "Pagos",
+          "description": "Métodos de pago, facturas e incidencias."
+        },
+        "cancellation": {
+          "title": "Cancelaciones y reembolsos",
+          "description": "Condiciones de cancelación y plazos de reembolso."
+        },
+        "account": {
+          "title": "Cuenta y perfil",
+          "description": "Perfil, direcciones, idioma y seguridad."
+        },
+        "contact": {
+          "title": "Contactarnos",
+          "description": "Plazos de respuesta y cómo contactar al soporte."
+        }
+      },
+      "articles": {
+        "modify-or-cancel": {
+          "title": "¿Cómo cambio o cancelo una reserva?",
+          "summary": "Gestione su estancia desde Mi cuenta o contacte al soporte.",
+          "body": "Abra Mi cuenta → Reservas, seleccione su estancia y use las acciones disponibles (pagar, cancelar). Si falta una opción, contáctenos con su referencia de reserva."
+        },
+        "find-booking": {
+          "title": "¿Dónde encuentro mi reserva?",
+          "summary": "Acceda al historial y al detalle de sus estancias.",
+          "body": "Inicie sesión y abra Mi cuenta → Reservas. Cada estancia muestra el estado, las fechas y las acciones disponibles. Use el correo de confirmación si necesita la referencia de reserva."
+        },
+        "confirmation-email": {
+          "title": "No recibí el correo de confirmación",
+          "summary": "Revise el spam y encuentre la confirmación en su cuenta.",
+          "body": "Revise la carpeta de spam o correo no deseado y luego Mi cuenta → Reservas. Si la reserva no aparece tras unos minutos, abra un ticket con el correo usado en el pago."
+        },
+        "payment-methods": {
+          "title": "¿Qué métodos de pago aceptan?",
+          "summary": "Pagos con tarjeta seguros en la confirmación.",
+          "body": "En el pago se ofrecen pagos seguros con tarjeta en línea (Stripe). Los cargos y facturas dependen del alojamiento y del producto reservado."
+        },
+        "invoice-receipt": {
+          "title": "¿Cómo obtengo una factura o recibo?",
+          "summary": "Descargue o solicite su justificante de pago.",
+          "body": "Tras el pago, suele enviarse un recibo por correo. También puede consultar el detalle en Mi cuenta → Reservas. Para una factura nominativa, abra un ticket con su referencia de reserva."
+        },
+        "failed-payment": {
+          "title": "Mi pago falló",
+          "summary": "Qué hacer si la tarjeta es rechazada o el cargo incompleto.",
+          "body": "Compruebe el límite de su tarjeta e inténtelo de nuevo desde la página de confirmación. La estancia no se confirma hasta que el pago sea válido. Si se retuvo un importe sin confirmación, contacte al soporte con la fecha y el monto."
+        },
+        "cancellation-policy": {
+          "title": "¿Cuál es su política de cancelación?",
+          "summary": "Las condiciones dependen del alojamiento o proveedor.",
+          "body": "Las condiciones varían según el alojamiento o proveedor. Consulte la página del producto y su correo de confirmación. Si tiene dudas, abra un ticket con su referencia de reserva."
+        },
+        "refund-timeline": {
+          "title": "¿Cuánto tarda un reembolso?",
+          "summary": "Plazos tras una cancelación elegible.",
+          "body": "Tras una cancelación conforme a las condiciones del producto, el reembolso lo procesan el proveedor y su banco. En general, espere unos días hábiles. Conserve su referencia de reserva para el seguimiento."
+        },
+        "update-profile": {
+          "title": "¿Cómo actualizo mi perfil o direcciones?",
+          "summary": "Modifique sus datos personales y preferencias.",
+          "body": "Desde Mi cuenta, use Perfil y Direcciones. Puede cambiar el idioma de visualización en sus preferencias."
+        },
+        "password-security": {
+          "title": "Contraseña y seguridad de la cuenta",
+          "summary": "Proteja su cuenta y recupere el acceso.",
+          "body": "Use una contraseña única y segura. Si la olvida, use «Olvidé mi contraseña» en la página de inicio de sesión. Si sospecha un acceso no autorizado, cambie la contraseña y luego contacte al soporte."
+        },
+        "response-time": {
+          "title": "¿En cuánto tiempo responde el soporte?",
+          "summary": "Primera respuesta en 1–2 días hábiles en la mayoría de los casos.",
+          "body": "Atendemos las solicitudes de lunes a viernes. La mayoría de los tickets reciben una primera respuesta en 1–2 días hábiles."
+        },
+        "how-to-contact": {
+          "title": "¿Cómo contacto al soporte?",
+          "summary": "Abra un ticket desde el centro de ayuda tras iniciar sesión.",
+          "body": "Inicie sesión y use el formulario «Contactar soporte» al final de esta página. Incluya su número de reserva si lo tiene. También puede visitar Contactarnos en Sobre nosotros."
+        }
       }
     }
   },

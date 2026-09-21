@@ -213,10 +213,23 @@
     "breadcrumbBlog": "Blog"
   },
   "support": {
-    "metaTitle": "Aide et support",
-    "metaDescription": "Consultez la FAQ Africa Tourism Gate ou contactez notre équipe pour vos réservations et votre compte.",
+    "metaTitle": "Centre d'aide",
+    "metaDescription": "Parcourez le centre d'aide Africa Tourism Gate : thèmes, articles et contact support pour vos réservations et votre compte.",
     "pageTitle": "Centre d'aide",
-    "pageSubtitle": "Réponses aux questions fréquentes et formulaire pour joindre notre équipe support.",
+    "pageSubtitle": "Comment pouvons-nous vous aider ?",
+    "searchLabel": "Rechercher dans l'aide",
+    "searchPlaceholder": "Rechercher un article d'aide…",
+    "searchNoResults": "Aucun article ne correspond à votre recherche.",
+    "searchResultsAria": "Résultats de recherche",
+    "categoriesTitle": "Parcourir par thème",
+    "categoriesSubtitle": "Choisissez un sujet pour trouver des réponses détaillées.",
+    "popularTitle": "Articles populaires",
+    "popularSubtitle": "Les sujets les plus consultés par nos voyageurs.",
+    "articlesInCategory": "{count, plural, one {# article} other {# articles}}",
+    "relatedTitle": "Articles liés",
+    "breadcrumbHome": "Centre d'aide",
+    "backToCategory": "Retour au thème",
+    "backToHub": "Retour au centre d'aide",
     "faqTitle": "Questions fréquentes",
     "formTitle": "Contacter le support",
     "formSubtitle": "Décrivez votre demande : nous créons un ticket et vous répondons par e-mail.",
@@ -254,6 +267,92 @@
       "contact": {
         "question": "Quel délai de réponse du support ?",
         "answer": "Nous traitons les demandes du lundi au vendredi. La plupart des tickets reçoivent une première réponse sous 24 à 48 h ouvrées."
+      }
+    },
+    "help": {
+      "categories": {
+        "booking": {
+          "title": "Réservations",
+          "description": "Modifier, retrouver ou confirmer un séjour."
+        },
+        "payment": {
+          "title": "Paiements",
+          "description": "Moyens de paiement, factures et incidents."
+        },
+        "cancellation": {
+          "title": "Annulations & remboursements",
+          "description": "Conditions d'annulation et délais de remboursement."
+        },
+        "account": {
+          "title": "Compte & profil",
+          "description": "Profil, adresses, langue et sécurité."
+        },
+        "contact": {
+          "title": "Nous contacter",
+          "description": "Délais de réponse et comment joindre le support."
+        }
+      },
+      "articles": {
+        "modify-or-cancel": {
+          "title": "Comment modifier ou annuler une réservation ?",
+          "summary": "Gérez votre séjour depuis Mon compte ou contactez le support.",
+          "body": "Ouvrez Mon compte → Réservations, sélectionnez votre séjour puis suivez les options disponibles (paiement, annulation). Si le bouton n'apparaît pas, contactez-nous avec votre numéro de réservation."
+        },
+        "find-booking": {
+          "title": "Où retrouver ma réservation ?",
+          "summary": "Accédez à l'historique et au détail de vos séjours.",
+          "body": "Connectez-vous puis ouvrez Mon compte → Réservations. Chaque séjour affiche le statut, les dates et les actions possibles. Utilisez l'e-mail de confirmation pour retrouver votre numéro de réservation si besoin."
+        },
+        "confirmation-email": {
+          "title": "Je n'ai pas reçu mon e-mail de confirmation",
+          "summary": "Vérifiez vos dossiers et retrouvez la confirmation dans votre compte.",
+          "body": "Vérifiez le dossier spam ou courrier indésirable, puis Mon compte → Réservations. Si la réservation n'apparaît pas après quelques minutes, ouvrez un ticket avec l'adresse e-mail utilisée au paiement."
+        },
+        "payment-methods": {
+          "title": "Quels moyens de paiement acceptez-vous ?",
+          "summary": "Paiements carte sécurisés au moment de la confirmation.",
+          "body": "Les paiements en ligne sécurisés (carte bancaire via Stripe) sont proposés au moment de la confirmation. Le débit et la facture dépendent de l'établissement et du type de produit réservé."
+        },
+        "invoice-receipt": {
+          "title": "Comment obtenir une facture ou un reçu ?",
+          "summary": "Téléchargez ou demandez votre justificatif de paiement.",
+          "body": "Après paiement, un reçu est généralement envoyé par e-mail. Vous pouvez aussi consulter le détail depuis Mon compte → Réservations. Pour une facture nominative, ouvrez un ticket avec votre référence de réservation."
+        },
+        "failed-payment": {
+          "title": "Mon paiement a échoué",
+          "summary": "Que faire si la carte est refusée ou le débit incomplet.",
+          "body": "Vérifiez le plafond de votre carte et réessayez depuis la page de confirmation. Aucun séjour n'est confirmé tant que le paiement n'est pas validé. Si un montant a été réservé sans confirmation, contactez le support avec la date et le montant."
+        },
+        "cancellation-policy": {
+          "title": "Quelle est votre politique d'annulation ?",
+          "summary": "Les conditions dépendent de l'hébergement ou du prestataire.",
+          "body": "Les conditions varient selon l'hébergement ou le prestataire. Consultez les détails sur la fiche produit et dans votre confirmation. En cas de doute, ouvrez un ticket avec votre référence de réservation."
+        },
+        "refund-timeline": {
+          "title": "Combien de temps pour un remboursement ?",
+          "summary": "Délais après une annulation éligible.",
+          "body": "Après une annulation conforme aux conditions du produit, le remboursement est traité selon le prestataire et votre banque. Comptez en général quelques jours ouvrés. Conservez votre référence de réservation pour le suivi."
+        },
+        "update-profile": {
+          "title": "Comment mettre à jour mon profil ou mes adresses ?",
+          "summary": "Modifiez vos informations personnelles et préférences.",
+          "body": "Depuis Mon compte, rubriques Profil et Adresses. La langue d'affichage peut être modifiée dans vos préférences."
+        },
+        "password-security": {
+          "title": "Mot de passe et sécurité du compte",
+          "summary": "Protégez votre compte et récupérez l'accès.",
+          "body": "Utilisez un mot de passe unique et fort. En cas d'oubli, utilisez le lien « Mot de passe oublié » sur la page de connexion. Si vous suspectez un accès non autorisé, changez votre mot de passe puis contactez le support."
+        },
+        "response-time": {
+          "title": "Quel délai de réponse du support ?",
+          "summary": "Première réponse sous 24 à 48 h ouvrées en général.",
+          "body": "Nous traitons les demandes du lundi au vendredi. La plupart des tickets reçoivent une première réponse sous 24 à 48 h ouvrées."
+        },
+        "how-to-contact": {
+          "title": "Comment contacter le support ?",
+          "summary": "Ouvrez un ticket depuis le centre d'aide après connexion.",
+          "body": "Connectez-vous, puis utilisez le formulaire « Contacter le support » en bas de cette page. Indiquez votre numéro de réservation si vous en avez un. Vous pouvez aussi consulter la page Nous contacter dans À propos."
+        }
       }
     }
   },

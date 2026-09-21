@@ -213,31 +213,44 @@
     "breadcrumbBlog": "Blog"
   },
   "support": {
-    "metaTitle": "Help & support",
-    "metaDescription": "Browse the Africa Tourism Gate FAQ or contact our team about bookings and your account.",
+    "metaTitle": "Help centre",
+    "metaDescription": "Browse the Africa Tourism Gate help centre: topics, articles, and support contact for bookings and your account.",
     "pageTitle": "Help centre",
-    "pageSubtitle": "Frequently asked questions and a form to reach our support team.",
+    "pageSubtitle": "How can we help you?",
+    "searchLabel": "Search help",
+    "searchPlaceholder": "Search help articles…",
+    "searchNoResults": "No articles match your search.",
+    "searchResultsAria": "Search results",
+    "categoriesTitle": "Browse by topic",
+    "categoriesSubtitle": "Pick a topic to find detailed answers.",
+    "popularTitle": "Popular articles",
+    "popularSubtitle": "The topics travellers look up most often.",
+    "articlesInCategory": "{count, plural, one {# article} other {# articles}}",
+    "relatedTitle": "Related articles",
+    "breadcrumbHome": "Help centre",
+    "backToCategory": "Back to topic",
+    "backToHub": "Back to help centre",
     "faqTitle": "Frequently asked questions",
     "formTitle": "Contact support",
-    "formSubtitle": "Describe your request ?\u001d we open a ticket and reply by email.",
+    "formSubtitle": "Describe your request: we open a ticket and reply by email.",
     "signInPrompt": "Sign in to send a request to support.",
     "signInCta": "Sign in",
-    "checkingSession": "Checking session?",
+    "checkingSession": "Checking session…",
     "subjectLabel": "Subject",
-    "subjectPlaceholder": "e.g. Question about booking #?",
+    "subjectPlaceholder": "e.g. Question about booking #…",
     "messageLabel": "Message",
-    "messagePlaceholder": "Describe your situation in a few sentences?",
+    "messagePlaceholder": "Describe your situation in a few sentences…",
     "submit": "Send request",
-    "submitting": "Sending?",
+    "submitting": "Sending…",
     "successTitle": "Request received",
-    "successMessage": "Thank you. Your ticket was created. Keep this reference: {ticketId}. Our team will reply within 1?\u001c2 business days.",
+    "successMessage": "Thank you. Your ticket was created. Keep this reference: {ticketId}. Our team will reply within 1–2 business days.",
     "subjectRequired": "Subject is required.",
     "messageTooShort": "Message must be at least 10 characters.",
     "submitError": "Could not send your request. Please try again.",
     "faq": {
       "booking": {
         "question": "How do I change or cancel a booking?",
-        "answer": "Open My account ? Bookings, select your stay and use the available actions (pay, cancel). If an option is missing, contact us with your booking reference."
+        "answer": "Open My account → Bookings, select your stay and use the available actions (pay, cancel). If an option is missing, contact us with your booking reference."
       },
       "payment": {
         "question": "Which payment methods do you accept?",
@@ -253,7 +266,93 @@
       },
       "contact": {
         "question": "How fast does support reply?",
-        "answer": "We handle requests Monday?\u001cFriday. Most tickets get a first reply within 1?\u001c2 business days."
+        "answer": "We handle requests Monday–Friday. Most tickets get a first reply within 1–2 business days."
+      }
+    },
+    "help": {
+      "categories": {
+        "booking": {
+          "title": "Bookings",
+          "description": "Change, find, or confirm a stay."
+        },
+        "payment": {
+          "title": "Payments",
+          "description": "Payment methods, invoices, and issues."
+        },
+        "cancellation": {
+          "title": "Cancellations & refunds",
+          "description": "Cancellation terms and refund timelines."
+        },
+        "account": {
+          "title": "Account & profile",
+          "description": "Profile, addresses, language, and security."
+        },
+        "contact": {
+          "title": "Contact us",
+          "description": "Response times and how to reach support."
+        }
+      },
+      "articles": {
+        "modify-or-cancel": {
+          "title": "How do I change or cancel a booking?",
+          "summary": "Manage your stay from My account or contact support.",
+          "body": "Open My account → Bookings, select your stay and use the available actions (pay, cancel). If an option is missing, contact us with your booking reference."
+        },
+        "find-booking": {
+          "title": "Where can I find my booking?",
+          "summary": "Open your booking history and stay details.",
+          "body": "Sign in and open My account → Bookings. Each stay shows status, dates, and available actions. Use your confirmation email if you need the booking reference."
+        },
+        "confirmation-email": {
+          "title": "I did not receive my confirmation email",
+          "summary": "Check spam folders and find the confirmation in your account.",
+          "body": "Check your spam or junk folder, then My account → Bookings. If the booking still does not appear after a few minutes, open a ticket with the email used at checkout."
+        },
+        "payment-methods": {
+          "title": "Which payment methods do you accept?",
+          "summary": "Secure card payments at confirmation.",
+          "body": "Secure online card payments (Stripe) are offered at checkout. Charges and invoices depend on the property and product booked."
+        },
+        "invoice-receipt": {
+          "title": "How do I get an invoice or receipt?",
+          "summary": "Download or request your payment proof.",
+          "body": "After payment, a receipt is usually sent by email. You can also check details under My account → Bookings. For a named invoice, open a ticket with your booking reference."
+        },
+        "failed-payment": {
+          "title": "My payment failed",
+          "summary": "What to do if the card is declined or the charge is incomplete.",
+          "body": "Check your card limit and try again from the confirmation page. A stay is not confirmed until payment succeeds. If an amount was held without confirmation, contact support with the date and amount."
+        },
+        "cancellation-policy": {
+          "title": "What is your cancellation policy?",
+          "summary": "Terms depend on the property or provider.",
+          "body": "Terms vary by property or provider. Check the product page and your confirmation email. If unsure, open a ticket with your booking reference."
+        },
+        "refund-timeline": {
+          "title": "How long do refunds take?",
+          "summary": "Timelines after an eligible cancellation.",
+          "body": "After a cancellation that matches the product terms, refunds are processed by the provider and your bank. Expect a few business days in most cases. Keep your booking reference for follow-up."
+        },
+        "update-profile": {
+          "title": "How do I update my profile or addresses?",
+          "summary": "Edit your personal details and preferences.",
+          "body": "From My account, use Profile and Addresses. You can change display language in your preferences."
+        },
+        "password-security": {
+          "title": "Password and account security",
+          "summary": "Protect your account and recover access.",
+          "body": "Use a unique, strong password. If you forget it, use Forgot password on the sign-in page. If you suspect unauthorised access, change your password and then contact support."
+        },
+        "response-time": {
+          "title": "How fast does support reply?",
+          "summary": "First reply within 1–2 business days in most cases.",
+          "body": "We handle requests Monday–Friday. Most tickets get a first reply within 1–2 business days."
+        },
+        "how-to-contact": {
+          "title": "How do I contact support?",
+          "summary": "Open a ticket from the help centre after signing in.",
+          "body": "Sign in, then use the Contact support form at the bottom of this page. Include your booking number if you have one. You can also visit Contact us under About."
+        }
       }
     }
   },
