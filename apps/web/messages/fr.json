@@ -294,6 +294,21 @@
         }
       },
       "articles": {
+        "how-to-book": {
+          "title": "Comment réserver un séjour ou une activité ?",
+          "summary": "De la recherche à la confirmation, étape par étape.",
+          "body": "Sur l'accueil, utilisez la recherche pour choisir un produit : hôtels, vols, voitures, croisières, activités ou forfaits. Ouvrez une fiche, sélectionnez vos dates ou options, puis ajoutez au panier.\n\nPoursuivez vers /booking/cart puis le récapitulatif pour choisir le mode de paiement. Une fois le paiement validé (ou la demande envoyée), vous retrouvez le séjour dans Mon compte → Réservations."
+        },
+        "cart-and-checkout": {
+          "title": "Panier et parcours de paiement",
+          "summary": "Comprendre les étapes cart → récap → confirmation.",
+          "body": "Le panier (/booking/cart) regroupe les éléments sélectionnés avant validation. Vérifiez dates, voyageurs et montant, puis passez au récapitulatif pour choisir le paiement.\n\nLa connexion est requise pour finaliser. Après succès, une page de confirmation s'affiche et un e-mail est envoyé. Vous pouvez aussi rouvrir le détail depuis Mon compte → Réservations."
+        },
+        "request-vs-paid": {
+          "title": "Demande de réservation ou paiement immédiat ?",
+          "summary": "Différence entre confirmation payée et demande en attente.",
+          "body": "Certains produits se confirment dès le paiement en ligne (carte). D'autres passent par une demande : vous validez le parcours jusqu'à /booking/request-success, puis l'équipe ou le prestataire revient vers vous.\n\nLe statut apparaît dans Mon compte → Réservations. Tant que le paiement n'est pas validé ou la demande acceptée, le séjour n'est pas définitivement confirmé."
+        },
         "modify-or-cancel": {
           "title": "Comment modifier ou annuler une réservation ?",
           "summary": "Gérez votre séjour depuis Mon compte ou contactez le support.",
@@ -309,10 +324,25 @@
           "summary": "Vérifiez vos dossiers et retrouvez la confirmation dans votre compte.",
           "body": "Vérifiez le dossier spam ou courrier indésirable, puis Mon compte → Réservations. Si la réservation n'apparaît pas après quelques minutes, ouvrez un ticket avec l'adresse e-mail utilisée au paiement."
         },
+        "booking-chat": {
+          "title": "Comment utiliser le chat d'une réservation ?",
+          "summary": "Échangez avec l'équipe au sujet d'un séjour précis.",
+          "body": "Ouvrez Mon compte → Réservations, sélectionnez le séjour concerné, puis le chat lié à cette réservation. Ce canal sert aux questions sur ce séjour (dates, documents, suite du voyage).\n\nPour une demande générale (compte, facturation hors séjour), utilisez plutôt le formulaire Contacter le support en bas du centre d'aide."
+        },
         "payment-methods": {
           "title": "Quels moyens de paiement acceptez-vous ?",
           "summary": "Paiements carte sécurisés au moment de la confirmation.",
           "body": "Les paiements en ligne sécurisés (carte bancaire via Stripe) sont proposés au moment de la confirmation. Le débit et la facture dépendent de l'établissement et du type de produit réservé."
+        },
+        "offline-payments": {
+          "title": "Espèces, virement ou mobile money",
+          "summary": "Payer hors carte bancaire lorsque l'option est proposée.",
+          "body": "Selon le produit et le récapitulatif, des options hors carte peuvent être proposées : espèces, virement bancaire ou mobile money. Suivez les instructions affichées après validation ; la confirmation dépend de la réception du paiement.\n\nRetrouvez le statut dans Mon compte → Réservations. En cas de doute sur un transfert, ouvrez un ticket avec la référence et la preuve de paiement."
+        },
+        "saved-cards": {
+          "title": "Gérer mes moyens de paiement enregistrés",
+          "summary": "Ajouter ou retirer une carte dans Mon compte.",
+          "body": "Dans Mon compte → Moyens de paiement, vous pouvez enregistrer une carte pour accélérer les prochains checkouts, ou supprimer une carte devenue inutile.\n\nLes données de carte sont traitées de façon sécurisée via le prestataire de paiement. Ne partagez jamais vos codes dans le chat ou un ticket support."
         },
         "invoice-receipt": {
           "title": "Comment obtenir une facture ou un reçu ?",
@@ -339,10 +369,30 @@
           "summary": "Modifiez vos informations personnelles et préférences.",
           "body": "Depuis Mon compte, rubriques Profil et Adresses. La langue d'affichage peut être modifiée dans vos préférences."
         },
+        "manage-addresses": {
+          "title": "Gérer mes adresses",
+          "summary": "Ajouter, modifier ou supprimer une adresse de facturation ou de contact.",
+          "body": "Ouvrez Mon compte → Adresses pour enregistrer une adresse de facturation ou de contact. Vous pouvez en ajouter plusieurs et les mettre à jour avant une réservation.\n\nUne adresse à jour facilite les factures et le suivi. Elle est distincte des informations voyageurs du manifeste sur une réservation."
+        },
         "password-security": {
           "title": "Mot de passe et sécurité du compte",
           "summary": "Protégez votre compte et récupérez l'accès.",
           "body": "Utilisez un mot de passe unique et fort. En cas d'oubli, utilisez le lien « Mot de passe oublié » sur la page de connexion. Si vous suspectez un accès non autorisé, changez votre mot de passe puis contactez le support."
+        },
+        "onekey-loyalty": {
+          "title": "Programme de fidélité OneKey",
+          "summary": "Suivre vos avantages et votre palier dans Mon compte.",
+          "body": "OneKey regroupe vos avantages fidélité liés à vos séjours sur Africa Tourism Gate. Consultez Mon compte → Fidélité pour voir votre palier et les informations disponibles.\n\nLes règles d'accumulation et d'utilisation dépendent du programme en vigueur. Pour une question sur des points manquants, ouvrez un ticket avec vos références de réservation."
+        },
+        "passenger-manifest": {
+          "title": "Manifeste et documents voyageurs",
+          "summary": "Renseigner les voyageurs, contacts d'urgence et pièces d'identité.",
+          "body": "Sur le détail d'une réservation (Mon compte → Réservations), complétez le manifeste voyageurs lorsque demandé : identité, contacts d'urgence et documents utiles au séjour.\n\nFournissez des informations exactes avant le départ. En cas de difficulté d'upload ou de champ manquant, utilisez le chat de la réservation ou un ticket support."
+        },
+        "leave-a-review": {
+          "title": "Laisser un avis après mon séjour",
+          "summary": "Noter un produit ou un guide depuis le détail de réservation.",
+          "body": "Lorsque votre séjour le permet, ouvrez Mon compte → Réservations, puis le détail du séjour et la section avis. Vous pouvez noter l'expérience et, le cas échéant, un guide.\n\nLes avis aident les autres voyageurs. Si le formulaire n'apparaît pas encore, le séjour n'est peut-être pas éligible ou le délai d'ouverture n'est pas atteint."
         },
         "response-time": {
           "title": "Quel délai de réponse du support ?",
