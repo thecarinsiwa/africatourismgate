@@ -5,6 +5,7 @@
     "searchLabel": "Search help",
     "searchPlaceholder": "Search a help article…",
     "searchNoResults": "No articles match your search.",
+    "searchNoResultsHint": "Try these quick-start articles instead:",
     "searchResultsAria": "Search results",
     "categoriesTitle": "Browse by topic",
     "categoriesSubtitle": "Pick a topic to find detailed answers.",

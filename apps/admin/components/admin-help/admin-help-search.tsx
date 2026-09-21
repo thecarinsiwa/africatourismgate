@@ -7,10 +7,13 @@ import { useTranslations } from 'next-intl';
 import { useId, useState, type KeyboardEvent } from 'react';
 import {
   ADMIN_HELP_ARTICLES,
+  getAdminHelpQuickStartArticles,
   searchAdminHelpArticles,
   type AdminHelpArticleSearchStrings,
 } from '../../lib/admin-help/help-catalog';
 import { adminHelpArticlePath } from '../../lib/admin-help/routes';
+
+const EMPTY_SEARCH_QUICK_START_LIMIT = 4;
 
 function SearchIcon({ className }: { className?: string }) {
   return (
@@ -48,6 +51,7 @@ function useArticleSearchStrings(): Record<
 
 export function AdminHelpSearch() {
   const t = useTranslations('modules.adminHelp.ui');
+  const tArticles = useTranslations('modules.adminHelp');
   const router = useRouter();
   const inputId = useId();
   const listId = useId();
@@ -56,6 +60,10 @@ export function AdminHelpSearch() {
   const stringsBySlug = useArticleSearchStrings();
   const results = searchAdminHelpArticles(query, stringsBySlug);
   const showResults = query.trim().length > 0;
+  const quickStartSuggestions = getAdminHelpQuickStartArticles().slice(
+    0,
+    EMPTY_SEARCH_QUICK_START_LIMIT,
+  );
   const activeOptionId =
     activeIndex >= 0 && activeIndex < results.length
       ? `${listId}-option-${activeIndex}`
@@ -138,7 +146,39 @@ export function AdminHelpSearch() {
           className="mt-3 border-t border-atg-border pt-3 dark:border-atg-border"
         >
           {results.length === 0 ? (
-            <p className="text-sm text-atg-muted">{t('searchNoResults')}</p>
+            <div className="space-y-3">
+              <p className="text-sm text-atg-muted">{t('searchNoResults')}</p>
+              {quickStartSuggestions.length > 0 ? (
+                <div>
+                  <p className="text-sm font-medium text-atg-fg">
+                    {t('searchNoResultsHint')}
+                  </p>
+                  <ul className="mt-2 space-y-1">
+                    {quickStartSuggestions.map((article) => (
+                      <li key={article.id}>
+                        <Link
+                          href={adminHelpArticlePath(
+                            article.categorySlug,
+                            article.slug,
+                          )}
+                          className="text-sm font-medium text-primary outline-none hover:underline focus-visible:underline"
+                        >
+                          {tArticles(`articles.${article.slug}.title`)}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-3">
+                    <a
+                      href="#admin-help-quick-start"
+                      className="text-sm text-atg-muted outline-none hover:text-primary hover:underline focus-visible:text-primary focus-visible:underline"
+                    >
+                      {t('quickStartTitle')}
+                    </a>
+                  </p>
+                </div>
+              ) : null}
+            </div>
           ) : (
             <ul className="divide-y divide-atg-border dark:divide-atg-border">
               {results.map((article, index) => {

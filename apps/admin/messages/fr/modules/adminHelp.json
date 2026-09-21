@@ -5,6 +5,7 @@
     "searchLabel": "Rechercher dans l'aide",
     "searchPlaceholder": "Rechercher un article d'aide…",
     "searchNoResults": "Aucun article ne correspond à votre recherche.",
+    "searchNoResultsHint": "Essayez plutôt ces articles de démarrage rapide :",
     "searchResultsAria": "Résultats de recherche",
     "categoriesTitle": "Parcourir par thème",
     "categoriesSubtitle": "Choisissez un sujet pour trouver des réponses détaillées.",

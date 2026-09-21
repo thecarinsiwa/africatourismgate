@@ -15,7 +15,11 @@ export function AdminHelpQuickStart() {
   }
 
   return (
-    <section aria-labelledby="admin-help-quick-start-heading">
+    <section
+      id="admin-help-quick-start"
+      aria-labelledby="admin-help-quick-start-heading"
+      className="scroll-mt-24"
+    >
       <h2
         id="admin-help-quick-start-heading"
         className="text-lg font-semibold text-atg-fg"

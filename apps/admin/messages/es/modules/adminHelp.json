@@ -5,6 +5,7 @@
     "searchLabel": "Buscar en la ayuda",
     "searchPlaceholder": "Buscar un artículo de ayuda…",
     "searchNoResults": "Ningún artículo coincide con su búsqueda.",
+    "searchNoResultsHint": "Pruebe en su lugar estos artículos de inicio rápido:",
     "searchResultsAria": "Resultados de búsqueda",
     "categoriesTitle": "Explorar por tema",
     "categoriesSubtitle": "Elija un tema para encontrar respuestas detalladas.",
