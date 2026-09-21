@@ -4,16 +4,26 @@ import { Input, cn } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useEffect, useId, useState, type KeyboardEvent } from 'react';
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type FocusEvent,
+  type KeyboardEvent,
+} from 'react';
 import {
   ADMIN_HELP_ARTICLES,
+  getAdminHelpPopularArticles,
   getAdminHelpQuickStartArticles,
   searchAdminHelpArticles,
+  type AdminHelpArticle,
   type AdminHelpArticleSearchStrings,
 } from '../../lib/admin-help/help-catalog';
 import { adminHelpArticlePath } from '../../lib/admin-help/routes';
 
 const EMPTY_SEARCH_QUICK_START_LIMIT = 4;
+const FOCUS_SUGGESTIONS_LIMIT = 5;
 const SEARCH_DEBOUNCE_MS = 175;
 
 function SearchIcon({ className }: { className?: string }) {
@@ -54,20 +64,34 @@ export function AdminHelpSearch() {
   const t = useTranslations('modules.adminHelp.ui');
   const tArticles = useTranslations('modules.adminHelp');
   const router = useRouter();
+  const containerRef = useRef<HTMLDivElement>(null);
   const inputId = useId();
   const listId = useId();
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const stringsBySlug = useArticleSearchStrings();
   const results = searchAdminHelpArticles(debouncedQuery, stringsBySlug);
-  const showResults = debouncedQuery.trim().length > 0;
+  const popularSuggestions = getAdminHelpPopularArticles().slice(
+    0,
+    FOCUS_SUGGESTIONS_LIMIT,
+  );
   const quickStartSuggestions = getAdminHelpQuickStartArticles().slice(
     0,
     EMPTY_SEARCH_QUICK_START_LIMIT,
   );
+  const hasQuery = debouncedQuery.trim().length > 0;
+  const showSuggestions =
+    isFocused && !hasQuery && popularSuggestions.length > 0;
+  const showResults = hasQuery;
+  const showPanel = showResults || showSuggestions;
+  const listItems: AdminHelpArticle[] = showResults
+    ? results
+    : popularSuggestions;
+  const listNavigable = showSuggestions || (showResults && results.length > 0);
   const activeOptionId =
-    activeIndex >= 0 && activeIndex < results.length
+    activeIndex >= 0 && activeIndex < listItems.length
       ? `${listId}-option-${activeIndex}`
       : undefined;
 
@@ -84,10 +108,25 @@ export function AdminHelpSearch() {
     setQuery(next);
   }
 
+  function handleFocus() {
+    setIsFocused(true);
+  }
+
+  function handleBlur(event: FocusEvent<HTMLDivElement>) {
+    const next = event.relatedTarget as Node | null;
+    if (containerRef.current?.contains(next)) {
+      return;
+    }
+    setIsFocused(false);
+    setActiveIndex(-1);
+  }
+
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-    if (!showResults || results.length === 0) {
+    if (!listNavigable) {
       if (event.key === 'Escape') {
         updateQuery('');
+        setIsFocused(false);
+        (event.target as HTMLInputElement).blur();
       }
       return;
     }
@@ -96,23 +135,23 @@ export function AdminHelpSearch() {
       case 'ArrowDown': {
         event.preventDefault();
         setActiveIndex((current) =>
-          current < results.length - 1 ? current + 1 : 0,
+          current < listItems.length - 1 ? current + 1 : 0,
         );
         break;
       }
       case 'ArrowUp': {
         event.preventDefault();
         setActiveIndex((current) =>
-          current <= 0 ? results.length - 1 : current - 1,
+          current <= 0 ? listItems.length - 1 : current - 1,
         );
         break;
       }
       case 'Enter': {
-        if (activeIndex < 0 || activeIndex >= results.length) {
+        if (activeIndex < 0 || activeIndex >= listItems.length) {
           return;
         }
         event.preventDefault();
-        const article = results[activeIndex];
+        const article = listItems[activeIndex];
         router.push(
           adminHelpArticlePath(article.categorySlug, article.slug),
         );
@@ -120,7 +159,12 @@ export function AdminHelpSearch() {
       }
       case 'Escape': {
         event.preventDefault();
-        updateQuery('');
+        if (hasQuery) {
+          updateQuery('');
+        } else {
+          setIsFocused(false);
+          (event.target as HTMLInputElement).blur();
+        }
         break;
       }
       default:
@@ -129,7 +173,12 @@ export function AdminHelpSearch() {
   }
 
   return (
-    <div className="w-full">
+    <div
+      ref={containerRef}
+      className="w-full"
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+    >
       <Input
         id={inputId}
         type="search"
@@ -140,22 +189,66 @@ export function AdminHelpSearch() {
         value={query}
         onChange={(event) => updateQuery(event.target.value)}
         onKeyDown={handleKeyDown}
-        aria-controls={showResults ? listId : undefined}
-        aria-expanded={showResults}
+        aria-controls={showPanel ? listId : undefined}
+        aria-expanded={showPanel}
         aria-activedescendant={activeOptionId}
         role="combobox"
         aria-autocomplete="list"
         trailing={<SearchIcon className="text-atg-muted" />}
       />
 
-      {showResults ? (
+      {showPanel ? (
         <div
           id={listId}
           role="listbox"
-          aria-label={t('searchResultsAria')}
+          aria-label={
+            showSuggestions ? t('searchSuggestionsAria') : t('searchResultsAria')
+          }
           className="mt-3 border-t border-atg-border pt-3 dark:border-atg-border"
         >
-          {results.length === 0 ? (
+          {showSuggestions ? (
+            <div>
+              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-atg-muted">
+                {t('popularTitle')}
+              </p>
+              <ul className="divide-y divide-atg-border dark:divide-atg-border">
+                {popularSuggestions.map((article, index) => {
+                  const strings = stringsBySlug[article.slug];
+                  const optionId = `${listId}-option-${index}`;
+                  const isActive = index === activeIndex;
+                  return (
+                    <li
+                      key={article.id}
+                      id={optionId}
+                      role="option"
+                      aria-selected={isActive}
+                    >
+                      <Link
+                        href={adminHelpArticlePath(
+                          article.categorySlug,
+                          article.slug,
+                        )}
+                        className={cn(
+                          'block min-w-0 rounded-md px-2 py-3 outline-none transition-colors hover:text-primary focus-visible:text-primary',
+                          isActive && 'bg-primary/5 text-primary',
+                        )}
+                        onMouseEnter={() => setActiveIndex(index)}
+                      >
+                        <span className="block break-words text-sm font-medium text-atg-fg">
+                          {strings?.title}
+                        </span>
+                        {strings?.summary ? (
+                          <span className="mt-0.5 block break-words text-sm text-atg-muted">
+                            {strings.summary}
+                          </span>
+                        ) : null}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ) : results.length === 0 ? (
             <div className="space-y-3">
               <p className="text-sm text-atg-muted">{t('searchNoResults')}</p>
               {quickStartSuggestions.length > 0 ? (
