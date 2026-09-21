@@ -4,7 +4,7 @@ import { Input, cn } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useId, useState, type KeyboardEvent } from 'react';
+import { useEffect, useId, useState, type KeyboardEvent } from 'react';
 import {
   ADMIN_HELP_ARTICLES,
   getAdminHelpQuickStartArticles,
@@ -14,6 +14,7 @@ import {
 import { adminHelpArticlePath } from '../../lib/admin-help/routes';
 
 const EMPTY_SEARCH_QUICK_START_LIMIT = 4;
+const SEARCH_DEBOUNCE_MS = 175;
 
 function SearchIcon({ className }: { className?: string }) {
   return (
@@ -56,10 +57,11 @@ export function AdminHelpSearch() {
   const inputId = useId();
   const listId = useId();
   const [query, setQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(-1);
   const stringsBySlug = useArticleSearchStrings();
-  const results = searchAdminHelpArticles(query, stringsBySlug);
-  const showResults = query.trim().length > 0;
+  const results = searchAdminHelpArticles(debouncedQuery, stringsBySlug);
+  const showResults = debouncedQuery.trim().length > 0;
   const quickStartSuggestions = getAdminHelpQuickStartArticles().slice(
     0,
     EMPTY_SEARCH_QUICK_START_LIMIT,
@@ -69,9 +71,17 @@ export function AdminHelpSearch() {
       ? `${listId}-option-${activeIndex}`
       : undefined;
 
+  useEffect(() => {
+    const delay = query.trim().length === 0 ? 0 : SEARCH_DEBOUNCE_MS;
+    const timer = window.setTimeout(() => {
+      setDebouncedQuery(query);
+      setActiveIndex(-1);
+    }, delay);
+    return () => window.clearTimeout(timer);
+  }, [query]);
+
   function updateQuery(next: string) {
     setQuery(next);
-    setActiveIndex(-1);
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
