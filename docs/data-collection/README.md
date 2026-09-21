@@ -21,7 +21,7 @@ Document parent : [production-data-preparation.md](../production-data-preparatio
 | [08-vehicles.csv](08-vehicles.csv) | Agences et véhicules |
 | [09-cruises.csv](09-cruises.csv) | Lignes, ports, navires, cabines, départs |
 | [10-activities-packages.csv](10-activities-packages.csv) | Activités, créneaux, forfaits |
-| [11-tour-guides.csv](11-tour-guides.csv) | Guides touristiques |
+| [11-tour-guides.csv](11-tour-guides.csv) | Guides (`display_name`, `type`, `status`, `languages`) |
 | [12-promo-codes.csv](12-promo-codes.csv) | Codes promo |
 | [13-cms-content-checklist.csv](13-cms-content-checklist.csv) | Checklist contenus CMS / légal / GAP |
 
@@ -49,7 +49,9 @@ Chaque fichier contient **une ligne d’en-tête** et des **lignes d’exemple c
 | Colonne | Valeurs |
 |---------|---------|
 | `role_code` | `super_admin`, `org_admin`, `support`, `customer`, `gap_coordinator` |
-| `guide_type` | `internal`, `external` |
+| `guide_type` | *(obsolète dans les CSV — utiliser `type`)* |
+| `type` (11) | `internal`, `external` |
+| `status` (11) | `active`, `inactive` |
 | `record_type` (05) | `destination`, `poi` |
 | `record_type` (06) | `property`, `room`, `availability` |
 | `record_type` (07) | `airline`, `airport`, `flight`, `flight_class` |
@@ -62,6 +64,10 @@ Chaque fichier contient **une ligne d’en-tête** et des **lignes d’exemple c
 ### Secrets
 
 Ne **jamais** mettre dans ces CSV : clés Stripe (`sk_…`), mots de passe SMTP, tokens API. Les transmettre via un canal sécurisé séparé (voir document parent §1.5).
+
+### Moyens de paiement (rappel)
+
+Le setting `payment_methods` attend les booléens : `stripe`, `cash`, `bank_transfer`, `mobile_money`. Au moins **un** doit être `true`.
 
 ---
 

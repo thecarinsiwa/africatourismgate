@@ -2,9 +2,10 @@
 
 **Projet :** Africa Tourism Gate  
 **Document :** unique (parties A + B + C + D)  
-**Version :** 1.0  
-**Statut :** Brouillon — à valider avant toute opération destructive  
+**Version :** 1.1  
+**Statut :** Revu tech interne — prêt à transmettre à la société (collecte)  
 **Public :** équipe technique, équipe projet, interlocuteurs société
+**Dernière revue :** 2026-09-21 (Phase 1 — revue interne)
 
 ---
 
@@ -113,10 +114,10 @@ Retirer les données de démonstration / développement sans casser le démarrag
 | Vols démo | `FLIGHT_DEMO_*`, classes, dispos, images | `flight_*`, `flights` |
 | Véhicules démo | `RENTAL_AGENCY_DEMO_KIN`, `VEHICLE_DEMO_*` | `vehicle_*`, `vehicles`, `rental_agencies` |
 | Croisières démo | `SHIP_DEMO_*`, itinerary, cabins, sailing | `cabin_*`, `cruise_sailings`, `ships`, `itineraries`… |
-| Activités / package démo | `ACTIVITY_*_DEMO_*`, package Kinshasa Duo | `activity_*`, `activities`, `activity_providers`, `packages`, `package_*` |
+| Activités / package démo | `ACTIVITY_*_DEMO_*`, package `…5001` Kinshasa Duo | `activity_*`, `activities`, `activity_providers`, `packages`, `package_*` |
 | Activité exclusive POS | `ACTIVITY_POS_EXCLUSIVE_GUICHET_EST` | `activity_schedules`, `activities` |
 | Org POS test | `ORG_POS_GUICHET_EST` (`…0002`) | `organization_settings` branding, `organizations` |
-| Guides seed | Marie Kabila, Jean-Pierre Mwamba (`…0701`, `…0702`) | `tour_guides` |
+| Guides seed | Marie Kabila (`…0701`), Jean-Pierre Mwamba (`…0702`) — **absents de `seed-ids.txt`**, IDs dans `install.seed.sql` | `tour_guides` (ne pas supprimer le user admin lié au guide interne) |
 | Promo test | `POSWELCOME10` / `PROMO_POS_WELCOME10` | `promo_codes` |
 | Compte bancaire sample | `ORG_BANK_DEFAULT` (`…0020`) Rawbank `0001234567890` | `organization_bank_accounts` |
 | Sessions / tokens test | Comptes non prod | `user_sessions`, `password_reset_tokens`, etc. |
@@ -142,10 +143,10 @@ Exécuter dans cet ordre (enfants → parents) :
    `rooms` → `property_amenities` → `properties`  
    `flight_classes` → `flights`  
    `vehicles` → `rental_agencies`  
-   `cabins` → `cruise_sailings` → `itinerary_ports` → `itineraries` → `ships`  
+   `cabin_availability` → puis `cabins` et `cruise_sailings` (indépendants) → `itinerary_ports` → `itineraries` → `ships`  
    `activities` → `activity_providers`  
-   `packages`  
-   `points_of_interest` → `destinations` (si démo)
+   `package_items` / `package_images` → `packages`  
+   `points_of_interest` → `destinations` (uniquement si la destination Kinshasa seed n’est pas réutilisée en prod)
 3. **Opérations démo**  
    `tour_guides` seed, `promo_codes` `POSWELCOME10`
 4. **Finance sample**  
@@ -191,10 +192,10 @@ Légende **Obligatoire** : O = obligatoire pour go-live minimal ; F = facultatif
 | Devise principale | Devise catalogue / org | `organizations.currency` + locale | ISO 4217 | O | Organisation / Finance | `USD` | Finance |
 | Fuseau horaire | Affichages et créneaux | JSON locale | IANA | O | Organisation | `Africa/Kinshasa` | Technique / Ops |
 | Langue par défaut | UI | JSON locale | `fr` / `en` / `es` | O | Organisation | `fr` | Marketing / Produit |
-| Couleurs marque | Thème admin / e-mails | Hex | O | Branding | `#0B6E4F` | Marketing |
-| Logo | Identité visuelle | Fichier PNG/SVG ou URL HTTPS | O | Branding | `logo.png` (fond transparent) | Marketing |
-| Adresse / localisation affichée | Footer, contact web | Texte | O | Contact | Kinshasa, RD Congo | Direction |
-| Réseaux sociaux | Liens footer | URL HTTPS | F | Contact | URL Facebook / Instagram / X | Marketing |
+| Couleurs marque | Thème admin / e-mails | Identité visuelle | Hex | O | Branding | `#0B6E4F` | Marketing |
+| Logo | Identité visuelle | Branding uploads / URLs | Fichier PNG/SVG ou URL HTTPS | O | Branding | `logo.png` (fond transparent) | Marketing |
+| Adresse / localisation affichée | Footer, contact web | Setting contact | Texte | O | Contact | Kinshasa, RD Congo | Direction |
+| Réseaux sociaux | Liens footer | Setting contact | URL HTTPS | F | Contact | URL Facebook / Instagram / X | Marketing |
 
 ### 4.2 Utilisateurs et rôles
 
@@ -270,7 +271,7 @@ Catégories référence déjà seedées : Economy → Premium (`vehicle_categori
 
 | Nom | Description | Pourquoi | Format | O/F | Module | Exemple | Service |
 |-----|-------------|----------|--------|-----|--------|---------|---------|
-| Flags moyens de paiement web | Stripe / cash / virement | `organization_settings` `payment_methods` | JSON booléens | O | Paiements | `stripe:true, cash:false, bank_transfer:true` | Finance / Produit |
+| Flags moyens de paiement web | Stripe / cash / virement / Mobile Money | `organization_settings` `payment_methods` | JSON booléens | O | Paiements | `{"stripe":true,"cash":false,"bank_transfer":true,"mobile_money":true}` | Finance / Produit |
 | Clés Stripe | Paiement carte | Env serveur (pas DB) | Secret + publishable | O si Stripe | Paiements / Env | `sk_live_…` | Finance / IT |
 | Comptes bancaires org | Virement B2B / affichage | `organization_bank_accounts` | Banque, titulaire, n°, SWIFT, devise, défaut | O si virement | Finance | Rawbank, USD, SWIFT | Finance |
 | Pays Mobile Money | Config MM | `mobile_money_countries` | Code ISO2, nom | O si MM | Paiements | CD, RD Congo | Finance |
@@ -424,6 +425,7 @@ Colonnes : **Donnée | Description | Format | Obligatoire | Exemple | Service | 
 | Activer Stripe | Oui/Non | Bool | Oui | Oui | Finance | À demander | | |
 | Activer cash | Oui/Non | Bool | Oui | Non | Finance | À demander | | |
 | Activer virement | Oui/Non | Bool | Oui | Oui | Finance | À demander | | |
+| Activer Mobile Money | Oui/Non | Bool | Oui | Oui | Finance | À demander | | Au moins un moyen doit être `true` |
 | Clés Stripe | Env | Secrets | Si Stripe | | IT / Finance | À demander | | Canal sécurisé |
 | Banque / titulaire / n° / SWIFT / devise | Compte B2B | Texte | Si virement | | Finance | À demander | | |
 | Pays MM | ISO2 + nom | Texte | Si MM | CD | Finance | À demander | | |
@@ -591,10 +593,13 @@ record_type,provider_name,activity_title,price_cents,currency,duration_minutes,o
 #### `11-tour-guides.csv`
 
 ```text
-full_name,email,phone,guide_type,organization_slug,is_active,notes
+display_name,contact_email,type,organization_slug,languages,status,notes
 ```
 
-`guide_type` : `internal` | `external` (selon modèle applicatif)
+- Colonne DB : `type` (`internal` | `external`), pas `guide_type`
+- `status` : `active` | `inactive` (colonne DB ; pas de téléphone dédié sur `tour_guides`)
+- `languages` : JSON tableau de codes, ex. `["fr","en"]`
+- Guide interne seed lié au user admin : supprimer la **ligne guide** uniquement, jamais l’utilisateur bootstrap sans remplacement
 
 #### `12-promo-codes.csv`
 
@@ -642,7 +647,8 @@ Les CSV servent d’abord à la **collecte**. L’import en base se fait ensuite
 
 Voir le registre complet : `database/seeds/seed-ids.txt`.
 
-Exemples : `ORG_POS_GUICHET_EST`, `PROP_DEMO_HOTEL`, `ROOM_DEMO_STD`, `FLIGHT_DEMO_*`, `VEHICLE_DEMO_*`, `SHIP_DEMO_CONGO`, `ACTIVITY_DEMO_*`, `ACTIVITY_POS_EXCLUSIVE_GUICHET_EST`, `PROMO_POS_WELCOME10`, `ORG_BANK_DEFAULT`, `USER_SUPER_ADMIN` (à sécuriser, pas forcément à supprimer).
+Exemples : `ORG_POS_GUICHET_EST`, `PROP_DEMO_HOTEL`, `ROOM_DEMO_STD`, `FLIGHT_DEMO_*`, `VEHICLE_DEMO_*`, `SHIP_DEMO_CONGO`, `ACTIVITY_DEMO_*`, `ACTIVITY_POS_EXCLUSIVE_GUICHET_EST`, package `…5001` / items `…5002`–`…5004`, guides `…0701` / `…0702` (dans `install.seed.sql` uniquement), `PROMO_POS_WELCOME10`, `ORG_BANK_DEFAULT`.  
+`USER_SUPER_ADMIN` : **sécuriser** (e-mail / mot de passe), ne pas supprimer sans compte admin de remplacement.
 
 ### 7.3 Checklist go-live (rappel)
 
@@ -657,12 +663,27 @@ Exemples : `ORG_POS_GUICHET_EST`, `PROP_DEMO_HOTEL`, `ROOM_DEMO_STD`, `FLIGHT_DE
 - [ ] Domaines / SSL (voir `docs/production-domains.md`)
 - [ ] Smoke : web réservation + admin + POS (si actif)
 
-### 7.4 Historique du document
+### 7.4 Revue technique interne (Phase 1)
+
+| Point de contrôle | Résultat |
+|-------------------|----------|
+| Alignement schéma MySQL / seeds / migrations MM & CMS | OK |
+| Distinction démo vs paramétrage vs référence | OK |
+| Risque `db:sync` / `DATABASE_AUTO_SEED` documenté | OK |
+| Formulaire + statuts de collecte | OK |
+| 13 CSV + README présents et liés | OK |
+| Liens depuis `database/seeds/README.md` et `docs/production-domains.md` | OK |
+| Corrections appliquées en v1.1 | Tableaux §4.1 ; flag `mobile_money` ; guides (`type`/`status`) ; IDs package/guides ; ordre FK croisières |
+
+**Verdict :** document **apte à l’envoi à la société** pour la Phase 2 (collecte). Aucune purge SQL tant que les données collectées ne sont pas validées et qu’un backup staging n’est pas fait.
+
+### 7.5 Historique du document
 
 | Version | Date | Auteur | Changements |
 |---------|------|--------|-------------|
 | 1.0 | 2026-09-20 | Équipe projet | Création document unique A+B+C+D |
+| 1.1 | 2026-09-21 | Équipe projet | Revue tech interne ; corrections schéma / paiements / guides / IDs |
 
 ---
 
-*Fin du document — Aucune donnée n’a été modifiée dans la base par la seule rédaction de ce fichier.*
+*Fin du document — Aucune donnée n’a été modifiée dans la base par la seule rédaction ou revue de ce fichier.*
