@@ -401,11 +401,13 @@
         },
         "how-to-contact": {
           "title": "Comment contacter le support ?",
-          "summary": "Ticket centre d’aide, chat réservation ou page contact.",
-          "body": "Connectez-vous, puis utilisez le formulaire Contacter le support en bas de /support (ou /support#support-form). Décrivez la demande et ajoutez le numéro de réservation si vous en avez un.\n\nPour un séjour précis (dates, documents, suite du voyage), ouvrez plutôt le chat depuis Mon compte → Réservations → détail du séjour.\n\nVous pouvez aussi consulter À propos → Nous contacter pour les coordonnées publiques."
+          "summary": "Chat réservation pour un séjour ; ticket pour le reste.",
+          "body": "Deux canaux complémentaires :\n\n• Chat de réservation — pour une question liée à un séjour précis (dates, documents, manifeste, suite du voyage). Ouvrez Mon compte → Réservations → détail du séjour → chat. Les échanges restent attachés à cette réservation.\n\n• Ticket support — pour le compte, la facturation générale, un paiement hors séjour, ou si vous n’avez pas encore de réservation. Connectez-vous, puis utilisez Contacter le support en bas de /support (ancre /support#support-form). Indiquez la référence si vous en avez une.\n\nVous pouvez aussi consulter À propos → Nous contacter pour les coordonnées publiques. Voir aussi l’article sur le chat d’une réservation."
         }
       }
-    }
+    },
+    "breadcrumbAria": "Fil d’Ariane",
+    "searchContactCta": "Contacter le support"
   },
   "about": {
     "heroTitle": "À propos",
@@ -1426,7 +1428,8 @@
       "addresses": "Adresses",
       "reservations": "Réservations",
       "loyalty": "Fidélité OneKey",
-      "paymentMethods": "Moyens de paiement"
+      "paymentMethods": "Moyens de paiement",
+      "help": "Aide"
     },
     "profile": {
       "email": "E-mail",

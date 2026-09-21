@@ -401,11 +401,13 @@
         },
         "how-to-contact": {
           "title": "¿Cómo contacto al soporte?",
-          "summary": "Ticket del centro de ayuda, chat de reserva o página de contacto.",
-          "body": "Inicie sesión y use el formulario Contactar soporte al final de /support (o /support#support-form). Describa la solicitud y añada el número de reserva si lo tiene.\n\nPara una estancia concreta (fechas, documentos, siguientes pasos), prefiera el chat en Mi cuenta → Reservas → detalle.\n\nTambién puede abrir Sobre nosotros → Contactarnos para los datos públicos."
+          "summary": "Chat de reserva para una estancia; ticket para el resto.",
+          "body": "Dos canales complementarios:\n\n• Chat de reserva — para preguntas sobre una estancia concreta (fechas, documentos, manifiesto, siguientes pasos). Abra Mi cuenta → Reservas → detalle → chat. Los mensajes quedan ligados a esa reserva.\n\n• Ticket de soporte — para la cuenta, facturación general, un pago fuera de una estancia, o si aún no tiene reserva. Inicie sesión y use Contactar soporte al final de /support (ancla /support#support-form). Incluya la referencia si la tiene.\n\nTambién puede abrir Sobre nosotros → Contactarnos para los datos públicos. Vea también el artículo del chat de reserva."
         }
       }
-    }
+    },
+    "breadcrumbAria": "Miga de pan",
+    "searchContactCta": "Contactar soporte"
   },
   "about": {
     "heroTitle": "Sobre nosotros",
@@ -1426,7 +1428,8 @@
       "addresses": "Direcciones",
       "reservations": "Reservas",
       "loyalty": "Fidelidad OneKey",
-      "paymentMethods": "Métodos de pago"
+      "paymentMethods": "Métodos de pago",
+      "help": "Ayuda"
     },
     "profile": {
       "email": "Correo",

@@ -401,11 +401,13 @@
         },
         "how-to-contact": {
           "title": "How do I contact support?",
-          "summary": "Help centre ticket, booking chat, or contact page.",
-          "body": "Sign in, then use the Contact support form at the bottom of /support (or /support#support-form). Describe the request and add your booking number if you have one.\n\nFor a specific stay (dates, documents, next steps), prefer chat from My account → Bookings → stay detail.\n\nYou can also open About → Contact us for public contact details."
+          "summary": "Booking chat for a stay; support ticket for everything else.",
+          "body": "Two complementary channels:\n\n• Booking chat — for questions about a specific stay (dates, documents, manifest, next steps). Open My account → Bookings → stay detail → chat. Messages stay attached to that booking.\n\n• Support ticket — for account issues, general billing, payment outside a stay, or if you do not have a booking yet. Sign in, then use Contact support at the bottom of /support (anchor /support#support-form). Include a reference when you have one.\n\nYou can also open About → Contact us for public contact details. See also the booking chat article."
         }
       }
-    }
+    },
+    "breadcrumbAria": "Breadcrumb",
+    "searchContactCta": "Contact support"
   },
   "about": {
     "heroTitle": "About us",
@@ -1426,7 +1428,8 @@
       "addresses": "Addresses",
       "reservations": "Bookings",
       "loyalty": "OneKey loyalty",
-      "paymentMethods": "Payment methods"
+      "paymentMethods": "Payment methods",
+      "help": "Help"
     },
     "profile": {
       "email": "Email",
