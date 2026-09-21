@@ -312,17 +312,17 @@
         "modify-or-cancel": {
           "title": "How do I change or cancel a booking?",
           "summary": "Manage your stay from My account or contact support.",
-          "body": "Open My account → Bookings, select your stay and use the available actions (pay, cancel). If an option is missing, contact us with your booking reference."
+          "body": "Open My account → Bookings, select your stay, then use the available actions (remaining payment, cancellation, documents). Options depend on status and product terms.\n\nIf a button is missing, provider rules may block self-service or require a manual request. Open a ticket or booking chat with your reference.\n\nBefore cancelling, also read the cancellation policy and refund timeline articles."
         },
         "find-booking": {
           "title": "Where can I find my booking?",
           "summary": "Open your booking history and stay details.",
-          "body": "Sign in and open My account → Bookings. Each stay shows status, dates, and available actions. Use your confirmation email if you need the booking reference."
+          "body": "Sign in, then open My account → Bookings. The list shows status, dates, and a link to each stay detail.\n\nOn the detail page you will find payment, cancellation (when available), passenger manifest, reviews, and chat. Keep your confirmation email to recover the booking number.\n\nIf nothing appears after payment, check the account used at checkout or open a ticket with the email and payment date."
         },
         "confirmation-email": {
           "title": "I did not receive my confirmation email",
           "summary": "Check spam folders and find the confirmation in your account.",
-          "body": "Check your spam or junk folder, then My account → Bookings. If the booking still does not appear after a few minutes, open a ticket with the email used at checkout."
+          "body": "First check spam / junk folders and the email entered at checkout. Delivery can take a few minutes.\n\nAlso open My account → Bookings: the stay often appears even without the email. You may also still see /booking/success right after checkout.\n\nIf the booking is missing after several minutes, open a ticket with the checkout email and any on-screen reference."
         },
         "booking-chat": {
           "title": "How do I use booking chat?",
@@ -331,8 +331,8 @@
         },
         "payment-methods": {
           "title": "Which payment methods do you accept?",
-          "summary": "Secure card payments at confirmation.",
-          "body": "Secure online card payments (Stripe) are offered at checkout. Charges and invoices depend on the property and product booked."
+          "summary": "Online card, and non-card options when offered.",
+          "body": "On the recap (/booking/recap), secure card payment (Stripe) is offered for many immediate confirmations. Charges and invoices depend on the product booked.\n\nIn some cases, cash, bank transfer, or mobile money may appear — see the offline payments article.\n\nYou can save a card under My account → Payment methods for faster future checkouts."
         },
         "offline-payments": {
           "title": "Cash, bank transfer, or mobile money",
@@ -347,27 +347,27 @@
         "invoice-receipt": {
           "title": "How do I get an invoice or receipt?",
           "summary": "Download or request your payment proof.",
-          "body": "After payment, a receipt is usually sent by email. You can also check details under My account → Bookings. For a named invoice, open a ticket with your booking reference."
+          "body": "After a successful payment, a receipt is usually emailed. Also keep /booking/success and the detail under My account → Bookings.\n\nOn the stay detail, a confirmation PDF may be available depending on the product. For a named invoice (company details, VAT), open a ticket with your reference.\n\nNon-card proofs follow the instructions shown after you choose that payment method."
         },
         "failed-payment": {
           "title": "My payment failed",
           "summary": "What to do if the card is declined or the charge is incomplete.",
-          "body": "Check your card limit and try again from the confirmation page. A stay is not confirmed until payment succeeds. If an amount was held without confirmation, contact support with the date and amount."
+          "body": "On the recap or confirmation page, check card limits and expiry, then try again. A stay is not confirmed until payment succeeds.\n\nYou can also return from My account → Bookings if a remaining payment is offered, or pick another option shown at checkout.\n\nIf an amount was held without confirmation, contact support with the date, amount, and any reference — never send the card security code in a ticket."
         },
         "cancellation-policy": {
           "title": "What is your cancellation policy?",
           "summary": "Terms depend on the property or provider.",
-          "body": "Terms vary by property or provider. Check the product page and your confirmation email. If unsure, open a ticket with your booking reference."
+          "body": "Cancellation terms vary by hotel, flight, car, cruise, activity, or package. They appear on the product page and in your confirmation email / booking detail.\n\nTo cancel when allowed: My account → Bookings → stay detail. If the button is missing, you may need a ticket or booking chat.\n\nBefore cancelling, also read the refund timeline article to know when funds return."
         },
         "refund-timeline": {
           "title": "How long do refunds take?",
           "summary": "Timelines after an eligible cancellation.",
-          "body": "After a cancellation that matches the product terms, refunds are processed by the provider and your bank. Expect a few business days in most cases. Keep your booking reference for follow-up."
+          "body": "After a cancellation that matches product terms, refunds are processed by the provider and your bank or payment operator. Expect a few business days in most cases.\n\nStay status updates under My account → Bookings. Keep the reference for follow-up.\n\nIf the expected delay passes or the amount differs, open a ticket with cancellation proof and the relevant statement."
         },
         "update-profile": {
-          "title": "How do I update my profile or addresses?",
-          "summary": "Edit your personal details and preferences.",
-          "body": "From My account, use Profile and Addresses. You can change display language in your preferences."
+          "title": "How do I update my profile?",
+          "summary": "Edit name, phone, language, and avatar.",
+          "body": "Open My account → Profile to update personal details (name, phone, avatar) and display preferences, including language.\n\nAddresses are managed separately under My account → Addresses. Travellers for a stay are entered on the booking manifest.\n\nAfter saving, changes apply to future bookings and site display."
         },
         "manage-addresses": {
           "title": "Manage my addresses",
@@ -377,7 +377,7 @@
         "password-security": {
           "title": "Password and account security",
           "summary": "Protect your account and recover access.",
-          "body": "Use a unique, strong password. If you forget it, use Forgot password on the sign-in page. If you suspect unauthorised access, change your password and then contact support."
+          "body": "Use a unique, strong password. On the sign-in page (/booking/login), use Forgot password if you cannot sign in.\n\nIf you suspect unauthorised access, change the password as soon as possible, review My account → Payment methods, then contact support.\n\nNever share your password in booking chat or a support ticket."
         },
         "onekey-loyalty": {
           "title": "OneKey loyalty programme",
@@ -397,12 +397,12 @@
         "response-time": {
           "title": "How fast does support reply?",
           "summary": "First reply within 1–2 business days in most cases.",
-          "body": "We handle requests Monday–Friday. Most tickets get a first reply within 1–2 business days."
+          "body": "We handle tickets Monday–Friday. Most get a first reply within 1–2 business days.\n\nFor an urgent question about an existing stay, also use booking chat (My account → Bookings → detail).\n\nAlways include your booking reference to speed up handling."
         },
         "how-to-contact": {
           "title": "How do I contact support?",
-          "summary": "Open a ticket from the help centre after signing in.",
-          "body": "Sign in, then use the Contact support form at the bottom of this page. Include your booking number if you have one. You can also visit Contact us under About."
+          "summary": "Help centre ticket, booking chat, or contact page.",
+          "body": "Sign in, then use the Contact support form at the bottom of /support (or /support#support-form). Describe the request and add your booking number if you have one.\n\nFor a specific stay (dates, documents, next steps), prefer chat from My account → Bookings → stay detail.\n\nYou can also open About → Contact us for public contact details."
         }
       }
     }

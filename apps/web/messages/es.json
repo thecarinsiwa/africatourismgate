@@ -312,17 +312,17 @@
         "modify-or-cancel": {
           "title": "¿Cómo cambio o cancelo una reserva?",
           "summary": "Gestione su estancia desde Mi cuenta o contacte al soporte.",
-          "body": "Abra Mi cuenta → Reservas, seleccione su estancia y use las acciones disponibles (pagar, cancelar). Si falta una opción, contáctenos con su referencia de reserva."
+          "body": "Abra Mi cuenta → Reservas, seleccione su estancia y use las acciones disponibles (pago pendiente, cancelación, documentos). Las opciones dependen del estado y de las condiciones del producto.\n\nSi falta un botón, las reglas del proveedor pueden impedir el autoservicio o exigir una solicitud manual. Abra un ticket o el chat de la reserva con su referencia.\n\nAntes de cancelar, consulte también la política de cancelación y los plazos de reembolso."
         },
         "find-booking": {
           "title": "¿Dónde encuentro mi reserva?",
           "summary": "Acceda al historial y al detalle de sus estancias.",
-          "body": "Inicie sesión y abra Mi cuenta → Reservas. Cada estancia muestra el estado, las fechas y las acciones disponibles. Use el correo de confirmación si necesita la referencia de reserva."
+          "body": "Inicie sesión y abra Mi cuenta → Reservas. La lista muestra el estado, las fechas y el acceso al detalle de cada estancia.\n\nEn el detalle encontrará pago, cancelación (si está disponible), manifiesto de viajeros, reseñas y chat. Guarde el correo de confirmación para recuperar el número de reserva.\n\nSi no aparece nada tras un pago, compruebe la cuenta usada en el checkout o abra un ticket con el correo y la fecha del pago."
         },
         "confirmation-email": {
           "title": "No recibí el correo de confirmación",
           "summary": "Revise el spam y encuentre la confirmación en su cuenta.",
-          "body": "Revise la carpeta de spam o correo no deseado y luego Mi cuenta → Reservas. Si la reserva no aparece tras unos minutos, abra un ticket con el correo usado en el pago."
+          "body": "Primero revise spam / correo no deseado y la dirección indicada en el checkout. El correo puede tardar unos minutos.\n\nTambién abra Mi cuenta → Reservas: la estancia suele aparecer aunque falte el correo. Puede ver /booking/success justo después del pago.\n\nSi la reserva no aparece tras varios minutos, abra un ticket con el correo del pago y cualquier referencia en pantalla."
         },
         "booking-chat": {
           "title": "¿Cómo uso el chat de una reserva?",
@@ -331,8 +331,8 @@
         },
         "payment-methods": {
           "title": "¿Qué métodos de pago aceptan?",
-          "summary": "Pagos con tarjeta seguros en la confirmación.",
-          "body": "En el pago se ofrecen pagos seguros con tarjeta en línea (Stripe). Los cargos y facturas dependen del alojamiento y del producto reservado."
+          "summary": "Tarjeta en línea y, según el producto, opciones fuera de tarjeta.",
+          "body": "En el resumen (/booking/recap) se ofrece pago seguro con tarjeta (Stripe) para muchas confirmaciones inmediatas. Los cargos y facturas dependen del producto reservado.\n\nEn algunos casos aparecen efectivo, transferencia o mobile money — vea el artículo de pagos fuera de tarjeta.\n\nPuede guardar una tarjeta en Mi cuenta → Métodos de pago para agilizar próximos checkouts."
         },
         "offline-payments": {
           "title": "Efectivo, transferencia o mobile money",
@@ -347,27 +347,27 @@
         "invoice-receipt": {
           "title": "¿Cómo obtengo una factura o recibo?",
           "summary": "Descargue o solicite su justificante de pago.",
-          "body": "Tras el pago, suele enviarse un recibo por correo. También puede consultar el detalle en Mi cuenta → Reservas. Para una factura nominativa, abra un ticket con su referencia de reserva."
+          "body": "Tras un pago correcto, suele enviarse un recibo por correo. Conserve también /booking/success y el detalle en Mi cuenta → Reservas.\n\nEn el detalle de la estancia puede haber un PDF de confirmación según el producto. Para una factura nominativa (empresa, IVA), abra un ticket con su referencia.\n\nLos justificantes fuera de tarjeta siguen las instrucciones mostradas tras elegir ese método."
         },
         "failed-payment": {
           "title": "Mi pago falló",
           "summary": "Qué hacer si la tarjeta es rechazada o el cargo incompleto.",
-          "body": "Compruebe el límite de su tarjeta e inténtelo de nuevo desde la página de confirmación. La estancia no se confirma hasta que el pago sea válido. Si se retuvo un importe sin confirmación, contacte al soporte con la fecha y el monto."
+          "body": "En el resumen o la página de confirmación, compruebe el límite y la caducidad de la tarjeta e inténtelo de nuevo. La estancia no se confirma hasta que el pago sea válido.\n\nTambién puede volver desde Mi cuenta → Reservas si hay un pago pendiente, u otra opción del checkout.\n\nSi se retuvo un importe sin confirmación, contacte al soporte con la fecha, el monto y la referencia — nunca envíe el código de seguridad en un ticket."
         },
         "cancellation-policy": {
           "title": "¿Cuál es su política de cancelación?",
           "summary": "Las condiciones dependen del alojamiento o proveedor.",
-          "body": "Las condiciones varían según el alojamiento o proveedor. Consulte la página del producto y su correo de confirmación. Si tiene dudas, abra un ticket con su referencia de reserva."
+          "body": "Las condiciones varían según hotel, vuelo, coche, crucero, actividad o paquete. Figuran en la ficha del producto y en el correo / detalle de confirmación.\n\nPara cancelar cuando esté permitido: Mi cuenta → Reservas → detalle. Si falta el botón, puede hacer falta un ticket o el chat de la reserva.\n\nAntes de cancelar, lea también los plazos de reembolso."
         },
         "refund-timeline": {
           "title": "¿Cuánto tarda un reembolso?",
           "summary": "Plazos tras una cancelación elegible.",
-          "body": "Tras una cancelación conforme a las condiciones del producto, el reembolso lo procesan el proveedor y su banco. En general, espere unos días hábiles. Conserve su referencia de reserva para el seguimiento."
+          "body": "Tras una cancelación conforme a las condiciones del producto, el reembolso lo procesan el proveedor y su banco u operador de pago. En general, espere unos días hábiles.\n\nEl estado se actualiza en Mi cuenta → Reservas. Conserve la referencia para el seguimiento.\n\nSi pasa el plazo previsto o el importe no coincide, abra un ticket con la prueba de cancelación y el extracto correspondiente."
         },
         "update-profile": {
-          "title": "¿Cómo actualizo mi perfil o direcciones?",
-          "summary": "Modifique sus datos personales y preferencias.",
-          "body": "Desde Mi cuenta, use Perfil y Direcciones. Puede cambiar el idioma de visualización en sus preferencias."
+          "title": "¿Cómo actualizo mi perfil?",
+          "summary": "Modificar nombre, teléfono, idioma y avatar.",
+          "body": "Abra Mi cuenta → Perfil para actualizar sus datos personales (nombre, teléfono, avatar) y preferencias de visualización, incluido el idioma.\n\nLas direcciones se gestionan en Mi cuenta → Direcciones. Los viajeros de una estancia se indican en el manifiesto de la reserva.\n\nTras guardar, los cambios se aplican a futuras reservas y a la visualización del sitio."
         },
         "manage-addresses": {
           "title": "Gestionar mis direcciones",
@@ -377,7 +377,7 @@
         "password-security": {
           "title": "Contraseña y seguridad de la cuenta",
           "summary": "Proteja su cuenta y recupere el acceso.",
-          "body": "Use una contraseña única y segura. Si la olvida, use «Olvidé mi contraseña» en la página de inicio de sesión. Si sospecha un acceso no autorizado, cambie la contraseña y luego contacte al soporte."
+          "body": "Use una contraseña única y segura. En la página de inicio de sesión (/booking/login), use «Olvidé mi contraseña» si no puede entrar.\n\nSi sospecha un acceso no autorizado, cambie la contraseña cuanto antes, revise Mi cuenta → Métodos de pago y contacte al soporte.\n\nNunca comparta su contraseña en el chat de reserva ni en un ticket."
         },
         "onekey-loyalty": {
           "title": "Programa de fidelidad OneKey",
@@ -397,12 +397,12 @@
         "response-time": {
           "title": "¿En cuánto tiempo responde el soporte?",
           "summary": "Primera respuesta en 1–2 días hábiles en la mayoría de los casos.",
-          "body": "Atendemos las solicitudes de lunes a viernes. La mayoría de los tickets reciben una primera respuesta en 1–2 días hábiles."
+          "body": "Atendemos tickets de lunes a viernes. La mayoría reciben una primera respuesta en 1–2 días hábiles.\n\nPara una urgencia sobre una estancia ya reservada, use también el chat de la reserva (Mi cuenta → Reservas → detalle).\n\nIncluya siempre su referencia de reserva para agilizar el trámite."
         },
         "how-to-contact": {
           "title": "¿Cómo contacto al soporte?",
-          "summary": "Abra un ticket desde el centro de ayuda tras iniciar sesión.",
-          "body": "Inicie sesión y use el formulario «Contactar soporte» al final de esta página. Incluya su número de reserva si lo tiene. También puede visitar Contactarnos en Sobre nosotros."
+          "summary": "Ticket del centro de ayuda, chat de reserva o página de contacto.",
+          "body": "Inicie sesión y use el formulario Contactar soporte al final de /support (o /support#support-form). Describa la solicitud y añada el número de reserva si lo tiene.\n\nPara una estancia concreta (fechas, documentos, siguientes pasos), prefiera el chat en Mi cuenta → Reservas → detalle.\n\nTambién puede abrir Sobre nosotros → Contactarnos para los datos públicos."
         }
       }
     }
