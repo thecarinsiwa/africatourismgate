@@ -33,7 +33,11 @@ export function SupportPageContent() {
             <SupportCategoryGrid />
             <SupportPopularList />
 
-            <section aria-labelledby="support-form-heading">
+            <section
+              id="support-form"
+              aria-labelledby="support-form-heading"
+              className="scroll-mt-24"
+            >
               <h2
                 id="support-form-heading"
                 className="text-lg font-semibold text-atg-fg"

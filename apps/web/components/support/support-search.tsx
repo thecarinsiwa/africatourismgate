@@ -9,7 +9,7 @@ import {
   searchHelpArticles,
   type HelpArticleSearchStrings,
 } from '../../lib/support/help-catalog';
-import { supportArticlePath } from '../../lib/support/routes';
+import { supportArticlePath, SUPPORT_BASE_PATH } from '../../lib/support/routes';
 import { HelpSearchIcon } from './support-help-icons';
 
 function useArticleSearchStrings(): Record<string, HelpArticleSearchStrings> {
@@ -61,7 +61,17 @@ export function SupportSearch() {
           className="mt-3 border-t border-atg-border pt-3 dark:border-atg-border"
         >
           {results.length === 0 ? (
-            <p className="text-sm text-atg-muted">{t('searchNoResults')}</p>
+            <div className="space-y-2">
+              <p className="text-sm text-atg-muted">{t('searchNoResults')}</p>
+              <p>
+                <Link
+                  href={`${SUPPORT_BASE_PATH}#support-form`}
+                  className="text-sm font-medium text-primary outline-none hover:underline focus-visible:underline"
+                >
+                  {t('searchContactCta')}
+                </Link>
+              </p>
+            </div>
           ) : (
             <ul className="divide-y divide-atg-border dark:divide-atg-border">
               {results.map((article) => {
