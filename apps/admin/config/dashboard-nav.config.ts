@@ -133,6 +133,12 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
       { href: '/parametres', labelKey: 'settings', iconKey: 'sliders' },
     ],
   },
+  {
+    type: 'link',
+    href: '/aide',
+    labelKey: 'adminHelp',
+    iconKey: 'help',
+  },
 ];
 
 /** Routes imbriquées hors menu latéral — clés i18n `nav.links.*` ou `nav.breadcrumb.*`. */
