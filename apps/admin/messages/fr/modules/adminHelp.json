@@ -156,44 +156,44 @@
       "body": "L'impact GAP (/gap/impact) présente les statistiques et indicateurs mis en avant (dons, résultats, jalons). Ajoutez ou mettez à jour une statistique via Nouvelle statistique d'impact.\n\nLes médias GAP (/gap/medias) centralisent images et fichiers réutilisables dans les pages et activités. Téléversez des assets correctement nommés et dimensionnés pour le web.\n\nGardez chiffres et visuels à jour : ils alimentent la crédibilité du programme côté public."
     },
     "blog-et-site": {
-      "title": "Blog et site",
-      "summary": "",
-      "body": ""
+      "title": "Blog et site de présentation",
+      "summary": "Articles de blog et contenu institutionnel (À propos, hero, équipe…).",
+      "body": "Le blog (/contenu/blog) permet de créer et publier des articles pour le site public. Utilisez Nouvel article, renseignez le contenu localisé, puis publiez selon le workflow prévu.\n\nSite & présentation (/contenu/site) regroupe les pages institutionnelles : À propos, équipe, frise, ressources, Pourquoi nous, carousel hero et clients satisfaits. Naviguez par onglets pour éditer chaque section.\n\nPermissions blog.read/write et content.read/write. Prévisualisez le rendu public après une modification majeure."
     },
     "pages-legales": {
       "title": "Pages légales",
-      "summary": "",
-      "body": ""
+      "summary": "CGU, confidentialité et autres textes juridiques.",
+      "body": "Les pages légales (/contenu/legal) gèrent les documents juridiques affichés sur le site (conditions, confidentialité, etc.). Créez ou mettez à jour une page via Nouvelle page légale.\n\nVeillez à la version linguistique (fr / en / es) et à la date de mise à jour. Une page obsolète expose la plateforme à des risques de conformité.\n\nPermission content.read / content.write. Faites relire les textes sensibles avant publication."
     },
     "moderer-les-avis": {
-      "title": "Modérer les avis",
-      "summary": "",
-      "body": ""
+      "title": "Modérer les avis clients",
+      "summary": "Approuver, masquer ou supprimer notes et commentaires.",
+      "body": "Le module Avis (/contenu/avis) centralise les notes et commentaires laissés par les clients. Filtrez par note, propriété ou statut (en attente, publié, masqué).\n\nDepuis le détail, approuvez, masquez ou supprimez un avis selon votre politique. Le compteur « avis en attente » dans le menu signale le backlog de modération.\n\nPermissions reviews.read / reviews.write. Traitez rapidement les avis signalés pour protéger la réputation et la qualité du contenu public."
     },
     "tickets-support-clients": {
       "title": "Tickets support clients",
-      "summary": "",
-      "body": ""
+      "summary": "File d'assistance : priorités, réponses et clôture.",
+      "body": "Le hub Support (/contenu/support) gère les tickets clients (onglet Tickets) et prépare la messagerie unifiée (onglet Messages). Filtrez par statut et priorité, puis ouvrez un ticket pour lire le fil et répondre.\n\nAssignez le ticket, changez le statut (ouvert → en cours → résolu / fermé) et envoyez une réponse d'au moins dix caractères. Le badge « tickets ouverts » dans la navigation indique la charge restante.\n\nPermissions support_tickets.read / support_tickets.write. Ne confondez pas ce module avec le Centre d'aide admin (/aide), réservé à la documentation interne."
     },
     "comptes-fidelite-onekey": {
       "title": "Comptes fidélité OneKey",
-      "summary": "",
-      "body": ""
+      "summary": "Solde de points, paliers et ajustements manuels.",
+      "body": "Les comptes fidélité (/fidelite/comptes) affichent le programme OneKey : solde de points, palier et dernière activité. Recherchez un compte par utilisateur pour inspecter l'historique.\n\nUn ajustement manuel du solde peut être réservé au super administrateur. Documentez la raison de toute correction pour l'audit.\n\nL'accès suit en général users.read (ou règles équivalentes). Croisez avec le profil utilisateur si vous devez vérifier l'identité du titulaire."
     },
     "organisations": {
       "title": "Organisations",
-      "summary": "",
-      "body": ""
+      "summary": "Partenaires, entités et paramètres d'organisation.",
+      "body": "Le module Organisations (/organisations) liste les partenaires et entités de la plateforme. Recherchez par nom ou slug, puis ouvrez une fiche pour voir le profil, le contact et les employés liés.\n\nCréez une organisation via Nouvelle organisation, puis complétez les infos et les réglages associés. Certaines options (thème, comptes bancaires) se gèrent aussi depuis Paramètres.\n\nL'accès est en général ouvert aux utilisateurs authentifiés selon les règles RBAC ; les actions d'écriture peuvent être restreintes."
     },
     "roles-et-permissions": {
       "title": "Rôles et permissions",
-      "summary": "",
-      "body": ""
+      "summary": "Contrôler qui peut lire ou modifier chaque module.",
+      "body": "Sous Système → Rôles (/systeme/roles), définissez les rôles et les permissions associées (lecture / écriture par domaine). Créez un rôle, cochez les permissions nécessaires, puis assignez-le aux utilisateurs.\n\nLes écrans d'assignations et de permissions (hors menu principal, accessibles via fil d'Ariane ou Ctrl+K) permettent de lier un rôle à un utilisateur avec un périmètre (global, propriété, agence, file support…).\n\nPrincipe du moindre privilège : n'accordez que ce qui est utile. Un mauvais rôle peut masquer des menus entiers ou ouvrir trop d'accès."
     },
     "parametres-systeme": {
       "title": "Paramètres système",
-      "summary": "",
-      "body": ""
+      "summary": "E-mails, dons, mobile money, comptes bancaires et réglages org.",
+      "body": "Le hub Paramètres (/parametres) regroupe la configuration de l'organisation. Depuis ce point d'entrée, accédez notamment aux e-mails transactionnels, aux dons, au mobile money et aux comptes bancaires.\n\nModifiez un réglage avec prudence : un mauvais modèle d'e-mail ou un compte bancaire incorrect impacte directement clients et opérations. Enregistrez puis vérifiez un parcours réel (paiement test, notification).\n\nPermissions typiques : organization_settings.read/write, et droits spécifiques pour mobile money ou comptes bancaires. Ces paramètres sont distincts de ceux du module GAP."
     }
   }
 }
