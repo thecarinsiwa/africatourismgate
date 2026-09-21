@@ -284,7 +284,14 @@ export function AdminHelpSearch() {
               ) : null}
             </div>
           ) : (
-            <ul className="divide-y divide-atg-border dark:divide-atg-border">
+            <div>
+              <p
+                className="mb-1 text-xs font-medium text-atg-muted"
+                aria-live="polite"
+              >
+                {t('searchResultsCount', { count: results.length })}
+              </p>
+              <ul className="divide-y divide-atg-border dark:divide-atg-border">
               {results.map((article, index) => {
                 const strings = stringsBySlug[article.slug];
                 const optionId = `${listId}-option-${index}`;
@@ -327,7 +334,8 @@ export function AdminHelpSearch() {
                   </li>
                 );
               })}
-            </ul>
+              </ul>
+            </div>
           )}
         </div>
       ) : null}
