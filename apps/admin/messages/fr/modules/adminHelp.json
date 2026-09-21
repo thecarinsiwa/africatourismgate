@@ -20,8 +20,8 @@
     "breadcrumbHome": "Centre d'aide",
     "backToCategory": "Retour au thème",
     "backToHub": "Retour au centre d'aide",
-    "contextualHelp": "Aide",
-    "openContextualHelp": "Aide pour cette page"
+    "contextualHelp": "Ouvrir le centre d'aide",
+    "openContextualHelp": "Ouvrir l'aide pour cette page"
   },
   "categories": {
     "prise-en-main": {

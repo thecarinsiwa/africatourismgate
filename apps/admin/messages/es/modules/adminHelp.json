@@ -20,8 +20,8 @@
     "breadcrumbHome": "Centro de ayuda",
     "backToCategory": "Volver al tema",
     "backToHub": "Volver al centro de ayuda",
-    "contextualHelp": "Ayuda",
-    "openContextualHelp": "Ayuda para esta página"
+    "contextualHelp": "Abrir el centro de ayuda",
+    "openContextualHelp": "Abrir la ayuda para esta página"
   },
   "categories": {
     "prise-en-main": {

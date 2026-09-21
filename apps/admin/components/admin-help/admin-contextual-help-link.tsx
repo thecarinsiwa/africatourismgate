@@ -14,11 +14,13 @@ export function AdminContextualHelpLink() {
   const pathname = usePathname();
   const t = useTranslations('modules.adminHelp.ui');
 
-  const { href, label } = useMemo(() => {
+  const { href, label, isContextual } = useMemo(() => {
     const target = resolveAdminContextualHelp(pathname);
+    const contextual = target !== null;
     return {
       href: getAdminContextualHelpHref(pathname),
-      label: target ? t('openContextualHelp') : t('contextualHelp'),
+      label: contextual ? t('openContextualHelp') : t('contextualHelp'),
+      isContextual: contextual,
     };
   }, [pathname, t]);
 
@@ -28,10 +30,11 @@ export function AdminContextualHelpLink() {
       aria-label={label}
       title={label}
       data-testid="admin-contextual-help-link"
+      data-contextual={isContextual ? 'true' : 'false'}
       className={cn(
         'relative inline-flex h-10 w-10 items-center justify-center rounded-lg border border-atg-border bg-atg-elevated',
         'text-atg-fg transition-colors hover:bg-atg-surface',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface',
       )}
     >
       <SidebarHeadsetIcon className="h-5 w-5" />
