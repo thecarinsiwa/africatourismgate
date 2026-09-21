@@ -7,20 +7,37 @@ import { getMysqlConfig, isAutoSeedEnabled } from './mysql-config';
 
 const logger = new Logger('DatabaseBootstrap');
 
-const SEED_FILE = 'install.seed.sql';
 const PLATFORM_ORG_ID = '00000000-0000-4000-8000-000000000001';
 
-function resolveSeedSqlPath(): string {
+function resolveSeedFileName(config: ConfigService): string {
+  const explicit = config.get<string>('DATABASE_SEED_FILE');
+  if (explicit?.trim()) {
+    return explicit.trim();
+  }
+  const profile = (config.get<string>('SEED_PROFILE', 'dev') ?? 'dev').toLowerCase();
+  if (profile === 'prod' || profile === 'production') {
+    return 'install.seed.prod.sql';
+  }
+  return 'install.seed.sql';
+}
+
+function resolveSeedSqlPath(config: ConfigService): string {
+  const seedFile = resolveSeedFileName(config);
+  if (seedFile.includes('/') || seedFile.includes('\\')) {
+    if (existsSync(seedFile)) return seedFile;
+    throw new Error(`Seed file not found: ${seedFile}`);
+  }
+
   const candidates = [
-    join(__dirname, '../../../../database/seeds', SEED_FILE),
-    join(process.cwd(), 'database/seeds', SEED_FILE),
-    join(process.cwd(), '../../database/seeds', SEED_FILE),
+    join(__dirname, '../../../../database/seeds', seedFile),
+    join(process.cwd(), 'database/seeds', seedFile),
+    join(process.cwd(), '../../database/seeds', seedFile),
   ];
   for (const path of candidates) {
     if (existsSync(path)) return path;
   }
   throw new Error(
-    `Seed file "${SEED_FILE}" not found. Expected at database/seeds/${SEED_FILE}.`,
+    `Seed file "${seedFile}" not found. Expected at database/seeds/${seedFile}.`,
   );
 }
 
@@ -71,7 +88,7 @@ export async function ensureSeeds(config: ConfigService): Promise<void> {
     return;
   }
 
-  const seedPath = resolveSeedSqlPath();
+  const seedPath = resolveSeedSqlPath(config);
   const sql = readFileSync(seedPath, 'utf8');
   const mysql = getMysqlConfig(config);
 

@@ -56,6 +56,8 @@ Africa Tourism Gate est une **marketplace tourisme** multi-verticales :
 |---------|-------------|
 | Schéma | `database/africatourismgate_database.sql` |
 | Seed installation (dev/demo) | `database/seeds/install.seed.sql` |
+| Seed production minimal | `database/seeds/install.seed.prod.sql` |
+| Purge démo + CLI prépare | `database/scripts/purge-demo-data.sql`, `pnpm db:prepare-prod` |
 | Registre UUID seed | `database/seeds/seed-ids.txt` |
 | Doc seeds | `database/seeds/README.md` |
 | Modèles CSV | `docs/data-collection/` (voir partie D) |
@@ -102,8 +104,8 @@ Retirer les données de démonstration / développement sans casser le démarrag
 | RBAC | `permissions`, `roles`, `role_permissions` (+ rôle `gap_coordinator`) | AuthZ obligatoire |
 | Organisation | `organizations` plateforme (Africa Tourism Gate, id `…0001`) | Tenant par défaut |
 | Paramètres | `organization_settings` (locale, booking, payment_methods, deposits, branding, contact, loyalty, email, item_type_modes, auth_visual) | Runtime web / admin / POS |
-| Référentiels catalogue génériques | `amenities`, `vehicle_categories` | Listes de référence |
-| Référentiels transport (option) | `airlines`, `airports`, `cruise_lines`, `cruise_ports` seed | Utiles si réels ; sinon à remplacer |
+| Référentiels catalogue génériques | `amenities` (seed prod) ; `vehicle_categories` à fournir hors seed | Listes de référence |
+| Référentiels transport (option) | `airlines`, `airports`, `cruise_lines`, `cruise_ports` | **Hors seed prod** — à intégrer avec le catalogue réel |
 
 ### 3.4 Données à supprimer (démo / test)
 
@@ -170,11 +172,33 @@ Exécuter dans cet ordre (enfants → parents) :
 
 ### 3.8 Suites techniques (après validation — ne pas exécuter sans feu vert)
 
-| Livrable | Rôle |
-|----------|------|
-| `database/scripts/purge-demo-data.sql` | DELETE ciblés par UUID, commentaires, SELECT de contrôle |
-| `database/seeds/install.seed.prod.sql` | RBAC + org plateforme + settings + référentiels minimaux |
-| Mise à jour `database/seeds/README.md` | Distinguer seed dev vs seed prod |
+| Livrable | Rôle | Statut |
+|----------|------|--------|
+| `database/scripts/purge-demo-data.sql` | DELETE ciblés par UUID, commentaires, SELECT de contrôle | **Disponible** |
+| `database/seeds/install.seed.prod.sql` | 8 tables : RBAC + org plateforme + settings + amenities | **Disponible** |
+| `apps/api/scripts/prepare-production-db.mjs` | CLI `check` / `purge` / `fresh` / `reset` / `install-only` (`pnpm db:prepare-prod`) | **Disponible** |
+| Mise à jour `database/seeds/README.md` | Distinguer seed dev vs seed prod | **Disponible** |
+
+```bash
+# Contrôles (staging)
+pnpm db:prepare-prod -- --mode=check
+
+# Purge démo (staging uniquement, avec backup)
+pnpm db:prepare-prod -- --mode=purge --confirm --backup
+
+# Install neuve production
+pnpm db:prepare-prod -- --mode=fresh --database=africatourismgate_prod
+
+# Production : vider toutes les tables métier, garder uniquement le seed d'installation
+pnpm db:prod-install-only -- --backup
+
+# Sync ultérieur sans réinjecter CMS / catalogue démo (filtre les DML migrations)
+pnpm db:sync:prod
+# équivalent : SEED_PROFILE=prod dans .env puis pnpm db:sync
+# + DATABASE_AUTO_SEED=false
+```
+
+Voir aussi `database/scripts/README.md`.
 
 ---
 
@@ -250,7 +274,7 @@ Sans import, les clients se créent via inscription / checkout.
 | Agences de location | Fournisseurs locaux | Vertical véhicules | Nom, contact | O si vertical actif | Véhicules | Rent Kinshasa | Partenariats |
 | Véhicules | Flotte | Catalogue | Catégorie, plaque, prix/jour, images, dispos | O pour vendre | Véhicules | SUV, CD-KIN-123 | Ops |
 
-Catégories référence déjà seedées : Economy → Premium (`vehicle_categories`).
+Catégories véhicules : à créer via admin / import (plus dans le seed prod).
 
 ### 4.8 Catalogue — Croisières
 

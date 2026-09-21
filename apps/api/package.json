@@ -11,6 +11,8 @@
     "generate": "node scripts/generate-entities.mjs && node scripts/generate-modules.mjs",
     "openapi:export": "nest build && node -r reflect-metadata dist/cli/export-openapi.js",
     "db:sync": "node scripts/db-sync.mjs",
+    "db:sync:prod": "node scripts/db-sync-prod.mjs",
+    "db:prepare-prod": "node scripts/prepare-production-db.mjs",
     "test:rbac": "node scripts/test-rbac-permissions.mjs",
     "test:rbac-catalog": "node scripts/test-rbac-catalog.mjs",
     "test:organizations": "node scripts/test-organizations-crud.mjs",
