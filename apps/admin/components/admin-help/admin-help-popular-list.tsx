@@ -25,7 +25,7 @@ export function AdminHelpPopularList() {
           <li key={article.id}>
             <Link
               href={adminHelpArticlePath(article.categorySlug, article.slug)}
-              className="flex min-w-0 items-start justify-between gap-4 py-3.5 outline-none transition-colors hover:text-primary focus-visible:text-primary"
+              className="flex min-w-0 items-start justify-between gap-3 py-3 outline-none transition-colors hover:text-primary focus-visible:text-primary"
             >
               <span className="min-w-0 break-words text-sm font-medium text-atg-fg">
                 {t(`articles.${article.slug}.title`)}

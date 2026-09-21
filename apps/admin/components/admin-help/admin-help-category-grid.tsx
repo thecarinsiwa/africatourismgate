@@ -21,7 +21,7 @@ export function AdminHelpCategoryGrid() {
       </h2>
       <p className="mt-1 text-sm text-atg-muted">{tUi('categoriesSubtitle')}</p>
 
-      <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="mt-6 grid gap-4 sm:grid-cols-2">
         {categories.map((category) => (
           <li key={category.id}>
             <Link

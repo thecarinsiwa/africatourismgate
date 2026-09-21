@@ -13,7 +13,7 @@ export function AidePageContent() {
 
   return (
     <div className="min-w-0">
-      <div className="mx-auto w-full max-w-4xl space-y-8 sm:space-y-12">
+      <div className="mx-auto w-full max-w-5xl space-y-8 sm:space-y-12">
         <header className="max-w-2xl space-y-6">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-atg-fg sm:text-3xl">
@@ -27,8 +27,13 @@ export function AidePageContent() {
         </header>
 
         <AdminHelpQuickStart />
-        <AdminHelpCategoryGrid />
-        <AdminHelpPopularList />
+
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(14rem,17.5rem)] lg:items-start lg:gap-12">
+          <AdminHelpCategoryGrid />
+          <aside className="min-w-0 lg:sticky lg:top-4">
+            <AdminHelpPopularList />
+          </aside>
+        </div>
       </div>
     </div>
   );
