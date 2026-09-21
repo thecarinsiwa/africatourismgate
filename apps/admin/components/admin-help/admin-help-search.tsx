@@ -20,6 +20,7 @@ import {
   type AdminHelpArticle,
   type AdminHelpArticleSearchStrings,
 } from '../../lib/admin-help/help-catalog';
+import { stripAdminHelpMarkdownLinks } from '../../lib/admin-help/admin-path-links';
 import { adminHelpArticlePath } from '../../lib/admin-help/routes';
 import { AdminHelpHighlightText } from './admin-help-highlight';
 
@@ -55,7 +56,7 @@ function useArticleSearchStrings(): Record<
     strings[article.slug] = {
       title: t(`articles.${article.slug}.title`),
       summary: t(`articles.${article.slug}.summary`),
-      body: t(`articles.${article.slug}.body`),
+      body: stripAdminHelpMarkdownLinks(t(`articles.${article.slug}.body`)),
     };
   }
   return strings;
