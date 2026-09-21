@@ -29,18 +29,43 @@ function mockSession(page: import('@playwright/test').Page) {
   });
 }
 
-test('shows public FAQ and sign-in prompt without session', async ({ page }) => {
+test('shows help hub, search, topics and sign-in prompt without session', async ({
+  page,
+}) => {
   await page.goto('/support');
 
   await expect(
     page.getByRole('heading', {
       name: /Centre d'aide|Help centre|Centro de ayuda/i,
+      level: 1,
+    }),
+  ).toBeVisible();
+
+  await expect(
+    page.getByLabel(/Rechercher dans l'aide|Search help|Buscar en la ayuda/i),
+  ).toBeVisible();
+
+  await expect(
+    page.getByRole('heading', {
+      name: /Parcourir par thème|Browse by topic|Explorar por tema/i,
+    }),
+  ).toBeVisible();
+
+  await expect(
+    page.getByRole('link', {
+      name: /Réservations|Bookings|Reservas/i,
     }),
   ).toBeVisible();
 
   await expect(
     page.getByRole('heading', {
-      name: /Questions fréquentes|Frequently asked questions|Preguntas frecuentes/i,
+      name: /Articles populaires|Popular articles|Artículos populares/i,
+    }),
+  ).toBeVisible();
+
+  await expect(
+    page.getByRole('heading', {
+      name: /Contacter le support|Contact support|Contactar soporte/i,
     }),
   ).toBeVisible();
 
@@ -49,6 +74,74 @@ test('shows public FAQ and sign-in prompt without session', async ({ page }) => 
   ).toBeVisible();
 
   await expect(page.getByLabel(/Sujet|Subject|Asunto/i)).toHaveCount(0);
+});
+
+test('navigates from topic to article', async ({ page }) => {
+  await page.goto('/support');
+
+  await page
+    .getByRole('link', { name: /Réservations|Bookings|Reservas/i })
+    .first()
+    .click();
+
+  await expect(page).toHaveURL(/\/support\/booking\/?$/);
+
+  await expect(
+    page.getByRole('heading', {
+      name: /Réservations|Bookings|Reservas/i,
+      level: 1,
+    }),
+  ).toBeVisible();
+
+  await page
+    .getByRole('link', {
+      name: /modifier ou annuler|change or cancel|cambio o cancelo/i,
+    })
+    .first()
+    .click();
+
+  await expect(page).toHaveURL(/\/support\/booking\/modify-or-cancel\/?$/);
+
+  await expect(
+    page.getByRole('heading', {
+      name: /modifier ou annuler|change or cancel|cambio o cancelo/i,
+      level: 1,
+    }),
+  ).toBeVisible();
+
+  await expect(
+    page.getByRole('heading', {
+      name: /Articles liés|Related articles|Artículos relacionados/i,
+    }),
+  ).toBeVisible();
+});
+
+test('search finds and opens an article', async ({ page }) => {
+  await page.goto('/support');
+
+  const search = page.getByLabel(
+    /Rechercher dans l'aide|Search help|Buscar en la ayuda/i,
+  );
+  await search.fill('paiement');
+
+  const results = page.getByRole('listbox', {
+    name: /Résultats de recherche|Search results|Resultados de búsqueda/i,
+  });
+  await expect(results).toBeVisible();
+
+  await results
+    .getByRole('link', {
+      name: /moyens de paiement|payment methods|métodos de pago/i,
+    })
+    .click();
+
+  await expect(page).toHaveURL(/\/support\/payment\/payment-methods\/?$/);
+  await expect(
+    page.getByRole('heading', {
+      name: /moyens de paiement|payment methods|métodos de pago/i,
+      level: 1,
+    }),
+  ).toBeVisible();
 });
 
 test('submits support ticket when signed in', async ({ page }) => {

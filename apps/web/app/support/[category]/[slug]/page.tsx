@@ -1,13 +1,13 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { SupportArticlePageContent } from '../../../components/support/support-article-page-content';
+import { SupportArticlePageContent } from '../../../../components/support/support-article-page-content';
 import {
   getArticleBySlug,
   getHelpArticleStaticParams,
   isValidHelpArticlePath,
-} from '../../../lib/support/help-catalog';
-import { supportArticlePath } from '../../../lib/support/routes';
+} from '../../../../lib/support/help-catalog';
+import { supportArticlePath } from '../../../../lib/support/routes';
 
 const LANG_ALTERNATES = ['fr', 'en', 'es'] as const;
 

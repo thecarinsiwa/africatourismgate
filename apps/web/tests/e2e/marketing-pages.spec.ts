@@ -103,17 +103,47 @@ test.describe('Marketing pages smoke', () => {
       page.getByText(/Aucun membre de l'équipe|No team members|Ningún miembro del equipo/i),
     ).toBeVisible({ timeout: 15_000 });
 
-    // 6. Support FAQ smoke (deep ticket flow stays in support.spec.ts)
+    // 6. Help centre smoke (deep ticket / search flows stay in support.spec.ts)
     await page.goto('/support');
     await assertShell(page);
     await expect(
       page.getByRole('heading', {
         name: /Centre d'aide|Help centre|Centro de ayuda/i,
+        level: 1,
       }),
     ).toBeVisible();
     await expect(
       page.getByRole('heading', {
-        name: /Questions fréquentes|Frequently asked questions|Preguntas frecuentes/i,
+        name: /Parcourir par thème|Browse by topic|Explorar por tema/i,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByLabel(/Rechercher dans l'aide|Search help|Buscar en la ayuda/i),
+    ).toBeVisible();
+
+    await page
+      .getByRole('link', { name: /Réservations|Bookings|Reservas/i })
+      .first()
+      .click();
+    await expect(page).toHaveURL(/\/support\/booking\/?$/);
+    await expect(
+      page.getByRole('heading', {
+        name: /Réservations|Bookings|Reservas/i,
+        level: 1,
+      }),
+    ).toBeVisible();
+
+    await page
+      .getByRole('link', {
+        name: /modifier ou annuler|change or cancel|cambio o cancelo/i,
+      })
+      .first()
+      .click();
+    await expect(page).toHaveURL(/\/support\/booking\/modify-or-cancel\/?$/);
+    await expect(
+      page.getByRole('heading', {
+        name: /modifier ou annuler|change or cancel|cambio o cancelo/i,
+        level: 1,
       }),
     ).toBeVisible();
   });
