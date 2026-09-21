@@ -158,16 +158,16 @@ export function AdminHelpSearch() {
                         article.slug,
                       )}
                       className={cn(
-                        'block py-3 outline-none transition-colors hover:text-primary focus-visible:text-primary',
+                        'block min-w-0 rounded-md px-2 py-3 outline-none transition-colors hover:text-primary focus-visible:text-primary',
                         isActive && 'bg-primary/5 text-primary',
                       )}
                       onMouseEnter={() => setActiveIndex(index)}
                     >
-                      <span className="block text-sm font-medium text-atg-fg">
+                      <span className="block break-words text-sm font-medium text-atg-fg">
                         {strings?.title}
                       </span>
                       {strings?.summary ? (
-                        <span className="mt-0.5 block text-sm text-atg-muted">
+                        <span className="mt-0.5 block break-words text-sm text-atg-muted">
                           {strings.summary}
                         </span>
                       ) : null}

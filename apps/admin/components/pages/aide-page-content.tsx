@@ -15,8 +15,8 @@ export function AidePageContent() {
     <div className="min-w-0">
       <AdminListPageHeader routePath="aide" />
 
-      <div className="mx-auto w-full max-w-4xl space-y-12">
-        <div className="max-w-2xl">
+      <div className="mx-auto w-full max-w-4xl space-y-8 sm:space-y-12">
+        <div className="w-full max-w-2xl">
           <AdminHelpSearch />
         </div>
 

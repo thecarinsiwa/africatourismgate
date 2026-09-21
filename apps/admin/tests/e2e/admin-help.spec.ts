@@ -154,4 +154,103 @@ test.describe('Admin help center', () => {
       }),
     ).toBeVisible();
   });
+
+  test('hub stays usable on a mobile viewport', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.goto('/aide');
+
+    await expect(
+      page.getByRole('heading', { name: HELP_HUB_HEADING, level: 1 }),
+    ).toBeVisible();
+    await expect(page.getByLabel(SEARCH_LABEL)).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: GETTING_STARTED }),
+    ).toBeVisible();
+  });
+});
+
+const LANGUAGE_BUTTON = /Choisir la langue|Select language|Elegir idioma/i;
+
+async function selectLocale(
+  page: import('@playwright/test').Page,
+  localeName: RegExp,
+) {
+  await page.getByRole('button', { name: LANGUAGE_BUTTON }).click();
+  await expect(page.getByRole('menu', { name: LANGUAGE_BUTTON })).toBeVisible();
+  await page.getByRole('menuitemradio', { name: localeName }).click();
+}
+
+test.describe('Admin help center — locale smoke', () => {
+  test.describe.configure({ mode: 'serial' });
+
+  test.beforeEach(async ({ page }) => {
+    await loginAsSeedAdmin(page);
+  });
+
+  test('hub and article render in English', async ({ page }) => {
+    await selectLocale(page, /English/i);
+    await page.goto('/aide');
+
+    await expect(
+      page.getByRole('heading', { name: 'Help Center', level: 1 }),
+    ).toBeVisible();
+    await expect(page.getByLabel('Search help')).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Browse by topic' }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: /Getting started/i }),
+    ).toBeVisible();
+
+    await page.goto('/aide/prise-en-main/palette-commandes');
+    await expect(
+      page.getByRole('heading', {
+        name: /Command palette/i,
+        level: 1,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Related articles' }),
+    ).toBeVisible();
+  });
+
+  test('hub and article render in Spanish', async ({ page }) => {
+    await selectLocale(page, /Español/i);
+    await page.goto('/aide');
+
+    await expect(
+      page.getByRole('heading', { name: 'Centro de ayuda', level: 1 }),
+    ).toBeVisible();
+    await expect(page.getByLabel('Buscar en la ayuda')).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Explorar por tema' }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: /Primeros pasos/i }),
+    ).toBeVisible();
+
+    await page.goto('/aide/prise-en-main/palette-commandes');
+    await expect(
+      page.getByRole('heading', {
+        name: /Paleta de comandos/i,
+        level: 1,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Artículos relacionados' }),
+    ).toBeVisible();
+  });
+
+  test('hub renders in French after switching back', async ({ page }) => {
+    await selectLocale(page, /Français/i);
+    await page.goto('/aide');
+
+    await expect(
+      page.getByRole('heading', { name: "Centre d'aide", level: 1 }),
+    ).toBeVisible();
+    await expect(page.getByLabel("Rechercher dans l'aide")).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: /Prise en main/i }),
+    ).toBeVisible();
+  });
 });

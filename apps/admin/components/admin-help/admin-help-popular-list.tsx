@@ -25,9 +25,9 @@ export function AdminHelpPopularList() {
           <li key={article.id}>
             <Link
               href={adminHelpArticlePath(article.categorySlug, article.slug)}
-              className="flex items-start justify-between gap-4 py-3.5 outline-none transition-colors hover:text-primary focus-visible:text-primary"
+              className="flex min-w-0 items-start justify-between gap-4 py-3.5 outline-none transition-colors hover:text-primary focus-visible:text-primary"
             >
-              <span className="text-sm font-medium text-atg-fg">
+              <span className="min-w-0 break-words text-sm font-medium text-atg-fg">
                 {t(`articles.${article.slug}.title`)}
               </span>
               <span aria-hidden className="mt-0.5 shrink-0 text-atg-muted">

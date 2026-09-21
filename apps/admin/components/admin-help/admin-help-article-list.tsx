@@ -30,13 +30,13 @@ export function AdminHelpArticleList({
           <li key={article.id}>
             <Link
               href={adminHelpArticlePath(article.categorySlug, article.slug)}
-              className="block py-4 outline-none transition-colors hover:text-primary focus-visible:text-primary"
+              className="block min-w-0 py-4 outline-none transition-colors hover:text-primary focus-visible:text-primary"
             >
-              <span className="block text-sm font-semibold text-atg-fg">
+              <span className="block break-words text-sm font-semibold text-atg-fg">
                 {t(`articles.${article.slug}.title`)}
               </span>
               {summary ? (
-                <span className="mt-1 block text-sm text-atg-muted">
+                <span className="mt-1 block break-words text-sm text-atg-muted">
                   {summary}
                 </span>
               ) : null}

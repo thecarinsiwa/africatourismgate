@@ -36,15 +36,18 @@ export function AideCategoryPageContent({
       <AdminHelpBreadcrumbs categorySlug={category.slug} />
 
       <div className="mx-auto w-full max-w-3xl space-y-8">
-        <header className="flex gap-4">
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center text-primary">
-            <AdminHelpTopicIcon icon={category.icon} className="h-7 w-7" />
+        <header className="flex items-start gap-3 sm:gap-4">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center text-primary sm:h-12 sm:w-12">
+            <AdminHelpTopicIcon
+              icon={category.icon}
+              className="h-6 w-6 sm:h-7 sm:w-7"
+            />
           </span>
           <div className="min-w-0">
-            <h1 className="text-2xl font-bold tracking-tight text-atg-fg sm:text-3xl">
+            <h1 className="break-words text-xl font-bold tracking-tight text-atg-fg sm:text-2xl lg:text-3xl">
               {categoryTitle}
             </h1>
-            <p className="mt-2 text-sm text-atg-muted">
+            <p className="mt-2 break-words text-sm text-atg-muted">
               {t(`categories.${category.slug}.description`)}
             </p>
             <p className="mt-1 text-sm text-atg-muted">

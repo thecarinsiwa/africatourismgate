@@ -52,11 +52,11 @@ export function AideArticlePageContent({
               {categoryTitle}
             </Link>
           </p>
-          <h1 className="mt-2 text-2xl font-bold tracking-tight text-atg-fg sm:text-3xl">
+          <h1 className="mt-2 break-words text-xl font-bold tracking-tight text-atg-fg sm:text-2xl lg:text-3xl">
             {articleTitle}
           </h1>
           {summary ? (
-            <p className="mt-3 text-base text-atg-muted">{summary}</p>
+            <p className="mt-3 break-words text-base text-atg-muted">{summary}</p>
           ) : null}
         </header>
 

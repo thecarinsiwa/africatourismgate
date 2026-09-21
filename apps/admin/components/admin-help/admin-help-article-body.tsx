@@ -62,7 +62,7 @@ export function AdminHelpArticleBody({ article }: AdminHelpArticleBodyProps) {
       {paragraphs.length > 0 ? (
         <div className="space-y-4 text-base leading-relaxed text-atg-fg">
           {paragraphs.map((paragraph, index) => (
-            <p key={index} className="m-0">
+            <p key={index} className="m-0 break-words">
               {paragraph}
             </p>
           ))}
