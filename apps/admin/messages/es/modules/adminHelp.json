@@ -10,6 +10,8 @@
     "categoriesSubtitle": "Elija un tema para encontrar respuestas detalladas.",
     "popularTitle": "Artículos populares",
     "popularSubtitle": "Los temas más útiles para empezar.",
+    "quickStartTitle": "Inicio rápido",
+    "quickStartSubtitle": "Primeros pasos para familiarizarse con la administración.",
     "articlesInCategory": "{count, plural, one {# artículo} other {# artículos}}",
     "relatedTitle": "Artículos relacionados",
     "breadcrumbHome": "Centro de ayuda",

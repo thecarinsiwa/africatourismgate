@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { AdminHelpCategoryGrid } from '../admin-help/admin-help-category-grid';
 import { AdminHelpPopularList } from '../admin-help/admin-help-popular-list';
+import { AdminHelpQuickStart } from '../admin-help/admin-help-quick-start';
 import { AdminHelpSearch } from '../admin-help/admin-help-search';
 
 export function AidePageContent() {
@@ -25,6 +26,7 @@ export function AidePageContent() {
           <AdminHelpSearch />
         </header>
 
+        <AdminHelpQuickStart />
         <AdminHelpCategoryGrid />
         <AdminHelpPopularList />
       </div>

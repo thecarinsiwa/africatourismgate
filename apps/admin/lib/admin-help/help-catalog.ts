@@ -144,6 +144,19 @@ export const ADMIN_HELP_CATEGORIES: readonly AdminHelpCategory[] = [
   },
 ] as const;
 
+/**
+ * Curated hub “quick start” links (dashboard, palette, users, bookings, roles, tickets).
+ * Resolved against ADMIN_HELP_ARTICLES — unknown slugs are ignored.
+ */
+export const ADMIN_HELP_QUICK_START_SLUGS = [
+  'naviguer-dans-le-dashboard',
+  'palette-commandes',
+  'gerer-les-utilisateurs',
+  'gerer-les-reservations',
+  'roles-et-permissions',
+  'tickets-support-clients',
+] as const;
+
 export const ADMIN_HELP_ARTICLES: readonly AdminHelpArticle[] = [
   {
     id: 'art-naviguer-dans-le-dashboard',
@@ -403,6 +416,12 @@ export function getAdminHelpArticlesByCategory(
 
 export function getAdminHelpPopularArticles(): AdminHelpArticle[] {
   return ADMIN_HELP_ARTICLES.filter((article) => article.popular === true);
+}
+
+export function getAdminHelpQuickStartArticles(): AdminHelpArticle[] {
+  return ADMIN_HELP_QUICK_START_SLUGS.map((slug) => articlesBySlug.get(slug)).filter(
+    (article): article is AdminHelpArticle => article !== undefined,
+  );
 }
 
 export function getAdminHelpRelatedArticles(
