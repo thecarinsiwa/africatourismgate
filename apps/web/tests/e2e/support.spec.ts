@@ -175,6 +175,118 @@ test('search finds and opens an article', async ({ page }) => {
   ).toBeVisible();
 });
 
+test('search from category page opens an article', async ({ page }) => {
+  await page.goto('/support/booking');
+
+  await expect(
+    page.getByRole('heading', {
+      name: /Réservations|Bookings|Reservas/i,
+      level: 1,
+    }),
+  ).toBeVisible();
+
+  const search = page.getByLabel(
+    /Rechercher dans l'aide|Search help|Buscar en la ayuda/i,
+  );
+  await search.fill('panier');
+
+  const results = page.getByRole('listbox', {
+    name: /Résultats de recherche|Search results|Resultados de búsqueda/i,
+  });
+  await expect(results).toBeVisible();
+
+  await results
+    .getByRole('link', {
+      name: /Panier|Cart and checkout|Carrito/i,
+    })
+    .click();
+
+  await expect(page).toHaveURL(/\/support\/booking\/cart-and-checkout\/?$/);
+  await expect(
+    page.getByRole('heading', {
+      name: /Panier|Cart and checkout|Carrito/i,
+      level: 1,
+    }),
+  ).toBeVisible();
+});
+
+test('empty search shows contact CTA to support form anchor', async ({ page }) => {
+  await page.goto('/support');
+
+  const search = page.getByLabel(
+    /Rechercher dans l'aide|Search help|Buscar en la ayuda/i,
+  );
+  await search.fill('zzzz-no-match-xyz');
+
+  const results = page.getByRole('listbox', {
+    name: /Résultats de recherche|Search results|Resultados de búsqueda/i,
+  });
+  await expect(results).toBeVisible();
+  await expect(
+    results.getByText(
+      /Aucun article|No articles match|Ningún artículo/i,
+    ),
+  ).toBeVisible();
+
+  const cta = results.getByRole('link', {
+    name: /Contacter le support|Contact support|Contactar soporte/i,
+  });
+  await expect(cta).toHaveAttribute('href', /\/support#support-form$/);
+  await cta.click();
+
+  await expect(page).toHaveURL(/\/support#support-form$/);
+  await expect(page.locator('#support-form')).toBeVisible();
+});
+
+test('account shell shows Help link to /support', async ({ page }) => {
+  await mockSession(page);
+
+  await page.route('**/api/auth/me', async (route) => {
+    if (route.request().method() !== 'GET') {
+      await route.continue();
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        user: {
+          id: USER_ID,
+          email: 'support.e2e@example.com',
+          firstName: 'Support',
+          lastName: 'E2E',
+          phone: null,
+          preferredLanguage: 'fr',
+          organizationId: null,
+          status: 'active',
+        },
+        permissions: ['bookings.read'],
+        isSuperAdmin: false,
+      }),
+    });
+  });
+
+  await page.goto('/account/profile');
+
+  const helpLink = page
+    .getByRole('navigation', {
+      name: /Navigation du compte|Account navigation|Navegación de la cuenta/i,
+    })
+    .getByRole('link', { name: /Aide|Help|Ayuda/i });
+
+  await expect(helpLink).toBeVisible();
+  await expect(helpLink).toHaveAttribute('href', '/support');
+
+  await helpLink.click();
+  await expect(page).toHaveURL(/\/support\/?$/);
+  await expect(
+    page.getByRole('heading', {
+      name: /Centre d'aide|Help centre|Centro de ayuda/i,
+      level: 1,
+    }),
+  ).toBeVisible();
+});
+
 test('submits support ticket when signed in', async ({ page }) => {
   await mockSession(page);
 
