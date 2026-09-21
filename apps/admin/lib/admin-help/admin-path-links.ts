@@ -91,3 +91,137 @@ export function isAllowedAdminHelpHref(href: string): boolean {
     matchesAllowedPrefix(pathname, prefix),
   );
 }
+
+export type AdminHelpRichTextSegment =
+  | { type: 'text'; text: string }
+  | { type: 'link'; text: string; href: string };
+
+const MARKDOWN_LINK_RE = /\[([^\]]+)\]\(([^)]+)\)/g;
+/** Bare admin paths, optionally wrapped in parentheses: `/foo` or `(/foo/bar)`. */
+const BARE_PATH_RE = /(\()?(\/[a-z0-9]+(?:[/-][a-z0-9]+)*)(\))?/gi;
+
+/**
+ * Remove markdown link syntax for search indexing.
+ * Keeps label + href so both remain searchable.
+ */
+export function stripAdminHelpMarkdownLinks(text: string): string {
+  if (!text) {
+    return '';
+  }
+  return text.replace(MARKDOWN_LINK_RE, (_match, label: string, href: string) => {
+    const normalized = normalizeAdminHelpLinkHref(href);
+    if (normalized) {
+      return `${label} ${normalized}`;
+    }
+    return `${label} ${href}`.trim();
+  });
+}
+
+function pushText(segments: AdminHelpRichTextSegment[], text: string) {
+  if (!text) {
+    return;
+  }
+  const last = segments[segments.length - 1];
+  if (last?.type === 'text') {
+    last.text += text;
+    return;
+  }
+  segments.push({ type: 'text', text });
+}
+
+function pushLink(
+  segments: AdminHelpRichTextSegment[],
+  text: string,
+  href: string,
+) {
+  if (!text) {
+    return;
+  }
+  segments.push({ type: 'link', text, href });
+}
+
+/** Auto-link allowlisted bare paths inside a plain-text chunk. */
+function parseBarePaths(text: string): AdminHelpRichTextSegment[] {
+  const segments: AdminHelpRichTextSegment[] = [];
+  let lastIndex = 0;
+  BARE_PATH_RE.lastIndex = 0;
+
+  let match: RegExpExecArray | null;
+  while ((match = BARE_PATH_RE.exec(text)) !== null) {
+    const [full, openParen, rawPath, closeParen] = match;
+    const pathname = normalizeAdminHelpLinkHref(rawPath ?? '');
+
+    if (!pathname || !isAllowedAdminHelpHref(pathname)) {
+      continue;
+    }
+
+    // Avoid linking mid-token (e.g. email-like noise); require path boundary.
+    const index = match.index;
+    const prev = index > 0 ? text[index - 1] : '';
+    if (prev && /[a-z0-9]/i.test(prev)) {
+      continue;
+    }
+
+    pushText(segments, text.slice(lastIndex, index));
+
+    const hasParens = Boolean(openParen && closeParen);
+    if (hasParens) {
+      pushText(segments, '(');
+      pushLink(segments, pathname, pathname);
+      pushText(segments, ')');
+    } else if (openParen && !closeParen) {
+      // Unbalanced — keep as text.
+      pushText(segments, full);
+    } else {
+      pushLink(segments, pathname, pathname);
+    }
+
+    lastIndex = index + full.length;
+  }
+
+  pushText(segments, text.slice(lastIndex));
+  return segments;
+}
+
+/**
+ * Parse help body text into text/link segments.
+ * Supports `[label](/path)` and auto-links allowlisted `/path` / `(/path)`.
+ */
+export function parseAdminHelpRichText(text: string): AdminHelpRichTextSegment[] {
+  if (!text) {
+    return [];
+  }
+
+  const segments: AdminHelpRichTextSegment[] = [];
+  let lastIndex = 0;
+  MARKDOWN_LINK_RE.lastIndex = 0;
+
+  let match: RegExpExecArray | null;
+  while ((match = MARKDOWN_LINK_RE.exec(text)) !== null) {
+    const [full, label, rawHref] = match;
+    const index = match.index;
+
+    if (index > lastIndex) {
+      segments.push(...parseBarePaths(text.slice(lastIndex, index)));
+    }
+
+    const href = normalizeAdminHelpLinkHref(rawHref ?? '');
+    if (href && isAllowedAdminHelpHref(href) && label) {
+      pushLink(segments, label, href);
+    } else {
+      // Unsafe / unknown — keep readable label + path as plain text.
+      pushText(
+        segments,
+        label && rawHref ? `${label} (${rawHref})` : full,
+      );
+    }
+
+    lastIndex = index + full.length;
+  }
+
+  if (lastIndex < text.length) {
+    segments.push(...parseBarePaths(text.slice(lastIndex)));
+  }
+
+  return segments.length > 0 ? segments : [{ type: 'text', text }];
+}
