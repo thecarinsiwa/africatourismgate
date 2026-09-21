@@ -38,6 +38,11 @@ export function AdminHelpCategoryGrid() {
                 <span className="mt-1 block text-sm text-atg-muted">
                   {t(`categories.${category.slug}.description`)}
                 </span>
+                <span className="mt-2 block text-xs font-medium text-atg-muted">
+                  {tUi('articlesInCategory', {
+                    count: category.articleSlugs.length,
+                  })}
+                </span>
               </span>
             </Link>
           </li>
