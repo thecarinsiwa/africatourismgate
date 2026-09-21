@@ -55,3 +55,12 @@ pnpm db:sync
 ```env
 DATABASE_AUTO_SEED=false
 ```
+
+## Production data preparation
+
+Before go-live, do **not** rely on this demo/install seed as production data. See the consolidated guide:
+
+- [Production database preparation](../../docs/production-data-preparation.md) — cleanup plan, data inventory, collection form, CSV templates
+- [Data collection CSV templates](../../docs/data-collection/README.md)
+
+In production, set `DATABASE_AUTO_SEED=false` after bootstrap and use a prod-minimal seed (see that guide, Part A) so `pnpm db:sync` does not re-insert demo catalog rows.
