@@ -57,43 +57,43 @@
   "articles": {
     "naviguer-dans-le-dashboard": {
       "title": "Naviguer dans le dashboard",
-      "summary": "",
-      "body": ""
+      "summary": "Menu latéral, fil d'Ariane et organisation des modules d'administration.",
+      "body": "Après connexion, le tableau de bord (/dashboard) affiche les indicateurs et l'activité récente. Le menu latéral à gauche regroupe les modules : utilisateurs, produits, réservations, paiements, contenu, GAP et système.\n\nLe fil d'Ariane en haut de page indique où vous êtes et permet de remonter d'un niveau. Sur mobile, ouvrez le menu via l'icône hamburger.\n\nUtilisez le centre d'aide (/aide) ou la palette de commandes (Ctrl+K) pour atteindre rapidement une page sans parcourir tout le menu."
     },
     "notifications": {
-      "title": "Notifications",
-      "summary": "",
-      "body": ""
+      "title": "Centre de notifications",
+      "summary": "Consulter, filtrer et traiter les alertes admin.",
+      "body": "Ouvrez Notifications dans le menu (ou l'icône cloche) pour accéder au centre de notifications. Vous y retrouvez les alertes liées aux réservations, messages, tickets support et autres événements.\n\nFiltrez par type ou statut pour cibler ce qui reste à traiter. Marquez les éléments comme lus après action pour garder une boîte claire.\n\nLes compteurs éventuellement affichés dans la navigation (avis en attente, tickets ouverts) renvoient vers les modules concernés."
     },
     "palette-commandes": {
-      "title": "Palette de commandes",
-      "summary": "",
-      "body": ""
+      "title": "Palette de commandes (Ctrl+K)",
+      "summary": "Rechercher et ouvrir n'importe quelle page admin en quelques frappes.",
+      "body": "Appuyez sur Ctrl+K (ou Cmd+K sur Mac) pour ouvrir la palette de commandes. Tapez le début d'un libellé de menu (par exemple « hébergements » ou « rôles ») pour filtrer les destinations.\n\nValidez avec Entrée pour naviguer immédiatement. La palette liste les pages du menu et certaines routes imbriquées hors menu (nouveaux formulaires, paramètres e-mails, etc.).\n\nFermez la palette avec Échap. C'est le moyen le plus rapide de se déplacer dans l'admin au quotidien."
     },
     "raccourcis-clavier": {
       "title": "Raccourcis clavier",
-      "summary": "",
-      "body": ""
+      "summary": "Afficher l'aide des raccourcis avec ? et utiliser Ctrl+K.",
+      "body": "Appuyez sur la touche ? (hors champ de saisie) pour ouvrir le panneau des raccourcis clavier. Il rappelle les combinaisons disponibles dans le shell admin.\n\nLe raccourci principal est Ctrl+K / Cmd+K pour la palette de commandes. D'autres raccourcis peuvent être documentés dans ce panneau selon la version de l'interface.\n\nSi un raccourci ne répond pas, vérifiez qu'aucun champ texte n'a le focus et que vous n'êtes pas sur une page de connexion."
     },
     "gerer-les-utilisateurs": {
       "title": "Gérer les utilisateurs",
-      "summary": "",
-      "body": ""
+      "summary": "Créer, rechercher et mettre à jour les comptes plateforme.",
+      "body": "Le module Utilisateurs (/utilisateurs) liste les comptes clients et staff de la plateforme. Filtrez par statut ou organisation, puis ouvrez une fiche pour voir ou modifier le profil.\n\nPour créer un compte, utilisez Nouvel utilisateur. Renseignez les informations obligatoires puis enregistrez. Selon vos permissions (users.read / users.write), certaines actions peuvent être masquées.\n\nDepuis la fiche, vous pouvez consulter les détails, lier un profil employé, ou orienter vers les sessions et journaux de sécurité pour l'audit d'accès."
     },
     "employes-et-departements": {
       "title": "Employés et départements",
-      "summary": "",
-      "body": ""
+      "summary": "Lier des utilisateurs aux organisations et structurer les équipes.",
+      "body": "Les employés (/utilisateurs/employes) associent un utilisateur à une organisation et à un département. Créez un employé à partir d'un compte utilisateur existant, puis renseignez le code, le poste et le rattachement.\n\nLes départements (/utilisateurs/departements) classent les collaborateurs (commercial, support, opérations…). Ils servent de référence lors de la création ou de l'édition d'un employé.\n\nCes écrans requièrent en général les permissions employees.read / departments.read (et les droits d'écriture associés pour modifier)."
     },
     "sessions-et-securite": {
-      "title": "Sessions et sécurité",
-      "summary": "",
-      "body": ""
+      "title": "Sessions et journaux de sécurité",
+      "summary": "Contrôler les connexions actives et l'audit d'accès.",
+      "body": "Dans Sessions (/utilisateurs/sessions), consultez les sessions actives des utilisateurs. Vous pouvez révoquer une session pour forcer une déconnexion (par exemple en cas d'appareil perdu ou d'accès suspect).\n\nLes journaux de sécurité (/utilisateurs/journaux-securite) enregistrent les événements d'authentification et d'audit. Utilisez-les pour investiguer un incident ou vérifier une activité récente.\n\nCes outils complètent la gestion des rôles et permissions : une session révoquée n'accorde plus d'accès même si le compte reste actif."
     },
     "adresses-et-moyens-paiement": {
       "title": "Adresses et moyens de paiement",
-      "summary": "",
-      "body": ""
+      "summary": "Consulter les adresses et cartes enregistrées par les utilisateurs.",
+      "body": "Le module Adresses (/utilisateurs/adresses) affiche les adresses enregistrées par les utilisateurs (facturation, livraison, voyage). Filtrez ou recherchez pour retrouver une entrée liée à un compte.\n\nLes moyens de paiement (/utilisateurs/moyens-paiement) listent les cartes et autres méthodes enregistrées côté utilisateurs. Ces données sont consultatives pour le support et le suivi ; le traitement des paiements de réservation se fait dans le module Paiements.\n\nRespectez la confidentialité : n'exportez et ne partagez ces informations que dans le cadre de vos missions et permissions."
     },
     "hebergements": {
       "title": "Hébergements",
