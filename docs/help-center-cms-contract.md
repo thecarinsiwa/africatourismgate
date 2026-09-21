@@ -208,14 +208,15 @@ Related : résoudre `relatedSlugs` → UUIDs après insertion des 22 articles.
 | Fichier | Contenu |
 |---------|---------|
 | [`database/migrations/add_help_categories.sql`](../database/migrations/add_help_categories.sql) | `help_categories` + `help_category_translations` (audit + soft-delete) |
-| *(à venir)* `add_help_articles.sql` | Articles, traductions, related |
+| [`database/migrations/add_help_articles.sql`](../database/migrations/add_help_articles.sql) | `help_articles` + `help_article_translations` + `help_article_related` |
+
+Index articles : `uk_help_articles_slug`, `idx_help_articles_category`, `idx_help_articles_category_sort`, `idx_help_articles_status_popular`. FK catégorie en `ON DELETE RESTRICT` (refuser hard-delete si articles liés). Related : PK composite `(article_id, related_article_id)`, `sort_order`, CHECK anti auto-référence ; max 5 en app.
 
 Locales attendues en app : `fr`, `en`, `es` (`locale` VARCHAR(5), pas de CHECK MySQL pour rester aligné avec blog/légal).
 
 ## 9. Suite du plan
 
-1. **t03** — Migration SQL articles (+ traductions + related)  
-2. **t04** — Types exportés dans `packages/types` (copier §3)  
-3. **t05–t09** — Entités, modules Nest, api-client  
-4. **t10–t24** — Admin UI, seed, e2e  
-5. **t25 / phase 2** — Remplacer `help-catalog.ts` + messages par lecture API publique  
+1. **t04** — Types exportés dans `packages/types` (copier §3)  
+2. **t05–t09** — Entités, modules Nest, api-client  
+3. **t10–t24** — Admin UI, seed, e2e  
+4. **t25 / phase 2** — Remplacer `help-catalog.ts` + messages par lecture API publique  
