@@ -203,9 +203,18 @@ Related : résoudre `relatedSlugs` → UUIDs après insertion des 22 articles.
 
 ---
 
-## 8. Suite du plan
+## 8. Migrations SQL
 
-1. **t02–t03** — Migrations SQL conformes à ce contrat  
+| Fichier | Contenu |
+|---------|---------|
+| [`database/migrations/add_help_categories.sql`](../database/migrations/add_help_categories.sql) | `help_categories` + `help_category_translations` (audit + soft-delete) |
+| *(à venir)* `add_help_articles.sql` | Articles, traductions, related |
+
+Locales attendues en app : `fr`, `en`, `es` (`locale` VARCHAR(5), pas de CHECK MySQL pour rester aligné avec blog/légal).
+
+## 9. Suite du plan
+
+1. **t03** — Migration SQL articles (+ traductions + related)  
 2. **t04** — Types exportés dans `packages/types` (copier §3)  
 3. **t05–t09** — Entités, modules Nest, api-client  
 4. **t10–t24** — Admin UI, seed, e2e  
