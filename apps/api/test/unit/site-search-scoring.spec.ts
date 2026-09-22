@@ -1,6 +1,7 @@
 import {
   ACTIVITY_SITE_SEARCH_WEIGHTS,
   BLOG_SITE_SEARCH_WEIGHTS,
+  CRUISE_SITE_SEARCH_WEIGHTS,
   FLIGHT_SITE_SEARCH_WEIGHTS,
   HOTEL_SITE_SEARCH_WEIGHTS,
   PACKAGE_SITE_SEARCH_WEIGHTS,
@@ -141,6 +142,28 @@ describe('site-search-scoring', () => {
     expect(model).toBe(VEHICLE_SITE_SEARCH_WEIGHTS.model - 15);
     expect(destinationOnly).toBe(VEHICLE_SITE_SEARCH_WEIGHTS.destination);
     expect(model).toBeGreaterThan(destinationOnly);
+  });
+
+  it('scores cruise itinerary over ship, line and port', () => {
+    const itinerary = scoreSiteSearchTextMatch('kinshasa', [
+      {
+        weight: CRUISE_SITE_SEARCH_WEIGHTS.itinerary,
+        value: 'Kinshasa — Banana',
+      },
+      { weight: CRUISE_SITE_SEARCH_WEIGHTS.ship, value: 'Congo River Spirit' },
+      { weight: CRUISE_SITE_SEARCH_WEIGHTS.line, value: 'Africa River Cruises' },
+      { weight: CRUISE_SITE_SEARCH_WEIGHTS.port, value: 'Banana Port' },
+    ]);
+    const portOnly = scoreSiteSearchTextMatch('banana', [
+      { weight: CRUISE_SITE_SEARCH_WEIGHTS.itinerary, value: 'River Loop' },
+      { weight: CRUISE_SITE_SEARCH_WEIGHTS.ship, value: 'Spirit' },
+      { weight: CRUISE_SITE_SEARCH_WEIGHTS.line, value: 'ARC' },
+      { weight: CRUISE_SITE_SEARCH_WEIGHTS.port, value: 'Banana Port' },
+    ]);
+
+    expect(itinerary).toBe(CRUISE_SITE_SEARCH_WEIGHTS.itinerary - 5);
+    expect(portOnly).toBe(CRUISE_SITE_SEARCH_WEIGHTS.port - 5);
+    expect(itinerary).toBeGreaterThan(portOnly);
   });
 
   it('returns 0 when nothing matches', () => {

@@ -70,3 +70,11 @@ export const VEHICLE_SITE_SEARCH_WEIGHTS = {
   agency: 50,
   licensePlate: 40,
 } as const;
+
+/** Field weights for cruise catalogue search. */
+export const CRUISE_SITE_SEARCH_WEIGHTS = {
+  itinerary: 100,
+  ship: 80,
+  line: 70,
+  port: 60,
+} as const;

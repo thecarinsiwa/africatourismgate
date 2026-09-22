@@ -8,6 +8,7 @@ import type {
 import { PublicAccommodationsService } from '../accommodations/public-accommodations.service';
 import { PublicActivitiesService } from '../activities/public-activities.service';
 import { PublicBlogService } from '../blog/public-blog.service';
+import { PublicCruisesService } from '../cruises/public-cruises.service';
 import { PublicFlightsService } from '../flights/public-flights.service';
 import { PublicPackagesService } from '../packages/public-packages.service';
 import { PublicVehiclesService } from '../vehicles/public-vehicles.service';
@@ -32,6 +33,7 @@ export class PublicSiteSearchService {
     private readonly blogService: PublicBlogService,
     private readonly flightsService: PublicFlightsService,
     private readonly vehiclesService: PublicVehiclesService,
+    private readonly cruisesService: PublicCruisesService,
   ) {}
 
   async search(query: SiteSearchQueryDto): Promise<PublicSiteSearchResponse> {
@@ -92,6 +94,9 @@ export class PublicSiteSearchService {
         break;
       case 'cars':
         hits = await this.vehiclesService.searchCatalog(q, limit);
+        break;
+      case 'cruises':
+        hits = await this.cruisesService.searchCatalog(q, limit);
         break;
       default:
         hits = [];
