@@ -1,7 +1,5 @@
-import { browseActivities } from '../api/public';
-import { siteSearchDeepLinks } from './deep-links';
 import { normalizeSiteSearchText } from './nav-match';
-import { buildSiteSearchResultId, getSiteSearchSourceDefinition } from './sources';
+import { searchSiteCatalogType } from './search-catalog';
 import type { SiteSearchContext, SiteSearchResultItem } from './types';
 
 export type SearchSiteActivitiesOptions = {
@@ -14,8 +12,7 @@ export type SiteSearchActivityMatchable = {
 };
 
 /**
- * Re-filtre client pour écarter le bruit de `browseActivities` :
- * conserve les activités dont le titre ou la destination matche.
+ * Re-filtre client (tests / utilitaires) pour title / destination.
  */
 export function matchesSiteActivity(
   activity: SiteSearchActivityMatchable,
@@ -32,40 +29,12 @@ export function matchesSiteActivity(
 }
 
 /**
- * Source API `activities` :
- * `browseActivities({ destination: query })` puis re-filtre title/destination.
+ * Source API `activities` via `GET /public/site-search` (catalogue unifié).
  */
 export async function searchSiteActivities(
   query: string,
-  _context?: SiteSearchContext,
+  context: SiteSearchContext = {},
   options?: SearchSiteActivitiesOptions,
 ): Promise<SiteSearchResultItem[]> {
-  const definitionLimit =
-    getSiteSearchSourceDefinition('activities')?.resultLimit;
-  const limit = options?.resultLimit ?? definitionLimit ?? 5;
-  const normalized = normalizeSiteSearchText(query);
-
-  if (!normalized) {
-    return [];
-  }
-
-  const response = await browseActivities({
-    destination: query.trim(),
-    page: 1,
-    limit: Math.min(limit * 3, 30),
-  });
-
-  const matched = response.data.filter((activity) =>
-    matchesSiteActivity(activity, normalized),
-  );
-
-  return matched.slice(0, limit).map((activity) => ({
-    id: buildSiteSearchResultId('activities', activity.id),
-    sourceId: 'activities' as const,
-    group: 'activities' as const,
-    title: activity.title,
-    subtitle: activity.destination || activity.providerName,
-    href: siteSearchDeepLinks.activity(activity.id),
-    kind: 'entity' as const,
-  }));
+  return searchSiteCatalogType('activities', query, context, options);
 }

@@ -3,6 +3,7 @@ import { siteSearchDeepLinks } from './deep-links';
 import { normalizeSiteSearchText } from './nav-match';
 import { formatSiteSearchPrefilledSubtitle } from './prefilled';
 import { getCachedPickupLocations } from './reference-data';
+import { searchSiteCatalogType } from './search-catalog';
 import { buildSiteSearchResultId, getSiteSearchSourceDefinition } from './sources';
 import type { SiteSearchContext, SiteSearchResultItem } from './types';
 
@@ -26,14 +27,8 @@ export function matchesSitePickupLocation(
   return name.includes(normalizedQuery) || country.includes(normalizedQuery);
 }
 
-/**
- * Source référence `cars` :
- * filtre les lieux de prise en charge en cache et produit un listing
- * pré-rempli via `buildSearchRoute('cars', { pickupLocation })`.
- */
-export async function searchSiteCars(
+async function searchSiteCarsPrefilled(
   query: string,
-  _context?: SiteSearchContext,
   options?: SearchSiteCarsOptions,
 ): Promise<SiteSearchResultItem[]> {
   const definitionLimit = getSiteSearchSourceDefinition('cars')?.resultLimit;
@@ -50,7 +45,7 @@ export async function searchSiteCars(
   );
 
   return matched.slice(0, limit).map((location) => ({
-    id: buildSiteSearchResultId('cars', location.id),
+    id: buildSiteSearchResultId('cars', `prefill:${location.id}`),
     sourceId: 'cars' as const,
     group: 'cars' as const,
     title: location.name,
@@ -61,4 +56,36 @@ export async function searchSiteCars(
     href: siteSearchDeepLinks.carsByPickup(location.name),
     kind: 'prefilled' as const,
   }));
+}
+
+/**
+ * Source `cars` : fiches catalogue d’abord, raccourcis pickup en secondaire.
+ */
+export async function searchSiteCars(
+  query: string,
+  context: SiteSearchContext = {},
+  options?: SearchSiteCarsOptions,
+): Promise<SiteSearchResultItem[]> {
+  const definitionLimit = getSiteSearchSourceDefinition('cars')?.resultLimit;
+  const limit = options?.resultLimit ?? definitionLimit ?? 5;
+
+  let entities: SiteSearchResultItem[] = [];
+  try {
+    entities = await searchSiteCatalogType('cars', query, context, {
+      resultLimit: limit,
+    });
+  } catch {
+    entities = [];
+  }
+
+  if (entities.length >= limit) {
+    return entities.slice(0, limit);
+  }
+
+  const prefilled = await searchSiteCarsPrefilled(query, {
+    ...options,
+    resultLimit: limit - entities.length,
+  });
+
+  return [...entities, ...prefilled];
 }

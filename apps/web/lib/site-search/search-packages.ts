@@ -1,7 +1,4 @@
-import { browsePackages } from '../api/public';
-import { siteSearchDeepLinks } from './deep-links';
-import { normalizeSiteSearchText } from './nav-match';
-import { buildSiteSearchResultId, getSiteSearchSourceDefinition } from './sources';
+import { searchSiteCatalogType } from './search-catalog';
 import type { SiteSearchContext, SiteSearchResultItem } from './types';
 
 export type SearchSitePackagesOptions = {
@@ -9,35 +6,12 @@ export type SearchSitePackagesOptions = {
 };
 
 /**
- * Source API `packages` — recherche plein texte native via `browsePackages({ search })`.
+ * Source API `packages` via `GET /public/site-search` (catalogue unifié).
  */
 export async function searchSitePackages(
   query: string,
-  _context?: SiteSearchContext,
+  context: SiteSearchContext = {},
   options?: SearchSitePackagesOptions,
 ): Promise<SiteSearchResultItem[]> {
-  const definitionLimit =
-    getSiteSearchSourceDefinition('packages')?.resultLimit;
-  const limit = options?.resultLimit ?? definitionLimit ?? 5;
-  const normalized = normalizeSiteSearchText(query);
-
-  if (!normalized) {
-    return [];
-  }
-
-  const response = await browsePackages({
-    search: query.trim(),
-    page: 1,
-    limit,
-  });
-
-  return response.data.slice(0, limit).map((pkg) => ({
-    id: buildSiteSearchResultId('packages', pkg.id),
-    sourceId: 'packages' as const,
-    group: 'packages' as const,
-    title: pkg.name,
-    subtitle: pkg.description?.trim() || undefined,
-    href: siteSearchDeepLinks.packageItem(pkg.id),
-    kind: 'entity' as const,
-  }));
+  return searchSiteCatalogType('packages', query, context, options);
 }

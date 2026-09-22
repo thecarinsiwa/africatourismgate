@@ -40,6 +40,13 @@ export {
   type SearchSiteHelpOptions,
 } from './search-help';
 export {
+  clearSiteSearchCatalogInflightCache,
+  fetchSharedSiteSearchCatalog,
+  mapSiteSearchCatalogHitToResultItem,
+  searchSiteCatalogType,
+  type SearchSiteCatalogOptions,
+} from './search-catalog';
+export {
   SITE_SEARCH_API_MIN_QUERY_LENGTH,
   SITE_SEARCH_DEBOUNCE_MS,
   SITE_SEARCH_DEFAULT_RESULT_LIMIT,

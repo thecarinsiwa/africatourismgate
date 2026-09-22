@@ -1,6 +1,7 @@
 import { CRUISE_PORT_OPTIONS } from '../cruises/ports';
 import { siteSearchDeepLinks } from './deep-links';
 import { normalizeSiteSearchText } from './nav-match';
+import { searchSiteCatalogType } from './search-catalog';
 import { buildSiteSearchResultId, getSiteSearchSourceDefinition } from './sources';
 import type { SiteSearchContext, SiteSearchResultItem } from './types';
 
@@ -27,14 +28,8 @@ export function matchesSiteCruisePort(
   return code.includes(normalizedQuery) || name.includes(normalizedQuery);
 }
 
-/**
- * Source référence `cruises` :
- * filtre les ports connus (`CRUISE_PORT_OPTIONS`) et produit un listing
- * pré-rempli via `buildSearchRoute('cruises', { sailFrom })`.
- */
-export async function searchSiteCruises(
+async function searchSiteCruisesPrefilled(
   query: string,
-  _context?: SiteSearchContext,
   options?: SearchSiteCruisesOptions,
 ): Promise<SiteSearchResultItem[]> {
   const definitionLimit =
@@ -51,7 +46,7 @@ export async function searchSiteCruises(
   );
 
   return matched.slice(0, limit).map((port) => ({
-    id: buildSiteSearchResultId('cruises', port.code),
+    id: buildSiteSearchResultId('cruises', `prefill:${port.code}`),
     sourceId: 'cruises' as const,
     group: 'cruises' as const,
     title: port.name,
@@ -59,4 +54,37 @@ export async function searchSiteCruises(
     href: siteSearchDeepLinks.cruisesFrom(port.code),
     kind: 'prefilled' as const,
   }));
+}
+
+/**
+ * Source `cruises` : sailings catalogue d’abord, raccourcis ports en secondaire.
+ */
+export async function searchSiteCruises(
+  query: string,
+  context: SiteSearchContext = {},
+  options?: SearchSiteCruisesOptions,
+): Promise<SiteSearchResultItem[]> {
+  const definitionLimit =
+    getSiteSearchSourceDefinition('cruises')?.resultLimit;
+  const limit = options?.resultLimit ?? definitionLimit ?? 5;
+
+  let entities: SiteSearchResultItem[] = [];
+  try {
+    entities = await searchSiteCatalogType('cruises', query, context, {
+      resultLimit: limit,
+    });
+  } catch {
+    entities = [];
+  }
+
+  if (entities.length >= limit) {
+    return entities.slice(0, limit);
+  }
+
+  const prefilled = await searchSiteCruisesPrefilled(query, {
+    ...options,
+    resultLimit: limit - entities.length,
+  });
+
+  return [...entities, ...prefilled];
 }

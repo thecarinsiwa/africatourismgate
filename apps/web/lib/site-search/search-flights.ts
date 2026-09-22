@@ -3,6 +3,7 @@ import { siteSearchDeepLinks } from './deep-links';
 import { normalizeSiteSearchText } from './nav-match';
 import { formatSiteSearchPrefilledSubtitle } from './prefilled';
 import { getCachedAirports } from './reference-data';
+import { searchSiteCatalogType } from './search-catalog';
 import { buildSiteSearchResultId, getSiteSearchSourceDefinition } from './sources';
 import type { SiteSearchContext, SiteSearchResultItem } from './types';
 
@@ -31,14 +32,8 @@ export function matchesSiteAirport(
   );
 }
 
-/**
- * Source référence `flights` :
- * filtre les aéroports en cache (name / iata / city) et produit un listing
- * pré-rempli via `buildSearchRoute('flights', { from })`.
- */
-export async function searchSiteFlights(
+async function searchSiteFlightsPrefilled(
   query: string,
-  _context?: SiteSearchContext,
   options?: SearchSiteFlightsOptions,
 ): Promise<SiteSearchResultItem[]> {
   const definitionLimit =
@@ -56,7 +51,7 @@ export async function searchSiteFlights(
   );
 
   return matched.slice(0, limit).map((airport) => ({
-    id: buildSiteSearchResultId('flights', airport.iataCode),
+    id: buildSiteSearchResultId('flights', `prefill:${airport.iataCode}`),
     sourceId: 'flights' as const,
     group: 'flights' as const,
     title: airport.name,
@@ -67,4 +62,37 @@ export async function searchSiteFlights(
     href: siteSearchDeepLinks.flightsFrom(airport.iataCode),
     kind: 'prefilled' as const,
   }));
+}
+
+/**
+ * Source `flights` : fiches catalogue d’abord, raccourcis aéroports en secondaire.
+ */
+export async function searchSiteFlights(
+  query: string,
+  context: SiteSearchContext = {},
+  options?: SearchSiteFlightsOptions,
+): Promise<SiteSearchResultItem[]> {
+  const definitionLimit =
+    getSiteSearchSourceDefinition('flights')?.resultLimit;
+  const limit = options?.resultLimit ?? definitionLimit ?? 5;
+
+  let entities: SiteSearchResultItem[] = [];
+  try {
+    entities = await searchSiteCatalogType('flights', query, context, {
+      resultLimit: limit,
+    });
+  } catch {
+    entities = [];
+  }
+
+  if (entities.length >= limit) {
+    return entities.slice(0, limit);
+  }
+
+  const prefilled = await searchSiteFlightsPrefilled(query, {
+    ...options,
+    resultLimit: limit - entities.length,
+  });
+
+  return [...entities, ...prefilled];
 }
