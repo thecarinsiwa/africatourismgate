@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { BrandingMark } from './branding-mark';
+import { LanguageSwitcher } from './language-switcher';
 
 export type MaintenancePageProps = {
   title: string | null;
@@ -181,6 +182,10 @@ export function MaintenancePage({ title, message, endsAt }: MaintenancePageProps
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-atg-surface text-atg-fg">
+      <div className="absolute right-4 top-4 z-20 sm:right-6 sm:top-6">
+        <LanguageSwitcher variant="navbar" />
+      </div>
+
       <main className="relative z-10 mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center px-6 py-16 text-center sm:px-8 sm:py-20">
         <div className="pointer-events-none select-none">
           <BrandingMark
