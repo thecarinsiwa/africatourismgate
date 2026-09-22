@@ -196,6 +196,14 @@
     "verticalMetaTitle": "{label} — Próximamente",
     "verticalMetaDescription": "La reserva en línea de {label} llegará pronto a Africa Tourism Gate."
   },
+  "maintenance": {
+    "badge": "Mantenimiento",
+    "title": "En mantenimiento",
+    "message": "El sitio no está disponible temporalmente. Volveremos pronto — gracias por su paciencia.",
+    "endsAtLabel": "Regreso previsto: {date}",
+    "metaTitle": "Mantenimiento",
+    "metaDescription": "Africa Tourism Gate está temporalmente en mantenimiento."
+  },
   "blog": {
     "metaTitle": "Blog de viajes en África",
     "metaDescription": "Consejos, guías e inspiración para planificar su próximo viaje a África con Africa Tourism Gate.",
