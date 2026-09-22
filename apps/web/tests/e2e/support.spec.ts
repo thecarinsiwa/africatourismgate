@@ -3,6 +3,35 @@ import { expect, test } from '@playwright/test';
 const USER_ID = 'user-e2e-support';
 const TICKET_ID = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee';
 
+const HELP_HUB_HEADING =
+  /Centre d'aide|Help centre|Centro de ayuda/i;
+const SEARCH_LABEL =
+  /Rechercher dans l'aide|Search help|Buscar en la ayuda/i;
+const CATEGORIES_HEADING =
+  /Parcourir par thème|Browse by topic|Explorar por tema/i;
+const POPULAR_HEADING =
+  /Articles populaires|Popular articles|Artículos populares/i;
+const QUICK_START_HEADING =
+  /Démarrage rapide|Quick start|Inicio rápido/i;
+const SEARCH_RESULTS_ARIA =
+  /Résultats de recherche|Search results|Resultados de búsqueda/i;
+const SEARCH_SUGGESTIONS_ARIA =
+  /Suggestions d'articles populaires|Popular article suggestions|Sugerencias de artículos populares/i;
+const NO_RESULTS =
+  /Aucun article|No articles match|Ningún artículo/i;
+const NO_RESULTS_HINT =
+  /démarrage rapide|quick-start|inicio rápido/i;
+const HOW_TO_BOOK =
+  /Comment réserver|How do I book|Cómo reservo/i;
+const FIND_BOOKING =
+  /retrouver ma réservation|find my booking|encuentro mi reserva/i;
+const ARTICLE_COUNT =
+  /\d+\s+(article|articles|artículo|artículos)/i;
+const CONTEXTUAL_HELP =
+  /Aide sur cette page|Help for this page|Ayuda para esta página/i;
+const CART_LINK =
+  /^(le panier|the cart|carrito|panier)$/i;
+
 type SupportTicketPostBody = {
   subject: string;
   body: string;
@@ -29,6 +58,33 @@ function mockSession(page: import('@playwright/test').Page) {
   });
 }
 
+function mockAuthMe(page: import('@playwright/test').Page) {
+  return page.route('**/api/auth/me', async (route) => {
+    if (route.request().method() !== 'GET') {
+      await route.continue();
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        user: {
+          id: USER_ID,
+          email: 'support.e2e@example.com',
+          firstName: 'Support',
+          lastName: 'E2E',
+          phone: null,
+          preferredLanguage: 'fr',
+          organizationId: null,
+          status: 'active',
+        },
+        permissions: ['bookings.read'],
+        isSuperAdmin: false,
+      }),
+    });
+  });
+}
+
 test('shows help hub, search, topics and sign-in prompt without session', async ({
   page,
 }) => {
@@ -36,18 +92,22 @@ test('shows help hub, search, topics and sign-in prompt without session', async 
 
   await expect(
     page.getByRole('heading', {
-      name: /Centre d'aide|Help centre|Centro de ayuda/i,
+      name: HELP_HUB_HEADING,
       level: 1,
     }),
   ).toBeVisible();
 
+  await expect(page.getByLabel(SEARCH_LABEL)).toBeVisible();
+
   await expect(
-    page.getByLabel(/Rechercher dans l'aide|Search help|Buscar en la ayuda/i),
+    page.getByRole('heading', {
+      name: QUICK_START_HEADING,
+    }),
   ).toBeVisible();
 
   await expect(
     page.getByRole('heading', {
-      name: /Parcourir par thème|Browse by topic|Explorar por tema/i,
+      name: CATEGORIES_HEADING,
     }),
   ).toBeVisible();
 
@@ -58,8 +118,16 @@ test('shows help hub, search, topics and sign-in prompt without session', async 
   ).toBeVisible();
 
   await expect(
+    page
+      .locator('section')
+      .filter({ has: page.getByRole('heading', { name: CATEGORIES_HEADING }) })
+      .getByText(ARTICLE_COUNT)
+      .first(),
+  ).toBeVisible();
+
+  await expect(
     page.getByRole('heading', {
-      name: /Articles populaires|Popular articles|Artículos populares/i,
+      name: POPULAR_HEADING,
     }),
   ).toBeVisible();
 
@@ -74,6 +142,24 @@ test('shows help hub, search, topics and sign-in prompt without session', async 
   ).toBeVisible();
 
   await expect(page.getByLabel(/Sujet|Subject|Asunto/i)).toHaveCount(0);
+});
+
+test('shows quick start links and opens an article', async ({ page }) => {
+  await page.goto('/support');
+
+  const quickStart = page.locator('#support-quick-start');
+  await expect(
+    page.getByRole('heading', { name: QUICK_START_HEADING }),
+  ).toBeVisible();
+  await expect(
+    quickStart.getByRole('link', { name: HOW_TO_BOOK }),
+  ).toBeVisible();
+
+  await quickStart.getByRole('link', { name: HOW_TO_BOOK }).click();
+  await expect(page).toHaveURL(/\/support\/booking\/how-to-book\/?$/);
+  await expect(
+    page.getByRole('heading', { name: HOW_TO_BOOK, level: 1 }),
+  ).toBeVisible();
 });
 
 test('navigates from topic to article', async ({ page }) => {
@@ -128,7 +214,7 @@ test('opens how-to-book from booking topic list', async ({ page }) => {
 
   await page
     .getByRole('link', {
-      name: /Comment réserver|How do I book|Cómo reservo/i,
+      name: HOW_TO_BOOK,
     })
     .first()
     .click();
@@ -137,28 +223,41 @@ test('opens how-to-book from booking topic list', async ({ page }) => {
 
   await expect(
     page.getByRole('heading', {
-      name: /Comment réserver|How do I book|Cómo reservo/i,
+      name: HOW_TO_BOOK,
       level: 1,
     }),
   ).toBeVisible();
 
   await expect(
-    page.getByText(/\/booking\/cart|My account|Mi cuenta|Mon compte/i).first(),
+    page.getByRole('link', { name: CART_LINK }).first(),
+  ).toHaveAttribute('href', '/booking/cart');
+});
+
+test('article markdown link opens allowlisted path', async ({ page }) => {
+  await page.goto('/support/booking/how-to-book');
+
+  await expect(
+    page.getByRole('heading', { name: HOW_TO_BOOK, level: 1 }),
   ).toBeVisible();
+
+  const cartLink = page.getByRole('link', { name: CART_LINK }).first();
+  await expect(cartLink).toHaveAttribute('href', '/booking/cart');
+  await cartLink.click();
+  await expect(page).toHaveURL(/\/booking\/(cart|login)/);
 });
 
 test('search finds and opens an article', async ({ page }) => {
   await page.goto('/support');
 
-  const search = page.getByLabel(
-    /Rechercher dans l'aide|Search help|Buscar en la ayuda/i,
-  );
+  const search = page.getByLabel(SEARCH_LABEL);
   await search.fill('paiement');
 
   const results = page.getByRole('listbox', {
-    name: /Résultats de recherche|Search results|Resultados de búsqueda/i,
+    name: SEARCH_RESULTS_ARIA,
   });
   await expect(results).toBeVisible();
+  await expect(results.getByText(ARTICLE_COUNT).first()).toBeVisible();
+  await expect(results.locator('mark').first()).toBeVisible();
 
   await results
     .getByRole('link', {
@@ -185,13 +284,11 @@ test('search from category page opens an article', async ({ page }) => {
     }),
   ).toBeVisible();
 
-  const search = page.getByLabel(
-    /Rechercher dans l'aide|Search help|Buscar en la ayuda/i,
-  );
+  const search = page.getByLabel(SEARCH_LABEL);
   await search.fill('panier');
 
   const results = page.getByRole('listbox', {
-    name: /Résultats de recherche|Search results|Resultados de búsqueda/i,
+    name: SEARCH_RESULTS_ARIA,
   });
   await expect(results).toBeVisible();
 
@@ -210,22 +307,37 @@ test('search from category page opens an article', async ({ page }) => {
   ).toBeVisible();
 });
 
-test('empty search shows contact CTA to support form anchor', async ({ page }) => {
+test('focus on empty search shows popular suggestions', async ({ page }) => {
   await page.goto('/support');
 
-  const search = page.getByLabel(
-    /Rechercher dans l'aide|Search help|Buscar en la ayuda/i,
-  );
+  const search = page.getByLabel(SEARCH_LABEL);
+  await search.click();
+
+  const suggestions = page.getByRole('listbox', {
+    name: SEARCH_SUGGESTIONS_ARIA,
+  });
+  await expect(suggestions).toBeVisible();
+  await expect(
+    suggestions.getByRole('link', { name: HOW_TO_BOOK }),
+  ).toBeVisible();
+});
+
+test('empty search shows contact CTA and quick-start links', async ({
+  page,
+}) => {
+  await page.goto('/support');
+
+  const search = page.getByLabel(SEARCH_LABEL);
   await search.fill('zzzz-no-match-xyz');
 
   const results = page.getByRole('listbox', {
-    name: /Résultats de recherche|Search results|Resultados de búsqueda/i,
+    name: SEARCH_RESULTS_ARIA,
   });
   await expect(results).toBeVisible();
+  await expect(results.getByText(NO_RESULTS)).toBeVisible();
+  await expect(results.getByText(NO_RESULTS_HINT)).toBeVisible();
   await expect(
-    results.getByText(
-      /Aucun article|No articles match|Ningún artículo/i,
-    ),
+    results.getByRole('link', { name: HOW_TO_BOOK }),
   ).toBeVisible();
 
   const cta = results.getByRole('link', {
@@ -240,31 +352,7 @@ test('empty search shows contact CTA to support form anchor', async ({ page }) =
 
 test('account shell shows Help link to /support', async ({ page }) => {
   await mockSession(page);
-
-  await page.route('**/api/auth/me', async (route) => {
-    if (route.request().method() !== 'GET') {
-      await route.continue();
-      return;
-    }
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        user: {
-          id: USER_ID,
-          email: 'support.e2e@example.com',
-          firstName: 'Support',
-          lastName: 'E2E',
-          phone: null,
-          preferredLanguage: 'fr',
-          organizationId: null,
-          status: 'active',
-        },
-        permissions: ['bookings.read'],
-        isSuperAdmin: false,
-      }),
-    });
-  });
+  await mockAuthMe(page);
 
   await page.goto('/account/profile');
 
@@ -281,9 +369,45 @@ test('account shell shows Help link to /support', async ({ page }) => {
   await expect(page).toHaveURL(/\/support\/?$/);
   await expect(
     page.getByRole('heading', {
-      name: /Centre d'aide|Help centre|Centro de ayuda/i,
+      name: HELP_HUB_HEADING,
       level: 1,
     }),
+  ).toBeVisible();
+});
+
+test('contextual help from reservations opens find-booking', async ({
+  page,
+}) => {
+  await mockSession(page);
+  await mockAuthMe(page);
+
+  await page.route('**/api/bookings**', async (route) => {
+    if (route.request().method() !== 'GET') {
+      await route.continue();
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ items: [], total: 0 }),
+    });
+  });
+
+  await page.goto('/account/reservations');
+
+  const helpLink = page.getByTestId('support-contextual-help-link');
+  await expect(helpLink).toBeVisible();
+  await expect(helpLink).toHaveAttribute('data-contextual', 'true');
+  await expect(helpLink).toHaveText(CONTEXTUAL_HELP);
+  await expect(helpLink).toHaveAttribute(
+    'href',
+    '/support/booking/find-booking',
+  );
+
+  await helpLink.click();
+  await expect(page).toHaveURL(/\/support\/booking\/find-booking\/?$/);
+  await expect(
+    page.getByRole('heading', { name: FIND_BOOKING, level: 1 }),
   ).toBeVisible();
 });
 
