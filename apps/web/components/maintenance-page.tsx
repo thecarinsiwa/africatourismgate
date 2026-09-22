@@ -180,31 +180,12 @@ export function MaintenancePage({ title, message, endsAt }: MaintenancePageProps
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-atg-surface text-atg-fg">
-      <div
-        className="pointer-events-none absolute inset-0"
-        aria-hidden
-        style={{
-          background:
-            'radial-gradient(ellipse 80% 55% at 50% -10%, color-mix(in srgb, var(--atg-primary) 28%, transparent), transparent 70%), radial-gradient(ellipse 60% 40% at 100% 100%, color-mix(in srgb, var(--atg-primary) 12%, transparent), transparent 55%), linear-gradient(180deg, color-mix(in srgb, var(--atg-primary) 6%, var(--atg-surface, #f8faf9)) 0%, var(--atg-surface, #f8faf9) 42%, var(--atg-surface, #f8faf9) 100%)',
-        }}
-      />
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.35]"
-        aria-hidden
-        style={{
-          backgroundImage:
-            'radial-gradient(circle at 1px 1px, color-mix(in srgb, currentColor 10%, transparent) 1px, transparent 0)',
-          backgroundSize: '28px 28px',
-          maskImage: 'linear-gradient(180deg, black 0%, transparent 75%)',
-        }}
-      />
-
       <main className="relative z-10 mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center px-6 py-16 text-center sm:px-8 sm:py-20">
         <div className="pointer-events-none select-none">
           <BrandingMark
             showName
             className="flex flex-col items-center gap-5 sm:gap-6"
-            logoClassName="h-28 w-28 rounded-2xl object-contain shadow-[0_18px_40px_-18px_rgba(11,110,79,0.35)] ring-1 ring-atg-border/60 sm:h-36 sm:w-36 sm:rounded-3xl"
+            logoClassName="h-28 w-28 rounded-2xl object-contain sm:h-36 sm:w-36 sm:rounded-3xl"
             nameClassName="max-w-md text-2xl font-bold tracking-tight text-atg-fg sm:text-3xl"
           />
         </div>
