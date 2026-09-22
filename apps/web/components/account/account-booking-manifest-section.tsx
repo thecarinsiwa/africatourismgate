@@ -218,6 +218,15 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
     if (!saving) setEditorOpen(false);
   }
 
+  useEffect(() => {
+    if (!editorOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [editorOpen]);
+
   async function handleSave() {
     if (!form.fullName.trim()) {
       setActionError(m.fullNameRequired);
@@ -462,18 +471,37 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
 
       {editorOpen ? (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4"
           role="dialog"
           aria-modal="true"
           aria-label={editingEntry ? m.editTitle : m.addTitle}
+          onClick={closeEditor}
         >
-          <div className="w-full max-w-xl rounded-xl border border-atg-border bg-atg-surface p-6 shadow-xl dark:border-atg-border dark:bg-atg-bg">
-            <h2 className="text-lg font-semibold text-atg-fg">
-              {editingEntry ? m.editTitle : m.addTitle}
-            </h2>
-            <p className="mt-1 text-sm text-atg-muted">{m.formHint}</p>
+          <div
+            className="flex max-h-[min(92dvh,920px)] w-full max-w-xl flex-col overflow-hidden rounded-t-2xl border border-atg-border bg-atg-surface shadow-xl dark:border-atg-border dark:bg-atg-bg sm:rounded-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex shrink-0 items-start justify-between gap-3 border-b border-atg-border px-4 py-3 dark:border-atg-border sm:px-5 sm:py-4">
+              <div className="min-w-0">
+                <h2 className="text-base font-semibold text-atg-fg sm:text-lg">
+                  {editingEntry ? m.editTitle : m.addTitle}
+                </h2>
+                <p className="mt-0.5 text-xs text-atg-muted sm:text-sm">{m.formHint}</p>
+              </div>
+              <button
+                type="button"
+                onClick={closeEditor}
+                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-atg-muted transition-colors hover:bg-atg-surface hover:text-atg-fg dark:hover:bg-white/10"
+                aria-label={m.cancel}
+              >
+                <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" aria-hidden>
+                  <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                </svg>
+              </button>
+            </div>
 
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-5">
+              <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
               <div className="sm:col-span-2">
                 <label className="block text-sm font-medium text-atg-fg" htmlFor="manifest-fullName">
                   {m.fields.fullName}
@@ -555,9 +583,9 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
                 />
               </div>
 
-              <div className="sm:col-span-2 space-y-3 rounded-lg border border-atg-border/80 p-3 dark:border-atg-border">
+              <div className="sm:col-span-2 space-y-2.5 rounded-lg border border-atg-border/80 p-3 dark:border-atg-border">
                 <p className="text-sm font-semibold text-atg-fg">{m.fields.medicalSection}</p>
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="grid gap-2.5 sm:grid-cols-2 sm:gap-3">
                   <div className="sm:col-span-2">
                     <label className="block text-sm font-medium text-atg-fg" htmlFor={allergiesId}>
                       {m.fields.allergies}
@@ -624,11 +652,11 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
                 </div>
               </div>
 
-              <div className="sm:col-span-2 space-y-3 rounded-lg border border-atg-border/80 p-3 dark:border-atg-border">
+              <div className="sm:col-span-2 space-y-2.5 rounded-lg border border-atg-border/80 p-3 dark:border-atg-border">
                 <p className="text-sm font-semibold text-atg-fg">
                   {m.fields.emergencyContactSection}
                 </p>
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="grid gap-2.5 sm:grid-cols-2 sm:gap-3">
                   <div>
                     <label
                       className="block text-sm font-medium text-atg-fg"
@@ -762,15 +790,16 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
                   placeholder={m.fields.otherPlaceholder}
                 />
               </div>
+              </div>
+
+              {actionError ? (
+                <p role="alert" className="mt-3 text-sm text-red-600 dark:text-red-400">
+                  {actionError}
+                </p>
+              ) : null}
             </div>
 
-            {actionError ? (
-              <p role="alert" className="mt-3 text-sm text-red-600 dark:text-red-400">
-                {actionError}
-              </p>
-            ) : null}
-
-            <div className="mt-6 flex flex-wrap justify-end gap-2">
+            <div className="flex shrink-0 flex-wrap justify-end gap-2 border-t border-atg-border bg-atg-surface px-4 py-3 dark:border-atg-border dark:bg-atg-bg sm:px-5">
               <Button
                 type="button"
                 variant="outline"
