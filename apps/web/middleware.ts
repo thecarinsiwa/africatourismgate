@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 import {
   isSiteMaintenanceActive,
   type PublicSiteMaintenance,
-} from '@africatourismgate/types/organization-maintenances';
+} from '@africatourismgate/types/organization-settings';
 
 const MAINTENANCE_FETCH_TIMEOUT_MS = 2_000;
 const DEFAULT_API = 'http://127.0.0.1:3000/api';

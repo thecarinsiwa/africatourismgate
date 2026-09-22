@@ -3,7 +3,7 @@ import {
   normalizeSiteMaintenance,
   type PublicSiteMaintenance,
   type SiteMaintenanceSettingValue,
-} from '@africatourismgate/types/organization-maintenances';
+} from '@africatourismgate/types/organization-settings';
 
 const defaultApiUrl = 'http://localhost:3000/api';
 
