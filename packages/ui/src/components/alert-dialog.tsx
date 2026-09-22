@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { cn } from '../lib/cn';
 import { Button } from './button';
 import { Modal } from './modal';
@@ -40,14 +41,34 @@ export function AlertDialog({
   error,
   containerClassName,
 }: AlertDialogProps) {
+  const onConfirmRef = useRef(onConfirm);
+  onConfirmRef.current = onConfirm;
+  const loadingRef = useRef(loading);
+  loadingRef.current = loading;
+
   const handleCancel = () => {
     onCancel?.();
     onOpenChange(false);
   };
 
   const handleConfirm = () => {
-    onConfirm();
+    if (loadingRef.current) return;
+    onConfirmRef.current();
   };
+
+  useEffect(() => {
+    if (!open) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Enter' || event.isComposing) return;
+      event.preventDefault();
+      event.stopPropagation();
+      handleConfirm();
+    };
+
+    document.addEventListener('keydown', onKeyDown, true);
+    return () => document.removeEventListener('keydown', onKeyDown, true);
+  }, [open]);
 
   return (
     <Modal
@@ -71,6 +92,7 @@ export function AlertDialog({
           variant={variant === 'danger' ? 'primary' : 'primary'}
           onClick={handleConfirm}
           loading={loading}
+          autoFocus
           className={cn(
             variant === 'danger' &&
               'bg-red-600 hover:bg-red-700 focus-visible:ring-red-600 dark:bg-red-600 dark:hover:bg-red-700',

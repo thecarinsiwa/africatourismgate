@@ -56,8 +56,11 @@
     "starRating": "Star rating",
     "starRatingHint": "Optional, 0 to 5",
     "validation": {
-      "destinationRequired": "Destination is required."
-    }
+      "destinationRequired": "Destination is required.",
+      "formIncomplete": "Check the required fields (destination, name, slug)."
+    },
+    "noDestinationsHint": "No destinations available. Create one before adding an accommodation.",
+    "noDestinationsLink": "Create a destination"
   },
   "status": {
     "propertyType": {
@@ -100,7 +103,8 @@
     "carouselClose": "Close preview",
     "roomsIntro": "{count, plural, =0 {No rooms} one {# room} other {# rooms}}",
     "amenitiesIntro": "{count, plural, =0 {No amenities} one {# amenity} other {# amenities}}",
-    "amenitiesEmpty": "No amenities linked."
+    "amenitiesEmpty": "No amenities linked.",
+    "availabilityIntro": "Browse stock and nightly rates for each room."
   },
   "sections": {
     "rooms": {
@@ -120,7 +124,11 @@
       "deleteTitle": "Delete room",
       "deleteConfirmButton": "Delete",
       "cancel": "Cancel",
-      "photosAction": "Photos"
+      "photosAction": "Photos",
+      "viewAction": "View room",
+      "viewTitle": "Room details",
+      "viewIntro": "Information, rate and photos for this room.",
+      "availabilityAction": "Availability"
     },
     "amenities": {
       "title": "Amenities",

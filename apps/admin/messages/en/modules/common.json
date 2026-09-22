@@ -161,7 +161,9 @@
     "chooseDash": "— Choose —",
     "chooseFeminine": "— Choose —",
     "searchPlaceholder": "Search…",
-    "empty": "No results"
+    "empty": "No results",
+    "loading": "Loading…",
+    "loadError": "Unable to load the list."
   },
   "back": {
     "toList": "← Back to list"
@@ -242,6 +244,7 @@
     "amenitiesSavedTitle": "Amenities saved",
     "amenitiesSavedMessage": "The selection has been updated.",
     "propertySavedTitle": "Accommodation saved",
+    "destinationSavedTitle": "Destination saved",
     "deletedProperty": "Accommodation « {name} » has been deleted.",
     "deletedFlight": "Flight « {flightNumber} » has been deleted.",
     "deletedVehicle": "Vehicle « {label} » has been deleted.",

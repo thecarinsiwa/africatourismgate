@@ -23,6 +23,7 @@ import { getApiClient } from '../../lib/auth/api';
 import { hasValidDestinationCoords } from '../../lib/destination-coords';
 import { getIsoCountryLabel } from '../../lib/iso-countries';
 import { resolveMediaUrl } from '../../lib/resolve-media-url';
+import { isRichTextEmpty } from '../../lib/rich-text';
 import { DestinationRelatedStatCards } from './destination-related-stat-cards';
 import { DestinationStaticMap } from './destination-static-map';
 import { DestinationThumbnail } from './destination-thumbnail';
@@ -159,9 +160,15 @@ export function DestinationViewPage({ destinationId }: DestinationViewPageProps)
 
   const countryLabel = getIsoCountryLabel(destination.countryCode, locale);
   const heroUrl = destination.imageUrl?.trim() || null;
-  const hasMap = hasValidDestinationCoords(destination.latitude, destination.longitude);
+  const hasPoiOnMap = pois.some((poi) =>
+    hasValidDestinationCoords(poi.latitude, poi.longitude),
+  );
+  const hasMap =
+    hasValidDestinationCoords(destination.latitude, destination.longitude) ||
+    /^[A-Z]{2}$/.test(destination.countryCode.trim().toUpperCase()) ||
+    hasPoiOnMap;
   const coordsLabel =
-    hasMap
+    hasValidDestinationCoords(destination.latitude, destination.longitude)
       ? `${formatCoord(destination.latitude, emptyDash)}, ${formatCoord(destination.longitude, emptyDash)}`
       : emptyDash;
 
@@ -241,7 +248,8 @@ export function DestinationViewPage({ destinationId }: DestinationViewPageProps)
 
             <div>
               <h3 className="text-sm font-semibold text-atg-fg">{t('description')}</h3>
-              {destination.description?.trim() ? (
+              {destination.description?.trim() &&
+              !isRichTextEmpty(destination.description) ? (
                 <RichTextContent html={destination.description} className="mt-2" />
               ) : (
                 <p className="mt-2 text-sm text-atg-muted">{t('noDescription')}</p>
@@ -300,8 +308,11 @@ export function DestinationViewPage({ destinationId }: DestinationViewPageProps)
 
             {hasMap ? (
               <DestinationStaticMap
+                countryCode={destination.countryCode}
                 latitude={destination.latitude}
                 longitude={destination.longitude}
+                destinationName={destination.name}
+                pointsOfInterest={pois}
                 title={t('mapTitle')}
                 compact
               />

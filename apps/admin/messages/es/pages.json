@@ -738,6 +738,11 @@
       }
     }
   },
+  "mise-en-route": {
+    "title": "Puesta en marcha",
+    "description": "Recorrido guiado para completar el catálogo, módulo por módulo.",
+    "metaTitle": "Puesta en marcha"
+  },
   "profil": {
     "title": "Mi perfil",
     "description": "Actualice sus datos y foto de perfil.",

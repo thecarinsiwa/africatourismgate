@@ -738,6 +738,11 @@
       }
     }
   },
+  "mise-en-route": {
+    "title": "Getting started",
+    "description": "Guided walkthrough to fill the catalog, module by module.",
+    "metaTitle": "Getting started"
+  },
   "profil": {
     "title": "My profile",
     "description": "Update your details and profile photo.",

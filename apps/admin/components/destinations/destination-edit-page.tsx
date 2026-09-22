@@ -190,6 +190,8 @@ export function DestinationEditPage({ destinationId }: DestinationEditPageProps)
           <DestinationPoisSection
             destinationId={destinationId}
             embedded
+            countryCode={destination.countryCode}
+            destinationName={destination.name}
             mapDefaultLatitude={destination.latitude}
             mapDefaultLongitude={destination.longitude}
           />

@@ -56,8 +56,11 @@
     "starRating": "Classement (étoiles)",
     "starRatingHint": "Optionnel, 0 à 5",
     "validation": {
-      "destinationRequired": "La destination est obligatoire."
-    }
+      "destinationRequired": "La destination est obligatoire.",
+      "formIncomplete": "Vérifiez les champs obligatoires (destination, nom, slug)."
+    },
+    "noDestinationsHint": "Aucune destination disponible. Créez-en une avant d'ajouter un hébergement.",
+    "noDestinationsLink": "Créer une destination"
   },
   "status": {
     "propertyType": {
@@ -100,7 +103,8 @@
     "carouselClose": "Fermer l'aperçu",
     "roomsIntro": "{count, plural, =0 {Aucune chambre} one {# chambre} other {# chambres}}",
     "amenitiesIntro": "{count, plural, =0 {Aucun équipement} one {# équipement} other {# équipements}}",
-    "amenitiesEmpty": "Aucun équipement associé."
+    "amenitiesEmpty": "Aucun équipement associé.",
+    "availabilityIntro": "Consultez le calendrier de stock et de tarifs pour chaque chambre."
   },
   "sections": {
     "rooms": {
@@ -120,7 +124,11 @@
       "deleteTitle": "Supprimer la chambre",
       "deleteConfirmButton": "Supprimer",
       "cancel": "Annuler",
-      "photosAction": "Photos"
+      "photosAction": "Photos",
+      "viewAction": "Voir la chambre",
+      "viewTitle": "Détail de la chambre",
+      "viewIntro": "Informations, tarif et photos de la chambre.",
+      "availabilityAction": "Disponibilités"
     },
     "amenities": {
       "title": "Équipements",

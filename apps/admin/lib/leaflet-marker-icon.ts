@@ -1,4 +1,4 @@
-import type { Icon, IconOptions } from 'leaflet';
+import type { DivIcon, Icon, IconOptions } from 'leaflet';
 
 /** Fixes broken default marker images under Next.js / bundlers. */
 export function createLeafletMarkerIcon(L: typeof import('leaflet')): Icon {
@@ -14,4 +14,24 @@ export function createLeafletMarkerIcon(L: typeof import('leaflet')): Icon {
     shadowSize: [41, 41],
   };
   return new L.Icon(options);
+}
+
+/** Distinct pin for points of interest (teal) vs destination center (default blue). */
+export function createLeafletPoiMarkerIcon(L: typeof import('leaflet')): DivIcon {
+  return L.divIcon({
+    className: 'atg-poi-marker',
+    html: `<span style="
+      display:block;
+      width:14px;
+      height:14px;
+      margin:7px;
+      border-radius:9999px;
+      background:#0f766e;
+      border:2px solid #fff;
+      box-shadow:0 1px 4px rgba(0,0,0,.35);
+    "></span>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
+    popupAnchor: [0, -12],
+  });
 }

@@ -145,33 +145,47 @@ export function PropertyForm({
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setFormError(null);
-    if (!validate()) return;
+    if (!validate()) {
+      toast({
+        title: tToast('saveError'),
+        message: tForm('validation.formIncomplete'),
+        variant: 'error',
+      });
+      return;
+    }
     setSubmitting(true);
     try {
       const client = getApiClient();
       const payload = toPayload(values);
       if (mode === 'create') {
         const created = await client.createProperty(payload);
+        toast({
+          title: tToast('propertySavedTitle'),
+          message: values.name.trim(),
+          variant: 'success',
+        });
         router.push(`/hebergements/${created.id}`);
         router.refresh();
-      } else if (propertyId) {
+        return;
+      }
+      if (propertyId) {
         await client.updateProperty(propertyId, payload);
         toast({
           title: tToast('propertySavedTitle'),
           message: values.name.trim(),
           variant: 'success',
         });
+        router.push('/hebergements');
+        router.refresh();
       }
     } catch (error) {
       const message = getHebergementsErrorMessage(error);
       setFormError(message);
-      if (mode === 'edit') {
-        toast({
-          title: tToast('saveError'),
-          message,
-          variant: 'error',
-        });
-      }
+      toast({
+        title: tToast('saveError'),
+        message,
+        variant: 'error',
+      });
     } finally {
       setSubmitting(false);
     }
@@ -189,7 +203,7 @@ export function PropertyForm({
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={(e) => void handleSubmit(e)}
       className={identityAside ? 'w-full space-y-4' : 'w-full max-w-3xl space-y-4'}
     >
       {formError ? (
@@ -198,6 +212,21 @@ export function PropertyForm({
           className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400"
         >
           {formError}
+        </p>
+      ) : null}
+
+      {destinations.length === 0 ? (
+        <p
+          role="status"
+          className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-200"
+        >
+          {tForm('noDestinationsHint')}{' '}
+          <a
+            href="/produits/destinations/nouveau"
+            className="font-medium text-primary underline-offset-2 hover:underline"
+          >
+            {tForm('noDestinationsLink')}
+          </a>
         </p>
       ) : null}
 

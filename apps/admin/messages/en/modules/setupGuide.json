@@ -1,0 +1,188 @@
+{
+  "ui": {
+    "pageTitle": "Getting started",
+    "pageSubtitle": "Guided walkthrough to fill the catalog, module by module.",
+    "progressSummary": "{ready} / {total} steps ready",
+    "modulesHeading": "Modules",
+    "stepsHeading": "Steps",
+    "stepsCount": "{count, plural, one {# step} other {# steps}}",
+    "moduleProgress": "{ready}/{total}",
+    "stateLocked": "Locked",
+    "stateUnlocked": "To do",
+    "stateComplete": "Done",
+    "stepStatusReady": "Ready",
+    "stepStatusEmpty": "Empty",
+    "stepStatusUnknown": "Unknown",
+    "stepCount": "{total} / min. {min}",
+    "stepCountUnknown": "Count unavailable",
+    "moduleLockedHint": "This module is locked until its prerequisites are ready. You can still open the linked screens.",
+    "openList": "Open list",
+    "createItem": "Create",
+    "emptyModule": "Select a module to see its steps.",
+    "refresh": "Refresh",
+    "refreshing": "Refreshing…",
+    "loading": "Loading catalog status…",
+    "loadError": "Could not load catalog status.",
+    "partialError": "Some steps could not be verified (unknown status). Retry or open the related screens."
+  },
+  "modules": {
+    "platform": {
+      "title": "Platform",
+      "description": "Organization, amenities, and vehicle categories."
+    },
+    "destinations": {
+      "title": "Destinations",
+      "description": "Geography and points of interest."
+    },
+    "accommodations": {
+      "title": "Accommodations",
+      "description": "Properties and rooms."
+    },
+    "flights": {
+      "title": "Flights",
+      "description": "Airlines, airports, and flights."
+    },
+    "vehicles": {
+      "title": "Rentals",
+      "description": "Agencies and vehicles."
+    },
+    "cruises": {
+      "title": "Cruises",
+      "description": "Lines, ports, ships, and sailings."
+    },
+    "activities": {
+      "title": "Activities",
+      "description": "Providers and activities."
+    },
+    "packages": {
+      "title": "Packages",
+      "description": "Packages combining catalog products."
+    },
+    "payments": {
+      "title": "Payments",
+      "description": "Payment methods, bank accounts, and Mobile Money."
+    },
+    "content": {
+      "title": "Site content",
+      "description": "Hero, about, legal pages, and blog."
+    },
+    "ops": {
+      "title": "Optional ops",
+      "description": "Tour guides and promo codes."
+    }
+  },
+  "steps": {
+    "org-settings": {
+      "title": "Organization & settings",
+      "help": "Confirm the platform organization and its basic settings."
+    },
+    "amenities": {
+      "title": "Amenities",
+      "help": "Reusable amenity catalog for accommodations."
+    },
+    "vehicle-categories": {
+      "title": "Vehicle categories",
+      "help": "Categories required before creating vehicles."
+    },
+    "destinations": {
+      "title": "Destinations",
+      "help": "Create at least one destination (country / region / place)."
+    },
+    "points-of-interest": {
+      "title": "Points of interest",
+      "help": "Add POIs linked to destinations (from the destination detail)."
+    },
+    "properties": {
+      "title": "Properties",
+      "help": "Hotels, lodges, or stays linked to a destination."
+    },
+    "rooms": {
+      "title": "Rooms",
+      "help": "At least one room (or room type) on a property."
+    },
+    "airlines": {
+      "title": "Airlines",
+      "help": "Airline reference data before flights."
+    },
+    "airports": {
+      "title": "Airports",
+      "help": "Departure and arrival airport reference data."
+    },
+    "flights": {
+      "title": "Flights",
+      "help": "Create flights linking airlines and airports."
+    },
+    "rental-agencies": {
+      "title": "Rental agencies",
+      "help": "Partners that manage the vehicle fleet."
+    },
+    "vehicles": {
+      "title": "Vehicles",
+      "help": "Add vehicles linked to an agency and a category."
+    },
+    "cruise-lines": {
+      "title": "Cruise lines",
+      "help": "Cruise brands / operators."
+    },
+    "cruise-ports": {
+      "title": "Ports",
+      "help": "Ports of call used by itineraries."
+    },
+    "ships": {
+      "title": "Ships",
+      "help": "Ships linked to a cruise line."
+    },
+    "cruise-sailings": {
+      "title": "Sailings",
+      "help": "Bookable departures with dates and ship."
+    },
+    "activity-providers": {
+      "title": "Activity providers",
+      "help": "Operators or partners offering activities."
+    },
+    "activities": {
+      "title": "Activities",
+      "help": "Excursions and experiences linked to a destination."
+    },
+    "packages": {
+      "title": "Packages",
+      "help": "Combine accommodations, flights, rentals, cruises, or activities."
+    },
+    "payment-methods": {
+      "title": "Payment methods",
+      "help": "Enable at least one method (Stripe, bank transfer, cash, Mobile Money)."
+    },
+    "bank-accounts": {
+      "title": "Bank accounts",
+      "help": "Accounts for receiving bank transfers."
+    },
+    "mobile-money": {
+      "title": "Mobile Money",
+      "help": "Configured Mobile Money countries (and operators)."
+    },
+    "hero-slides": {
+      "title": "Hero carousel",
+      "help": "Homepage hero slides."
+    },
+    "about-pages": {
+      "title": "About pages",
+      "help": "Editorial content for the About section."
+    },
+    "legal-pages": {
+      "title": "Legal pages",
+      "help": "Terms, privacy, and other legal pages."
+    },
+    "blog-posts": {
+      "title": "Blog posts",
+      "help": "At least one published or draft post."
+    },
+    "tour-guides": {
+      "title": "Tour guides",
+      "help": "Guide profiles (optional to get started)."
+    },
+    "promo-codes": {
+      "title": "Promo codes",
+      "help": "Discount codes (optional to get started)."
+    }
+  }
+}

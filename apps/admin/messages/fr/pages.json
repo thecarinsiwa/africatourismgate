@@ -738,6 +738,11 @@
       }
     }
   },
+  "mise-en-route": {
+    "title": "Mise en route",
+    "description": "Parcours guidé pour remplir le catalogue, module par module.",
+    "metaTitle": "Mise en route"
+  },
   "profil": {
     "title": "Mon profil",
     "description": "Mettez à jour vos informations et votre photo de profil.",

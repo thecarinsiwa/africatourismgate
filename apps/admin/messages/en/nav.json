@@ -103,7 +103,8 @@
     "settings": "Settings",
     "emails": "Emails",
     "rbacAudit": "RBAC audit",
-    "adminHelp": "Help Center"
+    "adminHelp": "Help Center",
+    "setupGuide": "Getting started"
   },
   "userMenu": {
     "dashboard": "Dashboard",

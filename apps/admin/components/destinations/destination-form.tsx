@@ -2,16 +2,18 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Checkbox, Input } from '@africatourismgate/ui';
+import { Button, Checkbox, Input, useToast } from '@africatourismgate/ui';
 import type { CreateDestinationRequest, Destination } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useId, useState } from 'react';
-import { hasValidDestinationCoords, parseDestinationCoord } from '../../lib/destination-coords';
+import { parseDestinationCoord } from '../../lib/destination-coords';
 import { getApiClient } from '../../lib/auth/api';
+import { isRichTextEmpty } from '../../lib/rich-text';
 import { isValidSlug, slugifyName } from '../../lib/slug';
+import { RichTextEditor } from '../rich-text-editor';
 import { CountryCodeCombobox } from './country-code-combobox';
-import { DestinationStaticMap } from './destination-static-map';
+import { DestinationGeographyMap } from './destination-geography-map';
 
 export type DestinationFormValues = {
   name: string;
@@ -68,7 +70,7 @@ function toPayload(
     isFeatured: values.isFeatured,
   };
 
-  if (values.description.trim()) {
+  if (values.description.trim() && !isRichTextEmpty(values.description)) {
     payload.description = values.description.trim();
   } else if (mode === 'edit') {
     payload.description = undefined;
@@ -119,9 +121,10 @@ export function DestinationForm({
   const tValidation = useTranslations('modules.common.validation');
   const tActions = useTranslations('common.actions');
   const tLoading = useTranslations('common.loading');
+  const tToast = useTranslations('modules.common.toast');
+  const { toast } = useToast();
   const router = useRouter();
   const countryId = useId();
-  const descriptionId = useId();
   const [values, setValues] = useState<DestinationFormValues>(() =>
     initialDestination ? destinationToFormValues(initialDestination) : defaultValues,
   );
@@ -196,17 +199,28 @@ export function DestinationForm({
       } else if (destinationId) {
         const updated = await client.updateDestination(destinationId, payload);
         onUpdated?.(updated);
+        toast({
+          title: tToast('destinationSavedTitle'),
+          message: values.name.trim(),
+          variant: 'success',
+        });
+        router.push('/produits/destinations');
         router.refresh();
       }
     } catch (error) {
-      setFormError(getDestinationsErrorMessage(error));
+      const message = getDestinationsErrorMessage(error);
+      setFormError(message);
+      if (mode === 'edit') {
+        toast({
+          title: tToast('saveError'),
+          message,
+          variant: 'error',
+        });
+      }
     } finally {
       setSubmitting(false);
     }
   }
-
-  const textareaClass =
-    'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg placeholder:text-atg-muted/70 outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary';
 
   return (
     <form
@@ -268,16 +282,11 @@ export function DestinationForm({
               />
             )}
             <div>
-              <label htmlFor={descriptionId} className="mb-2 block text-sm font-medium text-atg-fg">
-                {tCommonForm('description')}
-              </label>
-              <textarea
-                id={descriptionId}
-                name="description"
-                rows={5}
+              <RichTextEditor
+                label={tCommonForm('description')}
                 value={values.description}
-                onChange={(e) => updateField('description', e.target.value)}
-                className={textareaClass}
+                onChange={(html) => updateField('description', html)}
+                contentClassName="min-h-[140px]"
               />
             </div>
           </section>
@@ -299,6 +308,15 @@ export function DestinationForm({
           <section className="space-y-4">
             <h3 className="text-sm font-semibold text-atg-fg">{t('sections.geography')}</h3>
             <p className="text-xs text-atg-muted">{t('geographyIntro')}</p>
+            <DestinationGeographyMap
+              countryCode={values.countryCode}
+              latitude={values.latitude}
+              longitude={values.longitude}
+              onCoordinateChange={(lat, lng) => {
+                updateField('latitude', lat);
+                updateField('longitude', lng);
+              }}
+            />
             <Input
               label={tCommonForm('latitude')}
               type="text"
@@ -319,14 +337,6 @@ export function DestinationForm({
               hint={t('longitudeHint')}
               error={fieldErrors.longitude}
             />
-            {hasValidDestinationCoords(values.latitude, values.longitude) ? (
-              <DestinationStaticMap
-                latitude={values.latitude}
-                longitude={values.longitude}
-                title={t('mapPreview')}
-                compact
-              />
-            ) : null}
           </section>
         </aside>
       </div>

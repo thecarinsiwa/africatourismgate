@@ -49,7 +49,7 @@
     "departureTime": "Hora de salida",
     "arrivalTime": "Hora de llegada",
     "durationMinutes": "Duración (minutos)",
-    "durationHint": "Ej. 390 para 6 h 30",
+    "durationHint": "Calculada automáticamente a partir de los horarios.",
     "validation": {
       "airlineRequired": "La aerolínea es obligatoria.",
       "flightNumberRequired": "El código de vuelo es obligatorio.",
@@ -57,7 +57,8 @@
       "arrivalAirportRequired": "El aeropuerto de llegada es obligatorio.",
       "airportsMustDiffer": "La salida y la llegada deben ser diferentes.",
       "departureTimeRequired": "La hora de salida es obligatoria.",
-      "arrivalTimeRequired": "La hora de llegada es obligatoria."
+      "arrivalTimeRequired": "La hora de llegada es obligatoria.",
+      "departureBeforeArrival": "La hora de salida debe ser anterior a la hora de llegada."
     }
   },
   "view": {

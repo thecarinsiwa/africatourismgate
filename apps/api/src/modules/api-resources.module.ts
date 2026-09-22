@@ -31,6 +31,7 @@ import { DestinationsModule } from './resources/destinations/destinations.module
 import { PointsOfInterestModule } from './resources/points-of-interest/points-of-interest.module';
 import { AmenitiesModule } from './resources/amenities/amenities.module';
 import { PropertiesModule } from './resources/properties/properties.module';
+import { AccommodationReportsModule } from './resources/properties/accommodation-reports/accommodation-reports.module';
 import { PropertyImagesModule } from './resources/property-images/property-images.module';
 import { PropertyAmenitiesModule } from './resources/property-amenities/property-amenities.module';
 import { RoomsModule } from './resources/rooms/rooms.module';
@@ -38,11 +39,13 @@ import { RoomAvailabilityModule } from './resources/room-availability/room-avail
 import { AirlinesModule } from './resources/airlines/airlines.module';
 import { AirportsModule } from './resources/airports/airports.module';
 import { FlightsModule } from './resources/flights/flights.module';
+import { FlightReportsModule } from './resources/flights/flight-reports/flight-reports.module';
 import { FlightClassesModule } from './resources/flight-classes/flight-classes.module';
 import { FlightClassAvailabilityModule } from './resources/flight-class-availability/flight-class-availability.module';
 import { RentalAgenciesModule } from './resources/rental-agencies/rental-agencies.module';
 import { VehicleCategoriesModule } from './resources/vehicle-categories/vehicle-categories.module';
 import { VehiclesModule } from './resources/vehicles/vehicles.module';
+import { VehicleReportsModule } from './resources/vehicles/vehicle-reports/vehicle-reports.module';
 import { VehicleAvailabilityModule } from './resources/vehicle-availability/vehicle-availability.module';
 import { CruiseLinesModule } from './resources/cruise-lines/cruise-lines.module';
 import { CruisePortsModule } from './resources/cruise-ports/cruise-ports.module';
@@ -123,6 +126,7 @@ import { Module } from '@nestjs/common';
     PointsOfInterestModule,
     AmenitiesModule,
     PropertiesModule,
+    AccommodationReportsModule,
     PropertyImagesModule,
     PropertyAmenitiesModule,
     RoomsModule,
@@ -130,11 +134,13 @@ import { Module } from '@nestjs/common';
     AirlinesModule,
     AirportsModule,
     FlightsModule,
+    FlightReportsModule,
     FlightClassesModule,
     FlightClassAvailabilityModule,
     RentalAgenciesModule,
     VehicleCategoriesModule,
     VehiclesModule,
+    VehicleReportsModule,
     VehicleAvailabilityModule,
     CruiseLinesModule,
     CruisePortsModule,

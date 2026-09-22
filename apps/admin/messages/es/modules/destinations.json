@@ -40,10 +40,14 @@
     "heroImageHint": "Se muestra en el banner. Déjelo vacío para un degradado.",
     "isFeatured": "Mostrar en la página de inicio",
     "isFeaturedHint": "Sección « Destinos populares » del sitio público (máx. 4).",
-    "geographyIntro": "Coordenadas del centro del destino para el mapa estático.",
+    "geographyIntro": "El contorno del país se actualiza al cambiar el país. Haga clic en el mapa o arrastre el marcador para fijar el centro del destino.",
     "latitudeHint": "Opcional, -90 a 90",
     "longitudeHint": "Opcional, -180 a 180",
-    "mapPreview": "Vista previa del mapa",
+    "mapPreview": "Mapa del destino",
+    "mapBoundaryHint": "Contorno del país seleccionado. Haga clic o arrastre el marcador para las coordenadas del centro.",
+    "mapBoundaryAria": "Mapa con contorno del país y selección del punto central",
+    "mapBoundaryLoading": "Cargando el contorno del país…",
+    "mapBoundaryUnavailable": "Contorno no disponible para este país. Aun así puede colocar un punto.",
     "openStreetMap": "Abrir en OpenStreetMap"
   },
   "detail": {
@@ -76,6 +80,8 @@
     "heroAlt": "Imagen de cabecera de {name}",
     "heroEmpty": "Ninguna imagen de cabecera.",
     "mapEmpty": "No hay coordenadas para el mapa.",
+    "mapCenterLabel": "Centro del destino",
+    "mapPoiHint": "{count, plural, one {# punto de interés mostrado en el mapa.} other {# puntos de interés mostrados en el mapa.}}",
     "poisTitle": "Puntos de interés",
     "poisIntro": "{count} punto(s) de interés registrado(s)",
     "poisEmpty": "Ningún punto de interés para este destino.",
@@ -97,11 +103,18 @@
   "sections": {
     "pois": {
       "title": "Puntos de interés",
-      "intro": "Lugares destacados vinculados a este destino.",
+      "intro": "Lugares destacados vinculados a este destino. Haga clic en un nombre para localizarlo en el mapa.",
       "addPoi": "Añadir un punto de interés",
-      "mapPicker": "Mapa de asistencia",
-      "mapPickerHint": "Haga clic en el mapa o mueva el marcador para completar automáticamente la latitud y la longitud.",
+      "mapOverviewTitle": "Mapa de puntos de interés",
+      "mapOverviewHint": "{count, plural, one {# punto mostrado en el mapa.} other {# puntos mostrados en el mapa.}}",
+      "mapOverviewEmpty": "Indique el país o el centro del destino para mostrar el mapa.",
+      "mapPicker": "Colocar en el mapa",
+      "mapPickerHint": "Contorno del país y otros puntos de referencia. Haga clic o mueva el marcador para las coordenadas.",
       "mapPickerAria": "Mapa interactivo para seleccionar coordenadas",
+      "columnLocation": "Mapa",
+      "statusOnMap": "En el mapa",
+      "statusNoCoords": "Sin coordenadas",
+      "locateOnMap": "Localizar en el mapa",
       "new": "Nuevo punto de interés",
       "edit": "Editar punto de interés",
       "empty": "Ningún punto de interés para este destino.",
@@ -109,7 +122,12 @@
       "deleteTitle": "Eliminar punto de interés",
       "deleteConfirm": "El punto de interés «{name}» será eliminado permanentemente.",
       "deleteConfirmButton": "Eliminar",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "toastCreatedTitle": "Punto de interés creado",
+      "toastUpdatedTitle": "Punto de interés actualizado",
+      "toastDeletedTitle": "Punto de interés eliminado",
+      "toastNoCoordsTitle": "Coordenadas faltantes",
+      "toastNoCoordsMessage": "«{name}» aún no tiene posición en el mapa."
     },
     "related": {
       "properties": {

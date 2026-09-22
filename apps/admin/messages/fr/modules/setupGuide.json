@@ -1,0 +1,188 @@
+{
+  "ui": {
+    "pageTitle": "Mise en route",
+    "pageSubtitle": "Parcours guidé pour remplir le catalogue, module par module.",
+    "progressSummary": "{ready} / {total} étapes prêtes",
+    "modulesHeading": "Modules",
+    "stepsHeading": "Étapes",
+    "stepsCount": "{count, plural, one {# étape} other {# étapes}}",
+    "moduleProgress": "{ready}/{total}",
+    "stateLocked": "Verrouillé",
+    "stateUnlocked": "À faire",
+    "stateComplete": "Terminé",
+    "stepStatusReady": "Prêt",
+    "stepStatusEmpty": "Vide",
+    "stepStatusUnknown": "Inconnu",
+    "stepCount": "{total} / min. {min}",
+    "stepCountUnknown": "Compte indisponible",
+    "moduleLockedHint": "Ce module est verrouillé tant que ses prérequis ne sont pas prêts. Vous pouvez quand même ouvrir les écrans liés.",
+    "openList": "Ouvrir la liste",
+    "createItem": "Créer",
+    "emptyModule": "Sélectionnez un module pour voir ses étapes.",
+    "refresh": "Actualiser",
+    "refreshing": "Actualisation…",
+    "loading": "Chargement de l’état du catalogue…",
+    "loadError": "Impossible de charger l’état du catalogue.",
+    "partialError": "Certaines étapes n’ont pas pu être vérifiées (statut inconnu). Réessayez ou ouvrez les écrans concernés."
+  },
+  "modules": {
+    "platform": {
+      "title": "Plateforme",
+      "description": "Organisation, équipements et catégories de véhicules."
+    },
+    "destinations": {
+      "title": "Destinations",
+      "description": "Géographie et points d’intérêt."
+    },
+    "accommodations": {
+      "title": "Hébergements",
+      "description": "Propriétés et chambres."
+    },
+    "flights": {
+      "title": "Vols",
+      "description": "Compagnies, aéroports et vols."
+    },
+    "vehicles": {
+      "title": "Locations",
+      "description": "Agences et véhicules."
+    },
+    "cruises": {
+      "title": "Croisières",
+      "description": "Lignes, ports, navires et départs."
+    },
+    "activities": {
+      "title": "Activités",
+      "description": "Partenaires et activités."
+    },
+    "packages": {
+      "title": "Forfaits",
+      "description": "Packages combinant les produits."
+    },
+    "payments": {
+      "title": "Paiements",
+      "description": "Moyens de paiement, comptes bancaires et Mobile Money."
+    },
+    "content": {
+      "title": "Contenu site",
+      "description": "Hero, à propos, pages légales et blog."
+    },
+    "ops": {
+      "title": "Ops optionnels",
+      "description": "Guides touristiques et codes promo."
+    }
+  },
+  "steps": {
+    "org-settings": {
+      "title": "Organisation & paramètres",
+      "help": "Vérifiez l’organisation plateforme et ses paramètres de base."
+    },
+    "amenities": {
+      "title": "Équipements",
+      "help": "Référentiel d’équipements réutilisable pour les hébergements."
+    },
+    "vehicle-categories": {
+      "title": "Catégories de véhicules",
+      "help": "Catégories nécessaires avant de créer des véhicules."
+    },
+    "destinations": {
+      "title": "Destinations",
+      "help": "Créez au moins une destination (pays / région / lieu)."
+    },
+    "points-of-interest": {
+      "title": "Points d’intérêt",
+      "help": "Ajoutez des POI liés aux destinations (depuis la fiche destination)."
+    },
+    "properties": {
+      "title": "Propriétés",
+      "help": "Hôtels, lodges ou logements rattachés à une destination."
+    },
+    "rooms": {
+      "title": "Chambres",
+      "help": "Au moins une chambre (ou type de chambre) sur une propriété."
+    },
+    "airlines": {
+      "title": "Compagnies aériennes",
+      "help": "Référentiel compagnies avant les vols."
+    },
+    "airports": {
+      "title": "Aéroports",
+      "help": "Référentiel aéroports de départ et d’arrivée."
+    },
+    "flights": {
+      "title": "Vols",
+      "help": "Créez des vols reliant compagnies et aéroports."
+    },
+    "rental-agencies": {
+      "title": "Agences de location",
+      "help": "Partenaires qui gèrent le parc de véhicules."
+    },
+    "vehicles": {
+      "title": "Véhicules",
+      "help": "Ajoutez des véhicules rattachés à une agence et une catégorie."
+    },
+    "cruise-lines": {
+      "title": "Lignes de croisière",
+      "help": "Compagnies / marques de croisière."
+    },
+    "cruise-ports": {
+      "title": "Ports",
+      "help": "Ports d’escale utilisés par les itinéraires."
+    },
+    "ships": {
+      "title": "Navires",
+      "help": "Navires rattachés à une ligne de croisière."
+    },
+    "cruise-sailings": {
+      "title": "Départs (sailings)",
+      "help": "Départs commercialisés avec dates et navire."
+    },
+    "activity-providers": {
+      "title": "Partenaires d’activités",
+      "help": "Opérateurs ou partenaires qui proposent les activités."
+    },
+    "activities": {
+      "title": "Activités",
+      "help": "Excursions et expériences liées à une destination."
+    },
+    "packages": {
+      "title": "Forfaits",
+      "help": "Combinez hébergements, vols, locations, croisières ou activités."
+    },
+    "payment-methods": {
+      "title": "Moyens de paiement",
+      "help": "Activez au moins un moyen (Stripe, virement, cash, Mobile Money)."
+    },
+    "bank-accounts": {
+      "title": "Comptes bancaires",
+      "help": "Comptes pour recevoir les virements."
+    },
+    "mobile-money": {
+      "title": "Mobile Money",
+      "help": "Pays (et opérateurs) Mobile Money configurés."
+    },
+    "hero-slides": {
+      "title": "Carousel hero",
+      "help": "Diapositives de la page d’accueil."
+    },
+    "about-pages": {
+      "title": "Pages À propos",
+      "help": "Contenu éditorial de la section À propos."
+    },
+    "legal-pages": {
+      "title": "Pages légales",
+      "help": "CGU, confidentialité et autres pages légales."
+    },
+    "blog-posts": {
+      "title": "Articles de blog",
+      "help": "Au moins un article publié ou brouillon."
+    },
+    "tour-guides": {
+      "title": "Guides touristiques",
+      "help": "Profils de guides (optionnel pour démarrer)."
+    },
+    "promo-codes": {
+      "title": "Codes promo",
+      "help": "Codes de réduction (optionnel pour démarrer)."
+    }
+  }
+}
