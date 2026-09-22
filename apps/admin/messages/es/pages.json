@@ -738,6 +738,18 @@
       }
     }
   },
+  "mise-en-route": {
+    "title": "Puesta en marcha",
+    "description": "Recorrido guiado para completar el catálogo, módulo por módulo.",
+    "metaTitle": "Puesta en marcha",
+    "progressSummary": "{ready} / {total} pasos listos",
+    "modulesHeading": "Módulos",
+    "stepsHeading": "Pasos",
+    "stepsCount": "{count, plural, one {# paso} other {# pasos}}",
+    "openList": "Abrir lista",
+    "createItem": "Crear",
+    "emptyModule": "Seleccione un módulo para ver sus pasos."
+  },
   "profil": {
     "title": "Mi perfil",
     "description": "Actualice sus datos y foto de perfil.",

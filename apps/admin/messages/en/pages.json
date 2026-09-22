@@ -738,6 +738,18 @@
       }
     }
   },
+  "mise-en-route": {
+    "title": "Getting started",
+    "description": "Guided walkthrough to fill the catalog, module by module.",
+    "metaTitle": "Getting started",
+    "progressSummary": "{ready} / {total} steps ready",
+    "modulesHeading": "Modules",
+    "stepsHeading": "Steps",
+    "stepsCount": "{count, plural, one {# step} other {# steps}}",
+    "openList": "Open list",
+    "createItem": "Create",
+    "emptyModule": "Select a module to see its steps."
+  },
   "profil": {
     "title": "My profile",
     "description": "Update your details and profile photo.",

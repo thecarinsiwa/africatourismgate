@@ -738,6 +738,18 @@
       }
     }
   },
+  "mise-en-route": {
+    "title": "Mise en route",
+    "description": "Parcours guidé pour remplir le catalogue, module par module.",
+    "metaTitle": "Mise en route",
+    "progressSummary": "{ready} / {total} étapes prêtes",
+    "modulesHeading": "Modules",
+    "stepsHeading": "Étapes",
+    "stepsCount": "{count, plural, one {# étape} other {# étapes}}",
+    "openList": "Ouvrir la liste",
+    "createItem": "Créer",
+    "emptyModule": "Sélectionnez un module pour voir ses étapes."
+  },
   "profil": {
     "title": "Mon profil",
     "description": "Mettez à jour vos informations et votre photo de profil.",
