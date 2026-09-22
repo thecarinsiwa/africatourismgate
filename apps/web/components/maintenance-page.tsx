@@ -100,9 +100,10 @@ function MaintenanceCountdown({ endsAt }: { endsAt: string }) {
       if (cancelled) return;
       setParts(next);
       if (next.done && reloadTimer === undefined) {
+        // Small delay so server clocks that lag the client also see endsAt as past.
         reloadTimer = window.setTimeout(() => {
-          window.location.assign('/');
-        }, 1_200);
+          window.location.replace(`/?_m=${Date.now()}`);
+        }, 1_500);
       }
     };
 
