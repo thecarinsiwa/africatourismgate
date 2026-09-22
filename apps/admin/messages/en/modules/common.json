@@ -242,6 +242,7 @@
     "amenitiesSavedTitle": "Amenities saved",
     "amenitiesSavedMessage": "The selection has been updated.",
     "propertySavedTitle": "Accommodation saved",
+    "destinationSavedTitle": "Destination saved",
     "deletedProperty": "Accommodation « {name} » has been deleted.",
     "deletedFlight": "Flight « {flightNumber} » has been deleted.",
     "deletedVehicle": "Vehicle « {label} » has been deleted.",

@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Checkbox, Input } from '@africatourismgate/ui';
+import { Button, Checkbox, Input, useToast } from '@africatourismgate/ui';
 import type { CreateDestinationRequest, Destination } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -119,6 +119,8 @@ export function DestinationForm({
   const tValidation = useTranslations('modules.common.validation');
   const tActions = useTranslations('common.actions');
   const tLoading = useTranslations('common.loading');
+  const tToast = useTranslations('modules.common.toast');
+  const { toast } = useToast();
   const router = useRouter();
   const countryId = useId();
   const descriptionId = useId();
@@ -196,10 +198,24 @@ export function DestinationForm({
       } else if (destinationId) {
         const updated = await client.updateDestination(destinationId, payload);
         onUpdated?.(updated);
+        toast({
+          title: tToast('destinationSavedTitle'),
+          message: values.name.trim(),
+          variant: 'success',
+        });
+        router.push('/produits/destinations');
         router.refresh();
       }
     } catch (error) {
-      setFormError(getDestinationsErrorMessage(error));
+      const message = getDestinationsErrorMessage(error);
+      setFormError(message);
+      if (mode === 'edit') {
+        toast({
+          title: tToast('saveError'),
+          message,
+          variant: 'error',
+        });
+      }
     } finally {
       setSubmitting(false);
     }

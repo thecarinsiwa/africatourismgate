@@ -242,6 +242,7 @@
     "amenitiesSavedTitle": "Équipements enregistrés",
     "amenitiesSavedMessage": "La sélection a été mise à jour.",
     "propertySavedTitle": "Hébergement enregistré",
+    "destinationSavedTitle": "Destination enregistrée",
     "deletedProperty": "L'hébergement « {name} » a été supprimé.",
     "deletedFlight": "Le vol « {flightNumber} » a été supprimé.",
     "deletedVehicle": "Le véhicule « {label} » a été supprimé.",
