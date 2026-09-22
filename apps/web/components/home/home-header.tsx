@@ -112,6 +112,27 @@ export function HomeHeader() {
   const [hasSession, setHasSession] = useState(false);
   const mobileNavRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+
+    const syncHeaderHeight = () => {
+      document.documentElement.style.setProperty(
+        '--atg-header-h',
+        `${header.offsetHeight}px`,
+      );
+    };
+
+    syncHeaderHeight();
+    const observer = new ResizeObserver(syncHeaderHeight);
+    observer.observe(header);
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty('--atg-header-h');
+    };
+  }, [menuOpen]);
 
   const navLinks = useMemo(
     () => [
@@ -218,7 +239,11 @@ export function HomeHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-atg-elevated/95 shadow-sm backdrop-blur-md dark:bg-atg-elevated/95">
+    <>
+    <header
+      ref={headerRef}
+      className="fixed inset-x-0 top-0 z-50 w-full bg-atg-elevated/95 shadow-sm backdrop-blur-md dark:bg-atg-elevated/95"
+    >
       <div className="border-b border-atg-border bg-atg-surface text-atg-fg dark:border-white/10 dark:bg-[#1b1b2f] dark:text-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 text-xs sm:text-sm">
@@ -502,5 +527,11 @@ export function HomeHeader() {
         ) : null}
       </div>
     </header>
+    <div
+      className="shrink-0"
+      style={{ height: 'var(--atg-header-h, 7.5rem)' }}
+      aria-hidden
+    />
+    </>
   );
 }

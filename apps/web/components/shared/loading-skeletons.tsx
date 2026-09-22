@@ -113,7 +113,7 @@ function BookingSidebarSkeleton() {
   return (
     <aside
       aria-hidden
-      className="hidden rounded-2xl border border-atg-border bg-atg-elevated p-6 shadow-lg dark:border-atg-border dark:bg-atg-elevated lg:block lg:sticky lg:top-24 lg:self-start"
+      className="hidden rounded-2xl border border-atg-border bg-atg-elevated p-6 shadow-lg dark:border-atg-border dark:bg-atg-elevated lg:block lg:sticky lg:top-[calc(var(--atg-header-h,7.5rem)+1rem)] lg:self-start"
     >
       <Skeleton className="mb-4 h-6 w-40" />
       <div className="space-y-4">

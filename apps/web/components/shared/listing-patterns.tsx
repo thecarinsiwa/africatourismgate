@@ -37,7 +37,7 @@ export function ListingSortBar({
   disabled,
 }: ListingSortBarProps) {
   return (
-    <div className="sticky top-[7.5rem] z-30 border-b border-atg-border bg-atg-elevated/95 shadow-sm backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95 sm:top-32">
+    <div className="sticky top-[var(--atg-header-h,7.5rem)] z-30 border-b border-atg-border bg-atg-elevated/95 shadow-sm backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95">
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
         <div>
           <p className="text-sm text-atg-muted">{resultsLine}</p>

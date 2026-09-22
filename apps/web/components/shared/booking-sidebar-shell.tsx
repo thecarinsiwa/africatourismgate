@@ -150,7 +150,7 @@ export function BookingSidebarDesktop({
   return (
     <aside
       id={id}
-      className={`hidden rounded-2xl border border-atg-border bg-atg-elevated p-6 shadow-lg dark:border-atg-border dark:bg-atg-elevated lg:block lg:sticky lg:top-24 lg:self-start ${className}`.trim()}
+      className={`hidden rounded-2xl border border-atg-border bg-atg-elevated p-6 shadow-lg dark:border-atg-border dark:bg-atg-elevated lg:block lg:sticky lg:top-[calc(var(--atg-header-h,7.5rem)+1rem)] lg:self-start ${className}`.trim()}
     >
       {children}
     </aside>
