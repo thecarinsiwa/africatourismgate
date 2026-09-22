@@ -3,6 +3,8 @@ import { expect, test } from '@playwright/test';
 const SEARCH_TITLE = /Rechercher sur le site|Search the site|Buscar en el sitio/i;
 const OPEN_SEARCH = /Ouvrir la recherche|Open search|Abrir la búsqueda/i;
 const RESULTS_HEADING = /Résultats|Results|Resultados/i;
+/** Libellé nav de la page blog (source locale `pages`). */
+const BLOG_OPTION = /Blog/i;
 
 test.describe('Site global search', () => {
   test.beforeEach(async ({ page }) => {
@@ -23,9 +25,13 @@ test.describe('Site global search', () => {
     await expect(input).toBeFocused();
 
     await input.fill('blog');
-    await expect(page.getByTestId('site-search-result').first()).toBeVisible({
+    // Attendre le debounce (300 ms) + filtre : ne pas cliquer un résultat de la requête vide.
+    await expect(page.getByRole('option', { name: BLOG_OPTION }).first()).toBeVisible({
       timeout: 10_000,
     });
+    await expect(
+      page.getByRole('option', { name: /Accueil|Home|Inicio/i }),
+    ).toHaveCount(0);
   });
 
   test('opens with Ctrl+K and navigates to a page', async ({ page }) => {
@@ -34,9 +40,14 @@ test.describe('Site global search', () => {
 
     const input = page.getByTestId('site-search-input');
     await input.fill('blog');
-    const first = page.getByTestId('site-search-result').first();
-    await expect(first).toBeVisible({ timeout: 10_000 });
-    await first.click();
+
+    const blogResult = page.getByRole('option', { name: BLOG_OPTION }).first();
+    await expect(blogResult).toBeVisible({ timeout: 10_000 });
+    await expect(
+      page.getByRole('option', { name: /Accueil|Home|Inicio/i }),
+    ).toHaveCount(0);
+
+    await blogResult.click();
 
     await expect(page).toHaveURL(/\/blog/);
     await expect(page.getByTestId('site-search-navigator')).toHaveCount(0);
@@ -52,13 +63,15 @@ test.describe('Site global search', () => {
 
     const input = page.getByTestId('site-search-input');
     await input.fill('blog');
-    await expect(page.getByTestId('site-search-result').first()).toBeVisible({
-      timeout: 10_000,
-    });
 
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowUp');
-    await page.keyboard.press('Enter');
+    const blogResult = page.getByRole('option', { name: BLOG_OPTION }).first();
+    await expect(blogResult).toBeVisible({ timeout: 10_000 });
+    await expect(
+      page.getByRole('option', { name: /Accueil|Home|Inicio/i }),
+    ).toHaveCount(0);
+
+    // Focus déjà sur l’input : Entrée active l’option sélectionnée (index 0 après filtre).
+    await input.press('Enter');
     await expect(page).toHaveURL(/\/blog/);
 
     await page.goto('/');
