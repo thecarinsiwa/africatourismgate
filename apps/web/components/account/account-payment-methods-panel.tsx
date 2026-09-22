@@ -14,7 +14,7 @@ const emptyForm = {
 };
 
 function methodLabel(method: UserPaymentMethod): string {
-  const parts = [method.type];
+  const parts: string[] = [method.type];
   if (method.provider) parts.push(method.provider);
   if (method.lastFour) parts.push(`•••• ${method.lastFour}`);
   return parts.join(' — ');
