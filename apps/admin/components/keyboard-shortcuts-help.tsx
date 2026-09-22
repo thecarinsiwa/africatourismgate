@@ -37,7 +37,8 @@ export function KeyboardShortcutsHelp() {
     return /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent);
   }, []);
 
-  const paletteKeys = isMac ? ['⌘', 'K'] : ['Ctrl', 'K'];
+  const paletteKeys = isMac ? ['⌘', 'F'] : ['Ctrl', 'F'];
+  const paletteAliasKeys = isMac ? ['⌘', 'K'] : ['Ctrl', 'K'];
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -57,9 +58,14 @@ export function KeyboardShortcutsHelp() {
 
   const rows = [
     {
-      id: 'palette',
+      id: 'search',
       keys: paletteKeys,
-      label: t('items.palette'),
+      label: t('items.search'),
+    },
+    {
+      id: 'searchAlias',
+      keys: paletteAliasKeys,
+      label: t('items.searchAlias'),
     },
     {
       id: 'escape',

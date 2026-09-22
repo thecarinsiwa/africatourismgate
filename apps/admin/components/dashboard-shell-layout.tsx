@@ -29,7 +29,8 @@ import { SessionIdleLock } from './session-idle-lock';
 import { useBrowserSessionLifecycle } from '../lib/auth/browser-lifecycle';
 import { LanguageSwitcher } from './language-switcher';
 import { AdminNotificationsMenu } from './notifications/admin-notifications-menu';
-import { CommandPalette } from './command-palette';
+import { AdminSearchNavigatorProvider } from './admin-search-navigator';
+import { AdminSearchTrigger } from './admin-search-trigger';
 import { KeyboardShortcutsHelp } from './keyboard-shortcuts-help';
 import { AdminContextualHelpLink } from './admin-help/admin-contextual-help-link';
 
@@ -115,49 +116,51 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
   }, [router]);
 
   return (
-    <DashboardShell
-      navItems={navItems}
-      title={headerTitle}
-      breadcrumb={
-        showShellBreadcrumb ? (
-          <Breadcrumb items={breadcrumbItems} ariaLabel={tShell('breadcrumb')} />
-        ) : undefined
-      }
-      headerActions={
-        <>
-          <AdminContextualHelpLink />
-          <AdminNotificationsMenu />
-          <LanguageSwitcher />
-        </>
-      }
-      openMenuLabel={tShell('openMenu')}
-      closeMenuLabel={tShell('closeMenu')}
-      logo={{
-        name: orgTheme?.branding?.displayName ?? adminDashboardConfig.logo.name,
-        href: adminDashboardConfig.logo.href,
-        logoUrl: orgTheme?.branding?.logoUrl,
-      }}
-      user={{
-        ...user,
-        onLogout: handleLogout,
-        logoutLabel: tShell('logout'),
-        loggingOutLabel: tShell('loggingOut'),
-        menuLinks: [
-          { href: '/profil', label: tNav('userMenu.profile') },
-          { href: '/dashboard', label: tNav('userMenu.dashboard') },
-          { href: '/notifications', label: tNav('userMenu.notifications') },
-          { href: '/parametres', label: tNav('userMenu.settings') },
-        ],
-      }}
-      themeLabels={{
-        light: tTheme('light'),
-        dark: tTheme('dark'),
-      }}
-    >
-      <CommandPalette />
-      <KeyboardShortcutsHelp />
-      <RouteAccessGate>{children}</RouteAccessGate>
-    </DashboardShell>
+    <AdminSearchNavigatorProvider>
+      <DashboardShell
+        navItems={navItems}
+        title={headerTitle}
+        breadcrumb={
+          showShellBreadcrumb ? (
+            <Breadcrumb items={breadcrumbItems} ariaLabel={tShell('breadcrumb')} />
+          ) : undefined
+        }
+        headerActions={
+          <>
+            <AdminSearchTrigger />
+            <AdminContextualHelpLink />
+            <AdminNotificationsMenu />
+            <LanguageSwitcher />
+          </>
+        }
+        openMenuLabel={tShell('openMenu')}
+        closeMenuLabel={tShell('closeMenu')}
+        logo={{
+          name: orgTheme?.branding?.displayName ?? adminDashboardConfig.logo.name,
+          href: adminDashboardConfig.logo.href,
+          logoUrl: orgTheme?.branding?.logoUrl,
+        }}
+        user={{
+          ...user,
+          onLogout: handleLogout,
+          logoutLabel: tShell('logout'),
+          loggingOutLabel: tShell('loggingOut'),
+          menuLinks: [
+            { href: '/profil', label: tNav('userMenu.profile') },
+            { href: '/dashboard', label: tNav('userMenu.dashboard') },
+            { href: '/notifications', label: tNav('userMenu.notifications') },
+            { href: '/parametres', label: tNav('userMenu.settings') },
+          ],
+        }}
+        themeLabels={{
+          light: tTheme('light'),
+          dark: tTheme('dark'),
+        }}
+      >
+        <KeyboardShortcutsHelp />
+        <RouteAccessGate>{children}</RouteAccessGate>
+      </DashboardShell>
+    </AdminSearchNavigatorProvider>
   );
 }
 

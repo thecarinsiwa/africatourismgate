@@ -47,17 +47,43 @@
     "title": "Quick navigation",
     "placeholder": "Search for a page…",
     "empty": "No pages found",
-    "shortcutHint": "Ctrl+K · ⌘K — press ? for help"
+    "shortcutHint": "Ctrl+F · ⌘F — alias Ctrl/⌘+K ; ? for shortcut help"
+  },
+  "globalSearch": {
+    "title": "Admin search",
+    "placeholder": "Search pages, help, users, bookings…",
+    "empty": "No results",
+    "shortcutHint": "Ctrl+F · ⌘F (alias Ctrl/⌘+K) — ↑↓ to navigate, Enter to open",
+    "close": "Close search",
+    "resultsLabel": "Search results",
+    "updating": "Updating…",
+    "partialError": "Some sources could not be loaded.",
+    "groupError": "Partial error",
+    "openLabel": "Open search",
+    "groups": {
+      "pages": "Pages",
+      "help": "Help",
+      "users": "Users",
+      "organizations": "Organizations",
+      "bookings": "Bookings",
+      "properties": "Properties",
+      "payments": "Payments",
+      "support": "Support",
+      "catalog": "Catalog",
+      "content": "Content"
+    }
   },
   "keyboardShortcuts": {
     "title": "Keyboard shortcuts",
     "description": "Shortcuts available in the admin.",
     "close": "Close",
-    "hint": "Shortcuts are ignored while typing in a field.",
+    "hint": "When search is closed, shortcuts are ignored while typing in a field (Ctrl+F then keeps the browser’s native find).",
     "openHelpCenter": "Open the Help Center",
     "items": {
+      "search": "Open / close admin search",
+      "searchAlias": "Alias — open / close search",
       "palette": "Open / close quick navigation",
-      "escape": "Close the palette or this help",
+      "escape": "Close search or this help",
       "help": "Show this help"
     }
   },

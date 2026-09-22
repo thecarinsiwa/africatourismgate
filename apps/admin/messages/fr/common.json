@@ -47,17 +47,43 @@
     "title": "Navigation rapide",
     "placeholder": "Rechercher une page…",
     "empty": "Aucune page trouvée",
-    "shortcutHint": "Ctrl+K · ⌘K — appuyez sur ? pour l’aide"
+    "shortcutHint": "Ctrl+F · ⌘F — alias Ctrl/⌘+K ; ? pour l’aide des raccourcis"
+  },
+  "globalSearch": {
+    "title": "Recherche admin",
+    "placeholder": "Rechercher pages, aide, utilisateurs, réservations…",
+    "empty": "Aucun résultat",
+    "shortcutHint": "Ctrl+F · ⌘F (alias Ctrl/⌘+K) — ↑↓ pour naviguer, Entrée pour ouvrir",
+    "close": "Fermer la recherche",
+    "resultsLabel": "Résultats de recherche",
+    "updating": "Mise à jour…",
+    "partialError": "Certaines sources n’ont pas pu être chargées.",
+    "groupError": "Erreur partielle",
+    "openLabel": "Ouvrir la recherche",
+    "groups": {
+      "pages": "Pages",
+      "help": "Aide",
+      "users": "Utilisateurs",
+      "organizations": "Organisations",
+      "bookings": "Réservations",
+      "properties": "Hébergements",
+      "payments": "Paiements",
+      "support": "Support",
+      "catalog": "Catalogue",
+      "content": "Contenu"
+    }
   },
   "keyboardShortcuts": {
     "title": "Raccourcis clavier",
     "description": "Raccourcis disponibles dans le back-office.",
     "close": "Fermer",
-    "hint": "Les raccourcis sont ignorés pendant la saisie dans un champ.",
+    "hint": "Hors recherche ouverte, les raccourcis sont ignorés pendant la saisie dans un champ (Ctrl+F laisse alors le find natif).",
     "openHelpCenter": "Ouvrir le centre d'aide",
     "items": {
+      "search": "Ouvrir / fermer la recherche admin",
+      "searchAlias": "Alias — ouvrir / fermer la recherche",
       "palette": "Ouvrir / fermer la navigation rapide",
-      "escape": "Fermer la palette ou l’aide",
+      "escape": "Fermer la recherche ou l’aide",
       "help": "Afficher cette aide"
     }
   },

@@ -212,7 +212,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 | S1  | Fil d’Ariane dans le header  | **Haute**   | Afficher le chemin courant à côté du bouton menu (mobile) ou sous le logo (desktop) |
 | S2  | Titre de page contextuel     | **Moyenne** | Propager le titre de la page active dans `AppHeader`                                |
 | S3  | Indicateur de section active | **Moyenne** | Barre verticale ou pastille sur le groupe sidebar ouvert                            |
-| S4  | Raccourci recherche globale  | **Basse**   | `Cmd+K` — recherche cross-modules                                                   |
+| S4  | Raccourci recherche globale  | ✅        | Ctrl/⌘+F (+ alias Ctrl/⌘+K) + icône loupe — pages, aide, entités métier |
 | S5  | Badge compteur nav           | **Basse**   | Ex. tickets support en attente, avis à modérer                                      |
 | S6  | Sidebar compacte             | **Basse**   | Mode icônes seules sur `xl:`                                                        |
 | S7  | Pied de sidebar              | **Basse**   | Version app + lien documentation / support                                          |
@@ -1149,7 +1149,7 @@ Références :
 Implémenter :
 - M1 : DataTable responsive — option hiddenColumns mobile + expand row pour détails
 - M2 : Migrer chaînes FR en dur des KPI dashboard et labels listes fréquentes vers next-intl
-- M3 (optionnel) : Cmd+K palette recherche stub
+- M3 (optionnel) : Cmd+K palette recherche stub → **livré** : recherche globale Ctrl/⌘+F (+ alias K), loupe header
 - M4 (optionnel) : Hook exportCsv réutilisable
 
 Appliquer M1 sur bookings-list et properties-list minimum.

@@ -203,7 +203,7 @@ test.describe('Admin help center', () => {
       .getByRole('option')
       .filter({
         hasText:
-          /Palette de commandes|Command palette|Paleta de comandos/i,
+          /Recherche admin|Admin search|Búsqueda admin/i,
       })
       .first()
       .click();
@@ -213,7 +213,7 @@ test.describe('Admin help center', () => {
     );
     await expect(
       page.getByRole('heading', {
-        name: /Palette de commandes|Command palette|Paleta de comandos/i,
+        name: /Recherche admin|Admin search|Búsqueda admin/i,
         level: 1,
       }),
     ).toBeVisible();
@@ -361,7 +361,7 @@ test.describe('Admin help center — locale smoke', () => {
     await page.goto('/aide/prise-en-main/palette-commandes');
     await expect(
       page.getByRole('heading', {
-        name: /Command palette/i,
+        name: /Admin search/i,
         level: 1,
       }),
     ).toBeVisible();
@@ -391,7 +391,7 @@ test.describe('Admin help center — locale smoke', () => {
     await page.goto('/aide/prise-en-main/palette-commandes');
     await expect(
       page.getByRole('heading', {
-        name: /Paleta de comandos/i,
+        name: /Búsqueda admin/i,
         level: 1,
       }),
     ).toBeVisible();

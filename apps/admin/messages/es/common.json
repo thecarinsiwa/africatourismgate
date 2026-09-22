@@ -47,17 +47,43 @@
     "title": "Navegación rápida",
     "placeholder": "Buscar una página…",
     "empty": "Ninguna página encontrada",
-    "shortcutHint": "Ctrl+K · ⌘K — pulse ? para la ayuda"
+    "shortcutHint": "Ctrl+F · ⌘F — alias Ctrl/⌘+K ; ? para la ayuda de atajos"
+  },
+  "globalSearch": {
+    "title": "Búsqueda admin",
+    "placeholder": "Buscar páginas, ayuda, usuarios, reservas…",
+    "empty": "Sin resultados",
+    "shortcutHint": "Ctrl+F · ⌘F (alias Ctrl/⌘+K) — ↑↓ para navegar, Entrar para abrir",
+    "close": "Cerrar la búsqueda",
+    "resultsLabel": "Resultados de búsqueda",
+    "updating": "Actualizando…",
+    "partialError": "Algunas fuentes no se pudieron cargar.",
+    "groupError": "Error parcial",
+    "openLabel": "Abrir la búsqueda",
+    "groups": {
+      "pages": "Páginas",
+      "help": "Ayuda",
+      "users": "Usuarios",
+      "organizations": "Organizaciones",
+      "bookings": "Reservas",
+      "properties": "Alojamientos",
+      "payments": "Pagos",
+      "support": "Soporte",
+      "catalog": "Catálogo",
+      "content": "Contenido"
+    }
   },
   "keyboardShortcuts": {
     "title": "Atajos de teclado",
     "description": "Atajos disponibles en el back office.",
     "close": "Cerrar",
-    "hint": "Los atajos se ignoran mientras escribe en un campo.",
+    "hint": "Con la búsqueda cerrada, los atajos se ignoran al escribir en un campo (Ctrl+F deja entonces el buscador nativo).",
     "openHelpCenter": "Abrir el centro de ayuda",
     "items": {
+      "search": "Abrir / cerrar la búsqueda admin",
+      "searchAlias": "Alias — abrir / cerrar la búsqueda",
       "palette": "Abrir / cerrar la navegación rápida",
-      "escape": "Cerrar la paleta o esta ayuda",
+      "escape": "Cerrar la búsqueda o esta ayuda",
       "help": "Mostrar esta ayuda"
     }
   },
