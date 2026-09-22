@@ -325,6 +325,27 @@ export function HotelDetailPageContent({
               amenityLabels={h.amenities}
             />
 
+            <HotelRoomsSection
+              rooms={detail.rooms}
+              title={h.roomsTitle}
+              selectedRoomId={selectedRoomId}
+              onSelectRoom={handleSelectRoom}
+              selectRoomLabel={h.selectRoom}
+              unavailableLabel={h.unavailable}
+              perNightLabel={h.perNight}
+              maxGuestsLabel={h.maxGuests}
+              bedConfigLabel={h.bedConfig}
+              nights={detail.stay.nights}
+              galleryLabels={{
+                ariaLabel: h.galleryAria,
+                openLightbox: h.galleryOpenLightbox,
+                close: h.galleryClose,
+                previous: h.galleryPrevious,
+                next: h.galleryNext,
+                counter: h.galleryCounter,
+              }}
+            />
+
             <HotelReviewsSection
               propertyId={propertyId}
               averageRating={detail.averageRating}
@@ -360,27 +381,6 @@ export function HotelDetailPageContent({
                 unavailable: h.calendarLegendUnavailable,
               }}
               locale={locale}
-            />
-
-            <HotelRoomsSection
-              rooms={detail.rooms}
-              title={h.roomsTitle}
-              selectedRoomId={selectedRoomId}
-              onSelectRoom={handleSelectRoom}
-              selectRoomLabel={h.selectRoom}
-              unavailableLabel={h.unavailable}
-              perNightLabel={h.perNight}
-              maxGuestsLabel={h.maxGuests}
-              bedConfigLabel={h.bedConfig}
-              nights={detail.stay.nights}
-              galleryLabels={{
-                ariaLabel: h.galleryAria,
-                openLightbox: h.galleryOpenLightbox,
-                close: h.galleryClose,
-                previous: h.galleryPrevious,
-                next: h.galleryNext,
-                counter: h.galleryCounter,
-              }}
             />
           </div>
 
