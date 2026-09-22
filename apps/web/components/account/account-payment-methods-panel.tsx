@@ -13,6 +13,13 @@ const emptyForm = {
   isDefault: false,
 };
 
+function methodLabel(method: UserPaymentMethod): string {
+  const parts = [method.type];
+  if (method.provider) parts.push(method.provider);
+  if (method.lastFour) parts.push(`•••• ${method.lastFour}`);
+  return parts.join(' — ');
+}
+
 export function AccountPaymentMethodsPanel() {
   const t = useTranslations('account');
   const [methods, setMethods] = useState<UserPaymentMethod[]>([]);
@@ -22,6 +29,8 @@ export function AccountPaymentMethodsPanel() {
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<UserPaymentMethod | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -75,14 +84,20 @@ export function AccountPaymentMethodsPanel() {
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!window.confirm(t('paymentMethods.deleteConfirm'))) return;
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    setError(null);
     try {
       const client = await getAccountApiClient();
-      await client.deleteUserPaymentMethod(id);
+      await client.deleteUserPaymentMethod(deleteTarget.id);
+      setDeleteTarget(null);
       await load();
     } catch {
       setError(t('paymentMethods.deleteError'));
+      setDeleteTarget(null);
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -124,7 +139,7 @@ export function AccountPaymentMethodsPanel() {
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => void handleDelete(method.id)}
+              onClick={() => setDeleteTarget(method)}
             >
               {t('paymentMethods.delete')}
             </Button>
@@ -227,6 +242,49 @@ export function AccountPaymentMethodsPanel() {
             </Button>
           </div>
         </form>
+      </Modal>
+
+      <Modal
+        open={deleteTarget != null}
+        onOpenChange={(open) => {
+          if (!open && !deleting) setDeleteTarget(null);
+        }}
+        title={t('paymentMethods.deleteTitle')}
+        showClose={!deleting}
+        closeAriaLabel={t('paymentMethods.cancel')}
+        className="max-w-sm"
+      >
+        <p className="text-sm text-atg-muted">
+          {t('paymentMethods.deleteConfirm')}
+          {deleteTarget ? (
+            <>
+              {' '}
+              <span className="font-medium capitalize text-atg-fg">
+                ({methodLabel(deleteTarget)})
+              </span>
+            </>
+          ) : null}
+        </p>
+        <div className="mt-6 flex flex-wrap justify-end gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            disabled={deleting}
+            onClick={() => setDeleteTarget(null)}
+          >
+            {t('paymentMethods.no')}
+          </Button>
+          <Button
+            type="button"
+            disabled={deleting}
+            loading={deleting}
+            loadingText={t('paymentMethods.deleting')}
+            onClick={() => void confirmDelete()}
+            className="border-red-600 bg-red-600 text-white hover:border-red-700 hover:bg-red-700"
+          >
+            {t('paymentMethods.yes')}
+          </Button>
+        </div>
       </Modal>
     </div>
   );

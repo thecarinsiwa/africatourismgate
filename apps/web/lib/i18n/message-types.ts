@@ -1128,8 +1128,12 @@ export type Translations = {
       saving: string;
       cancel: string;
       delete: string;
+      deleteTitle: string;
       deleteConfirm: string;
       deleteError: string;
+      deleting: string;
+      yes: string;
+      no: string;
       loadError: string;
       saveError: string;
       defaultBadge: string;
