@@ -1,5 +1,6 @@
 import {
   ACTIVITY_SITE_SEARCH_WEIGHTS,
+  BLOG_SITE_SEARCH_WEIGHTS,
   HOTEL_SITE_SEARCH_WEIGHTS,
   PACKAGE_SITE_SEARCH_WEIGHTS,
   scoreSiteSearchTextMatch,
@@ -87,6 +88,23 @@ describe('site-search-scoring', () => {
     expect(name).toBe(PACKAGE_SITE_SEARCH_WEIGHTS.name - 5);
     expect(descriptionOnly).toBe(PACKAGE_SITE_SEARCH_WEIGHTS.description - 5);
     expect(name).toBeGreaterThan(descriptionOnly);
+  });
+
+  it('scores blog title over excerpt and content', () => {
+    const title = scoreSiteSearchTextMatch('safari', [
+      { weight: BLOG_SITE_SEARCH_WEIGHTS.title, value: 'Safari Tips' },
+      { weight: BLOG_SITE_SEARCH_WEIGHTS.excerpt, value: 'Plan a safari' },
+      { weight: BLOG_SITE_SEARCH_WEIGHTS.content, value: 'Best safari seasons' },
+    ]);
+    const contentOnly = scoreSiteSearchTextMatch('seasons', [
+      { weight: BLOG_SITE_SEARCH_WEIGHTS.title, value: 'Travel Notes' },
+      { weight: BLOG_SITE_SEARCH_WEIGHTS.excerpt, value: 'Short note' },
+      { weight: BLOG_SITE_SEARCH_WEIGHTS.content, value: 'Best safari seasons' },
+    ]);
+
+    expect(title).toBe(BLOG_SITE_SEARCH_WEIGHTS.title - 5);
+    expect(contentOnly).toBe(BLOG_SITE_SEARCH_WEIGHTS.content - 15);
+    expect(title).toBeGreaterThan(contentOnly);
   });
 
   it('returns 0 when nothing matches', () => {

@@ -1,8 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import type { PublicSiteSearchHit } from '@africatourismgate/types';
 import { Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { BlogPosts } from '../../../entities/blog-post.entity';
+import {
+  BLOG_SITE_SEARCH_WEIGHTS,
+  scoreSiteSearchTextMatch,
+} from '../site-search/site-search-scoring';
 import { PublicBlogPostsListQueryDto } from './dto/public-blog-posts-list-query.dto';
 
 export type PublicBlogPostListItemDto = {
@@ -45,9 +50,12 @@ export class PublicBlogService {
 
     const search = query.search?.trim();
     if (search) {
+      const pattern = `%${search.toLowerCase()}%`;
       qb.andWhere(
-        '(post.title LIKE :term OR post.excerpt LIKE :term)',
-        { term: `%${search}%` },
+        `(LOWER(post.title) LIKE :pattern
+          OR LOWER(COALESCE(post.excerpt, '')) LIKE :pattern
+          OR LOWER(post.content) LIKE :pattern)`,
+        { pattern },
       );
     }
 
@@ -66,6 +74,71 @@ export class PublicBlogService {
         totalPages: Math.ceil(total / limit) || 1,
       },
     };
+  }
+
+  /**
+   * Free-text catalogue search for site-search.
+   * Matches title, excerpt and content on published posts (optional locale).
+   */
+  async searchCatalog(
+    q: string,
+    limit: number,
+    locale?: string | null,
+  ): Promise<PublicSiteSearchHit[]> {
+    const term = q.trim().toLowerCase();
+    if (!term || limit < 1) return [];
+
+    const pattern = `%${term}%`;
+    const fetchLimit = Math.min(Math.max(limit * 3, limit), 60);
+
+    const qb = this.blogPostsRepository
+      .createQueryBuilder('post')
+      .where('post.deletedAt IS NULL')
+      .andWhere('post.status = :status', { status: 'published' })
+      .andWhere('post.publishedAt IS NOT NULL')
+      .andWhere('post.publishedAt <= :now', { now: new Date() })
+      .andWhere(
+        `(LOWER(post.title) LIKE :pattern
+          OR LOWER(COALESCE(post.excerpt, '')) LIKE :pattern
+          OR LOWER(post.content) LIKE :pattern)`,
+        { pattern },
+      );
+
+    const localeFilter = locale?.trim();
+    if (localeFilter) {
+      qb.andWhere('post.locale = :locale', { locale: localeFilter });
+    }
+
+    const posts = await qb
+      .orderBy('post.publishedAt', 'DESC')
+      .take(fetchLimit)
+      .getMany();
+
+    if (!posts.length) return [];
+
+    const hits: PublicSiteSearchHit[] = [];
+
+    for (const post of posts) {
+      const score = scoreSiteSearchTextMatch(term, [
+        { weight: BLOG_SITE_SEARCH_WEIGHTS.title, value: post.title },
+        { weight: BLOG_SITE_SEARCH_WEIGHTS.excerpt, value: post.excerpt },
+        { weight: BLOG_SITE_SEARCH_WEIGHTS.content, value: post.content },
+      ]);
+      if (score <= 0) continue;
+
+      hits.push({
+        type: 'blog',
+        id: post.slug,
+        title: post.title,
+        subtitle: post.excerpt?.trim() || null,
+        href: `/blog/${encodeURIComponent(post.slug)}`,
+        imageUrl: post.coverImageUrl,
+        score,
+      });
+    }
+
+    hits.sort((a, b) => b.score - a.score || a.title.localeCompare(b.title));
+    return hits.slice(0, limit);
   }
 
   async getBySlug(slug: string, locale?: string): Promise<PublicBlogPostDetailDto> {

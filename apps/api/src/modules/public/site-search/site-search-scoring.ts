@@ -47,3 +47,10 @@ export const PACKAGE_SITE_SEARCH_WEIGHTS = {
   name: 100,
   description: 40,
 } as const;
+
+/** Field weights for blog catalogue search. */
+export const BLOG_SITE_SEARCH_WEIGHTS = {
+  title: 100,
+  excerpt: 70,
+  content: 40,
+} as const;
