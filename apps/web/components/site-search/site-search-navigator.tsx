@@ -1,6 +1,7 @@
 'use client';
 
 import { Input, Modal, Skeleton, cn } from '@africatourismgate/ui';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import {
@@ -12,35 +13,36 @@ import {
   useMemo,
   useRef,
   useState,
+  type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
 } from 'react';
 import {
-  useAdminGlobalSearch,
-  type AdminSearchGroupId,
-  type AdminSearchResultItem,
-} from '../lib/admin-search';
-import { shouldHandleAdminSearchShortcut } from '../lib/admin-search/shortcuts';
+  useSiteSearch,
+  type SiteSearchGroupId,
+  type SiteSearchResultItem,
+} from '../../lib/site-search';
+import { shouldHandleSiteSearchShortcut } from '../../lib/site-search/shortcuts';
 
-type AdminSearchNavigatorContextValue = {
+type SiteSearchNavigatorContextValue = {
   open: boolean;
   setOpen: (open: boolean) => void;
   toggle: () => void;
 };
 
-const AdminSearchNavigatorContext =
-  createContext<AdminSearchNavigatorContextValue | null>(null);
+const SiteSearchNavigatorContext =
+  createContext<SiteSearchNavigatorContextValue | null>(null);
 
-export function useAdminSearchNavigator(): AdminSearchNavigatorContextValue {
-  const context = useContext(AdminSearchNavigatorContext);
+export function useSiteSearchNavigator(): SiteSearchNavigatorContextValue {
+  const context = useContext(SiteSearchNavigatorContext);
   if (!context) {
     throw new Error(
-      'useAdminSearchNavigator must be used within AdminSearchNavigatorProvider',
+      'useSiteSearchNavigator must be used within SiteSearchProvider',
     );
   }
   return context;
 }
 
-export function AdminSearchNavigatorProvider({
+export function SiteSearchProvider({
   children,
 }: {
   children?: ReactNode;
@@ -62,22 +64,32 @@ export function AdminSearchNavigatorProvider({
   );
 
   return (
-    <AdminSearchNavigatorContext.Provider value={value}>
+    <SiteSearchNavigatorContext.Provider value={value}>
       {children}
-      <AdminSearchNavigatorModal />
-    </AdminSearchNavigatorContext.Provider>
+      <SiteSearchNavigatorModal />
+    </SiteSearchNavigatorContext.Provider>
   );
 }
 
-/** Monte le provider + modal (remplace l’ancienne CommandPalette). */
-export function AdminSearchNavigator() {
-  return <AdminSearchNavigatorProvider />;
+/** Monte le provider + modal sans enfants (usage autonome). */
+export function SiteSearchNavigator() {
+  return <SiteSearchProvider />;
 }
 
-function AdminSearchNavigatorModal() {
+function buildResultsPageHref(query: string): string {
+  const trimmed = query.trim();
+  const params = new URLSearchParams();
+  if (trimmed) {
+    params.set('q', trimmed);
+  }
+  const qs = params.toString();
+  return qs ? `/search?${qs}` : '/search';
+}
+
+function SiteSearchNavigatorModal() {
   const router = useRouter();
-  const { open, setOpen, toggle } = useAdminSearchNavigator();
-  const t = useTranslations('common.globalSearch');
+  const { open, setOpen, toggle } = useSiteSearchNavigator();
+  const t = useTranslations('siteSearch');
   const listId = useId();
   const [activeIndex, setActiveIndex] = useState(0);
   const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -90,7 +102,7 @@ function AdminSearchNavigatorModal() {
     loading,
     hasResults,
     isEmpty,
-  } = useAdminGlobalSearch({ enabled: open });
+  } = useSiteSearch({ enabled: open });
 
   const handleOpenChange = useCallback(
     (next: boolean) => {
@@ -107,9 +119,12 @@ function AdminSearchNavigatorModal() {
     [handleOpenChange, router],
   );
 
+  const seeAllHref = buildResultsPageHref(query);
+  const showSeeAll = query.trim().length > 0;
+
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if (!shouldHandleAdminSearchShortcut(event, { searchOpen: open })) {
+      if (!shouldHandleSiteSearchShortcut(event, { searchOpen: open })) {
         return;
       }
       event.preventDefault();
@@ -135,12 +150,13 @@ function AdminSearchNavigatorModal() {
     node?.scrollIntoView({ block: 'nearest' });
   }, [activeIndex]);
 
-  function handleListKeyDown(event: React.KeyboardEvent) {
-    if (flatItems.length === 0) return;
+  function handleListKeyDown(event: ReactKeyboardEvent) {
     if (event.key === 'ArrowDown') {
+      if (flatItems.length === 0) return;
       event.preventDefault();
       setActiveIndex((index) => (index + 1) % flatItems.length);
     } else if (event.key === 'ArrowUp') {
+      if (flatItems.length === 0) return;
       event.preventDefault();
       setActiveIndex(
         (index) => (index - 1 + flatItems.length) % flatItems.length,
@@ -148,11 +164,17 @@ function AdminSearchNavigatorModal() {
     } else if (event.key === 'Enter') {
       event.preventDefault();
       const item = flatItems[activeIndex];
-      if (item) navigate(item.href);
+      if (item) {
+        navigate(item.href);
+        return;
+      }
+      if (query.trim()) {
+        navigate(seeAllHref);
+      }
     }
   }
 
-  const groupLabel = (group: AdminSearchGroupId) =>
+  const groupLabel = (group: SiteSearchGroupId) =>
     t(`groups.${group}` as Parameters<typeof t>[0]);
 
   let runningIndex = 0;
@@ -170,7 +192,7 @@ function AdminSearchNavigatorModal() {
       <div
         className="space-y-3 p-4"
         onKeyDown={handleListKeyDown}
-        data-testid="admin-search-navigator"
+        data-testid="site-search-navigator"
       >
         <Input
           type="search"
@@ -181,7 +203,7 @@ function AdminSearchNavigatorModal() {
           aria-label={t('placeholder')}
           aria-controls={listId}
           aria-autocomplete="list"
-          data-testid="admin-search-input"
+          data-testid="site-search-input"
         />
         <p className="text-xs text-atg-muted">{t('shortcutHint')}</p>
 
@@ -261,6 +283,19 @@ function AdminSearchNavigatorModal() {
             </p>
           ) : null}
         </div>
+
+        {showSeeAll ? (
+          <div className="flex justify-end">
+            <Link
+              href={seeAllHref}
+              className="text-sm font-medium text-primary hover:underline"
+              data-testid="site-search-see-all"
+              onClick={() => handleOpenChange(false)}
+            >
+              {t('seeAllResults')}
+            </Link>
+          </div>
+        ) : null}
       </div>
     </Modal>
   );
@@ -275,7 +310,7 @@ function SearchResultOption({
   onActivate,
   onHover,
 }: {
-  item: AdminSearchResultItem;
+  item: SiteSearchResultItem;
   index: number;
   active: boolean;
   listId: string;
@@ -290,7 +325,7 @@ function SearchResultOption({
       id={`${listId}-option-${index}`}
       role="option"
       aria-selected={active}
-      data-testid="admin-search-result"
+      data-testid="site-search-result"
       className={cn(
         'flex w-full flex-col gap-0.5 px-4 py-3 text-left transition-colors',
         active ? 'bg-atg-surface' : 'hover:bg-atg-surface/70',

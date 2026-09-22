@@ -578,6 +578,34 @@
       "Gare"
     ]
   },
+  "siteSearch": {
+    "title": "Rechercher sur le site",
+    "placeholder": "Hôtels, activités, destinations, aide…",
+    "empty": "Aucun résultat",
+    "shortcutHint": "Ctrl+K · ⌘K ou / — ↑↓ pour naviguer, Entrée pour ouvrir",
+    "close": "Fermer la recherche",
+    "resultsLabel": "Résultats de recherche",
+    "updating": "Mise à jour…",
+    "partialError": "Certaines sources n’ont pas pu être chargées.",
+    "groupError": "Erreur partielle",
+    "openLabel": "Ouvrir la recherche",
+    "seeAllResults": "Voir tous les résultats",
+    "prefilledHint": "Recherche pré-remplie",
+    "resultsPageTitle": "Résultats de recherche",
+    "resultsPageSubtitle": "Résultats pour « {query} »",
+    "groups": {
+      "pages": "Pages",
+      "destinations": "Destinations",
+      "hotels": "Hôtels",
+      "activities": "Activités",
+      "packages": "Forfaits",
+      "cruises": "Croisières",
+      "flights": "Vols",
+      "cars": "Voitures",
+      "blog": "Blog",
+      "help": "Aide"
+    }
+  },
   "footer": {
     "tagline": "Votre passerelle vers les meilleures expériences de voyage en Afrique. Découvrez des destinations uniques et réservez en toute confiance.",
     "learnMore": "En savoir plus",

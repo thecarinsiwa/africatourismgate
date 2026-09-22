@@ -25,6 +25,7 @@ import { PaymentMethodsProvider } from '../components/payment-methods-provider';
 import { ContactProvider } from '../components/contact-provider';
 import { DonationProvider } from '../components/donation-provider';
 import { Providers } from '../components/providers';
+import { SiteSearchProvider } from '../components/site-search/site-search-navigator';
 import { getPublicDonationsForLocale } from '../lib/api/public-donations';
 import {
   buildLanguageAlternates,
@@ -280,7 +281,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <BookingModesProvider modes={bookingModes}>
                   <PaymentMethodsProvider methods={paymentMethods}>
                     <Providers>
-                      <AppShell>{children}</AppShell>
+                      <SiteSearchProvider>
+                        <AppShell>{children}</AppShell>
+                      </SiteSearchProvider>
                     </Providers>
                   </PaymentMethodsProvider>
                 </BookingModesProvider>
