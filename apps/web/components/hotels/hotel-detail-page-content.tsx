@@ -346,23 +346,6 @@ export function HotelDetailPageContent({
               }}
             />
 
-            <HotelReviewsSection
-              propertyId={propertyId}
-              averageRating={detail.averageRating}
-              reviewCount={detail.reviewCount}
-              localeTag={localeTag}
-              labels={{
-                reviewsTitle: h.reviewsTitle,
-                guestRating: h.guestRating,
-                reviews: h.reviews,
-                noReviews: h.noReviews,
-                reviewsLoading: h.reviewsLoading,
-                reviewsLoadError: h.reviewsLoadError,
-                loadMoreReviews: h.loadMoreReviews,
-                anonymousGuest: h.anonymousGuest,
-              }}
-            />
-
             <HotelStayCalendar
               calendarDays={detail.calendarDays}
               month={calendarMonth}
@@ -381,6 +364,23 @@ export function HotelDetailPageContent({
                 unavailable: h.calendarLegendUnavailable,
               }}
               locale={locale}
+            />
+
+            <HotelReviewsSection
+              propertyId={propertyId}
+              averageRating={detail.averageRating}
+              reviewCount={detail.reviewCount}
+              localeTag={localeTag}
+              labels={{
+                reviewsTitle: h.reviewsTitle,
+                guestRating: h.guestRating,
+                reviews: h.reviews,
+                noReviews: h.noReviews,
+                reviewsLoading: h.reviewsLoading,
+                reviewsLoadError: h.reviewsLoadError,
+                loadMoreReviews: h.loadMoreReviews,
+                anonymousGuest: h.anonymousGuest,
+              }}
             />
           </div>
 
