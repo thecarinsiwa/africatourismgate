@@ -125,6 +125,14 @@ export function PackagePropertyConfigItem({
           maxGuestsLabel={h.maxGuests}
           bedConfigLabel={h.bedConfig}
           nights={nights}
+          galleryLabels={{
+            ariaLabel: h.galleryAria,
+            openLightbox: h.galleryOpenLightbox,
+            close: h.galleryClose,
+            previous: h.galleryPrevious,
+            next: h.galleryNext,
+            counter: h.galleryCounter,
+          }}
         />
       )}
     </article>
