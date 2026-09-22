@@ -28,25 +28,26 @@ test('catalogue: 11 modules ordered 0–10 with stable ids', () => {
     modules.map((m) => m.id),
     [...SETUP_MODULE_IDS],
   );
-  modules.forEach((module, index) => {
-    assert.equal(module.order, index);
+  modules.forEach((setupModule, index) => {
+    assert.equal(setupModule.order, index);
   });
 });
 
 test('catalogue: dependsOnModuleIds reference earlier modules only', () => {
   const indexById = new Map(
-    SETUP_MODULES.map((module, index) => [module.id, index]),
+    SETUP_MODULES.map((setupModule, index) => [setupModule.id, index]),
   );
 
-  for (const module of SETUP_MODULES) {
-    for (const parentId of module.dependsOnModuleIds) {
+  for (const setupModule of SETUP_MODULES) {
+    for (const parentId of setupModule.dependsOnModuleIds) {
       assert.ok(
         indexById.has(parentId),
-        `${module.id} depends on unknown ${parentId}`,
+        `${setupModule.id} depends on unknown ${parentId}`,
       );
       assert.ok(
-        (indexById.get(parentId) ?? -1) < (indexById.get(module.id) ?? -1),
-        `${module.id} must depend on an earlier module than itself`,
+        (indexById.get(parentId) ?? -1) <
+          (indexById.get(setupModule.id) ?? -1),
+        `${setupModule.id} must depend on an earlier module than itself`,
       );
     }
   }

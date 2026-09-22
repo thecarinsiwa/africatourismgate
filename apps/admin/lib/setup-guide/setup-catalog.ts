@@ -376,7 +376,7 @@ export const SETUP_MODULES: readonly SetupModule[] = [
 ] as const;
 
 const modulesById = new Map(
-  SETUP_MODULES.map((module) => [module.id, module]),
+  SETUP_MODULES.map((setupModule) => [setupModule.id, setupModule]),
 );
 
 export function getSetupModules(): readonly SetupModule[] {
@@ -395,7 +395,7 @@ export function getSetupModulesInOrder(): readonly SetupModule[] {
 }
 
 export function getAllSetupSteps(): readonly SetupStep[] {
-  return SETUP_MODULES.flatMap((module) => [...module.steps]);
+  return SETUP_MODULES.flatMap((setupModule) => [...setupModule.steps]);
 }
 
 /** Ressources listTotal uniques (pour le fan-out readiness). */

@@ -92,18 +92,19 @@ export function SetupModuleNav({
       </h2>
       <ul className="space-y-1">
         {modules.map((item) => {
-          const { module, lockState, readyCount, stepCount } = item;
-          const isActive = module.id === activeModuleId;
+          const { module: setupModule, lockState, readyCount, stepCount } =
+            item;
+          const isActive = setupModule.id === activeModuleId;
           const isLocked = lockState === 'locked';
           const isComplete = lockState === 'complete';
           const stateLabel = t(lockStateLabelKey(lockState));
-          const moduleTitle = tGuide(module.titleKey);
+          const moduleTitle = tGuide(setupModule.titleKey);
 
           return (
-            <li key={module.id}>
+            <li key={setupModule.id}>
               <button
                 type="button"
-                onClick={() => onSelectModule(module.id)}
+                onClick={() => onSelectModule(setupModule.id)}
                 className={
                   isActive
                     ? 'flex w-full items-start gap-2 rounded-md bg-primary/10 px-3 py-2 text-left text-sm font-medium text-primary'
@@ -113,7 +114,7 @@ export function SetupModuleNav({
                 }
                 aria-current={isActive ? 'true' : undefined}
                 title={stateLabel}
-                data-module-id={module.id}
+                data-module-id={setupModule.id}
                 data-lock-state={lockState}
               >
                 <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center">

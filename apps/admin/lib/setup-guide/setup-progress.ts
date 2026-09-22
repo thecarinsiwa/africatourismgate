@@ -115,10 +115,10 @@ export function isSetupModuleReady(
  * Les parents sont évalués dans l’ordre du catalogue (DAG acyclique).
  */
 export function isSetupModuleLocked(
-  module: SetupModule,
+  setupModule: SetupModule,
   readyByModuleId: ReadonlyMap<SetupModuleId, boolean>,
 ): boolean {
-  for (const parentId of module.dependsOnModuleIds) {
+  for (const parentId of setupModule.dependsOnModuleIds) {
     if (!readyByModuleId.get(parentId)) {
       return true;
     }
@@ -153,24 +153,24 @@ export function buildSetupGuideProgress(
   let readyStepCount = 0;
   let totalStepCount = 0;
 
-  for (const module of modules) {
-    const steps = module.steps.map((step) =>
+  for (const setupModule of modules) {
+    const steps = setupModule.steps.map((step) =>
       buildSetupStepProgress(step, snapshot),
     );
     const readyCount = steps.filter((s) => s.status === 'ready').length;
     const stepCount = steps.length;
     const isReady = isSetupModuleReady(steps);
     const hasUnknown = steps.some((s) => s.status === 'unknown');
-    const locked = isSetupModuleLocked(module, readyByModuleId);
+    const locked = isSetupModuleLocked(setupModule, readyByModuleId);
     const lockState = resolveSetupModuleLockState({ locked, isReady });
 
-    readyByModuleId.set(module.id, isReady);
+    readyByModuleId.set(setupModule.id, isReady);
 
     readyStepCount += readyCount;
     totalStepCount += stepCount;
 
     moduleProgressList.push({
-      module,
+      module: setupModule,
       steps,
       isReady,
       hasUnknown,
