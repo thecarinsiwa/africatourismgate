@@ -43,7 +43,7 @@ export function useAdminSearchNavigator(): AdminSearchNavigatorContextValue {
 export function AdminSearchNavigatorProvider({
   children,
 }: {
-  children: ReactNode;
+  children?: ReactNode;
 }) {
   const [open, setOpenState] = useState(false);
   const setOpen = useCallback((next: boolean) => {
