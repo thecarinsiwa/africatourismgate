@@ -112,7 +112,6 @@ export function SetupModuleNav({
                       : 'flex w-full items-start gap-2 rounded-md px-3 py-2 text-left text-sm text-atg-fg hover:bg-atg-muted/10'
                 }
                 aria-current={isActive ? 'true' : undefined}
-                aria-disabled={isLocked || undefined}
                 title={stateLabel}
                 data-module-id={module.id}
                 data-lock-state={lockState}
