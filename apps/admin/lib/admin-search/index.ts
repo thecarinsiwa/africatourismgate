@@ -9,6 +9,12 @@ export {
   shouldRunAdminSearchSource,
 } from './sources';
 export { listLocalAdminSearchSources } from './local-sources';
+export { listCoreAdminSearchSources } from './core-sources';
+export {
+  adminSearchDeepLinks,
+  formatAdminSearchIdPrefix,
+  formatAdminSearchPersonName,
+} from './deep-links';
 export {
   buildAdminNavSearchItems,
   matchesAdminNavSearchItem,
@@ -20,6 +26,15 @@ export {
   searchAdminHelp,
   type SearchAdminHelpOptions,
 } from './search-help';
+export {
+  searchAdminBookings,
+  searchAdminOrganizations,
+  searchAdminPayments,
+  searchAdminProperties,
+  searchAdminSupportTickets,
+  searchAdminUsers,
+  type SearchApiCoreOptions,
+} from './search-api-core';
 export {
   ADMIN_SEARCH_API_MIN_QUERY_LENGTH,
   ADMIN_SEARCH_DEBOUNCE_MS,
