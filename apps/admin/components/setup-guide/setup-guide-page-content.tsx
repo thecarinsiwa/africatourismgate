@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
@@ -11,10 +10,11 @@ import {
   getSetupModuleProgressById,
 } from '../../lib/setup-guide/setup-progress';
 import { SetupModuleNav } from './setup-module-nav';
+import { SetupStepCard } from './setup-step-card';
 
 /**
  * Coquille layout « Mise en route » (2 colonnes).
- * Cartes d’étapes (s06) et readiness live (s09) à brancher ensuite.
+ * Readiness live (s09) à brancher ensuite.
  */
 export function SetupGuidePageContent() {
   const t = useTranslations('pages.mise-en-route');
@@ -33,6 +33,18 @@ export function SetupGuidePageContent() {
     progress,
     activeModuleId,
   );
+
+  const moduleLocked = activeModuleProgress?.lockState === 'locked';
+
+  const moduleTitleKey = activeModuleProgress
+    ? `modules.${activeModuleProgress.module.id}.title`
+    : null;
+  const moduleTitle =
+    moduleTitleKey &&
+    typeof t.has === 'function' &&
+    t.has(moduleTitleKey)
+      ? t(moduleTitleKey)
+      : (activeModuleProgress?.module.id ?? '');
 
   return (
     <div className="min-w-0 space-y-6" data-testid="setup-guide-page">
@@ -67,7 +79,7 @@ export function SetupGuidePageContent() {
             <>
               <div className="space-y-1">
                 <h2 className="text-lg font-semibold text-atg-fg">
-                  {activeModuleProgress.module.id}
+                  {moduleTitle}
                 </h2>
                 <p className="text-sm text-atg-muted">
                   {t('moduleProgress', {
@@ -75,45 +87,21 @@ export function SetupGuidePageContent() {
                     total: activeModuleProgress.stepCount,
                   })}
                 </p>
+                {moduleLocked ? (
+                  <p className="text-sm text-amber-700 dark:text-amber-400">
+                    {t('moduleLockedHint')}
+                  </p>
+                ) : null}
               </div>
               <ol className="space-y-3">
-                {activeModuleProgress.steps.map((stepProgress, index) => {
-                  const { step } = stepProgress;
-                  return (
-                    <li
-                      key={step.id}
-                      className="rounded-lg border border-atg-border bg-atg-elevated p-4"
-                      data-step-id={step.id}
-                    >
-                      <div className="flex flex-wrap items-start justify-between gap-3">
-                        <div className="min-w-0 space-y-1">
-                          <p className="text-sm font-medium text-atg-fg">
-                            <span className="mr-2 tabular-nums text-atg-muted">
-                              {index + 1}.
-                            </span>
-                            {step.id}
-                          </p>
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          <Link
-                            href={step.listHref}
-                            className="inline-flex items-center rounded-md border border-atg-border px-3 py-1.5 text-xs font-medium text-atg-fg hover:bg-atg-muted/10"
-                          >
-                            {t('openList')}
-                          </Link>
-                          {step.createHref ? (
-                            <Link
-                              href={step.createHref}
-                              className="inline-flex items-center rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-white hover:bg-primary/90"
-                            >
-                              {t('createItem')}
-                            </Link>
-                          ) : null}
-                        </div>
-                      </div>
-                    </li>
-                  );
-                })}
+                {activeModuleProgress.steps.map((stepProgress, index) => (
+                  <SetupStepCard
+                    key={stepProgress.step.id}
+                    stepProgress={stepProgress}
+                    index={index + 1}
+                    moduleLocked={moduleLocked}
+                  />
+                ))}
               </ol>
             </>
           ) : (

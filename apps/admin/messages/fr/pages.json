@@ -750,6 +750,12 @@
     "stateLocked": "Verrouillé",
     "stateUnlocked": "À faire",
     "stateComplete": "Terminé",
+    "stepStatusReady": "Prêt",
+    "stepStatusEmpty": "Vide",
+    "stepStatusUnknown": "Inconnu",
+    "stepCount": "{total} / min. {min}",
+    "stepCountUnknown": "Compte indisponible",
+    "moduleLockedHint": "Ce module est verrouillé tant que ses prérequis ne sont pas prêts. Vous pouvez quand même ouvrir les écrans liés.",
     "openList": "Ouvrir la liste",
     "createItem": "Créer",
     "emptyModule": "Sélectionnez un module pour voir ses étapes."

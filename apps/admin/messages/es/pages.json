@@ -750,6 +750,12 @@
     "stateLocked": "Bloqueado",
     "stateUnlocked": "Pendiente",
     "stateComplete": "Completado",
+    "stepStatusReady": "Listo",
+    "stepStatusEmpty": "Vacío",
+    "stepStatusUnknown": "Desconocido",
+    "stepCount": "{total} / mín. {min}",
+    "stepCountUnknown": "Recuento no disponible",
+    "moduleLockedHint": "Este módulo está bloqueado hasta que sus requisitos previos estén listos. Aun así puede abrir las pantallas vinculadas.",
     "openList": "Abrir lista",
     "createItem": "Crear",
     "emptyModule": "Seleccione un módulo para ver sus pasos."

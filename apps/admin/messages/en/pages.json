@@ -750,6 +750,12 @@
     "stateLocked": "Locked",
     "stateUnlocked": "To do",
     "stateComplete": "Done",
+    "stepStatusReady": "Ready",
+    "stepStatusEmpty": "Empty",
+    "stepStatusUnknown": "Unknown",
+    "stepCount": "{total} / min. {min}",
+    "stepCountUnknown": "Count unavailable",
+    "moduleLockedHint": "This module is locked until its prerequisites are ready. You can still open the linked screens.",
     "openList": "Open list",
     "createItem": "Create",
     "emptyModule": "Select a module to see its steps."
