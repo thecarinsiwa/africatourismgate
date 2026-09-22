@@ -54,3 +54,10 @@ export const BLOG_SITE_SEARCH_WEIGHTS = {
   excerpt: 70,
   content: 40,
 } as const;
+
+/** Field weights for flight catalogue search. */
+export const FLIGHT_SITE_SEARCH_WEIGHTS = {
+  flightNumber: 100,
+  airline: 80,
+  airport: 60,
+} as const;

@@ -1,6 +1,7 @@
 import {
   ACTIVITY_SITE_SEARCH_WEIGHTS,
   BLOG_SITE_SEARCH_WEIGHTS,
+  FLIGHT_SITE_SEARCH_WEIGHTS,
   HOTEL_SITE_SEARCH_WEIGHTS,
   PACKAGE_SITE_SEARCH_WEIGHTS,
   scoreSiteSearchTextMatch,
@@ -105,6 +106,23 @@ describe('site-search-scoring', () => {
     expect(title).toBe(BLOG_SITE_SEARCH_WEIGHTS.title - 5);
     expect(contentOnly).toBe(BLOG_SITE_SEARCH_WEIGHTS.content - 15);
     expect(title).toBeGreaterThan(contentOnly);
+  });
+
+  it('scores flight number over airline and airport', () => {
+    const flightNumber = scoreSiteSearchTextMatch('kq550', [
+      { weight: FLIGHT_SITE_SEARCH_WEIGHTS.flightNumber, value: 'KQ550' },
+      { weight: FLIGHT_SITE_SEARCH_WEIGHTS.airline, value: 'Kenya Airways' },
+      { weight: FLIGHT_SITE_SEARCH_WEIGHTS.airport, value: 'Nairobi' },
+    ]);
+    const airportOnly = scoreSiteSearchTextMatch('nairobi', [
+      { weight: FLIGHT_SITE_SEARCH_WEIGHTS.flightNumber, value: 'ET302' },
+      { weight: FLIGHT_SITE_SEARCH_WEIGHTS.airline, value: 'Ethiopian' },
+      { weight: FLIGHT_SITE_SEARCH_WEIGHTS.airport, value: 'Nairobi' },
+    ]);
+
+    expect(flightNumber).toBe(FLIGHT_SITE_SEARCH_WEIGHTS.flightNumber);
+    expect(airportOnly).toBe(FLIGHT_SITE_SEARCH_WEIGHTS.airport);
+    expect(flightNumber).toBeGreaterThan(airportOnly);
   });
 
   it('returns 0 when nothing matches', () => {

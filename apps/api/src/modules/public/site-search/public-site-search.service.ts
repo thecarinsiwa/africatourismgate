@@ -8,6 +8,7 @@ import type {
 import { PublicAccommodationsService } from '../accommodations/public-accommodations.service';
 import { PublicActivitiesService } from '../activities/public-activities.service';
 import { PublicBlogService } from '../blog/public-blog.service';
+import { PublicFlightsService } from '../flights/public-flights.service';
 import { PublicPackagesService } from '../packages/public-packages.service';
 import {
   clampSiteSearchLimit,
@@ -28,6 +29,7 @@ export class PublicSiteSearchService {
     private readonly activitiesService: PublicActivitiesService,
     private readonly packagesService: PublicPackagesService,
     private readonly blogService: PublicBlogService,
+    private readonly flightsService: PublicFlightsService,
   ) {}
 
   async search(query: SiteSearchQueryDto): Promise<PublicSiteSearchResponse> {
@@ -82,6 +84,9 @@ export class PublicSiteSearchService {
         break;
       case 'blog':
         hits = await this.blogService.searchCatalog(q, limit, locale);
+        break;
+      case 'flights':
+        hits = await this.flightsService.searchCatalog(q, limit);
         break;
       default:
         hits = [];

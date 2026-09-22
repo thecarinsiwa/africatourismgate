@@ -24,5 +24,6 @@ import { PublicFlightsService } from './public-flights.service';
   ],
   controllers: [PublicFlightsController],
   providers: [PublicFlightsService],
+  exports: [PublicFlightsService],
 })
 export class PublicFlightsModule {}
