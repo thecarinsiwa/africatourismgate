@@ -46,9 +46,32 @@ export type AdminSearchResultItem = {
   href: string;
 };
 
+/** Entrée de navigation pré-traduite (fournie par le hook / UI). */
+export type AdminSearchNavItem = {
+  href: string;
+  label: string;
+};
+
+/** Chaînes i18n d’un article d’aide pour la recherche client. */
+export type AdminSearchHelpArticleStrings = {
+  title: string;
+  summary: string;
+  body?: string;
+};
+
 export type AdminSearchContext = RouteAccessContext & {
   /** Locale active pour les sources i18n locales (aide). */
   locale?: string;
+  /**
+   * Pages : entrées nav + routes extra déjà labellisées.
+   * Si absent, la source `pages` renvoie [].
+   */
+  navItems?: readonly AdminSearchNavItem[];
+  /**
+   * Aide : chaînes par slug d’article (`modules.adminHelp`).
+   * Si absent, la source `help` renvoie [].
+   */
+  helpStringsBySlug?: Readonly<Record<string, AdminSearchHelpArticleStrings>>;
 };
 
 /**

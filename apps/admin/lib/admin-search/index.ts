@@ -8,6 +8,18 @@ export {
   listAllowedAdminSearchSources,
   shouldRunAdminSearchSource,
 } from './sources';
+export { listLocalAdminSearchSources } from './local-sources';
+export {
+  buildAdminNavSearchItems,
+  matchesAdminNavSearchItem,
+  searchAdminPages,
+  type BuildAdminNavSearchItemsOptions,
+  type SearchAdminPagesOptions,
+} from './search-pages';
+export {
+  searchAdminHelp,
+  type SearchAdminHelpOptions,
+} from './search-help';
 export {
   ADMIN_SEARCH_API_MIN_QUERY_LENGTH,
   ADMIN_SEARCH_DEBOUNCE_MS,
@@ -15,7 +27,9 @@ export {
   type AdminSearchContext,
   type AdminSearchGroupId,
   type AdminSearchGroupResult,
+  type AdminSearchHelpArticleStrings,
   type AdminSearchLabelKey,
+  type AdminSearchNavItem,
   type AdminSearchResultItem,
   type AdminSearchSource,
   type AdminSearchSourceDefinition,

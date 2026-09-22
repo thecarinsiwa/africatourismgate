@@ -5,62 +5,10 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  adminBreadcrumbExtraRoutes,
-  buildAdminDashboardNav,
-} from '../config/dashboard-nav';
-import { isHrefAllowed } from '../config/admin-route-permissions';
-import { ADMIN_HELP_BASE_PATH } from '../lib/admin-help/routes';
+  buildAdminNavSearchItems,
+  matchesAdminNavSearchItem,
+} from '../lib/admin-search';
 import { usePermissions } from '../lib/auth/use-permissions';
-
-type CommandPaletteItem = {
-  href: string;
-  label: string;
-};
-
-const ADMIN_HELP_SEARCH_ALIASES = [
-  'aide',
-  'help',
-  'ayuda',
-  'docs',
-  'documentation',
-] as const;
-
-function flattenNavItems(
-  navItems: ReturnType<typeof buildAdminDashboardNav>,
-): CommandPaletteItem[] {
-  const items: CommandPaletteItem[] = [];
-  for (const entry of navItems) {
-    if (entry.type === 'link') {
-      items.push({ href: entry.href, label: entry.label });
-    } else {
-      for (const child of entry.children) {
-        items.push({ href: child.href, label: child.label });
-      }
-    }
-  }
-  return items;
-}
-
-function matchesCommandPaletteItem(
-  item: CommandPaletteItem,
-  normalizedQuery: string,
-): boolean {
-  if (
-    item.label.toLowerCase().includes(normalizedQuery) ||
-    item.href.toLowerCase().includes(normalizedQuery)
-  ) {
-    return true;
-  }
-
-  if (item.href !== ADMIN_HELP_BASE_PATH || normalizedQuery.length < 2) {
-    return false;
-  }
-
-  return ADMIN_HELP_SEARCH_ALIASES.some(
-    (alias) =>
-      alias.includes(normalizedQuery) || normalizedQuery.includes(alias),
-  );
-}
 
 export function CommandPalette() {
   const router = useRouter();
@@ -71,33 +19,21 @@ export function CommandPalette() {
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const allItems = useMemo(() => {
-    const navItems = buildAdminDashboardNav((key) => tNav(key as Parameters<typeof tNav>[0]));
-    const fromNav = flattenNavItems(navItems);
-    const fromExtra = adminBreadcrumbExtraRoutes.map((route) => ({
-      href: route.href,
-      label: tNav(`links.${route.labelKey}` as Parameters<typeof tNav>[0]),
-    }));
-    const byHref = new Map<string, CommandPaletteItem>();
-    for (const item of [...fromNav, ...fromExtra]) {
-      if (!byHref.has(item.href)) {
-        byHref.set(item.href, item);
-      }
-    }
-    const items = Array.from(byHref.values());
-    if (permissionsLoading) {
-      return items.sort((a, b) => a.label.localeCompare(b.label));
-    }
-    return items
-      .filter((item) => isHrefAllowed(item.href, { permissions, isSuperAdmin }))
-      .sort((a, b) => a.label.localeCompare(b.label));
-  }, [tNav, permissions, isSuperAdmin, permissionsLoading]);
+  const allItems = useMemo(
+    () =>
+      buildAdminNavSearchItems(
+        (key) => tNav(key as Parameters<typeof tNav>[0]),
+        { permissions, isSuperAdmin },
+        { permissionsLoading },
+      ),
+    [tNav, permissions, isSuperAdmin, permissionsLoading],
+  );
 
   const filteredItems = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     if (!normalized) return allItems;
     return allItems.filter((item) =>
-      matchesCommandPaletteItem(item, normalized),
+      matchesAdminNavSearchItem(item, normalized),
     );
   }, [allItems, query]);
 
