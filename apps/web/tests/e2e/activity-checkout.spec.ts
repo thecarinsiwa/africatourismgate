@@ -160,7 +160,11 @@ test('activité Gombe City Tour: créneau complet grisé, panier -> recap -> dem
 
   const isRequestSuccess = /request-success/.test(page.url());
   if (isRequestSuccess) {
-    await expect(page.getByText(/demande envoy[ée]e|request submitted|solicitud enviada/i)).toBeVisible();
+    await expect(
+      page.getByRole('heading', {
+        name: /demande envoy[ée]e|request submitted|solicitud enviada/i,
+      }),
+    ).toBeVisible();
     await expect(page.getByText(/r[ée]f\. demande|request ref|ref\. solicitud/i)).toBeVisible();
   } else {
     await expect(
