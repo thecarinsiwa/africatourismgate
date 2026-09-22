@@ -68,7 +68,7 @@ type LightboxProps = {
   onIndexChange: (index: number) => void;
 };
 
-function GalleryLightbox({
+export function SwipeableGalleryLightbox({
   images,
   name,
   index,
@@ -307,7 +307,7 @@ export function SwipeableImageGallery({ images, name, labels }: SwipeableImageGa
       ) : null}
 
       {lightboxOpen ? (
-        <GalleryLightbox
+        <SwipeableGalleryLightbox
           images={sorted}
           name={name}
           index={activeIndex}

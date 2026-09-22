@@ -10,6 +10,7 @@ import {
   PropertyAmenities,
   PropertyImages,
   RoomAvailability,
+  RoomImages,
   Rooms,
 } from '../../../entities/generated';
 import { ReviewsService } from '../../resources/reviews/reviews.service';
@@ -50,6 +51,8 @@ export class PublicAccommodationsService {
     private readonly availabilityRepository: Repository<RoomAvailability>,
     @InjectRepository(PropertyImages)
     private readonly imagesRepository: Repository<PropertyImages>,
+    @InjectRepository(RoomImages)
+    private readonly roomImagesRepository: Repository<RoomImages>,
     @InjectRepository(PropertyAmenities)
     private readonly propertyAmenitiesRepository: Repository<PropertyAmenities>,
     @InjectRepository(Amenities)
@@ -398,6 +401,28 @@ export class PublicAccommodationsService {
 
     const amenities = await this.loadPropertyAmenities(prop.id);
 
+    const roomImagesByRoomId = new Map<
+      string,
+      { id: string; url: string; caption: string | null; sortOrder: number }[]
+    >();
+    if (roomIds.length > 0) {
+      const roomImageRows = await this.roomImagesRepository.find({
+        where: { roomId: In(roomIds) },
+        order: { sortOrder: 'ASC' },
+      });
+      for (const img of roomImageRows) {
+        if (img.deletedAt) continue;
+        const list = roomImagesByRoomId.get(img.roomId) ?? [];
+        list.push({
+          id: img.id,
+          url: img.url,
+          caption: img.caption ?? null,
+          sortOrder: img.sortOrder,
+        });
+        roomImagesByRoomId.set(img.roomId, list);
+      }
+    }
+
     const roomDtos = eligibleRooms.map((room) => {
       const stayPricing = stayNights?.length
         ? this.computeRoomStayPricing(room, stayNights, availabilityByRoomDate)
@@ -414,6 +439,7 @@ export class PublicAccommodationsService {
         totalPriceCents: stayPricing?.totalPriceCents ?? null,
         available: stayPricing?.available ?? true,
         nightlyBreakdown: stayPricing?.nightlyBreakdown ?? [],
+        images: roomImagesByRoomId.get(room.id) ?? [],
       };
     });
 
