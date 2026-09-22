@@ -221,6 +221,7 @@
     "searchLabel": "Search help",
     "searchPlaceholder": "Search help articles…",
     "searchNoResults": "No articles match your search.",
+    "searchNoResultsHint": "Try these quick-start articles instead:",
     "searchResultsAria": "Search results",
     "searchResultsCount": "{count, plural, one {# article} other {# articles}}",
     "searchSuggestionsAria": "Popular article suggestions",

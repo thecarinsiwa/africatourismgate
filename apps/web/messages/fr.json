@@ -221,6 +221,7 @@
     "searchLabel": "Rechercher dans l'aide",
     "searchPlaceholder": "Rechercher un article d'aide…",
     "searchNoResults": "Aucun article ne correspond à votre recherche.",
+    "searchNoResultsHint": "Essayez plutôt ces articles de démarrage rapide :",
     "searchResultsAria": "Résultats de recherche",
     "searchResultsCount": "{count, plural, one {# article} other {# articles}}",
     "searchSuggestionsAria": "Suggestions d'articles populaires",

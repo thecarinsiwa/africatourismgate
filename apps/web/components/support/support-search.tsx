@@ -16,14 +16,17 @@ import {
 import {
   HELP_ARTICLES,
   getPopularArticles,
+  getQuickStartArticles,
   searchHelpArticles,
   type HelpArticle,
   type HelpArticleSearchStrings,
 } from '../../lib/support/help-catalog';
 import { supportArticlePath, SUPPORT_BASE_PATH } from '../../lib/support/routes';
 import { stripWebHelpMarkdownLinks } from '../../lib/support/web-path-links';
+import { SupportHelpHighlightText } from './support-help-highlight';
 import { HelpSearchIcon } from './support-help-icons';
 
+const EMPTY_SEARCH_QUICK_START_LIMIT = 4;
 const FOCUS_SUGGESTIONS_LIMIT = 5;
 const SEARCH_DEBOUNCE_MS = 175;
 
@@ -62,6 +65,10 @@ export function SupportSearch() {
   );
   const popularSuggestions = useMemo(
     () => getPopularArticles().slice(0, FOCUS_SUGGESTIONS_LIMIT),
+    [],
+  );
+  const quickStartSuggestions = useMemo(
+    () => getQuickStartArticles().slice(0, EMPTY_SEARCH_QUICK_START_LIMIT),
     [],
   );
   const hasQuery = debouncedQuery.trim().length > 0;
@@ -236,8 +243,38 @@ export function SupportSearch() {
               </ul>
             </div>
           ) : results.length === 0 ? (
-            <div className="space-y-2">
+            <div className="space-y-3">
               <p className="text-sm text-atg-muted">{t('searchNoResults')}</p>
+              {quickStartSuggestions.length > 0 ? (
+                <div>
+                  <p className="text-sm font-medium text-atg-fg">
+                    {t('searchNoResultsHint')}
+                  </p>
+                  <ul className="mt-2 space-y-1">
+                    {quickStartSuggestions.map((article) => (
+                      <li key={article.id}>
+                        <Link
+                          href={supportArticlePath(
+                            article.categorySlug,
+                            article.slug,
+                          )}
+                          className="text-sm font-medium text-primary outline-none hover:underline focus-visible:underline"
+                        >
+                          {t(`help.articles.${article.slug}.title`)}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-3">
+                    <a
+                      href="#support-quick-start"
+                      className="text-sm text-atg-muted outline-none hover:text-primary hover:underline focus-visible:text-primary focus-visible:underline"
+                    >
+                      {t('quickStartTitle')}
+                    </a>
+                  </p>
+                </div>
+              ) : null}
               <p>
                 <Link
                   href={`${SUPPORT_BASE_PATH}#support-form`}
@@ -279,11 +316,21 @@ export function SupportSearch() {
                         onMouseEnter={() => setActiveIndex(index)}
                       >
                         <span className="block text-sm font-medium text-atg-fg">
-                          {strings?.title}
+                          {strings?.title ? (
+                            <SupportHelpHighlightText
+                              text={strings.title}
+                              query={debouncedQuery}
+                            />
+                          ) : null}
                         </span>
-                        <span className="mt-0.5 block text-sm text-atg-muted">
-                          {strings?.summary}
-                        </span>
+                        {strings?.summary ? (
+                          <span className="mt-0.5 block text-sm text-atg-muted">
+                            <SupportHelpHighlightText
+                              text={strings.summary}
+                              query={debouncedQuery}
+                            />
+                          </span>
+                        ) : null}
                       </Link>
                     </li>
                   );
