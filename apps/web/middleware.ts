@@ -86,7 +86,7 @@ function maintenanceStatusUrls(request: NextRequest): string[] {
     ),
   );
 
-  return [...new Set(urls)];
+  return Array.from(new Set(urls));
 }
 
 async function fetchPublicMaintenance(
