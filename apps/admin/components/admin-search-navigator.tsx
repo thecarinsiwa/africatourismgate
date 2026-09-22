@@ -19,6 +19,7 @@ import {
   type AdminSearchGroupId,
   type AdminSearchResultItem,
 } from '../lib/admin-search';
+import { shouldHandleAdminSearchShortcut } from '../lib/admin-search/shortcuts';
 
 type AdminSearchNavigatorContextValue = {
   open: boolean;
@@ -108,14 +109,15 @@ function AdminSearchNavigatorModal() {
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
-        event.preventDefault();
-        toggle();
+      if (!shouldHandleAdminSearchShortcut(event, { searchOpen: open })) {
+        return;
       }
+      event.preventDefault();
+      toggle();
     }
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [toggle]);
+  }, [open, toggle]);
 
   useEffect(() => {
     if (!open) {

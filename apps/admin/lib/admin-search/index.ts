@@ -13,6 +13,11 @@ export { listCoreAdminSearchSources } from './core-sources';
 export { listCatalogAdminSearchSources } from './catalog-sources';
 export { listWiredAdminSearchSources } from './wired-sources';
 export {
+  isAdminSearchToggleShortcut,
+  isEditableKeyboardTarget,
+  shouldHandleAdminSearchShortcut,
+} from './shortcuts';
+export {
   aggregateAdminSearchResults,
   flattenAdminSearchGroups,
   runAdminSearchFanOut,

@@ -53,7 +53,7 @@
     "title": "Recherche admin",
     "placeholder": "Rechercher pages, aide, utilisateurs, réservations…",
     "empty": "Aucun résultat",
-    "shortcutHint": "Ctrl+K · ⌘K — ↑↓ pour naviguer, Entrée pour ouvrir",
+    "shortcutHint": "Ctrl+F · ⌘F (alias Ctrl/⌘+K) — ↑↓ pour naviguer, Entrée pour ouvrir",
     "close": "Fermer la recherche",
     "resultsLabel": "Résultats de recherche",
     "updating": "Mise à jour…",
@@ -80,8 +80,10 @@
     "hint": "Les raccourcis sont ignorés pendant la saisie dans un champ.",
     "openHelpCenter": "Ouvrir le centre d'aide",
     "items": {
+      "search": "Ouvrir / fermer la recherche admin",
+      "searchAlias": "Alias — ouvrir / fermer la recherche",
       "palette": "Ouvrir / fermer la navigation rapide",
-      "escape": "Fermer la palette ou l’aide",
+      "escape": "Fermer la recherche ou l’aide",
       "help": "Afficher cette aide"
     }
   },

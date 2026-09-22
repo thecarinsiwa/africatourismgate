@@ -53,7 +53,7 @@
     "title": "Admin search",
     "placeholder": "Search pages, help, users, bookings…",
     "empty": "No results",
-    "shortcutHint": "Ctrl+K · ⌘K — ↑↓ to navigate, Enter to open",
+    "shortcutHint": "Ctrl+F · ⌘F (alias Ctrl/⌘+K) — ↑↓ to navigate, Enter to open",
     "close": "Close search",
     "resultsLabel": "Search results",
     "updating": "Updating…",
@@ -80,8 +80,10 @@
     "hint": "Shortcuts are ignored while typing in a field.",
     "openHelpCenter": "Open the Help Center",
     "items": {
+      "search": "Open / close admin search",
+      "searchAlias": "Alias — open / close search",
       "palette": "Open / close quick navigation",
-      "escape": "Close the palette or this help",
+      "escape": "Close search or this help",
       "help": "Show this help"
     }
   },
