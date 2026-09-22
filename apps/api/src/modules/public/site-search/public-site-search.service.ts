@@ -6,6 +6,7 @@ import type {
   SiteSearchHitType,
 } from '@africatourismgate/types';
 import { PublicAccommodationsService } from '../accommodations/public-accommodations.service';
+import { PublicActivitiesService } from '../activities/public-activities.service';
 import {
   clampSiteSearchLimit,
   resolveSiteSearchTypes,
@@ -22,6 +23,7 @@ export class PublicSiteSearchService {
 
   constructor(
     private readonly accommodationsService: PublicAccommodationsService,
+    private readonly activitiesService: PublicActivitiesService,
   ) {}
 
   async search(query: SiteSearchQueryDto): Promise<PublicSiteSearchResponse> {
@@ -67,6 +69,9 @@ export class PublicSiteSearchService {
     switch (type) {
       case 'hotels':
         hits = await this.accommodationsService.searchCatalog(q, limit);
+        break;
+      case 'activities':
+        hits = await this.activitiesService.searchCatalog(q, limit);
         break;
       default:
         hits = [];

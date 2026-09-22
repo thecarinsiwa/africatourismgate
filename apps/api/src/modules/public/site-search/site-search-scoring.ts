@@ -34,3 +34,10 @@ export const HOTEL_SITE_SEARCH_WEIGHTS = {
   address: 50,
   description: 40,
 } as const;
+
+/** Field weights for activity catalogue search. */
+export const ACTIVITY_SITE_SEARCH_WEIGHTS = {
+  title: 100,
+  destination: 60,
+  description: 40,
+} as const;

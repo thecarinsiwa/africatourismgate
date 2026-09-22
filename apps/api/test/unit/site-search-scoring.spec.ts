@@ -1,4 +1,5 @@
 import {
+  ACTIVITY_SITE_SEARCH_WEIGHTS,
   HOTEL_SITE_SEARCH_WEIGHTS,
   scoreSiteSearchTextMatch,
 } from '../../src/modules/public/site-search/site-search-scoring';
@@ -45,6 +46,25 @@ describe('site-search-scoring', () => {
     expect(destination).toBe(HOTEL_SITE_SEARCH_WEIGHTS.destination);
     expect(slugPrefix).toBe(HOTEL_SITE_SEARCH_WEIGHTS.slug - 5);
     expect(slugContains).toBe(HOTEL_SITE_SEARCH_WEIGHTS.slug - 15);
+  });
+
+  it('scores activity title over destination and description', () => {
+    const title = scoreSiteSearchTextMatch('gorilla', [
+      { weight: ACTIVITY_SITE_SEARCH_WEIGHTS.title, value: 'Gorilla Trekking' },
+      { weight: ACTIVITY_SITE_SEARCH_WEIGHTS.destination, value: 'Virunga' },
+      {
+        weight: ACTIVITY_SITE_SEARCH_WEIGHTS.description,
+        value: 'See gorilla families',
+      },
+    ]);
+    const destinationOnly = scoreSiteSearchTextMatch('virunga', [
+      { weight: ACTIVITY_SITE_SEARCH_WEIGHTS.title, value: 'City Walk' },
+      { weight: ACTIVITY_SITE_SEARCH_WEIGHTS.destination, value: 'Virunga' },
+    ]);
+
+    expect(title).toBe(ACTIVITY_SITE_SEARCH_WEIGHTS.title - 5);
+    expect(destinationOnly).toBe(ACTIVITY_SITE_SEARCH_WEIGHTS.destination);
+    expect(title).toBeGreaterThan(destinationOnly);
   });
 
   it('returns 0 when nothing matches', () => {
