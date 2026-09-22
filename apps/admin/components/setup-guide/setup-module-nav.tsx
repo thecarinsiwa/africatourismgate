@@ -77,7 +77,8 @@ export function SetupModuleNav({
   activeModuleId,
   onSelectModule,
 }: SetupModuleNavProps) {
-  const t = useTranslations('pages.mise-en-route');
+  const t = useTranslations('modules.setupGuide.ui');
+  const tGuide = useTranslations('modules.setupGuide');
 
   return (
     <aside
@@ -96,6 +97,7 @@ export function SetupModuleNav({
           const isLocked = lockState === 'locked';
           const isComplete = lockState === 'complete';
           const stateLabel = t(lockStateLabelKey(lockState));
+          const moduleTitle = tGuide(module.titleKey);
 
           return (
             <li key={module.id}>
@@ -126,7 +128,7 @@ export function SetupModuleNav({
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center justify-between gap-2">
-                    <span className="truncate">{module.id}</span>
+                    <span className="truncate">{moduleTitle}</span>
                     <span className="shrink-0 text-xs font-normal tabular-nums text-atg-muted">
                       {t('moduleProgress', {
                         ready: readyCount,

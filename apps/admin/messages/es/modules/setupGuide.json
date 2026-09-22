@@ -1,0 +1,185 @@
+{
+  "ui": {
+    "pageTitle": "Puesta en marcha",
+    "pageSubtitle": "Recorrido guiado para completar el catálogo, módulo por módulo.",
+    "progressSummary": "{ready} / {total} pasos listos",
+    "modulesHeading": "Módulos",
+    "stepsHeading": "Pasos",
+    "stepsCount": "{count, plural, one {# paso} other {# pasos}}",
+    "moduleProgress": "{ready}/{total}",
+    "stateLocked": "Bloqueado",
+    "stateUnlocked": "Pendiente",
+    "stateComplete": "Completado",
+    "stepStatusReady": "Listo",
+    "stepStatusEmpty": "Vacío",
+    "stepStatusUnknown": "Desconocido",
+    "stepCount": "{total} / mín. {min}",
+    "stepCountUnknown": "Recuento no disponible",
+    "moduleLockedHint": "Este módulo está bloqueado hasta que sus requisitos previos estén listos. Aun así puede abrir las pantallas vinculadas.",
+    "openList": "Abrir lista",
+    "createItem": "Crear",
+    "emptyModule": "Seleccione un módulo para ver sus pasos.",
+    "refresh": "Actualizar",
+    "loadError": "No se pudo cargar el estado del catálogo."
+  },
+  "modules": {
+    "platform": {
+      "title": "Plataforma",
+      "description": "Organización, equipamientos y categorías de vehículos."
+    },
+    "destinations": {
+      "title": "Destinos",
+      "description": "Geografía y puntos de interés."
+    },
+    "accommodations": {
+      "title": "Alojamientos",
+      "description": "Propiedades y habitaciones."
+    },
+    "flights": {
+      "title": "Vuelos",
+      "description": "Aerolíneas, aeropuertos y vuelos."
+    },
+    "vehicles": {
+      "title": "Alquileres",
+      "description": "Agencias y vehículos."
+    },
+    "cruises": {
+      "title": "Cruceros",
+      "description": "Líneas, puertos, barcos y salidas."
+    },
+    "activities": {
+      "title": "Actividades",
+      "description": "Proveedores y actividades."
+    },
+    "packages": {
+      "title": "Paquetes",
+      "description": "Paquetes que combinan productos del catálogo."
+    },
+    "payments": {
+      "title": "Pagos",
+      "description": "Métodos de pago, cuentas bancarias y Mobile Money."
+    },
+    "content": {
+      "title": "Contenido del sitio",
+      "description": "Hero, acerca de, páginas legales y blog."
+    },
+    "ops": {
+      "title": "Ops opcionales",
+      "description": "Guías turísticos y códigos promo."
+    }
+  },
+  "steps": {
+    "org-settings": {
+      "title": "Organización y ajustes",
+      "help": "Confirme la organización de la plataforma y sus ajustes básicos."
+    },
+    "amenities": {
+      "title": "Equipamientos",
+      "help": "Catálogo reutilizable de equipamientos para alojamientos."
+    },
+    "vehicle-categories": {
+      "title": "Categorías de vehículos",
+      "help": "Categorías necesarias antes de crear vehículos."
+    },
+    "destinations": {
+      "title": "Destinos",
+      "help": "Cree al menos un destino (país / región / lugar)."
+    },
+    "points-of-interest": {
+      "title": "Puntos de interés",
+      "help": "Añada POI vinculados a destinos (desde la ficha del destino)."
+    },
+    "properties": {
+      "title": "Propiedades",
+      "help": "Hoteles, lodges o alojamientos vinculados a un destino."
+    },
+    "rooms": {
+      "title": "Habitaciones",
+      "help": "Al menos una habitación (o tipo) en una propiedad."
+    },
+    "airlines": {
+      "title": "Aerolíneas",
+      "help": "Referencial de aerolíneas antes de los vuelos."
+    },
+    "airports": {
+      "title": "Aeropuertos",
+      "help": "Referencial de aeropuertos de salida y llegada."
+    },
+    "flights": {
+      "title": "Vuelos",
+      "help": "Cree vuelos que enlacen aerolíneas y aeropuertos."
+    },
+    "rental-agencies": {
+      "title": "Agencias de alquiler",
+      "help": "Socios que gestionan la flota de vehículos."
+    },
+    "vehicles": {
+      "title": "Vehículos",
+      "help": "Añada vehículos vinculados a una agencia y una categoría."
+    },
+    "cruise-lines": {
+      "title": "Líneas de crucero",
+      "help": "Marcas / operadores de crucero."
+    },
+    "cruise-ports": {
+      "title": "Puertos",
+      "help": "Puertos de escala usados en los itinerarios."
+    },
+    "ships": {
+      "title": "Barcos",
+      "help": "Barcos vinculados a una línea de crucero."
+    },
+    "cruise-sailings": {
+      "title": "Salidas",
+      "help": "Salidas comercializadas con fechas y barco."
+    },
+    "activity-providers": {
+      "title": "Proveedores de actividades",
+      "help": "Operadores o socios que ofrecen las actividades."
+    },
+    "activities": {
+      "title": "Actividades",
+      "help": "Excursiones y experiencias vinculadas a un destino."
+    },
+    "packages": {
+      "title": "Paquetes",
+      "help": "Combine alojamientos, vuelos, alquileres, cruceros o actividades."
+    },
+    "payment-methods": {
+      "title": "Métodos de pago",
+      "help": "Active al menos un método (Stripe, transferencia, efectivo, Mobile Money)."
+    },
+    "bank-accounts": {
+      "title": "Cuentas bancarias",
+      "help": "Cuentas para recibir transferencias."
+    },
+    "mobile-money": {
+      "title": "Mobile Money",
+      "help": "Países (y operadores) Mobile Money configurados."
+    },
+    "hero-slides": {
+      "title": "Carrusel hero",
+      "help": "Diapositivas de la página de inicio."
+    },
+    "about-pages": {
+      "title": "Páginas Acerca de",
+      "help": "Contenido editorial de la sección Acerca de."
+    },
+    "legal-pages": {
+      "title": "Páginas legales",
+      "help": "Términos, privacidad y otras páginas legales."
+    },
+    "blog-posts": {
+      "title": "Artículos del blog",
+      "help": "Al menos un artículo publicado o borrador."
+    },
+    "tour-guides": {
+      "title": "Guías turísticos",
+      "help": "Perfiles de guías (opcional para empezar)."
+    },
+    "promo-codes": {
+      "title": "Códigos promo",
+      "help": "Códigos de descuento (opcional para empezar)."
+    }
+  }
+}

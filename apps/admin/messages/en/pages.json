@@ -741,24 +741,7 @@
   "mise-en-route": {
     "title": "Getting started",
     "description": "Guided walkthrough to fill the catalog, module by module.",
-    "metaTitle": "Getting started",
-    "progressSummary": "{ready} / {total} steps ready",
-    "modulesHeading": "Modules",
-    "stepsHeading": "Steps",
-    "stepsCount": "{count, plural, one {# step} other {# steps}}",
-    "moduleProgress": "{ready}/{total}",
-    "stateLocked": "Locked",
-    "stateUnlocked": "To do",
-    "stateComplete": "Done",
-    "stepStatusReady": "Ready",
-    "stepStatusEmpty": "Empty",
-    "stepStatusUnknown": "Unknown",
-    "stepCount": "{total} / min. {min}",
-    "stepCountUnknown": "Count unavailable",
-    "moduleLockedHint": "This module is locked until its prerequisites are ready. You can still open the linked screens.",
-    "openList": "Open list",
-    "createItem": "Create",
-    "emptyModule": "Select a module to see its steps."
+    "metaTitle": "Getting started"
   },
   "profil": {
     "title": "My profile",

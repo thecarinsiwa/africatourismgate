@@ -17,8 +17,9 @@ import { SetupStepCard } from './setup-step-card';
  * Readiness live (s09) à brancher ensuite.
  */
 export function SetupGuidePageContent() {
-  const t = useTranslations('pages.mise-en-route');
-  useSetAdminPageMeta({ title: t('title') });
+  const t = useTranslations('modules.setupGuide.ui');
+  const tGuide = useTranslations('modules.setupGuide');
+  useSetAdminPageMeta({ title: t('pageTitle') });
 
   const progress = useMemo(
     () => buildSetupGuideProgress(createEmptySetupReadinessSnapshot()),
@@ -36,24 +37,21 @@ export function SetupGuidePageContent() {
 
   const moduleLocked = activeModuleProgress?.lockState === 'locked';
 
-  const moduleTitleKey = activeModuleProgress
-    ? `modules.${activeModuleProgress.module.id}.title`
-    : null;
-  const moduleTitle =
-    moduleTitleKey &&
-    typeof t.has === 'function' &&
-    t.has(moduleTitleKey)
-      ? t(moduleTitleKey)
-      : (activeModuleProgress?.module.id ?? '');
+  const moduleTitle = activeModuleProgress
+    ? tGuide(activeModuleProgress.module.titleKey)
+    : '';
+  const moduleDescription = activeModuleProgress
+    ? tGuide(activeModuleProgress.module.descriptionKey)
+    : '';
 
   return (
     <div className="min-w-0 space-y-6" data-testid="setup-guide-page">
       <header className="space-y-2 border-b border-atg-border pb-6">
         <h1 className="text-2xl font-bold tracking-tight text-atg-fg sm:text-3xl">
-          {t('title')}
+          {t('pageTitle')}
         </h1>
         <p className="max-w-2xl text-base text-atg-muted sm:text-lg">
-          {t('description')}
+          {t('pageSubtitle')}
         </p>
         <p className="text-sm font-medium tabular-nums text-atg-fg">
           {t('progressSummary', {
@@ -81,6 +79,7 @@ export function SetupGuidePageContent() {
                 <h2 className="text-lg font-semibold text-atg-fg">
                   {moduleTitle}
                 </h2>
+                <p className="text-sm text-atg-muted">{moduleDescription}</p>
                 <p className="text-sm text-atg-muted">
                   {t('moduleProgress', {
                     ready: activeModuleProgress.readyCount,

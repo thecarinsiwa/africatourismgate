@@ -45,15 +45,12 @@ export function SetupStepCard({
   index,
   moduleLocked = false,
 }: SetupStepCardProps) {
-  const t = useTranslations('pages.mise-en-route');
+  const t = useTranslations('modules.setupGuide.ui');
+  const tGuide = useTranslations('modules.setupGuide');
   const { step, status, total, min } = stepProgress;
 
-  const titleKey = `steps.${step.id}.title`;
-  const helpKey = `steps.${step.id}.help`;
-  const title =
-    typeof t.has === 'function' && t.has(titleKey) ? t(titleKey) : step.id;
-  const help =
-    typeof t.has === 'function' && t.has(helpKey) ? t(helpKey) : null;
+  const title = tGuide(step.titleKey);
+  const help = tGuide(step.helpKey);
 
   const showCount = step.check.kind === 'listTotal' && total != null;
   const countLabel = showCount
@@ -87,9 +84,7 @@ export function SetupStepCard({
               {t(statusLabelKey(status))}
             </DataTableBadge>
           </div>
-          {help ? (
-            <p className="text-sm text-atg-muted">{help}</p>
-          ) : null}
+          <p className="text-sm text-atg-muted">{help}</p>
           {countLabel ? (
             <p className="text-xs font-medium tabular-nums text-atg-fg">
               {countLabel}
