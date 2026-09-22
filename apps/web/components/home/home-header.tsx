@@ -13,6 +13,7 @@ import { buildSocialLinks } from '../../lib/contact/social-links';
 import { buildVerticalListRoute } from '../../lib/search/route';
 import { ABOUT_NAV_ITEMS, ABOUT_PATHS } from '../../lib/about/routes';
 import { useTranslations as useIntlTranslations } from 'next-intl';
+import { SiteSearchTrigger } from '../site-search/site-search-trigger';
 
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -315,6 +316,7 @@ export function HomeHeader() {
           </nav>
 
           <div className="hidden items-center gap-2 lg:flex shrink-0">
+            <SiteSearchTrigger />
             {donateHref ? (
               <DonateButton
                 href={donateHref}
@@ -342,6 +344,8 @@ export function HomeHeader() {
               </Link>
             ) : null}
           </div>
+
+          <SiteSearchTrigger className="lg:hidden" />
 
           <button
             type="button"
@@ -391,11 +395,14 @@ export function HomeHeader() {
           className="border-b border-atg-border bg-atg-elevated px-4 py-4 shadow-lg transition-[opacity,transform] duration-200 ease-out opacity-100 translate-y-0 max-h-[calc(100dvh-8.5rem)] overflow-y-auto overscroll-contain dark:border-atg-border dark:bg-atg-elevated lg:hidden"
           aria-label={t('mobileAria')}
         >
-          <div className="mb-3 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
-              {tLanguage('label')}
-            </span>
-            <LanguageSwitcher variant="navbar" />
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <SiteSearchTrigger onAfterToggle={() => setMenuOpen(false)} />
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
+                {tLanguage('label')}
+              </span>
+              <LanguageSwitcher variant="navbar" />
+            </div>
           </div>
           <ul className="flex flex-col gap-0.5">
             <li>
