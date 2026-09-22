@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import type {
   PublicSiteSearchGroup,
+  PublicSiteSearchHit,
   PublicSiteSearchResponse,
   SiteSearchHitType,
 } from '@africatourismgate/types';
+import { PublicAccommodationsService } from '../accommodations/public-accommodations.service';
 import {
   clampSiteSearchLimit,
   resolveSiteSearchTypes,
@@ -12,19 +14,38 @@ import { SiteSearchQueryDto } from './dto/site-search-query.dto';
 
 /**
  * Unified public catalogue search.
- * Catalogue providers are wired in subsequent tasks; this establishes the response contract.
+ * Catalogue providers are wired progressively per vertical.
  */
 @Injectable()
 export class PublicSiteSearchService {
+  private readonly logger = new Logger(PublicSiteSearchService.name);
+
+  constructor(
+    private readonly accommodationsService: PublicAccommodationsService,
+  ) {}
+
   async search(query: SiteSearchQueryDto): Promise<PublicSiteSearchResponse> {
     const q = query.q.trim();
     const locale = query.locale?.trim() || null;
     const limit = clampSiteSearchLimit(query.limit);
     const types = resolveSiteSearchTypes(query.types);
 
-    const groups: PublicSiteSearchGroup[] = types.map((type) =>
-      this.emptyGroup(type),
+    const settled = await Promise.allSettled(
+      types.map((type) => this.searchType(type, q, limit, locale)),
     );
+
+    const groups: PublicSiteSearchGroup[] = settled.map((result, index) => {
+      const type = types[index]!;
+      if (result.status === 'fulfilled') {
+        return result.value;
+      }
+      const message =
+        result.reason instanceof Error
+          ? result.reason.message
+          : 'Search failed';
+      this.logger.warn(`site-search type=${type} failed: ${message}`);
+      return { type, hits: [], error: message };
+    });
 
     return {
       query: q,
@@ -35,11 +56,23 @@ export class PublicSiteSearchService {
     };
   }
 
-  private emptyGroup(type: SiteSearchHitType): PublicSiteSearchGroup {
-    return {
-      type,
-      hits: [],
-      error: null,
-    };
+  private async searchType(
+    type: SiteSearchHitType,
+    q: string,
+    limit: number,
+    _locale: string | null,
+  ): Promise<PublicSiteSearchGroup> {
+    let hits: PublicSiteSearchHit[] = [];
+
+    switch (type) {
+      case 'hotels':
+        hits = await this.accommodationsService.searchCatalog(q, limit);
+        break;
+      default:
+        hits = [];
+        break;
+    }
+
+    return { type, hits, error: null };
   }
 }

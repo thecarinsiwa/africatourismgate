@@ -28,5 +28,6 @@ import { PublicAccommodationsService } from './public-accommodations.service';
   ],
   controllers: [PublicAccommodationsController],
   providers: [PublicAccommodationsService],
+  exports: [PublicAccommodationsService],
 })
 export class PublicAccommodationsModule {}

@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import type { PublicSiteSearchHit } from '@africatourismgate/types';
 import { In, Repository } from 'typeorm';
 import { PaginatedResult, PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import {
@@ -13,6 +14,10 @@ import {
 } from '../../../entities/generated';
 import { ReviewsService } from '../../resources/reviews/reviews.service';
 import { ReviewDto } from '../../resources/reviews/dto/review.dto';
+import {
+  HOTEL_SITE_SEARCH_WEIGHTS,
+  scoreSiteSearchTextMatch,
+} from '../site-search/site-search-scoring';
 import { PropertyDetailQueryDto } from './dto/property-detail-query.dto';
 import { PropertyDetailDto } from './dto/property-detail.dto';
 import { PropertySearchQueryDto } from './dto/property-search-query.dto';
@@ -248,6 +253,91 @@ export class PublicAccommodationsService {
         totalPages: Math.ceil(total / limit) || 1,
       },
     };
+  }
+
+  /**
+   * Free-text catalogue search for site-search (no dates/guests required).
+   * Matches name, slug, description, address and destination name/slug.
+   */
+  async searchCatalog(
+    q: string,
+    limit: number,
+  ): Promise<PublicSiteSearchHit[]> {
+    const term = q.trim().toLowerCase();
+    if (!term || limit < 1) return [];
+
+    const pattern = `%${term}%`;
+    const fetchLimit = Math.min(Math.max(limit * 3, limit), 60);
+
+    const properties = await this.propertiesRepository
+      .createQueryBuilder('prop')
+      .innerJoin(
+        Destinations,
+        'd',
+        'd.id = prop.destinationId AND d.deletedAt IS NULL',
+      )
+      .where('prop.deletedAt IS NULL')
+      .andWhere(
+        `(LOWER(prop.name) LIKE :pattern
+          OR LOWER(prop.slug) LIKE :pattern
+          OR LOWER(COALESCE(prop.description, '')) LIKE :pattern
+          OR LOWER(COALESCE(prop.addressLine, '')) LIKE :pattern
+          OR LOWER(d.name) LIKE :pattern
+          OR LOWER(d.slug) LIKE :pattern)`,
+        { pattern },
+      )
+      .orderBy('prop.name', 'ASC')
+      .take(fetchLimit)
+      .getMany();
+
+    if (!properties.length) return [];
+
+    const destIds = [...new Set(properties.map((p) => p.destinationId))];
+    const destinations = await this.destinationsRepository.find({
+      where: { id: In(destIds) },
+    });
+    const destById = new Map(
+      destinations
+        .filter((d) => !d.deletedAt)
+        .map((d) => [d.id, d] as const),
+    );
+
+    const imageByProperty = await this.loadPrimaryImageUrlByPropertyId(
+      properties.map((p) => p.id),
+    );
+
+    const hits: PublicSiteSearchHit[] = [];
+
+    for (const prop of properties) {
+      const dest = destById.get(prop.destinationId);
+      if (!dest) continue;
+
+      const score = scoreSiteSearchTextMatch(term, [
+        { weight: HOTEL_SITE_SEARCH_WEIGHTS.name, value: prop.name },
+        { weight: HOTEL_SITE_SEARCH_WEIGHTS.slug, value: prop.slug },
+        { weight: HOTEL_SITE_SEARCH_WEIGHTS.destination, value: dest.name },
+        { weight: HOTEL_SITE_SEARCH_WEIGHTS.destination, value: dest.slug },
+        { weight: HOTEL_SITE_SEARCH_WEIGHTS.address, value: prop.addressLine },
+        {
+          weight: HOTEL_SITE_SEARCH_WEIGHTS.description,
+          value: prop.description,
+        },
+      ]);
+      if (score <= 0) continue;
+
+      hits.push({
+        type: 'hotels',
+        id: prop.id,
+        title: prop.name,
+        subtitle: `${dest.name} · ${dest.countryCode}`,
+        href: `/hotels/${encodeURIComponent(prop.id)}`,
+        imageUrl: imageByProperty.get(prop.id) ?? PLACEHOLDER_IMAGE,
+        score,
+      });
+    }
+
+    hits.sort((a, b) => b.score - a.score || a.title.localeCompare(b.title));
+    return hits.slice(0, limit);
   }
 
   async getById(id: string, query: PropertyDetailQueryDto): Promise<PropertyDetailDto> {
@@ -509,6 +599,25 @@ export class PublicAccommodationsService {
 
     if (globalMin === null) return null;
     return { minPriceCents: globalMin, currency };
+  }
+
+  private async loadPrimaryImageUrlByPropertyId(
+    propertyIds: string[],
+  ): Promise<Map<string, string>> {
+    if (!propertyIds.length) return new Map();
+
+    const images = await this.imagesRepository.find({
+      where: { propertyId: In(propertyIds) },
+      order: { sortOrder: 'ASC' },
+    });
+
+    const imageByProperty = new Map<string, string>();
+    for (const img of images) {
+      if (!img.deletedAt && !imageByProperty.has(img.propertyId)) {
+        imageByProperty.set(img.propertyId, img.url);
+      }
+    }
+    return imageByProperty;
   }
 
   private async loadPropertyAmenities(
