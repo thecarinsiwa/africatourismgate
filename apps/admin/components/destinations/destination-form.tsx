@@ -7,13 +7,13 @@ import type { CreateDestinationRequest, Destination } from '@africatourismgate/t
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useId, useState } from 'react';
-import { hasValidDestinationCoords, parseDestinationCoord } from '../../lib/destination-coords';
+import { parseDestinationCoord } from '../../lib/destination-coords';
 import { getApiClient } from '../../lib/auth/api';
 import { isRichTextEmpty } from '../../lib/rich-text';
 import { isValidSlug, slugifyName } from '../../lib/slug';
 import { RichTextEditor } from '../rich-text-editor';
 import { CountryCodeCombobox } from './country-code-combobox';
-import { DestinationStaticMap } from './destination-static-map';
+import { DestinationGeographyMap } from './destination-geography-map';
 
 export type DestinationFormValues = {
   name: string;
@@ -308,6 +308,15 @@ export function DestinationForm({
           <section className="space-y-4">
             <h3 className="text-sm font-semibold text-atg-fg">{t('sections.geography')}</h3>
             <p className="text-xs text-atg-muted">{t('geographyIntro')}</p>
+            <DestinationGeographyMap
+              countryCode={values.countryCode}
+              latitude={values.latitude}
+              longitude={values.longitude}
+              onCoordinateChange={(lat, lng) => {
+                updateField('latitude', lat);
+                updateField('longitude', lng);
+              }}
+            />
             <Input
               label={tCommonForm('latitude')}
               type="text"
@@ -328,14 +337,6 @@ export function DestinationForm({
               hint={t('longitudeHint')}
               error={fieldErrors.longitude}
             />
-            {hasValidDestinationCoords(values.latitude, values.longitude) ? (
-              <DestinationStaticMap
-                latitude={values.latitude}
-                longitude={values.longitude}
-                title={t('mapPreview')}
-                compact
-              />
-            ) : null}
           </section>
         </aside>
       </div>

@@ -40,10 +40,14 @@
     "heroImageHint": "Se muestra en el banner. Déjelo vacío para un degradado.",
     "isFeatured": "Mostrar en la página de inicio",
     "isFeaturedHint": "Sección « Destinos populares » del sitio público (máx. 4).",
-    "geographyIntro": "Coordenadas del centro del destino para el mapa estático.",
+    "geographyIntro": "El contorno del país se actualiza al cambiar el país. Haga clic en el mapa o arrastre el marcador para fijar el centro del destino.",
     "latitudeHint": "Opcional, -90 a 90",
     "longitudeHint": "Opcional, -180 a 180",
-    "mapPreview": "Vista previa del mapa",
+    "mapPreview": "Mapa del destino",
+    "mapBoundaryHint": "Contorno del país seleccionado. Haga clic o arrastre el marcador para las coordenadas del centro.",
+    "mapBoundaryAria": "Mapa con contorno del país y selección del punto central",
+    "mapBoundaryLoading": "Cargando el contorno del país…",
+    "mapBoundaryUnavailable": "Contorno no disponible para este país. Aun así puede colocar un punto.",
     "openStreetMap": "Abrir en OpenStreetMap"
   },
   "detail": {

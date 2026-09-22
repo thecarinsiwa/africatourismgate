@@ -40,10 +40,14 @@
     "heroImageHint": "Shown in the banner. Leave empty for a gradient.",
     "isFeatured": "Show on homepage",
     "isFeaturedHint": "Popular Destinations section on the public site (max. 4).",
-    "geographyIntro": "Coordinates for the destination center on the static map.",
+    "geographyIntro": "The country outline updates when you change the country. Click the map or drag the marker to set the destination center.",
     "latitudeHint": "Optional, -90 to 90",
     "longitudeHint": "Optional, -180 to 180",
-    "mapPreview": "Map preview",
+    "mapPreview": "Destination map",
+    "mapBoundaryHint": "Outline of the selected country. Click or drag the marker for the center coordinates.",
+    "mapBoundaryAria": "Map with country outline and center point selection",
+    "mapBoundaryLoading": "Loading country outline…",
+    "mapBoundaryUnavailable": "Outline unavailable for this country. You can still place a point.",
     "openStreetMap": "Open in OpenStreetMap"
   },
   "detail": {

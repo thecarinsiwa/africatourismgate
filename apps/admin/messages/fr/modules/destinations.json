@@ -40,10 +40,14 @@
     "heroImageHint": "Affichée dans le bandeau. Laissez vide pour un dégradé.",
     "isFeatured": "Afficher sur la page d'accueil",
     "isFeaturedHint": "Section « Destinations populaires » du site public (max. 4).",
-    "geographyIntro": "Coordonnées du centre de la destination pour la carte statique.",
+    "geographyIntro": "Le contour du pays se met à jour selon le pays choisi. Cliquez sur la carte ou déplacez le marqueur pour fixer le centre de la destination.",
     "latitudeHint": "Optionnel, -90 à 90",
     "longitudeHint": "Optionnel, -180 à 180",
-    "mapPreview": "Aperçu de la carte",
+    "mapPreview": "Carte de la destination",
+    "mapBoundaryHint": "Contour du pays sélectionné. Cliquez ou déplacez le marqueur pour les coordonnées du centre.",
+    "mapBoundaryAria": "Carte avec contour du pays et sélection du point central",
+    "mapBoundaryLoading": "Chargement du contour du pays…",
+    "mapBoundaryUnavailable": "Contour indisponible pour ce pays. Vous pouvez quand même placer un point.",
     "openStreetMap": "Ouvrir dans OpenStreetMap"
   },
   "detail": {
