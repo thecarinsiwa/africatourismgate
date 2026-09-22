@@ -212,7 +212,7 @@ export class ReviewsService extends CrudService<Reviews> {
       void this.staffNotifications.fanOut(
         'review_pending',
         {
-          href: '/contenu/avis',
+          href: `/contenu/avis/${saved.id}`,
           priority: 'normal',
           reviewId: saved.id,
           bookingId,
@@ -371,7 +371,7 @@ export class ReviewsService extends CrudService<Reviews> {
       void this.staffNotifications.fanOut(
         'review_pending',
         {
-          href: '/contenu/avis',
+          href: `/contenu/avis/${saved.id}`,
           priority: 'normal',
           reviewId: saved.id,
           bookingId,
