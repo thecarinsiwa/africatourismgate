@@ -24,5 +24,6 @@ import { PublicVehiclesService } from './public-vehicles.service';
   ],
   controllers: [PublicVehiclesController],
   providers: [PublicVehiclesService],
+  exports: [PublicVehiclesService],
 })
 export class PublicVehiclesModule {}

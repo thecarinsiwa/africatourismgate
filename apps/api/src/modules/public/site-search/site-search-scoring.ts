@@ -61,3 +61,12 @@ export const FLIGHT_SITE_SEARCH_WEIGHTS = {
   airline: 80,
   airport: 60,
 } as const;
+
+/** Field weights for vehicle catalogue search. */
+export const VEHICLE_SITE_SEARCH_WEIGHTS = {
+  model: 100,
+  category: 80,
+  destination: 60,
+  agency: 50,
+  licensePlate: 40,
+} as const;

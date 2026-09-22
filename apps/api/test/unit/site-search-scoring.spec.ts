@@ -4,6 +4,7 @@ import {
   FLIGHT_SITE_SEARCH_WEIGHTS,
   HOTEL_SITE_SEARCH_WEIGHTS,
   PACKAGE_SITE_SEARCH_WEIGHTS,
+  VEHICLE_SITE_SEARCH_WEIGHTS,
   scoreSiteSearchTextMatch,
 } from '../../src/modules/public/site-search/site-search-scoring';
 
@@ -123,6 +124,23 @@ describe('site-search-scoring', () => {
     expect(flightNumber).toBe(FLIGHT_SITE_SEARCH_WEIGHTS.flightNumber);
     expect(airportOnly).toBe(FLIGHT_SITE_SEARCH_WEIGHTS.airport);
     expect(flightNumber).toBeGreaterThan(airportOnly);
+  });
+
+  it('scores vehicle model over category and destination', () => {
+    const model = scoreSiteSearchTextMatch('yaris', [
+      { weight: VEHICLE_SITE_SEARCH_WEIGHTS.model, value: 'Toyota Yaris' },
+      { weight: VEHICLE_SITE_SEARCH_WEIGHTS.category, value: 'Economy' },
+      { weight: VEHICLE_SITE_SEARCH_WEIGHTS.destination, value: 'Kinshasa' },
+    ]);
+    const destinationOnly = scoreSiteSearchTextMatch('kinshasa', [
+      { weight: VEHICLE_SITE_SEARCH_WEIGHTS.model, value: 'SUV X' },
+      { weight: VEHICLE_SITE_SEARCH_WEIGHTS.category, value: 'SUV' },
+      { weight: VEHICLE_SITE_SEARCH_WEIGHTS.destination, value: 'Kinshasa' },
+    ]);
+
+    expect(model).toBe(VEHICLE_SITE_SEARCH_WEIGHTS.model - 15);
+    expect(destinationOnly).toBe(VEHICLE_SITE_SEARCH_WEIGHTS.destination);
+    expect(model).toBeGreaterThan(destinationOnly);
   });
 
   it('returns 0 when nothing matches', () => {
