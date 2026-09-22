@@ -20,7 +20,10 @@
     "createItem": "Créer",
     "emptyModule": "Sélectionnez un module pour voir ses étapes.",
     "refresh": "Actualiser",
-    "loadError": "Impossible de charger l’état du catalogue."
+    "refreshing": "Actualisation…",
+    "loading": "Chargement de l’état du catalogue…",
+    "loadError": "Impossible de charger l’état du catalogue.",
+    "partialError": "Certaines étapes n’ont pas pu être vérifiées (statut inconnu). Réessayez ou ouvrez les écrans concernés."
   },
   "modules": {
     "platform": {

@@ -20,7 +20,10 @@
     "createItem": "Crear",
     "emptyModule": "Seleccione un módulo para ver sus pasos.",
     "refresh": "Actualizar",
-    "loadError": "No se pudo cargar el estado del catálogo."
+    "refreshing": "Actualizando…",
+    "loading": "Cargando el estado del catálogo…",
+    "loadError": "No se pudo cargar el estado del catálogo.",
+    "partialError": "Algunos pasos no se pudieron verificar (estado desconocido). Reintente o abra las pantallas relacionadas."
   },
   "modules": {
     "platform": {

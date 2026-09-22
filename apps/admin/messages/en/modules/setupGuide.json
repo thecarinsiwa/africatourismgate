@@ -20,7 +20,10 @@
     "createItem": "Create",
     "emptyModule": "Select a module to see its steps.",
     "refresh": "Refresh",
-    "loadError": "Could not load catalog status."
+    "refreshing": "Refreshing…",
+    "loading": "Loading catalog status…",
+    "loadError": "Could not load catalog status.",
+    "partialError": "Some steps could not be verified (unknown status). Retry or open the related screens."
   },
   "modules": {
     "platform": {
