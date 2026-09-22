@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Input, Spinner } from '@africatourismgate/ui';
+import { Button, Input, Modal, Spinner } from '@africatourismgate/ui';
 import type { UserAddress } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
@@ -17,6 +17,12 @@ const emptyForm = {
   isDefault: false,
 };
 
+function addressLabel(addr: UserAddress): string {
+  if (addr.label) return addr.label;
+  const parts = [addr.line1, addr.city].filter(Boolean);
+  return parts.join(', ') || addr.countryCode;
+}
+
 export function AccountAddressesPanel() {
   const t = useTranslations('account');
   const [addresses, setAddresses] = useState<UserAddress[]>([]);
@@ -25,6 +31,8 @@ export function AccountAddressesPanel() {
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<UserAddress | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -70,14 +78,20 @@ export function AccountAddressesPanel() {
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!window.confirm(t('addresses.deleteConfirm'))) return;
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    setError(null);
     try {
       const client = await getAccountApiClient();
-      await client.deleteUserAddress(id);
+      await client.deleteUserAddress(deleteTarget.id);
+      setDeleteTarget(null);
       await load();
     } catch {
       setError(t('addresses.deleteError'));
+      setDeleteTarget(null);
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -91,9 +105,9 @@ export function AccountAddressesPanel() {
 
   return (
     <div className="space-y-6">
-      {addresses.length === 0 && !showForm && (
+      {addresses.length === 0 && !showForm ? (
         <p className="text-sm text-atg-muted">{t('addresses.empty')}</p>
-      )}
+      ) : null}
 
       <ul className="space-y-3">
         {addresses.map((addr) => (
@@ -103,9 +117,9 @@ export function AccountAddressesPanel() {
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                {addr.label && (
+                {addr.label ? (
                   <p className="font-medium text-atg-fg">{addr.label}</p>
-                )}
+                ) : null}
                 <p className="text-sm text-atg-muted">
                   {addr.line1}
                   {addr.line2 ? `, ${addr.line2}` : ''}
@@ -115,17 +129,17 @@ export function AccountAddressesPanel() {
                   {addr.city}
                   {addr.region ? `, ${addr.region}` : ''} — {addr.countryCode}
                 </p>
-                {addr.isDefault === 1 && (
+                {addr.isDefault === 1 ? (
                   <span className="mt-1 inline-block text-xs font-medium text-primary">
                     {t('addresses.defaultBadge')}
                   </span>
-                )}
+                ) : null}
               </div>
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => void handleDelete(addr.id)}
+                onClick={() => setDeleteTarget(addr)}
               >
                 {t('addresses.delete')}
               </Button>
@@ -135,7 +149,10 @@ export function AccountAddressesPanel() {
       </ul>
 
       {showForm ? (
-        <form onSubmit={handleCreate} className="max-w-lg space-y-3 rounded-lg border border-atg-border p-4 dark:border-atg-border">
+        <form
+          onSubmit={(event) => void handleCreate(event)}
+          className="max-w-lg space-y-3 rounded-lg border border-atg-border p-4 dark:border-atg-border"
+        >
           <Input
             placeholder={t('addresses.label')}
             value={form.label}
@@ -190,11 +207,52 @@ export function AccountAddressesPanel() {
         </Button>
       )}
 
-      {error && (
+      {error ? (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
           {error}
         </p>
-      )}
+      ) : null}
+
+      <Modal
+        open={deleteTarget != null}
+        onOpenChange={(open) => {
+          if (!open && !deleting) setDeleteTarget(null);
+        }}
+        title={t('addresses.deleteTitle')}
+        showClose={!deleting}
+        closeAriaLabel={t('addresses.cancel')}
+        className="max-w-sm"
+      >
+        <p className="text-sm text-atg-muted">
+          {t('addresses.deleteConfirm')}
+          {deleteTarget ? (
+            <>
+              {' '}
+              <span className="font-medium text-atg-fg">({addressLabel(deleteTarget)})</span>
+            </>
+          ) : null}
+        </p>
+        <div className="mt-6 flex flex-wrap justify-end gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            disabled={deleting}
+            onClick={() => setDeleteTarget(null)}
+          >
+            {t('addresses.no')}
+          </Button>
+          <Button
+            type="button"
+            disabled={deleting}
+            loading={deleting}
+            loadingText={t('addresses.deleting')}
+            onClick={() => void confirmDelete()}
+            className="border-red-600 bg-red-600 text-white hover:border-red-700 hover:bg-red-700"
+          >
+            {t('addresses.yes')}
+          </Button>
+        </div>
+      </Modal>
     </div>
   );
 }
