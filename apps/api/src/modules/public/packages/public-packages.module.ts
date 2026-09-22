@@ -26,5 +26,6 @@ import { PublicPackagesService } from './public-packages.service';
   ],
   controllers: [PublicPackagesController],
   providers: [PublicPackagesService],
+  exports: [PublicPackagesService],
 })
 export class PublicPackagesModule {}

@@ -41,3 +41,9 @@ export const ACTIVITY_SITE_SEARCH_WEIGHTS = {
   destination: 60,
   description: 40,
 } as const;
+
+/** Field weights for package catalogue search. */
+export const PACKAGE_SITE_SEARCH_WEIGHTS = {
+  name: 100,
+  description: 40,
+} as const;

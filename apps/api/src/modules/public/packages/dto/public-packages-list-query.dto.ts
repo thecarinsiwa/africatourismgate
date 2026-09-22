@@ -3,7 +3,7 @@ import { IsOptional, IsString, MaxLength } from 'class-validator';
 import { PaginationQueryDto } from '../../../../common/dto/pagination-query.dto';
 
 export class PublicPackagesListQueryDto extends PaginationQueryDto {
-  @ApiPropertyOptional({ description: 'Search by package name' })
+  @ApiPropertyOptional({ description: 'Search by package name or description' })
   @IsOptional()
   @IsString()
   @MaxLength(180)

@@ -1,6 +1,7 @@
 import {
   ACTIVITY_SITE_SEARCH_WEIGHTS,
   HOTEL_SITE_SEARCH_WEIGHTS,
+  PACKAGE_SITE_SEARCH_WEIGHTS,
   scoreSiteSearchTextMatch,
 } from '../../src/modules/public/site-search/site-search-scoring';
 
@@ -65,6 +66,27 @@ describe('site-search-scoring', () => {
     expect(title).toBe(ACTIVITY_SITE_SEARCH_WEIGHTS.title - 5);
     expect(destinationOnly).toBe(ACTIVITY_SITE_SEARCH_WEIGHTS.destination);
     expect(title).toBeGreaterThan(destinationOnly);
+  });
+
+  it('scores package name over description', () => {
+    const name = scoreSiteSearchTextMatch('kinshasa', [
+      { weight: PACKAGE_SITE_SEARCH_WEIGHTS.name, value: 'Kinshasa Duo' },
+      {
+        weight: PACKAGE_SITE_SEARCH_WEIGHTS.description,
+        value: 'Week-end à Kinshasa',
+      },
+    ]);
+    const descriptionOnly = scoreSiteSearchTextMatch('week-end', [
+      { weight: PACKAGE_SITE_SEARCH_WEIGHTS.name, value: 'City Escape' },
+      {
+        weight: PACKAGE_SITE_SEARCH_WEIGHTS.description,
+        value: 'Week-end à Kinshasa',
+      },
+    ]);
+
+    expect(name).toBe(PACKAGE_SITE_SEARCH_WEIGHTS.name - 5);
+    expect(descriptionOnly).toBe(PACKAGE_SITE_SEARCH_WEIGHTS.description - 5);
+    expect(name).toBeGreaterThan(descriptionOnly);
   });
 
   it('returns 0 when nothing matches', () => {

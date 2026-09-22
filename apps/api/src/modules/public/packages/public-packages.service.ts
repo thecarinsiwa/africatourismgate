@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import type { PublicSiteSearchHit } from '@africatourismgate/types';
 import { Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import {
@@ -12,6 +13,10 @@ import {
 } from '../../../entities/generated';
 import { PackageDetailDto, PackageItemEnrichedDto } from '../../resources/packages/dto/package-detail.dto';
 import { PackagesService } from '../../resources/packages/packages.service';
+import {
+  PACKAGE_SITE_SEARCH_WEIGHTS,
+  scoreSiteSearchTextMatch,
+} from '../site-search/site-search-scoring';
 import { PublicPackageListItemDto } from './dto/public-package-list-item.dto';
 import { PublicPackagesListQueryDto } from './dto/public-packages-list-query.dto';
 import { PackageResolveLinesQueryDto } from './dto/package-resolve-lines-query.dto';
@@ -48,7 +53,12 @@ export class PublicPackagesService {
 
     const search = query.search?.trim();
     if (search) {
-      qb.andWhere('pkg.name LIKE :search', { search: `%${search}%` });
+      const pattern = `%${search.toLowerCase()}%`;
+      qb.andWhere(
+        `(LOWER(pkg.name) LIKE :pattern
+          OR LOWER(COALESCE(pkg.description, '')) LIKE :pattern)`,
+        { pattern },
+      );
     }
 
     qb.orderBy('pkg.createdAt', 'DESC')
@@ -74,6 +84,71 @@ export class PublicPackagesService {
         totalPages: Math.ceil(total / limit) || 1,
       },
     };
+  }
+
+  /**
+   * Free-text catalogue search for site-search.
+   * Matches package name and description (active packages only).
+   */
+  async searchCatalog(
+    q: string,
+    limit: number,
+  ): Promise<PublicSiteSearchHit[]> {
+    const term = q.trim().toLowerCase();
+    if (!term || limit < 1) return [];
+
+    const pattern = `%${term}%`;
+    const fetchLimit = Math.min(Math.max(limit * 3, limit), 60);
+
+    const packages = await this.packagesRepository
+      .createQueryBuilder('pkg')
+      .where('pkg.deletedAt IS NULL')
+      .andWhere('pkg.active = 1')
+      .andWhere(
+        `(LOWER(pkg.name) LIKE :pattern
+          OR LOWER(COALESCE(pkg.description, '')) LIKE :pattern)`,
+        { pattern },
+      )
+      .orderBy('pkg.name', 'ASC')
+      .take(fetchLimit)
+      .getMany();
+
+    if (!packages.length) return [];
+
+    const imageUrlByPackageId =
+      await this.packagesService.findPrimaryImageUrlsByPackageIds(
+        packages.map((pkg) => pkg.id),
+      );
+
+    const hits: PublicSiteSearchHit[] = [];
+
+    for (const pkg of packages) {
+      const score = scoreSiteSearchTextMatch(term, [
+        { weight: PACKAGE_SITE_SEARCH_WEIGHTS.name, value: pkg.name },
+        {
+          weight: PACKAGE_SITE_SEARCH_WEIGHTS.description,
+          value: pkg.description,
+        },
+      ]);
+      if (score <= 0) continue;
+
+      const durationLabel =
+        pkg.durationDays > 0 ? `${pkg.durationDays}d` : null;
+
+      hits.push({
+        type: 'packages',
+        id: pkg.id,
+        title: pkg.name,
+        subtitle: durationLabel,
+        href: `/packages/${encodeURIComponent(pkg.id)}`,
+        imageUrl:
+          imageUrlByPackageId.get(pkg.id) ?? pkg.coverImageUrl ?? null,
+        score,
+      });
+    }
+
+    hits.sort((a, b) => b.score - a.score || a.title.localeCompare(b.title));
+    return hits.slice(0, limit);
   }
 
   async getFeatured(): Promise<PublicPackageListItemDto | null> {
