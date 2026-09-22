@@ -56,8 +56,11 @@
     "starRating": "Clasificación (estrellas)",
     "starRatingHint": "Opcional, de 0 a 5",
     "validation": {
-      "destinationRequired": "El destino es obligatorio."
-    }
+      "destinationRequired": "El destino es obligatorio.",
+      "formIncomplete": "Compruebe los campos obligatorios (destino, nombre, slug)."
+    },
+    "noDestinationsHint": "No hay destinos disponibles. Cree uno antes de añadir un alojamiento.",
+    "noDestinationsLink": "Crear un destino"
   },
   "status": {
     "propertyType": {

@@ -56,8 +56,11 @@
     "starRating": "Star rating",
     "starRatingHint": "Optional, 0 to 5",
     "validation": {
-      "destinationRequired": "Destination is required."
-    }
+      "destinationRequired": "Destination is required.",
+      "formIncomplete": "Check the required fields (destination, name, slug)."
+    },
+    "noDestinationsHint": "No destinations available. Create one before adding an accommodation.",
+    "noDestinationsLink": "Create a destination"
   },
   "status": {
     "propertyType": {
