@@ -10,9 +10,17 @@ export async function generateMetadata(): Promise<Metadata> {
     getLocale(),
     getPublicSiteMaintenance(),
   ]);
+  const title =
+    maintenance.localeFallback || !maintenance.title?.trim()
+      ? t('metaTitle')
+      : maintenance.title.trim();
+  const description =
+    maintenance.localeFallback || !maintenance.message?.trim()
+      ? t('metaDescription')
+      : maintenance.message.trim();
   return buildPageMetadata({
-    title: maintenance.title?.trim() || t('metaTitle'),
-    description: maintenance.message?.trim() || t('metaDescription'),
+    title,
+    description,
     path: '/maintenance',
     locale,
     robots: PRIVATE_PAGE_ROBOTS,
@@ -27,6 +35,7 @@ export default async function MaintenanceRoute() {
       title={maintenance.title}
       message={maintenance.message}
       endsAt={maintenance.endsAt}
+      localeFallback={maintenance.localeFallback}
     />
   );
 }

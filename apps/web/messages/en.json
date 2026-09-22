@@ -200,6 +200,7 @@
     "badge": "Maintenance",
     "title": "Under maintenance",
     "message": "The site is temporarily unavailable. We’ll be back soon — thank you for your patience.",
+    "localeFallback": "No maintenance announcement in your language yet — showing the default message.",
     "endsAtLabel": "Expected back: {date}",
     "countdownLabel": "Back online in",
     "countdownDays": "Days",

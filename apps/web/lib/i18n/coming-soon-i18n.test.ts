@@ -24,6 +24,7 @@ const REQUIRED_MAINTENANCE_KEYS = [
   'badge',
   'title',
   'message',
+  'localeFallback',
   'endsAtLabel',
   'countdownLabel',
   'countdownDays',

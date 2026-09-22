@@ -70,7 +70,9 @@ export class OrganizationMaintenancesService extends CrudService<OrganizationMai
     for (const candidate of candidates) {
       const row = await this.findActiveRow(organizationId, candidate);
       if (row) {
-        return toPublicSiteMaintenanceFromRow(row);
+        return toPublicSiteMaintenanceFromRow(row, {
+          localeFallback: candidate !== requested,
+        });
       }
     }
 
@@ -79,7 +81,10 @@ export class OrganizationMaintenancesService extends CrudService<OrganizationMai
     if (!anyRow) {
       return { ...DEFAULT_SITE_MAINTENANCE };
     }
-    return toPublicSiteMaintenanceFromRow(anyRow);
+    return toPublicSiteMaintenanceFromRow(anyRow, {
+      localeFallback:
+        normalizeSiteMaintenanceLocale(anyRow.locale) !== requested,
+    });
   }
 
   private async findActiveRow(

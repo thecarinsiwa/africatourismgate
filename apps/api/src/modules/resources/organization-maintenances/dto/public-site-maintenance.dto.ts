@@ -14,6 +14,12 @@ export class PublicSiteMaintenanceDto implements PublicSiteMaintenance {
   })
   locale!: PublicSiteMaintenance['locale'];
 
+  @ApiProperty({
+    description:
+      'True when the matched window locale differs from the requested UI locale',
+  })
+  localeFallback!: boolean;
+
   @ApiPropertyOptional({
     nullable: true,
     description: 'Custom maintenance page title',

@@ -200,6 +200,7 @@
     "badge": "Maintenance",
     "title": "Maintenance en cours",
     "message": "Le site est temporairement indisponible. Nous revenons bientôt — merci de votre patience.",
+    "localeFallback": "Aucun message de maintenance dans votre langue pour le moment — affichage du texte par défaut.",
     "endsAtLabel": "Retour prévu : {date}",
     "countdownLabel": "Réouverture dans",
     "countdownDays": "Jours",

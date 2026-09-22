@@ -9,6 +9,7 @@ export type MaintenancePageProps = {
   title: string | null;
   message: string | null;
   endsAt: string | null;
+  localeFallback?: boolean;
 };
 
 type CountdownParts = {
@@ -174,11 +175,21 @@ function MaintenanceCountdown({ endsAt }: { endsAt: string }) {
   );
 }
 
-export function MaintenancePage({ title, message, endsAt }: MaintenancePageProps) {
+export function MaintenancePage({
+  title,
+  message,
+  endsAt,
+  localeFallback = false,
+}: MaintenancePageProps) {
   const t = useTranslations('maintenance');
   const locale = useLocale();
   const endsAtFormatted = endsAt ? formatEndsAt(endsAt, locale) : null;
   const showCountdown = Boolean(endsAt && !Number.isNaN(Date.parse(endsAt)));
+  // Pas d’annonce dans la langue choisie → messages UI traduits (pas le texte d’une autre langue).
+  const displayTitle = localeFallback ? t('title') : title?.trim() || t('title');
+  const displayMessage = localeFallback
+    ? t('message')
+    : message?.trim() || t('message');
 
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden bg-atg-surface text-atg-fg">
@@ -196,14 +207,25 @@ export function MaintenancePage({ title, message, endsAt }: MaintenancePageProps
           />
         </div>
 
-        <p className="mt-10 text-xs font-semibold uppercase tracking-[0.22em] text-primary">
+        {localeFallback ? (
+          <p
+            className="mt-8 w-full max-w-lg rounded-lg border border-amber-200/70 bg-amber-50 px-3 py-2 text-sm text-amber-950"
+            role="status"
+          >
+            {t('localeFallback')}
+          </p>
+        ) : null}
+
+        <p
+          className={`${localeFallback ? 'mt-6' : 'mt-10'} text-xs font-semibold uppercase tracking-[0.22em] text-primary`}
+        >
           {t('badge')}
         </p>
         <h1 className="mt-3 max-w-xl text-3xl font-bold tracking-tight text-atg-fg sm:text-4xl md:text-5xl">
-          {title?.trim() || t('title')}
+          {displayTitle}
         </h1>
         <p className="mt-5 max-w-lg text-base leading-relaxed text-atg-muted sm:text-lg">
-          {message?.trim() || t('message')}
+          {displayMessage}
         </p>
 
         {endsAtFormatted ? (

@@ -56,6 +56,8 @@ export interface OrganizationMaintenancesListQuery {
 export interface PublicSiteMaintenance {
   enabled: boolean;
   locale: SiteMaintenanceLocale | null;
+  /** True when the active window is not in the requested UI locale. */
+  localeFallback: boolean;
   title: string | null;
   message: string | null;
   /** ISO 8601 — début de fenêtre (optionnel pour compat legacy). */
@@ -66,6 +68,7 @@ export interface PublicSiteMaintenance {
 export const DEFAULT_SITE_MAINTENANCE: PublicSiteMaintenance = {
   enabled: false,
   locale: null,
+  localeFallback: false,
   title: null,
   message: null,
   startsAt: null,
@@ -76,6 +79,7 @@ export const DEFAULT_SITE_MAINTENANCE: PublicSiteMaintenance = {
 export interface SiteMaintenanceSettingValue {
   enabled: boolean;
   locale?: string | null;
+  localeFallback?: boolean;
   title?: string;
   message?: string;
   endsAt?: string | null;
@@ -115,6 +119,7 @@ export function normalizeSiteMaintenance(
     locale: value.locale
       ? normalizeSiteMaintenanceLocale(value.locale)
       : null,
+    localeFallback: value.localeFallback === true,
     title,
     message,
     startsAt: parseIsoOrNull(value.startsAt),
@@ -153,14 +158,17 @@ export function isSiteMaintenanceActive(
   return endMs > nowMs;
 }
 
-export function toPublicSiteMaintenanceFromRow(row: {
-  enabled: boolean;
-  locale?: string | null;
-  title: string | null;
-  message: string | null;
-  startsAt: Date | string;
-  endsAt: Date | string | null;
-}): PublicSiteMaintenance {
+export function toPublicSiteMaintenanceFromRow(
+  row: {
+    enabled: boolean;
+    locale?: string | null;
+    title: string | null;
+    message: string | null;
+    startsAt: Date | string;
+    endsAt: Date | string | null;
+  },
+  options?: { localeFallback?: boolean },
+): PublicSiteMaintenance {
   const startsAt =
     row.startsAt instanceof Date
       ? row.startsAt.toISOString()
@@ -177,6 +185,7 @@ export function toPublicSiteMaintenanceFromRow(row: {
     locale: row.locale
       ? normalizeSiteMaintenanceLocale(row.locale)
       : null,
+    localeFallback: options?.localeFallback === true,
     title: row.title?.trim() ? row.title.trim() : null,
     message: row.message?.trim() ? row.message.trim() : null,
     startsAt,
