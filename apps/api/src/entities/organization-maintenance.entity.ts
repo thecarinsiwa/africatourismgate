@@ -9,6 +9,9 @@ export class OrganizationMaintenances extends BaseAuditEntity {
   @Column({ type: 'char', name: 'organization_id', length: 36 })
   organizationId!: string;
 
+  @Column({ type: 'varchar', name: 'locale', length: 5, default: 'fr' })
+  locale!: string;
+
   @Column({ type: 'varchar', name: 'title', length: 200, nullable: true })
   title!: string | null;
 

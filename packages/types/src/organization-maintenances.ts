@@ -1,8 +1,25 @@
 import type { AuditFields } from './index.js';
 
+export const SITE_MAINTENANCE_LOCALES = ['fr', 'en', 'es'] as const;
+export type SiteMaintenanceLocale = (typeof SITE_MAINTENANCE_LOCALES)[number];
+export const DEFAULT_SITE_MAINTENANCE_LOCALE: SiteMaintenanceLocale = 'fr';
+
+export function normalizeSiteMaintenanceLocale(
+  value?: string | null,
+): SiteMaintenanceLocale {
+  const trimmed = typeof value === 'string' ? value.trim().toLowerCase() : '';
+  if (
+    SITE_MAINTENANCE_LOCALES.includes(trimmed as SiteMaintenanceLocale)
+  ) {
+    return trimmed as SiteMaintenanceLocale;
+  }
+  return DEFAULT_SITE_MAINTENANCE_LOCALE;
+}
+
 export interface OrganizationMaintenance extends AuditFields {
   id: string;
   organizationId: string;
+  locale: SiteMaintenanceLocale;
   title: string | null;
   message: string | null;
   enabled: boolean;
@@ -14,6 +31,7 @@ export interface OrganizationMaintenance extends AuditFields {
 
 export interface CreateOrganizationMaintenanceRequest {
   organizationId?: string;
+  locale?: SiteMaintenanceLocale;
   title?: string | null;
   message?: string | null;
   enabled?: boolean;
@@ -28,6 +46,7 @@ export interface OrganizationMaintenancesListQuery {
   page?: number;
   limit?: number;
   organizationId?: string;
+  locale?: SiteMaintenanceLocale;
 }
 
 /**
@@ -36,6 +55,7 @@ export interface OrganizationMaintenancesListQuery {
  */
 export interface PublicSiteMaintenance {
   enabled: boolean;
+  locale: SiteMaintenanceLocale | null;
   title: string | null;
   message: string | null;
   /** ISO 8601 — début de fenêtre (optionnel pour compat legacy). */
@@ -45,6 +65,7 @@ export interface PublicSiteMaintenance {
 
 export const DEFAULT_SITE_MAINTENANCE: PublicSiteMaintenance = {
   enabled: false,
+  locale: null,
   title: null,
   message: null,
   startsAt: null,
@@ -54,6 +75,7 @@ export const DEFAULT_SITE_MAINTENANCE: PublicSiteMaintenance = {
 /** Ancien shape EAV (sans startsAt). */
 export interface SiteMaintenanceSettingValue {
   enabled: boolean;
+  locale?: string | null;
   title?: string;
   message?: string;
   endsAt?: string | null;
@@ -90,6 +112,9 @@ export function normalizeSiteMaintenance(
 
   return {
     enabled,
+    locale: value.locale
+      ? normalizeSiteMaintenanceLocale(value.locale)
+      : null,
     title,
     message,
     startsAt: parseIsoOrNull(value.startsAt),
@@ -130,6 +155,7 @@ export function isSiteMaintenanceActive(
 
 export function toPublicSiteMaintenanceFromRow(row: {
   enabled: boolean;
+  locale?: string | null;
   title: string | null;
   message: string | null;
   startsAt: Date | string;
@@ -148,6 +174,9 @@ export function toPublicSiteMaintenanceFromRow(row: {
 
   return {
     enabled: Boolean(row.enabled),
+    locale: row.locale
+      ? normalizeSiteMaintenanceLocale(row.locale)
+      : null,
     title: row.title?.trim() ? row.title.trim() : null,
     message: row.message?.trim() ? row.message.trim() : null,
     startsAt,

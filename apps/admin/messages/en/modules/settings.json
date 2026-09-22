@@ -493,12 +493,15 @@
       "cancel": "Cancel",
       "untitled": "Untitled",
       "tableAria": "Maintenance windows list",
+      "localeFilter": "Language",
+      "allLocales": "All languages",
       "enabledYes": "Enabled",
       "enabledNo": "Disabled",
       "statusActive": "Active",
       "statusInactive": "Inactive",
       "columns": {
         "title": "Title",
+        "locale": "Language",
         "window": "Window",
         "enabled": "Enabled",
         "status": "Status"
@@ -513,6 +516,7 @@
       "fields": {
         "enabled": "Enable this window",
         "enabledHint": "The public site enters maintenance only when this window is enabled and the current time falls within the interval.",
+        "locale": "Language",
         "title": "Page title",
         "titlePlaceholder": "Under maintenance",
         "titleHint": "Optional — otherwise the public page default title is used.",

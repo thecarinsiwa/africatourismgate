@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from '../../auth/decorators/public.decorator';
-import { PublicBrandingQueryDto } from '../organization-settings/dto/public-branding-query.dto';
+import { PublicCurrentMaintenanceQueryDto } from './dto/public-current-maintenance-query.dto';
 import { PublicSiteMaintenanceDto } from './dto/public-site-maintenance.dto';
 import { OrganizationMaintenancesService } from './organization-maintenances.service';
 
@@ -14,12 +14,12 @@ export class PublicOrganizationMaintenancesController {
   @Get('public/organization-maintenances/current')
   @ApiOperation({
     summary:
-      'Current active site-maintenance window for the public site (by organization slug)',
+      'Current active site-maintenance window for the public site (by organization slug + locale)',
   })
   @ApiOkResponse({ type: PublicSiteMaintenanceDto })
   current(
-    @Query() query: PublicBrandingQueryDto,
+    @Query() query: PublicCurrentMaintenanceQueryDto,
   ): Promise<PublicSiteMaintenanceDto> {
-    return this.service.findPublicCurrent(query.organizationSlug);
+    return this.service.findPublicCurrent(query.organizationSlug, query.locale);
   }
 }

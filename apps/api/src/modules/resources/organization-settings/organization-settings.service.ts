@@ -366,9 +366,10 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
 
   async findPublicSiteMaintenance(
     organizationSlug?: string,
+    locale?: string,
   ): Promise<PublicSiteMaintenanceDto> {
     const organization = await this.resolvePublicOrganization(organizationSlug);
-    return this.getResolvedSiteMaintenance(organization.id);
+    return this.getResolvedSiteMaintenance(organization.id, locale);
   }
 
   async getResolvedItemTypeModes(
@@ -452,8 +453,12 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
 
   async getResolvedSiteMaintenance(
     organizationId: string = PLATFORM_ORG_ID,
+    locale?: string,
   ): Promise<PublicSiteMaintenance> {
-    return this.organizationMaintenancesService.getResolvedCurrent(organizationId);
+    return this.organizationMaintenancesService.getResolvedCurrent(
+      organizationId,
+      locale,
+    );
   }
 
   private async resolvePublicOrganization(

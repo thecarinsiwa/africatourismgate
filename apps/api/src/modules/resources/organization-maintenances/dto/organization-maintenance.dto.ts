@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import type { OrganizationMaintenance } from '@africatourismgate/types';
+import type { OrganizationMaintenance, SiteMaintenanceLocale } from '@africatourismgate/types';
+import { normalizeSiteMaintenanceLocale } from '@africatourismgate/types';
 import { OrganizationMaintenances } from '../../../../entities/organization-maintenance.entity';
 
 export class OrganizationMaintenanceDto implements OrganizationMaintenance {
@@ -8,6 +9,9 @@ export class OrganizationMaintenanceDto implements OrganizationMaintenance {
 
   @ApiProperty({ format: 'uuid' })
   organizationId!: string;
+
+  @ApiProperty({ enum: ['fr', 'en', 'es'] })
+  locale!: SiteMaintenanceLocale;
 
   @ApiPropertyOptional({ nullable: true })
   title!: string | null;
@@ -54,6 +58,7 @@ export function toOrganizationMaintenanceDto(
   return {
     id: row.id,
     organizationId: row.organizationId,
+    locale: normalizeSiteMaintenanceLocale(row.locale),
     title: row.title ?? null,
     message: row.message ?? null,
     enabled: Boolean(row.enabled),

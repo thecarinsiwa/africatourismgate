@@ -15,10 +15,12 @@ import {
   isSiteMaintenanceActive,
   type OrganizationListItem,
   type OrganizationMaintenance,
+  type SiteMaintenanceLocale,
 } from '@africatourismgate/types';
+import { SITE_MAINTENANCE_LOCALES } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { getApiClient } from '../../lib/auth/api';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
@@ -42,9 +44,11 @@ function formatWindowDate(iso: string | null, locale: string): string {
 export function MaintenancesList() {
   const { organizationSettings: getErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.settings.maintenances.list');
+  const tLocale = useTranslations('modules.about.locale');
   const tCommon = useTranslations('modules.common');
   const router = useRouter();
   const searchParams = useSearchParams();
+  const localeFilterId = useId();
 
   const [accessError, setAccessError] = useState<string | null>(null);
   const [canWrite, setCanWrite] = useState(false);
@@ -52,6 +56,7 @@ export function MaintenancesList() {
   const [organizationId, setOrganizationId] = useState<string | null>(null);
   const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [page, setPage] = useState(1);
+  const [localeFilter, setLocaleFilter] = useState<'' | SiteMaintenanceLocale>('');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -71,13 +76,19 @@ export function MaintenancesList() {
   useSetAdminPageMeta({ title: t('pageTitle') });
 
   const load = useCallback(
-    async (orgId: string, superAdmin: boolean, pageNum: number) => {
+    async (
+      orgId: string,
+      superAdmin: boolean,
+      pageNum: number,
+      locale?: '' | SiteMaintenanceLocale,
+    ) => {
       setState({ status: 'loading' });
       try {
         const result = await getApiClient().listOrganizationMaintenances({
           ...(superAdmin ? { organizationId: orgId } : {}),
           page: pageNum,
           limit: PAGE_SIZE,
+          ...(locale ? { locale } : {}),
         });
         setState({
           status: 'ready',
@@ -137,8 +148,8 @@ export function MaintenancesList() {
 
   useEffect(() => {
     if (!organizationId || accessError) return;
-    void load(organizationId, isSuperAdmin, page);
-  }, [page, organizationId, isSuperAdmin, accessError, load]);
+    void load(organizationId, isSuperAdmin, page, localeFilter);
+  }, [page, organizationId, isSuperAdmin, accessError, load, localeFilter]);
 
   const handleOrganizationChange = useCallback(
     (id: string) => {
@@ -199,6 +210,16 @@ export function MaintenancesList() {
               <p className="line-clamp-2 text-xs text-atg-muted">{row.original.message}</p>
             ) : null}
           </div>
+        ),
+      },
+      {
+        id: 'locale',
+        header: t('columns.locale'),
+        meta: { align: 'center', hideOnMobile: true, cellClassName: 'whitespace-nowrap' },
+        cell: ({ row }) => (
+          <span className="text-sm text-atg-muted">
+            {tLocale(row.original.locale)}
+          </span>
         ),
       },
       {
@@ -279,6 +300,7 @@ export function MaintenancesList() {
       organizationId,
       t,
       tCommon,
+      tLocale,
     ],
   );
 
@@ -337,6 +359,31 @@ export function MaintenancesList() {
               onChange={handleOrganizationChange}
             />
           ) : null}
+
+          <div className="max-w-xs">
+            <label
+              htmlFor={localeFilterId}
+              className="mb-1 block text-xs font-medium text-muted-foreground"
+            >
+              {t('localeFilter')}
+            </label>
+            <select
+              id={localeFilterId}
+              value={localeFilter}
+              onChange={(e) => {
+                setLocaleFilter(e.target.value as '' | SiteMaintenanceLocale);
+                setPage(1);
+              }}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            >
+              <option value="">{t('allLocales')}</option>
+              {SITE_MAINTENANCE_LOCALES.map((code) => (
+                <option key={code} value={code}>
+                  {tLocale(code)}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {state.status === 'error' ? (
             <p className="text-sm text-destructive" role="alert">

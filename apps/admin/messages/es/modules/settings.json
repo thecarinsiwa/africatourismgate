@@ -493,12 +493,15 @@
       "cancel": "Cancelar",
       "untitled": "Sin título",
       "tableAria": "Lista de ventanas de mantenimiento",
+      "localeFilter": "Idioma",
+      "allLocales": "Todos los idiomas",
       "enabledYes": "Activada",
       "enabledNo": "Desactivada",
       "statusActive": "En curso",
       "statusInactive": "Inactiva",
       "columns": {
         "title": "Título",
+        "locale": "Idioma",
         "window": "Ventana",
         "enabled": "Activación",
         "status": "Estado"
@@ -513,6 +516,7 @@
       "fields": {
         "enabled": "Activar esta ventana",
         "enabledHint": "El sitio público entra en mantenimiento solo si la ventana está activada y la fecha/hora actual está en el intervalo.",
+        "locale": "Idioma",
         "title": "Título de la página",
         "titlePlaceholder": "Mantenimiento en curso",
         "titleHint": "Opcional — de lo contrario se usa el título predeterminado de la página pública.",

@@ -4,7 +4,9 @@ import { Button, Card, Input, Textarea } from '@africatourismgate/ui';
 import type {
   CreateOrganizationMaintenanceRequest,
   OrganizationMaintenance,
+  SiteMaintenanceLocale,
 } from '@africatourismgate/types';
+import { SITE_MAINTENANCE_LOCALES } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useId, useState } from 'react';
@@ -17,6 +19,7 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 export type MaintenanceFormValues = {
   enabled: boolean;
+  locale: SiteMaintenanceLocale;
   title: string;
   message: string;
   startsAtLocal: string;
@@ -29,6 +32,7 @@ function defaultStartsAtLocal(): string {
 
 const defaultValues: MaintenanceFormValues = {
   enabled: false,
+  locale: 'fr',
   title: '',
   message: '',
   startsAtLocal: '',
@@ -40,6 +44,7 @@ function maintenanceToFormValues(
 ): MaintenanceFormValues {
   return {
     enabled: row.enabled,
+    locale: row.locale,
     title: row.title ?? '',
     message: row.message ?? '',
     startsAtLocal: row.startsAt ? toDatetimeLocalValue(row.startsAt) : '',
@@ -66,6 +71,7 @@ export function MaintenanceForm({
 }: MaintenanceFormProps) {
   const { organizationSettings: getErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.settings.maintenances.form');
+  const tLocale = useTranslations('modules.about.locale');
   const router = useRouter();
 
   const [values, setValues] = useState<MaintenanceFormValues>(() =>
@@ -84,6 +90,7 @@ export function MaintenanceForm({
   const startsAtId = useId();
   const endsAtId = useId();
   const enabledId = useId();
+  const localeId = useId();
 
   const updateField = useCallback(
     <K extends keyof MaintenanceFormValues>(key: K, value: MaintenanceFormValues[K]) => {
@@ -130,6 +137,7 @@ export function MaintenanceForm({
 
     const payload: CreateOrganizationMaintenanceRequest = {
       ...(isSuperAdmin ? { organizationId } : {}),
+      locale: values.locale,
       enabled: values.enabled,
       title: values.title.trim() || null,
       message: values.message.trim() || null,
@@ -177,6 +185,27 @@ export function MaintenanceForm({
             </label>
             <p className="text-xs text-muted-foreground">{t('fields.enabledHint')}</p>
           </div>
+        </div>
+
+        <div>
+          <label htmlFor={localeId} className="mb-1 block text-sm font-medium">
+            {t('fields.locale')}
+          </label>
+          <select
+            id={localeId}
+            value={values.locale}
+            disabled={!canWrite || saving}
+            onChange={(e) =>
+              updateField('locale', e.target.value as SiteMaintenanceLocale)
+            }
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+          >
+            {SITE_MAINTENANCE_LOCALES.map((code) => (
+              <option key={code} value={code}>
+                {tLocale(code)}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>

@@ -4,9 +4,24 @@ import {
   isSiteMaintenanceActive,
   type PublicSiteMaintenance,
 } from '@africatourismgate/types/organization-settings';
+import { defaultLocale, LOCALE_COOKIE, locales, type AppLocale } from './i18n/routing';
 
 const MAINTENANCE_FETCH_TIMEOUT_MS = 2_000;
 const DEFAULT_API = 'http://127.0.0.1:3000/api';
+
+function resolveRequestLocale(request: NextRequest): AppLocale {
+  const cookieLocale = request.cookies.get(LOCALE_COOKIE)?.value;
+  if (cookieLocale && locales.includes(cookieLocale as AppLocale)) {
+    return cookieLocale as AppLocale;
+  }
+  return defaultLocale;
+}
+
+function withLocaleQuery(url: string, locale: string): string {
+  const parsed = new URL(url);
+  parsed.searchParams.set('locale', locale);
+  return parsed.toString();
+}
 
 function shouldBypassMaintenanceGate(pathname: string): boolean {
   if (pathname === '/maintenance' || pathname.startsWith('/maintenance/')) {
@@ -32,6 +47,7 @@ function shouldBypassMaintenanceGate(pathname: string): boolean {
  *   so we hit the Next `/api` rewrite without a self-deadlock on a second host.
  */
 function maintenanceStatusUrls(request: NextRequest): string[] {
+  const locale = resolveRequestLocale(request);
   const configured = (process.env.NEXT_PUBLIC_API_URL ?? DEFAULT_API)
     .replace(/\/$/, '')
     .replace('://localhost', '://127.0.0.1');
@@ -50,17 +66,25 @@ function maintenanceStatusUrls(request: NextRequest): string[] {
 
     if (samePort && loopback) {
       urls.push(
-        new URL(
-          '/api/public/organization-maintenances/current',
-          request.nextUrl.origin,
-        ).toString(),
+        withLocaleQuery(
+          new URL(
+            '/api/public/organization-maintenances/current',
+            request.nextUrl.origin,
+          ).toString(),
+          locale,
+        ),
       );
     }
   } catch {
     // ignore invalid URL
   }
 
-  urls.push(`${configured}/public/organization-maintenances/current`);
+  urls.push(
+    withLocaleQuery(
+      `${configured}/public/organization-maintenances/current`,
+      locale,
+    ),
+  );
 
   return [...new Set(urls)];
 }

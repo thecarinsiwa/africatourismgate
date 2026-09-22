@@ -503,14 +503,18 @@ export type {
   OrganizationMaintenance,
   OrganizationMaintenancesListQuery,
   PublicSiteMaintenance,
+  SiteMaintenanceLocale,
   SiteMaintenanceSettingValue,
   UpdateOrganizationMaintenanceRequest,
 } from './organization-maintenances.js';
 
 export {
   DEFAULT_SITE_MAINTENANCE,
+  DEFAULT_SITE_MAINTENANCE_LOCALE,
+  SITE_MAINTENANCE_LOCALES,
   isSiteMaintenanceActive,
   normalizeSiteMaintenance,
+  normalizeSiteMaintenanceLocale,
   toPublicSiteMaintenanceFromRow,
 } from './organization-maintenances.js';
 

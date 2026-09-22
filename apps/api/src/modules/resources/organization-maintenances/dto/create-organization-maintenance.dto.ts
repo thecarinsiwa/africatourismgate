@@ -2,18 +2,27 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsDateString,
+  IsIn,
   IsOptional,
   IsString,
   IsUUID,
   MaxLength,
   ValidateIf,
 } from 'class-validator';
+import { SITE_MAINTENANCE_LOCALES } from '@africatourismgate/types';
 
 export class CreateOrganizationMaintenanceDto {
   @ApiPropertyOptional({ format: 'uuid' })
   @IsOptional()
   @IsUUID('4', { message: 'organizationId doit être un UUID valide.' })
   organizationId?: string;
+
+  @ApiPropertyOptional({ enum: SITE_MAINTENANCE_LOCALES, default: 'fr' })
+  @IsOptional()
+  @IsIn([...SITE_MAINTENANCE_LOCALES], {
+    message: 'locale doit être fr, en ou es.',
+  })
+  locale?: string;
 
   @ApiPropertyOptional({ nullable: true, maxLength: 200 })
   @IsOptional()

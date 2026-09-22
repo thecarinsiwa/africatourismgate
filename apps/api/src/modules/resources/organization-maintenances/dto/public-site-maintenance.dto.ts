@@ -9,6 +9,13 @@ export class PublicSiteMaintenanceDto implements PublicSiteMaintenance {
 
   @ApiPropertyOptional({
     nullable: true,
+    enum: ['fr', 'en', 'es'],
+    description: 'Locale of the matched maintenance window',
+  })
+  locale!: PublicSiteMaintenance['locale'];
+
+  @ApiPropertyOptional({
+    nullable: true,
     description: 'Custom maintenance page title',
   })
   title!: string | null;

@@ -4,6 +4,7 @@
 CREATE TABLE IF NOT EXISTS `organization_maintenances` (
   `id` CHAR(36) NOT NULL,
   `organization_id` CHAR(36) NOT NULL,
+  `locale` VARCHAR(5) NOT NULL DEFAULT 'fr',
   `title` VARCHAR(200) DEFAULT NULL,
   `message` TEXT DEFAULT NULL,
   `enabled` TINYINT(1) NOT NULL DEFAULT 0,
@@ -18,6 +19,7 @@ CREATE TABLE IF NOT EXISTS `organization_maintenances` (
   PRIMARY KEY (`id`),
   KEY `idx_org_maintenances_org` (`organization_id`),
   KEY `idx_org_maintenances_active_window` (`organization_id`, `enabled`, `starts_at`, `ends_at`),
+  KEY `idx_org_maintenances_locale` (`organization_id`, `locale`, `enabled`, `starts_at`, `ends_at`),
   KEY `idx_org_maintenances_deleted_at` (`deleted_at`),
   CONSTRAINT `fk_org_maintenances_org` FOREIGN KEY (`organization_id`) REFERENCES `organizations` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_org_maintenances_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
@@ -29,6 +31,7 @@ CREATE TABLE IF NOT EXISTS `organization_maintenances` (
 INSERT INTO `organization_maintenances` (
   `id`,
   `organization_id`,
+  `locale`,
   `title`,
   `message`,
   `enabled`,
@@ -40,6 +43,7 @@ INSERT INTO `organization_maintenances` (
 SELECT
   UUID(),
   os.`organization_id`,
+  'fr',
   NULLIF(TRIM(BOTH '"' FROM JSON_UNQUOTE(JSON_EXTRACT(os.`setting_value`, '$.title'))), ''),
   NULLIF(TRIM(BOTH '"' FROM JSON_UNQUOTE(JSON_EXTRACT(os.`setting_value`, '$.message'))), ''),
   IF(

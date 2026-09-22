@@ -6,10 +6,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   DEFAULT_SITE_MAINTENANCE,
+  DEFAULT_SITE_MAINTENANCE_LOCALE,
+  normalizeSiteMaintenanceLocale,
   toPublicSiteMaintenanceFromRow,
   type PublicSiteMaintenance,
 } from '@africatourismgate/types';
-import { IsNull, LessThanOrEqual, MoreThan, Repository } from 'typeorm';
+import { IsNull, LessThanOrEqual, MoreThan, type FindOptionsWhere, Repository } from 'typeorm';
 import {
   OrgScopeService,
   PLATFORM_ORG_ID,
@@ -41,10 +43,13 @@ export class OrganizationMaintenancesService extends CrudService<OrganizationMai
   }
 
   /** Fenêtre active courante pour le site public (fail-open → inactif). */
-  async findPublicCurrent(organizationSlug?: string): Promise<PublicSiteMaintenance> {
+  async findPublicCurrent(
+    organizationSlug?: string,
+    locale?: string,
+  ): Promise<PublicSiteMaintenance> {
     try {
       const organization = await this.resolvePublicOrganization(organizationSlug);
-      return this.getResolvedCurrent(organization.id);
+      return this.getResolvedCurrent(organization.id, locale);
     } catch {
       return { ...DEFAULT_SITE_MAINTENANCE };
     }
@@ -52,33 +57,51 @@ export class OrganizationMaintenancesService extends CrudService<OrganizationMai
 
   async getResolvedCurrent(
     organizationId: string = PLATFORM_ORG_ID,
+    locale?: string,
   ): Promise<PublicSiteMaintenance> {
+    const requested = normalizeSiteMaintenanceLocale(locale);
+    const candidates = [
+      requested,
+      ...(requested !== DEFAULT_SITE_MAINTENANCE_LOCALE
+        ? [DEFAULT_SITE_MAINTENANCE_LOCALE]
+        : []),
+    ];
+
+    for (const candidate of candidates) {
+      const row = await this.findActiveRow(organizationId, candidate);
+      if (row) {
+        return toPublicSiteMaintenanceFromRow(row);
+      }
+    }
+
+    // Dernier recours : toute fenêtre active (gate global, contenu d’une autre langue).
+    const anyRow = await this.findActiveRow(organizationId);
+    if (!anyRow) {
+      return { ...DEFAULT_SITE_MAINTENANCE };
+    }
+    return toPublicSiteMaintenanceFromRow(anyRow);
+  }
+
+  private async findActiveRow(
+    organizationId: string,
+    locale?: string,
+  ): Promise<OrganizationMaintenances | null> {
     const now = new Date();
-    const row = await this.maintenancesRepository.findOne({
+    const base: FindOptionsWhere<OrganizationMaintenances> = {
+      organizationId,
+      enabled: true,
+      deletedAt: IsNull(),
+      startsAt: LessThanOrEqual(now),
+      ...(locale ? { locale } : {}),
+    };
+
+    return this.maintenancesRepository.findOne({
       where: [
-        {
-          organizationId,
-          enabled: true,
-          deletedAt: IsNull(),
-          startsAt: LessThanOrEqual(now),
-          endsAt: IsNull(),
-        },
-        {
-          organizationId,
-          enabled: true,
-          deletedAt: IsNull(),
-          startsAt: LessThanOrEqual(now),
-          endsAt: MoreThan(now),
-        },
+        { ...base, endsAt: IsNull() },
+        { ...base, endsAt: MoreThan(now) },
       ],
       order: { startsAt: 'DESC' },
     });
-
-    if (!row) {
-      return { ...DEFAULT_SITE_MAINTENANCE };
-    }
-
-    return toPublicSiteMaintenanceFromRow(row);
   }
 
   async list(
@@ -92,9 +115,16 @@ export class OrganizationMaintenancesService extends CrudService<OrganizationMai
 
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
+    const locale = query.locale
+      ? normalizeSiteMaintenanceLocale(query.locale)
+      : undefined;
 
     const [rows, total] = await this.maintenancesRepository.findAndCount({
-      where: { organizationId, deletedAt: IsNull() },
+      where: {
+        organizationId,
+        deletedAt: IsNull(),
+        ...(locale ? { locale } : {}),
+      },
       skip: (page - 1) * limit,
       take: limit,
       order: { startsAt: 'DESC' },
@@ -147,6 +177,7 @@ export class OrganizationMaintenancesService extends CrudService<OrganizationMai
       {
         id: newId(),
         organizationId,
+        locale: normalizeSiteMaintenanceLocale(dto.locale),
         title: this.normalizeOptionalText(dto.title),
         message: this.normalizeOptionalText(dto.message),
         enabled: dto.enabled === true,
@@ -185,6 +216,9 @@ export class OrganizationMaintenancesService extends CrudService<OrganizationMai
     const updated = await this.update(
       id,
       {
+        ...(dto.locale !== undefined
+          ? { locale: normalizeSiteMaintenanceLocale(dto.locale) }
+          : {}),
         ...(dto.title !== undefined
           ? { title: this.normalizeOptionalText(dto.title) }
           : {}),
