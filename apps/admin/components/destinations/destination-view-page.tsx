@@ -160,9 +160,11 @@ export function DestinationViewPage({ destinationId }: DestinationViewPageProps)
 
   const countryLabel = getIsoCountryLabel(destination.countryCode, locale);
   const heroUrl = destination.imageUrl?.trim() || null;
-  const hasMap = hasValidDestinationCoords(destination.latitude, destination.longitude);
+  const hasMap =
+    hasValidDestinationCoords(destination.latitude, destination.longitude) ||
+    /^[A-Z]{2}$/.test(destination.countryCode.trim().toUpperCase());
   const coordsLabel =
-    hasMap
+    hasValidDestinationCoords(destination.latitude, destination.longitude)
       ? `${formatCoord(destination.latitude, emptyDash)}, ${formatCoord(destination.longitude, emptyDash)}`
       : emptyDash;
 
@@ -302,6 +304,7 @@ export function DestinationViewPage({ destinationId }: DestinationViewPageProps)
 
             {hasMap ? (
               <DestinationStaticMap
+                countryCode={destination.countryCode}
                 latitude={destination.latitude}
                 longitude={destination.longitude}
                 title={t('mapTitle')}
