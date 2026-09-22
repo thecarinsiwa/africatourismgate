@@ -1,0 +1,206 @@
+{
+  "ui": {
+    "pageTitle": "Help Center",
+    "pageSubtitle": "How to use the Africa Tourism Gate admin panel?",
+    "searchLabel": "Search help",
+    "searchPlaceholder": "Search a help article…",
+    "searchNoResults": "No articles match your search.",
+    "searchNoResultsHint": "Try these quick-start articles instead:",
+    "searchResultsAria": "Search results",
+    "searchResultsCount": "{count, plural, one {# article} other {# articles}}",
+    "searchSuggestionsAria": "Popular article suggestions",
+    "categoriesTitle": "Browse by topic",
+    "categoriesSubtitle": "Pick a topic to find detailed answers.",
+    "popularTitle": "Popular articles",
+    "popularSubtitle": "The most useful topics to get started.",
+    "quickStartTitle": "Quick start",
+    "quickStartSubtitle": "First steps to get familiar with the admin panel.",
+    "articlesInCategory": "{count, plural, one {# article} other {# articles}}",
+    "relatedTitle": "Related articles",
+    "breadcrumbHome": "Help Center",
+    "backToCategory": "Back to topic",
+    "backToHub": "Back to Help Center",
+    "contextualHelp": "Open the Help Center",
+    "openContextualHelp": "Open help for this page"
+  },
+  "categories": {
+    "prise-en-main": {
+      "title": "Getting started",
+      "description": "Dashboard, notifications, command palette, and shortcuts."
+    },
+    "utilisateurs-acces": {
+      "title": "Users & access",
+      "description": "Accounts, employees, sessions, and security."
+    },
+    "produits-voyage": {
+      "title": "Travel products",
+      "description": "Accommodations, flights, rentals, cruises, and more."
+    },
+    "reservations-guides": {
+      "title": "Bookings & guides",
+      "description": "Booking follow-up and guide calendar."
+    },
+    "paiements-promos": {
+      "title": "Payments & promos",
+      "description": "Payments, promo codes, and promotions."
+    },
+    "gap": {
+      "title": "GAP",
+      "description": "Settings, pages, activities, impact, and media."
+    },
+    "contenu-relation": {
+      "title": "Content & customer relations",
+      "description": "Blog, site, legal, reviews, and support tickets."
+    },
+    "fidelite": {
+      "title": "Loyalty",
+      "description": "OneKey accounts and loyalty program."
+    },
+    "systeme": {
+      "title": "System & organization",
+      "description": "Organizations, roles, permissions, and settings."
+    }
+  },
+  "articles": {
+    "naviguer-dans-le-dashboard": {
+      "title": "Navigate the dashboard",
+      "summary": "Key landmarks: sidebar, breadcrumbs, notifications, and quick help access.",
+      "body": "After you sign in, the [dashboard](/dashboard) shows KPIs and recent activity. The left sidebar groups modules: users, products, bookings, payments, content, GAP, and system.\n\nThe breadcrumb at the top of the page shows where you are and lets you move up one level. On mobile, open the menu with the hamburger icon. The bell icon opens the [notification center](/notifications) without leaving the current page.\n\nUse the [Help Center](/aide) or the command palette (Ctrl+K) to reach a page quickly without scanning the whole menu. On every screen, the Help icon in the header opens the recommended article for the current module.\n\nTip: start with Quick start on /aide (users, bookings, roles, tickets) to learn the daily actions before exploring advanced topics."
+    },
+    "notifications": {
+      "title": "Notification center",
+      "summary": "View, filter, and process admin alerts.",
+      "body": "Open Notifications in the menu (or the bell icon) to reach the [notification center](/notifications). You will find alerts related to bookings, messages, support tickets, and other events.\n\nFilter by type or status to focus on what still needs action. Mark items as read after you handle them to keep the inbox clear.\n\nBadges in the navigation (pending reviews, open tickets) link to the relevant modules."
+    },
+    "palette-commandes": {
+      "title": "Command palette (Ctrl+K)",
+      "summary": "Jump to any admin page in a few keystrokes, including off-menu routes.",
+      "body": "Press Ctrl+K (or Cmd+K on Mac) to open the command palette. Type the start of a menu label (for example “accommodations”, “roles”, or “help”) to filter destinations.\n\nPress Enter to navigate immediately. The palette lists menu pages and some nested routes outside the sidebar (new forms, role assignments, email settings, and so on).\n\nClose the palette with Escape. Press ? to show keyboard-shortcut help, then follow the link to the [Help Center](/aide) if needed.\n\nCombine the palette with the header Help icon: the first teleports you, the second opens docs for the module you are on."
+    },
+    "raccourcis-clavier": {
+      "title": "Keyboard shortcuts",
+      "summary": "Open shortcut help with ? and use Ctrl+K.",
+      "body": "Press the ? key (when you are not typing in a field) to open the keyboard shortcuts panel. It lists combinations available in the admin shell.\n\nThe main shortcut is Ctrl+K / Cmd+K for the command palette. Other shortcuts may appear in this panel depending on the UI version.\n\nIf a shortcut does nothing, check that no text field has focus and that you are not on a login page."
+    },
+    "gerer-les-utilisateurs": {
+      "title": "Manage users",
+      "summary": "Create, search, and update accounts — the foundation of platform access.",
+      "body": "The [Users](/utilisateurs) module lists customer and staff accounts on the platform. Filter by status or organization, then open a record to view or edit the profile.\n\nTo create an account, use New user. Fill in the required fields and save. Depending on your permissions (users.read / users.write), some actions may be hidden.\n\nFrom the record you can review details, link an employee profile, or go to [sessions](/utilisateurs/sessions) and [security logs](/utilisateurs/journaux-securite) for access auditing. [Roles and permissions](/systeme/roles) then control what that account can open in the admin.\n\nIf a customer reports an account issue, cross-check [Support](/contenu/support) and review active [sessions](/utilisateurs/sessions) before resetting access."
+    },
+    "employes-et-departements": {
+      "title": "Employees and departments",
+      "summary": "Link users to organizations and structure teams.",
+      "body": "[Employees](/utilisateurs/employes) associate a user with an organization and a department. Create an employee from an existing user account, then enter the code, job title, and assignment.\n\n[Departments](/utilisateurs/departements) classify staff (sales, support, operations, and so on). They are used as a reference when creating or editing an employee.\n\nThese screens usually require employees.read / departments.read (and the matching write permissions to edit)."
+    },
+    "sessions-et-securite": {
+      "title": "Sessions and security logs",
+      "summary": "Control active logins and access auditing.",
+      "body": "In [Sessions](/utilisateurs/sessions), review users’ active sessions. You can revoke a session to force a sign-out (for example after a lost device or suspicious access).\n\n[Security logs](/utilisateurs/journaux-securite) record authentication and audit events. Use them to investigate an incident or verify recent activity.\n\nThese tools complement roles and permissions: a revoked session grants no access even if the account remains active."
+    },
+    "adresses-et-moyens-paiement": {
+      "title": "Addresses and payment methods",
+      "summary": "View addresses and cards saved by users.",
+      "body": "The [Addresses](/utilisateurs/adresses) module shows addresses saved by users (billing, delivery, travel). Filter or search to find an entry linked to an account.\n\n[Payment methods](/utilisateurs/moyens-paiement) list cards and other methods saved by users. This data is for support and follow-up; booking payments are handled in the [Payments](/paiements) module.\n\nRespect privacy: export or share this information only within your role and permissions."
+    },
+    "hebergements": {
+      "title": "Manage accommodations",
+      "summary": "Properties, rooms, amenities, and availability.",
+      "body": "The [Accommodations](/hebergements) module lists properties (hotels, lodges, and so on). Filter by destination, search by name, then open a record to edit or view details.\n\nCreate a property with New accommodation, then add images, amenities, rooms, and availability from the edit page. Global amenities are managed in the related catalog.\n\nAccess is controlled by properties.read / properties.write. A complete property record improves bookings and the public site listing."
+    },
+    "vols-locations-croisieres": {
+      "title": "Flights, rentals, and cruises",
+      "summary": "Air catalog, vehicles, and cruise sailings.",
+      "body": "Under Products there are three verticals: [Flights](/produits/vols), [Rentals](/produits/locations), and [Cruises](/produits/croisieres).\n\nFor flights, manage airlines, airports, and offers; for rentals, agencies, categories, and vehicles with slots; for cruises, ships, lines, ports, and sailings.\n\nUse the “New…” screens and nested pages (ships, ports, agencies…) from the module or the Ctrl+K palette. Each vertical has its own permissions (flights, vehicles, cruises)."
+    },
+    "activites-et-forfaits": {
+      "title": "Activities and packages",
+      "summary": "Experiences, partners, time slots, and combined packages.",
+      "body": "[Activities](/produits/activites) describe experiences and tours. Create an activity, attach a destination and partner, then add slots or options on the edit page.\n\n[Packages](/produits/forfaits) combine several products (accommodation, activity, and so on) into one packaged offer. Build the package contents, then publish according to your workflow.\n\nTypical permissions: activities.read/write and packages.read/write. Check destinations and pricing before going live."
+    },
+    "destinations": {
+      "title": "Destinations",
+      "summary": "Geography, points of interest, and product linking.",
+      "body": "[Destinations](/produits/destinations) structure the platform geography (countries, regions, places). Search by name, slug, or country code.\n\nCreate a destination, then enrich it with points of interest and map coordinates. Many products (accommodations, activities, and so on) link to it.\n\nPermission destinations.read / destinations.write. Clear destinations improve public search and admin filtering."
+    },
+    "gerer-les-reservations": {
+      "title": "Manage bookings",
+      "summary": "Track requests, travelers, statuses, and related payments in one place.",
+      "body": "The [Bookings](/reservations) module centralizes customer bookings. Filter by status, dates, or reference, then open the detail to see lines, travelers, documents, and history.\n\nDepending on status, you can advance processing, review payment proofs, or coordinate with support. Permissions bookings.read / bookings.write apply.\n\nFor a payment issue or customer incident, cross-check [Payments](/paiements) and [Support](/contenu/support). Assign a guide via the [guides](/guides) calendar when the product requires it.\n\nBreadcrumbs, Ctrl+K, and the header Help icon let you switch quickly between booking, payment, and ticket without losing context."
+    },
+    "guides-et-calendrier": {
+      "title": "Tour guides and calendar",
+      "summary": "Guide profiles, availability, and scheduling.",
+      "body": "The [Guides](/guides) module manages tour guide profiles. Create a guide, fill in the bio and useful details, then track their availability calendar.\n\nUse planning views to avoid assignment conflicts and align guides with related bookings or activities.\n\nPermission guides.read / guides.write. A complete guide profile helps field operations and booking follow-up."
+    },
+    "suivre-les-paiements": {
+      "title": "Track payments",
+      "summary": "Statuses, amounts, and links to bookings.",
+      "body": "The [Payments](/paiements) module lists transactions tied to bookings and other collections. Filter by status, method, or period to find a payment.\n\nOpen the detail to see amount, reference, method (card, mobile money, offline…), and any link to the booking. Watch failures and payments pending validation.\n\nPermission payments.read (and write for some actions). For a customer dispute, cross-check [Bookings](/reservations) and support tickets."
+    },
+    "codes-promo": {
+      "title": "Promo codes",
+      "summary": "Create, limit, and monitor discount codes.",
+      "body": "[Promo codes](/paiements/codes-promo) apply a discount at checkout. Create a code with New promo code: set the type (percentage or amount), validity, usage caps, and conditions.\n\nMonitor usage from the list or the detail page. Disable a code as soon as a campaign ends to prevent abuse.\n\nPermission promo_codes.read / promo_codes.write. Test the code on a booking flow before a large campaign."
+    },
+    "promotions": {
+      "title": "Promotions",
+      "summary": "Promotional campaigns shown or applied to offers.",
+      "body": "[Promotions](/paiements/promotions) cover campaigns broader than a single code (featured offers, seasonal deals, and so on). Create a promotion, set dates and scope, then save.\n\nDistinguish promotions (campaign / showcase) from promo codes (customer enters a code). Both can run in the same period.\n\nPermission promotions.read / promotions.write. Align the promo calendar with stock and pricing for the products involved."
+    },
+    "parametres-gap": {
+      "title": "GAP settings",
+      "summary": "Configure the Gorilla Ambassadors Program site.",
+      "body": "GAP (Gorilla Ambassadors) has its own [settings](/gap/parametres). Adjust the GAP site configuration (identity, display options, operational settings as shown on screen).\n\nChange only fields you understand, then save. Check the preview or public GAP site after a sensitive change.\n\nPermission gap.read / gap.write. These settings are separate from general organization [settings](/parametres)."
+    },
+    "pages-et-activites-gap": {
+      "title": "GAP pages and activities",
+      "summary": "Editorial content and ambassador program activities.",
+      "body": "[GAP pages](/gap/pages) manage editorial content for the ambassadors site (create, edit, publish). Start with New GAP page, then fill in title, body, and metadata.\n\n[GAP activities](/gap/activites) describe actions or experiences linked to the program. Create and organize them like the main activity catalog, but within the GAP scope.\n\nStay consistent with the brand guidelines and [GAP settings](/gap/parametres). Permissions gap.read / gap.write."
+    },
+    "impact-et-medias-gap": {
+      "title": "GAP impact and media",
+      "summary": "Impact statistics and media library.",
+      "body": "[GAP impact](/gap/impact) presents featured statistics and indicators (donations, results, milestones). Add or update a statistic with New impact statistic.\n\n[GAP media](/gap/medias) centralizes images and files reused in pages and activities. Upload assets with clear names and web-friendly dimensions.\n\nKeep numbers and visuals current: they support the program’s credibility on the public site."
+    },
+    "blog-et-site": {
+      "title": "Blog and presentation site",
+      "summary": "Blog posts and institutional content (About, hero, team…).",
+      "body": "The [blog](/contenu/blog) lets you create and publish posts for the public site. Use New post, enter localized content, then publish according to your workflow.\n\nSite & [presentation](/contenu/site) groups institutional pages: About, team, timeline, resources, Why us, hero carousel, and happy customers. Use tabs to edit each section.\n\nPermissions blog.read/write and content.read/write. Preview the public site after a major change."
+    },
+    "pages-legales": {
+      "title": "Legal pages",
+      "summary": "Terms, privacy, and other legal texts.",
+      "body": "[Legal pages](/contenu/legal) manage legal documents shown on the site (terms, privacy, and so on). Create or update a page with New legal page.\n\nWatch the language version (fr / en / es) and the update date. An outdated page creates compliance risk.\n\nPermission content.read / content.write. Have sensitive texts reviewed before publishing."
+    },
+    "moderer-les-avis": {
+      "title": "Moderate customer reviews",
+      "summary": "Approve, hide, or delete ratings and comments.",
+      "body": "The [Reviews](/contenu/avis) module centralizes ratings and comments left by customers. Filter by rating, property, or status (pending, published, hidden).\n\nFrom the detail view, approve, hide, or delete a review according to your policy. The “pending reviews” badge in the menu shows the moderation backlog.\n\nPermissions reviews.read / reviews.write. Handle flagged reviews quickly to protect reputation and public content quality."
+    },
+    "tickets-support-clients": {
+      "title": "Customer support tickets",
+      "summary": "Work the support queue: priority, reply, status, and closure.",
+      "body": "The [Support](/contenu/support) hub manages customer tickets (Tickets tab) and prepares unified messaging (Messages tab). Filter by status and priority, then open a ticket to read the thread and reply.\n\nAssign the ticket, change the status (open → pending → resolved / closed), and send a reply of at least ten characters. The “open tickets” badge in the navigation shows remaining workload.\n\nPermissions support_tickets.read / support_tickets.write. Do not confuse this module with the admin [Help Center](/aide), which is for internal documentation only.\n\nWhen a ticket relates to a booking or account, open the linked record (Ctrl+K or contextual Help) to verify status before you reply to the customer."
+    },
+    "comptes-fidelite-onekey": {
+      "title": "OneKey loyalty accounts",
+      "summary": "Point balances, tiers, and manual adjustments.",
+      "body": "[Loyalty accounts](/fidelite/comptes) show the OneKey program: point balance, tier, and last activity. Search by user to inspect history.\n\nManual balance adjustments may be limited to the super administrator. Document the reason for every correction for audit.\n\nAccess usually follows users.read (or equivalent rules). Cross-check the user profile if you need to verify the account holder."
+    },
+    "organisations": {
+      "title": "Organizations",
+      "summary": "Partners, entities, and organization settings.",
+      "body": "The [Organizations](/organisations) module lists partners and entities on the platform. Search by name or slug, then open a record to see the profile, contact, and linked employees.\n\nCreate an organization with New organization, then complete the details and related settings. Some options (theme, bank accounts) are also managed under [Settings](/parametres).\n\nAccess is generally available to authenticated users under RBAC rules; write actions may be restricted."
+    },
+    "roles-et-permissions": {
+      "title": "Roles and permissions",
+      "summary": "Decide who can read or edit each module, with least privilege.",
+      "body": "Under [System → Roles](/systeme/roles), define roles and their permissions (read / write per domain). Create a role, select the needed permissions, then assign it to users.\n\nAssignment and permission screens (outside the main menu, reachable via breadcrumb or Ctrl+K) link a role to a user with a scope (global, property, agency, support queue…).\n\nLeast privilege: grant only what is needed. A bad role can hide entire menus or open too much access.\n\nAfter an assignment, ask the user to sign in again if menus do not refresh. Cross-check [Sessions](/utilisateurs/sessions) & security if you suspect abusive access."
+    },
+    "parametres-systeme": {
+      "title": "System settings",
+      "summary": "Emails, donations, mobile money, bank accounts, and org settings.",
+      "body": "The [Settings](/parametres) hub groups organization configuration. From there you can reach transactional emails, donations, mobile money, and bank accounts.\n\nChange settings carefully: a wrong email template or bank account directly affects customers and operations. Save, then verify a real flow (test payment, notification).\n\nTypical permissions: organization_settings.read/write, plus specific rights for mobile money or bank accounts. These settings are separate from the [GAP](/gap/parametres) module."
+    }
+  }
+}

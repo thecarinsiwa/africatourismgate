@@ -1,0 +1,206 @@
+{
+  "ui": {
+    "pageTitle": "Centro de ayuda",
+    "pageSubtitle": "¿Cómo usar el panel de administración de Africa Tourism Gate?",
+    "searchLabel": "Buscar en la ayuda",
+    "searchPlaceholder": "Buscar un artículo de ayuda…",
+    "searchNoResults": "Ningún artículo coincide con su búsqueda.",
+    "searchNoResultsHint": "Pruebe en su lugar estos artículos de inicio rápido:",
+    "searchResultsAria": "Resultados de búsqueda",
+    "searchResultsCount": "{count, plural, one {# artículo} other {# artículos}}",
+    "searchSuggestionsAria": "Sugerencias de artículos populares",
+    "categoriesTitle": "Explorar por tema",
+    "categoriesSubtitle": "Elija un tema para encontrar respuestas detalladas.",
+    "popularTitle": "Artículos populares",
+    "popularSubtitle": "Los temas más útiles para empezar.",
+    "quickStartTitle": "Inicio rápido",
+    "quickStartSubtitle": "Primeros pasos para familiarizarse con la administración.",
+    "articlesInCategory": "{count, plural, one {# artículo} other {# artículos}}",
+    "relatedTitle": "Artículos relacionados",
+    "breadcrumbHome": "Centro de ayuda",
+    "backToCategory": "Volver al tema",
+    "backToHub": "Volver al centro de ayuda",
+    "contextualHelp": "Abrir el centro de ayuda",
+    "openContextualHelp": "Abrir la ayuda para esta página"
+  },
+  "categories": {
+    "prise-en-main": {
+      "title": "Primeros pasos",
+      "description": "Panel, notificaciones, paleta y atajos."
+    },
+    "utilisateurs-acces": {
+      "title": "Usuarios y acceso",
+      "description": "Cuentas, empleados, sesiones y seguridad."
+    },
+    "produits-voyage": {
+      "title": "Productos de viaje",
+      "description": "Alojamientos, vuelos, alquileres, cruceros y más."
+    },
+    "reservations-guides": {
+      "title": "Reservas y guías",
+      "description": "Seguimiento de reservas y calendario de guías."
+    },
+    "paiements-promos": {
+      "title": "Pagos y promociones",
+      "description": "Pagos, códigos promo y promociones."
+    },
+    "gap": {
+      "title": "GAP",
+      "description": "Ajustes, páginas, actividades, impacto y medios."
+    },
+    "contenu-relation": {
+      "title": "Contenido y relación con clientes",
+      "description": "Blog, sitio, legal, reseñas y tickets de soporte."
+    },
+    "fidelite": {
+      "title": "Fidelidad",
+      "description": "Cuentas OneKey y programa de fidelidad."
+    },
+    "systeme": {
+      "title": "Sistema y organización",
+      "description": "Organizaciones, roles, permisos y ajustes."
+    }
+  },
+  "articles": {
+    "naviguer-dans-le-dashboard": {
+      "title": "Navegar por el panel",
+      "summary": "Referencias clave: menú lateral, migas de pan, notificaciones y acceso rápido a la ayuda.",
+      "body": "Tras iniciar sesión, [el panel](/dashboard) muestra indicadores y la actividad reciente. El menú lateral izquierdo agrupa los módulos: usuarios, productos, reservas, pagos, contenido, GAP y sistema.\n\nLas migas de pan en la parte superior indican dónde se encuentra y permiten subir un nivel. En móvil, abra el menú con el icono de hamburguesa. El icono de campana abre el [centro de notificaciones](/notifications) sin salir de la página actual.\n\nUse el [centro de ayuda](/aide) o la paleta de comandos (Ctrl+K) para llegar rápido a una página sin recorrer todo el menú. En cada pantalla, el icono Ayuda del encabezado abre el artículo recomendado para el módulo en curso.\n\nConsejo: empiece por Inicio rápido en /aide (usuarios, reservas, roles, tickets) para dominar los gestos diarios antes de explorar temas avanzados."
+    },
+    "notifications": {
+      "title": "Centro de notificaciones",
+      "summary": "Consultar, filtrar y gestionar las alertas de administración.",
+      "body": "Abra Notificaciones en el menú (o el icono de campana) para acceder al centro de notificaciones. Allí encontrará alertas relacionadas con reservas, mensajes, tickets de soporte y otros eventos.\n\nFiltre por tipo o estado para centrarse en lo pendiente. Marque los elementos como leídos tras actuar para mantener la bandeja clara.\n\nLos contadores de la navegación (reseñas pendientes, tickets abiertos) enlazan con los módulos correspondientes."
+    },
+    "palette-commandes": {
+      "title": "Paleta de comandos (Ctrl+K)",
+      "summary": "Ir a cualquier página de administración en pocas pulsaciones, incluso fuera del menú.",
+      "body": "Pulse Ctrl+K (o Cmd+K en Mac) para abrir la paleta de comandos. Escriba el inicio de una etiqueta del menú (por ejemplo « alojamientos », « roles » o « ayuda ») para filtrar destinos.\n\nValide con Entrar para navegar de inmediato. La paleta lista las páginas del menú y algunas rutas anidadas fuera del menú (formularios nuevos, asignaciones de roles, ajustes de correo, etc.).\n\nCierre la paleta con Escape. Pulse ? para ver la ayuda de atajos de teclado y, si hace falta, siga el enlace al [centro de ayuda](/aide).\n\nCombine la paleta con el icono Ayuda del encabezado: la primera le teletransporta, la segunda abre la documentación del módulo en el que está."
+    },
+    "raccourcis-clavier": {
+      "title": "Atajos de teclado",
+      "summary": "Mostrar la ayuda de atajos con ? y usar Ctrl+K.",
+      "body": "Pulse la tecla ? (fuera de un campo de texto) para abrir el panel de atajos de teclado. Recuerda las combinaciones disponibles en el shell de administración.\n\nEl atajo principal es Ctrl+K / Cmd+K para la paleta de comandos. Otros atajos pueden aparecer en este panel según la versión de la interfaz.\n\nSi un atajo no responde, compruebe que ningún campo de texto tenga el foco y que no esté en una página de inicio de sesión."
+    },
+    "gerer-les-utilisateurs": {
+      "title": "Gestionar usuarios",
+      "summary": "Crear, buscar y actualizar cuentas: la base del acceso a la plataforma.",
+      "body": "El módulo [Usuarios](/utilisateurs) lista las cuentas de clientes y personal de la plataforma. Filtre por estado u organización y abra una ficha para ver o editar el perfil.\n\nPara crear una cuenta, use Nuevo usuario. Complete los campos obligatorios y guarde. Según sus permisos (users.read / users.write), algunas acciones pueden estar ocultas.\n\nDesde la ficha puede consultar los detalles, vincular un perfil de empleado u orientar hacia [sesiones](/utilisateurs/sessions) y [registros de seguridad](/utilisateurs/journaux-securite) para la auditoría de acceso. Los [roles y permisos](/systeme/roles) determinan después qué puede abrir esa cuenta en la administración.\n\nSi un cliente reporta un problema de cuenta, cruce con [Soporte](/contenu/support) y revise las [sesiones](/utilisateurs/sessions) activas antes de restablecer un acceso."
+    },
+    "employes-et-departements": {
+      "title": "Empleados y departamentos",
+      "summary": "Vincular usuarios a organizaciones y estructurar equipos.",
+      "body": "Los [empleados](/utilisateurs/employes) asocian un usuario a una organización y un departamento. Cree un empleado a partir de una cuenta de usuario existente e indique el código, el puesto y la asignación.\n\nLos [departamentos](/utilisateurs/departements) clasifican al personal (comercial, soporte, operaciones…). Sirven de referencia al crear o editar un empleado.\n\nEstas pantallas suelen requerir employees.read / departments.read (y los permisos de escritura correspondientes para modificar)."
+    },
+    "sessions-et-securite": {
+      "title": "Sesiones y registros de seguridad",
+      "summary": "Controlar las conexiones activas y la auditoría de acceso.",
+      "body": "En [Sesiones](/utilisateurs/sessions), consulte las sesiones activas de los usuarios. Puede revocar una sesión para forzar el cierre (por ejemplo, dispositivo perdido o acceso sospechoso).\n\nLos [registros de seguridad](/utilisateurs/journaux-securite) guardan eventos de autenticación y auditoría. Úselos para investigar un incidente o verificar actividad reciente.\n\nEstas herramientas complementan roles y permisos: una sesión revocada ya no concede acceso aunque la cuenta siga activa."
+    },
+    "adresses-et-moyens-paiement": {
+      "title": "Direcciones y métodos de pago",
+      "summary": "Consultar direcciones y tarjetas guardadas por los usuarios.",
+      "body": "El módulo [Direcciones](/utilisateurs/adresses) muestra las direcciones guardadas por los usuarios (facturación, entrega, viaje). Filtre o busque para encontrar una entrada vinculada a una cuenta.\n\nLos [métodos de pago](/utilisateurs/moyens-paiement) listan tarjetas y otros métodos guardados por los usuarios. Estos datos son consultivos para soporte y seguimiento; el tratamiento de pagos de reserva se hace en el módulo [Pagos](/paiements).\n\nRespete la confidencialidad: exporte o comparta esta información solo dentro de sus funciones y permisos."
+    },
+    "hebergements": {
+      "title": "Gestionar alojamientos",
+      "summary": "Propiedades, habitaciones, comodidades y disponibilidad.",
+      "body": "El módulo [Alojamientos](/hebergements) lista las propiedades (hoteles, lodges, etc.). Filtre por destino, busque por nombre y abra una ficha para editar o ver el detalle.\n\nCree una propiedad con Nuevo alojamiento y complete imágenes, comodidades, habitaciones y disponibilidad desde la página de edición. Las comodidades globales se gestionan en el catálogo asociado.\n\nLos permisos properties.read / properties.write controlan el acceso. Una propiedad bien informada facilita las reservas y la ficha en el sitio público."
+    },
+    "vols-locations-croisieres": {
+      "title": "Vuelos, alquileres y cruceros",
+      "summary": "Catálogo aéreo, vehículos y salidas de crucero.",
+      "body": "En Productos hay tres verticales: [Vuelos](/produits/vols), [Alquileres](/produits/locations) [y Cruceros](/produits/croisieres).\n\nPara vuelos, gestione compañías, aeropuertos y ofertas; para alquileres, agencias, categorías y vehículos con franjas; para cruceros, buques, líneas, puertos y salidas (sailings).\n\nUse las pantallas « Nuevo… » y las subpáginas (buques, puertos, agencias…) desde el módulo o la paleta Ctrl+K. Cada vertical tiene sus propios permisos (flights, vehicles, cruises)."
+    },
+    "activites-et-forfaits": {
+      "title": "Actividades y paquetes",
+      "summary": "Experiencias, socios, franjas y paquetes combinados.",
+      "body": "Las [actividades](/produits/activites) describen experiencias y tours. Cree una actividad, asocie un destino y un socio, y añada franjas u opciones en la ficha de edición.\n\nLos [paquetes](/produits/forfaits) agrupan varios productos (alojamiento, actividad, etc.) en una oferta empaquetada. Compose el contenido del paquete y publíquelo según el flujo previsto.\n\nPermisos típicos: activities.read/write y packages.read/write. Compruebe destinos y precios antes de publicar."
+    },
+    "destinations": {
+      "title": "Destinos",
+      "summary": "Geografía, puntos de interés y vínculo con productos.",
+      "body": "Los [destinos](/produits/destinations) estructuran la geografía de la plataforma (países, regiones, lugares). Busque por nombre, slug o código de país.\n\nCree un destino y enriquézcalo con puntos de interés y coordenadas útiles para el mapa. Muchos productos (alojamientos, actividades, etc.) se vinculan a él.\n\nPermiso destinations.read / destinations.write. Un destino claro mejora la búsqueda pública y el filtrado en la administración."
+    },
+    "gerer-les-reservations": {
+      "title": "Gestionar reservas",
+      "summary": "Seguir solicitudes, viajeros, estados y pagos relacionados en un solo lugar.",
+      "body": "El módulo [Reservas](/reservations) centraliza las reservas de clientes. Filtre por estado, fechas o referencia y abra el detalle para ver líneas, viajeros, documentos e historial.\n\nSegún el estado, puede avanzar el tratamiento, consultar pruebas de pago o coordinar con soporte. Se aplican los permisos bookings.read / bookings.write.\n\nPara un pago o un incidente de cliente, cruce con [Pagos](/paiements) y [Soporte](/contenu/support). Asigne un guía mediante el calendario de [guías](/guides) cuando el producto lo exija.\n\nLas migas de pan, Ctrl+K y el icono Ayuda del encabezado permiten cambiar rápido entre reserva, pago y ticket sin perder el contexto."
+    },
+    "guides-et-calendrier": {
+      "title": "Guías turísticos y calendario",
+      "summary": "Fichas de guías, disponibilidad y planificación.",
+      "body": "El módulo [Guías](/guides) gestiona los perfiles de guías turísticos. Cree una guía, complete la biografía y la información útil, y siga su calendario de disponibilidad.\n\nUse las vistas de planificación para evitar conflictos de asignación y alinear guías con reservas o actividades relacionadas.\n\nPermiso guides.read / guides.write. Una ficha completa facilita la operación en campo y el seguimiento de reservas."
+    },
+    "suivre-les-paiements": {
+      "title": "Seguir los pagos",
+      "summary": "Estados, importes y conciliación con las reservas.",
+      "body": "El módulo [Pagos](/paiements) lista las transacciones vinculadas a reservas y otros cobros. Filtre por estado, método o periodo para encontrar un pago.\n\nAbra el detalle para ver el importe, la referencia, el modo (tarjeta, mobile money, fuera de línea…) y el vínculo eventual con la reserva. Siga los fallos y los pagos pendientes de validación.\n\nPermiso payments.read (y write según las acciones). Para un litigio de cliente, cruce con [Reservas](/reservations) y los tickets de soporte."
+    },
+    "codes-promo": {
+      "title": "Códigos promo",
+      "summary": "Crear, limitar y seguir códigos de descuento.",
+      "body": "Los [códigos promo](/paiements/codes-promo) aplican un descuento en el checkout. Cree un código con Nuevo código promo: defina el tipo (porcentaje o importe), la validez, los límites de uso y las condiciones.\n\nSupervise los usos desde la lista o la ficha. Desactive un código en cuanto termine una campaña para evitar abusos.\n\nPermiso promo_codes.read / promo_codes.write. Pruebe el código en un flujo de reserva antes de una campaña amplia."
+    },
+    "promotions": {
+      "title": "Promociones",
+      "summary": "Campañas promocionales mostradas o aplicadas a las ofertas.",
+      "body": "Las [promociones](/paiements/promotions) cubren campañas más amplias que un simple código (destacados, ofertas de temporada, etc.). Cree una promoción, indique fechas y alcance, y guarde.\n\nDistinga bien promociones (campaña / vitrina) y códigos promo (el cliente introduce un código). Ambos pueden coexistir en el mismo periodo.\n\nPermiso promotions.read / promotions.write. Alinee el calendario promo con el stock y las tarifas de los productos afectados."
+    },
+    "parametres-gap": {
+      "title": "Ajustes GAP",
+      "summary": "Configurar el sitio Gorilla Ambassadors Program.",
+      "body": "GAP (Gorilla Ambassadors) tiene sus propios [ajustes](/gap/parametres). Allí configura el sitio GAP (identidad, opciones de visualización, ajustes operativos según lo expuesto en la pantalla).\n\nModifique solo los campos que domine y guarde. Compruebe la vista previa o el sitio público GAP tras un cambio sensible.\n\nPermiso gap.read / gap.write. Estos ajustes son distintos de los [ajustes](/parametres) generales de la organización."
+    },
+    "pages-et-activites-gap": {
+      "title": "Páginas y actividades GAP",
+      "summary": "Contenido editorial y actividades del programa de embajadores.",
+      "body": "Las [páginas GAP](/gap/pages) gestionan el contenido editorial del sitio de embajadores (crear, editar, publicar). Use Nueva página GAP para empezar e indique título, cuerpo y metadatos.\n\nLas [actividades GAP](/gap/activites) describen acciones o experiencias del programa. Créelas y organícelas como el catálogo principal de actividades, pero en el ámbito GAP.\n\nMantenga coherencia con la marca y los [ajustes GAP](/gap/parametres). Permisos gap.read / gap.write."
+    },
+    "impact-et-medias-gap": {
+      "title": "Impacto y medios GAP",
+      "summary": "Estadísticas de impacto y biblioteca de medios.",
+      "body": "El [impacto GAP](/gap/impact) presenta estadísticas e indicadores destacados (donaciones, resultados, hitos). Añada o actualice una estadística con Nueva estadística de impacto.\n\nLos [medios GAP](/gap/medias) centralizan imágenes y archivos reutilizables en páginas y actividades. Suba assets con nombres claros y dimensiones adecuadas para la web.\n\nMantenga cifras y visuales al día: refuerzan la credibilidad del programa en el sitio público."
+    },
+    "blog-et-site": {
+      "title": "Blog y sitio de presentación",
+      "summary": "Artículos de blog y contenido institucional (Acerca de, hero, equipo…).",
+      "body": "El [blog](/contenu/blog) permite crear y publicar artículos para el sitio público. Use Nuevo artículo, complete el contenido localizado y publique según el flujo previsto.\n\n[Sitio y presentación](/contenu/site) agrupa las páginas institucionales: Acerca de, equipo, línea de tiempo, recursos, Por qué nosotros, carrusel hero y clientes satisfechos. Navegue por pestañas para editar cada sección.\n\nPermisos blog.read/write y content.read/write. Previsualice el sitio público tras un cambio importante."
+    },
+    "pages-legales": {
+      "title": "Páginas legales",
+      "summary": "Condiciones, privacidad y otros textos jurídicos.",
+      "body": "Las [páginas legales](/contenu/legal) gestionan los documentos jurídicos mostrados en el sitio (condiciones, privacidad, etc.). Cree o actualice una página con Nueva página legal.\n\nCuide la versión lingüística (fr / en / es) y la fecha de actualización. Una página obsoleta genera riesgo de cumplimiento.\n\nPermiso content.read / content.write. Haga revisar los textos sensibles antes de publicar."
+    },
+    "moderer-les-avis": {
+      "title": "Moderar reseñas de clientes",
+      "summary": "Aprobar, ocultar o eliminar notas y comentarios.",
+      "body": "El módulo [Reseñas](/contenu/avis) centraliza las notas y comentarios de los clientes. Filtre por nota, propiedad o estado (pendiente, publicado, oculto).\n\nDesde el detalle, apruebe, oculte o elimine una reseña según su política. El contador « reseñas pendientes » en el menú indica el backlog de moderación.\n\nPermisos reviews.read / reviews.write. Gestione con rapidez las reseñas señaladas para proteger la reputación y la calidad del contenido público."
+    },
+    "tickets-support-clients": {
+      "title": "Tickets de soporte al cliente",
+      "summary": "Trabajar la cola de asistencia: prioridad, respuesta, estado y cierre.",
+      "body": "El hub [Soporte](/contenu/support) gestiona los tickets de clientes (pestaña Tickets) y prepara la mensajería unificada (pestaña Mensajes). Filtre por estado y prioridad, abra un ticket para leer el hilo y responder.\n\nAsigne el ticket, cambie el estado (abierto → en curso → resuelto / cerrado) y envíe una respuesta de al menos diez caracteres. El badge « tickets abiertos » en la navegación indica la carga restante.\n\nPermisos support_tickets.read / support_tickets.write. No confunda este módulo con el Centro de [ayuda de administración](/aide), reservado a la documentación interna.\n\nCuando el ticket afecta a una reserva o una cuenta, abra la ficha vinculada (Ctrl+K o Ayuda contextual) para verificar el estado antes de responder al cliente."
+    },
+    "comptes-fidelite-onekey": {
+      "title": "Cuentas de fidelidad OneKey",
+      "summary": "Saldo de puntos, niveles y ajustes manuales.",
+      "body": "Las [cuentas de fidelidad](/fidelite/comptes) muestran el programa OneKey: saldo de puntos, nivel y última actividad. Busque una cuenta por usuario para inspeccionar el historial.\n\nUn ajuste manual del saldo puede estar reservado al superadministrador. Documente el motivo de cada corrección para la auditoría.\n\nEl acceso suele seguir users.read (o reglas equivalentes). Cruce con el perfil de usuario si debe verificar la identidad del titular."
+    },
+    "organisations": {
+      "title": "Organizaciones",
+      "summary": "Socios, entidades y ajustes de organización.",
+      "body": "El módulo [Organizaciones](/organisations) lista los socios y entidades de la plataforma. Busque por nombre o slug y abra una ficha para ver el perfil, el contacto y los empleados vinculados.\n\nCree una organización con Nueva organización y complete la información y los ajustes asociados. Algunas opciones (tema, cuentas bancarias) también se gestionan desde [Ajustes](/parametres).\n\nEl acceso suele estar abierto a usuarios autenticados según RBAC; las acciones de escritura pueden estar restringidas."
+    },
+    "roles-et-permissions": {
+      "title": "Roles y permisos",
+      "summary": "Definir quién puede leer o modificar cada módulo, con mínimo privilegio.",
+      "body": "En [Sistema → Roles](/systeme/roles), defina los roles y los permisos asociados (lectura / escritura por dominio). Cree un rol, marque los permisos necesarios y asígnelo a los usuarios.\n\nLas pantallas de asignaciones y permisos (fuera del menú principal, accesibles por migas de pan o Ctrl+K) vinculan un rol a un usuario con un alcance (global, propiedad, agencia, cola de soporte…).\n\nPrincipio de mínimo privilegio: conceda solo lo útil. Un rol incorrecto puede ocultar menús enteros o abrir demasiado acceso.\n\nTras una asignación, pida al usuario que vuelva a iniciar sesión si los menús no se actualizan. Cruce con [Sesiones](/utilisateurs/sessions) y seguridad si sospecha un acceso abusivo."
+    },
+    "parametres-systeme": {
+      "title": "Ajustes del sistema",
+      "summary": "Correos, donaciones, mobile money, cuentas bancarias y ajustes de org.",
+      "body": "El hub [Ajustes](/parametres) agrupa la configuración de la organización. Desde ahí accede, entre otros, a correos transaccionales, donaciones, mobile money y cuentas bancarias.\n\nModifique con prudencia: una plantilla de correo o una cuenta bancaria incorrecta impacta directamente a clientes y operaciones. Guarde y verifique un flujo real (pago de prueba, notificación).\n\nPermisos típicos: organization_settings.read/write, y derechos específicos para mobile money o cuentas bancarias. Estos ajustes son distintos de los del módulo [GAP](/gap/parametres)."
+    }
+  }
+}

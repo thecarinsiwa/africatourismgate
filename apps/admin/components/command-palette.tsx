@@ -9,12 +9,21 @@ import {
   buildAdminDashboardNav,
 } from '../config/dashboard-nav';
 import { isHrefAllowed } from '../config/admin-route-permissions';
+import { ADMIN_HELP_BASE_PATH } from '../lib/admin-help/routes';
 import { usePermissions } from '../lib/auth/use-permissions';
 
 type CommandPaletteItem = {
   href: string;
   label: string;
 };
+
+const ADMIN_HELP_SEARCH_ALIASES = [
+  'aide',
+  'help',
+  'ayuda',
+  'docs',
+  'documentation',
+] as const;
 
 function flattenNavItems(
   navItems: ReturnType<typeof buildAdminDashboardNav>,
@@ -30,6 +39,27 @@ function flattenNavItems(
     }
   }
   return items;
+}
+
+function matchesCommandPaletteItem(
+  item: CommandPaletteItem,
+  normalizedQuery: string,
+): boolean {
+  if (
+    item.label.toLowerCase().includes(normalizedQuery) ||
+    item.href.toLowerCase().includes(normalizedQuery)
+  ) {
+    return true;
+  }
+
+  if (item.href !== ADMIN_HELP_BASE_PATH || normalizedQuery.length < 2) {
+    return false;
+  }
+
+  return ADMIN_HELP_SEARCH_ALIASES.some(
+    (alias) =>
+      alias.includes(normalizedQuery) || normalizedQuery.includes(alias),
+  );
 }
 
 export function CommandPalette() {
@@ -66,10 +96,8 @@ export function CommandPalette() {
   const filteredItems = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     if (!normalized) return allItems;
-    return allItems.filter(
-      (item) =>
-        item.label.toLowerCase().includes(normalized) ||
-        item.href.toLowerCase().includes(normalized),
+    return allItems.filter((item) =>
+      matchesCommandPaletteItem(item, normalized),
     );
   }, [allItems, query]);
 

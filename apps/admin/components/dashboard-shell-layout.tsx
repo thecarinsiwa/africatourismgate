@@ -31,6 +31,7 @@ import { LanguageSwitcher } from './language-switcher';
 import { AdminNotificationsMenu } from './notifications/admin-notifications-menu';
 import { CommandPalette } from './command-palette';
 import { KeyboardShortcutsHelp } from './keyboard-shortcuts-help';
+import { AdminContextualHelpLink } from './admin-help/admin-contextual-help-link';
 
 function formatDisplayName(firstName: string, lastName: string, email: string): string {
   const name = `${firstName} ${lastName}`.trim();
@@ -124,6 +125,7 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
       }
       headerActions={
         <>
+          <AdminContextualHelpLink />
           <AdminNotificationsMenu />
           <LanguageSwitcher />
         </>

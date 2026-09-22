@@ -128,6 +128,8 @@ export const config = {
     '/parametres/:path*',
     '/gap',
     '/gap/:path*',
+    '/aide',
+    '/aide/:path*',
     '/profil',
     '/guides',
     '/guides/:path*',

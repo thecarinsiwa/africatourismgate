@@ -102,7 +102,8 @@
     "roles": "Roles y permisos",
     "settings": "Configuración",
     "emails": "Correos electrónicos",
-    "rbacAudit": "Auditoría RBAC"
+    "rbacAudit": "Auditoría RBAC",
+    "adminHelp": "Centro de ayuda"
   },
   "userMenu": {
     "dashboard": "Panel de control",

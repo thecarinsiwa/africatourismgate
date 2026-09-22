@@ -725,6 +725,19 @@
     "description": "Consultez, filtrez et traitez toutes les alertes, demandes de réservation, messages et tickets.",
     "metaTitle": "Centre de notifications"
   },
+  "aide": {
+    "title": "Centre d'aide",
+    "description": "Articles pour apprendre à utiliser l'administration Africa Tourism Gate.",
+    "metaTitle": "Centre d'aide",
+    "category": {
+      "metaTitle": "Thème d'aide",
+      "description": "Articles d'aide regroupés par thème d'administration.",
+      "slug": {
+        "metaTitle": "Article d'aide",
+        "description": "Guide pas à pas pour utiliser une fonctionnalité de l'administration."
+      }
+    }
+  },
   "profil": {
     "title": "Mon profil",
     "description": "Mettez à jour vos informations et votre photo de profil.",
