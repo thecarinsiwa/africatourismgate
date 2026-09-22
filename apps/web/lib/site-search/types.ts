@@ -114,3 +114,23 @@ export const SITE_SEARCH_DEBOUNCE_MS = 300;
 export const SITE_SEARCH_API_MIN_QUERY_LENGTH = 2;
 
 export const SITE_SEARCH_DEFAULT_RESULT_LIMIT = 5;
+
+/**
+ * Contrat miroir de `GET /public/site-search` (`@africatourismgate/types`).
+ * Les adaptateurs UI brancheront ces hits dans une tâche suivante.
+ */
+export type {
+  PublicSiteSearchGroup,
+  PublicSiteSearchHit,
+  PublicSiteSearchQuery,
+  PublicSiteSearchResponse,
+  SiteSearchHitType,
+} from '@africatourismgate/types';
+
+export {
+  SITE_SEARCH_DEFAULT_LIMIT_PER_TYPE,
+  SITE_SEARCH_HIT_TYPES,
+  SITE_SEARCH_MAX_LIMIT_PER_TYPE,
+  SITE_SEARCH_MAX_QUERY_LENGTH,
+  SITE_SEARCH_MIN_QUERY_LENGTH,
+} from '@africatourismgate/types';
