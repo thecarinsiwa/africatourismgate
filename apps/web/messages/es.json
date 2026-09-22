@@ -221,9 +221,14 @@
     "searchLabel": "Buscar en la ayuda",
     "searchPlaceholder": "Buscar artículos de ayuda…",
     "searchNoResults": "Ningún artículo coincide con su búsqueda.",
+    "searchNoResultsHint": "Pruebe en su lugar estos artículos de inicio rápido:",
     "searchResultsAria": "Resultados de búsqueda",
+    "searchResultsCount": "{count, plural, one {# artículo} other {# artículos}}",
+    "searchSuggestionsAria": "Sugerencias de artículos populares",
     "categoriesTitle": "Explorar por tema",
     "categoriesSubtitle": "Elija un tema para encontrar respuestas detalladas.",
+    "quickStartTitle": "Inicio rápido",
+    "quickStartSubtitle": "Primeros pasos para reservar y gestionar su estancia.",
     "popularTitle": "Artículos populares",
     "popularSubtitle": "Los temas más consultados por los viajeros.",
     "articlesInCategory": "{count, plural, one {# artículo} other {# artículos}}",
@@ -274,117 +279,119 @@
         "how-to-book": {
           "title": "¿Cómo reservo una estancia o actividad?",
           "summary": "De la búsqueda a la confirmación, paso a paso.",
-          "body": "En la página de inicio, use la búsqueda para elegir un producto: hoteles, vuelos, coches, cruceros, actividades o paquetes. Abra una ficha, seleccione fechas u opciones y añada al carrito.\n\nContinúe a /booking/cart y al resumen para elegir el método de pago. Tras validar el pago (o enviar la solicitud), encontrará la estancia en Mi cuenta → Reservas."
+          "body": "En la página de inicio, use la búsqueda para elegir un producto: hoteles, vuelos, coches, cruceros, actividades o paquetes. Abra una ficha, seleccione fechas u opciones y añada al carrito.\n\nContinúe al [carrito](/booking/cart) y al resumen para elegir el método de pago. Tras validar el pago (o enviar la solicitud), encontrará la estancia en [Mi cuenta → Reservas](/account/reservations)."
         },
         "cart-and-checkout": {
           "title": "Carrito y flujo de pago",
           "summary": "Entender carrito → resumen → confirmación.",
-          "body": "El carrito (/booking/cart) agrupa los elementos seleccionados antes de confirmar. Revise fechas, viajeros e importe, luego pase al resumen para elegir el pago.\n\nDebe iniciar sesión para finalizar. Tras el éxito, aparece una página de confirmación y se envía un correo. También puede reabrir el detalle en Mi cuenta → Reservas."
+          "body": "El [carrito](/booking/cart) agrupa los elementos seleccionados antes de confirmar. Revise fechas, viajeros e importe, luego pase al [resumen](/booking/recap) para elegir el pago.\n\nDebe iniciar sesión para finalizar. Tras el éxito, aparece una página de confirmación y se envía un correo. También puede reabrir el detalle en [Mi cuenta → Reservas](/account/reservations)."
         },
         "request-vs-paid": {
           "title": "¿Solicitud de reserva o pago inmediato?",
           "summary": "Diferencia entre confirmación pagada y solicitud pendiente.",
-          "body": "Algunos productos se confirman en cuanto el pago con tarjeta en línea es válido. Otros pasan por una solicitud: completa el flujo hasta /booking/request-success y el equipo o proveedor le responde.\n\nEl estado aparece en Mi cuenta → Reservas. Hasta que el pago se valide o la solicitud se acepte, la estancia no está confirmada del todo."
+          "body": "Algunos productos se confirman en cuanto el pago con tarjeta en línea es válido. Otros pasan por una solicitud: completa el flujo hasta la [página de solicitud enviada](/booking/request-success) y el equipo o proveedor le responde.\n\nEl estado aparece en [Mi cuenta → Reservas](/account/reservations). Hasta que el pago se valide o la solicitud se acepte, la estancia no está confirmada del todo."
         },
         "modify-or-cancel": {
           "title": "¿Cómo cambio o cancelo una reserva?",
           "summary": "Gestione su estancia desde Mi cuenta o contacte al soporte.",
-          "body": "Abra Mi cuenta → Reservas, seleccione su estancia y use las acciones disponibles (pago pendiente, cancelación, documentos). Las opciones dependen del estado y de las condiciones del producto.\n\nSi falta un botón, las reglas del proveedor pueden impedir el autoservicio o exigir una solicitud manual. Abra un ticket o el chat de la reserva con su referencia.\n\nAntes de cancelar, consulte también la política de cancelación y los plazos de reembolso."
+          "body": "Abra [Mi cuenta → Reservas](/account/reservations), seleccione su estancia y use las acciones disponibles (pago pendiente, cancelación, documentos). Las opciones dependen del estado y de las condiciones del producto.\n\nSi falta un botón, las reglas del proveedor pueden impedir el autoservicio o exigir una solicitud manual. Abra un ticket o el chat de la reserva con su referencia.\n\nAntes de cancelar, consulte también la política de cancelación y los plazos de reembolso."
         },
         "find-booking": {
           "title": "¿Dónde encuentro mi reserva?",
           "summary": "Acceda al historial y al detalle de sus estancias.",
-          "body": "Inicie sesión y abra Mi cuenta → Reservas. La lista muestra el estado, las fechas y el acceso al detalle de cada estancia.\n\nEn el detalle encontrará pago, cancelación (si está disponible), manifiesto de viajeros, reseñas y chat. Guarde el correo de confirmación para recuperar el número de reserva.\n\nSi no aparece nada tras un pago, compruebe la cuenta usada en el checkout o abra un ticket con el correo y la fecha del pago."
+          "body": "Inicie sesión y abra [Mi cuenta → Reservas](/account/reservations). La lista muestra el estado, las fechas y el acceso al detalle de cada estancia.\n\nEn el detalle encontrará pago, cancelación (si está disponible), manifiesto de viajeros, reseñas y chat. Guarde el correo de confirmación para recuperar el número de reserva.\n\nSi no aparece nada tras un pago, compruebe la cuenta usada en el checkout o abra un ticket con el correo y la fecha del pago."
         },
         "confirmation-email": {
           "title": "No recibí el correo de confirmación",
           "summary": "Revise el spam y encuentre la confirmación en su cuenta.",
-          "body": "Primero revise spam / correo no deseado y la dirección indicada en el checkout. El correo puede tardar unos minutos.\n\nTambién abra Mi cuenta → Reservas: la estancia suele aparecer aunque falte el correo. Puede ver /booking/success justo después del pago.\n\nSi la reserva no aparece tras varios minutos, abra un ticket con el correo del pago y cualquier referencia en pantalla."
+          "body": "Primero revise spam / correo no deseado y la dirección indicada en el checkout. El correo puede tardar unos minutos.\n\nTambién abra [Mi cuenta → Reservas](/account/reservations): la estancia suele aparecer aunque falte el correo. Puede ver la [página de éxito](/booking/success) justo después del pago.\n\nSi la reserva no aparece tras varios minutos, abra un ticket con el correo del pago y cualquier referencia en pantalla."
         },
         "booking-chat": {
           "title": "¿Cómo uso el chat de una reserva?",
           "summary": "Escriba al equipo sobre una estancia concreta.",
-          "body": "Abra Mi cuenta → Reservas, seleccione la estancia y abra el chat vinculado a esa reserva. Úselo para preguntas sobre esa estancia (fechas, documentos, siguientes pasos).\n\nPara temas generales de cuenta o facturación sin relación con una estancia, use Contactar soporte al final del centro de ayuda."
+          "body": "Abra [Mi cuenta → Reservas](/account/reservations), seleccione la estancia y abra el chat vinculado a esa reserva. Úselo para preguntas sobre esa estancia (fechas, documentos, siguientes pasos).\n\nPara temas generales de cuenta o facturación sin relación con una estancia, use Contactar soporte al final del [centro de ayuda](/support)."
         },
         "payment-methods": {
           "title": "¿Qué métodos de pago aceptan?",
           "summary": "Tarjeta en línea y, según el producto, opciones fuera de tarjeta.",
-          "body": "En el resumen (/booking/recap) se ofrece pago seguro con tarjeta (Stripe) para muchas confirmaciones inmediatas. Los cargos y facturas dependen del producto reservado.\n\nEn algunos casos aparecen efectivo, transferencia o mobile money — vea el artículo de pagos fuera de tarjeta.\n\nPuede guardar una tarjeta en Mi cuenta → Métodos de pago para agilizar próximos checkouts."
+          "body": "En el [resumen](/booking/recap) se ofrece pago seguro con tarjeta (Stripe) para muchas confirmaciones inmediatas. Los cargos y facturas dependen del producto reservado.\n\nEn algunos casos aparecen efectivo, transferencia o mobile money — vea el artículo de pagos fuera de tarjeta.\n\nPuede guardar una tarjeta en [Mi cuenta → Métodos de pago](/account/payment-methods) para agilizar próximos checkouts."
         },
         "offline-payments": {
           "title": "Efectivo, transferencia o mobile money",
           "summary": "Pagar sin tarjeta cuando se ofrece la opción.",
-          "body": "Según el producto y el resumen, pueden aparecer opciones fuera de tarjeta: efectivo, transferencia bancaria o mobile money. Siga las instrucciones en pantalla tras validar; la confirmación depende de la recepción del pago.\n\nConsulte el estado en Mi cuenta → Reservas. Si una transferencia no está clara, abra un ticket con la referencia y el comprobante."
+          "body": "Según el producto y el resumen, pueden aparecer opciones fuera de tarjeta: efectivo, transferencia bancaria o mobile money. Siga las instrucciones en pantalla tras validar; la confirmación depende de la recepción del pago.\n\nConsulte el estado en [Mi cuenta → Reservas](/account/reservations). Si una transferencia no está clara, abra un ticket con la referencia y el comprobante."
         },
         "saved-cards": {
           "title": "Gestionar mis métodos de pago guardados",
           "summary": "Añadir o quitar una tarjeta en Mi cuenta.",
-          "body": "En Mi cuenta → Métodos de pago puede guardar una tarjeta para agilizar próximos pagos o eliminar una tarjeta que ya no use.\n\nLos datos de tarjeta se tratan de forma segura con el proveedor de pago. Nunca comparta códigos en el chat ni en un ticket de soporte."
+          "body": "En [Mi cuenta → Métodos de pago](/account/payment-methods) puede guardar una tarjeta para agilizar próximos pagos o eliminar una tarjeta que ya no use.\n\nLos datos de tarjeta se tratan de forma segura con el proveedor de pago. Nunca comparta códigos en el chat ni en un ticket de soporte."
         },
         "invoice-receipt": {
           "title": "¿Cómo obtengo una factura o recibo?",
           "summary": "Descargue o solicite su justificante de pago.",
-          "body": "Tras un pago correcto, suele enviarse un recibo por correo. Conserve también /booking/success y el detalle en Mi cuenta → Reservas.\n\nEn el detalle de la estancia puede haber un PDF de confirmación según el producto. Para una factura nominativa (empresa, IVA), abra un ticket con su referencia.\n\nLos justificantes fuera de tarjeta siguen las instrucciones mostradas tras elegir ese método."
+          "body": "Tras un pago correcto, suele enviarse un recibo por correo. Conserve también la [página de éxito](/booking/success) y el detalle en [Mi cuenta → Reservas](/account/reservations).\n\nEn el detalle de la estancia puede haber un PDF de confirmación según el producto. Para una factura nominativa (empresa, IVA), abra un ticket con su referencia.\n\nLos justificantes fuera de tarjeta siguen las instrucciones mostradas tras elegir ese método."
         },
         "failed-payment": {
           "title": "Mi pago falló",
           "summary": "Qué hacer si la tarjeta es rechazada o el cargo incompleto.",
-          "body": "En el resumen o la página de confirmación, compruebe el límite y la caducidad de la tarjeta e inténtelo de nuevo. La estancia no se confirma hasta que el pago sea válido.\n\nTambién puede volver desde Mi cuenta → Reservas si hay un pago pendiente, u otra opción del checkout.\n\nSi se retuvo un importe sin confirmación, contacte al soporte con la fecha, el monto y la referencia — nunca envíe el código de seguridad en un ticket."
+          "body": "En el resumen o la página de confirmación, compruebe el límite y la caducidad de la tarjeta e inténtelo de nuevo. La estancia no se confirma hasta que el pago sea válido.\n\nTambién puede volver desde [Mi cuenta → Reservas](/account/reservations) si hay un pago pendiente, u otra opción del checkout.\n\nSi se retuvo un importe sin confirmación, contacte al soporte con la fecha, el monto y la referencia — nunca envíe el código de seguridad en un ticket."
         },
         "cancellation-policy": {
           "title": "¿Cuál es su política de cancelación?",
           "summary": "Las condiciones dependen del alojamiento o proveedor.",
-          "body": "Las condiciones varían según hotel, vuelo, coche, crucero, actividad o paquete. Figuran en la ficha del producto y en el correo / detalle de confirmación.\n\nPara cancelar cuando esté permitido: Mi cuenta → Reservas → detalle. Si falta el botón, puede hacer falta un ticket o el chat de la reserva.\n\nAntes de cancelar, lea también los plazos de reembolso."
+          "body": "Las condiciones varían según hotel, vuelo, coche, crucero, actividad o paquete. Figuran en la ficha del producto y en el correo / detalle de confirmación.\n\nPara cancelar cuando esté permitido: [Mi cuenta → Reservas](/account/reservations) → detalle. Si falta el botón, puede hacer falta un ticket o el chat de la reserva.\n\nAntes de cancelar, lea también los plazos de reembolso."
         },
         "refund-timeline": {
           "title": "¿Cuánto tarda un reembolso?",
           "summary": "Plazos tras una cancelación elegible.",
-          "body": "Tras una cancelación conforme a las condiciones del producto, el reembolso lo procesan el proveedor y su banco u operador de pago. En general, espere unos días hábiles.\n\nEl estado se actualiza en Mi cuenta → Reservas. Conserve la referencia para el seguimiento.\n\nSi pasa el plazo previsto o el importe no coincide, abra un ticket con la prueba de cancelación y el extracto correspondiente."
+          "body": "Tras una cancelación conforme a las condiciones del producto, el reembolso lo procesan el proveedor y su banco u operador de pago. En general, espere unos días hábiles.\n\nEl estado se actualiza en [Mi cuenta → Reservas](/account/reservations). Conserve la referencia para el seguimiento.\n\nSi pasa el plazo previsto o el importe no coincide, abra un ticket con la prueba de cancelación y el extracto correspondiente."
         },
         "update-profile": {
           "title": "¿Cómo actualizo mi perfil?",
           "summary": "Modificar nombre, teléfono, idioma y avatar.",
-          "body": "Abra Mi cuenta → Perfil para actualizar sus datos personales (nombre, teléfono, avatar) y preferencias de visualización, incluido el idioma.\n\nLas direcciones se gestionan en Mi cuenta → Direcciones. Los viajeros de una estancia se indican en el manifiesto de la reserva.\n\nTras guardar, los cambios se aplican a futuras reservas y a la visualización del sitio."
+          "body": "Abra [Mi cuenta → Perfil](/account/profile) para actualizar sus datos personales (nombre, teléfono, avatar) y preferencias de visualización, incluido el idioma.\n\nLas direcciones se gestionan en [Mi cuenta → Direcciones](/account/addresses). Los viajeros de una estancia se indican en el manifiesto de la reserva.\n\nTras guardar, los cambios se aplican a futuras reservas y a la visualización del sitio."
         },
         "manage-addresses": {
           "title": "Gestionar mis direcciones",
           "summary": "Añadir, editar o eliminar una dirección de facturación o contacto.",
-          "body": "Abra Mi cuenta → Direcciones para guardar una dirección de facturación o contacto. Puede añadir varias y actualizarlas antes de reservar.\n\nUna dirección actualizada facilita facturas y seguimiento. Es distinta de los datos de viajeros del manifiesto de una reserva."
+          "body": "Abra [Mi cuenta → Direcciones](/account/addresses) para guardar una dirección de facturación o contacto. Puede añadir varias y actualizarlas antes de reservar.\n\nUna dirección actualizada facilita facturas y seguimiento. Es distinta de los datos de viajeros del manifiesto de una reserva."
         },
         "password-security": {
           "title": "Contraseña y seguridad de la cuenta",
           "summary": "Proteja su cuenta y recupere el acceso.",
-          "body": "Use una contraseña única y segura. En la página de inicio de sesión (/booking/login), use «Olvidé mi contraseña» si no puede entrar.\n\nSi sospecha un acceso no autorizado, cambie la contraseña cuanto antes, revise Mi cuenta → Métodos de pago y contacte al soporte.\n\nNunca comparta su contraseña en el chat de reserva ni en un ticket."
+          "body": "Use una contraseña única y segura. En la [página de inicio de sesión](/booking/login), use «Olvidé mi contraseña» si no puede entrar.\n\nSi sospecha un acceso no autorizado, cambie la contraseña cuanto antes, revise [Mi cuenta → Métodos de pago](/account/payment-methods) y contacte al soporte.\n\nNunca comparta su contraseña en el chat de reserva ni en un ticket."
         },
         "onekey-loyalty": {
           "title": "Programa de fidelidad OneKey",
           "summary": "Consulte beneficios y su nivel en Mi cuenta.",
-          "body": "OneKey agrupa los beneficios de fidelidad ligados a sus estancias en Africa Tourism Gate. Abra Mi cuenta → Fidelidad para ver su nivel y la información disponible.\n\nLas reglas de acumulación y uso siguen el programa vigente. Si faltan puntos, abra un ticket con sus referencias de reserva."
+          "body": "OneKey agrupa los beneficios de fidelidad ligados a sus estancias en Africa Tourism Gate. Abra [Mi cuenta → Fidelidad](/account/loyalty) para ver su nivel y la información disponible.\n\nLas reglas de acumulación y uso siguen el programa vigente. Si faltan puntos, abra un ticket con sus referencias de reserva."
         },
         "passenger-manifest": {
           "title": "Manifiesto y documentos de viajeros",
           "summary": "Indicar viajeros, contactos de emergencia y documentos de identidad.",
-          "body": "En el detalle de una reserva (Mi cuenta → Reservas), complete el manifiesto de viajeros cuando se solicite: identidad, contactos de emergencia y documentos útiles para la estancia.\n\nFacilite datos exactos antes de la salida. Si falla la carga o un campo, use el chat de la reserva o un ticket de soporte."
+          "body": "En el detalle de una reserva ([Mi cuenta → Reservas](/account/reservations)), complete el manifiesto de viajeros cuando se solicite: identidad, contactos de emergencia y documentos útiles para la estancia.\n\nFacilite datos exactos antes de la salida. Si falla la carga o un campo, use el chat de la reserva o un ticket de soporte."
         },
         "leave-a-review": {
           "title": "Dejar una reseña tras mi estancia",
           "summary": "Valorar un producto o guía desde el detalle de la reserva.",
-          "body": "Cuando su estancia lo permita, abra Mi cuenta → Reservas, luego el detalle y la sección de reseñas. Puede valorar la experiencia y, si está disponible, a un guía.\n\nLas reseñas ayudan a otros viajeros. Si el formulario no aparece, la estancia puede no ser elegible aún o el plazo de reseña no ha empezado."
+          "body": "Cuando su estancia lo permita, abra [Mi cuenta → Reservas](/account/reservations), luego el detalle y la sección de reseñas. Puede valorar la experiencia y, si está disponible, a un guía.\n\nLas reseñas ayudan a otros viajeros. Si el formulario no aparece, la estancia puede no ser elegible aún o el plazo de reseña no ha empezado."
         },
         "response-time": {
           "title": "¿En cuánto tiempo responde el soporte?",
           "summary": "Primera respuesta en 1–2 días hábiles en la mayoría de los casos.",
-          "body": "Atendemos tickets de lunes a viernes. La mayoría reciben una primera respuesta en 1–2 días hábiles.\n\nPara una urgencia sobre una estancia ya reservada, use también el chat de la reserva (Mi cuenta → Reservas → detalle).\n\nIncluya siempre su referencia de reserva para agilizar el trámite."
+          "body": "Atendemos tickets de lunes a viernes. La mayoría reciben una primera respuesta en 1–2 días hábiles.\n\nPara una urgencia sobre una estancia ya reservada, use también el chat de la reserva ([Mi cuenta → Reservas](/account/reservations) → detalle).\n\nIncluya siempre su referencia de reserva para agilizar el trámite."
         },
         "how-to-contact": {
           "title": "¿Cómo contacto al soporte?",
           "summary": "Chat de reserva para una estancia; ticket para el resto.",
-          "body": "Dos canales complementarios:\n\n• Chat de reserva — para preguntas sobre una estancia concreta (fechas, documentos, manifiesto, siguientes pasos). Abra Mi cuenta → Reservas → detalle → chat. Los mensajes quedan ligados a esa reserva.\n\n• Ticket de soporte — para la cuenta, facturación general, un pago fuera de una estancia, o si aún no tiene reserva. Inicie sesión y use Contactar soporte al final de /support (ancla /support#support-form). Incluya la referencia si la tiene.\n\nTambién puede abrir Sobre nosotros → Contactarnos para los datos públicos. Vea también el artículo del chat de reserva."
+          "body": "Dos canales complementarios:\n\n• Chat de reserva — para preguntas sobre una estancia concreta (fechas, documentos, manifiesto, siguientes pasos). Abra [Mi cuenta → Reservas](/account/reservations) → detalle → chat. Los mensajes quedan ligados a esa reserva.\n\n• Ticket de soporte — para la cuenta, facturación general, un pago fuera de una estancia, o si aún no tiene reserva. Inicie sesión y use Contactar soporte al final del [centro de ayuda](/support). Incluya la referencia si la tiene.\n\nTambién puede abrir Sobre nosotros → Contactarnos para los datos públicos. Vea también el artículo del chat de reserva."
         }
       }
     },
     "breadcrumbAria": "Miga de pan",
-    "searchContactCta": "Contactar soporte"
+    "searchContactCta": "Contactar soporte",
+    "contextualHelp": "Abrir el centro de ayuda",
+    "openContextualHelp": "Ayuda para esta página"
   },
   "about": {
     "heroTitle": "Sobre nosotros",

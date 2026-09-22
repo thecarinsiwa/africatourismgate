@@ -4,6 +4,8 @@
  * under `support.help.categories.*` / `support.help.articles.*`.
  */
 
+import { stripWebHelpMarkdownLinks } from './web-path-links';
+
 export const HELP_CATEGORY_SLUGS = [
   'booking',
   'payment',
@@ -98,6 +100,19 @@ export const HELP_CATEGORIES: readonly HelpCategory[] = [
     icon: 'message',
     articleSlugs: ['response-time', 'how-to-contact'],
   },
+] as const;
+
+/**
+ * Curated hub “quick start” links for travellers.
+ * Resolved against HELP_ARTICLES — unknown slugs are ignored.
+ */
+export const HELP_QUICK_START_SLUGS = [
+  'how-to-book',
+  'find-booking',
+  'payment-methods',
+  'modify-or-cancel',
+  'update-profile',
+  'how-to-contact',
 ] as const;
 
 export const HELP_ARTICLES: readonly HelpArticle[] = [
@@ -299,6 +314,12 @@ export function getPopularArticles(): HelpArticle[] {
   return HELP_ARTICLES.filter((article) => article.popular === true);
 }
 
+export function getQuickStartArticles(): HelpArticle[] {
+  return HELP_QUICK_START_SLUGS.map((slug) => articlesBySlug.get(slug)).filter(
+    (article): article is HelpArticle => article !== undefined,
+  );
+}
+
 export function getRelatedArticles(article: HelpArticle): HelpArticle[] {
   if (!article.relatedSlugs?.length) {
     return [];
@@ -326,11 +347,15 @@ export function searchHelpArticles(
     if (!strings) {
       return false;
     }
+    const searchableBody =
+      strings.body !== undefined
+        ? stripWebHelpMarkdownLinks(strings.body)
+        : undefined;
     return (
       matchesSearch(strings.title, normalizedQuery) ||
       matchesSearch(strings.summary, normalizedQuery) ||
-      (strings.body !== undefined &&
-        matchesSearch(strings.body, normalizedQuery))
+      (searchableBody !== undefined &&
+        matchesSearch(searchableBody, normalizedQuery))
     );
   });
 }

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import { PageHero } from '../shared/page-hero';
+import { SupportContextualHelpLink } from '../support/support-contextual-help-link';
 import {
   AccountAddressesIcon,
   AccountBrowseIcon,
@@ -174,9 +175,12 @@ export function AccountShell({ children }: Props) {
 
           <div className="min-w-0 flex-1">
             <div className="rounded-xl border border-atg-border bg-atg-elevated p-5 shadow-sm sm:p-6 dark:border-atg-border dark:bg-atg-elevated">
-              <h2 className="mb-5 border-b border-atg-border pb-4 text-lg font-semibold text-atg-fg dark:border-atg-border dark:text-white">
-                {pageTitle}
-              </h2>
+              <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3 border-b border-atg-border pb-4 dark:border-atg-border">
+                <h2 className="text-lg font-semibold text-atg-fg dark:text-white">
+                  {pageTitle}
+                </h2>
+                <SupportContextualHelpLink />
+              </div>
               {children}
             </div>
           </div>

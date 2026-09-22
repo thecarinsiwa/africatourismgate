@@ -15,6 +15,7 @@ import {
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { SupportBreadcrumbs } from './support-breadcrumbs';
+import { SupportHelpRichText } from './support-help-rich-text';
 import { SupportSearch } from './support-search';
 
 type SupportArticlePageContentProps = {
@@ -79,7 +80,7 @@ export function SupportArticlePageContent({
           <div className="space-y-4 text-base leading-relaxed text-atg-fg">
             {body.split(/\n\n+/).map((paragraph, index) => (
               <p key={index} className="m-0">
-                {paragraph}
+                <SupportHelpRichText text={paragraph} />
               </p>
             ))}
           </div>

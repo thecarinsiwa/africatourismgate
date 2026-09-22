@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { HELP_ARTICLES } from '../support/help-catalog';
+import { stripWebHelpMarkdownLinks } from '../support/web-path-links';
 import {
   aggregateSiteSearchResults,
   flattenSiteSearchGroups,
@@ -48,7 +49,9 @@ function useHelpStringsBySlug(): Record<string, SiteSearchHelpArticleStrings> {
       strings[article.slug] = {
         title: t(`help.articles.${article.slug}.title`),
         summary: t(`help.articles.${article.slug}.summary`),
-        body: t(`help.articles.${article.slug}.body`),
+        body: stripWebHelpMarkdownLinks(
+          t(`help.articles.${article.slug}.body`),
+        ),
       };
     }
     return strings;

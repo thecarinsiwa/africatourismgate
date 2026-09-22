@@ -15,6 +15,7 @@ import { completeWebLoginFromAuthResponse } from '../../lib/auth/complete-web-lo
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { GoogleIcon } from '../icons/google-icon';
+import { SupportContextualHelpLink } from '../support/support-contextual-help-link';
 
 type Props = {
   nextPath?: string;
@@ -69,7 +70,10 @@ export function BookingLoginPageContent({ nextPath, oauthError }: Props) {
       <HomeHeader />
       <main className="mx-auto flex w-full max-w-xl flex-1 items-center px-4 py-10 sm:px-6 lg:px-8">
         <section className="w-full rounded-2xl border border-atg-border bg-atg-elevated p-6 shadow-sm dark:border-atg-border dark:bg-atg-elevated">
-          <h1 className="text-2xl font-bold text-atg-fg">{t('title')}</h1>
+          <div className="flex flex-wrap items-baseline justify-between gap-3">
+            <h1 className="text-2xl font-bold text-atg-fg">{t('title')}</h1>
+            <SupportContextualHelpLink />
+          </div>
           <p className="mt-2 text-sm text-atg-muted">{t('subtitle')}</p>
 
           {error ? (

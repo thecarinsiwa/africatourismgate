@@ -5,6 +5,7 @@ import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { SupportCategoryGrid } from './support-category-grid';
 import { SupportPopularList } from './support-popular-list';
+import { SupportQuickStart } from './support-quick-start';
 import { SupportSearch } from './support-search';
 import { SupportTicketForm } from './support-ticket-form';
 
@@ -15,7 +16,7 @@ export function SupportPageContent() {
     <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
       <HomeHeader />
       <main className="flex-1">
-        <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
           <header className="mb-8 max-w-2xl">
             <h1 className="text-2xl font-bold tracking-tight text-atg-fg sm:text-3xl">
               {t('pageTitle')}
@@ -30,8 +31,14 @@ export function SupportPageContent() {
           </div>
 
           <div className="space-y-12">
-            <SupportCategoryGrid />
-            <SupportPopularList />
+            <SupportQuickStart />
+
+            <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(14rem,17.5rem)] lg:items-start lg:gap-12">
+              <SupportCategoryGrid />
+              <aside className="min-w-0 lg:sticky lg:top-4">
+                <SupportPopularList />
+              </aside>
+            </div>
 
             <section
               id="support-form"

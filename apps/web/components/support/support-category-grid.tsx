@@ -20,7 +20,7 @@ export function SupportCategoryGrid() {
       </h2>
       <p className="mt-1 text-sm text-atg-muted">{t('categoriesSubtitle')}</p>
 
-      <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="mt-6 grid gap-4 sm:grid-cols-2">
         {categories.map((category) => (
           <li key={category.id}>
             <Link
@@ -36,6 +36,11 @@ export function SupportCategoryGrid() {
                 </span>
                 <span className="mt-1 block text-sm text-atg-muted">
                   {t(`help.categories.${category.slug}.description`)}
+                </span>
+                <span className="mt-2 block text-xs font-medium text-atg-muted">
+                  {t('articlesInCategory', {
+                    count: category.articleSlugs.length,
+                  })}
                 </span>
               </span>
             </Link>
