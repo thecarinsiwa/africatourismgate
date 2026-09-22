@@ -29,7 +29,6 @@ function errorMessage(reason: unknown): string {
 export function selectRunnableSiteSearchSources(
   sources: readonly SiteSearchSource[],
   query: string,
-  _context?: SiteSearchContext,
 ): SiteSearchSource[] {
   return sources.filter(
     (source) =>
@@ -90,7 +89,7 @@ export async function runSiteSearchFanOut(
   query: string,
   context: SiteSearchContext = {},
 ): Promise<SiteSearchSourceRun[]> {
-  const runnable = selectRunnableSiteSearchSources(sources, query, context);
+  const runnable = selectRunnableSiteSearchSources(sources, query);
   const settled = await Promise.allSettled(
     runnable.map((source) => source.search(query, context)),
   );
