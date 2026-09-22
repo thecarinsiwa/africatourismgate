@@ -11,6 +11,7 @@ import {
   type HelpArticleSearchStrings,
 } from '../../lib/support/help-catalog';
 import { supportArticlePath, SUPPORT_BASE_PATH } from '../../lib/support/routes';
+import { stripWebHelpMarkdownLinks } from '../../lib/support/web-path-links';
 import { HelpSearchIcon } from './support-help-icons';
 
 function useArticleSearchStrings(): Record<string, HelpArticleSearchStrings> {
@@ -20,7 +21,9 @@ function useArticleSearchStrings(): Record<string, HelpArticleSearchStrings> {
     strings[article.slug] = {
       title: t(`help.articles.${article.slug}.title`),
       summary: t(`help.articles.${article.slug}.summary`),
-      body: t(`help.articles.${article.slug}.body`),
+      body: stripWebHelpMarkdownLinks(
+        t(`help.articles.${article.slug}.body`),
+      ),
     };
   }
   return strings;

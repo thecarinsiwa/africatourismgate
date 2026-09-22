@@ -4,6 +4,8 @@
  * under `support.help.categories.*` / `support.help.articles.*`.
  */
 
+import { stripWebHelpMarkdownLinks } from './web-path-links';
+
 export const HELP_CATEGORY_SLUGS = [
   'booking',
   'payment',
@@ -326,11 +328,15 @@ export function searchHelpArticles(
     if (!strings) {
       return false;
     }
+    const searchableBody =
+      strings.body !== undefined
+        ? stripWebHelpMarkdownLinks(strings.body)
+        : undefined;
     return (
       matchesSearch(strings.title, normalizedQuery) ||
       matchesSearch(strings.summary, normalizedQuery) ||
-      (strings.body !== undefined &&
-        matchesSearch(strings.body, normalizedQuery))
+      (searchableBody !== undefined &&
+        matchesSearch(searchableBody, normalizedQuery))
     );
   });
 }
