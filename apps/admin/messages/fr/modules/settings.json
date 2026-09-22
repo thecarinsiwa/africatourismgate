@@ -105,7 +105,7 @@
         "message": "Message",
         "messageHint": "Optionnel — texte affiché aux visiteurs (2000 caractères max).",
         "endsAt": "Fin prévue",
-        "endsAtHint": "Optionnel — si renseignée et dépassée, le site redevient accessible même si le mode reste coché."
+        "endsAtHint": "Optionnel — date affichée aux visiteurs. Le site reste bloqué tant que le mode est activé (désactivez le toggle pour rouvrir)."
       },
       "loyalty": {
         "title": "Fidélité OneKey",

@@ -5,12 +5,8 @@ import {
   type PublicSiteMaintenance,
 } from '@africatourismgate/types/organization-settings';
 
-const MAINTENANCE_FETCH_TIMEOUT_MS = 800;
-const defaultApiUrl = 'http://localhost:3000/api';
-
-function apiBaseUrl(): string {
-  return (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(/\/$/, '');
-}
+const MAINTENANCE_FETCH_TIMEOUT_MS = 2_000;
+const DEFAULT_API = 'http://127.0.0.1:3000/api';
 
 function shouldBypassMaintenanceGate(pathname: string): boolean {
   if (pathname === '/maintenance' || pathname.startsWith('/maintenance/')) {
@@ -22,7 +18,6 @@ function shouldBypassMaintenanceGate(pathname: string): boolean {
   if (pathname.startsWith('/_next/')) {
     return true;
   }
-  // Static files with an extension (favicon, images, etc.)
   const lastSegment = pathname.split('/').pop() ?? '';
   if (lastSegment.includes('.')) {
     return true;
@@ -30,31 +25,83 @@ function shouldBypassMaintenanceGate(pathname: string): boolean {
   return false;
 }
 
-async function fetchPublicMaintenance(
-  signal: AbortSignal,
-): Promise<PublicSiteMaintenance | null> {
+/**
+ * Resolve the maintenance status URL.
+ * - Direct Nest (`:3000/api`): Edge often fails on `localhost` → use `127.0.0.1`.
+ * - Same-origin web proxy (`:3002/api` when ATG_USE_REMOTE_API=1): use request origin
+ *   so we hit the Next `/api` rewrite without a self-deadlock on a second host.
+ */
+function maintenanceStatusUrls(request: NextRequest): string[] {
+  const configured = (process.env.NEXT_PUBLIC_API_URL ?? DEFAULT_API)
+    .replace(/\/$/, '')
+    .replace('://localhost', '://127.0.0.1');
+
+  const urls: string[] = [];
+
   try {
-    const response = await fetch(
-      `${apiBaseUrl()}/organization-settings/public/maintenance`,
-      {
-        cache: 'no-store',
-        signal,
-        headers: { Accept: 'application/json' },
-      },
-    );
-    if (!response.ok) {
-      return null;
+    const api = new URL(configured);
+    const samePort =
+      api.port === request.nextUrl.port ||
+      (!api.port &&
+        ((api.protocol === 'https:' && request.nextUrl.port === '443') ||
+          (api.protocol === 'http:' && request.nextUrl.port === '80')));
+    const loopback =
+      api.hostname === '127.0.0.1' || api.hostname === 'localhost';
+
+    if (samePort && loopback) {
+      urls.push(
+        new URL(
+          '/api/organization-settings/public/maintenance',
+          request.nextUrl.origin,
+        ).toString(),
+      );
     }
-    return (await response.json()) as PublicSiteMaintenance;
   } catch {
-    return null;
+    // ignore invalid URL
   }
+
+  urls.push(`${configured}/organization-settings/public/maintenance`);
+
+  return [...new Set(urls)];
+}
+
+async function fetchPublicMaintenance(
+  request: NextRequest,
+): Promise<PublicSiteMaintenance | null> {
+  const deadline = Date.now() + MAINTENANCE_FETCH_TIMEOUT_MS;
+
+  for (const url of maintenanceStatusUrls(request)) {
+    const remaining = deadline - Date.now();
+    if (remaining <= 0) {
+      break;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), remaining);
+
+    try {
+      const response = await fetch(url, {
+        cache: 'no-store',
+        signal: controller.signal,
+        headers: { Accept: 'application/json' },
+      });
+      if (!response.ok) {
+        continue;
+      }
+      return (await response.json()) as PublicSiteMaintenance;
+    } catch {
+      // try next candidate
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+  return null;
 }
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // E2E / local opt-out: avoid latency when no API is listening on :3000.
+  // Playwright only — never set this in normal local/prod `.env`.
   if (process.env.DISABLE_SITE_MAINTENANCE_GATE === '1') {
     return NextResponse.next();
   }
@@ -63,25 +110,15 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(
-    () => controller.abort(),
-    MAINTENANCE_FETCH_TIMEOUT_MS,
-  );
-
-  try {
-    const maintenance = await fetchPublicMaintenance(controller.signal);
-    // Fail-open: API down / timeout → normal site
-    if (!maintenance || !isSiteMaintenanceActive(maintenance)) {
-      return NextResponse.next();
-    }
-
-    const rewriteUrl = request.nextUrl.clone();
-    rewriteUrl.pathname = '/maintenance';
-    return NextResponse.rewrite(rewriteUrl);
-  } finally {
-    clearTimeout(timeoutId);
+  const maintenance = await fetchPublicMaintenance(request);
+  if (!maintenance || !isSiteMaintenanceActive(maintenance)) {
+    return NextResponse.next();
   }
+
+  const maintenanceUrl = request.nextUrl.clone();
+  maintenanceUrl.pathname = '/maintenance';
+  maintenanceUrl.search = '';
+  return NextResponse.redirect(maintenanceUrl);
 }
 
 export const config = {

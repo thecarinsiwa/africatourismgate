@@ -201,6 +201,12 @@
     "title": "En mantenimiento",
     "message": "El sitio no está disponible temporalmente. Volveremos pronto — gracias por su paciencia.",
     "endsAtLabel": "Regreso previsto: {date}",
+    "countdownLabel": "Reapertura en",
+    "countdownDays": "Días",
+    "countdownHours": "Horas",
+    "countdownMinutes": "Min",
+    "countdownSeconds": "Seg",
+    "countdownDone": "Reabriendo…",
     "metaTitle": "Mantenimiento",
     "metaDescription": "Africa Tourism Gate está temporalmente en mantenimiento."
   },

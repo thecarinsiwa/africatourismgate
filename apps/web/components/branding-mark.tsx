@@ -29,7 +29,13 @@ export function BrandingLogo({
 
   return (
     <span className={`flex items-center justify-center rounded-lg bg-primary ${logoClassName}`}>
-      <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+      <svg
+        className="h-[55%] w-[55%] text-white"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        aria-hidden
+      >
         <path
           strokeLinecap="round"
           strokeLinejoin="round"

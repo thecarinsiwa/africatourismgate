@@ -105,7 +105,7 @@
         "message": "Message",
         "messageHint": "Optional — text shown to visitors (max 2000 characters).",
         "endsAt": "Scheduled end",
-        "endsAtHint": "Optional — once past this time, the site becomes accessible again even if the toggle stays on."
+        "endsAtHint": "Optional — date shown to visitors. The site stays locked while the mode is on (turn the toggle off to reopen)."
       },
       "loyalty": {
         "title": "OneKey loyalty",

@@ -25,6 +25,12 @@ const REQUIRED_MAINTENANCE_KEYS = [
   'title',
   'message',
   'endsAtLabel',
+  'countdownLabel',
+  'countdownDays',
+  'countdownHours',
+  'countdownMinutes',
+  'countdownSeconds',
+  'countdownDone',
   'metaTitle',
   'metaDescription',
 ] as const;

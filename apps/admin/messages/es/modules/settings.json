@@ -105,7 +105,7 @@
         "message": "Mensaje",
         "messageHint": "Opcional — texto mostrado a los visitantes (máx. 2000 caracteres).",
         "endsAt": "Fin previsto",
-        "endsAtHint": "Opcional — una vez pasada esta hora, el sitio vuelve a ser accesible aunque el interruptor siga activo."
+        "endsAtHint": "Opcional — fecha mostrada a los visitantes. El sitio permanece bloqueado mientras el modo esté activo (desactive el interruptor para reabrir)."
       },
       "loyalty": {
         "title": "Fidelidad OneKey",

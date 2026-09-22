@@ -347,22 +347,11 @@ export function normalizeSiteMaintenance(
   return { enabled, title, message, endsAt };
 }
 
-/** True when maintenance is on and optional `endsAt` is still in the future (or unset). */
+/** True when the public site maintenance toggle is on. */
 export function isSiteMaintenanceActive(
   maintenance: PublicSiteMaintenance = DEFAULT_SITE_MAINTENANCE,
-  now: Date = new Date(),
 ): boolean {
-  if (!maintenance.enabled) {
-    return false;
-  }
-  if (maintenance.endsAt == null) {
-    return true;
-  }
-  const endMs = Date.parse(maintenance.endsAt);
-  if (Number.isNaN(endMs)) {
-    return true;
-  }
-  return endMs > now.getTime();
+  return maintenance.enabled === true;
 }
 
 export interface OrganizationSetting {
