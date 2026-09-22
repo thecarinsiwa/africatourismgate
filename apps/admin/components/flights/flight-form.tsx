@@ -372,17 +372,38 @@ export function FlightForm({
     [airlines],
   );
 
-  const airportOptions = useMemo(
+  const toAirportOption = useCallback(
+    (airport: Airport) => ({
+      value: airport.id,
+      label: `${airport.iataCode} — ${airport.city}${
+        airport.name?.trim() && airport.name.trim() !== airport.city
+          ? ` (${airport.name.trim()})`
+          : ''
+      }`,
+    }),
+    [],
+  );
+
+  const departureAirportOptions = useMemo(
     () =>
-      airports.map((airport) => ({
-        value: airport.id,
-        label: `${airport.iataCode} — ${airport.city}${
-          airport.name?.trim() && airport.name.trim() !== airport.city
-            ? ` (${airport.name.trim()})`
-            : ''
-        }`,
-      })),
-    [airports],
+      airports
+        .filter((airport) => {
+          if (airport.id === values.departureAirportId) return true;
+          return airport.id !== values.arrivalAirportId;
+        })
+        .map(toAirportOption),
+    [airports, values.arrivalAirportId, values.departureAirportId, toAirportOption],
+  );
+
+  const arrivalAirportOptions = useMemo(
+    () =>
+      airports
+        .filter((airport) => {
+          if (airport.id === values.arrivalAirportId) return true;
+          return airport.id !== values.departureAirportId;
+        })
+        .map(toAirportOption),
+    [airports, values.departureAirportId, values.arrivalAirportId, toAirportOption],
   );
 
   const fieldInputClass =
@@ -427,7 +448,7 @@ export function FlightForm({
           label={t('departure')}
           name="departureAirportId"
           value={values.departureAirportId}
-          options={airportOptions}
+          options={departureAirportOptions}
           onChange={(next) => updateField('departureAirportId', next)}
           searchPlaceholder={tSelect('searchPlaceholder')}
           emptyMessage={tSelect('empty')}
@@ -438,13 +459,13 @@ export function FlightForm({
           onSearchChange={remoteOptions ? setAirportSearch : undefined}
           loading={optionsLoading || airportsSearching}
           loadingMessage={tSelect('loading')}
-          disabled={optionsLoading && airportOptions.length === 0}
+          disabled={optionsLoading && departureAirportOptions.length === 0}
         />
         <SearchableSelect
           label={t('arrival')}
           name="arrivalAirportId"
           value={values.arrivalAirportId}
-          options={airportOptions}
+          options={arrivalAirportOptions}
           onChange={(next) => updateField('arrivalAirportId', next)}
           searchPlaceholder={tSelect('searchPlaceholder')}
           emptyMessage={tSelect('empty')}
@@ -455,7 +476,7 @@ export function FlightForm({
           onSearchChange={remoteOptions ? setAirportSearch : undefined}
           loading={optionsLoading || airportsSearching}
           loadingMessage={tSelect('loading')}
-          disabled={optionsLoading && airportOptions.length === 0}
+          disabled={optionsLoading && arrivalAirportOptions.length === 0}
         />
       </div>
 
