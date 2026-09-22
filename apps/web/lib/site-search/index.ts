@@ -8,6 +8,11 @@ export {
 } from './sources';
 export { listWiredSiteSearchSources } from './wired-sources';
 export {
+  isSiteSearchToggleShortcut,
+  isEditableKeyboardTarget,
+  shouldHandleSiteSearchShortcut,
+} from './shortcuts';
+export {
   aggregateSiteSearchResults,
   flattenSiteSearchGroups,
   runSiteSearchFanOut,
