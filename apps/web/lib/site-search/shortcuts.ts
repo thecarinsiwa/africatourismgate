@@ -7,6 +7,11 @@
 export function isSiteSearchToggleShortcut(event: KeyboardEvent): boolean {
   if (event.defaultPrevented) return false;
 
+  // Certains événements clavier (IME, autofill, extensions) n’exposent pas `key`.
+  if (typeof event.key !== 'string' || event.key.length === 0) {
+    return false;
+  }
+
   const key = event.key.toLowerCase();
 
   // Ctrl/⌘+K (sans Alt/Shift)

@@ -65,6 +65,19 @@ test('isSiteSearchToggleShortcut accepts bare slash', () => {
   );
 });
 
+test('isSiteSearchToggleShortcut ignores missing or empty key', () => {
+  assert.equal(
+    isSiteSearchToggleShortcut(
+      asKeyboardEvent({ key: undefined as unknown as string }),
+    ),
+    false,
+  );
+  assert.equal(
+    isSiteSearchToggleShortcut(asKeyboardEvent({ key: '' })),
+    false,
+  );
+});
+
 test('isSiteSearchToggleShortcut never captures Ctrl/Meta+F', () => {
   assert.equal(
     isSiteSearchToggleShortcut(asKeyboardEvent({ key: 'f', ctrlKey: true })),
