@@ -27,11 +27,16 @@ type DestinationStaticMapProps = {
   longitude: string | number | null | undefined;
   destinationName?: string;
   pointsOfInterest?: DestinationMapPoi[];
+  /** Open popup / pan to this POI when set. */
+  highlightedPoiId?: string | null;
+  onPoiSelect?: (poiId: string) => void;
   title?: string;
   openMapsLabel?: string;
   className?: string;
   /** Smaller map for side panels / sticky asides. */
   compact?: boolean;
+  /** Hide the OpenStreetMap external link. */
+  hideExternalLink?: boolean;
 };
 
 const DEFAULT_CENTER: [number, number] = [0, 20];
@@ -101,10 +106,13 @@ export function DestinationStaticMap({
   longitude,
   destinationName,
   pointsOfInterest = [],
+  highlightedPoiId = null,
+  onPoiSelect,
   title,
   openMapsLabel,
   className,
   compact = false,
+  hideExternalLink = false,
 }: DestinationStaticMapProps) {
   const t = useTranslations('modules.destinations');
   const tForm = useTranslations('modules.destinations.form');
@@ -129,11 +137,15 @@ export function DestinationStaticMap({
   const mapRef = useRef<import('leaflet').Map | null>(null);
   const centerMarkerRef = useRef<import('leaflet').Marker | null>(null);
   const poiLayerRef = useRef<import('leaflet').LayerGroup | null>(null);
+  const poiMarkersRef = useRef<Map<string, import('leaflet').Marker>>(new Map());
   const boundaryLayerRef = useRef<import('leaflet').GeoJSON | null>(null);
+  const onPoiSelectRef = useRef(onPoiSelect);
   const [mapReady, setMapReady] = useState(false);
   const [boundaryStatus, setBoundaryStatus] = useState<
     'idle' | 'loading' | 'ready' | 'error' | 'empty'
   >('idle');
+
+  onPoiSelectRef.current = onPoiSelect;
 
   const lat = hasCoords ? parseDestinationCoord(latitude)! : null;
   const lng = hasCoords ? parseDestinationCoord(longitude)! : null;
@@ -186,6 +198,7 @@ export function DestinationStaticMap({
       boundaryLayerRef.current = null;
       centerMarkerRef.current = null;
       poiLayerRef.current = null;
+      poiMarkersRef.current.clear();
       mapRef.current?.remove();
       mapRef.current = null;
     };
@@ -236,6 +249,7 @@ export function DestinationStaticMap({
       }
 
       layer.clearLayers();
+      poiMarkersRef.current.clear();
       const icon = createLeafletPoiMarkerIcon(L);
       for (const poi of mappedPois) {
         const marker = L.marker(poi.point, { icon });
@@ -245,10 +259,27 @@ export function DestinationStaticMap({
           offset: [0, -8],
           opacity: 0.9,
         });
+        marker.on('click', () => {
+          onPoiSelectRef.current?.(poi.id);
+        });
         marker.addTo(layer);
+        poiMarkersRef.current.set(poi.id, marker);
       }
     });
   }, [mappedPois, mapReady]);
+
+  useEffect(() => {
+    if (!mapReady || !mapRef.current || !highlightedPoiId) {
+      return;
+    }
+    const marker = poiMarkersRef.current.get(highlightedPoiId);
+    if (!marker) {
+      return;
+    }
+    const map = mapRef.current;
+    map.panTo(marker.getLatLng(), { animate: true });
+    marker.openPopup();
+  }, [highlightedPoiId, mapReady, mappedPois]);
 
   useEffect(() => {
     if (!mapReady || !mapRef.current) {
@@ -376,7 +407,7 @@ export function DestinationStaticMap({
           {tForm('mapBoundaryUnavailable')}
         </p>
       ) : null}
-      {externalUrl ? (
+      {!hideExternalLink && externalUrl ? (
         <p className="text-xs text-atg-muted">
           <a
             href={externalUrl}

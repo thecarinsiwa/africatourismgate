@@ -103,11 +103,18 @@
   "sections": {
     "pois": {
       "title": "Points of interest",
-      "intro": "Landmarks linked to this destination.",
+      "intro": "Landmarks linked to this destination. Click a name to locate it on the map.",
       "addPoi": "Add a point of interest",
-      "mapPicker": "Map assistant",
-      "mapPickerHint": "Click the map or drag the marker to fill latitude and longitude automatically.",
+      "mapOverviewTitle": "Points of interest map",
+      "mapOverviewHint": "{count, plural, one {# point shown on the map.} other {# points shown on the map.}}",
+      "mapOverviewEmpty": "Set the country or destination center to display the map.",
+      "mapPicker": "Place on the map",
+      "mapPickerHint": "Country outline and other points for reference. Click or drag the marker for coordinates.",
       "mapPickerAria": "Interactive map to pick coordinates",
+      "columnLocation": "Map",
+      "statusOnMap": "On map",
+      "statusNoCoords": "No coordinates",
+      "locateOnMap": "Locate on map",
       "new": "New point of interest",
       "edit": "Edit point of interest",
       "empty": "No points of interest for this destination.",
@@ -115,7 +122,12 @@
       "deleteTitle": "Delete point of interest",
       "deleteConfirm": "Point of interest \"{name}\" will be permanently deleted.",
       "deleteConfirmButton": "Delete",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "toastCreatedTitle": "Point of interest created",
+      "toastUpdatedTitle": "Point of interest updated",
+      "toastDeletedTitle": "Point of interest deleted",
+      "toastNoCoordsTitle": "Missing coordinates",
+      "toastNoCoordsMessage": "\"{name}\" has no map position yet."
     },
     "related": {
       "properties": {

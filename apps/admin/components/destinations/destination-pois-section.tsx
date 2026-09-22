@@ -9,16 +9,22 @@ import {
   DataTable,
   DataTableActionButton,
   DataTableActions,
+  DataTableBadge,
   Input,
   Modal,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { PointOfInterest } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { parseDestinationCoord } from '../../lib/destination-coords';
+import {
+  hasValidDestinationCoords,
+  parseDestinationCoord,
+} from '../../lib/destination-coords';
 import { CoordinatePickerMap } from '../maps/coordinate-picker-map';
+import { DestinationStaticMap } from './destination-static-map';
 
 type PoiFormValues = {
   name: string;
@@ -42,6 +48,8 @@ function parseCoord(value: string): number | undefined {
 type DestinationPoisSectionProps = {
   destinationId: string;
   embedded?: boolean;
+  countryCode?: string | null;
+  destinationName?: string;
   /** Center the picker on the destination when POI coords are empty. */
   mapDefaultLatitude?: string | number | null;
   mapDefaultLongitude?: string | number | null;
@@ -50,6 +58,8 @@ type DestinationPoisSectionProps = {
 export function DestinationPoisSection({
   destinationId,
   embedded = false,
+  countryCode,
+  destinationName,
   mapDefaultLatitude,
   mapDefaultLongitude,
 }: DestinationPoisSectionProps) {
@@ -59,6 +69,7 @@ export function DestinationPoisSection({
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
   const tLoading = useTranslations('common.loading');
+  const { toast } = useToast();
   const emptyDash = tCommon('empty.dash');
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -76,6 +87,7 @@ export function DestinationPoisSection({
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<PointOfInterest | null>(null);
+  const [highlightedPoiId, setHighlightedPoiId] = useState<string | null>(null);
 
   const formatCoord = useCallback(
     (value: string | null): string => {
@@ -131,6 +143,9 @@ export function DestinationPoisSection({
     setFieldErrors({});
     setFormError(null);
     setModalOpen(true);
+    if (hasValidDestinationCoords(poi.latitude, poi.longitude)) {
+      setHighlightedPoiId(poi.id);
+    }
   }, []);
 
   function validatePoiForm(): boolean {
@@ -138,14 +153,20 @@ export function DestinationPoisSection({
     if (!formValues.name.trim()) {
       errors.name = tCommon('validation.nameRequired');
     }
+    const hasLat = formValues.latitude.trim().length > 0;
+    const hasLng = formValues.longitude.trim().length > 0;
     const lat = parseCoord(formValues.latitude);
     const lng = parseCoord(formValues.longitude);
-    if (formValues.latitude.trim() && lat === undefined) {
+
+    if (hasLat !== hasLng) {
+      errors.latitude = tCommon('validation.coordsBothRequired');
+      errors.longitude = tCommon('validation.coordsBothRequired');
+    } else if (hasLat && lat === undefined) {
       errors.latitude = tCommon('validation.latitudeInvalid');
     } else if (lat !== undefined && (lat < -90 || lat > 90)) {
       errors.latitude = tCommon('validation.latitudeOutOfRange');
     }
-    if (formValues.longitude.trim() && lng === undefined) {
+    if (hasLng && lng === undefined) {
       errors.longitude = tCommon('validation.longitudeInvalid');
     } else if (lng !== undefined && (lng < -180 || lng > 180)) {
       errors.longitude = tCommon('validation.longitudeOutOfRange');
@@ -164,18 +185,30 @@ export function DestinationPoisSection({
       const client = getApiClient();
       const latitude = parseCoord(formValues.latitude);
       const longitude = parseCoord(formValues.longitude);
-      const body = {
-        name: formValues.name.trim(),
-        ...(latitude !== undefined ? { latitude } : {}),
-        ...(longitude !== undefined ? { longitude } : {}),
-      };
+      const name = formValues.name.trim();
 
       if (editingPoi) {
-        await client.updatePointOfInterest(editingPoi.id, body);
+        await client.updatePointOfInterest(editingPoi.id, {
+          name,
+          latitude: latitude ?? null,
+          longitude: longitude ?? null,
+        });
+        toast({
+          title: t('toastUpdatedTitle'),
+          message: name,
+          variant: 'success',
+        });
       } else {
         await client.createPointOfInterest({
           destinationId,
-          ...body,
+          name,
+          ...(latitude !== undefined ? { latitude } : {}),
+          ...(longitude !== undefined ? { longitude } : {}),
+        });
+        toast({
+          title: t('toastCreatedTitle'),
+          message: name,
+          variant: 'success',
         });
       }
       resetForm();
@@ -209,27 +242,74 @@ export function DestinationPoisSection({
     setDeletingId(poi.id);
     try {
       await getApiClient().deletePointOfInterest(poi.id);
+      if (highlightedPoiId === poi.id) {
+        setHighlightedPoiId(null);
+      }
+      toast({
+        title: t('toastDeletedTitle'),
+        message: poi.name,
+        variant: 'success',
+      });
       await load();
     } catch (error) {
       setListError(getDestinationsErrorMessage(error));
     } finally {
       setDeletingId(null);
     }
-  }, [confirmTarget, getDestinationsErrorMessage, load]);
+  }, [confirmTarget, getDestinationsErrorMessage, highlightedPoiId, load, t, toast]);
+
+  const focusPoiOnMap = useCallback((poi: PointOfInterest) => {
+    if (!hasValidDestinationCoords(poi.latitude, poi.longitude)) {
+      toast({
+        title: t('toastNoCoordsTitle'),
+        message: t('toastNoCoordsMessage', { name: poi.name }),
+        variant: 'info',
+      });
+      return;
+    }
+    setHighlightedPoiId(poi.id);
+  }, [t, toast]);
 
   const columns = useMemo<ColumnDef<PointOfInterest, unknown>[]>(
     () => [
       {
         accessorKey: 'name',
         header: tCommon('columns.name'),
-        cell: ({ row }) => (
-          <span className="font-medium text-atg-fg">{row.original.name}</span>
-        ),
+        cell: ({ row }) => {
+          const poi = row.original;
+          const isActive = highlightedPoiId === poi.id;
+          return (
+            <button
+              type="button"
+              onClick={() => focusPoiOnMap(poi)}
+              className={
+                isActive
+                  ? 'text-left font-semibold text-primary'
+                  : 'text-left font-medium text-atg-fg hover:text-primary'
+              }
+            >
+              {poi.name}
+            </button>
+          );
+        },
+      },
+      {
+        id: 'location',
+        header: t('columnLocation'),
+        cell: ({ row }) => {
+          const poi = row.original;
+          const onMap = hasValidDestinationCoords(poi.latitude, poi.longitude);
+          return onMap ? (
+            <DataTableBadge variant="success">{t('statusOnMap')}</DataTableBadge>
+          ) : (
+            <DataTableBadge variant="muted">{t('statusNoCoords')}</DataTableBadge>
+          );
+        },
       },
       {
         id: 'latitude',
         header: tCommon('form.latitude'),
-        meta: { align: 'right' },
+        meta: { align: 'right', hideOnMobile: true },
         cell: ({ row }) => (
           <span className="font-mono text-xs tabular-nums text-atg-muted">
             {formatCoord(row.original.latitude)}
@@ -239,7 +319,7 @@ export function DestinationPoisSection({
       {
         id: 'longitude',
         header: tCommon('form.longitude'),
-        meta: { align: 'right' },
+        meta: { align: 'right', hideOnMobile: true },
         cell: ({ row }) => (
           <span className="font-mono text-xs tabular-nums text-atg-muted">
             {formatCoord(row.original.longitude)}
@@ -254,6 +334,12 @@ export function DestinationPoisSection({
           const poi = row.original;
           return (
             <DataTableActions>
+              <DataTableActionButton
+                action="view"
+                label={t('locateOnMap')}
+                onClick={() => focusPoiOnMap(poi)}
+                disabled={!hasValidDestinationCoords(poi.latitude, poi.longitude)}
+              />
               <DataTableActionButton action="edit" onClick={() => openEditForm(poi)} />
               <DataTableActionButton
                 action="delete"
@@ -266,10 +352,40 @@ export function DestinationPoisSection({
         },
       },
     ],
-    [deletingId, formatCoord, handleDeleteRequest, openEditForm, tCommon],
+    [
+      deletingId,
+      focusPoiOnMap,
+      formatCoord,
+      handleDeleteRequest,
+      highlightedPoiId,
+      openEditForm,
+      t,
+      tCommon,
+    ],
   );
 
   const pois = state.status === 'ready' ? state.pois : [];
+  const poisOnMap = useMemo(
+    () => pois.filter((poi) => hasValidDestinationCoords(poi.latitude, poi.longitude)),
+    [pois],
+  );
+  const showOverviewMap =
+    Boolean(countryCode) ||
+    hasValidDestinationCoords(mapDefaultLatitude, mapDefaultLongitude) ||
+    poisOnMap.length > 0;
+
+  const contextPois = useMemo(
+    () =>
+      pois
+        .filter((poi) => poi.id !== editingPoi?.id)
+        .map((poi) => ({
+          id: poi.id,
+          name: poi.name,
+          latitude: poi.latitude,
+          longitude: poi.longitude,
+        })),
+    [pois, editingPoi?.id],
+  );
 
   return (
     <>
@@ -295,7 +411,7 @@ export function DestinationPoisSection({
         title={editingPoi ? t('edit') : t('new')}
         showClose={!submitting}
         closeAriaLabel={tActions('close')}
-        className="max-w-2xl"
+        className="max-w-3xl"
       >
         <form onSubmit={(e) => void handleSubmitPoi(e)} className="space-y-4">
           {formError ? (
@@ -353,6 +469,8 @@ export function DestinationPoisSection({
             onCoordinateChange={handleCoordinatePick}
             defaultLatitude={mapDefaultCenter.latitude}
             defaultLongitude={mapDefaultCenter.longitude}
+            countryCode={countryCode}
+            contextPois={contextPois}
             title={t('mapPicker')}
             hint={t('mapPickerHint')}
             ariaLabel={t('mapPickerAria')}
@@ -379,16 +497,24 @@ export function DestinationPoisSection({
           embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
         }
       >
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            {embedded ? null : (
-              <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
-            )}
-            <p className={embedded ? 'text-sm text-atg-muted' : 'mt-1 text-sm text-atg-muted'}>
-              {t('intro')}
-            </p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="space-y-1">
+            <div className="flex flex-wrap items-center gap-2">
+              {embedded ? null : (
+                <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+              )}
+              {state.status === 'ready' ? (
+                <DataTableBadge variant="muted">{pois.length}</DataTableBadge>
+              ) : null}
+            </div>
+            <p className="text-sm text-atg-muted">{t('intro')}</p>
+            {state.status === 'ready' && poisOnMap.length > 0 ? (
+              <p className="text-xs text-atg-muted">
+                {t('mapOverviewHint', { count: poisOnMap.length })}
+              </p>
+            ) : null}
           </div>
-          <Button type="button" onClick={openCreateForm}>
+          <Button type="button" onClick={openCreateForm} className="w-full shrink-0 sm:w-auto">
             {t('addPoi')}
           </Button>
         </div>
@@ -404,16 +530,36 @@ export function DestinationPoisSection({
             {state.message}
           </p>
         ) : (
-          <Card variant="dashboard" padding="none" className="overflow-hidden">
-            <DataTable
-              columns={columns}
-              data={pois}
-              isLoading={state.status === 'loading'}
-              emptyMessage={t('empty')}
-              getRowId={(row) => row.id}
-              aria-label={t('ariaLabel')}
-            />
-          </Card>
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:items-start">
+            {showOverviewMap ? (
+              <DestinationStaticMap
+                countryCode={countryCode}
+                latitude={mapDefaultLatitude}
+                longitude={mapDefaultLongitude}
+                destinationName={destinationName}
+                pointsOfInterest={pois}
+                highlightedPoiId={highlightedPoiId}
+                onPoiSelect={setHighlightedPoiId}
+                title={t('mapOverviewTitle')}
+                hideExternalLink
+              />
+            ) : (
+              <Card variant="dashboard" className="flex min-h-[12rem] items-center justify-center p-6">
+                <p className="text-center text-sm text-atg-muted">{t('mapOverviewEmpty')}</p>
+              </Card>
+            )}
+
+            <Card variant="dashboard" padding="none" className="overflow-hidden">
+              <DataTable
+                columns={columns}
+                data={pois}
+                isLoading={state.status === 'loading'}
+                emptyMessage={t('empty')}
+                getRowId={(row) => row.id}
+                aria-label={t('ariaLabel')}
+              />
+            </Card>
+          </div>
         )}
       </section>
     </>

@@ -1,12 +1,25 @@
 'use client';
 
 import { cn } from '@africatourismgate/ui';
+import { useLocale } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
+import { fetchCountryBoundaryGeoJson } from '../../lib/country-boundary-geojson';
 import {
   hasValidDestinationCoords,
   parseDestinationCoord,
 } from '../../lib/destination-coords';
-import { createLeafletMarkerIcon } from '../../lib/leaflet-marker-icon';
+import { getIsoCountryLabel } from '../../lib/iso-countries';
+import {
+  createLeafletMarkerIcon,
+  createLeafletPoiMarkerIcon,
+} from '../../lib/leaflet-marker-icon';
+
+type ContextPoi = {
+  id: string;
+  name: string;
+  latitude: string | number | null | undefined;
+  longitude: string | number | null | undefined;
+};
 
 type CoordinatePickerMapProps = {
   latitude: string;
@@ -15,6 +28,9 @@ type CoordinatePickerMapProps = {
   defaultLatitude?: number;
   defaultLongitude?: number;
   defaultZoom?: number;
+  countryCode?: string | null;
+  /** Other POIs shown as context (non-editable). */
+  contextPois?: ContextPoi[];
   title?: string;
   hint?: string;
   className?: string;
@@ -27,6 +43,13 @@ const DEFAULT_CENTER = { latitude: 0, longitude: 20 };
 const DEFAULT_ZOOM = 4;
 const SELECTED_ZOOM = 12;
 
+const BOUNDARY_STYLE = {
+  color: '#0f766e',
+  weight: 2,
+  fillColor: '#14b8a6',
+  fillOpacity: 0.14,
+};
+
 function formatCoord(value: number): string {
   return value.toFixed(5);
 }
@@ -38,15 +61,20 @@ export function CoordinatePickerMap({
   defaultLatitude = DEFAULT_CENTER.latitude,
   defaultLongitude = DEFAULT_CENTER.longitude,
   defaultZoom = DEFAULT_ZOOM,
+  countryCode,
+  contextPois = [],
   title,
   hint,
   className,
   ariaLabel,
   active = true,
 }: CoordinatePickerMapProps) {
+  const locale = useLocale();
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<import('leaflet').Map | null>(null);
   const markerRef = useRef<import('leaflet').Marker | null>(null);
+  const boundaryLayerRef = useRef<import('leaflet').GeoJSON | null>(null);
+  const contextLayerRef = useRef<import('leaflet').LayerGroup | null>(null);
   const onChangeRef = useRef(onCoordinateChange);
   const initRef = useRef({
     latitude,
@@ -58,6 +86,8 @@ export function CoordinatePickerMap({
   const [mapReady, setMapReady] = useState(false);
 
   onChangeRef.current = onCoordinateChange;
+  const code = (countryCode ?? '').trim().toUpperCase();
+  const hasCountry = /^[A-Z]{2}$/.test(code);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -93,6 +123,8 @@ export function CoordinatePickerMap({
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 18,
       }).addTo(map);
+
+      contextLayerRef.current = L.layerGroup().addTo(map);
 
       const emitCoords = (lat: number, lng: number) => {
         onChangeRef.current(formatCoord(lat), formatCoord(lng));
@@ -137,6 +169,8 @@ export function CoordinatePickerMap({
       cancelled = true;
       setMapReady(false);
       markerRef.current = null;
+      boundaryLayerRef.current = null;
+      contextLayerRef.current = null;
       mapRef.current?.remove();
       mapRef.current = null;
     };
@@ -187,6 +221,77 @@ export function CoordinatePickerMap({
       map.panTo([lat, lng], { animate: true });
     });
   }, [latitude, longitude, mapReady]);
+
+  useEffect(() => {
+    if (!mapReady || !contextLayerRef.current) {
+      return;
+    }
+
+    void import('leaflet').then((L) => {
+      const layer = contextLayerRef.current;
+      if (!layer) return;
+      layer.clearLayers();
+      const icon = createLeafletPoiMarkerIcon(L);
+      for (const poi of contextPois) {
+        if (!hasValidDestinationCoords(poi.latitude, poi.longitude)) continue;
+        const lat = parseDestinationCoord(poi.latitude)!;
+        const lng = parseDestinationCoord(poi.longitude)!;
+        const marker = L.marker([lat, lng], { icon, interactive: true });
+        marker.bindTooltip(poi.name, { direction: 'top', offset: [0, -8], opacity: 0.9 });
+        marker.addTo(layer);
+      }
+    });
+  }, [contextPois, mapReady]);
+
+  useEffect(() => {
+    if (!mapReady || !mapRef.current) {
+      return;
+    }
+
+    const map = mapRef.current;
+    boundaryLayerRef.current?.remove();
+    boundaryLayerRef.current = null;
+
+    if (!hasCountry) {
+      return;
+    }
+
+    const controller = new AbortController();
+
+    void (async () => {
+      try {
+        const L = await import('leaflet');
+        const geojson = await fetchCountryBoundaryGeoJson(code, {
+          signal: controller.signal,
+          countryName: getIsoCountryLabel(code, locale),
+        });
+        if (controller.signal.aborted || mapRef.current !== map || !geojson) {
+          return;
+        }
+        const layer = L.geoJSON(geojson as GeoJSON.GeoJsonObject, {
+          style: () => BOUNDARY_STYLE,
+        });
+        layer.addTo(map);
+        boundaryLayerRef.current = layer;
+
+        if (!hasValidDestinationCoords(latitude, longitude)) {
+          const bounds = layer.getBounds();
+          if (bounds.isValid()) {
+            map.fitBounds(bounds, { padding: [24, 24], maxZoom: 8, animate: true });
+          }
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          console.warn('Country boundary load failed', error);
+        }
+      }
+    })();
+
+    return () => {
+      controller.abort();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [code, hasCountry, mapReady, locale]);
 
   useEffect(() => {
     if (!active || !mapReady || !mapRef.current) {
