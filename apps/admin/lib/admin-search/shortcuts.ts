@@ -13,6 +13,9 @@ export function isAdminSearchToggleShortcut(event: KeyboardEvent): boolean {
 }
 
 export function isEditableKeyboardTarget(target: EventTarget | null): boolean {
+  if (typeof HTMLElement === 'undefined') {
+    return false;
+  }
   if (!(target instanceof HTMLElement)) return false;
   if (target.isContentEditable) return true;
   const tag = target.tagName;

@@ -34,12 +34,14 @@ export {
   formatAdminSearchIdPrefix,
   formatAdminSearchPersonName,
 } from './deep-links';
+export { matchesAdminNavSearchItem } from './nav-match';
+export {
+  searchAdminPages,
+  type SearchAdminPagesOptions,
+} from './search-pages-query';
 export {
   buildAdminNavSearchItems,
-  matchesAdminNavSearchItem,
-  searchAdminPages,
   type BuildAdminNavSearchItemsOptions,
-  type SearchAdminPagesOptions,
 } from './search-pages';
 export {
   searchAdminHelp,
