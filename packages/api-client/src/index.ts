@@ -386,6 +386,7 @@ import type {
   UpdatePointOfInterestRequest,
   BulkUpsertOrganizationSettingsRequest,
   CreateOrganizationBankAccountRequest,
+  CreateOrganizationMaintenanceRequest,
   CreateMobileMoneyCountryRequest,
   CreateMobileMoneyOperatorRequest,
   CreateMobileMoneyPaymentNumberRequest,
@@ -393,6 +394,8 @@ import type {
   EmailPreviewResponse,
   OrganizationBankAccount,
   OrganizationBankAccountsListQuery,
+  OrganizationMaintenance,
+  OrganizationMaintenancesListQuery,
   OrganizationSetting,
   OrganizationSettingsListQuery,
   MobileMoneyCountriesListQuery,
@@ -402,6 +405,7 @@ import type {
   MobileMoneyPaymentNumber,
   MobileMoneyPaymentNumbersListQuery,
   UpdateOrganizationBankAccountRequest,
+  UpdateOrganizationMaintenanceRequest,
   UpdateMobileMoneyCountryRequest,
   UpdateMobileMoneyOperatorRequest,
   UpdateMobileMoneyPaymentNumberRequest,
@@ -516,6 +520,7 @@ export type {
   UpdateDepartmentRequest,
   BulkUpsertOrganizationSettingsRequest,
   CreateOrganizationBankAccountRequest,
+  CreateOrganizationMaintenanceRequest,
   CreateMobileMoneyCountryRequest,
   CreateMobileMoneyOperatorRequest,
   CreateMobileMoneyPaymentNumberRequest,
@@ -525,6 +530,8 @@ export type {
   EmailPreviewTemplate,
   OrganizationBankAccount,
   OrganizationBankAccountsListQuery,
+  OrganizationMaintenance,
+  OrganizationMaintenancesListQuery,
   OrganizationSetting,
   OrganizationSettingsListQuery,
   MobileMoneyCountriesListQuery,
@@ -534,6 +541,7 @@ export type {
   MobileMoneyPaymentNumber,
   MobileMoneyPaymentNumbersListQuery,
   UpdateOrganizationBankAccountRequest,
+  UpdateOrganizationMaintenanceRequest,
   UpdateMobileMoneyCountryRequest,
   UpdateMobileMoneyOperatorRequest,
   UpdateMobileMoneyPaymentNumberRequest,
@@ -1377,7 +1385,7 @@ export class ApiClient {
     }
     const q = params.toString();
     return this.request<PublicSiteMaintenance>(
-      `/organization-settings/public/maintenance${q ? `?${q}` : ''}`,
+      `/public/organization-maintenances/current${q ? `?${q}` : ''}`,
     );
   }
 
@@ -1386,6 +1394,64 @@ export class ApiClient {
       method: 'POST',
       body,
     });
+  }
+
+  listOrganizationMaintenances(
+    query?: OrganizationMaintenancesListQuery,
+  ): Promise<PaginatedResponse<OrganizationMaintenance>> {
+    return fetchPaginated<OrganizationMaintenance>(
+      this,
+      '/organization-maintenances',
+      query,
+    );
+  }
+
+  getOrganizationMaintenance(
+    id: string,
+    organizationId?: string,
+  ): Promise<OrganizationMaintenance> {
+    const params = new URLSearchParams();
+    if (organizationId) params.set('organizationId', organizationId);
+    const q = params.toString();
+    return this.request<OrganizationMaintenance>(
+      `/organization-maintenances/${id}${q ? `?${q}` : ''}`,
+    );
+  }
+
+  createOrganizationMaintenance(
+    body: CreateOrganizationMaintenanceRequest,
+  ): Promise<OrganizationMaintenance> {
+    return this.request<OrganizationMaintenance>('/organization-maintenances', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateOrganizationMaintenance(
+    id: string,
+    body: UpdateOrganizationMaintenanceRequest,
+    organizationId?: string,
+  ): Promise<OrganizationMaintenance> {
+    const params = new URLSearchParams();
+    if (organizationId) params.set('organizationId', organizationId);
+    const q = params.toString();
+    return this.request<OrganizationMaintenance>(
+      `/organization-maintenances/${id}${q ? `?${q}` : ''}`,
+      { method: 'PATCH', body },
+    );
+  }
+
+  deleteOrganizationMaintenance(
+    id: string,
+    organizationId?: string,
+  ): Promise<void> {
+    const params = new URLSearchParams();
+    if (organizationId) params.set('organizationId', organizationId);
+    const q = params.toString();
+    return this.request<void>(
+      `/organization-maintenances/${id}${q ? `?${q}` : ''}`,
+      { method: 'DELETE' },
+    );
   }
 
   listOrganizationBankAccounts(

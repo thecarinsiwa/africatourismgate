@@ -103,6 +103,7 @@
     "settings": "Configuración",
     "emails": "Correos electrónicos",
     "maintenance": "Mantenimiento",
+    "newMaintenance": "Nuevo mantenimiento",
     "rbacAudit": "Auditoría RBAC",
     "adminHelp": "Centro de ayuda",
     "setupGuide": "Puesta en marcha"

@@ -15,16 +15,13 @@ import type {
   ResolvedBookingDeposits,
   ResolvedBookingItemTypeModes,
   ResolvedWebPaymentMethods,
-  SiteMaintenanceSettingValue,
 } from '@africatourismgate/types';
 import {
   DEFAULT_BOOKING_DEPOSITS,
   DEFAULT_BOOKING_ITEM_TYPE_MODES,
-  DEFAULT_SITE_MAINTENANCE,
   DEFAULT_WEB_PAYMENT_METHODS,
   normalizeBookingDeposits,
   normalizeBookingItemTypeModes,
-  normalizeSiteMaintenance,
   normalizeWebPaymentMethods,
 } from '@africatourismgate/types';
 import { OrgScopeService, PLATFORM_ORG_ID } from '../../../common/org-scope/org-scope.service';
@@ -36,6 +33,7 @@ import {
   Organizations,
 } from '../../../entities/generated';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
+import { OrganizationMaintenancesService } from '../organization-maintenances/organization-maintenances.service';
 import { BulkUpsertOrganizationSettingsDto } from './dto/bulk-upsert-organization-settings.dto';
 import {
   OrganizationSettingDto,
@@ -165,6 +163,7 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
     @InjectRepository(Organizations)
     private readonly organizationsRepository: Repository<Organizations>,
     private readonly orgScopeService: OrgScopeService,
+    private readonly organizationMaintenancesService: OrganizationMaintenancesService,
   ) {
     super(settingsRepository);
   }
@@ -454,26 +453,7 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
   async getResolvedSiteMaintenance(
     organizationId: string = PLATFORM_ORG_ID,
   ): Promise<PublicSiteMaintenance> {
-    const setting = await this.settingsRepository.findOne({
-      where: {
-        organizationId,
-        settingGroup: 'site',
-        settingKey: 'maintenance',
-        deletedAt: IsNull(),
-      },
-    });
-
-    if (
-      !setting?.settingValue ||
-      typeof setting.settingValue !== 'object' ||
-      Array.isArray(setting.settingValue)
-    ) {
-      return { ...DEFAULT_SITE_MAINTENANCE };
-    }
-
-    return normalizeSiteMaintenance(
-      setting.settingValue as Partial<SiteMaintenanceSettingValue>,
-    );
+    return this.organizationMaintenancesService.getResolvedCurrent(organizationId);
   }
 
   private async resolvePublicOrganization(

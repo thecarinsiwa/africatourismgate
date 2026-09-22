@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 import {
   isSiteMaintenanceActive,
   type PublicSiteMaintenance,
-} from '@africatourismgate/types/organization-settings';
+} from '@africatourismgate/types/organization-maintenances';
 
 const MAINTENANCE_FETCH_TIMEOUT_MS = 2_000;
 const DEFAULT_API = 'http://127.0.0.1:3000/api';
@@ -51,7 +51,7 @@ function maintenanceStatusUrls(request: NextRequest): string[] {
     if (samePort && loopback) {
       urls.push(
         new URL(
-          '/api/organization-settings/public/maintenance',
+          '/api/public/organization-maintenances/current',
           request.nextUrl.origin,
         ).toString(),
       );
@@ -60,7 +60,7 @@ function maintenanceStatusUrls(request: NextRequest): string[] {
     // ignore invalid URL
   }
 
-  urls.push(`${configured}/organization-settings/public/maintenance`);
+  urls.push(`${configured}/public/organization-maintenances/current`);
 
   return [...new Set(urls)];
 }

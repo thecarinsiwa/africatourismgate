@@ -3,7 +3,7 @@ import {
   normalizeSiteMaintenance,
   type PublicSiteMaintenance,
   type SiteMaintenanceSettingValue,
-} from '@africatourismgate/types/organization-settings';
+} from '@africatourismgate/types/organization-maintenances';
 
 const defaultApiUrl = 'http://localhost:3000/api';
 
@@ -17,7 +17,7 @@ export async function getPublicSiteMaintenance(
 ): Promise<PublicSiteMaintenance> {
   try {
     const response = await fetch(
-      `${getApiBaseUrl()}/organization-settings/public/maintenance`,
+      `${getApiBaseUrl()}/public/organization-maintenances/current`,
       {
         cache: 'no-store',
         ...init,

@@ -480,5 +480,56 @@
         "urlInvalid": "Link must be a valid URL."
       }
     }
+  },
+  "maintenances": {
+    "list": {
+      "pageTitle": "Maintenance",
+      "createButton": "New window",
+      "empty": "No maintenance windows yet.",
+      "denied": "You do not have permission to view maintenance.",
+      "deleteTitle": "Delete window",
+      "deleteConfirm": "The window “{title}” will be deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
+      "untitled": "Untitled",
+      "tableAria": "Maintenance windows list",
+      "enabledYes": "Enabled",
+      "enabledNo": "Disabled",
+      "statusActive": "Active",
+      "statusInactive": "Inactive",
+      "columns": {
+        "title": "Title",
+        "window": "Window",
+        "enabled": "Enabled",
+        "status": "Status"
+      }
+    },
+    "form": {
+      "denied": "Access denied.",
+      "notFound": "Maintenance window not found.",
+      "saving": "Saving…",
+      "saveButton": "Save",
+      "cancelButton": "Cancel",
+      "fields": {
+        "enabled": "Enable this window",
+        "enabledHint": "The public site enters maintenance only when this window is enabled and the current time falls within the interval.",
+        "title": "Page title",
+        "titlePlaceholder": "Under maintenance",
+        "titleHint": "Optional — otherwise the public page default title is used.",
+        "message": "Message",
+        "messagePlaceholder": "We’ll be back soon…",
+        "startsAt": "Starts at",
+        "endsAt": "Planned end",
+        "endsAtHint": "Optional — leave empty for an open-ended window (manual reopen)."
+      },
+      "validation": {
+        "startsAtRequired": "Start date is required.",
+        "startsAtInvalid": "Start date is invalid.",
+        "endsAtInvalid": "End date is invalid.",
+        "endsAtAfterStartsAt": "End must be after start.",
+        "titleTooLong": "Title must be at most 200 characters.",
+        "messageTooLong": "Message must be at most 2000 characters."
+      }
+    }
   }
 }

@@ -10,7 +10,6 @@ import {
   isBookingMode,
   normalizeBookingDeposits,
   normalizeBookingItemTypeModes,
-  normalizeSiteMaintenance,
   normalizeWebPaymentMethods,
   type BookingMode,
 } from '@africatourismgate/types';
@@ -392,44 +391,9 @@ export function validateSettingValue(
       };
     }
     case 'maintenance': {
-      const enabled = value.enabled;
-      if (typeof enabled !== 'boolean') {
-        throw new BadRequestException('enabled doit être un booléen.');
-      }
-
-      const title = optionalString(value.title, 'title', 200);
-      const message = optionalString(value.message, 'message', 2000);
-
-      let endsAt: string | null = null;
-      if (value.endsAt !== undefined && value.endsAt !== null && value.endsAt !== '') {
-        if (typeof value.endsAt !== 'string' || !value.endsAt.trim()) {
-          throw new BadRequestException(
-            'endsAt doit être une date ISO 8601 ou null.',
-          );
-        }
-        const trimmed = value.endsAt.trim();
-        const parsed = Date.parse(trimmed);
-        if (Number.isNaN(parsed)) {
-          throw new BadRequestException(
-            'endsAt doit être une date ISO 8601 valide.',
-          );
-        }
-        endsAt = new Date(parsed).toISOString();
-      }
-
-      const normalized = normalizeSiteMaintenance({
-        enabled,
-        ...(title ? { title } : {}),
-        ...(message ? { message } : {}),
-        endsAt,
-      });
-
-      return {
-        enabled: normalized.enabled,
-        ...(normalized.title ? { title: normalized.title } : {}),
-        ...(normalized.message ? { message: normalized.message } : {}),
-        endsAt: normalized.endsAt,
-      };
+      throw new BadRequestException(
+        'Le setting site/maintenance est obsolète. Utilisez l’API organization-maintenances.',
+      );
     }
     default:
       return value;

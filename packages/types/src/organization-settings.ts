@@ -293,80 +293,17 @@ export function bookingDepositsMode(
   return deposits.depositFixedCents != null ? 'fixed' : 'percent';
 }
 
-/**
- * Mode maintenance du site public.
- * `organization_settings` group `site`, key `maintenance`.
- */
-export interface SiteMaintenanceSettingValue {
-  enabled: boolean;
-  title?: string;
-  message?: string;
-  /** ISO 8601 datetime, or null when no planned end. */
-  endsAt?: string | null;
-}
+/** @deprecated Prefer `organization-maintenances` table + types. Re-exported for legacy EAV. */
+export type {
+  PublicSiteMaintenance,
+  SiteMaintenanceSettingValue,
+} from './organization-maintenances.js';
 
-export interface PublicSiteMaintenance {
-  enabled: boolean;
-  title: string | null;
-  message: string | null;
-  endsAt: string | null;
-}
-
-export const DEFAULT_SITE_MAINTENANCE: PublicSiteMaintenance = {
-  enabled: false,
-  title: null,
-  message: null,
-  endsAt: null,
-};
-
-export function normalizeSiteMaintenance(
-  value?: Partial<SiteMaintenanceSettingValue> | null,
-): PublicSiteMaintenance {
-  if (!value || typeof value !== 'object') {
-    return { ...DEFAULT_SITE_MAINTENANCE };
-  }
-
-  const enabled = value.enabled === true;
-  const title =
-    typeof value.title === 'string' && value.title.trim()
-      ? value.title.trim()
-      : null;
-  const message =
-    typeof value.message === 'string' && value.message.trim()
-      ? value.message.trim()
-      : null;
-
-  let endsAt: string | null = null;
-  if (typeof value.endsAt === 'string' && value.endsAt.trim()) {
-    const parsed = Date.parse(value.endsAt.trim());
-    if (!Number.isNaN(parsed)) {
-      endsAt = new Date(parsed).toISOString();
-    }
-  }
-
-  return { enabled, title, message, endsAt };
-}
-
-/**
- * True when maintenance is enabled and optional `endsAt` is still in the future
- * (or unset). Once `endsAt` is reached, the public site reopens automatically.
- */
-export function isSiteMaintenanceActive(
-  maintenance: PublicSiteMaintenance = DEFAULT_SITE_MAINTENANCE,
-  now: Date = new Date(),
-): boolean {
-  if (!maintenance.enabled) {
-    return false;
-  }
-  if (maintenance.endsAt == null) {
-    return true;
-  }
-  const endMs = Date.parse(maintenance.endsAt);
-  if (Number.isNaN(endMs)) {
-    return true;
-  }
-  return endMs > now.getTime();
-}
+export {
+  DEFAULT_SITE_MAINTENANCE,
+  isSiteMaintenanceActive,
+  normalizeSiteMaintenance,
+} from './organization-maintenances.js';
 
 export interface OrganizationSetting {
   id: string;

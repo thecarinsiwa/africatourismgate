@@ -499,6 +499,22 @@ export type {
 } from './donations.js';
 
 export type {
+  CreateOrganizationMaintenanceRequest,
+  OrganizationMaintenance,
+  OrganizationMaintenancesListQuery,
+  PublicSiteMaintenance,
+  SiteMaintenanceSettingValue,
+  UpdateOrganizationMaintenanceRequest,
+} from './organization-maintenances.js';
+
+export {
+  DEFAULT_SITE_MAINTENANCE,
+  isSiteMaintenanceActive,
+  normalizeSiteMaintenance,
+  toPublicSiteMaintenanceFromRow,
+} from './organization-maintenances.js';
+
+export type {
   AdminReviewDetail,
   AdminReviewListItem,
   CreateBookingReviewRequest,
@@ -635,7 +651,6 @@ export type {
   PublicContact,
   PublicAuthVisual,
   PublicAuthVisualIcon,
-  PublicSiteMaintenance,
   AuthVisualDecorIcon,
   AuthVisualIconPosition,
   ResolvedBookingDeposits,
@@ -643,7 +658,6 @@ export type {
   AuthVisualIconSize,
   AuthVisualSettingValue,
   ResolvedWebPaymentMethods,
-  SiteMaintenanceSettingValue,
   UpdateOrganizationBankAccountRequest,
   UpsertOrganizationSettingItem,
   WebPaymentMethodKey,
@@ -674,15 +688,12 @@ export {
   DEFAULT_EMAIL_BRANDING,
   DEFAULT_LOYALTY_ONEKEY_SETTING,
   DEFAULT_PUBLIC_CONTACT,
-  DEFAULT_SITE_MAINTENANCE,
   DEFAULT_WEB_PAYMENT_METHODS,
   WEB_PAYMENT_METHOD_KEYS,
   bookingDepositsMode,
   computeDepositRequiredCents,
-  isSiteMaintenanceActive,
   isWebPaymentMethodEnabled,
   normalizeBookingDeposits,
-  normalizeSiteMaintenance,
   normalizeWebPaymentMethods,
 } from './organization-settings.js';
 
