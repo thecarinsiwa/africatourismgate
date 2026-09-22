@@ -222,6 +222,7 @@
     "searchPlaceholder": "Buscar artículos de ayuda…",
     "searchNoResults": "Ningún artículo coincide con su búsqueda.",
     "searchResultsAria": "Resultados de búsqueda",
+    "searchResultsCount": "{count, plural, one {# artículo} other {# artículos}}",
     "categoriesTitle": "Explorar por tema",
     "categoriesSubtitle": "Elija un tema para encontrar respuestas detalladas.",
     "quickStartTitle": "Inicio rápido",

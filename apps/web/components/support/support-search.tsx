@@ -4,7 +4,13 @@ import { Input, cn } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useId, useState, type KeyboardEvent } from 'react';
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useState,
+  type KeyboardEvent,
+} from 'react';
 import {
   HELP_ARTICLES,
   searchHelpArticles,
@@ -14,19 +20,24 @@ import { supportArticlePath, SUPPORT_BASE_PATH } from '../../lib/support/routes'
 import { stripWebHelpMarkdownLinks } from '../../lib/support/web-path-links';
 import { HelpSearchIcon } from './support-help-icons';
 
+const SEARCH_DEBOUNCE_MS = 175;
+
 function useArticleSearchStrings(): Record<string, HelpArticleSearchStrings> {
   const t = useTranslations('support');
-  const strings: Record<string, HelpArticleSearchStrings> = {};
-  for (const article of HELP_ARTICLES) {
-    strings[article.slug] = {
-      title: t(`help.articles.${article.slug}.title`),
-      summary: t(`help.articles.${article.slug}.summary`),
-      body: stripWebHelpMarkdownLinks(
-        t(`help.articles.${article.slug}.body`),
-      ),
-    };
-  }
-  return strings;
+
+  return useMemo(() => {
+    const strings: Record<string, HelpArticleSearchStrings> = {};
+    for (const article of HELP_ARTICLES) {
+      strings[article.slug] = {
+        title: t(`help.articles.${article.slug}.title`),
+        summary: t(`help.articles.${article.slug}.summary`),
+        body: stripWebHelpMarkdownLinks(
+          t(`help.articles.${article.slug}.body`),
+        ),
+      };
+    }
+    return strings;
+  }, [t]);
 }
 
 export function SupportSearch() {
@@ -35,18 +46,30 @@ export function SupportSearch() {
   const inputId = useId();
   const listId = useId();
   const [query, setQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(-1);
   const stringsBySlug = useArticleSearchStrings();
-  const results = searchHelpArticles(query, stringsBySlug);
-  const showResults = query.trim().length > 0;
+  const results = useMemo(
+    () => searchHelpArticles(debouncedQuery, stringsBySlug),
+    [debouncedQuery, stringsBySlug],
+  );
+  const showResults = debouncedQuery.trim().length > 0;
   const activeOptionId =
     activeIndex >= 0 && activeIndex < results.length
       ? `${listId}-option-${activeIndex}`
       : undefined;
 
+  useEffect(() => {
+    const delay = query.trim().length === 0 ? 0 : SEARCH_DEBOUNCE_MS;
+    const timer = window.setTimeout(() => {
+      setDebouncedQuery(query);
+      setActiveIndex(-1);
+    }, delay);
+    return () => window.clearTimeout(timer);
+  }, [query]);
+
   function updateQuery(next: string) {
     setQuery(next);
-    setActiveIndex(-1);
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
@@ -134,40 +157,48 @@ export function SupportSearch() {
               </p>
             </div>
           ) : (
-            <ul className="divide-y divide-atg-border dark:divide-atg-border">
-              {results.map((article, index) => {
-                const strings = stringsBySlug[article.slug];
-                const optionId = `${listId}-option-${index}`;
-                const isActive = index === activeIndex;
-                return (
-                  <li
-                    key={article.id}
-                    id={optionId}
-                    role="option"
-                    aria-selected={isActive}
-                  >
-                    <Link
-                      href={supportArticlePath(
-                        article.categorySlug,
-                        article.slug,
-                      )}
-                      className={cn(
-                        'block py-3 outline-none transition-colors hover:text-primary focus-visible:text-primary',
-                        isActive && 'bg-primary/5 text-primary',
-                      )}
-                      onMouseEnter={() => setActiveIndex(index)}
+            <div>
+              <p
+                className="mb-1 text-xs font-medium text-atg-muted"
+                aria-live="polite"
+              >
+                {t('searchResultsCount', { count: results.length })}
+              </p>
+              <ul className="divide-y divide-atg-border dark:divide-atg-border">
+                {results.map((article, index) => {
+                  const strings = stringsBySlug[article.slug];
+                  const optionId = `${listId}-option-${index}`;
+                  const isActive = index === activeIndex;
+                  return (
+                    <li
+                      key={article.id}
+                      id={optionId}
+                      role="option"
+                      aria-selected={isActive}
                     >
-                      <span className="block text-sm font-medium text-atg-fg">
-                        {strings?.title}
-                      </span>
-                      <span className="mt-0.5 block text-sm text-atg-muted">
-                        {strings?.summary}
-                      </span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+                      <Link
+                        href={supportArticlePath(
+                          article.categorySlug,
+                          article.slug,
+                        )}
+                        className={cn(
+                          'block py-3 outline-none transition-colors hover:text-primary focus-visible:text-primary',
+                          isActive && 'bg-primary/5 text-primary',
+                        )}
+                        onMouseEnter={() => setActiveIndex(index)}
+                      >
+                        <span className="block text-sm font-medium text-atg-fg">
+                          {strings?.title}
+                        </span>
+                        <span className="mt-0.5 block text-sm text-atg-muted">
+                          {strings?.summary}
+                        </span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           )}
         </div>
       ) : null}
