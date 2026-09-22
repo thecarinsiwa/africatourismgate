@@ -711,6 +711,11 @@
       "title": "Correos electrónicos",
       "description": "Personalice la apariencia de los correos transaccionales (bienvenida, confirmación de reserva).",
       "metaTitle": "Correos electrónicos"
+    },
+    "maintenance": {
+      "title": "Mantenimiento",
+      "description": "Active el modo mantenimiento del sitio público: mensaje, título y fecha de reapertura prevista.",
+      "metaTitle": "Mantenimiento"
     }
   },
   "dashboard": {

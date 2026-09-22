@@ -711,6 +711,11 @@
       "title": "Emails",
       "description": "Customize the look of transactional emails (welcome, booking confirmation).",
       "metaTitle": "Emails"
+    },
+    "maintenance": {
+      "title": "Maintenance",
+      "description": "Enable public site maintenance mode: message, title and scheduled reopen time.",
+      "metaTitle": "Maintenance"
     }
   },
   "dashboard": {

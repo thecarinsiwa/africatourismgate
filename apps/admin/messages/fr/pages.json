@@ -711,6 +711,11 @@
       "title": "E-mails",
       "description": "Personnalisez l'apparence des e-mails transactionnels (bienvenue, confirmation de réservation).",
       "metaTitle": "E-mails"
+    },
+    "maintenance": {
+      "title": "Maintenance",
+      "description": "Activez le mode maintenance du site public : message, titre et date de réouverture prévue.",
+      "metaTitle": "Maintenance"
     }
   },
   "dashboard": {
