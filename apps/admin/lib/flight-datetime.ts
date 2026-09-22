@@ -10,6 +10,23 @@ export function fromDatetimeLocalValue(value: string): string {
   return new Date(value).toISOString();
 }
 
+/**
+ * Duration in whole minutes between two `datetime-local` values.
+ * Returns null if either is missing/invalid or arrival is not after departure.
+ */
+export function durationMinutesFromDatetimeLocal(
+  departureLocal: string,
+  arrivalLocal: string,
+): number | null {
+  if (!departureLocal.trim() || !arrivalLocal.trim()) return null;
+  const departureMs = new Date(departureLocal).getTime();
+  const arrivalMs = new Date(arrivalLocal).getTime();
+  if (!Number.isFinite(departureMs) || !Number.isFinite(arrivalMs)) return null;
+  const minutes = Math.round((arrivalMs - departureMs) / 60_000);
+  if (minutes < 1) return null;
+  return minutes;
+}
+
 /** Minutes → readable duration (ex. 390 → "6 h 30"). */
 export function formatDurationMinutes(minutes: number, locale = 'fr'): string {
   if (!Number.isFinite(minutes) || minutes < 1) return '—';

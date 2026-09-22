@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import {
+  durationMinutesFromDatetimeLocal,
   fromDatetimeLocalValue,
   toDatetimeLocalValue,
 } from '../../lib/flight-datetime';
@@ -317,6 +318,27 @@ export function FlightForm({
     [],
   );
 
+  const updateScheduleTime = useCallback(
+    (key: 'departureTime' | 'arrivalTime', value: string) => {
+      setValues((prev) => {
+        const next = { ...prev, [key]: value };
+        const duration = durationMinutesFromDatetimeLocal(
+          next.departureTime,
+          next.arrivalTime,
+        );
+        next.durationMinutes = duration != null ? String(duration) : '';
+        return next;
+      });
+      setFieldErrors((prev) => ({
+        ...prev,
+        departureTime: undefined,
+        arrivalTime: undefined,
+        durationMinutes: undefined,
+      }));
+    },
+    [],
+  );
+
   function validate(): boolean {
     const errors: Partial<Record<keyof FlightFormValues, string>> = {};
     if (!values.airlineId) errors.airlineId = t('validation.airlineRequired');
@@ -330,6 +352,17 @@ export function FlightForm({
     }
     if (!values.departureTime) errors.departureTime = t('validation.departureTimeRequired');
     if (!values.arrivalTime) errors.arrivalTime = t('validation.arrivalTimeRequired');
+    if (values.departureTime && values.arrivalTime) {
+      const departureMs = new Date(values.departureTime).getTime();
+      const arrivalMs = new Date(values.arrivalTime).getTime();
+      if (
+        Number.isFinite(departureMs) &&
+        Number.isFinite(arrivalMs) &&
+        departureMs >= arrivalMs
+      ) {
+        errors.departureTime = t('validation.departureBeforeArrival');
+      }
+    }
     const duration = Number(values.durationMinutes);
     if (!Number.isFinite(duration) || duration < 1) {
       errors.durationMinutes = tCommon('validation.invalidDurationMinutes');
@@ -487,7 +520,8 @@ export function FlightForm({
             type="datetime-local"
             className={fieldInputClass}
             value={values.departureTime}
-            onChange={(e) => updateField('departureTime', e.target.value)}
+            max={values.arrivalTime || undefined}
+            onChange={(e) => updateScheduleTime('departureTime', e.target.value)}
           />
           {fieldErrors.departureTime ? (
             <p className="mt-1 text-sm text-red-600">{fieldErrors.departureTime}</p>
@@ -499,7 +533,8 @@ export function FlightForm({
             type="datetime-local"
             className={fieldInputClass}
             value={values.arrivalTime}
-            onChange={(e) => updateField('arrivalTime', e.target.value)}
+            min={values.departureTime || undefined}
+            onChange={(e) => updateScheduleTime('arrivalTime', e.target.value)}
           />
           {fieldErrors.arrivalTime ? (
             <p className="mt-1 text-sm text-red-600">{fieldErrors.arrivalTime}</p>
@@ -512,7 +547,7 @@ export function FlightForm({
         type="number"
         min={1}
         value={values.durationMinutes}
-        onChange={(e) => updateField('durationMinutes', e.target.value)}
+        readOnly
         hint={t('durationHint')}
         error={fieldErrors.durationMinutes}
       />
