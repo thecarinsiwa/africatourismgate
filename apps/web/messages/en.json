@@ -224,6 +224,8 @@
     "searchResultsAria": "Search results",
     "categoriesTitle": "Browse by topic",
     "categoriesSubtitle": "Pick a topic to find detailed answers.",
+    "quickStartTitle": "Quick start",
+    "quickStartSubtitle": "First steps to book and manage your stay.",
     "popularTitle": "Popular articles",
     "popularSubtitle": "The topics travellers look up most often.",
     "articlesInCategory": "{count, plural, one {# article} other {# articles}}",

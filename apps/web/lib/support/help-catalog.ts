@@ -102,6 +102,19 @@ export const HELP_CATEGORIES: readonly HelpCategory[] = [
   },
 ] as const;
 
+/**
+ * Curated hub “quick start” links for travellers.
+ * Resolved against HELP_ARTICLES — unknown slugs are ignored.
+ */
+export const HELP_QUICK_START_SLUGS = [
+  'how-to-book',
+  'find-booking',
+  'payment-methods',
+  'modify-or-cancel',
+  'update-profile',
+  'how-to-contact',
+] as const;
+
 export const HELP_ARTICLES: readonly HelpArticle[] = [
   {
     id: 'art-how-to-book',
@@ -299,6 +312,12 @@ export function getArticlesByCategory(
 
 export function getPopularArticles(): HelpArticle[] {
   return HELP_ARTICLES.filter((article) => article.popular === true);
+}
+
+export function getQuickStartArticles(): HelpArticle[] {
+  return HELP_QUICK_START_SLUGS.map((slug) => articlesBySlug.get(slug)).filter(
+    (article): article is HelpArticle => article !== undefined,
+  );
 }
 
 export function getRelatedArticles(article: HelpArticle): HelpArticle[] {

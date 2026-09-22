@@ -5,6 +5,7 @@ import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { SupportCategoryGrid } from './support-category-grid';
 import { SupportPopularList } from './support-popular-list';
+import { SupportQuickStart } from './support-quick-start';
 import { SupportSearch } from './support-search';
 import { SupportTicketForm } from './support-ticket-form';
 
@@ -30,6 +31,7 @@ export function SupportPageContent() {
           </div>
 
           <div className="space-y-12">
+            <SupportQuickStart />
             <SupportCategoryGrid />
             <SupportPopularList />
 
