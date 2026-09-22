@@ -20,7 +20,7 @@ const SEARCH_SUGGESTIONS_ARIA =
 const NO_RESULTS =
   /Aucun article|No articles match|Ningún artículo/i;
 const NO_RESULTS_HINT =
-  /démarrage rapide|quick-start|inicio rápido/i;
+  /Essayez plutôt|Try these quick-start|Pruebe en su lugar/i;
 const HOW_TO_BOOK =
   /Comment réserver|How do I book|Cómo reservo/i;
 const FIND_BOOKING =
@@ -389,11 +389,21 @@ test('contextual help from reservations opens find-booking', async ({
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ items: [], total: 0 }),
+      body: JSON.stringify({
+        data: [],
+        meta: { total: 0, page: 1, limit: 50, totalPages: 0 },
+      }),
     });
   });
 
   await page.goto('/account/reservations');
+
+  await expect(
+    page.getByRole('heading', {
+      name: /Réservations|Bookings|Reservas/i,
+      level: 2,
+    }),
+  ).toBeVisible();
 
   const helpLink = page.getByTestId('support-contextual-help-link');
   await expect(helpLink).toBeVisible();
