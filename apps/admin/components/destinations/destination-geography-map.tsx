@@ -127,7 +127,6 @@ export function DestinationGeographyMap({
       mapRef.current = null;
     };
     // Init once — coords/country handled in dedicated effects.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -241,7 +240,6 @@ export function DestinationGeographyMap({
       controller.abort();
     };
     // Fit on country change only (not on every lat/lng edit).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countryCode, mapReady, locale]);
 
   const coordsLabel = hasValidDestinationCoords(latitude, longitude)

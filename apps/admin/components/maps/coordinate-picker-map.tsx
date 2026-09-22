@@ -290,7 +290,6 @@ export function CoordinatePickerMap({
     return () => {
       controller.abort();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code, hasCountry, mapReady, locale]);
 
   useEffect(() => {
