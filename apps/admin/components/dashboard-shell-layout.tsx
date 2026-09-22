@@ -30,6 +30,7 @@ import { useBrowserSessionLifecycle } from '../lib/auth/browser-lifecycle';
 import { LanguageSwitcher } from './language-switcher';
 import { AdminNotificationsMenu } from './notifications/admin-notifications-menu';
 import { AdminSearchNavigatorProvider } from './admin-search-navigator';
+import { AdminSearchTrigger } from './admin-search-trigger';
 import { KeyboardShortcutsHelp } from './keyboard-shortcuts-help';
 import { AdminContextualHelpLink } from './admin-help/admin-contextual-help-link';
 
@@ -126,6 +127,7 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
         }
         headerActions={
           <>
+            <AdminSearchTrigger />
             <AdminContextualHelpLink />
             <AdminNotificationsMenu />
             <LanguageSwitcher />
