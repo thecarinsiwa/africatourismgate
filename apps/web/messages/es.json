@@ -578,6 +578,34 @@
       "Estación de tren"
     ]
   },
+  "siteSearch": {
+    "title": "Buscar en el sitio",
+    "placeholder": "Hoteles, actividades, destinos, ayuda…",
+    "empty": "Sin resultados",
+    "shortcutHint": "Ctrl+K · ⌘K o / — ↑↓ para navegar, Entrar para abrir",
+    "close": "Cerrar la búsqueda",
+    "resultsLabel": "Resultados de búsqueda",
+    "updating": "Actualizando…",
+    "partialError": "Algunas fuentes no se pudieron cargar.",
+    "groupError": "Error parcial",
+    "openLabel": "Abrir la búsqueda",
+    "seeAllResults": "Ver todos los resultados",
+    "prefilledHint": "Búsqueda precompletada",
+    "resultsPageTitle": "Resultados de búsqueda",
+    "resultsPageSubtitle": "Resultados para « {query} »",
+    "groups": {
+      "pages": "Páginas",
+      "destinations": "Destinos",
+      "hotels": "Hoteles",
+      "activities": "Actividades",
+      "packages": "Paquetes",
+      "cruises": "Cruceros",
+      "flights": "Vuelos",
+      "cars": "Coches",
+      "blog": "Blog",
+      "help": "Ayuda"
+    }
+  },
   "footer": {
     "tagline": "Su puerta de entrada a las mejores experiencias de viaje en África. Descubra destinos únicos y reserve con confianza.",
     "learnMore": "Saber más",

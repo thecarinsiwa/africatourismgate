@@ -578,6 +578,34 @@
       "Train station"
     ]
   },
+  "siteSearch": {
+    "title": "Search the site",
+    "placeholder": "Hotels, activities, destinations, help…",
+    "empty": "No results",
+    "shortcutHint": "Ctrl+K · ⌘K or / — ↑↓ to navigate, Enter to open",
+    "close": "Close search",
+    "resultsLabel": "Search results",
+    "updating": "Updating…",
+    "partialError": "Some sources could not be loaded.",
+    "groupError": "Partial error",
+    "openLabel": "Open search",
+    "seeAllResults": "See all results",
+    "prefilledHint": "Pre-filled search",
+    "resultsPageTitle": "Search results",
+    "resultsPageSubtitle": "Results for “{query}”",
+    "groups": {
+      "pages": "Pages",
+      "destinations": "Destinations",
+      "hotels": "Hotels",
+      "activities": "Activities",
+      "packages": "Packages",
+      "cruises": "Cruises",
+      "flights": "Flights",
+      "cars": "Cars",
+      "blog": "Blog",
+      "help": "Help"
+    }
+  },
   "footer": {
     "tagline": "Your gateway to the best travel experiences in Africa. Discover unique destinations and book with confidence.",
     "learnMore": "Learn more",
