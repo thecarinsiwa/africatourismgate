@@ -11,6 +11,19 @@ export {
 export { listLocalAdminSearchSources } from './local-sources';
 export { listCoreAdminSearchSources } from './core-sources';
 export { listCatalogAdminSearchSources } from './catalog-sources';
+export { listWiredAdminSearchSources } from './wired-sources';
+export {
+  aggregateAdminSearchResults,
+  flattenAdminSearchGroups,
+  runAdminSearchFanOut,
+  selectRunnableAdminSearchSources,
+  type AdminSearchSourceRun,
+} from './aggregate';
+export {
+  useAdminGlobalSearch,
+  type UseAdminGlobalSearchOptions,
+  type UseAdminGlobalSearchResult,
+} from './use-admin-global-search';
 export {
   adminSearchDeepLinks,
   formatAdminSearchIdPrefix,
