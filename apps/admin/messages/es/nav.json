@@ -102,6 +102,7 @@
     "roles": "Roles y permisos",
     "settings": "Configuración",
     "emails": "Correos electrónicos",
+    "maintenance": "Mantenimiento",
     "rbacAudit": "Auditoría RBAC",
     "adminHelp": "Centro de ayuda",
     "setupGuide": "Puesta en marcha"
