@@ -39,6 +39,7 @@ import { PublicBrandingDto } from './dto/public-branding.dto';
 import { PublicBrandingQueryDto } from './dto/public-branding-query.dto';
 import { PublicBookingModesDto } from './dto/public-booking-modes.dto';
 import { PublicPaymentMethodsDto } from './dto/public-payment-methods.dto';
+import { PublicSiteMaintenanceDto } from './dto/public-site-maintenance.dto';
 import { PublicContactDto } from './dto/public-contact.dto';
 import { OrganizationSettingsService } from './organization-settings.service';
 
@@ -103,6 +104,18 @@ export class OrganizationSettingsController {
     @Query() query: PublicBrandingQueryDto,
   ): Promise<PublicPaymentMethodsDto> {
     return this.service.findPublicPaymentMethods(query.organizationSlug);
+  }
+
+  @Public()
+  @Get('public/maintenance')
+  @ApiOperation({
+    summary: 'Get public site maintenance mode settings',
+  })
+  @ApiOkResponse({ type: PublicSiteMaintenanceDto })
+  findPublicSiteMaintenance(
+    @Query() query: PublicBrandingQueryDto,
+  ): Promise<PublicSiteMaintenanceDto> {
+    return this.service.findPublicSiteMaintenance(query.organizationSlug);
   }
 
   @Put('bulk')

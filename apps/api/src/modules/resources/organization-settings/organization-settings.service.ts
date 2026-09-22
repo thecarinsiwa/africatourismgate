@@ -11,16 +11,20 @@ import type {
   AuthVisualDecorIcon,
   PublicAuthVisual,
   PublicAuthVisualIcon,
+  PublicSiteMaintenance,
   ResolvedBookingDeposits,
   ResolvedBookingItemTypeModes,
   ResolvedWebPaymentMethods,
+  SiteMaintenanceSettingValue,
 } from '@africatourismgate/types';
 import {
   DEFAULT_BOOKING_DEPOSITS,
   DEFAULT_BOOKING_ITEM_TYPE_MODES,
+  DEFAULT_SITE_MAINTENANCE,
   DEFAULT_WEB_PAYMENT_METHODS,
   normalizeBookingDeposits,
   normalizeBookingItemTypeModes,
+  normalizeSiteMaintenance,
   normalizeWebPaymentMethods,
 } from '@africatourismgate/types';
 import { OrgScopeService, PLATFORM_ORG_ID } from '../../../common/org-scope/org-scope.service';
@@ -41,6 +45,7 @@ import { PublicBrandingDto } from './dto/public-branding.dto';
 import { PublicContactDto } from './dto/public-contact.dto';
 import { PublicBookingModesDto } from './dto/public-booking-modes.dto';
 import { PublicPaymentMethodsDto } from './dto/public-payment-methods.dto';
+import { PublicSiteMaintenanceDto } from './dto/public-site-maintenance.dto';
 import { OrganizationSettingsListQueryDto } from './dto/organization-settings-list-query.dto';
 import { validateSettingValue } from './validate-setting-value';
 
@@ -360,6 +365,13 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
     return this.getResolvedWebPaymentMethods(organization.id);
   }
 
+  async findPublicSiteMaintenance(
+    organizationSlug?: string,
+  ): Promise<PublicSiteMaintenanceDto> {
+    const organization = await this.resolvePublicOrganization(organizationSlug);
+    return this.getResolvedSiteMaintenance(organization.id);
+  }
+
   async getResolvedItemTypeModes(
     organizationId: string = PLATFORM_ORG_ID,
   ): Promise<ResolvedBookingItemTypeModes> {
@@ -436,6 +448,31 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
         depositPercent?: number;
         depositFixedCents?: number;
       },
+    );
+  }
+
+  async getResolvedSiteMaintenance(
+    organizationId: string = PLATFORM_ORG_ID,
+  ): Promise<PublicSiteMaintenance> {
+    const setting = await this.settingsRepository.findOne({
+      where: {
+        organizationId,
+        settingGroup: 'site',
+        settingKey: 'maintenance',
+        deletedAt: IsNull(),
+      },
+    });
+
+    if (
+      !setting?.settingValue ||
+      typeof setting.settingValue !== 'object' ||
+      Array.isArray(setting.settingValue)
+    ) {
+      return { ...DEFAULT_SITE_MAINTENANCE };
+    }
+
+    return normalizeSiteMaintenance(
+      setting.settingValue as SiteMaintenanceSettingValue,
     );
   }
 

@@ -421,6 +421,7 @@ import type {
   UserRoleAssignmentsListQuery,
   User,
   UsersListQuery,
+  PublicSiteMaintenance,
   ResolvedBookingItemTypeModes,
   ResolvedWebPaymentMethods,
 } from '@africatourismgate/types';
@@ -1364,6 +1365,19 @@ export class ApiClient {
     const q = params.toString();
     return this.request<ResolvedWebPaymentMethods>(
       `/organization-settings/public/payment-methods${q ? `?${q}` : ''}`,
+    );
+  }
+
+  getPublicSiteMaintenance(query?: {
+    organizationSlug?: string;
+  }): Promise<PublicSiteMaintenance> {
+    const params = new URLSearchParams();
+    if (query?.organizationSlug) {
+      params.set('organizationSlug', query.organizationSlug);
+    }
+    const q = params.toString();
+    return this.request<PublicSiteMaintenance>(
+      `/organization-settings/public/maintenance${q ? `?${q}` : ''}`,
     );
   }
 
