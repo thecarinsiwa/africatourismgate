@@ -223,6 +223,7 @@
     "searchNoResults": "Aucun article ne correspond à votre recherche.",
     "searchResultsAria": "Résultats de recherche",
     "searchResultsCount": "{count, plural, one {# article} other {# articles}}",
+    "searchSuggestionsAria": "Suggestions d'articles populaires",
     "categoriesTitle": "Parcourir par thème",
     "categoriesSubtitle": "Choisissez un sujet pour trouver des réponses détaillées.",
     "quickStartTitle": "Démarrage rapide",
