@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, IsNull, Repository } from 'typeorm';
+import { DataSource, In, IsNull, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { CrudService } from '../../../common/crud/crud.service';
 import { newId } from '../../../common/utils/uuid';
@@ -37,6 +37,14 @@ type AdminTicketRow = {
   customerFirstName: string | null;
   customerEmail: string | null;
 };
+
+type LastMessageInfo = {
+  preview: string | null;
+  at: string | null;
+  isStaff: boolean | null;
+};
+
+const LAST_MESSAGE_PREVIEW_MAX = 160;
 
 @Injectable()
 export class SupportTicketsService extends CrudService<SupportTickets> {
@@ -235,6 +243,7 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
   ): Promise<PaginatedResult<AdminSupportTicketListItemDto>> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
+    const sortByLastMessage = query.sortBy === 'lastMessageAt';
 
     const qb = this.ticketsRepository
       .createQueryBuilder('t')
@@ -247,10 +256,7 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
       .addSelect('t.createdAt', 'createdAt')
       .addSelect('u.firstName', 'customerFirstName')
       .addSelect('u.email', 'customerEmail')
-      .where('t.deletedAt IS NULL')
-      .orderBy('t.createdAt', 'DESC')
-      .offset((page - 1) * limit)
-      .limit(limit);
+      .where('t.deletedAt IS NULL');
 
     if (query.status) {
       qb.andWhere('t.status = :status', { status: query.status });
@@ -258,6 +264,19 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
     if (query.priority) {
       qb.andWhere('t.priority = :priority', { priority: query.priority });
     }
+
+    if (sortByLastMessage) {
+      qb.addSelect(
+        `(SELECT MAX(m.created_at) FROM support_messages m WHERE m.ticket_id = t.id AND m.deleted_at IS NULL)`,
+        'lastActivityAt',
+      )
+        .orderBy('lastActivityAt', 'DESC')
+        .addOrderBy('t.createdAt', 'DESC');
+    } else {
+      qb.orderBy('t.createdAt', 'DESC');
+    }
+
+    qb.offset((page - 1) * limit).limit(limit);
 
     const countQb = this.ticketsRepository
       .createQueryBuilder('t')
@@ -274,8 +293,14 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
       countQb.getCount(),
     ]);
 
+    const lastByTicket = await this.loadLastMessagesByTicketIds(
+      rows.map((row) => row.id),
+    );
+
     return {
-      data: rows.map((row) => this.toAdminListItemDto(row)),
+      data: rows.map((row) =>
+        this.toAdminListItemDto(row, lastByTicket.get(row.id)),
+      ),
       meta: {
         total,
         page,
@@ -283,6 +308,38 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
         totalPages: Math.ceil(total / limit) || 1,
       },
     };
+  }
+
+  private async loadLastMessagesByTicketIds(
+    ticketIds: string[],
+  ): Promise<Map<string, LastMessageInfo>> {
+    const map = new Map<string, LastMessageInfo>();
+    if (ticketIds.length === 0) return map;
+
+    const messages = await this.messagesRepository.find({
+      where: { ticketId: In(ticketIds), deletedAt: IsNull() },
+      order: { createdAt: 'DESC' },
+    });
+
+    for (const message of messages) {
+      if (map.has(message.ticketId)) continue;
+      map.set(message.ticketId, {
+        preview: this.previewMessageBody(message.body),
+        at:
+          message.createdAt instanceof Date
+            ? message.createdAt.toISOString()
+            : new Date(message.createdAt).toISOString(),
+        isStaff: message.isStaff === 1,
+      });
+    }
+
+    return map;
+  }
+
+  private previewMessageBody(body: string): string {
+    const normalized = body.replace(/\s+/g, ' ').trim();
+    if (normalized.length <= LAST_MESSAGE_PREVIEW_MAX) return normalized;
+    return `${normalized.slice(0, LAST_MESSAGE_PREVIEW_MAX - 1)}…`;
   }
 
   private async findOneForCustomer(
@@ -326,8 +383,20 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
       order: { createdAt: 'ASC' },
     });
 
+    const lastMessage = messages[messages.length - 1];
+    const last = lastMessage
+      ? {
+          preview: this.previewMessageBody(lastMessage.body),
+          at:
+            lastMessage.createdAt instanceof Date
+              ? lastMessage.createdAt.toISOString()
+              : new Date(lastMessage.createdAt).toISOString(),
+          isStaff: lastMessage.isStaff === 1,
+        }
+      : undefined;
+
     return {
-      ...this.toAdminListItemDto(row),
+      ...this.toAdminListItemDto(row, last),
       messages: messages.map((message) => this.toMessageDto(message)),
     };
   }
@@ -361,7 +430,10 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
     };
   }
 
-  private toAdminListItemDto(row: AdminTicketRow): AdminSupportTicketListItemDto {
+  private toAdminListItemDto(
+    row: AdminTicketRow,
+    last?: LastMessageInfo,
+  ): AdminSupportTicketListItemDto {
     return {
       id: row.id,
       userId: row.userId,
@@ -374,6 +446,9 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
           : new Date(row.createdAt).toISOString(),
       customerFirstName: row.customerFirstName,
       customerEmail: row.customerEmail,
+      lastMessagePreview: last?.preview ?? null,
+      lastMessageAt: last?.at ?? null,
+      lastMessageIsStaff: last?.isStaff ?? null,
     };
   }
 

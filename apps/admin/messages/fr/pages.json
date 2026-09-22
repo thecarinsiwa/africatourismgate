@@ -546,8 +546,8 @@
         "messages": "Messages"
       },
       "messages": {
-        "emptyTitle": "Messagerie unifiée à venir",
-        "emptyDescription": "Les échanges hors tickets seront centralisés ici. En attendant, gérez les conversations depuis l'onglet Tickets."
+        "emptyTitle": "Aucune conversation",
+        "emptyDescription": "Les échanges clients liés aux tickets support apparaissent ici, triés par activité récente."
       }
     },
     "site": {

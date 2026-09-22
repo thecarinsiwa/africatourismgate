@@ -1,8 +1,8 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useMemo, useState } from 'react';
-import { verifyOperation } from '../../lib/api/auth';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { resendVerification, verifyOperation } from '../../lib/api/auth';
 import { createBookingCheckoutSession, getBooking } from '../../lib/api/booking';
 import { getAuthErrorMessage } from '../../lib/auth/api-errors';
 import { completeWebLoginFromAuthResponse } from '../../lib/auth/complete-web-login';
@@ -10,6 +10,8 @@ import { stripDevOriginFromNextPath } from '../../lib/auth/dev-oauth-return';
 import { useDevOAuthReturnRedirect } from '../../lib/auth/use-dev-oauth-return-redirect';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
+
+const RESEND_COOLDOWN_SECONDS = 60;
 
 function normalizeNextPath(nextPath: string | null): string {
   if (!nextPath || !nextPath.startsWith('/') || nextPath.startsWith('//')) {
@@ -57,8 +59,26 @@ export function BookingVerifyPageContent() {
   }, [searchParams]);
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [resending, setResending] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = window.setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => window.clearTimeout(timer);
+  }, [cooldown]);
+
+  const replaceVerificationId = useCallback(
+    (nextVerificationId: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('verificationId', nextVerificationId);
+      router.replace(`/booking/verify?${params.toString()}`, { scroll: false });
+    },
+    [router, searchParams],
+  );
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -70,6 +90,7 @@ export function BookingVerifyPageContent() {
 
     setSubmitting(true);
     setError(null);
+    setInfo(null);
     try {
       const response = await verifyOperation({ verificationId, code });
       setSubmitted(true);
@@ -123,6 +144,33 @@ export function BookingVerifyPageContent() {
     }
   }
 
+  async function handleResend() {
+    if (!verificationId || resending || submitting || submitted || cooldown > 0) {
+      return;
+    }
+    setResending(true);
+    setError(null);
+    setInfo(null);
+    try {
+      const result = await resendVerification({ verificationId });
+      replaceVerificationId(result.verificationId);
+      setCode('');
+      setInfo(result.message || 'Un nouveau code a été envoyé.');
+      setCooldown(RESEND_COOLDOWN_SECONDS);
+    } catch (err: unknown) {
+      setError(
+        getAuthErrorMessage(err, {
+          network: 'Impossible de joindre le serveur. Vérifiez votre connexion.',
+          generic: 'Impossible de renvoyer le code. Réessayez dans un instant.',
+          envMissing: 'Configuration API manquante.',
+          unauthorized: 'Vérification introuvable ou déjà confirmée.',
+        }),
+      );
+    } finally {
+      setResending(false);
+    }
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
       <HomeHeader />
@@ -141,6 +189,15 @@ export function BookingVerifyPageContent() {
               className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300"
             >
               {error}
+            </p>
+          ) : null}
+
+          {info ? (
+            <p
+              role="status"
+              className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-200"
+            >
+              {info}
             </p>
           ) : null}
 
@@ -170,6 +227,27 @@ export function BookingVerifyPageContent() {
               {submitting ? 'Vérification…' : 'Confirmer et continuer'}
             </button>
           </form>
+
+          <div className="mt-4 text-center">
+            <button
+              type="button"
+              onClick={() => void handleResend()}
+              disabled={
+                !verificationId ||
+                resending ||
+                submitting ||
+                submitted ||
+                cooldown > 0
+              }
+              className="text-sm font-medium text-primary underline-offset-2 hover:underline disabled:cursor-not-allowed disabled:opacity-60 disabled:no-underline"
+            >
+              {resending
+                ? 'Envoi…'
+                : cooldown > 0
+                  ? `Renvoyer un code (${cooldown} s)`
+                  : 'Envoyer un autre code'}
+            </button>
+          </div>
         </section>
       </main>
       <HomeFooter />

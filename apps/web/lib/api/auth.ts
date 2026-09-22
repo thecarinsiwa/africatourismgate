@@ -30,6 +30,12 @@ export function verifyOperation(body: VerifyOperationRequest): Promise<AuthRespo
   );
 }
 
+export function resendVerification(body: {
+  verificationId: string;
+}): Promise<{ verificationId: string; message: string }> {
+  return createApiClient({ baseUrl: getApiBaseUrl() }).resendVerification(body);
+}
+
 export function registerCustomer(body: RegisterRequest): Promise<AuthResponse> {
   return createApiClient({ baseUrl: getApiBaseUrl() }).registerCustomer(
     withClientInstanceId(body),

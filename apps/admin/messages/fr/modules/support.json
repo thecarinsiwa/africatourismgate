@@ -50,11 +50,31 @@
         "title": "Aucun ticket ouvert",
         "description": "La file des tickets ouverts est vide. Les nouvelles demandes clients apparaîtront ici."
       },
+      "all": {
+        "title": "Aucun ticket",
+        "description": "Aucune demande d'assistance pour le moment. Les tickets clients apparaîtront ici."
+      },
       "filtered": {
         "title": "Aucun ticket ne correspond aux filtres",
         "description": "Élargissez les critères de statut ou de priorité pour afficher plus de demandes."
       }
     },
     "ariaLabel": "Boîte de réception des tickets support"
+  },
+  "messagesInbox": {
+    "ariaLabel": "Conversations support",
+    "fromStaff": "Agent",
+    "fromCustomer": "Client",
+    "noPreview": "Aucun message pour le moment.",
+    "empty": {
+      "default": {
+        "title": "Aucune conversation",
+        "description": "Les échanges clients liés aux tickets support apparaîtront ici, triés par activité récente."
+      },
+      "filtered": {
+        "title": "Aucune conversation ne correspond",
+        "description": "Élargissez les filtres de statut ou de priorité pour afficher plus de fils."
+      }
+    }
   }
 }

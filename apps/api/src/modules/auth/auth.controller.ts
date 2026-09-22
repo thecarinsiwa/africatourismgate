@@ -60,6 +60,10 @@ import { AuthMeDto } from './dto/auth-me.dto';
 import { AuthUserDto } from './dto/auth-user.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { VerifyOperationDto } from './dto/verify-operation.dto';
+import {
+  ResendVerificationDto,
+  ResendVerificationResponseDto,
+} from './dto/resend-verification.dto';
 
 @Public()
 @ApiTags('auth')
@@ -359,5 +363,20 @@ export class AuthController {
   @ApiBadRequestResponse({ description: 'Invalid or expired verification code' })
   verifyOperation(@Body() dto: VerifyOperationDto): Promise<AuthResponseDto> {
     return this.authService.verifyOperation(dto);
+  }
+
+  @Post('resend-verification')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ forgotPassword: { limit: 5, ttl: 60_000 } })
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Resend email verification code for a pending operation',
+  })
+  @ApiOkResponse({ type: ResendVerificationResponseDto })
+  @ApiBadRequestResponse({ description: 'Verification already confirmed or invalid' })
+  resendVerification(
+    @Body() dto: ResendVerificationDto,
+  ): Promise<ResendVerificationResponseDto> {
+    return this.authService.resendVerification(dto.verificationId);
   }
 }

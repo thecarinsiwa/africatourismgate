@@ -24,4 +24,19 @@ export class AdminSupportTicketListItemDto {
 
   @ApiPropertyOptional({ nullable: true })
   customerEmail!: string | null;
+
+  @ApiPropertyOptional({
+    nullable: true,
+    description: 'Preview of the latest message body',
+  })
+  lastMessagePreview!: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  lastMessageAt!: string | null;
+
+  @ApiPropertyOptional({
+    nullable: true,
+    description: 'True when the latest message was posted by staff',
+  })
+  lastMessageIsStaff!: boolean | null;
 }

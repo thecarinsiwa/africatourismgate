@@ -50,11 +50,31 @@
         "title": "No open tickets",
         "description": "The open-ticket queue is empty. New customer requests will appear here."
       },
+      "all": {
+        "title": "No tickets",
+        "description": "There are no support requests yet. Customer tickets will appear here."
+      },
       "filtered": {
         "title": "No tickets match your filters",
         "description": "Widen the status or priority criteria to show more requests."
       }
     },
     "ariaLabel": "Support tickets inbox"
+  },
+  "messagesInbox": {
+    "ariaLabel": "Support conversations",
+    "fromStaff": "Agent",
+    "fromCustomer": "Customer",
+    "noPreview": "No messages yet.",
+    "empty": {
+      "default": {
+        "title": "No conversations",
+        "description": "Customer threads linked to support tickets will appear here, sorted by recent activity."
+      },
+      "filtered": {
+        "title": "No conversations match",
+        "description": "Widen the status or priority filters to show more threads."
+      }
+    }
   }
 }

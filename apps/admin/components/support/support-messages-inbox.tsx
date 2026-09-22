@@ -1,7 +1,6 @@
 'use client';
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
-
 import {
   Card,
   DataTableBadge,
@@ -33,20 +32,29 @@ import {
 } from '../../lib/support-ticket-display';
 
 const PAGE_SIZE = 20;
-const DEFAULT_STATUS: '' | SupportTicketStatus = '';
 
-type SupportTicketInboxItemProps = {
+type SupportMessagesInboxItemProps = {
   ticket: AdminSupportTicketListItem;
 };
 
-function SupportTicketInboxItem({ ticket }: SupportTicketInboxItemProps) {
-  const tCommon = useTranslations('modules.common');
+function SupportMessagesInboxItem({ ticket }: SupportMessagesInboxItemProps) {
   const tInbox = useTranslations('modules.support.messagesInbox');
+  const tCommon = useTranslations('modules.common');
   const formatDateTime = useFormatDateTime();
   const statusLabels = useSupportTicketStatusLabels();
   const priorityLabels = useSupportTicketPriorityLabels();
   const emptyDash = tCommon('empty.dash');
+  const customer =
+    ticket.customerFirstName?.trim() || ticket.customerEmail || emptyDash;
   const when = ticket.lastMessageAt || ticket.createdAt;
+  const preview =
+    ticket.lastMessagePreview?.trim() || tInbox('noPreview');
+  const authorLabel =
+    ticket.lastMessageIsStaff === true
+      ? tInbox('fromStaff')
+      : ticket.lastMessageIsStaff === false
+        ? tInbox('fromCustomer')
+        : null;
 
   return (
     <Link
@@ -64,19 +72,13 @@ function SupportTicketInboxItem({ ticket }: SupportTicketInboxItemProps) {
       </div>
 
       <p className="mt-1 truncate text-sm text-atg-muted">
-        {ticket.customerFirstName?.trim() || emptyDash}
-        {ticket.customerEmail ? (
-          <span className="text-atg-muted"> · {ticket.customerEmail}</span>
+        {customer}
+        {authorLabel ? (
+          <span className="text-atg-muted"> · {authorLabel}</span>
         ) : null}
       </p>
 
-      {ticket.lastMessagePreview ? (
-        <p className="mt-1 line-clamp-2 text-sm text-atg-fg/90">
-          {ticket.lastMessagePreview}
-        </p>
-      ) : (
-        <p className="mt-1 text-sm text-atg-muted">{tInbox('noPreview')}</p>
-      )}
+      <p className="mt-1 line-clamp-2 text-sm text-atg-fg/90">{preview}</p>
 
       <div className="mt-2 flex flex-wrap items-center gap-2">
         <DataTableBadge variant={supportTicketStatusVariants[ticket.status]}>
@@ -90,7 +92,7 @@ function SupportTicketInboxItem({ ticket }: SupportTicketInboxItemProps) {
   );
 }
 
-function SupportTicketInboxSkeleton() {
+function SupportMessagesInboxSkeleton() {
   return (
     <div className="divide-y divide-atg-border">
       {Array.from({ length: 5 }, (_, index) => (
@@ -100,10 +102,10 @@ function SupportTicketInboxSkeleton() {
             <Skeleton className="h-4 w-24" />
           </div>
           <Skeleton className="h-4 w-48" />
+          <Skeleton className="h-4 w-full max-w-xl" />
           <div className="flex gap-2">
             <Skeleton className="h-6 w-16 rounded-full" />
             <Skeleton className="h-6 w-20 rounded-full" />
-            <Skeleton className="h-4 w-28" />
           </div>
         </div>
       ))}
@@ -111,8 +113,9 @@ function SupportTicketInboxSkeleton() {
   );
 }
 
-export function SupportTicketsList() {
+export function SupportMessagesInbox() {
   const { supportTickets: getSupportTicketsErrorMessage } = useAdminErrorMessages();
+  const tInbox = useTranslations('modules.support.messagesInbox');
   const tList = useTranslations('modules.support.list');
   const tColumns = useTranslations('modules.common.columns');
   const tCommon = useTranslations('modules.common');
@@ -121,7 +124,7 @@ export function SupportTicketsList() {
   const priorityOptions = useSupportTicketPriorityFilterOptions();
 
   const [page, setPage] = useState(1);
-  const [statusFilter, setStatusFilter] = useState<'' | SupportTicketStatus>(DEFAULT_STATUS);
+  const [statusFilter, setStatusFilter] = useState<'' | SupportTicketStatus>('');
   const [priorityFilter, setPriorityFilter] = useState<'' | SupportTicketPriority>('');
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -142,6 +145,7 @@ export function SupportTicketsList() {
         limit: PAGE_SIZE,
         status: statusFilter || undefined,
         priority: priorityFilter || undefined,
+        sortBy: 'lastMessageAt',
       });
       setState({
         status: 'ready',
@@ -158,13 +162,12 @@ export function SupportTicketsList() {
     void load();
   }, [load]);
 
-  const activeFilterCount = [
-    statusFilter !== DEFAULT_STATUS,
-    priorityFilter !== '',
-  ].filter(Boolean).length;
+  const activeFilterCount = [statusFilter !== '', priorityFilter !== ''].filter(
+    Boolean,
+  ).length;
 
   const handleClearFilters = useCallback(() => {
-    setStatusFilter(DEFAULT_STATUS);
+    setStatusFilter('');
     setPriorityFilter('');
     setPage(1);
   }, []);
@@ -220,27 +223,27 @@ export function SupportTicketsList() {
 
       {isLoading ? (
         <Card variant="dashboard" padding="none" className="overflow-hidden">
-          <SupportTicketInboxSkeleton />
+          <SupportMessagesInboxSkeleton />
         </Card>
       ) : isEmpty ? (
         <EmptyState
           title={
             hasFilters
-              ? tList('empty.filtered.title')
-              : tList('empty.all.title')
+              ? tInbox('empty.filtered.title')
+              : tInbox('empty.default.title')
           }
           description={
             hasFilters
-              ? tList('empty.filtered.description')
-              : tList('empty.all.description')
+              ? tInbox('empty.filtered.description')
+              : tInbox('empty.default.description')
           }
         />
       ) : (
         <Card variant="dashboard" padding="none" className="overflow-hidden">
-          <div role="list" aria-label={tList('ariaLabel')}>
+          <div role="list" aria-label={tInbox('ariaLabel')}>
             {tickets.map((ticket) => (
               <div key={ticket.id} role="listitem">
-                <SupportTicketInboxItem ticket={ticket} />
+                <SupportMessagesInboxItem ticket={ticket} />
               </div>
             ))}
           </div>

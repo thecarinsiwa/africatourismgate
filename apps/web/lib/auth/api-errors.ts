@@ -34,7 +34,13 @@ export function getAuthErrorMessage(
     if (error.status === 500 && messages.server) {
       return messages.server;
     }
-    if (error.status === 400 && error.message && !error.message.startsWith('HTTP ')) {
+    if (
+      (error.status === 400 ||
+        error.status === 404 ||
+        error.status === 429) &&
+      error.message &&
+      !error.message.startsWith('HTTP ')
+    ) {
       return error.message;
     }
   }

@@ -22,6 +22,9 @@ export interface SupportTicketMessage {
 export interface AdminSupportTicketListItem extends SupportTicket {
   customerFirstName: string | null;
   customerEmail: string | null;
+  lastMessagePreview: string | null;
+  lastMessageAt: string | null;
+  lastMessageIsStaff: boolean | null;
 }
 
 export interface AdminSupportTicketDetail extends AdminSupportTicketListItem {
@@ -45,6 +48,8 @@ export interface SupportTicketsListQuery {
   limit?: number;
   status?: SupportTicketStatus;
   priority?: SupportTicketPriority;
+  /** Admin list: sort by ticket creation or latest message activity. */
+  sortBy?: 'createdAt' | 'lastMessageAt';
 }
 
 export interface UpdateSupportTicketRequest {

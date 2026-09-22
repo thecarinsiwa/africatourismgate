@@ -27,6 +27,8 @@ export type {
   UnlockSessionRequest,
   UserStatus,
   VerifyOperationRequest,
+  ResendVerificationRequest,
+  ResendVerificationResponse,
 } from './auth.js';
 
 export { SESSION_LOCKED_CODE } from './auth.js';
