@@ -1763,6 +1763,7 @@
       "saveError": "Impossible d'enregistrer.",
       "defaultBadge": "Par défaut",
       "isDefault": "Par défaut",
+      "typeLabel": "Type",
       "typeCard": "Carte bancaire",
       "typePaypal": "PayPal",
       "typeOther": "Autre",

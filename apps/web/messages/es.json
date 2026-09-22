@@ -1763,6 +1763,7 @@
       "saveError": "No se pudo guardar.",
       "defaultBadge": "Predeterminado",
       "isDefault": "Predeterminado",
+      "typeLabel": "Tipo",
       "typeCard": "Tarjeta",
       "typePaypal": "PayPal",
       "typeOther": "Otro",

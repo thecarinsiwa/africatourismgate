@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Input, Spinner } from '@africatourismgate/ui';
+import { Button, Input, Modal, Spinner } from '@africatourismgate/ui';
 import type { UserPaymentMethod, UserPaymentMethodType } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
@@ -18,9 +18,10 @@ export function AccountPaymentMethodsPanel() {
   const [methods, setMethods] = useState<UserPaymentMethod[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
-  const [showForm, setShowForm] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -40,10 +41,22 @@ export function AccountPaymentMethodsPanel() {
     void load();
   }, [load]);
 
+  function openModal() {
+    setForm(emptyForm);
+    setFormError(null);
+    setModalOpen(true);
+  }
+
+  function closeModal() {
+    if (saving) return;
+    setModalOpen(false);
+    setFormError(null);
+  }
+
   async function handleCreate(event: React.FormEvent) {
     event.preventDefault();
     setSaving(true);
-    setError(null);
+    setFormError(null);
     try {
       const client = await getAccountApiClient();
       await client.createUserPaymentMethod({
@@ -53,10 +66,10 @@ export function AccountPaymentMethodsPanel() {
         isDefault: form.isDefault,
       });
       setForm(emptyForm);
-      setShowForm(false);
+      setModalOpen(false);
       await load();
     } catch {
-      setError(t('paymentMethods.saveError'));
+      setFormError(t('paymentMethods.saveError'));
     } finally {
       setSaving(false);
     }
@@ -83,11 +96,9 @@ export function AccountPaymentMethodsPanel() {
 
   return (
     <div className="space-y-6">
-      {methods.length === 0 && !showForm && (
-        <p className="text-sm text-atg-muted">
-          {t('paymentMethods.empty')}
-        </p>
-      )}
+      {methods.length === 0 ? (
+        <p className="text-sm text-atg-muted">{t('paymentMethods.empty')}</p>
+      ) : null}
 
       <ul className="space-y-3">
         {methods.map((method) => (
@@ -100,16 +111,14 @@ export function AccountPaymentMethodsPanel() {
                 {method.type}
                 {method.provider ? ` — ${method.provider}` : ''}
               </p>
-              {method.lastFour && (
-                <p className="text-sm text-atg-muted">
-                  •••• {method.lastFour}
-                </p>
-              )}
-              {method.isDefault === 1 && (
+              {method.lastFour ? (
+                <p className="text-sm text-atg-muted">•••• {method.lastFour}</p>
+              ) : null}
+              {method.isDefault === 1 ? (
                 <span className="mt-1 inline-block text-xs font-medium text-primary">
                   {t('paymentMethods.defaultBadge')}
                 </span>
-              )}
+              ) : null}
             </div>
             <Button
               type="button"
@@ -123,61 +132,102 @@ export function AccountPaymentMethodsPanel() {
         ))}
       </ul>
 
-      {showForm ? (
-        <form
-          onSubmit={handleCreate}
-          className="max-w-lg space-y-3 rounded-lg border border-atg-border p-4 dark:border-atg-border"
-        >
-          <select
-            value={form.type}
-            onChange={(e) =>
-              setForm((f) => ({ ...f, type: e.target.value as UserPaymentMethodType }))
-            }
-            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-elevated dark:text-white"
-          >
-            <option value="card">{t('paymentMethods.typeCard')}</option>
-            <option value="paypal">{t('paymentMethods.typePaypal')}</option>
-            <option value="other">{t('paymentMethods.typeOther')}</option>
-          </select>
+      <Button type="button" onClick={openModal}>
+        {t('paymentMethods.addNew')}
+      </Button>
+
+      {error ? (
+        <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+          {error}
+        </p>
+      ) : null}
+
+      <Modal
+        open={modalOpen}
+        onOpenChange={(open) => {
+          if (!open) closeModal();
+          else setModalOpen(true);
+        }}
+        title={t('paymentMethods.addNew')}
+        showClose
+        closeAriaLabel={t('paymentMethods.cancel')}
+        className="max-w-md"
+      >
+        <form onSubmit={(event) => void handleCreate(event)} className="space-y-4">
+          <div>
+            <label
+              htmlFor="payment-method-type"
+              className="mb-1 block text-sm font-medium text-atg-fg"
+            >
+              {t('paymentMethods.typeLabel')}
+            </label>
+            <select
+              id="payment-method-type"
+              value={form.type}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, type: e.target.value as UserPaymentMethodType }))
+              }
+              className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg dark:border-atg-border dark:bg-atg-elevated dark:text-white"
+            >
+              <option value="card">{t('paymentMethods.typeCard')}</option>
+              <option value="paypal">{t('paymentMethods.typePaypal')}</option>
+              <option value="other">{t('paymentMethods.typeOther')}</option>
+            </select>
+          </div>
+
           <Input
+            id="payment-method-provider"
+            label={t('paymentMethods.provider')}
             placeholder={t('paymentMethods.provider')}
             value={form.provider}
             onChange={(e) => setForm((f) => ({ ...f, provider: e.target.value }))}
           />
+
           <Input
+            id="payment-method-last-four"
+            label={t('paymentMethods.lastFour')}
             placeholder={t('paymentMethods.lastFour')}
             value={form.lastFour}
             onChange={(e) => setForm((f) => ({ ...f, lastFour: e.target.value }))}
             maxLength={4}
+            inputMode="numeric"
           />
-          <label className="flex items-center gap-2 text-sm">
+
+          <label className="flex min-h-10 items-center gap-2 text-sm text-atg-fg">
             <input
               type="checkbox"
               checked={form.isDefault}
               onChange={(e) => setForm((f) => ({ ...f, isDefault: e.target.checked }))}
+              className="h-4 w-4 rounded border-atg-border text-primary"
             />
             {t('paymentMethods.isDefault')}
           </label>
-          <div className="flex gap-2">
-            <Button type="submit" loading={saving} loadingText={t('paymentMethods.saving')}>
-              {t('paymentMethods.add')}
-            </Button>
-            <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
+
+          {formError ? (
+            <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+              {formError}
+            </p>
+          ) : null}
+
+          <div className="flex flex-wrap justify-end gap-2 pt-1">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={saving}
+              onClick={closeModal}
+            >
               {t('paymentMethods.cancel')}
+            </Button>
+            <Button
+              type="submit"
+              loading={saving}
+              loadingText={t('paymentMethods.saving')}
+            >
+              {t('paymentMethods.add')}
             </Button>
           </div>
         </form>
-      ) : (
-        <Button type="button" onClick={() => setShowForm(true)}>
-          {t('paymentMethods.addNew')}
-        </Button>
-      )}
-
-      {error && (
-        <p className="text-sm text-red-600 dark:text-red-400" role="alert">
-          {error}
-        </p>
-      )}
+      </Modal>
     </div>
   );
 }

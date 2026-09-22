@@ -1134,6 +1134,7 @@ export type Translations = {
       saveError: string;
       defaultBadge: string;
       isDefault: string;
+      typeLabel: string;
       typeCard: string;
       typePaypal: string;
       typeOther: string;
