@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import type { PublicSiteSearchHit } from '@africatourismgate/types';
 import { In, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { filterActivityItineraryStopsByDuration } from '../../../common/activity-itinerary-stops.util';
@@ -14,6 +15,10 @@ import {
 } from '../../../entities/generated';
 import { PublicGalleryImageDto } from '../dto/public-gallery-image.dto';
 import { PublicDestinationDto } from '../accommodations/dto/public-destination.dto';
+import {
+  ACTIVITY_SITE_SEARCH_WEIGHTS,
+  scoreSiteSearchTextMatch,
+} from '../site-search/site-search-scoring';
 import { ActivityBrowseQueryDto } from './dto/activity-browse-query.dto';
 import { ActivityDetailQueryDto } from './dto/activity-detail-query.dto';
 import { ActivityDetailDto } from './dto/activity-detail.dto';
@@ -311,6 +316,110 @@ export class PublicActivitiesService {
         totalPages: Math.ceil(total / limit) || 1,
       },
     };
+  }
+
+  /**
+   * Free-text catalogue search for site-search (no date required).
+   * Matches title, description and destination name/slug.
+   */
+  async searchCatalog(
+    q: string,
+    limit: number,
+  ): Promise<PublicSiteSearchHit[]> {
+    const term = q.trim().toLowerCase();
+    if (!term || limit < 1) return [];
+
+    const pattern = `%${term}%`;
+    const fetchLimit = Math.min(Math.max(limit * 3, limit), 60);
+
+    const activities = await this.activitiesRepository
+      .createQueryBuilder('a')
+      .innerJoin(
+        ActivityProviders,
+        'ap',
+        'ap.id = a.providerId AND ap.deletedAt IS NULL',
+      )
+      .innerJoin(
+        Destinations,
+        'd',
+        'd.id = ap.destinationId AND d.deletedAt IS NULL',
+      )
+      .where('a.deletedAt IS NULL')
+      .andWhere(
+        `(LOWER(a.title) LIKE :pattern
+          OR LOWER(COALESCE(a.description, '')) LIKE :pattern
+          OR LOWER(d.name) LIKE :pattern
+          OR LOWER(d.slug) LIKE :pattern)`,
+        { pattern },
+      )
+      .orderBy('a.title', 'ASC')
+      .take(fetchLimit)
+      .getMany();
+
+    if (!activities.length) return [];
+
+    const providerIds = [...new Set(activities.map((a) => a.providerId))];
+    const providers = await this.providersRepository.find({
+      where: { id: In(providerIds) },
+    });
+    const providerById = new Map(
+      providers.filter((p) => !p.deletedAt).map((p) => [p.id, p] as const),
+    );
+
+    const destIds = [
+      ...new Set(
+        [...providerById.values()].map((p) => p.destinationId),
+      ),
+    ];
+    const destinations = await this.destinationsRepository.find({
+      where: { id: In(destIds) },
+    });
+    const destinationById = new Map(
+      destinations.filter((d) => !d.deletedAt).map((d) => [d.id, d] as const),
+    );
+
+    const imageUrlByActivityId = await this.loadPrimaryImageUrlByActivityId(
+      activities.map((a) => a.id),
+    );
+
+    const hits: PublicSiteSearchHit[] = [];
+
+    for (const activity of activities) {
+      const provider = providerById.get(activity.providerId);
+      if (!provider) continue;
+      const dest = destinationById.get(provider.destinationId);
+      if (!dest) continue;
+
+      const score = scoreSiteSearchTextMatch(term, [
+        { weight: ACTIVITY_SITE_SEARCH_WEIGHTS.title, value: activity.title },
+        {
+          weight: ACTIVITY_SITE_SEARCH_WEIGHTS.destination,
+          value: dest.name,
+        },
+        {
+          weight: ACTIVITY_SITE_SEARCH_WEIGHTS.destination,
+          value: dest.slug,
+        },
+        {
+          weight: ACTIVITY_SITE_SEARCH_WEIGHTS.description,
+          value: activity.description,
+        },
+      ]);
+      if (score <= 0) continue;
+
+      hits.push({
+        type: 'activities',
+        id: activity.id,
+        title: activity.title,
+        subtitle: `${dest.name} · ${dest.countryCode}`,
+        href: `/activities/${encodeURIComponent(activity.id)}`,
+        imageUrl: imageUrlByActivityId.get(activity.id) ?? null,
+        score,
+      });
+    }
+
+    hits.sort((a, b) => b.score - a.score || a.title.localeCompare(b.title));
+    return hits.slice(0, limit);
   }
 
   async getById(

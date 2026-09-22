@@ -283,6 +283,7 @@ export interface PropertyDetailRoom {
   totalPriceCents: number | null;
   available: boolean;
   nightlyBreakdown: PropertyDetailNightlyPrice[];
+  images: PropertyDetailImage[];
 }
 
 export interface PropertyDetailStay {

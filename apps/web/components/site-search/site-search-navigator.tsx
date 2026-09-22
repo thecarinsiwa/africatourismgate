@@ -22,6 +22,7 @@ import {
   type SiteSearchResultItem,
 } from '../../lib/site-search';
 import { shouldHandleSiteSearchShortcut } from '../../lib/site-search/shortcuts';
+import { SiteSearchResultBody } from './site-search-result-body';
 
 type SiteSearchNavigatorContextValue = {
   open: boolean;
@@ -177,6 +178,11 @@ function SiteSearchNavigatorModal() {
   const groupLabel = (group: SiteSearchGroupId) =>
     t(`groups.${group}` as Parameters<typeof t>[0]);
 
+  const resultLabels = {
+    kindEntity: t('kindEntity'),
+    kindPrefilled: t('kindPrefilled'),
+  };
+
   let runningIndex = 0;
 
   return (
@@ -246,11 +252,21 @@ function SiteSearchNavigatorModal() {
                   <h3 className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
                     {groupLabel(group.group)}
                   </h3>
-                  {group.error ? (
-                    <span className="text-xs text-amber-700 dark:text-amber-400">
-                      {t('groupError')}
-                    </span>
-                  ) : null}
+                  <span className="flex items-center gap-2">
+                    {group.items.length > 0 ? (
+                      <span
+                        className="text-[10px] tabular-nums text-atg-muted"
+                        data-testid="site-search-group-count"
+                      >
+                        {group.items.length}
+                      </span>
+                    ) : null}
+                    {group.error ? (
+                      <span className="text-xs text-amber-700 dark:text-amber-400">
+                        {t('groupError')}
+                      </span>
+                    ) : null}
+                  </span>
                 </header>
                 <ul>
                   {group.items.map((item) => {
@@ -263,6 +279,7 @@ function SiteSearchNavigatorModal() {
                           index={index}
                           active={index === activeIndex}
                           listId={listId}
+                          labels={resultLabels}
                           optionRef={(node) => {
                             optionRefs.current[index] = node;
                           }}
@@ -306,6 +323,7 @@ function SearchResultOption({
   index,
   active,
   listId,
+  labels,
   optionRef,
   onActivate,
   onHover,
@@ -314,6 +332,7 @@ function SearchResultOption({
   index: number;
   active: boolean;
   listId: string;
+  labels: { kindEntity: string; kindPrefilled: string };
   optionRef: (node: HTMLButtonElement | null) => void;
   onActivate: () => void;
   onHover: () => void;
@@ -327,16 +346,13 @@ function SearchResultOption({
       aria-selected={active}
       data-testid="site-search-result"
       className={cn(
-        'flex w-full flex-col gap-0.5 px-4 py-3 text-left transition-colors',
+        'flex w-full px-4 py-3 text-left transition-colors',
         active ? 'bg-atg-surface' : 'hover:bg-atg-surface/70',
       )}
       onMouseEnter={onHover}
       onClick={onActivate}
     >
-      <span className="text-sm font-medium text-atg-fg">{item.title}</span>
-      {item.subtitle ? (
-        <span className="truncate text-xs text-atg-muted">{item.subtitle}</span>
-      ) : null}
+      <SiteSearchResultBody item={item} labels={labels} compact />
     </button>
   );
 }

@@ -112,6 +112,27 @@ export function HomeHeader() {
   const [hasSession, setHasSession] = useState(false);
   const mobileNavRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+
+    const syncHeaderHeight = () => {
+      document.documentElement.style.setProperty(
+        '--atg-header-h',
+        `${header.offsetHeight}px`,
+      );
+    };
+
+    syncHeaderHeight();
+    const observer = new ResizeObserver(syncHeaderHeight);
+    observer.observe(header);
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty('--atg-header-h');
+    };
+  }, [menuOpen]);
 
   const navLinks = useMemo(
     () => [
@@ -218,7 +239,11 @@ export function HomeHeader() {
   }
 
   return (
-    <header className="w-full z-50">
+    <>
+    <header
+      ref={headerRef}
+      className="fixed inset-x-0 top-0 z-50 w-full bg-atg-elevated/95 shadow-sm backdrop-blur-md dark:bg-atg-elevated/95"
+    >
       <div className="border-b border-atg-border bg-atg-surface text-atg-fg dark:border-white/10 dark:bg-[#1b1b2f] dark:text-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 text-xs sm:text-sm">
@@ -261,12 +286,17 @@ export function HomeHeader() {
         </div>
       </div>
 
-      <div className="border-b border-atg-border bg-atg-elevated shadow-sm transition-colors dark:border-atg-border dark:bg-atg-elevated">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-0 sm:px-6 lg:px-8">
-          <Link href="/" className={`flex shrink-0 items-center gap-2 rounded-md py-4 ${FOCUS_RING}`}>
+      <div className="border-b border-atg-border bg-atg-elevated transition-colors dark:border-atg-border dark:bg-atg-elevated">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-0 sm:gap-3 sm:px-6 lg:px-8">
+          <Link
+            href="/"
+            className={`flex min-w-0 flex-1 items-center rounded-md py-3 sm:py-4 lg:flex-none lg:shrink-0 ${FOCUS_RING}`}
+          >
             <BrandingMark
               showName
-              nameClassName="text-lg font-bold text-atg-fg"
+              className="flex min-w-0 items-center gap-1.5 sm:gap-2"
+              logoClassName="h-8 w-8 shrink-0 rounded-full object-cover sm:h-10 sm:w-10"
+              nameClassName="truncate text-sm font-bold text-atg-fg sm:text-base lg:text-lg"
             />
           </Link>
 
@@ -345,54 +375,55 @@ export function HomeHeader() {
             ) : null}
           </div>
 
-          <SiteSearchTrigger className="lg:hidden" />
+          <div className="flex shrink-0 items-center gap-0.5 sm:gap-1.5">
+            <SiteSearchTrigger className="lg:hidden" />
 
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className={`ml-2 mr-2 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-atg-border text-atg-muted transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/75 dark:hover:border-primary dark:hover:text-white lg:ml-2 lg:mr-2 ${FOCUS_RING}`}
-            aria-label={theme === 'dark' ? tTheme('enableLight') : tTheme('enableDark')}
-            title={theme === 'dark' ? tTheme('lightMode') : tTheme('darkMode')}
-          >
-            {theme === 'dark' ? (
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7} d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364-6.364-1.414 1.414M7.05 16.95l-1.414 1.414m12.728 0-1.414-1.414M7.05 7.05 5.636 5.636M12 8a4 4 0 100 8 4 4 0 000-8z" />
-              </svg>
-            ) : (
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7} d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
-              </svg>
-            )}
-          </button>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-atg-border text-atg-muted transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/75 dark:hover:border-primary dark:hover:text-white sm:h-11 sm:w-11 ${FOCUS_RING}`}
+              aria-label={theme === 'dark' ? tTheme('enableLight') : tTheme('enableDark')}
+              title={theme === 'dark' ? tTheme('lightMode') : tTheme('darkMode')}
+            >
+              {theme === 'dark' ? (
+                <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7} d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364-6.364-1.414 1.414M7.05 16.95l-1.414 1.414m12.728 0-1.414-1.414M7.05 7.05 5.636 5.636M12 8a4 4 0 100 8 4 4 0 000-8z" />
+                </svg>
+              ) : (
+                <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7} d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+                </svg>
+              )}
+            </button>
 
-          <button
-            ref={menuButtonRef}
-            type="button"
-            className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-atg-muted transition-colors hover:bg-atg-surface hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white lg:hidden ${FOCUS_RING}`}
-            aria-expanded={menuOpen}
-            aria-controls="mobile-nav"
-            onClick={() => setMenuOpen((o) => !o)}
-          >
-            <span className="sr-only">{t('menu')}</span>
-            {menuOpen ? (
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            )}
-          </button>
+            <button
+              ref={menuButtonRef}
+              type="button"
+              className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-atg-muted transition-colors hover:bg-atg-surface hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white sm:h-11 sm:w-11 lg:hidden ${FOCUS_RING}`}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-nav"
+              onClick={() => setMenuOpen((o) => !o)}
+            >
+              <span className="sr-only">{t('menu')}</span>
+              {menuOpen ? (
+                <svg className="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
-      </div>
 
-      {menuOpen && (
+        {menuOpen ? (
         <nav
           ref={mobileNavRef}
           id="mobile-nav"
           tabIndex={-1}
-          className="border-b border-atg-border bg-atg-elevated px-4 py-4 shadow-lg transition-[opacity,transform] duration-200 ease-out opacity-100 translate-y-0 max-h-[calc(100dvh-8.5rem)] overflow-y-auto overscroll-contain dark:border-atg-border dark:bg-atg-elevated lg:hidden"
+          className="border-t border-atg-border bg-atg-elevated px-4 py-4 shadow-lg transition-[opacity,transform] duration-200 ease-out opacity-100 translate-y-0 max-h-[calc(100dvh-8.5rem)] overflow-y-auto overscroll-contain dark:border-atg-border dark:bg-atg-elevated lg:hidden"
           aria-label={t('mobileAria')}
         >
           <div className="mb-3 flex items-center justify-between gap-2">
@@ -493,7 +524,14 @@ export function HomeHeader() {
             </div>
           ) : null}
         </nav>
-      )}
+        ) : null}
+      </div>
     </header>
+    <div
+      className="shrink-0"
+      style={{ height: 'var(--atg-header-h, 7.5rem)' }}
+      aria-hidden
+    />
+    </>
   );
 }

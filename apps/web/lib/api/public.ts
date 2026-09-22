@@ -28,6 +28,8 @@ import type {
   PublicHeroSlidesListQuery,
   PublicFeaturedReviewsListQuery,
   PublicGapHome,
+  PublicSiteSearchQuery,
+  PublicSiteSearchResponse,
   AboutPageSectionKey,
 } from '@africatourismgate/types';
 import type {
@@ -108,7 +110,13 @@ export type {
   PackagesBrowseQuery,
 } from '../packages/types';
 
-export type { PublicDestinationHighlight } from '@africatourismgate/types';
+export type {
+  PublicDestinationHighlight,
+  PublicSiteSearchHit,
+  PublicSiteSearchQuery,
+  PublicSiteSearchResponse,
+  SiteSearchHitType,
+} from '@africatourismgate/types';
 
 const defaultApiUrl =
   process.env.NODE_ENV === 'production'
@@ -469,6 +477,24 @@ export async function browseBlogPosts(
 ): Promise<PaginatedResponse<PublicBlogPostListItem>> {
   return fetchPublic<PaginatedResponse<PublicBlogPostListItem>>(
     `/public/blog${buildBlogQuery(params)}`,
+  );
+}
+
+function buildSiteSearchCatalogQuery(params: PublicSiteSearchQuery): string {
+  const qs = new URLSearchParams();
+  qs.set('q', params.q);
+  if (params.locale) qs.set('locale', params.locale);
+  if (params.limit !== undefined) qs.set('limit', String(params.limit));
+  if (params.types?.length) qs.set('types', params.types.join(','));
+  return `?${qs.toString()}`;
+}
+
+/** Unified catalogue + blog search (`GET /public/site-search`). */
+export async function searchPublicSiteCatalog(
+  params: PublicSiteSearchQuery,
+): Promise<PublicSiteSearchResponse> {
+  return fetchPublic<PublicSiteSearchResponse>(
+    `/public/site-search${buildSiteSearchCatalogQuery(params)}`,
   );
 }
 

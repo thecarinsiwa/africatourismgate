@@ -1,0 +1,80 @@
+/**
+ * Score a free-text match against weighted fields.
+ * Exact match keeps full weight; prefix / contains get small penalties.
+ */
+export function scoreSiteSearchTextMatch(
+  query: string,
+  fields: ReadonlyArray<{ weight: number; value: string | null | undefined }>,
+): number {
+  const q = query.trim().toLowerCase();
+  if (!q) return 0;
+
+  let best = 0;
+  for (const { weight, value } of fields) {
+    if (!value) continue;
+    const haystack = value.trim().toLowerCase();
+    if (!haystack) continue;
+
+    if (haystack === q) {
+      best = Math.max(best, weight);
+    } else if (haystack.startsWith(q)) {
+      best = Math.max(best, Math.max(1, weight - 5));
+    } else if (haystack.includes(q)) {
+      best = Math.max(best, Math.max(1, weight - 15));
+    }
+  }
+  return best;
+}
+
+/** Field weights for accommodation catalogue search. */
+export const HOTEL_SITE_SEARCH_WEIGHTS = {
+  name: 100,
+  slug: 80,
+  destination: 60,
+  address: 50,
+  description: 40,
+} as const;
+
+/** Field weights for activity catalogue search. */
+export const ACTIVITY_SITE_SEARCH_WEIGHTS = {
+  title: 100,
+  destination: 60,
+  description: 40,
+} as const;
+
+/** Field weights for package catalogue search. */
+export const PACKAGE_SITE_SEARCH_WEIGHTS = {
+  name: 100,
+  description: 40,
+} as const;
+
+/** Field weights for blog catalogue search. */
+export const BLOG_SITE_SEARCH_WEIGHTS = {
+  title: 100,
+  excerpt: 70,
+  content: 40,
+} as const;
+
+/** Field weights for flight catalogue search. */
+export const FLIGHT_SITE_SEARCH_WEIGHTS = {
+  flightNumber: 100,
+  airline: 80,
+  airport: 60,
+} as const;
+
+/** Field weights for vehicle catalogue search. */
+export const VEHICLE_SITE_SEARCH_WEIGHTS = {
+  model: 100,
+  category: 80,
+  destination: 60,
+  agency: 50,
+  licensePlate: 40,
+} as const;
+
+/** Field weights for cruise catalogue search. */
+export const CRUISE_SITE_SEARCH_WEIGHTS = {
+  itinerary: 100,
+  ship: 80,
+  line: 70,
+  port: 60,
+} as const;

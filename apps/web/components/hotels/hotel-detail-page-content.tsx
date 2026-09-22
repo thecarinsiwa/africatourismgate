@@ -259,7 +259,7 @@ export function HotelDetailPageContent({
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:pb-8">
+      <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 pb-40 sm:px-6 lg:px-8 lg:pb-8">
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
           <div className="min-w-0 space-y-8 lg:col-span-2">
             <HotelGallery
@@ -325,20 +325,24 @@ export function HotelDetailPageContent({
               amenityLabels={h.amenities}
             />
 
-            <HotelReviewsSection
-              propertyId={propertyId}
-              averageRating={detail.averageRating}
-              reviewCount={detail.reviewCount}
-              localeTag={localeTag}
-              labels={{
-                reviewsTitle: h.reviewsTitle,
-                guestRating: h.guestRating,
-                reviews: h.reviews,
-                noReviews: h.noReviews,
-                reviewsLoading: h.reviewsLoading,
-                reviewsLoadError: h.reviewsLoadError,
-                loadMoreReviews: h.loadMoreReviews,
-                anonymousGuest: h.anonymousGuest,
+            <HotelRoomsSection
+              rooms={detail.rooms}
+              title={h.roomsTitle}
+              selectedRoomId={selectedRoomId}
+              onSelectRoom={handleSelectRoom}
+              selectRoomLabel={h.selectRoom}
+              unavailableLabel={h.unavailable}
+              perNightLabel={h.perNight}
+              maxGuestsLabel={h.maxGuests}
+              bedConfigLabel={h.bedConfig}
+              nights={detail.stay.nights}
+              galleryLabels={{
+                ariaLabel: h.galleryAria,
+                openLightbox: h.galleryOpenLightbox,
+                close: h.galleryClose,
+                previous: h.galleryPrevious,
+                next: h.galleryNext,
+                counter: h.galleryCounter,
               }}
             />
 
@@ -362,17 +366,21 @@ export function HotelDetailPageContent({
               locale={locale}
             />
 
-            <HotelRoomsSection
-              rooms={detail.rooms}
-              title={h.roomsTitle}
-              selectedRoomId={selectedRoomId}
-              onSelectRoom={handleSelectRoom}
-              selectRoomLabel={h.selectRoom}
-              unavailableLabel={h.unavailable}
-              perNightLabel={h.perNight}
-              maxGuestsLabel={h.maxGuests}
-              bedConfigLabel={h.bedConfig}
-              nights={detail.stay.nights}
+            <HotelReviewsSection
+              propertyId={propertyId}
+              averageRating={detail.averageRating}
+              reviewCount={detail.reviewCount}
+              localeTag={localeTag}
+              labels={{
+                reviewsTitle: h.reviewsTitle,
+                guestRating: h.guestRating,
+                reviews: h.reviews,
+                noReviews: h.noReviews,
+                reviewsLoading: h.reviewsLoading,
+                reviewsLoadError: h.reviewsLoadError,
+                loadMoreReviews: h.loadMoreReviews,
+                anonymousGuest: h.anonymousGuest,
+              }}
             />
           </div>
 

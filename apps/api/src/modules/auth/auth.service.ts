@@ -701,6 +701,18 @@ export class AuthService {
     return { success: true };
   }
 
+  async resendVerification(verificationId: string): Promise<{
+    verificationId: string;
+    message: string;
+  }> {
+    const result =
+      await this.emailVerification.resendByVerificationId(verificationId);
+    return {
+      verificationId: result.verificationId,
+      message: 'Un nouveau code a été envoyé à votre adresse e-mail.',
+    };
+  }
+
   async forgotPassword(
     dto: ForgotPasswordDto,
   ): Promise<ForgotPasswordResponseDto> {

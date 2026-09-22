@@ -93,6 +93,8 @@ test.describe('Site global search', () => {
         timeout: 15_000,
       },
     );
+    await expect(page.getByTestId('site-search-page-group').first()).toBeVisible();
     await expect(page.getByTestId('site-search-page-count')).toBeVisible();
+    await expect(page.getByTestId('site-search-result-kind').first()).toBeVisible();
   });
 });

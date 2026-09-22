@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import type { PublicSiteSearchHit } from '@africatourismgate/types';
 import { In, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import {
@@ -11,6 +12,10 @@ import {
   Flights,
 } from '../../../entities/generated';
 import { PublicGalleryImageDto } from '../dto/public-gallery-image.dto';
+import {
+  FLIGHT_SITE_SEARCH_WEIGHTS,
+  scoreSiteSearchTextMatch,
+} from '../site-search/site-search-scoring';
 import { FlightDetailQueryDto } from './dto/flight-detail-query.dto';
 import { FlightDetailDto } from './dto/flight-detail.dto';
 import { FlightSearchQueryDto } from './dto/flight-search-query.dto';
@@ -198,6 +203,126 @@ export class PublicFlightsService {
         totalPages: Math.ceil(total / limit) || 1,
       },
     };
+  }
+
+  /**
+   * Free-text catalogue search for site-search (no dates required).
+   * Matches flight number, airline name/IATA, and airport IATA/name/city.
+   */
+  async searchCatalog(
+    q: string,
+    limit: number,
+  ): Promise<PublicSiteSearchHit[]> {
+    const term = q.trim().toLowerCase();
+    if (!term || limit < 1) return [];
+
+    const pattern = `%${term}%`;
+    const fetchLimit = Math.min(Math.max(limit * 3, limit), 60);
+
+    const flights = await this.flightsRepository
+      .createQueryBuilder('f')
+      .innerJoin(
+        Airlines,
+        'al',
+        'al.id = f.airlineId AND al.deletedAt IS NULL',
+      )
+      .innerJoin(
+        Airports,
+        'dep',
+        'dep.id = f.departureAirportId AND dep.deletedAt IS NULL',
+      )
+      .innerJoin(
+        Airports,
+        'arr',
+        'arr.id = f.arrivalAirportId AND arr.deletedAt IS NULL',
+      )
+      .where('f.deletedAt IS NULL')
+      .andWhere(
+        `(LOWER(f.flightNumber) LIKE :pattern
+          OR LOWER(al.name) LIKE :pattern
+          OR LOWER(al.iataCode) LIKE :pattern
+          OR LOWER(CONCAT(al.iataCode, f.flightNumber)) LIKE :pattern
+          OR LOWER(dep.iataCode) LIKE :pattern
+          OR LOWER(dep.name) LIKE :pattern
+          OR LOWER(dep.city) LIKE :pattern
+          OR LOWER(arr.iataCode) LIKE :pattern
+          OR LOWER(arr.name) LIKE :pattern
+          OR LOWER(arr.city) LIKE :pattern)`,
+        { pattern },
+      )
+      .orderBy('f.flightNumber', 'ASC')
+      .take(fetchLimit)
+      .getMany();
+
+    if (!flights.length) return [];
+
+    const airlineIds = [...new Set(flights.map((f) => f.airlineId))];
+    const airlines = await this.airlinesRepository.find({
+      where: { id: In(airlineIds) },
+    });
+    const airlineById = new Map(
+      airlines.filter((a) => !a.deletedAt).map((a) => [a.id, a] as const),
+    );
+
+    const airportIds = [
+      ...new Set(
+        flights.flatMap((f) => [f.departureAirportId, f.arrivalAirportId]),
+      ),
+    ];
+    const airports = await this.airportsRepository.find({
+      where: { id: In(airportIds) },
+    });
+    const airportById = new Map(
+      airports.filter((a) => !a.deletedAt).map((a) => [a.id, a] as const),
+    );
+
+    const imageUrlByFlightId = await this.loadPrimaryImageUrlByFlightId(
+      flights.map((f) => f.id),
+    );
+
+    const hits: PublicSiteSearchHit[] = [];
+
+    for (const flight of flights) {
+      const airline = airlineById.get(flight.airlineId);
+      const dep = airportById.get(flight.departureAirportId);
+      const arr = airportById.get(flight.arrivalAirportId);
+      if (!airline || !dep || !arr) continue;
+
+      const combinedNumber = `${airline.iataCode}${flight.flightNumber}`;
+      const score = scoreSiteSearchTextMatch(term, [
+        {
+          weight: FLIGHT_SITE_SEARCH_WEIGHTS.flightNumber,
+          value: flight.flightNumber,
+        },
+        {
+          weight: FLIGHT_SITE_SEARCH_WEIGHTS.flightNumber,
+          value: combinedNumber,
+        },
+        { weight: FLIGHT_SITE_SEARCH_WEIGHTS.airline, value: airline.name },
+        { weight: FLIGHT_SITE_SEARCH_WEIGHTS.airline, value: airline.iataCode },
+        { weight: FLIGHT_SITE_SEARCH_WEIGHTS.airport, value: dep.iataCode },
+        { weight: FLIGHT_SITE_SEARCH_WEIGHTS.airport, value: dep.name },
+        { weight: FLIGHT_SITE_SEARCH_WEIGHTS.airport, value: dep.city },
+        { weight: FLIGHT_SITE_SEARCH_WEIGHTS.airport, value: arr.iataCode },
+        { weight: FLIGHT_SITE_SEARCH_WEIGHTS.airport, value: arr.name },
+        { weight: FLIGHT_SITE_SEARCH_WEIGHTS.airport, value: arr.city },
+      ]);
+      if (score <= 0) continue;
+
+      hits.push({
+        type: 'flights',
+        id: flight.id,
+        title: `${airline.iataCode} ${flight.flightNumber} · ${airline.name}`,
+        subtitle: `${dep.city} (${dep.iataCode}) → ${arr.city} (${arr.iataCode})`,
+        href: `/flights/${encodeURIComponent(flight.id)}`,
+        imageUrl:
+          imageUrlByFlightId.get(flight.id) ?? airline.logoUrl ?? null,
+        score,
+      });
+    }
+
+    hits.sort((a, b) => b.score - a.score || a.title.localeCompare(b.title));
+    return hits.slice(0, limit);
   }
 
   private emptyPage(

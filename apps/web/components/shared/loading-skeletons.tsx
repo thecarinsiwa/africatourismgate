@@ -113,7 +113,7 @@ function BookingSidebarSkeleton() {
   return (
     <aside
       aria-hidden
-      className="hidden rounded-2xl border border-atg-border bg-atg-elevated p-6 shadow-lg dark:border-atg-border dark:bg-atg-elevated lg:block lg:sticky lg:top-24 lg:self-start"
+      className="hidden rounded-2xl border border-atg-border bg-atg-elevated p-6 shadow-lg dark:border-atg-border dark:bg-atg-elevated lg:block lg:sticky lg:top-[calc(var(--atg-header-h,7.5rem)+1rem)] lg:self-start"
     >
       <Skeleton className="mb-4 h-6 w-40" />
       <div className="space-y-4">
@@ -201,7 +201,7 @@ export function DetailPageSkeletonShell({
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:pb-8">
+      <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 pb-40 sm:px-6 lg:px-8 lg:pb-8">
         <DetailPageSkeleton loadingLabel={loadingLabel} layout={layout} />
       </div>
 

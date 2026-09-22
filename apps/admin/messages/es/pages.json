@@ -546,8 +546,8 @@
         "messages": "Mensajes"
       },
       "messages": {
-        "emptyTitle": "Mensajería unificada próximamente",
-        "emptyDescription": "Las conversaciones fuera de tickets se centralizarán aquí. Mientras tanto, gestione los hilos desde la pestaña Tickets."
+        "emptyTitle": "Ninguna conversación",
+        "emptyDescription": "Los hilos de clientes vinculados a tickets de soporte aparecen aquí, ordenados por actividad reciente."
       }
     },
     "site": {

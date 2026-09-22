@@ -26,5 +26,6 @@ import { PublicActivitiesService } from './public-activities.service';
   ],
   controllers: [PublicActivitiesController],
   providers: [PublicActivitiesService],
+  exports: [PublicActivitiesService],
 })
 export class PublicActivitiesModule {}

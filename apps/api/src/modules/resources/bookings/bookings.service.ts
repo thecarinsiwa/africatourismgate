@@ -95,7 +95,7 @@ export class BookingsService extends CrudService<Bookings> {
     void this.staffNotifications.fanOut(
       'booking_pending_approval',
       {
-        href: `/reservations?search=${result.bookingId}`,
+        href: `/reservations/${result.bookingId}`,
         priority: 'high',
         bookingId: result.bookingId,
         status: result.status,

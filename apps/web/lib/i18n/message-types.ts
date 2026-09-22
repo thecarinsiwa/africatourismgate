@@ -853,11 +853,18 @@ export type Translations = {
       empty: string;
       addNew: string;
       add: string;
+      edit: string;
+      editTitle: string;
+      save: string;
       saving: string;
       cancel: string;
       delete: string;
+      deleteTitle: string;
       deleteConfirm: string;
       deleteError: string;
+      deleting: string;
+      yes: string;
+      no: string;
       loadError: string;
       saveError: string;
       defaultBadge: string;
@@ -866,6 +873,8 @@ export type Translations = {
       line1: string;
       line2: string;
       city: string;
+      region: string;
+      postalCode: string;
       countryCode: string;
     };
     reservations: {
@@ -1128,12 +1137,17 @@ export type Translations = {
       saving: string;
       cancel: string;
       delete: string;
+      deleteTitle: string;
       deleteConfirm: string;
       deleteError: string;
+      deleting: string;
+      yes: string;
+      no: string;
       loadError: string;
       saveError: string;
       defaultBadge: string;
       isDefault: string;
+      typeLabel: string;
       typeCard: string;
       typePaypal: string;
       typeOther: string;

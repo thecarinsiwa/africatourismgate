@@ -17,6 +17,8 @@ const TICKET_PRIORITIES = [
   'urgent',
 ] as const satisfies readonly SupportTickets['priority'][];
 
+const SORT_BY = ['createdAt', 'lastMessageAt'] as const;
+
 export class SupportTicketsListQueryDto extends PaginationQueryDto {
   @ApiPropertyOptional({ enum: TICKET_STATUSES })
   @IsOptional()
@@ -27,4 +29,12 @@ export class SupportTicketsListQueryDto extends PaginationQueryDto {
   @IsOptional()
   @IsIn(TICKET_PRIORITIES)
   priority?: SupportTickets['priority'];
+
+  @ApiPropertyOptional({
+    enum: SORT_BY,
+    description: 'Sort tickets by creation date or latest message activity',
+  })
+  @IsOptional()
+  @IsIn(SORT_BY)
+  sortBy?: (typeof SORT_BY)[number];
 }

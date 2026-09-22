@@ -36,7 +36,9 @@ test('getSiteSearchSourceDefinition returns known sources', () => {
 
   assert.equal(getSiteSearchSourceDefinition('pages')?.kind, 'local');
   assert.equal(getSiteSearchSourceDefinition('destinations')?.kind, 'reference');
-  assert.equal(getSiteSearchSourceDefinition('flights')?.kind, 'reference');
+  assert.equal(getSiteSearchSourceDefinition('flights')?.kind, 'api');
+  assert.equal(getSiteSearchSourceDefinition('cars')?.kind, 'api');
+  assert.equal(getSiteSearchSourceDefinition('cruises')?.kind, 'api');
 });
 
 test('listSiteSearchSourceDefinitions returns enabled sources by default', () => {

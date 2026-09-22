@@ -72,6 +72,7 @@ export function useSiteSearch(
   const tNav = useTranslations('nav');
   const tAbout = useTranslations('about');
   const tLegal = useTranslations('legal');
+  const tSiteSearch = useTranslations('siteSearch');
   const helpStringsBySlug = useHelpStringsBySlug();
 
   const [query, setQuery] = useState('');
@@ -99,8 +100,9 @@ export function useSiteSearch(
       locale,
       navItems,
       helpStringsBySlug,
+      prefilledHint: tSiteSearch('prefilledHint'),
     }),
-    [locale, navItems, helpStringsBySlug],
+    [locale, navItems, helpStringsBySlug, tSiteSearch],
   );
 
   useEffect(() => {

@@ -78,15 +78,20 @@ export function WebSessionIdleLock() {
     }
 
     touchInFlightRef.current = true;
+    // Debounce before the request so failed touches cannot spam the API.
+    lastTouchAtRef.current = now;
     try {
       await touchSession(session.refreshToken);
-      lastTouchAtRef.current = Date.now();
     } catch (err) {
       if (err instanceof ApiHttpError) {
         const body = err.body as { code?: string } | undefined;
-        if (body?.code === 'SESSION_LOCKED' || isIdleExpired()) {
+        if (body?.code === 'SESSION_LOCKED') {
           setSessionLocked(true);
           setLocked(true);
+        } else if (err.status === 401) {
+          // Invalid/expired refresh token — drop local session and stop touching.
+          clearWebAuthState();
+          setLocked(false);
         }
       }
     } finally {
@@ -123,6 +128,8 @@ export function WebSessionIdleLock() {
       return;
     }
 
+    let cancelled = false;
+
     recordActivity();
 
     for (const eventName of ACTIVITY_EVENTS) {
@@ -131,6 +138,9 @@ export function WebSessionIdleLock() {
 
     function onVisibilityChange() {
       if (document.visibilityState === 'visible') {
+        if (!getWebSession()?.accessToken) {
+          return;
+        }
         if (isIdleExpired()) {
           setSessionLocked(true);
           setLocked(true);
@@ -143,7 +153,7 @@ export function WebSessionIdleLock() {
     document.addEventListener('visibilitychange', onVisibilityChange);
 
     const intervalId = window.setInterval(() => {
-      if (!getWebSession()?.accessToken) {
+      if (cancelled || !getWebSession()?.accessToken) {
         return;
       }
       if (isIdleExpired()) {
@@ -152,11 +162,26 @@ export function WebSessionIdleLock() {
       }
     }, IDLE_CHECK_INTERVAL_MS);
 
+    function onAuthChanged() {
+      if (!getWebSession()?.accessToken) {
+        cancelled = true;
+        for (const eventName of ACTIVITY_EVENTS) {
+          window.removeEventListener(eventName, recordActivity);
+        }
+        document.removeEventListener('visibilitychange', onVisibilityChange);
+        window.clearInterval(intervalId);
+      }
+    }
+
+    window.addEventListener(AUTH_CHANGED_EVENT, onAuthChanged);
+
     return () => {
+      cancelled = true;
       for (const eventName of ACTIVITY_EVENTS) {
         window.removeEventListener(eventName, recordActivity);
       }
       document.removeEventListener('visibilitychange', onVisibilityChange);
+      window.removeEventListener(AUTH_CHANGED_EVENT, onAuthChanged);
       window.clearInterval(intervalId);
     };
   }, [recordActivity]);

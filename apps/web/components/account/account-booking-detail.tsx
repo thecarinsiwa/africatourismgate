@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { ApiHttpError } from '@africatourismgate/api-client';
 import { Button, Spinner } from '@africatourismgate/ui';
 import type {
   BookingDetail,
@@ -186,8 +187,14 @@ export function AccountBookingDetail({
       anchor.click();
       anchor.remove();
       window.setTimeout(() => URL.revokeObjectURL(url), 0);
-    } catch {
-      setActionError(t('reservations.detail.downloadConfirmationError'));
+    } catch (err) {
+      const message =
+        err instanceof ApiHttpError &&
+        err.message &&
+        !err.message.startsWith('HTTP ')
+          ? err.message
+          : t('reservations.detail.downloadConfirmationError');
+      setActionError(message);
     } finally {
       setDownloadingPdf(false);
     }

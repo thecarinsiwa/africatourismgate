@@ -8,5 +8,6 @@ import { PublicBlogService } from './public-blog.service';
   imports: [TypeOrmModule.forFeature([BlogPosts])],
   controllers: [PublicBlogController],
   providers: [PublicBlogService],
+  exports: [PublicBlogService],
 })
 export class PublicBlogModule {}

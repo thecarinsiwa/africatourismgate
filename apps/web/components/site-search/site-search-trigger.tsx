@@ -7,7 +7,7 @@ import { useSiteSearchNavigator } from './site-search-navigator';
 function SearchLoupeIcon({ className }: { className?: string }) {
   return (
     <svg
-      className={cn('h-5 w-5', className)}
+      className={cn('h-4 w-4 sm:h-5 sm:w-5', className)}
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -51,7 +51,7 @@ export function SiteSearchTrigger({
       aria-haspopup="dialog"
       data-testid="site-search-trigger"
       className={cn(
-        'relative inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-atg-border',
+        'relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-atg-border sm:h-11 sm:w-11',
         'text-atg-muted transition-colors hover:border-primary hover:text-primary',
         'dark:border-atg-border dark:text-white/75 dark:hover:border-primary dark:hover:text-white',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface',

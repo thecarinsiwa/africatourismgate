@@ -137,7 +137,7 @@ export function GlobalBookingChatFab() {
     }
   }, [open, items, selectedBookingId]);
 
-  if (hideOnReservationDetail || (!loading && items.length === 0)) {
+  if (hideOnReservationDetail || items.length === 0) {
     return null;
   }
 

@@ -350,6 +350,8 @@ import type {
   UpdatePromoCodeRequest,
   RegisterRequest,
   VerifyOperationRequest,
+  ResendVerificationRequest,
+  ResendVerificationResponse,
   ResetPasswordRequest,
   ResetPasswordResponse,
   SucceededPaymentsRevenue,
@@ -485,6 +487,8 @@ export type {
   RefreshTokenRequest,
   RegisterRequest,
   VerifyOperationRequest,
+  ResendVerificationRequest,
+  ResendVerificationResponse,
   ResetPasswordRequest,
   ResetPasswordResponse,
   SucceededPaymentsRevenue,
@@ -765,6 +769,19 @@ export class ApiClient {
       body,
       skipAuth: true,
     });
+  }
+
+  resendVerification(
+    body: ResendVerificationRequest,
+  ): Promise<ResendVerificationResponse> {
+    return this.request<ResendVerificationResponse>(
+      '/auth/resend-verification',
+      {
+        method: 'POST',
+        body,
+        skipAuth: true,
+      },
+    );
   }
 
   registerCustomer(body: RegisterRequest): Promise<AuthResponse> {

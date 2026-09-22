@@ -27,6 +27,8 @@ export type {
   UnlockSessionRequest,
   UserStatus,
   VerifyOperationRequest,
+  ResendVerificationRequest,
+  ResendVerificationResponse,
 } from './auth.js';
 
 export { SESSION_LOCKED_CODE } from './auth.js';
@@ -333,6 +335,21 @@ export type {
   PublicBlogPostsListQuery,
   UpdateBlogPostRequest,
 } from './blog-post.js';
+
+export {
+  SITE_SEARCH_DEFAULT_LIMIT_PER_TYPE,
+  SITE_SEARCH_HIT_TYPES,
+  SITE_SEARCH_MAX_LIMIT_PER_TYPE,
+  SITE_SEARCH_MAX_QUERY_LENGTH,
+  SITE_SEARCH_MIN_QUERY_LENGTH,
+} from './site-search.js';
+export type {
+  PublicSiteSearchGroup,
+  PublicSiteSearchHit,
+  PublicSiteSearchQuery,
+  PublicSiteSearchResponse,
+  SiteSearchHitType,
+} from './site-search.js';
 
 export type {
   AboutPage,

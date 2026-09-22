@@ -50,11 +50,31 @@
         "title": "Ningún ticket abierto",
         "description": "La cola de tickets abiertos está vacía. Las nuevas solicitudes de clientes aparecerán aquí."
       },
+      "all": {
+        "title": "Ningún ticket",
+        "description": "Aún no hay solicitudes de asistencia. Los tickets de clientes aparecerán aquí."
+      },
       "filtered": {
         "title": "Ningún ticket coincide con los filtros",
         "description": "Amplíe los criterios de estado o prioridad para mostrar más solicitudes."
       }
     },
     "ariaLabel": "Bandeja de entrada de tickets de soporte"
+  },
+  "messagesInbox": {
+    "ariaLabel": "Conversaciones de soporte",
+    "fromStaff": "Agente",
+    "fromCustomer": "Cliente",
+    "noPreview": "Ningún mensaje por ahora.",
+    "empty": {
+      "default": {
+        "title": "Ninguna conversación",
+        "description": "Los hilos de clientes vinculados a tickets de soporte aparecerán aquí, ordenados por actividad reciente."
+      },
+      "filtered": {
+        "title": "Ninguna conversación coincide",
+        "description": "Amplíe los filtros de estado o prioridad para mostrar más hilos."
+      }
+    }
   }
 }

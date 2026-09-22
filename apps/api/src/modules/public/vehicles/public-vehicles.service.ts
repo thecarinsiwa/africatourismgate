@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import type { PublicSiteSearchHit } from '@africatourismgate/types';
 import { In, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import {
@@ -12,6 +13,10 @@ import {
 } from '../../../entities/generated';
 import { PublicGalleryImageDto } from '../dto/public-gallery-image.dto';
 import { PublicDestinationDto } from '../accommodations/dto/public-destination.dto';
+import {
+  VEHICLE_SITE_SEARCH_WEIGHTS,
+  scoreSiteSearchTextMatch,
+} from '../site-search/site-search-scoring';
 import { VehicleDetailQueryDto } from './dto/vehicle-detail-query.dto';
 import { VehicleDetailDto } from './dto/vehicle-detail.dto';
 import { VehicleSearchQueryDto } from './dto/vehicle-search-query.dto';
@@ -188,6 +193,150 @@ export class PublicVehiclesService {
         totalPages: Math.ceil(total / limit) || 1,
       },
     };
+  }
+
+  /**
+   * Free-text catalogue search for site-search (no dates required).
+   * Matches category, example model, destination and agency.
+   */
+  async searchCatalog(
+    q: string,
+    limit: number,
+  ): Promise<PublicSiteSearchHit[]> {
+    const term = q.trim().toLowerCase();
+    if (!term || limit < 1) return [];
+
+    const pattern = `%${term}%`;
+    const fetchLimit = Math.min(Math.max(limit * 3, limit), 60);
+
+    const vehicles = await this.vehiclesRepository
+      .createQueryBuilder('v')
+      .innerJoin(
+        VehicleCategories,
+        'cat',
+        'cat.id = v.categoryId AND cat.deletedAt IS NULL',
+      )
+      .innerJoin(
+        RentalAgencies,
+        'ra',
+        'ra.id = v.agencyId AND ra.deletedAt IS NULL',
+      )
+      .leftJoin(
+        Destinations,
+        'd',
+        'd.id = ra.destinationId AND d.deletedAt IS NULL',
+      )
+      .where('v.deletedAt IS NULL')
+      .andWhere(
+        `(LOWER(cat.name) LIKE :pattern
+          OR LOWER(COALESCE(cat.exampleModel, '')) LIKE :pattern
+          OR LOWER(COALESCE(d.name, '')) LIKE :pattern
+          OR LOWER(COALESCE(d.slug, '')) LIKE :pattern
+          OR LOWER(ra.name) LIKE :pattern
+          OR LOWER(COALESCE(v.licensePlate, '')) LIKE :pattern)`,
+        { pattern },
+      )
+      .orderBy('cat.name', 'ASC')
+      .take(fetchLimit)
+      .getMany();
+
+    if (!vehicles.length) return [];
+
+    const categoryIds = [...new Set(vehicles.map((v) => v.categoryId))];
+    const categories = await this.categoriesRepository.find({
+      where: { id: In(categoryIds) },
+    });
+    const categoryById = new Map(
+      categories.filter((c) => !c.deletedAt).map((c) => [c.id, c] as const),
+    );
+
+    const agencyIds = [...new Set(vehicles.map((v) => v.agencyId))];
+    const agencies = await this.agenciesRepository.find({
+      where: { id: In(agencyIds) },
+    });
+    const agencyById = new Map(
+      agencies.filter((a) => !a.deletedAt).map((a) => [a.id, a] as const),
+    );
+
+    const destIds = [
+      ...new Set(
+        [...agencyById.values()]
+          .map((a) => a.destinationId)
+          .filter((id): id is string => Boolean(id)),
+      ),
+    ];
+    const destinations =
+      destIds.length > 0
+        ? await this.destinationsRepository.find({ where: { id: In(destIds) } })
+        : [];
+    const destinationById = new Map(
+      destinations.filter((d) => !d.deletedAt).map((d) => [d.id, d] as const),
+    );
+
+    const imageUrlByVehicleId = await this.loadPrimaryImageUrlByVehicleId(
+      vehicles.map((v) => v.id),
+    );
+
+    const hits: PublicSiteSearchHit[] = [];
+
+    for (const vehicle of vehicles) {
+      const category = categoryById.get(vehicle.categoryId);
+      const agency = agencyById.get(vehicle.agencyId);
+      if (!category || !agency) continue;
+
+      const dest = agency.destinationId
+        ? destinationById.get(agency.destinationId)
+        : undefined;
+
+      const score = scoreSiteSearchTextMatch(term, [
+        {
+          weight: VEHICLE_SITE_SEARCH_WEIGHTS.model,
+          value: category.exampleModel,
+        },
+        {
+          weight: VEHICLE_SITE_SEARCH_WEIGHTS.category,
+          value: category.name,
+        },
+        {
+          weight: VEHICLE_SITE_SEARCH_WEIGHTS.destination,
+          value: dest?.name,
+        },
+        {
+          weight: VEHICLE_SITE_SEARCH_WEIGHTS.destination,
+          value: dest?.slug,
+        },
+        { weight: VEHICLE_SITE_SEARCH_WEIGHTS.agency, value: agency.name },
+        {
+          weight: VEHICLE_SITE_SEARCH_WEIGHTS.licensePlate,
+          value: vehicle.licensePlate,
+        },
+      ]);
+      if (score <= 0) continue;
+
+      const title =
+        category.exampleModel?.trim() ||
+        category.name ||
+        vehicle.licensePlate ||
+        'Vehicle';
+
+      const subtitleParts = [
+        category.exampleModel?.trim() ? category.name : null,
+        dest ? `${dest.name} · ${dest.countryCode}` : agency.name,
+      ].filter(Boolean);
+
+      hits.push({
+        type: 'cars',
+        id: vehicle.id,
+        title,
+        subtitle: subtitleParts.join(' · ') || null,
+        href: `/cars/${encodeURIComponent(vehicle.id)}`,
+        imageUrl: imageUrlByVehicleId.get(vehicle.id) ?? null,
+        score,
+      });
+    }
+
+    hits.sort((a, b) => b.score - a.score || a.title.localeCompare(b.title));
+    return hits.slice(0, limit);
   }
 
   private async resolveActiveFleet(pickupLocation?: string): Promise<{

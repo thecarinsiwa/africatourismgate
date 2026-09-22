@@ -11,6 +11,7 @@ import { PublicReviewsModule } from './reviews/public-reviews.module';
 import { PublicVehiclesModule } from './vehicles/public-vehicles.module';
 import { PublicGapModule } from './gap/public-gap.module';
 import { PublicDonationsModule } from './donations/public-donations.module';
+import { PublicSiteSearchModule } from './site-search/public-site-search.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { PublicDonationsModule } from './donations/public-donations.module';
     PublicReviewsModule,
     PublicGapModule,
     PublicDonationsModule,
+    PublicSiteSearchModule,
   ],
 })
 export class PublicModule {}

@@ -7,6 +7,7 @@ import {
   PropertyAmenities,
   PropertyImages,
   RoomAvailability,
+  RoomImages,
   Rooms,
 } from '../../../entities/generated';
 import { ReviewsModule } from '../../resources/reviews/reviews.module';
@@ -22,11 +23,13 @@ import { PublicAccommodationsService } from './public-accommodations.service';
       Rooms,
       RoomAvailability,
       PropertyImages,
+      RoomImages,
       PropertyAmenities,
       Amenities,
     ]),
   ],
   controllers: [PublicAccommodationsController],
   providers: [PublicAccommodationsService],
+  exports: [PublicAccommodationsService],
 })
 export class PublicAccommodationsModule {}

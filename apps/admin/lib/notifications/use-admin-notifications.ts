@@ -28,6 +28,29 @@ function shortId(id: string | undefined): string {
   return `#${id.slice(0, 8)}`;
 }
 
+/** Prefer resource detail pages; rewrite legacy list hrefs from payload meta. */
+function resolveNotificationHref(
+  type: StaffNotificationType,
+  href: string | undefined,
+  payload: StaffNotification['payload'],
+): string {
+  switch (type) {
+    case 'booking_pending_approval':
+    case 'booking_client_message':
+      if (payload.bookingId) return `/reservations/${payload.bookingId}`;
+      break;
+    case 'review_pending':
+      if (payload.reviewId) return `/contenu/avis/${payload.reviewId}`;
+      break;
+    case 'support_ticket_open':
+      if (payload.ticketId) return `/contenu/tickets/${payload.ticketId}`;
+      break;
+    default:
+      break;
+  }
+  return href || '/notifications';
+}
+
 function clearLegacyReadStorage(): void {
   if (typeof window === 'undefined') return;
   try {
@@ -68,7 +91,7 @@ function mapToItem(
     category,
     title: titleForCategory(category),
     description,
-    href: p.href || '/notifications',
+    href: resolveNotificationHref(row.type, p.href, p),
     createdAt: row.createdAt,
     priority: p.priority ?? 'normal',
     unread: row.readAt == null,

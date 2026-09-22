@@ -546,8 +546,8 @@
         "messages": "Messages"
       },
       "messages": {
-        "emptyTitle": "Unified messaging coming soon",
-        "emptyDescription": "Non-ticket conversations will be centralized here. For now, manage threads from the Tickets tab."
+        "emptyTitle": "No conversations",
+        "emptyDescription": "Customer threads linked to support tickets appear here, sorted by recent activity."
       }
     },
     "site": {

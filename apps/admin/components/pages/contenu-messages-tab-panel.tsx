@@ -1,15 +1,7 @@
 'use client';
 
-import { EmptyState } from '@africatourismgate/ui';
-import { useTranslations } from 'next-intl';
+import { SupportMessagesInbox } from '../support/support-messages-inbox';
 
 export function ContenuMessagesTabPanel() {
-  const t = useTranslations('pages.contenu.support.messages');
-
-  return (
-    <EmptyState
-      title={t('emptyTitle')}
-      description={t('emptyDescription')}
-    />
-  );
+  return <SupportMessagesInbox />;
 }

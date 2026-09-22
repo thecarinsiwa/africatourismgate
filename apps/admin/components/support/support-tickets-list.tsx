@@ -33,7 +33,7 @@ import {
 } from '../../lib/support-ticket-display';
 
 const PAGE_SIZE = 20;
-const DEFAULT_STATUS: SupportTicketStatus = 'open';
+const DEFAULT_STATUS: '' | SupportTicketStatus = '';
 
 type SupportTicketInboxItemProps = {
   ticket: AdminSupportTicketListItem;
@@ -41,10 +41,12 @@ type SupportTicketInboxItemProps = {
 
 function SupportTicketInboxItem({ ticket }: SupportTicketInboxItemProps) {
   const tCommon = useTranslations('modules.common');
+  const tInbox = useTranslations('modules.support.messagesInbox');
   const formatDateTime = useFormatDateTime();
   const statusLabels = useSupportTicketStatusLabels();
   const priorityLabels = useSupportTicketPriorityLabels();
   const emptyDash = tCommon('empty.dash');
+  const when = ticket.lastMessageAt || ticket.createdAt;
 
   return (
     <Link
@@ -55,9 +57,9 @@ function SupportTicketInboxItem({ ticket }: SupportTicketInboxItemProps) {
         <p className="min-w-0 flex-1 font-medium text-atg-fg">{ticket.subject}</p>
         <time
           className="shrink-0 text-xs tabular-nums text-atg-muted"
-          dateTime={ticket.createdAt}
+          dateTime={when}
         >
-          {formatDateTime(ticket.createdAt)}
+          {formatDateTime(when)}
         </time>
       </div>
 
@@ -67,6 +69,14 @@ function SupportTicketInboxItem({ ticket }: SupportTicketInboxItemProps) {
           <span className="text-atg-muted"> · {ticket.customerEmail}</span>
         ) : null}
       </p>
+
+      {ticket.lastMessagePreview ? (
+        <p className="mt-1 line-clamp-2 text-sm text-atg-fg/90">
+          {ticket.lastMessagePreview}
+        </p>
+      ) : (
+        <p className="mt-1 text-sm text-atg-muted">{tInbox('noPreview')}</p>
+      )}
 
       <div className="mt-2 flex flex-wrap items-center gap-2">
         <DataTableBadge variant={supportTicketStatusVariants[ticket.status]}>
@@ -217,12 +227,12 @@ export function SupportTicketsList() {
           title={
             hasFilters
               ? tList('empty.filtered.title')
-              : tList('empty.default.title')
+              : tList('empty.all.title')
           }
           description={
             hasFilters
               ? tList('empty.filtered.description')
-              : tList('empty.default.description')
+              : tList('empty.all.description')
           }
         />
       ) : (

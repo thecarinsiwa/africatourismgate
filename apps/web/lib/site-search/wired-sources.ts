@@ -91,7 +91,9 @@ function attachSearcher(
 }
 
 /**
- * Toutes les sources v1 avec adapters branchés (local + référence + API).
+ * Toutes les sources v1 avec adapters branchés.
+ * Catalogue produit/blog → `GET /public/site-search` (appel partagé).
+ * Pages / aide / destinations restent locaux ou référence.
  */
 export function listWiredSiteSearchSources(
   definitions: readonly SiteSearchSourceDefinition[] = listSiteSearchSourceDefinitions(),

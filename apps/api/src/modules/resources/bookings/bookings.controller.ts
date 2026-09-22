@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -11,6 +12,7 @@ import {
   Put,
   Query,
   Res,
+  StreamableFile,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -18,7 +20,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import type { Response } from 'express';
 import { ApiForbiddenResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { BadRequestException } from '@nestjs/common';
 import { OrgScopeService } from '../../../common/org-scope/org-scope.service';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
@@ -88,16 +89,15 @@ import {
   UpdateBookingManifestEntryDto,
 } from './dto/booking-manifest-entry.dto';
 
-function sendReceiptPdfFile(
+function sendPdfAttachmentHeaders(
   res: Response,
-  file: { buffer: Buffer; filename: string; contentType: string },
+  file: { filename: string; contentType: string },
 ): void {
   res.setHeader('Content-Type', file.contentType);
   res.setHeader(
     'Content-Disposition',
     `attachment; filename="${encodeURIComponent(file.filename)}"`,
   );
-  res.send(file.buffer);
 }
 
 @ApiTags('bookings')
@@ -619,8 +619,8 @@ export class BookingsController {
   async downloadConfirmationPdf(
     @Param('id') id: string,
     @CurrentUser() user: AuthUserDto,
-    @Res() res: Response,
-  ): Promise<void> {
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<StreamableFile> {
     const booking = await this.bookingsService.assertBookingOwnerOrStaff(
       id,
       user.id,
@@ -631,11 +631,11 @@ export class BookingsController {
       );
     }
     const pdf = await this.bookingEngine.generateConfirmationPdf(id);
-    sendReceiptPdfFile(res, {
-      buffer: pdf.buffer,
+    sendPdfAttachmentHeaders(res, {
       filename: pdf.filename,
       contentType: 'application/pdf',
     });
+    return new StreamableFile(pdf.buffer);
   }
 
   @Get(':id')
@@ -730,12 +730,16 @@ export class BookingsController {
   async downloadReceiptPdf(
     @Param('id') id: string,
     @CurrentUser() user: AuthUserDto,
-    @Res() res: Response,
-  ): Promise<void> {
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<StreamableFile> {
     await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
     const organizationId = await this.orgScopeService.resolveOrganizationId(user);
     const file = await this.posReceiptPdfService.generate(id, user.id, organizationId);
-    sendReceiptPdfFile(res, file);
+    sendPdfAttachmentHeaders(res, {
+      filename: file.filename,
+      contentType: file.contentType,
+    });
+    return new StreamableFile(file.buffer);
   }
 
   @Post(':id/payment-intent')

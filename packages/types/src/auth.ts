@@ -64,6 +64,15 @@ export interface VerifyOperationRequest {
   clientInstanceId?: string;
 }
 
+export interface ResendVerificationRequest {
+  verificationId: string;
+}
+
+export interface ResendVerificationResponse {
+  verificationId: string;
+  message: string;
+}
+
 export interface RefreshTokenRequest {
   refreshToken: string;
 }

@@ -60,6 +60,9 @@ export class PropertyDetailRoomDto {
 
   @ApiProperty({ type: [PropertyDetailNightlyPriceDto] })
   nightlyBreakdown!: PropertyDetailNightlyPriceDto[];
+
+  @ApiProperty({ type: [PropertyDetailImageDto] })
+  images!: PropertyDetailImageDto[];
 }
 
 export class PropertyDetailStayDto {

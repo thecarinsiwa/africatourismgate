@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import type { PublicSiteSearchHit } from '@africatourismgate/types';
 import { Between, FindOptionsWhere, In, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import {
@@ -14,6 +15,10 @@ import {
   Ships,
 } from '../../../entities/generated';
 import { PublicGalleryImageDto } from '../dto/public-gallery-image.dto';
+import {
+  CRUISE_SITE_SEARCH_WEIGHTS,
+  scoreSiteSearchTextMatch,
+} from '../site-search/site-search-scoring';
 import { CruiseSearchQueryDto } from './dto/cruise-search-query.dto';
 import { CruiseSearchResultDto } from './dto/cruise-search-result.dto';
 import { CruiseSailingDetailQueryDto } from './dto/cruise-sailing-detail-query.dto';
@@ -209,6 +214,145 @@ export class PublicCruisesService {
         totalPages: Math.ceil(total / limit) || 1,
       },
     };
+  }
+
+  /**
+   * Free-text catalogue search for site-search (no dates required).
+   * Matches itinerary, ports, ship and cruise line; returns sailings.
+   */
+  async searchCatalog(
+    q: string,
+    limit: number,
+  ): Promise<PublicSiteSearchHit[]> {
+    const term = q.trim().toLowerCase();
+    if (!term || limit < 1) return [];
+
+    const pattern = `%${term}%`;
+    const fetchLimit = Math.min(Math.max(limit * 3, limit), 60);
+
+    const sailings = await this.sailingsRepository
+      .createQueryBuilder('s')
+      .innerJoin(
+        Itineraries,
+        'it',
+        'it.id = s.itineraryId AND it.deletedAt IS NULL',
+      )
+      .innerJoin(
+        Ships,
+        'ship',
+        'ship.id = it.shipId AND ship.deletedAt IS NULL',
+      )
+      .innerJoin(
+        CruiseLines,
+        'line',
+        'line.id = ship.cruiseLineId AND line.deletedAt IS NULL',
+      )
+      .leftJoin(
+        ItineraryPorts,
+        'ip',
+        'ip.itineraryId = it.id AND ip.deletedAt IS NULL',
+      )
+      .leftJoin(
+        CruisePorts,
+        'port',
+        'port.id = ip.portId AND port.deletedAt IS NULL',
+      )
+      .where('s.deletedAt IS NULL')
+      .andWhere(
+        `(LOWER(it.name) LIKE :pattern
+          OR LOWER(ship.name) LIKE :pattern
+          OR LOWER(line.name) LIKE :pattern
+          OR LOWER(COALESCE(port.code, '')) LIKE :pattern
+          OR LOWER(COALESCE(port.name, '')) LIKE :pattern)`,
+        { pattern },
+      )
+      .distinct(true)
+      .orderBy('s.departureDate', 'ASC')
+      .take(fetchLimit)
+      .getMany();
+
+    if (!sailings.length) return [];
+
+    const itineraries = await this.itinerariesRepository.find({
+      where: { id: In([...new Set(sailings.map((s) => s.itineraryId))]) },
+    });
+    const itineraryById = new Map(
+      itineraries.filter((i) => !i.deletedAt).map((i) => [i.id, i] as const),
+    );
+
+    const portsByItineraryId = await this.loadItineraryPortsByItineraryIds([
+      ...itineraryById.keys(),
+    ]);
+
+    const shipIds = [...new Set(itineraries.map((i) => i.shipId))];
+    const ships =
+      shipIds.length > 0
+        ? await this.shipsRepository.find({ where: { id: In(shipIds) } })
+        : [];
+    const shipById = new Map(
+      ships.filter((s) => !s.deletedAt).map((s) => [s.id, s] as const),
+    );
+
+    const lineIds = [...new Set(ships.map((s) => s.cruiseLineId))];
+    const lines =
+      lineIds.length > 0
+        ? await this.cruiseLinesRepository.find({ where: { id: In(lineIds) } })
+        : [];
+    const lineById = new Map(
+      lines.filter((l) => !l.deletedAt).map((l) => [l.id, l] as const),
+    );
+
+    const imageUrlByShipId = await this.loadPrimaryImageUrlByShipId(shipIds);
+
+    const hits: PublicSiteSearchHit[] = [];
+
+    for (const sailing of sailings) {
+      const itinerary = itineraryById.get(sailing.itineraryId);
+      if (!itinerary) continue;
+      const ship = shipById.get(itinerary.shipId);
+      if (!ship) continue;
+      const line = lineById.get(ship.cruiseLineId);
+      if (!line) continue;
+
+      const ports = portsByItineraryId.get(itinerary.id) ?? [];
+      const portFields = ports.flatMap((p) => [
+        { weight: CRUISE_SITE_SEARCH_WEIGHTS.port, value: p.portCode },
+        { weight: CRUISE_SITE_SEARCH_WEIGHTS.port, value: p.portName },
+      ]);
+
+      const score = scoreSiteSearchTextMatch(term, [
+        {
+          weight: CRUISE_SITE_SEARCH_WEIGHTS.itinerary,
+          value: itinerary.name,
+        },
+        { weight: CRUISE_SITE_SEARCH_WEIGHTS.ship, value: ship.name },
+        { weight: CRUISE_SITE_SEARCH_WEIGHTS.line, value: line.name },
+        ...portFields,
+      ]);
+      if (score <= 0) continue;
+
+      const from = ports[0];
+      const to = ports[ports.length - 1];
+      const routeLabel =
+        from && to
+          ? `${from.portName} → ${to.portName}`
+          : `${itinerary.durationNights}n`;
+
+      const departureDate = String(sailing.departureDate).slice(0, 10);
+
+      hits.push({
+        type: 'cruises',
+        id: sailing.id,
+        title: itinerary.name,
+        subtitle: `${ship.name} · ${line.name} · ${departureDate} · ${routeLabel}`,
+        href: `/cruises/${encodeURIComponent(sailing.id)}`,
+        imageUrl: imageUrlByShipId.get(ship.id) ?? null,
+        score,
+      });
+    }
+
+    hits.sort((a, b) => b.score - a.score || a.title.localeCompare(b.title));
+    return hits.slice(0, limit);
   }
 
   async getSailingById(

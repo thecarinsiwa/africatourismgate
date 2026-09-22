@@ -30,5 +30,6 @@ import { PublicCruisesService } from './public-cruises.service';
   ],
   controllers: [PublicCruisesController],
   providers: [PublicCruisesService],
+  exports: [PublicCruisesService],
 })
 export class PublicCruisesModule {}

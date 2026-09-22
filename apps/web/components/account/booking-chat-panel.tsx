@@ -2,9 +2,12 @@
 
 import type { BookingMessage } from '@africatourismgate/types';
 import { ConversationChat, useToast } from '@africatourismgate/ui';
+import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
+import { AUTH_CHANGED_EVENT, getWebSession } from '../../lib/auth/client-session';
 import { formatBookingDateTime } from '../../lib/bookings/display';
+import { useResolvedPublicBranding } from '../../lib/branding/use-resolved-public-branding';
 import { useMessages } from 'next-intl';
 import type { Translations } from '../../lib/i18n/message-types';
 
@@ -39,6 +42,7 @@ export function BookingChatPanel({
   const m = (intlMessages as { account: Translations['account'] }).account.reservations.detail
     .messages;
   const { toast } = useToast();
+  const { branding } = useResolvedPublicBranding();
 
   const [messages, setMessages] = useState<BookingMessage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,7 +50,24 @@ export function BookingChatPanel({
   const [replyBody, setReplyBody] = useState('');
   const [replyError, setReplyError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
+  const [customerAvatarUrl, setCustomerAvatarUrl] = useState<string | null>(null);
   const previousUnreadCountRef = useRef(initialUnreadCount);
+
+  useEffect(() => {
+    const syncAvatar = () => {
+      const raw = getWebSession()?.user?.avatarUrl ?? null;
+      setCustomerAvatarUrl(normalizeBrandingAssetUrl(raw));
+    };
+    syncAvatar();
+    window.addEventListener(AUTH_CHANGED_EVENT, syncAvatar);
+    window.addEventListener('storage', syncAvatar);
+    return () => {
+      window.removeEventListener(AUTH_CHANGED_EVENT, syncAvatar);
+      window.removeEventListener('storage', syncAvatar);
+    };
+  }, []);
+
+  const staffAvatarUrl = branding.logoUrl;
 
   const refreshUnreadCount = useCallback(async () => {
     if (chatToken || !trackUnread) {
@@ -192,7 +213,17 @@ export function BookingChatPanel({
 
       <ConversationChat
         messages={messages.map((message) =>
-          message.isStaff ? message : { ...message, authorName: undefined },
+          message.isStaff
+            ? {
+                ...message,
+                authorName: message.authorName?.trim() || branding.displayName,
+                avatarUrl: staffAvatarUrl,
+              }
+            : {
+                ...message,
+                authorName: undefined,
+                avatarUrl: customerAvatarUrl,
+              },
         )}
         loading={loading}
         labels={{
@@ -208,6 +239,8 @@ export function BookingChatPanel({
         }}
         formatDateTime={(iso) => formatBookingDateTime(iso, localeTag)}
         formatDateSeparator={formatDateSeparator}
+        customerAvatarUrl={customerAvatarUrl}
+        staffAvatarUrl={staffAvatarUrl}
         canReply={canReply}
         replyBody={replyBody}
         onReplyBodyChange={setReplyBody}

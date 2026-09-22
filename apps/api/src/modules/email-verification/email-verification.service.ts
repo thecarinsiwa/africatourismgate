@@ -1,6 +1,8 @@
 import { createHash, randomInt } from 'node:crypto';
 import {
   BadRequestException,
+  HttpException,
+  HttpStatus,
   Injectable,
   Logger,
   NotFoundException,
@@ -17,6 +19,7 @@ import {
   ABANDONMENT_REMINDER_DELAY_MINUTES,
   OPERATION_CODE_LENGTH,
   OPERATION_CODE_TTL_SECONDS,
+  RESEND_OPERATION_COOLDOWN_SECONDS,
 } from './email-verification.constants';
 
 export type CreateVerificationParams = {
@@ -105,6 +108,60 @@ export class EmailVerificationService {
     }
 
     return { verificationId: row.id, code };
+  }
+
+  /**
+   * Invalidate the current pending verification and send a fresh code.
+   * Returns a new verificationId (caller must update the client URL).
+   */
+  async resendByVerificationId(
+    verificationId: string,
+  ): Promise<{ verificationId: string }> {
+    const id = verificationId.trim();
+    const existing = await this.repository.findOne({ where: { id } });
+    if (!existing) {
+      throw new NotFoundException('Vérification introuvable.');
+    }
+
+    if (
+      existing.verifiedAt &&
+      !existing.codeHash.startsWith('invalidated:')
+    ) {
+      throw new BadRequestException(
+        'Cette vérification a déjà été confirmée. Reconnectez-vous pour recevoir un nouveau code.',
+      );
+    }
+
+    const ageSeconds = (Date.now() - existing.createdAt.getTime()) / 1000;
+    if (ageSeconds < RESEND_OPERATION_COOLDOWN_SECONDS) {
+      const retryAfter = Math.ceil(
+        RESEND_OPERATION_COOLDOWN_SECONDS - ageSeconds,
+      );
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.TOO_MANY_REQUESTS,
+          message: `Veuillez patienter ${retryAfter} s avant de renvoyer un code.`,
+          retryAfter,
+        },
+        HttpStatus.TOO_MANY_REQUESTS,
+      );
+    }
+
+    const meta = existing.metadata ?? {};
+    const firstName =
+      typeof meta.firstName === 'string' && meta.firstName.trim()
+        ? meta.firstName.trim()
+        : 'Client';
+
+    const { verificationId: nextId } = await this.createAndSend({
+      email: existing.email,
+      purpose: existing.purpose,
+      referenceId: existing.referenceId,
+      firstName,
+      metadata: meta,
+    });
+
+    return { verificationId: nextId };
   }
 
   async verifyCode(

@@ -57,6 +57,7 @@ function minimalPropertyDetail(overrides: Record<string, unknown> = {}) {
         totalPriceCents: null,
         available: true,
         nightlyBreakdown: [],
+        images: [],
       },
     ],
     stay: {
