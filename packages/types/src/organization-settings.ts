@@ -320,7 +320,7 @@ export const DEFAULT_SITE_MAINTENANCE: PublicSiteMaintenance = {
 };
 
 export function normalizeSiteMaintenance(
-  value?: SiteMaintenanceSettingValue | null,
+  value?: Partial<SiteMaintenanceSettingValue> | null,
 ): PublicSiteMaintenance {
   if (!value || typeof value !== 'object') {
     return { ...DEFAULT_SITE_MAINTENANCE };

@@ -472,7 +472,7 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
     }
 
     return normalizeSiteMaintenance(
-      setting.settingValue as SiteMaintenanceSettingValue,
+      setting.settingValue as Partial<SiteMaintenanceSettingValue>,
     );
   }
 

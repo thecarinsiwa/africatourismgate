@@ -35,8 +35,15 @@ export default defineConfig({
     cwd: __dirname,
     reuseExistingServer: !useProdServer,
     timeout: 120_000,
-    env: useProdServer
-      ? { ...process.env, NEXT_DIST_DIR: process.env.NEXT_DIST_DIR || '.next-e2e' }
-      : undefined,
+    env: {
+      ...process.env,
+      ...(useProdServer
+        ? { NEXT_DIST_DIR: process.env.NEXT_DIST_DIR || '.next-e2e' }
+        : {}),
+      // Web E2E does not start the API; skip maintenance probes (fail-open still applies
+      // when unset, but this avoids up to ~800ms per navigation on connection refused).
+      DISABLE_SITE_MAINTENANCE_GATE:
+        process.env.DISABLE_SITE_MAINTENANCE_GATE ?? '1',
+    },
   },
 });

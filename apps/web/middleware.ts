@@ -54,6 +54,11 @@ async function fetchPublicMaintenance(
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // E2E / local opt-out: avoid latency when no API is listening on :3000.
+  if (process.env.DISABLE_SITE_MAINTENANCE_GATE === '1') {
+    return NextResponse.next();
+  }
+
   if (shouldBypassMaintenanceGate(pathname)) {
     return NextResponse.next();
   }
