@@ -21,7 +21,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
 import { formatMoney } from '../../lib/format-money';
-import { RoomImagesSection } from './room-images-section';
+import { RoomViewModal } from './room-view-modal';
 
 type RoomFormValues = {
   name: string;
@@ -357,7 +357,7 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
           <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
             <DataTableActionButton
               action="view"
-              label={t('photosAction')}
+              label={t('viewAction')}
               onClick={() => {
                 setShowForm(false);
                 setPhotosRoom(row.original);
@@ -625,10 +625,17 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
         )}
 
         {photosRoom ? (
-          <RoomImagesSection
-            roomId={photosRoom.id}
-            roomName={photosRoom.name}
-            onClose={() => setPhotosRoom(null)}
+          <RoomViewModal
+            room={photosRoom}
+            propertyId={propertyId}
+            open={!!photosRoom}
+            onOpenChange={(open) => {
+              if (!open) setPhotosRoom(null);
+            }}
+            onEdit={(room) => {
+              setPhotosRoom(null);
+              openEdit(room);
+            }}
           />
         ) : null}
       </section>

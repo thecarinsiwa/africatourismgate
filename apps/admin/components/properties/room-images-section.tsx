@@ -5,19 +5,18 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 import {
   AlertDialog,
   Button,
-  Card,
-  DataTable,
   DataTableActionButton,
   DataTableActions,
   DataTableBadge,
   Input,
   Modal,
-  type ColumnDef,
+  Skeleton,
+  cn,
 } from '@africatourismgate/ui';
 import type { RoomImage } from '@africatourismgate/types';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AdminImageViewerModal } from '../admin-image-viewer-modal';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
@@ -38,10 +37,15 @@ const emptyForm: ImageFormValues = { url: '', caption: '', sortOrder: '0' };
 type RoomImagesSectionProps = {
   roomId: string;
   roomName: string;
-  onClose?: () => void;
+  /** Compact header when already shown in a parent modal. */
+  embedded?: boolean;
 };
 
-export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSectionProps) {
+export function RoomImagesSection({
+  roomId,
+  roomName,
+  embedded = false,
+}: RoomImagesSectionProps) {
   const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
   const tGallery = useTranslations('modules.common.imagesGallery');
   const tColumns = useTranslations('modules.common.columns');
@@ -227,86 +231,6 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
     }
   }, [confirmTarget, load, getHebergementsErrorMessage]);
 
-  const columns = useMemo<ColumnDef<RoomImage, unknown>[]>(
-    () => [
-      {
-        id: 'preview',
-        header: tColumns('preview'),
-        cell: ({ row }) => {
-          const src = resolveMediaUrl(row.original.url);
-          const caption = row.original.caption?.trim();
-          return (
-            <button
-              type="button"
-              onClick={() => openViewer(row.original)}
-              className="flex min-w-0 items-center gap-3 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-              aria-label={tGallery('viewerOpen')}
-            >
-              <span className="relative h-12 w-16 shrink-0 cursor-zoom-in overflow-hidden rounded-md border border-atg-border bg-atg-surface">
-                <Image
-                  src={src}
-                  alt={caption || ''}
-                  fill
-                  unoptimized
-                  className="object-cover"
-                  sizes="64px"
-                />
-              </span>
-              <div className="min-w-0 md:hidden">
-                <p className="truncate text-sm font-medium text-atg-fg">
-                  {caption || emptyDash}
-                </p>
-                <p className="mt-0.5 text-xs tabular-nums text-atg-muted">
-                  #{row.original.sortOrder}
-                </p>
-              </div>
-            </button>
-          );
-        },
-      },
-      {
-        accessorKey: 'caption',
-        header: tColumns('caption'),
-        meta: { hideOnMobile: true },
-        cell: ({ row }) => (
-          <span className="text-sm text-atg-fg">
-            {row.original.caption?.trim() || emptyDash}
-          </span>
-        ),
-      },
-      {
-        accessorKey: 'sortOrder',
-        header: tColumns('sortOrder'),
-        meta: { align: 'center', hideOnMobile: true },
-        cell: ({ row }) => (
-          <DataTableBadge variant="muted">{row.original.sortOrder}</DataTableBadge>
-        ),
-      },
-      {
-        id: 'actions',
-        header: tColumns('actions'),
-        meta: { align: 'right' },
-        cell: ({ row }) => (
-          <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
-            <DataTableActionButton
-              action="view"
-              label={tGallery('viewerOpen')}
-              onClick={() => openViewer(row.original)}
-            />
-            <DataTableActionButton action="edit" onClick={() => openEdit(row.original)} />
-            <DataTableActionButton
-              action="delete"
-              onClick={() => handleDeleteRequest(row.original)}
-              disabled={deletingId === row.original.id}
-              loading={deletingId === row.original.id}
-            />
-          </DataTableActions>
-        ),
-      },
-    ],
-    [deletingId, emptyDash, handleDeleteRequest, openViewer, tColumns, tGallery],
-  );
-
   const previewSrc = formValues.url.trim() ? resolveMediaUrl(formValues.url.trim()) : '';
 
   return (
@@ -335,8 +259,9 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
         showClose={!submitting && !uploading}
         closeAriaLabel={tActions('close')}
         className="max-w-lg"
+        containerClassName="z-[60]"
       >
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
           {formError ? (
             <p role="alert" className="text-sm text-red-600 dark:text-red-400">
               {formError}
@@ -416,12 +341,17 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
         fallbackLabel={roomName}
       />
 
-      <div className="space-y-4 rounded-lg border border-atg-border bg-atg-surface/40 p-4">
+      <section className="space-y-4" aria-label={tGallery('ariaLabel')}>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="text-sm font-semibold text-atg-fg">
-                {tGallery('title')} — {roomName}
+              <h3
+                className={cn(
+                  'font-semibold text-atg-fg',
+                  embedded ? 'text-sm' : 'text-base',
+                )}
+              >
+                {embedded ? tGallery('title') : `${tGallery('title')} — ${roomName}`}
               </h3>
               {state.status === 'ready' ? (
                 <DataTableBadge variant="muted">
@@ -429,18 +359,41 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
                 </DataTableBadge>
               ) : null}
             </div>
-            <p className="mt-1 text-sm text-atg-muted">{tGallery('intro')}</p>
-            {atPhotoLimit ? (
-              <p className="mt-1 text-xs text-atg-muted">
-                {tGallery('maxPhotosReached', { max: ROOM_IMAGE_MAX_COUNT })}
-              </p>
-            ) : (
-              <p className="mt-1 text-xs text-atg-muted">
-                {tGallery('maxPhotosHint', { max: ROOM_IMAGE_MAX_COUNT })}
-              </p>
-            )}
+            <p className="mt-1 text-xs text-atg-muted">
+              {atPhotoLimit
+                ? tGallery('maxPhotosReached', { max: ROOM_IMAGE_MAX_COUNT })
+                : tGallery('maxPhotosHint', { max: ROOM_IMAGE_MAX_COUNT })}
+            </p>
           </div>
-          <div className="flex gap-2">
+          <Button
+            type="button"
+            size="sm"
+            onClick={handleOpenCreate}
+            disabled={atPhotoLimit || state.status === 'loading'}
+          >
+            {tGallery('addPhoto')}
+          </Button>
+        </div>
+
+        {state.status === 'error' ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {state.message}
+          </p>
+        ) : null}
+
+        {state.status === 'loading' ? (
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {Array.from({ length: 3 }, (_, i) => (
+              <li key={i}>
+                <Skeleton className="aspect-[4/3] w-full rounded-xl" />
+              </li>
+            ))}
+          </ul>
+        ) : null}
+
+        {state.status === 'ready' && images.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-atg-border bg-atg-surface/50 px-6 py-12 text-center">
+            <p className="text-sm text-atg-muted">{tGallery('emptyRoom')}</p>
             <Button
               type="button"
               size="sm"
@@ -449,35 +402,64 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
             >
               {tGallery('addPhoto')}
             </Button>
-            {onClose ? (
-              <Button type="button" size="sm" variant="outline" onClick={onClose}>
-                {tActions('close')}
-              </Button>
-            ) : null}
           </div>
-        </div>
+        ) : null}
 
-        {state.status === 'error' ? (
-          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-            {state.message}
-          </p>
-        ) : (
-          <Card variant="dashboard" padding="none" className="overflow-hidden">
-            <DataTable
-              columns={columns}
-              data={images}
-              isLoading={state.status === 'loading'}
-              emptyMessage={tGallery('emptyRoom')}
-              getRowId={(row) => row.id}
-              aria-label={tGallery('title')}
-              loadingMessage={tCommon('dataTable.loading')}
-              expandRowLabel={tCommon('dataTable.expandRow')}
-              collapseRowLabel={tCommon('dataTable.collapseRow')}
-              expandRowAriaLabel={tCommon('dataTable.expandRowAria')}
-            />
-          </Card>
-        )}
-      </div>
+        {state.status === 'ready' && images.length > 0 ? (
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {images.map((img) => {
+              const src = resolveMediaUrl(img.url);
+              const caption = img.caption?.trim() || emptyDash;
+              return (
+                <li
+                  key={img.id}
+                  className="group relative overflow-hidden rounded-xl border border-atg-border bg-atg-elevated shadow-sm"
+                >
+                  <button
+                    type="button"
+                    onClick={() => openViewer(img)}
+                    className="relative block aspect-[4/3] w-full cursor-zoom-in overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+                    aria-label={tGallery('viewerOpen')}
+                  >
+                    <Image
+                      src={src}
+                      alt={img.caption?.trim() || roomName}
+                      fill
+                      unoptimized
+                      className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                      sizes="(max-width: 640px) 50vw, 220px"
+                    />
+                    <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/35 to-transparent px-2.5 pb-2 pt-8">
+                      <span className="line-clamp-2 text-left text-xs font-medium text-white">
+                        {caption}
+                      </span>
+                    </span>
+                    <span className="absolute left-2 top-2 rounded-md bg-black/55 px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-white">
+                      #{img.sortOrder}
+                    </span>
+                  </button>
+                  <div className="absolute right-2 top-2 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
+                    <DataTableActions className="rounded-lg bg-atg-elevated/95 p-0.5 shadow-md ring-1 ring-atg-border">
+                      <DataTableActionButton
+                        action="view"
+                        label={tGallery('viewerOpen')}
+                        onClick={() => openViewer(img)}
+                      />
+                      <DataTableActionButton action="edit" onClick={() => openEdit(img)} />
+                      <DataTableActionButton
+                        action="delete"
+                        onClick={() => handleDeleteRequest(img)}
+                        disabled={deletingId === img.id}
+                        loading={deletingId === img.id}
+                      />
+                    </DataTableActions>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        ) : null}
+      </section>
     </>
   );
 }

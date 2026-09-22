@@ -123,7 +123,11 @@
       "deleteTitle": "Delete room",
       "deleteConfirmButton": "Delete",
       "cancel": "Cancel",
-      "photosAction": "Photos"
+      "photosAction": "Photos",
+      "viewAction": "View room",
+      "viewTitle": "Room details",
+      "viewIntro": "Information, rate and photos for this room.",
+      "availabilityAction": "Availability"
     },
     "amenities": {
       "title": "Amenities",

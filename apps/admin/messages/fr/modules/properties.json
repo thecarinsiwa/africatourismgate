@@ -123,7 +123,11 @@
       "deleteTitle": "Supprimer la chambre",
       "deleteConfirmButton": "Supprimer",
       "cancel": "Annuler",
-      "photosAction": "Photos"
+      "photosAction": "Photos",
+      "viewAction": "Voir la chambre",
+      "viewTitle": "Détail de la chambre",
+      "viewIntro": "Informations, tarif et photos de la chambre.",
+      "availabilityAction": "Disponibilités"
     },
     "amenities": {
       "title": "Équipements",

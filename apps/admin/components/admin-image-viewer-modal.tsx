@@ -70,7 +70,7 @@ export function AdminImageViewerModal({
       showClose
       closeAriaLabel={t('viewerClose')}
       className="max-w-4xl p-4 sm:p-5"
-      containerClassName="bg-black/40"
+      containerClassName="z-[70] bg-black/40"
     >
       {current ? (
         <div className="space-y-3">
