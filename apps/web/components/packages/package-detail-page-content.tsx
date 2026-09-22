@@ -251,7 +251,7 @@ export function PackageDetailPageContent({
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:pb-8">
+      <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 pb-40 sm:px-6 lg:px-8 lg:pb-8">
         {loading && (
           <DetailPageSkeleton loadingLabel={p.loadingDetail} layout="package" />
         )}

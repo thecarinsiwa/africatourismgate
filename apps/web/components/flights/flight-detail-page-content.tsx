@@ -246,7 +246,7 @@ export function FlightDetailPageContent({
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:pb-8">
+      <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 pb-40 sm:px-6 lg:px-8 lg:pb-8">
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
           <div className="min-w-0 space-y-8 lg:col-span-2">
             {detail.images && detail.images.length > 0 ? (

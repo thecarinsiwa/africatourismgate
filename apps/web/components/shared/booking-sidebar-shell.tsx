@@ -376,41 +376,47 @@ export function BookingSidebarMobileBar({
   return (
     <div
       id="mobile-reserve"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-atg-border bg-atg-elevated p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.12)] dark:border-atg-border dark:bg-[#121f1a] dark:shadow-[0_-4px_24px_rgba(0,0,0,0.45)] lg:hidden pb-safe"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-atg-border bg-atg-elevated p-3 shadow-[0_-4px_20px_rgba(0,0,0,0.12)] dark:border-atg-border dark:bg-[#121f1a] dark:shadow-[0_-4px_24px_rgba(0,0,0,0.45)] sm:p-4 lg:hidden pb-safe"
     >
-      <div className="mx-auto flex max-w-lg min-w-0 items-center gap-3">
-        <div className="min-w-0 flex-1">
+      <div className="mx-auto flex max-w-lg min-w-0 flex-col gap-3">
+        <div className="min-w-0">
           {hasPrice ? (
             <>
               <p className="text-xs font-medium uppercase tracking-wide text-atg-muted dark:text-white/75">
                 {priceLabel}
               </p>
-              <p className="truncate text-lg font-bold text-atg-fg dark:text-white">{priceAmount}</p>
+              <p className="truncate text-lg font-bold text-atg-fg dark:text-white">
+                {priceAmount}
+              </p>
               {secondaryLine ? (
-                <p className="truncate text-xs text-atg-muted dark:text-white/65">{secondaryLine}</p>
+                <p className="truncate text-xs text-atg-muted dark:text-white/65">
+                  {secondaryLine}
+                </p>
               ) : null}
             </>
           ) : (
             <p className="text-sm text-atg-muted dark:text-white/75">{hint}</p>
           )}
         </div>
-        {configureLabel && onConfigureClick ? (
+        <div className="flex min-w-0 items-stretch gap-2">
+          {configureLabel && onConfigureClick ? (
+            <button
+              type="button"
+              onClick={onConfigureClick}
+              className="inline-flex min-h-[48px] shrink-0 items-center justify-center rounded-lg border border-atg-border px-3 py-2 text-sm font-semibold text-atg-fg transition-colors hover:border-primary dark:border-white/25 dark:text-white dark:hover:border-primary sm:px-4"
+            >
+              {configureLabel}
+            </button>
+          ) : null}
           <button
             type="button"
-            onClick={onConfigureClick}
-            className="inline-flex min-h-[44px] shrink-0 items-center rounded-lg border border-atg-border px-4 py-2 text-sm font-semibold text-atg-fg transition-colors hover:border-primary dark:border-white/25 dark:text-white dark:hover:border-primary"
+            disabled={ctaDisabled}
+            onClick={onCtaClick}
+            className="min-h-[48px] min-w-0 flex-1 rounded-lg bg-primary px-3 py-2.5 text-center text-xs font-bold uppercase leading-snug tracking-wide text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50 sm:px-5 sm:text-sm"
           >
-            {configureLabel}
+            {ctaLabel}
           </button>
-        ) : null}
-        <button
-          type="button"
-          disabled={ctaDisabled}
-          onClick={onCtaClick}
-          className="min-h-[48px] shrink-0 rounded-lg bg-primary px-5 py-3 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50 sm:px-6"
-        >
-          {ctaLabel}
-        </button>
+        </div>
       </div>
     </div>
   );
