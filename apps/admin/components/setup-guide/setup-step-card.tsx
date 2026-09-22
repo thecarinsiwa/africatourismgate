@@ -52,15 +52,15 @@ export function SetupStepCard({
   const title = tGuide(step.titleKey);
   const help = tGuide(step.helpKey);
 
-  const showCount = step.check.kind === 'listTotal' && total != null;
-  const countLabel = showCount
-    ? t('stepCount', {
-        total,
-        min: min ?? step.check.min,
-      })
-    : status === 'unknown' && step.check.kind === 'listTotal'
-      ? t('stepCountUnknown')
-      : null;
+  let countLabel: string | null = null;
+  if (step.check.kind === 'listTotal' && total != null) {
+    countLabel = t('stepCount', {
+      total,
+      min: min ?? step.check.min,
+    });
+  } else if (status === 'unknown' && step.check.kind === 'listTotal') {
+    countLabel = t('stepCountUnknown');
+  }
 
   return (
     <li
