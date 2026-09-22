@@ -49,6 +49,30 @@
     "empty": "Ninguna página encontrada",
     "shortcutHint": "Ctrl+K · ⌘K — pulse ? para la ayuda"
   },
+  "globalSearch": {
+    "title": "Búsqueda admin",
+    "placeholder": "Buscar páginas, ayuda, usuarios, reservas…",
+    "empty": "Sin resultados",
+    "shortcutHint": "Ctrl+K · ⌘K — ↑↓ para navegar, Entrar para abrir",
+    "close": "Cerrar la búsqueda",
+    "resultsLabel": "Resultados de búsqueda",
+    "updating": "Actualizando…",
+    "partialError": "Algunas fuentes no se pudieron cargar.",
+    "groupError": "Error parcial",
+    "openLabel": "Abrir la búsqueda",
+    "groups": {
+      "pages": "Páginas",
+      "help": "Ayuda",
+      "users": "Usuarios",
+      "organizations": "Organizaciones",
+      "bookings": "Reservas",
+      "properties": "Alojamientos",
+      "payments": "Pagos",
+      "support": "Soporte",
+      "catalog": "Catálogo",
+      "content": "Contenido"
+    }
+  },
   "keyboardShortcuts": {
     "title": "Atajos de teclado",
     "description": "Atajos disponibles en el back office.",

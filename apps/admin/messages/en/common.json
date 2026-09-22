@@ -49,6 +49,30 @@
     "empty": "No pages found",
     "shortcutHint": "Ctrl+K · ⌘K — press ? for help"
   },
+  "globalSearch": {
+    "title": "Admin search",
+    "placeholder": "Search pages, help, users, bookings…",
+    "empty": "No results",
+    "shortcutHint": "Ctrl+K · ⌘K — ↑↓ to navigate, Enter to open",
+    "close": "Close search",
+    "resultsLabel": "Search results",
+    "updating": "Updating…",
+    "partialError": "Some sources could not be loaded.",
+    "groupError": "Partial error",
+    "openLabel": "Open search",
+    "groups": {
+      "pages": "Pages",
+      "help": "Help",
+      "users": "Users",
+      "organizations": "Organizations",
+      "bookings": "Bookings",
+      "properties": "Properties",
+      "payments": "Payments",
+      "support": "Support",
+      "catalog": "Catalog",
+      "content": "Content"
+    }
+  },
   "keyboardShortcuts": {
     "title": "Keyboard shortcuts",
     "description": "Shortcuts available in the admin.",
