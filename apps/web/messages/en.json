@@ -389,7 +389,9 @@
       }
     },
     "breadcrumbAria": "Breadcrumb",
-    "searchContactCta": "Contact support"
+    "searchContactCta": "Contact support",
+    "contextualHelp": "Open the help centre",
+    "openContextualHelp": "Help for this page"
   },
   "about": {
     "heroTitle": "About us",

@@ -3,7 +3,12 @@
 import type { ReactNode } from 'react';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
-import { CheckoutStepper, type CheckoutStepId, type CheckoutStepperLabels } from './checkout-stepper';
+import { SupportContextualHelpLink } from '../support/support-contextual-help-link';
+import {
+  CheckoutStepper,
+  type CheckoutStepId,
+  type CheckoutStepperLabels,
+} from './checkout-stepper';
 
 type CheckoutPageShellProps = {
   title: string;
@@ -29,7 +34,10 @@ export function CheckoutPageShell({
           labels={stepperLabels}
           cancelled={cancelled}
         />
-        <h1 className="text-2xl font-bold text-atg-fg">{title}</h1>
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <h1 className="text-2xl font-bold text-atg-fg">{title}</h1>
+          <SupportContextualHelpLink />
+        </div>
         {children}
       </main>
       <HomeFooter />

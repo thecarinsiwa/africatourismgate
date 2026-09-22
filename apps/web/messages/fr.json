@@ -389,7 +389,9 @@
       }
     },
     "breadcrumbAria": "Fil d’Ariane",
-    "searchContactCta": "Contacter le support"
+    "searchContactCta": "Contacter le support",
+    "contextualHelp": "Ouvrir le centre d'aide",
+    "openContextualHelp": "Aide sur cette page"
   },
   "about": {
     "heroTitle": "À propos",

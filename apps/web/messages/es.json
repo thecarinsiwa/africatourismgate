@@ -389,7 +389,9 @@
       }
     },
     "breadcrumbAria": "Miga de pan",
-    "searchContactCta": "Contactar soporte"
+    "searchContactCta": "Contactar soporte",
+    "contextualHelp": "Abrir el centro de ayuda",
+    "openContextualHelp": "Ayuda para esta página"
   },
   "about": {
     "heroTitle": "Sobre nosotros",
