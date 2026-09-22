@@ -22,6 +22,13 @@ export type SearchableSelectProps = {
   hint?: string;
   error?: string;
   required?: boolean;
+  /** When false, options are shown as provided (parent filters / remotes). Default true. */
+  filterLocally?: boolean;
+  /** Called when the internal search query changes (incl. reset on open). */
+  onSearchChange?: (query: string) => void;
+  /** Shows a loading row in the dropdown. */
+  loading?: boolean;
+  loadingMessage?: string;
 };
 
 function normalizeSearch(value: string): string {
@@ -47,6 +54,10 @@ export function SearchableSelect({
   hint,
   error,
   required,
+  filterLocally = true,
+  onSearchChange,
+  loading = false,
+  loadingMessage = 'Loading…',
 }: SearchableSelectProps) {
   const generatedId = useId();
   const id = idProp ?? generatedId;
@@ -54,9 +65,12 @@ export function SearchableSelect({
   const searchId = `${id}-search`;
   const containerRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
+  const onSearchChangeRef = useRef(onSearchChange);
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [highlightIndex, setHighlightIndex] = useState(0);
+
+  onSearchChangeRef.current = onSearchChange;
 
   const selected = useMemo(
     () => options.find((option) => option.value === value) ?? null,
@@ -64,18 +78,22 @@ export function SearchableSelect({
   );
 
   const filteredOptions = useMemo(() => {
+    if (!filterLocally) {
+      return options.filter((option) => !option.disabled);
+    }
     const needle = normalizeSearch(query);
     if (!needle) return options;
     return options.filter((option) => {
       if (option.disabled) return false;
       return normalizeSearch(option.label).includes(needle);
     });
-  }, [options, query]);
+  }, [options, query, filterLocally]);
 
   useEffect(() => {
     if (!open) return;
     setQuery('');
     setHighlightIndex(0);
+    onSearchChangeRef.current?.('');
     const timer = window.setTimeout(() => searchRef.current?.focus(), 0);
     return () => window.clearTimeout(timer);
   }, [open]);
@@ -93,7 +111,7 @@ export function SearchableSelect({
 
   useEffect(() => {
     setHighlightIndex(0);
-  }, [query]);
+  }, [query, filteredOptions.length]);
 
   function selectOption(option: SelectOption) {
     if (option.disabled) return;
@@ -182,7 +200,11 @@ export function SearchableSelect({
               id={searchId}
               type="search"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                const next = e.target.value;
+                setQuery(next);
+                onSearchChangeRef.current?.(next);
+              }}
               onKeyDown={handleSearchKeyDown}
               placeholder={searchPlaceholder}
               aria-label={searchPlaceholder}
@@ -196,7 +218,11 @@ export function SearchableSelect({
             aria-label={label}
             className="max-h-60 overflow-y-auto py-1"
           >
-            {filteredOptions.length === 0 ? (
+            {loading ? (
+              <li className="px-4 py-3 text-sm text-atg-muted" role="status">
+                {loadingMessage}
+              </li>
+            ) : filteredOptions.length === 0 ? (
               <li className="px-4 py-3 text-sm text-atg-muted">{emptyMessage}</li>
             ) : (
               filteredOptions.map((option, index) => {

@@ -11,7 +11,7 @@ import type {
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import {
   fromDatetimeLocalValue,
@@ -28,6 +28,10 @@ export type FlightFormValues = {
   durationMinutes: string;
 };
 
+/** API PaginationQueryDto caps `limit` at 100. */
+const OPTIONS_LIMIT = 100;
+const SEARCH_DEBOUNCE_MS = 300;
+
 const defaultValues: FlightFormValues = {
   airlineId: '',
   flightNumber: '',
@@ -37,6 +41,26 @@ const defaultValues: FlightFormValues = {
   arrivalTime: '',
   durationMinutes: '',
 };
+
+function upsertById<T extends { id: string }>(items: T[], extra: T | null | undefined): T[] {
+  if (!extra) return items;
+  if (items.some((item) => item.id === extra.id)) return items;
+  return [extra, ...items];
+}
+
+function keepSelectedById<T extends { id: string }>(
+  items: T[],
+  selectedIds: Array<string | undefined>,
+  pool: T[],
+): T[] {
+  let next = items;
+  for (const id of selectedIds) {
+    if (!id || next.some((item) => item.id === id)) continue;
+    const found = pool.find((item) => item.id === id);
+    if (found) next = [found, ...next];
+  }
+  return next;
+}
 
 function flightToFormValues(flight: Flight): FlightFormValues {
   return {
@@ -92,31 +116,198 @@ export function FlightForm({
   const [values, setValues] = useState<FlightFormValues>(() =>
     initialFlight ? flightToFormValues(initialFlight) : defaultValues,
   );
+  const airlinePoolRef = useRef<Airline[]>([]);
+  const airportPoolRef = useRef<Airport[]>([]);
+  const valuesRef = useRef(values);
+  const airlineSearchSkipRef = useRef(true);
+  const airportSearchSkipRef = useRef(true);
+  const [optionsLoading, setOptionsLoading] = useState(
+    !(airlinesProp && airportsProp),
+  );
+  const [airlinesSearching, setAirlinesSearching] = useState(false);
+  const [airportsSearching, setAirportsSearching] = useState(false);
+  const [optionsError, setOptionsError] = useState<string | null>(null);
+  const [airlineSearch, setAirlineSearch] = useState('');
+  const [airportSearch, setAirportSearch] = useState('');
+  const remoteOptions = !(airlinesProp && airportsProp);
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<keyof FlightFormValues, string>>
   >({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  valuesRef.current = values;
+
+  useEffect(() => {
+    airlinePoolRef.current = airlines;
+  }, [airlines]);
+
+  useEffect(() => {
+    airportPoolRef.current = airports;
+  }, [airports]);
+
   useEffect(() => {
     if (airlinesProp && airportsProp) {
       setAirlines(airlinesProp);
       setAirports(airportsProp);
+      setOptionsLoading(false);
+      setOptionsError(null);
       return;
     }
-    void Promise.all([
-      getApiClient().listAirlines({ page: 1, limit: 200 }),
-      getApiClient().listAirports({ page: 1, limit: 500 }),
-    ])
-      .then(([a, p]) => {
-        setAirlines(a.data);
-        setAirports(p.data);
-      })
-      .catch(() => {
-        setAirlines([]);
-        setAirports([]);
-      });
-  }, [airlinesProp, airportsProp]);
+
+    let cancelled = false;
+    setOptionsLoading(true);
+    setOptionsError(null);
+
+    void (async () => {
+      try {
+        const client = getApiClient();
+        const [airlinesResult, airportsResult] = await Promise.all([
+          client.listAirlines({ page: 1, limit: OPTIONS_LIMIT }),
+          client.listAirports({ page: 1, limit: OPTIONS_LIMIT }),
+        ]);
+        if (cancelled) return;
+
+        let nextAirlines = airlinesResult.data;
+        let nextAirports = airportsResult.data;
+
+        if (initialFlight) {
+          const missing: Promise<void>[] = [];
+          if (
+            initialFlight.airlineId &&
+            !nextAirlines.some((item) => item.id === initialFlight.airlineId)
+          ) {
+            missing.push(
+              client
+                .getAirline(initialFlight.airlineId)
+                .then((airline) => {
+                  nextAirlines = upsertById(nextAirlines, airline);
+                })
+                .catch(() => undefined),
+            );
+          }
+          for (const airportId of [
+            initialFlight.departureAirportId,
+            initialFlight.arrivalAirportId,
+          ]) {
+            if (!airportId || nextAirports.some((item) => item.id === airportId)) {
+              continue;
+            }
+            missing.push(
+              client
+                .getAirport(airportId)
+                .then((airport) => {
+                  nextAirports = upsertById(nextAirports, airport);
+                })
+                .catch(() => undefined),
+            );
+          }
+          if (missing.length > 0) await Promise.all(missing);
+        }
+
+        if (cancelled) return;
+        setAirlines(nextAirlines);
+        setAirports(nextAirports);
+      } catch {
+        if (!cancelled) {
+          setAirlines([]);
+          setAirports([]);
+          setOptionsError(tSelect('loadError'));
+        }
+      } finally {
+        if (!cancelled) setOptionsLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [airlinesProp, airportsProp, initialFlight, tSelect]);
+
+  useEffect(() => {
+    if (!remoteOptions) return;
+    if (airlineSearchSkipRef.current) {
+      airlineSearchSkipRef.current = false;
+      return;
+    }
+
+    const query = airlineSearch.trim();
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      setAirlinesSearching(true);
+      void getApiClient()
+        .listAirlines({
+          page: 1,
+          limit: OPTIONS_LIMIT,
+          search: query || undefined,
+        })
+        .then((result) => {
+          if (cancelled) return;
+          setAirlines(
+            keepSelectedById(
+              result.data,
+              [valuesRef.current.airlineId],
+              airlinePoolRef.current,
+            ),
+          );
+        })
+        .catch(() => {
+          if (!cancelled) setOptionsError(tSelect('loadError'));
+        })
+        .finally(() => {
+          if (!cancelled) setAirlinesSearching(false);
+        });
+    }, SEARCH_DEBOUNCE_MS);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [airlineSearch, remoteOptions, tSelect]);
+
+  useEffect(() => {
+    if (!remoteOptions) return;
+    if (airportSearchSkipRef.current) {
+      airportSearchSkipRef.current = false;
+      return;
+    }
+
+    const query = airportSearch.trim();
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      setAirportsSearching(true);
+      void getApiClient()
+        .listAirports({
+          page: 1,
+          limit: OPTIONS_LIMIT,
+          search: query || undefined,
+        })
+        .then((result) => {
+          if (cancelled) return;
+          setAirports(
+            keepSelectedById(
+              result.data,
+              [
+                valuesRef.current.departureAirportId,
+                valuesRef.current.arrivalAirportId,
+              ],
+              airportPoolRef.current,
+            ),
+          );
+        })
+        .catch(() => {
+          if (!cancelled) setOptionsError(tSelect('loadError'));
+        })
+        .finally(() => {
+          if (!cancelled) setAirportsSearching(false);
+        });
+    }, SEARCH_DEBOUNCE_MS);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [airportSearch, remoteOptions, tSelect]);
 
   const updateField = useCallback(
     <K extends keyof FlightFormValues>(key: K, value: FlightFormValues[K]) => {
@@ -199,6 +390,12 @@ export function FlightForm({
 
   const fields = (
     <div className="space-y-4">
+      {optionsError ? (
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+          {optionsError}
+        </p>
+      ) : null}
+
       <SearchableSelect
         label={t('airline')}
         name="airlineId"
@@ -210,6 +407,11 @@ export function FlightForm({
         placeholder={tCommon('select.chooseDash')}
         error={fieldErrors.airlineId}
         required
+        filterLocally={!remoteOptions}
+        onSearchChange={remoteOptions ? setAirlineSearch : undefined}
+        loading={optionsLoading || airlinesSearching}
+        loadingMessage={tSelect('loading')}
+        disabled={optionsLoading && airlineOptions.length === 0}
       />
 
       <Input
@@ -232,6 +434,11 @@ export function FlightForm({
           placeholder={tCommon('select.chooseDash')}
           error={fieldErrors.departureAirportId}
           required
+          filterLocally={!remoteOptions}
+          onSearchChange={remoteOptions ? setAirportSearch : undefined}
+          loading={optionsLoading || airportsSearching}
+          loadingMessage={tSelect('loading')}
+          disabled={optionsLoading && airportOptions.length === 0}
         />
         <SearchableSelect
           label={t('arrival')}
@@ -244,6 +451,11 @@ export function FlightForm({
           placeholder={tCommon('select.chooseDash')}
           error={fieldErrors.arrivalAirportId}
           required
+          filterLocally={!remoteOptions}
+          onSearchChange={remoteOptions ? setAirportSearch : undefined}
+          loading={optionsLoading || airportsSearching}
+          loadingMessage={tSelect('loading')}
+          disabled={optionsLoading && airportOptions.length === 0}
         />
       </div>
 

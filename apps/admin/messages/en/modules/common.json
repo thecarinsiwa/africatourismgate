@@ -161,7 +161,9 @@
     "chooseDash": "— Choose —",
     "chooseFeminine": "— Choose —",
     "searchPlaceholder": "Search…",
-    "empty": "No results"
+    "empty": "No results",
+    "loading": "Loading…",
+    "loadError": "Unable to load the list."
   },
   "back": {
     "toList": "← Back to list"

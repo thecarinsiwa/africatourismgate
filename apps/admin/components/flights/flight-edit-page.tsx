@@ -72,12 +72,40 @@ export function FlightEditPage({ flightId }: FlightEditPageProps) {
           client.listAirlines({ page: 1, limit: 100 }),
           client.listAirports({ page: 1, limit: 100 }),
         ]);
+
+        let airlines = airlinesResult.data;
+        let airports = airportsResult.data;
+
+        const missing: Promise<void>[] = [];
+        if (flight.airlineId && !airlines.some((item) => item.id === flight.airlineId)) {
+          missing.push(
+            client
+              .getAirline(flight.airlineId)
+              .then((airline) => {
+                airlines = [airline, ...airlines];
+              })
+              .catch(() => undefined),
+          );
+        }
+        for (const airportId of [flight.departureAirportId, flight.arrivalAirportId]) {
+          if (!airportId || airports.some((item) => item.id === airportId)) continue;
+          missing.push(
+            client
+              .getAirport(airportId)
+              .then((airport) => {
+                airports = [airport, ...airports];
+              })
+              .catch(() => undefined),
+          );
+        }
+        if (missing.length > 0) await Promise.all(missing);
+
         if (!cancelled) {
           setState({
             status: 'ready',
             flight,
-            airlines: airlinesResult.data,
-            airports: airportsResult.data,
+            airlines,
+            airports,
           });
         }
       } catch (error) {
