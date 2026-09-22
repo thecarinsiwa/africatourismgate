@@ -746,6 +746,10 @@
     "modulesHeading": "Modules",
     "stepsHeading": "Steps",
     "stepsCount": "{count, plural, one {# step} other {# steps}}",
+    "moduleProgress": "{ready}/{total}",
+    "stateLocked": "Locked",
+    "stateUnlocked": "To do",
+    "stateComplete": "Done",
     "openList": "Open list",
     "createItem": "Create",
     "emptyModule": "Select a module to see its steps."

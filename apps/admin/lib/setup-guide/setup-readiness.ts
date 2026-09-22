@@ -156,6 +156,14 @@ function emptySettings(): Record<SetupSettingsPath, boolean | null> {
   };
 }
 
+/** Snapshot initial (toutes les clés `null`) — avant le fetch live (s09). */
+export function createEmptySetupReadinessSnapshot(): SetupReadinessSnapshot {
+  return {
+    totals: emptyTotals(),
+    settings: emptySettings(),
+  };
+}
+
 export function getSetupSettingsPathsUsed(): readonly SetupSettingsPath[] {
   const seen = new Set<SetupSettingsPath>();
   for (const step of getAllSetupSteps()) {
