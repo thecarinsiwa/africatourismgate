@@ -406,5 +406,5 @@ export function getSetupListResourcesUsed(): readonly SetupListResource[] {
       seen.add(stepItem.check.resource);
     }
   }
-  return [...seen];
+  return Array.from(seen);
 }
