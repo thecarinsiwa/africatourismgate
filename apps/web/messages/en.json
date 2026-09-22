@@ -274,112 +274,112 @@
         "how-to-book": {
           "title": "How do I book a stay or activity?",
           "summary": "From search to confirmation, step by step.",
-          "body": "On the home page, use search to pick a product: hotels, flights, cars, cruises, activities, or packages. Open a listing, choose dates or options, then add to cart.\n\nContinue to /booking/cart and the recap to choose a payment method. Once payment is confirmed (or a request is sent), you will find the stay under My account → Bookings."
+          "body": "On the home page, use search to pick a product: hotels, flights, cars, cruises, activities, or packages. Open a listing, choose dates or options, then add to cart.\n\nContinue to [the cart](/booking/cart) and the recap to choose a payment method. Once payment is confirmed (or a request is sent), you will find the stay under [My account → Bookings](/account/reservations)."
         },
         "cart-and-checkout": {
           "title": "Cart and checkout flow",
           "summary": "Understand cart → recap → confirmation.",
-          "body": "The cart (/booking/cart) gathers selected items before you confirm. Check dates, travellers, and the total, then go to the recap to choose payment.\n\nYou must sign in to finish. After success, a confirmation page appears and an email is sent. You can also reopen details under My account → Bookings."
+          "body": "The [cart](/booking/cart) gathers selected items before you confirm. Check dates, travellers, and the total, then go to the [recap](/booking/recap) to choose payment.\n\nYou must sign in to finish. After success, a confirmation page appears and an email is sent. You can also reopen details under [My account → Bookings](/account/reservations)."
         },
         "request-vs-paid": {
           "title": "Booking request or immediate payment?",
           "summary": "Difference between a paid confirmation and a pending request.",
-          "body": "Some products confirm as soon as online card payment succeeds. Others go through a request: you complete the flow to /booking/request-success, then the team or provider follows up.\n\nStatus appears under My account → Bookings. Until payment is validated or the request is accepted, the stay is not fully confirmed."
+          "body": "Some products confirm as soon as online card payment succeeds. Others go through a request: you complete the flow to the [request success page](/booking/request-success), then the team or provider follows up.\n\nStatus appears under [My account → Bookings](/account/reservations). Until payment is validated or the request is accepted, the stay is not fully confirmed."
         },
         "modify-or-cancel": {
           "title": "How do I change or cancel a booking?",
           "summary": "Manage your stay from My account or contact support.",
-          "body": "Open My account → Bookings, select your stay, then use the available actions (remaining payment, cancellation, documents). Options depend on status and product terms.\n\nIf a button is missing, provider rules may block self-service or require a manual request. Open a ticket or booking chat with your reference.\n\nBefore cancelling, also read the cancellation policy and refund timeline articles."
+          "body": "Open [My account → Bookings](/account/reservations), select your stay, then use the available actions (remaining payment, cancellation, documents). Options depend on status and product terms.\n\nIf a button is missing, provider rules may block self-service or require a manual request. Open a ticket or booking chat with your reference.\n\nBefore cancelling, also read the cancellation policy and refund timeline articles."
         },
         "find-booking": {
           "title": "Where can I find my booking?",
           "summary": "Open your booking history and stay details.",
-          "body": "Sign in, then open My account → Bookings. The list shows status, dates, and a link to each stay detail.\n\nOn the detail page you will find payment, cancellation (when available), passenger manifest, reviews, and chat. Keep your confirmation email to recover the booking number.\n\nIf nothing appears after payment, check the account used at checkout or open a ticket with the email and payment date."
+          "body": "Sign in, then open [My account → Bookings](/account/reservations). The list shows status, dates, and a link to each stay detail.\n\nOn the detail page you will find payment, cancellation (when available), passenger manifest, reviews, and chat. Keep your confirmation email to recover the booking number.\n\nIf nothing appears after payment, check the account used at checkout or open a ticket with the email and payment date."
         },
         "confirmation-email": {
           "title": "I did not receive my confirmation email",
           "summary": "Check spam folders and find the confirmation in your account.",
-          "body": "First check spam / junk folders and the email entered at checkout. Delivery can take a few minutes.\n\nAlso open My account → Bookings: the stay often appears even without the email. You may also still see /booking/success right after checkout.\n\nIf the booking is missing after several minutes, open a ticket with the checkout email and any on-screen reference."
+          "body": "First check spam / junk folders and the email entered at checkout. Delivery can take a few minutes.\n\nAlso open [My account → Bookings](/account/reservations): the stay often appears even without the email. You may also still see the [success page](/booking/success) right after checkout.\n\nIf the booking is missing after several minutes, open a ticket with the checkout email and any on-screen reference."
         },
         "booking-chat": {
           "title": "How do I use booking chat?",
           "summary": "Message the team about a specific stay.",
-          "body": "Open My account → Bookings, select the stay, then open the chat linked to that booking. Use it for questions about that stay (dates, documents, next steps).\n\nFor general account or billing questions unrelated to a stay, use Contact support at the bottom of the help centre instead."
+          "body": "Open [My account → Bookings](/account/reservations), select the stay, then open the chat linked to that booking. Use it for questions about that stay (dates, documents, next steps).\n\nFor general account or billing questions unrelated to a stay, use Contact support at the bottom of the [help centre](/support) instead."
         },
         "payment-methods": {
           "title": "Which payment methods do you accept?",
           "summary": "Online card, and non-card options when offered.",
-          "body": "On the recap (/booking/recap), secure card payment (Stripe) is offered for many immediate confirmations. Charges and invoices depend on the product booked.\n\nIn some cases, cash, bank transfer, or mobile money may appear — see the offline payments article.\n\nYou can save a card under My account → Payment methods for faster future checkouts."
+          "body": "On the [recap](/booking/recap), secure card payment (Stripe) is offered for many immediate confirmations. Charges and invoices depend on the product booked.\n\nIn some cases, cash, bank transfer, or mobile money may appear — see the offline payments article.\n\nYou can save a card under [My account → Payment methods](/account/payment-methods) for faster future checkouts."
         },
         "offline-payments": {
           "title": "Cash, bank transfer, or mobile money",
           "summary": "Pay without a card when the option is offered.",
-          "body": "Depending on the product and recap, non-card options may appear: cash, bank transfer, or mobile money. Follow the on-screen instructions after validation; confirmation depends on payment receipt.\n\nCheck status under My account → Bookings. If a transfer is unclear, open a ticket with the reference and proof of payment."
+          "body": "Depending on the product and recap, non-card options may appear: cash, bank transfer, or mobile money. Follow the on-screen instructions after validation; confirmation depends on payment receipt.\n\nCheck status under [My account → Bookings](/account/reservations). If a transfer is unclear, open a ticket with the reference and proof of payment."
         },
         "saved-cards": {
           "title": "Manage saved payment methods",
           "summary": "Add or remove a card in My account.",
-          "body": "Under My account → Payment methods, you can save a card for faster checkouts or remove a card you no longer need.\n\nCard data is handled securely by the payment provider. Never share card codes in chat or a support ticket."
+          "body": "Under [My account → Payment methods](/account/payment-methods), you can save a card for faster checkouts or remove a card you no longer need.\n\nCard data is handled securely by the payment provider. Never share card codes in chat or a support ticket."
         },
         "invoice-receipt": {
           "title": "How do I get an invoice or receipt?",
           "summary": "Download or request your payment proof.",
-          "body": "After a successful payment, a receipt is usually emailed. Also keep /booking/success and the detail under My account → Bookings.\n\nOn the stay detail, a confirmation PDF may be available depending on the product. For a named invoice (company details, VAT), open a ticket with your reference.\n\nNon-card proofs follow the instructions shown after you choose that payment method."
+          "body": "After a successful payment, a receipt is usually emailed. Also keep the [success page](/booking/success) and the detail under [My account → Bookings](/account/reservations).\n\nOn the stay detail, a confirmation PDF may be available depending on the product. For a named invoice (company details, VAT), open a ticket with your reference.\n\nNon-card proofs follow the instructions shown after you choose that payment method."
         },
         "failed-payment": {
           "title": "My payment failed",
           "summary": "What to do if the card is declined or the charge is incomplete.",
-          "body": "On the recap or confirmation page, check card limits and expiry, then try again. A stay is not confirmed until payment succeeds.\n\nYou can also return from My account → Bookings if a remaining payment is offered, or pick another option shown at checkout.\n\nIf an amount was held without confirmation, contact support with the date, amount, and any reference — never send the card security code in a ticket."
+          "body": "On the recap or confirmation page, check card limits and expiry, then try again. A stay is not confirmed until payment succeeds.\n\nYou can also return from [My account → Bookings](/account/reservations) if a remaining payment is offered, or pick another option shown at checkout.\n\nIf an amount was held without confirmation, contact support with the date, amount, and any reference — never send the card security code in a ticket."
         },
         "cancellation-policy": {
           "title": "What is your cancellation policy?",
           "summary": "Terms depend on the property or provider.",
-          "body": "Cancellation terms vary by hotel, flight, car, cruise, activity, or package. They appear on the product page and in your confirmation email / booking detail.\n\nTo cancel when allowed: My account → Bookings → stay detail. If the button is missing, you may need a ticket or booking chat.\n\nBefore cancelling, also read the refund timeline article to know when funds return."
+          "body": "Cancellation terms vary by hotel, flight, car, cruise, activity, or package. They appear on the product page and in your confirmation email / booking detail.\n\nTo cancel when allowed: [My account → Bookings](/account/reservations) → stay detail. If the button is missing, you may need a ticket or booking chat.\n\nBefore cancelling, also read the refund timeline article to know when funds return."
         },
         "refund-timeline": {
           "title": "How long do refunds take?",
           "summary": "Timelines after an eligible cancellation.",
-          "body": "After a cancellation that matches product terms, refunds are processed by the provider and your bank or payment operator. Expect a few business days in most cases.\n\nStay status updates under My account → Bookings. Keep the reference for follow-up.\n\nIf the expected delay passes or the amount differs, open a ticket with cancellation proof and the relevant statement."
+          "body": "After a cancellation that matches product terms, refunds are processed by the provider and your bank or payment operator. Expect a few business days in most cases.\n\nStay status updates under [My account → Bookings](/account/reservations). Keep the reference for follow-up.\n\nIf the expected delay passes or the amount differs, open a ticket with cancellation proof and the relevant statement."
         },
         "update-profile": {
           "title": "How do I update my profile?",
           "summary": "Edit name, phone, language, and avatar.",
-          "body": "Open My account → Profile to update personal details (name, phone, avatar) and display preferences, including language.\n\nAddresses are managed separately under My account → Addresses. Travellers for a stay are entered on the booking manifest.\n\nAfter saving, changes apply to future bookings and site display."
+          "body": "Open [My account → Profile](/account/profile) to update personal details (name, phone, avatar) and display preferences, including language.\n\nAddresses are managed separately under [My account → Addresses](/account/addresses). Travellers for a stay are entered on the booking manifest.\n\nAfter saving, changes apply to future bookings and site display."
         },
         "manage-addresses": {
           "title": "Manage my addresses",
           "summary": "Add, edit, or remove a billing or contact address.",
-          "body": "Open My account → Addresses to save a billing or contact address. You can add several and update them before booking.\n\nAn up-to-date address helps with invoices and follow-up. It is separate from passenger details on a booking manifest."
+          "body": "Open [My account → Addresses](/account/addresses) to save a billing or contact address. You can add several and update them before booking.\n\nAn up-to-date address helps with invoices and follow-up. It is separate from passenger details on a booking manifest."
         },
         "password-security": {
           "title": "Password and account security",
           "summary": "Protect your account and recover access.",
-          "body": "Use a unique, strong password. On the sign-in page (/booking/login), use Forgot password if you cannot sign in.\n\nIf you suspect unauthorised access, change the password as soon as possible, review My account → Payment methods, then contact support.\n\nNever share your password in booking chat or a support ticket."
+          "body": "Use a unique, strong password. On the [sign-in page](/booking/login), use Forgot password if you cannot sign in.\n\nIf you suspect unauthorised access, change the password as soon as possible, review [My account → Payment methods](/account/payment-methods), then contact support.\n\nNever share your password in booking chat or a support ticket."
         },
         "onekey-loyalty": {
           "title": "OneKey loyalty programme",
           "summary": "Track benefits and your tier in My account.",
-          "body": "OneKey groups loyalty benefits linked to your stays on Africa Tourism Gate. Open My account → Loyalty to see your tier and available details.\n\nAccumulation and redemption rules follow the current programme. If points seem missing, open a ticket with your booking references."
+          "body": "OneKey groups loyalty benefits linked to your stays on Africa Tourism Gate. Open [My account → Loyalty](/account/loyalty) to see your tier and available details.\n\nAccumulation and redemption rules follow the current programme. If points seem missing, open a ticket with your booking references."
         },
         "passenger-manifest": {
           "title": "Passenger manifest and travel documents",
           "summary": "Enter travellers, emergency contacts, and ID documents.",
-          "body": "On a booking detail page (My account → Bookings), complete the passenger manifest when requested: identity, emergency contacts, and documents needed for the stay.\n\nProvide accurate information before departure. If upload or fields fail, use booking chat or a support ticket."
+          "body": "On a booking detail page ([My account → Bookings](/account/reservations)), complete the passenger manifest when requested: identity, emergency contacts, and documents needed for the stay.\n\nProvide accurate information before departure. If upload or fields fail, use booking chat or a support ticket."
         },
         "leave-a-review": {
           "title": "Leave a review after my stay",
           "summary": "Rate a product or guide from the booking detail.",
-          "body": "When your stay allows it, open My account → Bookings, then the booking detail and the review section. You can rate the experience and, when offered, a guide.\n\nReviews help other travellers. If the form is missing, the stay may not be eligible yet or the review window has not opened."
+          "body": "When your stay allows it, open [My account → Bookings](/account/reservations), then the booking detail and the review section. You can rate the experience and, when offered, a guide.\n\nReviews help other travellers. If the form is missing, the stay may not be eligible yet or the review window has not opened."
         },
         "response-time": {
           "title": "How fast does support reply?",
           "summary": "First reply within 1–2 business days in most cases.",
-          "body": "We handle tickets Monday–Friday. Most get a first reply within 1–2 business days.\n\nFor an urgent question about an existing stay, also use booking chat (My account → Bookings → detail).\n\nAlways include your booking reference to speed up handling."
+          "body": "We handle tickets Monday–Friday. Most get a first reply within 1–2 business days.\n\nFor an urgent question about an existing stay, also use booking chat ([My account → Bookings](/account/reservations) → detail).\n\nAlways include your booking reference to speed up handling."
         },
         "how-to-contact": {
           "title": "How do I contact support?",
           "summary": "Booking chat for a stay; support ticket for everything else.",
-          "body": "Two complementary channels:\n\n• Booking chat — for questions about a specific stay (dates, documents, manifest, next steps). Open My account → Bookings → stay detail → chat. Messages stay attached to that booking.\n\n• Support ticket — for account issues, general billing, payment outside a stay, or if you do not have a booking yet. Sign in, then use Contact support at the bottom of /support (anchor /support#support-form). Include a reference when you have one.\n\nYou can also open About → Contact us for public contact details. See also the booking chat article."
+          "body": "Two complementary channels:\n\n• Booking chat — for questions about a specific stay (dates, documents, manifest, next steps). Open [My account → Bookings](/account/reservations) → stay detail → chat. Messages stay attached to that booking.\n\n• Support ticket — for account issues, general billing, payment outside a stay, or if you do not have a booking yet. Sign in, then use Contact support at the bottom of the [help centre](/support). Include a reference when you have one.\n\nYou can also open About → Contact us for public contact details. See also the booking chat article."
         }
       }
     },
