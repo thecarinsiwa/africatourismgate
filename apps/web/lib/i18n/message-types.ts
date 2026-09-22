@@ -853,6 +853,9 @@ export type Translations = {
       empty: string;
       addNew: string;
       add: string;
+      edit: string;
+      editTitle: string;
+      save: string;
       saving: string;
       cancel: string;
       delete: string;
@@ -870,6 +873,8 @@ export type Translations = {
       line1: string;
       line2: string;
       city: string;
+      region: string;
+      postalCode: string;
       countryCode: string;
     };
     reservations: {

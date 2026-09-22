@@ -1482,7 +1482,10 @@
       "empty": "No saved addresses.",
       "addNew": "Add address",
       "add": "Add",
-      "saving": "Saving?",
+      "edit": "Edit",
+      "editTitle": "Edit address",
+      "save": "Save",
+      "saving": "Saving…",
       "cancel": "Cancel",
       "delete": "Delete",
       "deleteTitle": "Delete this address?",
@@ -1499,6 +1502,8 @@
       "line1": "Address line 1",
       "line2": "Address line 2",
       "city": "City",
+      "region": "Region / state",
+      "postalCode": "Postal code",
       "countryCode": "Country code (e.g. CD)"
     },
     "reservations": {

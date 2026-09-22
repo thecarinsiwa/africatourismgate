@@ -1482,6 +1482,9 @@
       "empty": "Aucune adresse enregistrée.",
       "addNew": "Ajouter une adresse",
       "add": "Ajouter",
+      "edit": "Modifier",
+      "editTitle": "Modifier l'adresse",
+      "save": "Enregistrer",
       "saving": "Enregistrement…",
       "cancel": "Annuler",
       "delete": "Supprimer",
@@ -1499,6 +1502,8 @@
       "line1": "Adresse ligne 1",
       "line2": "Adresse ligne 2",
       "city": "Ville",
+      "region": "Région / province",
+      "postalCode": "Code postal",
       "countryCode": "Code pays (ex. CD)"
     },
     "reservations": {

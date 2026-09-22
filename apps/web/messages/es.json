@@ -1482,6 +1482,9 @@
       "empty": "No hay direcciones guardadas.",
       "addNew": "Añadir dirección",
       "add": "Añadir",
+      "edit": "Editar",
+      "editTitle": "Editar dirección",
+      "save": "Guardar",
       "saving": "Guardando…",
       "cancel": "Cancelar",
       "delete": "Eliminar",
@@ -1499,6 +1502,8 @@
       "line1": "Dirección línea 1",
       "line2": "Dirección línea 2",
       "city": "Ciudad",
+      "region": "Región / provincia",
+      "postalCode": "Código postal",
       "countryCode": "Código de país (p. ej. CD)"
     },
     "reservations": {
