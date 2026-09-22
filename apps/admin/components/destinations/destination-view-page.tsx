@@ -23,6 +23,7 @@ import { getApiClient } from '../../lib/auth/api';
 import { hasValidDestinationCoords } from '../../lib/destination-coords';
 import { getIsoCountryLabel } from '../../lib/iso-countries';
 import { resolveMediaUrl } from '../../lib/resolve-media-url';
+import { isRichTextEmpty } from '../../lib/rich-text';
 import { DestinationRelatedStatCards } from './destination-related-stat-cards';
 import { DestinationStaticMap } from './destination-static-map';
 import { DestinationThumbnail } from './destination-thumbnail';
@@ -241,7 +242,8 @@ export function DestinationViewPage({ destinationId }: DestinationViewPageProps)
 
             <div>
               <h3 className="text-sm font-semibold text-atg-fg">{t('description')}</h3>
-              {destination.description?.trim() ? (
+              {destination.description?.trim() &&
+              !isRichTextEmpty(destination.description) ? (
                 <RichTextContent html={destination.description} className="mt-2" />
               ) : (
                 <p className="mt-2 text-sm text-atg-muted">{t('noDescription')}</p>
