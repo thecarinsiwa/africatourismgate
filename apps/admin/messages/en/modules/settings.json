@@ -9,7 +9,7 @@
   },
   "page": {
     "title": "Settings",
-    "intro": "Organization settings: contact details, locale, booking and branding.",
+    "intro": "Organization settings: contact details, locale, booking, maintenance and branding.",
     "denied": "You do not have permission to view settings."
   },
   "unsaved": {
@@ -38,7 +38,10 @@
       "programCodeInvalid": "Program code is required (max 32 characters).",
       "paymentMethodsRequired": "Enable at least one payment method.",
       "depositPercentInvalid": "Deposit percent must be an integer between 1 and 100.",
-      "depositFixedInvalid": "Fixed deposit amount must be a positive number (e.g. 50.00)."
+      "depositFixedInvalid": "Fixed deposit amount must be a positive number (e.g. 50.00).",
+      "maintenanceTitleTooLong": "Title must be at most 200 characters.",
+      "maintenanceMessageTooLong": "Message must be at most 2000 characters.",
+      "maintenanceEndsAtInvalid": "Maintenance end date is invalid."
     },
     "sections": {
       "contact": {
@@ -92,6 +95,17 @@
           "activity_schedule": "Activity",
           "package": "Package"
         }
+      },
+      "maintenance": {
+        "title": "Site maintenance",
+        "description": "When enabled, public site visitors are redirected to a maintenance page (admin remains accessible).",
+        "enabled": "Enable maintenance mode",
+        "pageTitle": "Displayed title",
+        "pageTitleHint": "Optional — otherwise the default maintenance page title is used.",
+        "message": "Message",
+        "messageHint": "Optional — text shown to visitors (max 2000 characters).",
+        "endsAt": "Scheduled end",
+        "endsAtHint": "Optional — once past this time, the site becomes accessible again even if the toggle stays on."
       },
       "loyalty": {
         "title": "OneKey loyalty",

@@ -9,7 +9,7 @@
   },
   "page": {
     "title": "Ajustes",
-    "intro": "Configuración de la organización: datos de contacto, idioma, reservas y marca.",
+    "intro": "Configuración de la organización: datos de contacto, idioma, reservas, mantenimiento y marca.",
     "denied": "No tiene permiso para ver los ajustes."
   },
   "unsaved": {
@@ -38,7 +38,10 @@
       "programCodeInvalid": "El código de programa es obligatorio (máx. 32 caracteres).",
       "paymentMethodsRequired": "Active al menos un método de pago.",
       "depositPercentInvalid": "El porcentaje de anticipo debe ser un entero entre 1 y 100.",
-      "depositFixedInvalid": "El importe fijo de anticipo debe ser un número positivo (p. ej. 50.00)."
+      "depositFixedInvalid": "El importe fijo de anticipo debe ser un número positivo (p. ej. 50.00).",
+      "maintenanceTitleTooLong": "El título no debe superar 200 caracteres.",
+      "maintenanceMessageTooLong": "El mensaje no debe superar 2000 caracteres.",
+      "maintenanceEndsAtInvalid": "La fecha de fin de mantenimiento no es válida."
     },
     "sections": {
       "contact": {
@@ -92,6 +95,17 @@
           "activity_schedule": "Actividad",
           "package": "Paquete"
         }
+      },
+      "maintenance": {
+        "title": "Mantenimiento del sitio",
+        "description": "Cuando está activado, los visitantes del sitio público son redirigidos a una página de mantenimiento (el admin sigue accesible).",
+        "enabled": "Activar el modo mantenimiento",
+        "pageTitle": "Título mostrado",
+        "pageTitleHint": "Opcional — si no, se usa el título por defecto de la página de mantenimiento.",
+        "message": "Mensaje",
+        "messageHint": "Opcional — texto mostrado a los visitantes (máx. 2000 caracteres).",
+        "endsAt": "Fin previsto",
+        "endsAtHint": "Opcional — una vez pasada esta hora, el sitio vuelve a ser accesible aunque el interruptor siga activo."
       },
       "loyalty": {
         "title": "Fidelidad OneKey",
