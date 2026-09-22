@@ -103,7 +103,8 @@
     "settings": "Paramètres",
     "emails": "E-mails",
     "rbacAudit": "Audit RBAC",
-    "adminHelp": "Centre d'aide"
+    "adminHelp": "Centre d'aide",
+    "setupGuide": "Mise en route"
   },
   "userMenu": {
     "dashboard": "Tableau de bord",

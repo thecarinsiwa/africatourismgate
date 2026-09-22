@@ -130,6 +130,8 @@ export const config = {
     '/gap/:path*',
     '/aide',
     '/aide/:path*',
+    '/mise-en-route',
+    '/mise-en-route/:path*',
     '/profil',
     '/guides',
     '/guides/:path*',

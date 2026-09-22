@@ -37,6 +37,12 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
   },
   {
     type: 'link',
+    href: '/mise-en-route',
+    labelKey: 'setupGuide',
+    iconKey: 'list',
+  },
+  {
+    type: 'link',
     href: '/notifications',
     labelKey: 'notifications',
     iconKey: 'bell',
@@ -192,6 +198,7 @@ export const adminBreadcrumbExtraRoutes: AdminBreadcrumbRouteConfig[] = [
   { href: '/parametres/dons/nouveau', labelKey: 'newDonation' },
   { href: '/parametres/emails', labelKey: 'emails' },
   { href: '/aide', labelKey: 'adminHelp' },
+  { href: '/mise-en-route', labelKey: 'setupGuide' },
 ];
 
 export function navGroupMessageKey(groupId: string): string {
