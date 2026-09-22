@@ -37,7 +37,7 @@ function RoomImagesThumb({
   return (
     <>
       <div
-        className="flex max-w-full gap-1.5 overflow-x-auto pb-0.5 [-webkit-overflow-scrolling:touch]"
+        className="flex max-w-full gap-1 overflow-x-auto pb-0.5 [-webkit-overflow-scrolling:touch]"
         role="group"
         aria-label={galleryLabels.ariaLabel}
       >
@@ -46,8 +46,11 @@ function RoomImagesThumb({
             key={img.id}
             type="button"
             onClick={() => setLightboxIndex(index)}
-            className="relative h-16 w-[4.5rem] shrink-0 overflow-hidden rounded-lg border border-atg-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:border-atg-border sm:h-[4.5rem] sm:w-20"
-            aria-label={img.caption ?? `${galleryLabels.openLightbox} (${galleryLabels.counter(index + 1, images.length)})`}
+            className="relative h-11 w-14 shrink-0 overflow-hidden rounded-md border border-atg-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:border-atg-border sm:h-14 sm:w-[4.25rem] sm:rounded-lg"
+            aria-label={
+              img.caption ??
+              `${galleryLabels.openLightbox} (${galleryLabels.counter(index + 1, images.length)})`
+            }
           >
             <div
               className="absolute inset-0 bg-cover bg-center"
@@ -93,8 +96,8 @@ export function HotelRoomsSection({
 
   return (
     <section id="rooms">
-      <h2 className="mb-4 text-lg font-bold text-atg-fg">{title}</h2>
-      <div className="space-y-4">
+      <h2 className="mb-3 text-base font-bold text-atg-fg sm:mb-4 sm:text-lg">{title}</h2>
+      <div className="space-y-2.5 sm:space-y-4">
         {rooms.map((room) => {
           const selected = selectedRoomId === room.id;
           const nightly =
@@ -106,47 +109,42 @@ export function HotelRoomsSection({
           return (
             <article
               key={room.id}
-              className={`rounded-2xl border p-5 transition-colors ${
+              className={`rounded-xl border p-3 transition-colors sm:rounded-2xl sm:p-5 ${
                 selected
                   ? 'border-primary bg-primary/5 dark:border-primary dark:bg-primary/10'
                   : 'border-atg-border bg-atg-elevated dark:border-atg-border dark:bg-atg-elevated'
               } ${!room.available ? 'opacity-60' : ''}`}
             >
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-base font-bold text-atg-fg">{room.name}</h3>
-                  {room.roomType && (
-                    <p className="mt-0.5 text-sm text-atg-muted">{room.roomType}</p>
-                  )}
-                  <ul className="mt-2 flex flex-wrap gap-3 text-sm text-atg-muted">
-                    <li>{maxGuestsLabel.replace('{n}', String(room.maxGuests))}</li>
-                    {room.bedConfig && (
-                      <li>
-                        {bedConfigLabel}: {room.bedConfig}
-                      </li>
-                    )}
-                  </ul>
-                  {hasImages ? (
-                    <div className="mt-3">
-                      <RoomImagesThumb room={room} galleryLabels={galleryLabels} />
-                    </div>
-                  ) : null}
+                  <h3 className="text-sm font-bold text-atg-fg sm:text-base">{room.name}</h3>
+                  <p className="mt-0.5 text-xs text-atg-muted sm:text-sm">
+                    {[
+                      room.roomType,
+                      maxGuestsLabel.replace('{n}', String(room.maxGuests)),
+                      room.bedConfig
+                        ? `${bedConfigLabel}: ${room.bedConfig}`
+                        : null,
+                    ]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </p>
                 </div>
 
                 <div className="shrink-0 text-right">
                   {room.totalPriceCents != null && nights > 0 ? (
                     <>
-                      <p className="text-xl font-bold text-atg-fg">
+                      <p className="text-base font-bold text-atg-fg sm:text-xl">
                         {formatHotelPrice(room.totalPriceCents, room.currency)}
                       </p>
-                      <p className="text-xs text-atg-muted">
+                      <p className="text-[11px] text-atg-muted sm:text-xs">
                         {formatHotelPrice(nightly, room.currency)} {perNightLabel}
                       </p>
                     </>
                   ) : (
-                    <p className="text-lg font-bold text-atg-fg">
+                    <p className="text-sm font-bold text-atg-fg sm:text-lg">
                       {formatHotelPrice(room.basePriceCents, room.currency)}
-                      <span className="text-sm font-normal text-atg-muted">
+                      <span className="text-xs font-normal text-atg-muted sm:text-sm">
                         {' '}
                         {perNightLabel}
                       </span>
@@ -155,17 +153,25 @@ export function HotelRoomsSection({
                 </div>
               </div>
 
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-atg-border pt-4 dark:border-atg-border">
-                {!room.available && (
-                  <span className="text-sm font-medium text-red-600 dark:text-red-400">
+              {hasImages ? (
+                <div className="mt-2 sm:mt-3">
+                  <RoomImagesThumb room={room} galleryLabels={galleryLabels} />
+                </div>
+              ) : null}
+
+              <div className="mt-2.5 flex items-center justify-between gap-2 sm:mt-4 sm:border-t sm:border-atg-border sm:pt-4 dark:sm:border-atg-border">
+                {!room.available ? (
+                  <span className="text-xs font-medium text-red-600 dark:text-red-400 sm:text-sm">
                     {unavailableLabel}
                   </span>
+                ) : (
+                  <span className="sr-only" />
                 )}
                 <button
                   type="button"
                   disabled={!room.available}
                   onClick={() => onSelectRoom(room.id)}
-                  className={`ml-auto min-h-[44px] rounded-lg px-5 py-2 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+                  className={`ml-auto min-h-10 rounded-lg px-3.5 py-1.5 text-xs font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-50 sm:min-h-[44px] sm:px-5 sm:py-2 sm:text-sm ${
                     selected
                       ? 'bg-primary text-white'
                       : 'border border-atg-border text-atg-fg hover:border-primary hover:text-primary dark:border-atg-border dark:text-atg-fg'
