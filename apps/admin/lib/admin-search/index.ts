@@ -10,6 +10,7 @@ export {
 } from './sources';
 export { listLocalAdminSearchSources } from './local-sources';
 export { listCoreAdminSearchSources } from './core-sources';
+export { listCatalogAdminSearchSources } from './catalog-sources';
 export {
   adminSearchDeepLinks,
   formatAdminSearchIdPrefix,
@@ -35,6 +36,16 @@ export {
   searchAdminUsers,
   type SearchApiCoreOptions,
 } from './search-api-core';
+export {
+  searchAdminActivities,
+  searchAdminBlogPosts,
+  searchAdminDestinations,
+  searchAdminEmployees,
+  searchAdminFlights,
+  searchAdminPackages,
+  searchAdminSailings,
+  searchAdminVehicles,
+} from './search-api-catalog';
 export {
   ADMIN_SEARCH_API_MIN_QUERY_LENGTH,
   ADMIN_SEARCH_DEBOUNCE_MS,

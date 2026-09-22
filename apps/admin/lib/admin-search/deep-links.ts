@@ -7,6 +7,14 @@ export const adminSearchDeepLinks = {
   /** Pas de fiche paiement dédiée : on ouvre la réservation liée. */
   paymentBooking: (bookingId: string) => `/reservations/${bookingId}`,
   supportTicket: (id: string) => `/contenu/tickets/${id}`,
+  activity: (id: string) => `/produits/activites/${id}/voir`,
+  flight: (id: string) => `/produits/vols/${id}/voir`,
+  vehicle: (id: string) => `/produits/locations/${id}/voir`,
+  package: (id: string) => `/produits/forfaits/${id}/voir`,
+  sailing: (id: string) => `/produits/croisieres/${id}`,
+  blogPost: (id: string) => `/contenu/blog/${id}`,
+  destination: (id: string) => `/produits/destinations/${id}/voir`,
+  employee: (id: string) => `/utilisateurs/employes/${id}/voir`,
 } as const;
 
 export function formatAdminSearchPersonName(
