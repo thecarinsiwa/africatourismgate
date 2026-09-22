@@ -10,7 +10,7 @@
   },
   "page": {
     "title": "Settings",
-    "intro": "Organization settings: contact details, locale, booking, maintenance and branding.",
+    "intro": "Organization settings: contact details, locale, booking and branding.",
     "denied": "You do not have permission to view settings."
   },
   "unsaved": {

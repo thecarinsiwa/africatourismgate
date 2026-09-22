@@ -10,7 +10,7 @@
   },
   "page": {
     "title": "Ajustes",
-    "intro": "Configuración de la organización: datos de contacto, idioma, reservas, mantenimiento y marca.",
+    "intro": "Configuración de la organización: datos de contacto, idioma, reservas y marca.",
     "denied": "No tiene permiso para ver los ajustes."
   },
   "unsaved": {

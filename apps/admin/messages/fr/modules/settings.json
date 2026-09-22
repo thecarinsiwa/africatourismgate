@@ -10,7 +10,7 @@
   },
   "page": {
     "title": "Paramètres",
-    "intro": "Configuration de l'organisation : coordonnées, locale, réservation, maintenance et branding.",
+    "intro": "Configuration de l'organisation : coordonnées, locale, réservation et branding.",
     "denied": "Vous n'avez pas la permission de consulter les paramètres."
   },
   "unsaved": {

@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Card, Input, Select, Textarea } from '@africatourismgate/ui';
+import { Button, Card, Input, Select } from '@africatourismgate/ui';
 import type {
   AuthVisualDecorIcon,
   AuthVisualSettingValue,
@@ -15,11 +15,9 @@ import type {
   LoyaltyOneKeySettingValue,
   Organization,
   OrganizationSetting,
-  PublicSiteMaintenance,
   ResolvedBookingDeposits,
   ResolvedBookingItemTypeModes,
   ResolvedWebPaymentMethods,
-  SiteMaintenanceSettingValue,
   WebPaymentMethodKey,
 } from '@africatourismgate/types';
 import {
@@ -30,12 +28,10 @@ import {
 import {
   DEFAULT_BOOKING_DEPOSITS,
   DEFAULT_LOYALTY_ONEKEY_SETTING,
-  DEFAULT_SITE_MAINTENANCE,
   DEFAULT_WEB_PAYMENT_METHODS,
   WEB_PAYMENT_METHOD_KEYS,
   bookingDepositsMode,
   normalizeBookingDeposits,
-  normalizeSiteMaintenance,
   normalizeWebPaymentMethods,
 } from '@africatourismgate/types/organization-settings';
 import { useTranslations } from 'next-intl';
@@ -43,10 +39,6 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
-import {
-  fromDatetimeLocalValue,
-  toDatetimeLocalValue,
-} from '../../lib/flight-datetime';
 import {
   PLATFORM_ORG_ID,
   isValidContactEmail,
@@ -129,11 +121,6 @@ type SettingsFormValues = {
   depositsMode: BookingDepositsMode;
   depositPercent: string;
   depositFixedMajor: string;
-  maintenanceEnabled: boolean;
-  maintenanceTitle: string;
-  maintenanceMessage: string;
-  /** Value for `<input type="datetime-local" />` (empty = no planned end). */
-  maintenanceEndsAtLocal: string;
 };
 
 function centsToMajorString(cents: number | null): string {
@@ -168,25 +155,6 @@ function depositsToFormFields(deposits: ResolvedBookingDeposits): Pick<
   };
 }
 
-function maintenanceToFormFields(
-  maintenance: PublicSiteMaintenance,
-): Pick<
-  SettingsFormValues,
-  | 'maintenanceEnabled'
-  | 'maintenanceTitle'
-  | 'maintenanceMessage'
-  | 'maintenanceEndsAtLocal'
-> {
-  return {
-    maintenanceEnabled: maintenance.enabled,
-    maintenanceTitle: maintenance.title ?? '',
-    maintenanceMessage: maintenance.message ?? '',
-    maintenanceEndsAtLocal: maintenance.endsAt
-      ? toDatetimeLocalValue(maintenance.endsAt)
-      : '',
-  };
-}
-
 const defaultValues: SettingsFormValues = {
   contactEmail: '',
   contactPhone: '',
@@ -211,7 +179,6 @@ const defaultValues: SettingsFormValues = {
   itemTypeModes: { ...DEFAULT_BOOKING_ITEM_TYPE_MODES },
   paymentMethods: { ...DEFAULT_WEB_PAYMENT_METHODS },
   ...depositsToFormFields(DEFAULT_BOOKING_DEPOSITS),
-  ...maintenanceToFormFields(DEFAULT_SITE_MAINTENANCE),
 };
 
 function settingByKey(
@@ -244,10 +211,6 @@ function toFormValues(
       | { enabled: boolean; depositPercent?: number; depositFixedCents?: number }
       | undefined,
   );
-  const maintenance = normalizeSiteMaintenance(
-    settings.find((s) => s.settingGroup === 'site' && s.settingKey === 'maintenance')
-      ?.settingValue as SiteMaintenanceSettingValue | undefined,
-  );
 
   return {
     contactEmail: org.contactEmail ?? '',
@@ -276,7 +239,6 @@ function toFormValues(
     itemTypeModes,
     paymentMethods,
     ...depositsToFormFields(deposits),
-    ...maintenanceToFormFields(maintenance),
   };
 }
 
@@ -468,18 +430,6 @@ export function OrganizationSettingsForm({
         }
       }
     }
-    if (values.maintenanceTitle.trim().length > 200) {
-      errors.maintenanceTitle = t('validation.maintenanceTitleTooLong');
-    }
-    if (values.maintenanceMessage.trim().length > 2000) {
-      errors.maintenanceMessage = t('validation.maintenanceMessageTooLong');
-    }
-    if (values.maintenanceEndsAtLocal.trim()) {
-      const endsAtMs = new Date(values.maintenanceEndsAtLocal).getTime();
-      if (!Number.isFinite(endsAtMs)) {
-        errors.maintenanceEndsAtLocal = t('validation.maintenanceEndsAtInvalid');
-      }
-    }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   }
@@ -590,22 +540,6 @@ export function OrganizationSettingsForm({
               enabled: values.loyaltyEnabled,
               pointsPerMajorUnit: Number(values.loyaltyPointsPerMajorUnit),
               programCode: values.loyaltyProgramCode.trim().toUpperCase(),
-            },
-          },
-          {
-            settingGroup: 'site',
-            settingKey: 'maintenance',
-            settingValue: {
-              enabled: values.maintenanceEnabled,
-              ...(values.maintenanceTitle.trim()
-                ? { title: values.maintenanceTitle.trim() }
-                : {}),
-              ...(values.maintenanceMessage.trim()
-                ? { message: values.maintenanceMessage.trim() }
-                : {}),
-              endsAt: values.maintenanceEndsAtLocal.trim()
-                ? fromDatetimeLocalValue(values.maintenanceEndsAtLocal)
-                : null,
             },
           },
         ],
@@ -949,51 +883,6 @@ export function OrganizationSettingsForm({
                 />
               )}
             </div>
-          </Card>
-
-          <Card variant="dashboard" padding="sm" className="space-y-4">
-            <div>
-              <h2 className="text-base font-semibold text-atg-fg">
-                {t('sections.maintenance.title')}
-              </h2>
-              <p className="mt-1 text-sm text-atg-muted">
-                {t('sections.maintenance.description')}
-              </p>
-            </div>
-            <label className="flex items-center gap-2 text-sm text-atg-fg">
-              <input
-                type="checkbox"
-                checked={values.maintenanceEnabled}
-                onChange={(e) => updateField('maintenanceEnabled', e.target.checked)}
-                className="rounded border-atg-border"
-              />
-              {t('sections.maintenance.enabled')}
-            </label>
-            <Input
-              label={t('sections.maintenance.pageTitle')}
-              value={values.maintenanceTitle}
-              onChange={(e) => updateField('maintenanceTitle', e.target.value)}
-              error={fieldErrors.maintenanceTitle}
-              hint={t('sections.maintenance.pageTitleHint')}
-              maxLength={200}
-            />
-            <Textarea
-              label={t('sections.maintenance.message')}
-              value={values.maintenanceMessage}
-              onChange={(e) => updateField('maintenanceMessage', e.target.value)}
-              error={fieldErrors.maintenanceMessage}
-              hint={t('sections.maintenance.messageHint')}
-              rows={4}
-              maxLength={2000}
-            />
-            <Input
-              label={t('sections.maintenance.endsAt')}
-              type="datetime-local"
-              value={values.maintenanceEndsAtLocal}
-              onChange={(e) => updateField('maintenanceEndsAtLocal', e.target.value)}
-              error={fieldErrors.maintenanceEndsAtLocal}
-              hint={t('sections.maintenance.endsAtHint')}
-            />
           </Card>
 
           <Card variant="dashboard" padding="sm" className="space-y-4">
