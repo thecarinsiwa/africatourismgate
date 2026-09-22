@@ -103,7 +103,8 @@
     "carouselClose": "Close preview",
     "roomsIntro": "{count, plural, =0 {No rooms} one {# room} other {# rooms}}",
     "amenitiesIntro": "{count, plural, =0 {No amenities} one {# amenity} other {# amenities}}",
-    "amenitiesEmpty": "No amenities linked."
+    "amenitiesEmpty": "No amenities linked.",
+    "availabilityIntro": "Browse stock and nightly rates for each room."
   },
   "sections": {
     "rooms": {
