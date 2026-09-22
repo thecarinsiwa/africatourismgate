@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useId, useRef } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { cn } from '../lib/cn';
 import { Button } from './button';
 import { Spinner } from './spinner';
@@ -10,6 +10,7 @@ export type ConversationChatMessage = {
   body: string;
   isStaff: boolean;
   authorName?: string | null;
+  avatarUrl?: string | null;
   createdAt: string;
 };
 
@@ -31,6 +32,10 @@ export type ConversationChatProps = {
   labels: ConversationChatLabels;
   formatDateTime: (iso: string) => string;
   formatDateSeparator?: (iso: string) => string;
+  /** Fallback avatar for customer messages when `message.avatarUrl` is absent. */
+  customerAvatarUrl?: string | null;
+  /** Fallback avatar (e.g. org logo) for staff messages when `message.avatarUrl` is absent. */
+  staffAvatarUrl?: string | null;
   canReply?: boolean;
   replyBody: string;
   onReplyBodyChange: (value: string) => void;
@@ -62,12 +67,58 @@ function dayKey(iso: string): string {
   }
 }
 
+function avatarInitial(label: string): string {
+  const trimmed = label.trim();
+  if (!trimmed) return '?';
+  return trimmed.charAt(0).toUpperCase();
+}
+
+function MessageAvatar({
+  src,
+  alt,
+  fallbackLabel,
+  variant,
+}: {
+  src?: string | null;
+  alt: string;
+  fallbackLabel: string;
+  variant: 'staff' | 'customer';
+}) {
+  const [broken, setBroken] = useState(false);
+  const showImage = Boolean(src && !broken);
+
+  return (
+    <span
+      className={cn(
+        'inline-flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border text-[11px] font-semibold',
+        variant === 'staff'
+          ? 'border-primary/25 bg-primary/10 text-primary'
+          : 'border-atg-border bg-atg-muted/20 text-atg-muted dark:bg-white/10 dark:text-white/80',
+      )}
+      aria-hidden={!showImage}
+    >
+      {showImage ? (
+        <img
+          src={src!}
+          alt={alt}
+          className="h-full w-full object-cover"
+          onError={() => setBroken(true)}
+        />
+      ) : (
+        <span aria-hidden>{avatarInitial(fallbackLabel)}</span>
+      )}
+    </span>
+  );
+}
+
 export function ConversationChat({
   messages,
   loading = false,
   labels,
   formatDateTime,
   formatDateSeparator = defaultDateSeparator,
+  customerAvatarUrl = null,
+  staffAvatarUrl = null,
   canReply = false,
   replyBody,
   onReplyBodyChange,
@@ -131,6 +182,15 @@ export function ConversationChat({
               const currentDayKey = dayKey(message.createdAt);
               const showDateSeparator = currentDayKey !== lastDayKey;
               lastDayKey = currentDayKey;
+              const authorLabel = message.authorName?.trim()
+                ? message.authorName.trim()
+                : message.isStaff
+                  ? labels.authorStaff
+                  : labels.authorCustomer;
+              const avatarSrc =
+                message.avatarUrl?.trim() ||
+                (message.isStaff ? staffAvatarUrl : customerAvatarUrl) ||
+                null;
 
               return (
                 <li key={message.id}>
@@ -148,13 +208,21 @@ export function ConversationChat({
                   ) : null}
                   <div
                     className={cn(
-                      'flex',
+                      'flex items-end gap-2',
                       message.isStaff ? 'justify-end' : 'justify-start',
                     )}
                   >
+                    {!message.isStaff ? (
+                      <MessageAvatar
+                        src={avatarSrc}
+                        alt={authorLabel}
+                        fallbackLabel={authorLabel}
+                        variant="customer"
+                      />
+                    ) : null}
                     <div
                       className={cn(
-                        'max-w-[80%] rounded-2xl px-4 py-2.5',
+                        'max-w-[min(80%,24rem)] rounded-2xl px-4 py-2.5',
                         message.isStaff
                           ? 'rounded-br-md bg-primary/10 text-atg-fg dark:bg-primary/20'
                           : 'rounded-bl-md bg-atg-muted/15 text-atg-fg dark:bg-white/10',
@@ -169,11 +237,7 @@ export function ConversationChat({
                               : 'uppercase tracking-wide',
                           )}
                         >
-                          {message.authorName?.trim()
-                            ? message.authorName.trim()
-                            : message.isStaff
-                              ? labels.authorStaff
-                              : labels.authorCustomer}
+                          {authorLabel}
                         </span>
                         <time
                           className="text-[10px] text-atg-muted"
@@ -184,6 +248,14 @@ export function ConversationChat({
                       </div>
                       <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.body}</p>
                     </div>
+                    {message.isStaff ? (
+                      <MessageAvatar
+                        src={avatarSrc}
+                        alt={authorLabel}
+                        fallbackLabel={authorLabel}
+                        variant="staff"
+                      />
+                    ) : null}
                   </div>
                 </li>
               );
