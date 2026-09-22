@@ -160,9 +160,13 @@ export function DestinationViewPage({ destinationId }: DestinationViewPageProps)
 
   const countryLabel = getIsoCountryLabel(destination.countryCode, locale);
   const heroUrl = destination.imageUrl?.trim() || null;
+  const hasPoiOnMap = pois.some((poi) =>
+    hasValidDestinationCoords(poi.latitude, poi.longitude),
+  );
   const hasMap =
     hasValidDestinationCoords(destination.latitude, destination.longitude) ||
-    /^[A-Z]{2}$/.test(destination.countryCode.trim().toUpperCase());
+    /^[A-Z]{2}$/.test(destination.countryCode.trim().toUpperCase()) ||
+    hasPoiOnMap;
   const coordsLabel =
     hasValidDestinationCoords(destination.latitude, destination.longitude)
       ? `${formatCoord(destination.latitude, emptyDash)}, ${formatCoord(destination.longitude, emptyDash)}`
@@ -307,6 +311,8 @@ export function DestinationViewPage({ destinationId }: DestinationViewPageProps)
                 countryCode={destination.countryCode}
                 latitude={destination.latitude}
                 longitude={destination.longitude}
+                destinationName={destination.name}
+                pointsOfInterest={pois}
                 title={t('mapTitle')}
                 compact
               />

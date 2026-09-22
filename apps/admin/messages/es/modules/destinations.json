@@ -80,6 +80,8 @@
     "heroAlt": "Imagen de cabecera de {name}",
     "heroEmpty": "Ninguna imagen de cabecera.",
     "mapEmpty": "No hay coordenadas para el mapa.",
+    "mapCenterLabel": "Centro del destino",
+    "mapPoiHint": "{count, plural, one {# punto de interés mostrado en el mapa.} other {# puntos de interés mostrados en el mapa.}}",
     "poisTitle": "Puntos de interés",
     "poisIntro": "{count} punto(s) de interés registrado(s)",
     "poisEmpty": "Ningún punto de interés para este destino.",

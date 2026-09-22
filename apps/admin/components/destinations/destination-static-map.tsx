@@ -2,19 +2,31 @@
 
 import { cn } from '@africatourismgate/ui';
 import { useLocale, useTranslations } from 'next-intl';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { fetchCountryBoundaryGeoJson } from '../../lib/country-boundary-geojson';
 import {
   hasValidDestinationCoords,
   parseDestinationCoord,
 } from '../../lib/destination-coords';
 import { getIsoCountryLabel } from '../../lib/iso-countries';
-import { createLeafletMarkerIcon } from '../../lib/leaflet-marker-icon';
+import {
+  createLeafletMarkerIcon,
+  createLeafletPoiMarkerIcon,
+} from '../../lib/leaflet-marker-icon';
+
+export type DestinationMapPoi = {
+  id: string;
+  name: string;
+  latitude: string | number | null | undefined;
+  longitude: string | number | null | undefined;
+};
 
 type DestinationStaticMapProps = {
   countryCode?: string | null;
   latitude: string | number | null | undefined;
   longitude: string | number | null | undefined;
+  destinationName?: string;
+  pointsOfInterest?: DestinationMapPoi[];
   title?: string;
   openMapsLabel?: string;
   className?: string;
@@ -33,10 +45,62 @@ const BOUNDARY_STYLE = {
   fillOpacity: 0.18,
 };
 
+function toLatLng(
+  latitude: string | number | null | undefined,
+  longitude: string | number | null | undefined,
+): [number, number] | null {
+  if (!hasValidDestinationCoords(latitude, longitude)) {
+    return null;
+  }
+  return [parseDestinationCoord(latitude)!, parseDestinationCoord(longitude)!];
+}
+
+function fitMapContent(
+  map: import('leaflet').Map,
+  L: typeof import('leaflet'),
+  options: {
+    boundaryLayer: import('leaflet').GeoJSON | null;
+    points: [number, number][];
+  },
+) {
+  const { boundaryLayer, points } = options;
+  let bounds: import('leaflet').LatLngBounds | null = null;
+
+  if (boundaryLayer) {
+    const layerBounds = boundaryLayer.getBounds();
+    if (layerBounds.isValid()) {
+      bounds = layerBounds;
+    }
+  }
+
+  for (const point of points) {
+    if (!bounds) {
+      bounds = L.latLngBounds([point]);
+    } else {
+      bounds.extend(point);
+    }
+  }
+
+  if (bounds?.isValid()) {
+    map.fitBounds(bounds, {
+      padding: [28, 28],
+      maxZoom: points.length > 1 || boundaryLayer ? 11 : 8,
+      animate: true,
+    });
+    return;
+  }
+
+  if (points.length === 1) {
+    map.setView(points[0], POINT_ZOOM);
+  }
+}
+
 export function DestinationStaticMap({
   countryCode,
   latitude,
   longitude,
+  destinationName,
+  pointsOfInterest = [],
   title,
   openMapsLabel,
   className,
@@ -44,6 +108,7 @@ export function DestinationStaticMap({
 }: DestinationStaticMapProps) {
   const t = useTranslations('modules.destinations');
   const tForm = useTranslations('modules.destinations.form');
+  const tView = useTranslations('modules.destinations.view');
   const locale = useLocale();
   const mapTitle = title ?? t('form.mapPreview');
   const mapsLinkLabel = openMapsLabel ?? t('form.openStreetMap');
@@ -52,9 +117,18 @@ export function DestinationStaticMap({
   const code = (countryCode ?? '').trim().toUpperCase();
   const hasCountry = /^[A-Z]{2}$/.test(code);
 
+  const mappedPois = useMemo(() => {
+    return pointsOfInterest.flatMap((poi) => {
+      const point = toLatLng(poi.latitude, poi.longitude);
+      if (!point) return [];
+      return [{ id: poi.id, name: poi.name, point }];
+    });
+  }, [pointsOfInterest]);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<import('leaflet').Map | null>(null);
-  const markerRef = useRef<import('leaflet').Marker | null>(null);
+  const centerMarkerRef = useRef<import('leaflet').Marker | null>(null);
+  const poiLayerRef = useRef<import('leaflet').LayerGroup | null>(null);
   const boundaryLayerRef = useRef<import('leaflet').GeoJSON | null>(null);
   const [mapReady, setMapReady] = useState(false);
   const [boundaryStatus, setBoundaryStatus] = useState<
@@ -63,6 +137,16 @@ export function DestinationStaticMap({
 
   const lat = hasCoords ? parseDestinationCoord(latitude)! : null;
   const lng = hasCoords ? parseDestinationCoord(longitude)! : null;
+  const contentPoints = useMemo(() => {
+    const points: [number, number][] = [];
+    if (lat != null && lng != null) {
+      points.push([lat, lng]);
+    }
+    for (const poi of mappedPois) {
+      points.push(poi.point);
+    }
+    return points;
+  }, [lat, lng, mappedPois]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -87,15 +171,7 @@ export function DestinationStaticMap({
         maxZoom: 18,
       }).addTo(map);
 
-      if (lat != null && lng != null) {
-        const marker = L.marker([lat, lng], {
-          interactive: false,
-          icon: createLeafletMarkerIcon(L),
-        });
-        marker.addTo(map);
-        markerRef.current = marker;
-        map.setView([lat, lng], POINT_ZOOM);
-      }
+      poiLayerRef.current = L.layerGroup().addTo(map);
 
       mapRef.current = map;
       setMapReady(true);
@@ -108,12 +184,11 @@ export function DestinationStaticMap({
       cancelled = true;
       setMapReady(false);
       boundaryLayerRef.current = null;
-      markerRef.current = null;
+      centerMarkerRef.current = null;
+      poiLayerRef.current = null;
       mapRef.current?.remove();
       mapRef.current = null;
     };
-    // Init once — country/coords handled in dedicated effects.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -128,23 +203,52 @@ export function DestinationStaticMap({
       }
 
       if (lat == null || lng == null) {
-        markerRef.current?.remove();
-        markerRef.current = null;
+        centerMarkerRef.current?.remove();
+        centerMarkerRef.current = null;
         return;
       }
 
-      if (markerRef.current) {
-        markerRef.current.setLatLng([lat, lng]);
+      const popupLabel = destinationName?.trim() || tView('mapCenterLabel');
+
+      if (centerMarkerRef.current) {
+        centerMarkerRef.current.setLatLng([lat, lng]);
+        centerMarkerRef.current.bindPopup(popupLabel);
       } else {
         const marker = L.marker([lat, lng], {
-          interactive: false,
           icon: createLeafletMarkerIcon(L),
         });
+        marker.bindPopup(popupLabel);
         marker.addTo(map);
-        markerRef.current = marker;
+        centerMarkerRef.current = marker;
       }
     });
-  }, [lat, lng, mapReady]);
+  }, [lat, lng, mapReady, destinationName, tView]);
+
+  useEffect(() => {
+    if (!mapReady || !mapRef.current || !poiLayerRef.current) {
+      return;
+    }
+
+    void import('leaflet').then((L) => {
+      const layer = poiLayerRef.current;
+      if (!layer) {
+        return;
+      }
+
+      layer.clearLayers();
+      const icon = createLeafletPoiMarkerIcon(L);
+      for (const poi of mappedPois) {
+        const marker = L.marker(poi.point, { icon });
+        marker.bindPopup(poi.name);
+        marker.bindTooltip(poi.name, {
+          direction: 'top',
+          offset: [0, -8],
+          opacity: 0.9,
+        });
+        marker.addTo(layer);
+      }
+    });
+  }, [mappedPois, mapReady]);
 
   useEffect(() => {
     if (!mapReady || !mapRef.current) {
@@ -158,9 +262,6 @@ export function DestinationStaticMap({
 
     if (!hasCountry) {
       setBoundaryStatus('idle');
-      if (lat != null && lng != null) {
-        map.setView([lat, lng], POINT_ZOOM);
-      }
       return;
     }
 
@@ -181,9 +282,6 @@ export function DestinationStaticMap({
 
         if (!geojson) {
           setBoundaryStatus('empty');
-          if (lat != null && lng != null) {
-            map.setView([lat, lng], POINT_ZOOM);
-          }
           return;
         }
 
@@ -192,24 +290,6 @@ export function DestinationStaticMap({
         });
         layer.addTo(map);
         boundaryLayerRef.current = layer;
-
-        const bounds = layer.getBounds();
-        if (bounds.isValid()) {
-          if (lat != null && lng != null) {
-            map.fitBounds(bounds.extend([lat, lng]), {
-              padding: [28, 28],
-              maxZoom: 10,
-              animate: true,
-            });
-          } else {
-            map.fitBounds(bounds, {
-              padding: [28, 28],
-              maxZoom: 8,
-              animate: true,
-            });
-          }
-        }
-
         setBoundaryStatus('ready');
       } catch (error) {
         if (controller.signal.aborted) {
@@ -223,11 +303,27 @@ export function DestinationStaticMap({
     return () => {
       controller.abort();
     };
-    // Fit when country is ready; lat/lng read at fetch time for padding.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code, hasCountry, mapReady, locale]);
 
-  if (!hasCoords && !hasCountry) {
+  useEffect(() => {
+    if (!mapReady || !mapRef.current) {
+      return;
+    }
+    if (hasCountry && boundaryStatus === 'loading') {
+      return;
+    }
+
+    const map = mapRef.current;
+    void import('leaflet').then((L) => {
+      if (mapRef.current !== map) return;
+      fitMapContent(map, L, {
+        boundaryLayer: boundaryLayerRef.current,
+        points: contentPoints,
+      });
+    });
+  }, [mapReady, hasCountry, boundaryStatus, contentPoints]);
+
+  if (!hasCoords && !hasCountry && mappedPois.length === 0) {
     return null;
   }
 
@@ -237,6 +333,15 @@ export function DestinationStaticMap({
       : hasCountry
         ? `https://www.openstreetmap.org/search?query=${encodeURIComponent(code)}`
         : null;
+
+  const mapHeightClass =
+    mappedPois.length > 0
+      ? compact
+        ? 'h-52 w-full sm:h-64'
+        : 'h-64 w-full sm:h-80'
+      : compact
+        ? 'h-40 w-full'
+        : 'h-56 w-full sm:h-64';
 
   return (
     <section className={cn('space-y-3', className)} aria-label={mapTitle}>
@@ -248,10 +353,15 @@ export function DestinationStaticMap({
           </p>
         ) : null}
       </div>
+      {mappedPois.length > 0 ? (
+        <p className="text-xs text-atg-muted">
+          {tView('mapPoiHint', { count: mappedPois.length })}
+        </p>
+      ) : null}
       <div className="overflow-hidden rounded-xl border border-atg-border bg-atg-surface">
         <div
           ref={containerRef}
-          className={compact ? 'h-40 w-full' : 'h-56 w-full sm:h-64'}
+          className={mapHeightClass}
           role="img"
           aria-label={tForm('mapBoundaryAria')}
         />

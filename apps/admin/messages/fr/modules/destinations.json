@@ -80,6 +80,8 @@
     "heroAlt": "Image hero de {name}",
     "heroEmpty": "Aucune image hero.",
     "mapEmpty": "Aucune coordonnée renseignée pour la carte.",
+    "mapCenterLabel": "Centre de la destination",
+    "mapPoiHint": "{count, plural, one {# point d'intérêt affiché sur la carte.} other {# points d'intérêt affichés sur la carte.}}",
     "poisTitle": "Points d'intérêt",
     "poisIntro": "{count} point(s) d'intérêt enregistré(s)",
     "poisEmpty": "Aucun point d'intérêt pour cette destination.",
