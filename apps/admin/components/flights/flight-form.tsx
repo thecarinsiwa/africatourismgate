@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Card, Input } from '@africatourismgate/ui';
+import { Button, Card, Input, SearchableSelect } from '@africatourismgate/ui';
 import type {
   Airline,
   Airport,
@@ -11,7 +11,7 @@ import type {
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useId, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import {
   fromDatetimeLocalValue,
@@ -85,10 +85,8 @@ export function FlightForm({
   const tActions = useTranslations('common.actions');
   const tLoading = useTranslations('common.loading');
   const tCommon = useTranslations('modules.common');
+  const tSelect = useTranslations('modules.common.select');
   const router = useRouter();
-  const airlineId = useId();
-  const depId = useId();
-  const arrId = useId();
   const [airlines, setAirlines] = useState<Airline[]>([]);
   const [airports, setAirports] = useState<Airport[]>([]);
   const [values, setValues] = useState<FlightFormValues>(() =>
@@ -107,8 +105,8 @@ export function FlightForm({
       return;
     }
     void Promise.all([
-      getApiClient().listAirlines({ page: 1, limit: 100 }),
-      getApiClient().listAirports({ page: 1, limit: 100 }),
+      getApiClient().listAirlines({ page: 1, limit: 200 }),
+      getApiClient().listAirports({ page: 1, limit: 500 }),
     ])
       .then(([a, p]) => {
         setAirlines(a.data);
@@ -174,32 +172,45 @@ export function FlightForm({
     }
   }
 
-  const selectClass =
+  const airlineOptions = useMemo(
+    () =>
+      airlines.map((airline) => ({
+        value: airline.id,
+        label: `${airline.iataCode} — ${airline.name}`,
+      })),
+    [airlines],
+  );
+
+  const airportOptions = useMemo(
+    () =>
+      airports.map((airport) => ({
+        value: airport.id,
+        label: `${airport.iataCode} — ${airport.city}${
+          airport.name?.trim() && airport.name.trim() !== airport.city
+            ? ` (${airport.name.trim()})`
+            : ''
+        }`,
+      })),
+    [airports],
+  );
+
+  const fieldInputClass =
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none focus:border-primary focus:ring-1 focus:ring-primary';
 
   const fields = (
     <div className="space-y-4">
-      <div>
-        <label htmlFor={airlineId} className="mb-2 block text-sm font-medium text-atg-fg">
-          {t('airline')}
-        </label>
-        <select
-          id={airlineId}
-          className={selectClass}
-          value={values.airlineId}
-          onChange={(e) => updateField('airlineId', e.target.value)}
-        >
-          <option value="">{tCommon('select.chooseDash')}</option>
-          {airlines.map((a) => (
-            <option key={a.id} value={a.id}>
-              {a.iataCode} — {a.name}
-            </option>
-          ))}
-        </select>
-        {fieldErrors.airlineId ? (
-          <p className="mt-1 text-sm text-red-600">{fieldErrors.airlineId}</p>
-        ) : null}
-      </div>
+      <SearchableSelect
+        label={t('airline')}
+        name="airlineId"
+        value={values.airlineId}
+        options={airlineOptions}
+        onChange={(next) => updateField('airlineId', next)}
+        searchPlaceholder={tSelect('searchPlaceholder')}
+        emptyMessage={tSelect('empty')}
+        placeholder={tCommon('select.chooseDash')}
+        error={fieldErrors.airlineId}
+        required
+      />
 
       <Input
         label={t('flightNumber')}
@@ -210,48 +221,30 @@ export function FlightForm({
       />
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor={depId} className="mb-2 block text-sm font-medium text-atg-fg">
-            {t('departure')}
-          </label>
-          <select
-            id={depId}
-            className={selectClass}
-            value={values.departureAirportId}
-            onChange={(e) => updateField('departureAirportId', e.target.value)}
-          >
-            <option value="">{tCommon('select.chooseDash')}</option>
-            {airports.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.iataCode} — {a.city}
-              </option>
-            ))}
-          </select>
-          {fieldErrors.departureAirportId ? (
-            <p className="mt-1 text-sm text-red-600">{fieldErrors.departureAirportId}</p>
-          ) : null}
-        </div>
-        <div>
-          <label htmlFor={arrId} className="mb-2 block text-sm font-medium text-atg-fg">
-            {t('arrival')}
-          </label>
-          <select
-            id={arrId}
-            className={selectClass}
-            value={values.arrivalAirportId}
-            onChange={(e) => updateField('arrivalAirportId', e.target.value)}
-          >
-            <option value="">{tCommon('select.chooseDash')}</option>
-            {airports.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.iataCode} — {a.city}
-              </option>
-            ))}
-          </select>
-          {fieldErrors.arrivalAirportId ? (
-            <p className="mt-1 text-sm text-red-600">{fieldErrors.arrivalAirportId}</p>
-          ) : null}
-        </div>
+        <SearchableSelect
+          label={t('departure')}
+          name="departureAirportId"
+          value={values.departureAirportId}
+          options={airportOptions}
+          onChange={(next) => updateField('departureAirportId', next)}
+          searchPlaceholder={tSelect('searchPlaceholder')}
+          emptyMessage={tSelect('empty')}
+          placeholder={tCommon('select.chooseDash')}
+          error={fieldErrors.departureAirportId}
+          required
+        />
+        <SearchableSelect
+          label={t('arrival')}
+          name="arrivalAirportId"
+          value={values.arrivalAirportId}
+          options={airportOptions}
+          onChange={(next) => updateField('arrivalAirportId', next)}
+          searchPlaceholder={tSelect('searchPlaceholder')}
+          emptyMessage={tSelect('empty')}
+          placeholder={tCommon('select.chooseDash')}
+          error={fieldErrors.arrivalAirportId}
+          required
+        />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -259,7 +252,7 @@ export function FlightForm({
           <label className="mb-2 block text-sm font-medium text-atg-fg">{t('departureTime')}</label>
           <input
             type="datetime-local"
-            className={selectClass}
+            className={fieldInputClass}
             value={values.departureTime}
             onChange={(e) => updateField('departureTime', e.target.value)}
           />
@@ -271,7 +264,7 @@ export function FlightForm({
           <label className="mb-2 block text-sm font-medium text-atg-fg">{t('arrivalTime')}</label>
           <input
             type="datetime-local"
-            className={selectClass}
+            className={fieldInputClass}
             value={values.arrivalTime}
             onChange={(e) => updateField('arrivalTime', e.target.value)}
           />
