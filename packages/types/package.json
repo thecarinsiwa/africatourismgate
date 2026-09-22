@@ -29,6 +29,11 @@
       "types": "./dist/organization-settings.d.ts",
       "require": "./dist/organization-settings.js",
       "default": "./dist/organization-settings.js"
+    },
+    "./organization-maintenances": {
+      "types": "./dist/organization-maintenances.d.ts",
+      "require": "./dist/organization-maintenances.js",
+      "default": "./dist/organization-maintenances.js"
     }
   },
   "scripts": {

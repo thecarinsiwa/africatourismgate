@@ -22,6 +22,7 @@ import { OrganizationSettingsModule } from './resources/organization-settings/or
 import { OrganizationBankAccountsModule } from './resources/organization-bank-accounts/organization-bank-accounts.module';
 import { MobileMoneyConfigModule } from './resources/mobile-money-config/mobile-money-config.module';
 import { DonationsModule } from './resources/donations/donations.module';
+import { OrganizationMaintenancesModule } from './resources/organization-maintenances/organization-maintenances.module';
 import { PermissionsModule } from './resources/permissions/permissions.module';
 import { RolesModule } from './resources/roles/roles.module';
 import { RolePermissionsModule } from './resources/role-permissions/role-permissions.module';
@@ -117,6 +118,7 @@ import { Module } from '@nestjs/common';
     OrganizationBankAccountsModule,
     MobileMoneyConfigModule,
     DonationsModule,
+    OrganizationMaintenancesModule,
     PermissionsModule,
     RolesModule,
     RolePermissionsModule,

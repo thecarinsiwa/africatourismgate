@@ -711,6 +711,23 @@
       "title": "E-mails",
       "description": "Personnalisez l'apparence des e-mails transactionnels (bienvenue, confirmation de réservation).",
       "metaTitle": "E-mails"
+    },
+    "maintenance": {
+      "title": "Maintenance",
+      "description": "Planifiez une ou plusieurs fenêtres de maintenance du site public (titre, message, début et fin).",
+      "metaTitle": "Maintenance",
+      "nouveau": {
+        "title": "Nouvelle fenêtre de maintenance",
+        "metaTitle": "Nouvelle fenêtre de maintenance",
+        "description": "Définissez la période pendant laquelle le site public affiche la page de maintenance.",
+        "backLabel": "Retour à la maintenance"
+      },
+      "edit": {
+        "title": "Modifier la fenêtre de maintenance",
+        "metaTitle": "Modifier la fenêtre de maintenance",
+        "description": "Mettez à jour le message, l’activation et la période de la fenêtre.",
+        "backLabel": "Retour à la maintenance"
+      }
     }
   },
   "dashboard": {

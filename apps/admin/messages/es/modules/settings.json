@@ -3,6 +3,7 @@
     "ariaLabel": "Navegación de ajustes",
     "settings": "Ajustes",
     "emails": "Correos",
+    "maintenance": "Mantenimiento",
     "donations": "Donaciones",
     "bankAccounts": "Cuentas bancarias",
     "mobileMoney": "Mobile Money"
@@ -38,7 +39,10 @@
       "programCodeInvalid": "El código de programa es obligatorio (máx. 32 caracteres).",
       "paymentMethodsRequired": "Active al menos un método de pago.",
       "depositPercentInvalid": "El porcentaje de anticipo debe ser un entero entre 1 y 100.",
-      "depositFixedInvalid": "El importe fijo de anticipo debe ser un número positivo (p. ej. 50.00)."
+      "depositFixedInvalid": "El importe fijo de anticipo debe ser un número positivo (p. ej. 50.00).",
+      "maintenanceTitleTooLong": "El título no debe superar 200 caracteres.",
+      "maintenanceMessageTooLong": "El mensaje no debe superar 2000 caracteres.",
+      "maintenanceEndsAtInvalid": "La fecha de fin de mantenimiento no es válida."
     },
     "sections": {
       "contact": {
@@ -92,6 +96,17 @@
           "activity_schedule": "Actividad",
           "package": "Paquete"
         }
+      },
+      "maintenance": {
+        "title": "Mantenimiento del sitio",
+        "description": "Cuando está activado, los visitantes del sitio público son redirigidos a una página de mantenimiento (el admin sigue accesible).",
+        "enabled": "Activar el modo mantenimiento",
+        "pageTitle": "Título mostrado",
+        "pageTitleHint": "Opcional — si no, se usa el título por defecto de la página de mantenimiento.",
+        "message": "Mensaje",
+        "messageHint": "Opcional — texto mostrado a los visitantes (máx. 2000 caracteres).",
+        "endsAt": "Fin previsto",
+        "endsAtHint": "Opcional — si se indica, se muestra una cuenta atrás y el sitio se reabre automáticamente a esa hora (aunque el interruptor siga activo)."
       },
       "loyalty": {
         "title": "Fidelidad OneKey",
@@ -463,6 +478,61 @@
         "buttonLabelRequired": "La etiqueta del botón es obligatoria.",
         "urlRequired": "El enlace es obligatorio.",
         "urlInvalid": "El enlace debe ser una URL válida."
+      }
+    }
+  },
+  "maintenances": {
+    "list": {
+      "pageTitle": "Mantenimiento",
+      "createButton": "Nueva ventana",
+      "empty": "No hay ventanas de mantenimiento todavía.",
+      "denied": "No tiene permiso para consultar el mantenimiento.",
+      "deleteTitle": "Eliminar ventana",
+      "deleteConfirm": "La ventana « {title} » será eliminada.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
+      "untitled": "Sin título",
+      "tableAria": "Lista de ventanas de mantenimiento",
+      "localeFilter": "Idioma",
+      "allLocales": "Todos los idiomas",
+      "enabledYes": "Activada",
+      "enabledNo": "Desactivada",
+      "statusActive": "En curso",
+      "statusInactive": "Inactiva",
+      "columns": {
+        "title": "Título",
+        "locale": "Idioma",
+        "window": "Ventana",
+        "enabled": "Activación",
+        "status": "Estado"
+      }
+    },
+    "form": {
+      "denied": "Acceso denegado.",
+      "notFound": "Ventana de mantenimiento no encontrada.",
+      "saving": "Guardando…",
+      "saveButton": "Guardar",
+      "cancelButton": "Cancelar",
+      "fields": {
+        "enabled": "Activar esta ventana",
+        "enabledHint": "El sitio público entra en mantenimiento solo si la ventana está activada y la fecha/hora actual está en el intervalo.",
+        "locale": "Idioma",
+        "title": "Título de la página",
+        "titlePlaceholder": "Mantenimiento en curso",
+        "titleHint": "Opcional — de lo contrario se usa el título predeterminado de la página pública.",
+        "message": "Mensaje",
+        "messagePlaceholder": "Volveremos pronto…",
+        "startsAt": "Inicio",
+        "endsAt": "Fin previsto",
+        "endsAtHint": "Opcional — déjelo vacío para un fin indefinido (reapertura manual)."
+      },
+      "validation": {
+        "startsAtRequired": "La fecha de inicio es obligatoria.",
+        "startsAtInvalid": "La fecha de inicio no es válida.",
+        "endsAtInvalid": "La fecha de fin no es válida.",
+        "endsAtAfterStartsAt": "El fin debe ser posterior al inicio.",
+        "titleTooLong": "El título no debe superar 200 caracteres.",
+        "messageTooLong": "El mensaje no debe superar 2000 caracteres."
       }
     }
   }

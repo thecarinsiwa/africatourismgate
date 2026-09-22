@@ -25,6 +25,7 @@ import { GapMediaItems } from '../entities/gap-media-item.entity';
 import { GapPages } from '../entities/gap-page.entity';
 import { GapSiteSettings } from '../entities/gap-site-settings.entity';
 import { Donations } from '../entities/donation.entity';
+import { OrganizationMaintenances } from '../entities/organization-maintenance.entity';
 import { HeroSlides } from '../entities/hero-slide.entity';
 import { EmailOperationVerifications } from '../entities/email-operation-verification.entity';
 import { Notifications } from '../entities/notification.entity';
@@ -52,6 +53,7 @@ const entityList = [
   GapImpactStats,
   GapMediaItems,
   Donations,
+  OrganizationMaintenances,
   HeroSlides,
   BookingIdentityDocuments,
   BookingPaymentProofs,

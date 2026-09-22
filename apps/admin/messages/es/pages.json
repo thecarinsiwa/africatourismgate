@@ -711,6 +711,23 @@
       "title": "Correos electrónicos",
       "description": "Personalice la apariencia de los correos transaccionales (bienvenida, confirmación de reserva).",
       "metaTitle": "Correos electrónicos"
+    },
+    "maintenance": {
+      "title": "Mantenimiento",
+      "description": "Planifique una o más ventanas de mantenimiento del sitio público (título, mensaje, inicio y fin).",
+      "metaTitle": "Mantenimiento",
+      "nouveau": {
+        "title": "Nueva ventana de mantenimiento",
+        "metaTitle": "Nueva ventana de mantenimiento",
+        "description": "Defina el periodo durante el cual el sitio público muestra la página de mantenimiento.",
+        "backLabel": "Volver al mantenimiento"
+      },
+      "edit": {
+        "title": "Editar ventana de mantenimiento",
+        "metaTitle": "Editar ventana de mantenimiento",
+        "description": "Actualice el mensaje, la activación y el periodo de la ventana.",
+        "backLabel": "Volver al mantenimiento"
+      }
     }
   },
   "dashboard": {

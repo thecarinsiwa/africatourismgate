@@ -390,6 +390,11 @@ export function validateSettingValue(
           : {}),
       };
     }
+    case 'maintenance': {
+      throw new BadRequestException(
+        'Le setting site/maintenance est obsolète. Utilisez l’API organization-maintenances.',
+      );
+    }
     default:
       return value;
   }

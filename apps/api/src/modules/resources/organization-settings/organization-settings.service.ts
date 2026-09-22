@@ -11,6 +11,7 @@ import type {
   AuthVisualDecorIcon,
   PublicAuthVisual,
   PublicAuthVisualIcon,
+  PublicSiteMaintenance,
   ResolvedBookingDeposits,
   ResolvedBookingItemTypeModes,
   ResolvedWebPaymentMethods,
@@ -32,6 +33,7 @@ import {
   Organizations,
 } from '../../../entities/generated';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
+import { OrganizationMaintenancesService } from '../organization-maintenances/organization-maintenances.service';
 import { BulkUpsertOrganizationSettingsDto } from './dto/bulk-upsert-organization-settings.dto';
 import {
   OrganizationSettingDto,
@@ -41,6 +43,7 @@ import { PublicBrandingDto } from './dto/public-branding.dto';
 import { PublicContactDto } from './dto/public-contact.dto';
 import { PublicBookingModesDto } from './dto/public-booking-modes.dto';
 import { PublicPaymentMethodsDto } from './dto/public-payment-methods.dto';
+import { PublicSiteMaintenanceDto } from './dto/public-site-maintenance.dto';
 import { OrganizationSettingsListQueryDto } from './dto/organization-settings-list-query.dto';
 import { validateSettingValue } from './validate-setting-value';
 
@@ -160,6 +163,7 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
     @InjectRepository(Organizations)
     private readonly organizationsRepository: Repository<Organizations>,
     private readonly orgScopeService: OrgScopeService,
+    private readonly organizationMaintenancesService: OrganizationMaintenancesService,
   ) {
     super(settingsRepository);
   }
@@ -360,6 +364,14 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
     return this.getResolvedWebPaymentMethods(organization.id);
   }
 
+  async findPublicSiteMaintenance(
+    organizationSlug?: string,
+    locale?: string,
+  ): Promise<PublicSiteMaintenanceDto> {
+    const organization = await this.resolvePublicOrganization(organizationSlug);
+    return this.getResolvedSiteMaintenance(organization.id, locale);
+  }
+
   async getResolvedItemTypeModes(
     organizationId: string = PLATFORM_ORG_ID,
   ): Promise<ResolvedBookingItemTypeModes> {
@@ -436,6 +448,16 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
         depositPercent?: number;
         depositFixedCents?: number;
       },
+    );
+  }
+
+  async getResolvedSiteMaintenance(
+    organizationId: string = PLATFORM_ORG_ID,
+    locale?: string,
+  ): Promise<PublicSiteMaintenance> {
+    return this.organizationMaintenancesService.getResolvedCurrent(
+      organizationId,
+      locale,
     );
   }
 

@@ -43,6 +43,7 @@ export const ADMIN_ROUTE_ACCESS_RULES: RouteAccessRule[] = [
   { prefix: '/parametres/comptes', permission: 'organization_bank_accounts.read' },
   { prefix: '/parametres/mobile-money', permission: 'mobile_money.read' },
   { prefix: '/parametres/emails', permission: 'organization_settings.read' },
+  { prefix: '/parametres/maintenance', permission: 'organization_settings.read' },
   { prefix: '/parametres', permission: 'organization_settings.read' },
   { prefix: '/notifications', authenticatedOnly: true },
   { prefix: '/profil', authenticatedOnly: true },

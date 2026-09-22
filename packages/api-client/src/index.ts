@@ -386,6 +386,7 @@ import type {
   UpdatePointOfInterestRequest,
   BulkUpsertOrganizationSettingsRequest,
   CreateOrganizationBankAccountRequest,
+  CreateOrganizationMaintenanceRequest,
   CreateMobileMoneyCountryRequest,
   CreateMobileMoneyOperatorRequest,
   CreateMobileMoneyPaymentNumberRequest,
@@ -393,6 +394,8 @@ import type {
   EmailPreviewResponse,
   OrganizationBankAccount,
   OrganizationBankAccountsListQuery,
+  OrganizationMaintenance,
+  OrganizationMaintenancesListQuery,
   OrganizationSetting,
   OrganizationSettingsListQuery,
   MobileMoneyCountriesListQuery,
@@ -402,6 +405,7 @@ import type {
   MobileMoneyPaymentNumber,
   MobileMoneyPaymentNumbersListQuery,
   UpdateOrganizationBankAccountRequest,
+  UpdateOrganizationMaintenanceRequest,
   UpdateMobileMoneyCountryRequest,
   UpdateMobileMoneyOperatorRequest,
   UpdateMobileMoneyPaymentNumberRequest,
@@ -421,6 +425,7 @@ import type {
   UserRoleAssignmentsListQuery,
   User,
   UsersListQuery,
+  PublicSiteMaintenance,
   ResolvedBookingItemTypeModes,
   ResolvedWebPaymentMethods,
 } from '@africatourismgate/types';
@@ -515,6 +520,7 @@ export type {
   UpdateDepartmentRequest,
   BulkUpsertOrganizationSettingsRequest,
   CreateOrganizationBankAccountRequest,
+  CreateOrganizationMaintenanceRequest,
   CreateMobileMoneyCountryRequest,
   CreateMobileMoneyOperatorRequest,
   CreateMobileMoneyPaymentNumberRequest,
@@ -524,6 +530,8 @@ export type {
   EmailPreviewTemplate,
   OrganizationBankAccount,
   OrganizationBankAccountsListQuery,
+  OrganizationMaintenance,
+  OrganizationMaintenancesListQuery,
   OrganizationSetting,
   OrganizationSettingsListQuery,
   MobileMoneyCountriesListQuery,
@@ -533,6 +541,7 @@ export type {
   MobileMoneyPaymentNumber,
   MobileMoneyPaymentNumbersListQuery,
   UpdateOrganizationBankAccountRequest,
+  UpdateOrganizationMaintenanceRequest,
   UpdateMobileMoneyCountryRequest,
   UpdateMobileMoneyOperatorRequest,
   UpdateMobileMoneyPaymentNumberRequest,
@@ -1367,11 +1376,86 @@ export class ApiClient {
     );
   }
 
+  getPublicSiteMaintenance(query?: {
+    organizationSlug?: string;
+    locale?: string;
+  }): Promise<PublicSiteMaintenance> {
+    const params = new URLSearchParams();
+    if (query?.organizationSlug) {
+      params.set('organizationSlug', query.organizationSlug);
+    }
+    if (query?.locale) {
+      params.set('locale', query.locale);
+    }
+    const q = params.toString();
+    return this.request<PublicSiteMaintenance>(
+      `/public/organization-maintenances/current${q ? `?${q}` : ''}`,
+    );
+  }
+
   previewEmail(body: EmailPreviewRequest): Promise<EmailPreviewResponse> {
     return this.request<EmailPreviewResponse>('/email/preview', {
       method: 'POST',
       body,
     });
+  }
+
+  listOrganizationMaintenances(
+    query?: OrganizationMaintenancesListQuery,
+  ): Promise<PaginatedResponse<OrganizationMaintenance>> {
+    return fetchPaginated<OrganizationMaintenance>(
+      this,
+      '/organization-maintenances',
+      query,
+    );
+  }
+
+  getOrganizationMaintenance(
+    id: string,
+    organizationId?: string,
+  ): Promise<OrganizationMaintenance> {
+    const params = new URLSearchParams();
+    if (organizationId) params.set('organizationId', organizationId);
+    const q = params.toString();
+    return this.request<OrganizationMaintenance>(
+      `/organization-maintenances/${id}${q ? `?${q}` : ''}`,
+    );
+  }
+
+  createOrganizationMaintenance(
+    body: CreateOrganizationMaintenanceRequest,
+  ): Promise<OrganizationMaintenance> {
+    return this.request<OrganizationMaintenance>('/organization-maintenances', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateOrganizationMaintenance(
+    id: string,
+    body: UpdateOrganizationMaintenanceRequest,
+    organizationId?: string,
+  ): Promise<OrganizationMaintenance> {
+    const params = new URLSearchParams();
+    if (organizationId) params.set('organizationId', organizationId);
+    const q = params.toString();
+    return this.request<OrganizationMaintenance>(
+      `/organization-maintenances/${id}${q ? `?${q}` : ''}`,
+      { method: 'PATCH', body },
+    );
+  }
+
+  deleteOrganizationMaintenance(
+    id: string,
+    organizationId?: string,
+  ): Promise<void> {
+    const params = new URLSearchParams();
+    if (organizationId) params.set('organizationId', organizationId);
+    const q = params.toString();
+    return this.request<void>(
+      `/organization-maintenances/${id}${q ? `?${q}` : ''}`,
+      { method: 'DELETE' },
+    );
   }
 
   listOrganizationBankAccounts(

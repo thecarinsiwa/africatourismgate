@@ -56,6 +56,8 @@ test('panier -> recap -> Stripe -> confirmation', async ({ page }) => {
             totalPriceCents: 120000,
             currency: 'USD',
             available: true,
+            nightlyBreakdown: [],
+            images: [],
           },
         ],
       }),
@@ -73,7 +75,7 @@ test('panier -> recap -> Stripe -> confirmation', async ({ page }) => {
   await mockManifestApi(page);
 
   await page.goto(
-    '/hotels/test-hotel?checkIn=2026-08-10&checkOut=2026-08-12&guests=2&roomId=room-e2e',
+    '/hotels/test-hotel?checkIn=2026-11-10&checkOut=2026-11-12&guests=2&roomId=room-e2e',
   );
 
   await page
@@ -164,6 +166,8 @@ test('panier -> recap -> cash -> attente paiement sur place', async ({ page }) =
             totalPriceCents: 120000,
             currency: 'USD',
             available: true,
+            nightlyBreakdown: [],
+            images: [],
           },
         ],
       }),
@@ -181,7 +185,7 @@ test('panier -> recap -> cash -> attente paiement sur place', async ({ page }) =
   await mockManifestApi(page);
 
   await page.goto(
-    '/hotels/test-hotel?checkIn=2026-08-10&checkOut=2026-08-12&guests=2&roomId=room-e2e',
+    '/hotels/test-hotel?checkIn=2026-11-10&checkOut=2026-11-12&guests=2&roomId=room-e2e',
   );
 
   await page

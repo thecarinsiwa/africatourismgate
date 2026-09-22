@@ -711,6 +711,23 @@
       "title": "Emails",
       "description": "Customize the look of transactional emails (welcome, booking confirmation).",
       "metaTitle": "Emails"
+    },
+    "maintenance": {
+      "title": "Maintenance",
+      "description": "Schedule one or more public site maintenance windows (title, message, start and end).",
+      "metaTitle": "Maintenance",
+      "nouveau": {
+        "title": "New maintenance window",
+        "metaTitle": "New maintenance window",
+        "description": "Define the period when the public site shows the maintenance page.",
+        "backLabel": "Back to maintenance"
+      },
+      "edit": {
+        "title": "Edit maintenance window",
+        "metaTitle": "Edit maintenance window",
+        "description": "Update the message, enabled flag and time window.",
+        "backLabel": "Back to maintenance"
+      }
     }
   },
   "dashboard": {

@@ -196,6 +196,21 @@
     "verticalMetaTitle": "{label} — Coming soon",
     "verticalMetaDescription": "Online booking for {label} is coming soon on Africa Tourism Gate."
   },
+  "maintenance": {
+    "badge": "Maintenance",
+    "title": "Under maintenance",
+    "message": "The site is temporarily unavailable. We’ll be back soon — thank you for your patience.",
+    "localeFallback": "No maintenance announcement in your language yet — showing the default message.",
+    "endsAtLabel": "Expected back: {date}",
+    "countdownLabel": "Back online in",
+    "countdownDays": "Days",
+    "countdownHours": "Hours",
+    "countdownMinutes": "Min",
+    "countdownSeconds": "Sec",
+    "countdownDone": "Reopening…",
+    "metaTitle": "Maintenance",
+    "metaDescription": "Africa Tourism Gate is temporarily under maintenance."
+  },
   "blog": {
     "metaTitle": "Africa travel blog",
     "metaDescription": "Tips, guides and inspiration to plan your next trip to Africa with Africa Tourism Gate.",

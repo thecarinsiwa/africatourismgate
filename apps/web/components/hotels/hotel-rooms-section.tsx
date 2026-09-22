@@ -29,7 +29,7 @@ function RoomImagesThumb({
   room: PropertyDetailRoom;
   galleryLabels: SwipeableGalleryLabels;
 }) {
-  const images = [...room.images].sort((a, b) => a.sortOrder - b.sortOrder);
+  const images = [...(room.images ?? [])].sort((a, b) => a.sortOrder - b.sortOrder);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   if (!images.length) return null;
@@ -104,7 +104,8 @@ export function HotelRoomsSection({
             room.totalPriceCents != null && nights > 0
               ? Math.round(room.totalPriceCents / nights)
               : room.basePriceCents;
-          const hasImages = room.images.length > 0;
+          const roomImages = room.images ?? [];
+          const hasImages = roomImages.length > 0;
 
           return (
             <article
@@ -155,7 +156,10 @@ export function HotelRoomsSection({
 
               {hasImages ? (
                 <div className="mt-2 sm:mt-3">
-                  <RoomImagesThumb room={room} galleryLabels={galleryLabels} />
+                  <RoomImagesThumb
+                    room={{ ...room, images: roomImages }}
+                    galleryLabels={galleryLabels}
+                  />
                 </div>
               ) : null}
 

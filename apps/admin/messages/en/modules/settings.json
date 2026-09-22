@@ -3,6 +3,7 @@
     "ariaLabel": "Settings navigation",
     "settings": "Settings",
     "emails": "Emails",
+    "maintenance": "Maintenance",
     "donations": "Donations",
     "bankAccounts": "Bank accounts",
     "mobileMoney": "Mobile Money"
@@ -38,7 +39,10 @@
       "programCodeInvalid": "Program code is required (max 32 characters).",
       "paymentMethodsRequired": "Enable at least one payment method.",
       "depositPercentInvalid": "Deposit percent must be an integer between 1 and 100.",
-      "depositFixedInvalid": "Fixed deposit amount must be a positive number (e.g. 50.00)."
+      "depositFixedInvalid": "Fixed deposit amount must be a positive number (e.g. 50.00).",
+      "maintenanceTitleTooLong": "Title must be at most 200 characters.",
+      "maintenanceMessageTooLong": "Message must be at most 2000 characters.",
+      "maintenanceEndsAtInvalid": "Maintenance end date is invalid."
     },
     "sections": {
       "contact": {
@@ -92,6 +96,17 @@
           "activity_schedule": "Activity",
           "package": "Package"
         }
+      },
+      "maintenance": {
+        "title": "Site maintenance",
+        "description": "When enabled, public site visitors are redirected to a maintenance page (admin remains accessible).",
+        "enabled": "Enable maintenance mode",
+        "pageTitle": "Displayed title",
+        "pageTitleHint": "Optional — otherwise the default maintenance page title is used.",
+        "message": "Message",
+        "messageHint": "Optional — text shown to visitors (max 2000 characters).",
+        "endsAt": "Scheduled end",
+        "endsAtHint": "Optional — when set, a countdown is shown and the site reopens automatically at that time (even if the toggle stays on)."
       },
       "loyalty": {
         "title": "OneKey loyalty",
@@ -463,6 +478,61 @@
         "buttonLabelRequired": "Button label is required.",
         "urlRequired": "Link is required.",
         "urlInvalid": "Link must be a valid URL."
+      }
+    }
+  },
+  "maintenances": {
+    "list": {
+      "pageTitle": "Maintenance",
+      "createButton": "New window",
+      "empty": "No maintenance windows yet.",
+      "denied": "You do not have permission to view maintenance.",
+      "deleteTitle": "Delete window",
+      "deleteConfirm": "The window “{title}” will be deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
+      "untitled": "Untitled",
+      "tableAria": "Maintenance windows list",
+      "localeFilter": "Language",
+      "allLocales": "All languages",
+      "enabledYes": "Enabled",
+      "enabledNo": "Disabled",
+      "statusActive": "Active",
+      "statusInactive": "Inactive",
+      "columns": {
+        "title": "Title",
+        "locale": "Language",
+        "window": "Window",
+        "enabled": "Enabled",
+        "status": "Status"
+      }
+    },
+    "form": {
+      "denied": "Access denied.",
+      "notFound": "Maintenance window not found.",
+      "saving": "Saving…",
+      "saveButton": "Save",
+      "cancelButton": "Cancel",
+      "fields": {
+        "enabled": "Enable this window",
+        "enabledHint": "The public site enters maintenance only when this window is enabled and the current time falls within the interval.",
+        "locale": "Language",
+        "title": "Page title",
+        "titlePlaceholder": "Under maintenance",
+        "titleHint": "Optional — otherwise the public page default title is used.",
+        "message": "Message",
+        "messagePlaceholder": "We’ll be back soon…",
+        "startsAt": "Starts at",
+        "endsAt": "Planned end",
+        "endsAtHint": "Optional — leave empty for an open-ended window (manual reopen)."
+      },
+      "validation": {
+        "startsAtRequired": "Start date is required.",
+        "startsAtInvalid": "Start date is invalid.",
+        "endsAtInvalid": "End date is invalid.",
+        "endsAtAfterStartsAt": "End must be after start.",
+        "titleTooLong": "Title must be at most 200 characters.",
+        "messageTooLong": "Message must be at most 2000 characters."
       }
     }
   }

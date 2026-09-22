@@ -10,7 +10,7 @@ export type ComingSoonShellProps = {
   badge?: string;
   title: string;
   description: string;
-  primaryAction: { label: string; href: string };
+  primaryAction?: { label: string; href: string };
   secondaryAction?: { label: string; href: string };
   children?: ReactNode;
 };
@@ -43,22 +43,26 @@ export function ComingSoonShell({
           {description}
         </p>
         {children}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          {secondaryAction ? (
-            <Link
-              href={secondaryAction.href}
-              className="inline-flex min-h-[44px] items-center rounded-lg border border-atg-border px-6 py-2.5 text-sm font-semibold text-atg-fg transition-colors hover:border-primary dark:border-atg-border dark:text-white"
-            >
-              {secondaryAction.label}
-            </Link>
-          ) : null}
-          <Link
-            href={primaryAction.href}
-            className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
-          >
-            {primaryAction.label}
-          </Link>
-        </div>
+        {primaryAction || secondaryAction ? (
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            {secondaryAction ? (
+              <Link
+                href={secondaryAction.href}
+                className="inline-flex min-h-[44px] items-center rounded-lg border border-atg-border px-6 py-2.5 text-sm font-semibold text-atg-fg transition-colors hover:border-primary dark:border-atg-border dark:text-white"
+              >
+                {secondaryAction.label}
+              </Link>
+            ) : null}
+            {primaryAction ? (
+              <Link
+                href={primaryAction.href}
+                className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
+              >
+                {primaryAction.label}
+              </Link>
+            ) : null}
+          </div>
+        ) : null}
       </main>
       <HomeFooter />
     </div>

@@ -197,6 +197,8 @@ export const adminBreadcrumbExtraRoutes: AdminBreadcrumbRouteConfig[] = [
   { href: '/parametres/dons', labelKey: 'donations' },
   { href: '/parametres/dons/nouveau', labelKey: 'newDonation' },
   { href: '/parametres/emails', labelKey: 'emails' },
+  { href: '/parametres/maintenance', labelKey: 'maintenance' },
+  { href: '/parametres/maintenance/nouveau', labelKey: 'newMaintenance' },
   { href: '/aide', labelKey: 'adminHelp' },
   { href: '/mise-en-route', labelKey: 'setupGuide' },
 ];

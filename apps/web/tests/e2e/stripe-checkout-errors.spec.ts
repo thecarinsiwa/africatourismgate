@@ -58,6 +58,8 @@ async function seedCheckoutSession(page: Page): Promise<void> {
             totalPriceCents: 120000,
             currency: 'USD',
             available: true,
+            nightlyBreakdown: [],
+            images: [],
           },
         ],
       }),
@@ -69,7 +71,7 @@ async function seedCheckoutSession(page: Page): Promise<void> {
 
 async function navigateHotelToRecap(page: Page): Promise<void> {
   await page.goto(
-    '/hotels/test-hotel?checkIn=2026-08-10&checkOut=2026-08-12&guests=2&roomId=room-e2e',
+    '/hotels/test-hotel?checkIn=2026-11-10&checkOut=2026-11-12&guests=2&roomId=room-e2e',
   );
 
   await page

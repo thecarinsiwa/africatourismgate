@@ -273,7 +273,8 @@ async function runMigrations(connection, { prodSafe }) {
 
   const migrationFiles = readdirSync(migrationsDir)
     .filter((file) => file.endsWith('.sql'))
-    .sort((a, b) => a.localeCompare(b));
+    // Binary order: `foo.sql` before `foo_bar.sql` (localeCompare can invert that).
+    .sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
 
   if (migrationFiles.length === 0) {
     log('No migration files found');

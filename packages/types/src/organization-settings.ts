@@ -293,6 +293,18 @@ export function bookingDepositsMode(
   return deposits.depositFixedCents != null ? 'fixed' : 'percent';
 }
 
+/** @deprecated Prefer `organization-maintenances` table + types. Re-exported for legacy EAV. */
+export type {
+  PublicSiteMaintenance,
+  SiteMaintenanceSettingValue,
+} from './organization-maintenances.js';
+
+export {
+  DEFAULT_SITE_MAINTENANCE,
+  isSiteMaintenanceActive,
+  normalizeSiteMaintenance,
+} from './organization-maintenances.js';
+
 export interface OrganizationSetting {
   id: string;
   organizationId: string;
