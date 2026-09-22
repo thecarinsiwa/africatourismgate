@@ -68,6 +68,8 @@ export type SiteSearchContext = {
    * Si absent, la source `help` renvoie [].
    */
   helpStringsBySlug?: Readonly<Record<string, SiteSearchHelpArticleStrings>>;
+  /** Sous-titre i18n pour les résultats pré-remplis (vols / voitures). */
+  prefilledHint?: string;
 };
 
 /**

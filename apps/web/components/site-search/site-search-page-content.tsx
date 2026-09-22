@@ -12,6 +12,7 @@ import {
   ListingPageBody,
   ListingResultsGrid,
 } from '../shared/listing-patterns';
+import { SiteSearchResultBody } from './site-search-result-body';
 
 type SiteSearchPageContentProps = {
   initialQuery: string;
@@ -38,6 +39,11 @@ export function SiteSearchPageContent({
 
   const groupLabel = (group: SiteSearchGroupId) =>
     t(`groups.${group}` as Parameters<typeof t>[0]);
+
+  const resultLabels = {
+    kindEntity: t('kindEntity'),
+    kindPrefilled: t('kindPrefilled'),
+  };
 
   const title = initialQuery
     ? t('resultsPageSubtitle', { query: initialQuery })
@@ -98,15 +104,29 @@ export function SiteSearchPageContent({
                   <h2 className="text-lg font-bold text-atg-fg">
                     {groupLabel(group.group)}
                   </h2>
-                  {group.error ? (
-                    <span className="text-xs text-amber-700 dark:text-amber-400">
-                      {t('groupError')}
-                    </span>
-                  ) : null}
+                  <span className="flex items-center gap-3">
+                    {group.items.length > 0 ? (
+                      <span
+                        className="text-sm tabular-nums text-atg-muted"
+                        data-testid="site-search-group-count"
+                      >
+                        {group.items.length}
+                      </span>
+                    ) : null}
+                    {group.error ? (
+                      <span className="text-xs text-amber-700 dark:text-amber-400">
+                        {t('groupError')}
+                      </span>
+                    ) : null}
+                  </span>
                 </div>
                 <ListingResultsGrid variant="list">
                   {group.items.map((item) => (
-                    <SiteSearchResultCard key={item.id} item={item} />
+                    <SiteSearchResultCard
+                      key={item.id}
+                      item={item}
+                      labels={resultLabels}
+                    />
                   ))}
                 </ListingResultsGrid>
               </section>
@@ -122,7 +142,7 @@ export function SiteSearchPageContent({
               className="text-sm text-atg-muted"
               data-testid="site-search-page-count"
             >
-              {flatItems.length}
+              {t('resultCount', { count: flatItems.length })}
             </p>
           ) : null}
         </ListingPageBody>
@@ -132,19 +152,20 @@ export function SiteSearchPageContent({
   );
 }
 
-function SiteSearchResultCard({ item }: { item: SiteSearchResultItem }) {
+function SiteSearchResultCard({
+  item,
+  labels,
+}: {
+  item: SiteSearchResultItem;
+  labels: { kindEntity: string; kindPrefilled: string };
+}) {
   return (
     <Link
       href={item.href}
       data-testid="site-search-page-result"
       className="block rounded-2xl border border-atg-border bg-atg-elevated px-5 py-4 transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface dark:border-atg-border dark:bg-atg-elevated"
     >
-      <span className="text-base font-semibold text-atg-fg">{item.title}</span>
-      {item.subtitle ? (
-        <span className="mt-1 block truncate text-sm text-atg-muted">
-          {item.subtitle}
-        </span>
-      ) : null}
+      <SiteSearchResultBody item={item} labels={labels} />
     </Link>
   );
 }

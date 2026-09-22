@@ -44,6 +44,7 @@
     "test:public-cruise-search": "node scripts/test-public-cruise-search.mjs",
     "test:public-activity-search": "node scripts/test-public-activity-search.mjs",
     "test:public-packages": "node scripts/test-public-packages.mjs",
+    "test:public-site-search": "node scripts/test-public-site-search.mjs",
     "test:reviews": "node scripts/test-reviews.mjs",
     "test:support": "node scripts/test-support-tickets.mjs",
     "test:users": "node scripts/test-users-crud.mjs",

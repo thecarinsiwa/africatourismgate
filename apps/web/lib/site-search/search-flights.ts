@@ -75,6 +75,7 @@ export async function searchSiteFlights(
   const definitionLimit =
     getSiteSearchSourceDefinition('flights')?.resultLimit;
   const limit = options?.resultLimit ?? definitionLimit ?? 5;
+  const prefilledHint = options?.prefilledHint ?? context.prefilledHint;
 
   let entities: SiteSearchResultItem[] = [];
   try {
@@ -91,6 +92,7 @@ export async function searchSiteFlights(
 
   const prefilled = await searchSiteFlightsPrefilled(query, {
     ...options,
+    prefilledHint,
     resultLimit: limit - entities.length,
   });
 

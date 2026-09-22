@@ -68,6 +68,7 @@ export async function searchSiteCars(
 ): Promise<SiteSearchResultItem[]> {
   const definitionLimit = getSiteSearchSourceDefinition('cars')?.resultLimit;
   const limit = options?.resultLimit ?? definitionLimit ?? 5;
+  const prefilledHint = options?.prefilledHint ?? context.prefilledHint;
 
   let entities: SiteSearchResultItem[] = [];
   try {
@@ -84,6 +85,7 @@ export async function searchSiteCars(
 
   const prefilled = await searchSiteCarsPrefilled(query, {
     ...options,
+    prefilledHint,
     resultLimit: limit - entities.length,
   });
 

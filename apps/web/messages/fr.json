@@ -587,7 +587,7 @@
   },
   "siteSearch": {
     "title": "Rechercher sur le site",
-    "placeholder": "Hôtels, activités, destinations, aide…",
+    "placeholder": "Hôtels, vols, voitures, croisières, activités, forfaits, blog…",
     "empty": "Aucun résultat",
     "shortcutHint": "Ctrl+K · ⌘K ou / — ↑↓ pour naviguer, Entrée pour ouvrir",
     "close": "Fermer la recherche",
@@ -600,6 +600,9 @@
     "prefilledHint": "Recherche pré-remplie",
     "resultsPageTitle": "Résultats de recherche",
     "resultsPageSubtitle": "Résultats pour « {query} »",
+    "resultCount": "{count, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}",
+    "kindEntity": "Fiche",
+    "kindPrefilled": "Raccourci",
     "groups": {
       "pages": "Pages",
       "destinations": "Destinations",
