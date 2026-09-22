@@ -132,7 +132,10 @@ export function normalizeSiteMaintenance(
  * and optional `endsAt` is still in the future (or unset).
  */
 export function isSiteMaintenanceActive(
-  maintenance: PublicSiteMaintenance = DEFAULT_SITE_MAINTENANCE,
+  maintenance: Pick<
+    PublicSiteMaintenance,
+    'enabled' | 'startsAt' | 'endsAt'
+  > = DEFAULT_SITE_MAINTENANCE,
   now: Date = new Date(),
 ): boolean {
   if (!maintenance.enabled) {

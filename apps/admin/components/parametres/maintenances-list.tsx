@@ -252,8 +252,6 @@ export function MaintenancesList() {
         cell: ({ row }) => {
           const active = isSiteMaintenanceActive({
             enabled: row.original.enabled,
-            title: row.original.title,
-            message: row.original.message,
             startsAt: row.original.startsAt,
             endsAt: row.original.endsAt,
           });
