@@ -31,50 +31,30 @@ function RoomImagesThumb({
 }) {
   const images = [...room.images].sort((a, b) => a.sortOrder - b.sortOrder);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const cover = images[0];
 
-  if (!cover) return null;
+  if (!images.length) return null;
 
   return (
     <>
-      <div className="flex w-full shrink-0 flex-col gap-2 sm:w-44">
-        <button
-          type="button"
-          onClick={() => setLightboxIndex(0)}
-          className="group relative aspect-[4/3] w-full cursor-zoom-in overflow-hidden rounded-xl bg-atg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface dark:bg-atg-surface"
-          aria-label={galleryLabels.openLightbox}
-        >
-          <div
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-[1.03]"
-            style={{ backgroundImage: `url("${cover.url}")` }}
-            role="img"
-            aria-label={cover.caption ?? room.name}
-          />
-          {images.length > 1 ? (
-            <span className="pointer-events-none absolute bottom-2 right-2 rounded-md bg-atg-fg/65 px-2 py-0.5 text-xs font-medium text-atg-elevated backdrop-blur-sm">
-              {galleryLabels.counter(1, images.length)}
-            </span>
-          ) : null}
-        </button>
-
-        {images.length > 1 ? (
-          <div className="flex gap-1.5 overflow-x-auto pb-0.5 [-webkit-overflow-scrolling:touch]">
-            {images.slice(0, 4).map((img, index) => (
-              <button
-                key={img.id}
-                type="button"
-                onClick={() => setLightboxIndex(index)}
-                className="relative h-12 w-14 shrink-0 overflow-hidden rounded-md border border-atg-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:border-atg-border"
-                aria-label={img.caption ?? `${room.name} ${index + 1}`}
-              >
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url("${img.url}")` }}
-                />
-              </button>
-            ))}
-          </div>
-        ) : null}
+      <div
+        className="flex max-w-full gap-1.5 overflow-x-auto pb-0.5 [-webkit-overflow-scrolling:touch]"
+        role="group"
+        aria-label={galleryLabels.ariaLabel}
+      >
+        {images.map((img, index) => (
+          <button
+            key={img.id}
+            type="button"
+            onClick={() => setLightboxIndex(index)}
+            className="relative h-16 w-[4.5rem] shrink-0 overflow-hidden rounded-lg border border-atg-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:border-atg-border sm:h-[4.5rem] sm:w-20"
+            aria-label={img.caption ?? `${galleryLabels.openLightbox} (${galleryLabels.counter(index + 1, images.length)})`}
+          >
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url("${img.url}")` }}
+            />
+          </button>
+        ))}
       </div>
 
       {lightboxIndex != null ? (
@@ -133,24 +113,24 @@ export function HotelRoomsSection({
               } ${!room.available ? 'opacity-60' : ''}`}
             >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div className="flex min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-start">
-                  {hasImages ? (
-                    <RoomImagesThumb room={room} galleryLabels={galleryLabels} />
-                  ) : null}
-                  <div className="min-w-0 flex-1">
-                    <h3 className="text-base font-bold text-atg-fg">{room.name}</h3>
-                    {room.roomType && (
-                      <p className="mt-0.5 text-sm text-atg-muted">{room.roomType}</p>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-base font-bold text-atg-fg">{room.name}</h3>
+                  {room.roomType && (
+                    <p className="mt-0.5 text-sm text-atg-muted">{room.roomType}</p>
+                  )}
+                  <ul className="mt-2 flex flex-wrap gap-3 text-sm text-atg-muted">
+                    <li>{maxGuestsLabel.replace('{n}', String(room.maxGuests))}</li>
+                    {room.bedConfig && (
+                      <li>
+                        {bedConfigLabel}: {room.bedConfig}
+                      </li>
                     )}
-                    <ul className="mt-2 flex flex-wrap gap-3 text-sm text-atg-muted">
-                      <li>{maxGuestsLabel.replace('{n}', String(room.maxGuests))}</li>
-                      {room.bedConfig && (
-                        <li>
-                          {bedConfigLabel}: {room.bedConfig}
-                        </li>
-                      )}
-                    </ul>
-                  </div>
+                  </ul>
+                  {hasImages ? (
+                    <div className="mt-3">
+                      <RoomImagesThumb room={room} galleryLabels={galleryLabels} />
+                    </div>
+                  ) : null}
                 </div>
 
                 <div className="shrink-0 text-right">
