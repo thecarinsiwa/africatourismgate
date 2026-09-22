@@ -47,7 +47,7 @@
     "title": "Navegación rápida",
     "placeholder": "Buscar una página…",
     "empty": "Ninguna página encontrada",
-    "shortcutHint": "Ctrl+K · ⌘K — pulse ? para la ayuda"
+    "shortcutHint": "Ctrl+F · ⌘F — alias Ctrl/⌘+K ; ? para la ayuda de atajos"
   },
   "globalSearch": {
     "title": "Búsqueda admin",
@@ -77,7 +77,7 @@
     "title": "Atajos de teclado",
     "description": "Atajos disponibles en el back office.",
     "close": "Cerrar",
-    "hint": "Los atajos se ignoran mientras escribe en un campo.",
+    "hint": "Con la búsqueda cerrada, los atajos se ignoran al escribir en un campo (Ctrl+F deja entonces el buscador nativo).",
     "openHelpCenter": "Abrir el centro de ayuda",
     "items": {
       "search": "Abrir / cerrar la búsqueda admin",

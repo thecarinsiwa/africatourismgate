@@ -26,7 +26,7 @@
   "categories": {
     "prise-en-main": {
       "title": "Getting started",
-      "description": "Dashboard, notifications, command palette, and shortcuts."
+      "description": "Dashboard, notifications, admin search, and shortcuts."
     },
     "utilisateurs-acces": {
       "title": "Users & access",
@@ -65,7 +65,7 @@
     "naviguer-dans-le-dashboard": {
       "title": "Navigate the dashboard",
       "summary": "Key landmarks: sidebar, breadcrumbs, notifications, and quick help access.",
-      "body": "After you sign in, the [dashboard](/dashboard) shows KPIs and recent activity. The left sidebar groups modules: users, products, bookings, payments, content, GAP, and system.\n\nThe breadcrumb at the top of the page shows where you are and lets you move up one level. On mobile, open the menu with the hamburger icon. The bell icon opens the [notification center](/notifications) without leaving the current page.\n\nUse the [Help Center](/aide) or the command palette (Ctrl+K) to reach a page quickly without scanning the whole menu. On every screen, the Help icon in the header opens the recommended article for the current module.\n\nTip: start with Quick start on /aide (users, bookings, roles, tickets) to learn the daily actions before exploring advanced topics."
+      "body": "After you sign in, the [dashboard](/dashboard) shows KPIs and recent activity. The left sidebar groups modules: users, products, bookings, payments, content, GAP, and system.\n\nThe breadcrumb at the top of the page shows where you are and lets you move up one level. On mobile, open the menu with the hamburger icon. The bell icon opens the [notification center](/notifications) without leaving the current page.\n\nUse the [Help Center](/aide) or admin search (magnifier icon, Ctrl+F) to reach a page, a help article, or a business record quickly without scanning the whole menu. On every screen, the Help icon in the header opens the recommended article for the current module.\n\nTip: start with Quick start on /aide (users, bookings, roles, tickets) to learn the daily actions before exploring advanced topics."
     },
     "notifications": {
       "title": "Notification center",
@@ -73,14 +73,14 @@
       "body": "Open Notifications in the menu (or the bell icon) to reach the [notification center](/notifications). You will find alerts related to bookings, messages, support tickets, and other events.\n\nFilter by type or status to focus on what still needs action. Mark items as read after you handle them to keep the inbox clear.\n\nBadges in the navigation (pending reviews, open tickets) link to the relevant modules."
     },
     "palette-commandes": {
-      "title": "Command palette (Ctrl+K)",
-      "summary": "Jump to any admin page in a few keystrokes, including off-menu routes.",
-      "body": "Press Ctrl+K (or Cmd+K on Mac) to open the command palette. Type the start of a menu label (for example “accommodations”, “roles”, or “help”) to filter destinations.\n\nPress Enter to navigate immediately. The palette lists menu pages and some nested routes outside the sidebar (new forms, role assignments, email settings, and so on).\n\nClose the palette with Escape. Press ? to show keyboard-shortcut help, then follow the link to the [Help Center](/aide) if needed.\n\nCombine the palette with the header Help icon: the first teleports you, the second opens docs for the module you are on."
+      "title": "Admin search (Ctrl+F)",
+      "summary": "Search pages, help, and business data via the magnifier or Ctrl+F.",
+      "body": "Open admin search with the header magnifier icon, or the shortcuts Ctrl+F / Cmd+F (alias Ctrl+K / Cmd+K). Type to filter menu pages and help articles, then — from two characters — business entities (users, bookings, properties, catalog, and more) according to your permissions.\n\nNavigate with ↑↓ and press Enter to open a result. Results are grouped (Pages, Help, Users…). Close with Escape or the same shortcut.\n\nWhile typing in a form field, Ctrl+F keeps the browser’s native find; outside a field, it opens admin search. Press ? for keyboard-shortcut help, then follow the link to the [Help Center](/aide) if needed.\n\nCombine the magnifier / Ctrl+F with the header Help icon: the first jumps to a page or record, the second opens docs for the module you are on."
     },
     "raccourcis-clavier": {
       "title": "Keyboard shortcuts",
-      "summary": "Open shortcut help with ? and use Ctrl+K.",
-      "body": "Press the ? key (when you are not typing in a field) to open the keyboard shortcuts panel. It lists combinations available in the admin shell.\n\nThe main shortcut is Ctrl+K / Cmd+K for the command palette. Other shortcuts may appear in this panel depending on the UI version.\n\nIf a shortcut does nothing, check that no text field has focus and that you are not on a login page."
+      "summary": "Open shortcut help with ?; search with Ctrl+F (alias Ctrl+K).",
+      "body": "Press the ? key (when you are not typing in a field) to open the keyboard shortcuts panel. It lists combinations available in the admin shell.\n\nThe main shortcut is Ctrl+F / Cmd+F for admin search (pages, help, and business data). Ctrl+K / Cmd+K remains an alias. Escape closes search or this help panel.\n\nIf a shortcut does nothing, check that no text field has focus (except when closing search that is already open) and that you are not on a login page."
     },
     "gerer-les-utilisateurs": {
       "title": "Manage users",
@@ -110,7 +110,7 @@
     "vols-locations-croisieres": {
       "title": "Flights, rentals, and cruises",
       "summary": "Air catalog, vehicles, and cruise sailings.",
-      "body": "Under Products there are three verticals: [Flights](/produits/vols), [Rentals](/produits/locations), and [Cruises](/produits/croisieres).\n\nFor flights, manage airlines, airports, and offers; for rentals, agencies, categories, and vehicles with slots; for cruises, ships, lines, ports, and sailings.\n\nUse the “New…” screens and nested pages (ships, ports, agencies…) from the module or the Ctrl+K palette. Each vertical has its own permissions (flights, vehicles, cruises)."
+      "body": "Under Products there are three verticals: [Flights](/produits/vols), [Rentals](/produits/locations), and [Cruises](/produits/croisieres).\n\nFor flights, manage airlines, airports, and offers; for rentals, agencies, categories, and vehicles with slots; for cruises, ships, lines, ports, and sailings.\n\nUse the “New…” screens and nested pages (ships, ports, agencies…) from the module or admin search (Ctrl+F). Each vertical has its own permissions (flights, vehicles, cruises)."
     },
     "activites-et-forfaits": {
       "title": "Activities and packages",
@@ -125,7 +125,7 @@
     "gerer-les-reservations": {
       "title": "Manage bookings",
       "summary": "Track requests, travelers, statuses, and related payments in one place.",
-      "body": "The [Bookings](/reservations) module centralizes customer bookings. Filter by status, dates, or reference, then open the detail to see lines, travelers, documents, and history.\n\nDepending on status, you can advance processing, review payment proofs, or coordinate with support. Permissions bookings.read / bookings.write apply.\n\nFor a payment issue or customer incident, cross-check [Payments](/paiements) and [Support](/contenu/support). Assign a guide via the [guides](/guides) calendar when the product requires it.\n\nBreadcrumbs, Ctrl+K, and the header Help icon let you switch quickly between booking, payment, and ticket without losing context."
+      "body": "The [Bookings](/reservations) module centralizes customer bookings. Filter by status, dates, or reference, then open the detail to see lines, travelers, documents, and history.\n\nDepending on status, you can advance processing, review payment proofs, or coordinate with support. Permissions bookings.read / bookings.write apply.\n\nFor a payment issue or customer incident, cross-check [Payments](/paiements) and [Support](/contenu/support). Assign a guide via the [guides](/guides) calendar when the product requires it.\n\nBreadcrumbs, admin search (Ctrl+F), and the header Help icon let you switch quickly between booking, payment, and ticket without losing context."
     },
     "guides-et-calendrier": {
       "title": "Tour guides and calendar",
@@ -180,7 +180,7 @@
     "tickets-support-clients": {
       "title": "Customer support tickets",
       "summary": "Work the support queue: priority, reply, status, and closure.",
-      "body": "The [Support](/contenu/support) hub manages customer tickets (Tickets tab) and prepares unified messaging (Messages tab). Filter by status and priority, then open a ticket to read the thread and reply.\n\nAssign the ticket, change the status (open → pending → resolved / closed), and send a reply of at least ten characters. The “open tickets” badge in the navigation shows remaining workload.\n\nPermissions support_tickets.read / support_tickets.write. Do not confuse this module with the admin [Help Center](/aide), which is for internal documentation only.\n\nWhen a ticket relates to a booking or account, open the linked record (Ctrl+K or contextual Help) to verify status before you reply to the customer."
+      "body": "The [Support](/contenu/support) hub manages customer tickets (Tickets tab) and prepares unified messaging (Messages tab). Filter by status and priority, then open a ticket to read the thread and reply.\n\nAssign the ticket, change the status (open → pending → resolved / closed), and send a reply of at least ten characters. The “open tickets” badge in the navigation shows remaining workload.\n\nPermissions support_tickets.read / support_tickets.write. Do not confuse this module with the admin [Help Center](/aide), which is for internal documentation only.\n\nWhen a ticket relates to a booking or account, open the linked record (Ctrl+F search or contextual Help) to verify status before you reply to the customer."
     },
     "comptes-fidelite-onekey": {
       "title": "OneKey loyalty accounts",
@@ -195,7 +195,7 @@
     "roles-et-permissions": {
       "title": "Roles and permissions",
       "summary": "Decide who can read or edit each module, with least privilege.",
-      "body": "Under [System → Roles](/systeme/roles), define roles and their permissions (read / write per domain). Create a role, select the needed permissions, then assign it to users.\n\nAssignment and permission screens (outside the main menu, reachable via breadcrumb or Ctrl+K) link a role to a user with a scope (global, property, agency, support queue…).\n\nLeast privilege: grant only what is needed. A bad role can hide entire menus or open too much access.\n\nAfter an assignment, ask the user to sign in again if menus do not refresh. Cross-check [Sessions](/utilisateurs/sessions) & security if you suspect abusive access."
+      "body": "Under [System → Roles](/systeme/roles), define roles and their permissions (read / write per domain). Create a role, select the needed permissions, then assign it to users.\n\nAssignment and permission screens (outside the main menu, reachable via breadcrumb or Ctrl+F search) link a role to a user with a scope (global, property, agency, support queue…).\n\nLeast privilege: grant only what is needed. A bad role can hide entire menus or open too much access.\n\nAfter an assignment, ask the user to sign in again if menus do not refresh. Cross-check [Sessions](/utilisateurs/sessions) & security if you suspect abusive access."
     },
     "parametres-systeme": {
       "title": "System settings",

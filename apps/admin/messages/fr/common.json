@@ -47,7 +47,7 @@
     "title": "Navigation rapide",
     "placeholder": "Rechercher une page…",
     "empty": "Aucune page trouvée",
-    "shortcutHint": "Ctrl+K · ⌘K — appuyez sur ? pour l’aide"
+    "shortcutHint": "Ctrl+F · ⌘F — alias Ctrl/⌘+K ; ? pour l’aide des raccourcis"
   },
   "globalSearch": {
     "title": "Recherche admin",
@@ -77,7 +77,7 @@
     "title": "Raccourcis clavier",
     "description": "Raccourcis disponibles dans le back-office.",
     "close": "Fermer",
-    "hint": "Les raccourcis sont ignorés pendant la saisie dans un champ.",
+    "hint": "Hors recherche ouverte, les raccourcis sont ignorés pendant la saisie dans un champ (Ctrl+F laisse alors le find natif).",
     "openHelpCenter": "Ouvrir le centre d'aide",
     "items": {
       "search": "Ouvrir / fermer la recherche admin",

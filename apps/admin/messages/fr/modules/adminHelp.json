@@ -26,7 +26,7 @@
   "categories": {
     "prise-en-main": {
       "title": "Prise en main",
-      "description": "Dashboard, notifications, palette et raccourcis."
+      "description": "Dashboard, notifications, recherche admin et raccourcis."
     },
     "utilisateurs-acces": {
       "title": "Utilisateurs & accès",
@@ -65,7 +65,7 @@
     "naviguer-dans-le-dashboard": {
       "title": "Naviguer dans le dashboard",
       "summary": "Repères essentiels : menu latéral, fil d'Ariane, notifications et accès rapide à l'aide.",
-      "body": "Après connexion, le [tableau de bord](/dashboard) affiche les indicateurs et l'activité récente. Le menu latéral à gauche regroupe les modules : utilisateurs, produits, réservations, paiements, contenu, GAP et système.\n\nLe fil d'Ariane en haut de page indique où vous êtes et permet de remonter d'un niveau. Sur mobile, ouvrez le menu via l'icône hamburger. L'icône cloche ouvre le [centre de notifications](/notifications) sans quitter la page courante.\n\nUtilisez le [centre d'aide](/aide) ou la palette de commandes (Ctrl+K) pour atteindre rapidement une page sans parcourir tout le menu. Sur chaque écran, l'icône Aide du bandeau ouvre l'article recommandé pour le module en cours.\n\nAstuce : commencez par le Démarrage rapide sur /aide (utilisateurs, réservations, rôles, tickets) pour enchaîner les gestes du quotidien avant d'explorer les thèmes avancés."
+      "body": "Après connexion, le [tableau de bord](/dashboard) affiche les indicateurs et l'activité récente. Le menu latéral à gauche regroupe les modules : utilisateurs, produits, réservations, paiements, contenu, GAP et système.\n\nLe fil d'Ariane en haut de page indique où vous êtes et permet de remonter d'un niveau. Sur mobile, ouvrez le menu via l'icône hamburger. L'icône cloche ouvre le [centre de notifications](/notifications) sans quitter la page courante.\n\nUtilisez le [centre d'aide](/aide) ou la recherche admin (icône loupe, Ctrl+F) pour atteindre rapidement une page, un article d'aide ou une fiche métier sans parcourir tout le menu. Sur chaque écran, l'icône Aide du bandeau ouvre l'article recommandé pour le module en cours.\n\nAstuce : commencez par le Démarrage rapide sur /aide (utilisateurs, réservations, rôles, tickets) pour enchaîner les gestes du quotidien avant d'explorer les thèmes avancés."
     },
     "notifications": {
       "title": "Centre de notifications",
@@ -73,14 +73,14 @@
       "body": "Ouvrez Notifications dans le menu (ou l'icône cloche) pour accéder au [centre de notifications](/notifications). Vous y retrouvez les alertes liées aux réservations, messages, tickets support et autres événements.\n\nFiltrez par type ou statut pour cibler ce qui reste à traiter. Marquez les éléments comme lus après action pour garder une boîte claire.\n\nLes compteurs éventuellement affichés dans la navigation (avis en attente, tickets ouverts) renvoient vers les modules concernés."
     },
     "palette-commandes": {
-      "title": "Palette de commandes (Ctrl+K)",
-      "summary": "Aller à n'importe quelle page admin en quelques frappes, y compris hors menu.",
-      "body": "Appuyez sur Ctrl+K (ou Cmd+K sur Mac) pour ouvrir la palette de commandes. Tapez le début d'un libellé de menu (par exemple « hébergements », « rôles » ou « aide ») pour filtrer les destinations.\n\nValidez avec Entrée pour naviguer immédiatement. La palette liste les pages du menu et certaines routes imbriquées hors menu (nouveaux formulaires, assignations de rôles, paramètres e-mails, etc.).\n\nFermez la palette avec Échap. Appuyez sur ? pour afficher l'aide des raccourcis clavier, puis suivez le lien vers le centre d'aide si besoin.\n\nCombinez la palette avec l'icône Aide du bandeau : la première vous téléporte, la seconde ouvre la doc du module où vous êtes."
+      "title": "Recherche admin (Ctrl+F)",
+      "summary": "Chercher pages, aide et données métier via la loupe ou Ctrl+F.",
+      "body": "Ouvrez la recherche admin avec l'icône loupe du bandeau, ou les raccourcis Ctrl+F / Cmd+F (alias Ctrl+K / Cmd+K). Tapez pour filtrer les pages du menu, les articles d'aide, puis — dès deux caractères — les entités métier (utilisateurs, réservations, hébergements, catalogue, etc.) selon vos permissions.\n\nNaviguez avec ↑↓ et validez avec Entrée pour ouvrir le résultat. Les résultats sont regroupés (Pages, Aide, Utilisateurs…). Fermez avec Échap ou le même raccourci.\n\nDans un champ de saisie, Ctrl+F laisse le find natif du navigateur ; hors champ, il ouvre la recherche admin. Appuyez sur ? pour l'aide des raccourcis, puis suivez le lien vers le [centre d'aide](/aide) si besoin.\n\nCombinez la loupe / Ctrl+F avec l'icône Aide du bandeau : la première vous téléporte vers une fiche ou une page, la seconde ouvre la documentation du module où vous êtes."
     },
     "raccourcis-clavier": {
       "title": "Raccourcis clavier",
-      "summary": "Afficher l'aide des raccourcis avec ? et utiliser Ctrl+K.",
-      "body": "Appuyez sur la touche ? (hors champ de saisie) pour ouvrir le panneau des raccourcis clavier. Il rappelle les combinaisons disponibles dans le shell admin.\n\nLe raccourci principal est Ctrl+K / Cmd+K pour la palette de commandes. D'autres raccourcis peuvent être documentés dans ce panneau selon la version de l'interface.\n\nSi un raccourci ne répond pas, vérifiez qu'aucun champ texte n'a le focus et que vous n'êtes pas sur une page de connexion."
+      "summary": "Afficher l'aide avec ? ; recherche via Ctrl+F (alias Ctrl+K).",
+      "body": "Appuyez sur la touche ? (hors champ de saisie) pour ouvrir le panneau des raccourcis clavier. Il rappelle les combinaisons disponibles dans le shell admin.\n\nLe raccourci principal est Ctrl+F / Cmd+F pour la recherche admin (pages, aide et données métier). Ctrl+K / Cmd+K reste un alias. Échap ferme la recherche ou ce panneau d'aide.\n\nSi un raccourci ne répond pas, vérifiez qu'aucun champ texte n'a le focus (sauf pour fermer la recherche déjà ouverte) et que vous n'êtes pas sur une page de connexion."
     },
     "gerer-les-utilisateurs": {
       "title": "Gérer les utilisateurs",
@@ -110,7 +110,7 @@
     "vols-locations-croisieres": {
       "title": "Vols, locations et croisières",
       "summary": "Catalogue aérien, véhicules et départs de croisière.",
-      "body": "Sous Produits, trois verticales distinctes : [Vols](/produits/vols), [Locations](/produits/locations) [et Croisières](/produits/croisieres).\n\nPour les vols, gérez compagnies, aéroports et offres ; pour les locations, agences, catégories et véhicules avec créneaux ; pour les croisières, navires, lignes, ports et départs (sailings).\n\nUtilisez les écrans « Nouveau… » et les sous-pages (navires, ports, agences…) accessibles depuis le module ou la palette Ctrl+K. Chaque verticale a ses propres permissions (flights, vehicles, cruises)."
+      "body": "Sous Produits, trois verticales distinctes : [Vols](/produits/vols), [Locations](/produits/locations) [et Croisières](/produits/croisieres).\n\nPour les vols, gérez compagnies, aéroports et offres ; pour les locations, agences, catégories et véhicules avec créneaux ; pour les croisières, navires, lignes, ports et départs (sailings).\n\nUtilisez les écrans « Nouveau… » et les sous-pages (navires, ports, agences…) accessibles depuis le module ou la recherche admin (Ctrl+F). Chaque verticale a ses propres permissions (flights, vehicles, cruises)."
     },
     "activites-et-forfaits": {
       "title": "Activités et forfaits",
@@ -125,7 +125,7 @@
     "gerer-les-reservations": {
       "title": "Gérer les réservations",
       "summary": "Suivre demandes, voyageurs, statuts et paiements liés au même endroit.",
-      "body": "Le module [Réservations](/reservations) centralise les bookings clients. Filtrez par statut, dates ou référence, puis ouvrez le détail pour voir les lignes, voyageurs, documents et historique.\n\nSelon le statut, vous pouvez faire avancer le traitement, consulter les preuves de paiement ou coordonner avec le support. Les permissions bookings.read / bookings.write s'appliquent.\n\nPour un paiement ou un incident client, croisez avec [Paiements](/paiements) et [Support](/contenu/support). Assignez un guide via le calendrier [guides](/guides) lorsque le produit l'exige.\n\nLe fil d'Ariane, Ctrl+K et l'icône Aide du bandeau permettent de basculer vite entre réservation, paiement et ticket sans perdre le contexte."
+      "body": "Le module [Réservations](/reservations) centralise les bookings clients. Filtrez par statut, dates ou référence, puis ouvrez le détail pour voir les lignes, voyageurs, documents et historique.\n\nSelon le statut, vous pouvez faire avancer le traitement, consulter les preuves de paiement ou coordonner avec le support. Les permissions bookings.read / bookings.write s'appliquent.\n\nPour un paiement ou un incident client, croisez avec [Paiements](/paiements) et [Support](/contenu/support). Assignez un guide via le calendrier [guides](/guides) lorsque le produit l'exige.\n\nLe fil d'Ariane, la recherche admin (Ctrl+F) et l'icône Aide du bandeau permettent de basculer vite entre réservation, paiement et ticket sans perdre le contexte."
     },
     "guides-et-calendrier": {
       "title": "Guides touristiques et calendrier",
@@ -180,7 +180,7 @@
     "tickets-support-clients": {
       "title": "Tickets support clients",
       "summary": "Traiter la file d'assistance : priorité, réponse, statut et clôture.",
-      "body": "Le [hub Support](/contenu/support) gère les tickets clients (onglet Tickets) et prépare la messagerie unifiée (onglet Messages). Filtrez par statut et priorité, puis ouvrez un ticket pour lire le fil et répondre.\n\nAssignez le ticket, changez le statut (ouvert → en cours → résolu / fermé) et envoyez une réponse d'au moins dix caractères. Le badge « tickets ouverts » dans la navigation indique la charge restante.\n\nPermissions support_tickets.read / support_tickets.write. Ne confondez pas ce module avec le [Centre d'aide admin](/aide), réservé à la documentation interne.\n\nQuand le ticket concerne une réservation ou un compte, ouvrez la fiche liée (Ctrl+K ou Aide contextuelle) pour vérifier le statut avant de répondre au client."
+      "body": "Le [hub Support](/contenu/support) gère les tickets clients (onglet Tickets) et prépare la messagerie unifiée (onglet Messages). Filtrez par statut et priorité, puis ouvrez un ticket pour lire le fil et répondre.\n\nAssignez le ticket, changez le statut (ouvert → en cours → résolu / fermé) et envoyez une réponse d'au moins dix caractères. Le badge « tickets ouverts » dans la navigation indique la charge restante.\n\nPermissions support_tickets.read / support_tickets.write. Ne confondez pas ce module avec le [Centre d'aide admin](/aide), réservé à la documentation interne.\n\nQuand le ticket concerne une réservation ou un compte, ouvrez la fiche liée (recherche Ctrl+F ou Aide contextuelle) pour vérifier le statut avant de répondre au client."
     },
     "comptes-fidelite-onekey": {
       "title": "Comptes fidélité OneKey",
@@ -195,7 +195,7 @@
     "roles-et-permissions": {
       "title": "Rôles et permissions",
       "summary": "Définir qui peut lire ou modifier chaque module, avec le moindre privilège.",
-      "body": "Sous [Système → Rôles](/systeme/roles), définissez les rôles et les permissions associées (lecture / écriture par domaine). Créez un rôle, cochez les permissions nécessaires, puis assignez-le aux utilisateurs.\n\nLes écrans d'assignations et de permissions (hors menu principal, accessibles via fil d'Ariane ou Ctrl+K) permettent de lier un rôle à un utilisateur avec un périmètre (global, propriété, agence, file support…).\n\nPrincipe du moindre privilège : n'accordez que ce qui est utile. Un mauvais rôle peut masquer des menus entiers ou ouvrir trop d'accès.\n\nAprès une assignation, demandez à l'utilisateur de se reconnecter si les menus ne se mettent pas à jour. Croisez avec [Sessions](/utilisateurs/sessions) & sécurité en cas de doute sur un accès abusif."
+      "body": "Sous [Système → Rôles](/systeme/roles), définissez les rôles et les permissions associées (lecture / écriture par domaine). Créez un rôle, cochez les permissions nécessaires, puis assignez-le aux utilisateurs.\n\nLes écrans d'assignations et de permissions (hors menu principal, accessibles via fil d'Ariane ou recherche Ctrl+F) permettent de lier un rôle à un utilisateur avec un périmètre (global, propriété, agence, file support…).\n\nPrincipe du moindre privilège : n'accordez que ce qui est utile. Un mauvais rôle peut masquer des menus entiers ou ouvrir trop d'accès.\n\nAprès une assignation, demandez à l'utilisateur de se reconnecter si les menus ne se mettent pas à jour. Croisez avec [Sessions](/utilisateurs/sessions) & sécurité en cas de doute sur un accès abusif."
     },
     "parametres-systeme": {
       "title": "Paramètres système",

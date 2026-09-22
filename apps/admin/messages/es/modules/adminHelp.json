@@ -26,7 +26,7 @@
   "categories": {
     "prise-en-main": {
       "title": "Primeros pasos",
-      "description": "Panel, notificaciones, paleta y atajos."
+      "description": "Panel, notificaciones, búsqueda admin y atajos."
     },
     "utilisateurs-acces": {
       "title": "Usuarios y acceso",
@@ -65,7 +65,7 @@
     "naviguer-dans-le-dashboard": {
       "title": "Navegar por el panel",
       "summary": "Referencias clave: menú lateral, migas de pan, notificaciones y acceso rápido a la ayuda.",
-      "body": "Tras iniciar sesión, [el panel](/dashboard) muestra indicadores y la actividad reciente. El menú lateral izquierdo agrupa los módulos: usuarios, productos, reservas, pagos, contenido, GAP y sistema.\n\nLas migas de pan en la parte superior indican dónde se encuentra y permiten subir un nivel. En móvil, abra el menú con el icono de hamburguesa. El icono de campana abre el [centro de notificaciones](/notifications) sin salir de la página actual.\n\nUse el [centro de ayuda](/aide) o la paleta de comandos (Ctrl+K) para llegar rápido a una página sin recorrer todo el menú. En cada pantalla, el icono Ayuda del encabezado abre el artículo recomendado para el módulo en curso.\n\nConsejo: empiece por Inicio rápido en /aide (usuarios, reservas, roles, tickets) para dominar los gestos diarios antes de explorar temas avanzados."
+      "body": "Tras iniciar sesión, [el panel](/dashboard) muestra indicadores y la actividad reciente. El menú lateral izquierdo agrupa los módulos: usuarios, productos, reservas, pagos, contenido, GAP y sistema.\n\nLas migas de pan en la parte superior indican dónde se encuentra y permiten subir un nivel. En móvil, abra el menú con el icono de hamburguesa. El icono de campana abre el [centro de notificaciones](/notifications) sin salir de la página actual.\n\nUse el [centro de ayuda](/aide) o la búsqueda admin (icono lupa, Ctrl+F) para llegar rápido a una página, un artículo de ayuda o una ficha de negocio sin recorrer todo el menú. En cada pantalla, el icono Ayuda del encabezado abre el artículo recomendado para el módulo en curso.\n\nConsejo: empiece por Inicio rápido en /aide (usuarios, reservas, roles, tickets) para dominar los gestos diarios antes de explorar temas avanzados."
     },
     "notifications": {
       "title": "Centro de notificaciones",
@@ -73,14 +73,14 @@
       "body": "Abra Notificaciones en el menú (o el icono de campana) para acceder al centro de notificaciones. Allí encontrará alertas relacionadas con reservas, mensajes, tickets de soporte y otros eventos.\n\nFiltre por tipo o estado para centrarse en lo pendiente. Marque los elementos como leídos tras actuar para mantener la bandeja clara.\n\nLos contadores de la navegación (reseñas pendientes, tickets abiertos) enlazan con los módulos correspondientes."
     },
     "palette-commandes": {
-      "title": "Paleta de comandos (Ctrl+K)",
-      "summary": "Ir a cualquier página de administración en pocas pulsaciones, incluso fuera del menú.",
-      "body": "Pulse Ctrl+K (o Cmd+K en Mac) para abrir la paleta de comandos. Escriba el inicio de una etiqueta del menú (por ejemplo « alojamientos », « roles » o « ayuda ») para filtrar destinos.\n\nValide con Entrar para navegar de inmediato. La paleta lista las páginas del menú y algunas rutas anidadas fuera del menú (formularios nuevos, asignaciones de roles, ajustes de correo, etc.).\n\nCierre la paleta con Escape. Pulse ? para ver la ayuda de atajos de teclado y, si hace falta, siga el enlace al [centro de ayuda](/aide).\n\nCombine la paleta con el icono Ayuda del encabezado: la primera le teletransporta, la segunda abre la documentación del módulo en el que está."
+      "title": "Búsqueda admin (Ctrl+F)",
+      "summary": "Buscar páginas, ayuda y datos de negocio con la lupa o Ctrl+F.",
+      "body": "Abra la búsqueda admin con el icono lupa del encabezado, o los atajos Ctrl+F / Cmd+F (alias Ctrl+K / Cmd+K). Escriba para filtrar páginas del menú y artículos de ayuda; a partir de dos caracteres también aparecen entidades de negocio (usuarios, reservas, alojamientos, catálogo, etc.) según sus permisos.\n\nNavegue con ↑↓ y pulse Entrar para abrir un resultado. Los resultados están agrupados (Páginas, Ayuda, Usuarios…). Cierre con Escape o el mismo atajo.\n\nEn un campo de formulario, Ctrl+F deja el buscador nativo del navegador; fuera de un campo, abre la búsqueda admin. Pulse ? para la ayuda de atajos y, si hace falta, siga el enlace al [centro de ayuda](/aide).\n\nCombine la lupa / Ctrl+F con el icono Ayuda del encabezado: la primera le lleva a una página o ficha, la segunda abre la documentación del módulo en el que está."
     },
     "raccourcis-clavier": {
       "title": "Atajos de teclado",
-      "summary": "Mostrar la ayuda de atajos con ? y usar Ctrl+K.",
-      "body": "Pulse la tecla ? (fuera de un campo de texto) para abrir el panel de atajos de teclado. Recuerda las combinaciones disponibles en el shell de administración.\n\nEl atajo principal es Ctrl+K / Cmd+K para la paleta de comandos. Otros atajos pueden aparecer en este panel según la versión de la interfaz.\n\nSi un atajo no responde, compruebe que ningún campo de texto tenga el foco y que no esté en una página de inicio de sesión."
+      "summary": "Mostrar la ayuda con ?; búsqueda con Ctrl+F (alias Ctrl+K).",
+      "body": "Pulse la tecla ? (fuera de un campo de texto) para abrir el panel de atajos de teclado. Recuerda las combinaciones disponibles en el shell de administración.\n\nEl atajo principal es Ctrl+F / Cmd+F para la búsqueda admin (páginas, ayuda y datos de negocio). Ctrl+K / Cmd+K sigue siendo un alias. Escape cierra la búsqueda o este panel de ayuda.\n\nSi un atajo no responde, compruebe que ningún campo de texto tenga el foco (salvo para cerrar la búsqueda ya abierta) y que no esté en una página de inicio de sesión."
     },
     "gerer-les-utilisateurs": {
       "title": "Gestionar usuarios",
@@ -110,7 +110,7 @@
     "vols-locations-croisieres": {
       "title": "Vuelos, alquileres y cruceros",
       "summary": "Catálogo aéreo, vehículos y salidas de crucero.",
-      "body": "En Productos hay tres verticales: [Vuelos](/produits/vols), [Alquileres](/produits/locations) [y Cruceros](/produits/croisieres).\n\nPara vuelos, gestione compañías, aeropuertos y ofertas; para alquileres, agencias, categorías y vehículos con franjas; para cruceros, buques, líneas, puertos y salidas (sailings).\n\nUse las pantallas « Nuevo… » y las subpáginas (buques, puertos, agencias…) desde el módulo o la paleta Ctrl+K. Cada vertical tiene sus propios permisos (flights, vehicles, cruises)."
+      "body": "En Productos hay tres verticales: [Vuelos](/produits/vols), [Alquileres](/produits/locations) [y Cruceros](/produits/croisieres).\n\nPara vuelos, gestione compañías, aeropuertos y ofertas; para alquileres, agencias, categorías y vehículos con franjas; para cruceros, buques, líneas, puertos y salidas (sailings).\n\nUse las pantallas « Nuevo… » y las subpáginas (buques, puertos, agencias…) desde el módulo o la búsqueda admin (Ctrl+F). Cada vertical tiene sus propios permisos (flights, vehicles, cruises)."
     },
     "activites-et-forfaits": {
       "title": "Actividades y paquetes",
@@ -125,7 +125,7 @@
     "gerer-les-reservations": {
       "title": "Gestionar reservas",
       "summary": "Seguir solicitudes, viajeros, estados y pagos relacionados en un solo lugar.",
-      "body": "El módulo [Reservas](/reservations) centraliza las reservas de clientes. Filtre por estado, fechas o referencia y abra el detalle para ver líneas, viajeros, documentos e historial.\n\nSegún el estado, puede avanzar el tratamiento, consultar pruebas de pago o coordinar con soporte. Se aplican los permisos bookings.read / bookings.write.\n\nPara un pago o un incidente de cliente, cruce con [Pagos](/paiements) y [Soporte](/contenu/support). Asigne un guía mediante el calendario de [guías](/guides) cuando el producto lo exija.\n\nLas migas de pan, Ctrl+K y el icono Ayuda del encabezado permiten cambiar rápido entre reserva, pago y ticket sin perder el contexto."
+      "body": "El módulo [Reservas](/reservations) centraliza las reservas de clientes. Filtre por estado, fechas o referencia y abra el detalle para ver líneas, viajeros, documentos e historial.\n\nSegún el estado, puede avanzar el tratamiento, consultar pruebas de pago o coordinar con soporte. Se aplican los permisos bookings.read / bookings.write.\n\nPara un pago o un incidente de cliente, cruce con [Pagos](/paiements) y [Soporte](/contenu/support). Asigne un guía mediante el calendario de [guías](/guides) cuando el producto lo exija.\n\nLas migas de pan, la búsqueda admin (Ctrl+F) y el icono Ayuda del encabezado permiten cambiar rápido entre reserva, pago y ticket sin perder el contexto."
     },
     "guides-et-calendrier": {
       "title": "Guías turísticos y calendario",
@@ -180,7 +180,7 @@
     "tickets-support-clients": {
       "title": "Tickets de soporte al cliente",
       "summary": "Trabajar la cola de asistencia: prioridad, respuesta, estado y cierre.",
-      "body": "El hub [Soporte](/contenu/support) gestiona los tickets de clientes (pestaña Tickets) y prepara la mensajería unificada (pestaña Mensajes). Filtre por estado y prioridad, abra un ticket para leer el hilo y responder.\n\nAsigne el ticket, cambie el estado (abierto → en curso → resuelto / cerrado) y envíe una respuesta de al menos diez caracteres. El badge « tickets abiertos » en la navegación indica la carga restante.\n\nPermisos support_tickets.read / support_tickets.write. No confunda este módulo con el Centro de [ayuda de administración](/aide), reservado a la documentación interna.\n\nCuando el ticket afecta a una reserva o una cuenta, abra la ficha vinculada (Ctrl+K o Ayuda contextual) para verificar el estado antes de responder al cliente."
+      "body": "El hub [Soporte](/contenu/support) gestiona los tickets de clientes (pestaña Tickets) y prepara la mensajería unificada (pestaña Mensajes). Filtre por estado y prioridad, abra un ticket para leer el hilo y responder.\n\nAsigne el ticket, cambie el estado (abierto → en curso → resuelto / cerrado) y envíe una respuesta de al menos diez caracteres. El badge « tickets abiertos » en la navegación indica la carga restante.\n\nPermisos support_tickets.read / support_tickets.write. No confunda este módulo con el Centro de [ayuda de administración](/aide), reservado a la documentación interna.\n\nCuando el ticket afecta a una reserva o una cuenta, abra la ficha vinculada (búsqueda Ctrl+F o Ayuda contextual) para verificar el estado antes de responder al cliente."
     },
     "comptes-fidelite-onekey": {
       "title": "Cuentas de fidelidad OneKey",
@@ -195,7 +195,7 @@
     "roles-et-permissions": {
       "title": "Roles y permisos",
       "summary": "Definir quién puede leer o modificar cada módulo, con mínimo privilegio.",
-      "body": "En [Sistema → Roles](/systeme/roles), defina los roles y los permisos asociados (lectura / escritura por dominio). Cree un rol, marque los permisos necesarios y asígnelo a los usuarios.\n\nLas pantallas de asignaciones y permisos (fuera del menú principal, accesibles por migas de pan o Ctrl+K) vinculan un rol a un usuario con un alcance (global, propiedad, agencia, cola de soporte…).\n\nPrincipio de mínimo privilegio: conceda solo lo útil. Un rol incorrecto puede ocultar menús enteros o abrir demasiado acceso.\n\nTras una asignación, pida al usuario que vuelva a iniciar sesión si los menús no se actualizan. Cruce con [Sesiones](/utilisateurs/sessions) y seguridad si sospecha un acceso abusivo."
+      "body": "En [Sistema → Roles](/systeme/roles), defina los roles y los permisos asociados (lectura / escritura por dominio). Cree un rol, marque los permisos necesarios y asígnelo a los usuarios.\n\nLas pantallas de asignaciones y permisos (fuera del menú principal, accesibles por migas de pan o búsqueda Ctrl+F) vinculan un rol a un usuario con un alcance (global, propiedad, agencia, cola de soporte…).\n\nPrincipio de mínimo privilegio: conceda solo lo útil. Un rol incorrecto puede ocultar menús enteros o abrir demasiado acceso.\n\nTras una asignación, pida al usuario que vuelva a iniciar sesión si los menús no se actualizan. Cruce con [Sesiones](/utilisateurs/sessions) y seguridad si sospecha un acceso abusivo."
     },
     "parametres-systeme": {
       "title": "Ajustes del sistema",
