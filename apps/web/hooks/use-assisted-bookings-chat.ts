@@ -1,7 +1,7 @@
 'use client';
 
 import type { BookingDetail, BookingListItem, BookingStatus } from '@africatourismgate/types';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { isAssistedBookingDetail } from '../components/account/booking-status-timeline';
 import { getAccountApiClient } from '../lib/api/account';
 import { formatBookingDisplayName } from '../lib/bookings/display';
@@ -83,20 +83,31 @@ async function fetchAssistedBookings(): Promise<AssistedBookingChatItem[]> {
 export function useAssistedBookingsChat() {
   const [items, setItems] = useState<AssistedBookingChatItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const itemsRef = useRef(items);
+  itemsRef.current = items;
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (options?: { silent?: boolean }) => {
+    const silent = options?.silent === true;
     if (!hasWebSession()) {
       setItems([]);
+      setLoading(false);
       return;
     }
-    setLoading(true);
+    if (!silent) {
+      setLoading(true);
+    }
     try {
       const next = await fetchAssistedBookings();
       setItems(next);
     } catch {
-      setItems([]);
+      // Keep last known list on background refresh failures to avoid FAB flicker.
+      if (!silent && itemsRef.current.length === 0) {
+        setItems([]);
+      }
     } finally {
-      setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
   }, []);
 
@@ -111,7 +122,7 @@ export function useAssistedBookingsChat() {
     window.addEventListener('storage', onAuthChanged);
 
     const intervalId = window.setInterval(() => {
-      void refresh();
+      void refresh({ silent: true });
     }, REFRESH_INTERVAL_MS);
 
     return () => {
