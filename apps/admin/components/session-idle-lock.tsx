@@ -55,11 +55,13 @@ export function SessionIdleLock() {
   const touchInFlightRef = useRef(false);
 
   const syncLockedState = useCallback(() => {
+    // Unlock needs refreshToken; access may already be expired when the lock fires.
+    const hasUnlockableSession = Boolean(getSession()?.refreshToken);
     const shouldLock = isSessionLocked() || isIdleExpired();
-    if (shouldLock && getSession()?.accessToken) {
+    if (shouldLock && hasUnlockableSession) {
       setSessionLocked(true);
     }
-    setLocked(shouldLock && Boolean(getSession()?.accessToken));
+    setLocked(shouldLock && hasUnlockableSession);
   }, []);
 
   const touchServerActivity = useCallback(async () => {
@@ -124,7 +126,7 @@ export function SessionIdleLock() {
   }, [syncLockedState]);
 
   useEffect(() => {
-    if (!getSession()?.accessToken) {
+    if (!getSession()?.refreshToken) {
       return;
     }
 
@@ -136,7 +138,7 @@ export function SessionIdleLock() {
 
     function onVisibilityChange() {
       if (document.visibilityState === 'visible') {
-        if (isIdleExpired()) {
+        if (isIdleExpired() || isSessionLocked()) {
           setSessionLocked(true);
           setLocked(true);
           return;
@@ -148,10 +150,10 @@ export function SessionIdleLock() {
     document.addEventListener('visibilitychange', onVisibilityChange);
 
     const intervalId = window.setInterval(() => {
-      if (!getSession()?.accessToken) {
+      if (!getSession()?.refreshToken) {
         return;
       }
-      if (isIdleExpired()) {
+      if (isIdleExpired() || isSessionLocked()) {
         setSessionLocked(true);
         setLocked(true);
       }
@@ -180,9 +182,9 @@ export function SessionIdleLock() {
         password,
         refreshToken: session.refreshToken,
       });
-      saveSession(tokensToStoredSession(tokens, session.user));
-      markActivity();
-      setSessionLocked(false);
+      saveSession(tokensToStoredSession(tokens, session.user), {
+        resetIdle: true,
+      });
       setLocked(false);
       setPassword('');
     } catch (err) {

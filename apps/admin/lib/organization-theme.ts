@@ -92,27 +92,41 @@ export function brandingFromPlatformSetting(
 
 /**
  * Apply org favicon, or restore the default admin icon when unset.
- * Never leave the document without a favicon link (avoids blank tab icons).
+ * Replaces every competing icon link so Next metadata icons cannot
+ * stick to a stale or blank tab icon.
  */
 export function applyFaviconToDocument(faviconUrl: string | null): void {
   if (typeof document === 'undefined') return;
 
   const href = faviconUrl?.trim() || DEFAULT_ADMIN_FAVICON_HREF;
-  const selector = 'link[data-atg-dynamic-favicon="1"]';
-  const existing = document.querySelector<HTMLLinkElement>(selector);
+  const isSvg = /\.svg(\?|#|$)/i.test(href);
 
-  const link = existing ?? document.createElement('link');
+  document
+    .querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]')
+    .forEach((node) => {
+      if (!(node instanceof HTMLLinkElement)) return;
+      if (node.getAttribute('data-atg-dynamic-favicon') === '1') return;
+      node.remove();
+    });
+
+  let link = document.querySelector<HTMLLinkElement>(
+    'link[data-atg-dynamic-favicon="1"]',
+  );
+  if (!link) {
+    link = document.createElement('link');
+    link.setAttribute('data-atg-dynamic-favicon', '1');
+    document.head.appendChild(link);
+  }
+
   link.rel = 'icon';
-  link.href = href;
-  if (href.endsWith('.svg')) {
+  if (isSvg) {
     link.type = 'image/svg+xml';
   } else {
     link.removeAttribute('type');
   }
-  link.setAttribute('data-atg-dynamic-favicon', '1');
-  if (!existing) {
-    document.head.appendChild(link);
-  }
+  // Re-assign so the browser re-fetches when branding changes.
+  link.removeAttribute('href');
+  link.href = href;
 }
 
 export function brandingFromSettingsForm(values: {

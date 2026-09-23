@@ -40,7 +40,7 @@ export function AdminLoginForm() {
               withClientInstanceId({ email, password }),
             );
             const session = authResponseToStoredSession(response);
-            saveSession(session);
+            saveSession(session, { resetIdle: true });
             applyLocaleFromUser(session.user);
             router.refresh();
             router.push(resolvePostLoginPath(searchParams.get('next')));
