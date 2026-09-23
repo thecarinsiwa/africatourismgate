@@ -79,7 +79,7 @@ export function authVisualPositionClass(
   variant: 'compact' | 'full',
 ): string {
   if (variant === 'compact') {
-    return 'right-6 top-1/2 -translate-y-1/2';
+    return 'right-3 top-1/2 -translate-y-1/2 sm:right-4';
   }
 
   switch (position) {
@@ -101,7 +101,7 @@ export function authVisualSizeClass(
   variant: 'compact' | 'full',
 ): string {
   if (variant === 'compact') {
-    return 'h-24 w-24';
+    return 'h-14 w-14 sm:h-16 sm:w-16';
   }
 
   switch (size) {
