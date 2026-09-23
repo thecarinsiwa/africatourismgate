@@ -252,11 +252,11 @@ export function TourGuidesCalendarView() {
           {state.message}
         </p>
       ) : (
-        <Card variant="dashboard" padding="md">
+        <Card variant="dashboard" padding="md" className="overflow-hidden">
           {state.status === 'loading' ? (
             <div className="grid grid-cols-7 gap-1 sm:gap-2">
               {Array.from({ length: 35 }).map((_, index) => (
-                <Skeleton key={index} className="min-h-[5rem] rounded-lg sm:min-h-[6rem]" />
+                <Skeleton key={index} className="min-h-[3.75rem] rounded-lg sm:min-h-[6rem]" />
               ))}
             </div>
           ) : totalActiveGuides === 0 ? (
@@ -271,7 +271,7 @@ export function TourGuidesCalendarView() {
                 <div
                   key={label}
                   role="columnheader"
-                  className="py-1 text-center text-xs font-medium uppercase tracking-wide text-atg-muted"
+                  className="truncate py-1 text-center text-[10px] font-medium uppercase tracking-wide text-atg-muted sm:text-xs"
                 >
                   {label}
                 </div>
@@ -284,7 +284,7 @@ export function TourGuidesCalendarView() {
                       key={`blank-${index}`}
                       role="gridcell"
                       aria-hidden
-                      className="min-h-[5rem] rounded-lg sm:min-h-[6rem]"
+                      className="min-h-[3.75rem] rounded-lg sm:min-h-[6rem]"
                     />
                   );
                 }
@@ -292,37 +292,80 @@ export function TourGuidesCalendarView() {
                 const dayNum = Number(cell.date.split('-')[2]);
                 const summary = dayByDate.get(cell.date);
                 const isToday = cell.date === new Date().toISOString().slice(0, 10);
+                const ariaParts = summary
+                  ? [
+                      t('availableShort', { count: summary.available }),
+                      summary.occupied > 0
+                        ? t('occupiedShort', { count: summary.occupied })
+                        : null,
+                      summary.unavailable > 0
+                        ? t('unavailableShort', { count: summary.unavailable })
+                        : null,
+                    ].filter(Boolean)
+                  : [];
 
                 return (
                   <button
                     key={cell.date}
                     type="button"
                     role="gridcell"
+                    aria-label={
+                      ariaParts.length > 0
+                        ? `${dayNum}, ${ariaParts.join(', ')}`
+                        : String(dayNum)
+                    }
                     onClick={() => setSelectedDate(cell.date)}
                     className={cn(
-                      'flex min-h-[5rem] flex-col rounded-lg border border-atg-border/60 bg-atg-elevated p-1.5 text-left transition-colors hover:border-primary/40 hover:bg-atg-surface sm:min-h-[6rem] sm:p-2',
+                      'flex min-h-[3.75rem] min-w-0 flex-col overflow-hidden rounded-lg border border-atg-border/60 bg-atg-elevated p-1 text-left transition-colors hover:border-primary/40 hover:bg-atg-surface sm:min-h-[6rem] sm:p-2',
                       isToday && 'ring-2 ring-primary/40',
                     )}
                   >
-                    <span className="text-xs font-semibold tabular-nums text-atg-fg">
+                    <span className="text-[11px] font-semibold tabular-nums text-atg-fg sm:text-xs">
                       {dayNum}
                     </span>
                     {summary ? (
-                      <div className="mt-1.5 flex flex-col gap-1">
-                        <DataTableBadge variant="success" className="w-fit text-[10px] sm:text-xs">
-                          {t('availableShort', { count: summary.available })}
-                        </DataTableBadge>
-                        {summary.occupied > 0 ? (
-                          <DataTableBadge variant="warning" className="w-fit text-[10px] sm:text-xs">
-                            {t('occupiedShort', { count: summary.occupied })}
-                          </DataTableBadge>
-                        ) : null}
-                        {summary.unavailable > 0 ? (
-                          <span className="text-[10px] text-atg-muted sm:text-xs">
-                            {t('unavailableShort', { count: summary.unavailable })}
+                      <>
+                        {/* Mobile: compact count chips (full labels overflow 7-col grid) */}
+                        <div
+                          aria-hidden
+                          className="mt-auto flex flex-wrap gap-0.5 sm:hidden"
+                        >
+                          <span className="inline-flex min-w-[1.1rem] items-center justify-center rounded bg-atg-success-light px-0.5 text-[10px] font-bold tabular-nums text-atg-success-fg">
+                            {summary.available}
                           </span>
-                        ) : null}
-                      </div>
+                          {summary.occupied > 0 ? (
+                            <span className="inline-flex min-w-[1.1rem] items-center justify-center rounded bg-atg-warning-light px-0.5 text-[10px] font-bold tabular-nums text-atg-warning-fg">
+                              {summary.occupied}
+                            </span>
+                          ) : null}
+                          {summary.unavailable > 0 ? (
+                            <span className="inline-flex min-w-[1.1rem] items-center justify-center rounded bg-atg-border/50 px-0.5 text-[10px] font-bold tabular-nums text-atg-muted">
+                              {summary.unavailable}
+                            </span>
+                          ) : null}
+                        </div>
+                        <div className="mt-1.5 hidden flex-col gap-1 sm:flex">
+                          <DataTableBadge
+                            variant="success"
+                            className="max-w-full truncate text-xs"
+                          >
+                            {t('availableShort', { count: summary.available })}
+                          </DataTableBadge>
+                          {summary.occupied > 0 ? (
+                            <DataTableBadge
+                              variant="warning"
+                              className="max-w-full truncate text-xs"
+                            >
+                              {t('occupiedShort', { count: summary.occupied })}
+                            </DataTableBadge>
+                          ) : null}
+                          {summary.unavailable > 0 ? (
+                            <span className="truncate text-xs text-atg-muted">
+                              {t('unavailableShort', { count: summary.unavailable })}
+                            </span>
+                          ) : null}
+                        </div>
+                      </>
                     ) : null}
                   </button>
                 );
