@@ -15,6 +15,10 @@ import { logout } from '../lib/auth/logout';
 import { AUTH_CHANGED_EVENT, getSession } from '../lib/auth/session';
 import type { StoredSession } from '../lib/auth/session';
 import {
+  isSessionLocked,
+  SESSION_LOCK_CHANGED_EVENT,
+} from '../lib/auth/session-idle';
+import {
   breadcrumbFromPath,
   buildAdminBreadcrumbHrefLabels,
   resolveAdminPageTitle,
@@ -50,6 +54,16 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
   const { permissions, isSuperAdmin, loading: permissionsLoading } = usePermissions();
   const badgeCounts = useNavBadgeCounts();
   const [session, setSession] = useState<StoredSession | null>(null);
+  const [sessionLocked, setSessionLockedUi] = useState(false);
+
+  useEffect(() => {
+    function syncLock() {
+      setSessionLockedUi(isSessionLocked());
+    }
+    syncLock();
+    window.addEventListener(SESSION_LOCK_CHANGED_EVENT, syncLock);
+    return () => window.removeEventListener(SESSION_LOCK_CHANGED_EVENT, syncLock);
+  }, []);
 
   const navItems = useMemo(() => {
     const allItems = buildAdminDashboardNav((key) => tNav(key as Parameters<typeof tNav>[0]));
@@ -158,7 +172,15 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
         }}
       >
         <KeyboardShortcutsHelp />
-        <RouteAccessGate>{children}</RouteAccessGate>
+        <RouteAccessGate>
+          {/* Hide page errors/content while idle-locked; overlay is rendered by SessionIdleLock. */}
+          <div
+            className={sessionLocked ? 'invisible pointer-events-none select-none' : undefined}
+            aria-hidden={sessionLocked || undefined}
+          >
+            {children}
+          </div>
+        </RouteAccessGate>
       </DashboardShell>
     </AdminSearchNavigatorProvider>
   );

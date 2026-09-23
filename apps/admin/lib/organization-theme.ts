@@ -18,6 +18,9 @@ const DEFAULT_BRANDING: OrganizationBranding = {
   faviconUrl: null,
 };
 
+/** Matches Next.js metadata icons in `app/layout.tsx`. */
+export const DEFAULT_ADMIN_FAVICON_HREF = '/favicon.svg';
+
 const CSS_VARS = {
   primary: '--atg-primary',
   primaryHover: '--atg-primary-hover',
@@ -87,21 +90,21 @@ export function brandingFromPlatformSetting(
   return { displayName, primaryColor: primary, secondaryColor: secondary, logoUrl, faviconUrl };
 }
 
+/**
+ * Apply org favicon, or restore the default admin icon when unset.
+ * Never leave the document without a favicon link (avoids blank tab icons).
+ */
 export function applyFaviconToDocument(faviconUrl: string | null): void {
   if (typeof document === 'undefined') return;
 
+  const href = faviconUrl?.trim() || DEFAULT_ADMIN_FAVICON_HREF;
   const selector = 'link[data-atg-dynamic-favicon="1"]';
   const existing = document.querySelector<HTMLLinkElement>(selector);
 
-  if (!faviconUrl) {
-    existing?.remove();
-    return;
-  }
-
   const link = existing ?? document.createElement('link');
   link.rel = 'icon';
-  link.href = faviconUrl;
-  if (faviconUrl.endsWith('.svg')) {
+  link.href = href;
+  if (href.endsWith('.svg')) {
     link.type = 'image/svg+xml';
   } else {
     link.removeAttribute('type');
