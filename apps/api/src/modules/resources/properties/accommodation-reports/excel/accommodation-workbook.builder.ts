@@ -5,6 +5,7 @@ import {
   type AccommodationWorkbookLabels,
 } from '../labels/accommodation-workbook.labels';
 import type { AccommodationReportLocale } from '../labels/accommodation-reports.labels';
+import { htmlToPlainText } from '../pdf/pdf-layout.utils';
 
 export type AccommodationWorkbookRoomRow = {
   propertyName: string;
@@ -109,7 +110,7 @@ function buildCatalogRows(
     property.starRating ?? '',
     property.destinationName,
     property.addressLine ?? '',
-    property.description ?? '',
+    property.description ? htmlToPlainText(property.description) : '',
   ]);
 }
 
