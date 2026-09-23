@@ -4,7 +4,6 @@ import { ATG_DOMAINS } from '../../packages/config/domains.mjs';
 import {
   isRemoteApiDev,
   getRemoteApiTargetUrl,
-  resolveDevApiUrl,
 } from '../../packages/config/remote-api-dev.mjs';
 
 loadRootEnv(import.meta.url);
@@ -22,10 +21,12 @@ const adminUrl =
     ? ATG_DOMAINS.admin.url
     : `http://localhost:${adminPort}`);
 
-const apiUrl = remoteProxy
-  ? resolveDevApiUrl({ appPort: adminPort })
-  : explicitApiUrl ??
-    (isProduction ? ATG_DOMAINS.api.url : resolveDevApiUrl({ appPort: adminPort }));
+// Dev: always same-origin `/api` (proxied by app/api/[...path]) to avoid CORS.
+const apiUrl = isProduction
+  ? explicitApiUrl && !/localhost|127\.0\.0\.1/.test(explicitApiUrl)
+    ? explicitApiUrl
+    : ATG_DOMAINS.api.url
+  : `http://localhost:${adminPort}/api`;
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

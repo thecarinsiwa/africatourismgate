@@ -53,8 +53,19 @@ async function bootstrap() {
   SwaggerModule.setup(globalPrefix, app, document);
 
   app.enableCors({
-    origin: process.env.CORS_ORIGIN?.split(',') ?? true,
+    origin: (() => {
+      const raw = process.env.CORS_ORIGIN?.trim();
+      if (!raw) return true;
+      const origins = raw
+        .split(',')
+        .map((value) => value.trim())
+        .filter(Boolean);
+      return origins.length > 0 ? origins : true;
+    })(),
     credentials: true,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    exposedHeaders: ['Content-Disposition'],
   });
   const port = Number(process.env.API_PORT ?? 3000);
   await app.listen(port);
