@@ -44,7 +44,7 @@ export function AuthVisualPanel({ variant = 'full', className }: Props) {
       className={cn(
         'relative overflow-hidden text-white',
         'bg-gradient-to-br from-primary via-[#0d5c44] to-secondary',
-        isCompact ? 'h-44 shrink-0' : 'min-h-[16rem] flex-1 lg:min-h-screen',
+        isCompact ? 'h-28 shrink-0 sm:h-32' : 'min-h-[16rem] flex-1 lg:min-h-screen',
         className,
       )}
       aria-hidden={isCompact}
@@ -70,17 +70,24 @@ export function AuthVisualPanel({ variant = 'full', className }: Props) {
         className={cn(
           'relative',
           isCompact
-            ? 'flex h-full flex-col justify-end px-6 py-6'
+            ? 'flex h-full flex-col justify-end px-4 py-3 sm:px-6 sm:py-4'
             : 'absolute inset-x-0 bottom-0 z-10 px-10 py-12 lg:px-14 lg:py-16',
         )}
       >
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/70">
+        <p
+          className={cn(
+            'font-semibold uppercase tracking-[0.2em] text-white/70',
+            isCompact ? 'text-[10px] leading-none' : 'text-xs',
+          )}
+        >
           {t('visualEyebrow')}
         </p>
         <h2
           className={cn(
-            'mt-2 font-bold leading-tight text-white',
-            isCompact ? 'max-w-[14rem] text-lg' : 'max-w-md text-2xl lg:text-3xl',
+            'font-bold leading-tight text-white',
+            isCompact
+              ? 'mt-1 max-w-[16rem] text-sm sm:max-w-[18rem] sm:text-base'
+              : 'mt-2 max-w-md text-2xl lg:text-3xl',
           )}
         >
           {t('visualTitle')}

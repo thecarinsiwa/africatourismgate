@@ -11,6 +11,7 @@ import {
   drawPdfKeyValue,
   drawPdfSectionTitle,
   drawPdfTable,
+  htmlToPlainText,
   pdfPrimaryColor,
   truncateText,
 } from './pdf-layout.utils';
@@ -66,7 +67,10 @@ export function renderPropertyDossierPdf(input: RenderPropertyDossierPdfInput): 
   drawPdfKeyValue(
     doc,
     labels.dossier.description,
-    truncateText(input.property.description, 600),
+    truncateText(
+      htmlToPlainText(input.property.description).replace(/\s+/g, ' '),
+      600,
+    ),
   );
 
   drawPdfSectionTitle(doc, labels.dossier.roomsSection, brandColor);

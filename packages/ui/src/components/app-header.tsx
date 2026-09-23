@@ -44,17 +44,19 @@ export function AppHeader({
   return (
     <header
       className={cn(
-        'flex shrink-0 items-start justify-between gap-4 border-b border-atg-border bg-atg-elevated px-4 py-3 md:items-center md:px-6 md:py-4',
+        // Mobile: two rows so the menu never collides with a crowded actions strip.
+        'flex shrink-0 flex-col gap-2 border-b border-atg-border bg-atg-elevated px-3 py-2.5',
+        'sm:px-4 md:flex-row md:items-center md:justify-between md:gap-4 md:px-6 md:py-4',
         className,
       )}
     >
-      <div className="flex min-w-0 flex-1 items-start gap-3 md:items-center">
+      <div className="flex min-w-0 items-center gap-2.5 md:flex-1 md:gap-3">
         {onMenuClick ? (
           <button
             type="button"
             onClick={onMenuClick}
             className={cn(
-              'inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-atg-border',
+              'relative z-10 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-atg-border',
               'bg-atg-elevated text-atg-fg transition-colors hover:bg-atg-surface md:hidden',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
             )}
@@ -66,7 +68,7 @@ export function AppHeader({
 
         <div className="min-w-0 flex-1 space-y-1">
           {title ? (
-            <p className="truncate text-lg font-bold text-atg-fg md:text-xl">{title}</p>
+            <p className="truncate text-base font-bold text-atg-fg sm:text-lg md:text-xl">{title}</p>
           ) : hasHeading ? null : (
             <span className="sr-only">Africa Tourism Gate Admin</span>
           )}
@@ -74,7 +76,7 @@ export function AppHeader({
         </div>
       </div>
 
-      <div className="flex shrink-0 items-center gap-2 md:gap-3">
+      <div className="flex shrink-0 items-center justify-end gap-1.5 sm:gap-2 md:gap-3">
         {actions}
         <ThemeToggle labels={themeLabels} />
         <UserMenu {...user} />

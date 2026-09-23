@@ -113,7 +113,7 @@ export function UserMenu({
         <div
           id={menuId}
           role="menu"
-          className="absolute right-0 z-50 mt-2 w-64 rounded-lg border border-atg-border bg-atg-elevated py-2 shadow-lg"
+          className="absolute right-0 z-[80] mt-2 w-[min(16rem,calc(100vw-1.5rem))] rounded-lg border border-atg-border bg-atg-elevated py-2 shadow-lg"
         >
           <div className="border-b border-atg-border px-4 py-3">
             <p className="truncate text-sm font-semibold text-atg-fg">{displayName}</p>
