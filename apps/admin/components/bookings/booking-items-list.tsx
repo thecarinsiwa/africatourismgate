@@ -81,15 +81,14 @@ export function BookingItemsList() {
   useEffect(() => {
     const query = bookingIdInput.trim();
     const timer = window.setTimeout(() => {
-      setBookingIdFilter((prev) => {
-        if (prev !== query) {
-          setPage(1);
-        }
-        return query;
-      });
+      setBookingIdFilter((prev) => (prev === query ? prev : query));
     }, BOOKING_ID_DEBOUNCE_MS);
     return () => window.clearTimeout(timer);
   }, [bookingIdInput]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [bookingIdFilter, itemTypeFilter, statusFilter]);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -128,7 +127,6 @@ export function BookingItemsList() {
     setStatusFilter('');
     setBookingIdInput('');
     setBookingIdFilter('');
-    setPage(1);
   }, []);
 
   const columns = useMemo<ColumnDef<BookingItemListItem, unknown>[]>(
@@ -189,9 +187,10 @@ export function BookingItemsList() {
         meta: { align: 'center' },
         cell: ({ row }) => {
           const status = row.original.bookingStatus;
+          const variant = status ? BOOKING_STATUS_VARIANTS[status] : 'muted';
           return (
-            <DataTableBadge variant={BOOKING_STATUS_VARIANTS[status]}>
-              {getBookingStatusLabel(status, statusLabels)}
+            <DataTableBadge variant={variant ?? 'muted'}>
+              {status ? getBookingStatusLabel(status, statusLabels) : emptyDash}
             </DataTableBadge>
           );
         },
@@ -236,7 +235,6 @@ export function BookingItemsList() {
                 options={itemTypeSelectOptions}
                 onChange={(e) => {
                   setItemTypeFilter(e.target.value as ItemTypeFilter);
-                  setPage(1);
                 }}
               />
             </div>
@@ -247,7 +245,6 @@ export function BookingItemsList() {
                 options={statusFilterOptions}
                 onChange={(e) => {
                   setStatusFilter(e.target.value as StatusFilter);
-                  setPage(1);
                 }}
               />
             </div>
