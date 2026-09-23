@@ -155,6 +155,10 @@
       "succeeded": "Réussi",
       "failed": "Échoué",
       "refunded": "Remboursé"
+    },
+    "paymentProofs": {
+      "title": "Preuves de paiement",
+      "subtitle": "Justificatifs déposés par le client — validez pour enregistrer le paiement (acompte ou solde). La réservation n’est confirmée que lorsque le solde est couvert."
     }
   },
   "timeline": {

@@ -155,6 +155,10 @@
       "succeeded": "Exitoso",
       "failed": "Fallido",
       "refunded": "Reembolsado"
+    },
+    "paymentProofs": {
+      "title": "Comprobantes de pago",
+      "subtitle": "Justificantes subidos por el cliente — apruebe para registrar el pago (anticipo o saldo). La reserva se confirma solo cuando el saldo está cubierto."
     }
   },
   "timeline": {
