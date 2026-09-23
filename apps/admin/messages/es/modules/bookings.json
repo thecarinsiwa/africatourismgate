@@ -133,6 +133,10 @@
     },
     "linesEmpty": "Ninguna línea.",
     "linesAriaLabel": "Líneas de reserva",
+    "nightsCount": "{count, plural, one {# noche} other {# noches}}",
+    "downloadConfirmation": "Descargar PDF",
+    "downloadingConfirmation": "Descargando…",
+    "downloadConfirmationError": "No se pudo descargar el PDF de confirmación.",
     "paymentsEmpty": "Ningún pago registrado para esta reserva.",
     "paymentsAriaLabel": "Pagos",
     "statusDialog": {

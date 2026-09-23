@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
+import { groupRoomBookingLinesForDisplay } from '@africatourismgate/utils';
 import { Organizations } from '../../entities/generated';
 import type { BookingManifestEntryDto } from '../resources/bookings/dto/booking-manifest-entry.dto';
 import type { BookingDetailDto } from '../resources/bookings/dto/booking-detail.dto';
@@ -78,6 +79,7 @@ export class BookingDetailPdfService {
     const bookingId = detail.booking.id;
     const enriched = await this.pdfEnrichment.enrich(bookingId, detail, manifest, locale);
 
+    const displayItems = groupRoomBookingLinesForDisplay(detail.items);
     const buffer = await renderBookingDetailPdf({
       bookingId,
       status: detail.booking.status,
@@ -88,10 +90,14 @@ export class BookingDetailPdfService {
         lastName: customer.lastName,
         email: customer.email,
       },
-      items: detail.items.map((item) => ({
+      items: displayItems.map((item) => ({
         title: item.titleSnapshot,
         itemType: item.itemType,
-        quantity: item.quantity,
+        // Multi-night rooms: qty = rooms × nights so unitPrice (per night) × qty = stay total.
+        quantity:
+          item.itemType === 'room' && item.nightCount > 1
+            ? item.quantity * item.nightCount
+            : item.quantity,
         unitPriceCents: item.unitPriceCents,
         startDate: toDateOnlyString(item.startDate),
         endDate: toDateOnlyString(item.endDate),

@@ -21,10 +21,14 @@ import {
 } from '@africatourismgate/ui';
 import type {
   BookingAdminDetail,
-  BookingItem,
   BookingPayment,
   BookingStatus,
 } from '@africatourismgate/types';
+import {
+  formatBookingLineDateRange,
+  groupRoomBookingLinesForDisplay,
+} from '@africatourismgate/utils';
+import { ApiHttpError } from '@africatourismgate/api-client';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
@@ -140,6 +144,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const [bankTransferAmount, setBankTransferAmount] = useState('');
   const [activeTab, setActiveTab] = useState('manifest');
   const [manifestSync, setManifestSync] = useState(0);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
 
   const bumpManifestSync = useCallback(() => {
     setManifestSync((value) => value + 1);
@@ -302,6 +307,33 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
     getBookingsErrorMessage,
   ]);
 
+  const handleDownloadConfirmationPdf = useCallback(async () => {
+    setActionError(null);
+    setDownloadingPdf(true);
+    try {
+      const blob = await getApiClient().downloadBookingConfirmationPdf(bookingId);
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `reservation-${bookingId.slice(0, 8)}.pdf`;
+      anchor.rel = 'noopener';
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    } catch (error) {
+      const message =
+        error instanceof ApiHttpError &&
+        error.message &&
+        !error.message.startsWith('HTTP ')
+          ? error.message
+          : t('downloadConfirmationError');
+      setActionError(message);
+    } finally {
+      setDownloadingPdf(false);
+    }
+  }, [bookingId, t]);
+
   const statusOptions = useMemo(() => {
     const current = detail?.booking.status;
     const allowed = current ? getManualBookingStatusTargets(current) : [];
@@ -311,7 +343,12 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
     }));
   }, [detail?.booking.status, statusLabels]);
 
-  const itemColumns = useMemo<ColumnDef<BookingItem, unknown>[]>(
+  const displayItems = useMemo(
+    () => (detail ? groupRoomBookingLinesForDisplay(detail.items) : []),
+    [detail],
+  );
+
+  const itemColumns = useMemo<ColumnDef<(typeof displayItems)[number], unknown>[]>(
     () => [
       {
         accessorKey: 'itemType',
@@ -356,14 +393,26 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
         id: 'dates',
         header: tCommon('columns.dates'),
         cell: ({ row }) => {
-          const { startDate, endDate } = row.original;
-          if (!startDate) return emptyDash;
-          if (startDate === endDate || !endDate) return startDate;
-          return `${startDate} → ${endDate}`;
+          const range = formatBookingLineDateRange(
+            row.original.startDate,
+            row.original.endDate,
+          );
+          if (!range) return emptyDash;
+          if (row.original.itemType === 'room' && row.original.nightCount > 1) {
+            return (
+              <span className="text-sm">
+                {range}{' '}
+                <span className="text-atg-muted">
+                  ({t('nightsCount', { count: row.original.nightCount })})
+                </span>
+              </span>
+            );
+          }
+          return range;
         },
       },
     ],
-    [detail, emptyDash, tCommon],
+    [detail, emptyDash, t, tCommon],
   );
 
   const paymentColumns = useMemo<ColumnDef<BookingPayment, unknown>[]>(
@@ -428,7 +477,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   }
 
   const { booking, client } = detail;
-  const suggestedTravelerCount = detail.items.reduce(
+  const suggestedTravelerCount = displayItems.reduce(
     (sum, item) => sum + item.quantity,
     0,
   );
@@ -637,11 +686,24 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       />
 
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-atg-fg">{t('sections.bookingLines')}</h2>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-lg font-semibold text-atg-fg">{t('sections.bookingLines')}</h2>
+          {booking.status === 'confirmed' ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              loading={downloadingPdf}
+              onClick={() => void handleDownloadConfirmationPdf()}
+            >
+              {downloadingPdf ? t('downloadingConfirmation') : t('downloadConfirmation')}
+            </Button>
+          ) : null}
+        </div>
         <Card variant="dashboard" padding="none" className="overflow-hidden">
           <DataTable
             columns={itemColumns}
-            data={detail.items}
+            data={displayItems}
             emptyMessage={t('linesEmpty')}
             getRowId={(row) => row.id}
             aria-label={t('linesAriaLabel')}
