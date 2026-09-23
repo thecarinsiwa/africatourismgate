@@ -38,6 +38,9 @@ import { BookingItemTypeIcon } from './booking-item-type-icon';
 
 const PAGE_SIZE = 10;
 const BOOKING_ID_DEBOUNCE_MS = 300;
+/** UUID v4 — only send bookingId to the API once the value is complete. */
+const BOOKING_ID_UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 type StatusFilter = '' | BookingStatus;
 type ItemTypeFilter = '' | BookingItemType;
@@ -50,6 +53,10 @@ function formatDates(startDate: string | null, endDate: string | null, emptyDash
 
 function formatBookingRef(bookingId: string): string {
   return bookingId.slice(0, 8);
+}
+
+function isBookingIdUuid(value: string): boolean {
+  return BOOKING_ID_UUID_RE.test(value);
 }
 
 export function BookingItemsList() {
@@ -81,7 +88,10 @@ export function BookingItemsList() {
   useEffect(() => {
     const query = bookingIdInput.trim();
     const timer = window.setTimeout(() => {
-      setBookingIdFilter((prev) => (prev === query ? prev : query));
+      // Ignore partial IDs while typing — API requires a full UUID.
+      const next = query === '' || isBookingIdUuid(query) ? query : null;
+      if (next === null) return;
+      setBookingIdFilter((prev) => (prev === next ? prev : next));
     }, BOOKING_ID_DEBOUNCE_MS);
     return () => window.clearTimeout(timer);
   }, [bookingIdInput]);

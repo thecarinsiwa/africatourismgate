@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsIn, IsInt, IsOptional, IsUUID, Max, Min } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsIn, IsInt, IsOptional, IsUUID, Max, Min, ValidateIf } from 'class-validator';
 import type { BookingItems, Bookings } from '../../../../entities/generated';
 
 const ITEM_TYPES = [
@@ -55,7 +55,10 @@ export class BookingItemsListQueryDto {
   status?: Bookings['status'];
 
   @ApiPropertyOptional({ format: 'uuid', description: 'Filter by booking' })
-  @IsOptional()
+  @Transform(({ value }) =>
+    typeof value === 'string' && value.trim() === '' ? undefined : value,
+  )
+  @ValidateIf((_, value) => value !== undefined && value !== null)
   @IsUUID('4')
   bookingId?: string;
 }
