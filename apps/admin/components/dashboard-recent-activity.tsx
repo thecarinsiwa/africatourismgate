@@ -6,7 +6,7 @@ import { Card, DataTableBadge, Skeleton } from '@africatourismgate/ui';
 import type { SupportTicketStatus } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   fetchDashboardRecentActivity,
   hasDashboardActivityAccess,
@@ -140,11 +140,14 @@ export function DashboardRecentActivity({ className }: { className?: string }) {
   const reviewStatusLabels = useReviewStatusLabels();
   const ticketStatusLabels = useSupportTicketStatusLabels();
 
-  const access = {
-    canReadBookings: hasPermission('bookings.read'),
-    canReadReviews: hasPermission('reviews.read'),
-    canReadSupportTickets: hasPermission('support_tickets.read'),
-  };
+  const access = useMemo(
+    () => ({
+      canReadBookings: hasPermission('bookings.read'),
+      canReadReviews: hasPermission('reviews.read'),
+      canReadSupportTickets: hasPermission('support_tickets.read'),
+    }),
+    [hasPermission],
+  );
 
   const canShow = hasDashboardActivityAccess(access);
 
