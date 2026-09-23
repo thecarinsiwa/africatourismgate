@@ -5,7 +5,11 @@ export function formatCount(value: number): string {
   return countFormatter.format(value);
 }
 
-export function formatMoney(totalCents: number, currency?: string | null): string {
+export function formatMoney(
+  totalCents: number | null | undefined,
+  currency?: string | null,
+): string {
+  const cents = typeof totalCents === 'number' && Number.isFinite(totalCents) ? totalCents : 0;
   const code =
     typeof currency === 'string' && /^[A-Za-z]{3}$/.test(currency.trim())
       ? currency.trim().toUpperCase()
@@ -15,5 +19,5 @@ export function formatMoney(totalCents: number, currency?: string | null): strin
     currency: code,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(totalCents / 100);
+  }).format(cents / 100);
 }

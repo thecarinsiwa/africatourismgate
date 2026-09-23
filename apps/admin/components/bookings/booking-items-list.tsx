@@ -163,11 +163,18 @@ export function BookingItemsList() {
         id: 'amount',
         header: tCommon('columns.amount'),
         meta: { align: 'right' },
-        cell: ({ row }) => (
-          <span className="tabular-nums text-sm font-medium">
-            {formatMoney(row.original.lineTotalCents, row.original.currency)}
-          </span>
-        ),
+        cell: ({ row }) => {
+          const item = row.original;
+          const lineTotal =
+            typeof item.lineTotalCents === 'number' && Number.isFinite(item.lineTotalCents)
+              ? item.lineTotalCents
+              : Number(item.quantity ?? 0) * Number(item.unitPriceCents ?? 0);
+          return (
+            <span className="tabular-nums text-sm font-medium">
+              {formatMoney(lineTotal, item.currency)}
+            </span>
+          );
+        },
       },
       {
         id: 'bookingRef',
