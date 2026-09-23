@@ -416,7 +416,7 @@ export function TourGuideForm({
     <div className="space-y-3">
       <label
         htmlFor={photoFileInputId}
-        className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10"
+        className="inline-flex w-full cursor-pointer items-center justify-center rounded-md border border-atg-border px-3 py-2.5 text-xs font-medium text-atg-fg hover:bg-atg-muted/10 sm:w-auto sm:justify-start"
       >
         {uploadingPhoto ? tCommonForm('uploading') : t('uploadPhoto')}
         <input
@@ -439,6 +439,9 @@ export function TourGuideForm({
       />
     </div>
   );
+
+  // Wide layouts show photo in the sticky aside; keep fields in the form only for narrow.
+  const showPhotoInForm = !isWide;
 
   const identityFields = (
     <div className="space-y-4">
@@ -513,7 +516,7 @@ export function TourGuideForm({
         onChange={(e) => updateField('bio', e.target.value)}
       />
 
-      {!isWide || activeSection === 'all' ? photoFields : null}
+      {showPhotoInForm ? photoFields : null}
 
       <Select
         id={statusId}
@@ -537,7 +540,7 @@ export function TourGuideForm({
         required
       />
 
-      <div>
+      <div className="min-w-0">
         <p className="mb-1 text-sm font-medium text-atg-fg">{t('destinations')}</p>
         <p className="mb-3 text-xs text-atg-muted">{t('destinationsHint')}</p>
         {destinations.length === 0 ? (
@@ -555,7 +558,7 @@ export function TourGuideForm({
             />
             <div
               className={cn(
-                'grid gap-2 sm:grid-cols-2 xl:grid-cols-3',
+                'grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3',
                 fieldErrors.destinationIds && 'rounded-lg ring-1 ring-red-500',
               )}
             >
@@ -571,7 +574,7 @@ export function TourGuideForm({
                       onClick={() => toggleDestination(destination.id)}
                       aria-pressed={selected}
                       className={cn(
-                        'rounded-lg border px-3 py-2.5 text-left text-sm transition-colors',
+                        'min-w-0 rounded-lg border px-3 py-2.5 text-left text-sm break-words transition-colors',
                         selected
                           ? 'border-primary bg-primary/5 font-medium text-atg-fg'
                           : 'border-atg-border bg-atg-elevated text-atg-muted hover:border-primary/40 hover:text-atg-fg',
@@ -593,7 +596,7 @@ export function TourGuideForm({
   );
 
   const identityAside = (
-    <aside className="min-w-0 space-y-4 lg:sticky lg:top-6">
+    <aside className="min-w-0 space-y-4">
       <Card variant="dashboard" padding="md" className="space-y-4">
         <h3 className="text-sm font-semibold text-atg-fg">{t('previewPhoto')}</h3>
         <div className="flex flex-col items-center gap-3 text-center">
@@ -605,7 +608,7 @@ export function TourGuideForm({
             size="lg"
             label={values.displayName.trim() || previewFirstName}
           />
-          <p className="text-sm font-medium text-atg-fg">
+          <p className="max-w-full truncate text-sm font-medium text-atg-fg">
             {values.displayName.trim() || t('previewNamePlaceholder')}
           </p>
           <DataTableBadge variant="muted">{typeLabels[values.type]}</DataTableBadge>
@@ -616,7 +619,7 @@ export function TourGuideForm({
   );
 
   const coverageAside = (
-    <aside className="min-w-0 space-y-4 lg:sticky lg:top-6">
+    <aside className="min-w-0 space-y-4">
       <Card variant="dashboard" padding="md" className="space-y-3">
         <h3 className="text-sm font-semibold text-atg-fg">{t('selectedDestinations')}</h3>
         {selectedDestinations.length === 0 ? (
@@ -624,8 +627,8 @@ export function TourGuideForm({
         ) : (
           <div className="flex flex-wrap gap-2">
             {selectedDestinations.map((destination) => (
-              <DataTableBadge key={destination.id} variant="muted">
-                {destination.name}
+              <DataTableBadge key={destination.id} variant="muted" className="max-w-full">
+                <span className="truncate">{destination.name}</span>
               </DataTableBadge>
             ))}
           </div>
@@ -637,10 +640,20 @@ export function TourGuideForm({
     </aside>
   );
 
-  const formClassName = cn(
-    'space-y-6',
-    isWide ? 'w-full' : 'max-w-2xl',
+  const submitButton = (
+    <Button
+      type="submit"
+      variant="primary"
+      loading={submitting}
+      loadingText={tLoading('submit')}
+      disabled={uploadingPhoto}
+      className="w-full sm:w-auto"
+    >
+      {mode === 'create' ? t('submitCreate') : t('submitUpdate')}
+    </Button>
   );
+
+  const formClassName = cn('min-w-0 space-y-6', isWide ? 'w-full' : 'max-w-2xl');
 
   return (
     <form onSubmit={(e) => void handleSubmit(e)} className={formClassName}>
@@ -650,34 +663,63 @@ export function TourGuideForm({
         </p>
       ) : null}
 
+      {/* Create / full form: two columns with sticky preview on desktop */}
+      {isWide && activeSection === 'all' ? (
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
+          <div className="order-2 min-w-0 space-y-6 lg:order-1">
+            {showIdentity ? (
+              <Card variant="dashboard" padding="md" className="min-w-0 space-y-4">
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
+                  {t('sections.identity')}
+                </h2>
+                {identityFields}
+              </Card>
+            ) : null}
+            {showCoverage ? (
+              <Card variant="dashboard" padding="md" className="min-w-0 space-y-4">
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
+                  {t('sections.coverage')}
+                </h2>
+                {coverageFields}
+              </Card>
+            ) : null}
+            {submitButton}
+          </div>
+          <div className="order-1 min-w-0 space-y-4 lg:sticky lg:top-6 lg:order-2">
+            {showIdentity ? identityAside : null}
+            {showCoverage ? coverageAside : null}
+          </div>
+        </div>
+      ) : null}
+
       {isWide && showIdentity && !showCoverage ? (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
-          <Card variant="dashboard" padding="md">
+          <Card variant="dashboard" padding="md" className="min-w-0">
             <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-atg-muted">
               {t('sections.identity')}
             </h2>
             {identityFields}
           </Card>
-          {identityAside}
+          <div className="min-w-0 lg:sticky lg:top-6">{identityAside}</div>
         </div>
       ) : null}
 
       {isWide && showCoverage && !showIdentity ? (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
-          <Card variant="dashboard" padding="md">
+          <Card variant="dashboard" padding="md" className="min-w-0">
             <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-atg-muted">
               {t('sections.coverage')}
             </h2>
             {coverageFields}
           </Card>
-          {coverageAside}
+          <div className="min-w-0 lg:sticky lg:top-6">{coverageAside}</div>
         </div>
       ) : null}
 
-      {!isWide || activeSection === 'all' ? (
+      {!isWide ? (
         <>
           {showIdentity ? (
-            <Card variant="dashboard" padding="md" className="space-y-4">
+            <Card variant="dashboard" padding="md" className="min-w-0 space-y-4">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
                 {t('sections.identity')}
               </h2>
@@ -686,25 +728,19 @@ export function TourGuideForm({
           ) : null}
 
           {showCoverage ? (
-            <Card variant="dashboard" padding="md" className="space-y-4">
+            <Card variant="dashboard" padding="md" className="min-w-0 space-y-4">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
                 {t('sections.coverage')}
               </h2>
               {coverageFields}
             </Card>
           ) : null}
+
+          {submitButton}
         </>
       ) : null}
 
-      <Button
-        type="submit"
-        variant="primary"
-        loading={submitting}
-        loadingText={tLoading('submit')}
-        disabled={uploadingPhoto}
-      >
-        {mode === 'create' ? t('submitCreate') : t('submitUpdate')}
-      </Button>
+      {isWide && activeSection !== 'all' ? submitButton : null}
     </form>
   );
 }
