@@ -1,11 +1,4 @@
-import { ATG_DOMAINS } from './domains.mjs';
 import { getDevApiUrl } from './dev-api-url.mjs';
-
-function remoteApiTarget(): string {
-  return (
-    process.env.ATG_REMOTE_API_URL?.replace(/\/$/, '') ?? ATG_DOMAINS.api.url
-  );
-}
 
 /** True when this Next app exposes same-origin `/api` (see next.config + route handler). */
 export function shouldProxyRemoteApi(appPort: string): boolean {
