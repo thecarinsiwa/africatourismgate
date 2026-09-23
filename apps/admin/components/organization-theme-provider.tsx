@@ -7,6 +7,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -71,48 +72,65 @@ export function OrganizationThemeProvider({ children }: { children: ReactNode })
   const [organizationId, setOrganizationId] = useState<string | null>(null);
   const [branding, setBranding] = useState<OrganizationBranding | null>(null);
   const [loading, setLoading] = useState(true);
+  const lastLoadedOrgKeyRef = useRef<string | null>(null);
+  const brandingRef = useRef<OrganizationBranding | null>(null);
+  brandingRef.current = branding;
 
   const resolvedOrgId = organizationId;
   const canReadSettings = hasPermission('organization_settings.read');
 
-  const loadTheme = useCallback(async () => {
-    setLoading(true);
-    try {
-      const client = getApiClient();
-      const me = await client.getAuthMe();
-      const orgId = resolveThemeOrganizationId(
-        me.isSuperAdmin,
-        me.user.organizationId,
-        queryOrgId,
-        pathname,
-      );
-      setOrganizationId(orgId);
+  /** Stable key: avoid refetching theme on every route change within the same org scope. */
+  const themeScopeKey = useMemo(() => {
+    const onParametres = pathname.startsWith('/parametres');
+    return `${onParametres ? 'parametres' : 'app'}:${queryOrgId ?? ''}:${canReadSettings ? '1' : '0'}`;
+  }, [pathname, queryOrgId, canReadSettings]);
 
-      if (canReadSettings) {
-        const settingsPage = await client.listOrganizationSettings({
-          organizationId: orgId,
-          page: 1,
-          limit: 100,
-        });
-        const nextBranding = findPlatformSetting(settingsPage.data);
-        setBranding(nextBranding);
-        applyOrganizationBrandingToDocument(nextBranding);
-        applyFaviconToDocument(nextBranding.faviconUrl);
-      } else {
-        const publicBranding = await fetchPublicBranding();
-        const nextBranding = brandingFromPublicBranding(publicBranding);
-        setBranding(nextBranding);
-        applyOrganizationBrandingToDocument(nextBranding);
-        applyFaviconToDocument(nextBranding.faviconUrl);
+  const loadTheme = useCallback(
+    async (options?: { force?: boolean }) => {
+      if (!options?.force && lastLoadedOrgKeyRef.current === themeScopeKey) {
+        return;
       }
-    } catch {
-      clearOrganizationBrandingFromDocument();
-      applyFaviconToDocument(null);
-      setBranding(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [canReadSettings, pathname, queryOrgId]);
+
+      setLoading(true);
+      try {
+        const client = getApiClient();
+        const me = await client.getAuthMe();
+        const orgId = resolveThemeOrganizationId(
+          me.isSuperAdmin,
+          me.user.organizationId,
+          queryOrgId,
+          pathname,
+        );
+        setOrganizationId(orgId);
+
+        if (canReadSettings) {
+          const settingsPage = await client.listOrganizationSettings({
+            organizationId: orgId,
+            page: 1,
+            limit: 100,
+          });
+          const nextBranding = findPlatformSetting(settingsPage.data);
+          setBranding(nextBranding);
+          applyOrganizationBrandingToDocument(nextBranding);
+          applyFaviconToDocument(nextBranding.faviconUrl);
+        } else {
+          const publicBranding = await fetchPublicBranding();
+          const nextBranding = brandingFromPublicBranding(publicBranding);
+          setBranding(nextBranding);
+          applyOrganizationBrandingToDocument(nextBranding);
+          applyFaviconToDocument(nextBranding.faviconUrl);
+        }
+        lastLoadedOrgKeyRef.current = themeScopeKey;
+      } catch {
+        // Keep last-known branding/favicon so API blips don't blank the tab icon.
+        clearOrganizationBrandingFromDocument();
+        applyFaviconToDocument(brandingRef.current?.faviconUrl ?? null);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [canReadSettings, pathname, queryOrgId, themeScopeKey],
+  );
 
   useEffect(() => {
     if (permissionsLoading) return;
@@ -125,15 +143,20 @@ export function OrganizationThemeProvider({ children }: { children: ReactNode })
     applyFaviconToDocument(next.faviconUrl);
   }, []);
 
+  const refreshTheme = useCallback(async () => {
+    lastLoadedOrgKeyRef.current = null;
+    await loadTheme({ force: true });
+  }, [loadTheme]);
+
   const value = useMemo(
     () => ({
       organizationId: resolvedOrgId,
       branding,
       loading,
       applyBranding,
-      refreshTheme: loadTheme,
+      refreshTheme,
     }),
-    [resolvedOrgId, branding, loading, applyBranding, loadTheme],
+    [resolvedOrgId, branding, loading, applyBranding, refreshTheme],
   );
 
   return (

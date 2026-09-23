@@ -20,7 +20,7 @@ import {
 import type { BookingListItem, BookingStatus, OrganizationListItem, User } from '@africatourismgate/types';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { getApiClient } from '../../lib/auth/api';
+import { getApiClient, shouldOpenSessionLock } from '../../lib/auth/api';
 import {
   BOOKING_STATUS_VARIANTS,
   getBookingStatusLabel,
@@ -177,6 +177,11 @@ export function BookingsList() {
         totalPages: result.meta.totalPages,
       });
     } catch (error) {
+      if (shouldOpenSessionLock(error)) {
+        // Idle lock overlay handles UX; avoid a competing page error.
+        setState({ status: 'loading' });
+        return;
+      }
       setState({ status: 'error', message: getBookingsErrorMessage(error) });
     }
   }, [page, statusFilter, userFilter, organizationFilter, dateFrom, dateTo, sortOrder, search, getBookingsErrorMessage]);

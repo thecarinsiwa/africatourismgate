@@ -1,4 +1,5 @@
-import { ApiHttpError, parseApiErrorMessage } from '@africatourismgate/api-client';
+import { ApiHttpError, isSessionLockedApiError, parseApiErrorMessage } from '@africatourismgate/api-client';
+import { shouldOpenSessionLock } from './auth/api';
 
 export type CommonErrorMessages = {
   network: string;
@@ -36,6 +37,11 @@ export function resolveApiHttpError(
   messages: CommonErrorMessages,
   options: ApiErrorHandlerOptions = {},
 ): string {
+  // Idle lock overlay handles this; suppress competing page error copy.
+  if (shouldOpenSessionLock(error) || isSessionLockedApiError(error)) {
+    return '';
+  }
+
   if (error.status === 401 && (options.sessionExpired ?? messages.sessionExpired)) {
     return options.sessionExpired ?? messages.sessionExpired!;
   }
@@ -74,6 +80,10 @@ export function resolveUnknownApiError(
   messages: CommonErrorMessages,
   options: ApiErrorHandlerOptions = {},
 ): string {
+  if (shouldOpenSessionLock(error)) {
+    return '';
+  }
+
   if (error instanceof TypeError) {
     return messages.network;
   }
@@ -87,4 +97,12 @@ export function resolveUnknownApiError(
   }
 
   return messages.generic;
+}
+
+/**
+ * Shared catch helper for admin loaders: opens idle lock instead of page errors.
+ * @returns true when the caller should stop (lock UI is handling it).
+ */
+export function absorbSessionLockError(error: unknown): boolean {
+  return shouldOpenSessionLock(error);
 }
