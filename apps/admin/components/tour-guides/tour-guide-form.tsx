@@ -413,10 +413,10 @@ export function TourGuideForm({
   }, []);
 
   const photoFields = (
-    <div className="space-y-3">
+    <div className="flex w-full flex-col gap-3">
       <label
         htmlFor={photoFileInputId}
-        className="inline-flex w-full cursor-pointer items-center justify-center rounded-md border border-atg-border px-3 py-2.5 text-xs font-medium text-atg-fg hover:bg-atg-muted/10 sm:w-auto sm:justify-start"
+        className="flex w-full cursor-pointer items-center justify-center rounded-md border border-atg-border px-3 py-2.5 text-center text-xs font-medium text-atg-fg hover:bg-atg-muted/10"
       >
         {uploadingPhoto ? tCommonForm('uploading') : t('uploadPhoto')}
         <input
@@ -597,45 +597,50 @@ export function TourGuideForm({
 
   const identityAside = (
     <aside className="min-w-0 space-y-4">
-      <Card variant="dashboard" padding="md" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">{t('previewPhoto')}</h3>
-        <div className="flex flex-col items-center gap-3 text-center">
-          <Avatar
-            email={previewEmail}
-            firstName={previewFirstName}
-            lastName={previewLastName}
-            src={photoPreviewSrc}
-            size="lg"
-            label={values.displayName.trim() || previewFirstName}
-          />
-          <p className="max-w-full truncate text-sm font-medium text-atg-fg">
-            {values.displayName.trim() || t('previewNamePlaceholder')}
-          </p>
-          <DataTableBadge variant="muted">{typeLabels[values.type]}</DataTableBadge>
+      {/* Card applies className on the outer wrapper; spacing must be on an inner div. */}
+      <Card variant="dashboard" padding="md">
+        <div className="flex flex-col gap-4">
+          <h3 className="text-sm font-semibold text-atg-fg">{t('previewPhoto')}</h3>
+          <div className="flex flex-col items-center gap-3 text-center">
+            <Avatar
+              email={previewEmail}
+              firstName={previewFirstName}
+              lastName={previewLastName}
+              src={photoPreviewSrc}
+              size="lg"
+              label={values.displayName.trim() || previewFirstName}
+            />
+            <p className="max-w-full truncate text-sm font-medium text-atg-fg">
+              {values.displayName.trim() || t('previewNamePlaceholder')}
+            </p>
+            <DataTableBadge variant="muted">{typeLabels[values.type]}</DataTableBadge>
+          </div>
+          <div className="w-full border-t border-atg-border pt-4">{photoFields}</div>
         </div>
-        {photoFields}
       </Card>
     </aside>
   );
 
   const coverageAside = (
     <aside className="min-w-0 space-y-4">
-      <Card variant="dashboard" padding="md" className="space-y-3">
-        <h3 className="text-sm font-semibold text-atg-fg">{t('selectedDestinations')}</h3>
-        {selectedDestinations.length === 0 ? (
-          <p className="text-sm text-atg-muted">{t('noDestinationsSelected')}</p>
-        ) : (
-          <div className="flex flex-wrap gap-2">
-            {selectedDestinations.map((destination) => (
-              <DataTableBadge key={destination.id} variant="muted" className="max-w-full">
-                <span className="truncate">{destination.name}</span>
-              </DataTableBadge>
-            ))}
-          </div>
-        )}
-        <p className="text-xs text-atg-muted">
-          {t('selectedCount', { count: selectedDestinations.length })}
-        </p>
+      <Card variant="dashboard" padding="md">
+        <div className="flex flex-col gap-3">
+          <h3 className="text-sm font-semibold text-atg-fg">{t('selectedDestinations')}</h3>
+          {selectedDestinations.length === 0 ? (
+            <p className="text-sm text-atg-muted">{t('noDestinationsSelected')}</p>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {selectedDestinations.map((destination) => (
+                <DataTableBadge key={destination.id} variant="muted" className="max-w-full">
+                  <span className="truncate">{destination.name}</span>
+                </DataTableBadge>
+              ))}
+            </div>
+          )}
+          <p className="text-xs text-atg-muted">
+            {t('selectedCount', { count: selectedDestinations.length })}
+          </p>
+        </div>
       </Card>
     </aside>
   );
@@ -668,19 +673,23 @@ export function TourGuideForm({
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
           <div className="order-2 min-w-0 space-y-6 lg:order-1">
             {showIdentity ? (
-              <Card variant="dashboard" padding="md" className="min-w-0 space-y-4">
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
-                  {t('sections.identity')}
-                </h2>
-                {identityFields}
+              <Card variant="dashboard" padding="md" className="min-w-0">
+                <div className="flex flex-col gap-4">
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
+                    {t('sections.identity')}
+                  </h2>
+                  {identityFields}
+                </div>
               </Card>
             ) : null}
             {showCoverage ? (
-              <Card variant="dashboard" padding="md" className="min-w-0 space-y-4">
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
-                  {t('sections.coverage')}
-                </h2>
-                {coverageFields}
+              <Card variant="dashboard" padding="md" className="min-w-0">
+                <div className="flex flex-col gap-4">
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
+                    {t('sections.coverage')}
+                  </h2>
+                  {coverageFields}
+                </div>
               </Card>
             ) : null}
             {submitButton}
@@ -695,10 +704,12 @@ export function TourGuideForm({
       {isWide && showIdentity && !showCoverage ? (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
           <Card variant="dashboard" padding="md" className="min-w-0">
-            <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-atg-muted">
-              {t('sections.identity')}
-            </h2>
-            {identityFields}
+            <div className="flex flex-col gap-4">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
+                {t('sections.identity')}
+              </h2>
+              {identityFields}
+            </div>
           </Card>
           <div className="min-w-0 lg:sticky lg:top-6">{identityAside}</div>
         </div>
@@ -707,10 +718,12 @@ export function TourGuideForm({
       {isWide && showCoverage && !showIdentity ? (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
           <Card variant="dashboard" padding="md" className="min-w-0">
-            <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-atg-muted">
-              {t('sections.coverage')}
-            </h2>
-            {coverageFields}
+            <div className="flex flex-col gap-4">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
+                {t('sections.coverage')}
+              </h2>
+              {coverageFields}
+            </div>
           </Card>
           <div className="min-w-0 lg:sticky lg:top-6">{coverageAside}</div>
         </div>
@@ -719,20 +732,24 @@ export function TourGuideForm({
       {!isWide ? (
         <>
           {showIdentity ? (
-            <Card variant="dashboard" padding="md" className="min-w-0 space-y-4">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
-                {t('sections.identity')}
-              </h2>
-              {identityFields}
+            <Card variant="dashboard" padding="md" className="min-w-0">
+              <div className="flex flex-col gap-4">
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
+                  {t('sections.identity')}
+                </h2>
+                {identityFields}
+              </div>
             </Card>
           ) : null}
 
           {showCoverage ? (
-            <Card variant="dashboard" padding="md" className="min-w-0 space-y-4">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
-                {t('sections.coverage')}
-              </h2>
-              {coverageFields}
+            <Card variant="dashboard" padding="md" className="min-w-0">
+              <div className="flex flex-col gap-4">
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
+                  {t('sections.coverage')}
+                </h2>
+                {coverageFields}
+              </div>
             </Card>
           ) : null}
 
