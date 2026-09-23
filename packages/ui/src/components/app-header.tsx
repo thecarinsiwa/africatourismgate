@@ -76,13 +76,7 @@ export function AppHeader({
         </div>
       </div>
 
-      <div
-        className={cn(
-          'flex min-w-0 items-center gap-1.5 overflow-x-auto overscroll-x-contain',
-          '[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
-          'md:shrink-0 md:justify-end md:gap-3 md:overflow-visible',
-        )}
-      >
+      <div className="flex shrink-0 items-center justify-end gap-1.5 sm:gap-2 md:gap-3">
         {actions}
         <ThemeToggle labels={themeLabels} />
         <UserMenu {...user} />
