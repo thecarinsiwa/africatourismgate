@@ -20,11 +20,11 @@ export function AuthPageShell({ children, footer }: Props) {
       <AuthVisualPanel variant="compact" className="lg:hidden" />
 
       <div className="flex min-h-0 flex-1 flex-col bg-atg-surface">
-        <header className="relative px-6 py-6 md:px-10">
-          <div className="flex justify-center lg:justify-start">
+        <header className="flex items-center justify-between gap-3 px-4 py-4 sm:px-6 md:px-10 md:py-6">
+          <div className="min-w-0 flex-1">
             <BrandingLogo />
           </div>
-          <div className="absolute right-6 top-6 flex items-center gap-3 md:right-10">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <LanguageSwitcher />
             <ThemeToggle labels={{ light: t('light'), dark: t('dark') }} />
           </div>
@@ -33,7 +33,7 @@ export function AuthPageShell({ children, footer }: Props) {
           {children}
         </main>
         {footer ? (
-          <footer className="pb-8 text-center text-sm text-atg-muted lg:text-left lg:px-10">
+          <footer className="pb-8 text-center text-sm text-atg-muted lg:px-10 lg:text-left">
             {footer}
           </footer>
         ) : null}

@@ -28,31 +28,33 @@ export function Logo({
   iconClassName,
 }: LogoProps) {
   const content = (
-    <div className={cn('flex items-center gap-2.5', className)}>
+    <div className={cn('flex min-w-0 items-center gap-2.5', className)}>
       {logoUrl ? (
         <img
           src={logoUrl}
           alt=""
-          className={cn('h-9 w-9 rounded-md object-contain', iconClassName)}
+          className={cn('h-9 w-9 shrink-0 rounded-md object-contain', iconClassName)}
         />
       ) : (
         <div
           className={cn(
-            'flex h-9 w-9 items-center justify-center rounded-md bg-primary',
+            'flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary',
             iconClassName,
           )}
         >
           {icon}
         </div>
       )}
-      <span className="text-base font-bold leading-tight tracking-tight text-atg-fg">{name}</span>
+      <span className="truncate text-base font-bold leading-tight tracking-tight text-atg-fg">
+        {name}
+      </span>
     </div>
   );
 
   const inner = href ? (
     <a
       href={href}
-      className="inline-flex focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md"
+      className="inline-flex min-w-0 max-w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md"
     >
       {content}
     </a>

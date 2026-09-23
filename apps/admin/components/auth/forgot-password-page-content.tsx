@@ -11,9 +11,11 @@ export function ForgotPasswordPageContent() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="relative px-6 py-6 md:px-10">
-        <BrandingLogo centered />
-        <div className="absolute right-6 top-6 md:right-10">
+      <header className="flex items-center justify-between gap-3 px-4 py-4 sm:px-6 md:px-10 md:py-6">
+        <div className="min-w-0 flex-1">
+          <BrandingLogo />
+        </div>
+        <div className="shrink-0">
           <ThemeToggle labels={{ light: tTheme('light'), dark: tTheme('dark') }} />
         </div>
       </header>
