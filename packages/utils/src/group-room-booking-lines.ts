@@ -27,6 +27,15 @@ function toDateOnly(value: string | null | undefined): string | null {
   return match ? match[1]! : value.trim().slice(0, 10);
 }
 
+/** Calendar day after a YYYY-MM-DD (checkout = last night + 1). */
+function addOneDay(iso: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  if (!match) return iso;
+  const date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])));
+  date.setUTCDate(date.getUTCDate() + 1);
+  return date.toISOString().slice(0, 10);
+}
+
 function roomGroupKey(item: RoomGroupableBookingLine): string {
   return `${item.referenceId}::${item.quantity}`;
 }
@@ -43,7 +52,8 @@ function lineAmount(item: RoomGroupableBookingLine): number {
  * - `quantity` = number of rooms
  * - `unitPriceCents` = average price per room-night
  * - `lineTotalCents` = sum of night amounts (use this for PDF line totals)
- * - `startDate` / `endDate` = first / last night (inclusive)
+ * - `startDate` = check-in (first night)
+ * - `endDate` = check-out (day after last night)
  */
 export function groupRoomBookingLinesForDisplay<T extends RoomGroupableBookingLine>(
   items: T[],
@@ -84,9 +94,10 @@ export function groupRoomBookingLinesForDisplay<T extends RoomGroupableBookingLi
     const lineTotalCents = group.reduce((sum, row) => sum + lineAmount(row), 0);
     const roomsQty = item.quantity;
     const startDate = toDateOnly(group[0]?.startDate) ?? item.startDate;
-    const endDate =
+    const lastNight =
       toDateOnly(group[group.length - 1]?.endDate ?? group[group.length - 1]?.startDate) ??
-      item.endDate;
+      toDateOnly(item.endDate);
+    const endDate = lastNight ? addOneDay(lastNight) : item.endDate;
     const unitPriceCents =
       nightCount > 0 && roomsQty > 0
         ? Math.round(lineTotalCents / (nightCount * roomsQty))
@@ -116,5 +127,5 @@ export function formatBookingLineDateRange(
   if (!start) return null;
   const end = toDateOnly(endDate);
   if (!end || end === start) return start;
-  return `${start} → ${end}`;
+  return `${start} - ${end}`;
 }

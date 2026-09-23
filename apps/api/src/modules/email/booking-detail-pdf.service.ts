@@ -51,9 +51,21 @@ function deriveVisitDates(
     .map((item) => toDateOnlyString(item.endDate ?? item.startDate))
     .filter((value): value is string => Boolean(value))
     .sort();
+  let endDate = ends[ends.length - 1] ?? null;
+  // Room lines store nights (check-in night); Retour = checkout = last night + 1.
+  if (endDate && dated.some((item) => item.itemType === 'room')) {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(endDate);
+    if (match) {
+      const date = new Date(
+        Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])),
+      );
+      date.setUTCDate(date.getUTCDate() + 1);
+      endDate = date.toISOString().slice(0, 10);
+    }
+  }
   return {
     startDate: starts[0] ?? null,
-    endDate: ends[ends.length - 1] ?? null,
+    endDate,
   };
 }
 
@@ -93,12 +105,10 @@ export class BookingDetailPdfService {
       items: displayItems.map((item) => ({
         title: item.titleSnapshot,
         itemType: item.itemType,
-        // Multi-night rooms: qty = rooms × nights so unitPrice (per night) × qty = stay total.
-        quantity:
-          item.itemType === 'room' && item.nightCount > 1
-            ? item.quantity * item.nightCount
-            : item.quantity,
+        // Rooms: quantity = number of rooms; sous-total uses lineTotalCents (sum of nights).
+        quantity: item.quantity,
         unitPriceCents: item.unitPriceCents,
+        lineTotalCents: item.lineTotalCents,
         startDate: toDateOnlyString(item.startDate),
         endDate: toDateOnlyString(item.endDate),
         schedule: enriched.itemSchedules.get(item.id) ?? null,

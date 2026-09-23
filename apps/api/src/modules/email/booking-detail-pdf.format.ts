@@ -35,7 +35,7 @@ export function formatVisitDate(
 ): string {
   const dateOnly = toDateOnlyString(value);
   if (!dateOnly) {
-    return '—';
+    return '-';
   }
   try {
     return new Intl.DateTimeFormat(intlTag(locale), { dateStyle: 'medium' }).format(
@@ -53,13 +53,14 @@ export function formatItemDateRange(
 ): string {
   const start = toDateOnlyString(startDate);
   if (!start) {
-    return '—';
+    return '-';
   }
   const end = toDateOnlyString(endDate);
   if (!end || end === start) {
     return formatVisitDate(start, locale);
   }
-  return `${formatVisitDate(start, locale)} → ${formatVisitDate(end, locale)}`;
+  // ASCII separator only — Helvetica in PDFKit cannot render Unicode arrows (→).
+  return `${formatVisitDate(start, locale)} - ${formatVisitDate(end, locale)}`;
 }
 
 export function formatPdfScheduleRange(
@@ -70,7 +71,7 @@ export function formatPdfScheduleRange(
   const startDate = start instanceof Date ? start : new Date(start);
   const endDate = end instanceof Date ? end : new Date(end);
   if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
-    return '—';
+    return '-';
   }
 
   const sameDay = startDate.toISOString().slice(0, 10) === endDate.toISOString().slice(0, 10);
@@ -93,8 +94,8 @@ export function formatPdfScheduleRange(
     }).format(startDate);
     const from = new Intl.DateTimeFormat(tag, timeFmt).format(startDate);
     const to = new Intl.DateTimeFormat(tag, timeFmt).format(endDate);
-    return `${day} · ${from} – ${to}`;
+    return `${day} · ${from} - ${to}`;
   }
 
-  return `${new Intl.DateTimeFormat(tag, dateFmt).format(startDate)} → ${new Intl.DateTimeFormat(tag, dateFmt).format(endDate)}`;
+  return `${new Intl.DateTimeFormat(tag, dateFmt).format(startDate)} - ${new Intl.DateTimeFormat(tag, dateFmt).format(endDate)}`;
 }

@@ -6,6 +6,8 @@ export type BookingDetailPdfItem = {
   itemType: string;
   quantity: number;
   unitPriceCents: number;
+  /** Prefer this for line sous-total (rooms: sum of nights). Falls back to qty × unit. */
+  lineTotalCents?: number;
   startDate: string | null;
   endDate: string | null;
   schedule: string | null;

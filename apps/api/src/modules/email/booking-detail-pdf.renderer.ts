@@ -73,7 +73,7 @@ function sexLabel(
   if (sex === 'M') return labels.sexM;
   if (sex === 'F') return labels.sexF;
   if (sex === 'other') return labels.sexOther;
-  return '—';
+  return '-';
 }
 
 function travelerNotes(
@@ -214,7 +214,7 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
   );
 
   drawSectionTitle(doc, labels.customerSection, brandColor);
-  drawKeyValue(doc, labels.customerName, customerName || '—', mutedColor);
+  drawKeyValue(doc, labels.customerName, customerName || '-', mutedColor);
   drawKeyValue(doc, labels.customerEmail, input.customer.email, mutedColor);
 
   if (input.visitStartDate) {
@@ -267,12 +267,12 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
   for (const item of input.items) {
     ensureSpace(doc, 22);
     const rowTop = doc.y;
-    const lineTotal = item.quantity * item.unitPriceCents;
+    const lineTotal = item.lineTotalCents ?? item.quantity * item.unitPriceCents;
     const cells = [
       item.title,
       itemTypeLabel(item.itemType, labels),
       formatItemDateRange(item.startDate, item.endDate, input.locale),
-      item.schedule?.trim() || '—',
+      item.schedule?.trim() || '-',
       String(item.quantity),
       formatMoney(item.unitPriceCents, input.currency),
       formatMoney(lineTotal, input.currency),
@@ -358,19 +358,19 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
       ensureSpace(doc, 18);
       const rowTop = doc.y;
       const age =
-        traveler.age != null && !Number.isNaN(traveler.age) ? String(traveler.age) : '—';
+        traveler.age != null && !Number.isNaN(traveler.age) ? String(traveler.age) : '-';
       const price =
         traveler.priceCents != null
           ? formatMoney(traveler.priceCents, input.currency)
-          : '—';
-      const notes = travelerNotes(traveler, labels, input.locale) || '—';
+          : '-';
+      const notes = travelerNotes(traveler, labels, input.locale) || '-';
       const cells = [
         String(index + 1),
         traveler.fullName,
         age,
         sexLabel(traveler.sex, labels),
-        formatNationalityDisplay(traveler.nationality, input.locale) || '—',
-        traveler.idNumber?.trim() || '—',
+        formatNationalityDisplay(traveler.nationality, input.locale) || '-',
+        traveler.idNumber?.trim() || '-',
         price,
         notes,
       ];
