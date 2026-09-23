@@ -92,8 +92,8 @@ export function brandingFromPlatformSetting(
 
 /**
  * Apply org favicon, or restore the default admin icon when unset.
- * Replaces every competing icon link so Next metadata icons cannot
- * stick to a stale or blank tab icon.
+ * Only mutates our own `data-atg-dynamic-favicon` link — never remove
+ * Next/React-managed `<link rel="icon">` nodes (causes removeChild crashes).
  */
 export function applyFaviconToDocument(faviconUrl: string | null): void {
   if (typeof document === 'undefined') return;
@@ -101,20 +101,13 @@ export function applyFaviconToDocument(faviconUrl: string | null): void {
   const href = faviconUrl?.trim() || DEFAULT_ADMIN_FAVICON_HREF;
   const isSvg = /\.svg(\?|#|$)/i.test(href);
 
-  document
-    .querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]')
-    .forEach((node) => {
-      if (!(node instanceof HTMLLinkElement)) return;
-      if (node.getAttribute('data-atg-dynamic-favicon') === '1') return;
-      node.remove();
-    });
-
   let link = document.querySelector<HTMLLinkElement>(
     'link[data-atg-dynamic-favicon="1"]',
   );
   if (!link) {
     link = document.createElement('link');
     link.setAttribute('data-atg-dynamic-favicon', '1');
+    // Append last so browsers prefer this over Next metadata icons.
     document.head.appendChild(link);
   }
 
@@ -124,9 +117,9 @@ export function applyFaviconToDocument(faviconUrl: string | null): void {
   } else {
     link.removeAttribute('type');
   }
-  // Re-assign so the browser re-fetches when branding changes.
-  link.removeAttribute('href');
-  link.href = href;
+  if (link.getAttribute('href') !== href) {
+    link.href = href;
+  }
 }
 
 export function brandingFromSettingsForm(values: {
