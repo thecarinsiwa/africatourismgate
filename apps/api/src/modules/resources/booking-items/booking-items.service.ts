@@ -30,9 +30,9 @@ function toStringValue(value: unknown, fallback = ''): string {
 export class BookingItemsService extends CrudService<BookingItems> {
   constructor(
     @InjectRepository(BookingItems)
-    repository: Repository<BookingItems>,
+    private readonly bookingItemsRepository: Repository<BookingItems>,
   ) {
-    super(repository);
+    super(bookingItemsRepository);
   }
 
   async listForAdmin(
@@ -41,7 +41,7 @@ export class BookingItemsService extends CrudService<BookingItems> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
 
-    const baseQb = this.repository
+    const baseQb = this.bookingItemsRepository
       .createQueryBuilder('item')
       .innerJoin(Bookings, 'booking', 'booking.id = item.bookingId AND booking.deletedAt IS NULL')
       .where('item.deletedAt IS NULL');

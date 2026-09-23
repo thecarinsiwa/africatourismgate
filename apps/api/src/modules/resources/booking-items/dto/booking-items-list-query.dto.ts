@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsIn, IsOptional, IsUUID } from 'class-validator';
-import { PaginationQueryDto } from '../../../../common/dto/pagination-query.dto';
+import { Type } from 'class-transformer';
+import { IsIn, IsInt, IsOptional, IsUUID, Max, Min } from 'class-validator';
 import type { BookingItems, Bookings } from '../../../../entities/generated';
 
 const ITEM_TYPES = [
@@ -21,10 +21,29 @@ const BOOKING_STATUSES = [
   'refunded',
 ] as const satisfies readonly Bookings['status'][];
 
-export class BookingItemsListQueryDto extends PaginationQueryDto {
+/**
+ * Standalone query DTO (does not extend PaginationQueryDto) so class-validator
+ * whitelist metadata is always attached to this constructor under forbidNonWhitelisted.
+ */
+export class BookingItemsListQueryDto {
+  @ApiPropertyOptional({ default: 1, minimum: 1 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  page?: number = 1;
+
+  @ApiPropertyOptional({ default: 20, minimum: 1, maximum: 100 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(100)
+  limit?: number = 20;
+
   @ApiPropertyOptional({ enum: ITEM_TYPES })
   @IsOptional()
-  @IsIn(ITEM_TYPES)
+  @IsIn([...ITEM_TYPES])
   itemType?: BookingItems['itemType'];
 
   @ApiPropertyOptional({
@@ -32,7 +51,7 @@ export class BookingItemsListQueryDto extends PaginationQueryDto {
     description: 'Filter by parent booking status',
   })
   @IsOptional()
-  @IsIn(BOOKING_STATUSES)
+  @IsIn([...BOOKING_STATUSES])
   status?: Bookings['status'];
 
   @ApiPropertyOptional({ format: 'uuid', description: 'Filter by booking' })
