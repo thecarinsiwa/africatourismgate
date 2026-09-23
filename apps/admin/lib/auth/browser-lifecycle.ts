@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { resolveApiBaseUrl } from './api';
-import { getSession } from './session';
+import { clearAuthState, getSession } from './session';
 
 function revokeSessionOnUnload(): void {
   const session = getSession();
@@ -16,6 +16,9 @@ function revokeSessionOnUnload(): void {
     type: 'application/json',
   });
   navigator.sendBeacon(url, blob);
+  // Drop local tokens immediately so a refresh cannot keep a zombie session
+  // that would spam POST /auth/touch with 401.
+  clearAuthState();
 }
 
 /** Revoke refresh token when the browser tab/window is actually unloaded. */
