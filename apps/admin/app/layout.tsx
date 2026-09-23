@@ -4,8 +4,10 @@ import NextTopLoader from 'nextjs-toploader';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages, getTranslations } from 'next-intl/server';
 import { ThemeProvider, ToastProvider } from '@africatourismgate/ui';
+import { getAdminAppUrl, normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import './globals.css';
-import { getAdminAppUrl } from '@africatourismgate/utils';
+import { resolveApiBaseUrl } from '../lib/auth/api-url';
+import { DEFAULT_ADMIN_FAVICON_HREF } from '../lib/organization-theme';
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -14,8 +16,29 @@ const montserrat = Montserrat({
 
 const adminUrl = getAdminAppUrl();
 
+async function resolveAdminFaviconHref(): Promise<string> {
+  try {
+    const response = await fetch(
+      `${resolveApiBaseUrl()}/organization-settings/public/branding`,
+      { cache: 'no-store', headers: { Accept: 'application/json' } },
+    );
+    if (!response.ok) return DEFAULT_ADMIN_FAVICON_HREF;
+    const payload = (await response.json()) as { faviconUrl?: string | null };
+    return (
+      normalizeBrandingAssetUrl(payload.faviconUrl?.trim() || null) ||
+      DEFAULT_ADMIN_FAVICON_HREF
+    );
+  } catch {
+    return DEFAULT_ADMIN_FAVICON_HREF;
+  }
+}
+
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations('common.meta');
+  const [t, faviconHref] = await Promise.all([
+    getTranslations('common.meta'),
+    resolveAdminFaviconHref(),
+  ]);
+  const isSvg = /\.svg(\?|#|$)/i.test(faviconHref);
 
   return {
     metadataBase: new URL(adminUrl),
@@ -25,8 +48,8 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description: t('description'),
     icons: {
-      icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
-      shortcut: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
+      icon: [{ url: faviconHref, ...(isSvg ? { type: 'image/svg+xml' } : {}) }],
+      shortcut: [{ url: faviconHref, ...(isSvg ? { type: 'image/svg+xml' } : {}) }],
     },
   };
 }

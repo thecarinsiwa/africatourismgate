@@ -24,7 +24,10 @@ export function isAccessTokenExpired(
   return Date.now() >= session.expiresAt - skewMs;
 }
 
-export function saveSession(session: StoredSession): void {
+export function saveSession(
+  session: StoredSession,
+  options?: { resetIdle?: boolean },
+): void {
   if (typeof window === 'undefined') {
     return;
   }
@@ -32,7 +35,11 @@ export function saveSession(session: StoredSession): void {
   sessionStorage.setItem(STORAGE_KEY, JSON.stringify(session));
   localStorage.removeItem(STORAGE_KEY);
   setClientSessionCookies(session);
-  resetSessionActivity();
+  // Only reset idle/lock on explicit login (or unlock callers that pass resetIdle).
+  // Silent token refresh / cookie sync must not clear an active idle lock.
+  if (options?.resetIdle) {
+    resetSessionActivity();
+  }
   window.dispatchEvent(
     new CustomEvent(AUTH_CHANGED_EVENT, { detail: { loggedIn: true } }),
   );

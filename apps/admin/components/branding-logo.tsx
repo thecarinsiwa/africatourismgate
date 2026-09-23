@@ -17,14 +17,21 @@ export function useBrandingLogo(fallbackName = 'Africa Tourism Gate') {
   const [publicBranding, setPublicBranding] = useState<PublicBranding | null>(null);
 
   useEffect(() => {
-    if (orgTheme?.branding) return;
+    if (orgTheme?.branding) {
+      applyFaviconToDocument(orgTheme.branding.faviconUrl);
+      return;
+    }
+
     let cancelled = false;
-    void fetchPublicBranding().then((branding) => {
-      if (!cancelled) {
+    void fetchPublicBranding()
+      .then((branding) => {
+        if (cancelled) return;
         setPublicBranding(branding);
         applyFaviconToDocument(branding.faviconUrl);
-      }
-    });
+      })
+      .catch(() => {
+        if (!cancelled) applyFaviconToDocument(null);
+      });
     return () => {
       cancelled = true;
     };

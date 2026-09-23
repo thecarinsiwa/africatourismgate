@@ -46,7 +46,7 @@ export function AdminRegisterForm() {
               }),
             );
             const session = authResponseToStoredSession(response);
-            saveSession(session);
+            saveSession(session, { resetIdle: true });
             applyLocaleFromUser(session.user);
             router.refresh();
             router.push('/dashboard');
