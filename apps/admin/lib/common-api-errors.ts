@@ -1,4 +1,4 @@
-import { ApiHttpError, parseApiErrorMessage } from '@africatourismgate/api-client';
+import { ApiHttpError, isSessionLockedApiError, parseApiErrorMessage } from '@africatourismgate/api-client';
 
 export type CommonErrorMessages = {
   network: string;
@@ -36,6 +36,14 @@ export function resolveApiHttpError(
   messages: CommonErrorMessages,
   options: ApiErrorHandlerOptions = {},
 ): string {
+  // Idle lock is shown by SessionIdleLock; prefer session-expired copy over a raw 401.
+  if (
+    isSessionLockedApiError(error) &&
+    (options.sessionExpired ?? messages.sessionExpired)
+  ) {
+    return options.sessionExpired ?? messages.sessionExpired!;
+  }
+
   if (error.status === 401 && (options.sessionExpired ?? messages.sessionExpired)) {
     return options.sessionExpired ?? messages.sessionExpired!;
   }
