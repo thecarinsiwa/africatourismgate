@@ -27,6 +27,11 @@ export function isSessionLocked(): boolean {
 
 export function setSessionLocked(locked: boolean): void {
   if (typeof window === 'undefined') return;
+  const currentlyLocked = sessionStorage.getItem(LOCKED_KEY) === '1';
+  if (locked === currentlyLocked) {
+    // Avoid re-dispatching: SessionIdleLock listens and would recurse forever.
+    return;
+  }
   if (locked) {
     sessionStorage.setItem(LOCKED_KEY, '1');
   } else {

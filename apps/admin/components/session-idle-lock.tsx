@@ -58,10 +58,11 @@ export function SessionIdleLock() {
     // Unlock needs refreshToken; access may already be expired when the lock fires.
     const hasUnlockableSession = Boolean(getSession()?.refreshToken);
     const shouldLock = isSessionLocked() || isIdleExpired();
-    if (shouldLock && hasUnlockableSession) {
+    const nextLocked = shouldLock && hasUnlockableSession;
+    if (nextLocked && !isSessionLocked()) {
       setSessionLocked(true);
     }
-    setLocked(shouldLock && hasUnlockableSession);
+    setLocked(nextLocked);
   }, []);
 
   const touchServerActivity = useCallback(async () => {
