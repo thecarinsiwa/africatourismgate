@@ -564,15 +564,8 @@ export async function getAboutPageBySectionKeyForLocale(
   sectionKey: AboutPageSectionKey,
   locale?: string,
 ): Promise<PublicAboutPage> {
-  if (!locale) {
-    return getAboutPageBySectionKey(sectionKey);
-  }
-
-  try {
-    return await getAboutPageBySectionKey(sectionKey, locale);
-  } catch {
-    return getAboutPageBySectionKey(sectionKey);
-  }
+  // API already falls back to any published locale when the requested one is missing.
+  return getAboutPageBySectionKey(sectionKey, locale);
 }
 
 export async function getLegalPageBySectionKey(
@@ -589,15 +582,8 @@ export async function getLegalPageBySectionKeyForLocale(
   sectionKey: LegalPageSectionKey = 'terms-of-use',
   locale?: string,
 ): Promise<PublicLegalPage> {
-  if (!locale) {
-    return getLegalPageBySectionKey(sectionKey);
-  }
-
-  try {
-    return await getLegalPageBySectionKey(sectionKey, locale);
-  } catch {
-    return getLegalPageBySectionKey(sectionKey);
-  }
+  // API already falls back to `fr` (then any) when the requested locale is missing.
+  return getLegalPageBySectionKey(sectionKey, locale);
 }
 
 function buildTeamMembersQuery(params: PublicTeamMembersListQuery): string {

@@ -30,6 +30,8 @@ export const PROD_MIGRATION_DATA_TABLES = new Set([
   'role_permissions',
   'user_role_assignments',
   'organization_settings',
+  // Institutional CMS defaults (skipped on first apply when prodSafe was stricter).
+  'about_pages',
 ]);
 
 export function isProdSeedProfile(env = process.env) {
