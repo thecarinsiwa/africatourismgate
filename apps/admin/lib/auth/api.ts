@@ -75,7 +75,7 @@ export async function ensureFreshSession(): Promise<StoredSession | null> {
   if (!refreshInFlight) {
     const refreshToken = session.refreshToken;
     refreshInFlight = refreshAccessToken(refreshToken)
-      .then((result) => {
+      .then(async (result) => {
         refreshInFlight = null;
         if (result === 'locked') {
           // Keep local tokens for unlock; do not hand callers an expired access token.
@@ -83,6 +83,29 @@ export async function ensureFreshSession(): Promise<StoredSession | null> {
           return null;
         }
         if (!result) {
+          // Middleware (or another tab) may have rotated the refresh token already.
+          // Adopt newer cookies before treating this as a hard logout.
+          const fromCookies = getSessionFromDocumentCookies();
+          if (
+            fromCookies?.refreshToken &&
+            fromCookies.refreshToken !== refreshToken
+          ) {
+            saveSession(fromCookies);
+            if (!isAccessTokenExpired(fromCookies)) {
+              return fromCookies;
+            }
+            const retried = await refreshAccessToken(fromCookies.refreshToken);
+            if (retried && retried !== 'locked') {
+              const current = getSession() ?? fromCookies;
+              const updated = tokensToStoredSession(retried, current.user);
+              saveSession(updated);
+              return updated;
+            }
+            if (retried === 'locked') {
+              activateSessionLock();
+              return null;
+            }
+          }
           clearAuthState();
           return null;
         }
