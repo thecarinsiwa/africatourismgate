@@ -18,6 +18,7 @@ import {
 } from '../lib/auth/session-idle';
 import {
   AUTH_CHANGED_EVENT,
+  clearAuthState,
   getSession,
   saveSession,
   tokensToStoredSession,
@@ -76,21 +77,27 @@ export function SessionIdleLock() {
     }
 
     touchInFlightRef.current = true;
+    // Debounce before the request so failed touches cannot spam the API.
+    lastTouchAtRef.current = now;
     try {
       await getApiClient().touchSession(session.refreshToken);
-      lastTouchAtRef.current = Date.now();
     } catch (err) {
       if (err instanceof ApiHttpError) {
         const body = err.body as { code?: string } | undefined;
-        if (body?.code === 'SESSION_LOCKED' || isIdleExpired()) {
+        if (body?.code === 'SESSION_LOCKED') {
           setSessionLocked(true);
           setLocked(true);
+        } else if (err.status === 401) {
+          // Invalid/expired refresh (e.g. revoked on unload) — drop local session.
+          clearAuthState();
+          setLocked(false);
+          router.replace('/login');
         }
       }
     } finally {
       touchInFlightRef.current = false;
     }
-  }, []);
+  }, [router]);
 
   const recordActivity = useCallback(() => {
     if (locked || isSessionLocked()) {
