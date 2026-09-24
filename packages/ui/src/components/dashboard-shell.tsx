@@ -40,7 +40,7 @@ export function DashboardShell({
 
   return (
     <AppShell>
-      <div className="flex min-h-screen flex-col bg-atg-surface md:flex-row">
+      <div className="flex h-svh min-h-0 flex-col overflow-hidden bg-atg-surface md:flex-row">
         <Sidebar
           navItems={navItems}
           logo={logo}
@@ -48,7 +48,7 @@ export function DashboardShell({
           onMobileClose={closeMobileNav}
           closeMenuLabel={closeMenuLabel}
         />
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           <AppHeader
             title={title}
             breadcrumb={breadcrumb}
@@ -58,7 +58,7 @@ export function DashboardShell({
             onMenuClick={openMobileNav}
             openMenuLabel={openMenuLabel}
           />
-          <main className="flex-1 overflow-auto bg-atg-surface p-4 sm:p-6 md:p-8">{children}</main>
+          <main className="min-h-0 flex-1 overflow-auto bg-atg-surface p-4 sm:p-6 md:p-8">{children}</main>
         </div>
       </div>
     </AppShell>
