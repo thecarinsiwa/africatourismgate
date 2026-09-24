@@ -11,7 +11,7 @@ import {
   DataTablePagination,
   FilterBar,
   Input,
-  Select,
+  SearchableSelect,
   Button,
   useToast,
   type ColumnDef,
@@ -64,6 +64,7 @@ export function BookingsList() {
   const tExport = useTranslations('modules.common.exportCsv');
   const tPages = useTranslations('pages.reservations');
   const tUsers = useTranslations('modules.users.filters');
+  const tSelect = useTranslations('modules.common.select');
   const statusLabels = useBookingStatusLabels();
   const statusOptions = useBookingStatusFilterOptions();
   const paginationLabels = useDataTablePaginationLabels();
@@ -237,6 +238,7 @@ export function BookingsList() {
       {
         id: 'client',
         header: tCommon('columns.client'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => (
           <div className="min-w-0">
             <span className="block truncate font-medium text-atg-fg">{row.original.clientEmail}</span>
@@ -256,7 +258,7 @@ export function BookingsList() {
             return <span className="text-atg-muted">{emptyDash}</span>;
           }
           return (
-            <span className="text-sm text-atg-muted">
+            <span className="block max-w-[12rem] truncate text-sm text-atg-muted">
               {orgNameById.get(orgId) ?? orgId.slice(0, 8)}
             </span>
           );
@@ -265,7 +267,7 @@ export function BookingsList() {
       {
         accessorKey: 'status',
         header: tCommon('columns.status'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) => {
           const status = row.original.status;
           return (
@@ -293,7 +295,7 @@ export function BookingsList() {
       {
         id: 'actions',
         header: tCommon('columns.actions'),
-        meta: { align: 'right' },
+        meta: { align: 'right', cellClassName: 'w-[5.5rem] sm:w-auto' },
         cell: ({ row }) => (
           <DataTableActions>
             <DataTableActionButton
@@ -343,9 +345,9 @@ export function BookingsList() {
   }, [bookings, emptyDash, locale, orgNameById, statusLabels, tCommon, tExport, toast]);
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6 overflow-x-hidden">
       <div
-        className="flex flex-wrap gap-2"
+        className="flex min-w-0 flex-wrap gap-2"
         role="tablist"
         aria-label={t('tabs.ariaLabel')}
       >
@@ -397,7 +399,7 @@ export function BookingsList() {
         }
         filters={
           <>
-            <div className="min-w-[200px] flex-1 sm:max-w-md">
+            <div className="min-w-0 w-full flex-1 sm:min-w-[200px] sm:max-w-md">
               <Input
                 name="search"
                 type="search"
@@ -407,40 +409,49 @@ export function BookingsList() {
                 aria-label={tCommonFilters('searchBookingsAria')}
               />
             </div>
-            <div className="w-full sm:w-48">
-              <Select
+            <div className="min-w-0 w-full sm:w-48">
+              <SearchableSelect
                 label={tCommon('columns.status')}
                 value={statusFilter}
                 options={statusOptions}
-                onChange={(e) => {
-                  setStatusFilter(e.target.value as StatusFilter);
+                onChange={(value) => {
+                  setStatusFilter(value as StatusFilter);
                   setPage(1);
                 }}
+                searchPlaceholder={tSelect('searchPlaceholder')}
+                emptyMessage={tSelect('empty')}
+                placeholder={tCommon('filters.all')}
               />
             </div>
-            <div className="w-full sm:w-56">
-              <Select
+            <div className="min-w-0 w-full sm:w-56">
+              <SearchableSelect
                 label={t('filters.client')}
                 value={userFilter}
                 options={clientOptions}
-                onChange={(e) => {
-                  setUserFilter(e.target.value);
+                onChange={(value) => {
+                  setUserFilter(value);
                   setPage(1);
                 }}
+                searchPlaceholder={tSelect('searchPlaceholder')}
+                emptyMessage={tSelect('empty')}
+                placeholder={tCommon('filters.all')}
               />
             </div>
-            <div className="w-full sm:w-48">
-              <Select
+            <div className="min-w-0 w-full sm:w-48">
+              <SearchableSelect
                 label={tUsers('organization')}
                 value={organizationFilter}
                 options={organizationOptions}
-                onChange={(e) => {
-                  setOrganizationFilter(e.target.value);
+                onChange={(value) => {
+                  setOrganizationFilter(value);
                   setPage(1);
                 }}
+                searchPlaceholder={tSelect('searchPlaceholder')}
+                emptyMessage={tSelect('empty')}
+                placeholder={tCommon('filters.allFeminine')}
               />
             </div>
-            <div className="w-full sm:w-40">
+            <div className="min-w-0 w-full sm:w-40">
               <Input
                 label={tCommon('filters.dateFrom')}
                 name="dateFrom"
@@ -452,7 +463,7 @@ export function BookingsList() {
                 }}
               />
             </div>
-            <div className="w-full sm:w-40">
+            <div className="min-w-0 w-full sm:w-40">
               <Input
                 label={tCommon('filters.dateTo')}
                 name="dateTo"
@@ -474,7 +485,7 @@ export function BookingsList() {
         </p>
       ) : (
         <>
-          <Card variant="dashboard" padding="none" className="overflow-hidden">
+          <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
             <DataTable
               columns={columns}
               data={bookings}
@@ -496,6 +507,7 @@ export function BookingsList() {
               }}
               manualSorting
               aria-label={t('ariaLabel')}
+              className="min-w-0"
             />
           </Card>
 
