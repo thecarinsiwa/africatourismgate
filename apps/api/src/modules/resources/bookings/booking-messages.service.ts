@@ -231,20 +231,19 @@ export class BookingMessagesService {
   }
 
   private async toDtos(messages: BookingMessages[]): Promise<BookingMessageDto[]> {
-    const authorNames = await this.loadCustomerAuthorNames(messages);
+    const authors = await this.loadMessageAuthors(messages);
     return Promise.all(
-      messages.map((message) => this.toDto(message, authorNames.get(message.userId ?? '') ?? null)),
+      messages.map((message) => this.toDto(message, authors.get(message.userId ?? ''))),
     );
   }
 
   private async toDto(
     message: BookingMessages,
-    authorName?: string | null,
+    author?: { name: string | null; avatarUrl: string | null },
   ): Promise<BookingMessageDto> {
-    const resolvedAuthorName =
-      authorName === undefined
-        ? (await this.loadCustomerAuthorNames([message])).get(message.userId ?? '') ?? null
-        : authorName;
+    const resolved =
+      author ??
+      (await this.loadMessageAuthors([message])).get(message.userId ?? '');
 
     return {
       id: message.id,
@@ -252,18 +251,19 @@ export class BookingMessagesService {
       userId: message.userId,
       body: message.body,
       isStaff: message.isStaff === 1,
-      authorName: message.isStaff === 1 ? null : resolvedAuthorName,
+      authorName: message.isStaff === 1 ? null : (resolved?.name ?? null),
+      avatarUrl: resolved?.avatarUrl ?? null,
       createdAt: message.createdAt.toISOString(),
     };
   }
 
-  private async loadCustomerAuthorNames(
+  private async loadMessageAuthors(
     messages: BookingMessages[],
-  ): Promise<Map<string, string>> {
+  ): Promise<Map<string, { name: string | null; avatarUrl: string | null }>> {
     const userIds = [
       ...new Set(
         messages
-          .filter((message) => message.isStaff !== 1 && message.userId)
+          .filter((message) => Boolean(message.userId))
           .map((message) => message.userId as string),
       ),
     ];
@@ -274,15 +274,19 @@ export class BookingMessagesService {
 
     const users = await this.usersRepository.find({
       where: { id: In(userIds), deletedAt: IsNull() },
-      select: ['id', 'firstName', 'lastName'],
+      select: ['id', 'firstName', 'lastName', 'avatarUrl'],
     });
 
-    const entries: [string, string][] = [];
+    const entries: [string, { name: string | null; avatarUrl: string | null }][] = [];
     for (const user of users) {
       const name = this.formatUserDisplayName(user);
-      if (name) {
-        entries.push([user.id, name]);
-      }
+      entries.push([
+        user.id,
+        {
+          name: name || null,
+          avatarUrl: user.avatarUrl?.trim() || null,
+        },
+      ]);
     }
     return new Map(entries);
   }

@@ -212,19 +212,23 @@ export function BookingChatPanel({
       ) : null}
 
       <ConversationChat
-        messages={messages.map((message) =>
-          message.isStaff
-            ? {
-                ...message,
-                authorName: message.authorName?.trim() || branding.displayName,
-                avatarUrl: staffAvatarUrl,
-              }
-            : {
-                ...message,
-                authorName: undefined,
-                avatarUrl: customerAvatarUrl,
-              },
-        )}
+        messages={messages.map((message) => {
+          const apiAvatar = message.avatarUrl?.trim()
+            ? normalizeBrandingAssetUrl(message.avatarUrl.trim())
+            : null;
+          if (message.isStaff) {
+            return {
+              ...message,
+              authorName: message.authorName?.trim() || branding.displayName,
+              avatarUrl: apiAvatar ?? staffAvatarUrl,
+            };
+          }
+          return {
+            ...message,
+            authorName: undefined,
+            avatarUrl: apiAvatar ?? customerAvatarUrl,
+          };
+        })}
         loading={loading}
         labels={{
           threadAria: m.threadAria,
