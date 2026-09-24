@@ -222,16 +222,16 @@ export function UserViewPage({ userId }: UserViewPageProps) {
     (user.organizationId ? user.organizationId.slice(0, 8) : emptyDash);
 
   return (
-    <div className="mx-auto w-full max-w-5xl space-y-6">
+    <div className="mx-auto w-full min-w-0 max-w-5xl space-y-6 overflow-x-hidden">
       <AdminPageBackLink
         href="/utilisateurs"
         label={tPages('backLabel')}
         className="block"
       />
 
-      <section className="overflow-hidden rounded-2xl border border-atg-border bg-atg-elevated shadow-sm">
+      <section className="min-w-0 overflow-hidden rounded-2xl border border-atg-border bg-atg-elevated shadow-sm">
         <div className="border-b border-atg-border bg-gradient-to-br from-atg-surface via-atg-elevated to-atg-surface px-5 py-5 sm:px-6 sm:py-6">
-          <div className="flex items-start gap-4 sm:gap-5">
+          <div className="flex min-w-0 items-start gap-4 sm:gap-5">
             <Avatar
               email={user.email}
               firstName={user.firstName}
@@ -242,10 +242,10 @@ export function UserViewPage({ userId }: UserViewPageProps) {
             />
 
             <div className="min-w-0 flex-1">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0 space-y-1.5">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="text-xl font-semibold tracking-tight text-atg-fg sm:text-2xl">
+                  <div className="flex min-w-0 flex-wrap items-center gap-2">
+                    <h2 className="min-w-0 truncate text-xl font-semibold tracking-tight text-atg-fg sm:text-2xl">
                       {fullName || user.email}
                     </h2>
                     <DataTableBadge variant={statusVariants[user.status]}>
@@ -277,7 +277,7 @@ export function UserViewPage({ userId }: UserViewPageProps) {
 
                 <Button
                   href={`/utilisateurs/${userId}`}
-                  className="shrink-0 self-stretch sm:self-start"
+                  className="w-full shrink-0 self-stretch sm:w-auto sm:self-start"
                 >
                   {tDetail('editButton')}
                 </Button>

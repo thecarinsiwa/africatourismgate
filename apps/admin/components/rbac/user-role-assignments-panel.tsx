@@ -4,13 +4,16 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
   AlertDialog,
-  Button,
   Card,
+  DataTable,
+  DataTableActionButton,
+  DataTableActions,
   useToast,
+  type ColumnDef,
 } from '@africatourismgate/ui';
 import type { UserRoleAssignment } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRbacScopeDisplayLabels } from '../../lib/i18n/use-module-labels';
 import { formatAssignmentScope } from '../../lib/rbac-display';
 import { getApiClient } from '../../lib/auth/api';
@@ -32,6 +35,7 @@ export function UserRoleAssignmentsPanel({
   const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
   const tRoles = useTranslations('modules.users.roles');
   const tCommon = useTranslations('modules.common');
+  const tDataTable = useTranslations('modules.common.dataTable');
   const scopeLabels = useRbacScopeDisplayLabels();
   const { toast } = useToast();
   const [assignments, setAssignments] = useState<UserRoleAssignment[]>([]);
@@ -86,55 +90,91 @@ export function UserRoleAssignmentsPanel({
     }
   }, [pendingRevoke, load, toast, tRoles, getRbacErrorMessage, onChanged]);
 
+  const columns = useMemo<ColumnDef<UserRoleAssignment, unknown>[]>(() => {
+    const cols: ColumnDef<UserRoleAssignment, unknown>[] = [
+      {
+        id: 'role',
+        header: tCommon('columns.role'),
+        meta: { cellClassName: 'min-w-0' },
+        cell: ({ row }) => {
+          const role = row.original.role;
+          return (
+            <div className="min-w-0">
+              {role ? (
+                <RoleBadge code={role.code} name={role.name} />
+              ) : (
+                <RoleBadge code={row.original.roleId.slice(0, 8)} />
+              )}
+            </div>
+          );
+        },
+      },
+      {
+        id: 'scope',
+        header: tRoles('scope'),
+        meta: { hideOnMobile: true },
+        cell: ({ row }) => (
+          <span className="text-sm text-atg-muted">
+            {formatAssignmentScope(
+              row.original.scopeType,
+              scopeLabels,
+              row.original.scopeId,
+              row.original.scopeName,
+            )}
+          </span>
+        ),
+      },
+    ];
+
+    if (!readOnly) {
+      cols.push({
+        id: 'actions',
+        header: tCommon('columns.actions'),
+        meta: { align: 'right', cellClassName: 'w-[5.5rem] sm:w-auto' },
+        cell: ({ row }) => {
+          const assignment = row.original;
+          const busy = revokingId === assignment.id;
+          return (
+            <DataTableActions>
+              <DataTableActionButton
+                action="revoke"
+                label={tRoles('revokeDialog.title')}
+                onClick={() => setPendingRevoke(assignment)}
+                disabled={busy}
+                loading={busy}
+              />
+            </DataTableActions>
+          );
+        },
+      });
+    }
+
+    return cols;
+  }, [readOnly, revokingId, scopeLabels, tCommon, tRoles]);
+
   return (
-    <Card variant="dashboard" padding="lg" className="space-y-4">
+    <Card variant="dashboard" padding="lg" className="min-w-0 space-y-4 overflow-x-hidden">
       <h2 className="text-lg font-semibold text-atg-fg">{tRoles('assignedTitle')}</h2>
       {error ? (
         <p role="alert" className="text-sm text-red-600">
           {error}
         </p>
       ) : null}
-      {loading ? (
-        <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
-      ) : assignments.length === 0 ? (
-        <p className="text-sm text-atg-muted">{tRoles('empty')}</p>
-      ) : (
-        <div className="flex flex-wrap gap-2">
-          {assignments.map((assignment) => (
-            <div
-              key={assignment.id}
-              className="flex flex-wrap items-center gap-2 rounded-lg border border-atg-border bg-atg-elevated px-3 py-2"
-            >
-              {assignment.role ? (
-                <RoleBadge code={assignment.role.code} name={assignment.role.name} />
-              ) : (
-                <RoleBadge code={assignment.roleId.slice(0, 8)} />
-              )}
-              <span className="text-xs text-atg-muted">
-                {formatAssignmentScope(
-                  assignment.scopeType,
-                  scopeLabels,
-                  assignment.scopeId,
-                  assignment.scopeName,
-                )}
-              </span>
-              {readOnly ? null : (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setPendingRevoke(assignment)}
-                  disabled={revokingId === assignment.id}
-                  loading={revokingId === assignment.id}
-                  className="!text-red-600"
-                >
-                  {tRoles('revokeDialog.title')}
-                </Button>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+      <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
+        <DataTable
+          columns={columns}
+          data={assignments}
+          isLoading={loading}
+          loadingMessage={tDataTable('loading')}
+          emptyMessage={tRoles('empty')}
+          expandRowLabel={tDataTable('expandRow')}
+          collapseRowLabel={tDataTable('collapseRow')}
+          expandRowAriaLabel={tDataTable('expandRowAria')}
+          getRowId={(row) => row.id}
+          aria-label={tRoles('assignedTitle')}
+          className="min-w-0"
+        />
+      </Card>
       {readOnly ? null : (
         <UserRoleAssignmentForm
           defaultUserId={userId}

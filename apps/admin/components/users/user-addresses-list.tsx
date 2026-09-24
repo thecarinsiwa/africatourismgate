@@ -38,6 +38,7 @@ export function UserAddressesList({
   const tBoolean = useTranslations('modules.common.boolean');
   const tEmpty = useTranslations('modules.common.empty');
   const tPagination = useTranslations('modules.common.pagination');
+  const tDataTable = useTranslations('modules.common.dataTable');
   const [page, setPage] = useState(1);
   const [userIdFilter, setUserIdFilter] = useState(fixedUserId ?? '');
   const [users, setUsers] = useState<User[]>([]);
@@ -92,16 +93,32 @@ export function UserAddressesList({
       {
         id: 'label',
         header: tColumns('label'),
-        cell: ({ row }) => row.original.label?.trim() || tEmpty('dash'),
+        meta: { cellClassName: 'min-w-0' },
+        cell: ({ row }) => (
+          <div className="min-w-0">
+            <span className="block truncate font-medium text-atg-fg">
+              {row.original.label?.trim() || tEmpty('dash')}
+            </span>
+            <p className="mt-0.5 line-clamp-2 text-xs text-atg-muted sm:hidden">
+              {formatAddress(row.original)}
+            </p>
+          </div>
+        ),
       },
       {
         id: 'address',
         header: tColumns('address'),
-        cell: ({ row }) => formatAddress(row.original),
+        meta: { hideOnMobile: true, cellClassName: 'min-w-0' },
+        cell: ({ row }) => (
+          <span className="block max-w-[20rem] truncate text-sm text-atg-fg">
+            {formatAddress(row.original)}
+          </span>
+        ),
       },
       {
         id: 'country',
         header: tColumns('country'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => row.original.countryCode,
       },
     ];
@@ -110,6 +127,7 @@ export function UserAddressesList({
       cols.push({
         id: 'userId',
         header: tColumns('user'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <UserListCell userId={row.original.userId} usersById={usersById} />
         ),
@@ -119,6 +137,7 @@ export function UserAddressesList({
     cols.push({
       id: 'default',
       header: tColumns('default'),
+      meta: { hideOnMobile: true },
       cell: ({ row }) =>
         row.original.isDefault ? (
           <DataTableBadge variant="success">{tBoolean('yes')}</DataTableBadge>
@@ -134,25 +153,30 @@ export function UserAddressesList({
   const emptyMessage = userIdFilter ? tAddresses('emptyFiltered') : tAddresses('emptyDefault');
 
   return (
-    <>
+    <div className="min-w-0 space-y-4 overflow-x-hidden">
       {!fixedUserId ? (
         <UserIdFilterBar onUserIdChange={handleUserIdChange} onUsersLoaded={setUsers} />
       ) : null}
 
       {state.status === 'error' ? (
-        <p role="alert" className="mb-4 text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
       ) : null}
 
-      <Card variant="dashboard" padding="none" className="overflow-hidden">
+      <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
         <DataTable
           columns={columns}
           data={rows}
           getRowId={(row) => row.id}
           isLoading={state.status === 'loading'}
+          loadingMessage={tDataTable('loading')}
           emptyMessage={emptyMessage}
+          expandRowLabel={tDataTable('expandRow')}
+          collapseRowLabel={tDataTable('collapseRow')}
+          expandRowAriaLabel={tDataTable('expandRowAria')}
           aria-label={tAddresses('ariaLabel')}
+          className="min-w-0"
         />
         {state.status === 'ready' && state.totalPages > 0 ? (
           <DataTablePagination
@@ -165,6 +189,6 @@ export function UserAddressesList({
           />
         ) : null}
       </Card>
-    </>
+    </div>
   );
 }

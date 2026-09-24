@@ -40,6 +40,7 @@ export function UserPaymentMethodsList({
   const tBoolean = useTranslations('modules.common.boolean');
   const tEmpty = useTranslations('modules.common.empty');
   const tPagination = useTranslations('modules.common.pagination');
+  const tDataTable = useTranslations('modules.common.dataTable');
   const [page, setPage] = useState(1);
   const [userIdFilter, setUserIdFilter] = useState(fixedUserId ?? '');
   const [users, setUsers] = useState<User[]>([]);
@@ -99,16 +100,29 @@ export function UserPaymentMethodsList({
       {
         id: 'type',
         header: tColumns('type'),
-        cell: ({ row }) => row.original.type,
+        meta: { cellClassName: 'min-w-0' },
+        cell: ({ row }) => (
+          <div className="min-w-0">
+            <span className="block truncate font-medium text-atg-fg">{row.original.type}</span>
+            <p className="truncate text-xs text-atg-muted sm:hidden">
+              {row.original.provider?.trim() || tEmpty('dash')}
+              {row.original.lastFour
+                ? ` · ${tPaymentMethods('lastFourMasked', { lastFour: row.original.lastFour })}`
+                : ''}
+            </p>
+          </div>
+        ),
       },
       {
         id: 'provider',
         header: tColumns('paymentProvider'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => row.original.provider?.trim() || tEmpty('dash'),
       },
       {
         id: 'lastFour',
         header: tColumns('end'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) =>
           row.original.lastFour
             ? tPaymentMethods('lastFourMasked', { lastFour: row.original.lastFour })
@@ -120,6 +134,7 @@ export function UserPaymentMethodsList({
       cols.push({
         id: 'userId',
         header: tColumns('user'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <UserListCell userId={row.original.userId} usersById={usersById} />
         ),
@@ -130,6 +145,7 @@ export function UserPaymentMethodsList({
       {
         id: 'createdAt',
         header: tColumns('addedAt'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm text-atg-muted">
             {formatDateTime(row.original.createdAt)}
@@ -139,6 +155,7 @@ export function UserPaymentMethodsList({
       {
         id: 'default',
         header: tColumns('default'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) =>
           row.original.isDefault ? (
             <DataTableBadge variant="success">{tBoolean('yes')}</DataTableBadge>
@@ -157,25 +174,30 @@ export function UserPaymentMethodsList({
     : tPaymentMethods('emptyDefault');
 
   return (
-    <>
+    <div className="min-w-0 space-y-4 overflow-x-hidden">
       {!fixedUserId ? (
         <UserIdFilterBar onUserIdChange={handleUserIdChange} onUsersLoaded={setUsers} />
       ) : null}
 
       {state.status === 'error' ? (
-        <p role="alert" className="mb-4 text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
       ) : null}
 
-      <Card variant="dashboard" padding="none" className="overflow-hidden">
+      <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
         <DataTable
           columns={columns}
           data={rows}
           getRowId={(row) => row.id}
           isLoading={state.status === 'loading'}
+          loadingMessage={tDataTable('loading')}
           emptyMessage={emptyMessage}
+          expandRowLabel={tDataTable('expandRow')}
+          collapseRowLabel={tDataTable('collapseRow')}
+          expandRowAriaLabel={tDataTable('expandRowAria')}
           aria-label={tPaymentMethods('ariaLabel')}
+          className="min-w-0"
         />
         {state.status === 'ready' && state.totalPages > 0 ? (
           <DataTablePagination
@@ -188,6 +210,6 @@ export function UserPaymentMethodsList({
           />
         ) : null}
       </Card>
-    </>
+    </div>
   );
 }
