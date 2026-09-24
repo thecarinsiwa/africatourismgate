@@ -206,6 +206,7 @@ export type {
   CreateActivityDescriptionAssetRequest,
   CreateActivityRequest,
   CreateActivityScheduleRequest,
+  PublicActivityProvider,
   UpdateActivityProviderRequest,
   UpdateActivityImageRequest,
   UpdateActivityDescriptionAssetRequest,

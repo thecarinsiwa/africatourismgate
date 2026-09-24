@@ -7,6 +7,13 @@ export interface ActivityProvider {
   updatedAt: string | null;
 }
 
+/** Public catalogue partner (home partners strip). */
+export interface PublicActivityProvider {
+  id: string;
+  name: string;
+  logoUrl: string | null;
+}
+
 export interface CreateActivityProviderRequest {
   destinationId: string;
   name: string;

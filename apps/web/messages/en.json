@@ -779,6 +779,11 @@
       }
     ]
   },
+  "partners": {
+    "title": "Our partners",
+    "subtitle": "Trusted local operators who power experiences across Africa.",
+    "ariaLabel": "Activity partners"
+  },
   "gapImpact": {
     "title": "Our impact",
     "subtitle": "See the measurable results of the GAP program for communities and conservation.",

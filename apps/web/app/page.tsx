@@ -9,6 +9,7 @@ import { ParallaxPromo } from '../components/home/parallax-promo';
 import { HappyCustomers } from '../components/home/happy-customers';
 import { ActivitiesMapSection } from '../components/home/activities-map-section';
 import { CustomerReviewsCarousel } from '../components/home/customer-reviews-carousel';
+import { PartnersSection } from '../components/home/partners-section';
 import { GapImpactSection } from '../components/home/gap-impact-section';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -32,6 +33,7 @@ export default function HomePage() {
         <ActivitiesMapSection />
         <HappyCustomers />
         <CustomerReviewsCarousel />
+        <PartnersSection />
         <GapImpactSection />
       </main>
 

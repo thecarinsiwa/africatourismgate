@@ -24,6 +24,7 @@ import { ActivityDetailQueryDto } from './dto/activity-detail-query.dto';
 import { ActivityDetailDto } from './dto/activity-detail.dto';
 import { ActivitySearchQueryDto } from './dto/activity-search-query.dto';
 import { ActivitySearchResultDto } from './dto/activity-search-result.dto';
+import { PublicActivityProviderDto } from './dto/public-activity-provider.dto';
 import { parseDateOnly } from './activity-dates.util';
 
 type ScheduleOffer = ActivityDetailDto['schedules'][number];
@@ -70,6 +71,20 @@ export class PublicActivitiesService {
       id: d.id,
       name: d.name,
       countryCode: d.countryCode,
+    }));
+  }
+
+  /** Active activity partners for the public home / trust strip. */
+  async listProviders(): Promise<PublicActivityProviderDto[]> {
+    const rows = await this.providersRepository.find({
+      order: { name: 'ASC' },
+      take: 24,
+    });
+
+    return rows.map((provider) => ({
+      id: provider.id,
+      name: provider.name,
+      logoUrl: provider.logoUrl?.trim() || null,
     }));
   }
 

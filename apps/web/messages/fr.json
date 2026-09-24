@@ -779,6 +779,11 @@
       }
     ]
   },
+  "partners": {
+    "title": "Nos partenaires",
+    "subtitle": "Des opérateurs locaux de confiance qui animent les expériences à travers l'Afrique.",
+    "ariaLabel": "Partenaires d'activités"
+  },
   "gapImpact": {
     "title": "Notre impact",
     "subtitle": "Découvrez les résultats concrets du programme GAP en faveur des communautés et de la conservation.",

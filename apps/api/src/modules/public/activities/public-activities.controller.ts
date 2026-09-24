@@ -39,6 +39,15 @@ export class PublicActivitiesController {
   }
 
   @Public()
+  @Get('activity-providers')
+  @ApiOperation({
+    summary: 'List active activity partners (name + logo) for the public site',
+  })
+  listProviders() {
+    return this.service.listProviders();
+  }
+
+  @Public()
   @Get('activities/:id')
   @ApiOperation({
     summary: 'Activity detail with available schedule slots',
