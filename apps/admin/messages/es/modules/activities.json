@@ -153,6 +153,7 @@
       "new": "Nuevo socio",
       "edit": "Editar socio",
       "empty": "No hay socios aún.",
+      "ariaLabel": "Lista de socios",
       "searchPlaceholder": "Buscar un socio…",
       "ratingTitle": "Calificación media (próximamente)",
       "deleteConfirm": "El socio «{name}» será eliminado permanentemente.",

@@ -153,6 +153,7 @@
       "new": "Nouveau partenaire",
       "edit": "Modifier le partenaire",
       "empty": "Aucun partenaire.",
+      "ariaLabel": "Liste des partenaires",
       "searchPlaceholder": "Rechercher un partenaire…",
       "ratingTitle": "Note moyenne (à venir)",
       "deleteConfirm": "Supprimer « {name} » ?",
