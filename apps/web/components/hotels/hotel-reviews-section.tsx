@@ -1,6 +1,7 @@
 'use client';
 
 import type { Review } from '@africatourismgate/types';
+import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import { useCallback, useEffect, useState } from 'react';
 import { getPropertyReviews } from '../../lib/api/public';
 import { formatRelativeReviewDate } from '../../lib/i18n/format-relative-date';
@@ -28,6 +29,39 @@ type HotelReviewsSectionProps = {
   localeTag: string;
 };
 
+function GuestAvatar({
+  name,
+  avatarUrl,
+}: {
+  name: string;
+  avatarUrl?: string | null;
+}) {
+  const [broken, setBroken] = useState(false);
+  const src = avatarUrl?.trim()
+    ? normalizeBrandingAssetUrl(avatarUrl.trim())
+    : null;
+  const showImage = Boolean(src && !broken);
+  const initials = getGuestInitials(name);
+
+  return (
+    <div
+      className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-sm font-bold text-white"
+      aria-hidden={!showImage}
+    >
+      {showImage ? (
+        <img
+          src={src!}
+          alt={name}
+          className="h-full w-full object-cover"
+          onError={() => setBroken(true)}
+        />
+      ) : (
+        <span aria-hidden>{initials}</span>
+      )}
+    </div>
+  );
+}
+
 function ReviewCard({
   review,
   labels,
@@ -38,19 +72,11 @@ function ReviewCard({
   localeTag: string;
 }) {
   const author = review.authorFirstName?.trim() || labels.anonymousGuest;
-  const initials = getGuestInitials(
-    review.authorFirstName?.trim() || labels.anonymousGuest,
-  );
 
   return (
     <article className="rounded-xl border border-atg-border bg-atg-elevated p-4 dark:border-atg-border dark:bg-atg-elevated">
       <div className="flex gap-3">
-        <div
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-white"
-          aria-hidden
-        >
-          {initials}
-        </div>
+        <GuestAvatar name={author} avatarUrl={review.authorAvatarUrl} />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex flex-wrap items-center gap-2">

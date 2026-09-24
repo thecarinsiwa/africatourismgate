@@ -4,6 +4,8 @@ export interface Review {
   title: string | null;
   body: string | null;
   authorFirstName: string | null;
+  /** Reviewer profile photo when available. */
+  authorAvatarUrl?: string | null;
   createdAt: string;
 }
 
