@@ -79,8 +79,8 @@ export function UserMenu({
         type="button"
         onClick={() => setOpen((value) => !value)}
         className={cn(
-          'inline-flex h-8 w-8 items-center justify-center rounded-lg border border-atg-border bg-atg-elevated',
-          'sm:h-9 sm:w-auto sm:gap-1.5 sm:px-1.5 md:h-10 md:gap-2 md:px-2',
+          'inline-flex h-8 items-center justify-center gap-0.5 rounded-lg border border-atg-border bg-atg-elevated px-1',
+          'sm:h-9 sm:gap-1.5 sm:px-1.5 md:h-10 md:gap-2 md:px-2',
           'text-sm text-atg-fg transition-colors hover:bg-atg-surface',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
         )}
@@ -101,10 +101,7 @@ export function UserMenu({
           <span className="block truncate text-xs text-atg-muted">{email}</span>
         </span>
         <svg
-          className={cn(
-            'hidden h-3.5 w-3.5 text-atg-muted transition-transform sm:block',
-            open && 'rotate-180',
-          )}
+          className={cn('h-3.5 w-3.5 shrink-0 text-atg-muted transition-transform', open && 'rotate-180')}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
