@@ -183,15 +183,16 @@ export function DestinationsList({ onChanged }: DestinationsListProps) {
       {
         accessorKey: 'name',
         header: tColumns('destination'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => (
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <DestinationThumbnail
               name={row.original.name}
               countryCode={row.original.countryCode}
               imageUrl={row.original.imageUrl}
               size="sm"
             />
-            <span className="font-medium text-atg-fg">{row.original.name}</span>
+            <span className="min-w-0 truncate font-medium text-atg-fg">{row.original.name}</span>
           </div>
         ),
       },
@@ -200,7 +201,7 @@ export function DestinationsList({ onChanged }: DestinationsListProps) {
         header: tCommon('columns.slug'),
         meta: { hideOnMobile: true },
         cell: ({ row }) => (
-          <code className="rounded-md bg-atg-surface px-2 py-0.5 font-mono text-xs text-atg-muted ring-1 ring-atg-border/60">
+          <code className="block max-w-[12rem] truncate rounded-md bg-atg-surface px-2 py-0.5 font-mono text-xs text-atg-muted ring-1 ring-atg-border/60">
             {row.original.slug}
           </code>
         ),
@@ -208,7 +209,7 @@ export function DestinationsList({ onChanged }: DestinationsListProps) {
       {
         accessorKey: 'countryCode',
         header: tColumns('country'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) => (
           <div className="flex items-center justify-center gap-2">
             <CountryFlagPlaceholder countryCode={row.original.countryCode} className="h-8 w-8" />
@@ -221,7 +222,7 @@ export function DestinationsList({ onChanged }: DestinationsListProps) {
       {
         accessorKey: 'isFeatured',
         header: tColumns('featured'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) =>
           isDestinationFeatured(row.original) ? (
             <DataTableBadge variant="success">{tColumns('featured')}</DataTableBadge>
@@ -232,7 +233,7 @@ export function DestinationsList({ onChanged }: DestinationsListProps) {
       {
         id: 'actions',
         header: tCommon('columns.actions'),
-        meta: { align: 'right' },
+        meta: { align: 'right', cellClassName: 'w-[6.5rem] sm:w-auto' },
         cell: ({ row }) => renderActions(row.original),
       },
     ],
@@ -311,7 +312,7 @@ export function DestinationsList({ onChanged }: DestinationsListProps) {
           </p>
         ) : viewMode === 'table' ? (
           <>
-            <Card variant="dashboard" padding="none" className="overflow-hidden">
+            <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
               <DataTable
                 columns={columns}
                 data={destinations}
@@ -321,6 +322,10 @@ export function DestinationsList({ onChanged }: DestinationsListProps) {
                 emptyVariant={hasFilters ? 'search' : 'default'}
                 getRowId={(row) => row.id}
                 aria-label={t('ariaLabel')}
+                expandRowLabel={tDataTable('expandRow')}
+                collapseRowLabel={tDataTable('collapseRow')}
+                expandRowAriaLabel={tDataTable('expandRowAria')}
+                className="min-w-0"
               />
             </Card>
             {state.status === 'ready' ? (

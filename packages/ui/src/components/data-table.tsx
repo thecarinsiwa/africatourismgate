@@ -310,9 +310,10 @@ export function DataTable<TData>({
   return (
     <div
       className={cn(
+        'min-w-0',
         useMobileLayout
           ? 'w-full max-w-full overflow-x-hidden'
-          : '-mx-2 overflow-x-auto px-2 sm:mx-0 sm:px-0',
+          : 'overflow-x-auto',
         className,
       )}
     >
