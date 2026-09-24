@@ -133,15 +133,22 @@ export function GuideAssignedBookingsSection({
       {
         id: 'schedule',
         header: t('schedule'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => (
-          <span className="whitespace-nowrap text-sm tabular-nums text-atg-fg">
-            {formatSlotRange(row.original.startDatetime, row.original.endDatetime, locale)}
-          </span>
+          <div className="min-w-0">
+            <span className="block truncate text-sm font-medium tabular-nums text-atg-fg">
+              {formatSlotRange(row.original.startDatetime, row.original.endDatetime, locale)}
+            </span>
+            <p className="truncate text-xs text-atg-muted sm:hidden">
+              {row.original.clientEmail}
+            </p>
+          </div>
         ),
       },
       {
         id: 'client',
         header: tColumns('client'),
+        meta: { hideOnMobile: true, cellClassName: 'min-w-0' },
         cell: ({ row }) => (
           <div className="min-w-0">
             <span className="block truncate font-medium text-atg-fg">{row.original.clientEmail}</span>
@@ -154,7 +161,7 @@ export function GuideAssignedBookingsSection({
       {
         accessorKey: 'status',
         header: tColumns('status'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) => (
           <DataTableBadge variant={BOOKING_STATUS_VARIANTS[row.original.status]}>
             {getBookingStatusLabel(row.original.status, statusLabels)}
@@ -192,7 +199,7 @@ export function GuideAssignedBookingsSection({
       {
         id: 'actions',
         header: tColumns('actions'),
-        meta: { align: 'right' },
+        meta: { align: 'right', cellClassName: 'w-[5.5rem] sm:w-auto' },
         cell: ({ row }) => (
           <DataTableActions>
             <DataTableActionButton
@@ -221,9 +228,9 @@ export function GuideAssignedBookingsSection({
   const hasSearch = search.trim().length > 0;
 
   return (
-    <section className="space-y-4">
+    <section className="min-w-0 space-y-4 overflow-x-hidden">
       {embedded ? null : (
-        <div>
+        <div className="min-w-0">
           <h3 className="text-sm font-semibold text-atg-fg">{t('title')}</h3>
           <p className="mt-0.5 text-xs text-atg-muted">{t('intro')}</p>
         </div>
@@ -235,7 +242,7 @@ export function GuideAssignedBookingsSection({
         </p>
       ) : (
         <>
-          <div className="max-w-md">
+          <div className="min-w-0 w-full max-w-md">
             <Input
               name="missionsSearch"
               type="search"
@@ -246,7 +253,7 @@ export function GuideAssignedBookingsSection({
             />
           </div>
 
-          <Card variant="dashboard" padding="none" className="overflow-hidden">
+          <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
             <DataTable
               columns={columns}
               data={rows}
@@ -254,8 +261,12 @@ export function GuideAssignedBookingsSection({
               loadingMessage={tDataTable('loading')}
               emptyMessage={hasSearch ? t('emptySearch') : t('empty')}
               emptyVariant={hasSearch ? 'search' : 'default'}
+              expandRowLabel={tDataTable('expandRow')}
+              collapseRowLabel={tDataTable('collapseRow')}
+              expandRowAriaLabel={tDataTable('expandRowAria')}
               getRowId={(row) => row.assignmentId}
               aria-label={t('ariaLabel')}
+              className="min-w-0"
             />
           </Card>
 
