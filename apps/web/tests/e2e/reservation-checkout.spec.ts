@@ -43,9 +43,13 @@ test('panier -> recap -> Stripe -> confirmation', async ({ page }) => {
     '/hotels/test-hotel?checkIn=2026-11-10&checkOut=2026-11-12&guests=2&roomId=room-e2e',
   );
 
-  await page
-    .getByRole('button', { name: /choisir cette chambre|select this room|elegir esta habitaci[oó]n/i })
-    .click();
+  const selectRoom = page
+    .getByRole('button', {
+      name: /choisir cette chambre|select this room|elegir esta habitaci[oó]n/i,
+    })
+    .first();
+  await expect(selectRoom).toBeVisible({ timeout: 15_000 });
+  await selectRoom.click();
   await Promise.all([
     page.waitForURL(/\/booking\/cart\?/),
     page
@@ -117,9 +121,13 @@ test('panier -> recap -> cash -> attente paiement sur place', async ({ page }) =
     '/hotels/test-hotel?checkIn=2026-11-10&checkOut=2026-11-12&guests=2&roomId=room-e2e',
   );
 
-  await page
-    .getByRole('button', { name: /choisir cette chambre|select this room|elegir esta habitaci[oó]n/i })
-    .click();
+  const selectRoom = page
+    .getByRole('button', {
+      name: /choisir cette chambre|select this room|elegir esta habitaci[oó]n/i,
+    })
+    .first();
+  await expect(selectRoom).toBeVisible({ timeout: 15_000 });
+  await selectRoom.click();
   await Promise.all([
     page.waitForURL(/\/booking\/cart\?/),
     page
