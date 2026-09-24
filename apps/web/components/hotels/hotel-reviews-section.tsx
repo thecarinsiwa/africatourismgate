@@ -135,7 +135,9 @@ export function HotelReviewsSection({
     void getPropertyReviews(propertyId, { page: 1, limit: FETCH_LIMIT })
       .then((result) => {
         if (cancelled) return;
-        setReviews(result.data);
+        // Guard malformed payloads (e.g. e2e detail mock matching `/reviews`) so a
+        // render crash does not remount sibling room cards mid-click.
+        setReviews(Array.isArray(result?.data) ? result.data : []);
         setCurrent(0);
       })
       .catch(() => {

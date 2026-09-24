@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { fillCheckoutManifest, mockManifestApi } from './helpers/fill-manifest';
 import { mockBookingCheckoutRoutes } from './helpers/mock-booking-checkout';
 import { mockCheckoutAuth } from './helpers/mock-checkout-auth';
+import { mockTestHotelDetail } from './helpers/mock-hotel-detail';
 import { mockWebPaymentMethods } from './helpers/mock-web-payment-methods';
 
 test('panier -> recap -> Stripe -> confirmation', async ({ page }) => {
@@ -26,43 +27,7 @@ test('panier -> recap -> Stripe -> confirmation', async ({ page }) => {
     );
   });
 
-  await page.route('**/api/public/accommodations/test-hotel**', async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        id: 'test-hotel',
-        name: 'Hotel Test Kinshasa',
-        propertyType: 'hotel',
-        destinationName: 'Kinshasa',
-        addressLine: '1 Avenue Test',
-        description: 'Hotel for e2e.',
-        starRating: 4,
-        images: [],
-        amenities: [],
-        stay: {
-          nights: 2,
-          minTotalCents: 120000,
-          currency: 'USD',
-        },
-        calendarDays: [],
-        rooms: [
-          {
-            id: 'room-e2e',
-            name: 'Suite E2E',
-            maxGuests: 2,
-            bedConfig: '1 king bed',
-            basePriceCents: 60000,
-            totalPriceCents: 120000,
-            currency: 'USD',
-            available: true,
-            nightlyBreakdown: [],
-            images: [],
-          },
-        ],
-      }),
-    });
-  });
+  await mockTestHotelDetail(page);
 
   let postedCheckout: unknown = null;
   await mockBookingCheckoutRoutes(page, {
@@ -136,43 +101,7 @@ test('panier -> recap -> cash -> attente paiement sur place', async ({ page }) =
     );
   });
 
-  await page.route('**/api/public/accommodations/test-hotel**', async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        id: 'test-hotel',
-        name: 'Hotel Test Kinshasa',
-        propertyType: 'hotel',
-        destinationName: 'Kinshasa',
-        addressLine: '1 Avenue Test',
-        description: 'Hotel for e2e.',
-        starRating: 4,
-        images: [],
-        amenities: [],
-        stay: {
-          nights: 2,
-          minTotalCents: 120000,
-          currency: 'USD',
-        },
-        calendarDays: [],
-        rooms: [
-          {
-            id: 'room-e2e',
-            name: 'Suite E2E',
-            maxGuests: 2,
-            bedConfig: '1 king bed',
-            basePriceCents: 60000,
-            totalPriceCents: 120000,
-            currency: 'USD',
-            available: true,
-            nightlyBreakdown: [],
-            images: [],
-          },
-        ],
-      }),
-    });
-  });
+  await mockTestHotelDetail(page);
 
   let postedCheckout: unknown = null;
   await mockBookingCheckoutRoutes(page, {
