@@ -19,13 +19,23 @@ import { StaffNotificationDto } from './dto/staff-notification.dto';
 const DEFAULT_LIST_LIMIT = 50;
 
 function toDto(row: Notifications): StaffNotificationDto {
+  const createdAt =
+    row.createdAt instanceof Date
+      ? row.createdAt.toISOString()
+      : new Date(row.createdAt as unknown as string).toISOString();
+  const readAt =
+    row.readAt == null
+      ? null
+      : row.readAt instanceof Date
+        ? row.readAt.toISOString()
+        : new Date(row.readAt as unknown as string).toISOString();
   return {
     id: row.id,
     userId: row.userId,
     type: row.type,
-    payload: row.payload,
-    readAt: row.readAt?.toISOString() ?? null,
-    createdAt: row.createdAt.toISOString(),
+    payload: row.payload ?? { href: '/notifications', priority: 'normal' },
+    readAt,
+    createdAt,
   };
 }
 

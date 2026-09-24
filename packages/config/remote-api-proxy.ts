@@ -28,7 +28,21 @@ async function forwardApiRequest(
     init.body = await req.arrayBuffer();
   }
 
-  const res = await fetch(url, init);
+  let res: Response;
+  try {
+    res = await fetch(url, init);
+  } catch (error) {
+    const detail =
+      error instanceof Error ? error.message : 'upstream unreachable';
+    return Response.json(
+      {
+        statusCode: 502,
+        error: 'Bad Gateway',
+        message: `API locale indisponible (${detail}). Vérifiez que pnpm dev:api tourne sur le port attendu.`,
+      },
+      { status: 502 },
+    );
+  }
 
   if ([301, 302, 303, 307, 308].includes(res.status)) {
     const location = res.headers.get('location');
