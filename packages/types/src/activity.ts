@@ -2,6 +2,7 @@ export interface ActivityProvider {
   id: string;
   destinationId: string;
   name: string;
+  logoUrl: string | null;
   createdAt: string;
   updatedAt: string | null;
 }
@@ -9,6 +10,7 @@ export interface ActivityProvider {
 export interface CreateActivityProviderRequest {
   destinationId: string;
   name: string;
+  logoUrl?: string | null;
 }
 
 export type UpdateActivityProviderRequest = Partial<CreateActivityProviderRequest>;

@@ -1,5 +1,12 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID, MaxLength } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+  ValidateIf,
+} from 'class-validator';
 
 export class CreateActivityProviderDto {
   @ApiProperty({ format: 'uuid' })
@@ -11,4 +18,11 @@ export class CreateActivityProviderDto {
   @IsString()
   @MaxLength(180)
   name!: string;
+
+  @ApiPropertyOptional({ nullable: true, maxLength: 512 })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  @MaxLength(512)
+  logoUrl?: string | null;
 }

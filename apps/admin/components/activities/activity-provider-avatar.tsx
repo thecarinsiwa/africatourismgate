@@ -1,9 +1,12 @@
 'use client';
 
 import { cn } from '@africatourismgate/ui';
+import Image from 'next/image';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
 
 type ActivityProviderAvatarProps = {
   name: string;
+  logoUrl?: string | null;
   size?: 'sm' | 'md';
   className?: string;
 };
@@ -23,10 +26,34 @@ function getProviderInitials(name: string): string {
 
 export function ActivityProviderAvatar({
   name,
+  logoUrl,
   size = 'md',
   className,
 }: ActivityProviderAvatarProps) {
   const initials = getProviderInitials(name);
+  const src = logoUrl?.trim() ? resolveMediaUrl(logoUrl.trim()) : null;
+
+  if (src) {
+    return (
+      <div
+        className={cn(
+          'relative shrink-0 overflow-hidden rounded-full ring-1 ring-atg-border/60',
+          sizeClasses[size],
+          className,
+        )}
+        title={name}
+      >
+        <Image
+          src={src}
+          alt={name}
+          fill
+          unoptimized
+          className="object-cover"
+          sizes={size === 'sm' ? '36px' : '40px'}
+        />
+      </div>
+    );
+  }
 
   return (
     <div

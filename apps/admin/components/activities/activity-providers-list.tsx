@@ -16,18 +16,21 @@ import {
 } from '@africatourismgate/ui';
 import type { ActivityProvider, Destination } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import { ActivityProviderAvatar } from './activity-provider-avatar';
 import { ActivityProviderRating } from './activity-provider-rating';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
+const LOGO_MAX_BYTES = 5 * 1024 * 1024;
+const ALLOWED_LOGO_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
-type FormValues = { name: string; destinationId: string };
+type FormValues = { name: string; destinationId: string; logoUrl: string | null };
 
-const emptyForm: FormValues = { name: '', destinationId: '' };
+const emptyForm: FormValues = { name: '', destinationId: '', logoUrl: null };
 
 export function ActivityProvidersList() {
   const { activities: getActivitiesErrorMessage } = useAdminErrorMessages();
@@ -40,8 +43,11 @@ export function ActivityProvidersList() {
   const tSelect = useTranslations('modules.common.select');
   const tActions = useTranslations('common.actions');
   const tLoading = useTranslations('common.loading');
+  const tValidation = useTranslations('modules.common.validation');
   const emptyDash = tCommon('empty.dash');
   const destId = useId();
+  const logoFileInputId = useId();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const paginationLabels = useDataTablePaginationLabels();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -56,8 +62,11 @@ export function ActivityProvidersList() {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<ActivityProvider | null>(null);
   const [formValues, setFormValues] = useState<FormValues>(emptyForm);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [localPreviewUrl, setLocalPreviewUrl] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<ActivityProvider | null>(null);
@@ -127,15 +136,27 @@ export function ActivityProvidersList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
+  function clearLocalPreview() {
+    setPendingFile(null);
+    setLocalPreviewUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return null;
+    });
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  }
+
   function resetForm() {
+    clearLocalPreview();
     setFormValues(emptyForm);
     setEditing(null);
     setShowForm(false);
     setFormError(null);
+    setUploading(false);
   }
 
   function openCreate() {
     if (!canWrite) return;
+    clearLocalPreview();
     setEditing(null);
     setFormValues(emptyForm);
     setFormError(null);
@@ -144,13 +165,48 @@ export function ActivityProvidersList() {
 
   function openEdit(provider: ActivityProvider) {
     if (!canWrite) return;
+    clearLocalPreview();
     setEditing(provider);
     setFormValues({
       name: provider.name,
       destinationId: provider.destinationId,
+      logoUrl: provider.logoUrl ?? null,
     });
     setFormError(null);
     setShowForm(true);
+  }
+
+  function handleLogoPick(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!ALLOWED_LOGO_TYPES.has(file.type)) {
+      setFormError(tValidation('imageFormat'));
+      event.target.value = '';
+      return;
+    }
+    if (file.size > LOGO_MAX_BYTES) {
+      setFormError(tValidation('imageTooLarge'));
+      event.target.value = '';
+      return;
+    }
+    setFormError(null);
+    setLocalPreviewUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(file);
+    });
+    setPendingFile(file);
+  }
+
+  function handleRemoveLogo() {
+    clearLocalPreview();
+    setFormValues((prev) => ({ ...prev, logoUrl: null }));
+  }
+
+  async function uploadLogo(providerId: string, file: File): Promise<string> {
+    const body = new FormData();
+    body.append('file', file);
+    const { url } = await getApiClient().uploadActivityProviderImage(providerId, body);
+    return url;
   }
 
   async function handleSubmit(event: React.FormEvent) {
@@ -167,20 +223,32 @@ export function ActivityProvidersList() {
     }
     setSubmitting(true);
     try {
-      const body = {
+      const client = getApiClient();
+      const base = {
         name: formValues.name.trim(),
         destinationId: formValues.destinationId,
       };
       if (editing) {
-        await getApiClient().updateActivityProvider(editing.id, body);
+        let logoUrl = formValues.logoUrl;
+        if (pendingFile) {
+          setUploading(true);
+          logoUrl = await uploadLogo(editing.id, pendingFile);
+        }
+        await client.updateActivityProvider(editing.id, { ...base, logoUrl });
       } else {
-        await getApiClient().createActivityProvider(body);
+        const created = await client.createActivityProvider(base);
+        if (pendingFile) {
+          setUploading(true);
+          const logoUrl = await uploadLogo(created.id, pendingFile);
+          await client.updateActivityProvider(created.id, { logoUrl });
+        }
       }
       resetForm();
       await load();
     } catch (error) {
       setFormError(getActivitiesErrorMessage(error));
     } finally {
+      setUploading(false);
       setSubmitting(false);
     }
   }
@@ -213,7 +281,11 @@ export function ActivityProvidersList() {
         meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => (
           <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-            <ActivityProviderAvatar name={row.original.name} size="sm" />
+            <ActivityProviderAvatar
+              name={row.original.name}
+              logoUrl={row.original.logoUrl}
+              size="sm"
+            />
             <span className="min-w-0 truncate font-medium text-atg-fg">{row.original.name}</span>
           </div>
         ),
@@ -285,10 +357,10 @@ export function ActivityProvidersList() {
       <Modal
         open={showForm}
         onOpenChange={(open) => {
-          if (!open && !submitting) resetForm();
+          if (!open && !submitting && !uploading) resetForm();
         }}
         title={editing ? t('edit') : t('new')}
-        showClose={!submitting}
+        showClose={!submitting && !uploading}
         closeAriaLabel={tActions('close')}
         className="max-w-lg"
       >
@@ -298,11 +370,70 @@ export function ActivityProvidersList() {
               {formError}
             </p>
           ) : null}
+          <div className="rounded-xl border border-atg-border bg-atg-surface/50 p-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+              {t('logo')}
+            </p>
+            <p className="mt-1 text-xs text-atg-muted">{t('logoHint')}</p>
+            <div className="mt-3 flex flex-wrap items-center gap-4">
+              {localPreviewUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element -- blob preview
+                <img
+                  src={localPreviewUrl}
+                  alt=""
+                  className="h-16 w-16 rounded-full object-cover ring-1 ring-atg-border/60"
+                />
+              ) : formValues.logoUrl?.trim() ? (
+                // eslint-disable-next-line @next/next/no-img-element -- remote upload URL
+                <img
+                  src={resolveMediaUrl(formValues.logoUrl.trim())}
+                  alt=""
+                  className="h-16 w-16 rounded-full object-cover ring-1 ring-atg-border/60"
+                />
+              ) : (
+                <ActivityProviderAvatar
+                  name={formValues.name || t('logo')}
+                  size="md"
+                  className="!h-16 !w-16 !text-base"
+                />
+              )}
+              <div className="flex flex-wrap gap-2">
+                <input
+                  ref={fileInputRef}
+                  id={logoFileInputId}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="sr-only"
+                  onChange={handleLogoPick}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={submitting || uploading}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {t('logoUpload')}
+                </Button>
+                {localPreviewUrl || formValues.logoUrl ? (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    disabled={submitting || uploading}
+                    onClick={handleRemoveLogo}
+                  >
+                    {t('logoRemove')}
+                  </Button>
+                ) : null}
+              </div>
+            </div>
+          </div>
           <Input
             label={tColumns('name')}
             value={formValues.name}
             onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
-            disabled={submitting}
+            disabled={submitting || uploading}
             required
           />
           <div>
@@ -316,7 +447,7 @@ export function ActivityProvidersList() {
               onChange={(e) =>
                 setFormValues((p) => ({ ...p, destinationId: e.target.value }))
               }
-              disabled={submitting}
+              disabled={submitting || uploading}
               required
             >
               <option value="">{tSelect('chooseDash')}</option>
@@ -332,11 +463,15 @@ export function ActivityProvidersList() {
               type="button"
               variant="outline"
               onClick={resetForm}
-              disabled={submitting}
+              disabled={submitting || uploading}
             >
               {tActions('cancel')}
             </Button>
-            <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
+            <Button
+              type="submit"
+              loading={submitting || uploading}
+              loadingText={uploading ? t('logoUploading') : tLoading('submit')}
+            >
               {editing ? tActions('save') : tActions('create')}
             </Button>
           </div>
