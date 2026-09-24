@@ -1,7 +1,7 @@
 import type { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { apiPath, authHeader, loginAsSeedAdmin, registerAndLoginCustomer } from './auth-client';
-import { SEED_ROOM_ID } from './constants';
+import { SEED_ROOM_ID, addDaysIso } from './constants';
 import { createE2eApp } from './create-app';
 
 const MESSAGES_E2E_DATE = '2099-08-22';
@@ -36,7 +36,7 @@ describe('Booking messages (e2e)', () => {
             itemType: 'room',
             referenceId: SEED_ROOM_ID,
             startDate: MESSAGES_E2E_DATE,
-            endDate: MESSAGES_E2E_DATE,
+            endDate: addDaysIso(MESSAGES_E2E_DATE, 1),
             quantity: 1,
           },
         ],
@@ -169,7 +169,7 @@ describe('Booking messages (e2e)', () => {
             itemType: 'room',
             referenceId: SEED_ROOM_ID,
             startDate: OTHER_USER_BOOKING_DATE,
-            endDate: OTHER_USER_BOOKING_DATE,
+            endDate: addDaysIso(OTHER_USER_BOOKING_DATE, 1),
             quantity: 1,
           },
         ],

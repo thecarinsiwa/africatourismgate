@@ -13,3 +13,11 @@ export const E2E_OTP_CODE = '000000';
 
 export const DEFAULT_STRIPE_WEBHOOK_E2E_SECRET =
   'whsec_e2e_test_secret_for_signature_only';
+
+/** Exclusive checkout helper: endDate = startDate + days (hotel nights). */
+export function addDaysIso(isoDate: string, days: number): string {
+  const [year, month, day] = isoDate.split('-').map(Number);
+  const date = new Date(Date.UTC(year!, month! - 1, day!));
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}
