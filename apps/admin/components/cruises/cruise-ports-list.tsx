@@ -17,10 +17,12 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { CruisePort } from '@africatourismgate/types';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { getIsoCountryLabel } from '../../lib/iso-countries';
+import { CountryCodeCombobox } from '../destinations/country-code-combobox';
 import { ListViewModeToggle } from '../list-view-mode-toggle';
 
 const PAGE_SIZE = 10;
@@ -39,6 +41,7 @@ export function CruisePortsList() {
   const tLoading = useTranslations('common.loading');
   const tToast = useTranslations('modules.common.toast');
   const tDataTable = useTranslations('modules.common.dataTable');
+  const locale = useLocale();
   const { toast } = useToast();
   const paginationLabels = useDataTablePaginationLabels();
 
@@ -208,7 +211,10 @@ export function CruisePortsList() {
         accessorKey: 'countryCode',
         header: t('country'),
         cell: ({ row }) => (
-          <DataTableBadge variant="muted">{row.original.countryCode}</DataTableBadge>
+          <DataTableBadge variant="muted">
+            {getIsoCountryLabel(row.original.countryCode, locale) ??
+              row.original.countryCode}
+          </DataTableBadge>
         ),
       },
       {
@@ -218,7 +224,7 @@ export function CruisePortsList() {
         cell: ({ row }) => renderActions(row.original),
       },
     ],
-    [renderActions, t, tCommon],
+    [locale, renderActions, t, tCommon],
   );
 
   const ports = state.status === 'ready' ? state.ports : [];
@@ -296,16 +302,12 @@ export function CruisePortsList() {
                 disabled={submitting}
                 required
               />
-              <Input
+              <CountryCodeCombobox
                 label={t('country')}
                 value={formValues.countryCode}
-                onChange={(e) =>
-                  setFormValues((p) => ({
-                    ...p,
-                    countryCode: e.target.value.toUpperCase().slice(0, 2),
-                  }))
+                onChange={(code) =>
+                  setFormValues((p) => ({ ...p, countryCode: code }))
                 }
-                maxLength={2}
                 disabled={submitting}
                 required
               />
@@ -380,7 +382,10 @@ export function CruisePortsList() {
                         <code className="rounded bg-atg-surface px-1.5 py-0.5 font-mono text-xs">
                           {port.code}
                         </code>
-                        <DataTableBadge variant="muted">{port.countryCode}</DataTableBadge>
+                        <DataTableBadge variant="muted">
+                          {getIsoCountryLabel(port.countryCode, locale) ??
+                            port.countryCode}
+                        </DataTableBadge>
                       </div>
                       <p className="mt-2 truncate font-medium text-atg-fg">{port.name}</p>
                     </div>
