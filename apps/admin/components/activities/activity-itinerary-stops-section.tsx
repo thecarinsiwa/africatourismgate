@@ -61,6 +61,7 @@ export function ActivityItineraryStopsSection({
   const t = useTranslations('modules.activities.sections.itineraryStops');
   const tColumns = useTranslations('modules.common.columns');
   const tCommon = useTranslations('modules.common');
+  const tDataTable = useTranslations('modules.common.dataTable');
   const tActions = useTranslations('common.actions');
   const tLoading = useTranslations('common.loading');
   const emptyDash = tCommon('empty.dash');
@@ -287,31 +288,42 @@ export function ActivityItineraryStopsSection({
       {
         accessorKey: 'stopOrder',
         header: t('order'),
-        meta: { align: 'center' },
+        meta: { align: 'center', cellClassName: 'w-12 sm:w-16' },
       },
       {
         accessorKey: 'name',
         header: tCommon('columns.name'),
+        meta: { cellClassName: 'min-w-0' },
+        cell: ({ row }) => (
+          <span className="block min-w-0 truncate font-medium text-atg-fg">{row.original.name}</span>
+        ),
       },
       {
         id: 'latitude',
         header: tCommon('form.latitude'),
-        cell: ({ row }) => formatCoord(row.original.latitude),
+        meta: { hideOnMobile: true },
+        cell: ({ row }) => (
+          <span className="tabular-nums text-sm">{formatCoord(row.original.latitude)}</span>
+        ),
       },
       {
         id: 'longitude',
         header: tCommon('form.longitude'),
-        cell: ({ row }) => formatCoord(row.original.longitude),
+        meta: { hideOnMobile: true },
+        cell: ({ row }) => (
+          <span className="tabular-nums text-sm">{formatCoord(row.original.longitude)}</span>
+        ),
       },
       {
         id: 'durationMinutes',
         header: tCommon('columns.duration'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => formatDuration(row.original.durationMinutes),
       },
       {
         id: 'actions',
         header: tColumns('actions'),
-        meta: { align: 'right' },
+        meta: { align: 'right', cellClassName: 'w-[5.5rem] sm:w-auto' },
         cell: ({ row }) => (
           <DataTableActions>
             <DataTableActionButton
@@ -447,7 +459,7 @@ export function ActivityItineraryStopsSection({
         </form>
       </Modal>
 
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6 overflow-x-hidden">
         {!embedded ? <h3 className="text-base font-semibold text-atg-fg">{t('title')}</h3> : null}
 
         {activityDurationLabel || totalStopDurationLabel ? (
@@ -491,13 +503,18 @@ export function ActivityItineraryStopsSection({
             <p className="text-sm text-atg-muted">{t('empty')}</p>
           </Card>
         ) : (
-          <Card variant="dashboard" padding="none">
+          <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
             <DataTable
               columns={columns}
               data={rows}
               isLoading={false}
               emptyMessage={t('empty')}
+              expandRowLabel={tDataTable('expandRow')}
+              collapseRowLabel={tDataTable('collapseRow')}
+              expandRowAriaLabel={tDataTable('expandRowAria')}
               getRowId={(row) => row.id}
+              aria-label={t('title')}
+              className="min-w-0"
             />
           </Card>
         )}
