@@ -66,7 +66,7 @@ export function AppHeader({
           </button>
         ) : null}
 
-        <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-1.5 md:gap-2">
+        <div className="ml-auto flex min-w-0 max-w-full flex-wrap items-center justify-end gap-1 sm:gap-1.5 md:gap-2">
           {actions}
           <ThemeToggle labels={themeLabels} />
           <UserMenu {...user} />
