@@ -377,14 +377,12 @@ export function ActivityProvidersList() {
             <p className="mt-1 text-xs text-atg-muted">{t('logoHint')}</p>
             <div className="mt-3 flex flex-wrap items-center gap-4">
               {localPreviewUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element -- blob preview
                 <img
                   src={localPreviewUrl}
                   alt=""
                   className="h-16 w-16 rounded-full object-cover ring-1 ring-atg-border/60"
                 />
               ) : formValues.logoUrl?.trim() ? (
-                // eslint-disable-next-line @next/next/no-img-element -- remote upload URL
                 <img
                   src={resolveMediaUrl(formValues.logoUrl.trim())}
                   alt=""

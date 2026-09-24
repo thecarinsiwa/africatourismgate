@@ -12,5 +12,5 @@ export default [
       globals: { ...globals.node },
     },
   },
-  { ignores: ['**/dist/**', '**/.next/**', '**/node_modules/**'] },
+  { ignores: ['**/dist/**', '**/.next/**', '**/.next-e2e/**', '**/node_modules/**'] },
 ];
