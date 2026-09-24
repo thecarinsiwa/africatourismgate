@@ -32,7 +32,7 @@ export function AdminContextualHelpLink() {
       data-testid="admin-contextual-help-link"
       data-contextual={isContextual ? 'true' : 'false'}
       className={cn(
-        'relative hidden h-10 w-10 items-center justify-center rounded-lg border border-atg-border bg-atg-elevated sm:inline-flex',
+        'relative hidden h-9 w-9 items-center justify-center rounded-lg border border-atg-border bg-atg-elevated sm:inline-flex sm:h-10 sm:w-10',
         'text-atg-fg transition-colors hover:bg-atg-surface',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface',
       )}

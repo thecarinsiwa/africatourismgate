@@ -59,7 +59,7 @@ export function LanguageSwitcher() {
       <span className="sr-only">{t('select')}</span>
       <button
         type="button"
-        className="inline-flex items-center gap-1.5 rounded-md border border-atg-border bg-atg-surface px-2 py-1.5 text-xs font-semibold text-atg-fg transition-colors hover:bg-atg-elevated focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+        className="inline-flex h-9 min-w-9 items-center justify-center gap-1 rounded-lg border border-atg-border bg-atg-elevated px-2 text-xs font-semibold text-atg-fg transition-colors hover:bg-atg-surface focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:h-10"
         onClick={() => setOpen((v) => !v)}
         aria-label={t('select')}
         aria-haspopup="menu"

@@ -44,20 +44,20 @@ export function AppHeader({
   return (
     <header
       className={cn(
-        // Mobile: two rows so the menu never collides with a crowded actions strip.
-        'flex shrink-0 flex-col gap-2 border-b border-atg-border bg-atg-elevated px-3 py-2.5',
-        'sm:px-4 md:flex-row md:items-center md:justify-between md:gap-4 md:px-6 md:py-4',
+        'flex shrink-0 flex-col gap-2 border-b border-atg-border bg-atg-elevated px-3 py-2',
+        'sm:px-4 sm:py-2.5 md:gap-3 md:px-6 md:py-3',
         className,
       )}
     >
-      <div className="flex min-w-0 items-center gap-2.5 md:flex-1 md:gap-3">
+      {/* Single toolbar row — title truncates, actions stay on the right. */}
+      <div className="flex min-w-0 items-center gap-2 sm:gap-3">
         {onMenuClick ? (
           <button
             type="button"
             onClick={onMenuClick}
             className={cn(
-              'relative z-10 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-atg-border',
-              'bg-atg-elevated text-atg-fg transition-colors hover:bg-atg-surface md:hidden',
+              'relative z-10 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-atg-border',
+              'bg-atg-elevated text-atg-fg transition-colors hover:bg-atg-surface sm:h-10 sm:w-10 md:hidden',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
             )}
             aria-label={openMenuLabel}
@@ -66,21 +66,24 @@ export function AppHeader({
           </button>
         ) : null}
 
-        <div className="min-w-0 flex-1 space-y-1">
+        <div className="min-w-0 flex-1">
           {title ? (
-            <p className="truncate text-base font-bold text-atg-fg sm:text-lg md:text-xl">{title}</p>
+            <p className="truncate text-base font-bold leading-tight text-atg-fg sm:text-lg md:text-xl">
+              {title}
+            </p>
           ) : hasHeading ? null : (
             <span className="sr-only">Africa Tourism Gate Admin</span>
           )}
-          {breadcrumb}
+        </div>
+
+        <div className="flex shrink-0 items-center gap-1 sm:gap-1.5 md:gap-2">
+          {actions}
+          <ThemeToggle labels={themeLabels} />
+          <UserMenu {...user} />
         </div>
       </div>
 
-      <div className="flex shrink-0 items-center justify-end gap-1.5 sm:gap-2 md:gap-3">
-        {actions}
-        <ThemeToggle labels={themeLabels} />
-        <UserMenu {...user} />
-      </div>
+      {breadcrumb ? <div className="min-w-0">{breadcrumb}</div> : null}
     </header>
   );
 }

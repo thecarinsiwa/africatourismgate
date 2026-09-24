@@ -52,7 +52,7 @@ export function ThemeToggle({
   if (!mounted) {
     return (
       <div
-        className={cn('h-10 w-10 rounded-lg border border-atg-border bg-atg-elevated', className)}
+        className={cn('h-9 w-9 rounded-lg border border-atg-border bg-atg-elevated sm:h-10 sm:w-10', className)}
         aria-hidden
       />
     );
@@ -65,7 +65,7 @@ export function ThemeToggle({
       type="button"
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
       className={cn(
-        'inline-flex h-10 w-10 items-center justify-center rounded-lg border border-atg-border',
+        'inline-flex h-9 w-9 items-center justify-center rounded-lg border border-atg-border sm:h-10 sm:w-10',
         'bg-atg-elevated text-atg-fg transition-colors hover:bg-atg-surface',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
         className,

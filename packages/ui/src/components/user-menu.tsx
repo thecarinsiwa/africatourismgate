@@ -79,7 +79,7 @@ export function UserMenu({
         type="button"
         onClick={() => setOpen((value) => !value)}
         className={cn(
-          'inline-flex items-center gap-2 rounded-lg border border-atg-border bg-atg-elevated px-2 py-1.5',
+          'inline-flex items-center gap-1.5 rounded-lg border border-atg-border bg-atg-elevated px-1.5 py-1 sm:gap-2 sm:px-2 sm:py-1.5',
           'text-sm text-atg-fg transition-colors hover:bg-atg-surface',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
         )}

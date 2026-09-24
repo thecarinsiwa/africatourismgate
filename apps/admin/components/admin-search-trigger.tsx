@@ -39,7 +39,7 @@ export function AdminSearchTrigger() {
       aria-haspopup="dialog"
       data-testid="admin-search-trigger"
       className={cn(
-        'relative inline-flex h-10 w-10 items-center justify-center rounded-lg border border-atg-border bg-atg-elevated',
+        'relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-atg-border bg-atg-elevated sm:h-10 sm:w-10',
         'text-atg-fg transition-colors hover:bg-atg-surface',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface',
         open && 'border-primary/40 bg-atg-surface text-primary',
