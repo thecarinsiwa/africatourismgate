@@ -83,6 +83,7 @@ export async function ensurePosSaleSeedData(): Promise<void> {
     if (created.status !== 201) {
       throw new Error(`Impossible de créer room-availability E2E (${created.status})`);
     }
+    saleSeedReady = true;
     return;
   }
 

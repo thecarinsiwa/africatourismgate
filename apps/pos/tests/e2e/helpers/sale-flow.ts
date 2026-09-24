@@ -1,6 +1,6 @@
 import { expect, type Page } from '@playwright/test';
 import { posSalePageConfig, posSaleSuccessPageConfig } from '../../../config/sale';
-import { E2E_ROOM_STAY_START } from './pos-seed.constants';
+import { E2E_ROOM_STAY_END, E2E_ROOM_STAY_START } from './pos-seed.constants';
 import { ensurePosSaleSeedData } from './pos-seed';
 
 const ROOM_CATALOG_TITLE = 'Standard Double';
@@ -31,7 +31,7 @@ export async function completeCashRoomSale(page: Page) {
   await expect(dialog).toBeVisible();
 
   await dialog.locator('#room-start').fill(E2E_ROOM_STAY_START);
-  await dialog.locator('#room-end').fill(E2E_ROOM_STAY_START);
+  await dialog.locator('#room-end').fill(E2E_ROOM_STAY_END);
 
   const previewResponse = page.waitForResponse(
     (response) =>
