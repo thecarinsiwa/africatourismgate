@@ -320,8 +320,9 @@ export function VehicleAvailabilitySection({
       {
         id: 'range',
         header: tCommon('columns.period'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => (
-          <span className="text-sm tabular-nums text-atg-fg">
+          <span className="block min-w-0 truncate text-sm tabular-nums text-atg-fg">
             {formatRange(row.original.startDatetime, row.original.endDatetime)}
           </span>
         ),
@@ -329,6 +330,7 @@ export function VehicleAvailabilitySection({
       {
         id: 'latitude',
         header: tCommon('form.latitude'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <span className="text-sm tabular-nums text-atg-muted">
             {formatCoord(row.original.latitude, emptyDash)}
@@ -338,6 +340,7 @@ export function VehicleAvailabilitySection({
       {
         id: 'longitude',
         header: tCommon('form.longitude'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <span className="text-sm tabular-nums text-atg-muted">
             {formatCoord(row.original.longitude, emptyDash)}
@@ -347,6 +350,7 @@ export function VehicleAvailabilitySection({
       {
         accessorKey: 'status',
         header: t('status'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <DataTableBadge variant={statusBadgeVariant(row.original.status)}>
             {getVehicleStatusLabel(row.original.status, statusLabels)}
@@ -356,7 +360,7 @@ export function VehicleAvailabilitySection({
       {
         id: 'actions',
         header: tCommon('columns.actions'),
-        meta: { align: 'right' },
+        meta: { align: 'right', cellClassName: 'w-[5.5rem] sm:w-auto' },
         cell: ({ row }) => (
           <DataTableActions>
             <DataTableActionButton
@@ -520,28 +524,34 @@ export function VehicleAvailabilitySection({
   );
 
   const filterToolbar = (
-    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
-      <div className="flex flex-wrap items-end gap-3">
+    <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
         <Input
           label={t('filterFrom')}
           type="date"
           value={filterStart}
           onChange={(e) => setFilterStart(e.target.value)}
-          wrapperClassName="w-full sm:w-auto sm:min-w-[160px]"
+          wrapperClassName="min-w-0 w-full sm:w-auto sm:min-w-[160px]"
         />
         <Input
           label={t('filterTo')}
           type="date"
           value={filterEnd}
           onChange={(e) => setFilterEnd(e.target.value)}
-          wrapperClassName="w-full sm:w-auto sm:min-w-[160px]"
+          wrapperClassName="min-w-0 w-full sm:w-auto sm:min-w-[160px]"
         />
-        <Button type="button" variant="outline" size="sm" onClick={() => void load()}>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => void load()}
+          className="w-full sm:w-auto"
+        >
           {tCommon('filters.apply')}
         </Button>
       </div>
       {!isPageVariant ? (
-        <Button type="button" onClick={() => openForm()} className="w-full sm:w-auto">
+        <Button type="button" onClick={() => openForm()} className="w-full shrink-0 sm:w-auto">
           {t('addSlot')}
         </Button>
       ) : null}
@@ -549,22 +559,28 @@ export function VehicleAvailabilitySection({
   );
 
   const defaultFilterToolbar = (
-    <div className="flex flex-wrap items-end gap-4">
+    <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
       <Input
         label={t('filterFrom')}
         type="date"
         value={filterStart}
         onChange={(e) => setFilterStart(e.target.value)}
-        className="max-w-[180px]"
+        wrapperClassName="min-w-0 w-full sm:w-auto sm:min-w-[160px]"
       />
       <Input
         label={t('filterTo')}
         type="date"
         value={filterEnd}
         onChange={(e) => setFilterEnd(e.target.value)}
-        className="max-w-[180px]"
+        wrapperClassName="min-w-0 w-full sm:w-auto sm:min-w-[160px]"
       />
-      <Button type="button" variant="outline" size="sm" onClick={() => void load()}>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={() => void load()}
+        className="w-full sm:w-auto"
+      >
         {tCommon('filters.apply')}
       </Button>
     </div>
@@ -575,7 +591,7 @@ export function VehicleAvailabilitySection({
       {state.message}
     </p>
   ) : (
-    <Card variant="dashboard" padding="none" className="overflow-hidden">
+    <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
       <DataTable
         columns={columns}
         data={isPageVariant ? filteredSlots : slots}
@@ -590,6 +606,7 @@ export function VehicleAvailabilitySection({
         expandRowLabel={tCommon('dataTable.expandRow')}
         collapseRowLabel={tCommon('dataTable.collapseRow')}
         expandRowAriaLabel={tCommon('dataTable.expandRowAria')}
+        className="min-w-0"
       />
     </Card>
   );
@@ -610,7 +627,11 @@ export function VehicleAvailabilitySection({
 
   if (isPageVariant) {
     return (
-      <section ref={sectionRef} id="vehicle-availability" className="space-y-6">
+      <section
+        ref={sectionRef}
+        id="vehicle-availability"
+        className="min-w-0 space-y-6 overflow-x-hidden"
+      >
         {deleteDialog}
         {slotFormModal}
 
@@ -642,9 +663,9 @@ export function VehicleAvailabilitySection({
             <Card
               key={stat.key}
               variant="dashboard"
-              className="border border-atg-border/80 p-3 sm:p-4"
+              className="min-w-0 border border-atg-border/80 p-3 sm:p-4"
             >
-              <p className="text-[11px] font-medium uppercase tracking-wide text-atg-muted">
+              <p className="truncate text-[11px] font-medium uppercase tracking-wide text-atg-muted">
                 {stat.label}
               </p>
               {state.status === 'loading' ? (
@@ -658,9 +679,9 @@ export function VehicleAvailabilitySection({
           ))}
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div className="min-w-0">
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
               <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
               {state.status === 'ready' ? (
                 <DataTableBadge variant="muted">
@@ -674,7 +695,13 @@ export function VehicleAvailabilitySection({
             </div>
             <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
           </div>
-          <Button type="button" variant="outline" size="sm" onClick={() => openForm()}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => openForm()}
+            className="w-full shrink-0 sm:w-auto"
+          >
             {t('addSlot')}
           </Button>
         </div>
@@ -682,7 +709,7 @@ export function VehicleAvailabilitySection({
         {filterToolbar}
 
         {slots.length > 0 || hasSlotSearch ? (
-          <div className="max-w-md">
+          <div className="min-w-0 w-full max-w-md">
             <Input
               type="search"
               placeholder={t('searchPlaceholder')}
@@ -703,17 +730,23 @@ export function VehicleAvailabilitySection({
       ref={sectionRef}
       id="vehicle-availability"
       className={
-        embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
+        embedded
+          ? 'min-w-0 space-y-6 overflow-x-hidden'
+          : 'mt-12 min-w-0 space-y-6 overflow-x-hidden border-t border-atg-border pt-10'
       }
     >
       {deleteDialog}
       {slotFormModal}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
           <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
           <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
         </div>
-        <Button type="button" onClick={() => openForm()}>
+        <Button
+          type="button"
+          onClick={() => openForm()}
+          className="w-full shrink-0 sm:w-auto"
+        >
           {t('addSlot')}
         </Button>
       </div>
