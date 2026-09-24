@@ -71,6 +71,7 @@ export interface GuideReviewInvite {
   assignmentId: string;
   guideId: string;
   guideName: string;
+  guideBio: string | null;
   role: 'primary' | 'secondary';
   canReview: boolean;
   review: Review | null;

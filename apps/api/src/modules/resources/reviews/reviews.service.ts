@@ -277,6 +277,7 @@ export class ReviewsService extends CrudService<Reviews> {
         assignmentId: assignment.id,
         guideId: assignment.guideId,
         guideName: guide?.displayName ?? assignment.guideId.slice(0, 8),
+        guideBio: guide?.bio ?? null,
         role: assignment.role,
         canReview,
         review: existing,

@@ -7,6 +7,7 @@ import type { PublicTeamMember } from '@africatourismgate/types';
 import { Spinner } from '@africatourismgate/ui';
 import { browseTeamMembersForLocale } from '../../lib/api/public';
 import { useScrollAnimation } from '../home/use-scroll-animation';
+import { RichText } from '../shared/rich-text';
 
 export function AboutTeamPageContent() {
   const locale = useLocale();
@@ -94,7 +95,11 @@ export function AboutTeamPageContent() {
             <h2 className="text-lg font-semibold text-atg-fg">{member.name}</h2>
             <p className="mt-1 text-sm font-medium text-primary">{member.role}</p>
             {member.bio ? (
-              <p className="mt-3 text-sm leading-relaxed text-atg-muted">{member.bio}</p>
+              <RichText
+                content={member.bio}
+                className="mt-3 text-left text-sm leading-relaxed text-atg-muted"
+                fallbackClassName="mt-3 text-sm leading-relaxed text-atg-muted"
+              />
             ) : null}
           </li>
         ))}
