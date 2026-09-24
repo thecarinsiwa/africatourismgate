@@ -15,6 +15,8 @@ const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api')
 );
 const SEED_ROOM_ID = '00000000-0000-4000-8000-000000002011';
 const TEST_DATE = '2099-12-01';
+/** Fin exclusive (1 nuit). */
+const TEST_END_DATE = '2099-12-02';
 
 async function request(method, path, { token, body } = {}) {
   const headers = { 'Content-Type': 'application/json' };
@@ -84,7 +86,7 @@ async function main() {
     itemType: 'room',
     referenceId: SEED_ROOM_ID,
     startDate: TEST_DATE,
-    endDate: TEST_DATE,
+    endDate: TEST_END_DATE,
     quantity: 1,
   };
 

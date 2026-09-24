@@ -29,13 +29,13 @@ export function BookingItemCatalogLink({
   const titleContent = href ? (
     <Link
       href={href}
-      className="font-medium text-primary hover:underline"
+      className="block truncate font-medium text-primary hover:underline"
       aria-label={t('catalogLink.ariaLabel', { typeLabel, title })}
     >
       {title}
     </Link>
   ) : (
-    <span className="font-medium text-atg-fg">{title}</span>
+    <span className="block truncate font-medium text-atg-fg">{title}</span>
   );
 
   if (!showReference) {
@@ -43,9 +43,9 @@ export function BookingItemCatalogLink({
   }
 
   return (
-    <div>
+    <div className="min-w-0">
       {titleContent}
-      <p className="text-xs text-atg-muted">
+      <p className="truncate text-xs text-atg-muted">
         {t('catalogLink.referencePrefix', { idPrefix: referenceId.slice(0, 8) })}
       </p>
     </div>

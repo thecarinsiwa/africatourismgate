@@ -58,6 +58,7 @@ export function ActivityViewPage({ activityId }: ActivityViewPageProps) {
   const tItinerary = useTranslations('modules.activities.sections.itineraryStops');
   const tCommon = useTranslations('modules.common');
   const tColumns = useTranslations('modules.common.columns');
+  const tDataTable = useTranslations('modules.common.dataTable');
   const tDates = useTranslations('modules.common.dates');
   const tActions = useTranslations('common.actions');
   const difficultyLabels = useActivityDifficultyLabels();
@@ -127,17 +128,22 @@ export function ActivityViewPage({ activityId }: ActivityViewPageProps) {
       {
         id: 'start',
         header: tColumns('start'),
-        cell: ({ row }) => formatDatetime(row.original.startDatetime),
+        meta: { cellClassName: 'min-w-0' },
+        cell: ({ row }) => (
+          <span className="block min-w-0 truncate text-sm">
+            {formatDatetime(row.original.startDatetime)}
+          </span>
+        ),
       },
       {
         accessorKey: 'capacity',
         header: tSchedules('capacity'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
       },
       {
         accessorKey: 'bookedCount',
         header: tColumns('reserved'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
       },
     ],
     [formatDatetime, tColumns, tSchedules],
@@ -157,25 +163,36 @@ export function ActivityViewPage({ activityId }: ActivityViewPageProps) {
       {
         accessorKey: 'stopOrder',
         header: tItinerary('order'),
-        meta: { align: 'center' },
+        meta: { align: 'center', cellClassName: 'w-12 sm:w-16' },
       },
       {
         accessorKey: 'name',
         header: tColumns('name'),
+        meta: { cellClassName: 'min-w-0' },
+        cell: ({ row }) => (
+          <span className="block min-w-0 truncate font-medium text-atg-fg">{row.original.name}</span>
+        ),
       },
       {
         id: 'latitude',
         header: tCommon('form.latitude'),
-        cell: ({ row }) => formatCoord(row.original.latitude),
+        meta: { hideOnMobile: true },
+        cell: ({ row }) => (
+          <span className="tabular-nums text-sm">{formatCoord(row.original.latitude)}</span>
+        ),
       },
       {
         id: 'longitude',
         header: tCommon('form.longitude'),
-        cell: ({ row }) => formatCoord(row.original.longitude),
+        meta: { hideOnMobile: true },
+        cell: ({ row }) => (
+          <span className="tabular-nums text-sm">{formatCoord(row.original.longitude)}</span>
+        ),
       },
       {
         id: 'durationMinutes',
         header: tColumns('duration'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => {
           const value = row.original.durationMinutes;
           if (value == null || value <= 0) return emptyDash;
@@ -221,7 +238,7 @@ export function ActivityViewPage({ activityId }: ActivityViewPageProps) {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <AdminPageBackLink href="/produits/activites" label={t('backLink')} />
         <Button href={editHref} className="w-full sm:w-auto">
@@ -341,7 +358,7 @@ export function ActivityViewPage({ activityId }: ActivityViewPageProps) {
         </section>
       ) : null}
 
-      <section className="space-y-4">
+      <section className="min-w-0 space-y-4">
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-lg font-semibold text-atg-fg">{tItinerary('title')}</h3>
@@ -354,17 +371,22 @@ export function ActivityViewPage({ activityId }: ActivityViewPageProps) {
         {itineraryStops.length > 0 ? (
           <ActivityItineraryStopsTimeline stops={itineraryStops} />
         ) : null}
-        <Card variant="dashboard" padding="none" className="overflow-hidden">
+        <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
           <DataTable
             columns={itineraryColumns}
             data={itineraryStops}
             emptyMessage={tItinerary('empty')}
+            expandRowLabel={tDataTable('expandRow')}
+            collapseRowLabel={tDataTable('collapseRow')}
+            expandRowAriaLabel={tDataTable('expandRowAria')}
             getRowId={(row) => row.id}
+            aria-label={tItinerary('title')}
+            className="min-w-0"
           />
         </Card>
       </section>
 
-      <section className="space-y-4">
+      <section className="min-w-0 space-y-4">
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-lg font-semibold text-atg-fg">{tSchedules('title')}</h3>
@@ -374,12 +396,17 @@ export function ActivityViewPage({ activityId }: ActivityViewPageProps) {
             {t('schedulesIntro', { count: schedules.length })}
           </p>
         </div>
-        <Card variant="dashboard" padding="none" className="overflow-hidden">
+        <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
           <DataTable
             columns={scheduleColumns}
             data={schedules}
             emptyMessage={tSchedules('empty')}
+            expandRowLabel={tDataTable('expandRow')}
+            collapseRowLabel={tDataTable('collapseRow')}
+            expandRowAriaLabel={tDataTable('expandRowAria')}
             getRowId={(row) => row.id}
+            aria-label={tSchedules('title')}
+            className="min-w-0"
           />
         </Card>
       </section>

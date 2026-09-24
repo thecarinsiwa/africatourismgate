@@ -19,11 +19,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
+import { isRichTextEmpty } from '../../lib/rich-text';
 import {
   useFormatDateTime,
   useTourGuideStatusLabels,
   useTourGuideTypeLabels,
 } from '../../lib/i18n/use-module-labels';
+import { RichTextContent } from '../rich-text-content';
 import { GuideAssignedBookingsSection } from './guide-assigned-bookings-section';
 import { GuidePersonalCalendar } from './guide-personal-calendar';
 import { TourGuideAvatar } from './tour-guide-avatar';
@@ -252,10 +254,10 @@ export function TourGuideViewPage({ guideId }: TourGuideViewPageProps) {
               </dl>
             </div>
 
-            {guide.bio ? (
+            {guide.bio && !isRichTextEmpty(guide.bio) ? (
               <div>
                 <h3 className="text-sm font-semibold text-atg-fg">{tForm('bio')}</h3>
-                <p className="mt-2 whitespace-pre-wrap text-sm text-atg-fg">{guide.bio}</p>
+                <RichTextContent html={guide.bio} className="mt-2 text-sm" />
               </div>
             ) : null}
 

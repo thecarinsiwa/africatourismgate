@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Card, Input } from '@africatourismgate/ui';
+import { Button, Card, Input, SearchableSelect } from '@africatourismgate/ui';
 import type {
   CreateVehicleRequest,
   RentalAgency,
@@ -11,7 +11,7 @@ import type {
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useId, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 
 export type VehicleFormValues = {
@@ -70,9 +70,8 @@ export function VehicleForm({
   const tActions = useTranslations('common.actions');
   const tLoading = useTranslations('common.loading');
   const tCommon = useTranslations('modules.common');
+  const tSelect = useTranslations('modules.common.select');
   const router = useRouter();
-  const agencyId = useId();
-  const categoryId = useId();
   const [agencies, setAgencies] = useState<RentalAgency[]>([]);
   const [categories, setCategories] = useState<VehicleCategory[]>([]);
   const [values, setValues] = useState<VehicleFormValues>(() =>
@@ -98,6 +97,25 @@ export function VehicleForm({
         setCategories([]);
       });
   }, []);
+
+  const agencyOptions = useMemo(
+    () => [
+      { value: '', label: tSelect('chooseDash') },
+      ...agencies.map((a) => ({ value: a.id, label: a.name })),
+    ],
+    [agencies, tSelect],
+  );
+
+  const categoryOptions = useMemo(
+    () => [
+      { value: '', label: tSelect('chooseDash') },
+      ...categories.map((c) => ({
+        value: c.id,
+        label: c.exampleModel ? `${c.name} (${c.exampleModel})` : c.name,
+      })),
+    ],
+    [categories, tSelect],
+  );
 
   const updateField = useCallback(
     <K extends keyof VehicleFormValues>(key: K, value: VehicleFormValues[K]) => {
@@ -147,55 +165,33 @@ export function VehicleForm({
     }
   }
 
-  const selectClass =
-    'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none focus:border-primary focus:ring-1 focus:ring-primary';
-
   const fields = (
     <div className="space-y-6">
-      <div>
-        <label htmlFor={agencyId} className="mb-2 block text-sm font-medium text-atg-fg">
-          {t('rentalAgency')}
-        </label>
-        <select
-          id={agencyId}
-          className={selectClass}
-          value={values.agencyId}
-          onChange={(e) => updateField('agencyId', e.target.value)}
-        >
-          <option value="">{tCommon('select.chooseDash')}</option>
-          {agencies.map((a) => (
-            <option key={a.id} value={a.id}>
-              {a.name}
-            </option>
-          ))}
-        </select>
-        {fieldErrors.agencyId ? (
-          <p className="mt-1 text-sm text-red-600">{fieldErrors.agencyId}</p>
-        ) : null}
-      </div>
+      <SearchableSelect
+        label={t('rentalAgency')}
+        name="agencyId"
+        value={values.agencyId}
+        options={agencyOptions}
+        onChange={(next) => updateField('agencyId', next)}
+        searchPlaceholder={tSelect('searchPlaceholder')}
+        emptyMessage={tSelect('empty')}
+        placeholder={tSelect('chooseDash')}
+        error={fieldErrors.agencyId}
+        required
+      />
 
-      <div>
-        <label htmlFor={categoryId} className="mb-2 block text-sm font-medium text-atg-fg">
-          {t('category')}
-        </label>
-        <select
-          id={categoryId}
-          className={selectClass}
-          value={values.categoryId}
-          onChange={(e) => updateField('categoryId', e.target.value)}
-        >
-          <option value="">{tCommon('select.chooseDash')}</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-              {c.exampleModel ? ` (${c.exampleModel})` : ''}
-            </option>
-          ))}
-        </select>
-        {fieldErrors.categoryId ? (
-          <p className="mt-1 text-sm text-red-600">{fieldErrors.categoryId}</p>
-        ) : null}
-      </div>
+      <SearchableSelect
+        label={t('category')}
+        name="categoryId"
+        value={values.categoryId}
+        options={categoryOptions}
+        onChange={(next) => updateField('categoryId', next)}
+        searchPlaceholder={tSelect('searchPlaceholder')}
+        emptyMessage={tSelect('empty')}
+        placeholder={tSelect('chooseDash')}
+        error={fieldErrors.categoryId}
+        required
+      />
 
       <Input
         label={t('licensePlate')}

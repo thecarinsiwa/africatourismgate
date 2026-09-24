@@ -272,6 +272,7 @@ export function PackageViewPage({ packageId }: PackageViewPageProps) {
               pkg={pkg}
               itemCount={items.length}
               pricing={pricing}
+              coverImageUrl={thumbUrl}
               size="sm"
             />
           </div>

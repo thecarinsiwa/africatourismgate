@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@africatourismgate/ui';
+import { Button, cn } from '@africatourismgate/ui';
 
 export type ListViewModeOption<T extends string> = {
   value: T;
@@ -12,6 +12,7 @@ type ListViewModeToggleProps<T extends string> = {
   options: ListViewModeOption<T>[];
   onChange: (value: T) => void;
   ariaLabel: string;
+  className?: string;
 };
 
 export function ListViewModeToggle<T extends string>({
@@ -19,10 +20,14 @@ export function ListViewModeToggle<T extends string>({
   options,
   onChange,
   ariaLabel,
+  className,
 }: ListViewModeToggleProps<T>) {
   return (
     <div
-      className="inline-flex flex-wrap gap-1 rounded-lg border border-atg-border bg-atg-surface p-1"
+      className={cn(
+        'inline-flex max-w-full flex-wrap gap-1 rounded-lg border border-atg-border bg-atg-surface p-1',
+        className,
+      )}
       role="group"
       aria-label={ariaLabel}
     >
@@ -34,6 +39,7 @@ export function ListViewModeToggle<T extends string>({
           variant={value === option.value ? 'primary' : 'ghost'}
           onClick={() => onChange(option.value)}
           aria-pressed={value === option.value}
+          className="min-w-0 flex-1 sm:flex-none"
         >
           {option.label}
         </Button>

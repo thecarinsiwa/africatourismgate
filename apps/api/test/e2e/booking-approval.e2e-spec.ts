@@ -1,7 +1,7 @@
 import type { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { apiPath, authHeader, loginAsSeedAdmin, registerAndLoginCustomer } from './auth-client';
-import { SEED_ROOM_ID } from './constants';
+import { SEED_ROOM_ID, addDaysIso } from './constants';
 import { createE2eApp } from './create-app';
 
 const APPROVAL_E2E_DATE = '2099-08-23';
@@ -13,7 +13,7 @@ const assistedCheckoutBody = (date: string) => ({
       itemType: 'room',
       referenceId: SEED_ROOM_ID,
       startDate: date,
-      endDate: date,
+      endDate: addDaysIso(date, 1),
       quantity: 1,
     },
   ],
@@ -402,16 +402,15 @@ describe('Booking approval (e2e)', () => {
   });
 
   it('PUT /bookings/:id/visit-dates updates item dates in pending_approval', async () => {
+    // Exclusive checkout: 10→12 = 2 nights (10, 11).
     const startDate = '2099-09-10';
     const endDate = '2099-09-12';
     const newStartDate = '2099-09-15';
-    const expectedEndDate = '2099-09-17';
+    const expectedLastNight = '2099-09-16';
     await ensureRoomAvailabilityForDate(app, adminToken, startDate, 2);
     await ensureRoomAvailabilityForDate(app, adminToken, '2099-09-11', 2);
-    await ensureRoomAvailabilityForDate(app, adminToken, endDate, 2);
     await ensureRoomAvailabilityForDate(app, adminToken, newStartDate, 2);
-    await ensureRoomAvailabilityForDate(app, adminToken, '2099-09-16', 2);
-    await ensureRoomAvailabilityForDate(app, adminToken, expectedEndDate, 2);
+    await ensureRoomAvailabilityForDate(app, adminToken, expectedLastNight, 2);
 
     const created = await request(app.getHttpServer())
       .post(apiPath('/bookings/request'))
@@ -439,9 +438,9 @@ describe('Booking approval (e2e)', () => {
       .send({ startDate: newStartDate })
       .expect(200);
 
-    expect(updated.body.items).toHaveLength(3);
+    expect(updated.body.items).toHaveLength(2);
     expect(updated.body.items[0]?.startDate).toMatch(new RegExp(`^${newStartDate}`));
-    expect(updated.body.items[2]?.startDate).toMatch(new RegExp(`^${expectedEndDate}`));
+    expect(updated.body.items[1]?.startDate).toMatch(new RegExp(`^${expectedLastNight}`));
   });
 });
 

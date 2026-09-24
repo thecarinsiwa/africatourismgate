@@ -135,8 +135,9 @@ export function VehicleViewPage({ vehicleId }: VehicleViewPageProps) {
       {
         id: 'range',
         header: tCommonColumns('period'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => (
-          <span className="text-sm">
+          <span className="block min-w-0 truncate text-sm tabular-nums text-atg-fg">
             {formatRange(row.original.startDatetime, row.original.endDatetime)}
           </span>
         ),
@@ -144,6 +145,7 @@ export function VehicleViewPage({ vehicleId }: VehicleViewPageProps) {
       {
         accessorKey: 'status',
         header: tAvailability('status'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <DataTableBadge variant="muted">
             {getVehicleStatusLabel(row.original.status, statusLabels)}
@@ -153,7 +155,7 @@ export function VehicleViewPage({ vehicleId }: VehicleViewPageProps) {
       {
         id: 'actions',
         header: tCommonColumns('actions'),
-        meta: { align: 'right' },
+        meta: { align: 'right', cellClassName: 'w-[5.5rem] sm:w-auto' },
         cell: () => (
           <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
             <DataTableActionButton action="calendar" href={availabilityHref} />
@@ -230,18 +232,24 @@ export function VehicleViewPage({ vehicleId }: VehicleViewPageProps) {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="min-w-0 space-y-6 overflow-x-hidden">
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <AdminPageBackLink href="/produits/locations" label={tDetail('backLink')} />
-        <div className="flex flex-wrap items-center gap-2">
-          <Button href={availabilityHref} variant="outline">
+        <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+          <Button
+            href={availabilityHref}
+            variant="outline"
+            className="w-full shrink-0 sm:w-auto"
+          >
             {tAvailability('title')}
           </Button>
-          <Button href={editHref}>{tView('editButton')}</Button>
+          <Button href={editHref} className="w-full shrink-0 sm:w-auto">
+            {tView('editButton')}
+          </Button>
         </div>
       </div>
 
-      <div className="flex flex-wrap items-start gap-4">
+      <div className="flex min-w-0 flex-wrap items-start gap-4">
         <VehicleThumbnail
           vehicleId={vehicleId}
           label={thumbnailLabel}
@@ -249,9 +257,9 @@ export function VehicleViewPage({ vehicleId }: VehicleViewPageProps) {
           size="md"
         />
         <div className="min-w-0 flex-1 space-y-3">
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
             {vehicle.licensePlate ? (
-              <h2 className="font-mono text-xl font-semibold text-atg-fg">
+              <h2 className="min-w-0 truncate font-mono text-xl font-semibold text-atg-fg">
                 {vehicle.licensePlate}
               </h2>
             ) : (
@@ -270,8 +278,8 @@ export function VehicleViewPage({ vehicleId }: VehicleViewPageProps) {
         </div>
       </div>
 
-      <Card variant="dashboard" padding="sm">
-        <div className="grid gap-6 lg:grid-cols-2 lg:items-stretch xl:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)_minmax(0,17rem)]">
+      <Card variant="dashboard" padding="sm" className="min-w-0 overflow-hidden">
+        <div className="grid min-w-0 gap-6 lg:grid-cols-2 lg:items-stretch xl:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)_minmax(0,17rem)]">
           {category ? (
             <div className="flex min-w-0 flex-col justify-center">
               <VehicleSpecsGrid categoryName={category.name} />
@@ -346,10 +354,10 @@ export function VehicleViewPage({ vehicleId }: VehicleViewPageProps) {
         </div>
       </Card>
 
-      <section className="space-y-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
+      <section className="min-w-0 space-y-4 overflow-x-hidden">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div className="min-w-0">
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
               <h3 className="text-lg font-semibold text-atg-fg">
                 {tAvailability('title')}
               </h3>
@@ -363,13 +371,18 @@ export function VehicleViewPage({ vehicleId }: VehicleViewPageProps) {
               {tView('availabilityIntro', { count: slots.length })}
             </p>
           </div>
-          <Button href={`${availabilityHref}?add=1`} variant="outline" size="sm">
+          <Button
+            href={`${availabilityHref}?add=1`}
+            variant="outline"
+            size="sm"
+            className="w-full shrink-0 sm:w-auto"
+          >
             {tAvailability('addSlot')}
           </Button>
         </div>
 
         {slots.length > 0 ? (
-          <div className="max-w-md">
+          <div className="min-w-0 w-full max-w-md">
             <Input
               type="search"
               placeholder={tView('availabilitySearchPlaceholder')}
@@ -380,7 +393,7 @@ export function VehicleViewPage({ vehicleId }: VehicleViewPageProps) {
           </div>
         ) : null}
 
-        <Card variant="dashboard" padding="none" className="overflow-hidden">
+        <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
           <DataTable
             columns={availabilityColumns}
             data={filteredSlots}
@@ -396,12 +409,13 @@ export function VehicleViewPage({ vehicleId }: VehicleViewPageProps) {
             expandRowLabel={tCommon('dataTable.expandRow')}
             collapseRowLabel={tCommon('dataTable.collapseRow')}
             expandRowAriaLabel={tCommon('dataTable.expandRowAria')}
+            className="min-w-0"
           />
         </Card>
       </section>
 
       <div className="flex justify-end">
-        <Button href={editHref} variant="outline">
+        <Button href={editHref} variant="outline" className="w-full sm:w-auto">
           {tActions('edit')}
         </Button>
       </div>

@@ -22,8 +22,10 @@ export function BookingItemsListModal({ open, onOpenChange }: BookingItemsListMo
       closeAriaLabel={tActions('close')}
       className="max-w-6xl"
     >
-      <p className="mb-4 text-sm text-atg-muted">{t('description')}</p>
-      <BookingItemsList />
+      <div className="min-w-0 overflow-x-hidden">
+        <p className="mb-4 text-sm text-atg-muted">{t('description')}</p>
+        <BookingItemsList />
+      </div>
     </Modal>
   );
 }

@@ -183,15 +183,16 @@ export function DestinationsList({ onChanged }: DestinationsListProps) {
       {
         accessorKey: 'name',
         header: tColumns('destination'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => (
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             <DestinationThumbnail
               name={row.original.name}
               countryCode={row.original.countryCode}
               imageUrl={row.original.imageUrl}
               size="sm"
             />
-            <span className="font-medium text-atg-fg">{row.original.name}</span>
+            <span className="min-w-0 truncate font-medium text-atg-fg">{row.original.name}</span>
           </div>
         ),
       },
@@ -200,7 +201,7 @@ export function DestinationsList({ onChanged }: DestinationsListProps) {
         header: tCommon('columns.slug'),
         meta: { hideOnMobile: true },
         cell: ({ row }) => (
-          <code className="rounded-md bg-atg-surface px-2 py-0.5 font-mono text-xs text-atg-muted ring-1 ring-atg-border/60">
+          <code className="block max-w-[12rem] truncate rounded-md bg-atg-surface px-2 py-0.5 font-mono text-xs text-atg-muted ring-1 ring-atg-border/60">
             {row.original.slug}
           </code>
         ),
@@ -208,7 +209,7 @@ export function DestinationsList({ onChanged }: DestinationsListProps) {
       {
         accessorKey: 'countryCode',
         header: tColumns('country'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) => (
           <div className="flex items-center justify-center gap-2">
             <CountryFlagPlaceholder countryCode={row.original.countryCode} className="h-8 w-8" />
@@ -221,7 +222,7 @@ export function DestinationsList({ onChanged }: DestinationsListProps) {
       {
         accessorKey: 'isFeatured',
         header: tColumns('featured'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) =>
           isDestinationFeatured(row.original) ? (
             <DataTableBadge variant="success">{tColumns('featured')}</DataTableBadge>
@@ -232,7 +233,7 @@ export function DestinationsList({ onChanged }: DestinationsListProps) {
       {
         id: 'actions',
         header: tCommon('columns.actions'),
-        meta: { align: 'right' },
+        meta: { align: 'right', cellClassName: 'w-[6.5rem] sm:w-auto' },
         cell: ({ row }) => renderActions(row.original),
       },
     ],
@@ -264,10 +265,10 @@ export function DestinationsList({ onChanged }: DestinationsListProps) {
         onConfirm={() => void handleDeleteConfirm()}
       />
 
-      <div className="min-w-0 space-y-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div className="flex min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-end">
-            <div className="min-w-0 flex-1 sm:max-w-md">
+      <div className="min-w-0 space-y-6 overflow-x-hidden">
+        <div className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+            <div className="min-w-0 w-full flex-1 sm:max-w-md">
               <Input
                 name="search"
                 type="search"
@@ -277,7 +278,7 @@ export function DestinationsList({ onChanged }: DestinationsListProps) {
                 aria-label={t('searchAria')}
               />
             </div>
-            <div className="min-w-0 sm:w-52">
+            <div className="min-w-0 w-full sm:w-52">
               <label className="mb-2 block text-sm font-medium text-atg-fg">
                 {t('featuredFilter')}
               </label>
@@ -300,6 +301,7 @@ export function DestinationsList({ onChanged }: DestinationsListProps) {
               options={viewModeOptions}
               onChange={setViewMode}
               ariaLabel={t('viewModeAria')}
+              className="w-full sm:w-auto"
             />
           </div>
         </div>
@@ -310,7 +312,7 @@ export function DestinationsList({ onChanged }: DestinationsListProps) {
           </p>
         ) : viewMode === 'table' ? (
           <>
-            <Card variant="dashboard" padding="none" className="overflow-hidden">
+            <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
               <DataTable
                 columns={columns}
                 data={destinations}
@@ -320,6 +322,10 @@ export function DestinationsList({ onChanged }: DestinationsListProps) {
                 emptyVariant={hasFilters ? 'search' : 'default'}
                 getRowId={(row) => row.id}
                 aria-label={t('ariaLabel')}
+                expandRowLabel={tDataTable('expandRow')}
+                collapseRowLabel={tDataTable('collapseRow')}
+                expandRowAriaLabel={tDataTable('expandRowAria')}
+                className="min-w-0"
               />
             </Card>
             {state.status === 'ready' ? (
@@ -340,33 +346,35 @@ export function DestinationsList({ onChanged }: DestinationsListProps) {
           <p className="text-sm text-atg-muted">{emptyMessage}</p>
         ) : (
           <>
-            <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {destinations.map((destination) => (
-                <li key={destination.id}>
-                  <Card variant="dashboard" className="flex h-full flex-col gap-3">
-                    <div className="flex items-start gap-3">
+                <li key={destination.id} className="min-w-0">
+                  <Card
+                    variant="dashboard"
+                    padding="sm"
+                    className="flex h-full min-w-0 flex-col gap-3 overflow-hidden"
+                  >
+                    <div className="flex min-w-0 items-start gap-3">
                       <DestinationThumbnail
                         name={destination.name}
                         countryCode={destination.countryCode}
                         imageUrl={destination.imageUrl}
                         size="md"
                       />
-                      <div className="min-w-0 flex-1">
+                      <div className="min-w-0 flex-1 space-y-1">
                         <p className="truncate font-medium text-atg-fg">{destination.name}</p>
-                        <code className="mt-0.5 inline-block rounded-md bg-atg-surface px-2 py-0.5 font-mono text-xs text-atg-muted ring-1 ring-atg-border/60">
+                        <code className="block max-w-full truncate rounded-md bg-atg-surface px-2 py-0.5 font-mono text-xs text-atg-muted ring-1 ring-atg-border/60">
                           {destination.slug}
                         </code>
-                        <p className="mt-1 truncate text-xs text-atg-muted">
-                          {destination.countryCode}
-                        </p>
+                        <p className="truncate text-xs text-atg-muted">{destination.countryCode}</p>
                         {isDestinationFeatured(destination) ? (
-                          <DataTableBadge variant="success" className="mt-2">
+                          <DataTableBadge variant="success" className="max-w-full truncate">
                             {tColumns('featured')}
                           </DataTableBadge>
                         ) : null}
                       </div>
                     </div>
-                    <div className="mt-auto flex justify-end border-t border-atg-border pt-3">
+                    <div className="mt-auto flex min-w-0 justify-end border-t border-atg-border pt-3">
                       {renderActions(destination)}
                     </div>
                   </Card>

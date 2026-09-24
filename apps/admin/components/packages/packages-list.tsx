@@ -135,39 +135,42 @@ export function PackagesList() {
   const columns = useMemo<ColumnDef<PackageRow, unknown>[]>(
     () => [
       {
-        id: 'cover',
-        header: tColumns('cover'),
-        meta: { align: 'center' },
+        accessorKey: 'name',
+        header: tColumns('package'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => {
           const imageUrl = row.original.imageUrl ?? row.original.coverImageUrl;
-          if (!imageUrl?.trim()) {
-            return <span className="text-sm text-atg-muted">{tEmpty('dash')}</span>;
-          }
+          const trimmed = imageUrl?.trim() || null;
           return (
-            <div className="relative mx-auto h-12 w-16 overflow-hidden rounded-md border border-atg-border">
-              <Image
-                src={resolveMediaUrl(imageUrl.trim())}
-                alt=""
-                fill
-                unoptimized
-                className="object-cover"
-                sizes="64px"
-              />
+            <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+              {trimmed ? (
+                <div className="relative h-10 w-14 shrink-0 overflow-hidden rounded-md border border-atg-border sm:h-12 sm:w-16">
+                  <Image
+                    src={resolveMediaUrl(trimmed)}
+                    alt=""
+                    fill
+                    unoptimized
+                    className="object-cover"
+                    sizes="64px"
+                  />
+                </div>
+              ) : (
+                <div
+                  className="flex h-10 w-14 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-[#0f2744] to-primary/70 text-xs font-bold text-white/90 sm:h-12 sm:w-16"
+                  aria-hidden
+                >
+                  {row.original.name.trim().charAt(0) || '?'}
+                </div>
+              )}
+              <span className="min-w-0 truncate font-medium text-atg-fg">{row.original.name}</span>
             </div>
           );
         },
       },
       {
-        accessorKey: 'name',
-        header: tColumns('package'),
-        cell: ({ row }) => (
-          <span className="font-medium text-atg-fg">{row.original.name}</span>
-        ),
-      },
-      {
         id: 'discount',
         header: tColumns('discount'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) => (
           <span className="text-sm tabular-nums">{row.original.discountPercent}%</span>
         ),
@@ -175,7 +178,7 @@ export function PackagesList() {
       {
         id: 'total',
         header: tColumns('total'),
-        meta: { align: 'right' },
+        meta: { align: 'right', hideOnMobile: true },
         cell: ({ row }) =>
           row.original.totalCents != null && row.original.currency ? (
             <span className="tabular-nums text-sm">
@@ -188,7 +191,7 @@ export function PackagesList() {
       {
         id: 'active',
         header: tColumns('active'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) =>
           row.original.active === 1 ? (
             <DataTableBadge variant="success">{packageStatusLabels.active}</DataTableBadge>
@@ -199,7 +202,7 @@ export function PackagesList() {
       {
         id: 'actions',
         header: tCommonColumns('actions'),
-        meta: { align: 'right' },
+        meta: { align: 'right', cellClassName: 'w-[6.5rem] sm:w-auto' },
         cell: ({ row }) => {
           const pkg = row.original;
           return (
@@ -243,9 +246,9 @@ export function PackagesList() {
         error={deleteError}
         onConfirm={() => void handleDeleteConfirm()}
       />
-      <div className="min-w-0 space-y-6">
-        <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-end">
-          <div className="min-w-0 flex-1 sm:max-w-md">
+      <div className="min-w-0 space-y-6 overflow-x-hidden">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+          <div className="min-w-0 w-full flex-1 sm:max-w-md">
             <Input
               type="search"
               placeholder={tList('searchPlaceholder')}
@@ -254,7 +257,7 @@ export function PackagesList() {
               aria-label={tList('searchPlaceholder')}
             />
           </div>
-          <div className="min-w-0 sm:w-56">
+          <div className="min-w-0 w-full sm:w-56">
             <label className="mb-2 block text-sm font-medium text-atg-fg">
               {tList('activeFilter')}
             </label>
@@ -286,7 +289,7 @@ export function PackagesList() {
           </p>
         ) : (
           <>
-            <Card variant="dashboard" padding="none" className="overflow-hidden">
+            <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
               <DataTable
                 columns={columns}
                 data={packages}
@@ -298,6 +301,7 @@ export function PackagesList() {
                 expandRowAriaLabel={tDataTable('expandRowAria')}
                 getRowId={(row) => row.id}
                 aria-label={tList('ariaLabel')}
+                className="min-w-0"
               />
             </Card>
             {state.status === 'ready' ? (

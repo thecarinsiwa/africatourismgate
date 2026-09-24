@@ -134,18 +134,20 @@ export function VehicleAvailabilityPage({ vehicleId }: VehicleAvailabilityPagePr
     state;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="min-w-0 space-y-6 overflow-x-hidden">
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <AdminPageBackLink href={viewHref} label={backLabel} />
-        <div className="flex flex-wrap items-center gap-2">
-          <Button href={viewHref} variant="outline">
+        <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+          <Button href={viewHref} variant="outline" className="w-full shrink-0 sm:w-auto">
             {tDetail('viewButton')}
           </Button>
-          <Button href={editHref}>{tView('editButton')}</Button>
+          <Button href={editHref} className="w-full shrink-0 sm:w-auto">
+            {tView('editButton')}
+          </Button>
         </div>
       </div>
 
-      <div className="flex flex-wrap items-start gap-4">
+      <div className="flex min-w-0 flex-wrap items-start gap-4">
         <VehicleThumbnail
           vehicleId={vehicleId}
           label={label}
@@ -153,9 +155,9 @@ export function VehicleAvailabilityPage({ vehicleId }: VehicleAvailabilityPagePr
           size="md"
         />
         <div className="min-w-0 flex-1 space-y-2">
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
             {licensePlate ? (
-              <h2 className="font-mono text-xl font-semibold text-atg-fg">
+              <h2 className="min-w-0 truncate font-mono text-xl font-semibold text-atg-fg">
                 {licensePlate}
               </h2>
             ) : (
@@ -181,7 +183,7 @@ export function VehicleAvailabilityPage({ vehicleId }: VehicleAvailabilityPagePr
       />
 
       <div className="flex justify-end">
-        <Button href={editHref} variant="outline">
+        <Button href={editHref} variant="outline" className="w-full sm:w-auto">
           {tActions('edit')}
         </Button>
       </div>

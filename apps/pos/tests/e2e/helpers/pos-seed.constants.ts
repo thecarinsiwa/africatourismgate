@@ -8,5 +8,5 @@ export const SEED_ORG_GUICHET_NAME = 'Kinshasa Guichet Est';
 
 /** Dates stables pour dispo chambre (hors conflits seed 2026). */
 export const E2E_ROOM_STAY_START = '2099-12-01';
-/** Date de fin alignée sur test-pos-sale-cash.mjs (même jour). */
-export const E2E_ROOM_STAY_END = E2E_ROOM_STAY_START;
+/** Fin exclusive (1 nuit : check-in inclusif, check-out exclusif). */
+export const E2E_ROOM_STAY_END = '2099-12-02';

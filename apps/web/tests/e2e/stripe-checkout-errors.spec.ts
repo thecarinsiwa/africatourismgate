@@ -3,6 +3,7 @@ import { fillCheckoutManifest, mockManifestApi } from './helpers/fill-manifest';
 import { mockBookingCheckoutRoutes } from './helpers/mock-booking-checkout';
 import { mockCheckoutAuth } from './helpers/mock-checkout-auth';
 import { mockBookingModes } from './helpers/mock-booking-modes';
+import { mockTestHotelDetail } from './helpers/mock-hotel-detail';
 
 const SAFE_PAYMENT_ERROR = 'Unable to start payment. Please try again.';
 
@@ -28,44 +29,7 @@ async function seedCheckoutSession(page: Page): Promise<void> {
     );
   });
 
-  await page.route('**/api/public/accommodations/test-hotel**', async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        id: 'test-hotel',
-        name: 'Hotel Test Kinshasa',
-        propertyType: 'hotel',
-        destinationName: 'Kinshasa',
-        addressLine: '1 Avenue Test',
-        description: 'Hotel for e2e.',
-        starRating: 4,
-        images: [],
-        amenities: [],
-        stay: {
-          nights: 2,
-          minTotalCents: 120000,
-          currency: 'USD',
-        },
-        calendarDays: [],
-        rooms: [
-          {
-            id: 'room-e2e',
-            name: 'Suite E2E',
-            maxGuests: 2,
-            bedConfig: '1 king bed',
-            basePriceCents: 60000,
-            totalPriceCents: 120000,
-            currency: 'USD',
-            available: true,
-            nightlyBreakdown: [],
-            images: [],
-          },
-        ],
-      }),
-    });
-  });
-
+  await mockTestHotelDetail(page);
   await mockManifestApi(page);
 }
 
@@ -74,9 +38,13 @@ async function navigateHotelToRecap(page: Page): Promise<void> {
     '/hotels/test-hotel?checkIn=2026-11-10&checkOut=2026-11-12&guests=2&roomId=room-e2e',
   );
 
-  await page
-    .getByRole('button', { name: /choisir cette chambre|select this room|elegir esta habitaci[oó]n/i })
-    .click();
+  const selectRoom = page
+    .getByRole('button', {
+      name: /choisir cette chambre|select this room|elegir esta habitaci[oó]n/i,
+    })
+    .first();
+  await expect(selectRoom).toBeVisible({ timeout: 15_000 });
+  await selectRoom.click();
   await Promise.all([
     page.waitForURL(/\/booking\/cart\?/),
     page

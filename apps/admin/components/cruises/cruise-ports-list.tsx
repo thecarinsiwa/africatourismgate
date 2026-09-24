@@ -17,10 +17,12 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { CruisePort } from '@africatourismgate/types';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { getIsoCountryLabel } from '../../lib/iso-countries';
+import { CountryCodeCombobox } from '../destinations/country-code-combobox';
 import { ListViewModeToggle } from '../list-view-mode-toggle';
 
 const PAGE_SIZE = 10;
@@ -39,6 +41,7 @@ export function CruisePortsList() {
   const tLoading = useTranslations('common.loading');
   const tToast = useTranslations('modules.common.toast');
   const tDataTable = useTranslations('modules.common.dataTable');
+  const locale = useLocale();
   const { toast } = useToast();
   const paginationLabels = useDataTablePaginationLabels();
 
@@ -195,30 +198,44 @@ export function CruisePortsList() {
   const columns = useMemo<ColumnDef<CruisePort, unknown>[]>(
     () => [
       {
+        accessorKey: 'name',
+        header: t('port'),
+        meta: { cellClassName: 'min-w-0' },
+        cell: ({ row }) => (
+          <span className="block min-w-0 truncate font-medium text-atg-fg">
+            {row.original.name}
+          </span>
+        ),
+      },
+      {
         accessorKey: 'code',
         header: t('code'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <code className="rounded bg-atg-surface px-1.5 py-0.5 font-mono text-xs">
             {row.original.code}
           </code>
         ),
       },
-      { accessorKey: 'name', header: t('port') },
       {
         accessorKey: 'countryCode',
         header: t('country'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
-          <DataTableBadge variant="muted">{row.original.countryCode}</DataTableBadge>
+          <DataTableBadge variant="muted">
+            {getIsoCountryLabel(row.original.countryCode, locale) ??
+              row.original.countryCode}
+          </DataTableBadge>
         ),
       },
       {
         id: 'actions',
         header: tCommon('columns.actions'),
-        meta: { align: 'right' },
+        meta: { align: 'right', cellClassName: 'w-[5.5rem] sm:w-auto' },
         cell: ({ row }) => renderActions(row.original),
       },
     ],
-    [renderActions, t, tCommon],
+    [locale, renderActions, t, tCommon],
   );
 
   const ports = state.status === 'ready' ? state.ports : [];
@@ -243,10 +260,10 @@ export function CruisePortsList() {
         onConfirm={() => void handleDeleteConfirm()}
       />
 
-      <div className="space-y-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-center">
-            <div className="min-w-0 flex-1 sm:max-w-md">
+      <div className="min-w-0 space-y-6 overflow-x-hidden">
+        <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <div className="min-w-0 w-full flex-1 sm:max-w-md">
               <Input
                 type="search"
                 placeholder={t('searchPlaceholder')}
@@ -260,9 +277,14 @@ export function CruisePortsList() {
               options={viewModeOptions}
               onChange={setViewMode}
               ariaLabel={t('viewModeAria')}
+              className="w-full sm:w-auto"
             />
           </div>
-          <Button type="button" onClick={() => openForm()}>
+          <Button
+            type="button"
+            onClick={() => openForm()}
+            className="w-full shrink-0 sm:w-auto"
+          >
             {t('new')}
           </Button>
         </div>
@@ -296,16 +318,12 @@ export function CruisePortsList() {
                 disabled={submitting}
                 required
               />
-              <Input
+              <CountryCodeCombobox
                 label={t('country')}
                 value={formValues.countryCode}
-                onChange={(e) =>
-                  setFormValues((p) => ({
-                    ...p,
-                    countryCode: e.target.value.toUpperCase().slice(0, 2),
-                  }))
+                onChange={(code) =>
+                  setFormValues((p) => ({ ...p, countryCode: code }))
                 }
-                maxLength={2}
                 disabled={submitting}
                 required
               />
@@ -341,7 +359,7 @@ export function CruisePortsList() {
           </p>
         ) : viewMode === 'table' ? (
           <>
-            <Card variant="dashboard" padding="none" className="overflow-hidden">
+            <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
               <DataTable
                 columns={columns}
                 data={ports}
@@ -349,8 +367,12 @@ export function CruisePortsList() {
                 loadingMessage={tDataTable('loading')}
                 emptyMessage={emptyMessage}
                 emptyVariant={search.trim().length > 0 ? 'search' : 'default'}
+                expandRowLabel={tDataTable('expandRow')}
+                collapseRowLabel={tDataTable('collapseRow')}
+                expandRowAriaLabel={tDataTable('expandRowAria')}
                 getRowId={(r) => r.id}
                 aria-label={t('ariaLabel')}
+                className="min-w-0"
               />
             </Card>
             {state.status === 'ready' ? (
@@ -371,20 +393,27 @@ export function CruisePortsList() {
           <p className="text-sm text-atg-muted">{emptyMessage}</p>
         ) : (
           <>
-            <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {ports.map((port) => (
-                <li key={port.id}>
-                  <Card variant="dashboard" className="flex h-full flex-col gap-3">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2">
+                <li key={port.id} className="min-w-0">
+                  <Card
+                    variant="dashboard"
+                    padding="sm"
+                    className="flex h-full min-w-0 flex-col gap-3 overflow-hidden"
+                  >
+                    <div className="min-w-0 flex-1 space-y-2">
+                      <p className="truncate font-medium text-atg-fg">{port.name}</p>
+                      <div className="flex min-w-0 flex-wrap items-center gap-2">
                         <code className="rounded bg-atg-surface px-1.5 py-0.5 font-mono text-xs">
                           {port.code}
                         </code>
-                        <DataTableBadge variant="muted">{port.countryCode}</DataTableBadge>
+                        <DataTableBadge variant="muted">
+                          {getIsoCountryLabel(port.countryCode, locale) ??
+                            port.countryCode}
+                        </DataTableBadge>
                       </div>
-                      <p className="mt-2 truncate font-medium text-atg-fg">{port.name}</p>
                     </div>
-                    <div className="mt-auto flex justify-end border-t border-atg-border pt-3">
+                    <div className="mt-auto flex min-w-0 justify-end border-t border-atg-border pt-3">
                       {renderActions(port)}
                     </div>
                   </Card>

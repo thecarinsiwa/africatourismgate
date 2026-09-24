@@ -2,11 +2,14 @@
 
 import type { BookingMessage } from '@africatourismgate/types';
 import { ConversationChat, DraggableFab, BookingChatFabIcon, Modal, useToast } from '@africatourismgate/ui';
+import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import { useFormatter, useTranslations } from 'next-intl';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { AUTH_CHANGED_EVENT, getSession } from '../../lib/auth/session';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 import { useFormatDateTime } from '../../lib/i18n/use-module-labels';
+import { useOrganizationThemeOptional } from '../organization-theme-provider';
 
 const POLL_INTERVAL_MS = 20_000;
 const FAB_STORAGE_KEY = 'atg-admin-booking-chat-fab-position';
@@ -16,6 +19,12 @@ type BookingMessagesSectionProps = {
   canWrite: boolean;
   initialUnreadCount?: number;
 };
+
+function resolveMessageAvatarUrl(url: string | null | undefined): string | null {
+  const trimmed = url?.trim();
+  if (!trimmed) return null;
+  return normalizeBrandingAssetUrl(trimmed) ?? trimmed;
+}
 
 export function BookingMessagesSection({
   bookingId,
@@ -27,6 +36,7 @@ export function BookingMessagesSection({
   const { toast } = useToast();
   const format = useFormatter();
   const formatDateTime = useFormatDateTime();
+  const orgTheme = useOrganizationThemeOptional();
   const formatDateSeparator = useCallback(
     (iso: string) => {
       try {
@@ -51,7 +61,32 @@ export function BookingMessagesSection({
   const [replyError, setReplyError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [unreadCount, setUnreadCount] = useState(initialUnreadCount);
+  const [staffAvatarUrl, setStaffAvatarUrl] = useState<string | null>(null);
   const previousUnreadCountRef = useRef(initialUnreadCount);
+
+  useEffect(() => {
+    const syncStaffAvatar = () => {
+      const sessionAvatar = normalizeBrandingAssetUrl(
+        getSession()?.user?.avatarUrl ?? null,
+      );
+      const logoAvatar = normalizeBrandingAssetUrl(
+        orgTheme?.branding?.logoUrl ?? null,
+      );
+      setStaffAvatarUrl(sessionAvatar ?? logoAvatar);
+    };
+    syncStaffAvatar();
+    window.addEventListener(AUTH_CHANGED_EVENT, syncStaffAvatar);
+    return () => window.removeEventListener(AUTH_CHANGED_EVENT, syncStaffAvatar);
+  }, [orgTheme?.branding?.logoUrl]);
+
+  const chatMessages = useMemo(
+    () =>
+      messages.map((message) => ({
+        ...message,
+        avatarUrl: resolveMessageAvatarUrl(message.avatarUrl),
+      })),
+    [messages],
+  );
 
   const refreshUnreadCount = useCallback(async () => {
     try {
@@ -164,7 +199,7 @@ export function BookingMessagesSection({
         ) : null}
 
         <ConversationChat
-          messages={messages}
+          messages={chatMessages}
           loading={loading}
           labels={{
             threadAria: t('threadAria'),
@@ -179,6 +214,7 @@ export function BookingMessagesSection({
           }}
           formatDateTime={formatDateTime}
           formatDateSeparator={formatDateSeparator}
+          staffAvatarUrl={staffAvatarUrl}
           canReply={canWrite}
           replyBody={replyBody}
           onReplyBodyChange={setReplyBody}

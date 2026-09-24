@@ -38,6 +38,7 @@ type ReviewRow = {
   body: string | null;
   createdAt: Date;
   authorFirstName: string | null;
+  authorAvatarUrl: string | null;
 };
 
 type AdminReviewRow = {
@@ -96,7 +97,7 @@ export class ReviewsService extends CrudService<Reviews> {
       where: { id: review.userId },
     });
 
-    return this.toReviewDto(review, author?.firstName ?? null);
+    return this.toReviewDto(review, author);
   }
 
   async canReview(bookingId: string, userId: string): Promise<boolean> {
@@ -220,7 +221,7 @@ export class ReviewsService extends CrudService<Reviews> {
         },
         ['reviews.read'],
       );
-      return this.toReviewDto(saved, author?.firstName ?? null);
+      return this.toReviewDto(saved, author);
     } catch (error) {
       if (
         error instanceof QueryFailedError &&
@@ -276,6 +277,7 @@ export class ReviewsService extends CrudService<Reviews> {
         assignmentId: assignment.id,
         guideId: assignment.guideId,
         guideName: guide?.displayName ?? assignment.guideId.slice(0, 8),
+        guideBio: guide?.bio ?? null,
         role: assignment.role,
         canReview,
         review: existing,
@@ -300,7 +302,7 @@ export class ReviewsService extends CrudService<Reviews> {
     const author = await this.usersRepository.findOne({
       where: { id: review.userId },
     });
-    return this.toReviewDto(review, author?.firstName ?? null);
+    return this.toReviewDto(review, author);
   }
 
   async createForGuideAssignment(
@@ -379,7 +381,7 @@ export class ReviewsService extends CrudService<Reviews> {
         },
         ['reviews.read'],
       );
-      return this.toReviewDto(saved, author?.firstName ?? null);
+      return this.toReviewDto(saved, author);
     } catch (error) {
       if (
         error instanceof QueryFailedError &&
@@ -434,29 +436,21 @@ export class ReviewsService extends CrudService<Reviews> {
       .addSelect('r.body', 'body')
       .addSelect('r.createdAt', 'createdAt')
       .addSelect('u.firstName', 'authorFirstName')
+      .addSelect('u.avatarUrl', 'authorAvatarUrl')
       .groupBy('r.id')
       .addGroupBy('r.rating')
       .addGroupBy('r.title')
       .addGroupBy('r.body')
       .addGroupBy('r.createdAt')
       .addGroupBy('u.firstName')
+      .addGroupBy('u.avatarUrl')
       .orderBy('r.createdAt', 'DESC')
       .offset((page - 1) * limit)
       .limit(limit)
       .getRawMany<ReviewRow>();
 
     return {
-      data: rows.map((row) => ({
-        id: row.id,
-        rating: Number(row.rating),
-        title: row.title,
-        body: row.body,
-        authorFirstName: row.authorFirstName,
-        createdAt:
-          row.createdAt instanceof Date
-            ? row.createdAt.toISOString()
-            : String(row.createdAt),
-      })),
+      data: rows.map((row) => this.mapReviewRow(row)),
       meta: {
         total,
         page,
@@ -478,6 +472,7 @@ export class ReviewsService extends CrudService<Reviews> {
       .addSelect('r.body', 'body')
       .addSelect('r.createdAt', 'createdAt')
       .addSelect('u.firstName', 'authorFirstName')
+      .addSelect('u.avatarUrl', 'authorAvatarUrl')
       .where('r.deletedAt IS NULL')
       .andWhere("r.status = 'approved'")
       .andWhere('r.body IS NOT NULL')
@@ -487,17 +482,7 @@ export class ReviewsService extends CrudService<Reviews> {
       .limit(cappedLimit)
       .getRawMany<ReviewRow>();
 
-    return rows.map((row) => ({
-      id: row.id,
-      rating: Number(row.rating),
-      title: row.title,
-      body: row.body,
-      authorFirstName: row.authorFirstName,
-      createdAt:
-        row.createdAt instanceof Date
-          ? row.createdAt.toISOString()
-          : String(row.createdAt),
-    }));
+    return rows.map((row) => this.mapReviewRow(row));
   }
 
   async listForAdmin(
@@ -761,13 +746,32 @@ export class ReviewsService extends CrudService<Reviews> {
     };
   }
 
-  private toReviewDto(review: Reviews, authorFirstName: string | null): ReviewDto {
+  private mapReviewRow(row: ReviewRow): ReviewDto {
+    return {
+      id: row.id,
+      rating: Number(row.rating),
+      title: row.title,
+      body: row.body,
+      authorFirstName: row.authorFirstName,
+      authorAvatarUrl: row.authorAvatarUrl?.trim() || null,
+      createdAt:
+        row.createdAt instanceof Date
+          ? row.createdAt.toISOString()
+          : String(row.createdAt),
+    };
+  }
+
+  private toReviewDto(
+    review: Reviews,
+    author?: Pick<Users, 'firstName' | 'avatarUrl'> | null,
+  ): ReviewDto {
     return {
       id: review.id,
       rating: review.rating,
       title: review.title || null,
       body: review.body || null,
-      authorFirstName,
+      authorFirstName: author?.firstName ?? null,
+      authorAvatarUrl: author?.avatarUrl?.trim() || null,
       createdAt: review.createdAt.toISOString(),
     };
   }

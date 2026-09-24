@@ -4,6 +4,8 @@ export interface Review {
   title: string | null;
   body: string | null;
   authorFirstName: string | null;
+  /** Reviewer profile photo when available. */
+  authorAvatarUrl?: string | null;
   createdAt: string;
 }
 
@@ -69,6 +71,7 @@ export interface GuideReviewInvite {
   assignmentId: string;
   guideId: string;
   guideName: string;
+  guideBio: string | null;
   role: 'primary' | 'secondary';
   canReview: boolean;
   review: Review | null;

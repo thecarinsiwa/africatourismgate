@@ -11,7 +11,7 @@ import {
   DataTablePagination,
   FilterBar,
   Input,
-  Select,
+  SearchableSelect,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type {
@@ -38,6 +38,9 @@ import { BookingItemTypeIcon } from './booking-item-type-icon';
 
 const PAGE_SIZE = 10;
 const BOOKING_ID_DEBOUNCE_MS = 300;
+/** UUID v4 — only send bookingId to the API once the value is complete. */
+const BOOKING_ID_UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 type StatusFilter = '' | BookingStatus;
 type ItemTypeFilter = '' | BookingItemType;
@@ -52,11 +55,16 @@ function formatBookingRef(bookingId: string): string {
   return bookingId.slice(0, 8);
 }
 
+function isBookingIdUuid(value: string): boolean {
+  return BOOKING_ID_UUID_RE.test(value);
+}
+
 export function BookingItemsList() {
   const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.bookings.itemsList');
   const tCommon = useTranslations('modules.common');
   const tDataTable = useTranslations('modules.common.dataTable');
+  const tSelect = useTranslations('modules.common.select');
   const statusLabels = useBookingStatusLabels();
   const statusFilterOptions = useBookingStatusFilterOptions();
   const itemTypeOptions = useBookingItemTypeOptions();
@@ -81,15 +89,17 @@ export function BookingItemsList() {
   useEffect(() => {
     const query = bookingIdInput.trim();
     const timer = window.setTimeout(() => {
-      setBookingIdFilter((prev) => {
-        if (prev !== query) {
-          setPage(1);
-        }
-        return query;
-      });
+      // Ignore partial IDs while typing — API requires a full UUID.
+      const next = query === '' || isBookingIdUuid(query) ? query : null;
+      if (next === null) return;
+      setBookingIdFilter((prev) => (prev === next ? prev : next));
     }, BOOKING_ID_DEBOUNCE_MS);
     return () => window.clearTimeout(timer);
   }, [bookingIdInput]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [bookingIdFilter, itemTypeFilter, statusFilter]);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -128,33 +138,32 @@ export function BookingItemsList() {
     setStatusFilter('');
     setBookingIdInput('');
     setBookingIdFilter('');
-    setPage(1);
   }, []);
 
   const columns = useMemo<ColumnDef<BookingItemListItem, unknown>[]>(
     () => [
       {
-        accessorKey: 'itemType',
-        header: tCommon('columns.type'),
-        cell: ({ row }) => (
-          <BookingItemTypeIcon itemType={row.original.itemType} size="sm" showLabel />
-        ),
-      },
-      {
         accessorKey: 'titleSnapshot',
         header: tCommon('columns.label'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => (
-          <BookingItemCatalogLink
-            itemType={row.original.itemType}
-            referenceId={row.original.referenceId}
-            title={row.original.titleSnapshot}
-            showReference
-          />
+          <div className="flex min-w-0 items-start gap-2">
+            <BookingItemTypeIcon itemType={row.original.itemType} size="sm" />
+            <div className="min-w-0 flex-1">
+              <BookingItemCatalogLink
+                itemType={row.original.itemType}
+                referenceId={row.original.referenceId}
+                title={row.original.titleSnapshot}
+                showReference
+              />
+            </div>
+          </div>
         ),
       },
       {
         id: 'dates',
         header: tCommon('columns.dates'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm text-atg-muted">
             {formatDates(row.original.startDate, row.original.endDate, emptyDash)}
@@ -164,16 +173,24 @@ export function BookingItemsList() {
       {
         id: 'amount',
         header: tCommon('columns.amount'),
-        meta: { align: 'right' },
-        cell: ({ row }) => (
-          <span className="tabular-nums text-sm font-medium">
-            {formatMoney(row.original.lineTotalCents, row.original.currency)}
-          </span>
-        ),
+        meta: { align: 'right', hideOnMobile: true },
+        cell: ({ row }) => {
+          const item = row.original;
+          const lineTotal =
+            typeof item.lineTotalCents === 'number' && Number.isFinite(item.lineTotalCents)
+              ? item.lineTotalCents
+              : Number(item.quantity ?? 0) * Number(item.unitPriceCents ?? 0);
+          return (
+            <span className="tabular-nums text-sm font-medium">
+              {formatMoney(lineTotal, item.currency)}
+            </span>
+          );
+        },
       },
       {
         id: 'bookingRef',
         header: tCommon('columns.booking'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <Link
             href={`/reservations/${row.original.bookingId}`}
@@ -186,12 +203,13 @@ export function BookingItemsList() {
       {
         id: 'bookingStatus',
         header: tCommon('columns.status'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) => {
           const status = row.original.bookingStatus;
+          const variant = status ? BOOKING_STATUS_VARIANTS[status] : 'muted';
           return (
-            <DataTableBadge variant={BOOKING_STATUS_VARIANTS[status]}>
-              {getBookingStatusLabel(status, statusLabels)}
+            <DataTableBadge variant={variant ?? 'muted'}>
+              {status ? getBookingStatusLabel(status, statusLabels) : emptyDash}
             </DataTableBadge>
           );
         },
@@ -199,7 +217,7 @@ export function BookingItemsList() {
       {
         id: 'actions',
         header: tCommon('columns.actions'),
-        meta: { align: 'right' },
+        meta: { align: 'right', cellClassName: 'w-[5.5rem] sm:w-auto' },
         cell: ({ row }) => (
           <DataTableActions>
             <DataTableActionButton
@@ -219,7 +237,7 @@ export function BookingItemsList() {
   const emptyMessage = hasFilters ? t('emptyFiltered') : t('emptyDefault');
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6 overflow-x-hidden">
       <FilterBar
         mobileVariant="drawer"
         activeCount={activeFilterCount}
@@ -229,29 +247,29 @@ export function BookingItemsList() {
         toggleLabel={tCommon('filters.toggle')}
         filters={
           <>
-            <div className="w-full sm:w-48">
-              <Select
+            <div className="min-w-0 w-full sm:w-48">
+              <SearchableSelect
                 label={t('filters.type')}
                 value={itemTypeFilter}
                 options={itemTypeSelectOptions}
-                onChange={(e) => {
-                  setItemTypeFilter(e.target.value as ItemTypeFilter);
-                  setPage(1);
-                }}
+                onChange={(value) => setItemTypeFilter(value as ItemTypeFilter)}
+                searchPlaceholder={tSelect('searchPlaceholder')}
+                emptyMessage={tSelect('empty')}
+                placeholder={tCommon('filters.all')}
               />
             </div>
-            <div className="w-full sm:w-56">
-              <Select
+            <div className="min-w-0 w-full sm:w-56">
+              <SearchableSelect
                 label={t('filters.bookingStatus')}
                 value={statusFilter}
                 options={statusFilterOptions}
-                onChange={(e) => {
-                  setStatusFilter(e.target.value as StatusFilter);
-                  setPage(1);
-                }}
+                onChange={(value) => setStatusFilter(value as StatusFilter)}
+                searchPlaceholder={tSelect('searchPlaceholder')}
+                emptyMessage={tSelect('empty')}
+                placeholder={tCommon('filters.all')}
               />
             </div>
-            <div className="w-full sm:min-w-[280px] sm:max-w-md sm:flex-1">
+            <div className="min-w-0 w-full sm:min-w-[280px] sm:max-w-md sm:flex-1">
               <Input
                 label={t('filters.bookingId')}
                 name="bookingId"
@@ -272,7 +290,7 @@ export function BookingItemsList() {
         </p>
       ) : (
         <>
-          <Card variant="dashboard" padding="none" className="overflow-hidden">
+          <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
             <DataTable
               columns={columns}
               data={items}
@@ -280,8 +298,12 @@ export function BookingItemsList() {
               loadingMessage={tDataTable('loading')}
               emptyMessage={emptyMessage}
               emptyVariant={hasFilters ? 'search' : 'default'}
+              expandRowLabel={tDataTable('expandRow')}
+              collapseRowLabel={tDataTable('collapseRow')}
+              expandRowAriaLabel={tDataTable('expandRowAria')}
               getRowId={(row) => row.id}
               aria-label={t('ariaLabel')}
+              className="min-w-0"
             />
           </Card>
 

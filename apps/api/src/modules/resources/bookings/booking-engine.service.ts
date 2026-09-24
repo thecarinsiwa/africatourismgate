@@ -38,6 +38,7 @@ import {
   slotCoversRentalPeriod,
 } from '../../public/vehicles/vehicle-dates.util';
 import { enumerateDates, addDaysToDateOnly, visitSpanDays } from '../room-availability/room-availability-date.util';
+import { enumerateStayNights } from '../../public/accommodations/stay-dates.util';
 import { OrganizationSettingsService } from '../organization-settings/organization-settings.service';
 import { PackagesService } from '../packages/packages.service';
 import {
@@ -1433,7 +1434,8 @@ export class BookingEngineService {
     }
 
     const lines: ResolvedBookingLine[] = [];
-    const dates = enumerateDates(item.startDate, item.endDate);
+    // Hotel stay: checkIn inclusive, checkOut exclusive (same as public availability).
+    const dates = enumerateStayNights(item.startDate, item.endDate);
 
     for (const date of dates) {
       const availability = await this.roomAvailabilityRepository.findOne({

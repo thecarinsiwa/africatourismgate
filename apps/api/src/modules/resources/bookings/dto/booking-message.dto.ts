@@ -22,6 +22,12 @@ export class BookingMessageDto {
   })
   authorName?: string | null;
 
+  @ApiPropertyOptional({
+    description: 'Avatar URL of the message author (customer or staff).',
+    nullable: true,
+  })
+  avatarUrl?: string | null;
+
   @ApiProperty()
   createdAt!: string;
 

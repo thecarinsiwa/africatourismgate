@@ -32,12 +32,12 @@ export function AdminContextualHelpLink() {
       data-testid="admin-contextual-help-link"
       data-contextual={isContextual ? 'true' : 'false'}
       className={cn(
-        'relative hidden h-10 w-10 items-center justify-center rounded-lg border border-atg-border bg-atg-elevated sm:inline-flex',
+        'relative inline-flex h-8 w-8 items-center justify-center rounded-lg border border-atg-border bg-atg-elevated sm:h-9 sm:w-9 md:h-10 md:w-10',
         'text-atg-fg transition-colors hover:bg-atg-surface',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface',
       )}
     >
-      <SidebarHeadsetIcon className="h-5 w-5" />
+      <SidebarHeadsetIcon className="h-4 w-4 sm:h-5 sm:w-5" />
     </Link>
   );
 }

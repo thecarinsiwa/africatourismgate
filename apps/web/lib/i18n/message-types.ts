@@ -340,6 +340,9 @@ export type Translations = {
     reviewsLoading: string;
     reviewsLoadError: string;
     loadMoreReviews: string;
+    reviewsCarouselAria: string;
+    reviewsPrev: string;
+    reviewsNext: string;
     anonymousGuest: string;
   };
   flights: {

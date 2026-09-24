@@ -11,7 +11,7 @@ import {
   DataTableActions,
   Input,
   Modal,
-  Select,
+  SearchableSelect,
   Skeleton,
   useToast,
   type ColumnDef,
@@ -139,6 +139,8 @@ export function BookingManifestSection({
   const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.bookings.manifest');
   const tCommon = useTranslations('modules.common');
+  const tDataTable = useTranslations('modules.common.dataTable');
+  const tSelect = useTranslations('modules.common.select');
   const tActions = useTranslations('common.actions');
   const locale = useLocale();
   const { toast } = useToast();
@@ -264,22 +266,22 @@ export function BookingManifestSection({
   const columns = useMemo<ColumnDef<BookingManifestEntry, unknown>[]>(
     () => [
       {
-        accessorKey: 'sortOrder',
-        header: '#',
-        cell: ({ row }) => (
-          <span className="tabular-nums text-atg-muted">{row.index + 1}</span>
-        ),
-      },
-      {
         accessorKey: 'fullName',
         header: t('columns.fullName'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => (
-          <span className="font-medium text-atg-fg">{row.original.fullName}</span>
+          <div className="min-w-0">
+            <span className="block truncate font-medium text-atg-fg">
+              {row.original.fullName}
+            </span>
+            <span className="text-xs tabular-nums text-atg-muted">#{row.index + 1}</span>
+          </div>
         ),
       },
       {
         accessorKey: 'age',
         header: t('columns.age'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <span className="tabular-nums">
             {row.original.age ?? tCommon('empty.dash')}
@@ -289,11 +291,13 @@ export function BookingManifestSection({
       {
         accessorKey: 'sex',
         header: t('columns.sex'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => sexLabel(row.original.sex),
       },
       {
         accessorKey: 'nationality',
         header: t('columns.nationality'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) =>
           formatNationalityDisplay(row.original.nationality, locale) ||
           tCommon('empty.dash'),
@@ -301,6 +305,7 @@ export function BookingManifestSection({
       {
         accessorKey: 'idNumber',
         header: t('columns.idNumber'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <span className="font-mono text-xs">
             {row.original.idNumber ?? tCommon('empty.dash')}
@@ -310,6 +315,7 @@ export function BookingManifestSection({
       {
         accessorKey: 'priceCents',
         header: t('columns.price'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <span className="tabular-nums">
             {row.original.priceCents != null
@@ -321,6 +327,7 @@ export function BookingManifestSection({
       {
         id: 'medical',
         header: t('columns.medical'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => {
           const e = row.original;
           const summary = [
@@ -349,7 +356,7 @@ export function BookingManifestSection({
             {
               id: 'actions',
               header: tCommon('columns.actions'),
-              meta: { align: 'right' as const },
+              meta: { align: 'right' as const, cellClassName: 'w-[5.5rem] sm:w-auto' },
               cell: ({ row }: { row: { original: BookingManifestEntry } }) => (
                 <DataTableActions>
                   <DataTableActionButton
@@ -411,13 +418,17 @@ export function BookingManifestSection({
       {loading ? (
         <Skeleton className="h-48 w-full rounded-xl" />
       ) : (
-        <Card variant="dashboard" padding="none" className="overflow-hidden">
+        <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
           <DataTable
             columns={columns}
             data={entries}
             emptyMessage={t('empty')}
+            expandRowLabel={tDataTable('expandRow')}
+            collapseRowLabel={tDataTable('collapseRow')}
+            expandRowAriaLabel={tDataTable('expandRowAria')}
             getRowId={(row) => row.id}
             aria-label={t('tableAria')}
+            className="min-w-0"
           />
         </Card>
       )}
@@ -451,7 +462,7 @@ export function BookingManifestSection({
             value={form.age}
             onChange={(e) => setForm((prev) => ({ ...prev, age: e.target.value }))}
           />
-          <Select
+          <SearchableSelect
             label={t('fields.sex')}
             value={form.sex}
             options={[
@@ -460,12 +471,15 @@ export function BookingManifestSection({
               { value: 'F', label: t('sex.F') },
               { value: 'other', label: t('sex.other') },
             ]}
-            onChange={(e) =>
+            onChange={(value) =>
               setForm((prev) => ({
                 ...prev,
-                sex: e.target.value as FormState['sex'],
+                sex: value as FormState['sex'],
               }))
             }
+            searchPlaceholder={tSelect('searchPlaceholder')}
+            emptyMessage={tSelect('empty')}
+            placeholder={t('sex.unspecified')}
           />
           <Input
             label={t('fields.price')}

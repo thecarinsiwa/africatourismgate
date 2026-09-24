@@ -2587,6 +2587,13 @@ export class ApiClient {
     return this.request<void>(`/activity-providers/${id}`, { method: 'DELETE' });
   }
 
+  uploadActivityProviderImage(id: string, body: FormData): Promise<{ url: string }> {
+    return this.request<{ url: string }>(`/activity-providers/${id}/upload-image`, {
+      method: 'POST',
+      body,
+    });
+  }
+
   listActivities(query?: ActivitiesListQuery): Promise<PaginatedResponse<Activity>> {
     return fetchPaginated<Activity>(this, '/activities', query);
   }

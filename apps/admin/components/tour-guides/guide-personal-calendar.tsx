@@ -164,11 +164,11 @@ export function GuidePersonalCalendar({ guideId, canWrite }: GuidePersonalCalend
           {state.message}
         </p>
       ) : (
-        <Card variant="dashboard" padding="md">
+        <Card variant="dashboard" padding="md" className="overflow-hidden">
           {state.status === 'loading' ? (
             <div className="grid grid-cols-7 gap-1 sm:gap-2">
               {Array.from({ length: 35 }).map((_, index) => (
-                <Skeleton key={index} className="min-h-[4.5rem] rounded-lg sm:min-h-[5rem]" />
+                <Skeleton key={index} className="min-h-[3.75rem] rounded-lg sm:min-h-[5rem]" />
               ))}
             </div>
           ) : (
@@ -181,7 +181,7 @@ export function GuidePersonalCalendar({ guideId, canWrite }: GuidePersonalCalend
                 <div
                   key={label}
                   role="columnheader"
-                  className="py-1 text-center text-xs font-medium uppercase tracking-wide text-atg-muted"
+                  className="truncate py-1 text-center text-[10px] font-medium uppercase tracking-wide text-atg-muted sm:text-xs"
                 >
                   {label}
                 </div>
@@ -194,7 +194,7 @@ export function GuidePersonalCalendar({ guideId, canWrite }: GuidePersonalCalend
                       key={`blank-${index}`}
                       role="gridcell"
                       aria-hidden
-                      className="min-h-[4.5rem] rounded-lg sm:min-h-[5rem]"
+                      className="min-h-[3.75rem] rounded-lg sm:min-h-[5rem]"
                     />
                   );
                 }
@@ -203,26 +203,42 @@ export function GuidePersonalCalendar({ guideId, canWrite }: GuidePersonalCalend
                 const summary = dayByDate.get(cell.date);
                 const dayStatus = summary ? resolveDayStatus(summary) : 'available';
                 const isToday = cell.date === new Date().toISOString().slice(0, 10);
+                const statusLabel = statusLabels[dayStatus];
 
                 return (
                   <button
                     key={cell.date}
                     type="button"
                     role="gridcell"
+                    aria-label={`${dayNum}, ${statusLabel}`}
                     onClick={() => setSelectedDate(cell.date)}
                     className={cn(
-                      'flex min-h-[4.5rem] flex-col rounded-lg border border-atg-border/60 bg-atg-elevated p-1.5 text-left transition-colors hover:border-primary/40 hover:bg-atg-surface sm:min-h-[5rem] sm:p-2',
+                      'flex min-h-[3.75rem] min-w-0 flex-col overflow-hidden rounded-lg border border-atg-border/60 bg-atg-elevated p-1 text-left transition-colors hover:border-primary/40 hover:bg-atg-surface sm:min-h-[5rem] sm:p-2',
                       isToday && 'ring-2 ring-primary/40',
                     )}
                   >
-                    <span className="text-xs font-semibold tabular-nums text-atg-fg">{dayNum}</span>
+                    <span className="text-[11px] font-semibold tabular-nums text-atg-fg sm:text-xs">
+                      {dayNum}
+                    </span>
                     {summary ? (
-                      <DataTableBadge
-                        variant={STATUS_VARIANTS[dayStatus]}
-                        className="mt-1.5 w-fit text-[10px] sm:text-xs"
-                      >
-                        {statusLabels[dayStatus]}
-                      </DataTableBadge>
+                      <>
+                        {/* Mobile: color bar (full labels overflow 7-col grid) */}
+                        <span
+                          aria-hidden
+                          className={cn(
+                            'mt-auto h-1.5 w-full rounded-full sm:hidden',
+                            dayStatus === 'available' && 'bg-atg-success',
+                            dayStatus === 'occupied' && 'bg-primary',
+                            dayStatus === 'unavailable' && 'bg-atg-muted',
+                          )}
+                        />
+                        <DataTableBadge
+                          variant={STATUS_VARIANTS[dayStatus]}
+                          className="mt-1.5 hidden max-w-full truncate text-xs sm:inline-flex"
+                        >
+                          {statusLabel}
+                        </DataTableBadge>
+                      </>
                     ) : null}
                   </button>
                 );

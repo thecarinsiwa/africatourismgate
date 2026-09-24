@@ -4,7 +4,15 @@ import { cn } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from 'react';
 import type {
   AdminNotificationCategory,
   AdminNotificationItem,
@@ -108,6 +116,7 @@ export function AdminNotificationsMenu() {
   const menuId = useId();
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<AdminNotificationCategory>('all');
+  const [panelStyle, setPanelStyle] = useState<CSSProperties | undefined>();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -119,6 +128,44 @@ export function AdminNotificationsMenu() {
     markAsRead,
     markAllAsRead,
   } = useAdminNotifications();
+
+  // On mobile the panel is nearly full-width; absolute right-0 on the bell overflows left.
+  useLayoutEffect(() => {
+    if (!open) {
+      setPanelStyle(undefined);
+      return;
+    }
+
+    function updatePosition() {
+      const trigger = containerRef.current;
+      if (!trigger) return;
+      const mobile = window.matchMedia('(max-width: 639px)').matches;
+      if (!mobile) {
+        setPanelStyle(undefined);
+        return;
+      }
+      const rect = trigger.getBoundingClientRect();
+      const margin = 16;
+      const top = rect.bottom + 8;
+      setPanelStyle({
+        position: 'fixed',
+        top,
+        left: margin,
+        right: margin,
+        width: 'auto',
+        maxWidth: 'none',
+        maxHeight: `calc(100dvh - ${top + margin}px)`,
+      });
+    }
+
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition, true);
+    return () => {
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition, true);
+    };
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -171,7 +218,7 @@ export function AdminNotificationsMenu() {
         type="button"
         onClick={() => setOpen((prev) => !prev)}
         className={cn(
-          'relative inline-flex h-10 w-10 items-center justify-center rounded-lg border border-atg-border bg-atg-elevated',
+          'relative inline-flex h-8 w-8 items-center justify-center rounded-lg border border-atg-border bg-atg-elevated sm:h-9 sm:w-9 md:h-10 md:w-10',
           'text-atg-fg transition-colors hover:bg-atg-surface',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
         )}
@@ -180,7 +227,7 @@ export function AdminNotificationsMenu() {
         aria-controls={menuId}
         aria-label={t('openLabel')}
       >
-        <BellIcon className="h-5 w-5" />
+        <BellIcon className="h-4 w-4 sm:h-5 sm:w-5" />
         {unreadCount > 0 ? (
           <span className="absolute -right-1 -top-1 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-600 px-1 text-[11px] font-bold text-white shadow-sm ring-2 ring-atg-elevated">
             {unreadCount > 99 ? '99+' : unreadCount}
@@ -191,10 +238,15 @@ export function AdminNotificationsMenu() {
       {open ? (
         <div
           id={menuId}
-          className="absolute right-0 top-full z-50 mt-2 w-[calc(100vw-2rem)] max-w-md rounded-2xl border border-atg-border bg-atg-elevated shadow-2xl transition-all sm:w-[26rem]"
+          style={panelStyle}
+          className={cn(
+            'z-50 flex flex-col overflow-hidden rounded-2xl border border-atg-border bg-atg-elevated shadow-2xl',
+            !panelStyle &&
+              'absolute right-0 top-full mt-2 w-[26rem] max-w-[calc(100vw-2rem)]',
+          )}
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-atg-border px-4 py-3">
+          <div className="flex shrink-0 items-center justify-between border-b border-atg-border px-4 py-3">
             <div className="flex items-center gap-2">
               <h3 className="text-base font-bold text-atg-fg">{t('title')}</h3>
               {unreadCount > 0 ? (
@@ -238,7 +290,7 @@ export function AdminNotificationsMenu() {
           </div>
 
           {/* Filter Tabs */}
-          <div className="flex overflow-x-auto border-b border-atg-border px-2 py-1.5 no-scrollbar">
+          <div className="flex shrink-0 overflow-x-auto border-b border-atg-border px-2 py-1.5 no-scrollbar">
             {tabs.map((tab) => {
               const active = activeTab === tab.key;
               return (
@@ -272,7 +324,12 @@ export function AdminNotificationsMenu() {
           </div>
 
           {/* List */}
-          <div className="max-h-[22rem] overflow-y-auto divide-y divide-atg-border/50">
+          <div
+            className={cn(
+              'divide-y divide-atg-border/50 overflow-y-auto',
+              panelStyle ? 'min-h-0 flex-1' : 'max-h-[22rem]',
+            )}
+          >
             {filteredItems.length === 0 ? (
               <div className="flex flex-col items-center justify-center p-8 text-center">
                 <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-atg-surface text-atg-muted">
@@ -340,7 +397,7 @@ export function AdminNotificationsMenu() {
           </div>
 
           {/* Footer */}
-          <div className="border-t border-atg-border bg-atg-surface/30 px-4 py-2.5 text-center">
+          <div className="shrink-0 border-t border-atg-border bg-atg-surface/30 px-4 py-2.5 text-center">
             <Link
               href="/notifications"
               onClick={() => setOpen(false)}

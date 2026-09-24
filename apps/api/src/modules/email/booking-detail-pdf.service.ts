@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
+import { groupRoomBookingLinesForDisplay } from '@africatourismgate/utils';
 import { Organizations } from '../../entities/generated';
 import type { BookingManifestEntryDto } from '../resources/bookings/dto/booking-manifest-entry.dto';
 import type { BookingDetailDto } from '../resources/bookings/dto/booking-detail.dto';
@@ -50,9 +51,21 @@ function deriveVisitDates(
     .map((item) => toDateOnlyString(item.endDate ?? item.startDate))
     .filter((value): value is string => Boolean(value))
     .sort();
+  let endDate = ends[ends.length - 1] ?? null;
+  // Room lines store nights (check-in night); Retour = checkout = last night + 1.
+  if (endDate && dated.some((item) => item.itemType === 'room')) {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(endDate);
+    if (match) {
+      const date = new Date(
+        Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])),
+      );
+      date.setUTCDate(date.getUTCDate() + 1);
+      endDate = date.toISOString().slice(0, 10);
+    }
+  }
   return {
     startDate: starts[0] ?? null,
-    endDate: ends[ends.length - 1] ?? null,
+    endDate,
   };
 }
 
@@ -78,6 +91,7 @@ export class BookingDetailPdfService {
     const bookingId = detail.booking.id;
     const enriched = await this.pdfEnrichment.enrich(bookingId, detail, manifest, locale);
 
+    const displayItems = groupRoomBookingLinesForDisplay(detail.items);
     const buffer = await renderBookingDetailPdf({
       bookingId,
       status: detail.booking.status,
@@ -88,11 +102,13 @@ export class BookingDetailPdfService {
         lastName: customer.lastName,
         email: customer.email,
       },
-      items: detail.items.map((item) => ({
+      items: displayItems.map((item) => ({
         title: item.titleSnapshot,
         itemType: item.itemType,
+        // Rooms: quantity = number of rooms; sous-total uses lineTotalCents (sum of nights).
         quantity: item.quantity,
         unitPriceCents: item.unitPriceCents,
+        lineTotalCents: item.lineTotalCents,
         startDate: toDateOnlyString(item.startDate),
         endDate: toDateOnlyString(item.endDate),
         schedule: enriched.itemSchedules.get(item.id) ?? null,

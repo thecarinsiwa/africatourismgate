@@ -133,6 +133,10 @@
     },
     "linesEmpty": "No lines.",
     "linesAriaLabel": "Booking lines",
+    "nightsCount": "{count, plural, one {# night} other {# nights}}",
+    "downloadConfirmation": "Download PDF",
+    "downloadingConfirmation": "Downloading…",
+    "downloadConfirmationError": "Unable to download the confirmation PDF.",
     "paymentsEmpty": "No payments recorded for this booking.",
     "paymentsAriaLabel": "Payments",
     "statusDialog": {
@@ -151,6 +155,10 @@
       "succeeded": "Succeeded",
       "failed": "Failed",
       "refunded": "Refunded"
+    },
+    "paymentProofs": {
+      "title": "Payment proofs",
+      "subtitle": "Receipts uploaded by the customer — approve to record the payment (deposit or balance). The booking is confirmed only when the balance is covered."
     }
   },
   "timeline": {

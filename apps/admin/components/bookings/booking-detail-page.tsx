@@ -10,7 +10,7 @@ import {
   DataTableBadge,
   Input,
   Modal,
-  Select,
+  SearchableSelect,
   Skeleton,
   Tabs,
   TabsContent,
@@ -21,10 +21,14 @@ import {
 } from '@africatourismgate/ui';
 import type {
   BookingAdminDetail,
-  BookingItem,
   BookingPayment,
   BookingStatus,
 } from '@africatourismgate/types';
+import {
+  formatBookingLineDateRange,
+  groupRoomBookingLinesForDisplay,
+} from '@africatourismgate/utils';
+import { ApiHttpError } from '@africatourismgate/api-client';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
@@ -109,6 +113,8 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const t = useTranslations('modules.bookings.detail');
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
+  const tDataTable = useTranslations('modules.common.dataTable');
+  const tSelect = useTranslations('modules.common.select');
   const statusLabels = useBookingStatusLabels();
   const paymentStatusLabels = usePaymentStatusLabels();
   const providerLabels = usePaymentProviderLabels();
@@ -140,6 +146,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const [bankTransferAmount, setBankTransferAmount] = useState('');
   const [activeTab, setActiveTab] = useState('manifest');
   const [manifestSync, setManifestSync] = useState(0);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
 
   const bumpManifestSync = useCallback(() => {
     setManifestSync((value) => value + 1);
@@ -302,6 +309,33 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
     getBookingsErrorMessage,
   ]);
 
+  const handleDownloadConfirmationPdf = useCallback(async () => {
+    setActionError(null);
+    setDownloadingPdf(true);
+    try {
+      const blob = await getApiClient().downloadBookingConfirmationPdf(bookingId);
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `reservation-${bookingId.slice(0, 8)}.pdf`;
+      anchor.rel = 'noopener';
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    } catch (error) {
+      const message =
+        error instanceof ApiHttpError &&
+        error.message &&
+        !error.message.startsWith('HTTP ')
+          ? error.message
+          : t('downloadConfirmationError');
+      setActionError(message);
+    } finally {
+      setDownloadingPdf(false);
+    }
+  }, [bookingId, t]);
+
   const statusOptions = useMemo(() => {
     const current = detail?.booking.status;
     const allowed = current ? getManualBookingStatusTargets(current) : [];
@@ -311,30 +345,34 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
     }));
   }, [detail?.booking.status, statusLabels]);
 
-  const itemColumns = useMemo<ColumnDef<BookingItem, unknown>[]>(
+  const displayItems = useMemo(
+    () => (detail ? groupRoomBookingLinesForDisplay(detail.items) : []),
+    [detail],
+  );
+
+  const itemColumns = useMemo<ColumnDef<(typeof displayItems)[number], unknown>[]>(
     () => [
-      {
-        accessorKey: 'itemType',
-        header: tCommon('columns.type'),
-        cell: ({ row }) => (
-          <BookingItemTypeIcon itemType={row.original.itemType} size="sm" showLabel />
-        ),
-      },
       {
         accessorKey: 'titleSnapshot',
         header: tCommon('columns.label'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => (
-          <BookingItemCatalogLink
-            itemType={row.original.itemType}
-            referenceId={row.original.referenceId}
-            title={row.original.titleSnapshot}
-          />
+          <div className="flex min-w-0 items-start gap-2">
+            <BookingItemTypeIcon itemType={row.original.itemType} size="sm" />
+            <div className="min-w-0 flex-1">
+              <BookingItemCatalogLink
+                itemType={row.original.itemType}
+                referenceId={row.original.referenceId}
+                title={row.original.titleSnapshot}
+              />
+            </div>
+          </div>
         ),
       },
       {
         accessorKey: 'quantity',
         header: tCommon('columns.quantityShort'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) => (
           <span className="tabular-nums">{row.original.quantity}</span>
         ),
@@ -342,7 +380,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       {
         id: 'unitPrice',
         header: tCommon('columns.unitPrice'),
-        meta: { align: 'right' },
+        meta: { align: 'right', hideOnMobile: true },
         cell: ({ row }) =>
           detail ? (
             <span className="tabular-nums text-sm font-medium">
@@ -355,15 +393,28 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       {
         id: 'dates',
         header: tCommon('columns.dates'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => {
-          const { startDate, endDate } = row.original;
-          if (!startDate) return emptyDash;
-          if (startDate === endDate || !endDate) return startDate;
-          return `${startDate} → ${endDate}`;
+          const range = formatBookingLineDateRange(
+            row.original.startDate,
+            row.original.endDate,
+          );
+          if (!range) return emptyDash;
+          if (row.original.itemType === 'room' && row.original.nightCount > 1) {
+            return (
+              <span className="block max-w-[16rem] truncate text-sm">
+                {range}{' '}
+                <span className="text-atg-muted">
+                  ({t('nightsCount', { count: row.original.nightCount })})
+                </span>
+              </span>
+            );
+          }
+          return <span className="block max-w-[16rem] truncate text-sm">{range}</span>;
         },
       },
     ],
-    [detail, emptyDash, tCommon],
+    [detail, emptyDash, t, tCommon],
   );
 
   const paymentColumns = useMemo<ColumnDef<BookingPayment, unknown>[]>(
@@ -371,8 +422,9 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       {
         accessorKey: 'createdAt',
         header: tCommon('columns.date'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => (
-          <span className="whitespace-nowrap text-sm tabular-nums">
+          <span className="block min-w-0 truncate text-sm tabular-nums">
             {formatDateTime(row.original.createdAt)}
           </span>
         ),
@@ -380,7 +432,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       {
         id: 'amount',
         header: tCommon('columns.amount'),
-        meta: { align: 'right' },
+        meta: { align: 'right', hideOnMobile: true },
         cell: ({ row }) => (
           <span className="tabular-nums text-sm font-medium">
             {formatMoney(row.original.amountCents, row.original.currency)}
@@ -390,12 +442,13 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       {
         accessorKey: 'status',
         header: tCommon('columns.status'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) => paymentStatusLabels[row.original.status],
       },
       {
         accessorKey: 'provider',
         header: tCommon('columns.paymentProvider'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) =>
           formatPaymentProvider(row.original.provider, providerLabels, emptyDash),
       },
@@ -428,7 +481,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   }
 
   const { booking, client } = detail;
-  const suggestedTravelerCount = detail.items.reduce(
+  const suggestedTravelerCount = displayItems.reduce(
     (sum, item) => sum + item.quantity,
     0,
   );
@@ -499,7 +552,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       booking.status === 'pending_approval');
 
   return (
-    <div className={`min-w-0 space-y-6${showActionsBar ? ' pb-24' : ''}`}>
+    <div className={`min-w-0 space-y-6 overflow-x-hidden${showActionsBar ? ' pb-24' : ''}`}>
       <AdminPageBackLink href="/reservations" label={t('backLink')} />
 
       {actionError ? (
@@ -508,12 +561,12 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
         </p>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,1fr)] lg:items-start">
-        <Card variant="dashboard" padding="md" className="min-w-0 space-y-4">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,1fr)] lg:items-start">
+        <Card variant="dashboard" padding="md" className="min-w-0 space-y-4 overflow-hidden">
+          <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0 space-y-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-xl font-semibold text-atg-fg">
+              <div className="flex min-w-0 flex-wrap items-center gap-2">
+                <h2 className="min-w-0 truncate text-xl font-semibold text-atg-fg">
                   {clientName || client.email}
                 </h2>
                 <DataTableBadge variant={BOOKING_STATUS_VARIANTS[booking.status]}>
@@ -609,15 +662,19 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
           />
         </Card>
 
-        <section className="min-w-0 space-y-3">
+        <section className="min-w-0 space-y-3 overflow-x-hidden">
           <h2 className="text-lg font-semibold text-atg-fg">{t('sections.payments')}</h2>
-          <Card variant="dashboard" padding="none" className="overflow-hidden">
+          <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
             <DataTable
               columns={paymentColumns}
               data={detail.payments}
               emptyMessage={t('paymentsEmpty')}
+              expandRowLabel={tDataTable('expandRow')}
+              collapseRowLabel={tDataTable('collapseRow')}
+              expandRowAriaLabel={tDataTable('expandRowAria')}
               getRowId={(row) => row.id}
               aria-label={t('paymentsAriaLabel')}
+              className="min-w-0"
             />
           </Card>
         </section>
@@ -636,15 +693,33 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
         onUpdated={refreshDetail}
       />
 
-      <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-atg-fg">{t('sections.bookingLines')}</h2>
-        <Card variant="dashboard" padding="none" className="overflow-hidden">
+      <section className="min-w-0 space-y-3 overflow-x-hidden">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-lg font-semibold text-atg-fg">{t('sections.bookingLines')}</h2>
+          {booking.status === 'confirmed' ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              loading={downloadingPdf}
+              className="w-full shrink-0 sm:w-auto"
+              onClick={() => void handleDownloadConfirmationPdf()}
+            >
+              {downloadingPdf ? t('downloadingConfirmation') : t('downloadConfirmation')}
+            </Button>
+          ) : null}
+        </div>
+        <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
           <DataTable
             columns={itemColumns}
-            data={detail.items}
+            data={displayItems}
             emptyMessage={t('linesEmpty')}
+            expandRowLabel={tDataTable('expandRow')}
+            collapseRowLabel={tDataTable('collapseRow')}
+            expandRowAriaLabel={tDataTable('expandRowAria')}
             getRowId={(row) => row.id}
             aria-label={t('linesAriaLabel')}
+            className="min-w-0"
           />
         </Card>
       </section>
@@ -812,11 +887,14 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
         className="max-w-lg"
       >
         <div className="space-y-4">
-          <Select
+          <SearchableSelect
             label={t('actions.changeStatus')}
             value={newStatus}
             options={statusOptions}
-            onChange={(e) => setNewStatus(e.target.value as BookingStatus)}
+            onChange={(value) => setNewStatus(value as BookingStatus)}
+            searchPlaceholder={tSelect('searchPlaceholder')}
+            emptyMessage={tSelect('empty')}
+            placeholder={tSelect('chooseDash')}
           />
           <Textarea
             name="statusReason"

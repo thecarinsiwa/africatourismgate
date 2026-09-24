@@ -12,6 +12,7 @@ import {
   DataTableBadge,
   Input,
   Modal,
+  SearchableSelect,
   Textarea,
   type ColumnDef,
 } from '@africatourismgate/ui';
@@ -25,7 +26,7 @@ import type {
 } from '@africatourismgate/types';
 import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { deriveBookingVisitWindow, isDatetimeLocalWithinWindow } from '../../lib/booking-visit-window';
 import { BookingGuideAssignmentHistorySection } from './booking-guide-assignment-history-section';
@@ -155,13 +156,12 @@ export function BookingGuidesSection({
   const t = useTranslations('modules.bookings.guides');
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
+  const tDataTable = useTranslations('modules.common.dataTable');
+  const tSelect = useTranslations('modules.common.select');
   const roleLabels = useBookingGuideRoleLabels();
   const formatDateTime = useFormatDateTime();
 
   const visitWindow = useMemo(() => deriveBookingVisitWindow(items), [items]);
-
-  const guideSelectId = useId();
-  const roleSelectId = useId();
 
   const [assignments, setAssignments] = useState<AssignmentRow[]>([]);
   const [guideDirectory, setGuideDirectory] = useState<Map<string, string>>(new Map());
@@ -432,9 +432,10 @@ export function BookingGuidesSection({
       {
         accessorKey: 'guideName',
         header: t('columns.guide'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => (
-          <div className="flex flex-col">
-            <span className="font-medium text-atg-fg">{row.original.guideName}</span>
+          <div className="flex min-w-0 flex-col">
+            <span className="truncate font-medium text-atg-fg">{row.original.guideName}</span>
             <Link href={`/guides/${row.original.guideId}`} className="text-xs text-primary hover:underline">
               {t('viewProfile')}
             </Link>
@@ -444,8 +445,9 @@ export function BookingGuidesSection({
       {
         id: 'schedule',
         header: t('columns.schedule'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
-          <span className="text-sm text-atg-fg">
+          <span className="block max-w-[16rem] truncate text-sm text-atg-fg">
             {formatSlotRange(row.original.startDatetime, row.original.endDatetime, locale)}
           </span>
         ),
@@ -453,6 +455,7 @@ export function BookingGuidesSection({
       {
         accessorKey: 'role',
         header: t('columns.role'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <DataTableBadge variant={row.original.role === 'primary' ? 'default' : 'muted'}>
             {roleLabels[row.original.role]}
@@ -462,13 +465,17 @@ export function BookingGuidesSection({
       {
         accessorKey: 'notes',
         header: t('columns.notes'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
-          <span className="text-sm text-atg-muted">{row.original.notes?.trim() || '—'}</span>
+          <span className="block max-w-[12rem] truncate text-sm text-atg-muted">
+            {row.original.notes?.trim() || '—'}
+          </span>
         ),
       },
       {
         accessorKey: 'assignedAt',
         header: t('columns.assignedAt'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <span className="text-sm text-atg-muted">{formatDateTime(row.original.assignedAt)}</span>
         ),
@@ -478,7 +485,7 @@ export function BookingGuidesSection({
             {
               id: 'actions',
               header: tCommon('columns.actions'),
-              meta: { align: 'right' as const },
+              meta: { align: 'right' as const, cellClassName: 'w-[5.5rem] sm:w-auto' },
               cell: ({ row }: { row: { original: AssignmentRow } }) => (
                 <DataTableActions>
                   <DataTableActionButton
@@ -513,6 +520,28 @@ export function BookingGuidesSection({
       tActions,
       tCommon,
     ],
+  );
+
+  const guideOptions = useMemo(
+    () => [
+      {
+        value: '',
+        label: !slotRangeIso ? t('selectTimesFirst') : t('selectPlaceholder'),
+      },
+      ...availableForSlot.map((guide) => ({
+        value: guide.id,
+        label: guide.displayName,
+      })),
+    ],
+    [availableForSlot, slotRangeIso, t],
+  );
+
+  const roleOptions = useMemo(
+    () => [
+      { value: 'primary', label: roleLabels.primary },
+      { value: 'secondary', label: roleLabels.secondary },
+    ],
+    [roleLabels.primary, roleLabels.secondary],
   );
 
   const selectedGuideName = useMemo(() => {
@@ -662,23 +691,19 @@ export function BookingGuidesSection({
             />
           </div>
           <div className="sm:w-48">
-            <label htmlFor={`${guideSelectId}-edit-role`} className="mb-1 block text-xs font-medium text-atg-muted">
-              {t('selectRole')}
-            </label>
-            <select
-              id={`${guideSelectId}-edit-role`}
+            <SearchableSelect
+              label={t('selectRole')}
               value={editValues.role}
-              onChange={(event) =>
+              options={roleOptions}
+              onChange={(value) =>
                 setEditValues((current) => ({
                   ...current,
-                  role: event.target.value as BookingGuideRole,
+                  role: value as BookingGuideRole,
                 }))
               }
-              className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg"
-            >
-              <option value="primary">{roleLabels.primary}</option>
-              <option value="secondary">{roleLabels.secondary}</option>
-            </select>
+              searchPlaceholder={tSelect('searchPlaceholder')}
+              emptyMessage={tSelect('empty')}
+            />
           </div>
           <Textarea
             label={t('fields.notes')}
@@ -760,52 +785,46 @@ export function BookingGuidesSection({
             {!slotRangeIso && formValues.startDatetime && formValues.endDatetime ? (
               <p className="text-xs text-amber-700 dark:text-amber-300">{t('validation.endAfterStart')}</p>
             ) : null}
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-              <div className="flex-1">
-                <label htmlFor={guideSelectId} className="mb-1 block text-xs font-medium text-atg-muted">
-                  {t('selectGuide')}
-                  {searchingGuides ? ` (${t('searchingGuides')})` : null}
-                </label>
-                <select
-                  id={guideSelectId}
+            <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end">
+              <div className="min-w-0 flex-1">
+                <SearchableSelect
+                  label={
+                    searchingGuides
+                      ? `${t('selectGuide')} (${t('searchingGuides')})`
+                      : t('selectGuide')
+                  }
                   value={formValues.guideId}
-                  onChange={(event) =>
-                    setFormValues((current) => ({ ...current, guideId: event.target.value }))
+                  options={guideOptions}
+                  onChange={(value) =>
+                    setFormValues((current) => ({ ...current, guideId: value }))
                   }
                   disabled={!slotRangeIso || searchingGuides}
-                  className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg disabled:opacity-60"
-                >
-                  <option value="">
-                    {!slotRangeIso ? t('selectTimesFirst') : t('selectPlaceholder')}
-                  </option>
-                  {availableForSlot.map((guide) => (
-                    <option key={guide.id} value={guide.id}>
-                      {guide.displayName}
-                    </option>
-                  ))}
-                </select>
+                  searchPlaceholder={tSelect('searchPlaceholder')}
+                  emptyMessage={tSelect('empty')}
+                  placeholder={
+                    !slotRangeIso ? t('selectTimesFirst') : t('selectPlaceholder')
+                  }
+                  loading={searchingGuides}
+                  loadingMessage={tSelect('loading')}
+                />
                 {slotRangeIso && !searchingGuides && availableForSlot.length === 0 ? (
                   <p className="mt-1 text-xs text-atg-muted">{t('noGuidesForSlot')}</p>
                 ) : null}
               </div>
-              <div className="sm:w-40">
-                <label htmlFor={roleSelectId} className="mb-1 block text-xs font-medium text-atg-muted">
-                  {t('selectRole')}
-                </label>
-                <select
-                  id={roleSelectId}
+              <div className="min-w-0 w-full sm:w-40">
+                <SearchableSelect
+                  label={t('selectRole')}
                   value={formValues.role}
-                  onChange={(event) =>
+                  options={roleOptions}
+                  onChange={(value) =>
                     setFormValues((current) => ({
                       ...current,
-                      role: event.target.value as BookingGuideRole,
+                      role: value as BookingGuideRole,
                     }))
                   }
-                  className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg"
-                >
-                  <option value="primary">{roleLabels.primary}</option>
-                  <option value="secondary">{roleLabels.secondary}</option>
-                </select>
+                  searchPlaceholder={tSelect('searchPlaceholder')}
+                  emptyMessage={tSelect('empty')}
+                />
               </div>
             </div>
             <Textarea
@@ -837,14 +856,18 @@ export function BookingGuidesSection({
           )
         ) : null}
 
-        <Card variant="dashboard" padding="none" className="overflow-hidden">
+        <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
           <DataTable
             columns={columns}
             data={assignments}
             isLoading={loading}
             emptyMessage={t('empty')}
+            expandRowLabel={tDataTable('expandRow')}
+            collapseRowLabel={tDataTable('collapseRow')}
+            expandRowAriaLabel={tDataTable('expandRowAria')}
             getRowId={(row) => row.id}
             aria-label={t('ariaLabel')}
+            className="min-w-0"
           />
         </Card>
 

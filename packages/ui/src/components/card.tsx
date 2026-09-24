@@ -10,9 +10,9 @@ export type CardProps = React.HTMLAttributes<HTMLDivElement> & {
 
 const paddingClasses = {
   none: '',
-  sm: 'p-5',
-  md: 'px-8 py-10',
-  lg: 'px-10 py-12',
+  sm: 'p-4 sm:p-5',
+  md: 'px-4 py-5 sm:px-8 sm:py-10',
+  lg: 'px-5 py-6 sm:px-10 sm:py-12',
 };
 
 const variantClasses = {
@@ -31,8 +31,17 @@ export function Card({
   ...props
 }: CardProps) {
   return (
-    <div className={cn(accent && 'relative', className)} {...props}>
-      {accent && (
+    <div
+      className={cn(
+        'min-w-0',
+        variantClasses[variant],
+        paddingClasses[padding],
+        accent && 'relative',
+        className,
+      )}
+      {...props}
+    >
+      {accent ? (
         <>
           <div
             className="absolute left-1/2 top-0 h-16 w-px -translate-x-1/2 -translate-y-full bg-primary"
@@ -43,12 +52,8 @@ export function Card({
             aria-hidden
           />
         </>
-      )}
-      <div
-        className={cn(variantClasses[variant], paddingClasses[padding])}
-      >
-        {children}
-      </div>
+      ) : null}
+      {children}
     </div>
   );
 }

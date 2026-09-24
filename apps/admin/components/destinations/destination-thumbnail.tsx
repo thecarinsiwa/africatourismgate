@@ -19,8 +19,8 @@ const sizeClasses = {
 };
 
 const flagSizeClasses = {
-  sm: 'absolute -bottom-1 -right-1 h-5 w-5 rounded-md text-sm',
-  md: 'absolute -bottom-1.5 -right-1.5 h-6 w-6 rounded-md',
+  sm: 'absolute bottom-0.5 right-0.5 h-5 w-5 rounded-md text-sm',
+  md: 'absolute bottom-0.5 right-0.5 h-6 w-6 rounded-md',
 };
 
 export function DestinationThumbnail({

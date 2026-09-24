@@ -133,6 +133,10 @@
     },
     "linesEmpty": "Aucune ligne.",
     "linesAriaLabel": "Lignes de réservation",
+    "nightsCount": "{count, plural, one {# nuit} other {# nuits}}",
+    "downloadConfirmation": "Télécharger le PDF",
+    "downloadingConfirmation": "Téléchargement…",
+    "downloadConfirmationError": "Impossible de télécharger le PDF de confirmation.",
     "paymentsEmpty": "Aucun paiement enregistré pour cette réservation.",
     "paymentsAriaLabel": "Paiements",
     "statusDialog": {
@@ -151,6 +155,10 @@
       "succeeded": "Réussi",
       "failed": "Échoué",
       "refunded": "Remboursé"
+    },
+    "paymentProofs": {
+      "title": "Preuves de paiement",
+      "subtitle": "Justificatifs déposés par le client — validez pour enregistrer le paiement (acompte ou solde). La réservation n’est confirmée que lorsque le solde est couvert."
     }
   },
   "timeline": {

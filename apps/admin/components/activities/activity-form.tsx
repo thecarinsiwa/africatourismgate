@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Input } from '@africatourismgate/ui';
+import { Button, Input, SearchableSelect } from '@africatourismgate/ui';
 import type {
   Activity,
   ActivityDifficultyLevel,
@@ -11,7 +11,7 @@ import type {
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useId, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { RichTextEditor, type RichTextUploadedAsset } from '../rich-text-editor';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { isRichTextEmpty } from '../../lib/rich-text';
@@ -92,8 +92,6 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
   const tSelect = useTranslations('modules.common.select');
   const difficultyOptions = useActivityDifficultyOptions();
   const router = useRouter();
-  const providerId = useId();
-  const difficultyId = useId();
   const [providers, setProviders] = useState<ActivityProvider[]>([]);
   const [values, setValues] = useState<ActivityFormValues>(() =>
     initialActivity ? activityToFormValues(initialActivity) : defaultValues,
@@ -110,6 +108,14 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
       .then((r) => setProviders(r.data))
       .catch(() => setProviders([]));
   }, []);
+
+  const providerOptions = useMemo(
+    () => [
+      { value: '', label: tSelect('chooseDash') },
+      ...providers.map((provider) => ({ value: provider.id, label: provider.name })),
+    ],
+    [providers, tSelect],
+  );
 
   const handleUploadDescriptionAsset = useCallback(
     async (file: File): Promise<RichTextUploadedAsset> => {
@@ -194,9 +200,6 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
     }
   }
 
-  const selectClass =
-    'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none focus:border-primary focus:ring-1 focus:ring-primary';
-
   return (
     <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
       {formError ? (
@@ -204,27 +207,18 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
           {formError}
         </p>
       ) : null}
-      <div>
-        <label htmlFor={providerId} className="mb-2 block text-sm font-medium text-atg-fg">
-          {tForm('provider')}
-        </label>
-        <select
-          id={providerId}
-          className={selectClass}
-          value={values.providerId}
-          onChange={(e) => updateField('providerId', e.target.value)}
-        >
-          <option value="">{tSelect('chooseDash')}</option>
-          {providers.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.name}
-            </option>
-          ))}
-        </select>
-        {fieldErrors.providerId ? (
-          <p className="mt-1 text-sm text-red-600">{fieldErrors.providerId}</p>
-        ) : null}
-      </div>
+      <SearchableSelect
+        label={tForm('provider')}
+        name="providerId"
+        value={values.providerId}
+        options={providerOptions}
+        onChange={(next) => updateField('providerId', next)}
+        searchPlaceholder={tSelect('searchPlaceholder')}
+        emptyMessage={tSelect('empty')}
+        placeholder={tSelect('chooseDash')}
+        error={fieldErrors.providerId}
+        required
+      />
       <Input
         label={tForm('title')}
         value={values.title}
@@ -249,23 +243,16 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
         onChange={(e) => updateField('durationMinutes', e.target.value)}
         error={fieldErrors.durationMinutes}
       />
-      <div>
-        <label htmlFor={difficultyId} className="mb-2 block text-sm font-medium text-atg-fg">
-          {tForm('difficulty')}
-        </label>
-        <select
-          id={difficultyId}
-          className={selectClass}
-          value={values.difficultyLevel}
-          onChange={(e) => updateField('difficultyLevel', e.target.value)}
-        >
-          {difficultyOptions.map((option) => (
-            <option key={option.value || 'unspecified'} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
+      <SearchableSelect
+        label={tForm('difficulty')}
+        name="difficultyLevel"
+        value={values.difficultyLevel}
+        options={difficultyOptions}
+        onChange={(next) => updateField('difficultyLevel', next)}
+        searchPlaceholder={tSelect('searchPlaceholder')}
+        emptyMessage={tSelect('empty')}
+        placeholder={tSelect('chooseDash')}
+      />
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
           label={tForm('priceCents')}

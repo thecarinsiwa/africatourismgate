@@ -1,6 +1,7 @@
 'use client';
 
 import type { GuideReviewInvite } from '@africatourismgate/types';
+import { RichText } from '../shared/rich-text';
 import { BookingReviewCard } from './booking-review-card';
 import { BookingReviewForm } from './booking-review-form';
 
@@ -73,10 +74,19 @@ export function GuideReviewInvitesSection({
 
         return (
           <div key={invite.assignmentId} className="space-y-3">
-            <p className="text-sm font-medium text-atg-fg">
-              {invite.guideName}
-              <span className="ml-2 text-xs font-normal text-atg-muted">({roleLabel})</span>
-            </p>
+            <div>
+              <p className="text-sm font-medium text-atg-fg">
+                {invite.guideName}
+                <span className="ml-2 text-xs font-normal text-atg-muted">({roleLabel})</span>
+              </p>
+              {invite.guideBio ? (
+                <RichText
+                  content={invite.guideBio}
+                  className="mt-2 text-sm leading-relaxed text-atg-muted"
+                  fallbackClassName="mt-2 text-sm leading-relaxed text-atg-muted"
+                />
+              ) : null}
+            </div>
 
             {invite.review ? (
               <BookingReviewCard

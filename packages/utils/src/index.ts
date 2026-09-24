@@ -12,6 +12,13 @@ export {
 } from './urls';
 
 export {
+  formatBookingLineDateRange,
+  groupRoomBookingLinesForDisplay,
+  type GroupedBookingLineDisplay,
+  type RoomGroupableBookingLine,
+} from './group-room-booking-lines';
+
+export {
   getOrCreateClientInstanceId,
   withClientInstanceId,
 } from './client-instance';

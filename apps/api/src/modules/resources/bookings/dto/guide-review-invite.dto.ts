@@ -11,6 +11,9 @@ export class GuideReviewInviteDto implements GuideReviewInvite {
   @ApiProperty()
   guideName!: string;
 
+  @ApiPropertyOptional({ nullable: true })
+  guideBio!: string | null;
+
   @ApiProperty({ enum: ['primary', 'secondary'] })
   role!: 'primary' | 'secondary';
 

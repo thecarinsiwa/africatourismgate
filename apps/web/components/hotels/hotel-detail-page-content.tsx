@@ -378,7 +378,9 @@ export function HotelDetailPageContent({
                 noReviews: h.noReviews,
                 reviewsLoading: h.reviewsLoading,
                 reviewsLoadError: h.reviewsLoadError,
-                loadMoreReviews: h.loadMoreReviews,
+                reviewsCarouselAria: h.reviewsCarouselAria,
+                reviewsPrev: h.reviewsPrev,
+                reviewsNext: h.reviewsNext,
                 anonymousGuest: h.anonymousGuest,
               }}
             />

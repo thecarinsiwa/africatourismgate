@@ -16,7 +16,7 @@ export type ThemeToggleProps = {
 
 function SunIcon() {
   return (
-    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+    <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -29,7 +29,7 @@ function SunIcon() {
 
 function MoonIcon() {
   return (
-    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+    <svg className="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -52,7 +52,10 @@ export function ThemeToggle({
   if (!mounted) {
     return (
       <div
-        className={cn('h-10 w-10 rounded-lg border border-atg-border bg-atg-elevated', className)}
+        className={cn(
+          'h-8 w-8 rounded-lg border border-atg-border bg-atg-elevated sm:h-9 sm:w-9 md:h-10 md:w-10',
+          className,
+        )}
         aria-hidden
       />
     );
@@ -65,7 +68,7 @@ export function ThemeToggle({
       type="button"
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
       className={cn(
-        'inline-flex h-10 w-10 items-center justify-center rounded-lg border border-atg-border',
+        'inline-flex h-8 w-8 items-center justify-center rounded-lg border border-atg-border sm:h-9 sm:w-9 md:h-10 md:w-10',
         'bg-atg-elevated text-atg-fg transition-colors hover:bg-atg-surface',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
         className,

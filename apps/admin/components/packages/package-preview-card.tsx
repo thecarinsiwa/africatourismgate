@@ -2,14 +2,18 @@
 
 import { cn, DataTableBadge } from '@africatourismgate/ui';
 import type { Package, PackagePricing } from '@africatourismgate/types';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { formatMoney } from '../../lib/format-money';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import { stripHtml } from '../../lib/rich-text';
 
 type PackagePreviewCardProps = {
   pkg: Package;
   itemCount: number;
   pricing: PackagePricing;
+  /** URL de couverture (sinon `pkg.coverImageUrl`). */
+  coverImageUrl?: string | null;
   size?: 'sm' | 'md';
   className?: string;
 };
@@ -22,6 +26,7 @@ export function PackagePreviewCard({
   pkg,
   itemCount,
   pricing,
+  coverImageUrl,
   size = 'md',
   className,
 }: PackagePreviewCardProps) {
@@ -31,6 +36,7 @@ export function PackagePreviewCard({
   const discountPercent = Math.round(Number(pkg.discountPercent));
   const descriptionPreview = pkg.description ? stripHtml(pkg.description) : '';
   const isCompact = size === 'sm';
+  const coverUrl = (coverImageUrl ?? pkg.coverImageUrl)?.trim() || null;
 
   return (
     <article
@@ -52,36 +58,57 @@ export function PackagePreviewCard({
       <div className="flex flex-col">
         <div
           className={cn(
-            'bg-gradient-to-br from-[#0f2744] to-primary/80 text-white',
-            isCompact ? 'px-3 py-3' : 'px-5 py-6',
+            'relative overflow-hidden bg-gradient-to-br from-[#0f2744] to-primary/80 text-white',
+            isCompact ? 'min-h-[7.5rem] px-3 py-3' : 'min-h-[10rem] px-5 py-6',
           )}
         >
-          <p
+          {coverUrl ? (
+            <Image
+              src={resolveMediaUrl(coverUrl)}
+              alt=""
+              fill
+              unoptimized
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 20rem"
+              aria-hidden
+            />
+          ) : null}
+          <div
             className={cn(
-              'font-semibold uppercase tracking-wide text-white/70',
-              isCompact ? 'text-[10px]' : 'text-xs',
+              'absolute inset-0',
+              coverUrl
+                ? 'bg-gradient-to-t from-black/80 via-black/45 to-black/20'
+                : 'bg-gradient-to-t from-black/30 via-transparent to-black/10',
             )}
-          >
-            {t('eyebrow')}
-          </p>
-          <p
-            className={cn(
-              'mt-1 font-bold leading-tight',
-              isCompact ? 'line-clamp-2 text-sm' : 'text-lg',
-            )}
-          >
-            {pkg.name}
-          </p>
-          {descriptionPreview ? (
+          />
+          <div className="relative z-10">
             <p
               className={cn(
-                'text-white/80',
-                isCompact ? 'mt-1 line-clamp-2 text-xs' : 'mt-2 line-clamp-3 text-sm',
+                'font-semibold uppercase tracking-wide text-white/80',
+                isCompact ? 'text-[10px]' : 'text-xs',
               )}
             >
-              {descriptionPreview}
+              {t('eyebrow')}
             </p>
-          ) : null}
+            <p
+              className={cn(
+                'mt-1 font-bold leading-tight',
+                isCompact ? 'line-clamp-2 text-sm' : 'text-lg',
+              )}
+            >
+              {pkg.name}
+            </p>
+            {descriptionPreview ? (
+              <p
+                className={cn(
+                  'text-white/85',
+                  isCompact ? 'mt-1 line-clamp-2 text-xs' : 'mt-2 line-clamp-3 text-sm',
+                )}
+              >
+                {descriptionPreview}
+              </p>
+            ) : null}
+          </div>
         </div>
 
         <div className={cn('flex flex-col', isCompact ? 'gap-1.5 p-3' : 'gap-3 p-4')}>

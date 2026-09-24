@@ -10,22 +10,24 @@ export function CroisieresPageContent() {
   const t = useTranslations('pages.produits.croisieres');
 
   return (
-    <div className="min-w-0">
+    <div className="min-w-0 overflow-x-hidden">
       <AdminListPageHeader
         routePath="produits/croisieres"
         actions={
-          <>
-            <Button href="/produits/croisieres/lignes" variant="outline">
+          <div className="flex w-full flex-wrap gap-2 sm:w-auto sm:justify-end">
+            <Button href="/produits/croisieres/lignes" variant="outline" className="min-w-0 flex-1 sm:flex-none">
               {t('actions.lines')}
             </Button>
-            <Button href="/produits/croisieres/ports" variant="outline">
+            <Button href="/produits/croisieres/ports" variant="outline" className="min-w-0 flex-1 sm:flex-none">
               {t('actions.ports')}
             </Button>
-            <Button href="/produits/croisieres/navires" variant="outline">
+            <Button href="/produits/croisieres/navires" variant="outline" className="min-w-0 flex-1 sm:flex-none">
               {t('actions.ships')}
             </Button>
-            <Button href="/produits/croisieres/nouveau">{t('actions.new')}</Button>
-          </>
+            <Button href="/produits/croisieres/nouveau" className="min-w-0 flex-1 sm:flex-none">
+              {t('actions.new')}
+            </Button>
+          </div>
         }
       />
       <CruisesStatCards className="mb-6" />

@@ -16,6 +16,9 @@ export class ReviewDto {
   @ApiPropertyOptional({ nullable: true, description: 'Reviewer first name (public display)' })
   authorFirstName!: string | null;
 
+  @ApiPropertyOptional({ nullable: true, description: 'Reviewer avatar URL (public display)' })
+  authorAvatarUrl!: string | null;
+
   @ApiProperty()
   createdAt!: string;
 }

@@ -139,6 +139,8 @@ export interface BookingMessage {
   isStaff: boolean;
   /** Full name of the customer who posted the message (non-staff only). */
   authorName?: string | null;
+  /** Avatar URL of the message author (customer or staff). */
+  avatarUrl?: string | null;
   createdAt: string;
   /** Present on staff POST responses when the customer was offline. */
   customerNotifiedByEmail?: boolean;

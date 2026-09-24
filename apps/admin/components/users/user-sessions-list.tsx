@@ -289,6 +289,7 @@ export function UserSessionsList({
       cols.push({
         id: 'user',
         header: tColumns('user'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => (
           <UserListCell userId={row.original.userId} usersById={usersById} />
         ),
@@ -299,8 +300,9 @@ export function UserSessionsList({
       {
         id: 'createdAt',
         header: tDates('createdAt'),
+        meta: showUserColumn ? { hideOnMobile: true } : { cellClassName: 'min-w-0' },
         cell: ({ row }) => (
-          <span className="whitespace-nowrap text-sm">
+          <span className="block min-w-0 truncate text-sm">
             {formatDateTime(row.original.createdAt)}
           </span>
         ),
@@ -308,6 +310,7 @@ export function UserSessionsList({
       {
         id: 'expiresAt',
         header: tDates('expiresAt'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm text-atg-muted">
             {formatDateTime(row.original.expiresAt)}
@@ -317,7 +320,7 @@ export function UserSessionsList({
       {
         id: 'status',
         header: tColumns('status'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) =>
           isSessionExpired(row.original.expiresAt) ? (
             <DataTableBadge variant="muted">{tSessionStatus('expired')}</DataTableBadge>
@@ -331,7 +334,7 @@ export function UserSessionsList({
       cols.push({
         id: 'actions',
         header: tColumns('actions'),
-        meta: { align: 'right' },
+        meta: { align: 'right', cellClassName: 'w-[5.5rem] sm:w-auto' },
         cell: ({ row }) => (
           <DataTableActions>
             <DataTableActionButton
@@ -375,7 +378,7 @@ export function UserSessionsList({
     ) : null;
 
   return (
-    <>
+    <div className="min-w-0 space-y-4 overflow-x-hidden">
       <AlertDialog
         open={!!confirmTarget}
         onOpenChange={(open) => {
@@ -416,7 +419,7 @@ export function UserSessionsList({
       ) : null}
 
       {activeViewMode === 'table' ? (
-        <Card variant="dashboard" padding="none" className="overflow-hidden">
+        <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
           <DataTable
             columns={columns}
             data={rows}
@@ -425,7 +428,11 @@ export function UserSessionsList({
             loadingMessage={tDataTable('loading')}
             emptyMessage={emptyMessage}
             emptyVariant={userIdFilter ? 'search' : 'default'}
+            expandRowLabel={tDataTable('expandRow')}
+            collapseRowLabel={tDataTable('collapseRow')}
+            expandRowAriaLabel={tDataTable('expandRowAria')}
             aria-label={tSessions('ariaLabel')}
+            className="min-w-0"
           />
           {pagination}
         </Card>
@@ -486,6 +493,6 @@ export function UserSessionsList({
           {pagination}
         </div>
       )}
-    </>
+    </div>
   );
 }

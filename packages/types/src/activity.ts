@@ -2,13 +2,22 @@ export interface ActivityProvider {
   id: string;
   destinationId: string;
   name: string;
+  logoUrl: string | null;
   createdAt: string;
   updatedAt: string | null;
+}
+
+/** Public catalogue partner (home partners strip). */
+export interface PublicActivityProvider {
+  id: string;
+  name: string;
+  logoUrl: string | null;
 }
 
 export interface CreateActivityProviderRequest {
   destinationId: string;
   name: string;
+  logoUrl?: string | null;
 }
 
 export type UpdateActivityProviderRequest = Partial<CreateActivityProviderRequest>;

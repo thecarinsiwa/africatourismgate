@@ -10,7 +10,7 @@ export function GuidesNouveauPageContent() {
       backHref="/guides"
       backLabelKey="backLabel"
     >
-      <TourGuideForm mode="create" />
+      <TourGuideForm mode="create" layout="wide" />
     </AdminIntroPage>
   );
 }

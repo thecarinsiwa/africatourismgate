@@ -779,6 +779,11 @@
       }
     ]
   },
+  "partners": {
+    "title": "Our partners",
+    "subtitle": "Trusted local operators who power experiences across Africa.",
+    "ariaLabel": "Activity partners"
+  },
   "gapImpact": {
     "title": "Our impact",
     "subtitle": "See the measurable results of the GAP program for communities and conservation.",
@@ -930,9 +935,12 @@
     "guestRating": "Guest rating",
     "reviewsTitle": "Guest reviews",
     "noReviews": "No reviews yet.",
-    "reviewsLoading": "Loading reviews?",
+    "reviewsLoading": "Loading reviews…",
     "reviewsLoadError": "Could not load reviews.",
     "loadMoreReviews": "Show more reviews",
+    "reviewsCarouselAria": "Guest reviews carousel",
+    "reviewsPrev": "Previous review",
+    "reviewsNext": "Next review",
     "anonymousGuest": "Guest",
     "galleryCounter": "Photo {current} of {total}"
   },

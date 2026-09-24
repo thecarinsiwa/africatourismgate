@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, IsNull, Repository } from 'typeorm';
+import { groupRoomBookingLinesForDisplay } from '@africatourismgate/utils';
 import { filterActivityItineraryStopsByDuration } from '../../common/activity-itinerary-stops.util';
 import {
   Activities,
@@ -290,12 +291,45 @@ export class BookingDetailPdfEnrichmentService {
     items: BookingItems[],
     locale: BookingDetailPdfLocale,
   ): Promise<BookingDetailPdfItineraryGroup[]> {
+    const displayItems = groupRoomBookingLinesForDisplay(
+      items.map((item) => ({
+        id: item.id,
+        itemType: item.itemType,
+        referenceId: item.referenceId,
+        titleSnapshot: item.titleSnapshot,
+        quantity: item.quantity,
+        unitPriceCents: item.unitPriceCents,
+        startDate:
+          item.startDate == null
+            ? null
+            : typeof item.startDate === 'string'
+              ? item.startDate
+              : String(item.startDate).slice(0, 10),
+        endDate:
+          item.endDate == null
+            ? null
+            : typeof item.endDate === 'string'
+              ? item.endDate
+              : String(item.endDate).slice(0, 10),
+      })),
+    );
+
     const groups: BookingDetailPdfItineraryGroup[] = [];
 
-    for (const item of items) {
-      const steps = await this.resolveItemItinerary(item, locale);
+    for (const item of displayItems) {
+      const entityLike = {
+        id: item.id,
+        itemType: item.itemType,
+        referenceId: item.referenceId,
+        titleSnapshot: item.titleSnapshot,
+      } as BookingItems;
+      const steps = await this.resolveItemItinerary(entityLike, locale);
+      const title =
+        item.itemType === 'room' && item.nightCount > 1
+          ? `${item.titleSnapshot} (${item.nightCount})`
+          : item.titleSnapshot;
       groups.push({
-        title: item.titleSnapshot,
+        title,
         itemType: item.itemType,
         steps: steps.length > 0 ? steps : [{ order: 1, label: item.titleSnapshot }],
       });

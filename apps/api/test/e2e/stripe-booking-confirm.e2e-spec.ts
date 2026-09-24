@@ -10,7 +10,7 @@ import {
   STRIPE_METADATA_PAYMENT_ID,
 } from '../../src/modules/stripe/stripe.constants';
 import { apiPath, authHeader, loginAsSeedAdmin, registerAndLoginCustomer } from './auth-client';
-import { SEED_ROOM_ID } from './constants';
+import { SEED_ROOM_ID, addDaysIso } from './constants';
 import { createE2eApp } from './create-app';
 import {
   buildSignedStripeWebhookRequest,
@@ -18,6 +18,7 @@ import {
 } from './stripe-webhook.util';
 
 const E2E_DATE = '2099-10-01';
+const E2E_CHECKOUT = addDaysIso(E2E_DATE, 1);
 
 describe('Stripe booking confirmation (e2e)', () => {
   let app: INestApplication;
@@ -50,7 +51,7 @@ describe('Stripe booking confirmation (e2e)', () => {
             itemType: 'room',
             referenceId: SEED_ROOM_ID,
             startDate: E2E_DATE,
-            endDate: E2E_DATE,
+            endDate: E2E_CHECKOUT,
             quantity: 1,
           },
         ],
@@ -123,7 +124,7 @@ describe('Stripe booking confirmation (e2e)', () => {
             itemType: 'room',
             referenceId: SEED_ROOM_ID,
             startDate: E2E_DATE,
-            endDate: E2E_DATE,
+            endDate: E2E_CHECKOUT,
             quantity: 1,
           },
         ],
