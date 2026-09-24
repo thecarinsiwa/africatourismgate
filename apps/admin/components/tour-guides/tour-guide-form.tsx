@@ -10,7 +10,6 @@ import {
   DataTableBadge,
   Input,
   Select,
-  Textarea,
   useToast,
 } from '@africatourismgate/ui';
 import type {
@@ -28,11 +27,13 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
+import { isRichTextEmpty } from '../../lib/rich-text';
 import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import {
   useTourGuideStatusLabels,
   useTourGuideTypeLabels,
 } from '../../lib/i18n/use-module-labels';
+import { RichTextEditor } from '../rich-text-editor';
 
 export type TourGuideFormValues = {
   type: TourGuideType;
@@ -98,7 +99,9 @@ function toCreatePayload(values: TourGuideFormValues): CreateTourGuideRequest {
       ? { contactEmail: values.contactEmail.trim() }
       : {}),
     ...(values.organizationId ? { organizationId: values.organizationId } : {}),
-    ...(values.bio.trim() ? { bio: values.bio.trim() } : {}),
+    ...(values.bio.trim() && !isRichTextEmpty(values.bio)
+      ? { bio: values.bio.trim() }
+      : {}),
     ...(values.photoUrl.trim() ? { photoUrl: values.photoUrl.trim() } : {}),
   };
 }
@@ -117,7 +120,7 @@ function toUpdatePayload(values: TourGuideFormValues): UpdateTourGuideRequest {
         ? values.contactEmail.trim()
         : null,
     organizationId: values.organizationId ? values.organizationId : null,
-    bio: values.bio.trim() ? values.bio.trim() : null,
+    bio: values.bio.trim() && !isRichTextEmpty(values.bio) ? values.bio.trim() : null,
     photoUrl: values.photoUrl.trim() ? values.photoUrl.trim() : null,
   };
 }
@@ -508,12 +511,11 @@ export function TourGuideForm({
         required
       />
 
-      <Textarea
+      <RichTextEditor
         label={t('bio')}
-        name="bio"
-        rows={4}
         value={values.bio}
-        onChange={(e) => updateField('bio', e.target.value)}
+        onChange={(html) => updateField('bio', html)}
+        contentClassName="min-h-[140px]"
       />
 
       {showPhotoInForm ? photoFields : null}
