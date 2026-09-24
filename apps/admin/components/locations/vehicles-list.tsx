@@ -248,36 +248,32 @@ export function VehiclesList() {
   const columns = useMemo<ColumnDef<Vehicle, unknown>[]>(
     () => [
       {
-        id: 'thumbnail',
-        header: '',
-        meta: { align: 'center' },
+        accessorKey: 'licensePlate',
+        header: tColumns('licensePlate'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => {
           const categoryName = categoryById.get(row.original.categoryId);
           return (
-            <VehicleThumbnail
-              vehicleId={row.original.id}
-              label={getVehicleLabel(row.original, categoryById, t('fallbackLabel'))}
-              categoryName={categoryName}
-              size="md"
-            />
+            <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+              <VehicleThumbnail
+                vehicleId={row.original.id}
+                label={getVehicleLabel(row.original, categoryById, t('fallbackLabel'))}
+                categoryName={categoryName}
+                size="sm"
+              />
+              <code className="min-w-0 truncate rounded-md bg-atg-surface px-2 py-0.5 font-mono text-xs font-semibold text-atg-fg ring-1 ring-atg-border/60 sm:text-sm">
+                {row.original.licensePlate ?? emptyDash}
+              </code>
+            </div>
           );
         },
-      },
-      {
-        accessorKey: 'licensePlate',
-        header: tColumns('licensePlate'),
-        cell: ({ row }) => (
-          <code className="rounded-md bg-atg-surface px-2 py-0.5 font-mono text-sm font-semibold text-atg-fg ring-1 ring-atg-border/60">
-            {row.original.licensePlate ?? emptyDash}
-          </code>
-        ),
       },
       {
         id: 'agency',
         header: tColumns('agency'),
         meta: { hideOnMobile: true },
         cell: ({ row }) => (
-          <span className="text-sm text-atg-fg">
+          <span className="block max-w-[12rem] truncate text-sm text-atg-fg">
             {agencyById.get(row.original.agencyId) ?? emptyDash}
           </span>
         ),
@@ -285,12 +281,13 @@ export function VehiclesList() {
       {
         id: 'category',
         header: tColumns('category'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => renderCategory(row.original.categoryId),
       },
       {
         id: 'price',
         header: tColumns('pricePerDay'),
-        meta: { align: 'right' },
+        meta: { align: 'right', hideOnMobile: true },
         cell: ({ row }) => (
           <span className="tabular-nums text-sm">
             {formatPrice(row.original.dailyPriceCents, row.original.currency)}
@@ -300,7 +297,7 @@ export function VehiclesList() {
       {
         id: 'actions',
         header: tCommonColumns('actions'),
-        meta: { align: 'right' },
+        meta: { align: 'right', cellClassName: 'w-[8rem] sm:w-auto' },
         cell: ({ row }) => renderVehicleActions(row.original),
       },
     ],
@@ -321,10 +318,10 @@ export function VehiclesList() {
   const emptyMessage = hasActiveFilters ? t('emptyFiltered') : t('emptyDefault');
 
   return (
-    <div className="min-w-0 space-y-6">
-      <div className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-end">
-          <div className="min-w-0 flex-1 sm:max-w-md">
+    <div className="min-w-0 space-y-6 overflow-x-hidden">
+      <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+          <div className="min-w-0 w-full flex-1 sm:max-w-xs">
             <Input
               type="search"
               placeholder={t('searchPlaceholder')}
@@ -333,7 +330,7 @@ export function VehiclesList() {
               aria-label={t('searchAria')}
             />
           </div>
-          <div className="sm:w-52">
+          <div className="min-w-0 w-full sm:w-52">
             <Select
               label={tFilters('agency')}
               value={agencyFilter}
@@ -344,7 +341,7 @@ export function VehiclesList() {
               }}
             />
           </div>
-          <div className="sm:w-52">
+          <div className="min-w-0 w-full sm:w-52">
             <Select
               label={tFilters('category')}
               value={categoryFilter}
@@ -360,13 +357,21 @@ export function VehiclesList() {
             options={viewModeOptions}
             onChange={setViewMode}
             ariaLabel={t('viewModeAria')}
+            className="w-full sm:w-auto"
           />
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button variant="outline" onClick={() => setExportOpen(true)}>
+        <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
+          <Button
+            variant="outline"
+            onClick={() => setExportOpen(true)}
+            className="w-full shrink-0 sm:w-auto"
+          >
             {tExports('button')}
           </Button>
-          <Button href="/produits/locations/nouveau" className="lg:hidden">
+          <Button
+            href="/produits/locations/nouveau"
+            className="w-full shrink-0 sm:w-auto lg:hidden"
+          >
             {t('newVehicle')}
           </Button>
         </div>
@@ -388,7 +393,7 @@ export function VehiclesList() {
       ) : (
         <>
           {viewMode === 'table' ? (
-            <Card variant="dashboard" padding="none" className="overflow-hidden">
+            <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
               <DataTable
                 columns={columns}
                 data={vehicles}
@@ -401,6 +406,7 @@ export function VehiclesList() {
                 expandRowAriaLabel={tDataTable('expandRowAria')}
                 getRowId={(r) => r.id}
                 aria-label={t('ariaLabel')}
+                className="min-w-0"
               />
             </Card>
           ) : state.status === 'loading' ? (
@@ -408,39 +414,45 @@ export function VehiclesList() {
           ) : vehicles.length === 0 ? (
             <p className="text-sm text-atg-muted">{emptyMessage}</p>
           ) : viewMode === 'grid' ? (
-            <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {vehicles.map((vehicle) => {
                 const categoryName = categoryById.get(vehicle.categoryId);
                 const label = getVehicleLabel(vehicle, categoryById, t('fallbackLabel'));
                 return (
                   <li key={vehicle.id} className="min-w-0">
-                    <Card variant="dashboard" className="flex h-full flex-col gap-3">
-                      <div className="flex items-start gap-3">
+                    <Card
+                      variant="dashboard"
+                      padding="sm"
+                      className="flex h-full min-w-0 flex-col gap-3 overflow-hidden"
+                    >
+                      <div className="flex min-w-0 items-start gap-3">
                         <VehicleThumbnail
                           vehicleId={vehicle.id}
                           label={label}
                           categoryName={categoryName}
                           size="md"
                         />
-                        <div className="min-w-0 flex-1">
-                          <code className="inline-block rounded-md bg-atg-surface px-2 py-0.5 font-mono text-xs font-semibold text-atg-fg ring-1 ring-atg-border/60">
+                        <div className="min-w-0 flex-1 space-y-1">
+                          <code className="inline-block max-w-full truncate rounded-md bg-atg-surface px-2 py-0.5 font-mono text-xs font-semibold text-atg-fg ring-1 ring-atg-border/60">
                             {vehicle.licensePlate ?? emptyDash}
                           </code>
-                          <p className="mt-1 truncate text-sm font-medium text-atg-fg">
+                          <p className="truncate text-sm font-medium text-atg-fg">
                             {agencyById.get(vehicle.agencyId) ?? emptyDash}
                           </p>
-                          <p className="mt-0.5 truncate text-xs text-atg-muted">
+                          <p className="truncate text-xs text-atg-muted">
                             {categoryName ?? emptyDash}
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between gap-2 rounded-lg bg-atg-surface/50 px-3 py-2">
-                        <span className="text-xs text-atg-muted">{tColumns('pricePerDay')}</span>
-                        <span className="tabular-nums text-sm font-semibold text-atg-fg">
+                      <div className="flex min-w-0 items-center justify-between gap-2 rounded-lg bg-atg-surface/50 px-3 py-2">
+                        <span className="shrink-0 text-xs text-atg-muted">
+                          {tColumns('pricePerDay')}
+                        </span>
+                        <span className="min-w-0 truncate tabular-nums text-sm font-semibold text-atg-fg">
                           {formatPrice(vehicle.dailyPriceCents, vehicle.currency)}
                         </span>
                       </div>
-                      <div className="mt-auto flex justify-end border-t border-atg-border pt-3">
+                      <div className="mt-auto flex min-w-0 justify-end border-t border-atg-border pt-3">
                         {renderVehicleActions(vehicle)}
                       </div>
                     </Card>
@@ -449,7 +461,7 @@ export function VehiclesList() {
               })}
             </ul>
           ) : (
-            <Card variant="dashboard" padding="none" className="overflow-hidden">
+            <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
               <ul className="divide-y divide-atg-border">
                 {vehicles.map((vehicle) => {
                   const categoryName = categoryById.get(vehicle.categoryId);
@@ -457,7 +469,7 @@ export function VehiclesList() {
                   return (
                     <li
                       key={vehicle.id}
-                      className="flex flex-col gap-3 px-4 py-3 lg:flex-row lg:items-center lg:justify-between"
+                      className="flex min-w-0 flex-col gap-3 px-3 py-3 sm:px-4 lg:flex-row lg:items-center lg:justify-between"
                     >
                       <div className="flex min-w-0 flex-1 items-center gap-3">
                         <VehicleThumbnail
@@ -467,15 +479,15 @@ export function VehiclesList() {
                           size="sm"
                         />
                         <div className="min-w-0 flex-1">
-                          <div className="flex flex-wrap items-center gap-2">
+                          <div className="flex min-w-0 flex-wrap items-center gap-2">
                             <code className="rounded-md bg-atg-surface px-2 py-0.5 font-mono text-xs font-semibold text-atg-fg ring-1 ring-atg-border/60">
                               {vehicle.licensePlate ?? emptyDash}
                             </code>
-                            <span className="truncate text-sm text-atg-muted">
+                            <span className="min-w-0 truncate text-sm text-atg-muted">
                               {agencyById.get(vehicle.agencyId) ?? emptyDash}
                             </span>
                           </div>
-                          <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+                          <div className="mt-2 flex min-w-0 flex-wrap items-center justify-between gap-2">
                             {renderCategory(vehicle.categoryId)}
                             <span className="tabular-nums text-sm text-atg-fg">
                               {formatPrice(vehicle.dailyPriceCents, vehicle.currency)}
@@ -483,7 +495,9 @@ export function VehiclesList() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex shrink-0 justify-end">{renderVehicleActions(vehicle)}</div>
+                      <div className="flex min-w-0 shrink-0 justify-end">
+                        {renderVehicleActions(vehicle)}
+                      </div>
                     </li>
                   );
                 })}
