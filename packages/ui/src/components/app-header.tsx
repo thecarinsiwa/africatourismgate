@@ -68,7 +68,7 @@ export function AppHeader({
 
         <div className="min-w-0 flex-1">
           {title ? (
-            <p className="truncate text-base font-bold leading-tight text-atg-fg sm:text-lg md:text-xl">
+            <p className="truncate text-sm font-semibold leading-tight text-atg-fg sm:text-base sm:font-bold md:text-xl">
               {title}
             </p>
           ) : hasHeading ? null : (
