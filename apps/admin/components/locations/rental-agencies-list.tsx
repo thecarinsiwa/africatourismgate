@@ -239,24 +239,42 @@ export function RentalAgenciesList() {
 
   const columns = useMemo<ColumnDef<RentalAgency, unknown>[]>(
     () => [
-      { accessorKey: 'name', header: t('agency') },
+      {
+        accessorKey: 'name',
+        header: t('agency'),
+        meta: { cellClassName: 'min-w-0' },
+        cell: ({ row }) => (
+          <span className="block min-w-0 truncate font-medium text-atg-fg">
+            {row.original.name}
+          </span>
+        ),
+      },
       {
         id: 'destination',
         header: tDestinations('destination'),
-        cell: ({ row }) =>
-          row.original.destinationId
-            ? (destById.get(row.original.destinationId) ?? emptyDash)
-            : emptyDash,
+        meta: { hideOnMobile: true },
+        cell: ({ row }) => (
+          <span className="block max-w-[12rem] truncate text-sm text-atg-muted">
+            {row.original.destinationId
+              ? (destById.get(row.original.destinationId) ?? emptyDash)
+              : emptyDash}
+          </span>
+        ),
       },
       {
         accessorKey: 'address',
         header: t('address'),
-        cell: ({ row }) => row.original.address ?? emptyDash,
+        meta: { hideOnMobile: true },
+        cell: ({ row }) => (
+          <span className="block max-w-[16rem] truncate text-sm text-atg-muted">
+            {row.original.address ?? emptyDash}
+          </span>
+        ),
       },
       {
         id: 'actions',
         header: tCommon('columns.actions'),
-        meta: { align: 'right' },
+        meta: { align: 'right', cellClassName: 'w-[5.5rem] sm:w-auto' },
         cell: ({ row }) => renderActions(row.original),
       },
     ],
@@ -285,12 +303,12 @@ export function RentalAgenciesList() {
         onConfirm={() => void handleDeleteConfirm()}
       />
 
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6 overflow-x-hidden">
         <RentalAgenciesStatCards refreshKey={statsKey} />
 
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-center">
-            <div className="min-w-0 flex-1 sm:max-w-md">
+        <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <div className="min-w-0 w-full flex-1 sm:max-w-md">
               <Input
                 type="search"
                 placeholder={t('searchPlaceholder')}
@@ -304,9 +322,14 @@ export function RentalAgenciesList() {
               options={viewModeOptions}
               onChange={setViewMode}
               ariaLabel={t('viewModeAria')}
+              className="w-full sm:w-auto"
             />
           </div>
-          <Button type="button" onClick={() => openForm()}>
+          <Button
+            type="button"
+            onClick={() => openForm()}
+            className="w-full shrink-0 sm:w-auto"
+          >
             {t('new')}
           </Button>
         </div>
@@ -390,7 +413,7 @@ export function RentalAgenciesList() {
           </p>
         ) : viewMode === 'table' ? (
           <>
-            <Card variant="dashboard" padding="none" className="overflow-hidden">
+            <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
               <DataTable
                 columns={columns}
                 data={agencies}
@@ -398,8 +421,12 @@ export function RentalAgenciesList() {
                 loadingMessage={tDataTable('loading')}
                 emptyMessage={emptyMessage}
                 emptyVariant={search.trim().length > 0 ? 'search' : 'default'}
+                expandRowLabel={tDataTable('expandRow')}
+                collapseRowLabel={tDataTable('collapseRow')}
+                expandRowAriaLabel={tDataTable('expandRowAria')}
                 getRowId={(r) => r.id}
                 aria-label={t('ariaLabel')}
+                className="min-w-0"
               />
             </Card>
             {state.status === 'ready' ? (
@@ -420,24 +447,28 @@ export function RentalAgenciesList() {
           <p className="text-sm text-atg-muted">{emptyMessage}</p>
         ) : (
           <>
-            <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {agencies.map((agency) => (
-                <li key={agency.id}>
-                  <Card variant="dashboard" className="flex h-full flex-col gap-3">
-                    <div className="min-w-0 flex-1">
+                <li key={agency.id} className="min-w-0">
+                  <Card
+                    variant="dashboard"
+                    padding="sm"
+                    className="flex h-full min-w-0 flex-col gap-3 overflow-hidden"
+                  >
+                    <div className="min-w-0 flex-1 space-y-1">
                       <p className="truncate font-medium text-atg-fg">
                         {agency.name}
                       </p>
-                      <p className="mt-1 truncate text-xs text-atg-muted">
+                      <p className="truncate text-xs text-atg-muted">
                         {agency.destinationId
                           ? (destById.get(agency.destinationId) ?? emptyDash)
                           : emptyDash}
                       </p>
-                      <p className="mt-0.5 line-clamp-2 text-xs text-atg-muted">
+                      <p className="line-clamp-2 text-xs text-atg-muted">
                         {agency.address ?? emptyDash}
                       </p>
                     </div>
-                    <div className="mt-auto flex justify-end border-t border-atg-border pt-3">
+                    <div className="mt-auto flex min-w-0 justify-end border-t border-atg-border pt-3">
                       {renderActions(agency)}
                     </div>
                   </Card>
