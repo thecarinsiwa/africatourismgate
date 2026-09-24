@@ -79,7 +79,8 @@ export function UserMenu({
         type="button"
         onClick={() => setOpen((value) => !value)}
         className={cn(
-          'inline-flex items-center gap-1.5 rounded-lg border border-atg-border bg-atg-elevated px-1.5 py-1 sm:gap-2 sm:px-2 sm:py-1.5',
+          'inline-flex h-8 w-8 items-center justify-center rounded-lg border border-atg-border bg-atg-elevated',
+          'sm:h-9 sm:w-auto sm:gap-1.5 sm:px-1.5 md:h-10 md:gap-2 md:px-2',
           'text-sm text-atg-fg transition-colors hover:bg-atg-surface',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
         )}
@@ -93,13 +94,17 @@ export function UserMenu({
           lastName={nameParts.length > 1 ? nameParts[nameParts.length - 1] : undefined}
           src={avatarSrc}
           size="sm"
+          className="h-6 w-6 text-[10px] sm:h-7 sm:w-7 sm:text-xs md:h-8 md:w-8"
         />
         <span className="hidden max-w-[10rem] truncate text-left sm:inline">
           <span className="block truncate font-medium">{displayName}</span>
           <span className="block truncate text-xs text-atg-muted">{email}</span>
         </span>
         <svg
-          className={cn('h-4 w-4 text-atg-muted transition-transform', open && 'rotate-180')}
+          className={cn(
+            'hidden h-3.5 w-3.5 text-atg-muted transition-transform sm:block',
+            open && 'rotate-180',
+          )}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"

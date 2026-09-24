@@ -39,13 +39,13 @@ export function AdminSearchTrigger() {
       aria-haspopup="dialog"
       data-testid="admin-search-trigger"
       className={cn(
-        'relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-atg-border bg-atg-elevated sm:h-10 sm:w-10',
+        'relative inline-flex h-8 w-8 items-center justify-center rounded-lg border border-atg-border bg-atg-elevated sm:h-9 sm:w-9 md:h-10 md:w-10',
         'text-atg-fg transition-colors hover:bg-atg-surface',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface',
         open && 'border-primary/40 bg-atg-surface text-primary',
       )}
     >
-      <SearchLoupeIcon />
+      <SearchLoupeIcon className="h-4 w-4 sm:h-5 sm:w-5" />
     </button>
   );
 }
