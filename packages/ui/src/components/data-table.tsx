@@ -306,12 +306,13 @@ export function DataTable<TData>({
   }
 
   const totalColSpan = visibleHeaders.length + (hasExpandColumn ? 1 : 0);
+  const useCompactTable = isMobile;
 
   return (
     <div
       className={cn(
         'min-w-0',
-        useMobileLayout
+        useCompactTable
           ? 'w-full max-w-full overflow-x-hidden'
           : 'overflow-x-auto',
         className,
@@ -320,7 +321,7 @@ export function DataTable<TData>({
       <table
         className={cn(
           'w-full border-collapse text-left text-sm',
-          useMobileLayout ? 'table-fixed' : 'min-w-[560px]',
+          useCompactTable ? 'table-fixed' : 'min-w-[560px]',
           tableClassName,
         )}
         aria-label={ariaLabel}
@@ -328,7 +329,7 @@ export function DataTable<TData>({
         <thead className="sticky top-0 z-10 bg-atg-surface/95 backdrop-blur-sm">
           <tr>
             {visibleHeaders.map((header) => (
-              <DataTableHeaderCell key={header.id} header={header} mobile={useMobileLayout} />
+              <DataTableHeaderCell key={header.id} header={header} mobile={useCompactTable} />
             ))}
             {hasExpandColumn ? (
               <th
@@ -361,7 +362,7 @@ export function DataTable<TData>({
                         key={cell.id}
                         className={cn(
                           'text-atg-fg',
-                          useMobileLayout ? 'min-w-0 px-3 py-3' : 'px-5 py-3.5',
+                          useCompactTable ? 'min-w-0 px-3 py-3' : 'px-5 py-3.5',
                           alignClasses[align],
                           cell.column.columnDef.meta?.cellClassName,
                         )}
