@@ -155,28 +155,36 @@ export function ShipsList() {
   const columns = useMemo<ColumnDef<Ship, unknown>[]>(
     () => [
       {
-        id: 'thumbnail',
-        header: '',
-        meta: { align: 'center' },
+        accessorKey: 'name',
+        header: tColumns('ship'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => (
-          <ShipThumbnail shipId={row.original.id} label={row.original.name} size="sm" />
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <ShipThumbnail shipId={row.original.id} label={row.original.name} size="sm" />
+            <span className="min-w-0 truncate font-medium text-atg-fg">{row.original.name}</span>
+          </div>
         ),
       },
-      { accessorKey: 'name', header: tColumns('ship') },
       {
         id: 'line',
         header: tColumns('line'),
-        cell: ({ row }) => lineById.get(row.original.cruiseLineId) ?? emptyDash,
+        meta: { hideOnMobile: true },
+        cell: ({ row }) => (
+          <span className="block max-w-[12rem] truncate text-sm text-atg-muted">
+            {lineById.get(row.original.cruiseLineId) ?? emptyDash}
+          </span>
+        ),
       },
       {
         accessorKey: 'builtYear',
         header: tColumns('year'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => row.original.builtYear ?? emptyDash,
       },
       {
         id: 'actions',
         header: tCommon('columns.actions'),
-        meta: { align: 'right' },
+        meta: { align: 'right', cellClassName: 'w-[5.5rem] sm:w-auto' },
         cell: ({ row }) => renderActions(row.original),
       },
     ],
@@ -206,10 +214,10 @@ export function ShipsList() {
         onConfirm={() => void handleDeleteConfirm()}
       />
 
-      <div className="space-y-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="min-w-0 flex-1 sm:max-w-xs">
+      <div className="min-w-0 space-y-6 overflow-x-hidden">
+        <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <div className="min-w-0 w-full flex-1 sm:max-w-xs">
               <Input
                 type="search"
                 placeholder={t('searchPlaceholder')}
@@ -218,7 +226,7 @@ export function ShipsList() {
                 aria-label={t('searchAria')}
               />
             </div>
-            <div className="w-full sm:w-56">
+            <div className="min-w-0 w-full sm:w-56">
               <Select
                 label={t('filterLine')}
                 value={lineFilter}
@@ -234,9 +242,15 @@ export function ShipsList() {
               options={viewModeOptions}
               onChange={setViewMode}
               ariaLabel={t('viewModeAria')}
+              className="w-full sm:w-auto"
             />
           </div>
-          <Button href="/produits/croisieres/navires/nouveau">{t('new')}</Button>
+          <Button
+            href="/produits/croisieres/navires/nouveau"
+            className="w-full shrink-0 sm:w-auto"
+          >
+            {t('new')}
+          </Button>
         </div>
 
         {state.status === 'error' ? (
@@ -245,7 +259,7 @@ export function ShipsList() {
           </p>
         ) : viewMode === 'table' ? (
           <>
-            <Card variant="dashboard" padding="none" className="overflow-hidden">
+            <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
               <DataTable
                 columns={columns}
                 data={ships}
@@ -253,8 +267,12 @@ export function ShipsList() {
                 loadingMessage={tDataTable('loading')}
                 emptyMessage={emptyMessage}
                 emptyVariant={hasSearch ? 'search' : 'default'}
+                expandRowLabel={tDataTable('expandRow')}
+                collapseRowLabel={tDataTable('collapseRow')}
+                expandRowAriaLabel={tDataTable('expandRowAria')}
                 getRowId={(r) => r.id}
                 aria-label={t('ariaLabel')}
+                className="min-w-0"
               />
             </Card>
             {state.status === 'ready' ? (
@@ -275,29 +293,27 @@ export function ShipsList() {
           <p className="text-sm text-atg-muted">{emptyMessage}</p>
         ) : (
           <>
-            <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {ships.map((ship) => (
-                <li key={ship.id}>
-                  <Card variant="dashboard" className="flex h-full flex-col gap-3">
-                    <div className="flex items-start gap-3">
-                      <ShipThumbnail
-                        shipId={ship.id}
-                        label={ship.name}
-                        size="md"
-                      />
-                      <div className="min-w-0 flex-1">
+                <li key={ship.id} className="min-w-0">
+                  <Card
+                    variant="dashboard"
+                    padding="sm"
+                    className="flex h-full min-w-0 flex-col gap-3 overflow-hidden"
+                  >
+                    <div className="flex min-w-0 items-start gap-3">
+                      <ShipThumbnail shipId={ship.id} label={ship.name} size="md" />
+                      <div className="min-w-0 flex-1 space-y-1">
                         <p className="truncate font-medium text-atg-fg">{ship.name}</p>
-                        <p className="mt-1 truncate text-xs text-atg-muted">
+                        <p className="truncate text-xs text-atg-muted">
                           {lineById.get(ship.cruiseLineId) ?? emptyDash}
                         </p>
                         {ship.builtYear ? (
-                          <div className="mt-2">
-                            <DataTableBadge variant="muted">{ship.builtYear}</DataTableBadge>
-                          </div>
+                          <DataTableBadge variant="muted">{ship.builtYear}</DataTableBadge>
                         ) : null}
                       </div>
                     </div>
-                    <div className="mt-auto flex justify-end border-t border-atg-border pt-3">
+                    <div className="mt-auto flex min-w-0 justify-end border-t border-atg-border pt-3">
                       {renderActions(ship)}
                     </div>
                   </Card>
