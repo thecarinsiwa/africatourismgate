@@ -933,6 +933,9 @@
     "reviewsLoading": "Chargement des avis…",
     "reviewsLoadError": "Impossible de charger les avis.",
     "loadMoreReviews": "Afficher plus d'avis",
+    "reviewsCarouselAria": "Carrousel des avis voyageurs",
+    "reviewsPrev": "Avis précédent",
+    "reviewsNext": "Avis suivant",
     "anonymousGuest": "Voyageur",
     "galleryCounter": "Photo {current} sur {total}"
   },

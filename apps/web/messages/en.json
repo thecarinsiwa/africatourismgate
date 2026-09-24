@@ -930,9 +930,12 @@
     "guestRating": "Guest rating",
     "reviewsTitle": "Guest reviews",
     "noReviews": "No reviews yet.",
-    "reviewsLoading": "Loading reviews?",
+    "reviewsLoading": "Loading reviews…",
     "reviewsLoadError": "Could not load reviews.",
     "loadMoreReviews": "Show more reviews",
+    "reviewsCarouselAria": "Guest reviews carousel",
+    "reviewsPrev": "Previous review",
+    "reviewsNext": "Next review",
     "anonymousGuest": "Guest",
     "galleryCounter": "Photo {current} of {total}"
   },

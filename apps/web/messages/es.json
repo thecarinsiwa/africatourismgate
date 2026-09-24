@@ -933,6 +933,9 @@
     "reviewsLoading": "Cargando reseñas…",
     "reviewsLoadError": "No se pudieron cargar las reseñas.",
     "loadMoreReviews": "Ver más reseñas",
+    "reviewsCarouselAria": "Carrusel de reseñas de huéspedes",
+    "reviewsPrev": "Reseña anterior",
+    "reviewsNext": "Reseña siguiente",
     "anonymousGuest": "Huésped",
     "galleryCounter": "Foto {current} de {total}"
   },
