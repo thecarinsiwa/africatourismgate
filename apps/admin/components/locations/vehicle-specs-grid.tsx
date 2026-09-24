@@ -125,7 +125,7 @@ export function VehicleSpecsGrid({ categoryName }: VehicleSpecsGridProps) {
   );
 
   return (
-    <ul className="grid grid-cols-3 gap-2 sm:gap-3" role="list">
+    <ul className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-3 sm:gap-3" role="list">
       {items.map((item) => (
         <li
           key={item.label}
