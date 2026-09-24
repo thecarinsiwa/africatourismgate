@@ -217,8 +217,9 @@ export function SailingsList() {
       {
         id: 'departure',
         header: tColumns('departure'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => (
-          <span className="tabular-nums text-sm font-medium">
+          <span className="block min-w-0 truncate tabular-nums text-sm font-medium">
             {formatDate(row.original.departureDate)}
           </span>
         ),
@@ -226,24 +227,34 @@ export function SailingsList() {
       {
         id: 'itinerary',
         header: tColumns('itinerary'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => {
           const it = itineraryById.get(row.original.itineraryId);
-          return it?.name ?? emptyDash;
+          return (
+            <span className="block min-w-0 truncate font-medium text-atg-fg">
+              {it?.name ?? emptyDash}
+            </span>
+          );
         },
       },
       {
         id: 'ship',
         header: tColumns('ship'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => {
           const it = itineraryById.get(row.original.itineraryId);
           const ship = it ? shipById.get(it.shipId) : undefined;
-          return ship?.name ?? emptyDash;
+          return (
+            <span className="block max-w-[12rem] truncate text-sm text-atg-muted">
+              {ship?.name ?? emptyDash}
+            </span>
+          );
         },
       },
       {
         id: 'nights',
         header: tColumns('nights'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) => {
           const it = itineraryById.get(row.original.itineraryId);
           return it?.durationNights ?? emptyDash;
@@ -252,7 +263,7 @@ export function SailingsList() {
       {
         id: 'actions',
         header: tCommon('columns.actions'),
-        meta: { align: 'right' },
+        meta: { align: 'right', cellClassName: 'w-[5.5rem] sm:w-auto' },
         cell: ({ row }) => renderSailingActions(row.original),
       },
     ],
@@ -310,10 +321,10 @@ export function SailingsList() {
         onConfirm={() => void handleDeleteConfirm()}
       />
 
-      <div className="min-w-0 space-y-6">
+      <div className="min-w-0 space-y-6 overflow-x-hidden">
         <div className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div className="flex min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-end">
-            <div className="min-w-0 flex-1 sm:max-w-md">
+          <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+            <div className="min-w-0 w-full flex-1 sm:max-w-md">
               <Input
                 type="search"
                 placeholder={t('searchPlaceholder')}
@@ -322,7 +333,7 @@ export function SailingsList() {
                 aria-label={t('searchAria')}
               />
             </div>
-            <div className="sm:w-52">
+            <div className="min-w-0 w-full sm:w-52">
               <Select
                 label={tFilters('ship')}
                 value={shipFilter}
@@ -340,7 +351,7 @@ export function SailingsList() {
                 }}
               />
             </div>
-            <div className="sm:w-56">
+            <div className="min-w-0 w-full sm:w-56">
               <Select
                 label={tFilters('itinerary')}
                 value={itineraryFilter}
@@ -356,9 +367,10 @@ export function SailingsList() {
               options={viewModeOptions}
               onChange={setViewMode}
               ariaLabel={t('viewModeAria')}
+              className="w-full sm:w-auto"
             />
           </div>
-          <Button href="/produits/croisieres/nouveau" className="lg:hidden">
+          <Button href="/produits/croisieres/nouveau" className="w-full shrink-0 lg:hidden">
             {t('newSailing')}
           </Button>
         </div>
@@ -371,7 +383,7 @@ export function SailingsList() {
           </p>
         ) : viewMode === 'table' ? (
           <>
-            <Card variant="dashboard" padding="none" className="overflow-hidden">
+            <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
               <DataTable
                 columns={columns}
                 data={displayedSailings}
@@ -384,6 +396,7 @@ export function SailingsList() {
                 expandRowAriaLabel={tDataTable('expandRowAria')}
                 getRowId={(r) => r.id}
                 aria-label={t('ariaLabel')}
+                className="min-w-0"
               />
             </Card>
             {state.status === 'ready' ? (
@@ -404,7 +417,7 @@ export function SailingsList() {
           <p className="text-sm text-atg-muted">{emptyMessage}</p>
         ) : (
           <>
-            <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {displayedSailings.map((sailing) => {
                 const itinerary = itineraryById.get(sailing.itineraryId);
                 const ship = itinerary ? shipById.get(itinerary.shipId) : undefined;
@@ -412,26 +425,30 @@ export function SailingsList() {
                   itinerary?.name ?? formatDate(sailing.departureDate) ?? t('fallbackDeparture');
                 return (
                   <li key={sailing.id} className="min-w-0">
-                    <Card variant="dashboard" className="flex h-full flex-col gap-3">
-                      <div className="flex items-start gap-3">
+                    <Card
+                      variant="dashboard"
+                      padding="sm"
+                      className="flex h-full min-w-0 flex-col gap-3 overflow-hidden"
+                    >
+                      <div className="flex min-w-0 items-start gap-3">
                         <ShipThumbnail
                           shipId={ship?.id}
                           label={ship?.name ?? label}
                           size="md"
                         />
-                        <div className="min-w-0 flex-1">
-                          <p className="tabular-nums text-sm font-semibold text-atg-fg">
+                        <div className="min-w-0 flex-1 space-y-1">
+                          <p className="truncate tabular-nums text-sm font-semibold text-atg-fg">
                             {formatDate(sailing.departureDate)}
                           </p>
-                          <p className="mt-1 truncate text-sm font-medium text-atg-fg">
+                          <p className="truncate text-sm font-medium text-atg-fg">
                             {itinerary?.name ?? emptyDash}
                           </p>
-                          <p className="mt-0.5 truncate text-xs text-atg-muted">
+                          <p className="truncate text-xs text-atg-muted">
                             {ship?.name ?? emptyDash}
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between gap-2 rounded-lg bg-atg-surface/50 px-3 py-2">
+                      <div className="flex min-w-0 items-center justify-between gap-2 rounded-lg bg-atg-surface/50 px-3 py-2">
                         <span className="text-xs text-atg-muted">{tColumns('nights')}</span>
                         {itinerary?.durationNights != null ? (
                           <DataTableBadge variant="muted">
@@ -441,7 +458,7 @@ export function SailingsList() {
                           <span className="text-sm text-atg-muted">{emptyDash}</span>
                         )}
                       </div>
-                      <div className="mt-auto flex justify-end border-t border-atg-border pt-3">
+                      <div className="mt-auto flex min-w-0 justify-end border-t border-atg-border pt-3">
                         {renderSailingActions(sailing)}
                       </div>
                     </Card>
