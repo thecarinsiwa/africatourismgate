@@ -251,7 +251,9 @@ export function CustomerReviewsCarousel() {
             <>
               <div
                 ref={viewportRef}
-                className="flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                className={`flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
+                  slides.length <= 3 ? 'justify-center' : ''
+                }`}
               >
                 {slides.map((review, index) => (
                   <div
@@ -260,7 +262,11 @@ export function CustomerReviewsCarousel() {
                       slideRefs.current[index] = element;
                     }}
                     data-index={index}
-                    className="w-[85%] shrink-0 snap-center sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
+                    className={`shrink-0 snap-center ${
+                      slides.length === 1
+                        ? 'w-full max-w-md sm:w-[min(100%,28rem)]'
+                        : 'w-[85%] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]'
+                    }`}
                   >
                     <ReviewCard review={review} />
                   </div>
