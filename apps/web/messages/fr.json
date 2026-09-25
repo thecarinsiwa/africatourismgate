@@ -766,7 +766,7 @@
     }
   },
   "activitiesMap": {
-    "title": "Activités à venir",
+    "title": "Nos destinations",
     "subtitle": "Explorez les expériences disponibles à travers l'Afrique. Cliquez sur un point pour voir le détail et réserver.",
     "loading": "Chargement de la carte…",
     "loadError": "Impossible de charger les activités sur la carte.",

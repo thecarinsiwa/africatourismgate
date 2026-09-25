@@ -766,7 +766,7 @@
     }
   },
   "activitiesMap": {
-    "title": "Upcoming Activities",
+    "title": "Our destinations",
     "subtitle": "Explore available experiences across Africa. Click a marker to view details and book.",
     "loading": "Loading map?",
     "loadError": "Could not load activities on the map.",
