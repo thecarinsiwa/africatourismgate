@@ -265,6 +265,14 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
       qb.andWhere('t.priority = :priority', { priority: query.priority });
     }
 
+    const search = query.search?.trim();
+    if (search) {
+      qb.andWhere(
+        '(t.subject LIKE :term OR t.id LIKE :term OR u.email LIKE :term OR u.firstName LIKE :term OR u.lastName LIKE :term)',
+        { term: `%${search}%` },
+      );
+    }
+
     if (sortByLastMessage) {
       qb.addSelect(
         `(SELECT MAX(m.created_at) FROM support_messages m WHERE m.ticket_id = t.id AND m.deleted_at IS NULL)`,
@@ -286,6 +294,14 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
     }
     if (query.priority) {
       countQb.andWhere('t.priority = :priority', { priority: query.priority });
+    }
+    if (search) {
+      countQb
+        .innerJoin(Users, 'u', 'u.id = t.userId AND u.deletedAt IS NULL')
+        .andWhere(
+          '(t.subject LIKE :term OR t.id LIKE :term OR u.email LIKE :term OR u.firstName LIKE :term OR u.lastName LIKE :term)',
+          { term: `%${search}%` },
+        );
     }
 
     const [rows, total] = await Promise.all([

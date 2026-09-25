@@ -46,6 +46,8 @@ export interface SupportTicketCreated {
 export interface SupportTicketsListQuery {
   page?: number;
   limit?: number;
+  /** Partial match on subject, customer email/name, or ticket id. */
+  search?: string;
   status?: SupportTicketStatus;
   priority?: SupportTicketPriority;
   /** Admin list: sort by ticket creation or latest message activity. */

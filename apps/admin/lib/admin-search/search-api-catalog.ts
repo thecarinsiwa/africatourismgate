@@ -11,7 +11,6 @@ import type { AdminSearchResultItem } from './types';
 import type { SearchApiCoreOptions } from './search-api-core';
 
 const DEFAULT_LIMIT = 5;
-const CLIENT_FILTER_FETCH_LIMIT = 100;
 
 function resolveLimit(options?: SearchApiCoreOptions): number {
   return options?.resultLimit ?? DEFAULT_LIMIT;
@@ -131,72 +130,63 @@ export async function searchAdminPackages(
 }
 
 /**
- * Les départs croisière n’ont pas de `search` API : fetch + jointure
- * itinéraires + filtre client (date / nom itinéraire / id).
+ * Départs croisière via `search=` API (date, id, nom d’itinéraire).
+ * Les noms d’itinéraire sont résolus pour les résultats retournés uniquement.
  */
 export async function searchAdminSailings(
   query: string,
   options?: SearchApiCoreOptions,
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
-  const normalized = query.trim().toLowerCase();
-  if (!normalized) {
+  const search = query.trim();
+  if (!search) {
     return [];
   }
 
-  const [sailingsResult, itinerariesResult] = await withApiClient(
-    (client: ApiClient) => {
-      const req = requestOptions(options);
-      return Promise.all([
-        client.listCruiseSailings(
-          {
-            page: 1,
-            limit: CLIENT_FILTER_FETCH_LIMIT,
-          },
-          req,
-        ),
-        client.listItineraries(
-          {
-            page: 1,
-            limit: CLIENT_FILTER_FETCH_LIMIT,
-          },
-          req,
-        ),
-      ]);
-    },
+  const sailingsResult = await withApiClient((client: ApiClient) =>
+    client.listCruiseSailings(
+      {
+        page: 1,
+        limit,
+        search,
+      },
+      requestOptions(options),
+    ),
   );
 
-  const itineraryNameById = new Map(
-    itinerariesResult.data.map((itinerary) => [itinerary.id, itinerary.name]),
-  );
+  const itineraryIds = [
+    ...new Set(sailingsResult.data.map((sailing) => sailing.itineraryId)),
+  ];
+  const itineraryNameById = new Map<string, string>();
 
-  return sailingsResult.data
-    .filter((sailing) => {
-      const itineraryName = itineraryNameById.get(sailing.itineraryId) ?? '';
-      const haystacks = [
-        sailing.departureDate,
-        itineraryName,
-        sailing.id,
-        sailing.itineraryId,
-      ];
-      return haystacks.some((value) =>
-        value.toLowerCase().includes(normalized),
+  if (itineraryIds.length > 0) {
+    await withApiClient(async (client: ApiClient) => {
+      await Promise.all(
+        itineraryIds.map(async (id) => {
+          try {
+            const itinerary = await client.getItinerary(id);
+            itineraryNameById.set(id, itinerary.name);
+          } catch {
+            /* ignore missing itinerary for label */
+          }
+        }),
       );
-    })
-    .slice(0, limit)
-    .map((sailing) => {
-      const itineraryName = itineraryNameById.get(sailing.itineraryId);
-      return {
-        id: buildAdminSearchResultId('sailings', sailing.id),
-        sourceId: 'sailings' as const,
-        group: 'catalog' as const,
-        title: itineraryName
-          ? `${itineraryName} — ${sailing.departureDate}`
-          : sailing.departureDate,
-        subtitle: formatAdminSearchIdPrefix(sailing.id),
-        href: adminSearchDeepLinks.sailing(sailing.id),
-      };
     });
+  }
+
+  return sailingsResult.data.map((sailing) => {
+    const itineraryName = itineraryNameById.get(sailing.itineraryId);
+    return {
+      id: buildAdminSearchResultId('sailings', sailing.id),
+      sourceId: 'sailings' as const,
+      group: 'catalog' as const,
+      title: itineraryName
+        ? `${itineraryName} — ${sailing.departureDate}`
+        : sailing.departureDate,
+      subtitle: formatAdminSearchIdPrefix(sailing.id),
+      href: adminSearchDeepLinks.sailing(sailing.id),
+    };
+  });
 }
 
 export async function searchAdminBlogPosts(

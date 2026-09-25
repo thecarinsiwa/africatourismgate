@@ -168,6 +168,8 @@ export interface CruiseSailingsListQuery {
   page?: number;
   limit?: number;
   itineraryId?: string;
+  /** Partial match on sailing id, departure date, itinerary id, or itinerary name. */
+  search?: string;
 }
 
 export interface CabinAvailability {

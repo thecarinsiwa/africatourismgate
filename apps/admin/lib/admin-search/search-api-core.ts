@@ -16,9 +16,6 @@ export type SearchApiCoreOptions = {
 
 const DEFAULT_LIMIT = 5;
 
-/** Fetch plus large pour filtrer côté client (API tickets sans `search`). */
-const SUPPORT_TICKETS_CLIENT_FILTER_LIMIT = 100;
-
 function resolveLimit(options?: SearchApiCoreOptions): number {
   return options?.resultLimit ?? DEFAULT_LIMIT;
 }
@@ -177,16 +174,15 @@ export async function searchAdminPayments(
 }
 
 /**
- * L’API support-tickets n’expose pas `search` : fetch paginé + filtre client
- * sur sujet / email / prénom / préfixe d’id.
+ * Tickets support via `search=` API (sujet, email, prénom, id).
  */
 export async function searchAdminSupportTickets(
   query: string,
   options?: SearchApiCoreOptions,
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
-  const normalized = query.trim().toLowerCase();
-  if (!normalized) {
+  const search = query.trim();
+  if (!search) {
     return [];
   }
 
@@ -194,34 +190,22 @@ export async function searchAdminSupportTickets(
     client.listSupportTickets(
       {
         page: 1,
-        limit: SUPPORT_TICKETS_CLIENT_FILTER_LIMIT,
+        limit,
+        search,
       },
       requestOptions(options),
     ),
   );
 
-  return result.data
-    .filter((ticket) => {
-      const haystacks = [
-        ticket.subject,
-        ticket.customerEmail ?? '',
-        ticket.customerFirstName ?? '',
-        ticket.id,
-      ];
-      return haystacks.some((value) =>
-        value.toLowerCase().includes(normalized),
-      );
-    })
-    .slice(0, limit)
-    .map((ticket) => ({
-      id: buildAdminSearchResultId('supportTickets', ticket.id),
-      sourceId: 'supportTickets' as const,
-      group: 'support' as const,
-      title: ticket.subject,
-      subtitle:
-        ticket.customerEmail?.trim() ||
-        ticket.customerFirstName?.trim() ||
-        ticket.status,
-      href: adminSearchDeepLinks.supportTicket(ticket.id),
-    }));
+  return result.data.map((ticket) => ({
+    id: buildAdminSearchResultId('supportTickets', ticket.id),
+    sourceId: 'supportTickets' as const,
+    group: 'support' as const,
+    title: ticket.subject,
+    subtitle:
+      ticket.customerEmail?.trim() ||
+      ticket.customerFirstName?.trim() ||
+      ticket.status,
+    href: adminSearchDeepLinks.supportTicket(ticket.id),
+  }));
 }

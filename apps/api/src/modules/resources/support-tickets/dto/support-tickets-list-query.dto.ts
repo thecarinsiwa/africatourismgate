@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsIn, IsOptional } from 'class-validator';
+import { IsIn, IsOptional, IsString, MaxLength } from 'class-validator';
 import { PaginationQueryDto } from '../../../../common/dto/pagination-query.dto';
 import type { SupportTickets } from '../../../../entities/generated';
 
@@ -20,6 +20,14 @@ const TICKET_PRIORITIES = [
 const SORT_BY = ['createdAt', 'lastMessageAt'] as const;
 
 export class SupportTicketsListQueryDto extends PaginationQueryDto {
+  @ApiPropertyOptional({
+    description: 'Partial match on subject, customer email/name, or ticket id',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(180)
+  search?: string;
+
   @ApiPropertyOptional({ enum: TICKET_STATUSES })
   @IsOptional()
   @IsIn(TICKET_STATUSES)
