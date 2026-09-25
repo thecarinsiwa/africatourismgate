@@ -23,6 +23,13 @@
     "difficulty": "Dificultad",
     "priceCents": "Precio (centavos)",
     "descriptionPlaceholder": "Describa la actividad, el programa, las condiciones…",
+    "geographyTitle": "Punto de encuentro",
+    "geographyIntro": "Coloque el punto de inicio / encuentro de la actividad para mostrarlo en el mapa de destinos.",
+    "mapPicker": "Mapa de ubicación",
+    "mapPickerHint": "Haga clic en el mapa o mueva el marcador para definir latitud y longitud.",
+    "mapPickerAria": "Mapa interactivo para seleccionar las coordenadas de la actividad",
+    "latitudeHint": "Opcional, -90 a 90",
+    "longitudeHint": "Opcional, -180 a 180",
     "validation": {
       "providerRequired": "El socio es obligatorio.",
       "titleRequired": "El título es obligatorio.",

@@ -5,10 +5,12 @@ import {
   IsIn,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
   Length,
+  Max,
   MaxLength,
   Min,
   ValidateIf,
@@ -58,4 +60,20 @@ export class CreateActivityDto {
   @IsString()
   @Length(3, 3)
   currency!: string;
+
+  @ApiPropertyOptional({ example: -4.3058, nullable: true })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({}, { message: 'La latitude doit être un nombre.' })
+  @Min(-90)
+  @Max(90)
+  latitude?: number | null;
+
+  @ApiPropertyOptional({ example: 15.3, nullable: true })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({}, { message: 'La longitude doit être un nombre.' })
+  @Min(-180)
+  @Max(180)
+  longitude?: number | null;
 }

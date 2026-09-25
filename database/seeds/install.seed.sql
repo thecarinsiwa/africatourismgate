@@ -395,7 +395,7 @@ INSERT INTO `points_of_interest` (
 
 INSERT INTO `properties` (
   `id`, `destination_id`, `name`, `slug`, `property_type`, `star_rating`,
-  `description`, `address_line`, `created_by_user_id`
+  `description`, `address_line`, `latitude`, `longitude`, `created_by_user_id`
 ) VALUES (
   '00000000-0000-4000-8000-000000002010',
   '00000000-0000-4000-8000-000000002001',
@@ -405,6 +405,8 @@ INSERT INTO `properties` (
   4.0,
   'Sample property for staging and demos',
   'Av. du Tourisme, Gombe, Kinshasa',
+  -4.3058,
+  15.3000,
   '00000000-0000-4000-8000-000000000010'
 );
 
@@ -795,7 +797,7 @@ INSERT INTO `activity_providers` (
 
 INSERT INTO `activities` (
   `id`, `provider_id`, `title`, `description`, `duration_minutes`, `difficulty_level`,
-  `price_cents`, `currency`, `organization_id`, `created_by_user_id`
+  `price_cents`, `currency`, `latitude`, `longitude`, `organization_id`, `created_by_user_id`
 ) VALUES
 (
   '00000000-0000-4000-8000-000000004031',
@@ -806,6 +808,8 @@ INSERT INTO `activities` (
   'moderate',
   4500,
   'USD',
+  -4.3058,
+  15.3000,
   NULL,
   '00000000-0000-4000-8000-000000000010'
 ),
@@ -818,6 +822,8 @@ INSERT INTO `activities` (
   'easy',
   3500,
   'USD',
+  -4.3125,
+  15.2950,
   NULL,
   '00000000-0000-4000-8000-000000000010'
 ),
@@ -830,6 +836,8 @@ INSERT INTO `activities` (
   'easy',
   7500,
   'USD',
+  NULL,
+  NULL,
   '00000000-0000-4000-8000-000000000002',
   '00000000-0000-4000-8000-000000000010'
 );

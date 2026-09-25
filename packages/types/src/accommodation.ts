@@ -15,6 +15,8 @@ export interface Property {
   starRating: string | null;
   description: string | null;
   addressLine: string | null;
+  latitude?: string | number | null;
+  longitude?: string | number | null;
   /** NULL = catalogue partagé (toutes orgs). */
   organizationId: string | null;
   createdAt: string;
@@ -29,6 +31,8 @@ export interface CreatePropertyRequest {
   starRating?: number;
   description?: string;
   addressLine?: string;
+  latitude?: number | string | null;
+  longitude?: number | string | null;
   organizationId?: string | null;
 }
 
@@ -240,6 +244,8 @@ export interface PropertySearchResult {
   minPriceCents: number;
   currency: string;
   amenityCodes: string[];
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 export interface PublicDestination {

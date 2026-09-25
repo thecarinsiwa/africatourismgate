@@ -173,7 +173,18 @@ export class PublicAccommodationsService {
     const destById = new Map(
       destinations
         .filter((d) => !d.deletedAt)
-        .map((d) => [d.id, { name: d.name, countryCode: d.countryCode }] as const),
+        .map(
+          (d) =>
+            [
+              d.id,
+              {
+                name: d.name,
+                countryCode: d.countryCode,
+                latitude: d.latitude,
+                longitude: d.longitude,
+              },
+            ] as const,
+        ),
     );
 
     const propertyIds = propertyEntities.map((p) => p.id);
@@ -233,6 +244,10 @@ export class PublicAccommodationsService {
 
       const starRating = this.parseStarRating(prop.starRating);
 
+      const propLat = this.toCoord(prop.latitude);
+      const propLng = this.toCoord(prop.longitude);
+      const hasPropertyCoords = propLat != null && propLng != null;
+
       results.push({
         id: prop.id,
         slug: prop.slug,
@@ -246,6 +261,8 @@ export class PublicAccommodationsService {
         minPriceCents: pricing.minPriceCents,
         currency: pricing.currency,
         amenityCodes: amenityCodesByProperty.get(prop.id) ?? [],
+        latitude: hasPropertyCoords ? propLat : this.toCoord(dest.latitude),
+        longitude: hasPropertyCoords ? propLng : this.toCoord(dest.longitude),
       });
     }
 

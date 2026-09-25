@@ -21,14 +21,14 @@ export class ActivitySearchResultDto {
 
   @ApiPropertyOptional({
     nullable: true,
-    description: 'Destination latitude for map display',
+    description: 'Product or destination latitude for map display',
     example: -4.3217,
   })
   latitude?: number | null;
 
   @ApiPropertyOptional({
     nullable: true,
-    description: 'Destination longitude for map display',
+    description: 'Product or destination longitude for map display',
     example: 15.3125,
   })
   longitude?: number | null;

@@ -42,6 +42,12 @@ export class Activities extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'currency', length: 3 })
   currency!: string;
 
+  @Column({ type: 'decimal', name: 'latitude', precision: 10, scale: 7, nullable: true })
+  latitude!: string | null;
+
+  @Column({ type: 'decimal', name: 'longitude', precision: 10, scale: 7, nullable: true })
+  longitude!: string | null;
+
   @Column({ type: 'varchar', name: 'organization_id', length: 36, nullable: true })
   organizationId!: string | null;
 

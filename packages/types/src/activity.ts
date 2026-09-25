@@ -47,6 +47,8 @@ export interface Activity {
   difficultyLevel: ActivityDifficultyLevel | null;
   priceCents: number;
   currency: string;
+  latitude?: string | number | null;
+  longitude?: string | number | null;
   /** NULL = catalogue partagé (toutes orgs). */
   organizationId: string | null;
   createdAt: string;
@@ -61,6 +63,8 @@ export interface CreateActivityRequest {
   difficultyLevel?: ActivityDifficultyLevel | null;
   priceCents: number;
   currency: string;
+  latitude?: number | string | null;
+  longitude?: number | string | null;
   organizationId?: string | null;
 }
 

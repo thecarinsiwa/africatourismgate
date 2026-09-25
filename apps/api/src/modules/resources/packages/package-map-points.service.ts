@@ -73,6 +73,21 @@ export class PackageMapPointsService {
       return [];
     }
 
+    const activityLat = this.toCoord(activity.latitude);
+    const activityLng = this.toCoord(activity.longitude);
+    if (activityLat != null && activityLng != null) {
+      return [
+        this.toMapPoint({
+          label: item.label,
+          latitude: activityLat,
+          longitude: activityLng,
+          itemType: item.itemType,
+          itemId: item.itemId,
+          itemName: item.label,
+        }),
+      ];
+    }
+
     const stops = await this.activityItineraryStopsRepository.find({
       where: { activityId: activity.id },
       order: { stopOrder: 'ASC', createdAt: 'ASC' },
@@ -143,6 +158,21 @@ export class PackageMapPointsService {
     });
     if (!property || property.deletedAt) {
       return [];
+    }
+
+    const propertyLat = this.toCoord(property.latitude);
+    const propertyLng = this.toCoord(property.longitude);
+    if (propertyLat != null && propertyLng != null) {
+      return [
+        this.toMapPoint({
+          label: property.name,
+          latitude: propertyLat,
+          longitude: propertyLng,
+          itemType: item.itemType,
+          itemId: item.itemId,
+          itemName: item.label,
+        }),
+      ];
     }
 
     const destination = await this.destinationsRepository.findOne({

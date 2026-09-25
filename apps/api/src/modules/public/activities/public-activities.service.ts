@@ -176,6 +176,7 @@ export class PublicActivitiesService {
       );
 
       const dest = destinationById.get(provider.destinationId);
+      const mapCoords = this.resolveActivityMapCoords(activity, dest);
 
       const result: ActivitySearchResultDto = {
         id: activity.id,
@@ -184,8 +185,8 @@ export class PublicActivitiesService {
         priceCents: activity.priceCents,
         currency: activity.currency,
         destination: dest?.name ?? '',
-        latitude: this.toCoord(dest?.latitude),
-        longitude: this.toCoord(dest?.longitude),
+        latitude: mapCoords.latitude,
+        longitude: mapCoords.longitude,
         providerName: provider.name,
         availableSchedulesCount: availableSchedules.length,
         imageUrl: imageUrlByActivityId.get(activity.id) ?? null,
@@ -305,6 +306,7 @@ export class PublicActivitiesService {
 
       const dest = destinationById.get(provider.destinationId);
       const destinationName = dest?.name ?? query.destination?.trim() ?? '';
+      const mapCoords = this.resolveActivityMapCoords(activity, dest);
 
       results.push({
         id: activity.id,
@@ -313,8 +315,8 @@ export class PublicActivitiesService {
         priceCents: activity.priceCents,
         currency: activity.currency,
         destination: destinationName,
-        latitude: this.toCoord(dest?.latitude),
-        longitude: this.toCoord(dest?.longitude),
+        latitude: mapCoords.latitude,
+        longitude: mapCoords.longitude,
         providerName: provider.name,
         availableSchedulesCount: availableSchedules.length,
         nextStartDatetime: this.toIsoDatetime(availableSchedules[0].startDatetime),
@@ -705,6 +707,21 @@ export class PublicActivitiesService {
 
   private remainingPlaces(schedule: ActivitySchedules): number {
     return schedule.capacity - schedule.bookedCount;
+  }
+
+  private resolveActivityMapCoords(
+    activity: Activities,
+    destination: Destinations | undefined,
+  ): { latitude: number | null; longitude: number | null } {
+    const activityLat = this.toCoord(activity.latitude);
+    const activityLng = this.toCoord(activity.longitude);
+    if (activityLat != null && activityLng != null) {
+      return { latitude: activityLat, longitude: activityLng };
+    }
+    return {
+      latitude: this.toCoord(destination?.latitude),
+      longitude: this.toCoord(destination?.longitude),
+    };
   }
 
   private toCoord(value: string | null | undefined): number | null {

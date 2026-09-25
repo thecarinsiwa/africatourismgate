@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class PropertySearchResultDto {
   @ApiProperty({ format: 'uuid' })
@@ -36,4 +36,10 @@ export class PropertySearchResultDto {
 
   @ApiProperty({ type: [String] })
   amenityCodes!: string[];
+
+  @ApiPropertyOptional({ nullable: true, example: -4.3058 })
+  latitude?: number | null;
+
+  @ApiPropertyOptional({ nullable: true, example: 15.3 })
+  longitude?: number | null;
 }

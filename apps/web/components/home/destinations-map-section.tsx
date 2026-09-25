@@ -65,7 +65,7 @@ function hasMapCoordinates(
   );
 }
 
-/** Spread product pins around a destination center so they remain readable. */
+/** Spread product pins around a destination center when product coords are missing. */
 function offsetAround(
   latitude: number,
   longitude: number,
@@ -84,6 +84,18 @@ function offsetAround(
     latitude: latitude + radiusDeg * Math.cos(angle),
     longitude: longitude + (radiusDeg * Math.sin(angle)) / Math.cos(latRad),
   };
+}
+
+function hasProductCoordinates(
+  latitude: number | null | undefined,
+  longitude: number | null | undefined,
+): latitude is number {
+  return (
+    typeof latitude === 'number' &&
+    Number.isFinite(latitude) &&
+    typeof longitude === 'number' &&
+    Number.isFinite(longitude)
+  );
 }
 
 function formatPriceLabel(priceCents: number, currency: string, locale: string): string {
@@ -202,16 +214,18 @@ export function DestinationsMapSection() {
         const hotels = hotelsResult.data ?? [];
         const activities = activitiesResult.data ?? [];
         const total = hotels.length + activities.length;
-        let index = 0;
+        let fallbackIndex = 0;
         const next: DestinationMapMarker[] = [];
 
         for (const hotel of hotels) {
-          const point = offsetAround(
-            destination.latitude,
-            destination.longitude,
-            index,
-            total,
-          );
+          const point = hasProductCoordinates(hotel.latitude, hotel.longitude)
+            ? { latitude: hotel.latitude, longitude: hotel.longitude! }
+            : offsetAround(
+                destination.latitude,
+                destination.longitude,
+                fallbackIndex++,
+                total,
+              );
           next.push({
             id: `hotel-${hotel.id}`,
             kind: 'hotel',
@@ -223,16 +237,17 @@ export function DestinationsMapSection() {
             viewLabel: viewHotelLabel,
             fillColor: HOTEL_COLOR,
           });
-          index += 1;
         }
 
         for (const activity of activities) {
-          const point = offsetAround(
-            destination.latitude,
-            destination.longitude,
-            index,
-            total,
-          );
+          const point = hasProductCoordinates(activity.latitude, activity.longitude)
+            ? { latitude: activity.latitude, longitude: activity.longitude! }
+            : offsetAround(
+                destination.latitude,
+                destination.longitude,
+                fallbackIndex++,
+                total,
+              );
           next.push({
             id: `activity-${activity.id}`,
             kind: 'activity',
@@ -248,7 +263,6 @@ export function DestinationsMapSection() {
             viewLabel: viewActivityLabel,
             fillColor: ACTIVITY_COLOR,
           });
-          index += 1;
         }
 
         setProductMarkers(next);

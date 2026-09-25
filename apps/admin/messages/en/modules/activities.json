@@ -23,6 +23,13 @@
     "difficulty": "Difficulty",
     "priceCents": "Price (cents)",
     "descriptionPlaceholder": "Describe the activity, itinerary, conditions…",
+    "geographyTitle": "Meeting point",
+    "geographyIntro": "Place the activity meeting / start point so it appears on the destinations map.",
+    "mapPicker": "Location map",
+    "mapPickerHint": "Click the map or drag the marker to set latitude and longitude.",
+    "mapPickerAria": "Interactive map to select activity coordinates",
+    "latitudeHint": "Optional, -90 to 90",
+    "longitudeHint": "Optional, -180 to 180",
     "validation": {
       "providerRequired": "Partner is required.",
       "titleRequired": "Title is required.",
