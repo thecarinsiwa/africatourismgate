@@ -36,8 +36,6 @@ export type ActivityFormValues = {
   longitude: string;
 };
 
-const DESCRIPTION_MAX_LENGTH = 5000;
-
 const defaultValues: ActivityFormValues = {
   providerId: '',
   title: '',
