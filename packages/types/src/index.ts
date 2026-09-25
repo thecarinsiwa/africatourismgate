@@ -261,6 +261,8 @@ export type {
   ReviewBookingPaymentProofRequest,
   BookingManifestEntry,
   BookingManifestSex,
+  BookingEmergencyContact,
+  UpdateBookingEmergencyContactRequest,
   CreateBookingManifestEntryRequest,
   UpdateBookingManifestEntryRequest,
   BookingDetail,

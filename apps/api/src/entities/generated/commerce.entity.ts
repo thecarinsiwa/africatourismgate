@@ -43,6 +43,21 @@ export class Bookings extends BaseAuditEntity {
   })
   preferredPaymentMethod!: 'stripe' | 'cash' | 'bank_transfer' | 'mobile_money' | null;
 
+  @Column({ type: 'varchar', name: 'emergency_contact_name', length: 200, nullable: true })
+  emergencyContactName!: string | null;
+
+  @Column({ type: 'varchar', name: 'emergency_contact_phone', length: 40, nullable: true })
+  emergencyContactPhone!: string | null;
+
+  @Column({ type: 'varchar', name: 'emergency_contact_email', length: 255, nullable: true })
+  emergencyContactEmail!: string | null;
+
+  @Column({ type: 'varchar', name: 'emergency_contact_country', length: 100, nullable: true })
+  emergencyContactCountry!: string | null;
+
+  @Column({ type: 'varchar', name: 'emergency_contact_address', length: 500, nullable: true })
+  emergencyContactAddress!: string | null;
+
 }
 
 @Entity('booking_items')
