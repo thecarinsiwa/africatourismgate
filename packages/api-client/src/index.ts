@@ -427,6 +427,7 @@ import type {
   UsersListQuery,
   PublicSiteMaintenance,
   ResolvedBookingItemTypeModes,
+  ResolvedCatalogProducts,
   ResolvedWebPaymentMethods,
 } from '@africatourismgate/types';
 export type { PaginationQuery } from '@africatourismgate/types';
@@ -1373,6 +1374,19 @@ export class ApiClient {
     const q = params.toString();
     return this.request<ResolvedWebPaymentMethods>(
       `/organization-settings/public/payment-methods${q ? `?${q}` : ''}`,
+    );
+  }
+
+  getPublicCatalogProducts(query?: {
+    organizationSlug?: string;
+  }): Promise<ResolvedCatalogProducts> {
+    const params = new URLSearchParams();
+    if (query?.organizationSlug) {
+      params.set('organizationSlug', query.organizationSlug);
+    }
+    const q = params.toString();
+    return this.request<ResolvedCatalogProducts>(
+      `/organization-settings/public/catalog-products${q ? `?${q}` : ''}`,
     );
   }
 

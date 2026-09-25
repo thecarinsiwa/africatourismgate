@@ -14,14 +14,17 @@ import type {
   PublicSiteMaintenance,
   ResolvedBookingDeposits,
   ResolvedBookingItemTypeModes,
+  ResolvedCatalogProducts,
   ResolvedWebPaymentMethods,
 } from '@africatourismgate/types';
 import {
   DEFAULT_BOOKING_DEPOSITS,
   DEFAULT_BOOKING_ITEM_TYPE_MODES,
+  DEFAULT_CATALOG_PRODUCTS,
   DEFAULT_WEB_PAYMENT_METHODS,
   normalizeBookingDeposits,
   normalizeBookingItemTypeModes,
+  normalizeCatalogProducts,
   normalizeWebPaymentMethods,
 } from '@africatourismgate/types';
 import { OrgScopeService, PLATFORM_ORG_ID } from '../../../common/org-scope/org-scope.service';
@@ -43,6 +46,7 @@ import { PublicBrandingDto } from './dto/public-branding.dto';
 import { PublicContactDto } from './dto/public-contact.dto';
 import { PublicBookingModesDto } from './dto/public-booking-modes.dto';
 import { PublicPaymentMethodsDto } from './dto/public-payment-methods.dto';
+import { PublicCatalogProductsDto } from './dto/public-catalog-products.dto';
 import { PublicSiteMaintenanceDto } from './dto/public-site-maintenance.dto';
 import { OrganizationSettingsListQueryDto } from './dto/organization-settings-list-query.dto';
 import { validateSettingValue } from './validate-setting-value';
@@ -364,6 +368,13 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
     return this.getResolvedWebPaymentMethods(organization.id);
   }
 
+  async findPublicCatalogProducts(
+    organizationSlug?: string,
+  ): Promise<PublicCatalogProductsDto> {
+    const organization = await this.resolvePublicOrganization(organizationSlug);
+    return this.getResolvedCatalogProducts(organization.id);
+  }
+
   async findPublicSiteMaintenance(
     organizationSlug?: string,
     locale?: string,
@@ -419,6 +430,31 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
 
     return normalizeWebPaymentMethods(
       setting.settingValue as Partial<ResolvedWebPaymentMethods>,
+    );
+  }
+
+  async getResolvedCatalogProducts(
+    organizationId: string = PLATFORM_ORG_ID,
+  ): Promise<ResolvedCatalogProducts> {
+    const setting = await this.settingsRepository.findOne({
+      where: {
+        organizationId,
+        settingGroup: 'catalog',
+        settingKey: 'products_enabled',
+        deletedAt: IsNull(),
+      },
+    });
+
+    if (
+      !setting?.settingValue ||
+      typeof setting.settingValue !== 'object' ||
+      Array.isArray(setting.settingValue)
+    ) {
+      return { ...DEFAULT_CATALOG_PRODUCTS };
+    }
+
+    return normalizeCatalogProducts(
+      setting.settingValue as Partial<ResolvedCatalogProducts>,
     );
   }
 

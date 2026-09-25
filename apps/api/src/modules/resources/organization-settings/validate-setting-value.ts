@@ -6,10 +6,12 @@ import {
 } from './auth-visual.constants';
 import {
   BOOKING_ITEM_TYPE_KEYS,
+  CATALOG_PRODUCT_KEYS,
   WEB_PAYMENT_METHOD_KEYS,
   isBookingMode,
   normalizeBookingDeposits,
   normalizeBookingItemTypeModes,
+  normalizeCatalogProducts,
   normalizeWebPaymentMethods,
   type BookingMode,
 } from '@africatourismgate/types';
@@ -317,6 +319,21 @@ export function validateSettingValue(
         );
       }
       return normalized;
+    }
+    case 'products_enabled': {
+      const flags: Partial<Record<(typeof CATALOG_PRODUCT_KEYS)[number], boolean>> =
+        {};
+      for (const key of CATALOG_PRODUCT_KEYS) {
+        const flag = value[key];
+        if (flag === undefined || flag === null) {
+          continue;
+        }
+        if (typeof flag !== 'boolean') {
+          throw new BadRequestException(`${key} doit être un booléen.`);
+        }
+        flags[key] = flag;
+      }
+      return normalizeCatalogProducts(flags);
     }
     case 'deposits': {
       const enabled = value.enabled;
