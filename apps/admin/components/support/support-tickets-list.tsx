@@ -145,7 +145,7 @@ export function SupportTicketsList() {
       });
       setState({
         status: 'ready',
-        tickets: result.data,
+        tickets: result.data as AdminSupportTicketListItem[],
         total: result.meta.total,
         totalPages: result.meta.totalPages,
       });

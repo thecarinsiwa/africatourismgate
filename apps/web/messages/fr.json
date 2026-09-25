@@ -262,7 +262,8 @@
     "backToCategory": "Retour au thème",
     "backToHub": "Retour au centre d'aide",
     "formTitle": "Contacter le support",
-    "formSubtitle": "Décrivez votre demande : nous créons un ticket et vous répondons par e-mail.",
+    "formSubtitle": "Décrivez votre demande : nous créons un ticket et vous pourrez suivre les réponses dans votre compte.",
+    "myTicketsLink": "Voir mes tickets support",
     "signInPrompt": "Connectez-vous pour envoyer une demande au support.",
     "signInCta": "Se connecter",
     "checkingSession": "Vérification de la session…",
@@ -273,7 +274,9 @@
     "submit": "Envoyer la demande",
     "submitting": "Envoi en cours…",
     "successTitle": "Demande enregistrée",
-    "successMessage": "Merci. Votre ticket a été créé. Conservez cette référence : {ticketId}. Notre équipe vous répondra sous 24 à 48 h ouvrées.",
+    "successMessage": "Merci. Votre ticket a été créé. Notre équipe vous répondra sous 24 à 48 h ouvrées — suivez le fil dans votre compte.",
+    "successViewTicket": "Ouvrir mon ticket",
+    "successViewAll": "Voir tous mes tickets",
     "subjectRequired": "Le sujet est obligatoire.",
     "messageTooShort": "Le message doit contenir au moins 10 caractères.",
     "submitError": "Impossible d'envoyer votre demande. Veuillez réessayer.",
@@ -1469,6 +1472,14 @@
       "paymentMethods": {
         "title": "Moyens de paiement",
         "description": "Gérez vos moyens de paiement enregistrés."
+      },
+      "support": {
+        "title": "Mes tickets support",
+        "description": "Consultez vos demandes et les réponses de l'équipe support."
+      },
+      "supportDetail": {
+        "title": "Ticket support",
+        "description": "Fil de discussion avec l'équipe support."
       }
     },
     "nav": {
@@ -1477,7 +1488,36 @@
       "reservations": "Réservations",
       "loyalty": "Fidélité OneKey",
       "paymentMethods": "Moyens de paiement",
+      "tickets": "Mes tickets",
       "help": "Aide"
+    },
+    "support": {
+      "detailTitle": "Ticket support",
+      "listSubtitle": "Vos demandes et les réponses de l'équipe.",
+      "empty": "Vous n'avez pas encore de ticket support.",
+      "emptyHint": "Ouvrez une demande depuis le centre d'aide : vous pourrez suivre les réponses ici.",
+      "newTicket": "Nouvelle demande",
+      "loadError": "Impossible de charger vos tickets.",
+      "notFound": "Ticket introuvable.",
+      "backToList": "Retour à mes tickets",
+      "closedHint": "Ce ticket est fermé : vous ne pouvez plus y répondre.",
+      "loading": "Chargement du fil…",
+      "emptyThread": "Aucun message pour le moment.",
+      "threadAria": "Conversation support",
+      "authorStaff": "Support",
+      "authorCustomer": "Vous",
+      "replyTitle": "Votre réponse",
+      "replyLabel": "Message",
+      "replyPlaceholder": "Écrivez votre message (10 caractères minimum)…",
+      "sendReply": "Envoyer",
+      "replyMinLength": "Le message doit contenir au moins 10 caractères.",
+      "sendError": "Impossible d'envoyer votre message. Réessayez.",
+      "status": {
+        "open": "Ouvert",
+        "pending": "En attente",
+        "resolved": "Résolu",
+        "closed": "Fermé"
+      }
     },
     "profile": {
       "email": "E-mail",

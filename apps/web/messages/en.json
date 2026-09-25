@@ -262,7 +262,8 @@
     "backToCategory": "Back to topic",
     "backToHub": "Back to help centre",
     "formTitle": "Contact support",
-    "formSubtitle": "Describe your request: we open a ticket and reply by email.",
+    "formSubtitle": "Describe your request: we open a ticket and you can follow replies in your account.",
+    "myTicketsLink": "View my support tickets",
     "signInPrompt": "Sign in to send a request to support.",
     "signInCta": "Sign in",
     "checkingSession": "Checking session…",
@@ -273,7 +274,9 @@
     "submit": "Send request",
     "submitting": "Sending…",
     "successTitle": "Request received",
-    "successMessage": "Thank you. Your ticket was created. Keep this reference: {ticketId}. Our team will reply within 1–2 business days.",
+    "successMessage": "Thank you. Your ticket was created. Our team will reply within 1–2 business days — follow the thread in your account.",
+    "successViewTicket": "Open my ticket",
+    "successViewAll": "View all my tickets",
     "subjectRequired": "Subject is required.",
     "messageTooShort": "Message must be at least 10 characters.",
     "submitError": "Could not send your request. Please try again.",
@@ -1469,6 +1472,14 @@
       "paymentMethods": {
         "title": "Payment methods",
         "description": "Manage your saved payment methods."
+      },
+      "support": {
+        "title": "My support tickets",
+        "description": "View your requests and replies from the support team."
+      },
+      "supportDetail": {
+        "title": "Support ticket",
+        "description": "Conversation thread with the support team."
       }
     },
     "nav": {
@@ -1477,7 +1488,36 @@
       "reservations": "Bookings",
       "loyalty": "OneKey loyalty",
       "paymentMethods": "Payment methods",
+      "tickets": "My tickets",
       "help": "Help"
+    },
+    "support": {
+      "detailTitle": "Support ticket",
+      "listSubtitle": "Your requests and replies from the team.",
+      "empty": "You do not have any support tickets yet.",
+      "emptyHint": "Open a request from the help centre — you can follow replies here.",
+      "newTicket": "New request",
+      "loadError": "Could not load your tickets.",
+      "notFound": "Ticket not found.",
+      "backToList": "Back to my tickets",
+      "closedHint": "This ticket is closed: you can no longer reply.",
+      "loading": "Loading conversation…",
+      "emptyThread": "No messages yet.",
+      "threadAria": "Support conversation",
+      "authorStaff": "Support",
+      "authorCustomer": "You",
+      "replyTitle": "Your reply",
+      "replyLabel": "Message",
+      "replyPlaceholder": "Write your message (at least 10 characters)…",
+      "sendReply": "Send",
+      "replyMinLength": "The message must be at least 10 characters.",
+      "sendError": "Could not send your message. Please try again.",
+      "status": {
+        "open": "Open",
+        "pending": "Pending",
+        "resolved": "Resolved",
+        "closed": "Closed"
+      }
     },
     "profile": {
       "email": "Email",

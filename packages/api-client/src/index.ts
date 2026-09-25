@@ -138,6 +138,7 @@ import type {
   AdminSupportTicketDetail,
   AdminSupportTicketListItem,
   CustomerSupportTicketDetail,
+  SupportTicket,
   SupportTicketCreated,
   SupportTicketsListQuery,
   UpdateSupportTicketRequest,
@@ -3103,8 +3104,13 @@ export class ApiClient {
   listSupportTickets(
     query?: SupportTicketsListQuery,
     requestOptions?: RequestOptions,
-  ): Promise<PaginatedResponse<AdminSupportTicketListItem>> {
-    return fetchPaginated<AdminSupportTicketListItem>(this, '/support-tickets', query, requestOptions);
+  ): Promise<PaginatedResponse<SupportTicket | AdminSupportTicketListItem>> {
+    return fetchPaginated<SupportTicket | AdminSupportTicketListItem>(
+      this,
+      '/support-tickets',
+      query,
+      requestOptions,
+    );
   }
 
   getSupportTicket(

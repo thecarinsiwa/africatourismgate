@@ -819,6 +819,36 @@ export type Translations = {
       reservations: string;
       loyalty: string;
       paymentMethods: string;
+      tickets: string;
+      help: string;
+    };
+    support: {
+      detailTitle: string;
+      listSubtitle: string;
+      empty: string;
+      emptyHint: string;
+      newTicket: string;
+      loadError: string;
+      notFound: string;
+      backToList: string;
+      closedHint: string;
+      loading: string;
+      emptyThread: string;
+      threadAria: string;
+      authorStaff: string;
+      authorCustomer: string;
+      replyTitle: string;
+      replyLabel: string;
+      replyPlaceholder: string;
+      sendReply: string;
+      replyMinLength: string;
+      sendError: string;
+      status: {
+        open: string;
+        pending: string;
+        resolved: string;
+        closed: string;
+      };
     };
     profile: {
       email: string;

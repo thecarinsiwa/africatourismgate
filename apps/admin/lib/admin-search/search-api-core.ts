@@ -1,4 +1,5 @@
 import type { ApiClient } from '@africatourismgate/api-client';
+import type { AdminSupportTicketListItem } from '@africatourismgate/types';
 import { withApiClient } from '../auth/api';
 import { formatMoney } from '../format-money';
 import {
@@ -197,17 +198,20 @@ export async function searchAdminSupportTickets(
     ),
   );
 
-  return result.data.map((ticket) => ({
-    id: buildAdminSearchResultId('supportTickets', ticket.id),
-    sourceId: 'supportTickets' as const,
-    group: 'support' as const,
-    title: ticket.subject,
-    subtitle:
-      ticket.customerEmail?.trim() ||
-      ticket.customerFirstName?.trim() ||
-      ticket.status,
-    href: adminSearchDeepLinks.supportTicket(ticket.id),
-  }));
+  return result.data.map((ticket) => {
+    const adminTicket = ticket as AdminSupportTicketListItem;
+    return {
+      id: buildAdminSearchResultId('supportTickets', ticket.id),
+      sourceId: 'supportTickets' as const,
+      group: 'support' as const,
+      title: ticket.subject,
+      subtitle:
+        adminTicket.customerEmail?.trim() ||
+        adminTicket.customerFirstName?.trim() ||
+        ticket.status,
+      href: adminSearchDeepLinks.supportTicket(ticket.id),
+    };
+  });
 }
 
 export async function searchAdminPromotions(

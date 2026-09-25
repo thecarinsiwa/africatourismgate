@@ -262,7 +262,8 @@
     "backToCategory": "Volver al tema",
     "backToHub": "Volver al centro de ayuda",
     "formTitle": "Contactar soporte",
-    "formSubtitle": "Describa su solicitud: abrimos un ticket y respondemos por correo.",
+    "formSubtitle": "Describa su solicitud: abrimos un ticket y podrá seguir las respuestas en su cuenta.",
+    "myTicketsLink": "Ver mis tickets de soporte",
     "signInPrompt": "Inicie sesión para enviar una solicitud al soporte.",
     "signInCta": "Iniciar sesión",
     "checkingSession": "Comprobando sesión…",
@@ -273,7 +274,9 @@
     "submit": "Enviar solicitud",
     "submitting": "Enviando…",
     "successTitle": "Solicitud recibida",
-    "successMessage": "Gracias. Su ticket fue creado. Guarde esta referencia: {ticketId}. Nuestro equipo responderá en 1–2 días hábiles.",
+    "successMessage": "Gracias. Su ticket fue creado. Nuestro equipo responderá en 1–2 días hábiles — siga el hilo en su cuenta.",
+    "successViewTicket": "Abrir mi ticket",
+    "successViewAll": "Ver todos mis tickets",
     "subjectRequired": "El asunto es obligatorio.",
     "messageTooShort": "El mensaje debe tener al menos 10 caracteres.",
     "submitError": "No se pudo enviar su solicitud. Inténtelo de nuevo.",
@@ -1469,6 +1472,14 @@
       "paymentMethods": {
         "title": "Métodos de pago",
         "description": "Gestione sus métodos de pago guardados."
+      },
+      "support": {
+        "title": "Mis tickets de soporte",
+        "description": "Consulte sus solicitudes y las respuestas del equipo de soporte."
+      },
+      "supportDetail": {
+        "title": "Ticket de soporte",
+        "description": "Hilo de conversación con el equipo de soporte."
       }
     },
     "nav": {
@@ -1477,7 +1488,36 @@
       "reservations": "Reservas",
       "loyalty": "Fidelidad OneKey",
       "paymentMethods": "Métodos de pago",
+      "tickets": "Mis tickets",
       "help": "Ayuda"
+    },
+    "support": {
+      "detailTitle": "Ticket de soporte",
+      "listSubtitle": "Sus solicitudes y las respuestas del equipo.",
+      "empty": "Aún no tiene tickets de soporte.",
+      "emptyHint": "Abra una solicitud desde el centro de ayuda: podrá seguir las respuestas aquí.",
+      "newTicket": "Nueva solicitud",
+      "loadError": "No se pudieron cargar sus tickets.",
+      "notFound": "Ticket no encontrado.",
+      "backToList": "Volver a mis tickets",
+      "closedHint": "Este ticket está cerrado: ya no puede responder.",
+      "loading": "Cargando conversación…",
+      "emptyThread": "Aún no hay mensajes.",
+      "threadAria": "Conversación de soporte",
+      "authorStaff": "Soporte",
+      "authorCustomer": "Usted",
+      "replyTitle": "Su respuesta",
+      "replyLabel": "Mensaje",
+      "replyPlaceholder": "Escriba su mensaje (mínimo 10 caracteres)…",
+      "sendReply": "Enviar",
+      "replyMinLength": "El mensaje debe tener al menos 10 caracteres.",
+      "sendError": "No se pudo enviar su mensaje. Inténtelo de nuevo.",
+      "status": {
+        "open": "Abierto",
+        "pending": "Pendiente",
+        "resolved": "Resuelto",
+        "closed": "Cerrado"
+      }
     },
     "profile": {
       "email": "Correo",

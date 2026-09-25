@@ -122,9 +122,21 @@ export function SupportTicketForm() {
         <h3 className="text-base font-semibold text-atg-fg">
           {t('successTitle')}
         </h3>
-        <p className="mt-2 text-sm text-atg-muted">
-          {t('successMessage', { ticketId: created.ticket.id })}
-        </p>
+        <p className="mt-2 text-sm text-atg-muted">{t('successMessage')}</p>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <Link
+            href={`/account/support/${created.ticket.id}`}
+            className="inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-[var(--atg-primary-hover)]"
+          >
+            {t('successViewTicket')}
+          </Link>
+          <Link
+            href="/account/support"
+            className="inline-flex rounded-lg border border-atg-border px-4 py-2 text-sm font-medium text-atg-fg hover:bg-atg-surface"
+          >
+            {t('successViewAll')}
+          </Link>
+        </div>
       </Card>
     );
   }
