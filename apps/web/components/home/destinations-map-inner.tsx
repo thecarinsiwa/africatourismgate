@@ -218,7 +218,17 @@ function renderMarkers(
       });
     } else {
       marker.on('click', () => {
-        marker.openPopup();
+        const productZoom = isCompact ? 14 : 15;
+        const currentZoom = map.getZoom();
+        if (currentZoom < productZoom - 0.4) {
+          map.flyTo(latLng, productZoom, { duration: 0.7 });
+          map.once('moveend', () => {
+            marker.openPopup();
+          });
+        } else {
+          map.panTo(latLng, { animate: true, duration: 0.35 });
+          marker.openPopup();
+        }
       });
     }
 
