@@ -53,6 +53,11 @@
     "title": "Admin search",
     "placeholder": "Search pages, help, users, bookings…",
     "empty": "No results",
+    "emptyHint": "Try these shortcuts instead:",
+    "minQueryHint": "Type at least {count} characters to search business data.",
+    "suggestionsTitle": "Suggestions",
+    "suggestionsAria": "Page suggestions",
+    "loading": "Searching…",
     "shortcutHint": "Ctrl+F · ⌘F (alias Ctrl/⌘+K) — ↑↓ to navigate, Enter to open",
     "close": "Close search",
     "resultsLabel": "Search results",
@@ -60,6 +65,11 @@
     "partialError": "Some sources could not be loaded.",
     "groupError": "Partial error",
     "openLabel": "Open search",
+    "quickLinks": {
+      "dashboard": "Dashboard",
+      "help": "Help centre",
+      "users": "Users"
+    },
     "groups": {
       "pages": "Pages",
       "help": "Help",

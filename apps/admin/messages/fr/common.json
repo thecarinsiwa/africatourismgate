@@ -53,6 +53,11 @@
     "title": "Recherche admin",
     "placeholder": "Rechercher pages, aide, utilisateurs, réservations…",
     "empty": "Aucun résultat",
+    "emptyHint": "Essayez plutôt ces raccourcis :",
+    "minQueryHint": "Tapez au moins {count} caractères pour chercher dans les données métier.",
+    "suggestionsTitle": "Suggestions",
+    "suggestionsAria": "Suggestions de pages",
+    "loading": "Recherche en cours…",
     "shortcutHint": "Ctrl+F · ⌘F (alias Ctrl/⌘+K) — ↑↓ pour naviguer, Entrée pour ouvrir",
     "close": "Fermer la recherche",
     "resultsLabel": "Résultats de recherche",
@@ -60,6 +65,11 @@
     "partialError": "Certaines sources n’ont pas pu être chargées.",
     "groupError": "Erreur partielle",
     "openLabel": "Ouvrir la recherche",
+    "quickLinks": {
+      "dashboard": "Tableau de bord",
+      "help": "Centre d'aide",
+      "users": "Utilisateurs"
+    },
     "groups": {
       "pages": "Pages",
       "help": "Aide",

@@ -53,6 +53,11 @@
     "title": "Búsqueda admin",
     "placeholder": "Buscar páginas, ayuda, usuarios, reservas…",
     "empty": "Sin resultados",
+    "emptyHint": "Pruebe estos atajos en su lugar:",
+    "minQueryHint": "Escriba al menos {count} caracteres para buscar datos de negocio.",
+    "suggestionsTitle": "Sugerencias",
+    "suggestionsAria": "Sugerencias de páginas",
+    "loading": "Buscando…",
     "shortcutHint": "Ctrl+F · ⌘F (alias Ctrl/⌘+K) — ↑↓ para navegar, Entrar para abrir",
     "close": "Cerrar la búsqueda",
     "resultsLabel": "Resultados de búsqueda",
@@ -60,6 +65,11 @@
     "partialError": "Algunas fuentes no se pudieron cargar.",
     "groupError": "Error parcial",
     "openLabel": "Abrir la búsqueda",
+    "quickLinks": {
+      "dashboard": "Panel",
+      "help": "Centro de ayuda",
+      "users": "Usuarios"
+    },
     "groups": {
       "pages": "Páginas",
       "help": "Ayuda",
