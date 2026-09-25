@@ -804,6 +804,7 @@
     "productsError": "No se pudieron cargar los productos.",
     "noProducts": "Todavía no hay productos aquí.",
     "productsCount": "{count, plural, one {# producto} other {# productos}}",
+    "destinationsCount": "{count, plural, one {# destino} other {# destinos}}",
     "showAllDestinations": "Todos los destinos",
     "carouselTitle": "Productos",
     "carouselAria": "Carrusel de productos del destino",

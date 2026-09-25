@@ -48,6 +48,8 @@ export type DestinationMapMarker = {
   imageUrl?: string | null;
   /** ISO 3166-1 alpha-2 country code (destination markers). */
   countryCode?: string;
+  /** Destinations represented by this marker (country aggregate). */
+  count?: number;
 };
 
 const DESTINATION_COLOR = 'var(--atg-primary, #c8102e)';
@@ -148,6 +150,7 @@ export function DestinationsMapSection() {
   const [selectedDestinationId, setSelectedDestinationId] = useState<string | null>(
     null,
   );
+  const [expandedCountryCode, setExpandedCountryCode] = useState<string | null>(null);
   const [productMarkers, setProductMarkers] = useState<DestinationMapMarker[]>([]);
   const [productsLoading, setProductsLoading] = useState(false);
   const [productsError, setProductsError] = useState(false);
@@ -187,7 +190,7 @@ export function DestinationsMapSection() {
   const activityKindLabel = t('activityKind');
   const destinationKindLabel = t('destinationKind');
 
-  const destinationMarkers = useMemo<DestinationMapMarker[]>(() => {
+  const destinationPins = useMemo<DestinationMapMarker[]>(() => {
     return destinations.filter(hasMapCoordinates).map((destination) => ({
       id: destination.id,
       kind: 'destination' as const,
@@ -202,6 +205,54 @@ export function DestinationsMapSection() {
       kindLabel: destinationKindLabel,
     }));
   }, [destinationKindLabel, destinations, locale, viewDestinationLabel]);
+
+  /** One marker per country with destination count (overview). */
+  const countryMarkers = useMemo<DestinationMapMarker[]>(() => {
+    const byCountry = new Map<string, DestinationMapMarker[]>();
+    for (const pin of destinationPins) {
+      const code = pin.countryCode ?? '';
+      if (!code) {
+        continue;
+      }
+      const group = byCountry.get(code) ?? [];
+      group.push(pin);
+      byCountry.set(code, group);
+    }
+
+    return Array.from(byCountry.entries()).map(([code, members]) => {
+      const primary = members[0];
+      const count = members.length;
+      const latitude =
+        members.reduce((sum, m) => sum + m.latitude, 0) / count;
+      const longitude =
+        members.reduce((sum, m) => sum + m.longitude, 0) / count;
+      const countryLabel = formatCountryName(code, locale);
+
+      return {
+        ...primary,
+        id: count === 1 ? primary.id : `country:${code}`,
+        title: count === 1 ? primary.title : countryLabel,
+        subtitle: countryLabel,
+        countryCode: code,
+        latitude,
+        longitude,
+        href:
+          count === 1
+            ? primary.href
+            : siteSearchDeepLinks.hotelsByDestination(primary.title),
+        count,
+      };
+    });
+  }, [destinationPins, locale]);
+
+  const destinationMarkers = useMemo<DestinationMapMarker[]>(() => {
+    if (expandedCountryCode) {
+      return destinationPins.filter(
+        (pin) => pin.countryCode === expandedCountryCode,
+      );
+    }
+    return countryMarkers;
+  }, [countryMarkers, destinationPins, expandedCountryCode]);
 
   const selectedDestination = useMemo(() => {
     if (!selectedDestinationId) {
@@ -308,6 +359,16 @@ export function DestinationsMapSection() {
       if (marker.kind !== 'destination') {
         return;
       }
+      if ((marker.count ?? 1) > 1 && marker.countryCode) {
+        setExpandedCountryCode(marker.countryCode);
+        setSelectedDestinationId(null);
+        setProductMarkers([]);
+        setProductsError(false);
+        setProductsLoading(false);
+        setActiveProductId(null);
+        return;
+      }
+      setExpandedCountryCode(marker.countryCode ?? null);
       setSelectedDestinationId(marker.id);
       setActiveProductId(null);
       void loadProductsForDestination(marker);
@@ -317,6 +378,7 @@ export function DestinationsMapSection() {
 
   const handleResetView = useCallback(() => {
     setSelectedDestinationId(null);
+    setExpandedCountryCode(null);
     setProductMarkers([]);
     setProductsError(false);
     setProductsLoading(false);
@@ -457,7 +519,7 @@ export function DestinationsMapSection() {
                 className={MAP_HEIGHT_CLASS}
               />
 
-              {selectedDestination ? (
+              {selectedDestination || expandedCountryCode ? (
                 <div className="pointer-events-none absolute inset-x-0 top-0 z-[500] p-2 sm:p-3">
                   <div className="pointer-events-auto flex max-w-full items-center gap-2 rounded-full border border-atg-border bg-white/95 py-1.5 pl-1.5 pr-3 shadow-md backdrop-blur-md dark:bg-zinc-900/95 sm:max-w-md">
                     <button
@@ -482,16 +544,22 @@ export function DestinationsMapSection() {
                     </button>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-xs font-semibold leading-tight text-zinc-900 dark:text-zinc-50 sm:text-sm">
-                        {selectedDestination.title}
+                        {selectedDestination
+                          ? selectedDestination.title
+                          : formatCountryName(expandedCountryCode!, locale)}
                       </p>
                       <p className="truncate text-[10px] font-medium leading-tight text-zinc-500 dark:text-zinc-400 sm:text-xs">
-                        {productsLoading
-                          ? t('loadingProducts')
-                          : productsError
-                            ? t('productsError')
-                            : productMarkers.length === 0
-                              ? t('noProducts')
-                              : t('productsCount', { count: productMarkers.length })}
+                        {selectedDestination
+                          ? productsLoading
+                            ? t('loadingProducts')
+                            : productsError
+                              ? t('productsError')
+                              : productMarkers.length === 0
+                                ? t('noProducts')
+                                : t('productsCount', { count: productMarkers.length })
+                          : t('destinationsCount', {
+                              count: destinationMarkers.length,
+                            })}
                       </p>
                     </div>
                   </div>

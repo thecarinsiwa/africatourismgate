@@ -198,12 +198,19 @@ function renderMarkers(
       isCompact,
       isHighlighted,
       isDestination
-        ? { countryLabel: item.subtitle, countryCode: item.countryCode }
+        ? {
+            countryLabel:
+              item.count != null ? item.subtitle : item.title,
+            countryCode: item.countryCode,
+            count: item.count,
+          }
         : undefined,
     );
     const marker = L.marker(latLng, {
       icon,
-      title: isDestination ? `${item.title} · ${item.subtitle}` : item.title,
+      title: isDestination
+        ? `${item.title} · ${item.subtitle}${item.count != null ? ` (${item.count})` : ''}`
+        : item.title,
       zIndexOffset: isHighlighted ? 400 : isDestination ? 100 : 200,
     }).addTo(map);
 
@@ -215,7 +222,7 @@ function renderMarkers(
       : '';
 
     const countryLine = isDestination
-      ? `<span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#666;margin-bottom:6px">${countryFlagImgHtml(item.countryCode, 18, 13)}<span>${escapeHtml(item.subtitle)}</span></span>`
+      ? `<span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#666;margin-bottom:6px">${countryFlagImgHtml(item.countryCode, 18, 13)}<span>${escapeHtml(item.subtitle)}${item.count != null && item.count > 0 ? ` · ${item.count}` : ''}</span></span>`
       : `<span style="display:block;font-size:11px;color:#666;margin-bottom:6px">${escapeHtml(item.subtitle)}</span>`;
 
     const popupHtml = `
@@ -290,7 +297,11 @@ function createProductMarkerIcon(
   fillColor: string,
   isCompact: boolean,
   isHighlighted: boolean,
-  destinationMeta?: { countryLabel: string; countryCode?: string },
+  destinationMeta?: {
+    countryLabel: string;
+    countryCode?: string;
+    count?: number;
+  },
 ): import('leaflet').DivIcon {
   if (kind === 'destination') {
     return createDestinationCountryIcon(
@@ -300,6 +311,7 @@ function createProductMarkerIcon(
       fillColor,
       isCompact,
       isHighlighted,
+      destinationMeta?.count,
     );
   }
 
@@ -330,7 +342,7 @@ function createProductMarkerIcon(
   });
 }
 
-/** Flag + country name label (no circular badge). */
+/** Flag + country/destination label, with optional destination count badge. */
 function createDestinationCountryIcon(
   L: typeof import('leaflet'),
   countryLabel: string,
@@ -338,10 +350,11 @@ function createDestinationCountryIcon(
   _fillColor: string,
   isCompact: boolean,
   isHighlighted: boolean,
+  count?: number,
 ): import('leaflet').DivIcon {
   const label = escapeHtml(countryLabel);
   const width = isCompact ? 96 : 112;
-  const height = isCompact ? 48 : 54;
+  const height = isCompact ? 52 : 58;
   const flagW = isCompact ? 28 : 34;
   const flagH = Math.round(flagW * 0.72);
   const fontSize = countryLabel.length > 14 ? (isCompact ? 9 : 10) : isCompact ? 10 : 11;
@@ -351,6 +364,25 @@ function createDestinationCountryIcon(
     ? `<span style="display:inline-flex;align-items:center;justify-content:center;width:${flagW}px;height:${flagH}px;border-radius:2px;background:#fff;font-size:10px;font-weight:800;color:#111;box-shadow:0 1px 3px rgba(0,0,0,.25)">${escapeHtml(code)}</span>`
     : '';
   const scale = isHighlighted ? 1.06 : 1;
+  const showCount = typeof count === 'number' && count > 0;
+  const countBadge = showCount
+    ? `<span style="
+        position:absolute;
+        top:-6px;
+        right:-8px;
+        min-width:18px;
+        height:18px;
+        padding:0 5px;
+        border-radius:999px;
+        background:#111;
+        color:#fff;
+        font-size:10px;
+        font-weight:800;
+        line-height:18px;
+        text-align:center;
+        box-shadow:0 0 0 2px #fff;
+      ">${count}</span>`
+    : '';
 
   return L.divIcon({
     className: 'atg-destinations-map-marker',
@@ -367,7 +399,10 @@ function createDestinationCountryIcon(
         transform:scale(${scale});
         filter:drop-shadow(0 1px 2px rgba(0,0,0,.35));
       " aria-hidden="true">
-        ${flagHtml || fallbackCode}
+        <span style="position:relative;display:inline-flex;line-height:0">
+          ${flagHtml || fallbackCode}
+          ${countBadge}
+        </span>
         <span style="
           max-width:100%;
           padding:1px 4px;
