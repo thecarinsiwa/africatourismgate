@@ -48,7 +48,17 @@
     "mapBoundaryAria": "Map with country outline and center point selection",
     "mapBoundaryLoading": "Loading country outline…",
     "mapBoundaryUnavailable": "Outline unavailable for this country. You can still place a point.",
-    "openStreetMap": "Open in OpenStreetMap"
+    "openStreetMap": "Open in OpenStreetMap",
+    "restoreModal": {
+      "title": "Restore this destination?",
+      "description": "The destination “{name}” (slug “{slug}”) was deleted. Would you like to restore it instead of creating a new one?",
+      "confirm": "Restore",
+      "cancel": "Cancel",
+      "close": "Close",
+      "restoring": "Restoring…",
+      "successTitle": "Destination restored",
+      "successMessage": "“{name}” has been restored."
+    }
   },
   "detail": {
     "title": "Edit destination",
