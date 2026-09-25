@@ -4,17 +4,14 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { browseActivities } from '../../lib/api/public';
-import {
-  buildActivityDetailHref,
-  formatActivityPrice,
-} from '../../lib/activities/listings';
-import type { ActivitySearchResult } from '../../lib/activities/types';
+import type { PublicDestination } from '@africatourismgate/types';
+import { listPublicDestinations } from '../../lib/api/public';
+import { siteSearchDeepLinks } from '../../lib/site-search/deep-links';
 import { useScrollAnimation } from './use-scroll-animation';
 import { Spinner } from '@africatourismgate/ui';
 
-const ActivitiesMapInner = dynamic(
-  () => import('./activities-map-inner').then((m) => m.ActivitiesMapInner),
+const DestinationsMapInner = dynamic(
+  () => import('./destinations-map-inner').then((m) => m.DestinationsMapInner),
   {
     ssr: false,
     loading: () => (
@@ -23,56 +20,54 @@ const ActivitiesMapInner = dynamic(
   },
 );
 
-export type ActivityMapMarker = {
+export type DestinationMapMarker = {
   id: string;
   title: string;
-  destination: string;
+  subtitle: string;
   latitude: number;
   longitude: number;
-  priceLabel: string;
-  nextDateLabel: string | null;
   href: string;
   viewLabel: string;
 };
 
+function formatCountryName(countryCode: string, locale: string): string {
+  try {
+    const displayNames = new Intl.DisplayNames([locale], { type: 'region' });
+    return displayNames.of(countryCode) ?? countryCode;
+  } catch {
+    return countryCode;
+  }
+}
+
 function hasMapCoordinates(
-  activity: ActivitySearchResult,
-): activity is ActivitySearchResult & { latitude: number; longitude: number } {
+  destination: PublicDestination,
+): destination is PublicDestination & {
+  latitude: number;
+  longitude: number;
+} {
   return (
-    activity.availableSchedulesCount > 0 &&
-    typeof activity.latitude === 'number' &&
-    Number.isFinite(activity.latitude) &&
-    typeof activity.longitude === 'number' &&
-    Number.isFinite(activity.longitude)
+    typeof destination.latitude === 'number' &&
+    Number.isFinite(destination.latitude) &&
+    typeof destination.longitude === 'number' &&
+    Number.isFinite(destination.longitude)
   );
 }
 
-function toDateParam(iso?: string): string {
-  if (!iso) {
-    return new Date().toISOString().slice(0, 10);
-  }
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) {
-    return new Date().toISOString().slice(0, 10);
-  }
-  return date.toISOString().slice(0, 10);
-}
-
-export function ActivitiesMapSection() {
+export function DestinationsMapSection() {
   const t = useTranslations('activitiesMap');
   const locale = useLocale();
   const { ref, isVisible } = useScrollAnimation(0.1);
-  const [activities, setActivities] = useState<ActivitySearchResult[]>([]);
+  const [destinations, setDestinations] = useState<PublicDestination[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
 
-    void browseActivities({ limit: 100 })
-      .then((response) => {
+    void listPublicDestinations()
+      .then((rows) => {
         if (!cancelled) {
-          setActivities(response.data);
+          setDestinations(rows);
           setError(false);
         }
       })
@@ -92,48 +87,33 @@ export function ActivitiesMapSection() {
     };
   }, []);
 
-  const nextDateLabel = t('nextDate');
-  const viewLabel = t('viewActivity');
+  const viewLabel = t('viewDestination');
 
-  const markers = useMemo<ActivityMapMarker[]>(() => {
-    return activities.filter(hasMapCoordinates).map((activity) => {
-      const date = toDateParam(activity.nextStartDatetime);
-      const nextDate = activity.nextStartDatetime
-        ? new Date(activity.nextStartDatetime).toLocaleDateString(locale, {
-            weekday: 'short',
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-          })
-        : null;
-
-      return {
-        id: activity.id,
-        title: activity.title,
-        destination: activity.destination,
-        latitude: activity.latitude,
-        longitude: activity.longitude,
-        priceLabel: formatActivityPrice(activity.priceCents, activity.currency),
-        nextDateLabel: nextDate ? `${nextDateLabel}: ${nextDate}` : null,
-        href: buildActivityDetailHref(activity.id, { date }),
-        viewLabel,
-      };
-    });
-  }, [activities, locale, nextDateLabel, viewLabel]);
+  const markers = useMemo<DestinationMapMarker[]>(() => {
+    return destinations.filter(hasMapCoordinates).map((destination) => ({
+      id: destination.id,
+      title: destination.name,
+      subtitle: formatCountryName(destination.countryCode, locale),
+      latitude: destination.latitude,
+      longitude: destination.longitude,
+      href: siteSearchDeepLinks.hotelsByDestination(destination.name),
+      viewLabel,
+    }));
+  }, [destinations, locale, viewLabel]);
 
   return (
     <section
       id="gallery"
       ref={ref}
       className="scroll-mt-24 border-y border-atg-border bg-atg-elevated py-16 transition-colors dark:border-atg-border dark:bg-atg-elevated sm:py-20"
-      aria-labelledby="activities-map-heading"
+      aria-labelledby="destinations-map-heading"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div
           className={`mb-10 max-w-2xl mx-auto text-center ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}
         >
           <h2
-            id="activities-map-heading"
+            id="destinations-map-heading"
             className="text-2xl font-bold uppercase tracking-wide text-atg-fg sm:text-3xl"
           >
             {t('title')}
@@ -161,7 +141,7 @@ export function ActivitiesMapSection() {
             <div className="rounded-xl border border-dashed border-atg-border bg-atg-surface px-6 py-16 text-center">
               <p className="text-sm text-atg-muted">{t('empty')}</p>
               <Link
-                href="/activities"
+                href="/hotels"
                 className="mt-4 inline-block text-sm font-semibold text-primary hover:underline"
               >
                 {t('browseAll')}
@@ -169,7 +149,7 @@ export function ActivitiesMapSection() {
             </div>
           ) : (
             <div className="relative z-0 isolate overflow-hidden rounded-xl border border-atg-border shadow-md">
-              <ActivitiesMapInner markers={markers} ariaLabel={t('mapAria')} />
+              <DestinationsMapInner markers={markers} ariaLabel={t('mapAria')} />
             </div>
           )}
         </div>
@@ -177,3 +157,4 @@ export function ActivitiesMapSection() {
     </section>
   );
 }
+

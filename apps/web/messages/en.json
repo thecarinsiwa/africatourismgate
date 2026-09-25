@@ -767,14 +767,15 @@
   },
   "activitiesMap": {
     "title": "Our destinations",
-    "subtitle": "Explore available experiences across Africa. Click a marker to view details and book.",
-    "loading": "Loading map?",
-    "loadError": "Could not load activities on the map.",
-    "empty": "No activities with location available at the moment.",
-    "browseAll": "Browse all activities",
-    "mapAria": "Map of available activities in Africa",
+    "subtitle": "Discover our destinations across Africa. Click a marker to explore stays.",
+    "loading": "Loading map…",
+    "loadError": "Could not load destinations on the map.",
+    "empty": "No destinations with location available at the moment.",
+    "browseAll": "Browse hotels",
+    "mapAria": "Map of our destinations in Africa",
     "nextDate": "Next date",
-    "viewActivity": "View activity"
+    "viewActivity": "View activity",
+    "viewDestination": "View hotels"
   },
   "customerReviews": {
     "title": "What our travelers say",

@@ -767,14 +767,15 @@
   },
   "activitiesMap": {
     "title": "Nos destinations",
-    "subtitle": "Explorez les expériences disponibles à travers l'Afrique. Cliquez sur un point pour voir le détail et réserver.",
+    "subtitle": "Découvrez nos destinations à travers l'Afrique. Cliquez sur un point pour explorer les hébergements.",
     "loading": "Chargement de la carte…",
-    "loadError": "Impossible de charger les activités sur la carte.",
-    "empty": "Aucune activité disponible avec localisation pour le moment.",
-    "browseAll": "Voir toutes les activités",
-    "mapAria": "Carte des activités disponibles en Afrique",
+    "loadError": "Impossible de charger les destinations sur la carte.",
+    "empty": "Aucune destination avec localisation pour le moment.",
+    "browseAll": "Voir les hébergements",
+    "mapAria": "Carte de nos destinations en Afrique",
     "nextDate": "Prochaine date",
-    "viewActivity": "Voir l'activité"
+    "viewActivity": "Voir l'activité",
+    "viewDestination": "Voir les hébergements"
   },
   "customerReviews": {
     "title": "Avis de nos clients",

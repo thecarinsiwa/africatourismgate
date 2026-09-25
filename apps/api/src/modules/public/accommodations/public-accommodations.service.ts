@@ -63,7 +63,13 @@ export class PublicAccommodationsService {
   async listDestinations(): Promise<PublicDestinationDto[]> {
     const rows = await this.destinationsRepository
       .createQueryBuilder('d')
-      .select(['d.id', 'd.name', 'd.countryCode'])
+      .select([
+        'd.id',
+        'd.name',
+        'd.countryCode',
+        'd.latitude',
+        'd.longitude',
+      ])
       .where('d.deletedAt IS NULL')
       .orderBy('d.name', 'ASC')
       .getMany();
@@ -72,6 +78,8 @@ export class PublicAccommodationsService {
       id: d.id,
       name: d.name,
       countryCode: d.countryCode,
+      latitude: this.toCoord(d.latitude),
+      longitude: this.toCoord(d.longitude),
     }));
   }
 
@@ -694,5 +702,13 @@ export class PublicAccommodationsService {
       result.set(link.propertyId, list);
     }
     return result;
+  }
+
+  private toCoord(value: string | null | undefined): number | null {
+    if (value == null) {
+      return null;
+    }
+    const n = Number(value);
+    return Number.isFinite(n) ? n : null;
   }
 }

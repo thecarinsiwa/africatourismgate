@@ -246,6 +246,8 @@ export interface PublicDestination {
   id: string;
   name: string;
   countryCode: string;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 export interface PropertyDetailQuery {

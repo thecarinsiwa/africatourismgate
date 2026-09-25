@@ -6,7 +6,7 @@ import {
 } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
 import { useMemo, type ReactNode } from 'react';
-import { resolveApiBaseUrl } from '../lib/auth/api-url';
+import { resolveApiBaseUrl } from '../../lib/auth/api-url';
 
 function useLockMessages(
   namespace: 'common.connectionLock' | 'common.offlineLock',

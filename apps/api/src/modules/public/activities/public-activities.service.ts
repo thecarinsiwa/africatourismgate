@@ -51,7 +51,13 @@ export class PublicActivitiesService {
   async listDestinations(): Promise<PublicDestinationDto[]> {
     const rows = await this.destinationsRepository
       .createQueryBuilder('d')
-      .select(['d.id', 'd.name', 'd.countryCode'])
+      .select([
+        'd.id',
+        'd.name',
+        'd.countryCode',
+        'd.latitude',
+        'd.longitude',
+      ])
       .innerJoin(
         ActivityProviders,
         'ap',
@@ -71,6 +77,8 @@ export class PublicActivitiesService {
       id: d.id,
       name: d.name,
       countryCode: d.countryCode,
+      latitude: this.toCoord(d.latitude),
+      longitude: this.toCoord(d.longitude),
     }));
   }
 

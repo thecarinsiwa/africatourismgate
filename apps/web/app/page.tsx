@@ -7,7 +7,7 @@ import { SearchTabs } from '../components/home/search-tabs';
 import { WhyUsSection } from '../components/home/verticals-section';
 import { ParallaxPromo } from '../components/home/parallax-promo';
 import { HappyCustomers } from '../components/home/happy-customers';
-import { ActivitiesMapSection } from '../components/home/activities-map-section';
+import { DestinationsMapSection } from '../components/home/destinations-map-section';
 import { CustomerReviewsCarousel } from '../components/home/customer-reviews-carousel';
 import { PartnersSection } from '../components/home/partners-section';
 import { GapImpactSection } from '../components/home/gap-impact-section';
@@ -30,7 +30,7 @@ export default function HomePage() {
         <SearchTabs />
         <WhyUsSection />
         <ParallaxPromo />
-        <ActivitiesMapSection />
+        <DestinationsMapSection />
         <HappyCustomers />
         <CustomerReviewsCarousel />
         <PartnersSection />

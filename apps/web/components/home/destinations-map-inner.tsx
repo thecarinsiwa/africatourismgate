@@ -2,14 +2,17 @@
 
 import { useEffect, useRef, useState, type MutableRefObject } from 'react';
 import type { CircleMarker, Map as LeafletMap } from 'leaflet';
-import type { ActivityMapMarker } from './activities-map-section';
+import type { DestinationMapMarker } from './destinations-map-section';
 
-type ActivitiesMapInnerProps = {
-  markers: ActivityMapMarker[];
+type DestinationsMapInnerProps = {
+  markers: DestinationMapMarker[];
   ariaLabel: string;
 };
 
-export function ActivitiesMapInner({ markers, ariaLabel }: ActivitiesMapInnerProps) {
+export function DestinationsMapInner({
+  markers,
+  ariaLabel,
+}: DestinationsMapInnerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const markerLayerRef = useRef<CircleMarker[]>([]);
@@ -78,7 +81,7 @@ export function ActivitiesMapInner({ markers, ariaLabel }: ActivitiesMapInnerPro
 function renderMarkers(
   L: typeof import('leaflet'),
   map: LeafletMap,
-  markers: ActivityMapMarker[],
+  markers: DestinationMapMarker[],
   markerLayerRef: MutableRefObject<CircleMarker[]>,
 ) {
   for (const marker of markerLayerRef.current) {
@@ -107,9 +110,7 @@ function renderMarkers(
     const popupHtml = `
       <div style="min-width:180px;font-family:inherit;line-height:1.4">
         <strong style="display:block;margin-bottom:4px;font-size:14px">${escapeHtml(item.title)}</strong>
-        <span style="display:block;font-size:12px;color:#666;margin-bottom:6px">${escapeHtml(item.destination)}</span>
-        <span style="display:block;font-size:13px;font-weight:600;margin-bottom:4px">${escapeHtml(item.priceLabel)}</span>
-        ${item.nextDateLabel ? `<span style="display:block;font-size:12px;color:#666;margin-bottom:8px">${escapeHtml(item.nextDateLabel)}</span>` : ''}
+        <span style="display:block;font-size:12px;color:#666;margin-bottom:8px">${escapeHtml(item.subtitle)}</span>
         <a href="${escapeHtml(item.href)}" style="font-size:12px;font-weight:600;color:var(--atg-primary,#c8102e);text-decoration:underline">${escapeHtml(item.viewLabel)}</a>
       </div>
     `;
