@@ -513,7 +513,7 @@ export function DestinationsMapSection() {
                               key={product.id}
                               data-product-id={product.id}
                               role="listitem"
-                              className={`flex w-[11.5rem] shrink-0 snap-start items-center gap-1.5 rounded-md border bg-white p-1 transition dark:bg-zinc-950 sm:w-[13rem] ${
+                              className={`w-[10.5rem] shrink-0 snap-start overflow-hidden rounded-md border bg-white transition dark:bg-zinc-950 sm:w-[12rem] ${
                                 isActive
                                   ? 'border-primary ring-1 ring-primary/40'
                                   : 'border-atg-border'
@@ -522,7 +522,7 @@ export function DestinationsMapSection() {
                               <button
                                 type="button"
                                 onClick={() => handleProductSelect(product.id)}
-                                className="flex min-w-0 flex-1 items-center gap-1.5 text-left"
+                                className="flex w-full items-center gap-1.5 p-1 text-left"
                               >
                                 <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded bg-zinc-100 dark:bg-zinc-800">
                                   <Image
@@ -549,12 +549,14 @@ export function DestinationsMapSection() {
                                   </span>
                                 </span>
                               </button>
-                              <Link
-                                href={product.href}
-                                className="shrink-0 pr-0.5 text-[9px] font-semibold text-primary hover:underline sm:text-[10px]"
-                              >
-                                {t('viewMoreProduct')}
-                              </Link>
+                              <div className="border-t border-atg-border/60 px-1.5 py-1">
+                                <Link
+                                  href={product.href}
+                                  className="text-[9px] font-semibold text-primary hover:underline sm:text-[10px]"
+                                >
+                                  {t('viewMoreProduct')}
+                                </Link>
+                              </div>
                             </article>
                           );
                         })}
