@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { BrandingMark } from './branding-mark';
 import { HomeFooter } from './home/home-footer';
 import { HomeHeader } from './home/home-header';
 import { NotFoundIllustration } from './not-found/not-found-illustration';
@@ -42,17 +41,8 @@ export function NotFoundPage() {
           </p>
 
           <div className="relative z-10 flex w-full flex-col items-center">
-            <div className="w-full max-w-full animate-fade-in-up px-1">
-              <BrandingMark
-                showName
-                className="inline-flex max-w-full items-center justify-center gap-2.5 sm:gap-3"
-                logoClassName="h-10 w-10 shrink-0 rounded-xl object-cover sm:h-12 sm:w-12 md:h-14 md:w-14"
-                nameClassName="max-w-[min(100%,16rem)] truncate text-lg font-extrabold tracking-tight text-atg-fg sm:max-w-[22rem] sm:text-xl md:text-2xl"
-              />
-            </div>
-
             <div
-              className="mt-5 w-full max-w-[16rem] animate-fade-in-up delay-100 sm:mt-7 sm:max-w-[18rem] md:mt-8 md:max-w-none"
+              className="mt-2 w-full max-w-[16rem] animate-fade-in-up delay-100 sm:mt-4 sm:max-w-[18rem] md:max-w-none"
               aria-hidden
             >
               <div className="motion-safe:animate-soft-float">
