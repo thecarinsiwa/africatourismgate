@@ -2584,6 +2584,12 @@ export class ApiClient {
     return this.request<void>(`/destinations/${id}`, { method: 'DELETE' });
   }
 
+  restoreDestination(id: string): Promise<Destination> {
+    return this.request<Destination>(`/destinations/${id}/restore`, {
+      method: 'POST',
+    });
+  }
+
   listPointsOfInterest(
     query?: PointsOfInterestListQuery,
   ): Promise<PaginatedResponse<PointOfInterest>> {
