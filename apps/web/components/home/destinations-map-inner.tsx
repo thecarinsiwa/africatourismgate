@@ -4,19 +4,38 @@ import { useEffect, useRef, useState, type MutableRefObject } from 'react';
 import type { CircleMarker, Map as LeafletMap } from 'leaflet';
 import type { DestinationMapMarker } from './destinations-map-section';
 
+type MapFocus = {
+  latitude: number;
+  longitude: number;
+  zoom?: number;
+};
+
 type DestinationsMapInnerProps = {
   markers: DestinationMapMarker[];
   ariaLabel: string;
+  focus?: MapFocus | null;
+  /** When true, fit the viewport to current markers (used after products load). */
+  fitToMarkers?: boolean;
+  fitMaxZoom?: number;
+  onDestinationClick?: (marker: DestinationMapMarker) => void;
 };
 
 export function DestinationsMapInner({
   markers,
   ariaLabel,
+  focus = null,
+  fitToMarkers = true,
+  fitMaxZoom = 8,
+  onDestinationClick,
 }: DestinationsMapInnerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const markerLayerRef = useRef<CircleMarker[]>([]);
+  const onDestinationClickRef = useRef(onDestinationClick);
+  const lastFocusKeyRef = useRef<string | null>(null);
   const [mapReady, setMapReady] = useState(false);
+
+  onDestinationClickRef.current = onDestinationClick;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -64,9 +83,34 @@ export function DestinationsMapInner({
     }
 
     void import('leaflet').then((L) => {
-      renderMarkers(L, map, markers, markerLayerRef);
+      renderMarkers(L, map, markers, markerLayerRef, onDestinationClickRef, {
+        fitToMarkers,
+        fitMaxZoom,
+      });
     });
-  }, [markers, mapReady]);
+  }, [markers, mapReady, fitToMarkers, fitMaxZoom]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!mapReady || !map) {
+      return;
+    }
+
+    if (!focus) {
+      lastFocusKeyRef.current = null;
+      return;
+    }
+
+    const key = `${focus.latitude},${focus.longitude},${focus.zoom ?? 12}`;
+    if (lastFocusKeyRef.current === key) {
+      return;
+    }
+    lastFocusKeyRef.current = key;
+
+    map.flyTo([focus.latitude, focus.longitude], focus.zoom ?? 12, {
+      duration: 0.85,
+    });
+  }, [focus, mapReady]);
 
   return (
     <div
@@ -83,6 +127,10 @@ function renderMarkers(
   map: LeafletMap,
   markers: DestinationMapMarker[],
   markerLayerRef: MutableRefObject<CircleMarker[]>,
+  onDestinationClickRef: MutableRefObject<
+    ((marker: DestinationMapMarker) => void) | undefined
+  >,
+  options: { fitToMarkers: boolean; fitMaxZoom: number },
 ) {
   for (const marker of markerLayerRef.current) {
     marker.remove();
@@ -99,11 +147,12 @@ function renderMarkers(
     const latLng = L.latLng(item.latitude, item.longitude);
     bounds.extend(latLng);
 
+    const isDestination = item.kind === 'destination';
     const marker = L.circleMarker(latLng, {
-      radius: 9,
+      radius: isDestination ? 10 : 7,
       color: '#ffffff',
       weight: 2,
-      fillColor: 'var(--atg-primary, #c8102e)',
+      fillColor: item.fillColor,
       fillOpacity: 0.95,
     }).addTo(map);
 
@@ -116,15 +165,36 @@ function renderMarkers(
     `;
 
     marker.bindPopup(popupHtml, { closeButton: true, maxWidth: 260 });
+
+    if (isDestination) {
+      marker.on('click', () => {
+        onDestinationClickRef.current?.(item);
+      });
+    } else {
+      marker.on('click', () => {
+        marker.openPopup();
+      });
+    }
+
     markerLayerRef.current.push(marker);
   }
 
-  if (markers.length === 1) {
-    map.setView([markers[0].latitude, markers[0].longitude], 8);
+  if (!options.fitToMarkers) {
     return;
   }
 
-  map.fitBounds(bounds, { padding: [48, 48], maxZoom: 8 });
+  if (markers.length === 1) {
+    map.setView(
+      [markers[0].latitude, markers[0].longitude],
+      Math.min(options.fitMaxZoom, 11),
+    );
+    return;
+  }
+
+  map.fitBounds(bounds, {
+    padding: [48, 48],
+    maxZoom: options.fitMaxZoom,
+  });
 }
 
 function escapeHtml(value: string): string {

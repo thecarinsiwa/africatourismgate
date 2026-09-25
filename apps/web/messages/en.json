@@ -767,7 +767,7 @@
   },
   "activitiesMap": {
     "title": "Our destinations",
-    "subtitle": "Discover our destinations across Africa. Click a marker to explore stays.",
+    "subtitle": "Discover our destinations across Africa. Click a marker to zoom in and see products.",
     "loading": "Loading map…",
     "loadError": "Could not load destinations on the map.",
     "empty": "No destinations with location available at the moment.",
@@ -775,7 +775,15 @@
     "mapAria": "Map of our destinations in Africa",
     "nextDate": "Next date",
     "viewActivity": "View activity",
-    "viewDestination": "View hotels"
+    "viewDestination": "View hotels",
+    "viewHotel": "View stay",
+    "hotelKind": "Stay",
+    "activityKind": "Activity",
+    "loadingProducts": "Loading products…",
+    "productsError": "Could not load products.",
+    "noProducts": "No products available here yet.",
+    "productsCount": "{count, plural, one {# product} other {# products}}",
+    "showAllDestinations": "All destinations"
   },
   "customerReviews": {
     "title": "What our travelers say",

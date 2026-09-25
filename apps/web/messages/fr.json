@@ -767,7 +767,7 @@
   },
   "activitiesMap": {
     "title": "Nos destinations",
-    "subtitle": "Découvrez nos destinations à travers l'Afrique. Cliquez sur un point pour explorer les hébergements.",
+    "subtitle": "Découvrez nos destinations à travers l'Afrique. Cliquez sur un point pour zoomer et voir les produits.",
     "loading": "Chargement de la carte…",
     "loadError": "Impossible de charger les destinations sur la carte.",
     "empty": "Aucune destination avec localisation pour le moment.",
@@ -775,7 +775,15 @@
     "mapAria": "Carte de nos destinations en Afrique",
     "nextDate": "Prochaine date",
     "viewActivity": "Voir l'activité",
-    "viewDestination": "Voir les hébergements"
+    "viewDestination": "Voir les hébergements",
+    "viewHotel": "Voir l'hébergement",
+    "hotelKind": "Hébergement",
+    "activityKind": "Activité",
+    "loadingProducts": "Chargement des produits…",
+    "productsError": "Impossible de charger les produits.",
+    "noProducts": "Aucun produit disponible ici pour le moment.",
+    "productsCount": "{count, plural, one {# produit} other {# produits}}",
+    "showAllDestinations": "Toutes les destinations"
   },
   "customerReviews": {
     "title": "Avis de nos clients",

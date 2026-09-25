@@ -767,7 +767,7 @@
   },
   "activitiesMap": {
     "title": "Nuestros destinos",
-    "subtitle": "Descubra nuestros destinos en África. Haga clic en un marcador para explorar alojamientos.",
+    "subtitle": "Descubra nuestros destinos en África. Haga clic en un marcador para acercar y ver los productos.",
     "loading": "Cargando mapa…",
     "loadError": "No se pudieron cargar los destinos en el mapa.",
     "empty": "Ningún destino con ubicación disponible por el momento.",
@@ -775,7 +775,15 @@
     "mapAria": "Mapa de nuestros destinos en África",
     "nextDate": "Próxima fecha",
     "viewActivity": "Ver actividad",
-    "viewDestination": "Ver alojamientos"
+    "viewDestination": "Ver alojamientos",
+    "viewHotel": "Ver alojamiento",
+    "hotelKind": "Alojamiento",
+    "activityKind": "Actividad",
+    "loadingProducts": "Cargando productos…",
+    "productsError": "No se pudieron cargar los productos.",
+    "noProducts": "Todavía no hay productos aquí.",
+    "productsCount": "{count, plural, one {# producto} other {# productos}}",
+    "showAllDestinations": "Todos los destinos"
   },
   "customerReviews": {
     "title": "Opiniones de nuestros clientes",
