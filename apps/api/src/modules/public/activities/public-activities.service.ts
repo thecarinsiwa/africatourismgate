@@ -24,7 +24,10 @@ import { ActivityDetailQueryDto } from './dto/activity-detail-query.dto';
 import { ActivityDetailDto } from './dto/activity-detail.dto';
 import { ActivitySearchQueryDto } from './dto/activity-search-query.dto';
 import { ActivitySearchResultDto } from './dto/activity-search-result.dto';
-import { PublicActivityProviderDto } from './dto/public-activity-provider.dto';
+import {
+  PublicActivityProviderDetailDto,
+  PublicActivityProviderDto,
+} from './dto/public-activity-provider.dto';
 import { parseDateOnly } from './activity-dates.util';
 
 type ScheduleOffer = ActivityDetailDto['schedules'][number];
@@ -82,11 +85,10 @@ export class PublicActivitiesService {
     }));
   }
 
-  /** Active activity partners for the public home / trust strip. */
+  /** Active activity partners for the public partners listing / home strip. */
   async listProviders(): Promise<PublicActivityProviderDto[]> {
     const rows = await this.providersRepository.find({
       order: { name: 'ASC' },
-      take: 24,
     });
 
     return rows.map((provider) => ({
@@ -94,6 +96,94 @@ export class PublicActivitiesService {
       name: provider.name,
       logoUrl: provider.logoUrl?.trim() || null,
     }));
+  }
+
+  async getProviderById(id: string): Promise<PublicActivityProviderDetailDto> {
+    const provider = await this.providersRepository.findOne({ where: { id } });
+    if (!provider || provider.deletedAt) {
+      throw new NotFoundException('Partenaire introuvable.');
+    }
+
+    const destination = await this.destinationsRepository.findOne({
+      where: { id: provider.destinationId },
+    });
+    if (!destination || destination.deletedAt) {
+      throw new NotFoundException('Partenaire introuvable.');
+    }
+
+    const activities = await this.activitiesRepository.find({
+      where: { providerId: provider.id },
+      order: { title: 'ASC' },
+    });
+    const activeActivities = activities.filter((a) => !a.deletedAt);
+
+    const activityIds = activeActivities.map((a) => a.id);
+    const imageUrlByActivityId =
+      await this.loadPrimaryImageUrlByActivityId(activityIds);
+    const reviewSummaryByActivityId =
+      await this.loadReviewSummariesByActivityIds(activityIds);
+
+    const schedules = activityIds.length
+      ? await this.schedulesRepository
+          .createQueryBuilder('schedule')
+          .where('schedule.activityId IN (:...activityIds)', { activityIds })
+          .andWhere('schedule.deletedAt IS NULL')
+          .andWhere('schedule.startDatetime >= NOW()')
+          .orderBy('schedule.startDatetime', 'ASC')
+          .getMany()
+      : [];
+
+    const schedulesByActivityId = new Map<string, ActivitySchedules[]>();
+    for (const schedule of schedules) {
+      const list = schedulesByActivityId.get(schedule.activityId) ?? [];
+      list.push(schedule);
+      schedulesByActivityId.set(schedule.activityId, list);
+    }
+
+    const activityResults: ActivitySearchResultDto[] = activeActivities.map(
+      (activity) => {
+        const activitySchedules = schedulesByActivityId.get(activity.id) ?? [];
+        const availableSchedules = activitySchedules.filter(
+          (schedule) => this.remainingPlaces(schedule) >= 1,
+        );
+        const mapCoords = this.resolveActivityMapCoords(activity, destination);
+
+        const result: ActivitySearchResultDto = {
+          id: activity.id,
+          title: activity.title,
+          durationMinutes: activity.durationMinutes,
+          priceCents: activity.priceCents,
+          currency: activity.currency,
+          destination: destination.name,
+          latitude: mapCoords.latitude,
+          longitude: mapCoords.longitude,
+          providerName: provider.name,
+          availableSchedulesCount: availableSchedules.length,
+          imageUrl: imageUrlByActivityId.get(activity.id) ?? null,
+          difficultyLevel: activity.difficultyLevel,
+          ...this.toReviewFields(reviewSummaryByActivityId.get(activity.id)),
+        };
+
+        if (availableSchedules[0]) {
+          result.nextStartDatetime = this.toIsoDatetime(
+            availableSchedules[0].startDatetime,
+          );
+        }
+
+        return result;
+      },
+    );
+
+    activityResults.sort((a, b) => a.priceCents - b.priceCents);
+
+    return {
+      id: provider.id,
+      name: provider.name,
+      logoUrl: provider.logoUrl?.trim() || null,
+      destinationId: destination.id,
+      destinationName: destination.name,
+      activities: activityResults,
+    };
   }
 
   async browse(

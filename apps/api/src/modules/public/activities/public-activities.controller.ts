@@ -48,6 +48,15 @@ export class PublicActivitiesController {
   }
 
   @Public()
+  @Get('activity-providers/:id')
+  @ApiOperation({
+    summary: 'Activity partner detail with destination and public activities',
+  })
+  getProviderById(@Param('id') id: string) {
+    return this.service.getProviderById(id);
+  }
+
+  @Public()
   @Get('activities/:id')
   @ApiOperation({
     summary: 'Activity detail with available schedule slots',
