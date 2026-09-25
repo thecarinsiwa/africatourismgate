@@ -637,6 +637,7 @@
     "close": "Cerrar la búsqueda",
     "resultsLabel": "Resultados de búsqueda",
     "updating": "Actualizando…",
+    "opening": "Abriendo la página…",
     "partialError": "Algunas fuentes no se pudieron cargar.",
     "groupError": "Error parcial",
     "openLabel": "Abrir la búsqueda",

@@ -637,6 +637,7 @@
     "close": "Close search",
     "resultsLabel": "Search results",
     "updating": "Updating…",
+    "opening": "Opening page…",
     "partialError": "Some sources could not be loaded.",
     "groupError": "Partial error",
     "openLabel": "Open search",

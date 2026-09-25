@@ -1,9 +1,10 @@
 'use client';
 
-import { Input, Modal, Skeleton, cn } from '@africatourismgate/ui';
+import { Input, Modal, Skeleton, Spinner, cn } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useTopLoader } from 'nextjs-toploader';
 import {
   createContext,
   useCallback,
@@ -14,6 +15,7 @@ import {
   useRef,
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
+  type MouseEvent as ReactMouseEvent,
   type ReactNode,
 } from 'react';
 import {
@@ -87,11 +89,15 @@ export function AdminSearchNavigator() {
 
 function AdminSearchNavigatorModal() {
   const router = useRouter();
+  const pathname = usePathname();
+  const topLoader = useTopLoader();
   const { open, setOpen, toggle } = useAdminSearchNavigator();
   const t = useTranslations('common.globalSearch');
   const listId = useId();
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [navigating, setNavigating] = useState(false);
   const optionRefs = useRef<Array<HTMLAnchorElement | null>>([]);
+  const pathAtNavStartRef = useRef<string | null>(null);
 
   const {
     query,
@@ -133,19 +139,49 @@ function AdminSearchNavigatorModal() {
 
   const handleOpenChange = useCallback(
     (next: boolean) => {
+      if (!next && navigating) {
+        return;
+      }
       setOpen(next);
     },
-    [setOpen],
+    [navigating, setOpen],
   );
 
   const navigate = useCallback(
     (href: string) => {
-      // Push before closing: unmounting the modal first can cancel App Router soft navigation.
+      if (navigating) {
+        return;
+      }
+      pathAtNavStartRef.current = pathname;
+      setNavigating(true);
+      topLoader.start();
       router.push(href);
-      handleOpenChange(false);
     },
-    [handleOpenChange, router],
+    [navigating, pathname, router, topLoader],
   );
+
+  useEffect(() => {
+    if (!navigating) {
+      return;
+    }
+    if (pathname !== pathAtNavStartRef.current) {
+      topLoader.done();
+      setNavigating(false);
+      setOpen(false);
+    }
+  }, [pathname, navigating, setOpen, topLoader]);
+
+  useEffect(() => {
+    if (!navigating) {
+      return;
+    }
+    const timeoutId = window.setTimeout(() => {
+      topLoader.done();
+      setNavigating(false);
+      setOpen(false);
+    }, 12_000);
+    return () => window.clearTimeout(timeoutId);
+  }, [navigating, setOpen, topLoader]);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -163,6 +199,8 @@ function AdminSearchNavigatorModal() {
     if (!open) {
       setQuery('');
       setActiveIndex(-1);
+      setNavigating(false);
+      pathAtNavStartRef.current = null;
     }
   }, [open, setQuery]);
 
@@ -187,7 +225,7 @@ function AdminSearchNavigatorModal() {
   }
 
   function handleListKeyDown(event: ReactKeyboardEvent) {
-    if (navigableCount === 0) return;
+    if (navigating || navigableCount === 0) return;
     if (event.key === 'ArrowDown') {
       event.preventDefault();
       moveActive(1);
@@ -212,16 +250,27 @@ function AdminSearchNavigatorModal() {
       open={open}
       onOpenChange={handleOpenChange}
       title={t('title')}
-      showClose
+      showClose={!navigating}
       closeAriaLabel={t('close')}
-      className="max-w-xl"
+      className="relative max-w-xl"
       containerClassName="z-[80]"
     >
       <div
-        className="space-y-3 p-4"
+        className="relative space-y-3 p-4"
         onKeyDown={handleListKeyDown}
         data-testid="admin-search-navigator"
+        aria-busy={navigating}
       >
+        {navigating ? (
+          <div
+            className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 rounded-xl bg-atg-elevated/90 backdrop-blur-[1px]"
+            role="status"
+            data-testid="admin-search-navigating"
+          >
+            <Spinner size="lg" label={t('opening')} showLabel />
+          </div>
+        ) : null}
+
         <Input
           type="search"
           value={query}
@@ -229,6 +278,7 @@ function AdminSearchNavigatorModal() {
           placeholder={t('placeholder')}
           autoFocus
           autoComplete="off"
+          disabled={navigating}
           role="combobox"
           aria-label={t('placeholder')}
           aria-controls={listId}
@@ -279,7 +329,10 @@ function AdminSearchNavigatorModal() {
                     <Link
                       href={link.href}
                       className="text-sm font-medium text-primary outline-none hover:underline focus-visible:underline"
-                      onClick={() => handleOpenChange(false)}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        navigate(link.href);
+                      }}
                     >
                       {t(link.labelKey)}
                     </Link>
@@ -327,10 +380,11 @@ function AdminSearchNavigatorModal() {
                         index={index}
                         active={index === activeIndex}
                         listId={listId}
+                        disabled={navigating}
                         optionRef={(node) => {
                           optionRefs.current[index] = node;
                         }}
-                        onActivate={() => handleOpenChange(false)}
+                        onActivate={() => navigate(item.href)}
                         onHover={() => setActiveIndex(index)}
                       />
                     );
@@ -356,6 +410,7 @@ function SearchResultOption({
   index,
   active,
   listId,
+  disabled,
   optionRef,
   onActivate,
   onHover,
@@ -364,11 +419,25 @@ function SearchResultOption({
   index: number;
   active: boolean;
   listId: string;
+  disabled?: boolean;
   optionRef: (node: HTMLAnchorElement | null) => void;
   onActivate: () => void;
   onHover: () => void;
 }) {
   const optionId = `${listId}-option-${index}`;
+
+  function handleClick(event: ReactMouseEvent<HTMLAnchorElement>) {
+    if (disabled) {
+      event.preventDefault();
+      return;
+    }
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
+    event.preventDefault();
+    onActivate();
+  }
+
   return (
     <li id={optionId} role="option" aria-selected={active}>
       <Link
@@ -376,12 +445,14 @@ function SearchResultOption({
         href={item.href}
         data-testid="admin-search-result"
         tabIndex={-1}
+        aria-disabled={disabled || undefined}
         className={cn(
           'flex w-full flex-col gap-0.5 px-4 py-3 text-left transition-colors',
           active ? 'bg-atg-surface' : 'hover:bg-atg-surface/70',
+          disabled && 'pointer-events-none opacity-60',
         )}
         onMouseEnter={onHover}
-        onClick={onActivate}
+        onClick={handleClick}
       >
         <span className="text-sm font-medium text-atg-fg">{item.title}</span>
         {item.subtitle ? (

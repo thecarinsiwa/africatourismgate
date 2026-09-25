@@ -637,6 +637,7 @@
     "close": "Fermer la recherche",
     "resultsLabel": "Résultats de recherche",
     "updating": "Mise à jour…",
+    "opening": "Ouverture de la page…",
     "partialError": "Certaines sources n’ont pas pu être chargées.",
     "groupError": "Erreur partielle",
     "openLabel": "Ouvrir la recherche",
