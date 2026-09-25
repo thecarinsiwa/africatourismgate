@@ -168,7 +168,7 @@ export function ActivitiesMapSection() {
               </Link>
             </div>
           ) : (
-            <div className="overflow-hidden rounded-xl border border-atg-border shadow-md">
+            <div className="relative z-0 isolate overflow-hidden rounded-xl border border-atg-border shadow-md">
               <ActivitiesMapInner markers={markers} ariaLabel={t('mapAria')} />
             </div>
           )}

@@ -32,7 +32,7 @@ export function ItineraryMapSection({
 
   return (
     <div className={className}>
-      <div className="overflow-hidden rounded-xl border border-atg-border shadow-sm">
+      <div className="relative z-0 isolate overflow-hidden rounded-xl border border-atg-border shadow-sm">
         <ItineraryMapInner points={points} ariaLabel={ariaLabel} className={mapClassName} />
       </div>
     </div>
