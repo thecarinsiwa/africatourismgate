@@ -2,14 +2,11 @@
 
 import { Button, Card, Divider, TextLink } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { GoogleIcon } from '../icons/google-icon';
 import { buildAdminGoogleRegisterUrl } from '../../lib/auth/google-oauth';
 import { AuthPageShell } from './auth-page-shell';
-
-type Props = {
-  oauthError?: string;
-};
 
 function resolveOAuthErrorMessage(
   code: string | undefined,
@@ -26,9 +23,11 @@ function resolveOAuthErrorMessage(
   return tErrors('generic');
 }
 
-export function RegisterPageContent({ oauthError }: Props) {
+export function RegisterPageContent() {
   const t = useTranslations('auth.register');
   const tErrors = useTranslations('auth.register.errors');
+  const searchParams = useSearchParams();
+  const oauthError = searchParams.get('error') ?? undefined;
   const [error, setError] = useState<string | null>(() =>
     resolveOAuthErrorMessage(oauthError, tErrors),
   );
