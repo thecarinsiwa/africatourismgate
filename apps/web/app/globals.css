@@ -196,6 +196,25 @@
   filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.35));
 }
 
+/* Keep Leaflet attribution readable without covering mobile overlays. */
+@media (max-width: 639px) {
+  .leaflet-bottom.leaflet-right {
+    margin-bottom: 0.35rem;
+  }
+
+  .leaflet-control-attribution {
+    max-width: min(70vw, 14rem);
+    font-size: 9px !important;
+    line-height: 1.2;
+  }
+
+  .leaflet-control-zoom a {
+    width: 32px !important;
+    height: 32px !important;
+    line-height: 32px !important;
+  }
+}
+
 .atg-itinerary-marker__badge {
   display: flex;
   align-items: center;

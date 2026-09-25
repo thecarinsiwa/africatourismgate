@@ -19,10 +19,13 @@ const DestinationsMapInner = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-[420px] w-full animate-pulse rounded-xl bg-atg-surface sm:h-[480px]" />
+      <div className="h-[min(52vh,320px)] w-full animate-pulse rounded-xl bg-atg-surface sm:h-[420px] lg:h-[520px]" />
     ),
   },
 );
+
+const MAP_HEIGHT_CLASS =
+  'h-[min(52vh,320px)] w-full sm:h-[420px] lg:h-[520px]';
 
 export type DestinationMapMarkerKind = 'destination' | 'hotel' | 'activity';
 
@@ -367,7 +370,7 @@ export function DestinationsMapSection() {
         <div className={`${isVisible ? 'animate-fade-in-up delay-200' : 'opacity-0'}`}>
           {loading ? (
             <div
-              className="flex h-[420px] w-full flex-col items-center justify-center gap-3 rounded-xl border border-atg-border bg-atg-surface sm:h-[480px]"
+              className={`flex ${MAP_HEIGHT_CLASS} flex-col items-center justify-center gap-3 rounded-xl border border-atg-border bg-atg-surface`}
               role="status"
               aria-busy="true"
               aria-label={t('loading')}
@@ -397,12 +400,13 @@ export function DestinationsMapSection() {
                 fitToMarkers={!selectedDestination || productsReady}
                 fitMaxZoom={selectedDestination ? 13 : 8}
                 onDestinationClick={handleDestinationClick}
+                className={MAP_HEIGHT_CLASS}
               />
 
               {selectedDestination ? (
-                <div className="pointer-events-none absolute inset-x-0 top-0 z-[500] flex flex-wrap items-start justify-between gap-2 p-3 sm:p-4">
-                  <div className="pointer-events-auto max-w-[min(100%,20rem)] rounded-lg border border-atg-border bg-white px-3.5 py-2.5 shadow-lg dark:bg-zinc-900">
-                    <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+                <div className="pointer-events-none absolute inset-x-0 top-0 z-[500] flex flex-col gap-2 p-2.5 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-3 sm:p-4">
+                  <div className="pointer-events-auto min-w-0 max-w-full rounded-lg border border-atg-border bg-white px-3 py-2 shadow-lg sm:max-w-[min(100%,20rem)] sm:px-3.5 sm:py-2.5 dark:bg-zinc-900">
+                    <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                       {selectedDestination.title}
                     </p>
                     <p className="mt-0.5 text-xs font-medium text-zinc-600 dark:text-zinc-300">
@@ -418,7 +422,7 @@ export function DestinationsMapSection() {
                   <button
                     type="button"
                     onClick={handleResetView}
-                    className="pointer-events-auto rounded-lg border border-atg-border bg-white px-3.5 py-2.5 text-xs font-semibold text-zinc-900 shadow-lg hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-50 dark:hover:bg-zinc-800"
+                    className="pointer-events-auto w-full shrink-0 rounded-lg border border-atg-border bg-white px-3 py-2 text-xs font-semibold text-zinc-900 shadow-lg hover:bg-zinc-50 sm:w-auto sm:px-3.5 sm:py-2.5 dark:bg-zinc-900 dark:text-zinc-50 dark:hover:bg-zinc-800"
                   >
                     {t('showAllDestinations')}
                   </button>
@@ -426,18 +430,18 @@ export function DestinationsMapSection() {
               ) : null}
 
               {selectedDestination && productMarkers.length > 0 ? (
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[500] flex justify-center p-3 sm:justify-start sm:p-4">
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[500] flex justify-center p-2.5 sm:justify-start sm:p-4">
                   <ul
-                    className="pointer-events-auto flex flex-wrap items-center gap-3 rounded-lg border border-atg-border bg-white px-3.5 py-2.5 text-xs font-medium text-zinc-800 shadow-lg dark:bg-zinc-900 dark:text-zinc-100"
+                    className="pointer-events-auto flex max-w-full flex-wrap items-center justify-center gap-x-3 gap-y-1.5 rounded-lg border border-atg-border bg-white px-2.5 py-2 text-[11px] font-medium text-zinc-800 shadow-lg sm:justify-start sm:px-3.5 sm:py-2.5 sm:text-xs dark:bg-zinc-900 dark:text-zinc-100"
                     aria-label={t('legendAria')}
                   >
                     <li className="inline-flex items-center gap-1.5">
                       <span
-                        className="inline-flex h-6 w-6 items-center justify-center rounded-full text-white shadow ring-2 ring-white"
+                        className="inline-flex h-5 w-5 items-center justify-center rounded-full text-white shadow ring-2 ring-white sm:h-6 sm:w-6"
                         style={{ backgroundColor: HOTEL_COLOR }}
                         aria-hidden
                       >
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg className="h-2.5 w-2.5 sm:h-3 sm:w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M3 21h18" />
                           <path d="M5 21V8l7-4 7 4v13" />
                           <path d="M9 21v-5h6v5" />
@@ -447,11 +451,11 @@ export function DestinationsMapSection() {
                     </li>
                     <li className="inline-flex items-center gap-1.5">
                       <span
-                        className="inline-flex h-6 w-6 items-center justify-center rounded-full text-white shadow ring-2 ring-white"
+                        className="inline-flex h-5 w-5 items-center justify-center rounded-full text-white shadow ring-2 ring-white sm:h-6 sm:w-6"
                         style={{ backgroundColor: ACTIVITY_COLOR }}
                         aria-hidden
                       >
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg className="h-2.5 w-2.5 sm:h-3 sm:w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                           <circle cx="12" cy="12" r="3" />
                           <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
                         </svg>
@@ -463,8 +467,8 @@ export function DestinationsMapSection() {
               ) : null}
 
               {productsLoading ? (
-                <div className="pointer-events-none absolute inset-0 z-[400] flex items-center justify-center bg-atg-elevated/20">
-                  <div className="rounded-lg border border-atg-border bg-atg-elevated/95 px-4 py-3 shadow-sm">
+                <div className="pointer-events-none absolute inset-0 z-[400] flex items-center justify-center bg-white/30 px-3 dark:bg-zinc-950/30">
+                  <div className="max-w-[min(100%,18rem)] rounded-lg border border-atg-border bg-white px-3 py-2.5 shadow-lg dark:bg-zinc-900">
                     <Spinner size="md" variant="primary" label={t('loadingProducts')} showLabel />
                   </div>
                 </div>

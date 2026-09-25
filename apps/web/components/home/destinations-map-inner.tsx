@@ -21,6 +21,7 @@ type DestinationsMapInnerProps = {
   fitToMarkers?: boolean;
   fitMaxZoom?: number;
   onDestinationClick?: (marker: DestinationMapMarker) => void;
+  className?: string;
 };
 
 export function DestinationsMapInner({
@@ -30,6 +31,7 @@ export function DestinationsMapInner({
   fitToMarkers = true,
   fitMaxZoom = 8,
   onDestinationClick,
+  className = 'h-[min(52vh,320px)] w-full sm:h-[420px] lg:h-[520px]',
 }: DestinationsMapInnerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
@@ -47,6 +49,11 @@ export function DestinationsMapInner({
     }
 
     let cancelled = false;
+    let resizeObserver: ResizeObserver | null = null;
+
+    const invalidate = () => {
+      mapRef.current?.invalidateSize({ animate: false });
+    };
 
     void import('leaflet').then((L) => {
       if (cancelled || !containerRef.current || mapRef.current) {
@@ -55,7 +62,10 @@ export function DestinationsMapInner({
 
       const map = L.map(containerRef.current!, {
         scrollWheelZoom: false,
+        zoomControl: true,
       }).setView([2, 20], 4);
+
+      map.zoomControl.setPosition('bottomright');
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution:
@@ -65,11 +75,24 @@ export function DestinationsMapInner({
 
       mapRef.current = map;
       setMapReady(true);
+
+      requestAnimationFrame(invalidate);
+
+      if (typeof ResizeObserver !== 'undefined') {
+        resizeObserver = new ResizeObserver(() => {
+          invalidate();
+        });
+        resizeObserver.observe(containerRef.current!);
+      }
+
+      window.addEventListener('orientationchange', invalidate);
     });
 
     return () => {
       cancelled = true;
       setMapReady(false);
+      resizeObserver?.disconnect();
+      window.removeEventListener('orientationchange', invalidate);
       for (const marker of markerLayerRef.current) {
         marker.remove();
       }
@@ -86,6 +109,7 @@ export function DestinationsMapInner({
     }
 
     void import('leaflet').then((L) => {
+      map.invalidateSize({ animate: false });
       renderMarkers(L, map, markers, markerLayerRef, onDestinationClickRef, {
         fitToMarkers,
         fitMaxZoom,
@@ -110,6 +134,7 @@ export function DestinationsMapInner({
     }
     lastFocusKeyRef.current = key;
 
+    map.invalidateSize({ animate: false });
     map.flyTo([focus.latitude, focus.longitude], focus.zoom ?? 12, {
       duration: 0.85,
     });
@@ -118,11 +143,18 @@ export function DestinationsMapInner({
   return (
     <div
       ref={containerRef}
-      className="h-[420px] w-full rounded-xl sm:h-[480px]"
+      className={`rounded-xl ${className}`}
       role="application"
       aria-label={ariaLabel}
     />
   );
+}
+
+function getFitPadding(): [number, number] {
+  if (typeof window === 'undefined') {
+    return [48, 48];
+  }
+  return window.matchMedia('(min-width: 640px)').matches ? [64, 64] : [40, 72];
 }
 
 function renderMarkers(
@@ -145,13 +177,16 @@ function renderMarkers(
   }
 
   const bounds = L.latLngBounds([]);
+  const isCompact =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(max-width: 639px)').matches;
 
   for (const item of markers) {
     const latLng = L.latLng(item.latitude, item.longitude);
     bounds.extend(latLng);
 
     const isDestination = item.kind === 'destination';
-    const icon = createProductMarkerIcon(L, item.kind, item.fillColor);
+    const icon = createProductMarkerIcon(L, item.kind, item.fillColor, isCompact);
     const marker = L.marker(latLng, {
       icon,
       title: item.title,
@@ -163,7 +198,7 @@ function renderMarkers(
       : '';
 
     const popupHtml = `
-      <div style="min-width:180px;font-family:inherit;line-height:1.4">
+      <div style="min-width:min(180px,70vw);max-width:min(260px,82vw);font-family:inherit;line-height:1.4">
         ${kindBadge}
         <strong style="display:block;margin-bottom:4px;font-size:14px">${escapeHtml(item.title)}</strong>
         <span style="display:block;font-size:12px;color:#666;margin-bottom:8px">${escapeHtml(item.subtitle)}</span>
@@ -171,7 +206,11 @@ function renderMarkers(
       </div>
     `;
 
-    marker.bindPopup(popupHtml, { closeButton: true, maxWidth: 260 });
+    marker.bindPopup(popupHtml, {
+      closeButton: true,
+      maxWidth: isCompact ? 240 : 280,
+      autoPanPadding: isCompact ? [48, 72] : [56, 56],
+    });
 
     if (isDestination) {
       marker.on('click', () => {
@@ -190,16 +229,18 @@ function renderMarkers(
     return;
   }
 
+  const padding = getFitPadding();
+
   if (markers.length === 1) {
     map.setView(
       [markers[0].latitude, markers[0].longitude],
-      Math.min(options.fitMaxZoom, 11),
+      Math.min(options.fitMaxZoom, isCompact ? 10 : 11),
     );
     return;
   }
 
   map.fitBounds(bounds, {
-    padding: [56, 56],
+    padding,
     maxZoom: options.fitMaxZoom,
   });
 }
@@ -208,9 +249,11 @@ function createProductMarkerIcon(
   L: typeof import('leaflet'),
   kind: DestinationMapMarkerKind,
   fillColor: string,
+  isCompact: boolean,
 ): import('leaflet').DivIcon {
-  const glyph = markerGlyph(kind);
-  const size = kind === 'destination' ? 40 : 44;
+  const glyph = markerGlyph(kind, isCompact);
+  const base = kind === 'destination' ? 40 : 44;
+  const size = isCompact ? base - 8 : base;
 
   return L.divIcon({
     className: 'atg-destinations-map-marker',
@@ -234,14 +277,16 @@ function createProductMarkerIcon(
   });
 }
 
-function markerGlyph(kind: DestinationMapMarkerKind): string {
+function markerGlyph(kind: DestinationMapMarkerKind, isCompact: boolean): string {
+  const dim = isCompact ? 16 : 20;
   if (kind === 'hotel') {
-    return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5"/><path d="M9 10h.01"/><path d="M15 10h.01"/></svg>`;
+    return `<svg width="${dim}" height="${dim}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5"/><path d="M9 10h.01"/><path d="M15 10h.01"/></svg>`;
   }
   if (kind === 'activity') {
-    return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3"/><path d="M12 19v3"/><path d="m4.9 4.9 2.1 2.1"/><path d="m17 17 2.1 2.1"/><path d="M2 12h3"/><path d="M19 12h3"/><path d="m4.9 19.1 2.1-2.1"/><path d="m17 7 2.1-2.1"/></svg>`;
+    return `<svg width="${dim}" height="${dim}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3"/><path d="M12 19v3"/><path d="m4.9 4.9 2.1 2.1"/><path d="m17 17 2.1 2.1"/><path d="M2 12h3"/><path d="M19 12h3"/><path d="m4.9 19.1 2.1-2.1"/><path d="m17 7 2.1-2.1"/></svg>`;
   }
-  return `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>`;
+  const pin = isCompact ? 14 : 18;
+  return `<svg width="${pin}" height="${pin}" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>`;
 }
 
 function escapeHtml(value: string): string {
