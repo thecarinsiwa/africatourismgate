@@ -1,12 +1,13 @@
 import { createApiClient } from '@africatourismgate/api-client';
 import type { Destination, Property, PropertyImage, Room } from '@africatourismgate/types';
 import type { HotelAmenity, HotelDetails, HotelListing, HotelType } from './types';
+import { STOCK_IMAGES } from '../media/stock-images';
 
 const FALLBACK_IMAGES = [
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg/1280px-Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg',
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Table_Mountain_DanieVDM.jpg/1280px-Table_Mountain_DanieVDM.jpg',
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Zanzibar_beach.jpg/1280px-Zanzibar_beach.jpg',
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Koutoubia_Mosque%2C_Marrakech.jpg/1280px-Koutoubia_Mosque%2C_Marrakech.jpg',
+  STOCK_IMAGES.nairobiGiraffe,
+  STOCK_IMAGES.tableMountain,
+  STOCK_IMAGES.kinshasaGombe,
+  STOCK_IMAGES.serengetiSunset,
 ];
 
 function mapPropertyType(value: Property['propertyType']): HotelType {

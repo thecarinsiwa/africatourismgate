@@ -20,6 +20,7 @@ import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { HotelCard } from './hotel-card';
 import { HotelsSearchForm } from './hotels-search-form';
+import { STOCK_IMAGES } from '../../lib/media/stock-images';
 
 export type { HotelsSearchParams };
 
@@ -235,9 +236,7 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
         <div
           className="absolute inset-0 bg-cover bg-center opacity-40"
           style={{
-            backgroundImage:
-              'url("https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg/1280px-Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg")',
-          }}
+            backgroundImage: `url("${STOCK_IMAGES.nairobiGiraffe}")`,          }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#1b1b2f] via-[#1b1b2f]/90 to-[#1b1b2f]/70" />
         <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">

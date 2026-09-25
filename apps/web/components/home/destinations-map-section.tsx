@@ -12,6 +12,7 @@ import {
   searchAccommodations,
 } from '../../lib/api/public';
 import { siteSearchDeepLinks } from '../../lib/site-search/deep-links';
+import { PLACEHOLDER_COVER_IMAGE } from '../../lib/media/stock-images';
 import { useScrollAnimation } from './use-scroll-animation';
 import { Spinner } from '@africatourismgate/ui';
 
@@ -28,8 +29,7 @@ const DestinationsMapInner = dynamic(
 const MAP_HEIGHT_CLASS =
   'h-[min(62vh,420px)] w-full sm:h-[460px] lg:h-[540px]';
 
-const PLACEHOLDER_IMAGE =
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg/1280px-Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg';
+const PLACEHOLDER_IMAGE = PLACEHOLDER_COVER_IMAGE;
 
 export type DestinationMapMarkerKind = 'destination' | 'hotel' | 'activity';
 

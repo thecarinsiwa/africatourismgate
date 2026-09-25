@@ -8,10 +8,10 @@ import { getFeaturedPackage } from '../../lib/api/public';
 import { packageDescriptionPreview } from '../../lib/packages/description-preview';
 import { formatPackagePrice } from '../../lib/packages/listings';
 import type { PackageListItem } from '../../lib/packages/types';
+import { PLACEHOLDER_COVER_IMAGE } from '../../lib/media/stock-images';
 import { useScrollAnimation } from './use-scroll-animation';
 
-const FALLBACK_IMAGE =
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg/1280px-Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg';
+const FALLBACK_IMAGE = PLACEHOLDER_COVER_IMAGE;
 
 export function ParallaxPromo() {
   const t = useTranslations('promo');

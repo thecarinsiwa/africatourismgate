@@ -5,13 +5,7 @@ import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { getPublicHeroSlidesForLocale } from '../../lib/api/public';
-
-const FALLBACK_IMAGES = [
-  'https://upload.wikimedia.org/wikipedia/commons/d/de/Mountain_gorilla_from_Susa_Group_in_Karisimbi_thicket_of_Volcanoes_National_Park_in_Rwanda._Emmanuel_Kwizera.jpg',
-  'https://upload.wikimedia.org/wikipedia/commons/e/e8/Serengeti_sunset-1001.jpg',
-  'https://upload.wikimedia.org/wikipedia/commons/1/1b/Koutoubia_Mosque%2C_Marrakech.jpg',
-  'https://upload.wikimedia.org/wikipedia/commons/6/6a/Zanzibar_beach.jpg',
-];
+import { HERO_FALLBACK_IMAGES } from '../../lib/media/stock-images';
 
 const AUTO_PLAY_INTERVAL = 6000;
 
@@ -30,7 +24,7 @@ function buildFallbackSlides(
   return slides.map((slide, index) => ({
     id: `fallback-${index}`,
     ...slide,
-    image: FALLBACK_IMAGES[index] ?? FALLBACK_IMAGES[0],
+    image: HERO_FALLBACK_IMAGES[index] ?? HERO_FALLBACK_IMAGES[0],
   }));
 }
 

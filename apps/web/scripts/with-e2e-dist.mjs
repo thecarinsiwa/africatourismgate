@@ -19,6 +19,8 @@ if (!command) {
 const env = {
   ...process.env,
   NEXT_DIST_DIR: process.env.NEXT_DIST_DIR || '.next-e2e',
+  // Avoid Next.js Image Optimization fetching remote Wikimedia (429/404) during E2E.
+  NEXT_IMAGE_UNOPTIMIZED: process.env.NEXT_IMAGE_UNOPTIMIZED || '1',
 };
 
 const result = spawnSync(command, args, {

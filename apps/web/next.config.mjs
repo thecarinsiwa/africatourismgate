@@ -51,6 +51,9 @@ const nextConfig = {
     ATG_REMOTE_API_URL: remoteProxy ? getRemoteApiTargetUrl() : '',
   },
   images: {
+    // CI / E2E: skip optimizer upstream fetches (Wikimedia 429/404 noise & flakiness).
+    unoptimized:
+      process.env.CI === 'true' || process.env.NEXT_IMAGE_UNOPTIMIZED === '1',
     remotePatterns: [
       {
         protocol: 'https',

@@ -6,9 +6,9 @@ import { useMemo } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useScrollAnimation } from './use-scroll-animation';
 import { useFeaturedDestinations } from '../../lib/destinations/use-featured-destinations';
+import { PLACEHOLDER_COVER_IMAGE } from '../../lib/media/stock-images';
 
-const PLACEHOLDER_IMAGE =
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg/1280px-Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg';
+const PLACEHOLDER_IMAGE = PLACEHOLDER_COVER_IMAGE;
 
 function formatCountryName(countryCode: string, locale: string): string {
   try {
