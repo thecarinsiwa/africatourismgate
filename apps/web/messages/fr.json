@@ -12,6 +12,14 @@
     "enableLight": "Activer le mode clair",
     "enableDark": "Activer le mode sombre"
   },
+  "connectionLock": {
+    "title": "Connexion interrompue",
+    "subtitle": "Impossible de joindre le serveur. Vérifiez votre connexion réseau.",
+    "hint": "Si vous êtes en développement, assurez-vous que l’API est démarrée sur le port configuré.",
+    "retry": "Réessayer",
+    "retrying": "Vérification…",
+    "retryFailed": "Le serveur est toujours injoignable. Réessayez dans un instant."
+  },
   "nav": {
     "home": "Accueil",
     "about": "À propos",

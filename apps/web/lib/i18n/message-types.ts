@@ -19,6 +19,14 @@ export type Translations = {
     signOut: string;
   };
   theme: { lightMode: string; darkMode: string; enableLight: string; enableDark: string };
+  connectionLock: {
+    title: string;
+    subtitle: string;
+    hint: string;
+    retry: string;
+    retrying: string;
+    retryFailed: string;
+  };
   language: { label: string; select: string };
   listing: {
     clearFilters: string;

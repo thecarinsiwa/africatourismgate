@@ -64,6 +64,7 @@ import type {
   FlightSearchResult,
   PublicAirport,
 } from '../flights/types';
+import { notifyApiUnreachable } from './connection-lock';
 
 export type {
   VehicleDetail,
@@ -137,6 +138,9 @@ async function fetchPublic<T>(path: string): Promise<T> {
       cache: 'no-store',
     });
   } catch (cause) {
+    if (typeof window !== 'undefined') {
+      notifyApiUnreachable();
+    }
     const detail = cause instanceof Error ? cause.message : 'network error';
     throw new Error(`API unreachable: ${path} (${detail})`, { cause });
   }

@@ -12,6 +12,14 @@
     "enableLight": "Enable light mode",
     "enableDark": "Enable dark mode"
   },
+  "connectionLock": {
+    "title": "Connection interrupted",
+    "subtitle": "Could not reach the server. Check your network connection.",
+    "hint": "If you are in development, make sure the API is running on the configured port.",
+    "retry": "Try again",
+    "retrying": "Checking…",
+    "retryFailed": "The server is still unreachable. Please try again shortly."
+  },
   "nav": {
     "home": "Home",
     "about": "About",
