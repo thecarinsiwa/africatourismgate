@@ -43,6 +43,22 @@
     "conflict": "Conflit : cette ressource existe déjà.",
     "kpiLoadFailed": "Impossible de charger les indicateurs."
   },
+  "connectionLock": {
+    "title": "Connexion interrompue",
+    "subtitle": "Impossible de joindre l’API. Vérifiez votre connexion réseau.",
+    "hint": "Si vous êtes en développement, assurez-vous que l’API est démarrée sur le port configuré.",
+    "retry": "Réessayer",
+    "retrying": "Vérification…",
+    "retryFailed": "L’API est toujours injoignable. Réessayez dans un instant."
+  },
+  "offlineLock": {
+    "title": "Vous êtes hors ligne",
+    "subtitle": "Aucune connexion Internet détectée. L’administration ne peut pas se charger.",
+    "hint": "Vérifiez le Wi‑Fi ou les données mobiles, puis réessayez.",
+    "retry": "Réessayer",
+    "retrying": "Vérification…",
+    "retryFailed": "Vous êtes toujours hors ligne. Réessayez lorsque la connexion revient."
+  },
   "commandPalette": {
     "title": "Navigation rapide",
     "placeholder": "Rechercher une page…",

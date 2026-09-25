@@ -43,6 +43,22 @@
     "conflict": "Conflict: this resource already exists.",
     "kpiLoadFailed": "Unable to load metrics."
   },
+  "connectionLock": {
+    "title": "Connection interrupted",
+    "subtitle": "Unable to reach the API. Check your network connection.",
+    "hint": "If you are in development, make sure the API is running on the configured port.",
+    "retry": "Try again",
+    "retrying": "Checking…",
+    "retryFailed": "The API is still unreachable. Please try again shortly."
+  },
+  "offlineLock": {
+    "title": "You are offline",
+    "subtitle": "No Internet connection detected. The admin cannot load.",
+    "hint": "Check your Wi‑Fi or mobile data, then try again.",
+    "retry": "Try again",
+    "retrying": "Checking…",
+    "retryFailed": "You are still offline. Try again when your connection returns."
+  },
   "commandPalette": {
     "title": "Quick navigation",
     "placeholder": "Search for a page…",
