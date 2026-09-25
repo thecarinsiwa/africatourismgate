@@ -779,6 +779,8 @@
     "viewHotel": "Ver alojamiento",
     "hotelKind": "Alojamiento",
     "activityKind": "Actividad",
+    "destinationKind": "Destino",
+    "legendAria": "Leyenda de tipos de producto en el mapa",
     "loadingProducts": "Cargando productos…",
     "productsError": "No se pudieron cargar los productos.",
     "noProducts": "Todavía no hay productos aquí.",

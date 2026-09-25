@@ -779,6 +779,8 @@
     "viewHotel": "View stay",
     "hotelKind": "Stay",
     "activityKind": "Activity",
+    "destinationKind": "Destination",
+    "legendAria": "Map legend for product types",
     "loadingProducts": "Loading products…",
     "productsError": "Could not load products.",
     "noProducts": "No products available here yet.",

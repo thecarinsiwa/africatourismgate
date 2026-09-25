@@ -36,6 +36,8 @@ export type DestinationMapMarker = {
   href: string;
   viewLabel: string;
   fillColor: string;
+  /** Short product-type label shown on the map popup / legend. */
+  kindLabel?: string;
 };
 
 const DESTINATION_COLOR = 'var(--atg-primary, #c8102e)';
@@ -171,6 +173,7 @@ export function DestinationsMapSection() {
   const viewActivityLabel = t('viewActivity');
   const hotelKindLabel = t('hotelKind');
   const activityKindLabel = t('activityKind');
+  const destinationKindLabel = t('destinationKind');
 
   const destinationMarkers = useMemo<DestinationMapMarker[]>(() => {
     return destinations.filter(hasMapCoordinates).map((destination) => ({
@@ -183,8 +186,9 @@ export function DestinationsMapSection() {
       href: siteSearchDeepLinks.hotelsByDestination(destination.name),
       viewLabel: viewDestinationLabel,
       fillColor: DESTINATION_COLOR,
+      kindLabel: destinationKindLabel,
     }));
-  }, [destinations, locale, viewDestinationLabel]);
+  }, [destinationKindLabel, destinations, locale, viewDestinationLabel]);
 
   const selectedDestination = useMemo(() => {
     if (!selectedDestinationId) {
@@ -236,6 +240,7 @@ export function DestinationsMapSection() {
             href: siteSearchDeepLinks.hotel(hotel.id),
             viewLabel: viewHotelLabel,
             fillColor: HOTEL_COLOR,
+            kindLabel: hotelKindLabel,
           });
         }
 
@@ -262,6 +267,7 @@ export function DestinationsMapSection() {
             ),
             viewLabel: viewActivityLabel,
             fillColor: ACTIVITY_COLOR,
+            kindLabel: activityKindLabel,
           });
         }
 
@@ -304,14 +310,23 @@ export function DestinationsMapSection() {
     if (!selectedDestination) {
       return destinationMarkers;
     }
+    // Once products are on the map, show product-type pins only.
+    if (productMarkers.length > 0) {
+      return productMarkers;
+    }
     return [
       {
         ...selectedDestination,
         fillColor: DESTINATION_COLOR,
+        kindLabel: destinationKindLabel,
       },
-      ...productMarkers,
     ];
-  }, [destinationMarkers, productMarkers, selectedDestination]);
+  }, [
+    destinationKindLabel,
+    destinationMarkers,
+    productMarkers,
+    selectedDestination,
+  ]);
 
   const productsReady =
     Boolean(selectedDestination) && !productsLoading && productMarkers.length > 0;
@@ -407,6 +422,43 @@ export function DestinationsMapSection() {
                   >
                     {t('showAllDestinations')}
                   </button>
+                </div>
+              ) : null}
+
+              {selectedDestination && productMarkers.length > 0 ? (
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[500] flex justify-center p-3 sm:justify-start sm:p-4">
+                  <ul
+                    className="pointer-events-auto flex flex-wrap items-center gap-3 rounded-lg border border-atg-border bg-atg-elevated/95 px-3 py-2 text-xs text-atg-fg shadow-sm backdrop-blur-sm"
+                    aria-label={t('legendAria')}
+                  >
+                    <li className="inline-flex items-center gap-1.5">
+                      <span
+                        className="inline-flex h-5 w-5 items-center justify-center rounded-full text-white"
+                        style={{ backgroundColor: HOTEL_COLOR }}
+                        aria-hidden
+                      >
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M3 21h18" />
+                          <path d="M5 21V8l7-4 7 4v13" />
+                          <path d="M9 21v-5h6v5" />
+                        </svg>
+                      </span>
+                      {hotelKindLabel}
+                    </li>
+                    <li className="inline-flex items-center gap-1.5">
+                      <span
+                        className="inline-flex h-5 w-5 items-center justify-center rounded-full text-white"
+                        style={{ backgroundColor: ACTIVITY_COLOR }}
+                        aria-hidden
+                      >
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="3" />
+                          <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+                        </svg>
+                      </span>
+                      {activityKindLabel}
+                    </li>
+                  </ul>
                 </div>
               ) : null}
 
