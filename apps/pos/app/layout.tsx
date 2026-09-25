@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Montserrat } from 'next/font/google';
 import { ThemeProvider } from '@africatourismgate/ui';
+import { PosConnectionLockProvider } from '../components/connection-lock/pos-connection-lock-provider';
 import { SessionSync } from '../components/session-sync';
 import './globals.css';
 
@@ -22,8 +23,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="fr" className={montserrat.variable} suppressHydrationWarning>
       <body className="font-sans">
         <ThemeProvider defaultTheme="system">
-          <SessionSync />
-          {children}
+          <PosConnectionLockProvider>
+            <SessionSync />
+            {children}
+          </PosConnectionLockProvider>
         </ThemeProvider>
       </body>
     </html>
