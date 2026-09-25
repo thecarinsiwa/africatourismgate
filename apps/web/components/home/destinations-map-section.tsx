@@ -46,6 +46,8 @@ export type DestinationMapMarker = {
   /** Short product-type label shown on the map popup / legend. */
   kindLabel?: string;
   imageUrl?: string | null;
+  /** ISO 3166-1 alpha-2 country code (destination markers). */
+  countryCode?: string;
 };
 
 const DESTINATION_COLOR = 'var(--atg-primary, #c8102e)';
@@ -191,6 +193,7 @@ export function DestinationsMapSection() {
       kind: 'destination' as const,
       title: destination.name,
       subtitle: formatCountryName(destination.countryCode, locale),
+      countryCode: destination.countryCode.trim().toUpperCase(),
       latitude: destination.latitude,
       longitude: destination.longitude,
       href: siteSearchDeepLinks.hotelsByDestination(destination.name),

@@ -210,7 +210,9 @@ function renderMarkers(
       item.fillColor,
       isCompact,
       isHighlighted,
-      isDestination ? item.subtitle : undefined,
+      isDestination
+        ? { countryLabel: item.subtitle, countryCode: item.countryCode }
+        : undefined,
     );
     const marker = L.marker(latLng, {
       icon,
@@ -218,15 +220,22 @@ function renderMarkers(
       zIndexOffset: isHighlighted ? 400 : isDestination ? 100 : 200,
     }).addTo(map);
 
-    const kindBadge = item.kindLabel
-      ? `<span style="display:inline-block;margin-bottom:4px;padding:1px 7px;border-radius:999px;background:${escapeHtml(item.fillColor)};color:#fff;font-size:9px;font-weight:700;letter-spacing:.03em;text-transform:uppercase">${escapeHtml(item.kindLabel)}</span>`
+    const flagHtml = isDestination
+      ? countryFlagImgHtml(item.countryCode, 14, 10)
       : '';
+    const kindBadge = item.kindLabel
+      ? `<span style="display:inline-flex;align-items:center;gap:5px;margin-bottom:4px;padding:1px 7px;border-radius:999px;background:${escapeHtml(item.fillColor)};color:#fff;font-size:9px;font-weight:700;letter-spacing:.03em;text-transform:uppercase">${flagHtml}${escapeHtml(item.kindLabel)}</span>`
+      : '';
+
+    const countryLine = isDestination
+      ? `<span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#666;margin-bottom:6px">${countryFlagImgHtml(item.countryCode, 18, 13)}<span>${escapeHtml(item.subtitle)}</span></span>`
+      : `<span style="display:block;font-size:11px;color:#666;margin-bottom:6px">${escapeHtml(item.subtitle)}</span>`;
 
     const popupHtml = `
       <div class="atg-destinations-map-popup" style="min-width:0;max-width:min(200px,72vw);font-family:inherit;line-height:1.3">
         ${kindBadge}
         <strong style="display:block;margin-bottom:2px;font-size:13px">${escapeHtml(item.title)}</strong>
-        <span style="display:block;font-size:11px;color:#666;margin-bottom:6px">${escapeHtml(item.subtitle)}</span>
+        ${countryLine}
         <a href="${escapeHtml(item.href)}" style="font-size:11px;font-weight:600;color:var(--atg-primary,#c8102e);text-decoration:underline">${escapeHtml(item.viewLabel)}</a>
       </div>
     `;
@@ -271,18 +280,38 @@ function renderMarkers(
 
 const COUNTRY_HALO_RADIUS_METERS = 95_000;
 
+function normalizeCountryCode(countryCode?: string): string | null {
+  const code = countryCode?.trim().toUpperCase() ?? '';
+  return /^[A-Z]{2}$/.test(code) ? code : null;
+}
+
+/** Flag image (flagcdn) — works reliably across platforms unlike emoji flags. */
+function countryFlagImgHtml(
+  countryCode: string | undefined,
+  width: number,
+  height: number,
+): string {
+  const code = normalizeCountryCode(countryCode);
+  if (!code) {
+    return '';
+  }
+  const src = `https://flagcdn.com/w80/${code.toLowerCase()}.png`;
+  return `<img src="${src}" alt="" width="${width}" height="${height}" style="width:${width}px;height:${height}px;object-fit:cover;border-radius:2px;flex-shrink:0;box-shadow:0 0 0 1px rgba(0,0,0,.12)" loading="lazy" decoding="async" />`;
+}
+
 function createProductMarkerIcon(
   L: typeof import('leaflet'),
   kind: DestinationMapMarkerKind,
   fillColor: string,
   isCompact: boolean,
   isHighlighted: boolean,
-  countryLabel?: string,
+  destinationMeta?: { countryLabel: string; countryCode?: string },
 ): import('leaflet').DivIcon {
   if (kind === 'destination') {
     return createDestinationCountryIcon(
       L,
-      countryLabel?.trim() || '·',
+      destinationMeta?.countryLabel?.trim() || '·',
+      destinationMeta?.countryCode,
       fillColor,
       isCompact,
       isHighlighted,
@@ -316,19 +345,26 @@ function createProductMarkerIcon(
   });
 }
 
-/** Circular country badge for destination pins (encircled country label). */
+/** Circular badge: country flag + country name. */
 function createDestinationCountryIcon(
   L: typeof import('leaflet'),
   countryLabel: string,
+  countryCode: string | undefined,
   fillColor: string,
   isCompact: boolean,
   isHighlighted: boolean,
 ): import('leaflet').DivIcon {
   const label = escapeHtml(countryLabel);
-  const size = isCompact ? 64 : 72;
-  const fontSize = countryLabel.length > 12 ? (isCompact ? 9 : 10) : isCompact ? 10 : 11;
+  const size = isCompact ? 68 : 76;
+  const flagSize = isCompact ? 22 : 26;
+  const fontSize = countryLabel.length > 12 ? (isCompact ? 8 : 9) : isCompact ? 9 : 10;
   const highlightRing = isHighlighted
     ? '0 0 0 4px rgba(200,16,46,.28), '
+    : '';
+  const flagHtml = countryFlagImgHtml(countryCode, flagSize, Math.round(flagSize * 0.72));
+  const code = normalizeCountryCode(countryCode);
+  const fallbackCode = code
+    ? `<span style="font-size:11px;font-weight:800;letter-spacing:.04em">${escapeHtml(code)}</span>`
     : '';
 
   return L.divIcon({
@@ -336,12 +372,14 @@ function createDestinationCountryIcon(
     html: `
       <span class="atg-destinations-map-marker__country" style="
         display:inline-flex;
+        flex-direction:column;
         align-items:center;
         justify-content:center;
+        gap:3px;
         box-sizing:border-box;
         width:${size}px;
         height:${size}px;
-        padding:8px 6px;
+        padding:6px 5px;
         border-radius:9999px;
         background:${fillColor};
         border:3px solid #fff;
@@ -349,14 +387,15 @@ function createDestinationCountryIcon(
         color:#fff;
         font-size:${fontSize}px;
         font-weight:700;
-        line-height:1.1;
+        line-height:1.05;
         letter-spacing:.01em;
         text-align:center;
         transform:scale(${isHighlighted ? 1.06 : 1});
         overflow:hidden;
-        hyphens:auto;
-        word-break:break-word;
-      " aria-hidden="true">${label}</span>
+      " aria-hidden="true">
+        ${flagHtml || fallbackCode}
+        <span style="max-width:100%;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word">${label}</span>
+      </span>
     `,
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2],
