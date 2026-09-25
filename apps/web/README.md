@@ -37,7 +37,7 @@ pnpm --filter @africatourismgate/web test:e2e   # Playwright + pnpm dev
 pnpm --filter @africatourismgate/web test:e2e:ci # build → .next-e2e + next start
 ```
 
-`test:e2e:ci` isole le build dans **`.next-e2e`** (`NEXT_DIST_DIR`) pour éviter les collisions avec un `pnpm dev` concurrent. Job CI : `web-e2e` dans [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml).
+`test:e2e:ci` isole le build dans **`.next-e2e`** (`NEXT_DIST_DIR`) pour éviter les collisions avec un `pnpm dev` concurrent. En CI : job `web-e2e-build` puis 4 shards `web-e2e` en parallèle ([`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)).
 
 ## Structure
 

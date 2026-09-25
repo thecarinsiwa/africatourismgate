@@ -11,7 +11,9 @@
     "test:components": "vitest run",
     "test:components:watch": "vitest",
     "test:e2e": "playwright test",
-    "test:e2e:ci": "node ./scripts/with-e2e-dist.mjs pnpm build && node ./scripts/with-e2e-dist.mjs playwright test",
+    "test:e2e:ci:build": "node ./scripts/with-e2e-dist.mjs pnpm build",
+    "test:e2e:ci:run": "node ./scripts/with-e2e-dist.mjs playwright test",
+    "test:e2e:ci": "pnpm run test:e2e:ci:build && pnpm run test:e2e:ci:run",
     "test:e2e:loyalty": "node ./scripts/with-e2e-dist.mjs pnpm build && node ./scripts/with-e2e-dist.mjs playwright test -c playwright.loyalty.config.ts"
   },
   "dependencies": {

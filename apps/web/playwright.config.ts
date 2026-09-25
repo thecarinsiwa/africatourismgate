@@ -21,9 +21,9 @@ if (useProdServer) {
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
-  // CI runners are 2 vCPU — 2 workers ~halves wall time vs sequential.
-  // Specs mock the API via page.route, so shared DB state is not a concern.
+  // Parallelize on CI (2 vCPU runners). Specs mock the API via page.route.
   workers: process.env.CI ? 2 : undefined,
+  // Sharding is configured in GitHub Actions (--shard=n/4); keep retries low.
   retries: process.env.CI ? 1 : 1,
   forbidOnly: Boolean(process.env.CI),
   use: {
