@@ -475,9 +475,120 @@ test('submits support ticket when signed in', async ({ page }) => {
     ),
   ).toBeVisible();
 
-  await expect(page.getByText(TICKET_ID)).toBeVisible();
+  await expect(
+    page.getByRole('link', {
+      name: /Ouvrir mon ticket|Open my ticket|Abrir mi ticket/i,
+    }),
+  ).toHaveAttribute('href', `/account/support/${TICKET_ID}`);
+  await expect(
+    page.getByRole('link', {
+      name: /Voir tous mes tickets|View all my tickets|Ver todos mis tickets/i,
+    }),
+  ).toHaveAttribute('href', '/account/support');
 
   expect(postBody).toBeDefined();
   expect(postBody!.subject).toBe('Question réservation test');
   expect(postBody!.body).toContain('modifier les dates');
+});
+
+test('account support list shows empty state and nav link', async ({ page }) => {
+  await mockSession(page);
+  await mockAuthMe(page);
+
+  await page.route('**/api/support-tickets**', async (route) => {
+    if (route.request().method() !== 'GET') {
+      await route.continue();
+      return;
+    }
+    const url = route.request().url();
+    // List only — leave detail routes for the other smoke test.
+    if (/\/support-tickets\/[^/?]+/.test(url)) {
+      await route.continue();
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        data: [],
+        meta: { total: 0, page: 1, limit: 50, totalPages: 0 },
+      }),
+    });
+  });
+
+  await page.goto('/account/support');
+
+  await expect(page).toHaveURL(/\/account\/support\/?$/);
+  await expect(
+    page
+      .getByRole('navigation', {
+        name: /Navigation du compte|Account navigation|Navegación de la cuenta/i,
+      })
+      .getByRole('link', {
+        name: /Mes tickets|My tickets|Mis tickets/i,
+      }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      /Vous n'avez pas encore de ticket support|do not have any support tickets|Aún no tiene tickets/i,
+    ),
+  ).toBeVisible();
+});
+
+test('account support detail shows thread and staff reply', async ({ page }) => {
+  await mockSession(page);
+  await mockAuthMe(page);
+
+  await page.route(`**/api/support-tickets/${TICKET_ID}`, async (route) => {
+    if (route.request().method() !== 'GET') {
+      await route.continue();
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        id: TICKET_ID,
+        userId: USER_ID,
+        subject: 'Question réservation test',
+        status: 'pending',
+        priority: 'normal',
+        createdAt: '2026-06-02T12:00:00.000Z',
+        messages: [
+          {
+            id: 'msg-e2e-support-001',
+            ticketId: TICKET_ID,
+            body: 'Bonjour, je souhaite modifier les dates de ma réservation confirmée.',
+            isStaff: false,
+            createdAt: '2026-06-02T12:00:00.000Z',
+          },
+          {
+            id: 'msg-e2e-support-002',
+            ticketId: TICKET_ID,
+            body: 'Bonjour, nous avons bien reçu votre demande et revenons vers vous.',
+            isStaff: true,
+            createdAt: '2026-06-02T13:00:00.000Z',
+          },
+        ],
+      }),
+    });
+  });
+
+  await page.goto(`/account/support/${TICKET_ID}`);
+
+  await expect(
+    page.getByRole('heading', {
+      name: /Question réservation test/i,
+      level: 3,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/En attente|Pending|Pendiente/i).first(),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/modifier les dates de ma réservation/i),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/bien reçu votre demande/i),
+  ).toBeVisible();
 });

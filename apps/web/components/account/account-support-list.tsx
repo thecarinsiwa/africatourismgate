@@ -7,7 +7,8 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
 import { formatBookingDateTime } from '../../lib/bookings/display';
-import { localeToBcp47, type Locale } from '../../lib/i18n/config';
+import { localeToBcp47 } from '../../lib/i18n/locale-tag';
+import type { Locale } from '../../lib/i18n/types';
 
 const STATUS_VARIANT: Record<
   SupportTicketStatus,

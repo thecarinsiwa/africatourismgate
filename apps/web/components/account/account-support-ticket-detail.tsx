@@ -18,7 +18,8 @@ import { getAccountApiClient } from '../../lib/api/account';
 import { AUTH_CHANGED_EVENT, getWebSession } from '../../lib/auth/client-session';
 import { formatBookingDateTime } from '../../lib/bookings/display';
 import { useResolvedPublicBranding } from '../../lib/branding/use-resolved-public-branding';
-import { localeToBcp47, type Locale } from '../../lib/i18n/config';
+import { localeToBcp47 } from '../../lib/i18n/locale-tag';
+import type { Locale } from '../../lib/i18n/types';
 
 const POLL_INTERVAL_MS = 20_000;
 
