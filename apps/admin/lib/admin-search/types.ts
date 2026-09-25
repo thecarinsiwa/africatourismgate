@@ -29,7 +29,13 @@ export type AdminSearchSourceId =
   | 'sailings'
   | 'blogPosts'
   | 'destinations'
-  | 'employees';
+  | 'employees'
+  | 'tourGuides'
+  | 'promotions'
+  | 'promoCodes'
+  | 'gapPages'
+  | 'gapActivities'
+  | 'roles';
 
 export type AdminSearchSourceKind = 'local' | 'api';
 

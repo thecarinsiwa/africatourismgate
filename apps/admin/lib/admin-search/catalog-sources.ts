@@ -3,10 +3,12 @@ import {
   searchAdminActivities,
   searchAdminBlogPosts,
   searchAdminDestinations,
-  searchAdminEmployees,
   searchAdminFlights,
+  searchAdminGapActivities,
+  searchAdminGapPages,
   searchAdminPackages,
   searchAdminSailings,
+  searchAdminTourGuides,
   searchAdminVehicles,
 } from './search-api-catalog';
 import type {
@@ -25,7 +27,9 @@ const CATALOG_SOURCE_IDS = [
   'sailings',
   'blogPosts',
   'destinations',
-  'employees',
+  'tourGuides',
+  'gapPages',
+  'gapActivities',
 ] as const satisfies readonly AdminSearchSourceId[];
 
 type CatalogSourceId = (typeof CATALOG_SOURCE_IDS)[number];
@@ -54,7 +58,9 @@ const CATALOG_SEARCHERS: Record<CatalogSourceId, AdminSearchSourceSearcher> = {
   sailings: withLimitAndSignal('sailings', searchAdminSailings),
   blogPosts: withLimitAndSignal('blogPosts', searchAdminBlogPosts),
   destinations: withLimitAndSignal('destinations', searchAdminDestinations),
-  employees: withLimitAndSignal('employees', searchAdminEmployees),
+  tourGuides: withLimitAndSignal('tourGuides', searchAdminTourGuides),
+  gapPages: withLimitAndSignal('gapPages', searchAdminGapPages),
+  gapActivities: withLimitAndSignal('gapActivities', searchAdminGapActivities),
 };
 
 function isCatalogSourceId(id: AdminSearchSourceId): id is CatalogSourceId {

@@ -4,7 +4,6 @@ import { formatMoney } from '../format-money';
 import {
   adminSearchDeepLinks,
   formatAdminSearchIdPrefix,
-  formatAdminSearchPersonName,
 } from './deep-links';
 import { buildAdminSearchResultId } from './sources';
 import type { AdminSearchResultItem } from './types';
@@ -154,9 +153,9 @@ export async function searchAdminSailings(
     ),
   );
 
-  const itineraryIds = [
-    ...new Set(sailingsResult.data.map((sailing) => sailing.itineraryId)),
-  ];
+  const itineraryIds = Array.from(
+    new Set(sailingsResult.data.map((sailing) => sailing.itineraryId)),
+  );
   const itineraryNameById = new Map<string, string>();
 
   if (itineraryIds.length > 0) {
@@ -234,20 +233,20 @@ export async function searchAdminDestinations(
   return result.data.map((destination) => ({
     id: buildAdminSearchResultId('destinations', destination.id),
     sourceId: 'destinations' as const,
-    group: 'content' as const,
+    group: 'catalog' as const,
     title: destination.name,
     subtitle: `${destination.countryCode} · ${destination.slug}`,
     href: adminSearchDeepLinks.destination(destination.id),
   }));
 }
 
-export async function searchAdminEmployees(
+export async function searchAdminTourGuides(
   query: string,
   options?: SearchApiCoreOptions,
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listEmployees(
+    client.listTourGuides(
       {
         page: 1,
         limit,
@@ -257,27 +256,67 @@ export async function searchAdminEmployees(
     ),
   );
 
-  return result.data.map((employee) => {
-    const user = employee.user;
-    const name = user
-      ? formatAdminSearchPersonName(
-          user.firstName,
-          user.lastName,
-          user.email,
-        )
-      : employee.employeeCode?.trim() ||
-        formatAdminSearchIdPrefix(employee.id);
-    return {
-      id: buildAdminSearchResultId('employees', employee.id),
-      sourceId: 'employees' as const,
-      group: 'content' as const,
-      title: name,
-      subtitle:
-        employee.jobTitle?.trim() ||
-        employee.employeeCode?.trim() ||
-        user?.email ||
-        employee.status,
-      href: adminSearchDeepLinks.employee(employee.id),
-    };
-  });
+  return result.data.map((guide) => ({
+    id: buildAdminSearchResultId('tourGuides', guide.id),
+    sourceId: 'tourGuides' as const,
+    group: 'content' as const,
+    title: guide.displayName,
+    subtitle:
+      guide.contactEmail?.trim() ||
+      guide.user?.email ||
+      guide.status,
+    href: adminSearchDeepLinks.tourGuide(guide.id),
+  }));
+}
+
+export async function searchAdminGapPages(
+  query: string,
+  options?: SearchApiCoreOptions,
+): Promise<AdminSearchResultItem[]> {
+  const limit = resolveLimit(options);
+  const result = await withApiClient((client: ApiClient) =>
+    client.listGapPages(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
+  );
+
+  return result.data.map((page) => ({
+    id: buildAdminSearchResultId('gapPages', page.id),
+    sourceId: 'gapPages' as const,
+    group: 'content' as const,
+    title: page.title,
+    subtitle: `${page.status} · ${page.locale}`,
+    href: adminSearchDeepLinks.gapPage(page.id),
+  }));
+}
+
+export async function searchAdminGapActivities(
+  query: string,
+  options?: SearchApiCoreOptions,
+): Promise<AdminSearchResultItem[]> {
+  const limit = resolveLimit(options);
+  const result = await withApiClient((client: ApiClient) =>
+    client.listGapActivities(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
+  );
+
+  return result.data.map((activity) => ({
+    id: buildAdminSearchResultId('gapActivities', activity.id),
+    sourceId: 'gapActivities' as const,
+    group: 'content' as const,
+    title: activity.title,
+    subtitle: `${activity.status} · ${activity.locale}`,
+    href: adminSearchDeepLinks.gapActivity(activity.id),
+  }));
 }

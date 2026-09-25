@@ -1,9 +1,13 @@
 import { getAdminSearchSourceDefinition } from './sources';
 import {
   searchAdminBookings,
+  searchAdminEmployees,
   searchAdminOrganizations,
   searchAdminPayments,
+  searchAdminPromoCodes,
+  searchAdminPromotions,
   searchAdminProperties,
+  searchAdminRoles,
   searchAdminSupportTickets,
   searchAdminUsers,
 } from './search-api-core';
@@ -21,7 +25,11 @@ const CORE_SOURCE_IDS = [
   'bookings',
   'properties',
   'payments',
+  'promotions',
+  'promoCodes',
   'supportTickets',
+  'employees',
+  'roles',
 ] as const satisfies readonly AdminSearchSourceId[];
 
 type CoreSourceId = (typeof CORE_SOURCE_IDS)[number];
@@ -48,7 +56,11 @@ const CORE_SEARCHERS: Record<CoreSourceId, AdminSearchSourceSearcher> = {
   bookings: withLimitAndSignal('bookings', searchAdminBookings),
   properties: withLimitAndSignal('properties', searchAdminProperties),
   payments: withLimitAndSignal('payments', searchAdminPayments),
+  promotions: withLimitAndSignal('promotions', searchAdminPromotions),
+  promoCodes: withLimitAndSignal('promoCodes', searchAdminPromoCodes),
   supportTickets: withLimitAndSignal('supportTickets', searchAdminSupportTickets),
+  employees: withLimitAndSignal('employees', searchAdminEmployees),
+  roles: withLimitAndSignal('roles', searchAdminRoles),
 };
 
 function isCoreSourceId(id: AdminSearchSourceId): id is CoreSourceId {
@@ -68,7 +80,7 @@ function attachCoreSearcher(
 }
 
 /**
- * Sources API cœur prêtes pour le fan-out (users → tickets).
+ * Sources API cœur prêtes pour le fan-out (users → tickets / promos / rôles).
  */
 export function listCoreAdminSearchSources(
   definitions: readonly AdminSearchSourceDefinition[],

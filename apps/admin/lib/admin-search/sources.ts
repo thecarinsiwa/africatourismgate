@@ -28,8 +28,7 @@ export const ADMIN_SEARCH_GROUP_ORDER: readonly AdminSearchGroupId[] = [
 ] as const;
 
 /**
- * Catalogue des sources v1.
- * Les adapters `search` seront branchés dans les tâches suivantes.
+ * Catalogue des sources de recherche admin.
  */
 export const ADMIN_SEARCH_SOURCE_DEFINITIONS: readonly AdminSearchSourceDefinition[] =
   [
@@ -104,6 +103,26 @@ export const ADMIN_SEARCH_SOURCE_DEFINITIONS: readonly AdminSearchSourceDefiniti
       enabled: true,
     },
     {
+      id: 'promotions',
+      group: 'payments',
+      labelKey: 'promotions',
+      listHref: '/paiements/promotions',
+      kind: 'api',
+      minQueryLength: ADMIN_SEARCH_API_MIN_QUERY_LENGTH,
+      resultLimit: ADMIN_SEARCH_DEFAULT_RESULT_LIMIT,
+      enabled: true,
+    },
+    {
+      id: 'promoCodes',
+      group: 'payments',
+      labelKey: 'promoCodes',
+      listHref: '/paiements/codes-promo',
+      kind: 'api',
+      minQueryLength: ADMIN_SEARCH_API_MIN_QUERY_LENGTH,
+      resultLimit: ADMIN_SEARCH_DEFAULT_RESULT_LIMIT,
+      enabled: true,
+    },
+    {
       id: 'supportTickets',
       group: 'support',
       labelKey: 'supportTickets',
@@ -164,6 +183,16 @@ export const ADMIN_SEARCH_SOURCE_DEFINITIONS: readonly AdminSearchSourceDefiniti
       enabled: true,
     },
     {
+      id: 'destinations',
+      group: 'catalog',
+      labelKey: 'destinations',
+      listHref: '/produits/destinations',
+      kind: 'api',
+      minQueryLength: ADMIN_SEARCH_API_MIN_QUERY_LENGTH,
+      resultLimit: ADMIN_SEARCH_DEFAULT_RESULT_LIMIT,
+      enabled: true,
+    },
+    {
       id: 'blogPosts',
       group: 'content',
       labelKey: 'blogPosts',
@@ -174,20 +203,50 @@ export const ADMIN_SEARCH_SOURCE_DEFINITIONS: readonly AdminSearchSourceDefiniti
       enabled: true,
     },
     {
-      id: 'destinations',
-      group: 'content',
-      labelKey: 'destinations',
-      listHref: '/produits/destinations',
+      id: 'employees',
+      group: 'users',
+      labelKey: 'employees',
+      listHref: '/utilisateurs/employes',
       kind: 'api',
       minQueryLength: ADMIN_SEARCH_API_MIN_QUERY_LENGTH,
       resultLimit: ADMIN_SEARCH_DEFAULT_RESULT_LIMIT,
       enabled: true,
     },
     {
-      id: 'employees',
+      id: 'tourGuides',
       group: 'content',
-      labelKey: 'employees',
-      listHref: '/utilisateurs/employes',
+      labelKey: 'tourGuides',
+      listHref: '/guides',
+      kind: 'api',
+      minQueryLength: ADMIN_SEARCH_API_MIN_QUERY_LENGTH,
+      resultLimit: ADMIN_SEARCH_DEFAULT_RESULT_LIMIT,
+      enabled: true,
+    },
+    {
+      id: 'gapPages',
+      group: 'content',
+      labelKey: 'gapPages',
+      listHref: '/gap/pages',
+      kind: 'api',
+      minQueryLength: ADMIN_SEARCH_API_MIN_QUERY_LENGTH,
+      resultLimit: ADMIN_SEARCH_DEFAULT_RESULT_LIMIT,
+      enabled: true,
+    },
+    {
+      id: 'gapActivities',
+      group: 'content',
+      labelKey: 'gapActivities',
+      listHref: '/gap/activites',
+      kind: 'api',
+      minQueryLength: ADMIN_SEARCH_API_MIN_QUERY_LENGTH,
+      resultLimit: ADMIN_SEARCH_DEFAULT_RESULT_LIMIT,
+      enabled: true,
+    },
+    {
+      id: 'roles',
+      group: 'content',
+      labelKey: 'roles',
+      listHref: '/systeme/roles',
       kind: 'api',
       minQueryLength: ADMIN_SEARCH_API_MIN_QUERY_LENGTH,
       resultLimit: ADMIN_SEARCH_DEFAULT_RESULT_LIMIT,

@@ -1246,8 +1246,11 @@ export class ApiClient {
     });
   }
 
-  listPromoCodes(query?: PromoCodesListQuery): Promise<PaginatedResponse<PromoCode>> {
-    return fetchPaginated<PromoCode>(this, '/promo-codes', query);
+  listPromoCodes(
+    query?: PromoCodesListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<PromoCode>> {
+    return fetchPaginated<PromoCode>(this, '/promo-codes', query, requestOptions);
   }
 
   getPromoCode(id: string): Promise<PromoCode> {
@@ -1273,8 +1276,11 @@ export class ApiClient {
     });
   }
 
-  listPromotions(query?: PromotionsListQuery): Promise<PaginatedResponse<Promotion>> {
-    return fetchPaginated<Promotion>(this, '/promotions', query);
+  listPromotions(
+    query?: PromotionsListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<Promotion>> {
+    return fetchPaginated<Promotion>(this, '/promotions', query, requestOptions);
   }
 
   getPromotion(id: string): Promise<Promotion> {
@@ -1758,8 +1764,9 @@ export class ApiClient {
 
   listTourGuides(
     query?: TourGuidesListQuery,
+    requestOptions?: RequestOptions,
   ): Promise<PaginatedResponse<TourGuide>> {
-    return fetchPaginated<TourGuide>(this, '/tour-guides', query);
+    return fetchPaginated<TourGuide>(this, '/tour-guides', query, requestOptions);
   }
 
   getTourGuide(id: string): Promise<TourGuide> {
@@ -2155,8 +2162,11 @@ export class ApiClient {
     return this.request<void>(`/gap-site-settings/${id}`, { method: 'DELETE' });
   }
 
-  listGapPages(query?: GapPagesListQuery): Promise<PaginatedResponse<GapPage>> {
-    return fetchPaginated<GapPage>(this, '/gap-pages', query);
+  listGapPages(
+    query?: GapPagesListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<GapPage>> {
+    return fetchPaginated<GapPage>(this, '/gap-pages', query, requestOptions);
   }
 
   getGapPage(id: string): Promise<GapPage> {
@@ -2183,8 +2193,9 @@ export class ApiClient {
 
   listGapActivities(
     query?: GapActivitiesListQuery,
+    requestOptions?: RequestOptions,
   ): Promise<PaginatedResponse<GapActivity>> {
-    return fetchPaginated<GapActivity>(this, '/gap-activities', query);
+    return fetchPaginated<GapActivity>(this, '/gap-activities', query, requestOptions);
   }
 
   getGapActivity(id: string): Promise<GapActivity> {
@@ -2429,8 +2440,11 @@ export class ApiClient {
     return sumSucceededPaymentsRevenue(this);
   }
 
-  listRoles(query?: RolesListQuery): Promise<PaginatedResponse<Role>> {
-    return fetchPaginated<Role>(this, '/roles', query);
+  listRoles(
+    query?: RolesListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<Role>> {
+    return fetchPaginated<Role>(this, '/roles', query, requestOptions);
   }
 
   getRole(id: string): Promise<Role> {

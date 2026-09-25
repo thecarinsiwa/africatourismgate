@@ -53,9 +53,13 @@ export {
 } from './search-help';
 export {
   searchAdminBookings,
+  searchAdminEmployees,
   searchAdminOrganizations,
   searchAdminPayments,
+  searchAdminPromoCodes,
+  searchAdminPromotions,
   searchAdminProperties,
+  searchAdminRoles,
   searchAdminSupportTickets,
   searchAdminUsers,
   type SearchApiCoreOptions,
@@ -64,10 +68,12 @@ export {
   searchAdminActivities,
   searchAdminBlogPosts,
   searchAdminDestinations,
-  searchAdminEmployees,
   searchAdminFlights,
+  searchAdminGapActivities,
+  searchAdminGapPages,
   searchAdminPackages,
   searchAdminSailings,
+  searchAdminTourGuides,
   searchAdminVehicles,
 } from './search-api-catalog';
 export {

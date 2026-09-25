@@ -15,6 +15,12 @@ export const adminSearchDeepLinks = {
   blogPost: (id: string) => `/contenu/blog/${id}`,
   destination: (id: string) => `/produits/destinations/${id}/voir`,
   employee: (id: string) => `/utilisateurs/employes/${id}/voir`,
+  tourGuide: (id: string) => `/guides/${id}/voir`,
+  promotion: (id: string) => `/paiements/promotions/${id}/voir`,
+  promoCode: (id: string) => `/paiements/codes-promo/${id}/voir`,
+  gapPage: (id: string) => `/gap/pages/${id}`,
+  gapActivity: (id: string) => `/gap/activites/${id}`,
+  role: (id: string) => `/systeme/roles/${id}`,
 } as const;
 
 export function formatAdminSearchPersonName(

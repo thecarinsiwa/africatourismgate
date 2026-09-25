@@ -209,3 +209,122 @@ export async function searchAdminSupportTickets(
     href: adminSearchDeepLinks.supportTicket(ticket.id),
   }));
 }
+
+export async function searchAdminPromotions(
+  query: string,
+  options?: SearchApiCoreOptions,
+): Promise<AdminSearchResultItem[]> {
+  const limit = resolveLimit(options);
+  const result = await withApiClient((client: ApiClient) =>
+    client.listPromotions(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
+  );
+
+  return result.data.map((promotion) => ({
+    id: buildAdminSearchResultId('promotions', promotion.id),
+    sourceId: 'promotions' as const,
+    group: 'payments' as const,
+    title: promotion.name,
+    subtitle: promotion.active === 1 ? 'active' : 'inactive',
+    href: adminSearchDeepLinks.promotion(promotion.id),
+  }));
+}
+
+export async function searchAdminPromoCodes(
+  query: string,
+  options?: SearchApiCoreOptions,
+): Promise<AdminSearchResultItem[]> {
+  const limit = resolveLimit(options);
+  const result = await withApiClient((client: ApiClient) =>
+    client.listPromoCodes(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
+  );
+
+  return result.data.map((promo) => ({
+    id: buildAdminSearchResultId('promoCodes', promo.id),
+    sourceId: 'promoCodes' as const,
+    group: 'payments' as const,
+    title: promo.code,
+    subtitle: `${promo.discountType} · ${promo.discountValue}`,
+    href: adminSearchDeepLinks.promoCode(promo.id),
+  }));
+}
+
+export async function searchAdminRoles(
+  query: string,
+  options?: SearchApiCoreOptions,
+): Promise<AdminSearchResultItem[]> {
+  const limit = resolveLimit(options);
+  const result = await withApiClient((client: ApiClient) =>
+    client.listRoles(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
+  );
+
+  return result.data.map((role) => ({
+    id: buildAdminSearchResultId('roles', role.id),
+    sourceId: 'roles' as const,
+    group: 'content' as const,
+    title: role.name,
+    subtitle: role.code,
+    href: adminSearchDeepLinks.role(role.id),
+  }));
+}
+
+export async function searchAdminEmployees(
+  query: string,
+  options?: SearchApiCoreOptions,
+): Promise<AdminSearchResultItem[]> {
+  const limit = resolveLimit(options);
+  const result = await withApiClient((client: ApiClient) =>
+    client.listEmployees(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
+  );
+
+  return result.data.map((employee) => {
+    const user = employee.user;
+    const name = user
+      ? formatAdminSearchPersonName(
+          user.firstName,
+          user.lastName,
+          user.email,
+        )
+      : employee.employeeCode?.trim() ||
+        formatAdminSearchIdPrefix(employee.id);
+    return {
+      id: buildAdminSearchResultId('employees', employee.id),
+      sourceId: 'employees' as const,
+      group: 'users' as const,
+      title: name,
+      subtitle:
+        employee.jobTitle?.trim() ||
+        employee.employeeCode?.trim() ||
+        user?.email ||
+        employee.status,
+      href: adminSearchDeepLinks.employee(employee.id),
+    };
+  });
+}
