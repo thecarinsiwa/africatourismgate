@@ -79,10 +79,18 @@ async function selectNationality(page: Page, index: number, countryQuery: string
 
 /** Fill booking-level emergency contact + required traveler fields on checkout recap. */
 export async function fillCheckoutManifest(page: Page): Promise<number> {
-  const emName = page.getByLabel(/nom du contact|contact name|nombre del contacto/i).first();
-  await emName.fill('Contact Urgence');
-  const emPhone = page.getByLabel(/^t[ée]l[ée]phone$|^phone$|^tel[ée]fono$/i).first();
-  await emPhone.fill('+243900000001');
+  // Labels include a required "*" — do not use ^…$ anchors on getByLabel.
+  const emergency = page
+    .locator('section')
+    .filter({
+      has: page.getByRole('heading', {
+        name: /contact d['']urgence|emergency contact|contacto de emergencia/i,
+      }),
+    })
+    .first();
+
+  await emergency.getByLabel(/nom du contact|contact name|nombre del contacto/i).fill('Contact Urgence');
+  await emergency.getByLabel(/t[ée]l[ée]phone|phone|tel[ée]fono/i).fill('+243900000001');
 
   const nameInputs = page.getByLabel(/nom complet|full name|nombre completo/i);
   const count = await nameInputs.count();
