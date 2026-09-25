@@ -191,19 +191,6 @@ function renderMarkers(
     const isDestination = item.kind === 'destination';
     const isHighlighted = options.highlightId === item.id;
 
-    if (isDestination) {
-      const halo = L.circle(latLng, {
-        radius: COUNTRY_HALO_RADIUS_METERS,
-        color: item.fillColor,
-        weight: 2,
-        opacity: 0.65,
-        fillColor: item.fillColor,
-        fillOpacity: 0.14,
-        interactive: false,
-      }).addTo(map);
-      markerLayerRef.current.push(halo);
-    }
-
     const icon = createProductMarkerIcon(
       L,
       item.kind,
@@ -278,8 +265,6 @@ function renderMarkers(
   });
 }
 
-const COUNTRY_HALO_RADIUS_METERS = 95_000;
-
 function normalizeCountryCode(countryCode?: string): string | null {
   const code = countryCode?.trim().toUpperCase() ?? '';
   return /^[A-Z]{2}$/.test(code) ? code : null;
@@ -345,27 +330,27 @@ function createProductMarkerIcon(
   });
 }
 
-/** Circular badge: country flag + country name. */
+/** Flag + country name label (no circular badge). */
 function createDestinationCountryIcon(
   L: typeof import('leaflet'),
   countryLabel: string,
   countryCode: string | undefined,
-  fillColor: string,
+  _fillColor: string,
   isCompact: boolean,
   isHighlighted: boolean,
 ): import('leaflet').DivIcon {
   const label = escapeHtml(countryLabel);
-  const size = isCompact ? 68 : 76;
-  const flagSize = isCompact ? 22 : 26;
-  const fontSize = countryLabel.length > 12 ? (isCompact ? 8 : 9) : isCompact ? 9 : 10;
-  const highlightRing = isHighlighted
-    ? '0 0 0 4px rgba(200,16,46,.28), '
-    : '';
-  const flagHtml = countryFlagImgHtml(countryCode, flagSize, Math.round(flagSize * 0.72));
+  const width = isCompact ? 96 : 112;
+  const height = isCompact ? 48 : 54;
+  const flagW = isCompact ? 28 : 34;
+  const flagH = Math.round(flagW * 0.72);
+  const fontSize = countryLabel.length > 14 ? (isCompact ? 9 : 10) : isCompact ? 10 : 11;
+  const flagHtml = countryFlagImgHtml(countryCode, flagW, flagH);
   const code = normalizeCountryCode(countryCode);
   const fallbackCode = code
-    ? `<span style="font-size:11px;font-weight:800;letter-spacing:.04em">${escapeHtml(code)}</span>`
+    ? `<span style="display:inline-flex;align-items:center;justify-content:center;width:${flagW}px;height:${flagH}px;border-radius:2px;background:#fff;font-size:10px;font-weight:800;color:#111;box-shadow:0 1px 3px rgba(0,0,0,.25)">${escapeHtml(code)}</span>`
     : '';
+  const scale = isHighlighted ? 1.06 : 1;
 
   return L.divIcon({
     className: 'atg-destinations-map-marker',
@@ -374,32 +359,36 @@ function createDestinationCountryIcon(
         display:inline-flex;
         flex-direction:column;
         align-items:center;
-        justify-content:center;
-        gap:3px;
+        justify-content:flex-start;
+        gap:4px;
         box-sizing:border-box;
-        width:${size}px;
-        height:${size}px;
-        padding:6px 5px;
-        border-radius:9999px;
-        background:${fillColor};
-        border:3px solid #fff;
-        box-shadow:${highlightRing}0 0 0 2px rgba(0,0,0,.08), 0 4px 14px rgba(0,0,0,.35);
-        color:#fff;
-        font-size:${fontSize}px;
-        font-weight:700;
-        line-height:1.05;
-        letter-spacing:.01em;
-        text-align:center;
-        transform:scale(${isHighlighted ? 1.06 : 1});
-        overflow:hidden;
+        width:${width}px;
+        height:${height}px;
+        transform:scale(${scale});
+        filter:drop-shadow(0 1px 2px rgba(0,0,0,.35));
       " aria-hidden="true">
         ${flagHtml || fallbackCode}
-        <span style="max-width:100%;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word">${label}</span>
+        <span style="
+          max-width:100%;
+          padding:1px 4px;
+          border-radius:4px;
+          background:rgba(255,255,255,.92);
+          color:#111;
+          font-size:${fontSize}px;
+          font-weight:700;
+          line-height:1.15;
+          text-align:center;
+          overflow:hidden;
+          display:-webkit-box;
+          -webkit-line-clamp:2;
+          -webkit-box-orient:vertical;
+          word-break:break-word;
+        ">${label}</span>
       </span>
     `,
-    iconSize: [size, size],
-    iconAnchor: [size / 2, size / 2],
-    popupAnchor: [0, -(size / 2) - 4],
+    iconSize: [width, height],
+    iconAnchor: [width / 2, height / 2],
+    popupAnchor: [0, -(height / 2) - 4],
   });
 }
 
