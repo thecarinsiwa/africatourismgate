@@ -11,8 +11,8 @@ export class PublicDestinationDto {
   countryCode!: string;
 
   @ApiPropertyOptional({ nullable: true, type: Number })
-  latitude!: number | null;
+  latitude?: number | null;
 
   @ApiPropertyOptional({ nullable: true, type: Number })
-  longitude!: number | null;
+  longitude?: number | null;
 }
