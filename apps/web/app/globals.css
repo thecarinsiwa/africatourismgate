@@ -113,6 +113,15 @@
 .delay-500 { animation-delay: 500ms; }
 .delay-600 { animation-delay: 600ms; }
 
+/* ── Soft float (404 illustration) ────────────────────── */
+@keyframes soft-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.animate-soft-float {
+  animation: soft-float 4.5s ease-in-out infinite;
+}
+
 /* ── Parallax section ─────────────────────────────────── */
 .parallax-bg {
   background-attachment: fixed;

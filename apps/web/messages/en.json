@@ -211,6 +211,16 @@
     "metaTitle": "Maintenance",
     "metaDescription": "Africa Tourism Gate is temporarily under maintenance."
   },
+  "notFound": {
+    "code": "404",
+    "badge": "Off the map",
+    "title": "This destination doesn't exist",
+    "description": "The link you followed leads nowhere, or the page has moved. Head home to continue your journey.",
+    "backHome": "Back to home",
+    "help": "Help centre",
+    "metaTitle": "Page not found",
+    "metaDescription": "The requested page could not be found on Africa Tourism Gate."
+  },
   "blog": {
     "metaTitle": "Africa travel blog",
     "metaDescription": "Tips, guides and inspiration to plan your next trip to Africa with Africa Tourism Gate.",
