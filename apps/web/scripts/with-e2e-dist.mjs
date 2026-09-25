@@ -9,7 +9,17 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const cwd = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const [command, ...args] = process.argv.slice(2);
+const rawArgs = process.argv.slice(2);
+
+if (rawArgs.length === 0) {
+  console.error('Usage: node ./scripts/with-e2e-dist.mjs <command> [args...]');
+  process.exit(1);
+}
+
+// pnpm may forward a literal "--" separator; strip it so Playwright does not
+// treat it as a test-file pattern ("No tests found").
+const forwarded = rawArgs.filter((arg) => arg !== '--');
+const [command, ...args] = forwarded;
 
 if (!command) {
   console.error('Usage: node ./scripts/with-e2e-dist.mjs <command> [args...]');

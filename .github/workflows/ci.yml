@@ -246,9 +246,8 @@ jobs:
         run: pnpm --filter @africatourismgate/web exec playwright install-deps chromium
 
       - name: Web E2E shard ${{ matrix.shardIndex }}/4
-        run: >-
-          pnpm --filter @africatourismgate/web test:e2e:ci:run
-          -- --shard=${{ matrix.shardIndex }}/4
+        working-directory: apps/web
+        run: node ./scripts/with-e2e-dist.mjs playwright test --shard=${{ matrix.shardIndex }}/4
 
       - name: Upload Playwright report
         if: failure()
