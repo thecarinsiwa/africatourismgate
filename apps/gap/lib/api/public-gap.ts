@@ -7,14 +7,24 @@ import type {
   PublicGapMediaListQuery,
   PublicGapPage,
 } from '@africatourismgate/types';
+import { notifyApiUnreachable } from '@africatourismgate/ui';
 import { getPublicApiBaseUrl, getPublicApiOrigin } from './api-base-url';
 
 async function fetchPublic<T>(path: string): Promise<T> {
   const apiUrl = getPublicApiBaseUrl();
-  const res = await fetch(`${apiUrl}${path}`, {
-    headers: { Accept: 'application/json' },
-    cache: 'no-store',
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${apiUrl}${path}`, {
+      headers: { Accept: 'application/json' },
+      cache: 'no-store',
+    });
+  } catch (cause) {
+    if (typeof window !== 'undefined') {
+      notifyApiUnreachable();
+    }
+    const detail = cause instanceof Error ? cause.message : 'network error';
+    throw new Error(`API unreachable: ${path} (${detail})`, { cause });
+  }
   if (!res.ok) {
     throw new Error(`API ${res.status}: ${path}`);
   }

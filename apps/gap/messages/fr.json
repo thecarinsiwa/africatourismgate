@@ -8,6 +8,22 @@
     "enableLight": "Activer le mode clair",
     "enableDark": "Activer le mode sombre"
   },
+  "connectionLock": {
+    "title": "Connexion interrompue",
+    "subtitle": "Impossible de joindre le serveur. Vérifiez votre connexion réseau.",
+    "hint": "Si vous êtes en développement, assurez-vous que l’API est démarrée sur le port configuré.",
+    "retry": "Réessayer",
+    "retrying": "Vérification…",
+    "retryFailed": "Le serveur est toujours injoignable. Réessayez dans un instant."
+  },
+  "offlineLock": {
+    "title": "Vous êtes hors ligne",
+    "subtitle": "Aucune connexion Internet détectée. Certaines pages ne peuvent pas se charger.",
+    "hint": "Vérifiez le Wi‑Fi ou les données mobiles, puis réessayez.",
+    "retry": "Réessayer",
+    "retrying": "Vérification…",
+    "retryFailed": "Vous êtes toujours hors ligne. Réessayez lorsque la connexion revient."
+  },
   "language": {
     "label": "Langue",
     "select": "Choisir la langue",

@@ -8,6 +8,22 @@
     "enableLight": "Enable light mode",
     "enableDark": "Enable dark mode"
   },
+  "connectionLock": {
+    "title": "Connection interrupted",
+    "subtitle": "Could not reach the server. Check your network connection.",
+    "hint": "If you are in development, make sure the API is running on the configured port.",
+    "retry": "Try again",
+    "retrying": "Checking…",
+    "retryFailed": "The server is still unreachable. Please try again shortly."
+  },
+  "offlineLock": {
+    "title": "You are offline",
+    "subtitle": "No Internet connection detected. Some pages cannot load.",
+    "hint": "Check your Wi‑Fi or mobile data, then try again.",
+    "retry": "Try again",
+    "retrying": "Checking…",
+    "retryFailed": "You are still offline. Try again when your connection returns."
+  },
   "language": {
     "label": "Language",
     "select": "Choose language",

@@ -8,6 +8,22 @@
     "enableLight": "Activar modo claro",
     "enableDark": "Activar modo oscuro"
   },
+  "connectionLock": {
+    "title": "Conexión interrumpida",
+    "subtitle": "No se pudo contactar con el servidor. Compruebe su conexión de red.",
+    "hint": "Si está en desarrollo, asegúrese de que la API esté en marcha en el puerto configurado.",
+    "retry": "Reintentar",
+    "retrying": "Comprobando…",
+    "retryFailed": "El servidor sigue sin estar disponible. Inténtelo de nuevo en un momento."
+  },
+  "offlineLock": {
+    "title": "Está sin conexión",
+    "subtitle": "No se detectó conexión a Internet. Algunas páginas no pueden cargarse.",
+    "hint": "Compruebe el Wi‑Fi o los datos móviles y vuelva a intentarlo.",
+    "retry": "Reintentar",
+    "retrying": "Comprobando…",
+    "retryFailed": "Sigue sin conexión. Inténtelo de nuevo cuando vuelva la red."
+  },
   "language": {
     "label": "Idioma",
     "select": "Elegir idioma",
