@@ -4,9 +4,9 @@ let locked = false;
 const listeners = new Set<Listener>();
 
 function emit(): void {
-  for (const listener of listeners) {
+  listeners.forEach((listener) => {
     listener(locked);
-  }
+  });
 }
 
 export function isConnectionLocked(): boolean {

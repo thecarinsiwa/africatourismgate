@@ -5,7 +5,7 @@ import {
   type ConnectionLockMessages,
 } from '@africatourismgate/ui';
 import type { ReactNode } from 'react';
-import { resolveApiBaseUrl } from '../lib/auth/api';
+import { resolveApiBaseUrl } from '../../lib/auth/api';
 
 const CONNECTION_LOCK_FR: ConnectionLockMessages = {
   title: 'Connexion interrompue',
