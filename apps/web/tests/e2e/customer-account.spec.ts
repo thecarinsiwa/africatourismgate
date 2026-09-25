@@ -144,7 +144,7 @@ test('profile form submits PATCH /auth/me', async ({ page }) => {
   const firstName = page.locator('#profile-first-name');
   await expect(firstName).toHaveValue('Client', { timeout: 15_000 });
 
-  const saveBtn = page.getByRole('button', { name: /Enregistrer|Save|Guardar/i });
+  const saveBtn = page.getByRole('button', { name: /^Enregistrer$|^Save$|^Guardar$/i });
   await expect(saveBtn).toBeDisabled();
 
   // Settle: ignore a second Strict-Mode / remount GET before editing.
@@ -158,7 +158,7 @@ test('profile form submits PATCH /auth/me', async ({ page }) => {
 
   // Strict Mode / remount can detach the button between enable and click — retry.
   await expect(async () => {
-    const btn = page.getByRole('button', { name: /Enregistrer|Save|Guardar/i });
+    const btn = page.getByRole('button', { name: /^Enregistrer$|^Save$|^Guardar$/i });
     if (!(await firstName.inputValue()) || (await firstName.inputValue()) !== 'Updated') {
       await firstName.fill('Updated');
       await firstName.blur();

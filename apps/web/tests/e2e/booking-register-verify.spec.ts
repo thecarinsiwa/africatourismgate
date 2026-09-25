@@ -25,7 +25,7 @@ test('register requiring OTP redirects to verify then cart with session', async 
   await page
     .getByRole('textbox', { name: /Confirmer le mot de passe|Confirm password|Confirmar contraseña/i })
     .fill('secret-password');
-  await page.getByRole('checkbox').check();
+  await page.locator('#acceptTerms').check();
 
   await Promise.all([
     page.waitForURL(

@@ -1,4 +1,5 @@
 import { defineConfig } from '@playwright/test';
+import { cookieConsentStorageState } from './tests/e2e/helpers/cookie-consent';
 
 const port = 3099;
 const baseURL = `http://127.0.0.1:${port}`;
@@ -14,6 +15,7 @@ export default defineConfig({
   use: {
     baseURL,
     trace: 'on-first-retry',
+    storageState: cookieConsentStorageState(baseURL),
   },
   webServer: {
     command: `pnpm exec next start -p ${port}`,
@@ -21,6 +23,10 @@ export default defineConfig({
     cwd: __dirname,
     reuseExistingServer: false,
     timeout: 120_000,
-    env: { ...process.env, NEXT_DIST_DIR: process.env.NEXT_DIST_DIR || '.next-e2e' },
+    env: {
+      ...process.env,
+      NEXT_DIST_DIR: process.env.NEXT_DIST_DIR || '.next-e2e',
+      NEXT_IMAGE_UNOPTIMIZED: process.env.NEXT_IMAGE_UNOPTIMIZED || '1',
+    },
   },
 });

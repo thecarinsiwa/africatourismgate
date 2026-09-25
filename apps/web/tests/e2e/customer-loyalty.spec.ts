@@ -2,8 +2,6 @@ import { expect, test } from '@playwright/test';
 
 const USER_ID = 'user-e2e-loyalty';
 
-test.use({ storageState: { cookies: [], origins: [] } });
-
 function mockSessionInit(page: import('@playwright/test').Page) {
   return page.addInitScript((userId: string) => {
     window.localStorage.removeItem('atg.web.session');

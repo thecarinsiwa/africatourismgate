@@ -1,4 +1,5 @@
 import { defineConfig } from '@playwright/test';
+import { cookieConsentStorageState } from './tests/e2e/helpers/cookie-consent';
 
 const port = Number(process.env.PLAYWRIGHT_PORT ?? 3002);
 const baseURL =
@@ -29,6 +30,8 @@ export default defineConfig({
   use: {
     baseURL,
     trace: 'on-first-retry',
+    // Pre-accept cookie preferences so the z-[10000] modal does not block clicks.
+    storageState: cookieConsentStorageState(baseURL),
   },
   webServer: {
     command: useProdServer
