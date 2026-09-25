@@ -16,11 +16,6 @@ export type ManifestEntryDraft = {
   seriousMedicalConditions: string;
   currentMedications: string;
   dietaryNotes: string;
-  emergencyContactName: string;
-  emergencyContactPhone: string;
-  emergencyContactEmail: string;
-  emergencyContactCountry: string;
-  emergencyContactAddress: string;
   file?: File;
 };
 
@@ -35,11 +30,6 @@ export function emptyManifestEntryDraft(): ManifestEntryDraft {
     seriousMedicalConditions: '',
     currentMedications: '',
     dietaryNotes: '',
-    emergencyContactName: '',
-    emergencyContactPhone: '',
-    emergencyContactEmail: '',
-    emergencyContactCountry: '',
-    emergencyContactAddress: '',
     file: undefined,
   };
 }
@@ -59,11 +49,6 @@ export function manifestDraftToPayload(
     seriousMedicalConditions: entry.seriousMedicalConditions.trim() || undefined,
     currentMedications: entry.currentMedications.trim() || undefined,
     dietaryNotes: entry.dietaryNotes.trim() || undefined,
-    emergencyContactName: entry.emergencyContactName.trim(),
-    emergencyContactPhone: entry.emergencyContactPhone.trim(),
-    emergencyContactEmail: entry.emergencyContactEmail.trim() || undefined,
-    emergencyContactCountry: entry.emergencyContactCountry.trim() || undefined,
-    emergencyContactAddress: entry.emergencyContactAddress.trim() || undefined,
     sortOrder,
   };
 }
@@ -369,8 +354,6 @@ export type ManifestFieldErrors = {
   fullName?: string;
   nationality?: string;
   idNumber?: string;
-  emergencyContactName?: string;
-  emergencyContactPhone?: string;
 };
 
 type Labels = {
@@ -398,13 +381,6 @@ type Labels = {
   currentMedicationsPlaceholder: string;
   dietaryNotes: string;
   dietaryNotesPlaceholder: string;
-  emergencyContactSection: string;
-  emergencyContactName: string;
-  emergencyContactPhone: string;
-  emergencyContactEmail: string;
-  emergencyContactCountry: string;
-  emergencyContactAddress: string;
-  emergencyContactAddressPlaceholder: string;
   idDocument: string;
   idDocumentHint: string;
   idDocumentSelected: string;
@@ -665,109 +641,6 @@ export function CheckoutManifestForm({ count, entries, onChange, labels, validat
                         value={entry.dietaryNotes}
                         onChange={(e) => update(index, { dietaryNotes: e.target.value })}
                         placeholder={labels.dietaryNotesPlaceholder}
-                        className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="sm:col-span-2 space-y-3 rounded-lg border border-atg-border/80 p-3 dark:border-atg-border">
-                  <p className="text-sm font-semibold text-atg-fg">{labels.emergencyContactSection}</p>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div>
-                      <label
-                        htmlFor={`${idPrefix}-em-name`}
-                        className="block text-sm font-medium text-atg-fg"
-                      >
-                        {labels.emergencyContactName}
-                        <span className="ml-1 text-red-500" aria-hidden="true">
-                          *
-                        </span>
-                      </label>
-                      <input
-                        id={`${idPrefix}-em-name`}
-                        type="text"
-                        value={entry.emergencyContactName}
-                        onChange={(e) => update(index, { emergencyContactName: e.target.value })}
-                        className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
-                        required
-                        aria-required="true"
-                        aria-invalid={Boolean(fieldErrors?.emergencyContactName)}
-                      />
-                      {fieldErrors?.emergencyContactName ? (
-                        <p role="alert" className="mt-1 text-xs text-red-600 dark:text-red-400">
-                          {fieldErrors.emergencyContactName}
-                        </p>
-                      ) : null}
-                    </div>
-                    <div>
-                      <label
-                        htmlFor={`${idPrefix}-em-phone`}
-                        className="block text-sm font-medium text-atg-fg"
-                      >
-                        {labels.emergencyContactPhone}
-                        <span className="ml-1 text-red-500" aria-hidden="true">
-                          *
-                        </span>
-                      </label>
-                      <input
-                        id={`${idPrefix}-em-phone`}
-                        type="tel"
-                        value={entry.emergencyContactPhone}
-                        onChange={(e) => update(index, { emergencyContactPhone: e.target.value })}
-                        className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
-                        required
-                        aria-required="true"
-                        aria-invalid={Boolean(fieldErrors?.emergencyContactPhone)}
-                      />
-                      {fieldErrors?.emergencyContactPhone ? (
-                        <p role="alert" className="mt-1 text-xs text-red-600 dark:text-red-400">
-                          {fieldErrors.emergencyContactPhone}
-                        </p>
-                      ) : null}
-                    </div>
-                    <div>
-                      <label
-                        htmlFor={`${idPrefix}-em-email`}
-                        className="block text-sm font-medium text-atg-fg"
-                      >
-                        {labels.emergencyContactEmail}
-                      </label>
-                      <input
-                        id={`${idPrefix}-em-email`}
-                        type="email"
-                        value={entry.emergencyContactEmail}
-                        onChange={(e) => update(index, { emergencyContactEmail: e.target.value })}
-                        className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
-                      />
-                    </div>
-                    <div>
-                      <NationalitySelect
-                        id={`${idPrefix}-em-country`}
-                        label={labels.emergencyContactCountry}
-                        value={entry.emergencyContactCountry}
-                        onChange={(code) => update(index, { emergencyContactCountry: code })}
-                        locale={locale}
-                        placeholder={labels.nationalityPlaceholder}
-                        searchPlaceholder={labels.nationalitySearch}
-                        emptyMessage={labels.nationalityEmpty}
-                      />
-                    </div>
-                    <div className="sm:col-span-2">
-                      <label
-                        htmlFor={`${idPrefix}-em-addr`}
-                        className="block text-sm font-medium text-atg-fg"
-                      >
-                        {labels.emergencyContactAddress}
-                      </label>
-                      <input
-                        id={`${idPrefix}-em-addr`}
-                        type="text"
-                        value={entry.emergencyContactAddress}
-                        onChange={(e) =>
-                          update(index, { emergencyContactAddress: e.target.value })
-                        }
-                        placeholder={labels.emergencyContactAddressPlaceholder}
                         className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
                       />
                     </div>

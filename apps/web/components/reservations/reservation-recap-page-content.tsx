@@ -56,6 +56,13 @@ import { PackagePriceDisplay } from '../packages/package-price-display';
 import { PackageReservationSummary } from '../packages/package-reservation-summary';
 import { CheckoutPageShell } from './checkout-page-shell';
 import { CheckoutManifestForm, emptyManifestEntryDraft, manifestDraftToPayload, type ManifestEntryDraft, type ManifestFieldErrors } from './checkout-manifest-form';
+import {
+  BookingEmergencyContactForm,
+  emptyEmergencyContactDraft,
+  emergencyContactDraftToPayload,
+  type EmergencyContactDraft,
+  type EmergencyContactFieldErrors,
+} from './booking-emergency-contact-form';
 import { CheckoutRecapLine } from './checkout-recap-line';
 import { StripePaymentError } from './stripe-payment-error';
 import { BankTransferAccountsPanel } from './bank-transfer-accounts-panel';
@@ -87,6 +94,11 @@ export function ReservationRecapPageContent({ draft }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [manifestEntries, setManifestEntries] = useState<ManifestEntryDraft[]>([]);
   const [manifestErrors, setManifestErrors] = useState<Record<number, ManifestFieldErrors>>({});
+  const [emergencyContact, setEmergencyContact] = useState<EmergencyContactDraft>(
+    emptyEmergencyContactDraft,
+  );
+  const [emergencyContactErrors, setEmergencyContactErrors] =
+    useState<EmergencyContactFieldErrors>({});
   const [preferredPaymentMethod, setPreferredPaymentMethod] =
     useState<BookingPreferredPaymentMethod | null>(null);
   const [bankAccounts, setBankAccounts] = useState<PublicPaymentBankAccount[]>([]);
@@ -342,6 +354,10 @@ export function ReservationRecapPageContent({ draft }: Props) {
       '',
     );
     const apiClient = createApiClient({ baseUrl: apiBaseUrl, accessToken });
+    await apiClient.updateBookingEmergencyContact(
+      bookingId,
+      emergencyContactDraftToPayload(emergencyContact),
+    );
     const createdEntries: { entryId: string; file: File | null }[] = [];
     for (let i = 0; i < manifestEntries.length; i++) {
       const entry = manifestEntries[i]!;
@@ -375,11 +391,25 @@ export function ReservationRecapPageContent({ draft }: Props) {
     }
   }
 
+  function validateEmergencyContact(): boolean {
+    const errors: EmergencyContactFieldErrors = {};
+    if (!emergencyContact.name.trim()) {
+      errors.name = ck.manifest.emergencyContactNameRequired;
+    }
+    if (!emergencyContact.phone.trim()) {
+      errors.phone = ck.manifest.emergencyContactPhoneRequired;
+    }
+    setEmergencyContactErrors(errors);
+    return Object.keys(errors).length === 0;
+  }
+
   function validateManifestEntries(): boolean {
     if (travelerCount < 1) {
       setManifestErrors({});
+      setEmergencyContactErrors({});
       return true;
     }
+    const emergencyOk = validateEmergencyContact();
     const errors: Record<number, ManifestFieldErrors> = {};
     const entries =
       manifestEntries.length >= travelerCount
@@ -401,18 +431,6 @@ export function ReservationRecapPageContent({ draft }: Props) {
       if (!entry.idNumber.trim()) {
         fieldErrors.idNumber = ck.manifest.idNumberRequired.replace('{n}', n);
       }
-      if (!entry.emergencyContactName.trim()) {
-        fieldErrors.emergencyContactName = ck.manifest.emergencyContactNameRequired.replace(
-          '{n}',
-          n,
-        );
-      }
-      if (!entry.emergencyContactPhone.trim()) {
-        fieldErrors.emergencyContactPhone = ck.manifest.emergencyContactPhoneRequired.replace(
-          '{n}',
-          n,
-        );
-      }
       if (Object.keys(fieldErrors).length > 0) {
         errors[i] = fieldErrors;
       }
@@ -423,7 +441,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
       return false;
     }
     setManifestErrors({});
-    return true;
+    return emergencyOk;
   }
 
   async function handleCheckout() {
@@ -448,7 +466,9 @@ export function ReservationRecapPageContent({ draft }: Props) {
       const payload = buildCheckoutRequest(draft, preferredPaymentMethod);
       if (isAssisted) {
         const response = await requestBooking(accessToken, payload);
-        await persistManifestEntries(accessToken, response.bookingId);
+        if (travelerCount >= 1) {
+          await persistManifestEntries(accessToken, response.bookingId);
+        }
         router.push(`/booking/request-success?booking_id=${response.bookingId}`);
         return;
       }
@@ -769,16 +789,39 @@ export function ReservationRecapPageContent({ draft }: Props) {
             )}
 
             {!loading && canPay && travelerCount >= 1 && (
-              <CheckoutManifestForm
-                count={travelerCount}
-                entries={manifestEntries}
-                onChange={(entries) => {
-                  setManifestEntries(entries);
-                  setManifestErrors({});
-                }}
-                labels={ck.manifest}
-                validationErrors={manifestErrors}
-              />
+              <div className="space-y-4">
+                <BookingEmergencyContactForm
+                  value={emergencyContact}
+                  onChange={(next) => {
+                    setEmergencyContact(next);
+                    setEmergencyContactErrors({});
+                  }}
+                  labels={{
+                    title: ck.manifest.emergencyContactSection,
+                    subtitle: ck.manifest.emergencyContactHint,
+                    name: ck.manifest.emergencyContactName,
+                    phone: ck.manifest.emergencyContactPhone,
+                    email: ck.manifest.emergencyContactEmail,
+                    country: ck.manifest.emergencyContactCountry,
+                    address: ck.manifest.emergencyContactAddress,
+                    addressPlaceholder: ck.manifest.emergencyContactAddressPlaceholder,
+                    nationalityPlaceholder: ck.manifest.nationalityPlaceholder,
+                    nationalitySearch: ck.manifest.nationalitySearch,
+                    nationalityEmpty: ck.manifest.nationalityEmpty,
+                  }}
+                  errors={emergencyContactErrors}
+                />
+                <CheckoutManifestForm
+                  count={travelerCount}
+                  entries={manifestEntries}
+                  onChange={(entries) => {
+                    setManifestEntries(entries);
+                    setManifestErrors({});
+                  }}
+                  labels={ck.manifest}
+                  validationErrors={manifestErrors}
+                />
+              </div>
             )}
 
             {!loading && canPay ? (

@@ -201,6 +201,7 @@ export type Translations = {
       dietaryNotes: string;
       dietaryNotesPlaceholder: string;
       emergencyContactSection: string;
+      emergencyContactHint: string;
       emergencyContactName: string;
       emergencyContactPhone: string;
       emergencyContactEmail: string;
@@ -1075,8 +1076,6 @@ export type Translations = {
           fullNameRequired: string;
           nationalityRequired: string;
           idNumberRequired: string;
-          emergencyContactNameRequired: string;
-          emergencyContactPhoneRequired: string;
           save: string;
           saving: string;
           saveError: string;
@@ -1112,18 +1111,32 @@ export type Translations = {
             dietaryNotes: string;
             dietaryNotesPlaceholder: string;
             legacyConditions: string;
-            emergencyContactSection: string;
-            emergencyContactName: string;
-            emergencyContactPhone: string;
-            emergencyContactEmail: string;
-            emergencyContactCountry: string;
-            emergencyContactAddress: string;
-            emergencyContactAddressPlaceholder: string;
             comment: string;
             commentPlaceholder: string;
             other: string;
             otherPlaceholder: string;
           };
+        };
+        emergencyContact: {
+          title: string;
+          subtitle: string;
+          empty: string;
+          name: string;
+          phone: string;
+          email: string;
+          country: string;
+          address: string;
+          addressPlaceholder: string;
+          nationalityPlaceholder: string;
+          nationalitySearch: string;
+          nationalityEmpty: string;
+          nameRequired: string;
+          phoneRequired: string;
+          save: string;
+          saving: string;
+          saveError: string;
+          edit: string;
+          cancel: string;
         };
         messages: {
           title: string;
