@@ -152,7 +152,7 @@ export class SupportMessagesService extends CrudService<SupportMessages> {
       id: message.id,
       ticketId: message.ticketId,
       body: message.body,
-      isStaff: message.isStaff === 1,
+      isStaff: Number(message.isStaff) === 1,
       createdAt: message.createdAt.toISOString(),
     };
   }

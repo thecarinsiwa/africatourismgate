@@ -346,7 +346,7 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
           message.createdAt instanceof Date
             ? message.createdAt.toISOString()
             : new Date(message.createdAt).toISOString(),
-        isStaff: message.isStaff === 1,
+        isStaff: Number(message.isStaff) === 1,
       });
     }
 
@@ -375,7 +375,7 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
 
     const messages = await this.messagesRepository.find({
       where: { ticketId: id, deletedAt: IsNull() },
-      order: { createdAt: 'ASC' },
+      order: { createdAt: 'ASC', id: 'ASC' },
     });
 
     return {
@@ -406,7 +406,7 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
 
     const messages = await this.messagesRepository.find({
       where: { ticketId: id, deletedAt: IsNull() },
-      order: { createdAt: 'ASC' },
+      order: { createdAt: 'ASC', id: 'ASC' },
     });
 
     const lastMessage = messages[messages.length - 1];
@@ -417,7 +417,7 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
             lastMessage.createdAt instanceof Date
               ? lastMessage.createdAt.toISOString()
               : new Date(lastMessage.createdAt).toISOString(),
-          isStaff: lastMessage.isStaff === 1,
+          isStaff: Number(lastMessage.isStaff) === 1,
         }
       : undefined;
 
@@ -483,7 +483,7 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
       id: message.id,
       ticketId: message.ticketId,
       body: message.body,
-      isStaff: message.isStaff === 1,
+      isStaff: Number(message.isStaff) === 1,
       createdAt: message.createdAt.toISOString(),
     };
   }

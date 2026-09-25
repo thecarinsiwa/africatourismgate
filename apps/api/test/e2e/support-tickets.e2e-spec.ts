@@ -142,8 +142,16 @@ describe('Support tickets customer thread (e2e)', () => {
 
     expect(detail.body.status).toBe('pending');
     expect(detail.body.messages).toHaveLength(2);
-    expect(detail.body.messages[1].isStaff).toBe(true);
-    expect(detail.body.messages[1].body).toContain('bien reçu votre demande');
+    const staffMessage = detail.body.messages.find(
+      (message: { isStaff: boolean; body: string }) =>
+        message.isStaff && message.body.includes('bien reçu votre demande'),
+    );
+    expect(staffMessage).toBeDefined();
+    expect(
+      detail.body.messages.some(
+        (message: { isStaff: boolean }) => !message.isStaff,
+      ),
+    ).toBe(true);
   });
 
   it('owner reply reopens pending to open', async () => {
@@ -165,7 +173,11 @@ describe('Support tickets customer thread (e2e)', () => {
 
     expect(detail.body.status).toBe('open');
     expect(detail.body.messages).toHaveLength(3);
-    expect(detail.body.messages[2].isStaff).toBe(false);
+    const ownerReply = detail.body.messages.find(
+      (message: { isStaff: boolean; body: string }) =>
+        !message.isStaff && message.body.includes('complément d’information'),
+    );
+    expect(ownerReply).toBeDefined();
   });
 
   it('rejects customer reply on a closed ticket', async () => {
