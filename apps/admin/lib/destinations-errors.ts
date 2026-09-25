@@ -12,7 +12,9 @@ export type SoftDeletedDestinationInfo = {
 
 const DESTINATION_SLUG_SOFT_DELETED = 'DESTINATION_SLUG_SOFT_DELETED';
 
-export function isDestinationSoftDeletedSlugConflict(error: unknown): boolean {
+export function isDestinationSoftDeletedSlugConflict(
+  error: unknown,
+): error is ApiHttpError {
   return (
     error instanceof ApiHttpError &&
     error.status === 409 &&
