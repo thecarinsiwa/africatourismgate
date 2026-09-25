@@ -282,6 +282,12 @@ import type {
   UpdateDonationRequest,
   PublicDonationsPayload,
   PublicDonationsQuery,
+  AnalyticsPeriodQuery,
+  AnalyticsSummary,
+  AnalyticsTopPages,
+  AnalyticsTopPagesQuery,
+  AnalyticsTrend,
+  TrackPageViewRequest,
   AboutTimelineMilestone,
   AboutTimelineMilestonesListQuery,
   CreateAboutTimelineMilestoneRequest,
@@ -2373,6 +2379,50 @@ export class ApiClient {
 
   deleteDonation(id: string): Promise<void> {
     return this.request<void>(`/donations/${id}`, { method: 'DELETE' });
+  }
+
+  getAnalyticsSummary(query?: AnalyticsPeriodQuery): Promise<AnalyticsSummary> {
+    const params = new URLSearchParams();
+    if (query?.period) {
+      params.set('period', query.period);
+    }
+    const qs = params.toString();
+    return this.request<AnalyticsSummary>(
+      `/analytics/summary${qs ? `?${qs}` : ''}`,
+    );
+  }
+
+  getAnalyticsTrend(query?: AnalyticsPeriodQuery): Promise<AnalyticsTrend> {
+    const params = new URLSearchParams();
+    if (query?.period) {
+      params.set('period', query.period);
+    }
+    const qs = params.toString();
+    return this.request<AnalyticsTrend>(
+      `/analytics/trend${qs ? `?${qs}` : ''}`,
+    );
+  }
+
+  getAnalyticsTopPages(query?: AnalyticsTopPagesQuery): Promise<AnalyticsTopPages> {
+    const params = new URLSearchParams();
+    if (query?.period) {
+      params.set('period', query.period);
+    }
+    if (query?.limit != null) {
+      params.set('limit', String(query.limit));
+    }
+    const qs = params.toString();
+    return this.request<AnalyticsTopPages>(
+      `/analytics/top-pages${qs ? `?${qs}` : ''}`,
+    );
+  }
+
+  trackPageView(body: TrackPageViewRequest): Promise<void> {
+    return this.request<void>('/public/analytics/page-views', {
+      method: 'POST',
+      body,
+      skipAuth: true,
+    });
   }
 
   uploadDonationDescriptionAsset(

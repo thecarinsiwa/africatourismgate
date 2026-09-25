@@ -502,6 +502,20 @@ export type {
 } from './donations.js';
 
 export type {
+  AnalyticsChange,
+  AnalyticsChangeDirection,
+  AnalyticsPeriod,
+  AnalyticsPeriodQuery,
+  AnalyticsSummary,
+  AnalyticsTopPage,
+  AnalyticsTopPages,
+  AnalyticsTopPagesQuery,
+  AnalyticsTrend,
+  AnalyticsTrendPoint,
+  TrackPageViewRequest,
+} from './analytics.js';
+
+export type {
   CreateOrganizationMaintenanceRequest,
   OrganizationMaintenance,
   OrganizationMaintenancesListQuery,
