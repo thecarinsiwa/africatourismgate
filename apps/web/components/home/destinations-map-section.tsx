@@ -19,13 +19,13 @@ const DestinationsMapInner = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="h-[min(52vh,320px)] w-full animate-pulse rounded-xl bg-atg-surface sm:h-[420px] lg:h-[520px]" />
+      <div className="h-[min(62vh,420px)] w-full animate-pulse rounded-xl bg-atg-surface sm:h-[460px] lg:h-[540px]" />
     ),
   },
 );
 
 const MAP_HEIGHT_CLASS =
-  'h-[min(52vh,320px)] w-full sm:h-[420px] lg:h-[520px]';
+  'h-[min(62vh,420px)] w-full sm:h-[460px] lg:h-[540px]';
 
 export type DestinationMapMarkerKind = 'destination' | 'hotel' | 'activity';
 
@@ -404,63 +404,78 @@ export function DestinationsMapSection() {
               />
 
               {selectedDestination ? (
-                <div className="pointer-events-none absolute inset-x-0 top-0 z-[500] flex flex-col gap-2 p-2.5 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-3 sm:p-4">
-                  <div className="pointer-events-auto min-w-0 max-w-full rounded-lg border border-atg-border bg-white px-3 py-2 shadow-lg sm:max-w-[min(100%,20rem)] sm:px-3.5 sm:py-2.5 dark:bg-zinc-900">
-                    <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-                      {selectedDestination.title}
-                    </p>
-                    <p className="mt-0.5 text-xs font-medium text-zinc-600 dark:text-zinc-300">
-                      {productsLoading
-                        ? t('loadingProducts')
-                        : productsError
-                          ? t('productsError')
-                          : productMarkers.length === 0
-                            ? t('noProducts')
-                            : t('productsCount', { count: productMarkers.length })}
-                    </p>
+                <div className="pointer-events-none absolute inset-x-0 top-0 z-[500] p-2 sm:p-3">
+                  <div className="pointer-events-auto flex max-w-full items-center gap-2 rounded-full border border-atg-border bg-white/95 py-1.5 pl-1.5 pr-3 shadow-md backdrop-blur-md dark:bg-zinc-900/95 sm:max-w-md">
+                    <button
+                      type="button"
+                      onClick={handleResetView}
+                      className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-zinc-800 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+                      aria-label={t('showAllDestinations')}
+                      title={t('showAllDestinations')}
+                    >
+                      <svg
+                        className="h-4 w-4"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden
+                      >
+                        <path d="M15 18l-6-6 6-6" />
+                      </svg>
+                    </button>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-xs font-semibold leading-tight text-zinc-900 dark:text-zinc-50 sm:text-sm">
+                        {selectedDestination.title}
+                      </p>
+                      <p className="truncate text-[10px] font-medium leading-tight text-zinc-500 dark:text-zinc-400 sm:text-xs">
+                        {productsLoading
+                          ? t('loadingProducts')
+                          : productsError
+                            ? t('productsError')
+                            : productMarkers.length === 0
+                              ? t('noProducts')
+                              : t('productsCount', { count: productMarkers.length })}
+                      </p>
+                    </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={handleResetView}
-                    className="pointer-events-auto w-full shrink-0 rounded-lg border border-atg-border bg-white px-3 py-2 text-xs font-semibold text-zinc-900 shadow-lg hover:bg-zinc-50 sm:w-auto sm:px-3.5 sm:py-2.5 dark:bg-zinc-900 dark:text-zinc-50 dark:hover:bg-zinc-800"
-                  >
-                    {t('showAllDestinations')}
-                  </button>
                 </div>
               ) : null}
 
               {selectedDestination && productMarkers.length > 0 ? (
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[500] flex justify-center p-2.5 sm:justify-start sm:p-4">
+                <div className="pointer-events-none absolute bottom-2 left-2 z-[500] sm:bottom-3 sm:left-3">
                   <ul
-                    className="pointer-events-auto flex max-w-full flex-wrap items-center justify-center gap-x-3 gap-y-1.5 rounded-lg border border-atg-border bg-white px-2.5 py-2 text-[11px] font-medium text-zinc-800 shadow-lg sm:justify-start sm:px-3.5 sm:py-2.5 sm:text-xs dark:bg-zinc-900 dark:text-zinc-100"
+                    className="pointer-events-auto flex items-center gap-1 rounded-full border border-atg-border bg-white/95 p-1 shadow-md backdrop-blur-md dark:bg-zinc-900/95"
                     aria-label={t('legendAria')}
                   >
-                    <li className="inline-flex items-center gap-1.5">
+                    <li>
                       <span
-                        className="inline-flex h-5 w-5 items-center justify-center rounded-full text-white shadow ring-2 ring-white sm:h-6 sm:w-6"
+                        className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold text-white sm:text-[11px]"
                         style={{ backgroundColor: HOTEL_COLOR }}
-                        aria-hidden
+                        title={hotelKindLabel}
                       >
-                        <svg className="h-2.5 w-2.5 sm:h-3 sm:w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                           <path d="M3 21h18" />
                           <path d="M5 21V8l7-4 7 4v13" />
                           <path d="M9 21v-5h6v5" />
                         </svg>
+                        <span className="hidden sm:inline">{hotelKindLabel}</span>
                       </span>
-                      {hotelKindLabel}
                     </li>
-                    <li className="inline-flex items-center gap-1.5">
+                    <li>
                       <span
-                        className="inline-flex h-5 w-5 items-center justify-center rounded-full text-white shadow ring-2 ring-white sm:h-6 sm:w-6"
+                        className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold text-white sm:text-[11px]"
                         style={{ backgroundColor: ACTIVITY_COLOR }}
-                        aria-hidden
+                        title={activityKindLabel}
                       >
-                        <svg className="h-2.5 w-2.5 sm:h-3 sm:w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                           <circle cx="12" cy="12" r="3" />
                           <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
                         </svg>
+                        <span className="hidden sm:inline">{activityKindLabel}</span>
                       </span>
-                      {activityKindLabel}
                     </li>
                   </ul>
                 </div>

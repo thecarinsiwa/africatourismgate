@@ -31,7 +31,7 @@ export function DestinationsMapInner({
   fitToMarkers = true,
   fitMaxZoom = 8,
   onDestinationClick,
-  className = 'h-[min(52vh,320px)] w-full sm:h-[420px] lg:h-[520px]',
+  className = 'h-[min(62vh,420px)] w-full sm:h-[460px] lg:h-[540px]',
 }: DestinationsMapInnerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
@@ -65,7 +65,7 @@ export function DestinationsMapInner({
         zoomControl: true,
       }).setView([2, 20], 4);
 
-      map.zoomControl.setPosition('bottomright');
+      map.zoomControl.setPosition('topright');
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution:
@@ -194,22 +194,24 @@ function renderMarkers(
     }).addTo(map);
 
     const kindBadge = item.kindLabel
-      ? `<span style="display:inline-block;margin-bottom:6px;padding:2px 8px;border-radius:999px;background:${escapeHtml(item.fillColor)};color:#fff;font-size:10px;font-weight:700;letter-spacing:.02em;text-transform:uppercase">${escapeHtml(item.kindLabel)}</span>`
+      ? `<span style="display:inline-block;margin-bottom:4px;padding:1px 7px;border-radius:999px;background:${escapeHtml(item.fillColor)};color:#fff;font-size:9px;font-weight:700;letter-spacing:.03em;text-transform:uppercase">${escapeHtml(item.kindLabel)}</span>`
       : '';
 
     const popupHtml = `
-      <div style="min-width:min(180px,70vw);max-width:min(260px,82vw);font-family:inherit;line-height:1.4">
+      <div class="atg-destinations-map-popup" style="min-width:0;max-width:min(200px,72vw);font-family:inherit;line-height:1.3">
         ${kindBadge}
-        <strong style="display:block;margin-bottom:4px;font-size:14px">${escapeHtml(item.title)}</strong>
-        <span style="display:block;font-size:12px;color:#666;margin-bottom:8px">${escapeHtml(item.subtitle)}</span>
-        <a href="${escapeHtml(item.href)}" style="font-size:12px;font-weight:600;color:var(--atg-primary,#c8102e);text-decoration:underline">${escapeHtml(item.viewLabel)}</a>
+        <strong style="display:block;margin-bottom:2px;font-size:13px">${escapeHtml(item.title)}</strong>
+        <span style="display:block;font-size:11px;color:#666;margin-bottom:6px">${escapeHtml(item.subtitle)}</span>
+        <a href="${escapeHtml(item.href)}" style="font-size:11px;font-weight:600;color:var(--atg-primary,#c8102e);text-decoration:underline">${escapeHtml(item.viewLabel)}</a>
       </div>
     `;
 
     marker.bindPopup(popupHtml, {
       closeButton: true,
-      maxWidth: isCompact ? 240 : 280,
-      autoPanPadding: isCompact ? [48, 72] : [56, 56],
+      maxWidth: isCompact ? 200 : 220,
+      autoPanPaddingTopLeft: isCompact ? [12, 56] : [24, 64],
+      autoPanPaddingBottomRight: isCompact ? [12, 56] : [24, 64],
+      className: 'atg-destinations-map-popup-wrap',
     });
 
     if (isDestination) {
