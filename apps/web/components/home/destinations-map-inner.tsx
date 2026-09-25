@@ -158,7 +158,7 @@ function getFitPadding(): [number, number] {
   if (typeof window === 'undefined') {
     return [48, 48];
   }
-  return window.matchMedia('(min-width: 640px)').matches ? [64, 150] : [36, 150];
+  return window.matchMedia('(min-width: 640px)').matches ? [56, 72] : [28, 64];
 }
 
 function renderMarkers(
@@ -221,7 +221,7 @@ function renderMarkers(
       closeButton: true,
       maxWidth: isCompact ? 200 : 220,
       autoPanPaddingTopLeft: isCompact ? [12, 56] : [24, 64],
-      autoPanPaddingBottomRight: isCompact ? [12, 120] : [24, 140],
+      autoPanPaddingBottomRight: isCompact ? [12, 72] : [24, 80],
       className: 'atg-destinations-map-popup-wrap',
     });
 

@@ -496,82 +496,75 @@ export function DestinationsMapSection() {
               ) : null}
 
               {selectedDestination && productMarkers.length > 0 ? (
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[500] p-2 sm:p-3">
-                  <div className="pointer-events-auto overflow-hidden rounded-xl border border-atg-border bg-white/95 shadow-lg backdrop-blur-md dark:bg-zinc-900/95">
-                    <div className="flex items-center justify-between gap-2 border-b border-atg-border/70 px-2.5 py-1.5 sm:px-3">
-                      <p className="truncate text-[11px] font-semibold text-zinc-700 dark:text-zinc-200 sm:text-xs">
-                        {t('carouselTitle')}
-                      </p>
-                      <Link
-                        href={seeMoreHref}
-                        className="shrink-0 text-[11px] font-semibold text-primary hover:underline sm:text-xs"
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[500] p-1.5 sm:p-2.5">
+                  <div className="pointer-events-auto rounded-lg border border-atg-border bg-white/95 shadow-md backdrop-blur-md dark:bg-zinc-900/95">
+                    <div className="flex items-center gap-1.5 px-1.5 py-1 sm:gap-2 sm:px-2 sm:py-1.5">
+                      <div
+                        ref={carouselRef}
+                        className="flex min-w-0 flex-1 snap-x snap-mandatory gap-1.5 overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                        role="list"
+                        aria-label={t('carouselAria')}
                       >
-                        {t('viewMore')}
-                      </Link>
-                    </div>
-                    <div
-                      ref={carouselRef}
-                      className="flex snap-x snap-mandatory gap-2 overflow-x-auto scroll-smooth px-2 py-2 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-2.5 sm:px-2.5 [&::-webkit-scrollbar]:hidden"
-                      role="list"
-                      aria-label={t('carouselAria')}
-                    >
-                      {productMarkers.map((product) => {
-                        const isActive = product.id === activeProductId;
-                        const imageSrc = product.imageUrl?.trim() || PLACEHOLDER_IMAGE;
-                        return (
-                          <article
-                            key={product.id}
-                            data-product-id={product.id}
-                            role="listitem"
-                            className={`w-[9.5rem] shrink-0 snap-start overflow-hidden rounded-lg border bg-white transition dark:bg-zinc-950 sm:w-[11rem] ${
-                              isActive
-                                ? 'border-primary ring-2 ring-primary/30'
-                                : 'border-atg-border'
-                            }`}
-                          >
-                            <button
-                              type="button"
-                              onClick={() => handleProductSelect(product.id)}
-                              className="block w-full text-left"
+                        {productMarkers.map((product) => {
+                          const isActive = product.id === activeProductId;
+                          const imageSrc = product.imageUrl?.trim() || PLACEHOLDER_IMAGE;
+                          return (
+                            <article
+                              key={product.id}
+                              data-product-id={product.id}
+                              role="listitem"
+                              className={`flex w-[11.5rem] shrink-0 snap-start items-center gap-1.5 rounded-md border bg-white p-1 transition dark:bg-zinc-950 sm:w-[13rem] ${
+                                isActive
+                                  ? 'border-primary ring-1 ring-primary/40'
+                                  : 'border-atg-border'
+                              }`}
                             >
-                              <div className="relative h-16 w-full bg-zinc-100 sm:h-[4.5rem] dark:bg-zinc-800">
-                                <Image
-                                  src={imageSrc}
-                                  alt=""
-                                  fill
-                                  sizes="176px"
-                                  className="object-cover"
-                                  unoptimized
-                                />
-                                {product.kindLabel ? (
+                              <button
+                                type="button"
+                                onClick={() => handleProductSelect(product.id)}
+                                className="flex min-w-0 flex-1 items-center gap-1.5 text-left"
+                              >
+                                <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded bg-zinc-100 dark:bg-zinc-800">
+                                  <Image
+                                    src={imageSrc}
+                                    alt=""
+                                    fill
+                                    sizes="36px"
+                                    className="object-cover"
+                                    unoptimized
+                                  />
+                                </span>
+                                <span className="min-w-0 flex-1">
                                   <span
-                                    className="absolute left-1.5 top-1.5 rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white"
+                                    className="mb-0.5 inline-block rounded-full px-1 py-px text-[8px] font-bold uppercase tracking-wide text-white"
                                     style={{ backgroundColor: product.fillColor }}
                                   >
                                     {product.kindLabel}
                                   </span>
-                                ) : null}
-                              </div>
-                              <div className="space-y-0.5 p-1.5 pb-0 sm:p-2 sm:pb-0">
-                                <p className="truncate text-[11px] font-semibold text-zinc-900 dark:text-zinc-50 sm:text-xs">
-                                  {product.title}
-                                </p>
-                                <p className="truncate text-[10px] text-zinc-500 dark:text-zinc-400">
-                                  {product.subtitle}
-                                </p>
-                              </div>
-                            </button>
-                            <div className="px-1.5 pb-1.5 pt-1 sm:px-2 sm:pb-2">
+                                  <span className="block truncate text-[10px] font-semibold leading-tight text-zinc-900 dark:text-zinc-50 sm:text-[11px]">
+                                    {product.title}
+                                  </span>
+                                  <span className="block truncate text-[9px] leading-tight text-zinc-500 dark:text-zinc-400">
+                                    {product.subtitle}
+                                  </span>
+                                </span>
+                              </button>
                               <Link
                                 href={product.href}
-                                className="inline-block text-[10px] font-semibold text-primary hover:underline sm:text-[11px]"
+                                className="shrink-0 pr-0.5 text-[9px] font-semibold text-primary hover:underline sm:text-[10px]"
                               >
                                 {t('viewMoreProduct')}
                               </Link>
-                            </div>
-                          </article>
-                        );
-                      })}
+                            </article>
+                          );
+                        })}
+                      </div>
+                      <Link
+                        href={seeMoreHref}
+                        className="shrink-0 rounded-md bg-zinc-100 px-2 py-1.5 text-[10px] font-semibold text-zinc-800 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+                      >
+                        {t('viewMore')}
+                      </Link>
                     </div>
                   </div>
                 </div>
