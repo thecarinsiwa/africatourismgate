@@ -20,6 +20,7 @@ import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { AdminSupportTicketDetailDto } from './dto/admin-support-ticket-detail.dto';
 import { AdminSupportTicketListItemDto } from './dto/admin-support-ticket-list-item.dto';
+import { CreateCustomerSupportMessageDto } from './dto/create-customer-support-message.dto';
 import { CreateSupportTicketDto } from './dto/create-support-ticket.dto';
 import { CustomerSupportTicketDetailDto } from './dto/customer-support-ticket-detail.dto';
 import {
@@ -28,13 +29,18 @@ import {
 } from './dto/support-ticket-created.dto';
 import { SupportTicketsListQueryDto } from './dto/support-tickets-list-query.dto';
 import { UpdateSupportTicketStatusDto } from './dto/update-support-ticket-status.dto';
+import { CreateSupportMessageResponseDto } from '../support-messages/dto/create-support-message-response.dto';
+import { SupportMessagesService } from '../support-messages/support-messages.service';
 import { SupportTicketsService } from './support-tickets.service';
 
 @ApiTags('support-tickets')
 @ApiForbiddenResponse({ description: 'Missing permission' })
 @Controller('support-tickets')
 export class SupportTicketsController {
-  constructor(private readonly service: SupportTicketsService) {}
+  constructor(
+    private readonly service: SupportTicketsService,
+    private readonly messagesService: SupportMessagesService,
+  ) {}
 
   @Get()
   @ApiOperation({
@@ -60,6 +66,19 @@ export class SupportTicketsController {
     @CurrentUser() user: AuthUserDto,
   ): Promise<CustomerSupportTicketDetailDto | AdminSupportTicketDetailDto> {
     return this.service.findOneForActor(id, user.id);
+  }
+
+  @Post(':id/messages')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({
+    summary: 'Post a customer reply on an owned support ticket',
+  })
+  createCustomerMessage(
+    @Param('id') id: string,
+    @Body() dto: CreateCustomerSupportMessageDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<CreateSupportMessageResponseDto> {
+    return this.messagesService.createCustomerReply(id, dto.body, user.id);
   }
 
   @Post()

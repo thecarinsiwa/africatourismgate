@@ -537,6 +537,7 @@ export type {
 export type {
   AdminSupportTicketDetail,
   AdminSupportTicketListItem,
+  CreateCustomerSupportMessageRequest,
   CreateSupportMessageRequest,
   CreateSupportMessageResponse,
   CreateSupportTicketRequest,

@@ -133,6 +133,7 @@ import type {
   UpdateReviewStatusRequest,
   CreateSupportMessageRequest,
   CreateSupportMessageResponse,
+  CreateCustomerSupportMessageRequest,
   CreateSupportTicketRequest,
   AdminSupportTicketDetail,
   AdminSupportTicketListItem,
@@ -3140,6 +3141,19 @@ export class ApiClient {
       method: 'POST',
       body,
     });
+  }
+
+  createCustomerSupportMessage(
+    ticketId: string,
+    body: CreateCustomerSupportMessageRequest,
+  ): Promise<CreateSupportMessageResponse> {
+    return this.request<CreateSupportMessageResponse>(
+      `/support-tickets/${ticketId}/messages`,
+      {
+        method: 'POST',
+        body,
+      },
+    );
   }
 
   updateBookingStatus(

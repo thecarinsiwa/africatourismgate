@@ -69,6 +69,11 @@ export interface CreateSupportMessageRequest {
   body: string;
 }
 
+/** Customer reply on an owned ticket (`POST /support-tickets/:id/messages`). */
+export interface CreateCustomerSupportMessageRequest {
+  body: string;
+}
+
 export interface CreateSupportMessageResponse {
   message: SupportTicketMessage;
   ticketStatus: SupportTicketStatus;
