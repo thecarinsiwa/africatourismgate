@@ -1,6 +1,7 @@
 'use client';
 
 import { Input, Modal, Skeleton, cn } from '@africatourismgate/ui';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import {
@@ -90,7 +91,7 @@ function AdminSearchNavigatorModal() {
   const t = useTranslations('common.globalSearch');
   const listId = useId();
   const [activeIndex, setActiveIndex] = useState(-1);
-  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const optionRefs = useRef<Array<HTMLAnchorElement | null>>([]);
 
   const {
     query,
@@ -139,8 +140,9 @@ function AdminSearchNavigatorModal() {
 
   const navigate = useCallback(
     (href: string) => {
-      handleOpenChange(false);
+      // Push before closing: unmounting the modal first can cancel App Router soft navigation.
       router.push(href);
+      handleOpenChange(false);
     },
     [handleOpenChange, router],
   );
@@ -274,13 +276,13 @@ function AdminSearchNavigatorModal() {
               <ul className="space-y-1">
                 {EMPTY_QUICK_LINKS.map((link) => (
                   <li key={link.href}>
-                    <button
-                      type="button"
+                    <Link
+                      href={link.href}
                       className="text-sm font-medium text-primary outline-none hover:underline focus-visible:underline"
-                      onClick={() => navigate(link.href)}
+                      onClick={() => handleOpenChange(false)}
                     >
                       {t(link.labelKey)}
-                    </button>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -328,7 +330,7 @@ function AdminSearchNavigatorModal() {
                         optionRef={(node) => {
                           optionRefs.current[index] = node;
                         }}
-                        onActivate={() => navigate(item.href)}
+                        onActivate={() => handleOpenChange(false)}
                         onHover={() => setActiveIndex(index)}
                       />
                     );
@@ -362,16 +364,16 @@ function SearchResultOption({
   index: number;
   active: boolean;
   listId: string;
-  optionRef: (node: HTMLButtonElement | null) => void;
+  optionRef: (node: HTMLAnchorElement | null) => void;
   onActivate: () => void;
   onHover: () => void;
 }) {
   const optionId = `${listId}-option-${index}`;
   return (
     <li id={optionId} role="option" aria-selected={active}>
-      <button
+      <Link
         ref={optionRef}
-        type="button"
+        href={item.href}
         data-testid="admin-search-result"
         tabIndex={-1}
         className={cn(
@@ -385,7 +387,7 @@ function SearchResultOption({
         {item.subtitle ? (
           <span className="truncate text-xs text-atg-muted">{item.subtitle}</span>
         ) : null}
-      </button>
+      </Link>
     </li>
   );
 }
