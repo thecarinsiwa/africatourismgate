@@ -214,7 +214,7 @@
   "notFound": {
     "code": "404",
     "badge": "Hors parcours",
-    "title": "Cette destination n'existe pas",
+    "title": "Cette redirection n'existe pas",
     "description": "Le lien suivi mène nulle part, ou la page a changé de route. Revenez à l'accueil pour continuer votre voyage.",
     "backHome": "Retour à l'accueil",
     "help": "Centre d'aide",

@@ -214,7 +214,7 @@
   "notFound": {
     "code": "404",
     "badge": "Off the map",
-    "title": "This destination doesn't exist",
+    "title": "This redirect doesn't exist",
     "description": "The link you followed leads nowhere, or the page has moved. Head home to continue your journey.",
     "backHome": "Back to home",
     "help": "Help centre",

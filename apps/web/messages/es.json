@@ -214,7 +214,7 @@
   "notFound": {
     "code": "404",
     "badge": "Fuera de ruta",
-    "title": "Este destino no existe",
+    "title": "Esta redirección no existe",
     "description": "El enlace que siguió no lleva a ninguna parte, o la página ha cambiado. Vuelva al inicio para continuar su viaje.",
     "backHome": "Volver al inicio",
     "help": "Centro de ayuda",
