@@ -21,8 +21,11 @@ if (useProdServer) {
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
-  workers: 1,
-  retries: process.env.CI ? 2 : 1,
+  // CI runners are 2 vCPU — 2 workers ~halves wall time vs sequential.
+  // Specs mock the API via page.route, so shared DB state is not a concern.
+  workers: process.env.CI ? 2 : undefined,
+  retries: process.env.CI ? 1 : 1,
+  forbidOnly: Boolean(process.env.CI),
   use: {
     baseURL,
     trace: 'on-first-retry',
