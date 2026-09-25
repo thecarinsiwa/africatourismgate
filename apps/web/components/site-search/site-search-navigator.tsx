@@ -93,7 +93,7 @@ function SiteSearchNavigatorModal() {
   const t = useTranslations('siteSearch');
   const listId = useId();
   const [activeIndex, setActiveIndex] = useState(0);
-  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const optionRefs = useRef<Array<HTMLAnchorElement | null>>([]);
 
   const {
     query,
@@ -114,8 +114,9 @@ function SiteSearchNavigatorModal() {
 
   const navigate = useCallback(
     (href: string) => {
-      handleOpenChange(false);
+      // Push before closing: unmounting the modal first can cancel App Router soft navigation.
       router.push(href);
+      handleOpenChange(false);
     },
     [handleOpenChange, router],
   );
@@ -283,7 +284,7 @@ function SiteSearchNavigatorModal() {
                           optionRef={(node) => {
                             optionRefs.current[index] = node;
                           }}
-                          onActivate={() => navigate(item.href)}
+                          onActivate={() => handleOpenChange(false)}
                           onHover={() => setActiveIndex(index)}
                         />
                       </li>
@@ -333,14 +334,14 @@ function SearchResultOption({
   active: boolean;
   listId: string;
   labels: { kindEntity: string; kindPrefilled: string };
-  optionRef: (node: HTMLButtonElement | null) => void;
+  optionRef: (node: HTMLAnchorElement | null) => void;
   onActivate: () => void;
   onHover: () => void;
 }) {
   return (
-    <button
+    <Link
       ref={optionRef}
-      type="button"
+      href={item.href}
       id={`${listId}-option-${index}`}
       role="option"
       aria-selected={active}
@@ -353,6 +354,6 @@ function SearchResultOption({
       onClick={onActivate}
     >
       <SiteSearchResultBody item={item} labels={labels} compact />
-    </button>
+    </Link>
   );
 }
