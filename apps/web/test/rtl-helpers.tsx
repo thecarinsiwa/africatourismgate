@@ -3,10 +3,15 @@ import { type ReactElement, type ReactNode } from 'react';
 import { render, type RenderOptions } from '@testing-library/react';
 import { vi } from 'vitest';
 import { BookingModesProvider } from '../components/booking-modes-provider';
+import { CatalogProductsProvider } from '../components/catalog-products-provider';
 import {
   DEFAULT_BOOKING_ITEM_TYPE_MODES,
   type ResolvedBookingItemTypeModes,
 } from '@africatourismgate/types/tour-guide';
+import {
+  DEFAULT_CATALOG_PRODUCTS,
+  type ResolvedCatalogProducts,
+} from '@africatourismgate/types/organization-settings';
 
 /** Minimal messages for component tests (extend per suite as needed). */
 export const rtlTestMessages = {
@@ -39,6 +44,7 @@ type RtlProvidersProps = {
   locale?: string;
   messages?: AbstractIntlMessages;
   bookingModes?: ResolvedBookingItemTypeModes;
+  catalogProducts?: ResolvedCatalogProducts;
 };
 
 export function RtlProviders({
@@ -46,10 +52,15 @@ export function RtlProviders({
   locale = 'en',
   messages = rtlTestMessages,
   bookingModes = DEFAULT_BOOKING_ITEM_TYPE_MODES,
+  catalogProducts = DEFAULT_CATALOG_PRODUCTS,
 }: RtlProvidersProps) {
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <BookingModesProvider modes={bookingModes}>{children}</BookingModesProvider>
+      <BookingModesProvider modes={bookingModes}>
+        <CatalogProductsProvider products={catalogProducts}>
+          {children}
+        </CatalogProductsProvider>
+      </BookingModesProvider>
     </NextIntlClientProvider>
   );
 }
@@ -60,12 +71,19 @@ export function renderWithProviders(
     locale?: string;
     messages?: AbstractIntlMessages;
     bookingModes?: ResolvedBookingItemTypeModes;
+    catalogProducts?: ResolvedCatalogProducts;
   },
 ) {
-  const { locale, messages, bookingModes, ...renderOptions } = options ?? {};
+  const { locale, messages, bookingModes, catalogProducts, ...renderOptions } =
+    options ?? {};
   return render(ui, {
     wrapper: ({ children }) => (
-      <RtlProviders locale={locale} messages={messages} bookingModes={bookingModes}>
+      <RtlProviders
+        locale={locale}
+        messages={messages}
+        bookingModes={bookingModes}
+        catalogProducts={catalogProducts}
+      >
         {children}
       </RtlProviders>
     ),

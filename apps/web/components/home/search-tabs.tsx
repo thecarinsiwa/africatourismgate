@@ -21,6 +21,8 @@ import {
   SearchFormActions,
   SearchFormSubmit,
 } from '../shared';
+import { useCatalogProducts } from '../catalog-products-provider';
+import { isSearchVerticalCatalogEnabled } from '../../lib/catalog/products';
 
 type SearchTab = SearchVertical;
 
@@ -174,14 +176,28 @@ export function SearchTabs() {
     () => activityDestinations.map((destination) => destination.name),
     [activityDestinations],
   );
+  const catalogProducts = useCatalogProducts();
   const [activeTab, setActiveTab] = useState<SearchTab>('tours');
-  const tabs = useMemo(() => ([
-    { id: 'tours' as const, label: t('tabs.tours') },
-    { id: 'hotels' as const, label: t('tabs.hotels') },
-    { id: 'flights' as const, label: t('tabs.flights') },
-    { id: 'cars' as const, label: t('tabs.cars') },
-    { id: 'cruises' as const, label: t('tabs.cruises') },
-  ]), [t]);
+  const tabs = useMemo(
+    () =>
+      (
+        [
+          { id: 'tours' as const, label: t('tabs.tours') },
+          { id: 'hotels' as const, label: t('tabs.hotels') },
+          { id: 'flights' as const, label: t('tabs.flights') },
+          { id: 'cars' as const, label: t('tabs.cars') },
+          { id: 'cruises' as const, label: t('tabs.cruises') },
+        ] satisfies { id: SearchTab; label: string }[]
+      ).filter((tab) => isSearchVerticalCatalogEnabled(tab.id, catalogProducts)),
+    [catalogProducts, t],
+  );
+
+  useEffect(() => {
+    if (tabs.length === 0) return;
+    if (!tabs.some((tab) => tab.id === activeTab)) {
+      setActiveTab(tabs[0].id);
+    }
+  }, [activeTab, tabs]);
 
   const [departDate, setDepartDate] = useState('');
   const [returnDate, setReturnDate] = useState('');
@@ -370,6 +386,10 @@ export function SearchTabs() {
   }));
 
   const submitBtn = <SearchFormSubmit label={t('search')} />;
+
+  if (tabs.length === 0) {
+    return null;
+  }
 
   return (
     <SearchFormShell
