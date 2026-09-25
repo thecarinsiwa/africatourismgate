@@ -540,6 +540,7 @@ export type {
   CreateSupportMessageRequest,
   CreateSupportMessageResponse,
   CreateSupportTicketRequest,
+  CustomerSupportTicketDetail,
   SupportTicket,
   SupportTicketCreated,
   SupportTicketMessage,

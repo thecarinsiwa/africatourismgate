@@ -76,7 +76,9 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
   const load = useCallback(async () => {
     setState({ status: 'loading' });
     try {
-      const ticket = await getApiClient().getSupportTicket(ticketId);
+      const ticket = (await getApiClient().getSupportTicket(
+        ticketId,
+      )) as AdminSupportTicketDetail;
       setState({ status: 'ready', ticket });
     } catch (error) {
       setState({ status: 'error', message: getSupportTicketsErrorMessage(error) });

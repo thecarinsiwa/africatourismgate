@@ -136,6 +136,7 @@ import type {
   CreateSupportTicketRequest,
   AdminSupportTicketDetail,
   AdminSupportTicketListItem,
+  CustomerSupportTicketDetail,
   SupportTicketCreated,
   SupportTicketsListQuery,
   UpdateSupportTicketRequest,
@@ -3105,8 +3106,12 @@ export class ApiClient {
     return fetchPaginated<AdminSupportTicketListItem>(this, '/support-tickets', query, requestOptions);
   }
 
-  getSupportTicket(id: string): Promise<AdminSupportTicketDetail> {
-    return this.request<AdminSupportTicketDetail>(`/support-tickets/${id}`);
+  getSupportTicket(
+    id: string,
+  ): Promise<CustomerSupportTicketDetail | AdminSupportTicketDetail> {
+    return this.request<CustomerSupportTicketDetail | AdminSupportTicketDetail>(
+      `/support-tickets/${id}`,
+    );
   }
 
   createSupportTicket(

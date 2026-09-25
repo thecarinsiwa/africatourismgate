@@ -19,6 +19,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { AdminSupportTicketDetailDto } from './dto/admin-support-ticket-detail.dto';
 import { AdminSupportTicketListItemDto } from './dto/admin-support-ticket-list-item.dto';
 import { CreateSupportTicketDto } from './dto/create-support-ticket.dto';
+import { CustomerSupportTicketDetailDto } from './dto/customer-support-ticket-detail.dto';
 import {
   SupportTicketCreatedDto,
   SupportTicketDto,
@@ -155,7 +156,7 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
   async findOneForActor(
     id: string,
     actorUserId: string,
-  ): Promise<SupportTicketDto | AdminSupportTicketDetailDto> {
+  ): Promise<CustomerSupportTicketDetailDto | AdminSupportTicketDetailDto> {
     const staff = await this.canReadTickets(actorUserId);
     if (staff) {
       return this.findOneForAdmin(id);
@@ -361,7 +362,7 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
   private async findOneForCustomer(
     id: string,
     userId: string,
-  ): Promise<SupportTicketDto> {
+  ): Promise<CustomerSupportTicketDetailDto> {
     const ticket = await this.ticketsRepository.findOne({
       where: { id, deletedAt: IsNull() },
     });
@@ -371,7 +372,16 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
     if (ticket.userId !== userId) {
       throw new ForbiddenException('Accès refusé');
     }
-    return this.toTicketDto(ticket);
+
+    const messages = await this.messagesRepository.find({
+      where: { ticketId: id, deletedAt: IsNull() },
+      order: { createdAt: 'ASC' },
+    });
+
+    return {
+      ...this.toTicketDto(ticket),
+      messages: messages.map((message) => this.toMessageDto(message)),
+    };
   }
 
   async findOneForAdmin(id: string): Promise<AdminSupportTicketDetailDto> {

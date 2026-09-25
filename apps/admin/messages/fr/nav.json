@@ -113,6 +113,7 @@
     "profile": "Mon profil",
     "notifications": "Notifications",
     "settings": "Paramètres",
+    "lockSession": "Verrouiller la session",
     "defaultUser": "Utilisateur"
   },
   "shell": {

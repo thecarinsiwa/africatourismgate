@@ -10,6 +10,12 @@ export type UserMenuLink = {
   label: string;
 };
 
+export type UserMenuAction = {
+  id: string;
+  label: string;
+  onSelect: () => void | Promise<void>;
+};
+
 export type UserMenuProps = {
   displayName: string;
   email: string;
@@ -19,6 +25,8 @@ export type UserMenuProps = {
   logoutLabel?: string;
   loggingOutLabel?: string;
   menuLinks?: UserMenuLink[];
+  /** Actions displayed above Sign out (e.g. lock session). */
+  menuActions?: UserMenuAction[];
   className?: string;
 };
 
@@ -30,6 +38,7 @@ export function UserMenu({
   logoutLabel = 'Sign out',
   loggingOutLabel = 'Signing out…',
   menuLinks = [],
+  menuActions = [],
   className,
 }: UserMenuProps) {
   const menuId = useId();
@@ -69,6 +78,11 @@ export function UserMenu({
       setLoggingOut(false);
       setOpen(false);
     }
+  }
+
+  async function handleAction(action: UserMenuAction) {
+    setOpen(false);
+    await action.onSelect();
   }
 
   const nameParts = displayName.trim().split(/\s+/).filter(Boolean);
@@ -140,6 +154,22 @@ export function UserMenu({
             </div>
           ) : null}
           <div className="p-2">
+            {menuActions.map((action) => (
+              <button
+                key={action.id}
+                type="button"
+                role="menuitem"
+                disabled={loggingOut}
+                onClick={() => void handleAction(action)}
+                className={cn(
+                  'mb-1 w-full rounded-md px-3 py-2 text-left text-sm text-atg-fg transition-colors hover:bg-atg-surface',
+                  'disabled:opacity-60',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                )}
+              >
+                {action.label}
+              </button>
+            ))}
             <button
               type="button"
               role="menuitem"

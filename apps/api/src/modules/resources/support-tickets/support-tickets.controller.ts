@@ -21,6 +21,7 @@ import { RequirePermissions } from '../../rbac/decorators/require-permissions.de
 import { AdminSupportTicketDetailDto } from './dto/admin-support-ticket-detail.dto';
 import { AdminSupportTicketListItemDto } from './dto/admin-support-ticket-list-item.dto';
 import { CreateSupportTicketDto } from './dto/create-support-ticket.dto';
+import { CustomerSupportTicketDetailDto } from './dto/customer-support-ticket-detail.dto';
 import {
   SupportTicketCreatedDto,
   SupportTicketDto,
@@ -50,11 +51,14 @@ export class SupportTicketsController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get support ticket by id' })
+  @ApiOperation({
+    summary:
+      'Get support ticket by id (staff: admin detail; customer: own ticket + messages)',
+  })
   findOne(
     @Param('id') id: string,
     @CurrentUser() user: AuthUserDto,
-  ): Promise<SupportTicketDto | AdminSupportTicketDetailDto> {
+  ): Promise<CustomerSupportTicketDetailDto | AdminSupportTicketDetailDto> {
     return this.service.findOneForActor(id, user.id);
   }
 
