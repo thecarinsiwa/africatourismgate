@@ -625,6 +625,8 @@ export interface ApiClientOptions {
   baseUrl: string;
   /** When set, sent as `Authorization: Bearer <token>` on every request (overridable per call). */
   accessToken?: string | null;
+  /** Called when fetch fails at the network layer (API down / CORS / offline). Does not absorb the error. */
+  onNetworkError?: () => void;
 }
 
 export interface RequestOptions {
@@ -639,12 +641,15 @@ export interface RequestOptions {
 
 export class ApiClient {
   private accessToken: string | null;
+  private readonly onNetworkError?: () => void;
 
   constructor(
     private readonly baseUrl: string,
     accessToken?: string | null,
+    options?: Pick<ApiClientOptions, 'onNetworkError'>,
   ) {
     this.accessToken = accessToken ?? null;
+    this.onNetworkError = options?.onNetworkError;
   }
 
   static fromEnv(accessToken?: string | null): ApiClient {
@@ -666,6 +671,10 @@ export class ApiClient {
     return this.accessToken;
   }
 
+  private notifyNetworkError(): void {
+    this.onNetworkError?.();
+  }
+
   async request<T>(path: string, options: RequestOptions = {}): Promise<T> {
     const url = `${this.baseUrl.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`;
     const isFormData =
@@ -681,17 +690,23 @@ export class ApiClient {
       headers.Authorization = `Bearer ${this.accessToken}`;
     }
 
-    const res = await fetch(url, {
-      method: options.method ?? 'GET',
-      headers,
-      body:
-        options.body === undefined
-          ? undefined
-          : isFormData
-            ? (options.body as FormData)
-            : JSON.stringify(options.body),
-      signal: options.signal,
-    });
+    let res: Response;
+    try {
+      res = await fetch(url, {
+        method: options.method ?? 'GET',
+        headers,
+        body:
+          options.body === undefined
+            ? undefined
+            : isFormData
+              ? (options.body as FormData)
+              : JSON.stringify(options.body),
+        signal: options.signal,
+      });
+    } catch (error) {
+      this.notifyNetworkError();
+      throw error;
+    }
 
     if (!res.ok) {
       let body: unknown;
@@ -732,17 +747,23 @@ export class ApiClient {
       headers.Authorization = `Bearer ${this.accessToken}`;
     }
 
-    const res = await fetch(url, {
-      method: options.method ?? 'GET',
-      headers,
-      body:
-        options.body === undefined
-          ? undefined
-          : isFormData
-            ? (options.body as FormData)
-            : JSON.stringify(options.body),
-      signal: options.signal,
-    });
+    let res: Response;
+    try {
+      res = await fetch(url, {
+        method: options.method ?? 'GET',
+        headers,
+        body:
+          options.body === undefined
+            ? undefined
+            : isFormData
+              ? (options.body as FormData)
+              : JSON.stringify(options.body),
+        signal: options.signal,
+      });
+    } catch (error) {
+      this.notifyNetworkError();
+      throw error;
+    }
 
     if (!res.ok) {
       let body: unknown;
@@ -4010,5 +4031,7 @@ export class ApiClient {
 }
 
 export function createApiClient(options: ApiClientOptions): ApiClient {
-  return new ApiClient(options.baseUrl, options.accessToken);
+  return new ApiClient(options.baseUrl, options.accessToken, {
+    onNetworkError: options.onNetworkError,
+  });
 }

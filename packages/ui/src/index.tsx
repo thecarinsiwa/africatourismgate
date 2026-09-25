@@ -167,3 +167,17 @@ export {
   type RegisterFormData,
   type RegisterFormProps,
 } from './components/register-form';
+export {
+  ConnectionLockProvider,
+  useConnectionLock,
+  type ConnectionLockMessages,
+  type ConnectionLockProviderProps,
+} from './connection-lock/connection-lock-provider';
+export {
+  isApiUnreachableError,
+  isConnectionLocked,
+  lockConnection,
+  notifyApiUnreachable,
+  subscribeConnectionLock,
+  unlockConnection,
+} from './connection-lock/store';
