@@ -127,12 +127,16 @@ export class BookingDetailPdfService {
         dietaryNotes: entry.dietaryNotes,
         comment: entry.comment,
         other: entry.other,
-        emergencyContactName: entry.emergencyContactName,
-        emergencyContactPhone: entry.emergencyContactPhone,
-        emergencyContactEmail: entry.emergencyContactEmail,
-        emergencyContactCountry: entry.emergencyContactCountry,
-        emergencyContactAddress: entry.emergencyContactAddress,
       })),
+      emergencyContact: detail.emergencyContact
+        ? {
+            name: detail.emergencyContact.name,
+            phone: detail.emergencyContact.phone,
+            email: detail.emergencyContact.email,
+            country: detail.emergencyContact.country,
+            address: detail.emergencyContact.address,
+          }
+        : null,
       itinerary: enriched.itinerary,
       guides: enriched.guides,
       payments: enriched.payments,

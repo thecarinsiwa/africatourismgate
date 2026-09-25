@@ -4,6 +4,7 @@ import type { BookingStatusHistoryEntry } from '../booking-status-history.servic
 import type { GuideReviewInviteDto } from './guide-review-invite.dto';
 import type { BookingIdentityDocumentDto } from './booking-identity-document.dto';
 import type { BookingPaymentProofDto } from './booking-payment-proof.dto';
+import type { BookingEmergencyContactDto } from './booking-emergency-contact.dto';
 
 export type BookingDetailDto = {
   booking: Bookings;
@@ -13,6 +14,8 @@ export type BookingDetailDto = {
   paidCents: number;
   balanceCents: number;
   depositRequiredCents: number;
+  /** Single emergency contact for the whole reservation. */
+  emergencyContact?: BookingEmergencyContactDto | null;
   review?: ReviewDto | null;
   canReview?: boolean;
   statusHistory?: BookingStatusHistoryEntry[];

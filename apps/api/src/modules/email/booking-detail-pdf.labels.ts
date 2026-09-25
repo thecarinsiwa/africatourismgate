@@ -30,6 +30,7 @@ export type BookingDetailPdfLabels = {
   colIdNumber: string;
   colTravelerPrice: string;
   colTravelerNotes: string;
+  emergencyContactSection: string;
   emergencyContactPrefix: string;
   allergiesPrefix: string;
   seriousMedicalPrefix: string;
@@ -91,6 +92,7 @@ const LABELS: Record<BookingDetailPdfLocale, BookingDetailPdfLabels> = {
     colIdNumber: 'N° document',
     colTravelerPrice: 'Montant',
     colTravelerNotes: 'Notes',
+    emergencyContactSection: "Contact d'urgence",
     emergencyContactPrefix: 'Urgence',
     allergiesPrefix: 'Allergies',
     seriousMedicalPrefix: 'Conditions graves',
@@ -158,6 +160,7 @@ const LABELS: Record<BookingDetailPdfLocale, BookingDetailPdfLabels> = {
     colIdNumber: 'ID no.',
     colTravelerPrice: 'Amount',
     colTravelerNotes: 'Notes',
+    emergencyContactSection: 'Emergency contact',
     emergencyContactPrefix: 'Emergency',
     allergiesPrefix: 'Allergies',
     seriousMedicalPrefix: 'Serious conditions',
@@ -225,6 +228,7 @@ const LABELS: Record<BookingDetailPdfLocale, BookingDetailPdfLabels> = {
     colIdNumber: 'N.º documento',
     colTravelerPrice: 'Importe',
     colTravelerNotes: 'Notas',
+    emergencyContactSection: 'Contacto de emergencia',
     emergencyContactPrefix: 'Emergencia',
     allergiesPrefix: 'Alergias',
     seriousMedicalPrefix: 'Condiciones graves',

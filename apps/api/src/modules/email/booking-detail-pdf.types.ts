@@ -27,11 +27,14 @@ export type BookingDetailPdfTraveler = {
   dietaryNotes?: string | null;
   comment?: string | null;
   other?: string | null;
-  emergencyContactName?: string | null;
-  emergencyContactPhone?: string | null;
-  emergencyContactEmail?: string | null;
-  emergencyContactCountry?: string | null;
-  emergencyContactAddress?: string | null;
+};
+
+export type BookingDetailPdfEmergencyContact = {
+  name?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  country?: string | null;
+  address?: string | null;
 };
 
 export type BookingDetailPdfItineraryStep = {
@@ -72,6 +75,8 @@ export type BookingDetailPdfInput = {
   };
   items: BookingDetailPdfItem[];
   travelers: BookingDetailPdfTraveler[];
+  /** Single emergency contact for the reservation (shown once, not per traveler). */
+  emergencyContact?: BookingDetailPdfEmergencyContact | null;
   itinerary: BookingDetailPdfItineraryGroup[];
   guides: BookingDetailPdfGuide[];
   payments: BookingDetailPdfPayment[];

@@ -206,11 +206,16 @@ describe('booking-detail-pdf', () => {
     }
   });
 
-  it('includes emergency contact name and phone in traveler notes', async () => {
+  it('includes booking-level emergency contact section', async () => {
     const buffer = await renderBookingDetailPdf(
       sampleInput({
         locale: 'fr',
         logoPath: null,
+        emergencyContact: {
+          name: 'Paul Urgence',
+          phone: '+243900000001',
+          email: 'paul@example.com',
+        },
         travelers: [
           {
             fullName: 'Marie Dupont',
@@ -219,9 +224,6 @@ describe('booking-detail-pdf', () => {
             idNumber: 'P100001',
             priceCents: 30750,
             allergies: 'Allergie pollen',
-            emergencyContactName: 'Paul Urgence',
-            emergencyContactPhone: '+243900000001',
-            emergencyContactEmail: 'paul@example.com',
           },
         ],
       }),
@@ -230,7 +232,7 @@ describe('booking-detail-pdf', () => {
     expect(buffer.subarray(0, 4).toString()).toBe('%PDF');
     expect(pdfContentIncludes(buffer, 'Allergies')).toBe(true);
     expect(pdfContentIncludes(buffer, 'Allergie pollen')).toBe(true);
-    expect(pdfContentIncludes(buffer, 'Urgence')).toBe(true);
+    expect(pdfContentIncludes(buffer, "Contact d'urgence")).toBe(true);
     expect(pdfContentIncludes(buffer, 'Paul Urgence')).toBe(true);
     expect(pdfContentIncludes(buffer, '+243900000001')).toBe(true);
   });

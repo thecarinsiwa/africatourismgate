@@ -171,19 +171,11 @@ export class BookingManifestService {
 
     const nationality = dto.nationality.trim();
     const idNumber = dto.idNumber.trim();
-    const emergencyContactName = dto.emergencyContactName.trim();
-    const emergencyContactPhone = dto.emergencyContactPhone.trim();
     if (!nationality) {
       throw new BadRequestException('La nationalité est obligatoire.');
     }
     if (!idNumber) {
       throw new BadRequestException("Le numéro de pièce d'identité est obligatoire.");
-    }
-    if (!emergencyContactName) {
-      throw new BadRequestException("Le nom du contact d'urgence est obligatoire.");
-    }
-    if (!emergencyContactPhone) {
-      throw new BadRequestException("Le téléphone du contact d'urgence est obligatoire.");
     }
 
     const row = this.repository.create({
@@ -196,11 +188,12 @@ export class BookingManifestService {
       sex: dto.sex ?? null,
       nationality,
       idNumber,
-      emergencyContactName,
-      emergencyContactPhone,
-      emergencyContactEmail: normalizeOptionalText(dto.emergencyContactEmail),
-      emergencyContactCountry: normalizeOptionalText(dto.emergencyContactCountry),
-      emergencyContactAddress: normalizeOptionalText(dto.emergencyContactAddress),
+      // Emergency contact is booking-level; deprecated DTO fields are ignored.
+      emergencyContactName: null,
+      emergencyContactPhone: null,
+      emergencyContactEmail: null,
+      emergencyContactCountry: null,
+      emergencyContactAddress: null,
       // Legacy `conditions` is read-only; do not persist new writes to that column.
       conditions: null,
       allergies: normalizeOptionalText(dto.allergies),
@@ -254,29 +247,7 @@ export class BookingManifestService {
       }
       row.idNumber = idNumber;
     }
-    if (dto.emergencyContactName !== undefined) {
-      const emergencyContactName = dto.emergencyContactName.trim();
-      if (!emergencyContactName) {
-        throw new BadRequestException("Le nom du contact d'urgence est obligatoire.");
-      }
-      row.emergencyContactName = emergencyContactName;
-    }
-    if (dto.emergencyContactPhone !== undefined) {
-      const emergencyContactPhone = dto.emergencyContactPhone.trim();
-      if (!emergencyContactPhone) {
-        throw new BadRequestException("Le téléphone du contact d'urgence est obligatoire.");
-      }
-      row.emergencyContactPhone = emergencyContactPhone;
-    }
-    if (dto.emergencyContactEmail !== undefined) {
-      row.emergencyContactEmail = normalizeOptionalText(dto.emergencyContactEmail);
-    }
-    if (dto.emergencyContactCountry !== undefined) {
-      row.emergencyContactCountry = normalizeOptionalText(dto.emergencyContactCountry);
-    }
-    if (dto.emergencyContactAddress !== undefined) {
-      row.emergencyContactAddress = normalizeOptionalText(dto.emergencyContactAddress);
-    }
+    // Deprecated per-traveler emergency fields — ignored (booking-level contact).
     // `conditions` is legacy read-only — ignore write attempts.
     if (dto.allergies !== undefined) {
       row.allergies = normalizeOptionalText(dto.allergies);
