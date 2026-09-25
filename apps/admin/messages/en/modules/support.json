@@ -30,6 +30,9 @@
     },
     "advanceStatus": "Move to “{status}”",
     "noMessages": "No messages yet.",
+    "threadAria": "Ticket conversation thread",
+    "loading": "Loading messages…",
+    "closedHint": "This ticket is closed — replies are no longer allowed.",
     "messageAuthor": {
       "staff": "Agent",
       "customer": "Customer"

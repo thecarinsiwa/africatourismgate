@@ -29,7 +29,10 @@
       "agentMessage": "Message agent"
     },
     "advanceStatus": "Passer à « {status} »",
-    "noMessages": "Aucun message.",
+    "noMessages": "Aucun message pour le moment.",
+    "threadAria": "Fil de discussion du ticket",
+    "loading": "Chargement des messages…",
+    "closedHint": "Ce ticket est fermé : les réponses ne sont plus possibles.",
     "messageAuthor": {
       "staff": "Agent",
       "customer": "Client"
