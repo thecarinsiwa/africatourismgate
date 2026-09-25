@@ -401,11 +401,11 @@ export function DestinationsMapSection() {
 
               {selectedDestination ? (
                 <div className="pointer-events-none absolute inset-x-0 top-0 z-[500] flex flex-wrap items-start justify-between gap-2 p-3 sm:p-4">
-                  <div className="pointer-events-auto max-w-[min(100%,20rem)] rounded-lg border border-atg-border bg-atg-elevated/95 px-3 py-2 shadow-sm backdrop-blur-sm">
-                    <p className="text-sm font-semibold text-atg-fg">
+                  <div className="pointer-events-auto max-w-[min(100%,20rem)] rounded-lg border border-atg-border bg-white px-3.5 py-2.5 shadow-lg dark:bg-zinc-900">
+                    <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
                       {selectedDestination.title}
                     </p>
-                    <p className="text-xs text-atg-muted">
+                    <p className="mt-0.5 text-xs font-medium text-zinc-600 dark:text-zinc-300">
                       {productsLoading
                         ? t('loadingProducts')
                         : productsError
@@ -418,7 +418,7 @@ export function DestinationsMapSection() {
                   <button
                     type="button"
                     onClick={handleResetView}
-                    className="pointer-events-auto rounded-lg border border-atg-border bg-atg-elevated/95 px-3 py-2 text-xs font-semibold text-atg-fg shadow-sm backdrop-blur-sm hover:bg-atg-surface"
+                    className="pointer-events-auto rounded-lg border border-atg-border bg-white px-3.5 py-2.5 text-xs font-semibold text-zinc-900 shadow-lg hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-50 dark:hover:bg-zinc-800"
                   >
                     {t('showAllDestinations')}
                   </button>
@@ -428,16 +428,16 @@ export function DestinationsMapSection() {
               {selectedDestination && productMarkers.length > 0 ? (
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[500] flex justify-center p-3 sm:justify-start sm:p-4">
                   <ul
-                    className="pointer-events-auto flex flex-wrap items-center gap-3 rounded-lg border border-atg-border bg-atg-elevated/95 px-3 py-2 text-xs text-atg-fg shadow-sm backdrop-blur-sm"
+                    className="pointer-events-auto flex flex-wrap items-center gap-3 rounded-lg border border-atg-border bg-white px-3.5 py-2.5 text-xs font-medium text-zinc-800 shadow-lg dark:bg-zinc-900 dark:text-zinc-100"
                     aria-label={t('legendAria')}
                   >
                     <li className="inline-flex items-center gap-1.5">
                       <span
-                        className="inline-flex h-5 w-5 items-center justify-center rounded-full text-white"
+                        className="inline-flex h-6 w-6 items-center justify-center rounded-full text-white shadow ring-2 ring-white"
                         style={{ backgroundColor: HOTEL_COLOR }}
                         aria-hidden
                       >
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M3 21h18" />
                           <path d="M5 21V8l7-4 7 4v13" />
                           <path d="M9 21v-5h6v5" />
@@ -447,11 +447,11 @@ export function DestinationsMapSection() {
                     </li>
                     <li className="inline-flex items-center gap-1.5">
                       <span
-                        className="inline-flex h-5 w-5 items-center justify-center rounded-full text-white"
+                        className="inline-flex h-6 w-6 items-center justify-center rounded-full text-white shadow ring-2 ring-white"
                         style={{ backgroundColor: ACTIVITY_COLOR }}
                         aria-hidden
                       >
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                           <circle cx="12" cy="12" r="3" />
                           <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
                         </svg>

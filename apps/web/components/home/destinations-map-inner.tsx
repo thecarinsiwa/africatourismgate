@@ -210,12 +210,12 @@ function createProductMarkerIcon(
   fillColor: string,
 ): import('leaflet').DivIcon {
   const glyph = markerGlyph(kind);
-  const size = kind === 'destination' ? 34 : 36;
+  const size = kind === 'destination' ? 40 : 44;
 
   return L.divIcon({
     className: 'atg-destinations-map-marker',
     html: `
-      <span style="
+      <span class="atg-destinations-map-marker__pin" style="
         display:flex;
         align-items:center;
         justify-content:center;
@@ -223,8 +223,8 @@ function createProductMarkerIcon(
         height:${size}px;
         border-radius:9999px;
         background:${fillColor};
-        border:2px solid #fff;
-        box-shadow:0 2px 8px rgba(0,0,0,.28);
+        border:3px solid #fff;
+        box-shadow:0 0 0 2px rgba(0,0,0,.18), 0 4px 14px rgba(0,0,0,.4);
         color:#fff;
       " aria-hidden="true">${glyph}</span>
     `,
@@ -236,12 +236,12 @@ function createProductMarkerIcon(
 
 function markerGlyph(kind: DestinationMapMarkerKind): string {
   if (kind === 'hotel') {
-    return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5"/><path d="M9 10h.01"/><path d="M15 10h.01"/></svg>`;
+    return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V8l7-4 7 4v13"/><path d="M9 21v-5h6v5"/><path d="M9 10h.01"/><path d="M15 10h.01"/></svg>`;
   }
   if (kind === 'activity') {
-    return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3"/><path d="M12 19v3"/><path d="m4.9 4.9 2.1 2.1"/><path d="m17 17 2.1 2.1"/><path d="M2 12h3"/><path d="M19 12h3"/><path d="m4.9 19.1 2.1-2.1"/><path d="m17 7 2.1-2.1"/></svg>`;
+    return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3"/><path d="M12 19v3"/><path d="m4.9 4.9 2.1 2.1"/><path d="m17 17 2.1 2.1"/><path d="M2 12h3"/><path d="M19 12h3"/><path d="m4.9 19.1 2.1-2.1"/><path d="m17 7 2.1-2.1"/></svg>`;
   }
-  return `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>`;
+  return `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>`;
 }
 
 function escapeHtml(value: string): string {

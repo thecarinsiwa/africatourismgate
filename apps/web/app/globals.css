@@ -188,8 +188,12 @@
 }
 
 .atg-destinations-map-marker {
-  background: transparent;
-  border: none;
+  background: transparent !important;
+  border: none !important;
+}
+
+.atg-destinations-map-marker__pin {
+  filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.35));
 }
 
 .atg-itinerary-marker__badge {
