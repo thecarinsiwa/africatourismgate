@@ -111,6 +111,8 @@ import type {
   BookingManifestEntry,
   CreateBookingManifestEntryRequest,
   UpdateBookingManifestEntryRequest,
+  BookingEmergencyContact,
+  UpdateBookingEmergencyContactRequest,
   CreateBookingResponse,
   BookingRequestResponse,
   BookingMessage,
@@ -3350,6 +3352,24 @@ export class ApiClient {
   listBookingManifestEntries(bookingId: string): Promise<BookingManifestEntry[]> {
     return this.request<BookingManifestEntry[]>(
       `/bookings/${bookingId}/manifest-entries`,
+    );
+  }
+
+  getBookingEmergencyContact(
+    bookingId: string,
+  ): Promise<BookingEmergencyContact | null> {
+    return this.request<BookingEmergencyContact | null>(
+      `/bookings/${bookingId}/emergency-contact`,
+    );
+  }
+
+  updateBookingEmergencyContact(
+    bookingId: string,
+    body: UpdateBookingEmergencyContactRequest,
+  ): Promise<BookingEmergencyContact> {
+    return this.request<BookingEmergencyContact>(
+      `/bookings/${bookingId}/emergency-contact`,
+      { method: 'PATCH', body },
     );
   }
 

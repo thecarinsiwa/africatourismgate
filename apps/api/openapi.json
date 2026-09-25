@@ -1518,6 +1518,87 @@
         ]
       }
     },
+    "/api/bookings/{id}/emergency-contact": {
+      "get": {
+        "operationId": "BookingsController_getEmergencyContact",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "nullable": true,
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/BookingEmergencyContactDto"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Get booking-level emergency contact (owner or staff)",
+        "tags": [
+          "bookings"
+        ]
+      },
+      "patch": {
+        "operationId": "BookingsController_updateEmergencyContact",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBookingEmergencyContactDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingEmergencyContactDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Set booking-level emergency contact (owner or staff)",
+        "tags": [
+          "bookings"
+        ]
+      }
+    },
     "/api/bookings/{id}/manifest-entries/{entryId}": {
       "patch": {
         "operationId": "BookingsController_updateManifestEntry",
@@ -18458,7 +18539,42 @@
           "idNumber": {
             "type": "string"
           },
+          "emergencyContactName": {
+            "type": "string",
+            "deprecated": true,
+            "description": "Ignored — use booking-level PATCH …/emergency-contact"
+          },
+          "emergencyContactPhone": {
+            "type": "string",
+            "deprecated": true,
+            "description": "Ignored — use booking-level PATCH …/emergency-contact"
+          },
+          "emergencyContactEmail": {
+            "type": "string",
+            "deprecated": true
+          },
+          "emergencyContactCountry": {
+            "type": "string",
+            "deprecated": true
+          },
+          "emergencyContactAddress": {
+            "type": "string",
+            "deprecated": true
+          },
           "conditions": {
+            "type": "string",
+            "deprecated": true
+          },
+          "allergies": {
+            "type": "string"
+          },
+          "seriousMedicalConditions": {
+            "type": "string"
+          },
+          "currentMedications": {
+            "type": "string"
+          },
+          "dietaryNotes": {
             "type": "string"
           },
           "comment": {
@@ -18472,7 +18588,68 @@
           }
         },
         "required": [
-          "fullName"
+          "fullName",
+          "nationality",
+          "idNumber"
+        ]
+      },
+      "BookingEmergencyContactDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "name",
+          "phone",
+          "email",
+          "country",
+          "address"
+        ]
+      },
+      "UpdateBookingEmergencyContactDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "name",
+          "phone"
         ]
       },
       "UpdateBookingManifestEntryDto": {
@@ -18501,7 +18678,40 @@
           "idNumber": {
             "type": "string"
           },
+          "emergencyContactName": {
+            "type": "string",
+            "deprecated": true
+          },
+          "emergencyContactPhone": {
+            "type": "string",
+            "deprecated": true
+          },
+          "emergencyContactEmail": {
+            "type": "string",
+            "deprecated": true
+          },
+          "emergencyContactCountry": {
+            "type": "string",
+            "deprecated": true
+          },
+          "emergencyContactAddress": {
+            "type": "string",
+            "deprecated": true
+          },
           "conditions": {
+            "type": "string",
+            "deprecated": true
+          },
+          "allergies": {
+            "type": "string"
+          },
+          "seriousMedicalConditions": {
+            "type": "string"
+          },
+          "currentMedications": {
+            "type": "string"
+          },
+          "dietaryNotes": {
             "type": "string"
           },
           "comment": {
@@ -18513,10 +18723,7 @@
           "sortOrder": {
             "type": "number"
           }
-        },
-        "required": [
-          "fullName"
-        ]
+        }
       },
       "UpdateBookingStatusDto": {
         "type": "object",
