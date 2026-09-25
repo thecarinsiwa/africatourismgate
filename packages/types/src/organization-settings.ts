@@ -202,6 +202,65 @@ export function isWebPaymentMethodEnabled(
 }
 
 /**
+ * Verticales du menu public « Nos Produits ».
+ * `organization_settings` group `catalog`, key `products_enabled`.
+ * Désactivé = masqué de la nav / footer / recherche et inaccessible (404).
+ */
+export type CatalogProductKey =
+  | 'hotels'
+  | 'flights'
+  | 'cars'
+  | 'cruises'
+  | 'tours'
+  | 'packages';
+
+export type CatalogProductsSettingValue = Partial<Record<CatalogProductKey, boolean>>;
+
+export type ResolvedCatalogProducts = Record<CatalogProductKey, boolean>;
+
+export const CATALOG_PRODUCT_KEYS = [
+  'hotels',
+  'flights',
+  'cars',
+  'cruises',
+  'tours',
+  'packages',
+] as const satisfies readonly CatalogProductKey[];
+
+/** Toutes les verticales activées par défaut (rétrocompatible). */
+export const DEFAULT_CATALOG_PRODUCTS: ResolvedCatalogProducts = {
+  hotels: true,
+  flights: true,
+  cars: true,
+  cruises: true,
+  tours: true,
+  packages: true,
+};
+
+export function normalizeCatalogProducts(
+  value?: CatalogProductsSettingValue | null,
+): ResolvedCatalogProducts {
+  const resolved = { ...DEFAULT_CATALOG_PRODUCTS };
+  if (!value || typeof value !== 'object') {
+    return resolved;
+  }
+  for (const key of CATALOG_PRODUCT_KEYS) {
+    const flag = value[key];
+    if (typeof flag === 'boolean') {
+      resolved[key] = flag;
+    }
+  }
+  return resolved;
+}
+
+export function isCatalogProductEnabled(
+  product: CatalogProductKey,
+  products: ResolvedCatalogProducts = DEFAULT_CATALOG_PRODUCTS,
+): boolean {
+  return products[product] === true;
+}
+
+/**
  * Acomptes checkout — `organization_settings` group `booking`, key `deposits`.
  * Exactement un de `depositPercent` | `depositFixedCents` quand `enabled`.
  * Statut réservation : reste `pending_payment` jusqu’au solde intégral.

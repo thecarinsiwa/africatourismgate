@@ -641,6 +641,8 @@ export type {
   BookingDepositsSettingValue,
   BrandingPlatformValue,
   BulkUpsertOrganizationSettingsRequest,
+  CatalogProductKey,
+  CatalogProductsSettingValue,
   ContactWebSettingValue,
   CreateOrganizationBankAccountRequest,
   EmailBrandingValue,
@@ -662,6 +664,7 @@ export type {
   AuthVisualIconPreset,
   AuthVisualIconSize,
   AuthVisualSettingValue,
+  ResolvedCatalogProducts,
   ResolvedWebPaymentMethods,
   UpdateOrganizationBankAccountRequest,
   UpsertOrganizationSettingItem,
@@ -688,8 +691,10 @@ export type {
 } from './mobile-money.js';
 
 export {
+  CATALOG_PRODUCT_KEYS,
   DEFAULT_AUTH_VISUAL_ICONS,
   DEFAULT_BOOKING_DEPOSITS,
+  DEFAULT_CATALOG_PRODUCTS,
   DEFAULT_EMAIL_BRANDING,
   DEFAULT_LOYALTY_ONEKEY_SETTING,
   DEFAULT_PUBLIC_CONTACT,
@@ -697,8 +702,10 @@ export {
   WEB_PAYMENT_METHOD_KEYS,
   bookingDepositsMode,
   computeDepositRequiredCents,
+  isCatalogProductEnabled,
   isWebPaymentMethodEnabled,
   normalizeBookingDeposits,
+  normalizeCatalogProducts,
   normalizeWebPaymentMethods,
 } from './organization-settings.js';
 
