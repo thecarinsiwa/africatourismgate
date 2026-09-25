@@ -41,58 +41,88 @@ export function ParallaxPromo() {
     : '$159.00';
   const detailsHref = featured ? `/packages/${featured.id}` : '/packages';
   const imageUrl = featured?.imageUrl ?? FALLBACK_IMAGE;
+  const imageAlt = featured?.name ?? title;
 
   return (
-    <section ref={ref} className="bg-atg-surface py-5 sm:py-6">
+    <section ref={ref} className="bg-atg-surface py-8 sm:py-10 lg:py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div
-          className={`rounded-xl border border-atg-border bg-atg-elevated shadow-sm transition-shadow hover:shadow-md ${
+        <Link
+          href={detailsHref}
+          aria-label={`${title} — ${t('details')}`}
+          className={`group relative block overflow-hidden rounded-2xl bg-atg-elevated outline-none ring-1 ring-atg-border transition-[transform,box-shadow] duration-500 ease-out hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-24px_rgba(15,23,42,0.35)] focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface ${
             isVisible ? 'animate-fade-in-up' : 'opacity-0'
           }`}
         >
-          <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:gap-5 sm:p-5">
-            {/* Thumbnail */}
-            <div className="relative mx-auto aspect-[4/3] w-full max-w-[12rem] shrink-0 overflow-hidden rounded-lg sm:mx-0 sm:aspect-square sm:h-28 sm:w-28 sm:max-w-none">
+          <div className="grid grid-cols-1 md:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+            {/* Visual — dominant image plane */}
+            <div className="relative aspect-[16/10] overflow-hidden md:aspect-auto md:min-h-[16rem] lg:min-h-[18rem]">
               <Image
                 src={imageUrl}
-                alt=""
+                alt={imageAlt}
                 fill
-                className="object-cover"
-                sizes="(max-width: 640px) 192px, 112px"
+                className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                sizes="(max-width: 768px) 100vw, 45vw"
+                priority={false}
               />
-            </div>
-
-            {/* Content + green separator */}
-            <div className="flex min-w-0 flex-1 flex-col gap-2 border-t border-secondary/40 pt-4 sm:border-t-0 sm:border-l-4 sm:border-secondary sm:pt-0 sm:pl-5">
-              <span className="inline-flex w-fit rounded-full bg-secondary px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+              <div
+                className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-atg-elevated/80"
+                aria-hidden
+              />
+              <span className="absolute left-4 top-4 inline-flex items-center bg-secondary px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white md:left-5 md:top-5">
                 {t('badge')}
               </span>
-              <div className="min-w-0 space-y-1">
-                <h2 className="line-clamp-2 text-lg font-bold leading-snug text-atg-fg sm:line-clamp-1 sm:text-xl">
+            </div>
+
+            {/* Copy + CTA */}
+            <div className="relative flex flex-col justify-center gap-5 px-5 py-6 sm:px-7 sm:py-8 lg:gap-6 lg:px-10 lg:py-10">
+              <div
+                className="pointer-events-none absolute inset-y-6 left-0 hidden w-1 rounded-full bg-secondary md:inset-y-8 md:block"
+                aria-hidden
+              />
+
+              <div className="space-y-3 md:pl-4">
+                <h2 className="max-w-xl text-2xl font-bold tracking-tight text-atg-fg sm:text-3xl lg:text-[2rem] lg:leading-tight">
                   {title}
                 </h2>
-                <p className="line-clamp-2 text-sm leading-relaxed text-atg-muted">
+                <p className="max-w-lg text-sm leading-relaxed text-atg-muted sm:text-base">
                   {description}
                 </p>
               </div>
-              <p className="text-sm text-atg-muted">
-                {t('priceFrom')}{' '}
-                <span className="text-lg font-bold text-secondary">{price}</span>
-                <span className="ml-1">{t('perPerson')}</span>
-              </p>
-            </div>
 
-            {/* CTA */}
-            <div className="shrink-0 sm:ml-auto sm:self-center">
-              <Link
-                href={detailsHref}
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-secondary px-6 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-secondary/90 sm:w-auto"
-              >
-                {t('details')}
-              </Link>
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between md:pl-4">
+                <p className="text-sm text-atg-muted">
+                  <span className="block text-xs font-medium uppercase tracking-[0.12em] text-atg-muted/80">
+                    {t('priceFrom')}
+                  </span>
+                  <span className="mt-1 inline-flex items-baseline gap-1.5">
+                    <span className="text-3xl font-bold tracking-tight text-secondary sm:text-4xl">
+                      {price}
+                    </span>
+                    <span className="text-sm text-atg-muted">{t('perPerson')}</span>
+                  </span>
+                </p>
+
+                <span className="inline-flex min-h-11 items-center justify-center gap-2 self-start bg-secondary px-6 py-2.5 text-sm font-semibold uppercase tracking-[0.08em] text-white transition-colors duration-300 group-hover:bg-secondary/90 sm:self-auto">
+                  {t('details')}
+                  <svg
+                    className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                    />
+                  </svg>
+                </span>
+              </div>
             </div>
           </div>
-        </div>
+        </Link>
       </div>
     </section>
   );
