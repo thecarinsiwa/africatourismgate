@@ -57,6 +57,7 @@ export function PackageItemsSection({
   const tActions = useTranslations('common.actions');
   const tLoading = useTranslations('common.loading');
   const tPagination = useTranslations('modules.common.pagination');
+  const tDataTable = useTranslations('modules.common.dataTable');
   const paginationLabels = useDataTablePaginationLabels();
   const itemTypeOptions = usePackageItemTypeOptions();
   const itemTypeLabels = usePackageItemTypeLabels();
@@ -209,22 +210,42 @@ export function PackageItemsSection({
   const columns = useMemo<ColumnDef<PackageItemEnriched, unknown>[]>(
     () => [
       {
-        id: 'type',
-        header: tCommon('columns.type'),
-        cell: ({ row }) => (
-          <PackageItemTypeIcon itemType={row.original.itemType} showLabel size="sm" />
-        ),
-      },
-      {
         accessorKey: 'label',
         header: tCommon('columns.product'),
+        meta: { cellClassName: 'min-w-0' },
+        cell: ({ row }) => {
+          const item = row.original;
+          const typeLabel = getPackageItemTypeLabel(item.itemType, itemTypeLabels);
+          const priceLabel = formatMoney(item.unitPriceCents, item.currency);
+          return (
+            <div className="flex min-w-0 items-start gap-2">
+              <PackageItemTypeIcon itemType={item.itemType} size="sm" className="shrink-0" />
+              <div className="min-w-0 flex-1">
+                <span className="block truncate font-medium text-atg-fg">{item.label}</span>
+                <p className="truncate text-xs text-atg-muted sm:hidden">
+                  {typeLabel} · {priceLabel}
+                </p>
+              </div>
+            </div>
+          );
+        },
+      },
+      {
+        id: 'type',
+        header: tCommon('columns.type'),
+        meta: { hideOnMobile: true },
+        cell: ({ row }) => (
+          <span className="text-sm text-atg-muted">
+            {getPackageItemTypeLabel(row.original.itemType, itemTypeLabels)}
+          </span>
+        ),
       },
       {
         id: 'price',
         header: tCommon('columns.unitPrice'),
-        meta: { align: 'right' },
+        meta: { align: 'right', hideOnMobile: true },
         cell: ({ row }) => (
-          <span className="tabular-nums text-sm">
+          <span className="whitespace-nowrap tabular-nums text-sm">
             {formatMoney(row.original.unitPriceCents, row.original.currency)}
           </span>
         ),
@@ -249,7 +270,7 @@ export function PackageItemsSection({
         ),
       },
     ],
-    [deletingId, handleDeleteRequest, handleViewRequest, tCommon],
+    [deletingId, handleDeleteRequest, handleViewRequest, itemTypeLabels, tCommon],
   );
 
   const items = detail?.items ?? [];
@@ -420,8 +441,8 @@ export function PackageItemsSection({
                 {state.message}
               </p>
             ) : (
-              <div className="space-y-3">
-                <Card variant="dashboard" padding="none" className="h-fit overflow-hidden">
+              <div className="min-w-0 space-y-3 overflow-x-hidden">
+                <Card variant="dashboard" padding="none" className="h-fit min-w-0 overflow-hidden">
                   <DataTable
                     columns={columns}
                     data={pageItems}
@@ -431,6 +452,11 @@ export function PackageItemsSection({
                     getRowId={(r) => r.id}
                     aria-label={t('title')}
                     loadingRows={PAGE_SIZE}
+                    loadingMessage={tDataTable('loading')}
+                    expandRowLabel={tDataTable('expandRow')}
+                    collapseRowLabel={tDataTable('collapseRow')}
+                    expandRowAriaLabel={tDataTable('expandRowAria')}
+                    className="min-w-0"
                   />
                 </Card>
                 {state.status === 'ready' && filteredItems.length > 0 ? (
