@@ -1,5 +1,6 @@
 {
   "dashboard": "Dashboard",
+  "analytics": "Analytics",
   "groups": {
     "usersAuth": "Users & Authentication",
     "loyalty": "Loyalty (OneKey)",

@@ -1,5 +1,6 @@
 {
   "dashboard": "Tableau de bord",
+  "analytics": "Analytics",
   "groups": {
     "usersAuth": "Utilisateurs & authentification",
     "loyalty": "Fidélité (OneKey)",

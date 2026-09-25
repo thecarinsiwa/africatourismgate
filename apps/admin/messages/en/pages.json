@@ -742,6 +742,11 @@
     "description": "View, filter, and process all alerts, booking requests, messages, and tickets.",
     "metaTitle": "Notification Center"
   },
+  "analytics": {
+    "title": "Analytics",
+    "description": "Visitors and page views on the public website",
+    "metaTitle": "Analytics"
+  },
   "aide": {
     "title": "Help Center",
     "description": "Articles to learn how to use the Africa Tourism Gate admin panel.",

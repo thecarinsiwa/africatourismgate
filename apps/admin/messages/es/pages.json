@@ -742,6 +742,11 @@
     "description": "Consulte, filtre y gestione todas las alertas, solicitudes de reserva, mensajes y tickets.",
     "metaTitle": "Centro de notificaciones"
   },
+  "analytics": {
+    "title": "Analytics",
+    "description": "Visitantes y páginas vistas del sitio web público",
+    "metaTitle": "Analytics"
+  },
   "aide": {
     "title": "Centro de ayuda",
     "description": "Artículos para aprender a usar el panel de administración de Africa Tourism Gate.",
