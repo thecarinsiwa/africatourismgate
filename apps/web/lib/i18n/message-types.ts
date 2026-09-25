@@ -27,6 +27,14 @@ export type Translations = {
     retrying: string;
     retryFailed: string;
   };
+  offlineLock: {
+    title: string;
+    subtitle: string;
+    hint: string;
+    retry: string;
+    retrying: string;
+    retryFailed: string;
+  };
   language: { label: string; select: string };
   listing: {
     clearFilters: string;

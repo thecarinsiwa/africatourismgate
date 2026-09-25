@@ -20,6 +20,14 @@
     "retrying": "Checking…",
     "retryFailed": "The server is still unreachable. Please try again shortly."
   },
+  "offlineLock": {
+    "title": "You are offline",
+    "subtitle": "No Internet connection detected. Some pages cannot load.",
+    "hint": "Check your Wi‑Fi or mobile data, then try again.",
+    "retry": "Try again",
+    "retrying": "Checking…",
+    "retryFailed": "You are still offline. Try again when your connection returns."
+  },
   "nav": {
     "home": "Home",
     "about": "About",

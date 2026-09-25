@@ -20,6 +20,14 @@
     "retrying": "Vérification…",
     "retryFailed": "Le serveur est toujours injoignable. Réessayez dans un instant."
   },
+  "offlineLock": {
+    "title": "Vous êtes hors ligne",
+    "subtitle": "Aucune connexion Internet détectée. Certaines pages ne peuvent pas se charger.",
+    "hint": "Vérifiez le Wi‑Fi ou les données mobiles, puis réessayez.",
+    "retry": "Réessayer",
+    "retrying": "Vérification…",
+    "retryFailed": "Vous êtes toujours hors ligne. Réessayez lorsque la connexion revient."
+  },
   "nav": {
     "home": "Accueil",
     "about": "À propos",
