@@ -57,6 +57,7 @@ import type {
   PackageListItem,
   PackagesBrowseQuery,
 } from '../packages/types';
+import { notifyApiUnreachable } from '@africatourismgate/ui';
 import type {
   FlightDetail,
   FlightDetailQuery,
@@ -64,7 +65,6 @@ import type {
   FlightSearchResult,
   PublicAirport,
 } from '../flights/types';
-import { notifyApiUnreachable } from './connection-lock';
 
 export type {
   VehicleDetail,
