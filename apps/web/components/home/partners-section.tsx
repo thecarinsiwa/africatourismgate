@@ -63,7 +63,7 @@ export function PartnersSection() {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div
-          className={`mb-10 max-w-2xl text-center sm:mx-auto ${
+          className={`mx-auto mb-10 max-w-2xl text-center ${
             isVisible ? 'animate-fade-in-up' : 'opacity-0'
           }`}
         >
@@ -73,13 +73,13 @@ export function PartnersSection() {
           <p className="mt-2 text-sm text-atg-muted sm:text-base">{t('subtitle')}</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 sm:gap-8 md:grid-cols-4 lg:grid-cols-6">
+        <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 md:gap-10">
           {partners.map((partner, i) => {
             const logo = partner.logoUrl?.trim() || null;
             return (
               <div
                 key={partner.id}
-                className={`group flex items-center justify-center ${
+                className={`group flex w-[7.5rem] items-center justify-center sm:w-[8.5rem] ${
                   isVisible ? 'animate-flip-in-x' : 'opacity-0'
                 }`}
                 style={{ animationDelay: `${(i + 1) * 80}ms` }}
