@@ -11,7 +11,7 @@ export {
 export { listLocalAdminSearchSources } from './local-sources';
 export { listCoreAdminSearchSources } from './core-sources';
 export { listCatalogAdminSearchSources } from './catalog-sources';
-export { listWiredAdminSearchSources } from './wired-sources';
+export { listWiredAdminSearchSources, listWiredAdminSearchSourcesByPhase } from './wired-sources';
 export {
   isAdminSearchToggleShortcut,
   isEditableKeyboardTarget,
@@ -21,7 +21,11 @@ export {
   aggregateAdminSearchResults,
   flattenAdminSearchGroups,
   runAdminSearchFanOut,
+  runAdminSearchPhasedFanOut,
   selectRunnableAdminSearchSources,
+  ADMIN_SEARCH_FANOUT_PHASES,
+  type AdminSearchFanOutPhase,
+  type AdminSearchPhasedFanOutOptions,
   type AdminSearchSourceRun,
 } from './aggregate';
 export {

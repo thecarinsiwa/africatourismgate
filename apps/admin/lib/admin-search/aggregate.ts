@@ -16,6 +16,27 @@ export type AdminSearchSourceRun = {
   result: PromiseSettledResult<AdminSearchResultItem[]>;
 };
 
+export type AdminSearchFanOutPhase = 'local' | 'core' | 'catalog';
+
+export const ADMIN_SEARCH_FANOUT_PHASES = [
+  'local',
+  'core',
+  'catalog',
+] as const satisfies readonly AdminSearchFanOutPhase[];
+
+function abortError(): Error {
+  if (typeof DOMException !== 'undefined') {
+    return new DOMException('Aborted', 'AbortError');
+  }
+  return Object.assign(new Error('Aborted'), { name: 'AbortError' });
+}
+
+function throwIfAborted(signal?: AbortSignal): void {
+  if (signal?.aborted) {
+    throw abortError();
+  }
+}
+
 function errorMessage(reason: unknown): string {
   if (reason instanceof Error && reason.message.trim()) {
     return reason.message;
@@ -94,29 +115,57 @@ export async function runAdminSearchFanOut(
   options?: { signal?: AbortSignal },
 ): Promise<AdminSearchSourceRun[]> {
   const signal = options?.signal;
-  if (signal?.aborted) {
-    const abortError =
-      typeof DOMException !== 'undefined'
-        ? new DOMException('Aborted', 'AbortError')
-        : Object.assign(new Error('Aborted'), { name: 'AbortError' });
-    throw abortError;
-  }
+  throwIfAborted(signal);
 
   const runnable = selectRunnableAdminSearchSources(sources, query, context);
   const settled = await Promise.allSettled(
     runnable.map((source) => source.search(query, context, { signal })),
   );
 
-  if (signal?.aborted) {
-    const abortError =
-      typeof DOMException !== 'undefined'
-        ? new DOMException('Aborted', 'AbortError')
-        : Object.assign(new Error('Aborted'), { name: 'AbortError' });
-    throw abortError;
-  }
+  throwIfAborted(signal);
 
   return runnable.map((source, index) => ({
     source,
     result: settled[index]!,
   }));
+}
+
+export type AdminSearchPhasedFanOutOptions = {
+  signal?: AbortSignal;
+  /**
+   * Appelé après chaque phase avec les runs cumulés
+   * (permet un merge progressif côté UI).
+   */
+  onPhaseComplete?: (
+    phase: AdminSearchFanOutPhase,
+    phaseRuns: readonly AdminSearchSourceRun[],
+    allRuns: readonly AdminSearchSourceRun[],
+  ) => void;
+};
+
+/**
+ * Fan-out séquentiel local → core → catalog.
+ * Chaque phase réutilise `runAdminSearchFanOut` (filtre minLength + RBAC).
+ */
+export async function runAdminSearchPhasedFanOut(
+  phases: Readonly<Record<AdminSearchFanOutPhase, readonly AdminSearchSource[]>>,
+  query: string,
+  context: AdminSearchContext,
+  options?: AdminSearchPhasedFanOutOptions,
+): Promise<AdminSearchSourceRun[]> {
+  const allRuns: AdminSearchSourceRun[] = [];
+
+  for (const phase of ADMIN_SEARCH_FANOUT_PHASES) {
+    throwIfAborted(options?.signal);
+    const phaseRuns = await runAdminSearchFanOut(
+      phases[phase],
+      query,
+      context,
+      { signal: options?.signal },
+    );
+    allRuns.push(...phaseRuns);
+    options?.onPhaseComplete?.(phase, phaseRuns, allRuns);
+  }
+
+  return allRuns;
 }

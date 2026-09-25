@@ -213,3 +213,81 @@ test('runAdminSearchFanOut passes signal to searchers', async () => {
   );
   assert.equal(seenSignal, controller.signal);
 });
+
+test('runAdminSearchPhasedFanOut runs local then core then catalog', async () => {
+  const { runAdminSearchPhasedFanOut } = await import('./aggregate');
+  const order: string[] = [];
+  const phasesSeen: string[] = [];
+
+  const local = makeSource({
+    id: 'pages',
+    group: 'pages',
+    listHref: '/dashboard',
+    kind: 'local',
+    minQueryLength: 0,
+    search: async () => {
+      order.push('local');
+      return [
+        {
+          id: 'pages:/dashboard',
+          sourceId: 'pages',
+          group: 'pages',
+          title: 'Dashboard',
+          href: '/dashboard',
+        },
+      ];
+    },
+  });
+  const core = makeSource({
+    id: 'users',
+    group: 'users',
+    listHref: '/utilisateurs',
+    minQueryLength: 0,
+    search: async () => {
+      order.push('core');
+      return [
+        {
+          id: 'users:1',
+          sourceId: 'users',
+          group: 'users',
+          title: 'Ada',
+          href: '/utilisateurs/1',
+        },
+      ];
+    },
+  });
+  const catalog = makeSource({
+    id: 'activities',
+    group: 'catalog',
+    listHref: '/produits/activites',
+    minQueryLength: 0,
+    search: async () => {
+      order.push('catalog');
+      return [];
+    },
+  });
+
+  const all = await runAdminSearchPhasedFanOut(
+    { local: [local], core: [core], catalog: [catalog] },
+    'ab',
+    { permissions: [], isSuperAdmin: true },
+    {
+      onPhaseComplete: (phase, _phaseRuns, allRuns) => {
+        phasesSeen.push(phase);
+        if (phase === 'local') {
+          assert.equal(allRuns.length, 1);
+        }
+        if (phase === 'core') {
+          assert.equal(allRuns.length, 2);
+        }
+        if (phase === 'catalog') {
+          assert.equal(allRuns.length, 3);
+        }
+      },
+    },
+  );
+
+  assert.deepEqual(order, ['local', 'core', 'catalog']);
+  assert.deepEqual(phasesSeen, ['local', 'core', 'catalog']);
+  assert.equal(all.length, 3);
+});
