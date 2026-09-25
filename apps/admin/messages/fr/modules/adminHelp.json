@@ -74,7 +74,7 @@
     },
     "palette-commandes": {
       "title": "Recherche admin (Ctrl+F)",
-      "summary": "Chercher pages, aide et données métier via la loupe ou Ctrl+F.",
+      "summary": "Chercher pages, aide et données métier via la loupe ou Ctrl+F (palette).",
       "body": "Ouvrez la recherche admin avec l'icône loupe du bandeau, ou les raccourcis Ctrl+F / Cmd+F (alias Ctrl+K / Cmd+K). Tapez pour filtrer d'abord les pages du menu et les articles d'aide, puis — dès deux caractères — les fiches métier selon vos permissions : utilisateurs et employés, organisations, réservations, hébergements, paiements, [promotions](/paiements/promotions) et [codes promo](/paiements/codes-promo), tickets support, catalogue (activités, vols, locations, forfaits, croisières, destinations), [guides](/guides), blog, pages et activités GAP, et [rôles](/systeme/roles).\n\nLes résultats arrivent par vagues (pages/aide d'abord, puis le cœur métier, puis le catalogue) et s'ouvrent directement sur la fiche concernée. Naviguez avec ↑↓ et validez avec Entrée. Les résultats sont regroupés (Pages, Aide, Utilisateurs, Paiements…). Fermez avec Échap ou le même raccourci.\n\nDans un champ de saisie, Ctrl+F laisse le find natif du navigateur ; hors champ, il ouvre la recherche admin. Appuyez sur ? pour l'aide des raccourcis (dont Ctrl+L pour verrouiller la session), puis suivez le lien vers le [centre d'aide](/aide) si besoin.\n\nCombinez la loupe / Ctrl+F avec l'icône Aide du bandeau : la première vous téléporte vers une fiche ou une page, la seconde ouvre la documentation du module où vous êtes."
     },
     "raccourcis-clavier": {

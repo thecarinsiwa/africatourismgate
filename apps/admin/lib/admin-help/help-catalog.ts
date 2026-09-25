@@ -479,6 +479,8 @@ export function searchAdminHelpArticles(
       return false;
     }
     return (
+      matchesSearch(article.slug, normalizedQuery) ||
+      matchesSearch(article.slug.replace(/-/g, ' '), normalizedQuery) ||
       matchesSearch(strings.title, normalizedQuery) ||
       matchesSearch(strings.summary, normalizedQuery) ||
       (strings.body !== undefined &&
