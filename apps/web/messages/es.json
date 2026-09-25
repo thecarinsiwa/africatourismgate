@@ -720,6 +720,24 @@
     "perPerson": "/persona",
     "details": "Detalles"
   },
+  "cookieConsent": {
+    "title": "Sus preferencias de cookies",
+    "description": "Utilizamos cookies necesarias para el funcionamiento del sitio y, con su consentimiento, cookies analíticas anónimas para medir la audiencia.",
+    "necessary": {
+      "title": "Cookies necesarias",
+      "description": "Indispensables (idioma, seguridad, sesión). Siempre activas.",
+      "alwaysOn": "Siempre activas"
+    },
+    "analytics": {
+      "title": "Cookies analíticas",
+      "description": "Medición anónima de páginas visitadas para mejorar la plataforma (identificador de visitante)."
+    },
+    "privacyLink": "Política de privacidad",
+    "acceptAll": "Aceptar todo",
+    "rejectOptional": "Rechazar opcionales",
+    "save": "Guardar mis elecciones",
+    "closeAria": "Cerrar"
+  },
   "destinations": {
     "title": "Destinos populares",
     "subtitle": "Descubra nuestros destinos africanos más demandados. De safaris a playas paradisíacas, cada viaje es una aventura única.",

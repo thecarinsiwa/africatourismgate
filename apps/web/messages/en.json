@@ -720,6 +720,24 @@
     "perPerson": "/person",
     "details": "Details"
   },
+  "cookieConsent": {
+    "title": "Your cookie preferences",
+    "description": "We use cookies that are necessary for the site to work and, with your consent, anonymous analytics cookies to measure traffic.",
+    "necessary": {
+      "title": "Necessary cookies",
+      "description": "Required (language, security, session). Always on.",
+      "alwaysOn": "Always on"
+    },
+    "analytics": {
+      "title": "Analytics cookies",
+      "description": "Anonymous page-view measurement to improve the platform (visitor id)."
+    },
+    "privacyLink": "Privacy policy",
+    "acceptAll": "Accept all",
+    "rejectOptional": "Reject optional",
+    "save": "Save my choices",
+    "closeAria": "Close"
+  },
   "destinations": {
     "title": "Popular Destinations",
     "subtitle": "Discover our most sought-after African destinations. From safaris to paradise beaches, every trip is a unique adventure.",

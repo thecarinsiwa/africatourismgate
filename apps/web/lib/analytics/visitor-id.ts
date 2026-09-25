@@ -24,6 +24,14 @@ function writeVisitorCookie(id: string): void {
   document.cookie = `${VISITOR_COOKIE}=${encodeURIComponent(id)};path=/;max-age=${MAX_AGE_SECONDS};SameSite=Lax`;
 }
 
+/** Removes the anonymous visitor cookie (e.g. after analytics consent is withdrawn). */
+export function clearVisitorId(): void {
+  if (typeof document === 'undefined') {
+    return;
+  }
+  document.cookie = `${VISITOR_COOKIE}=;path=/;max-age=0;SameSite=Lax`;
+}
+
 /**
  * Returns a stable anonymous visitor id (cookie `atg-vid`, 1 year).
  * Creates one when missing or invalid. Empty string when not in a browser.
