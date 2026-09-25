@@ -22,7 +22,7 @@ import {
   SearchFormSubmit,
 } from '../shared';
 import { useCatalogProducts } from '../catalog-products-provider';
-import { isSearchVerticalCatalogEnabled } from '../../lib/catalog/products';
+import { isSearchVerticalCatalogEnabled } from '../../lib/catalog/keys';
 
 type SearchTab = SearchVertical;
 

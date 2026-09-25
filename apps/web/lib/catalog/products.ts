@@ -8,21 +8,13 @@ import {
   type CatalogProductsSettingValue,
   type ResolvedCatalogProducts,
 } from '@africatourismgate/types/organization-settings';
-import type { SearchVertical } from '../search/route';
+
+export {
+  catalogKeyForSearchVertical,
+  isSearchVerticalCatalogEnabled,
+} from './keys';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
-
-/** Search verticals map 1:1 onto catalog product keys (packages is nav-only). */
-export function catalogKeyForSearchVertical(vertical: SearchVertical): CatalogProductKey {
-  return vertical;
-}
-
-export function isSearchVerticalCatalogEnabled(
-  vertical: SearchVertical,
-  products: ResolvedCatalogProducts = DEFAULT_CATALOG_PRODUCTS,
-): boolean {
-  return isCatalogProductEnabled(catalogKeyForSearchVertical(vertical), products);
-}
 
 export const getPublicCatalogProducts = cache(
   async (): Promise<ResolvedCatalogProducts> => {

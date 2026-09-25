@@ -87,6 +87,33 @@ test('buildSiteNavSearchItems includes nav, about, legal and donate', () => {
   assert.equal(new Set(hrefs).size, hrefs.length);
 });
 
+test('buildSiteNavSearchItems hides disabled catalog products', () => {
+  const items = buildSiteNavSearchItems(
+    {
+      nav: (key) => `nav:${key}`,
+      aboutNav: (key) => `about:${key}`,
+      legal: (key) => `legal:${key}`,
+    },
+    {
+      hotels: false,
+      flights: true,
+      cars: false,
+      cruises: true,
+      tours: false,
+      packages: false,
+    },
+  );
+
+  const hrefs = new Set(items.map((item) => item.href));
+  assert.equal(hrefs.has('/hotels'), false);
+  assert.equal(hrefs.has('/cars'), false);
+  assert.equal(hrefs.has('/activities'), false);
+  assert.equal(hrefs.has('/packages'), false);
+  assert.equal(hrefs.has('/flights'), true);
+  assert.equal(hrefs.has('/cruises'), true);
+  assert.equal(hrefs.has('/'), true);
+});
+
 test('searchSitePages maps nav items to results with limit', async () => {
   const navItems = [
     { href: '/', label: 'Accueil' },
