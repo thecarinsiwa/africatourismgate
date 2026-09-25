@@ -785,7 +785,11 @@
     "productsError": "Could not load products.",
     "noProducts": "No products available here yet.",
     "productsCount": "{count, plural, one {# product} other {# products}}",
-    "showAllDestinations": "All destinations"
+    "showAllDestinations": "All destinations",
+    "carouselTitle": "Products",
+    "carouselAria": "Carousel of destination products",
+    "viewMore": "See more",
+    "viewMoreProduct": "See more"
   },
   "customerReviews": {
     "title": "What our travelers say",

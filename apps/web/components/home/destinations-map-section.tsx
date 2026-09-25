@@ -1,8 +1,9 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import Link from 'next/link';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import type { PublicDestination } from '@africatourismgate/types';
 import {
@@ -27,6 +28,9 @@ const DestinationsMapInner = dynamic(
 const MAP_HEIGHT_CLASS =
   'h-[min(62vh,420px)] w-full sm:h-[460px] lg:h-[540px]';
 
+const PLACEHOLDER_IMAGE =
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg/1280px-Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg';
+
 export type DestinationMapMarkerKind = 'destination' | 'hotel' | 'activity';
 
 export type DestinationMapMarker = {
@@ -41,6 +45,7 @@ export type DestinationMapMarker = {
   fillColor: string;
   /** Short product-type label shown on the map popup / legend. */
   kindLabel?: string;
+  imageUrl?: string | null;
 };
 
 const DESTINATION_COLOR = 'var(--atg-primary, #c8102e)';
@@ -144,6 +149,8 @@ export function DestinationsMapSection() {
   const [productMarkers, setProductMarkers] = useState<DestinationMapMarker[]>([]);
   const [productsLoading, setProductsLoading] = useState(false);
   const [productsError, setProductsError] = useState(false);
+  const [activeProductId, setActiveProductId] = useState<string | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -244,6 +251,7 @@ export function DestinationsMapSection() {
             viewLabel: viewHotelLabel,
             fillColor: HOTEL_COLOR,
             kindLabel: hotelKindLabel,
+            imageUrl: hotel.imageUrl,
           });
         }
 
@@ -271,6 +279,7 @@ export function DestinationsMapSection() {
             viewLabel: viewActivityLabel,
             fillColor: ACTIVITY_COLOR,
             kindLabel: activityKindLabel,
+            imageUrl: activity.imageUrl,
           });
         }
 
@@ -297,6 +306,7 @@ export function DestinationsMapSection() {
         return;
       }
       setSelectedDestinationId(marker.id);
+      setActiveProductId(null);
       void loadProductsForDestination(marker);
     },
     [loadProductsForDestination],
@@ -307,7 +317,47 @@ export function DestinationsMapSection() {
     setProductMarkers([]);
     setProductsError(false);
     setProductsLoading(false);
+    setActiveProductId(null);
   }, []);
+
+  const handleProductSelect = useCallback((productId: string) => {
+    setActiveProductId(productId);
+    const card = carouselRef.current?.querySelector<HTMLElement>(
+      `[data-product-id="${CSS.escape(productId)}"]`,
+    );
+    card?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }, []);
+
+  const handleMarkerProductClick = useCallback(
+    (marker: DestinationMapMarker) => {
+      if (marker.kind === 'destination') {
+        handleDestinationClick(marker);
+        return;
+      }
+      handleProductSelect(marker.id);
+    },
+    [handleDestinationClick, handleProductSelect],
+  );
+
+  const productFocus = useMemo(() => {
+    if (!activeProductId) {
+      return null;
+    }
+    const product = productMarkers.find((item) => item.id === activeProductId);
+    if (!product) {
+      return null;
+    }
+    return {
+      latitude: product.latitude,
+      longitude: product.longitude,
+      zoom: 15,
+      markerId: product.id,
+    };
+  }, [activeProductId, productMarkers]);
+
+  const seeMoreHref = selectedDestination
+    ? siteSearchDeepLinks.hotelsByDestination(selectedDestination.title)
+    : '/hotels';
 
   const markers = useMemo(() => {
     if (!selectedDestination) {
@@ -396,10 +446,11 @@ export function DestinationsMapSection() {
               <DestinationsMapInner
                 markers={markers}
                 ariaLabel={t('mapAria')}
-                focus={focus}
-                fitToMarkers={!selectedDestination || productsReady}
+                focus={productFocus ?? focus}
+                fitToMarkers={!selectedDestination || (productsReady && !productFocus)}
                 fitMaxZoom={selectedDestination ? 13 : 8}
-                onDestinationClick={handleDestinationClick}
+                onDestinationClick={handleMarkerProductClick}
+                highlightId={activeProductId}
                 className={MAP_HEIGHT_CLASS}
               />
 
@@ -445,39 +496,84 @@ export function DestinationsMapSection() {
               ) : null}
 
               {selectedDestination && productMarkers.length > 0 ? (
-                <div className="pointer-events-none absolute bottom-2 left-2 z-[500] sm:bottom-3 sm:left-3">
-                  <ul
-                    className="pointer-events-auto flex items-center gap-1 rounded-full border border-atg-border bg-white/95 p-1 shadow-md backdrop-blur-md dark:bg-zinc-900/95"
-                    aria-label={t('legendAria')}
-                  >
-                    <li>
-                      <span
-                        className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold text-white sm:text-[11px]"
-                        style={{ backgroundColor: HOTEL_COLOR }}
-                        title={hotelKindLabel}
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[500] p-2 sm:p-3">
+                  <div className="pointer-events-auto overflow-hidden rounded-xl border border-atg-border bg-white/95 shadow-lg backdrop-blur-md dark:bg-zinc-900/95">
+                    <div className="flex items-center justify-between gap-2 border-b border-atg-border/70 px-2.5 py-1.5 sm:px-3">
+                      <p className="truncate text-[11px] font-semibold text-zinc-700 dark:text-zinc-200 sm:text-xs">
+                        {t('carouselTitle')}
+                      </p>
+                      <Link
+                        href={seeMoreHref}
+                        className="shrink-0 text-[11px] font-semibold text-primary hover:underline sm:text-xs"
                       >
-                        <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                          <path d="M3 21h18" />
-                          <path d="M5 21V8l7-4 7 4v13" />
-                          <path d="M9 21v-5h6v5" />
-                        </svg>
-                        <span className="hidden sm:inline">{hotelKindLabel}</span>
-                      </span>
-                    </li>
-                    <li>
-                      <span
-                        className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold text-white sm:text-[11px]"
-                        style={{ backgroundColor: ACTIVITY_COLOR }}
-                        title={activityKindLabel}
-                      >
-                        <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                          <circle cx="12" cy="12" r="3" />
-                          <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
-                        </svg>
-                        <span className="hidden sm:inline">{activityKindLabel}</span>
-                      </span>
-                    </li>
-                  </ul>
+                        {t('viewMore')}
+                      </Link>
+                    </div>
+                    <div
+                      ref={carouselRef}
+                      className="flex snap-x snap-mandatory gap-2 overflow-x-auto scroll-smooth px-2 py-2 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-2.5 sm:px-2.5 [&::-webkit-scrollbar]:hidden"
+                      role="list"
+                      aria-label={t('carouselAria')}
+                    >
+                      {productMarkers.map((product) => {
+                        const isActive = product.id === activeProductId;
+                        const imageSrc = product.imageUrl?.trim() || PLACEHOLDER_IMAGE;
+                        return (
+                          <article
+                            key={product.id}
+                            data-product-id={product.id}
+                            role="listitem"
+                            className={`w-[9.5rem] shrink-0 snap-start overflow-hidden rounded-lg border bg-white transition dark:bg-zinc-950 sm:w-[11rem] ${
+                              isActive
+                                ? 'border-primary ring-2 ring-primary/30'
+                                : 'border-atg-border'
+                            }`}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => handleProductSelect(product.id)}
+                              className="block w-full text-left"
+                            >
+                              <div className="relative h-16 w-full bg-zinc-100 sm:h-[4.5rem] dark:bg-zinc-800">
+                                <Image
+                                  src={imageSrc}
+                                  alt=""
+                                  fill
+                                  sizes="176px"
+                                  className="object-cover"
+                                  unoptimized
+                                />
+                                {product.kindLabel ? (
+                                  <span
+                                    className="absolute left-1.5 top-1.5 rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-white"
+                                    style={{ backgroundColor: product.fillColor }}
+                                  >
+                                    {product.kindLabel}
+                                  </span>
+                                ) : null}
+                              </div>
+                              <div className="space-y-0.5 p-1.5 pb-0 sm:p-2 sm:pb-0">
+                                <p className="truncate text-[11px] font-semibold text-zinc-900 dark:text-zinc-50 sm:text-xs">
+                                  {product.title}
+                                </p>
+                                <p className="truncate text-[10px] text-zinc-500 dark:text-zinc-400">
+                                  {product.subtitle}
+                                </p>
+                              </div>
+                            </button>
+                            <div className="px-1.5 pb-1.5 pt-1 sm:px-2 sm:pb-2">
+                              <Link
+                                href={product.href}
+                                className="inline-block text-[10px] font-semibold text-primary hover:underline sm:text-[11px]"
+                              >
+                                {t('viewMoreProduct')}
+                              </Link>
+                            </div>
+                          </article>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
               ) : null}
 

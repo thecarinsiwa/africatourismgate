@@ -785,7 +785,11 @@
     "productsError": "No se pudieron cargar los productos.",
     "noProducts": "Todavía no hay productos aquí.",
     "productsCount": "{count, plural, one {# producto} other {# productos}}",
-    "showAllDestinations": "Todos los destinos"
+    "showAllDestinations": "Todos los destinos",
+    "carouselTitle": "Productos",
+    "carouselAria": "Carrusel de productos del destino",
+    "viewMore": "Ver más",
+    "viewMoreProduct": "Ver más"
   },
   "customerReviews": {
     "title": "Opiniones de nuestros clientes",

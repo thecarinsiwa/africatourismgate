@@ -11,6 +11,7 @@ type MapFocus = {
   latitude: number;
   longitude: number;
   zoom?: number;
+  markerId?: string;
 };
 
 type DestinationsMapInnerProps = {
@@ -21,6 +22,7 @@ type DestinationsMapInnerProps = {
   fitToMarkers?: boolean;
   fitMaxZoom?: number;
   onDestinationClick?: (marker: DestinationMapMarker) => void;
+  highlightId?: string | null;
   className?: string;
 };
 
@@ -31,6 +33,7 @@ export function DestinationsMapInner({
   fitToMarkers = true,
   fitMaxZoom = 8,
   onDestinationClick,
+  highlightId = null,
   className = 'h-[min(62vh,420px)] w-full sm:h-[460px] lg:h-[540px]',
 }: DestinationsMapInnerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -113,9 +116,10 @@ export function DestinationsMapInner({
       renderMarkers(L, map, markers, markerLayerRef, onDestinationClickRef, {
         fitToMarkers,
         fitMaxZoom,
+        highlightId,
       });
     });
-  }, [markers, mapReady, fitToMarkers, fitMaxZoom]);
+  }, [markers, mapReady, fitToMarkers, fitMaxZoom, highlightId]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -128,7 +132,7 @@ export function DestinationsMapInner({
       return;
     }
 
-    const key = `${focus.latitude},${focus.longitude},${focus.zoom ?? 12}`;
+    const key = `${focus.latitude},${focus.longitude},${focus.zoom ?? 12},${focus.markerId ?? ''}`;
     if (lastFocusKeyRef.current === key) {
       return;
     }
@@ -136,7 +140,7 @@ export function DestinationsMapInner({
 
     map.invalidateSize({ animate: false });
     map.flyTo([focus.latitude, focus.longitude], focus.zoom ?? 12, {
-      duration: 0.85,
+      duration: 0.7,
     });
   }, [focus, mapReady]);
 
@@ -154,7 +158,7 @@ function getFitPadding(): [number, number] {
   if (typeof window === 'undefined') {
     return [48, 48];
   }
-  return window.matchMedia('(min-width: 640px)').matches ? [64, 64] : [40, 72];
+  return window.matchMedia('(min-width: 640px)').matches ? [64, 150] : [36, 150];
 }
 
 function renderMarkers(
@@ -165,7 +169,7 @@ function renderMarkers(
   onDestinationClickRef: MutableRefObject<
     ((marker: DestinationMapMarker) => void) | undefined
   >,
-  options: { fitToMarkers: boolean; fitMaxZoom: number },
+  options: { fitToMarkers: boolean; fitMaxZoom: number; highlightId: string | null },
 ) {
   for (const marker of markerLayerRef.current) {
     marker.remove();
@@ -186,11 +190,18 @@ function renderMarkers(
     bounds.extend(latLng);
 
     const isDestination = item.kind === 'destination';
-    const icon = createProductMarkerIcon(L, item.kind, item.fillColor, isCompact);
+    const isHighlighted = options.highlightId === item.id;
+    const icon = createProductMarkerIcon(
+      L,
+      item.kind,
+      item.fillColor,
+      isCompact,
+      isHighlighted,
+    );
     const marker = L.marker(latLng, {
       icon,
       title: item.title,
-      zIndexOffset: isDestination ? 100 : 200,
+      zIndexOffset: isHighlighted ? 400 : isDestination ? 100 : 200,
     }).addTo(map);
 
     const kindBadge = item.kindLabel
@@ -210,29 +221,16 @@ function renderMarkers(
       closeButton: true,
       maxWidth: isCompact ? 200 : 220,
       autoPanPaddingTopLeft: isCompact ? [12, 56] : [24, 64],
-      autoPanPaddingBottomRight: isCompact ? [12, 56] : [24, 64],
+      autoPanPaddingBottomRight: isCompact ? [12, 120] : [24, 140],
       className: 'atg-destinations-map-popup-wrap',
     });
 
-    if (isDestination) {
-      marker.on('click', () => {
-        onDestinationClickRef.current?.(item);
-      });
-    } else {
-      marker.on('click', () => {
-        const productZoom = isCompact ? 14 : 15;
-        const currentZoom = map.getZoom();
-        if (currentZoom < productZoom - 0.4) {
-          map.flyTo(latLng, productZoom, { duration: 0.7 });
-          map.once('moveend', () => {
-            marker.openPopup();
-          });
-        } else {
-          map.panTo(latLng, { animate: true, duration: 0.35 });
-          marker.openPopup();
-        }
-      });
-    }
+    marker.on('click', () => {
+      onDestinationClickRef.current?.(item);
+      if (!isDestination) {
+        marker.openPopup();
+      }
+    });
 
     markerLayerRef.current.push(marker);
   }
@@ -262,10 +260,11 @@ function createProductMarkerIcon(
   kind: DestinationMapMarkerKind,
   fillColor: string,
   isCompact: boolean,
+  isHighlighted: boolean,
 ): import('leaflet').DivIcon {
   const glyph = markerGlyph(kind, isCompact);
   const base = kind === 'destination' ? 40 : 44;
-  const size = isCompact ? base - 8 : base;
+  const size = (isCompact ? base - 8 : base) + (isHighlighted ? 4 : 0);
 
   return L.divIcon({
     className: 'atg-destinations-map-marker',
@@ -279,8 +278,9 @@ function createProductMarkerIcon(
         border-radius:9999px;
         background:${fillColor};
         border:3px solid #fff;
-        box-shadow:0 0 0 2px rgba(0,0,0,.18), 0 4px 14px rgba(0,0,0,.4);
+        box-shadow:0 0 0 ${isHighlighted ? '3px rgba(200,16,46,.35), ' : ''}2px rgba(0,0,0,.18), 0 4px 14px rgba(0,0,0,.4);
         color:#fff;
+        transform:scale(${isHighlighted ? 1.06 : 1});
       " aria-hidden="true">${glyph}</span>
     `,
     iconSize: [size, size],
