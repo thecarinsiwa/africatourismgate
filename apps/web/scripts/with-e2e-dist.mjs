@@ -26,8 +26,11 @@ if (!command) {
   process.exit(1);
 }
 
+const binDir = path.join(cwd, 'node_modules', '.bin');
+const rootBinDir = path.resolve(cwd, '..', '..', 'node_modules', '.bin');
 const env = {
   ...process.env,
+  PATH: [binDir, rootBinDir, process.env.PATH ?? ''].join(path.delimiter),
   NEXT_DIST_DIR: process.env.NEXT_DIST_DIR || '.next-e2e',
   // Avoid Next.js Image Optimization fetching remote Wikimedia (429/404) during E2E.
   NEXT_IMAGE_UNOPTIMIZED: process.env.NEXT_IMAGE_UNOPTIMIZED || '1',
