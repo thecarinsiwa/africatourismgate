@@ -10,6 +10,7 @@ import type {
   BookingDepositsMode,
   BookingMode,
   BrandingPlatformValue,
+  CatalogProductKey,
   ContactWebSettingValue,
   LocaleSettingValue,
   LoyaltyOneKeySettingValue,
@@ -17,6 +18,7 @@ import type {
   OrganizationSetting,
   ResolvedBookingDeposits,
   ResolvedBookingItemTypeModes,
+  ResolvedCatalogProducts,
   ResolvedWebPaymentMethods,
   WebPaymentMethodKey,
 } from '@africatourismgate/types';
@@ -26,12 +28,15 @@ import {
   normalizeBookingItemTypeModes,
 } from '@africatourismgate/types/tour-guide';
 import {
+  CATALOG_PRODUCT_KEYS,
   DEFAULT_BOOKING_DEPOSITS,
+  DEFAULT_CATALOG_PRODUCTS,
   DEFAULT_LOYALTY_ONEKEY_SETTING,
   DEFAULT_WEB_PAYMENT_METHODS,
   WEB_PAYMENT_METHOD_KEYS,
   bookingDepositsMode,
   normalizeBookingDeposits,
+  normalizeCatalogProducts,
   normalizeWebPaymentMethods,
 } from '@africatourismgate/types/organization-settings';
 import { useTranslations } from 'next-intl';
@@ -117,6 +122,7 @@ type SettingsFormValues = {
   authVisualIcons: AuthVisualDecorIcon[];
   itemTypeModes: ResolvedBookingItemTypeModes;
   paymentMethods: ResolvedWebPaymentMethods;
+  catalogProducts: ResolvedCatalogProducts;
   depositsEnabled: boolean;
   depositsMode: BookingDepositsMode;
   depositPercent: string;
@@ -178,6 +184,7 @@ const defaultValues: SettingsFormValues = {
   authVisualIcons: [],
   itemTypeModes: { ...DEFAULT_BOOKING_ITEM_TYPE_MODES },
   paymentMethods: { ...DEFAULT_WEB_PAYMENT_METHODS },
+  catalogProducts: { ...DEFAULT_CATALOG_PRODUCTS },
   ...depositsToFormFields(DEFAULT_BOOKING_DEPOSITS),
 };
 
@@ -205,6 +212,9 @@ function toFormValues(
   );
   const paymentMethods = normalizeWebPaymentMethods(
     settingByKey(settings, 'payment_methods') as Partial<ResolvedWebPaymentMethods> | undefined,
+  );
+  const catalogProducts = normalizeCatalogProducts(
+    settingByKey(settings, 'products_enabled') as Partial<ResolvedCatalogProducts> | undefined,
   );
   const deposits = normalizeBookingDeposits(
     settingByKey(settings, 'deposits') as
@@ -238,6 +248,7 @@ function toFormValues(
     authVisualIcons: authVisualFromSetting(authVisual).map((icon) => ({ ...icon })),
     itemTypeModes,
     paymentMethods,
+    catalogProducts,
     ...depositsToFormFields(deposits),
   };
 }
@@ -491,6 +502,11 @@ export function OrganizationSettingsForm({
             settingGroup: 'booking',
             settingKey: 'payment_methods',
             settingValue: values.paymentMethods,
+          },
+          {
+            settingGroup: 'catalog',
+            settingKey: 'products_enabled',
+            settingValue: values.catalogProducts,
           },
           {
             settingGroup: 'booking',
@@ -882,6 +898,34 @@ export function OrganizationSettingsForm({
                   placeholder="50.00"
                 />
               )}
+            </div>
+          </Card>
+
+          <Card variant="dashboard" padding="sm" className="space-y-4">
+            <div>
+              <h2 className="text-base font-semibold text-atg-fg">{t('sections.catalog.title')}</h2>
+              <p className="mt-1 text-xs text-atg-muted">{t('sections.catalog.description')}</p>
+            </div>
+            <div className="space-y-2">
+              {CATALOG_PRODUCT_KEYS.map((product) => (
+                <label
+                  key={product}
+                  className="flex items-center gap-2 text-sm text-atg-fg"
+                >
+                  <input
+                    type="checkbox"
+                    checked={values.catalogProducts[product]}
+                    onChange={(e) =>
+                      updateField('catalogProducts', {
+                        ...values.catalogProducts,
+                        [product]: e.target.checked,
+                      })
+                    }
+                    className="rounded border-atg-border"
+                  />
+                  {t(`sections.catalog.products.${product as CatalogProductKey}`)}
+                </label>
+              ))}
             </div>
           </Card>
 

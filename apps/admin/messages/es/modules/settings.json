@@ -97,6 +97,18 @@
           "package": "Paquete"
         }
       },
+      "catalog": {
+        "title": "Productos del sitio",
+        "description": "Active o desactive cada vertical del menú público « Nuestros productos ». Una vertical desactivada desaparece de la navegación y devuelve una página 404.",
+        "products": {
+          "hotels": "Hoteles",
+          "flights": "Vuelos",
+          "cars": "Alquiler de coches",
+          "cruises": "Cruceros",
+          "tours": "Tours / actividades",
+          "packages": "Paquetes"
+        }
+      },
       "maintenance": {
         "title": "Mantenimiento del sitio",
         "description": "Cuando está activado, los visitantes del sitio público son redirigidos a una página de mantenimiento (el admin sigue accesible).",

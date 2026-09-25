@@ -97,6 +97,18 @@
           "package": "Forfait"
         }
       },
+      "catalog": {
+        "title": "Produits du site",
+        "description": "Activez ou désactivez chaque verticale du menu public « Nos Produits ». Une verticale désactivée disparaît de la navigation et renvoie une page 404.",
+        "products": {
+          "hotels": "Hôtels",
+          "flights": "Vols",
+          "cars": "Location de voitures",
+          "cruises": "Croisières",
+          "tours": "Tours / activités",
+          "packages": "Forfaits"
+        }
+      },
       "maintenance": {
         "title": "Maintenance du site",
         "description": "Lorsque le mode est activé, les visiteurs du site public sont redirigés vers une page de maintenance (l’admin reste accessible).",
