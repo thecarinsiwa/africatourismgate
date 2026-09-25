@@ -11,6 +11,7 @@ import type { AdminSearchResultItem } from './types';
 
 export type SearchApiCoreOptions = {
   resultLimit?: number;
+  signal?: AbortSignal;
 };
 
 const DEFAULT_LIMIT = 5;
@@ -22,13 +23,22 @@ function resolveLimit(options?: SearchApiCoreOptions): number {
   return options?.resultLimit ?? DEFAULT_LIMIT;
 }
 
+function requestOptions(
+  options?: SearchApiCoreOptions,
+): { signal: AbortSignal } | undefined {
+  return options?.signal ? { signal: options.signal } : undefined;
+}
+
 export async function searchAdminUsers(
   query: string,
   options?: SearchApiCoreOptions,
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listUsers({ page: 1, limit, search: query.trim() || undefined }),
+    client.listUsers(
+      { page: 1, limit, search: query.trim() || undefined },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((user) => {
@@ -54,11 +64,14 @@ export async function searchAdminOrganizations(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listOrganizations({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listOrganizations(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((org) => ({
@@ -77,11 +90,14 @@ export async function searchAdminBookings(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listBookings({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listBookings(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((booking) => {
@@ -107,11 +123,14 @@ export async function searchAdminProperties(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listProperties({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listProperties(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((property) => ({
@@ -130,11 +149,14 @@ export async function searchAdminPayments(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listPayments({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listPayments(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((payment) => {
@@ -169,10 +191,13 @@ export async function searchAdminSupportTickets(
   }
 
   const result = await withApiClient((client: ApiClient) =>
-    client.listSupportTickets({
-      page: 1,
-      limit: SUPPORT_TICKETS_CLIENT_FILTER_LIMIT,
-    }),
+    client.listSupportTickets(
+      {
+        page: 1,
+        limit: SUPPORT_TICKETS_CLIENT_FILTER_LIMIT,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data

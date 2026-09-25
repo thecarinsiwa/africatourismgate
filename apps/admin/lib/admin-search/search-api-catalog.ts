@@ -17,17 +17,26 @@ function resolveLimit(options?: SearchApiCoreOptions): number {
   return options?.resultLimit ?? DEFAULT_LIMIT;
 }
 
+function requestOptions(
+  options?: SearchApiCoreOptions,
+): { signal: AbortSignal } | undefined {
+  return options?.signal ? { signal: options.signal } : undefined;
+}
+
 export async function searchAdminActivities(
   query: string,
   options?: SearchApiCoreOptions,
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listActivities({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listActivities(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((activity) => ({
@@ -46,11 +55,14 @@ export async function searchAdminFlights(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listFlights({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listFlights(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((flight) => ({
@@ -69,11 +81,14 @@ export async function searchAdminVehicles(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listVehicles({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listVehicles(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((vehicle) => {
@@ -95,11 +110,14 @@ export async function searchAdminPackages(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listPackages({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listPackages(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((pkg) => ({
@@ -127,17 +145,25 @@ export async function searchAdminSailings(
   }
 
   const [sailingsResult, itinerariesResult] = await withApiClient(
-    (client: ApiClient) =>
-      Promise.all([
-        client.listCruiseSailings({
-          page: 1,
-          limit: CLIENT_FILTER_FETCH_LIMIT,
-        }),
-        client.listItineraries({
-          page: 1,
-          limit: CLIENT_FILTER_FETCH_LIMIT,
-        }),
-      ]),
+    (client: ApiClient) => {
+      const req = requestOptions(options);
+      return Promise.all([
+        client.listCruiseSailings(
+          {
+            page: 1,
+            limit: CLIENT_FILTER_FETCH_LIMIT,
+          },
+          req,
+        ),
+        client.listItineraries(
+          {
+            page: 1,
+            limit: CLIENT_FILTER_FETCH_LIMIT,
+          },
+          req,
+        ),
+      ]);
+    },
   );
 
   const itineraryNameById = new Map(
@@ -179,11 +205,14 @@ export async function searchAdminBlogPosts(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listBlogPosts({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listBlogPosts(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((post) => ({
@@ -202,11 +231,14 @@ export async function searchAdminDestinations(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listDestinations({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listDestinations(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((destination) => ({
@@ -225,11 +257,14 @@ export async function searchAdminEmployees(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listEmployees({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listEmployees(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((employee) => {

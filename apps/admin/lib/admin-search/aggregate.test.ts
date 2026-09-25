@@ -162,3 +162,54 @@ test('aggregateAdminSearchResults omits empty groups without errors', () => {
   const groups = aggregateAdminSearchResults([]);
   assert.equal(groups.length, 0);
 });
+
+test('runAdminSearchFanOut aborts when signal already aborted', async () => {
+  const { runAdminSearchFanOut } = await import('./aggregate');
+  const controller = new AbortController();
+  controller.abort();
+  const source = makeSource({
+    id: 'pages',
+    group: 'pages',
+    listHref: '/dashboard',
+    kind: 'local',
+    minQueryLength: 0,
+    search: async () => {
+      assert.fail('search should not run when already aborted');
+      return [];
+    },
+  });
+
+  await assert.rejects(
+    () =>
+      runAdminSearchFanOut([source], '', { permissions: [], isSuperAdmin: true }, {
+        signal: controller.signal,
+      }),
+    (error: unknown) =>
+      error instanceof Error && error.name === 'AbortError',
+  );
+});
+
+test('runAdminSearchFanOut passes signal to searchers', async () => {
+  const { runAdminSearchFanOut } = await import('./aggregate');
+  const controller = new AbortController();
+  let seenSignal: AbortSignal | undefined;
+  const source = makeSource({
+    id: 'pages',
+    group: 'pages',
+    listHref: '/dashboard',
+    kind: 'local',
+    minQueryLength: 0,
+    search: async (_query, _context, options) => {
+      seenSignal = options?.signal;
+      return [];
+    },
+  });
+
+  await runAdminSearchFanOut(
+    [source],
+    '',
+    { permissions: [], isSuperAdmin: true },
+    { signal: controller.signal },
+  );
+  assert.equal(seenSignal, controller.signal);
+});

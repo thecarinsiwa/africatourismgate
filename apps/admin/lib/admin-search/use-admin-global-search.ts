@@ -125,16 +125,31 @@ export function useAdminGlobalSearch(
     }
 
     const requestId = ++requestIdRef.current;
+    const controller = new AbortController();
     setLoading(true);
 
-    void runAdminSearchFanOut(wiredSources, debouncedQuery, searchContext)
+    void runAdminSearchFanOut(wiredSources, debouncedQuery, searchContext, {
+      signal: controller.signal,
+    })
       .then((runs) => {
-        if (requestId !== requestIdRef.current) return;
+        if (requestId !== requestIdRef.current || controller.signal.aborted) {
+          return;
+        }
         setGroups(aggregateAdminSearchResults(runs));
         setHasResolved(true);
       })
-      .catch(() => {
-        if (requestId !== requestIdRef.current) return;
+      .catch((error: unknown) => {
+        if (requestId !== requestIdRef.current || controller.signal.aborted) {
+          return;
+        }
+        const aborted =
+          (typeof DOMException !== 'undefined' &&
+            error instanceof DOMException &&
+            error.name === 'AbortError') ||
+          (error instanceof Error && error.name === 'AbortError');
+        if (aborted) {
+          return;
+        }
         setGroups([]);
         setHasResolved(true);
       })
@@ -142,6 +157,10 @@ export function useAdminGlobalSearch(
         if (requestId !== requestIdRef.current) return;
         setLoading(false);
       });
+
+    return () => {
+      controller.abort();
+    };
   }, [
     enabled,
     debouncedQuery,

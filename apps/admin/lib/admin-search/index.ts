@@ -77,6 +77,7 @@ export {
   type AdminSearchLabelKey,
   type AdminSearchNavItem,
   type AdminSearchResultItem,
+  type AdminSearchRunOptions,
   type AdminSearchSource,
   type AdminSearchSourceDefinition,
   type AdminSearchSourceId,

@@ -628,6 +628,8 @@ export interface RequestOptions {
   headers?: Record<string, string>;
   /** When true, omit Authorization even if an access token is configured on the client. */
   skipAuth?: boolean;
+  /** Optional AbortSignal forwarded to fetch (cancel in-flight requests). */
+  signal?: AbortSignal;
 }
 
 export class ApiClient {
@@ -683,6 +685,7 @@ export class ApiClient {
           : isFormData
             ? (options.body as FormData)
             : JSON.stringify(options.body),
+      signal: options.signal,
     });
 
     if (!res.ok) {
@@ -733,6 +736,7 @@ export class ApiClient {
           : isFormData
             ? (options.body as FormData)
             : JSON.stringify(options.body),
+      signal: options.signal,
     });
 
     if (!res.ok) {
@@ -876,8 +880,8 @@ export class ApiClient {
     });
   }
 
-  listUsers(query?: UsersListQuery): Promise<PaginatedResponse<User>> {
-    return fetchPaginated<User>(this, '/users', query);
+  listUsers(query?: UsersListQuery, requestOptions?: RequestOptions): Promise<PaginatedResponse<User>> {
+    return fetchPaginated<User>(this, '/users', query, requestOptions);
   }
 
   getUser(id: string): Promise<User> {
@@ -1005,8 +1009,9 @@ export class ApiClient {
 
   listProperties(
     query?: PropertiesListQuery,
+    requestOptions?: RequestOptions,
   ): Promise<PaginatedResponse<Property>> {
-    return fetchPaginated<Property>(this, '/properties', query);
+    return fetchPaginated<Property>(this, '/properties', query, requestOptions);
   }
 
   listPublicDestinations(): Promise<PublicDestination[]> {
@@ -1226,8 +1231,8 @@ export class ApiClient {
     });
   }
 
-  listPayments(query?: PaymentsListQuery): Promise<PaginatedResponse<PaymentListItem>> {
-    return fetchPaginated<PaymentListItem>(this, '/payments', query);
+  listPayments(query?: PaymentsListQuery, requestOptions?: RequestOptions): Promise<PaginatedResponse<PaymentListItem>> {
+    return fetchPaginated<PaymentListItem>(this, '/payments', query, requestOptions);
   }
 
   getPayment(id: string): Promise<PaymentAdminDetail> {
@@ -1309,8 +1314,9 @@ export class ApiClient {
 
   listOrganizations(
     query?: OrganizationsListQuery,
+    requestOptions?: RequestOptions,
   ): Promise<PaginatedResponse<OrganizationListItem>> {
-    return fetchPaginated<OrganizationListItem>(this, '/organizations', query);
+    return fetchPaginated<OrganizationListItem>(this, '/organizations', query, requestOptions);
   }
 
   getOrganization(id: string): Promise<Organization> {
@@ -1692,8 +1698,9 @@ export class ApiClient {
 
   listEmployees(
     query?: EmployeesListQuery,
+    requestOptions?: RequestOptions,
   ): Promise<PaginatedResponse<Employee>> {
-    return fetchPaginated<Employee>(this, '/employees', query);
+    return fetchPaginated<Employee>(this, '/employees', query, requestOptions);
   }
 
   listDepartments(
@@ -1838,8 +1845,9 @@ export class ApiClient {
 
   listBlogPosts(
     query?: BlogPostsListQuery,
+    requestOptions?: RequestOptions,
   ): Promise<PaginatedResponse<BlogPost>> {
-    return fetchPaginated<BlogPost>(this, '/blog-posts', query);
+    return fetchPaginated<BlogPost>(this, '/blog-posts', query, requestOptions);
   }
 
   getBlogPost(id: string): Promise<BlogPost> {
@@ -2502,8 +2510,9 @@ export class ApiClient {
 
   listDestinations(
     query?: DestinationsListQuery,
+    requestOptions?: RequestOptions,
   ): Promise<PaginatedResponse<Destination>> {
-    return fetchPaginated<Destination>(this, '/destinations', query);
+    return fetchPaginated<Destination>(this, '/destinations', query, requestOptions);
   }
 
   getDestination(id: string): Promise<Destination> {
@@ -2608,8 +2617,8 @@ export class ApiClient {
     });
   }
 
-  listActivities(query?: ActivitiesListQuery): Promise<PaginatedResponse<Activity>> {
-    return fetchPaginated<Activity>(this, '/activities', query);
+  listActivities(query?: ActivitiesListQuery, requestOptions?: RequestOptions): Promise<PaginatedResponse<Activity>> {
+    return fetchPaginated<Activity>(this, '/activities', query, requestOptions);
   }
 
   getActivity(id: string): Promise<Activity> {
@@ -2765,8 +2774,8 @@ export class ApiClient {
     });
   }
 
-  listPackages(query?: PackagesListQuery): Promise<PaginatedResponse<Package>> {
-    return fetchPaginated<Package>(this, '/packages', query);
+  listPackages(query?: PackagesListQuery, requestOptions?: RequestOptions): Promise<PaginatedResponse<Package>> {
+    return fetchPaginated<Package>(this, '/packages', query, requestOptions);
   }
 
   getPackage(id: string): Promise<PackageDetail> {
@@ -2953,8 +2962,8 @@ export class ApiClient {
     });
   }
 
-  listBookings(query?: BookingsListQuery): Promise<PaginatedResponse<BookingListItem>> {
-    return fetchPaginated<BookingListItem>(this, '/bookings', query);
+  listBookings(query?: BookingsListQuery, requestOptions?: RequestOptions): Promise<PaginatedResponse<BookingListItem>> {
+    return fetchPaginated<BookingListItem>(this, '/bookings', query, requestOptions);
   }
 
   listBookingItems(
@@ -3077,8 +3086,9 @@ export class ApiClient {
 
   listSupportTickets(
     query?: SupportTicketsListQuery,
+    requestOptions?: RequestOptions,
   ): Promise<PaginatedResponse<AdminSupportTicketListItem>> {
-    return fetchPaginated<AdminSupportTicketListItem>(this, '/support-tickets', query);
+    return fetchPaginated<AdminSupportTicketListItem>(this, '/support-tickets', query, requestOptions);
   }
 
   getSupportTicket(id: string): Promise<AdminSupportTicketDetail> {
@@ -3468,8 +3478,8 @@ export class ApiClient {
     return this.request<void>(`/airports/${id}`, { method: 'DELETE' });
   }
 
-  listFlights(query?: FlightsListQuery): Promise<PaginatedResponse<Flight>> {
-    return fetchPaginated<Flight>(this, '/flights', query);
+  listFlights(query?: FlightsListQuery, requestOptions?: RequestOptions): Promise<PaginatedResponse<Flight>> {
+    return fetchPaginated<Flight>(this, '/flights', query, requestOptions);
   }
 
   getFlight(id: string): Promise<Flight> {
@@ -3643,8 +3653,8 @@ export class ApiClient {
     return this.request<void>(`/vehicle-categories/${id}`, { method: 'DELETE' });
   }
 
-  listVehicles(query?: VehiclesListQuery): Promise<PaginatedResponse<Vehicle>> {
-    return fetchPaginated<Vehicle>(this, '/vehicles', query);
+  listVehicles(query?: VehiclesListQuery, requestOptions?: RequestOptions): Promise<PaginatedResponse<Vehicle>> {
+    return fetchPaginated<Vehicle>(this, '/vehicles', query, requestOptions);
   }
 
   getVehicle(id: string): Promise<Vehicle> {
@@ -3808,8 +3818,9 @@ export class ApiClient {
 
   listItineraries(
     query?: ItinerariesListQuery,
+    requestOptions?: RequestOptions,
   ): Promise<PaginatedResponse<Itinerary>> {
-    return fetchPaginated<Itinerary>(this, '/itineraries', query);
+    return fetchPaginated<Itinerary>(this, '/itineraries', query, requestOptions);
   }
 
   getItinerary(id: string): Promise<Itinerary> {
@@ -3878,8 +3889,9 @@ export class ApiClient {
 
   listCruiseSailings(
     query?: CruiseSailingsListQuery,
+    requestOptions?: RequestOptions,
   ): Promise<PaginatedResponse<CruiseSailing>> {
-    return fetchPaginated<CruiseSailing>(this, '/cruise-sailings', query);
+    return fetchPaginated<CruiseSailing>(this, '/cruise-sailings', query, requestOptions);
   }
 
   getCruiseSailing(id: string): Promise<CruiseSailing> {

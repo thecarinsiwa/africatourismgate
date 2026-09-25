@@ -8,6 +8,7 @@ import {
   searchAdminUsers,
 } from './search-api-core';
 import type {
+  AdminSearchRunOptions,
   AdminSearchSource,
   AdminSearchSourceDefinition,
   AdminSearchSourceId,
@@ -25,41 +26,29 @@ const CORE_SOURCE_IDS = [
 
 type CoreSourceId = (typeof CORE_SOURCE_IDS)[number];
 
+function withLimitAndSignal(
+  sourceId: CoreSourceId,
+  search: (
+    query: string,
+    options?: { resultLimit?: number; signal?: AbortSignal },
+  ) => ReturnType<AdminSearchSourceSearcher>,
+): AdminSearchSourceSearcher {
+  return async (query, _context, runOptions?: AdminSearchRunOptions) => {
+    const definition = getAdminSearchSourceDefinition(sourceId);
+    return search(query, {
+      resultLimit: definition?.resultLimit,
+      signal: runOptions?.signal,
+    });
+  };
+}
+
 const CORE_SEARCHERS: Record<CoreSourceId, AdminSearchSourceSearcher> = {
-  users: async (query) => {
-    const definition = getAdminSearchSourceDefinition('users');
-    return searchAdminUsers(query, { resultLimit: definition?.resultLimit });
-  },
-  organizations: async (query) => {
-    const definition = getAdminSearchSourceDefinition('organizations');
-    return searchAdminOrganizations(query, {
-      resultLimit: definition?.resultLimit,
-    });
-  },
-  bookings: async (query) => {
-    const definition = getAdminSearchSourceDefinition('bookings');
-    return searchAdminBookings(query, {
-      resultLimit: definition?.resultLimit,
-    });
-  },
-  properties: async (query) => {
-    const definition = getAdminSearchSourceDefinition('properties');
-    return searchAdminProperties(query, {
-      resultLimit: definition?.resultLimit,
-    });
-  },
-  payments: async (query) => {
-    const definition = getAdminSearchSourceDefinition('payments');
-    return searchAdminPayments(query, {
-      resultLimit: definition?.resultLimit,
-    });
-  },
-  supportTickets: async (query) => {
-    const definition = getAdminSearchSourceDefinition('supportTickets');
-    return searchAdminSupportTickets(query, {
-      resultLimit: definition?.resultLimit,
-    });
-  },
+  users: withLimitAndSignal('users', searchAdminUsers),
+  organizations: withLimitAndSignal('organizations', searchAdminOrganizations),
+  bookings: withLimitAndSignal('bookings', searchAdminBookings),
+  properties: withLimitAndSignal('properties', searchAdminProperties),
+  payments: withLimitAndSignal('payments', searchAdminPayments),
+  supportTickets: withLimitAndSignal('supportTickets', searchAdminSupportTickets),
 };
 
 function isCoreSourceId(id: AdminSearchSourceId): id is CoreSourceId {

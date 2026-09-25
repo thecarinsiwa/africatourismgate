@@ -91,11 +91,29 @@ export async function runAdminSearchFanOut(
   sources: readonly AdminSearchSource[],
   query: string,
   context: AdminSearchContext,
+  options?: { signal?: AbortSignal },
 ): Promise<AdminSearchSourceRun[]> {
+  const signal = options?.signal;
+  if (signal?.aborted) {
+    const abortError =
+      typeof DOMException !== 'undefined'
+        ? new DOMException('Aborted', 'AbortError')
+        : Object.assign(new Error('Aborted'), { name: 'AbortError' });
+    throw abortError;
+  }
+
   const runnable = selectRunnableAdminSearchSources(sources, query, context);
   const settled = await Promise.allSettled(
-    runnable.map((source) => source.search(query, context)),
+    runnable.map((source) => source.search(query, context, { signal })),
   );
+
+  if (signal?.aborted) {
+    const abortError =
+      typeof DOMException !== 'undefined'
+        ? new DOMException('Aborted', 'AbortError')
+        : Object.assign(new Error('Aborted'), { name: 'AbortError' });
+    throw abortError;
+  }
 
   return runnable.map((source, index) => ({
     source,
