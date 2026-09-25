@@ -45,8 +45,17 @@
   "list": {
     "filters": {
       "priority": "Priority",
-      "apply": "Apply filters"
+      "apply": "Apply filters",
+      "search": "Search by subject, customer, or email…",
+      "searchAria": "Search support tickets"
     },
+    "tabs": {
+      "ariaLabel": "Filter tickets by status",
+      "all": "All"
+    },
+    "resultsCount": "{count, plural, =0 {No tickets} one {# ticket} other {# tickets}}",
+    "awaitingAgent": "Awaiting agent",
+    "awaitingCustomer": "Awaiting customer",
     "assignedLabel": "Assigned:",
     "empty": {
       "default": {
@@ -59,7 +68,7 @@
       },
       "filtered": {
         "title": "No tickets match your filters",
-        "description": "Widen the status or priority criteria to show more requests."
+        "description": "Widen the status, priority, or search criteria to show more requests."
       }
     },
     "ariaLabel": "Support tickets inbox"
