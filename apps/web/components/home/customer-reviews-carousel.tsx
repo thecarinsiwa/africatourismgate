@@ -2,8 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Review } from '@africatourismgate/types';
+import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import { useLocale, useTranslations } from 'next-intl';
 import { getPublicFeaturedReviews } from '../../lib/api/public';
+import { getGuestInitials } from '../../lib/reviews/guest-initials';
 import { useScrollAnimation } from './use-scroll-animation';
 
 const AUTO_PLAY_MS = 6000;
@@ -15,6 +17,7 @@ type ReviewSlide = {
   title: string | null;
   body: string;
   authorName: string;
+  authorAvatarUrl: string | null;
 };
 
 type ReviewFallbackItem = {
@@ -48,6 +51,35 @@ function Stars({ rating }: { rating: number }) {
   );
 }
 
+function AuthorAvatar({
+  name,
+  avatarUrl,
+}: {
+  name: string;
+  avatarUrl?: string | null;
+}) {
+  const [broken, setBroken] = useState(false);
+  const src = avatarUrl?.trim()
+    ? normalizeBrandingAssetUrl(avatarUrl.trim())
+    : null;
+  const showImage = Boolean(src && !broken);
+
+  return (
+    <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary text-sm font-bold text-white ring-2 ring-atg-border/40">
+      {showImage ? (
+        <img
+          src={src!}
+          alt=""
+          className="h-full w-full object-cover"
+          onError={() => setBroken(true)}
+        />
+      ) : (
+        <span aria-hidden>{getGuestInitials(name)}</span>
+      )}
+    </div>
+  );
+}
+
 function ReviewCard({ review }: { review: ReviewSlide }) {
   return (
     <article className="flex h-full flex-col rounded-2xl border border-atg-border bg-atg-elevated p-6 shadow-sm dark:bg-atg-surface">
@@ -58,7 +90,10 @@ function ReviewCard({ review }: { review: ReviewSlide }) {
       <blockquote className="mt-3 flex-1 text-sm leading-relaxed text-atg-muted">
         &ldquo;{review.body}&rdquo;
       </blockquote>
-      <p className="mt-5 text-sm font-semibold text-atg-fg">{review.authorName}</p>
+      <div className="mt-5 flex items-center gap-3">
+        <AuthorAvatar name={review.authorName} avatarUrl={review.authorAvatarUrl} />
+        <p className="min-w-0 text-sm font-semibold text-atg-fg">{review.authorName}</p>
+      </div>
     </article>
   );
 }
@@ -72,7 +107,10 @@ function ReviewCardSkeleton() {
         <div className="h-4 w-5/6 animate-pulse rounded bg-atg-surface" />
         <div className="h-4 w-2/3 animate-pulse rounded bg-atg-surface" />
       </div>
-      <div className="mt-5 h-4 w-28 animate-pulse rounded bg-atg-surface" />
+      <div className="mt-5 flex items-center gap-3">
+        <div className="h-11 w-11 shrink-0 animate-pulse rounded-full bg-atg-surface" />
+        <div className="h-4 w-28 animate-pulse rounded bg-atg-surface" />
+      </div>
     </div>
   );
 }
@@ -95,6 +133,7 @@ export function CustomerReviewsCarousel() {
         title: item.title ?? null,
         body: item.body,
         authorName: item.author,
+        authorAvatarUrl: null,
       }));
 
     setLoading(true);
@@ -111,6 +150,7 @@ export function CustomerReviewsCarousel() {
             title: review.title,
             body: review.body!.trim(),
             authorName: formatAuthorName(review.authorFirstName, anonymousLabel),
+            authorAvatarUrl: review.authorAvatarUrl?.trim() || null,
           }));
         setReviews(slides.length > 0 ? slides : buildFallbackSlides());
       })
