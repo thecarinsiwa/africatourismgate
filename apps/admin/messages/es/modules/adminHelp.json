@@ -75,12 +75,12 @@
     "palette-commandes": {
       "title": "Búsqueda admin (Ctrl+F)",
       "summary": "Buscar páginas, ayuda y datos de negocio con la lupa o Ctrl+F.",
-      "body": "Abra la búsqueda admin con el icono lupa del encabezado, o los atajos Ctrl+F / Cmd+F (alias Ctrl+K / Cmd+K). Escriba para filtrar páginas del menú y artículos de ayuda; a partir de dos caracteres también aparecen entidades de negocio (usuarios, reservas, alojamientos, catálogo, etc.) según sus permisos.\n\nNavegue con ↑↓ y pulse Entrar para abrir un resultado. Los resultados están agrupados (Páginas, Ayuda, Usuarios…). Cierre con Escape o el mismo atajo.\n\nEn un campo de formulario, Ctrl+F deja el buscador nativo del navegador; fuera de un campo, abre la búsqueda admin. Pulse ? para la ayuda de atajos y, si hace falta, siga el enlace al [centro de ayuda](/aide).\n\nCombine la lupa / Ctrl+F con el icono Ayuda del encabezado: la primera le lleva a una página o ficha, la segunda abre la documentación del módulo en el que está."
+      "body": "Abra la búsqueda admin con el icono lupa del encabezado, o los atajos Ctrl+F / Cmd+F (alias Ctrl+K / Cmd+K). Escriba para filtrar páginas del menú y artículos de ayuda; a partir de dos caracteres también aparecen entidades de negocio (usuarios, reservas, alojamientos, catálogo, etc.) según sus permisos.\n\nNavegue con ↑↓ y pulse Entrar para abrir un resultado. Los resultados están agrupados (Páginas, Ayuda, Usuarios…). Cierre con Escape o el mismo atajo.\n\nEn un campo de formulario, Ctrl+F deja el buscador nativo del navegador; fuera de un campo, abre la búsqueda admin. Pulse ? para la ayuda de atajos (incluido Ctrl+L para bloquear la sesión) y, si hace falta, siga el enlace al [centro de ayuda](/aide).\n\nCombine la lupa / Ctrl+F con el icono Ayuda del encabezado: la primera le lleva a una página o ficha, la segunda abre la documentación del módulo en el que está."
     },
     "raccourcis-clavier": {
       "title": "Atajos de teclado",
-      "summary": "Mostrar la ayuda con ?; búsqueda con Ctrl+F (alias Ctrl+K).",
-      "body": "Pulse la tecla ? (fuera de un campo de texto) para abrir el panel de atajos de teclado. Recuerda las combinaciones disponibles en el shell de administración.\n\nEl atajo principal es Ctrl+F / Cmd+F para la búsqueda admin (páginas, ayuda y datos de negocio). Ctrl+K / Cmd+K sigue siendo un alias. Escape cierra la búsqueda o este panel de ayuda.\n\nSi un atajo no responde, compruebe que ningún campo de texto tenga el foco (salvo para cerrar la búsqueda ya abierta) y que no esté en una página de inicio de sesión."
+      "summary": "Mostrar la ayuda con ?; búsqueda Ctrl+F; bloquear con Ctrl+L.",
+      "body": "Pulse la tecla ? (fuera de un campo de texto) para abrir el panel de atajos de teclado. Recuerda las combinaciones disponibles en el shell de administración.\n\nEl atajo principal es Ctrl+F / Cmd+F para la búsqueda admin (páginas, ayuda y datos de negocio). Ctrl+K / Cmd+K sigue siendo un alias. Escape cierra la búsqueda o este panel de ayuda.\n\nCtrl+L / Cmd+L bloquea de inmediato su sesión de administración (también con el foco en un campo). La pantalla de bloqueo pide su contraseña para continuar, o le permite cerrar sesión. El mismo bloqueo puede activarse tras un periodo de inactividad — vea [Sesiones y registros de seguridad](/aide/utilisateurs-acces/sessions-et-securite).\n\nSi un atajo no responde, compruebe que está conectado al panel (no en la página de inicio de sesión). Fuera de un campo, Ctrl+F abre la búsqueda admin en lugar del buscador nativo del navegador."
     },
     "gerer-les-utilisateurs": {
       "title": "Gestionar usuarios",
@@ -94,8 +94,8 @@
     },
     "sessions-et-securite": {
       "title": "Sesiones y registros de seguridad",
-      "summary": "Controlar las conexiones activas y la auditoría de acceso.",
-      "body": "En [Sesiones](/utilisateurs/sessions), consulte las sesiones activas de los usuarios. Puede revocar una sesión para forzar el cierre (por ejemplo, dispositivo perdido o acceso sospechoso).\n\nLos [registros de seguridad](/utilisateurs/journaux-securite) guardan eventos de autenticación y auditoría. Úselos para investigar un incidente o verificar actividad reciente.\n\nEstas herramientas complementan roles y permisos: una sesión revocada ya no concede acceso aunque la cuenta siga activa."
+      "summary": "Bloqueo de pantalla, conexiones activas y auditoría de acceso.",
+      "body": "En la administración coexisten dos niveles de seguridad.\n\nBloqueo del puesto: tras un periodo de inactividad (a menudo unos 60 minutos), o de inmediato con Ctrl+L / Cmd+L, la interfaz se bloquea. Introduzca su contraseña para continuar, o cierre sesión. Los detalles de atajos están en [Atajos de teclado](/aide/prise-en-main/raccourcis-clavier).\n\nSesiones de usuarios (varios dispositivos): en [Sesiones](/utilisateurs/sessions), consulte las sesiones activas de las cuentas. Puede revocar una sesión para forzar el cierre (dispositivo perdido, acceso sospechoso).\n\nLos [registros de seguridad](/utilisateurs/journaux-securite) guardan eventos de autenticación y auditoría. Úselos para investigar un incidente o verificar actividad reciente.\n\nEstas herramientas complementan los [roles y permisos](/systeme/roles): una sesión revocada ya no concede acceso aunque la cuenta siga activa."
     },
     "adresses-et-moyens-paiement": {
       "title": "Direcciones y métodos de pago",
@@ -199,8 +199,8 @@
     },
     "parametres-systeme": {
       "title": "Ajustes del sistema",
-      "summary": "Correos, donaciones, mobile money, cuentas bancarias y ajustes de org.",
-      "body": "El hub [Ajustes](/parametres) agrupa la configuración de la organización. Desde ahí accede, entre otros, a correos transaccionales, donaciones, mobile money y cuentas bancarias.\n\nModifique con prudencia: una plantilla de correo o una cuenta bancaria incorrecta impacta directamente a clientes y operaciones. Guarde y verifique un flujo real (pago de prueba, notificación).\n\nPermisos típicos: organization_settings.read/write, y derechos específicos para mobile money o cuentas bancarias. Estos ajustes son distintos de los del módulo [GAP](/gap/parametres)."
+      "summary": "Correos, donaciones, catálogo público, mobile money y ajustes de org.",
+      "body": "El hub [Ajustes](/parametres) agrupa la configuración de la organización. Desde ahí accede, entre otros, a correos transaccionales, donaciones, mobile money y cuentas bancarias.\n\nEn los ajustes de organización, la sección catálogo / productos activados permite mostrar u ocultar cada vertical del sitio público (hoteles, vuelos, alquileres, cruceros, tours, paquetes). Una vertical desactivada desaparece de la navegación y devuelve una página no encontrada en el sitio público.\n\nModifique con prudencia: una plantilla de correo, una cuenta bancaria incorrecta o un producto oculto por error impacta directamente a clientes y operaciones. Guarde y verifique un flujo real (pago de prueba, notificación, menú público).\n\nPermisos típicos: organization_settings.read/write, y derechos específicos para mobile money o cuentas bancarias. Estos ajustes son distintos de los del módulo [GAP](/gap/parametres)."
     }
   }
 }

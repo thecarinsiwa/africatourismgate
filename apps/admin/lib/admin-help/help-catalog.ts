@@ -191,7 +191,11 @@ export const ADMIN_HELP_ARTICLES: readonly AdminHelpArticle[] = [
     id: 'art-raccourcis-clavier',
     slug: 'raccourcis-clavier',
     categorySlug: 'prise-en-main',
-    relatedSlugs: ['palette-commandes', 'naviguer-dans-le-dashboard'],
+    relatedSlugs: [
+      'palette-commandes',
+      'naviguer-dans-le-dashboard',
+      'sessions-et-securite',
+    ],
   },
   {
     id: 'art-gerer-les-utilisateurs',
@@ -215,7 +219,11 @@ export const ADMIN_HELP_ARTICLES: readonly AdminHelpArticle[] = [
     id: 'art-sessions-et-securite',
     slug: 'sessions-et-securite',
     categorySlug: 'utilisateurs-acces',
-    relatedSlugs: ['gerer-les-utilisateurs', 'roles-et-permissions'],
+    relatedSlugs: [
+      'gerer-les-utilisateurs',
+      'roles-et-permissions',
+      'raccourcis-clavier',
+    ],
   },
   {
     id: 'art-adresses-et-moyens-paiement',
@@ -374,7 +382,11 @@ export const ADMIN_HELP_ARTICLES: readonly AdminHelpArticle[] = [
     id: 'art-parametres-systeme',
     slug: 'parametres-systeme',
     categorySlug: 'systeme',
-    relatedSlugs: ['organisations', 'roles-et-permissions'],
+    relatedSlugs: [
+      'organisations',
+      'roles-et-permissions',
+      'sessions-et-securite',
+    ],
   },
 ] as const;
 

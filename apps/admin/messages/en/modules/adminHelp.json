@@ -75,12 +75,12 @@
     "palette-commandes": {
       "title": "Admin search (Ctrl+F)",
       "summary": "Search pages, help, and business data via the magnifier or Ctrl+F.",
-      "body": "Open admin search with the header magnifier icon, or the shortcuts Ctrl+F / Cmd+F (alias Ctrl+K / Cmd+K). Type to filter menu pages and help articles, then — from two characters — business entities (users, bookings, properties, catalog, and more) according to your permissions.\n\nNavigate with ↑↓ and press Enter to open a result. Results are grouped (Pages, Help, Users…). Close with Escape or the same shortcut.\n\nWhile typing in a form field, Ctrl+F keeps the browser’s native find; outside a field, it opens admin search. Press ? for keyboard-shortcut help, then follow the link to the [Help Center](/aide) if needed.\n\nCombine the magnifier / Ctrl+F with the header Help icon: the first jumps to a page or record, the second opens docs for the module you are on."
+      "body": "Open admin search with the header magnifier icon, or the shortcuts Ctrl+F / Cmd+F (alias Ctrl+K / Cmd+K). Type to filter menu pages and help articles, then — from two characters — business entities (users, bookings, properties, catalog, and more) according to your permissions.\n\nNavigate with ↑↓ and press Enter to open a result. Results are grouped (Pages, Help, Users…). Close with Escape or the same shortcut.\n\nWhile typing in a form field, Ctrl+F keeps the browser’s native find; outside a field, it opens admin search. Press ? for keyboard-shortcut help (including Ctrl+L to lock the session), then follow the link to the [Help Center](/aide) if needed.\n\nCombine the magnifier / Ctrl+F with the header Help icon: the first jumps to a page or record, the second opens docs for the module you are on."
     },
     "raccourcis-clavier": {
       "title": "Keyboard shortcuts",
-      "summary": "Open shortcut help with ?; search with Ctrl+F (alias Ctrl+K).",
-      "body": "Press the ? key (when you are not typing in a field) to open the keyboard shortcuts panel. It lists combinations available in the admin shell.\n\nThe main shortcut is Ctrl+F / Cmd+F for admin search (pages, help, and business data). Ctrl+K / Cmd+K remains an alias. Escape closes search or this help panel.\n\nIf a shortcut does nothing, check that no text field has focus (except when closing search that is already open) and that you are not on a login page."
+      "summary": "Open help with ?; search with Ctrl+F; lock with Ctrl+L.",
+      "body": "Press the ? key (when you are not typing in a field) to open the keyboard shortcuts panel. It lists combinations available in the admin shell.\n\nThe main shortcut is Ctrl+F / Cmd+F for admin search (pages, help, and business data). Ctrl+K / Cmd+K remains an alias. Escape closes search or this help panel.\n\nCtrl+L / Cmd+L locks your admin session immediately (including when focus is in a field). The lock screen asks for your password to continue, or lets you sign out. The same lock can also trigger after a period of inactivity — see [Sessions and security logs](/aide/utilisateurs-acces/sessions-et-securite).\n\nIf a shortcut does nothing, check that you are signed in to the dashboard (not on the login page). Outside a text field, Ctrl+F opens admin search instead of the browser’s native find."
     },
     "gerer-les-utilisateurs": {
       "title": "Manage users",
@@ -94,8 +94,8 @@
     },
     "sessions-et-securite": {
       "title": "Sessions and security logs",
-      "summary": "Control active logins and access auditing.",
-      "body": "In [Sessions](/utilisateurs/sessions), review users’ active sessions. You can revoke a session to force a sign-out (for example after a lost device or suspicious access).\n\n[Security logs](/utilisateurs/journaux-securite) record authentication and audit events. Use them to investigate an incident or verify recent activity.\n\nThese tools complement roles and permissions: a revoked session grants no access even if the account remains active."
+      "summary": "Screen lock, active logins, and access auditing.",
+      "body": "Two security layers coexist in the admin.\n\nWorkstation lock: after a period of inactivity (often about 60 minutes), or immediately via Ctrl+L / Cmd+L, the interface locks. Enter your password to resume, or sign out. Shortcut details are in [Keyboard shortcuts](/aide/prise-en-main/raccourcis-clavier).\n\nUser sessions (multi-device): in [Sessions](/utilisateurs/sessions), review users’ active sessions. You can revoke a session to force a sign-out (lost device, suspicious access).\n\n[Security logs](/utilisateurs/journaux-securite) record authentication and audit events. Use them to investigate an incident or verify recent activity.\n\nThese tools complement [roles and permissions](/systeme/roles): a revoked session grants no access even if the account remains active."
     },
     "adresses-et-moyens-paiement": {
       "title": "Addresses and payment methods",
@@ -199,8 +199,8 @@
     },
     "parametres-systeme": {
       "title": "System settings",
-      "summary": "Emails, donations, mobile money, bank accounts, and org settings.",
-      "body": "The [Settings](/parametres) hub groups organization configuration. From there you can reach transactional emails, donations, mobile money, and bank accounts.\n\nChange settings carefully: a wrong email template or bank account directly affects customers and operations. Save, then verify a real flow (test payment, notification).\n\nTypical permissions: organization_settings.read/write, plus specific rights for mobile money or bank accounts. These settings are separate from the [GAP](/gap/parametres) module."
+      "summary": "Emails, donations, public catalog, mobile money, and org settings.",
+      "body": "The [Settings](/parametres) hub groups organization configuration. From there you can reach transactional emails, donations, mobile money, and bank accounts.\n\nIn organization settings, the catalog / enabled products section lets you show or hide each public-site vertical (hotels, flights, car rentals, cruises, tours, packages). A disabled vertical is removed from navigation and returns a not-found page on the public site.\n\nChange settings carefully: a wrong email template, bank account, or accidentally hidden product directly affects customers and operations. Save, then verify a real flow (test payment, notification, public menu).\n\nTypical permissions: organization_settings.read/write, plus specific rights for mobile money or bank accounts. These settings are separate from the [GAP](/gap/parametres) module."
     }
   }
 }
