@@ -397,6 +397,22 @@ export class PublicActivitiesService {
       activities.map((a) => a.id),
     );
 
+    const activityIds = activities.map((a) => a.id);
+    const upcomingSchedules = await this.schedulesRepository
+      .createQueryBuilder('schedule')
+      .where('schedule.activityId IN (:...activityIds)', { activityIds })
+      .andWhere('schedule.deletedAt IS NULL')
+      .andWhere('schedule.startDatetime >= NOW()')
+      .orderBy('schedule.startDatetime', 'ASC')
+      .getMany();
+
+    const schedulesByActivityId = new Map<string, ActivitySchedules[]>();
+    for (const schedule of upcomingSchedules) {
+      const list = schedulesByActivityId.get(schedule.activityId) ?? [];
+      list.push(schedule);
+      schedulesByActivityId.set(schedule.activityId, list);
+    }
+
     const hits: PublicSiteSearchHit[] = [];
 
     for (const activity of activities) {
@@ -422,12 +438,18 @@ export class PublicActivitiesService {
       ]);
       if (score <= 0) continue;
 
+      const activitySchedules = schedulesByActivityId.get(activity.id) ?? [];
+      const bookable = activitySchedules.find(
+        (schedule) => this.remainingPlaces(schedule) >= 1,
+      );
+      const nextSchedule = bookable ?? activitySchedules[0];
+
       hits.push({
         type: 'activities',
         id: activity.id,
         title: activity.title,
         subtitle: `${dest.name} · ${dest.countryCode}`,
-        href: `/activities/${encodeURIComponent(activity.id)}`,
+        href: this.buildActivitySiteSearchHref(activity.id, dest.name, nextSchedule),
         imageUrl: imageUrlByActivityId.get(activity.id) ?? null,
         score,
       });
@@ -435,6 +457,26 @@ export class PublicActivitiesService {
 
     hits.sort((a, b) => b.score - a.score || a.title.localeCompare(b.title));
     return hits.slice(0, limit);
+  }
+
+  /** Deep-link détail avec params requis (date) pour la fiche publique. */
+  private buildActivitySiteSearchHref(
+    activityId: string,
+    destinationName: string,
+    schedule?: ActivitySchedules,
+  ): string {
+    const params = new URLSearchParams();
+    if (destinationName) {
+      params.set('destination', destinationName);
+    }
+    params.set('participants', '1');
+    if (schedule) {
+      params.set('date', this.toIsoDatetime(schedule.startDatetime).slice(0, 10));
+      params.set('scheduleId', schedule.id);
+    } else {
+      params.set('date', new Date().toISOString().slice(0, 10));
+    }
+    return `/activities/${encodeURIComponent(activityId)}?${params.toString()}`;
   }
 
   async getById(

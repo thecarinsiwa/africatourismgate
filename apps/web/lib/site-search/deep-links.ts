@@ -3,7 +3,25 @@ import { buildSearchRoute } from '../search/route';
 /** Deep-links publics pour les résultats de recherche globale. */
 export const siteSearchDeepLinks = {
   hotel: (id: string) => `/hotels/${encodeURIComponent(id)}`,
-  activity: (id: string) => `/activities/${encodeURIComponent(id)}`,
+  activity: (
+    id: string,
+    params?: {
+      destination?: string;
+      date?: string;
+      participants?: string | number;
+      scheduleId?: string;
+    },
+  ) => {
+    const qs = new URLSearchParams();
+    if (params?.destination) qs.set('destination', params.destination);
+    if (params?.date) qs.set('date', params.date);
+    if (params?.participants != null) {
+      qs.set('participants', String(params.participants));
+    }
+    if (params?.scheduleId) qs.set('scheduleId', params.scheduleId);
+    const query = qs.toString();
+    return `/activities/${encodeURIComponent(id)}${query ? `?${query}` : ''}`;
+  },
   packageItem: (id: string) => `/packages/${encodeURIComponent(id)}`,
   blogPost: (slug: string) => `/blog/${encodeURIComponent(slug)}`,
   helpArticle: (category: string, slug: string) =>
