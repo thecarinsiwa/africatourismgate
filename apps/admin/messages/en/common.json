@@ -83,6 +83,7 @@
       "search": "Open / close admin search",
       "searchAlias": "Alias — open / close search",
       "palette": "Open / close quick navigation",
+      "lockSession": "Lock the session",
       "escape": "Close search or this help",
       "help": "Show this help"
     }
