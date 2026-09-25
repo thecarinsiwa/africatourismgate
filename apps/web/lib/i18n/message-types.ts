@@ -11,6 +11,7 @@ export type Translations = {
     cars: string;
     cruises: string;
     tours: string;
+    partners: string;
     mainAria: string;
     mobileAria: string;
     menu: string;

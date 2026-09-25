@@ -10,12 +10,14 @@ import { buildSocialLinks } from '../../lib/contact/social-links';
 import { buildVerticalListRoute } from '../../lib/search/route';
 import { ABOUT_NAV_ITEMS, ABOUT_PATHS } from '../../lib/about/routes';
 import { LEGAL_PATHS } from '../../lib/legal/routes';
+import { partnersListHref } from '../../lib/partners/listings';
 import { useCatalogProducts } from '../catalog-products-provider';
 import type { CatalogProductKey } from '@africatourismgate/types/organization-settings';
 
 export function HomeFooter() {
   const t = useTranslations('footer');
   const tAbout = useTranslations('about');
+  const tPartners = useTranslations('partners');
   const [email, setEmail] = useState('');
   const gapUrl = process.env.NEXT_PUBLIC_GAP_URL?.trim() || null;
   const { branding, logoBroken, setLogoBroken } = useResolvedPublicBranding();
@@ -63,12 +65,14 @@ export function HomeFooter() {
   );
 
   const aboutLinks = useMemo(
-    () =>
-      ABOUT_NAV_ITEMS.map((item) => ({
+    () => [
+      { href: partnersListHref(), label: tPartners('title') },
+      ...ABOUT_NAV_ITEMS.map((item) => ({
         href: item.href,
         label: tAbout(`nav.${item.labelKey}`),
       })),
-    [tAbout],
+    ],
+    [tAbout, tPartners],
   );
 
   return (

@@ -13,6 +13,7 @@ export const WEB_HELP_LINK_PATH_PREFIXES = [
   '/cruises',
   '/activities',
   '/packages',
+  '/partners',
   '/donate',
   '/legal',
   '/search',

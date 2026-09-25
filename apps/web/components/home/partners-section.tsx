@@ -2,10 +2,12 @@
 
 import type { PublicActivityProvider } from '@africatourismgate/types';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { listPublicActivityProviders } from '../../lib/api/public';
 import { partnerColor, partnerInitials } from '../../lib/partners/display';
+import { partnerHref, partnersListHref } from '../../lib/partners/listings';
 import { useScrollAnimation } from './use-scroll-animation';
 
 export function PartnersSection() {
@@ -60,8 +62,9 @@ export function PartnersSection() {
                 }`}
                 style={{ animationDelay: `${(i + 1) * 80}ms` }}
               >
-                <div
-                  className="flex flex-col items-center gap-2 transition-transform duration-300 group-hover:scale-105"
+                <Link
+                  href={partnerHref(partner.id)}
+                  className="flex flex-col items-center gap-2 rounded-lg outline-none transition-transform duration-300 group-hover:scale-105 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                   title={partner.name}
                 >
                   {logo ? (
@@ -87,10 +90,22 @@ export function PartnersSection() {
                   <span className="line-clamp-2 max-w-[7.5rem] text-center text-xs text-atg-muted transition-colors group-hover:text-atg-fg sm:max-w-[8.5rem]">
                     {partner.name}
                   </span>
-                </div>
+                </Link>
               </div>
             );
           })}
+        </div>
+
+        <div
+          className={`mt-10 text-center ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}
+          style={{ animationDelay: '200ms' }}
+        >
+          <Link
+            href={partnersListHref()}
+            className="inline-flex min-h-[44px] items-center text-sm font-semibold text-primary underline-offset-4 transition-colors hover:underline"
+          >
+            {t('seeAll')}
+          </Link>
         </div>
       </div>
     </section>

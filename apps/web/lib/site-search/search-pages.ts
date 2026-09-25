@@ -58,6 +58,7 @@ export function buildSiteNavSearchItems(
   const extras: SiteSearchNavItem[] = [
     { href: '/', label: translate.nav('home') },
     { href: '/blog', label: translate.nav('blog') },
+    { href: '/partners', label: translate.nav('partners') },
     ...(catalogProducts.packages
       ? [{ href: '/packages', label: translate.nav('packages') }]
       : []),

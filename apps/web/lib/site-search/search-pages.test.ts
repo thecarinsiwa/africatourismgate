@@ -67,6 +67,7 @@ test('buildSiteNavSearchItems includes nav, about, legal and donate', () => {
 
   assert.equal(byHref.get('/')?.label, 'nav:home');
   assert.equal(byHref.get('/blog')?.label, 'nav:blog');
+  assert.equal(byHref.get('/partners')?.label, 'nav:partners');
   assert.equal(byHref.get('/packages')?.label, 'nav:packages');
   assert.equal(byHref.get('/support')?.label, 'nav:help');
   assert.equal(byHref.get('/donate')?.label, 'nav:donate');
