@@ -190,16 +190,31 @@ function renderMarkers(
 
     const isDestination = item.kind === 'destination';
     const isHighlighted = options.highlightId === item.id;
+
+    if (isDestination) {
+      const halo = L.circle(latLng, {
+        radius: COUNTRY_HALO_RADIUS_METERS,
+        color: item.fillColor,
+        weight: 2,
+        opacity: 0.65,
+        fillColor: item.fillColor,
+        fillOpacity: 0.14,
+        interactive: false,
+      }).addTo(map);
+      markerLayerRef.current.push(halo);
+    }
+
     const icon = createProductMarkerIcon(
       L,
       item.kind,
       item.fillColor,
       isCompact,
       isHighlighted,
+      isDestination ? item.subtitle : undefined,
     );
     const marker = L.marker(latLng, {
       icon,
-      title: item.title,
+      title: isDestination ? `${item.title} · ${item.subtitle}` : item.title,
       zIndexOffset: isHighlighted ? 400 : isDestination ? 100 : 200,
     }).addTo(map);
 
@@ -254,15 +269,28 @@ function renderMarkers(
   });
 }
 
+const COUNTRY_HALO_RADIUS_METERS = 95_000;
+
 function createProductMarkerIcon(
   L: typeof import('leaflet'),
   kind: DestinationMapMarkerKind,
   fillColor: string,
   isCompact: boolean,
   isHighlighted: boolean,
+  countryLabel?: string,
 ): import('leaflet').DivIcon {
+  if (kind === 'destination') {
+    return createDestinationCountryIcon(
+      L,
+      countryLabel?.trim() || '·',
+      fillColor,
+      isCompact,
+      isHighlighted,
+    );
+  }
+
   const glyph = markerGlyph(kind, isCompact);
-  const base = kind === 'destination' ? 40 : 44;
+  const base = 44;
   const size = (isCompact ? base - 8 : base) + (isHighlighted ? 4 : 0);
 
   return L.divIcon({
@@ -281,6 +309,54 @@ function createProductMarkerIcon(
         color:#fff;
         transform:scale(${isHighlighted ? 1.06 : 1});
       " aria-hidden="true">${glyph}</span>
+    `,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+    popupAnchor: [0, -(size / 2) - 4],
+  });
+}
+
+/** Circular country badge for destination pins (encircled country label). */
+function createDestinationCountryIcon(
+  L: typeof import('leaflet'),
+  countryLabel: string,
+  fillColor: string,
+  isCompact: boolean,
+  isHighlighted: boolean,
+): import('leaflet').DivIcon {
+  const label = escapeHtml(countryLabel);
+  const size = isCompact ? 64 : 72;
+  const fontSize = countryLabel.length > 12 ? (isCompact ? 9 : 10) : isCompact ? 10 : 11;
+  const highlightRing = isHighlighted
+    ? '0 0 0 4px rgba(200,16,46,.28), '
+    : '';
+
+  return L.divIcon({
+    className: 'atg-destinations-map-marker',
+    html: `
+      <span class="atg-destinations-map-marker__country" style="
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        box-sizing:border-box;
+        width:${size}px;
+        height:${size}px;
+        padding:8px 6px;
+        border-radius:9999px;
+        background:${fillColor};
+        border:3px solid #fff;
+        box-shadow:${highlightRing}0 0 0 2px rgba(0,0,0,.08), 0 4px 14px rgba(0,0,0,.35);
+        color:#fff;
+        font-size:${fontSize}px;
+        font-weight:700;
+        line-height:1.1;
+        letter-spacing:.01em;
+        text-align:center;
+        transform:scale(${isHighlighted ? 1.06 : 1});
+        overflow:hidden;
+        hyphens:auto;
+        word-break:break-word;
+      " aria-hidden="true">${label}</span>
     `,
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2],
