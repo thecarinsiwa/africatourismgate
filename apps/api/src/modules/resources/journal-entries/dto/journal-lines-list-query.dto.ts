@@ -1,0 +1,66 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
+import {
+  IsBoolean,
+  IsDateString,
+  IsOptional,
+  IsUUID,
+} from 'class-validator';
+import { PaginationQueryDto } from '../../../../common/dto/pagination-query.dto';
+
+function optionalBoolean({ value }: { value: unknown }): boolean | undefined {
+  if (value === undefined || value === null || value === '') return undefined;
+  if (value === true || value === 'true' || value === '1' || value === 1) {
+    return true;
+  }
+  if (value === false || value === 'false' || value === '0' || value === 0) {
+    return false;
+  }
+  return undefined;
+}
+
+/** Grand livre / filtre lignes (SYSCO-003). */
+export class JournalLinesListQueryDto extends PaginationQueryDto {
+  @ApiPropertyOptional({ format: 'uuid' })
+  @IsOptional()
+  @IsUUID('4')
+  organizationId?: string;
+
+  @ApiPropertyOptional({ format: 'uuid' })
+  @IsOptional()
+  @IsUUID('4')
+  accountId?: string;
+
+  @ApiPropertyOptional({ format: 'uuid' })
+  @IsOptional()
+  @IsUUID('4')
+  journalId?: string;
+
+  @ApiPropertyOptional({ format: 'uuid' })
+  @IsOptional()
+  @IsUUID('4')
+  exerciseId?: string;
+
+  @ApiPropertyOptional({ format: 'uuid' })
+  @IsOptional()
+  @IsUUID('4')
+  periodId?: string;
+
+  @ApiPropertyOptional({
+    description: 'Only lines from posted entries (default true)',
+  })
+  @IsOptional()
+  @Transform(optionalBoolean)
+  @IsBoolean()
+  postedOnly?: boolean;
+
+  @ApiPropertyOptional({ example: '2026-01-01' })
+  @IsOptional()
+  @IsDateString()
+  dateFrom?: string;
+
+  @ApiPropertyOptional({ example: '2026-12-31' })
+  @IsOptional()
+  @IsDateString()
+  dateTo?: string;
+}

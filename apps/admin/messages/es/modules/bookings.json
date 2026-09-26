@@ -56,6 +56,7 @@
       "actions": "Acciones",
       "bookingLines": "Líneas de reserva",
       "payments": "Pagos",
+      "treasury": "Tesorería vinculada",
       "assignedGuides": "Guías asignados"
     },
     "clientFields": {
@@ -139,6 +140,21 @@
     "downloadConfirmationError": "No se pudo descargar el PDF de confirmación.",
     "paymentsEmpty": "Ningún pago registrado para esta reserva.",
     "paymentsAriaLabel": "Pagos",
+    "treasuryOps": {
+      "ariaLabel": "Operaciones de tesorería vinculadas",
+      "empty": "No hay entradas ni salidas de fondos vinculadas a esta reserva.",
+      "kindEntry": "Entrada",
+      "kindExit": "Salida",
+      "openDetail": "Ver",
+      "columns": {
+        "kind": "Tipo",
+        "date": "Fecha",
+        "amount": "Importe",
+        "status": "Estado",
+        "reference": "Referencia",
+        "link": "Ficha"
+      }
+    },
     "statusDialog": {
       "title": "Confirmar el cambio de estado",
       "description": "¿Pasar la reserva de « {fromStatus} » a « {toStatus} »?{reasonSuffix}",

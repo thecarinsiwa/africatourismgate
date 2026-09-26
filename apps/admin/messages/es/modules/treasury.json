@@ -1,0 +1,893 @@
+{
+  "subnav": {
+    "ariaLabel": "Navegación de tesorería",
+    "hub": "Resumen",
+    "entries": "Entradas",
+    "exits": "Salidas",
+    "expenseRequests": "Estados de necesidad",
+    "budgets": "Presupuestos",
+    "reports": "Informes",
+    "externals": "Externos",
+    "audit": "Auditoría",
+    "accounting": "Contabilidad"
+  },
+  "hub": {
+    "statsDash": "—",
+    "quickLinks": {
+      "title": "Acceso rápido",
+      "subtitle": "Submódulos de tesorería según sus permisos",
+      "entries": {
+        "description": "Entradas e ingresos"
+      },
+      "exits": {
+        "description": "Desembolsos vinculados a necesidades"
+      },
+      "expenseRequests": {
+        "description": "Circuito de validación de necesidades"
+      },
+      "budgets": {
+        "description": "Presupuestos y seguimiento vs real"
+      },
+      "reports": {
+        "description": "Agregados y exportación CSV"
+      },
+      "externals": {
+        "description": "Colaboradores externos"
+      },
+      "audit": {
+        "description": "Registro de acciones"
+      },
+      "accounting": {
+        "description": "Libros SYSCOHADA y puente contable"
+      }
+    }
+  },
+  "stats": {
+    "entries": {
+      "label": "Entradas",
+      "subtitle": "Periodo en curso (mes)"
+    },
+    "exits": {
+      "label": "Salidas",
+      "subtitle": "Periodo en curso (mes)"
+    },
+    "pendingRequests": {
+      "label": "Necesidades pendientes",
+      "subtitle": "Enviadas o validadas"
+    },
+    "net": {
+      "label": "Saldo neto",
+      "subtitle": "Entradas − salidas (mes)"
+    }
+  },
+  "sources": {
+    "booking_payment": "Pago de reserva",
+    "customer_direct": "Cliente directo",
+    "partner": "Socio",
+    "grant_donation": "Subvención / donación",
+    "owner_capital": "Aporte de capital",
+    "bank_interest": "Intereses bancarios",
+    "other": "Otro"
+  },
+  "paymentMethods": {
+    "cash": "Efectivo",
+    "bank_transfer": "Transferencia",
+    "mobile_money": "Mobile Money",
+    "stripe": "Stripe / tarjeta",
+    "cheque": "Cheque",
+    "other": "Otro"
+  },
+  "fundEntryStatus": {
+    "recorded": "Registrada",
+    "voided": "Anulada"
+  },
+  "fundExitStatus": {
+    "draft": "Borrador",
+    "disbursed": "Desembolsada",
+    "recorded": "Registrada",
+    "voided": "Anulada"
+  },
+  "expenseRequestStatus": {
+    "draft": "Borrador",
+    "submitted": "Enviado",
+    "validated": "Validado",
+    "authorized": "Autorizado",
+    "rejected": "Rechazado",
+    "cancelled": "Cancelado",
+    "closed": "Cerrado"
+  },
+  "budgetPeriod": {
+    "monthly": "Mensual",
+    "annual": "Anual"
+  },
+  "budgetScope": {
+    "general": "General",
+    "activity": "Actividad",
+    "product": "Producto / servicio"
+  },
+  "budgetProductType": {
+    "room": "Habitación",
+    "flight_class": "Clase de vuelo",
+    "vehicle": "Vehículo",
+    "cabin": "Camarote",
+    "activity_schedule": "Horario de actividad",
+    "package": "Paquete"
+  },
+  "workflow": {
+    "title": "Circuito de validación",
+    "progressAria": "Progreso del circuito de validación",
+    "historyTitle": "Historial de transiciones",
+    "historyEmpty": "Aún no hay eventos de historial.",
+    "transition": "{fromStatus} → {toStatus}",
+    "steps": {
+      "draft": "Borrador",
+      "submitted": "Envío",
+      "validated": "Validación",
+      "authorized": "Autorización",
+      "disbursement": "Desembolso",
+      "justification": "Justificante",
+      "recorded": "Registro"
+    },
+    "actions": {
+      "submit": "Enviar",
+      "validate": "Validar",
+      "authorize": "Autorizar",
+      "reject": "Rechazar",
+      "cancel": "Cancelar",
+      "disburse": "Registrar desembolso",
+      "attachProof": "Añadir justificante",
+      "markRecorded": "Marcar como registrado"
+    },
+    "confirm": {
+      "submitTitle": "¿Enviar la solicitud?",
+      "submitDescription": "La solicitud pasará a enviada y ya no podrá modificarse.",
+      "validateTitle": "¿Validar la solicitud?",
+      "validateDescription": "Confirme el control de negocio de esta solicitud.",
+      "authorizeTitle": "¿Autorizar el gasto?",
+      "authorizeDescription": "Una vez autorizada, se podrá crear una salida de fondos.",
+      "rejectTitle": "¿Rechazar la solicitud?",
+      "rejectDescription": "La solicitud será rechazada. Se requiere un motivo.",
+      "cancelTitle": "¿Cancelar la solicitud?",
+      "cancelDescription": "La solicitud se cancelará de forma definitiva.",
+      "markRecordedTitle": "¿Cerrar la solicitud?",
+      "markRecordedDescription": "Marca el estado de necesidad como cerrado tras el desembolso y el registro.",
+      "confirm": "Confirmar",
+      "cancel": "Cancelar"
+    },
+    "toast": {
+      "successTitle": "Transición realizada",
+      "successMessage": "El estado se ha actualizado.",
+      "errorTitle": "Transición rechazada"
+    },
+    "disbursementHint": "El detalle de salidas (desembolso / justificantes) llega con TRESO-021.",
+    "commentLabel": "Comentario",
+    "commentPlaceholder": "Motivo u observación (opcional)…",
+    "rejectReasonRequired": "Indique un motivo de rechazo."
+  },
+  "entries": {
+    "list": {
+      "ariaLabel": "Lista de entradas de fondos",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.read.",
+      "emptyDefault": "Aún no hay entradas de fondos.",
+      "emptyFiltered": "Ninguna entrada coincide con sus criterios.",
+      "searchPlaceholder": "Buscar por referencia o notas…",
+      "searchAria": "Buscar entradas",
+      "newButton": "Nueva entrada",
+      "columns": {
+        "date": "Fecha",
+        "amount": "Importe",
+        "currency": "Moneda",
+        "source": "Origen",
+        "paymentMethod": "Método",
+        "reference": "Referencia",
+        "status": "Estado",
+        "bookings": "Reservas"
+      }
+    },
+    "form": {
+      "createTitle": "Nueva entrada de fondos",
+      "editTitle": "Editar entrada de fondos",
+      "fields": {
+        "amountCents": "Importe",
+        "currency": "Moneda",
+        "operationDate": "Fecha de operación",
+        "source": "Origen de los fondos",
+        "paymentMethod": "Método de pago",
+        "reference": "Referencia",
+        "notes": "Observaciones",
+        "bookingIds": "Reservas vinculadas"
+      },
+      "hints": {
+        "bookingIds": "Ninguna, una o varias reservas (cardinalidad 0,N).",
+        "sourceOther": "Precise el origen en las observaciones.",
+        "amountCents": "Importe en unidades mayores (ej. 1500,00)."
+      },
+      "validation": {
+        "amountPositive": "El importe debe ser mayor que cero.",
+        "currencyRequired": "La moneda es obligatoria.",
+        "operationDateRequired": "La fecha es obligatoria.",
+        "sourceRequired": "El origen es obligatorio.",
+        "paymentMethodRequired": "El método de pago es obligatorio.",
+        "notesRequiredForOther": "Las observaciones son obligatorias cuando el origen es Otro.",
+        "organizationRequired": "La organización es obligatoria."
+      },
+      "organization": "Organización",
+      "bookingsSearch": "Buscar una reserva…",
+      "bookingsSearchAria": "Buscar reservas para vincular",
+      "bookingsEmpty": "No se encontraron reservas.",
+      "bookingsSelected": "{count} reserva(s) seleccionada(s)",
+      "bookingsLoading": "Buscando reservas…",
+      "attachments": {
+        "title": "Justificantes",
+        "hint": "JPEG, PNG, WebP o PDF — máx. 10 Mo. Disponibles tras guardar.",
+        "upload": "Añadir un archivo",
+        "empty": "No hay justificantes.",
+        "remove": "Eliminar",
+        "uploading": "Enviando…",
+        "pendingHint": "Los archivos pendientes se enviarán tras la creación."
+      },
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.entries.write.",
+      "toast": {
+        "createdTitle": "Entrada creada",
+        "createdMessage": "La entrada de fondos se ha guardado.",
+        "updatedTitle": "Entrada actualizada",
+        "updatedMessage": "Los cambios se han guardado.",
+        "errorTitle": "Error"
+      },
+      "submitCreate": "Guardar entrada",
+      "submitUpdate": "Guardar cambios"
+    },
+    "detail": {
+      "title": "Detalle de la entrada",
+      "voidButton": "Anular entrada",
+      "voidUnavailable": "La anulación estará disponible pronto (TRESO-033).",
+      "editButton": "Editar",
+      "attachments": "Justificantes",
+      "audit": "Historial",
+      "auditEmpty": "Aún no hay eventos de auditoría. El diario se conectará con TRESO-031.",
+      "bookings": "Reservas vinculadas",
+      "bookingsEmpty": "No hay reservas vinculadas.",
+      "createdBy": "Creada por",
+      "voidedBy": "Anulada por",
+      "voidedAt": "Anulada el",
+      "voidReason": "Motivo de anulación",
+      "id": "Identificador"
+    }
+  },
+  "exits": {
+    "list": {
+      "ariaLabel": "Lista de salidas de fondos",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.read.",
+      "emptyDefault": "Aún no hay salidas de fondos.",
+      "emptyFiltered": "Ninguna salida coincide con sus criterios.",
+      "searchPlaceholder": "Buscar por referencia o notas…",
+      "searchAria": "Buscar salidas",
+      "newButton": "Nueva salida",
+      "columns": {
+        "date": "Fecha",
+        "amount": "Importe",
+        "expenseRequest": "Estado de necesidad",
+        "paymentMethod": "Método",
+        "status": "Estado",
+        "bookings": "Reservas"
+      }
+    },
+    "form": {
+      "createTitle": "Nueva salida de fondos",
+      "editTitle": "Editar salida de fondos",
+      "fields": {
+        "expenseRequestId": "Estado de necesidad",
+        "amountCents": "Importe",
+        "currency": "Moneda",
+        "operationDate": "Fecha de desembolso",
+        "paymentMethod": "Método de pago",
+        "reference": "Referencia",
+        "notes": "Observaciones",
+        "bookingIds": "Reservas vinculadas"
+      },
+      "hints": {
+        "expenseRequestId": "Solo se pueden seleccionar necesidades autorizadas.",
+        "amountCents": "Importe en unidades mayores (ej. 1500,00).",
+        "bookingIds": "Ninguna, una o varias reservas (cardinalidad 0,N)."
+      },
+      "validation": {
+        "expenseRequestRequired": "Un estado de necesidad es obligatorio.",
+        "amountPositive": "El importe debe ser mayor que cero.",
+        "currencyRequired": "La moneda es obligatoria.",
+        "operationDateRequired": "La fecha es obligatoria.",
+        "paymentMethodRequired": "El método de pago es obligatorio.",
+        "organizationRequired": "La organización es obligatoria.",
+        "noEligibleRequest": "No hay solicitudes autorizadas. Autorice primero un estado de necesidad."
+      },
+      "organization": "Organización",
+      "eligibleEmpty": "Aún no hay necesidades autorizadas.",
+      "eligibleLoading": "Cargando solicitudes elegibles…",
+      "bookingsSearch": "Buscar una reserva…",
+      "bookingsSearchAria": "Buscar reservas para vincular",
+      "bookingsEmpty": "No se encontraron reservas.",
+      "bookingsSelected": "{count} reserva(s) seleccionada(s)",
+      "bookingsLoading": "Buscando reservas…",
+      "attachments": {
+        "title": "Justificantes",
+        "hint": "JPEG, PNG, WebP o PDF — máx. 10 MB. Disponibles tras guardar.",
+        "upload": "Añadir un archivo",
+        "empty": "Sin justificantes.",
+        "remove": "Eliminar",
+        "uploading": "Subiendo…",
+        "pendingHint": "Los archivos pendientes se subirán tras la creación."
+      },
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.exits.write.",
+      "voidedHint": "Esta salida está anulada y ya no puede editarse.",
+      "toast": {
+        "createdTitle": "Salida creada",
+        "createdMessage": "La salida de fondos se ha guardado.",
+        "updatedTitle": "Salida actualizada",
+        "updatedMessage": "Los cambios se han guardado.",
+        "errorTitle": "Error"
+      },
+      "submitCreate": "Guardar salida",
+      "submitUpdate": "Guardar cambios"
+    },
+    "detail": {
+      "title": "Detalle de la salida",
+      "voidButton": "Anular salida",
+      "voidUnavailable": "La anulación estará disponible pronto (TRESO-033).",
+      "editButton": "Editar",
+      "attachments": "Justificantes",
+      "audit": "Historial",
+      "auditEmpty": "Aún no hay eventos de auditoría. El diario se conectará con TRESO-031.",
+      "bookings": "Reservas vinculadas",
+      "bookingsEmpty": "No hay reservas vinculadas.",
+      "expenseRequest": "Estado de necesidad",
+      "createdBy": "Creada por",
+      "voidedBy": "Anulada por",
+      "voidedAt": "Anulada el",
+      "voidReason": "Motivo de anulación",
+      "id": "Identificador"
+    },
+    "workflow": {
+      "actions": {
+        "markDisbursed": "Marcar como desembolsada",
+        "markRecorded": "Marcar como registrada"
+      },
+      "attachmentRequired": "Añada al menos un justificante antes del registro.",
+      "toast": {
+        "successTitle": "Estado actualizado",
+        "successMessage": "La transición de la salida se ha completado.",
+        "errorTitle": "Transición denegada"
+      }
+    }
+  },
+  "expenseRequests": {
+    "list": {
+      "ariaLabel": "Lista de estados de necesidad",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.read.",
+      "emptyDefault": "Aún no hay estados de necesidad.",
+      "emptyFiltered": "Ninguna solicitud coincide con sus criterios.",
+      "searchPlaceholder": "Buscar por título…",
+      "searchAria": "Buscar estados de necesidad",
+      "newButton": "Nueva solicitud",
+      "columns": {
+        "title": "Título",
+        "amount": "Importe solicitado",
+        "status": "Estado",
+        "neededBy": "Fecha límite",
+        "createdAt": "Creado"
+      }
+    },
+    "form": {
+      "createTitle": "Nuevo estado de necesidad",
+      "editTitle": "Editar estado de necesidad",
+      "fields": {
+        "title": "Título",
+        "description": "Justificación",
+        "requestedAmountCents": "Importe solicitado",
+        "currency": "Moneda",
+        "neededByDate": "Fecha de necesidad"
+      },
+      "hints": {
+        "amountCents": "Importe en unidades mayores (ej. 1500,00)."
+      },
+      "validation": {
+        "titleRequired": "El título es obligatorio.",
+        "descriptionRequired": "La justificación es obligatoria.",
+        "amountPositive": "El importe debe ser mayor que cero.",
+        "currencyRequired": "La moneda es obligatoria.",
+        "organizationRequired": "La organización es obligatoria."
+      },
+      "organization": "Organización",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.expense_requests.create.",
+      "draftOnlyHint": "Solo se pueden editar los borradores.",
+      "toast": {
+        "createdTitle": "Solicitud creada",
+        "createdMessage": "El estado de necesidad se ha guardado.",
+        "updatedTitle": "Solicitud actualizada",
+        "updatedMessage": "Los cambios se han guardado.",
+        "errorTitle": "Error"
+      },
+      "submitCreate": "Crear solicitud",
+      "submitUpdate": "Guardar"
+    },
+    "detail": {
+      "title": "Detalle del estado de necesidad",
+      "editButton": "Editar",
+      "timeline": "Historial de estados",
+      "timelineEmpty": "Aún no hay eventos de historial.",
+      "linkedExits": "Salidas vinculadas",
+      "linkedExitsEmpty": "Aún no hay salidas vinculadas.",
+      "createdBy": "Solicitado por",
+      "id": "Identificador",
+      "rejectionReason": "Motivo de rechazo"
+    }
+  },
+  "budgets": {
+    "list": {
+      "ariaLabel": "Lista de presupuestos",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.read.",
+      "emptyDefault": "Aún no hay presupuestos.",
+      "emptyFiltered": "Ningún presupuesto coincide con sus criterios.",
+      "searchPlaceholder": "Buscar por etiqueta…",
+      "searchAria": "Buscar presupuestos",
+      "newButton": "Nuevo presupuesto",
+      "columns": {
+        "label": "Etiqueta",
+        "period": "Periodo",
+        "scope": "Ámbito",
+        "amount": "Importe",
+        "currency": "Moneda",
+        "year": "Año"
+      }
+    },
+    "form": {
+      "createTitle": "Nuevo presupuesto",
+      "editTitle": "Editar presupuesto",
+      "fields": {
+        "label": "Etiqueta",
+        "periodType": "Tipo de periodo",
+        "year": "Año",
+        "month": "Mes",
+        "amountCents": "Importe presupuestado",
+        "currency": "Moneda",
+        "scopeType": "Ámbito",
+        "activityId": "Actividad",
+        "productType": "Tipo de producto",
+        "productId": "Producto / servicio",
+        "notes": "Notas"
+      },
+      "hints": {
+        "amountCents": "Importe en unidades mayores (ej. 1500,00).",
+        "scopeType": "General, vinculado a una actividad, o a un producto/servicio vendido.",
+        "activityId": "Busque y seleccione una actividad.",
+        "productId": "Busque y seleccione el destino según el tipo de producto."
+      },
+      "validation": {
+        "labelRequired": "La etiqueta es obligatoria.",
+        "yearRequired": "El año es obligatorio.",
+        "monthRequiredForMonthly": "El mes es obligatorio para un presupuesto mensual.",
+        "amountPositive": "El importe debe ser mayor que cero.",
+        "currencyRequired": "La moneda es obligatoria.",
+        "organizationRequired": "La organización es obligatoria.",
+        "activityRequired": "Se requiere una actividad para este ámbito.",
+        "productTypeRequired": "El tipo de producto es obligatorio.",
+        "productIdRequired": "Se requiere un producto / servicio."
+      },
+      "organization": "Organización",
+      "activitySearch": "Buscar una actividad…",
+      "activityLoading": "Cargando actividades…",
+      "activityEmpty": "No se encontraron actividades.",
+      "productSearch": "Buscar un producto…",
+      "productLoading": "Cargando productos…",
+      "productEmpty": "No se encontraron productos.",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.budgets.write.",
+      "toast": {
+        "createdTitle": "Presupuesto creado",
+        "createdMessage": "El presupuesto se ha guardado.",
+        "updatedTitle": "Presupuesto actualizado",
+        "updatedMessage": "Los cambios se han guardado.",
+        "errorTitle": "Error"
+      },
+      "submitCreate": "Crear presupuesto",
+      "submitUpdate": "Guardar"
+    },
+    "detail": {
+      "title": "Detalle del presupuesto",
+      "editButton": "Editar",
+      "period": "Periodo",
+      "scope": "Ámbito",
+      "activity": "Actividad",
+      "product": "Producto / servicio",
+      "createdBy": "Creado por",
+      "id": "Identificador"
+    },
+    "vsActual": {
+      "title": "Presupuesto vs realizado",
+      "planned": "Planificado",
+      "actual": "Realizado",
+      "variance": "Desviación",
+      "overBudget": "Sobre presupuesto",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.read.",
+      "empty": "No hay presupuestos para este periodo.",
+      "hint": "El realizado es la suma de las salidas desembolsadas o registradas en el periodo del presupuesto (misma organización y moneda).",
+      "alertOverBudget": "{count, plural, one {# presupuesto sobrepasado} other {# presupuestos sobrepasados}}.",
+      "totalsTitle": "Totales del periodo",
+      "filterYear": "Año",
+      "filterMonth": "Mes",
+      "filterMonthAll": "Todo el año",
+      "filterCurrency": "Moneda",
+      "filterCurrencyAll": "Todas las monedas",
+      "filterPeriodType": "Tipo de periodo",
+      "apply": "Aplicar",
+      "openSuivi": "Seguimiento vs realizado",
+      "columns": {
+        "label": "Etiqueta",
+        "period": "Periodo",
+        "scope": "Ámbito",
+        "planned": "Planificado",
+        "actual": "Realizado",
+        "variance": "Desviación",
+        "status": "Estado"
+      },
+      "statusOk": "En línea",
+      "statusOver": "Sobre presupuesto"
+    }
+  },
+  "reports": {
+    "filters": {
+      "dateFrom": "Desde",
+      "dateTo": "Hasta",
+      "currency": "Moneda",
+      "currencyAll": "Todas las monedas",
+      "apply": "Aplicar"
+    },
+    "exportCsv": "Exportar CSV",
+    "empty": "No hay datos para este periodo.",
+    "accessDenied": "Acceso denegado: se requiere el permiso treasury.reports.read.",
+    "kpi": {
+      "entries": "Entradas",
+      "exits": "Salidas",
+      "net": "Neto",
+      "netHint": "Entradas − salidas (una moneda)",
+      "netUnavailable": "Seleccione una moneda",
+      "multiCurrency": "Multimoneda",
+      "count": "{count, plural, one {# operación} other {# operaciones}}",
+      "period": "Periodo"
+    },
+    "byCurrencyTitle": "Desglose por moneda",
+    "sections": {
+      "bySource": "Por origen (entradas)",
+      "byPaymentMethod": "Por método de pago",
+      "chartPaymentMethod": "Gráfico — métodos de pago"
+    },
+    "chartUnit": "Importes en {currency} (unidades mayores)",
+    "columns": {
+      "dimension": "Dimensión",
+      "entries": "Entradas",
+      "entriesCount": "N.º entradas",
+      "exits": "Salidas",
+      "exitsCount": "N.º salidas"
+    }
+  },
+  "externalAccess": {
+    "metaTitle": "Enviar un estado de necesidad",
+    "title": "Nuevo estado de necesidad",
+    "subtitle": "Envíe una solicitud de gasto con su enlace de acceso seguro.",
+    "welcome": "Hola {name}",
+    "validating": "Verificando su enlace de acceso…",
+    "tokenMissing": "Enlace no válido: falta el token.",
+    "tokenExpired": "Este enlace de acceso ha caducado. Solicite una nueva invitación.",
+    "tokenRevoked": "Este enlace de acceso ha sido revocado.",
+    "tokenInactive": "Su acceso ha sido desactivado. Contacte al responsable financiero.",
+    "tokenInvalid": "Enlace de acceso no válido o desconocido.",
+    "tokenForbidden": "No está autorizado a crear un estado de necesidad.",
+    "fields": {
+      "title": "Título",
+      "description": "Descripción / justificación",
+      "amountCents": "Importe solicitado",
+      "currency": "Moneda",
+      "neededByDate": "Fecha deseada"
+    },
+    "hints": {
+      "amountCents": "Importe en unidades mayores (ej. 1500,00)."
+    },
+    "validation": {
+      "titleRequired": "El título es obligatorio.",
+      "descriptionRequired": "La descripción es obligatoria.",
+      "amountPositive": "El importe debe ser mayor que cero.",
+      "currencyRequired": "La moneda es obligatoria."
+    },
+    "submit": "Enviar solicitud",
+    "successTitle": "Solicitud enviada",
+    "successMessage": "Su estado de necesidad ha sido enviado y es visible en administración.",
+    "successRef": "Referencia: {id}",
+    "backToLogin": "Volver al inicio de sesión",
+    "toast": {
+      "errorTitle": "Error",
+      "successTitle": "Éxito"
+    }
+  },
+  "externals": {
+    "list": {
+      "ariaLabel": "Colaboradores externos",
+      "accessDenied": "Acceso denegado: se requiere treasury.externals.manage o treasury.read.",
+      "emptyDefault": "No hay colaboradores externos.",
+      "emptyFiltered": "Ningún colaborador coincide con sus criterios.",
+      "inviteButton": "Invitar por correo",
+      "searchPlaceholder": "Buscar por correo o nombre…",
+      "searchAria": "Buscar colaboradores externos",
+      "filterActive": "Estado",
+      "filterActiveAll": "Todos",
+      "filterActiveYes": "Activos",
+      "filterActiveNo": "Inactivos",
+      "columns": {
+        "email": "Correo",
+        "displayName": "Nombre",
+        "active": "Activo",
+        "scopes": "Permisos"
+      }
+    },
+    "form": {
+      "inviteTitle": "Invitar a un colaborador externo",
+      "organization": "Organización",
+      "fields": {
+        "email": "Correo electrónico",
+        "displayName": "Nombre visible",
+        "scopes": "Permisos",
+        "tokenTtlHours": "Validez del enlace (horas)"
+      },
+      "actions": {
+        "activate": "Activar",
+        "deactivate": "Desactivar",
+        "regenerateLink": "Regenerar enlace"
+      },
+      "validation": {
+        "emailRequired": "El correo es obligatorio.",
+        "emailInvalid": "Correo no válido.",
+        "scopesRequired": "Se requiere al menos un permiso.",
+        "organizationRequired": "La organización es obligatoria."
+      },
+      "submitInvite": "Enviar invitación",
+      "cancelInvite": "Cerrar",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.externals.manage.",
+      "inviteUrlLabel": "Enlace de invitación (correo no enviado)",
+      "inviteUrlCopied": "Enlace copiado",
+      "copyInviteUrl": "Copiar enlace",
+      "toast": {
+        "invitedTitle": "Invitación enviada",
+        "invitedMessage": "El colaborador ha sido invitado.",
+        "activatedTitle": "Colaborador activado",
+        "activatedMessage": "El acceso ha sido reactivado.",
+        "deactivatedTitle": "Colaborador desactivado",
+        "deactivatedMessage": "El acceso ha sido desactivado y los tokens revocados.",
+        "regeneratedTitle": "Enlace regenerado",
+        "regeneratedMessage": "Se ha generado un nuevo enlace de acceso.",
+        "errorTitle": "Error"
+      }
+    },
+    "scopes": {
+      "expense_requests": {
+        "create": "Crear un estado de necesidad"
+      }
+    }
+  },
+  "audit": {
+    "list": {
+      "ariaLabel": "Diario de auditoría de tesorería",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.audit.read.",
+      "emptyDefault": "No hay eventos de auditoría.",
+      "emptyFiltered": "Ningún evento coincide con los filtros.",
+      "columns": {
+        "createdAt": "Fecha",
+        "entityType": "Entidad",
+        "action": "Acción",
+        "actor": "Actor",
+        "diff": "Cambios"
+      }
+    },
+    "filters": {
+      "entityType": "Tipo de entidad",
+      "action": "Acción"
+    },
+    "showDiff": "Ver diff",
+    "diffModalTitle": "Valores anteriores / nuevos",
+    "oldJson": "Antes",
+    "newJson": "Después",
+    "openEntity": "Abrir entidad",
+    "actorTypes": {
+      "user": "Usuario",
+      "external": "Externo",
+      "system": "Sistema"
+    },
+    "actions": {
+      "create": "Creación",
+      "update": "Actualización",
+      "transition": "Transición",
+      "void": "Anulación",
+      "attach": "Adjunto",
+      "detach": "Desvincular",
+      "invite": "Invitación",
+      "activate": "Activación",
+      "deactivate": "Desactivación",
+      "revoke_token": "Revocar token"
+    },
+    "entityTypes": {
+      "fund_entry": "Entrada",
+      "fund_exit": "Salida",
+      "expense_request": "Estado de necesidad",
+      "budget": "Presupuesto",
+      "external_collaborator": "Colaborador externo",
+      "access_token": "Token de acceso",
+      "accounting_link": "Enlace contable"
+    }
+  },
+  "accounting": {
+    "notice": {
+      "title": "Libros SYSCOHADA",
+      "body": "Consulte el diario, libro mayor y balance a partir de asientos reales. Los enlaces siguientes conectan operaciones de tesorería con los asientos generados.",
+      "outOfScope": "Balance, cuenta de resultados y libros de caja/banco en los lotes SYSCO-007 / SYSCO-008."
+    },
+    "booksSubnav": {
+      "ariaLabel": "Navegación libros contables",
+      "links": "Enlaces",
+      "journal": "Diario",
+      "generalLedger": "Libro mayor",
+      "balance": "Balance"
+    },
+    "booksFilters": {
+      "organization": "Organización",
+      "exercise": "Ejercicio",
+      "period": "Período",
+      "journal": "Diario",
+      "account": "Cuenta",
+      "accountPlaceholder": "Elegir una cuenta"
+    },
+    "entryStatuses": {
+      "draft": "Borrador",
+      "posted": "Contabilizado",
+      "reversed": "Contrapartida"
+    },
+    "entrySources": {
+      "treasury_mapping": "Mapping tesorería",
+      "manual": "Entrada manual",
+      "closing": "Cierre",
+      "reversal": "Contrapartida"
+    },
+    "journal": {
+      "ariaLabel": "Lista de asientos del diario",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.accounting_link.read.",
+      "emptyDefault": "Ningún asiento contable.",
+      "emptyFiltered": "Ningún asiento coincide con los filtros.",
+      "pagination": {
+        "item": "asiento"
+      },
+      "columns": {
+        "entryNumber": "N° asiento",
+        "entryDate": "Fecha",
+        "description": "Descripción",
+        "status": "Estado",
+        "debit": "Débito",
+        "credit": "Crédito"
+      }
+    },
+    "journalDetail": {
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.accounting_link.read.",
+      "emptyLines": "Sin líneas en este asiento.",
+      "linesAriaLabel": "Líneas del asiento",
+      "fields": {
+        "entryDate": "Fecha",
+        "status": "Estado",
+        "source": "Origen",
+        "currency": "Divisa",
+        "totalDebit": "Total débito",
+        "totalCredit": "Total crédito"
+      },
+      "columns": {
+        "lineNo": "N°",
+        "account": "Cuenta",
+        "label": "Etiqueta",
+        "debit": "Débito",
+        "credit": "Crédito"
+      }
+    },
+    "generalLedger": {
+      "ariaLabel": "Libro mayor por cuenta",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.accounting_link.read.",
+      "selectAccount": "Seleccione una cuenta para ver el libro mayor.",
+      "emptyDefault": "Sin movimientos contabilizados para esta cuenta.",
+      "pagination": {
+        "item": "línea"
+      },
+      "columns": {
+        "entryDate": "Fecha",
+        "entryNumber": "N° asiento",
+        "journal": "Diario",
+        "label": "Etiqueta",
+        "debit": "Débito",
+        "credit": "Crédito"
+      }
+    },
+    "balance": {
+      "ariaLabel": "Balance de comprobación",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.accounting_link.read.",
+      "emptyDefault": "Sin filas de balance para los filtros seleccionados.",
+      "emptyFiltered": "Ninguna cuenta coincide con los filtros.",
+      "unbalancedHint": "Diferencia débito/crédito: {delta} (verifique los asientos del período).",
+      "totals": {
+        "debit": "Total débito",
+        "credit": "Total crédito",
+        "balance": "Saldo (D − C)"
+      },
+      "columns": {
+        "class": "Clase",
+        "account": "Cuenta",
+        "debit": "Débito",
+        "credit": "Crédito",
+        "balance": "Saldo"
+      }
+    },
+    "list": {
+      "ariaLabel": "Enlaces contables",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.accounting_link.read.",
+      "emptyDefault": "Ningún enlace contable.",
+      "emptyFiltered": "Ningún enlace coincide con los filtros.",
+      "columns": {
+        "createdAt": "Creado",
+        "fundOpType": "Tipo de operación",
+        "fundOp": "Operación",
+        "status": "Estado",
+        "mappingRuleKey": "Regla de mapping",
+        "journalEntryId": "Asiento"
+      }
+    },
+    "filters": {
+      "fundOpType": "Tipo de operación",
+      "status": "Estado"
+    },
+    "fundOpTypes": {
+      "fund_entry": "Entrada de fondos",
+      "fund_exit": "Salida de fondos"
+    },
+    "statuses": {
+      "pending": "Pendiente",
+      "linked": "Vinculado",
+      "skipped": "Omitido"
+    },
+    "pagination": {
+      "item": "enlace"
+    }
+  },
+  "void": {
+    "title": "Anular operación",
+    "description": "La operación pasará al estado anulado. Esta acción queda registrada en la auditoría.",
+    "reasonLabel": "Motivo de anulación",
+    "reasonPlaceholder": "Explique por qué se anula esta operación…",
+    "confirm": "Confirmar anulación",
+    "accessDenied": "Acceso denegado: se requiere el permiso treasury.void.",
+    "validation": {
+      "reasonRequired": "El motivo es obligatorio."
+    },
+    "toast": {
+      "successTitle": "Operación anulada",
+      "successMessage": "La operación se ha marcado como anulada.",
+      "errorTitle": "No se pudo anular"
+    }
+  },
+  "errors": {
+    "loadFailed": "No se pudieron cargar los datos de tesorería.",
+    "saveFailed": "No se pudo guardar.",
+    "forbidden": "No tiene permiso para realizar esta acción.",
+    "notFound": "Elemento no encontrado.",
+    "invalidTransition": "Transición de estado no permitida.",
+    "expenseRequestRequired": "Una salida debe estar vinculada a un estado de necesidad.",
+    "accountingLinked": "No se puede anular una operación ya vinculada a la contabilidad."
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "back": "Volver",
+    "edit": "Editar",
+    "view": "Ver",
+    "loading": "Cargando…",
+    "yes": "Sí",
+    "no": "No"
+  }
+}

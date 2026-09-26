@@ -22,6 +22,18 @@ import { OrganizationSettingsModule } from './resources/organization-settings/or
 import { OrganizationBankAccountsModule } from './resources/organization-bank-accounts/organization-bank-accounts.module';
 import { MobileMoneyConfigModule } from './resources/mobile-money-config/mobile-money-config.module';
 import { DonationsModule } from './resources/donations/donations.module';
+import { FundEntriesModule } from './resources/fund-entries/fund-entries.module';
+import { ExpenseRequestsModule } from './resources/expense-requests/expense-requests.module';
+import { FundExitsModule } from './resources/fund-exits/fund-exits.module';
+import { BudgetsModule } from './resources/budgets/budgets.module';
+import { ExternalCollaboratorsModule } from './resources/external-collaborators/external-collaborators.module';
+import { TreasuryAuditModule } from './resources/treasury-audit/treasury-audit.module';
+import { TreasuryReportsModule } from './resources/treasury-reports/treasury-reports.module';
+import { AccountingLinksModule } from './resources/accounting-links/accounting-links.module';
+import { ChartOfAccountsModule } from './resources/chart-of-accounts/chart-of-accounts.module';
+import { AccountingExercisesModule } from './resources/accounting-exercises/accounting-exercises.module';
+import { AccountingJournalsModule } from './resources/accounting-journals/accounting-journals.module';
+import { JournalEntriesModule } from './resources/journal-entries/journal-entries.module';
 import { OrganizationMaintenancesModule } from './resources/organization-maintenances/organization-maintenances.module';
 import { PermissionsModule } from './resources/permissions/permissions.module';
 import { RolesModule } from './resources/roles/roles.module';
@@ -119,6 +131,18 @@ import { Module } from '@nestjs/common';
     OrganizationBankAccountsModule,
     MobileMoneyConfigModule,
     DonationsModule,
+    FundEntriesModule,
+    ExpenseRequestsModule,
+    FundExitsModule,
+    BudgetsModule,
+    ExternalCollaboratorsModule,
+    TreasuryAuditModule,
+    TreasuryReportsModule,
+    AccountingLinksModule,
+    ChartOfAccountsModule,
+    AccountingExercisesModule,
+    AccountingJournalsModule,
+    JournalEntriesModule,
     OrganizationMaintenancesModule,
     PermissionsModule,
     RolesModule,

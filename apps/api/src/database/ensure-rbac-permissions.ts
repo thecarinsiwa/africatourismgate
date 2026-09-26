@@ -186,6 +186,91 @@ const PERMISSION_UPSERTS: Array<{
     action: 'read',
     description: 'View site analytics (visitors, page views)',
   },
+  // TRESO-008 — Module Trésorerie
+  {
+    id: '00000000-0000-4000-8000-000000001057',
+    code: 'treasury.read',
+    resource: 'treasury',
+    action: 'read',
+    description: 'View treasury module (lists, details, hub)',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001058',
+    code: 'treasury.entries.write',
+    resource: 'treasury',
+    action: 'entries.write',
+    description: 'Create and update fund entries',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001059',
+    code: 'treasury.exits.write',
+    resource: 'treasury',
+    action: 'exits.write',
+    description: 'Create and update fund exits',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001060',
+    code: 'treasury.expense_requests.create',
+    resource: 'treasury',
+    action: 'expense_requests.create',
+    description: 'Create and submit expense requests (états de besoin)',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001061',
+    code: 'treasury.expense_requests.validate',
+    resource: 'treasury',
+    action: 'expense_requests.validate',
+    description: 'Validate expense requests',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001062',
+    code: 'treasury.expense_requests.authorize',
+    resource: 'treasury',
+    action: 'expense_requests.authorize',
+    description: 'Authorize expense requests for disbursement',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001063',
+    code: 'treasury.budgets.write',
+    resource: 'treasury',
+    action: 'budgets.write',
+    description: 'Manage treasury budgets',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001064',
+    code: 'treasury.reports.read',
+    resource: 'treasury',
+    action: 'reports.read',
+    description: 'View treasury reports and exports',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001065',
+    code: 'treasury.externals.manage',
+    resource: 'treasury',
+    action: 'externals.manage',
+    description: 'Invite and manage external treasury collaborators',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001066',
+    code: 'treasury.void',
+    resource: 'treasury',
+    action: 'void',
+    description: 'Void fund entries and fund exits',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001067',
+    code: 'treasury.audit.read',
+    resource: 'treasury',
+    action: 'audit.read',
+    description: 'View treasury audit journal',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001068',
+    code: 'treasury.accounting_link.read',
+    resource: 'treasury',
+    action: 'accounting_link.read',
+    description: 'View accounting bridge stub links',
+  },
 ];
 
 /** Full org_admin set (install.seed.sql) — repairs partial or missing grants. */
@@ -226,6 +311,19 @@ const ORG_ADMIN_PERMISSION_IDS = [
   '00000000-0000-4000-8000-000000001054',
   '00000000-0000-4000-8000-000000001055',
   '00000000-0000-4000-8000-000000001056',
+  // TRESO-008 treasury.*
+  '00000000-0000-4000-8000-000000001057',
+  '00000000-0000-4000-8000-000000001058',
+  '00000000-0000-4000-8000-000000001059',
+  '00000000-0000-4000-8000-000000001060',
+  '00000000-0000-4000-8000-000000001061',
+  '00000000-0000-4000-8000-000000001062',
+  '00000000-0000-4000-8000-000000001063',
+  '00000000-0000-4000-8000-000000001064',
+  '00000000-0000-4000-8000-000000001065',
+  '00000000-0000-4000-8000-000000001066',
+  '00000000-0000-4000-8000-000000001067',
+  '00000000-0000-4000-8000-000000001068',
 ];
 
 async function platformOrgExists(config: ConfigService): Promise<boolean> {

@@ -349,6 +349,67 @@ import type {
   PaymentAdminDetail,
   PaymentListItem,
   PaymentsListQuery,
+  CreateExpenseRequestRequest,
+  CreateExpenseRequestExternalRequest,
+  CreateFundEntryRequest,
+  CreateFundExitRequest,
+  CreateBudgetRequest,
+  CreateAccountingLinkRequest,
+  UpdateAccountingLinkRequest,
+  AccountingLink,
+  AccountingLinksListQuery,
+  AccountingMappingConfig,
+  AccountingBalanceQuery,
+  AccountingBalanceSummary,
+  AccountingExercise,
+  AccountingExercisesListQuery,
+  AccountingJournal,
+  AccountingJournalsListQuery,
+  AccountingPeriod,
+  AccountingPeriodsListQuery,
+  ChartAccount,
+  ChartAccountsListQuery,
+  CreateJournalEntryRequest,
+  JournalEntriesListQuery,
+  JournalEntry,
+  JournalLine,
+  JournalLinesListQuery,
+  PostAccountingLinkRequest,
+  PostAccountingLinkResult,
+  SkipAccountingLinkRequest,
+  Budget,
+  BudgetVsActualSummary,
+  BudgetsListQuery,
+  BudgetsVsActualQuery,
+  InviteTreasuryExternalCollaboratorRequest,
+  InviteTreasuryExternalCollaboratorResponse,
+  ValidateTreasuryAccessTokenRequest,
+  ValidateTreasuryAccessTokenResponse,
+  TreasuryAccessToken,
+  TreasuryAuditLog,
+  TreasuryAuditLogsListQuery,
+  TreasuryExternalCollaborator,
+  TreasuryExternalCollaboratorsListQuery,
+  TreasuryReportsByDimension,
+  TreasuryReportsByDimensionQuery,
+  TreasuryReportsSummary,
+  TreasuryReportsSummaryQuery,
+  UpdateTreasuryExternalCollaboratorRequest,
+  ExpenseRequest,
+  ExpenseRequestStatusHistoryEntry,
+  ExpenseRequestsListQuery,
+  FundAttachment,
+  FundEntriesListQuery,
+  FundEntry,
+  FundExit,
+  FundExitsListQuery,
+  TransitionExpenseRequestRequest,
+  TransitionFundExitRequest,
+  UpdateBudgetRequest,
+  UpdateExpenseRequestRequest,
+  UpdateFundEntryRequest,
+  UpdateFundExitRequest,
+  VoidTreasuryOperationRequest,
   CreatePromoCodeRequest,
   CreatePromotionRequest,
   PromoCode,
@@ -1265,6 +1326,549 @@ export class ApiClient {
 
   listPayments(query?: PaymentsListQuery, requestOptions?: RequestOptions): Promise<PaginatedResponse<PaymentListItem>> {
     return fetchPaginated<PaymentListItem>(this, '/payments', query, requestOptions);
+  }
+
+  listFundEntries(
+    query?: FundEntriesListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<FundEntry>> {
+    return fetchPaginated<FundEntry>(this, '/fund-entries', query, requestOptions);
+  }
+
+  getFundEntry(id: string): Promise<FundEntry> {
+    return this.request<FundEntry>(`/fund-entries/${id}`);
+  }
+
+  createFundEntry(body: CreateFundEntryRequest): Promise<FundEntry> {
+    return this.request<FundEntry>('/fund-entries', { method: 'POST', body });
+  }
+
+  updateFundEntry(id: string, body: UpdateFundEntryRequest): Promise<FundEntry> {
+    return this.request<FundEntry>(`/fund-entries/${id}`, { method: 'PATCH', body });
+  }
+
+  voidFundEntry(
+    id: string,
+    body: VoidTreasuryOperationRequest,
+  ): Promise<FundEntry> {
+    return this.request<FundEntry>(`/fund-entries/${id}/void`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  deleteFundEntry(id: string): Promise<void> {
+    return this.request<void>(`/fund-entries/${id}`, { method: 'DELETE' });
+  }
+
+  attachFundEntryBookings(
+    id: string,
+    body: { bookingIds: string[] },
+  ): Promise<FundEntry> {
+    return this.request<FundEntry>(`/fund-entries/${id}/bookings`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  detachFundEntryBooking(id: string, bookingId: string): Promise<FundEntry> {
+    return this.request<FundEntry>(`/fund-entries/${id}/bookings/${bookingId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  listFundEntryAttachments(id: string): Promise<FundAttachment[]> {
+    return this.request<FundAttachment[]>(`/fund-entries/${id}/attachments`);
+  }
+
+  uploadFundEntryAttachment(id: string, body: FormData): Promise<FundAttachment> {
+    return this.request<FundAttachment>(`/fund-entries/${id}/attachments`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  deleteFundEntryAttachment(id: string, attachmentId: string): Promise<void> {
+    return this.request<void>(`/fund-entries/${id}/attachments/${attachmentId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  listExpenseRequests(
+    query?: ExpenseRequestsListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<ExpenseRequest>> {
+    return fetchPaginated<ExpenseRequest>(
+      this,
+      '/expense-requests',
+      query,
+      requestOptions,
+    );
+  }
+
+  getExpenseRequest(id: string): Promise<ExpenseRequest> {
+    return this.request<ExpenseRequest>(`/expense-requests/${id}`);
+  }
+
+  listExpenseRequestStatusHistory(
+    id: string,
+  ): Promise<ExpenseRequestStatusHistoryEntry[]> {
+    return this.request<ExpenseRequestStatusHistoryEntry[]>(
+      `/expense-requests/${id}/status-history`,
+    );
+  }
+
+  createExpenseRequest(body: CreateExpenseRequestRequest): Promise<ExpenseRequest> {
+    return this.request<ExpenseRequest>('/expense-requests', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  createExpenseRequestExternal(
+    body: CreateExpenseRequestExternalRequest,
+  ): Promise<ExpenseRequest> {
+    return this.request<ExpenseRequest>('/expense-requests/external', {
+      method: 'POST',
+      body,
+      skipAuth: true,
+    });
+  }
+
+  updateExpenseRequest(
+    id: string,
+    body: UpdateExpenseRequestRequest,
+  ): Promise<ExpenseRequest> {
+    return this.request<ExpenseRequest>(`/expense-requests/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteExpenseRequest(id: string): Promise<void> {
+    return this.request<void>(`/expense-requests/${id}`, { method: 'DELETE' });
+  }
+
+  transitionExpenseRequest(
+    id: string,
+    body: TransitionExpenseRequestRequest,
+  ): Promise<ExpenseRequest> {
+    return this.request<ExpenseRequest>(`/expense-requests/${id}/transition`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  listFundExits(
+    query?: FundExitsListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<FundExit>> {
+    return fetchPaginated<FundExit>(this, '/fund-exits', query, requestOptions);
+  }
+
+  getFundExit(id: string): Promise<FundExit> {
+    return this.request<FundExit>(`/fund-exits/${id}`);
+  }
+
+  createFundExit(body: CreateFundExitRequest): Promise<FundExit> {
+    return this.request<FundExit>('/fund-exits', { method: 'POST', body });
+  }
+
+  updateFundExit(id: string, body: UpdateFundExitRequest): Promise<FundExit> {
+    return this.request<FundExit>(`/fund-exits/${id}`, { method: 'PATCH', body });
+  }
+
+  deleteFundExit(id: string): Promise<void> {
+    return this.request<void>(`/fund-exits/${id}`, { method: 'DELETE' });
+  }
+
+  transitionFundExit(
+    id: string,
+    body: TransitionFundExitRequest,
+  ): Promise<FundExit> {
+    return this.request<FundExit>(`/fund-exits/${id}/transition`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  voidFundExit(
+    id: string,
+    body: VoidTreasuryOperationRequest,
+  ): Promise<FundExit> {
+    return this.request<FundExit>(`/fund-exits/${id}/void`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  attachFundExitBookings(
+    id: string,
+    body: { bookingIds: string[] },
+  ): Promise<FundExit> {
+    return this.request<FundExit>(`/fund-exits/${id}/bookings`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  detachFundExitBooking(id: string, bookingId: string): Promise<FundExit> {
+    return this.request<FundExit>(`/fund-exits/${id}/bookings/${bookingId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  listFundExitAttachments(id: string): Promise<FundAttachment[]> {
+    return this.request<FundAttachment[]>(`/fund-exits/${id}/attachments`);
+  }
+
+  uploadFundExitAttachment(id: string, body: FormData): Promise<FundAttachment> {
+    return this.request<FundAttachment>(`/fund-exits/${id}/attachments`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  deleteFundExitAttachment(id: string, attachmentId: string): Promise<void> {
+    return this.request<void>(`/fund-exits/${id}/attachments/${attachmentId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  listBudgets(
+    query?: BudgetsListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<Budget>> {
+    return fetchPaginated<Budget>(this, '/budgets', query, requestOptions);
+  }
+
+  getBudgetsVsActual(
+    query: BudgetsVsActualQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<BudgetVsActualSummary> {
+    const params = new URLSearchParams();
+    params.set('year', String(query.year));
+    if (query.month != null) params.set('month', String(query.month));
+    if (query.organizationId) params.set('organizationId', query.organizationId);
+    if (query.currency) params.set('currency', query.currency);
+    if (query.periodType) params.set('periodType', query.periodType);
+    const qs = params.toString();
+    return this.request<BudgetVsActualSummary>(
+      `/budgets/vs-actual${qs ? `?${qs}` : ''}`,
+      requestOptions,
+    );
+  }
+
+  getTreasuryReportsSummary(
+    query: TreasuryReportsSummaryQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<TreasuryReportsSummary> {
+    const params = new URLSearchParams();
+    params.set('dateFrom', query.dateFrom);
+    params.set('dateTo', query.dateTo);
+    if (query.organizationId) params.set('organizationId', query.organizationId);
+    if (query.currency) params.set('currency', query.currency);
+    if (query.source) params.set('source', query.source);
+    if (query.paymentMethod) params.set('paymentMethod', query.paymentMethod);
+    const qs = params.toString();
+    return this.request<TreasuryReportsSummary>(
+      `/treasury-reports/summary${qs ? `?${qs}` : ''}`,
+      requestOptions,
+    );
+  }
+
+  getTreasuryReportsByDimension(
+    query: TreasuryReportsByDimensionQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<TreasuryReportsByDimension> {
+    const params = new URLSearchParams();
+    params.set('dateFrom', query.dateFrom);
+    params.set('dateTo', query.dateTo);
+    params.set('groupBy', query.groupBy);
+    if (query.organizationId) params.set('organizationId', query.organizationId);
+    if (query.currency) params.set('currency', query.currency);
+    if (query.source) params.set('source', query.source);
+    if (query.paymentMethod) params.set('paymentMethod', query.paymentMethod);
+    const qs = params.toString();
+    return this.request<TreasuryReportsByDimension>(
+      `/treasury-reports/by-dimension${qs ? `?${qs}` : ''}`,
+      requestOptions,
+    );
+  }
+
+  getBudget(id: string): Promise<Budget> {
+    return this.request<Budget>(`/budgets/${id}`);
+  }
+
+  createBudget(body: CreateBudgetRequest): Promise<Budget> {
+    return this.request<Budget>('/budgets', { method: 'POST', body });
+  }
+
+  updateBudget(id: string, body: UpdateBudgetRequest): Promise<Budget> {
+    return this.request<Budget>(`/budgets/${id}`, { method: 'PATCH', body });
+  }
+
+  deleteBudget(id: string): Promise<void> {
+    return this.request<void>(`/budgets/${id}`, { method: 'DELETE' });
+  }
+
+  listAccountingLinks(
+    query?: AccountingLinksListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<AccountingLink>> {
+    return fetchPaginated<AccountingLink>(
+      this,
+      '/accounting-links',
+      query,
+      requestOptions,
+    );
+  }
+
+  getAccountingMappingConfig(
+    query?: { organizationId?: string },
+    requestOptions?: RequestOptions,
+  ): Promise<AccountingMappingConfig> {
+    const params = new URLSearchParams();
+    if (query?.organizationId) {
+      params.set('organizationId', query.organizationId);
+    }
+    const qs = params.toString();
+    return this.request<AccountingMappingConfig>(
+      `/accounting-links/mapping-config${qs ? `?${qs}` : ''}`,
+      requestOptions,
+    );
+  }
+
+  getAccountingLink(id: string): Promise<AccountingLink> {
+    return this.request<AccountingLink>(`/accounting-links/${id}`);
+  }
+
+  createAccountingLink(
+    body: CreateAccountingLinkRequest,
+  ): Promise<AccountingLink> {
+    return this.request<AccountingLink>('/accounting-links', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateAccountingLink(
+    id: string,
+    body: UpdateAccountingLinkRequest,
+  ): Promise<AccountingLink> {
+    return this.request<AccountingLink>(`/accounting-links/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  postAccountingLink(
+    body: PostAccountingLinkRequest,
+  ): Promise<PostAccountingLinkResult> {
+    return this.request<PostAccountingLinkResult>('/accounting-links/post', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  skipAccountingLink(
+    body: SkipAccountingLinkRequest,
+  ): Promise<AccountingLink> {
+    return this.request<AccountingLink>('/accounting-links/skip', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  softDeleteAccountingLink(id: string): Promise<{ id: string; deleted: true }> {
+    return this.request<{ id: string; deleted: true }>(
+      `/accounting-links/${id}`,
+      { method: 'DELETE' },
+    );
+  }
+
+  listChartOfAccounts(
+    query?: ChartAccountsListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<ChartAccount>> {
+    return fetchPaginated<ChartAccount>(
+      this,
+      '/chart-of-accounts',
+      query,
+      requestOptions,
+    );
+  }
+
+  getChartOfAccount(id: string): Promise<ChartAccount> {
+    return this.request<ChartAccount>(`/chart-of-accounts/${id}`);
+  }
+
+  listAccountingExercises(
+    query?: AccountingExercisesListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<AccountingExercise>> {
+    return fetchPaginated<AccountingExercise>(
+      this,
+      '/accounting-exercises',
+      query,
+      requestOptions,
+    );
+  }
+
+  getAccountingExercise(id: string): Promise<AccountingExercise> {
+    return this.request<AccountingExercise>(`/accounting-exercises/${id}`);
+  }
+
+  listAccountingPeriods(
+    query?: AccountingPeriodsListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<AccountingPeriod>> {
+    return fetchPaginated<AccountingPeriod>(
+      this,
+      '/accounting-periods',
+      query,
+      requestOptions,
+    );
+  }
+
+  listAccountingJournals(
+    query?: AccountingJournalsListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<AccountingJournal>> {
+    return fetchPaginated<AccountingJournal>(
+      this,
+      '/accounting-journals',
+      query,
+      requestOptions,
+    );
+  }
+
+  getAccountingJournal(id: string): Promise<AccountingJournal> {
+    return this.request<AccountingJournal>(`/accounting-journals/${id}`);
+  }
+
+  listJournalEntries(
+    query?: JournalEntriesListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<JournalEntry>> {
+    return fetchPaginated<JournalEntry>(
+      this,
+      '/journal-entries',
+      query,
+      requestOptions,
+    );
+  }
+
+  getJournalEntry(id: string): Promise<JournalEntry> {
+    return this.request<JournalEntry>(`/journal-entries/${id}`);
+  }
+
+  createJournalEntry(body: CreateJournalEntryRequest): Promise<JournalEntry> {
+    return this.request<JournalEntry>('/journal-entries', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  listJournalLines(
+    query?: JournalLinesListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<JournalLine>> {
+    return fetchPaginated<JournalLine>(
+      this,
+      '/journal-lines',
+      query,
+      requestOptions,
+    );
+  }
+
+  getAccountingBalance(
+    query?: AccountingBalanceQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<AccountingBalanceSummary> {
+    const params = new URLSearchParams();
+    if (query?.organizationId) {
+      params.set('organizationId', query.organizationId);
+    }
+    if (query?.exerciseId) {
+      params.set('exerciseId', query.exerciseId);
+    }
+    if (query?.periodId) {
+      params.set('periodId', query.periodId);
+    }
+    if (query?.journalId) {
+      params.set('journalId', query.journalId);
+    }
+    const qs = params.toString();
+    return this.request<AccountingBalanceSummary>(
+      `/accounting-balance${qs ? `?${qs}` : ''}`,
+      requestOptions,
+    );
+  }
+
+  inviteTreasuryExternalCollaborator(
+    body: InviteTreasuryExternalCollaboratorRequest,
+  ): Promise<InviteTreasuryExternalCollaboratorResponse> {
+    return this.request<InviteTreasuryExternalCollaboratorResponse>(
+      '/treasury-external-collaborators/invite',
+      { method: 'POST', body },
+    );
+  }
+
+  listTreasuryExternalCollaborators(
+    query?: TreasuryExternalCollaboratorsListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<TreasuryExternalCollaborator>> {
+    return fetchPaginated<TreasuryExternalCollaborator>(
+      this,
+      '/treasury-external-collaborators',
+      query,
+      requestOptions,
+    );
+  }
+
+  validateTreasuryAccessToken(
+    body: ValidateTreasuryAccessTokenRequest,
+  ): Promise<ValidateTreasuryAccessTokenResponse> {
+    return this.request<ValidateTreasuryAccessTokenResponse>(
+      '/treasury-external-collaborators/tokens/validate',
+      { method: 'POST', body, skipAuth: true },
+    );
+  }
+
+  revokeTreasuryAccessToken(tokenId: string): Promise<TreasuryAccessToken> {
+    return this.request<TreasuryAccessToken>(
+      `/treasury-external-collaborators/tokens/${tokenId}/revoke`,
+      { method: 'POST' },
+    );
+  }
+
+  activateTreasuryExternalCollaborator(
+    id: string,
+  ): Promise<TreasuryExternalCollaborator> {
+    return this.request<TreasuryExternalCollaborator>(
+      `/treasury-external-collaborators/${id}/activate`,
+      { method: 'POST' },
+    );
+  }
+
+  deactivateTreasuryExternalCollaborator(
+    id: string,
+  ): Promise<TreasuryExternalCollaborator> {
+    return this.request<TreasuryExternalCollaborator>(
+      `/treasury-external-collaborators/${id}/deactivate`,
+      { method: 'POST' },
+    );
+  }
+
+  updateTreasuryExternalCollaborator(
+    id: string,
+    body: UpdateTreasuryExternalCollaboratorRequest,
+  ): Promise<TreasuryExternalCollaborator> {
+    return this.request<TreasuryExternalCollaborator>(
+      `/treasury-external-collaborators/${id}`,
+      { method: 'PATCH', body },
+    );
   }
 
   getPayment(id: string): Promise<PaymentAdminDetail> {
@@ -2596,6 +3200,20 @@ export class ApiClient {
 
   getRbacAuditLog(id: string): Promise<RbacAuditLog> {
     return this.request<RbacAuditLog>(`/rbac-audit-logs/${id}`);
+  }
+
+  listTreasuryAuditLogs(
+    query?: TreasuryAuditLogsListQuery,
+  ): Promise<PaginatedResponse<TreasuryAuditLog>> {
+    return fetchPaginated<TreasuryAuditLog>(
+      this,
+      '/treasury-audit-logs',
+      query,
+    );
+  }
+
+  getTreasuryAuditLog(id: string): Promise<TreasuryAuditLog> {
+    return this.request<TreasuryAuditLog>(`/treasury-audit-logs/${id}`);
   }
 
   listDestinations(

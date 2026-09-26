@@ -765,6 +765,150 @@
     "description": "Guided walkthrough to fill the catalog, module by module.",
     "metaTitle": "Getting started"
   },
+  "tresorerie": {
+    "title": "Treasury",
+    "description": "Financial flows, budgets and traceability. Access: treasury.read.",
+    "metaTitle": "Treasury",
+    "stub": {
+      "title": "Module under integration",
+      "message": "This section will be available soon (Treasury CRUD and workflows)."
+    },
+    "entrees": {
+      "title": "Fund entries",
+      "description": "Record and track fund inflows. Access: treasury.read / treasury.entries.write.",
+      "metaTitle": "Fund entries",
+      "nouveau": {
+        "title": "New fund entry",
+        "description": "Create a fund entry with optional bookings and attachments.",
+        "metaTitle": "New fund entry",
+        "backLabel": "Back to entries"
+      },
+      "id": {
+        "title": "Edit fund entry",
+        "description": "Update a fund entry.",
+        "metaTitle": "Edit entry",
+        "backLabel": "Back to entries",
+        "voir": {
+          "metaTitle": "View fund entry",
+          "title": "Entry details",
+          "backLabel": "Back to entries"
+        }
+      }
+    },
+    "sorties": {
+      "title": "Fund exits",
+      "description": "Disbursements linked to an expense request. Access: treasury.read / treasury.exits.write.",
+      "metaTitle": "Fund exits",
+      "nouveau": {
+        "title": "New fund exit",
+        "description": "Create an exit linked to an authorized expense request.",
+        "metaTitle": "New fund exit",
+        "backLabel": "Back to exits"
+      },
+      "id": {
+        "title": "Edit fund exit",
+        "description": "Update a fund exit.",
+        "metaTitle": "Edit exit",
+        "backLabel": "Back to exits",
+        "voir": {
+          "metaTitle": "View fund exit",
+          "title": "Exit details",
+          "backLabel": "Back to exits"
+        }
+      }
+    },
+    "besoins": {
+      "title": "Expense requests",
+      "description": "Spend requests and validation workflow. Access: treasury.expense_requests.*.",
+      "metaTitle": "Expense requests",
+      "nouveau": {
+        "title": "New expense request",
+        "description": "Create a spend request (draft).",
+        "metaTitle": "New expense request",
+        "backLabel": "Back to requests"
+      },
+      "id": {
+        "title": "Edit expense request",
+        "description": "Update a draft request.",
+        "metaTitle": "Edit request",
+        "backLabel": "Back to requests",
+        "voir": {
+          "metaTitle": "View expense request",
+          "title": "Request details",
+          "backLabel": "Back to requests"
+        }
+      }
+    },
+    "budgets": {
+      "title": "Budgets",
+      "description": "Monthly, annual and activity/product budgets. Access: treasury.budgets.write.",
+      "metaTitle": "Budgets",
+      "nouveau": {
+        "title": "New budget",
+        "description": "Create a monthly, annual, activity or product budget.",
+        "metaTitle": "New budget",
+        "backLabel": "Back to budgets"
+      },
+      "suivi": {
+        "title": "Budget vs actual",
+        "description": "Planned vs actual variance by period, with over-budget alerts.",
+        "metaTitle": "Budget vs actual",
+        "backLabel": "Back to budgets"
+      },
+      "id": {
+        "title": "Edit budget",
+        "description": "Update a budget.",
+        "metaTitle": "Edit budget",
+        "backLabel": "Back to budgets",
+        "voir": {
+          "metaTitle": "View budget",
+          "title": "Budget details",
+          "backLabel": "Back to budgets"
+        }
+      }
+    },
+    "rapports": {
+      "title": "Reports",
+      "description": "Aggregates and exports. Access: treasury.reports.read.",
+      "metaTitle": "Treasury reports"
+    },
+    "externes": {
+      "title": "External collaborators",
+      "description": "Invites, tokens and external permissions. Access: treasury.externals.manage.",
+      "metaTitle": "External collaborators"
+    },
+    "audit": {
+      "title": "Audit",
+      "description": "Sensitive operations journal. Access: treasury.audit.read.",
+      "metaTitle": "Treasury audit"
+    },
+    "comptabilite": {
+      "title": "Accounting",
+      "description": "Accounting links bridge and SYSCOHADA books. Access: treasury.accounting_link.read.",
+      "metaTitle": "Accounting",
+      "journal": {
+        "title": "Journal",
+        "description": "Journal entries filtered by exercise and period.",
+        "metaTitle": "Accounting journal",
+        "id": {
+          "title": "Journal entry detail",
+          "description": "Debit and credit lines for the entry.",
+          "metaTitle": "Journal entry",
+          "backLabel": "Back to journal"
+        }
+      },
+      "grand-livre": {
+        "title": "General ledger",
+        "description": "Posted movements by account.",
+        "metaTitle": "General ledger"
+      },
+      "balance": {
+        "title": "Trial balance",
+        "description": "Debit / credit totals by account for the period.",
+        "metaTitle": "Trial balance"
+      }
+    }
+  },
   "profil": {
     "title": "My profile",
     "description": "Update your details and profile photo.",

@@ -30,6 +30,36 @@ import { HeroSlides } from '../entities/hero-slide.entity';
 import { EmailOperationVerifications } from '../entities/email-operation-verification.entity';
 import { Notifications } from '../entities/notification.entity';
 import { SitePageViews } from '../entities/site-page-view.entity';
+import {
+  FundEntries,
+  FundEntryAttachments,
+  FundEntryBookings,
+} from '../entities/fund-entry.entity';
+import {
+  ExpenseRequests,
+  ExpenseRequestStatusHistory,
+  FundExitAttachments,
+  FundExitBookings,
+  FundExits,
+} from '../entities/fund-exit.entity';
+import { Budgets } from '../entities/budget.entity';
+import {
+  TreasuryAccessTokens,
+  TreasuryExternalCollaborators,
+} from '../entities/treasury-external.entity';
+import { TreasuryAuditLogs } from '../entities/treasury-audit-log.entity';
+import { AccountingLinks } from '../entities/accounting-link.entity';
+import { ChartOfAccounts } from '../entities/chart-of-account.entity';
+import {
+  AccountingExercises,
+  AccountingPeriods,
+} from '../entities/accounting-exercise.entity';
+import { AccountingJournals } from '../entities/accounting-journal.entity';
+import {
+  JournalEntries,
+  JournalLines,
+} from '../entities/journal-entry.entity';
+import { AccountingMappingRules } from '../entities/accounting-mapping-rule.entity';
 import { ensureMigrations } from './ensure-migrations';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
 import { ensureSchema } from './ensure-schema';
@@ -64,6 +94,26 @@ const entityList = [
   MobileMoneyPaymentNumbers,
   Notifications,
   SitePageViews,
+  FundEntries,
+  FundEntryBookings,
+  FundEntryAttachments,
+  ExpenseRequests,
+  ExpenseRequestStatusHistory,
+  FundExits,
+  FundExitBookings,
+  FundExitAttachments,
+  Budgets,
+  TreasuryExternalCollaborators,
+  TreasuryAccessTokens,
+  TreasuryAuditLogs,
+  AccountingLinks,
+  ChartOfAccounts,
+  AccountingExercises,
+  AccountingPeriods,
+  AccountingJournals,
+  JournalEntries,
+  JournalLines,
+  AccountingMappingRules,
 ] as (new () => unknown)[];
 
 @Module({

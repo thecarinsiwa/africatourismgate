@@ -147,6 +147,136 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Transactions et statuts de paiement.',
     apiResource: 'payments',
   },
+  tresorerie: {
+    title: 'Trésorerie',
+    description: 'Hub du module Trésorerie (entrées, sorties, budgets, audit).',
+    apiResource: 'treasury',
+  },
+  'tresorerie/entrees': {
+    title: 'Entrées de fonds',
+    description: 'Enregistrement et suivi des entrées de fonds.',
+    apiResource: 'fund-entries',
+  },
+  'tresorerie/entrees/nouveau': {
+    title: 'Nouvelle entrée de fonds',
+    description: 'Créer une entrée de fonds.',
+    apiResource: 'fund-entries',
+  },
+  'tresorerie/entrees/id': {
+    title: 'Modifier entrée de fonds',
+    description: 'Éditer une entrée de fonds.',
+    apiResource: 'fund-entries',
+  },
+  'tresorerie/entrees/id/voir': {
+    title: 'Voir entrée de fonds',
+    description: 'Fiche détail d’une entrée de fonds.',
+    apiResource: 'fund-entries',
+  },
+  'tresorerie/sorties': {
+    title: 'Sorties de fonds',
+    description: 'Décaissements liés à un état de besoin.',
+    apiResource: 'fund-exits',
+  },
+  'tresorerie/sorties/nouveau': {
+    title: 'Nouvelle sortie de fonds',
+    description: 'Créer une sortie liée à un besoin autorisé.',
+    apiResource: 'fund-exits',
+  },
+  'tresorerie/sorties/id': {
+    title: 'Modifier sortie de fonds',
+    description: 'Éditer une sortie de fonds.',
+    apiResource: 'fund-exits',
+  },
+  'tresorerie/sorties/id/voir': {
+    title: 'Voir sortie de fonds',
+    description: 'Fiche détail d’une sortie de fonds.',
+    apiResource: 'fund-exits',
+  },
+  'tresorerie/besoins': {
+    title: 'États de besoin',
+    description: 'Demandes de dépense et circuit de validation.',
+    apiResource: 'expense-requests',
+  },
+  'tresorerie/besoins/nouveau': {
+    title: 'Nouvel état de besoin',
+    description: 'Créer une demande de dépense.',
+    apiResource: 'expense-requests',
+  },
+  'tresorerie/besoins/id': {
+    title: 'Modifier état de besoin',
+    description: 'Éditer une demande de dépense.',
+    apiResource: 'expense-requests',
+  },
+  'tresorerie/besoins/id/voir': {
+    title: 'Voir état de besoin',
+    description: 'Fiche détail d’un état de besoin.',
+    apiResource: 'expense-requests',
+  },
+  'tresorerie/budgets': {
+    title: 'Budgets',
+    description: 'Budgétisation mensuelle, annuelle et par activité/produit.',
+    apiResource: 'budgets',
+  },
+  'tresorerie/budgets/nouveau': {
+    title: 'Nouveau budget',
+    description: 'Créer un budget.',
+    apiResource: 'budgets',
+  },
+  'tresorerie/budgets/suivi': {
+    title: 'Budget vs réalisé',
+    description: 'Écarts prévu / réalisé par période.',
+    apiResource: 'budgets',
+  },
+  'tresorerie/budgets/id': {
+    title: 'Modifier budget',
+    description: 'Éditer un budget.',
+    apiResource: 'budgets',
+  },
+  'tresorerie/budgets/id/voir': {
+    title: 'Voir budget',
+    description: 'Fiche détail d’un budget.',
+    apiResource: 'budgets',
+  },
+  'tresorerie/rapports': {
+    title: 'Rapports trésorerie',
+    description: 'Agrégats et exports des opérations financières.',
+    apiResource: 'treasury-reports',
+  },
+  'tresorerie/externes': {
+    title: 'Collaborateurs externes',
+    description: 'Accès externes (e-mail, jetons, permissions).',
+    apiResource: 'treasury-external-collaborators',
+  },
+  'tresorerie/audit': {
+    title: 'Audit trésorerie',
+    description: 'Journal append-only des opérations sensibles.',
+    apiResource: 'treasury-audit-logs',
+  },
+  'tresorerie/comptabilite': {
+    title: 'Comptabilité',
+    description: 'Pont accounting_links + livres SYSCOHADA (journal, grand livre, balance).',
+    apiResource: 'accounting-links',
+  },
+  'tresorerie/comptabilite/journal': {
+    title: 'Journal',
+    description: 'Écritures comptables filtrées par journal et période.',
+    apiResource: 'journal-entries',
+  },
+  'tresorerie/comptabilite/journal/id': {
+    title: 'Détail écriture',
+    description: 'Lignes débit/crédit d’une pièce comptable.',
+    apiResource: 'journal-entries',
+  },
+  'tresorerie/comptabilite/grand-livre': {
+    title: 'Grand livre',
+    description: 'Mouvements par compte (écritures postées).',
+    apiResource: 'journal-lines',
+  },
+  'tresorerie/comptabilite/balance': {
+    title: 'Balance générale',
+    description: 'Totaux débit/crédit par compte pour la période.',
+    apiResource: 'accounting-balance',
+  },
   'paiements/codes-promo': {
     title: 'Codes promo',
     description: 'Codes promotionnels.',

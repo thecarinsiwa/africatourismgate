@@ -765,6 +765,150 @@
     "description": "Parcours guidé pour remplir le catalogue, module par module.",
     "metaTitle": "Mise en route"
   },
+  "tresorerie": {
+    "title": "Trésorerie",
+    "description": "Pilotage des flux financiers, budgets et traçabilité. Accès : treasury.read.",
+    "metaTitle": "Trésorerie",
+    "stub": {
+      "title": "Module en cours d'intégration",
+      "message": "Cette section sera disponible prochainement (CRUD et workflows Trésorerie)."
+    },
+    "entrees": {
+      "title": "Entrées de fonds",
+      "description": "Enregistrement et suivi des entrées de fonds. Accès : treasury.read / treasury.entries.write.",
+      "metaTitle": "Entrées de fonds",
+      "nouveau": {
+        "title": "Nouvelle entrée de fonds",
+        "description": "Créer une entrée de fonds avec réservations et justificatifs optionnels.",
+        "metaTitle": "Nouvelle entrée de fonds",
+        "backLabel": "Retour aux entrées"
+      },
+      "id": {
+        "title": "Modifier l'entrée de fonds",
+        "description": "Mettre à jour une entrée de fonds.",
+        "metaTitle": "Modifier l'entrée",
+        "backLabel": "Retour aux entrées",
+        "voir": {
+          "metaTitle": "Voir l'entrée de fonds",
+          "title": "Détail de l'entrée",
+          "backLabel": "Retour aux entrées"
+        }
+      }
+    },
+    "sorties": {
+      "title": "Sorties de fonds",
+      "description": "Décaissements liés à un état de besoin. Accès : treasury.read / treasury.exits.write.",
+      "metaTitle": "Sorties de fonds",
+      "nouveau": {
+        "title": "Nouvelle sortie de fonds",
+        "description": "Créer une sortie liée à un besoin autorisé.",
+        "metaTitle": "Nouvelle sortie de fonds",
+        "backLabel": "Retour aux sorties"
+      },
+      "id": {
+        "title": "Modifier la sortie de fonds",
+        "description": "Mettre à jour une sortie de fonds.",
+        "metaTitle": "Modifier la sortie",
+        "backLabel": "Retour aux sorties",
+        "voir": {
+          "metaTitle": "Voir la sortie de fonds",
+          "title": "Détail de la sortie",
+          "backLabel": "Retour aux sorties"
+        }
+      }
+    },
+    "besoins": {
+      "title": "États de besoin",
+      "description": "Demandes de dépense et circuit de validation. Accès : treasury.expense_requests.*.",
+      "metaTitle": "États de besoin",
+      "nouveau": {
+        "title": "Nouvel état de besoin",
+        "description": "Créer une demande de dépense (brouillon).",
+        "metaTitle": "Nouvel état de besoin",
+        "backLabel": "Retour aux besoins"
+      },
+      "id": {
+        "title": "Modifier l'état de besoin",
+        "description": "Mettre à jour une demande en brouillon.",
+        "metaTitle": "Modifier le besoin",
+        "backLabel": "Retour aux besoins",
+        "voir": {
+          "metaTitle": "Voir l'état de besoin",
+          "title": "Détail du besoin",
+          "backLabel": "Retour aux besoins"
+        }
+      }
+    },
+    "budgets": {
+      "title": "Budgets",
+      "description": "Budgétisation mensuelle, annuelle et par activité/produit. Accès : treasury.budgets.write.",
+      "metaTitle": "Budgets",
+      "nouveau": {
+        "title": "Nouveau budget",
+        "description": "Créer un budget mensuel, annuel, par activité ou produit.",
+        "metaTitle": "Nouveau budget",
+        "backLabel": "Retour aux budgets"
+      },
+      "suivi": {
+        "title": "Budget vs réalisé",
+        "description": "Écarts prévu / réalisé par période, avec alertes de dépassement.",
+        "metaTitle": "Budget vs réalisé",
+        "backLabel": "Retour aux budgets"
+      },
+      "id": {
+        "title": "Modifier le budget",
+        "description": "Mettre à jour un budget.",
+        "metaTitle": "Modifier le budget",
+        "backLabel": "Retour aux budgets",
+        "voir": {
+          "metaTitle": "Voir le budget",
+          "title": "Détail du budget",
+          "backLabel": "Retour aux budgets"
+        }
+      }
+    },
+    "rapports": {
+      "title": "Rapports",
+      "description": "Agrégats et exports des opérations. Accès : treasury.reports.read.",
+      "metaTitle": "Rapports trésorerie"
+    },
+    "externes": {
+      "title": "Collaborateurs externes",
+      "description": "Invitations, jetons et permissions externes. Accès : treasury.externals.manage.",
+      "metaTitle": "Collaborateurs externes"
+    },
+    "audit": {
+      "title": "Audit",
+      "description": "Journal des opérations sensibles. Accès : treasury.audit.read.",
+      "metaTitle": "Audit trésorerie"
+    },
+    "comptabilite": {
+      "title": "Comptabilité",
+      "description": "Pont accounting_links et livres SYSCOHADA. Accès : treasury.accounting_link.read.",
+      "metaTitle": "Comptabilité",
+      "journal": {
+        "title": "Journal",
+        "description": "Écritures d’un journal filtrées par exercice et période.",
+        "metaTitle": "Journal comptable",
+        "id": {
+          "title": "Détail de l’écriture",
+          "description": "Lignes débit et crédit de la pièce.",
+          "metaTitle": "Écriture comptable",
+          "backLabel": "Retour au journal"
+        }
+      },
+      "grand-livre": {
+        "title": "Grand livre",
+        "description": "Mouvements postés par compte.",
+        "metaTitle": "Grand livre"
+      },
+      "balance": {
+        "title": "Balance générale",
+        "description": "Totaux débit / crédit par compte pour la période.",
+        "metaTitle": "Balance générale"
+      }
+    }
+  },
   "profil": {
     "title": "Mon profil",
     "description": "Mettez à jour vos informations et votre photo de profil.",
