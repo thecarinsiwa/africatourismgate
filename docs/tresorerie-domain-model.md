@@ -207,8 +207,8 @@ Journal append-only des opérations sensibles.
 | `action` | `create` \| `update` \| `transition` \| `void` \| `attach` \| `invite` \| `activate` \| `deactivate` \| … |
 | `actor_type` | `user` \| `external` \| `system` |
 | `actor_id` | UUID nullable |
-| `old_values` | JSON null |
-| `new_values` | JSON null |
+| `old_json` | JSON null |
+| `new_json` | JSON null |
 | `created_at` | |
 
 ---

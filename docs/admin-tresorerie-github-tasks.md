@@ -81,7 +81,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-003 | Migration DB états de besoin + sorties + pivots — ✅     | Haute    | API / DB    | M      |
 | TRESO-004 | Migration DB budgets (période / activité / produit) — ✅ | Haute    | API / DB    | M      |
 | TRESO-005 | Migration DB collaborateurs externes + jetons — ✅       | Haute    | API / DB    | M      |
-| TRESO-006 | Migration / extension journal d’audit trésorerie         | Haute    | API / DB    | S      |
+| TRESO-006 | Migration / extension journal d’audit trésorerie — ✅    | Haute    | API / DB    | S      |
 | TRESO-007 | Types partagés `packages/types` (enums, DTOs)            | Haute    | API / Types | M      |
 | TRESO-008 | Catalogue RBAC `treasury.*` + sync seed                  | Haute    | API / RBAC  | M      |
 | TRESO-009 | Shell Admin nav + routes + permissions + registry        | Haute    | Admin       | M      |
@@ -353,10 +353,11 @@ pnpm db:sync
 
 ---
 
-### TRESO-006 — Migration / extension journal d’audit trésorerie
+### TRESO-006 — Migration / extension journal d’audit trésorerie — ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
-**Branche suggérée :** `feature/tresorerie-migration-audit`
+**Branche suggérée :** `feature/tresorerie-migration-audit`  
+**Livrable :** [`database/migrations/add_treasury_audit_logs.sql`](../database/migrations/add_treasury_audit_logs.sql) · [`apps/api/src/entities/treasury-audit-log.entity.ts`](../apps/api/src/entities/treasury-audit-log.entity.ts)
 
 #### Modèle GitHub
 
@@ -372,22 +373,28 @@ Opérations sensibles : user, date, action, anciennes/nouvelles valeurs. Réutil
 
 ## Fichiers clés
 
-- `database/migrations/*`
-- modules audit existants sous `apps/api`
+- `database/migrations/add_treasury_audit_logs.sql`
+- `apps/api/src/entities/treasury-audit-log.entity.ts`
+- `apps/api/src/database/database.module.ts`
+- Pattern : `apps/api/src/modules/rbac/rbac-audit.service.ts`
 
 ## Critères d'acceptation
 
-- [ ] Schéma audit adapté trésorerie
-- [ ] Indexes entity + date
-- [ ] Pas de perte d’historique (append-only)
+- [x] Schéma audit adapté trésorerie (`entity_type`, `action`, `old_json`/`new_json`)
+- [x] Indexes entity + date
+- [x] Pas de perte d’historique (append-only : pas de `updated_at` / `deleted_at`)
 
 ## Plan de test
 
-Migration + insert d’exemple.
+```bash
+pnpm db:sync
+# INSERT exemple create fund_entry ; pas d’UPDATE métier
+```
 
 ## Références
 
 - TRESO-031, rbac-audit-logs existants
+- docs/tresorerie-domain-model.md §4.6
 ```
 
 ---

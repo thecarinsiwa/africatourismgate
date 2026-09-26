@@ -47,6 +47,7 @@ import {
   TreasuryAccessTokens,
   TreasuryExternalCollaborators,
 } from '../entities/treasury-external.entity';
+import { TreasuryAuditLogs } from '../entities/treasury-audit-log.entity';
 import { ensureMigrations } from './ensure-migrations';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
 import { ensureSchema } from './ensure-schema';
@@ -92,6 +93,7 @@ const entityList = [
   Budgets,
   TreasuryExternalCollaborators,
   TreasuryAccessTokens,
+  TreasuryAuditLogs,
 ] as (new () => unknown)[];
 
 @Module({
