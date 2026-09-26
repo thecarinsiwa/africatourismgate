@@ -6,8 +6,8 @@
 
 # Test info
 
-- Name: tresorerie-fund-entry-smoke.spec.ts >> Trésorerie — smoke entrées de fonds >> login → nav → créer entrée → liste → détail
-- Location: tests\e2e\tresorerie-fund-entry-smoke.spec.ts:27:7
+- Name: tresorerie-expense-workflow-smoke.spec.ts >> Trésorerie — circuit sortie (workflow) >> besoin → valider → autoriser → décaisser → justificatif → enregistrée
+- Location: tests\e2e\tresorerie-expense-workflow-smoke.spec.ts:44:7
 
 # Error details
 

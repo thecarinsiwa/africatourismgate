@@ -344,6 +344,18 @@
       "voidedAt": "Anulada el",
       "voidReason": "Motivo de anulación",
       "id": "Identificador"
+    },
+    "workflow": {
+      "actions": {
+        "markDisbursed": "Marcar como desembolsada",
+        "markRecorded": "Marcar como registrada"
+      },
+      "attachmentRequired": "Añada al menos un justificante antes del registro.",
+      "toast": {
+        "successTitle": "Estado actualizado",
+        "successMessage": "La transición de la salida se ha completado.",
+        "errorTitle": "Transición denegada"
+      }
     }
   },
   "expenseRequests": {

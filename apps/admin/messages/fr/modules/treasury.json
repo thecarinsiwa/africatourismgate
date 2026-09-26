@@ -344,6 +344,18 @@
       "voidedAt": "Annulée le",
       "voidReason": "Motif d'annulation",
       "id": "Identifiant"
+    },
+    "workflow": {
+      "actions": {
+        "markDisbursed": "Marquer comme décaissée",
+        "markRecorded": "Marquer comme enregistrée"
+      },
+      "attachmentRequired": "Ajoutez au moins un justificatif avant l'enregistrement.",
+      "toast": {
+        "successTitle": "Statut mis à jour",
+        "successMessage": "La transition de la sortie a été effectuée.",
+        "errorTitle": "Transition refusée"
+      }
     }
   },
   "expenseRequests": {

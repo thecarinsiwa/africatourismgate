@@ -344,6 +344,18 @@
       "voidedAt": "Voided at",
       "voidReason": "Void reason",
       "id": "Identifier"
+    },
+    "workflow": {
+      "actions": {
+        "markDisbursed": "Mark as disbursed",
+        "markRecorded": "Mark as recorded"
+      },
+      "attachmentRequired": "Add at least one supporting document before recording.",
+      "toast": {
+        "successTitle": "Status updated",
+        "successMessage": "The fund exit transition completed.",
+        "errorTitle": "Transition denied"
+      }
     }
   },
   "expenseRequests": {

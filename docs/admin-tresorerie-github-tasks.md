@@ -119,7 +119,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-040 | UI placeholder section Comptabilité — ✅                 | Basse    | Admin       | S      |
 | TRESO-041 | Doc handoff épic SYSCOHADA suivant — ✅                  | Basse    | Docs        | S      |
 | TRESO-042 | E2E smoke nav + CRUD entrée — ✅                         | Haute    | Testing     | M      |
-| TRESO-043 | E2E happy path circuit sortie                            | Haute    | Testing     | M      |
+| TRESO-043 | E2E happy path circuit sortie — ✅                       | Haute    | Testing     | M      |
 | TRESO-044 | QA manuelle RBAC rôles trésorerie                        | Haute    | Testing     | M      |
 | TRESO-045 | Sync OpenAPI + api-client + README module                | Basse    | Docs / API  | S      |
 
@@ -1935,14 +1935,15 @@ pnpm --filter @africatourismgate/admin test:e2e -- tresorerie
 
 ---
 
-### TRESO-043 — E2E happy path circuit sortie
+### TRESO-043 — E2E happy path circuit sortie — ✅
 
 **Labels :** `admin`, `tresorerie`, `testing`, `priority:high`
 **Branche suggérée :** `feature/tresorerie-e2e-expense-workflow`
+**Livrable :** `tests/e2e/tresorerie-expense-workflow-smoke.spec.ts` · helpers workflow dans `treasury-e2e.ts` · UI transitions sorties (`FundExitWorkflowActions`)
 
 #### Modèle GitHub
 
-```markdown
+````markdown
 ## Contexte
 
 Valider le circuit complet côté Admin.
@@ -1958,12 +1959,23 @@ Valider le circuit complet côté Admin.
 
 ## Critères d'acceptation
 
-- [ ] Happy path vert
-- [ ] Échec transition illégale couvert (optionnel assert API/UI)
+- [x] Happy path vert
+- [x] Échec transition illégale couvert (optionnel assert API/UI)
 
 ## Plan de test
 
-Exécuter la spec workflow.
+```bash
+pnpm --filter @africatourismgate/admin test:e2e -- tresorerie-expense-workflow
+```
+
+## Notes
+
+- Isolation : titre `E2E-BESOIN-<timestamp>`, référence sortie `E2E-SORTIE-<timestamp>`.
+- Happy path : draft → submit → validate → authorize → create exit → upload PNG → disbursed → recorded → besoin `closed` + timeline.
+- Illégal : bouton « enregistrée » absent en draft + API `POST …/fund-exits/:id/transition` `draft→recorded` → 400.
+- Prérequis : API + MySQL seedés (`SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD` = credentials admin réels), Chromium Playwright ; `webServer` Playwright démarre API/admin si absents.
+- Exécution locale : si login API renvoie **401**, le mot de passe admin a divergé du seed `ChangeMe123!` (insert-only ne le réécrit pas) — exporter `SEED_ADMIN_PASSWORD` avant `test:e2e`.
+- Correctif annexe UI : `FundExitWorkflowActions` sur la fiche sortie (transitions draft→disbursed→recorded).
 
 ## Références
 

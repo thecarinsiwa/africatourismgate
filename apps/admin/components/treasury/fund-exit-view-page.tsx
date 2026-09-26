@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { usePermissions } from '../../lib/auth/use-permissions';
 import { resolveUnknownApiError } from '../../lib/common-api-errors';
 import { formatMoney } from '../../lib/format-money';
 import {
@@ -23,6 +24,7 @@ import { AdminPageBackLink } from '../admin-page-back-link';
 import { PermissionGate } from '../permission-gate';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { FundExitAttachmentsSection } from './fund-exit-attachments-section';
+import { FundExitWorkflowActions } from './fund-exit-workflow-actions';
 import { TreasuryVoidDialog } from './treasury-void-dialog';
 
 const STATUS_BADGE: Record<FundExitStatus, DataTableBadgeVariant> = {
@@ -67,9 +69,11 @@ export function FundExitViewPage({ fundExitId }: FundExitViewPageProps) {
   const formatDateTime = useFormatDateTime('short');
   const locale = useLocale();
   const emptyDash = tCommon('empty.dash');
+  const { hasPermission, isSuperAdmin } = usePermissions();
 
   const [exit, setExit] = useState<FundExit | null>(null);
   const [voidOpen, setVoidOpen] = useState(false);
+  const [attachmentCount, setAttachmentCount] = useState(0);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -89,6 +93,7 @@ export function FundExitViewPage({ fundExitId }: FundExitViewPageProps) {
     try {
       const data = await getApiClient().getFundExit(fundExitId);
       setExit(data);
+      setAttachmentCount(data.attachments?.length ?? 0);
       setState({ status: 'ready' });
     } catch (error) {
       setState({
@@ -152,12 +157,22 @@ export function FundExitViewPage({ fundExitId }: FundExitViewPageProps) {
   const isVoided = exit.status === 'voided';
   const voidedAt = toIsoString(exit.voidedAt);
   const updatedAt = toIsoString(exit.updatedAt);
+  const canWriteAttachments =
+    !isVoided && (isSuperAdmin || hasPermission('treasury.exits.write'));
 
   return (
     <div className="min-w-0 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <AdminPageBackLink href="/tresorerie/sorties" label={backLabel} />
         <div className="flex flex-wrap gap-2">
+          <FundExitWorkflowActions
+            fundExit={exit}
+            attachmentCount={attachmentCount}
+            onTransitioned={(updated) => {
+              setExit(updated);
+              setAttachmentCount(updated.attachments?.length ?? attachmentCount);
+            }}
+          />
           <PermissionGate permission="treasury.exits.write">
             {!isVoided ? (
               <Button href={editHref} variant="primary" className="w-full sm:w-auto">
@@ -317,7 +332,8 @@ export function FundExitViewPage({ fundExitId }: FundExitViewPageProps) {
         <FundExitAttachmentsSection
           fundExitId={fundExitId}
           initialAttachments={exit.attachments ?? []}
-          canWrite={false}
+          canWrite={canWriteAttachments}
+          onChanged={(list) => setAttachmentCount(list.length)}
         />
       </div>
 
