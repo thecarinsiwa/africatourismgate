@@ -86,7 +86,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-008 | Catalogue RBAC `treasury.*` + sync seed — ✅             | Haute    | API / RBAC  | M      |
 | TRESO-009 | Shell Admin nav + routes + permissions + registry — ✅   | Haute    | Admin       | M      |
 | TRESO-010 | Scaffold i18n fr/en/es modules trésorerie — ✅           | Haute    | i18n        | S      |
-| TRESO-011 | API Nest CRUD `fund-entries` + filtres                   | Haute    | API         | L      |
+| TRESO-011 | API Nest CRUD `fund-entries` + filtres — ✅              | Haute    | API         | L      |
 | TRESO-012 | API liaison entrées ↔ réservations (0,N) + justificatifs | Haute    | API         | M      |
 | TRESO-013 | UI Admin liste + filtres entrées de fonds                | Haute    | Admin       | M      |
 | TRESO-014 | UI Admin formulaire création/édition entrée              | Haute    | Admin       | L      |
@@ -609,10 +609,11 @@ pnpm check:admin-i18n
 
 ---
 
-### TRESO-011 — API Nest CRUD fund-entries + filtres
+### TRESO-011 — API Nest CRUD fund-entries + filtres — ✅
 
-**Labels :** `admin`, `tresorerie`, `api`, `priority:high`
-**Branche suggérée :** `feature/tresorerie-api-fund-entries`
+**Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
+**Branche suggérée :** `feature/tresorerie-api-fund-entries`  
+**Livrable :** `apps/api/src/modules/resources/fund-entries/**` + enregistrement `ApiResourcesModule`
 
 #### Modèle GitHub
 
@@ -636,23 +637,22 @@ Contrats API minimaux pour alimenter l’Admin : liste paginée, CRUD, champs m�
 
 ## Critères d'acceptation
 
-- [ ] CRUD + pagination
-- [ ] Champs : montant, date, devise, source, mode, référence, observations
-- [ ] RBAC appliqué
-- [ ] Spec OpenAPI à jour
+- [x] CRUD + pagination
+- [x] Champs : montant, date, devise, source, mode, référence, observations
+- [x] RBAC appliqué (`treasury.read` / `treasury.entries.write`)
+- [x] Spec OpenAPI à jour (tags Swagger `fund-entries`)
 
 ## Plan de test
 
 ```bash
 pnpm dev:api
 # smoke Swagger / curl CRUD
-````
+```
 
 ## Références
 
-- payments.controller.ts pattern
-
-````
+- TRESO-002, TRESO-008, packages/types treasury
+```
 
 ---
 
@@ -692,7 +692,7 @@ Créer entrée sans / avec 1 / avec N bookings.
 ## Références
 
 - TRESO-011, Bookings
-````
+```
 
 ---
 
