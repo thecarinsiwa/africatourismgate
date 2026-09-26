@@ -351,14 +351,18 @@ import type {
   PaymentsListQuery,
   CreateFundEntryRequest,
   CreateExpenseRequestRequest,
+  CreateFundExitRequest,
   ExpenseRequest,
   ExpenseRequestStatusHistoryEntry,
   ExpenseRequestsListQuery,
   FundAttachment,
   FundEntriesListQuery,
   FundEntry,
+  FundExit,
+  FundExitsListQuery,
   UpdateExpenseRequestRequest,
   UpdateFundEntryRequest,
+  UpdateFundExitRequest,
   CreatePromoCodeRequest,
   CreatePromotionRequest,
   PromoCode,
@@ -1376,6 +1380,29 @@ export class ApiClient {
 
   deleteExpenseRequest(id: string): Promise<void> {
     return this.request<void>(`/expense-requests/${id}`, { method: 'DELETE' });
+  }
+
+  listFundExits(
+    query?: FundExitsListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<FundExit>> {
+    return fetchPaginated<FundExit>(this, '/fund-exits', query, requestOptions);
+  }
+
+  getFundExit(id: string): Promise<FundExit> {
+    return this.request<FundExit>(`/fund-exits/${id}`);
+  }
+
+  createFundExit(body: CreateFundExitRequest): Promise<FundExit> {
+    return this.request<FundExit>('/fund-exits', { method: 'POST', body });
+  }
+
+  updateFundExit(id: string, body: UpdateFundExitRequest): Promise<FundExit> {
+    return this.request<FundExit>(`/fund-exits/${id}`, { method: 'PATCH', body });
+  }
+
+  deleteFundExit(id: string): Promise<void> {
+    return this.request<void>(`/fund-exits/${id}`, { method: 'DELETE' });
   }
 
   getPayment(id: string): Promise<PaymentAdminDetail> {

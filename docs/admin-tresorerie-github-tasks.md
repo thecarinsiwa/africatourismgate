@@ -92,7 +92,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-014 | UI Admin formulaire création/édition entrée — ✅         | Haute    | Admin       | L      |
 | TRESO-015 | UI Admin fiche détail entrée + traçabilité — ✅          | Haute    | Admin       | M      |
 | TRESO-016 | API Nest `expense-requests` CRUD + statuts — ✅          | Haute    | API         | L      |
-| TRESO-017 | API Nest `fund-exits` liées à un état de besoin          | Haute    | API         | L      |
+| TRESO-017 | API Nest `fund-exits` liées à un état de besoin — ✅     | Haute    | API         | L      |
 | TRESO-018 | API sorties ↔ réservations (0,N) + justificatifs         | Haute    | API         | M      |
 | TRESO-019 | UI Admin liste/création états de besoin                  | Haute    | Admin       | M      |
 | TRESO-020 | UI Admin circuit validation → décaissement               | Haute    | Admin       | L      |
@@ -869,10 +869,11 @@ Swagger smoke create/list/get/patch.
 
 ---
 
-### TRESO-017 — API Nest fund-exits liées à un état de besoin
+### TRESO-017 — API Nest fund-exits liées à un état de besoin — ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
-**Branche suggérée :** `feature/tresorerie-api-fund-exits`
+**Branche suggérée :** `feature/tresorerie-api-fund-exits`  
+**Livrable :** `apps/api/src/modules/resources/fund-exits/**` (create gated `authorized`)
 
 #### Modèle GitHub
 
@@ -893,9 +894,9 @@ Sortie de fonds uniquement si état de besoin dans un statut autorisant le déca
 
 ## Critères d'acceptation
 
-- [ ] Création refusée sans besoin valide
-- [ ] CRUD + list
-- [ ] RBAC
+- [x] Création refusée sans besoin `authorized` (400)
+- [x] CRUD + list
+- [x] RBAC (`treasury.read` / `treasury.exits.write`)
 
 ## Plan de test
 
