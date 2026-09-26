@@ -78,7 +78,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | --------- | -------------------------------------------------------- | -------- | ----------- | ------ |
 | TRESO-001 | Spec domaine Trésorerie + schéma cible — ✅              | Haute    | Docs / Spec | M      |
 | TRESO-002 | Migration DB entrées de fonds + pivots réservations — ✅ | Haute    | API / DB    | M      |
-| TRESO-003 | Migration DB états de besoin + sorties + pivots          | Haute    | API / DB    | M      |
+| TRESO-003 | Migration DB états de besoin + sorties + pivots — ✅     | Haute    | API / DB    | M      |
 | TRESO-004 | Migration DB budgets (période / activité / produit)      | Haute    | API / DB    | M      |
 | TRESO-005 | Migration DB collaborateurs externes + jetons            | Haute    | API / DB    | M      |
 | TRESO-006 | Migration / extension journal d’audit trésorerie         | Haute    | API / DB    | S      |
@@ -215,10 +215,11 @@ pnpm db:sync
 - docs/tresorerie-domain-model.md §4.1
 ```
 
-### TRESO-003 — Migration DB états de besoin + sorties + pivots
+### TRESO-003 — Migration DB états de besoin + sorties + pivots — ✅
 
-**Labels :** `admin`, `tresorerie`, `api`, `priority:high`
-**Branche suggérée :** `feature/tresorerie-migration-expense-exits`
+**Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
+**Branche suggérée :** `feature/tresorerie-migration-expense-exits`  
+**Livrable :** [`database/migrations/add_treasury_expense_exits.sql`](../database/migrations/add_treasury_expense_exits.sql) · [`apps/api/src/entities/fund-exit.entity.ts`](../apps/api/src/entities/fund-exit.entity.ts)
 
 #### Modèle GitHub
 
@@ -235,23 +236,28 @@ Toute sortie doit être justifiée par un état de besoin ; sorties aussi (0,N) 
 
 ## Fichiers clés
 
-- `database/migrations/*`
-- `apps/api/src/entities/`
+- `database/migrations/add_treasury_expense_exits.sql`
+- `apps/api/src/entities/fund-exit.entity.ts`
+- `apps/api/src/database/database.module.ts`
 
 ## Critères d'acceptation
 
-- [ ] Impossible de créer une sortie sans état de besoin (contrainte DB ou documentée pour couche service)
-- [ ] Statuts workflow persistés
-- [ ] Pivot (0,N) réservations
+- [x] Impossible de créer une sortie sans état de besoin (`expense_request_id` NOT NULL + FK RESTRICT)
+- [x] Statuts workflow persistés (`expense_requests.status` + `expense_request_status_history`)
+- [x] Pivot (0,N) réservations (`fund_exit_bookings`)
 
 ## Plan de test
 
-Migration up/down ; contrôle FKs.
+```bash
+pnpm db:sync
+# SHOW COLUMNS FROM fund_exits; — expense_request_id NOT NULL
+```
 
 ## Références
 
 - TRESO-001, TRESO-002
-````
+- docs/tresorerie-domain-model.md §4.2–4.3
+```
 
 ---
 
