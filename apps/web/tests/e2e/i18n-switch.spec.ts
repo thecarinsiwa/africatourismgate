@@ -326,7 +326,39 @@ test.describe('Language switch (FR/EN/ES)', () => {
   });
 
   test('account shell shows English after switch', async ({ page }) => {
+    // Seed session once; never clobber on reload — LocaleBootstrap prefers
+    // session.user.preferredLanguage over the atg-locale cookie/localStorage.
     await page.addInitScript(() => {
+      let fromStorage: 'fr' | 'en' | 'es' | null = null;
+      try {
+        const stored = localStorage.getItem('atg-locale');
+        if (stored === 'en' || stored === 'es' || stored === 'fr') {
+          fromStorage = stored;
+        }
+      } catch {
+        /* ignore */
+      }
+
+      const existingRaw = window.sessionStorage.getItem('atg.web.session');
+      if (existingRaw) {
+        // Keep tokens; only align preferredLanguage when localStorage was updated
+        // by switchLanguageViaStorage before reload.
+        if (fromStorage) {
+          try {
+            const existing = JSON.parse(existingRaw) as {
+              user?: { preferredLanguage?: string };
+            };
+            if (existing.user && existing.user.preferredLanguage !== fromStorage) {
+              existing.user.preferredLanguage = fromStorage;
+              window.sessionStorage.setItem('atg.web.session', JSON.stringify(existing));
+            }
+          } catch {
+            /* ignore */
+          }
+        }
+        return;
+      }
+
       window.sessionStorage.setItem(
         'atg.web.session',
         JSON.stringify({
@@ -338,7 +370,7 @@ test.describe('Language switch (FR/EN/ES)', () => {
             email: 'i18n@example.com',
             firstName: 'I18n',
             lastName: 'Test',
-            preferredLanguage: 'fr',
+            preferredLanguage: fromStorage ?? 'fr',
             organizationId: null,
             status: 'active',
           },
