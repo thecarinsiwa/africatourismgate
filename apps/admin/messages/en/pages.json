@@ -776,7 +776,19 @@
     "entrees": {
       "title": "Fund entries",
       "description": "Record and track fund inflows. Access: treasury.read / treasury.entries.write.",
-      "metaTitle": "Fund entries"
+      "metaTitle": "Fund entries",
+      "nouveau": {
+        "title": "New fund entry",
+        "description": "Create a fund entry with optional bookings and attachments.",
+        "metaTitle": "New fund entry",
+        "backLabel": "Back to entries"
+      },
+      "id": {
+        "title": "Edit fund entry",
+        "description": "Update a fund entry.",
+        "metaTitle": "Edit entry",
+        "backLabel": "Back to entries"
+      }
     },
     "sorties": {
       "title": "Fund exits",

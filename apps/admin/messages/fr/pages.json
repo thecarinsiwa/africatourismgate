@@ -776,7 +776,19 @@
     "entrees": {
       "title": "Entrées de fonds",
       "description": "Enregistrement et suivi des entrées de fonds. Accès : treasury.read / treasury.entries.write.",
-      "metaTitle": "Entrées de fonds"
+      "metaTitle": "Entrées de fonds",
+      "nouveau": {
+        "title": "Nouvelle entrée de fonds",
+        "description": "Créer une entrée de fonds avec réservations et justificatifs optionnels.",
+        "metaTitle": "Nouvelle entrée de fonds",
+        "backLabel": "Retour aux entrées"
+      },
+      "id": {
+        "title": "Modifier l'entrée de fonds",
+        "description": "Mettre à jour une entrée de fonds.",
+        "metaTitle": "Modifier l'entrée",
+        "backLabel": "Retour aux entrées"
+      }
     },
     "sorties": {
       "title": "Sorties de fonds",

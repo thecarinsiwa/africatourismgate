@@ -89,7 +89,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-011 | API Nest CRUD `fund-entries` + filtres — ✅              | Haute    | API         | L      |
 | TRESO-012 | API liaison entrées ↔ réservations (0,N) + justificatifs — ✅ | Haute    | API         | M      |
 | TRESO-013 | UI Admin liste + filtres entrées de fonds — ✅           | Haute    | Admin       | M      |
-| TRESO-014 | UI Admin formulaire création/édition entrée              | Haute    | Admin       | L      |
+| TRESO-014 | UI Admin formulaire création/édition entrée — ✅         | Haute    | Admin       | L      |
 | TRESO-015 | UI Admin fiche détail entrée + traçabilité               | Haute    | Admin       | M      |
 | TRESO-016 | API Nest `expense-requests` CRUD + statuts               | Haute    | API         | L      |
 | TRESO-017 | API Nest `fund-exits` liées à un état de besoin          | Haute    | API         | L      |
@@ -741,10 +741,11 @@ Pattern DataTable + `getApiClient` + `AdminListPageHeader`.
 
 ---
 
-### TRESO-014 — UI Admin formulaire création/édition entrée
+### TRESO-014 — UI Admin formulaire création/édition entrée — ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:high`  
-**Branche suggérée :** `feature/tresorerie-ui-fund-entry-form`
+**Branche suggérée :** `feature/tresorerie-ui-fund-entry-form`  
+**Livrable :** `fund-entry-form.tsx` + attachments + routes `nouveau` / `[id]`
 
 #### Modèle GitHub
 
@@ -762,15 +763,17 @@ Formulaire complet + multi-select réservations.
 
 ## Fichiers clés
 
-- `apps/admin/components/.../fund-entry-form.tsx`
-- routes `nouveau` / `[id]`
+- `apps/admin/components/treasury/fund-entry-form.tsx`
+- `apps/admin/components/treasury/fund-entry-attachments-section.tsx`
+- `apps/admin/app/(dashboard)/tresorerie/entrees/nouveau/page.tsx`
+- `apps/admin/app/(dashboard)/tresorerie/entrees/[id]/page.tsx`
 
 ## Critères d'acceptation
 
-- [ ] Create + edit OK
-- [ ] 0..N bookings
-- [ ] Permissions write
-- [ ] i18n fr/en/es
+- [x] Create + edit OK
+- [x] 0..N bookings
+- [x] Permissions write
+- [x] i18n fr/en/es
 
 ## Plan de test
 

@@ -157,6 +157,16 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Enregistrement et suivi des entrées de fonds.',
     apiResource: 'fund-entries',
   },
+  'tresorerie/entrees/nouveau': {
+    title: 'Nouvelle entrée de fonds',
+    description: 'Créer une entrée de fonds.',
+    apiResource: 'fund-entries',
+  },
+  'tresorerie/entrees/id': {
+    title: 'Modifier entrée de fonds',
+    description: 'Éditer une entrée de fonds.',
+    apiResource: 'fund-entries',
+  },
   'tresorerie/sorties': {
     title: 'Sorties de fonds',
     description: 'Décaissements liés à un état de besoin.',

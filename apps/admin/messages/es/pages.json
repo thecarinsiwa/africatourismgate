@@ -776,7 +776,19 @@
     "entrees": {
       "title": "Entradas de fondos",
       "description": "Registro y seguimiento de entradas. Acceso: treasury.read / treasury.entries.write.",
-      "metaTitle": "Entradas de fondos"
+      "metaTitle": "Entradas de fondos",
+      "nouveau": {
+        "title": "Nueva entrada de fondos",
+        "description": "Crear una entrada con reservas y justificantes opcionales.",
+        "metaTitle": "Nueva entrada de fondos",
+        "backLabel": "Volver a las entradas"
+      },
+      "id": {
+        "title": "Editar entrada de fondos",
+        "description": "Actualizar una entrada de fondos.",
+        "metaTitle": "Editar entrada",
+        "backLabel": "Volver a las entradas"
+      }
     },
     "sorties": {
       "title": "Salidas de fondos",

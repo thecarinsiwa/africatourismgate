@@ -116,7 +116,8 @@
       },
       "hints": {
         "bookingIds": "None, one, or many bookings (0,N cardinality).",
-        "sourceOther": "Clarify the origin in the notes."
+        "sourceOther": "Clarify the origin in the notes.",
+        "amountCents": "Amount in major units (e.g. 1500.00)."
       },
       "validation": {
         "amountPositive": "Amount must be greater than zero.",
@@ -124,7 +125,31 @@
         "operationDateRequired": "Date is required.",
         "sourceRequired": "Source is required.",
         "paymentMethodRequired": "Payment method is required.",
-        "notesRequiredForOther": "Notes are required when source is Other."
+        "notesRequiredForOther": "Notes are required when source is Other.",
+        "organizationRequired": "Organization is required."
+      },
+      "organization": "Organization",
+      "bookingsSearch": "Search a booking…",
+      "bookingsSearchAria": "Search bookings to link",
+      "bookingsEmpty": "No bookings found.",
+      "bookingsSelected": "{count} booking(s) selected",
+      "bookingsLoading": "Searching bookings…",
+      "attachments": {
+        "title": "Supporting documents",
+        "hint": "JPEG, PNG, WebP or PDF — max 10 MB. Available after save.",
+        "upload": "Add a file",
+        "empty": "No attachments.",
+        "remove": "Remove",
+        "uploading": "Uploading…",
+        "pendingHint": "Pending files will be uploaded after creation."
+      },
+      "accessDenied": "Access denied: treasury.entries.write permission required.",
+      "toast": {
+        "createdTitle": "Entry created",
+        "createdMessage": "The fund entry has been saved.",
+        "updatedTitle": "Entry updated",
+        "updatedMessage": "Changes have been saved.",
+        "errorTitle": "Error"
       },
       "submitCreate": "Save entry",
       "submitUpdate": "Save changes"

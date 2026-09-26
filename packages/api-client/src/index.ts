@@ -350,6 +350,7 @@ import type {
   PaymentListItem,
   PaymentsListQuery,
   CreateFundEntryRequest,
+  FundAttachment,
   FundEntriesListQuery,
   FundEntry,
   UpdateFundEntryRequest,
@@ -1292,6 +1293,39 @@ export class ApiClient {
 
   deleteFundEntry(id: string): Promise<void> {
     return this.request<void>(`/fund-entries/${id}`, { method: 'DELETE' });
+  }
+
+  attachFundEntryBookings(
+    id: string,
+    body: { bookingIds: string[] },
+  ): Promise<FundEntry> {
+    return this.request<FundEntry>(`/fund-entries/${id}/bookings`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  detachFundEntryBooking(id: string, bookingId: string): Promise<FundEntry> {
+    return this.request<FundEntry>(`/fund-entries/${id}/bookings/${bookingId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  listFundEntryAttachments(id: string): Promise<FundAttachment[]> {
+    return this.request<FundAttachment[]>(`/fund-entries/${id}/attachments`);
+  }
+
+  uploadFundEntryAttachment(id: string, body: FormData): Promise<FundAttachment> {
+    return this.request<FundAttachment>(`/fund-entries/${id}/attachments`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  deleteFundEntryAttachment(id: string, attachmentId: string): Promise<void> {
+    return this.request<void>(`/fund-entries/${id}/attachments/${attachmentId}`, {
+      method: 'DELETE',
+    });
   }
 
   getPayment(id: string): Promise<PaymentAdminDetail> {

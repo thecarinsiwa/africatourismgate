@@ -116,7 +116,8 @@
       },
       "hints": {
         "bookingIds": "Aucune, une ou plusieurs réservations (cardinalité 0,N).",
-        "sourceOther": "Précisez l'origine dans les observations."
+        "sourceOther": "Précisez l'origine dans les observations.",
+        "amountCents": "Montant en unités majeures (ex. 1500,00)."
       },
       "validation": {
         "amountPositive": "Le montant doit être supérieur à zéro.",
@@ -124,7 +125,31 @@
         "operationDateRequired": "La date est obligatoire.",
         "sourceRequired": "La source est obligatoire.",
         "paymentMethodRequired": "Le mode de paiement est obligatoire.",
-        "notesRequiredForOther": "Les observations sont obligatoires pour la source « Autre »."
+        "notesRequiredForOther": "Les observations sont obligatoires pour la source « Autre ».",
+        "organizationRequired": "L'organisation est obligatoire."
+      },
+      "organization": "Organisation",
+      "bookingsSearch": "Rechercher une réservation…",
+      "bookingsSearchAria": "Rechercher des réservations à lier",
+      "bookingsEmpty": "Aucune réservation trouvée.",
+      "bookingsSelected": "{count} réservation(s) sélectionnée(s)",
+      "bookingsLoading": "Recherche des réservations…",
+      "attachments": {
+        "title": "Justificatifs",
+        "hint": "JPEG, PNG, WebP ou PDF — max 10 Mo. Disponibles après enregistrement.",
+        "upload": "Ajouter un fichier",
+        "empty": "Aucun justificatif.",
+        "remove": "Supprimer",
+        "uploading": "Envoi…",
+        "pendingHint": "Fichiers en attente : ils seront envoyés après la création."
+      },
+      "accessDenied": "Accès refusé : permission treasury.entries.write requise.",
+      "toast": {
+        "createdTitle": "Entrée créée",
+        "createdMessage": "L'entrée de fonds a été enregistrée.",
+        "updatedTitle": "Entrée mise à jour",
+        "updatedMessage": "Les modifications ont été enregistrées.",
+        "errorTitle": "Erreur"
       },
       "submitCreate": "Enregistrer l'entrée",
       "submitUpdate": "Enregistrer les modifications"

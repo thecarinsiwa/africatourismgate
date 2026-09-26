@@ -116,7 +116,8 @@
       },
       "hints": {
         "bookingIds": "Ninguna, una o varias reservas (cardinalidad 0,N).",
-        "sourceOther": "Precise el origen en las observaciones."
+        "sourceOther": "Precise el origen en las observaciones.",
+        "amountCents": "Importe en unidades mayores (ej. 1500,00)."
       },
       "validation": {
         "amountPositive": "El importe debe ser mayor que cero.",
@@ -124,7 +125,31 @@
         "operationDateRequired": "La fecha es obligatoria.",
         "sourceRequired": "El origen es obligatorio.",
         "paymentMethodRequired": "El método de pago es obligatorio.",
-        "notesRequiredForOther": "Las observaciones son obligatorias cuando el origen es Otro."
+        "notesRequiredForOther": "Las observaciones son obligatorias cuando el origen es Otro.",
+        "organizationRequired": "La organización es obligatoria."
+      },
+      "organization": "Organización",
+      "bookingsSearch": "Buscar una reserva…",
+      "bookingsSearchAria": "Buscar reservas para vincular",
+      "bookingsEmpty": "No se encontraron reservas.",
+      "bookingsSelected": "{count} reserva(s) seleccionada(s)",
+      "bookingsLoading": "Buscando reservas…",
+      "attachments": {
+        "title": "Justificantes",
+        "hint": "JPEG, PNG, WebP o PDF — máx. 10 Mo. Disponibles tras guardar.",
+        "upload": "Añadir un archivo",
+        "empty": "No hay justificantes.",
+        "remove": "Eliminar",
+        "uploading": "Enviando…",
+        "pendingHint": "Los archivos pendientes se enviarán tras la creación."
+      },
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.entries.write.",
+      "toast": {
+        "createdTitle": "Entrada creada",
+        "createdMessage": "La entrada de fondos se ha guardado.",
+        "updatedTitle": "Entrada actualizada",
+        "updatedMessage": "Los cambios se han guardado.",
+        "errorTitle": "Error"
       },
       "submitCreate": "Guardar entrada",
       "submitUpdate": "Guardar cambios"
