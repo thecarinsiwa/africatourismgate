@@ -18,44 +18,10 @@ import { CreateExpenseRequestDto } from './dto/create-expense-request.dto';
 import { ExpenseRequestsListQueryDto } from './dto/expense-requests-list-query.dto';
 import { TransitionExpenseRequestDto } from './dto/transition-expense-request.dto';
 import { UpdateExpenseRequestDto } from './dto/update-expense-request.dto';
-
-/** Legal edges: fromStatus → Set of toStatus */
-const ALLOWED_TRANSITIONS: Record<
-  ExpenseRequestStatus,
-  ReadonlySet<ExpenseRequestStatus>
-> = {
-  draft: new Set(['submitted', 'cancelled']),
-  submitted: new Set(['validated', 'rejected', 'cancelled']),
-  validated: new Set(['authorized', 'rejected']),
-  authorized: new Set(['closed']),
-  rejected: new Set(),
-  cancelled: new Set(),
-  closed: new Set(),
-};
-
-function permissionForTransition(
-  from: ExpenseRequestStatus,
-  to: ExpenseRequestStatus,
-): string {
-  if (to === 'submitted' || to === 'cancelled') {
-    return 'treasury.expense_requests.create';
-  }
-  if (to === 'validated') {
-    return 'treasury.expense_requests.validate';
-  }
-  if (to === 'rejected') {
-    return from === 'submitted'
-      ? 'treasury.expense_requests.validate'
-      : 'treasury.expense_requests.authorize';
-  }
-  if (to === 'authorized') {
-    return 'treasury.expense_requests.authorize';
-  }
-  if (to === 'closed') {
-    return 'treasury.exits.write';
-  }
-  throw new BadRequestException(`Unsupported transition ${from} → ${to}`);
-}
+import {
+  isExpenseRequestTransitionAllowed,
+  permissionForExpenseRequestTransition,
+} from './expense-request-transitions';
 
 @Injectable()
 export class ExpenseRequestsService extends CrudService<ExpenseRequests> {
@@ -206,33 +172,42 @@ export class ExpenseRequestsService extends CrudService<ExpenseRequests> {
     });
   }
 
+  /**
+   * Apply a status transition (state machine). Appends immutable history.
+   * Used by HTTP endpoint and by fund-exit recorded → close besoin.
+   */
   async transition(
     id: string,
     dto: TransitionExpenseRequestDto,
     actorUserId: string,
+    options?: { skipPermissionCheck?: boolean },
   ): Promise<ExpenseRequests> {
     const existing = await this.findOne(id);
     const fromStatus = existing.status;
     const toStatus = dto.toStatus as ExpenseRequestStatus;
 
-    const allowed = ALLOWED_TRANSITIONS[fromStatus];
-    if (!allowed.has(toStatus)) {
+    if (!isExpenseRequestTransitionAllowed(fromStatus, toStatus)) {
       throw new BadRequestException(
         `Illegal transition: ${fromStatus} → ${toStatus}`,
       );
     }
 
-    const requiredPermission = permissionForTransition(fromStatus, toStatus);
-    const isSuperAdmin =
-      await this.permissionsService.hasSuperAdminRole(actorUserId);
-    if (!isSuperAdmin) {
-      const ok = await this.permissionsService.hasAnyPermission(actorUserId, [
-        requiredPermission,
-      ]);
-      if (!ok) {
-        throw new ForbiddenException(
-          `Missing permission: ${requiredPermission}`,
-        );
+    const requiredPermission = permissionForExpenseRequestTransition(
+      fromStatus,
+      toStatus,
+    );
+    if (!options?.skipPermissionCheck) {
+      const isSuperAdmin =
+        await this.permissionsService.hasSuperAdminRole(actorUserId);
+      if (!isSuperAdmin) {
+        const ok = await this.permissionsService.hasAnyPermission(actorUserId, [
+          requiredPermission,
+        ]);
+        if (!ok) {
+          throw new ForbiddenException(
+            `Missing permission: ${requiredPermission}`,
+          );
+        }
       }
     }
 

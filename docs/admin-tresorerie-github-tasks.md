@@ -1095,9 +1095,9 @@ Chaque transition doit être historisée pour audit complet.
 
 ## Critères d'acceptation
 
-- [ ] Transitions illégales → 4xx
-- [ ] Historique consultable
-- [ ] Permissions par type d’action
+- [x] Transitions illégales → 4xx
+- [x] Historique consultable
+- [x] Permissions par type d’action
 
 ## Plan de test
 

@@ -33,6 +33,7 @@ import { AttachFundExitBookingsDto } from './dto/attach-fund-exit-bookings.dto';
 import { CreateFundExitDto } from './dto/create-fund-exit.dto';
 import { FundExitAttachmentDto } from './dto/fund-exit-attachment.dto';
 import { FundExitsListQueryDto } from './dto/fund-exits-list-query.dto';
+import { TransitionFundExitDto } from './dto/transition-fund-exit.dto';
 import { UpdateFundExitDto } from './dto/update-fund-exit.dto';
 import {
   FUND_EXIT_ATTACHMENT_MAX_BYTES,
@@ -170,6 +171,20 @@ export class FundExitsController {
     @CurrentUser() user: AuthUserDto,
   ) {
     return this.service.createFromDto(dto, user.id);
+  }
+
+  @RequirePermissions('treasury.exits.write')
+  @Post(':id/transition')
+  @ApiOperation({
+    summary:
+      'Transition fund exit status (draft→disbursed→recorded; attachment required for recorded)',
+  })
+  transition(
+    @Param('id') id: string,
+    @Body() dto: TransitionFundExitDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.transition(id, dto, user.id);
   }
 
   @RequirePermissions('treasury.exits.write')

@@ -309,6 +309,7 @@ export type {
   FundExitsListQuery,
   InviteTreasuryExternalCollaboratorRequest,
   TransitionExpenseRequestRequest,
+  TransitionFundExitRequest,
   TreasuryAccessToken,
   TreasuryActorType,
   TreasuryAuditAction,

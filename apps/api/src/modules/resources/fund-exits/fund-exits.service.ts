@@ -16,13 +16,17 @@ import {
   ExpenseRequests,
   FundExitAttachments,
   FundExitBookings,
+  FundExitStatus,
   FundExits,
 } from '../../../entities/fund-exit.entity';
 import { Bookings } from '../../../entities/generated';
+import { ExpenseRequestsService } from '../expense-requests/expense-requests.service';
 import { CreateFundExitDto } from './dto/create-fund-exit.dto';
 import { FundExitAttachmentDto } from './dto/fund-exit-attachment.dto';
 import { FundExitsListQueryDto } from './dto/fund-exits-list-query.dto';
+import { TransitionFundExitDto } from './dto/transition-fund-exit.dto';
 import { UpdateFundExitDto } from './dto/update-fund-exit.dto';
+import { isFundExitTransitionAllowed } from './fund-exit-transitions';
 
 /** Domain rule TRESO-017 / §6 : décaissement uniquement si besoin autorisé */
 const DISBURSABLE_EXPENSE_STATUSES = ['authorized'] as const;
@@ -127,6 +131,7 @@ export class FundExitsService extends CrudService<FundExits> {
     private readonly expenseRequestsRepository: Repository<ExpenseRequests>,
     @InjectRepository(Bookings)
     private readonly bookingsRepository: Repository<Bookings>,
+    private readonly expenseRequestsService: ExpenseRequestsService,
   ) {
     super(fundExitsRepository);
   }
@@ -185,6 +190,66 @@ export class FundExitsService extends CrudService<FundExits> {
 
   async findOneDto(id: string): Promise<FundExitResponse> {
     const exit = await this.findOne(id);
+    return this.toResponse(exit, true);
+  }
+
+  /**
+   * State-machine transition: draft → disbursed → recorded.
+   * `recorded` requires ≥1 attachment; closes linked expense request when authorized.
+   */
+  async transition(
+    id: string,
+    dto: TransitionFundExitDto,
+    actorUserId: string,
+  ): Promise<FundExitResponse> {
+    const existing = await this.findOne(id);
+    this.assertNotVoided(existing);
+
+    const fromStatus = existing.status;
+    const toStatus = dto.toStatus as FundExitStatus;
+
+    if (!isFundExitTransitionAllowed(fromStatus, toStatus)) {
+      throw new BadRequestException(
+        `Illegal transition: ${fromStatus} → ${toStatus}`,
+      );
+    }
+
+    if (toStatus === 'recorded') {
+      const attachments = await this.fundExitAttachmentsRepository.count({
+        where: { fundExitId: id, deletedAt: IsNull() },
+      });
+      if (attachments < 1) {
+        throw new BadRequestException(
+          'At least one supporting document is required before marking as recorded',
+        );
+      }
+    }
+
+    const exit = await super.update(
+      id,
+      { status: toStatus } as DeepPartial<FundExits>,
+      actorUserId,
+    );
+
+    if (toStatus === 'recorded') {
+      const expenseRequest = await this.expenseRequestsRepository.findOne({
+        where: { id: existing.expenseRequestId },
+      });
+      if (expenseRequest && expenseRequest.status === 'authorized') {
+        await this.expenseRequestsService.transition(
+          expenseRequest.id,
+          {
+            toStatus: 'closed',
+            comment:
+              dto.comment?.trim() ||
+              `Closed after fund exit ${id} recorded`,
+          },
+          actorUserId,
+          { skipPermissionCheck: true },
+        );
+      }
+    }
+
     return this.toResponse(exit, true);
   }
 

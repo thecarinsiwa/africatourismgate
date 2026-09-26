@@ -249,6 +249,12 @@ export interface TransitionExpenseRequestRequest {
   comment?: string | null;
 }
 
+/** Fund exit status transition (TRESO-022) — void = TRESO-033 */
+export interface TransitionFundExitRequest {
+  toStatus: Extract<FundExitStatus, 'disbursed' | 'recorded'>;
+  comment?: string | null;
+}
+
 // ─── Sorties de fonds ───────────────────────────────────────────────────────
 
 export interface FundExit {
@@ -307,7 +313,6 @@ export interface UpdateFundExitRequest {
   reference?: string | null;
   notes?: string | null;
   bookingIds?: string[];
-  status?: FundExitStatus;
 }
 
 // ─── Budgets ────────────────────────────────────────────────────────────────
