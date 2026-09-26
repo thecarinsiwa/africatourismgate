@@ -104,7 +104,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-026 | UI suivi budget vs réalisé (agrégats légers) — ✅        | Moyenne  | Admin       | M      |
 | TRESO-027 | API invitation e-mail + jeton/lien sécurisé — ✅         | Moyenne  | API         | M      |
 | TRESO-028 | API activate/deactivate + permissions externes — ✅      | Moyenne  | API         | M      |
-| TRESO-029 | UI Admin gestion collaborateurs externes                 | Moyenne  | Admin       | M      |
+| TRESO-029 | UI Admin gestion collaborateurs externes — ✅            | Moyenne  | Admin       | M      |
 | TRESO-030 | Flux minimal état de besoin via jeton                    | Moyenne  | Admin / API | L      |
 | TRESO-031 | API journal d’audit (user, action, old/new)              | Haute    | API         | M      |
 | TRESO-032 | UI Admin consultation audit trésorerie                   | Haute    | Admin       | M      |
@@ -1354,10 +1354,11 @@ Activer/désactiver ; tenter create besoin.
 
 ---
 
-### TRESO-029 — UI Admin gestion collaborateurs externes
+### TRESO-029 — UI Admin gestion collaborateurs externes — ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:medium`  
-**Branche suggérée :** `feature/tresorerie-ui-external-collaborators`
+**Branche suggérée :** `feature/tresorerie-ui-external-collaborators`  
+**Livrable :** `/tresorerie/externes` · liste + invite modal · activate/deactivate · régénérer lien · `GET /treasury-external-collaborators` · i18n + `PermissionGate`
 
 #### Modèle GitHub
 
@@ -1378,9 +1379,9 @@ Back-office pour inviter, activer, attribuer droits.
 
 ## Critères d'acceptation
 
-- [ ] CRUD/gestion UI
-- [ ] Gates responsable financier
-- [ ] i18n
+- [x] CRUD/gestion UI
+- [x] Gates responsable financier
+- [x] i18n
 
 ## Plan de test
 

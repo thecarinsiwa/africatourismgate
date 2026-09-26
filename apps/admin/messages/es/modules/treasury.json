@@ -486,7 +486,14 @@
       "ariaLabel": "Colaboradores externos",
       "accessDenied": "Acceso denegado: se requiere treasury.externals.manage o treasury.read.",
       "emptyDefault": "No hay colaboradores externos.",
+      "emptyFiltered": "Ningún colaborador coincide con sus criterios.",
       "inviteButton": "Invitar por correo",
+      "searchPlaceholder": "Buscar por correo o nombre…",
+      "searchAria": "Buscar colaboradores externos",
+      "filterActive": "Estado",
+      "filterActiveAll": "Todos",
+      "filterActiveYes": "Activos",
+      "filterActiveNo": "Inactivos",
       "columns": {
         "email": "Correo",
         "displayName": "Nombre",
@@ -496,6 +503,7 @@
     },
     "form": {
       "inviteTitle": "Invitar a un colaborador externo",
+      "organization": "Organización",
       "fields": {
         "email": "Correo electrónico",
         "displayName": "Nombre visible",
@@ -510,9 +518,26 @@
       "validation": {
         "emailRequired": "El correo es obligatorio.",
         "emailInvalid": "Correo no válido.",
-        "scopesRequired": "Se requiere al menos un permiso."
+        "scopesRequired": "Se requiere al menos un permiso.",
+        "organizationRequired": "La organización es obligatoria."
       },
-      "submitInvite": "Enviar invitación"
+      "submitInvite": "Enviar invitación",
+      "cancelInvite": "Cerrar",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.externals.manage.",
+      "inviteUrlLabel": "Enlace de invitación (correo no enviado)",
+      "inviteUrlCopied": "Enlace copiado",
+      "copyInviteUrl": "Copiar enlace",
+      "toast": {
+        "invitedTitle": "Invitación enviada",
+        "invitedMessage": "El colaborador ha sido invitado.",
+        "activatedTitle": "Colaborador activado",
+        "activatedMessage": "El acceso ha sido reactivado.",
+        "deactivatedTitle": "Colaborador desactivado",
+        "deactivatedMessage": "El acceso ha sido desactivado y los tokens revocados.",
+        "regeneratedTitle": "Enlace regenerado",
+        "regeneratedMessage": "Se ha generado un nuevo enlace de acceso.",
+        "errorTitle": "Error"
+      }
     },
     "scopes": {
       "expense_requests.create": "Crear un estado de necesidad"

@@ -321,6 +321,7 @@ export type {
   TreasuryAuditLog,
   TreasuryAuditLogsListQuery,
   TreasuryExternalCollaborator,
+  TreasuryExternalCollaboratorsListQuery,
   TreasuryExternalScope,
   TreasuryPaymentMethod,
   UpdateBudgetRequest,

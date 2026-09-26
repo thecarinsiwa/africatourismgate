@@ -10,6 +10,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
+import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { newId } from '../../../common/utils/uuid';
 import {
   TreasuryAccessTokens,
@@ -18,6 +19,7 @@ import {
 import { EmailService } from '../../email/email.service';
 import { TreasuryAuditService } from '../treasury-audit/treasury-audit.service';
 import { InviteTreasuryExternalCollaboratorDto } from './dto/invite-treasury-external-collaborator.dto';
+import { TreasuryExternalCollaboratorsListQueryDto } from './dto/treasury-external-collaborators-list-query.dto';
 import { UpdateTreasuryExternalCollaboratorDto } from './dto/update-treasury-external-collaborator.dto';
 
 const DEFAULT_TTL_HOURS = 72;
@@ -80,6 +82,51 @@ export class ExternalCollaboratorsService {
     private readonly config: ConfigService,
     private readonly treasuryAudit: TreasuryAuditService,
   ) {}
+
+  async findAll(
+    query: TreasuryExternalCollaboratorsListQueryDto,
+  ): Promise<PaginatedResult<TreasuryExternalCollaboratorDto>> {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+
+    const qb = this.collaboratorsRepo
+      .createQueryBuilder('collab')
+      .where('collab.deletedAt IS NULL');
+
+    if (query.organizationId) {
+      qb.andWhere('collab.organizationId = :organizationId', {
+        organizationId: query.organizationId,
+      });
+    }
+    if (query.isActive !== undefined) {
+      qb.andWhere('collab.isActive = :isActive', {
+        isActive: query.isActive,
+      });
+    }
+    const search = query.search?.trim();
+    if (search) {
+      qb.andWhere(
+        '(collab.email LIKE :term OR collab.displayName LIKE :term)',
+        { term: `%${search}%` },
+      );
+    }
+
+    qb.orderBy('collab.createdAt', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit);
+
+    const [rows, total] = await qb.getManyAndCount();
+
+    return {
+      data: rows.map((row) => this.toCollaboratorDto(row)),
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit) || 1,
+      },
+    };
+  }
 
   async invite(
     dto: InviteTreasuryExternalCollaboratorDto,

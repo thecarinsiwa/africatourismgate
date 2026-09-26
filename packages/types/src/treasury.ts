@@ -426,6 +426,14 @@ export interface TreasuryExternalCollaborator {
   updatedAt: string | null;
 }
 
+export interface TreasuryExternalCollaboratorsListQuery {
+  page?: number;
+  limit?: number;
+  organizationId?: string;
+  search?: string;
+  isActive?: boolean;
+}
+
 export interface TreasuryAccessToken {
   id: string;
   collaboratorId: string;

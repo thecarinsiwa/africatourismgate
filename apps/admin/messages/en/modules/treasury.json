@@ -486,7 +486,14 @@
       "ariaLabel": "External collaborators",
       "accessDenied": "Access denied: treasury.externals.manage or treasury.read required.",
       "emptyDefault": "No external collaborators.",
+      "emptyFiltered": "No collaborator matches your criteria.",
       "inviteButton": "Invite by email",
+      "searchPlaceholder": "Search by email or name…",
+      "searchAria": "Search external collaborators",
+      "filterActive": "Status",
+      "filterActiveAll": "All",
+      "filterActiveYes": "Active",
+      "filterActiveNo": "Inactive",
       "columns": {
         "email": "Email",
         "displayName": "Name",
@@ -496,6 +503,7 @@
     },
     "form": {
       "inviteTitle": "Invite an external collaborator",
+      "organization": "Organization",
       "fields": {
         "email": "Email address",
         "displayName": "Display name",
@@ -510,9 +518,26 @@
       "validation": {
         "emailRequired": "Email is required.",
         "emailInvalid": "Invalid email.",
-        "scopesRequired": "At least one permission is required."
+        "scopesRequired": "At least one permission is required.",
+        "organizationRequired": "Organization is required."
       },
-      "submitInvite": "Send invitation"
+      "submitInvite": "Send invitation",
+      "cancelInvite": "Close",
+      "accessDenied": "Access denied: treasury.externals.manage permission required.",
+      "inviteUrlLabel": "Invite link (email not sent)",
+      "inviteUrlCopied": "Link copied",
+      "copyInviteUrl": "Copy link",
+      "toast": {
+        "invitedTitle": "Invitation sent",
+        "invitedMessage": "The collaborator has been invited.",
+        "activatedTitle": "Collaborator activated",
+        "activatedMessage": "Access has been re-enabled.",
+        "deactivatedTitle": "Collaborator deactivated",
+        "deactivatedMessage": "Access has been disabled and tokens revoked.",
+        "regeneratedTitle": "Link regenerated",
+        "regeneratedMessage": "A new access link has been generated.",
+        "errorTitle": "Error"
+      }
     },
     "scopes": {
       "expense_requests.create": "Create an expense request"

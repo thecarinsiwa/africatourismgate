@@ -363,6 +363,7 @@ import type {
   ValidateTreasuryAccessTokenResponse,
   TreasuryAccessToken,
   TreasuryExternalCollaborator,
+  TreasuryExternalCollaboratorsListQuery,
   UpdateTreasuryExternalCollaboratorRequest,
   ExpenseRequest,
   ExpenseRequestStatusHistoryEntry,
@@ -1519,6 +1520,18 @@ export class ApiClient {
     return this.request<InviteTreasuryExternalCollaboratorResponse>(
       '/treasury-external-collaborators/invite',
       { method: 'POST', body },
+    );
+  }
+
+  listTreasuryExternalCollaborators(
+    query?: TreasuryExternalCollaboratorsListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<TreasuryExternalCollaborator>> {
+    return fetchPaginated<TreasuryExternalCollaborator>(
+      this,
+      '/treasury-external-collaborators',
+      query,
+      requestOptions,
     );
   }
 

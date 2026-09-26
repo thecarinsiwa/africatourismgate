@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Patch,
   Post,
+  Query,
   Req,
 } from '@nestjs/common';
 import {
@@ -18,6 +20,7 @@ import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { InviteTreasuryExternalCollaboratorDto } from './dto/invite-treasury-external-collaborator.dto';
+import { TreasuryExternalCollaboratorsListQueryDto } from './dto/treasury-external-collaborators-list-query.dto';
 import { UpdateTreasuryExternalCollaboratorDto } from './dto/update-treasury-external-collaborator.dto';
 import { ValidateTreasuryAccessTokenDto } from './dto/validate-treasury-access-token.dto';
 import {
@@ -30,6 +33,13 @@ import {
 @Controller('treasury-external-collaborators')
 export class ExternalCollaboratorsController {
   constructor(private readonly service: ExternalCollaboratorsService) {}
+
+  @RequirePermissions('treasury.read', 'treasury.externals.manage')
+  @Get()
+  @ApiOperation({ summary: 'List external collaborators (paginated)' })
+  findAll(@Query() query: TreasuryExternalCollaboratorsListQueryDto) {
+    return this.service.findAll(query);
+  }
 
   @RequirePermissions('treasury.externals.manage')
   @Post('invite')

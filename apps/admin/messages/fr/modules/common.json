@@ -103,6 +103,7 @@
     "fundExit": "sortie",
     "budget": "budget",
     "expenseRequest": "besoin",
+    "externalCollaborator": "collaborateur",
     "property": "hébergement",
     "room": "chambre",
     "flight": "vol",

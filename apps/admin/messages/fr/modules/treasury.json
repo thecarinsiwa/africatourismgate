@@ -486,7 +486,14 @@
       "ariaLabel": "Collaborateurs externes",
       "accessDenied": "Accès refusé : permission treasury.externals.manage ou treasury.read requise.",
       "emptyDefault": "Aucun collaborateur externe.",
+      "emptyFiltered": "Aucun collaborateur ne correspond à vos critères.",
       "inviteButton": "Inviter par e-mail",
+      "searchPlaceholder": "Rechercher par e-mail ou nom…",
+      "searchAria": "Rechercher des collaborateurs externes",
+      "filterActive": "Statut",
+      "filterActiveAll": "Tous",
+      "filterActiveYes": "Actifs",
+      "filterActiveNo": "Inactifs",
       "columns": {
         "email": "E-mail",
         "displayName": "Nom",
@@ -496,6 +503,7 @@
     },
     "form": {
       "inviteTitle": "Inviter un collaborateur externe",
+      "organization": "Organisation",
       "fields": {
         "email": "Adresse e-mail",
         "displayName": "Nom affiché",
@@ -510,9 +518,26 @@
       "validation": {
         "emailRequired": "L'e-mail est obligatoire.",
         "emailInvalid": "E-mail invalide.",
-        "scopesRequired": "Au moins une autorisation est requise."
+        "scopesRequired": "Au moins une autorisation est requise.",
+        "organizationRequired": "L'organisation est obligatoire."
       },
-      "submitInvite": "Envoyer l'invitation"
+      "submitInvite": "Envoyer l'invitation",
+      "cancelInvite": "Fermer",
+      "accessDenied": "Accès refusé : permission treasury.externals.manage requise.",
+      "inviteUrlLabel": "Lien d'invitation (e-mail non envoyé)",
+      "inviteUrlCopied": "Lien copié",
+      "copyInviteUrl": "Copier le lien",
+      "toast": {
+        "invitedTitle": "Invitation envoyée",
+        "invitedMessage": "Le collaborateur a été invité.",
+        "activatedTitle": "Collaborateur activé",
+        "activatedMessage": "L'accès a été réactivé.",
+        "deactivatedTitle": "Collaborateur désactivé",
+        "deactivatedMessage": "L'accès a été désactivé et les jetons révoqués.",
+        "regeneratedTitle": "Lien régénéré",
+        "regeneratedMessage": "Un nouveau lien d'accès a été généré.",
+        "errorTitle": "Erreur"
+      }
     },
     "scopes": {
       "expense_requests.create": "Créer un état de besoin"
