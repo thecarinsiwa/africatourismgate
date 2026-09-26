@@ -108,6 +108,22 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
   },
   {
     type: 'group',
+    id: 'treasury',
+    iconKey: 'creditCard',
+    children: [
+      { href: '/tresorerie', labelKey: 'treasuryHub', iconKey: 'creditCard' },
+      { href: '/tresorerie/entrees', labelKey: 'treasuryEntries', iconKey: 'list' },
+      { href: '/tresorerie/sorties', labelKey: 'treasuryExits', iconKey: 'list' },
+      { href: '/tresorerie/besoins', labelKey: 'treasuryExpenseRequests', iconKey: 'document' },
+      { href: '/tresorerie/budgets', labelKey: 'treasuryBudgets', iconKey: 'chart' },
+      { href: '/tresorerie/rapports', labelKey: 'treasuryReports', iconKey: 'chart' },
+      { href: '/tresorerie/externes', labelKey: 'treasuryExternals', iconKey: 'users' },
+      { href: '/tresorerie/audit', labelKey: 'treasuryAudit', iconKey: 'shield' },
+      { href: '/tresorerie/comptabilite', labelKey: 'treasuryAccounting', iconKey: 'document' },
+    ],
+  },
+  {
+    type: 'group',
     id: 'gap',
     iconKey: 'globe',
     children: [

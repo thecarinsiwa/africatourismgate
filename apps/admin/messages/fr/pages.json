@@ -765,6 +765,55 @@
     "description": "Parcours guidé pour remplir le catalogue, module par module.",
     "metaTitle": "Mise en route"
   },
+  "tresorerie": {
+    "title": "Trésorerie",
+    "description": "Pilotage des flux financiers, budgets et traçabilité. Accès : treasury.read.",
+    "metaTitle": "Trésorerie",
+    "stub": {
+      "title": "Module en cours d'intégration",
+      "message": "Cette section sera disponible prochainement (CRUD et workflows Trésorerie)."
+    },
+    "entrees": {
+      "title": "Entrées de fonds",
+      "description": "Enregistrement et suivi des entrées de fonds. Accès : treasury.read / treasury.entries.write.",
+      "metaTitle": "Entrées de fonds"
+    },
+    "sorties": {
+      "title": "Sorties de fonds",
+      "description": "Décaissements liés à un état de besoin. Accès : treasury.read / treasury.exits.write.",
+      "metaTitle": "Sorties de fonds"
+    },
+    "besoins": {
+      "title": "États de besoin",
+      "description": "Demandes de dépense et circuit de validation. Accès : treasury.expense_requests.*.",
+      "metaTitle": "États de besoin"
+    },
+    "budgets": {
+      "title": "Budgets",
+      "description": "Budgétisation mensuelle, annuelle et par activité/produit. Accès : treasury.budgets.write.",
+      "metaTitle": "Budgets"
+    },
+    "rapports": {
+      "title": "Rapports",
+      "description": "Agrégats et exports des opérations. Accès : treasury.reports.read.",
+      "metaTitle": "Rapports trésorerie"
+    },
+    "externes": {
+      "title": "Collaborateurs externes",
+      "description": "Invitations, jetons et permissions externes. Accès : treasury.externals.manage.",
+      "metaTitle": "Collaborateurs externes"
+    },
+    "audit": {
+      "title": "Audit",
+      "description": "Journal des opérations sensibles. Accès : treasury.audit.read.",
+      "metaTitle": "Audit trésorerie"
+    },
+    "comptabilite": {
+      "title": "Comptabilité",
+      "description": "Pont stub vers la comptabilité SYSCOHADA (épic ultérieur). Accès : treasury.accounting_link.read.",
+      "metaTitle": "Comptabilité"
+    }
+  },
   "profil": {
     "title": "Mon profil",
     "description": "Mettez à jour vos informations et votre photo de profil.",

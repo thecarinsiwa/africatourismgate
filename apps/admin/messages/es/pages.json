@@ -765,6 +765,55 @@
     "description": "Recorrido guiado para completar el catálogo, módulo por módulo.",
     "metaTitle": "Puesta en marcha"
   },
+  "tresorerie": {
+    "title": "Tesorería",
+    "description": "Flujos financieros, presupuestos y trazabilidad. Acceso: treasury.read.",
+    "metaTitle": "Tesorería",
+    "stub": {
+      "title": "Módulo en integración",
+      "message": "Esta sección estará disponible próximamente (CRUD y flujos de Tesorería)."
+    },
+    "entrees": {
+      "title": "Entradas de fondos",
+      "description": "Registro y seguimiento de entradas. Acceso: treasury.read / treasury.entries.write.",
+      "metaTitle": "Entradas de fondos"
+    },
+    "sorties": {
+      "title": "Salidas de fondos",
+      "description": "Desembolsos vinculados a un estado de necesidad. Acceso: treasury.read / treasury.exits.write.",
+      "metaTitle": "Salidas de fondos"
+    },
+    "besoins": {
+      "title": "Estados de necesidad",
+      "description": "Solicitudes de gasto y circuito de validación. Acceso: treasury.expense_requests.*.",
+      "metaTitle": "Estados de necesidad"
+    },
+    "budgets": {
+      "title": "Presupuestos",
+      "description": "Presupuesto mensual, anual y por actividad/producto. Acceso: treasury.budgets.write.",
+      "metaTitle": "Presupuestos"
+    },
+    "rapports": {
+      "title": "Informes",
+      "description": "Agregados y exportaciones. Acceso: treasury.reports.read.",
+      "metaTitle": "Informes de tesorería"
+    },
+    "externes": {
+      "title": "Colaboradores externos",
+      "description": "Invitaciones, tokens y permisos externos. Acceso: treasury.externals.manage.",
+      "metaTitle": "Colaboradores externos"
+    },
+    "audit": {
+      "title": "Auditoría",
+      "description": "Diario de operaciones sensibles. Acceso: treasury.audit.read.",
+      "metaTitle": "Auditoría de tesorería"
+    },
+    "comptabilite": {
+      "title": "Contabilidad",
+      "description": "Puente stub hacia SYSCOHADA (épica posterior). Acceso: treasury.accounting_link.read.",
+      "metaTitle": "Contabilidad"
+    }
+  },
   "profil": {
     "title": "Mi perfil",
     "description": "Actualice sus datos y foto de perfil.",

@@ -84,7 +84,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-006 | Migration / extension journal d’audit trésorerie — ✅    | Haute    | API / DB    | S      |
 | TRESO-007 | Types partagés `packages/types` (enums, DTOs) — ✅       | Haute    | API / Types | M      |
 | TRESO-008 | Catalogue RBAC `treasury.*` + sync seed — ✅             | Haute    | API / RBAC  | M      |
-| TRESO-009 | Shell Admin nav + routes + permissions + registry        | Haute    | Admin       | M      |
+| TRESO-009 | Shell Admin nav + routes + permissions + registry — ✅   | Haute    | Admin       | M      |
 | TRESO-010 | Scaffold i18n fr/en/es modules trésorerie                | Haute    | i18n        | S      |
 | TRESO-011 | API Nest CRUD `fund-entries` + filtres                   | Haute    | API         | L      |
 | TRESO-012 | API liaison entrées ↔ réservations (0,N) + justificatifs | Haute    | API         | M      |
@@ -520,10 +520,11 @@ pnpm --filter @africatourismgate/api sync:rbac
 
 ---
 
-### TRESO-009 — Shell Admin nav + routes + permissions + registry
+### TRESO-009 — Shell Admin nav + routes + permissions + registry — ✅
 
-**Labels :** `admin`, `tresorerie`, `enhancement`, `priority:high`
-**Branche suggérée :** `feature/tresorerie-admin-shell`
+**Labels :** `admin`, `tresorerie`, `enhancement`, `priority:high`  
+**Branche suggérée :** `feature/tresorerie-admin-shell`  
+**Livrable :** groupe nav `/tresorerie/*` + stubs + registry + `treasury.*` route gates
 
 #### Modèle GitHub
 
@@ -545,21 +546,23 @@ Aucun groupe « Trésorerie » dans la nav. Pattern : nav + `ADMIN_ROUTE_ACCESS_
 - `apps/admin/config/admin-route-permissions.ts`
 - `apps/admin/config/admin-sections.registry.ts`
 - `apps/admin/app/(dashboard)/tresorerie/**`
+- `apps/admin/components/pages/tresorerie-stub-page-content.tsx`
+- `apps/admin/messages/{fr,en,es}/nav.json` + `pages.json`
 
 ## Critères d'acceptation
 
-- [ ] Nav visible selon permissions
-- [ ] Routes FR cohérentes
-- [ ] Middleware / RouteAccessGate OK
+- [x] Nav visible selon permissions (`treasury.read` et sous-permissions)
+- [x] Routes FR cohérentes (`/tresorerie/...`)
+- [x] Middleware / RouteAccessGate OK (matcher dérivé du nav)
 
 ## Plan de test
 
-Connexion admin ; navigation manuelle des sous-routes.
+Connexion admin ; ouvrir `/tresorerie` et chaque sous-route.
 
 ## Références
 
 - TRESO-010, pattern /paiements
-````
+```
 
 ---
 

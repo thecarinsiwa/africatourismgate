@@ -765,6 +765,55 @@
     "description": "Guided walkthrough to fill the catalog, module by module.",
     "metaTitle": "Getting started"
   },
+  "tresorerie": {
+    "title": "Treasury",
+    "description": "Financial flows, budgets and traceability. Access: treasury.read.",
+    "metaTitle": "Treasury",
+    "stub": {
+      "title": "Module under integration",
+      "message": "This section will be available soon (Treasury CRUD and workflows)."
+    },
+    "entrees": {
+      "title": "Fund entries",
+      "description": "Record and track fund inflows. Access: treasury.read / treasury.entries.write.",
+      "metaTitle": "Fund entries"
+    },
+    "sorties": {
+      "title": "Fund exits",
+      "description": "Disbursements linked to an expense request. Access: treasury.read / treasury.exits.write.",
+      "metaTitle": "Fund exits"
+    },
+    "besoins": {
+      "title": "Expense requests",
+      "description": "Spend requests and validation workflow. Access: treasury.expense_requests.*.",
+      "metaTitle": "Expense requests"
+    },
+    "budgets": {
+      "title": "Budgets",
+      "description": "Monthly, annual and activity/product budgets. Access: treasury.budgets.write.",
+      "metaTitle": "Budgets"
+    },
+    "rapports": {
+      "title": "Reports",
+      "description": "Aggregates and exports. Access: treasury.reports.read.",
+      "metaTitle": "Treasury reports"
+    },
+    "externes": {
+      "title": "External collaborators",
+      "description": "Invites, tokens and external permissions. Access: treasury.externals.manage.",
+      "metaTitle": "External collaborators"
+    },
+    "audit": {
+      "title": "Audit",
+      "description": "Sensitive operations journal. Access: treasury.audit.read.",
+      "metaTitle": "Treasury audit"
+    },
+    "comptabilite": {
+      "title": "Accounting",
+      "description": "Stub bridge to SYSCOHADA accounting (later epic). Access: treasury.accounting_link.read.",
+      "metaTitle": "Accounting"
+    }
+  },
   "profil": {
     "title": "My profile",
     "description": "Update your details and profile photo.",

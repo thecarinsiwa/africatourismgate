@@ -147,6 +147,51 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Transactions et statuts de paiement.',
     apiResource: 'payments',
   },
+  tresorerie: {
+    title: 'Trésorerie',
+    description: 'Hub du module Trésorerie (entrées, sorties, budgets, audit).',
+    apiResource: 'treasury',
+  },
+  'tresorerie/entrees': {
+    title: 'Entrées de fonds',
+    description: 'Enregistrement et suivi des entrées de fonds.',
+    apiResource: 'fund-entries',
+  },
+  'tresorerie/sorties': {
+    title: 'Sorties de fonds',
+    description: 'Décaissements liés à un état de besoin.',
+    apiResource: 'fund-exits',
+  },
+  'tresorerie/besoins': {
+    title: 'États de besoin',
+    description: 'Demandes de dépense et circuit de validation.',
+    apiResource: 'expense-requests',
+  },
+  'tresorerie/budgets': {
+    title: 'Budgets',
+    description: 'Budgétisation mensuelle, annuelle et par activité/produit.',
+    apiResource: 'budgets',
+  },
+  'tresorerie/rapports': {
+    title: 'Rapports trésorerie',
+    description: 'Agrégats et exports des opérations financières.',
+    apiResource: 'treasury-reports',
+  },
+  'tresorerie/externes': {
+    title: 'Collaborateurs externes',
+    description: 'Accès externes (e-mail, jetons, permissions).',
+    apiResource: 'treasury-external-collaborators',
+  },
+  'tresorerie/audit': {
+    title: 'Audit trésorerie',
+    description: 'Journal append-only des opérations sensibles.',
+    apiResource: 'treasury-audit-logs',
+  },
+  'tresorerie/comptabilite': {
+    title: 'Comptabilité (pont)',
+    description: 'Stub pont opération financière ↔ écriture future (SYSCOHADA hors lot).',
+    apiResource: 'accounting-links',
+  },
   'paiements/codes-promo': {
     title: 'Codes promo',
     description: 'Codes promotionnels.',
