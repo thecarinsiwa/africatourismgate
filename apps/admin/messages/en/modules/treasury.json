@@ -11,6 +11,55 @@
     "audit": "Audit",
     "accounting": "Accounting"
   },
+  "hub": {
+    "statsDash": "—",
+    "quickLinks": {
+      "title": "Quick access",
+      "subtitle": "Treasury submodules based on your permissions",
+      "entries": {
+        "description": "Incoming funds and receipts"
+      },
+      "exits": {
+        "description": "Disbursements linked to needs"
+      },
+      "expenseRequests": {
+        "description": "Expense request validation flow"
+      },
+      "budgets": {
+        "description": "Budgets and vs-actual tracking"
+      },
+      "reports": {
+        "description": "Aggregates and CSV export"
+      },
+      "externals": {
+        "description": "External collaborators"
+      },
+      "audit": {
+        "description": "Action audit log"
+      },
+      "accounting": {
+        "description": "Accounting bridge (stub)"
+      }
+    }
+  },
+  "stats": {
+    "entries": {
+      "label": "Entries",
+      "subtitle": "Current period (month)"
+    },
+    "exits": {
+      "label": "Exits",
+      "subtitle": "Current period (month)"
+    },
+    "pendingRequests": {
+      "label": "Pending requests",
+      "subtitle": "Submitted or validated"
+    },
+    "net": {
+      "label": "Net balance",
+      "subtitle": "Entries − exits (month)"
+    }
+  },
   "sources": {
     "booking_payment": "Booking payment",
     "customer_direct": "Direct customer",

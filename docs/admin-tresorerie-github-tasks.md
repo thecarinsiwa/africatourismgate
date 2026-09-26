@@ -113,7 +113,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-035 | API agrégats rapports (période, source, mode) — ✅       | Moyenne  | API         | M      |
 | TRESO-036 | UI Admin page rapports trésorerie — ✅                   | Moyenne  | Admin       | M      |
 | TRESO-037 | Export CSV des opérations — ✅                           | Moyenne  | API / Admin | S      |
-| TRESO-038 | Hub `/tresorerie` + cartes stats                         | Moyenne  | Admin       | S      |
+| TRESO-038 | Hub `/tresorerie` + cartes stats — ✅                    | Moyenne  | Admin       | S      |
 | TRESO-039 | Stub pont comptable `accounting_link` + mapping          | Basse    | API         | M      |
 | TRESO-040 | UI placeholder section Comptabilité                      | Basse    | Admin       | S      |
 | TRESO-041 | Doc handoff épic SYSCOHADA suivant                       | Basse    | Docs        | S      |
@@ -1721,10 +1721,11 @@ Exporter et ouvrir dans tableur.
 
 ---
 
-### TRESO-038 — Hub /tresorerie + cartes stats
+### TRESO-038 — Hub /tresorerie + cartes stats — ✅
 
-**Labels :** `admin`, `tresorerie`, `enhancement`, `priority:medium`  
+**Labels :** `admin`, `tresorerie`, `enhancement`, `priority:medium`
 **Branche suggérée :** `feature/tresorerie-ui-hub`
+**Livrable :** hub `/tresorerie` · `TresorerieStatCards` + `TresorerieHubQuickLinks` · KPI période (summary / fallback listes) · liens RBAC · i18n fr/en/es
 
 #### Modèle GitHub
 
@@ -1746,9 +1747,9 @@ Page d’accueil du module avec accès rapide et KPI légers.
 
 ## Critères d'acceptation
 
-- [ ] KPI cohérents
-- [ ] Liens permission-aware
-- [ ] i18n
+- [x] KPI cohérents
+- [x] Liens permission-aware
+- [x] i18n
 
 ## Plan de test
 

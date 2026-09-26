@@ -11,6 +11,55 @@
     "audit": "Auditoría",
     "accounting": "Contabilidad"
   },
+  "hub": {
+    "statsDash": "—",
+    "quickLinks": {
+      "title": "Acceso rápido",
+      "subtitle": "Submódulos de tesorería según sus permisos",
+      "entries": {
+        "description": "Entradas e ingresos"
+      },
+      "exits": {
+        "description": "Desembolsos vinculados a necesidades"
+      },
+      "expenseRequests": {
+        "description": "Circuito de validación de necesidades"
+      },
+      "budgets": {
+        "description": "Presupuestos y seguimiento vs real"
+      },
+      "reports": {
+        "description": "Agregados y exportación CSV"
+      },
+      "externals": {
+        "description": "Colaboradores externos"
+      },
+      "audit": {
+        "description": "Registro de acciones"
+      },
+      "accounting": {
+        "description": "Puente contable (stub)"
+      }
+    }
+  },
+  "stats": {
+    "entries": {
+      "label": "Entradas",
+      "subtitle": "Periodo en curso (mes)"
+    },
+    "exits": {
+      "label": "Salidas",
+      "subtitle": "Periodo en curso (mes)"
+    },
+    "pendingRequests": {
+      "label": "Necesidades pendientes",
+      "subtitle": "Enviadas o validadas"
+    },
+    "net": {
+      "label": "Saldo neto",
+      "subtitle": "Entradas − salidas (mes)"
+    }
+  },
   "sources": {
     "booking_payment": "Pago de reserva",
     "customer_direct": "Cliente directo",

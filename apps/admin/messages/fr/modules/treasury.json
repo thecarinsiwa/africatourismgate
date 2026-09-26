@@ -11,6 +11,55 @@
     "audit": "Audit",
     "accounting": "Comptabilité"
   },
+  "hub": {
+    "statsDash": "—",
+    "quickLinks": {
+      "title": "Accès rapide",
+      "subtitle": "Sous-modules de la trésorerie selon vos permissions",
+      "entries": {
+        "description": "Encaissements et flux entrants"
+      },
+      "exits": {
+        "description": "Décaissements liés aux besoins"
+      },
+      "expenseRequests": {
+        "description": "Circuit de validation des besoins"
+      },
+      "budgets": {
+        "description": "Budgets et suivi vs réalisé"
+      },
+      "reports": {
+        "description": "Agrégats et export CSV"
+      },
+      "externals": {
+        "description": "Collaborateurs externes"
+      },
+      "audit": {
+        "description": "Journal des actions"
+      },
+      "accounting": {
+        "description": "Pont comptable (stub)"
+      }
+    }
+  },
+  "stats": {
+    "entries": {
+      "label": "Entrées",
+      "subtitle": "Période en cours (mois)"
+    },
+    "exits": {
+      "label": "Sorties",
+      "subtitle": "Période en cours (mois)"
+    },
+    "pendingRequests": {
+      "label": "Besoins en attente",
+      "subtitle": "Soumis ou validés"
+    },
+    "net": {
+      "label": "Solde net",
+      "subtitle": "Entrées − sorties (mois)"
+    }
+  },
   "sources": {
     "booking_payment": "Paiement réservation",
     "customer_direct": "Client direct",
