@@ -80,7 +80,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-002 | Migration DB entrées de fonds + pivots réservations — ✅ | Haute    | API / DB    | M      |
 | TRESO-003 | Migration DB états de besoin + sorties + pivots — ✅     | Haute    | API / DB    | M      |
 | TRESO-004 | Migration DB budgets (période / activité / produit) — ✅ | Haute    | API / DB    | M      |
-| TRESO-005 | Migration DB collaborateurs externes + jetons            | Haute    | API / DB    | M      |
+| TRESO-005 | Migration DB collaborateurs externes + jetons — ✅       | Haute    | API / DB    | M      |
 | TRESO-006 | Migration / extension journal d’audit trésorerie         | Haute    | API / DB    | S      |
 | TRESO-007 | Types partagés `packages/types` (enums, DTOs)            | Haute    | API / Types | M      |
 | TRESO-008 | Catalogue RBAC `treasury.*` + sync seed                  | Haute    | API / RBAC  | M      |
@@ -307,10 +307,11 @@ pnpm db:sync
 
 ---
 
-### TRESO-005 — Migration DB collaborateurs externes + jetons
+### TRESO-005 — Migration DB collaborateurs externes + jetons — ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
-**Branche suggérée :** `feature/tresorerie-migration-external-access`
+**Branche suggérée :** `feature/tresorerie-migration-external-access`  
+**Livrable :** [`database/migrations/add_treasury_external_access.sql`](../database/migrations/add_treasury_external_access.sql) · [`apps/api/src/entities/treasury-external.entity.ts`](../apps/api/src/entities/treasury-external.entity.ts)
 
 #### Modèle GitHub
 
@@ -327,22 +328,27 @@ Intervenants externes : accès par e-mail, jeton/lien sécurisé, permissions, a
 
 ## Fichiers clés
 
-- `database/migrations/*`
-- `apps/api/src/entities/`
+- `database/migrations/add_treasury_external_access.sql`
+- `apps/api/src/entities/treasury-external.entity.ts`
+- `apps/api/src/database/database.module.ts`
 
 ## Critères d'acceptation
 
-- [ ] Email unique par org
-- [ ] Jeton stocké hashé + expiration
-- [ ] Flag active/inactive
+- [x] Email unique par org (`uk_treasury_external_collaborators_org_email`)
+- [x] Jeton stocké hashé + expiration (`token_hash`, `expires_at`)
+- [x] Flag active/inactive (`is_active`)
 
 ## Plan de test
 
-Migration + contraintes uniques.
+```bash
+pnpm db:sync
+# UNIQUE (organization_id, email) ; FK expense_requests.requested_by_external_id
+```
 
 ## Références
 
 - TRESO-001, TRESO-027
+- docs/tresorerie-domain-model.md §4.5
 ```
 
 ---

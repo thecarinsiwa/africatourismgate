@@ -43,6 +43,10 @@ import {
   FundExits,
 } from '../entities/fund-exit.entity';
 import { Budgets } from '../entities/budget.entity';
+import {
+  TreasuryAccessTokens,
+  TreasuryExternalCollaborators,
+} from '../entities/treasury-external.entity';
 import { ensureMigrations } from './ensure-migrations';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
 import { ensureSchema } from './ensure-schema';
@@ -86,6 +90,8 @@ const entityList = [
   FundExitBookings,
   FundExitAttachments,
   Budgets,
+  TreasuryExternalCollaborators,
+  TreasuryAccessTokens,
 ] as (new () => unknown)[];
 
 @Module({
