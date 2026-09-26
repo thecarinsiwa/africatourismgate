@@ -100,6 +100,7 @@
     "line": "línea",
     "payment": "pago",
     "fundEntry": "entrada",
+    "fundExit": "salida",
     "expenseRequest": "solicitud",
     "property": "alojamiento",
     "room": "habitación",

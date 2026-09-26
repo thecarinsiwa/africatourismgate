@@ -229,11 +229,44 @@
         "bookingIds": "Réservations liées"
       },
       "hints": {
-        "expenseRequestId": "Seuls les besoins autorisés sont sélectionnables."
+        "expenseRequestId": "Seuls les besoins autorisés sont sélectionnables.",
+        "amountCents": "Montant en unités majeures (ex. 1500,00).",
+        "bookingIds": "Aucune, une ou plusieurs réservations (cardinalité 0,N)."
       },
       "validation": {
         "expenseRequestRequired": "Un état de besoin est obligatoire.",
-        "amountPositive": "Le montant doit être supérieur à zéro."
+        "amountPositive": "Le montant doit être supérieur à zéro.",
+        "currencyRequired": "La devise est obligatoire.",
+        "operationDateRequired": "La date est obligatoire.",
+        "paymentMethodRequired": "Le mode de paiement est obligatoire.",
+        "organizationRequired": "L'organisation est obligatoire.",
+        "noEligibleRequest": "Aucun besoin autorisé disponible. Autorisez d'abord un état de besoin."
+      },
+      "organization": "Organisation",
+      "eligibleEmpty": "Aucun besoin autorisé pour le moment.",
+      "eligibleLoading": "Chargement des besoins éligibles…",
+      "bookingsSearch": "Rechercher une réservation…",
+      "bookingsSearchAria": "Rechercher des réservations à lier",
+      "bookingsEmpty": "Aucune réservation trouvée.",
+      "bookingsSelected": "{count} réservation(s) sélectionnée(s)",
+      "bookingsLoading": "Recherche des réservations…",
+      "attachments": {
+        "title": "Justificatifs",
+        "hint": "JPEG, PNG, WebP ou PDF — max 10 Mo. Disponibles après enregistrement.",
+        "upload": "Ajouter un fichier",
+        "empty": "Aucun justificatif.",
+        "remove": "Supprimer",
+        "uploading": "Envoi…",
+        "pendingHint": "Fichiers en attente : ils seront envoyés après la création."
+      },
+      "accessDenied": "Accès refusé : permission treasury.exits.write requise.",
+      "voidedHint": "Cette sortie est annulée et ne peut plus être modifiée.",
+      "toast": {
+        "createdTitle": "Sortie créée",
+        "createdMessage": "La sortie de fonds a été enregistrée.",
+        "updatedTitle": "Sortie mise à jour",
+        "updatedMessage": "Les modifications ont été enregistrées.",
+        "errorTitle": "Erreur"
       },
       "submitCreate": "Enregistrer la sortie",
       "submitUpdate": "Enregistrer les modifications"
@@ -241,7 +274,19 @@
     "detail": {
       "title": "Détail de la sortie",
       "voidButton": "Annuler la sortie",
-      "attachments": "Justificatifs"
+      "voidUnavailable": "L'annulation sera disponible prochainement (TRESO-033).",
+      "editButton": "Modifier",
+      "attachments": "Justificatifs",
+      "audit": "Historique",
+      "auditEmpty": "Aucun événement d'audit pour le moment. Le journal sera branché avec TRESO-031.",
+      "bookings": "Réservations liées",
+      "bookingsEmpty": "Aucune réservation liée.",
+      "expenseRequest": "État de besoin",
+      "createdBy": "Créée par",
+      "voidedBy": "Annulée par",
+      "voidedAt": "Annulée le",
+      "voidReason": "Motif d'annulation",
+      "id": "Identifiant"
     }
   },
   "expenseRequests": {

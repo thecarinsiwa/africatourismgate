@@ -10,6 +10,7 @@ import type {
   FlightClassName,
   FundEntrySource,
   FundEntryStatus,
+  FundExitStatus,
   LoyaltyTier,
   OrganizationStatus,
   PackageItemType,
@@ -29,6 +30,7 @@ import {
   EXPENSE_REQUEST_STATUSES,
   FUND_ENTRY_SOURCES,
   FUND_ENTRY_STATUSES,
+  FUND_EXIT_STATUSES,
   TREASURY_PAYMENT_METHODS,
 } from '@africatourismgate/types';
 import { useFormatter, useTranslations } from 'next-intl';
@@ -724,6 +726,34 @@ export function useFundEntryStatusFilterOptions() {
     () => [
       { value: '', label: tAll('all') },
       ...FUND_ENTRY_STATUSES.map((value) => ({
+        value,
+        label: labels[value],
+      })),
+    ],
+    [labels, tAll],
+  );
+}
+
+export function useFundExitStatusLabels() {
+  const t = useTranslations('modules.treasury.fundExitStatus');
+  return useMemo(
+    (): Record<FundExitStatus, string> => ({
+      draft: t('draft'),
+      disbursed: t('disbursed'),
+      recorded: t('recorded'),
+      voided: t('voided'),
+    }),
+    [t],
+  );
+}
+
+export function useFundExitStatusFilterOptions() {
+  const tAll = useTranslations('modules.common.filters');
+  const labels = useFundExitStatusLabels();
+  return useMemo(
+    () => [
+      { value: '', label: tAll('all') },
+      ...FUND_EXIT_STATUSES.map((value) => ({
         value,
         label: labels[value],
       })),

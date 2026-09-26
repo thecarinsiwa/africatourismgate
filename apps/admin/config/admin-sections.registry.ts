@@ -177,6 +177,21 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Décaissements liés à un état de besoin.',
     apiResource: 'fund-exits',
   },
+  'tresorerie/sorties/nouveau': {
+    title: 'Nouvelle sortie de fonds',
+    description: 'Créer une sortie liée à un besoin autorisé.',
+    apiResource: 'fund-exits',
+  },
+  'tresorerie/sorties/id': {
+    title: 'Modifier sortie de fonds',
+    description: 'Éditer une sortie de fonds.',
+    apiResource: 'fund-exits',
+  },
+  'tresorerie/sorties/id/voir': {
+    title: 'Voir sortie de fonds',
+    description: 'Fiche détail d’une sortie de fonds.',
+    apiResource: 'fund-exits',
+  },
   'tresorerie/besoins': {
     title: 'États de besoin',
     description: 'Demandes de dépense et circuit de validation.',

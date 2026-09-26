@@ -229,11 +229,44 @@
         "bookingIds": "Linked bookings"
       },
       "hints": {
-        "expenseRequestId": "Only authorized expense requests can be selected."
+        "expenseRequestId": "Only authorized expense requests can be selected.",
+        "amountCents": "Amount in major units (e.g. 1500.00).",
+        "bookingIds": "None, one, or many bookings (0,N cardinality)."
       },
       "validation": {
         "expenseRequestRequired": "An expense request is required.",
-        "amountPositive": "Amount must be greater than zero."
+        "amountPositive": "Amount must be greater than zero.",
+        "currencyRequired": "Currency is required.",
+        "operationDateRequired": "Date is required.",
+        "paymentMethodRequired": "Payment method is required.",
+        "organizationRequired": "Organization is required.",
+        "noEligibleRequest": "No authorized request available. Authorize an expense request first."
+      },
+      "organization": "Organization",
+      "eligibleEmpty": "No authorized expense requests yet.",
+      "eligibleLoading": "Loading eligible requests…",
+      "bookingsSearch": "Search a booking…",
+      "bookingsSearchAria": "Search bookings to link",
+      "bookingsEmpty": "No bookings found.",
+      "bookingsSelected": "{count} booking(s) selected",
+      "bookingsLoading": "Searching bookings…",
+      "attachments": {
+        "title": "Supporting documents",
+        "hint": "JPEG, PNG, WebP or PDF — max 10 MB. Available after save.",
+        "upload": "Add a file",
+        "empty": "No attachments.",
+        "remove": "Remove",
+        "uploading": "Uploading…",
+        "pendingHint": "Pending files will be uploaded after creation."
+      },
+      "accessDenied": "Access denied: treasury.exits.write permission required.",
+      "voidedHint": "This exit is voided and can no longer be edited.",
+      "toast": {
+        "createdTitle": "Exit created",
+        "createdMessage": "The fund exit has been saved.",
+        "updatedTitle": "Exit updated",
+        "updatedMessage": "Changes have been saved.",
+        "errorTitle": "Error"
       },
       "submitCreate": "Save exit",
       "submitUpdate": "Save changes"
@@ -241,7 +274,19 @@
     "detail": {
       "title": "Exit details",
       "voidButton": "Void exit",
-      "attachments": "Supporting documents"
+      "voidUnavailable": "Voiding will be available soon (TRESO-033).",
+      "editButton": "Edit",
+      "attachments": "Supporting documents",
+      "audit": "History",
+      "auditEmpty": "No audit events yet. The journal will connect with TRESO-031.",
+      "bookings": "Linked bookings",
+      "bookingsEmpty": "No linked bookings.",
+      "expenseRequest": "Expense request",
+      "createdBy": "Created by",
+      "voidedBy": "Voided by",
+      "voidedAt": "Voided at",
+      "voidReason": "Void reason",
+      "id": "Identifier"
     }
   },
   "expenseRequests": {

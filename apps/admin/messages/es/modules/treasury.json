@@ -229,11 +229,44 @@
         "bookingIds": "Reservas vinculadas"
       },
       "hints": {
-        "expenseRequestId": "Solo se pueden seleccionar necesidades autorizadas."
+        "expenseRequestId": "Solo se pueden seleccionar necesidades autorizadas.",
+        "amountCents": "Importe en unidades mayores (ej. 1500,00).",
+        "bookingIds": "Ninguna, una o varias reservas (cardinalidad 0,N)."
       },
       "validation": {
         "expenseRequestRequired": "Un estado de necesidad es obligatorio.",
-        "amountPositive": "El importe debe ser mayor que cero."
+        "amountPositive": "El importe debe ser mayor que cero.",
+        "currencyRequired": "La moneda es obligatoria.",
+        "operationDateRequired": "La fecha es obligatoria.",
+        "paymentMethodRequired": "El método de pago es obligatorio.",
+        "organizationRequired": "La organización es obligatoria.",
+        "noEligibleRequest": "No hay solicitudes autorizadas. Autorice primero un estado de necesidad."
+      },
+      "organization": "Organización",
+      "eligibleEmpty": "Aún no hay necesidades autorizadas.",
+      "eligibleLoading": "Cargando solicitudes elegibles…",
+      "bookingsSearch": "Buscar una reserva…",
+      "bookingsSearchAria": "Buscar reservas para vincular",
+      "bookingsEmpty": "No se encontraron reservas.",
+      "bookingsSelected": "{count} reserva(s) seleccionada(s)",
+      "bookingsLoading": "Buscando reservas…",
+      "attachments": {
+        "title": "Justificantes",
+        "hint": "JPEG, PNG, WebP o PDF — máx. 10 MB. Disponibles tras guardar.",
+        "upload": "Añadir un archivo",
+        "empty": "Sin justificantes.",
+        "remove": "Eliminar",
+        "uploading": "Subiendo…",
+        "pendingHint": "Los archivos pendientes se subirán tras la creación."
+      },
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.exits.write.",
+      "voidedHint": "Esta salida está anulada y ya no puede editarse.",
+      "toast": {
+        "createdTitle": "Salida creada",
+        "createdMessage": "La salida de fondos se ha guardado.",
+        "updatedTitle": "Salida actualizada",
+        "updatedMessage": "Los cambios se han guardado.",
+        "errorTitle": "Error"
       },
       "submitCreate": "Guardar salida",
       "submitUpdate": "Guardar cambios"
@@ -241,7 +274,19 @@
     "detail": {
       "title": "Detalle de la salida",
       "voidButton": "Anular salida",
-      "attachments": "Justificantes"
+      "voidUnavailable": "La anulación estará disponible pronto (TRESO-033).",
+      "editButton": "Editar",
+      "attachments": "Justificantes",
+      "audit": "Historial",
+      "auditEmpty": "Aún no hay eventos de auditoría. El diario se conectará con TRESO-031.",
+      "bookings": "Reservas vinculadas",
+      "bookingsEmpty": "No hay reservas vinculadas.",
+      "expenseRequest": "Estado de necesidad",
+      "createdBy": "Creada por",
+      "voidedBy": "Anulada por",
+      "voidedAt": "Anulada el",
+      "voidReason": "Motivo de anulación",
+      "id": "Identificador"
     }
   },
   "expenseRequests": {

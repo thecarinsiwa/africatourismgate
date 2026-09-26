@@ -798,7 +798,24 @@
     "sorties": {
       "title": "Fund exits",
       "description": "Disbursements linked to an expense request. Access: treasury.read / treasury.exits.write.",
-      "metaTitle": "Fund exits"
+      "metaTitle": "Fund exits",
+      "nouveau": {
+        "title": "New fund exit",
+        "description": "Create an exit linked to an authorized expense request.",
+        "metaTitle": "New fund exit",
+        "backLabel": "Back to exits"
+      },
+      "id": {
+        "title": "Edit fund exit",
+        "description": "Update a fund exit.",
+        "metaTitle": "Edit exit",
+        "backLabel": "Back to exits",
+        "voir": {
+          "metaTitle": "View fund exit",
+          "title": "Exit details",
+          "backLabel": "Back to exits"
+        }
+      }
     },
     "besoins": {
       "title": "Expense requests",

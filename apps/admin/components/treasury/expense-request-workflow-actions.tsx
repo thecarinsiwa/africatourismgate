@@ -211,10 +211,16 @@ export function ExpenseRequestWorkflowActions({
 
         {expenseRequest.status === 'authorized' ? (
           <PermissionGate permission="treasury.exits.write">
-            <Button href="/tresorerie/sorties" variant="outline">
+            <Button
+              href={`/tresorerie/sorties/nouveau?expenseRequestId=${expenseRequest.id}`}
+              variant="outline"
+            >
               {t('actions.disburse')}
             </Button>
-            <Button href="/tresorerie/sorties" variant="outline">
+            <Button
+              href={`/tresorerie/sorties/nouveau?expenseRequestId=${expenseRequest.id}`}
+              variant="outline"
+            >
               {t('actions.attachProof')}
             </Button>
           </PermissionGate>

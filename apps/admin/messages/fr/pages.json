@@ -798,7 +798,24 @@
     "sorties": {
       "title": "Sorties de fonds",
       "description": "Décaissements liés à un état de besoin. Accès : treasury.read / treasury.exits.write.",
-      "metaTitle": "Sorties de fonds"
+      "metaTitle": "Sorties de fonds",
+      "nouveau": {
+        "title": "Nouvelle sortie de fonds",
+        "description": "Créer une sortie liée à un besoin autorisé.",
+        "metaTitle": "Nouvelle sortie de fonds",
+        "backLabel": "Retour aux sorties"
+      },
+      "id": {
+        "title": "Modifier la sortie de fonds",
+        "description": "Mettre à jour une sortie de fonds.",
+        "metaTitle": "Modifier la sortie",
+        "backLabel": "Retour aux sorties",
+        "voir": {
+          "metaTitle": "Voir la sortie de fonds",
+          "title": "Détail de la sortie",
+          "backLabel": "Retour aux sorties"
+        }
+      }
     },
     "besoins": {
       "title": "États de besoin",

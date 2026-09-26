@@ -11,7 +11,9 @@ import type {
   ExpenseRequest,
   ExpenseRequestStatus,
   ExpenseRequestStatusHistoryEntry,
+  FundExit,
 } from '@africatourismgate/types';
+import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { getApiClient } from '../../lib/auth/api';
@@ -20,6 +22,7 @@ import { formatMoney } from '../../lib/format-money';
 import {
   useExpenseRequestStatusLabels,
   useFormatDateTime,
+  useFundExitStatusLabels,
 } from '../../lib/i18n/use-module-labels';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { PermissionGate } from '../permission-gate';
@@ -70,12 +73,14 @@ export function ExpenseRequestViewPage({
   const tErrors = useTranslations('modules.treasury.errors');
   const tCommonErrors = useTranslations('common.errors');
   const statusLabels = useExpenseRequestStatusLabels();
+  const exitStatusLabels = useFundExitStatusLabels();
   const formatDateTime = useFormatDateTime('short');
   const locale = useLocale();
   const emptyDash = tCommon('empty.dash');
 
   const [request, setRequest] = useState<ExpenseRequest | null>(null);
   const [history, setHistory] = useState<ExpenseRequestStatusHistoryEntry[]>([]);
+  const [linkedExits, setLinkedExits] = useState<FundExit[]>([]);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -94,12 +99,20 @@ export function ExpenseRequestViewPage({
     setState({ status: 'loading' });
     try {
       const client = getApiClient();
-      const [data, statusHistory] = await Promise.all([
+      const [data, statusHistory, exitsResult] = await Promise.all([
         client.getExpenseRequest(expenseRequestId),
         client.listExpenseRequestStatusHistory(expenseRequestId).catch(() => []),
+        client
+          .listFundExits({
+            page: 1,
+            limit: 50,
+            expenseRequestId,
+          })
+          .catch(() => ({ data: [] as FundExit[] })),
       ]);
       setRequest(data);
       setHistory(statusHistory);
+      setLinkedExits(exitsResult.data);
       setState({ status: 'ready' });
     } catch (error) {
       setState({
@@ -283,7 +296,30 @@ export function ExpenseRequestViewPage({
 
       <Card variant="dashboard" padding="md">
         <h2 className="mb-2 text-sm font-semibold text-atg-fg">{t('linkedExits')}</h2>
-        <p className="text-sm text-atg-muted">{t('linkedExitsEmpty')}</p>
+        {linkedExits.length === 0 ? (
+          <p className="text-sm text-atg-muted">{t('linkedExitsEmpty')}</p>
+        ) : (
+          <ul className="space-y-2">
+            {linkedExits.map((exit) => (
+              <li key={exit.id}>
+                <Link
+                  href={`/tresorerie/sorties/${exit.id}/voir`}
+                  className="flex flex-wrap items-center gap-2 rounded-md border border-atg-border px-3 py-2 text-sm hover:border-primary"
+                >
+                  <span className="tabular-nums font-medium">
+                    {formatMoney(exit.amountCents, exit.currency)}
+                  </span>
+                  <DataTableBadge variant="muted">
+                    {exitStatusLabels[exit.status] ?? exit.status}
+                  </DataTableBadge>
+                  <code className="font-mono text-xs text-atg-muted">
+                    {exit.id.slice(0, 8)}…
+                  </code>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
       </Card>
     </div>
   );

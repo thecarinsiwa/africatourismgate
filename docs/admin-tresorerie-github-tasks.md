@@ -96,7 +96,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-018 | API sorties ↔ réservations (0,N) + justificatifs — ✅    | Haute    | API         | M      |
 | TRESO-019 | UI Admin liste/création états de besoin — ✅             | Haute    | Admin       | M      |
 | TRESO-020 | UI Admin circuit validation → décaissement — ✅          | Haute    | Admin       | L      |
-| TRESO-021 | UI Admin liste/création/détail sorties                   | Haute    | Admin       | L      |
+| TRESO-021 | UI Admin liste/création/détail sorties — ✅              | Haute    | Admin       | L      |
 | TRESO-022 | API transitions d’état + historique immutable — ✅       | Haute    | API         | M      |
 | TRESO-023 | API budgets mensuels / annuels                           | Moyenne  | API         | M      |
 | TRESO-024 | API budgets par activité et produit/service              | Moyenne  | API         | M      |
@@ -1030,7 +1030,7 @@ Parcours complet happy path + rejet à validation.
 
 ---
 
-### TRESO-021 — UI Admin liste/création/détail sorties
+### TRESO-021 — UI Admin liste/création/détail sorties — ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-ui-fund-exits`

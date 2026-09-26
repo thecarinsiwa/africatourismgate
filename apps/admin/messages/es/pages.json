@@ -798,7 +798,24 @@
     "sorties": {
       "title": "Salidas de fondos",
       "description": "Desembolsos vinculados a un estado de necesidad. Acceso: treasury.read / treasury.exits.write.",
-      "metaTitle": "Salidas de fondos"
+      "metaTitle": "Salidas de fondos",
+      "nouveau": {
+        "title": "Nueva salida de fondos",
+        "description": "Crear una salida vinculada a una necesidad autorizada.",
+        "metaTitle": "Nueva salida de fondos",
+        "backLabel": "Volver a las salidas"
+      },
+      "id": {
+        "title": "Editar salida de fondos",
+        "description": "Actualizar una salida de fondos.",
+        "metaTitle": "Editar salida",
+        "backLabel": "Volver a las salidas",
+        "voir": {
+          "metaTitle": "Ver salida de fondos",
+          "title": "Detalle de la salida",
+          "backLabel": "Volver a las salidas"
+        }
+      }
     },
     "besoins": {
       "title": "Estados de necesidad",
