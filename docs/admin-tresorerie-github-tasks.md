@@ -112,7 +112,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-034 | Lien croisé fiche réservation → opérations — ✅         | Moyenne  | Admin       | S      |
 | TRESO-035 | API agrégats rapports (période, source, mode) — ✅       | Moyenne  | API         | M      |
 | TRESO-036 | UI Admin page rapports trésorerie — ✅                   | Moyenne  | Admin       | M      |
-| TRESO-037 | Export CSV des opérations                                | Moyenne  | API / Admin | S      |
+| TRESO-037 | Export CSV des opérations — ✅                           | Moyenne  | API / Admin | S      |
 | TRESO-038 | Hub `/tresorerie` + cartes stats                         | Moyenne  | Admin       | S      |
 | TRESO-039 | Stub pont comptable `accounting_link` + mapping          | Basse    | API         | M      |
 | TRESO-040 | UI placeholder section Comptabilité                      | Basse    | Admin       | S      |
@@ -1680,10 +1680,11 @@ Changer filtres ; vérifier refresh données.
 
 ---
 
-### TRESO-037 — Export CSV des opérations
+### TRESO-037 — Export CSV des opérations — ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:medium`  
-**Branche suggérée :** `feature/tresorerie-export-csv`
+**Branche suggérée :** `feature/tresorerie-export-csv`  
+**Livrable :** `GET /treasury-reports/export` (UTF-8 BOM) · permission `treasury.reports.read` · boutons listes entrées/sorties + page rapports
 
 #### Modèle GitHub
 
@@ -1705,9 +1706,9 @@ Export opérationnel pour contrôle / Excel.
 
 ## Critères d'acceptation
 
-- [ ] CSV téléchargeable
-- [ ] Colonnes métier présentes
-- [ ] Permission reports/export
+- [x] CSV téléchargeable
+- [x] Colonnes métier présentes
+- [x] Permission reports/export
 
 ## Plan de test
 

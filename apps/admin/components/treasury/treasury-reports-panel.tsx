@@ -1,11 +1,13 @@
 'use client';
 
 import {
+  Button,
   Card,
   DataTable,
   FilterBar,
   Select,
   Skeleton,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type {
@@ -32,6 +34,7 @@ import {
   useFundEntrySourceLabels,
   useTreasuryPaymentMethodLabels,
 } from '../../lib/i18n/use-module-labels';
+import { downloadTreasuryOperationsCsv } from '../../lib/treasury-reports-export';
 import { useChartTheme } from '../../lib/use-chart-theme';
 
 const CURRENCY_FILTER_OPTIONS = [
@@ -79,6 +82,7 @@ export function TreasuryReportsPanel() {
   const t = useTranslations('modules.treasury.reports');
   const tColumns = useTranslations('modules.treasury.reports.columns');
   const tCommon = useTranslations('modules.common');
+  const tExportCommon = useTranslations('modules.common.exportCsv');
   const tDataTable = useTranslations('modules.common.dataTable');
   const tErrors = useTranslations('modules.treasury.errors');
   const tCommonErrors = useTranslations('common.errors');
@@ -86,6 +90,8 @@ export function TreasuryReportsPanel() {
   const paymentLabels = useTreasuryPaymentMethodLabels();
   const chartTheme = useChartTheme();
   const emptyDash = tCommon('empty.dash');
+  const { toast } = useToast();
+  const [exporting, setExporting] = useState(false);
 
   const [dateFrom, setDateFrom] = useState(defaultDateFrom);
   const [dateTo, setDateTo] = useState(defaultDateTo);
@@ -201,6 +207,35 @@ export function TreasuryReportsPanel() {
     setApplied({ dateFrom: from, dateTo: to, currency: undefined });
   }, []);
 
+  const handleExportCsv = useCallback(async () => {
+    setExporting(true);
+    try {
+      await downloadTreasuryOperationsCsv({
+        type: 'all',
+        dateFrom: applied.dateFrom,
+        dateTo: applied.dateTo,
+        currency: applied.currency,
+        realizedOnly: true,
+      });
+      toast({
+        title: tExportCommon('success'),
+        message: tExportCommon('success'),
+        variant: 'success',
+      });
+    } catch (error) {
+      toast({
+        title: tErrors('loadFailed'),
+        message: resolveUnknownApiError(error, commonErrorMessages, {
+          useParseApiMessage: true,
+          forbidden: t('accessDenied'),
+        }),
+        variant: 'error',
+      });
+    } finally {
+      setExporting(false);
+    }
+  }, [applied, toast, tExportCommon, tErrors, t, commonErrorMessages]);
+
   const activeFilterCount = [
     applied.currency != null,
     applied.dateFrom !== defaultDateFrom() ||
@@ -300,6 +335,18 @@ export function TreasuryReportsPanel() {
         clearLabel={tCommon('filters.clearAll')}
         applyLabel={t('filters.apply')}
         toggleLabel={tCommon('filters.toggle')}
+        actions={
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            loading={exporting}
+            disabled={exporting || isLoading}
+            onClick={() => void handleExportCsv()}
+          >
+            {t('exportCsv')}
+          </Button>
+        }
         filters={
           <>
             <div>

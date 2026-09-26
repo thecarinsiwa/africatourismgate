@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  Button,
   Card,
   DataTable,
   DataTableActionButton,
@@ -10,6 +11,7 @@ import {
   FilterBar,
   Input,
   Select,
+  useToast,
   type ColumnDef,
   type DataTableBadgeVariant,
 } from '@africatourismgate/ui';
@@ -25,6 +27,8 @@ import {
   useTreasuryPaymentMethodLabels,
 } from '../../lib/i18n/use-module-labels';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { downloadTreasuryOperationsCsv } from '../../lib/treasury-reports-export';
+import { PermissionGate } from '../permission-gate';
 
 const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -40,6 +44,8 @@ export function FundExitsList() {
   const t = useTranslations('modules.treasury.exits.list');
   const tColumns = useTranslations('modules.treasury.exits.list.columns');
   const tCommon = useTranslations('modules.common');
+  const tExport = useTranslations('modules.treasury.reports');
+  const tExportCommon = useTranslations('modules.common.exportCsv');
   const tDataTable = useTranslations('modules.common.dataTable');
   const tActions = useTranslations('common.actions');
   const tErrors = useTranslations('modules.treasury.errors');
@@ -50,6 +56,8 @@ export function FundExitsList() {
   const statusFilterOptions = useFundExitStatusFilterOptions();
   const paymentMethodLabels = useTreasuryPaymentMethodLabels();
   const emptyDash = tCommon('empty.dash');
+  const { toast } = useToast();
+  const [exporting, setExporting] = useState(false);
 
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState<'' | FundExitStatus>('');
@@ -159,6 +167,46 @@ export function FundExitsList() {
     setDateTo('');
     setPage(1);
   }, []);
+
+  const handleExportCsv = useCallback(async () => {
+    setExporting(true);
+    try {
+      await downloadTreasuryOperationsCsv({
+        type: 'exits',
+        dateFrom: dateFrom || undefined,
+        dateTo: dateTo || undefined,
+        status: status || undefined,
+        search: search || undefined,
+        realizedOnly: false,
+      });
+      toast({
+        title: tExportCommon('success'),
+        message: tExportCommon('success'),
+        variant: 'success',
+      });
+    } catch (error) {
+      toast({
+        title: tErrors('loadFailed'),
+        message: resolveUnknownApiError(error, commonErrorMessages, {
+          useParseApiMessage: true,
+          forbidden: tExport('accessDenied'),
+        }),
+        variant: 'error',
+      });
+    } finally {
+      setExporting(false);
+    }
+  }, [
+    dateFrom,
+    dateTo,
+    status,
+    search,
+    toast,
+    tExportCommon,
+    tErrors,
+    tExport,
+    commonErrorMessages,
+  ]);
 
   const formatDate = useCallback(
     (value: string) => {
@@ -281,6 +329,20 @@ export function FundExitsList() {
         clearLabel={tCommon('filters.clearAll')}
         applyLabel={tCommon('filters.apply')}
         toggleLabel={tCommon('filters.toggle')}
+        actions={
+          <PermissionGate permission="treasury.reports.read">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              loading={exporting}
+              disabled={!canRead || exporting}
+              onClick={() => void handleExportCsv()}
+            >
+              {tExport('exportCsv')}
+            </Button>
+          </PermissionGate>
+        }
         filters={
           <>
             <div className="min-w-[200px] flex-1 sm:max-w-md">
