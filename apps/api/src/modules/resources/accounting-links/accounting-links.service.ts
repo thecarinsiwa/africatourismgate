@@ -251,6 +251,48 @@ export class AccountingLinksService {
     return toAccountingLinkDto(row);
   }
 
+  /**
+   * Soft-delete (SYSCO-005) : autorisé pour `pending` / `skipped` uniquement.
+   * Libère l’unicité `(fund_op_type, fund_op_id)` pour un recreate via Comptabiliser.
+   * Interdit si `linked` — exiger une contrepassation comptable d’abord.
+   */
+  async softDelete(
+    id: string,
+    actorUserId?: string | null,
+  ): Promise<{ id: string; deleted: true }> {
+    const row = await this.linksRepo.findOne({
+      where: { id, deletedAt: IsNull() },
+    });
+    if (!row) {
+      throw new NotFoundException('Accounting link not found');
+    }
+    if (row.status === 'linked') {
+      throw new ConflictException(
+        'Cannot soft-delete a linked accounting link — create a reversal journal entry first (SYSCO-005 policy)',
+      );
+    }
+
+    const oldJson = this.snapshot(row);
+    const now = new Date();
+    row.deletedAt = now;
+    row.deletedByUserId = actorUserId ?? null;
+    row.updatedByUserId = actorUserId ?? null;
+    await this.linksRepo.save(row);
+
+    await this.treasuryAudit.log({
+      organizationId: row.organizationId,
+      entityType: 'accounting_link',
+      entityId: row.id,
+      action: 'update',
+      actorType: 'user',
+      actorId: actorUserId ?? null,
+      oldJson,
+      newJson: { ...this.snapshot(row), deletedAt: now.toISOString() },
+    });
+
+    return { id: row.id, deleted: true };
+  }
+
   private async assertFundOpExists(
     fundOpType: 'fund_entry' | 'fund_exit',
     fundOpId: string,

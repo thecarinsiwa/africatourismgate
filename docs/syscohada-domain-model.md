@@ -300,6 +300,20 @@ linked --void fond--> BLOQUÉ (gate existante)
 
 **Soft-delete :** autorisé si `pending` ou `skipped` pour permettre recreate ; **interdit** si `linked` sans processus de contrepassation documenté (service).
 
+#### Politique opérationnelle SYSCO-005
+
+| Cas | Comportement |
+| --- | ------------ |
+| Comptabiliser → succès | `pending` puis `linked` + `journal_entry_id` = UUID pièce `posted` |
+| Rejeu si `linked` + `journal_entry_id` | **No-op** HTTP 200 (`noop: true`) |
+| Reprise si `pending` + `journal_entry_id` déjà posé | Finalise `linked` sans recréer d’écriture |
+| `skipped` | Pas d’écriture ; `POST …/skip` ; pour re-comptabiliser : `DELETE` soft-delete puis `POST …/post` |
+| Soft-delete `pending`/`skipped` | `DELETE /accounting-links/:id` — libère `uk_accounting_links_fund_op_active` |
+| Soft-delete `linked` | **403/409** — d’abord contrepassation comptable |
+| Void fond si `linked` actif | **Bloqué** (`assertFundOpNotAccountingLinked`, ignore soft-deleted) |
+| Contrepassation | **Nouvelle** `journal_entry` `source=reversal` ; le link `linked` d’origine **reste** (pas d’update in-place de la pièce) |
+| Unicité | `uniq_fund_op` généré = `fund_op_type:fund_op_id` si `deleted_at IS NULL` ; sinon NULL |
+
 ---
 
 ### 5.9. `accounting_audit_logs` — Audit écritures

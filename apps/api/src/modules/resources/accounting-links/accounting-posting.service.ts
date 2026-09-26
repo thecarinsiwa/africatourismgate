@@ -64,6 +64,7 @@ export class AccountingPostingService {
       },
     });
 
+    // Déjà lié avec écriture → no-op idempotent (SYSCO-005)
     if (link?.status === 'linked' && link.journalEntryId) {
       return {
         link: toAccountingLinkDto(link),
@@ -73,9 +74,37 @@ export class AccountingPostingService {
       };
     }
 
+    // Reprise : pending (ou linked inconsistante) avec journal déjà créé
+    if (
+      link &&
+      link.journalEntryId &&
+      (link.status === 'pending' || link.status === 'linked')
+    ) {
+      const oldJson = this.linkSnapshot(link);
+      link.status = 'linked';
+      link.updatedByUserId = actorUserId ?? null;
+      await this.linksRepo.save(link);
+      await this.treasuryAudit.log({
+        organizationId: link.organizationId,
+        entityType: 'accounting_link',
+        entityId: link.id,
+        action: 'update',
+        actorType: 'user',
+        actorId: actorUserId ?? null,
+        oldJson,
+        newJson: this.linkSnapshot(link),
+      });
+      return {
+        link: toAccountingLinkDto(link),
+        journalEntryId: link.journalEntryId,
+        noop: false,
+        mappingRuleKey: link.mappingRuleKey,
+      };
+    }
+
     if (link?.status === 'skipped') {
       throw new ConflictException(
-        'Fund operation was skipped for accounting — unskip or recreate link before posting',
+        'Fund operation was skipped for accounting — soft-delete the link (DELETE /accounting-links/:id) then post again',
       );
     }
 

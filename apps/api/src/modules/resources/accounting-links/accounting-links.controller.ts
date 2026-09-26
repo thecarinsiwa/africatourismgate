@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -123,5 +124,15 @@ export class AccountingLinksController {
     @CurrentUser() user: AuthUserDto,
   ) {
     return this.service.update(id, dto, user.id);
+  }
+
+  @RequirePermissions('treasury.accounting_link.read')
+  @Delete(':id')
+  @ApiOperation({
+    summary:
+      'Soft-delete pending/skipped link (SYSCO-005) — frees unique key for recreate; forbidden if linked',
+  })
+  softDelete(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
+    return this.service.softDelete(id, user.id);
   }
 }

@@ -322,7 +322,7 @@ pnpm db:sync
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `api`, `priority:high`  
 **Branche suggérée :** `feature/syscohada-accounting-links-link`  
-**Livrable :** flux `pending` → `linked` dans `AccountingPostingService` · gate void inchangée · skip / recreate documentés
+**Livrable :** `AccountingPostingService` (linked / noop / reprise) · `DELETE` soft-delete pending/skipped · migration `add_syscohada_accounting_links_unique_active.sql` · void ignore soft-deleted · politique [domaine §5.8](./syscohada-domain-model.md)
 
 #### Modèle GitHub
 
@@ -335,24 +335,31 @@ Le stub permet déjà `accounting_links` et interdit le void si `status = linked
 
 1. Après génération écriture : upsert link, `journal_entry_id`, `status = linked`
 2. Flux `pending` → reprise ; `linked` → no-op
-3. `skipped` : pas d’écriture
-4. Soft-delete : unique parmi non-deleted (existant)
+3. `skipped` : pas d’écriture ; recreate via soft-delete
+4. Documenter soft-delete vs unique + contrepassation
 
 ## Fichiers clés
 
 - `accounting-posting.service.ts`
-- `assertFundOpNotAccountingLinked` (void — inchangé)
+- `accounting-links.service.ts` (softDelete)
+- `assert-fund-op-not-accounting-linked.ts`
+- `database/migrations/add_syscohada_accounting_links_unique_active.sql`
+- `docs/syscohada-domain-model.md` §5.8
 
 ## Critères d'acceptation
 
 - [x] Opération comptabilisée → link `linked` + UUID écriture
-- [x] Void fond toujours bloqué si linked
-- [x] Contrepassation : nouvelle pièce (doc domaine) — hors MVP post
-- [x] Unique contrainte respectée (idempotence)
+- [x] Void fond toujours bloqué si linked (actifs uniquement)
+- [x] Contrepassation : nouvelle pièce documentée (pas d’update in-place)
+- [x] Unique contrainte parmi non soft-deleted (idempotence + recreate)
 
 ## Plan de test
 
-Créer entrée recorded → POST post → GET link ; tenter void → refus ; rejeu post → noop.
+```bash
+pnpm db:sync
+# POST /accounting-links/post → linked + journalEntryId
+# rejeu → noop:true ; void → 400 ; skip → DELETE → post à nouveau
+```
 
 ## Références
 

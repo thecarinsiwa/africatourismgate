@@ -2,8 +2,8 @@ import { BadRequestException } from '@nestjs/common';
 import type { EntityManager } from 'typeorm';
 
 /**
- * Bloque l’annulation si un pont comptable `linked` existe (TRESO-039).
- * No-op si la table `accounting_links` n’est pas encore migrée.
+ * Bloque l’annulation si un pont comptable `linked` actif existe (TRESO-039 / SYSCO-005).
+ * Ignore les liens soft-deleted. No-op si la table n’est pas encore migrée.
  */
 export async function assertFundOpNotAccountingLinked(
   manager: EntityManager,
@@ -27,6 +27,7 @@ export async function assertFundOpNotAccountingLinked(
      WHERE fund_op_type = ?
        AND fund_op_id = ?
        AND status = 'linked'
+       AND deleted_at IS NULL
      LIMIT 1`,
     [fundOpType, fundOpId],
   );
