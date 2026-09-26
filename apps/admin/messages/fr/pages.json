@@ -842,7 +842,24 @@
     "budgets": {
       "title": "Budgets",
       "description": "Budgétisation mensuelle, annuelle et par activité/produit. Accès : treasury.budgets.write.",
-      "metaTitle": "Budgets"
+      "metaTitle": "Budgets",
+      "nouveau": {
+        "title": "Nouveau budget",
+        "description": "Créer un budget mensuel, annuel, par activité ou produit.",
+        "metaTitle": "Nouveau budget",
+        "backLabel": "Retour aux budgets"
+      },
+      "id": {
+        "title": "Modifier le budget",
+        "description": "Mettre à jour un budget.",
+        "metaTitle": "Modifier le budget",
+        "backLabel": "Retour aux budgets",
+        "voir": {
+          "metaTitle": "Voir le budget",
+          "title": "Détail du budget",
+          "backLabel": "Retour aux budgets"
+        }
+      }
     },
     "rapports": {
       "title": "Rapports",

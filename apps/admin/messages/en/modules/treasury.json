@@ -56,6 +56,14 @@
     "activity": "Activity",
     "product": "Product / service"
   },
+  "budgetProductType": {
+    "room": "Room",
+    "flight_class": "Flight class",
+    "vehicle": "Vehicle",
+    "cabin": "Cabin",
+    "activity_schedule": "Activity schedule",
+    "package": "Package"
+  },
   "workflow": {
     "title": "Validation workflow",
     "progressAria": "Expense request workflow progress",
@@ -357,13 +365,16 @@
       "accessDenied": "Access denied: treasury.read permission required.",
       "emptyDefault": "No budgets yet.",
       "emptyFiltered": "No budget matches your criteria.",
+      "searchPlaceholder": "Search by label…",
+      "searchAria": "Search budgets",
       "newButton": "New budget",
       "columns": {
         "label": "Label",
         "period": "Period",
         "scope": "Scope",
         "amount": "Amount",
-        "currency": "Currency"
+        "currency": "Currency",
+        "year": "Year"
       }
     },
     "form": {
@@ -382,14 +393,50 @@
         "productId": "Product / service",
         "notes": "Notes"
       },
+      "hints": {
+        "amountCents": "Amount in major units (e.g. 1500.00).",
+        "scopeType": "General, linked to an activity, or to a sold product/service.",
+        "activityId": "Search and select an activity.",
+        "productId": "Search and select the target for the chosen product type."
+      },
       "validation": {
         "labelRequired": "Label is required.",
         "yearRequired": "Year is required.",
         "monthRequiredForMonthly": "Month is required for a monthly budget.",
-        "amountPositive": "Amount must be greater than zero."
+        "amountPositive": "Amount must be greater than zero.",
+        "currencyRequired": "Currency is required.",
+        "organizationRequired": "Organization is required.",
+        "activityRequired": "An activity is required for this scope.",
+        "productTypeRequired": "Product type is required.",
+        "productIdRequired": "A product / service is required."
+      },
+      "organization": "Organization",
+      "activitySearch": "Search an activity…",
+      "activityLoading": "Loading activities…",
+      "activityEmpty": "No activities found.",
+      "productSearch": "Search a product…",
+      "productLoading": "Loading products…",
+      "productEmpty": "No products found.",
+      "accessDenied": "Access denied: treasury.budgets.write permission required.",
+      "toast": {
+        "createdTitle": "Budget created",
+        "createdMessage": "The budget has been saved.",
+        "updatedTitle": "Budget updated",
+        "updatedMessage": "Changes have been saved.",
+        "errorTitle": "Error"
       },
       "submitCreate": "Create budget",
       "submitUpdate": "Save"
+    },
+    "detail": {
+      "title": "Budget details",
+      "editButton": "Edit",
+      "period": "Period",
+      "scope": "Scope",
+      "activity": "Activity",
+      "product": "Product / service",
+      "createdBy": "Created by",
+      "id": "Identifier"
     },
     "vsActual": {
       "title": "Budget vs actual",

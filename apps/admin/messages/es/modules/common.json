@@ -101,6 +101,7 @@
     "payment": "pago",
     "fundEntry": "entrada",
     "fundExit": "salida",
+    "budget": "presupuesto",
     "expenseRequest": "solicitud",
     "property": "alojamiento",
     "room": "habitación",

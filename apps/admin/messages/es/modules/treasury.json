@@ -56,6 +56,14 @@
     "activity": "Actividad",
     "product": "Producto / servicio"
   },
+  "budgetProductType": {
+    "room": "Habitación",
+    "flight_class": "Clase de vuelo",
+    "vehicle": "Vehículo",
+    "cabin": "Camarote",
+    "activity_schedule": "Horario de actividad",
+    "package": "Paquete"
+  },
   "workflow": {
     "title": "Circuito de validación",
     "progressAria": "Progreso del circuito de validación",
@@ -357,13 +365,16 @@
       "accessDenied": "Acceso denegado: se requiere el permiso treasury.read.",
       "emptyDefault": "Aún no hay presupuestos.",
       "emptyFiltered": "Ningún presupuesto coincide con sus criterios.",
+      "searchPlaceholder": "Buscar por etiqueta…",
+      "searchAria": "Buscar presupuestos",
       "newButton": "Nuevo presupuesto",
       "columns": {
         "label": "Etiqueta",
         "period": "Periodo",
         "scope": "Ámbito",
         "amount": "Importe",
-        "currency": "Moneda"
+        "currency": "Moneda",
+        "year": "Año"
       }
     },
     "form": {
@@ -382,14 +393,50 @@
         "productId": "Producto / servicio",
         "notes": "Notas"
       },
+      "hints": {
+        "amountCents": "Importe en unidades mayores (ej. 1500,00).",
+        "scopeType": "General, vinculado a una actividad, o a un producto/servicio vendido.",
+        "activityId": "Busque y seleccione una actividad.",
+        "productId": "Busque y seleccione el destino según el tipo de producto."
+      },
       "validation": {
         "labelRequired": "La etiqueta es obligatoria.",
         "yearRequired": "El año es obligatorio.",
         "monthRequiredForMonthly": "El mes es obligatorio para un presupuesto mensual.",
-        "amountPositive": "El importe debe ser mayor que cero."
+        "amountPositive": "El importe debe ser mayor que cero.",
+        "currencyRequired": "La moneda es obligatoria.",
+        "organizationRequired": "La organización es obligatoria.",
+        "activityRequired": "Se requiere una actividad para este ámbito.",
+        "productTypeRequired": "El tipo de producto es obligatorio.",
+        "productIdRequired": "Se requiere un producto / servicio."
+      },
+      "organization": "Organización",
+      "activitySearch": "Buscar una actividad…",
+      "activityLoading": "Cargando actividades…",
+      "activityEmpty": "No se encontraron actividades.",
+      "productSearch": "Buscar un producto…",
+      "productLoading": "Cargando productos…",
+      "productEmpty": "No se encontraron productos.",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.budgets.write.",
+      "toast": {
+        "createdTitle": "Presupuesto creado",
+        "createdMessage": "El presupuesto se ha guardado.",
+        "updatedTitle": "Presupuesto actualizado",
+        "updatedMessage": "Los cambios se han guardado.",
+        "errorTitle": "Error"
       },
       "submitCreate": "Crear presupuesto",
       "submitUpdate": "Guardar"
+    },
+    "detail": {
+      "title": "Detalle del presupuesto",
+      "editButton": "Editar",
+      "period": "Periodo",
+      "scope": "Ámbito",
+      "activity": "Actividad",
+      "product": "Producto / servicio",
+      "createdBy": "Creado por",
+      "id": "Identificador"
     },
     "vsActual": {
       "title": "Presupuesto vs realizado",

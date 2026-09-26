@@ -5,6 +5,9 @@ import type {
   BookingItemType,
   BookingGuideRole,
   BookingStatus,
+  BudgetPeriodType,
+  BudgetProductType,
+  BudgetScopeType,
   EmployeeStatus,
   ExpenseRequestStatus,
   FlightClassName,
@@ -27,6 +30,9 @@ import type {
   VehicleAvailabilityStatus,
 } from '@africatourismgate/types';
 import {
+  BUDGET_PERIOD_TYPES,
+  BUDGET_PRODUCT_TYPES,
+  BUDGET_SCOPE_TYPES,
   EXPENSE_REQUEST_STATUSES,
   FUND_ENTRY_SOURCES,
   FUND_ENTRY_STATUSES,
@@ -805,5 +811,73 @@ export function useExpenseRequestStatusFilterOptions() {
       })),
     ],
     [labels, tAll],
+  );
+}
+
+export function useBudgetPeriodLabels() {
+  const t = useTranslations('modules.treasury.budgetPeriod');
+  return useMemo(
+    (): Record<BudgetPeriodType, string> => ({
+      monthly: t('monthly'),
+      annual: t('annual'),
+    }),
+    [t],
+  );
+}
+
+export function useBudgetPeriodFilterOptions() {
+  const tAll = useTranslations('modules.common.filters');
+  const labels = useBudgetPeriodLabels();
+  return useMemo(
+    () => [
+      { value: '', label: tAll('all') },
+      ...BUDGET_PERIOD_TYPES.map((value) => ({
+        value,
+        label: labels[value],
+      })),
+    ],
+    [labels, tAll],
+  );
+}
+
+export function useBudgetScopeLabels() {
+  const t = useTranslations('modules.treasury.budgetScope');
+  return useMemo(
+    (): Record<BudgetScopeType, string> => ({
+      general: t('general'),
+      activity: t('activity'),
+      product: t('product'),
+    }),
+    [t],
+  );
+}
+
+export function useBudgetScopeFilterOptions() {
+  const tAll = useTranslations('modules.common.filters');
+  const labels = useBudgetScopeLabels();
+  return useMemo(
+    () => [
+      { value: '', label: tAll('all') },
+      ...BUDGET_SCOPE_TYPES.map((value) => ({
+        value,
+        label: labels[value],
+      })),
+    ],
+    [labels, tAll],
+  );
+}
+
+export function useBudgetProductTypeLabels() {
+  const t = useTranslations('modules.treasury.budgetProductType');
+  return useMemo(
+    (): Record<BudgetProductType, string> => ({
+      room: t('room'),
+      flight_class: t('flight_class'),
+      vehicle: t('vehicle'),
+      cabin: t('cabin'),
+      activity_schedule: t('activity_schedule'),
+      package: t('package'),
+    }),
+    [t],
   );
 }

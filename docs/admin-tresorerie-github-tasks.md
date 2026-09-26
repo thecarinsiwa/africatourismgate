@@ -100,7 +100,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-022 | API transitions d’état + historique immutable — ✅       | Haute    | API         | M      |
 | TRESO-023 | API budgets mensuels / annuels — ✅                      | Moyenne  | API         | M      |
 | TRESO-024 | API budgets par activité et produit/service — ✅         | Moyenne  | API         | M      |
-| TRESO-025 | UI Admin budgets liste + formulaires                     | Moyenne  | Admin       | M      |
+| TRESO-025 | UI Admin budgets liste + formulaires — ✅                | Moyenne  | Admin       | M      |
 | TRESO-026 | UI suivi budget vs réalisé (agrégats légers)             | Moyenne  | Admin       | M      |
 | TRESO-027 | API invitation e-mail + jeton/lien sécurisé              | Moyenne  | API         | M      |
 | TRESO-028 | API activate/deactivate + permissions externes           | Moyenne  | API         | M      |
@@ -1189,10 +1189,11 @@ CRUD avec liens activité et package/activity.
 
 ---
 
-### TRESO-025 — UI Admin budgets liste + formulaires
+### TRESO-025 — UI Admin budgets liste + formulaires — ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:medium`  
 **Branche suggérée :** `feature/tresorerie-ui-budgets`
+**Livrable :** routes `/tresorerie/budgets` · liste + formulaires mensuel/annuel/activité/produit · i18n + `PermissionGate` (`treasury.read` / `treasury.budgets.write`)
 
 #### Modèle GitHub
 
@@ -1214,9 +1215,9 @@ CRUD avec liens activité et package/activity.
 
 ## Critères d'acceptation
 
-- [ ] CRUD UI
-- [ ] i18n + permissions
-- [ ] Types de budget sélectionnables
+- [x] CRUD UI
+- [x] i18n + permissions
+- [x] Types de budget sélectionnables
 
 ## Plan de test
 

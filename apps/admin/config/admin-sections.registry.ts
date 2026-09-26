@@ -217,6 +217,21 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Budgétisation mensuelle, annuelle et par activité/produit.',
     apiResource: 'budgets',
   },
+  'tresorerie/budgets/nouveau': {
+    title: 'Nouveau budget',
+    description: 'Créer un budget.',
+    apiResource: 'budgets',
+  },
+  'tresorerie/budgets/id': {
+    title: 'Modifier budget',
+    description: 'Éditer un budget.',
+    apiResource: 'budgets',
+  },
+  'tresorerie/budgets/id/voir': {
+    title: 'Voir budget',
+    description: 'Fiche détail d’un budget.',
+    apiResource: 'budgets',
+  },
   'tresorerie/rapports': {
     title: 'Rapports trésorerie',
     description: 'Agrégats et exports des opérations financières.',

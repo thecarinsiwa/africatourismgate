@@ -842,7 +842,24 @@
     "budgets": {
       "title": "Presupuestos",
       "description": "Presupuesto mensual, anual y por actividad/producto. Acceso: treasury.budgets.write.",
-      "metaTitle": "Presupuestos"
+      "metaTitle": "Presupuestos",
+      "nouveau": {
+        "title": "Nuevo presupuesto",
+        "description": "Crear un presupuesto mensual, anual, por actividad o producto.",
+        "metaTitle": "Nuevo presupuesto",
+        "backLabel": "Volver a los presupuestos"
+      },
+      "id": {
+        "title": "Editar presupuesto",
+        "description": "Actualizar un presupuesto.",
+        "metaTitle": "Editar presupuesto",
+        "backLabel": "Volver a los presupuestos",
+        "voir": {
+          "metaTitle": "Ver presupuesto",
+          "title": "Detalle del presupuesto",
+          "backLabel": "Volver a los presupuestos"
+        }
+      }
     },
     "rapports": {
       "title": "Informes",
