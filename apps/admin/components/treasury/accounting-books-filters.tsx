@@ -88,8 +88,7 @@ export function AccountingBooksFilters({
     return () => {
       cancelled = true;
     };
-    // Bootstrap org once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Bootstrap org once on mount.
   }, []);
 
   useEffect(() => {
