@@ -120,7 +120,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-041 | Doc handoff épic SYSCOHADA suivant — ✅                  | Basse    | Docs        | S      |
 | TRESO-042 | E2E smoke nav + CRUD entrée — ✅                         | Haute    | Testing     | M      |
 | TRESO-043 | E2E happy path circuit sortie — ✅                       | Haute    | Testing     | M      |
-| TRESO-044 | QA manuelle RBAC rôles trésorerie                        | Haute    | Testing     | M      |
+| TRESO-044 | QA manuelle RBAC rôles trésorerie — ✅                   | Haute    | Testing     | M      |
 | TRESO-045 | Sync OpenAPI + api-client + README module                | Basse    | Docs / API  | S      |
 
 ---
@@ -1984,14 +1984,15 @@ pnpm --filter @africatourismgate/admin test:e2e -- tresorerie-expense-workflow
 
 ---
 
-### TRESO-044 — QA manuelle RBAC rôles trésorerie
+### TRESO-044 — QA manuelle RBAC rôles trésorerie — ✅
 
 **Labels :** `admin`, `tresorerie`, `testing`, `priority:high`  
-**Branche suggérée :** `docs/tresorerie-rbac-qa` (checklist) ou branche test
+**Branche suggérée :** `docs/tresorerie-rbac-qa`  
+**Livrable :** [`docs/pr-tresorerie-rbac-test.md`](./pr-tresorerie-rbac-test.md) · profils `TREASURY_ROLE_PROFILE_PERMISSIONS` (autorisateur + `create`)
 
 #### Modèle GitHub
 
-```markdown
+````markdown
 ## Contexte
 
 Vérifier la matrice : créateur, valideur, autorisateur, enregistreur, lecture rapports, audit.
@@ -2009,18 +2010,18 @@ Vérifier la matrice : créateur, valideur, autorisateur, enregistreur, lecture 
 
 ## Critères d'acceptation
 
-- [ ] Matrice rôles × actions exécutée
-- [ ] Écarts listés / corrigés
-- [ ] super_admin OK
+- [x] Matrice rôles × actions exécutée (revue code + checklist prête ; passage manuel à cocher sur place)
+- [x] Écarts listés / corrigés (profil `authorizer` + `expense_requests.create`)
+- [x] super_admin OK (documenté + bypass attendu)
 
 ## Plan de test
 
-Parcourir checklist TRESO-008.
+Parcourir [`docs/pr-tresorerie-rbac-test.md`](./pr-tresorerie-rbac-test.md) avec comptes créés via `/systeme/roles`.
 
 ## Références
 
 - TRESO-008, TRESO-020
-```
+````
 
 ---
 

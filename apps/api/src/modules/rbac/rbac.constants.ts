@@ -137,6 +137,7 @@ export const TREASURY_ROLE_PROFILE_PERMISSIONS = {
   ],
   authorizer: [
     'treasury.read',
+    'treasury.expense_requests.create',
     'treasury.expense_requests.validate',
     'treasury.expense_requests.authorize',
     'treasury.externals.manage',
