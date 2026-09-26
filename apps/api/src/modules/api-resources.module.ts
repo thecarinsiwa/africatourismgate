@@ -89,6 +89,7 @@ import { GapActivitiesModule } from './resources/gap-activities/gap-activities.m
 import { GapImpactStatsModule } from './resources/gap-impact-stats/gap-impact-stats.module';
 import { GapMediaItemsModule } from './resources/gap-media-items/gap-media-items.module';
 import { GapSiteSettingsModule } from './resources/gap-site-settings/gap-site-settings.module';
+import { AnalyticsModule } from './resources/analytics/analytics.module';
 
 import { Module } from '@nestjs/common';
 
@@ -185,6 +186,7 @@ import { Module } from '@nestjs/common';
     GapImpactStatsModule,
     GapMediaItemsModule,
     GapSiteSettingsModule,
+    AnalyticsModule,
   ],
 })
 export class ApiResourcesModule {}

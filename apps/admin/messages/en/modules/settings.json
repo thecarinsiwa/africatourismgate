@@ -97,6 +97,18 @@
           "package": "Package"
         }
       },
+      "catalog": {
+        "title": "Site products",
+        "description": "Enable or disable each vertical in the public “Our Products” menu. A disabled vertical is hidden from navigation and returns a 404 page.",
+        "products": {
+          "hotels": "Hotels",
+          "flights": "Flights",
+          "cars": "Car rentals",
+          "cruises": "Cruises",
+          "tours": "Tours / activities",
+          "packages": "Packages"
+        }
+      },
       "maintenance": {
         "title": "Site maintenance",
         "description": "When enabled, public site visitors are redirected to a maintenance page (admin remains accessible).",

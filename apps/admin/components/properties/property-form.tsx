@@ -14,8 +14,13 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useId, useMemo, useState, type ReactNode } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import {
+  hasValidDestinationCoords,
+  parseDestinationCoord,
+} from '../../lib/destination-coords';
 import { isRichTextEmpty } from '../../lib/rich-text';
 import { isValidSlug, slugifyName } from '../../lib/slug';
+import { CoordinatePickerMap } from '../maps/coordinate-picker-map';
 import { RichTextEditor } from '../rich-text-editor';
 
 export type PropertyFormValues = {
@@ -26,6 +31,8 @@ export type PropertyFormValues = {
   starRating: string;
   description: string;
   addressLine: string;
+  latitude: string;
+  longitude: string;
 };
 
 const defaultValues: PropertyFormValues = {
@@ -36,7 +43,17 @@ const defaultValues: PropertyFormValues = {
   starRating: '',
   description: '',
   addressLine: '',
+  latitude: '',
+  longitude: '',
 };
+
+function formatCoordInput(value: string | number | null | undefined): string {
+  if (value === null || value === undefined || value === '') {
+    return '';
+  }
+  const num = Number(value);
+  return Number.isFinite(num) ? String(num) : '';
+}
 
 function propertyToFormValues(property: Property): PropertyFormValues {
   return {
@@ -47,13 +64,18 @@ function propertyToFormValues(property: Property): PropertyFormValues {
     starRating: property.starRating != null ? String(property.starRating) : '',
     description: property.description ?? '',
     addressLine: property.addressLine ?? '',
+    latitude: formatCoordInput(property.latitude),
+    longitude: formatCoordInput(property.longitude),
   };
 }
 
-function toPayload(values: PropertyFormValues): CreatePropertyRequest {
+function toPayload(
+  values: PropertyFormValues,
+  mode: 'create' | 'edit',
+): CreatePropertyRequest {
   const star =
     values.starRating.trim() !== '' ? Number(values.starRating) : undefined;
-  return {
+  const payload: CreatePropertyRequest = {
     destinationId: values.destinationId,
     name: values.name.trim(),
     slug: values.slug.trim().toLowerCase(),
@@ -64,6 +86,18 @@ function toPayload(values: PropertyFormValues): CreatePropertyRequest {
       : {}),
     ...(values.addressLine.trim() ? { addressLine: values.addressLine.trim() } : {}),
   };
+
+  const latTrimmed = values.latitude.trim();
+  const lngTrimmed = values.longitude.trim();
+  if (latTrimmed && lngTrimmed) {
+    payload.latitude = Number(latTrimmed);
+    payload.longitude = Number(lngTrimmed);
+  } else if (mode === 'edit') {
+    payload.latitude = null;
+    payload.longitude = null;
+  }
+
+  return payload;
 }
 
 type PropertyFormProps = {
@@ -110,6 +144,24 @@ export function PropertyForm({
       .catch(() => setDestinations([]));
   }, []);
 
+  const selectedDestination = useMemo(
+    () => destinations.find((d) => d.id === values.destinationId) ?? null,
+    [destinations, values.destinationId],
+  );
+
+  const mapDefaults = useMemo(() => {
+    if (
+      selectedDestination &&
+      hasValidDestinationCoords(selectedDestination.latitude, selectedDestination.longitude)
+    ) {
+      return {
+        latitude: parseDestinationCoord(selectedDestination.latitude)!,
+        longitude: parseDestinationCoord(selectedDestination.longitude)!,
+      };
+    }
+    return { latitude: 0, longitude: 20 };
+  }, [selectedDestination]);
+
   const updateField = useCallback(
     <K extends keyof PropertyFormValues>(key: K, value: PropertyFormValues[K]) => {
       setValues((prev) => {
@@ -138,6 +190,17 @@ export function PropertyForm({
         errors.starRating = tValidation('starRatingRange');
       }
     }
+    const hasLat = values.latitude.trim().length > 0;
+    const hasLng = values.longitude.trim().length > 0;
+    if (hasLat !== hasLng) {
+      errors.latitude = tValidation('coordsBothRequired');
+      errors.longitude = tValidation('coordsBothRequired');
+    } else if (hasLat && hasLng) {
+      const lat = parseDestinationCoord(values.latitude);
+      const lng = parseDestinationCoord(values.longitude);
+      if (lat === null) errors.latitude = tValidation('latitudeInvalid');
+      if (lng === null) errors.longitude = tValidation('longitudeInvalid');
+    }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   }
@@ -156,7 +219,7 @@ export function PropertyForm({
     setSubmitting(true);
     try {
       const client = getApiClient();
-      const payload = toPayload(values);
+      const payload = toPayload(values, mode);
       if (mode === 'create') {
         const created = await client.createProperty(payload);
         toast({
@@ -218,13 +281,10 @@ export function PropertyForm({
       {destinations.length === 0 ? (
         <p
           role="status"
-          className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-200"
+          className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-200"
         >
           {tForm('noDestinationsHint')}{' '}
-          <a
-            href="/produits/destinations/nouveau"
-            className="font-medium text-primary underline-offset-2 hover:underline"
-          >
+          <a href="/produits/destinations/nouveau" className="font-medium underline">
             {tForm('noDestinationsLink')}
           </a>
         </p>
@@ -233,13 +293,13 @@ export function PropertyForm({
       <div
         className={
           identityAside
-            ? 'grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]'
+            ? 'grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)] lg:items-start'
             : undefined
         }
       >
-        <Card variant="dashboard" padding="sm">
-          <h3 className="text-sm font-semibold text-atg-fg">{tForm('sections.identity')}</h3>
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+        <Card variant="dashboard" padding="md" className="space-y-4">
+          <h2 className="text-sm font-semibold text-atg-fg">{tForm('sections.identity')}</h2>
+          <div className="grid gap-4 sm:grid-cols-2">
             <Input
               label={tForm('name')}
               value={values.name}
@@ -302,6 +362,41 @@ export function PropertyForm({
 
         {identityAside ? <div className="min-w-0">{identityAside}</div> : null}
       </div>
+
+      <Card variant="dashboard" padding="md" className="space-y-4">
+        <h2 className="text-sm font-semibold text-atg-fg">{tForm('sections.geography')}</h2>
+        <p className="text-xs text-atg-muted">{tForm('geographyIntro')}</p>
+        <CoordinatePickerMap
+          latitude={values.latitude}
+          longitude={values.longitude}
+          onCoordinateChange={(lat, lng) => {
+            updateField('latitude', lat);
+            updateField('longitude', lng);
+          }}
+          defaultLatitude={mapDefaults.latitude}
+          defaultLongitude={mapDefaults.longitude}
+          countryCode={selectedDestination?.countryCode}
+          title={tForm('mapPicker')}
+          hint={tForm('mapPickerHint')}
+          ariaLabel={tForm('mapPickerAria')}
+        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Input
+            label={tCommonForm('latitude')}
+            value={values.latitude}
+            onChange={(e) => updateField('latitude', e.target.value)}
+            hint={tForm('latitudeHint')}
+            error={fieldErrors.latitude}
+          />
+          <Input
+            label={tCommonForm('longitude')}
+            value={values.longitude}
+            onChange={(e) => updateField('longitude', e.target.value)}
+            hint={tForm('longitudeHint')}
+            error={fieldErrors.longitude}
+          />
+        </div>
+      </Card>
 
       <div className="flex flex-wrap gap-3">
         <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>

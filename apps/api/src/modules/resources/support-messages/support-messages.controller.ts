@@ -32,13 +32,15 @@ export class SupportMessagesController {
   constructor(private readonly service: SupportMessagesService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List support-messages' })
+  @RequirePermissions('support_tickets.read')
+  @ApiOperation({ summary: 'List support-messages (staff)' })
   findAll(@Query() query: PaginationQueryDto) {
     return this.service.findAll(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get support-messages by id' })
+  @RequirePermissions('support_tickets.read')
+  @ApiOperation({ summary: 'Get support-messages by id (staff)' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }

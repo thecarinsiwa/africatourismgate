@@ -39,6 +39,7 @@ import { PublicBrandingDto } from './dto/public-branding.dto';
 import { PublicBrandingQueryDto } from './dto/public-branding-query.dto';
 import { PublicBookingModesDto } from './dto/public-booking-modes.dto';
 import { PublicPaymentMethodsDto } from './dto/public-payment-methods.dto';
+import { PublicCatalogProductsDto } from './dto/public-catalog-products.dto';
 import { PublicSiteMaintenanceDto } from './dto/public-site-maintenance.dto';
 import { PublicContactDto } from './dto/public-contact.dto';
 import { OrganizationSettingsService } from './organization-settings.service';
@@ -104,6 +105,18 @@ export class OrganizationSettingsController {
     @Query() query: PublicBrandingQueryDto,
   ): Promise<PublicPaymentMethodsDto> {
     return this.service.findPublicPaymentMethods(query.organizationSlug);
+  }
+
+  @Public()
+  @Get('public/catalog-products')
+  @ApiOperation({
+    summary: 'Get enabled product verticals for the public site menu and routes',
+  })
+  @ApiOkResponse({ type: PublicCatalogProductsDto })
+  findPublicCatalogProducts(
+    @Query() query: PublicBrandingQueryDto,
+  ): Promise<PublicCatalogProductsDto> {
+    return this.service.findPublicCatalogProducts(query.organizationSlug);
   }
 
   @Public()

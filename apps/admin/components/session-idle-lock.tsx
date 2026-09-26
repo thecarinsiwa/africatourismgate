@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getApiClient } from '../lib/auth/api';
 import { logout } from '../lib/auth/logout';
+import { isAdminLockSessionShortcut } from '../lib/admin-search/shortcuts';
 import {
   isIdleExpired,
   isSessionLocked,
@@ -125,6 +126,25 @@ export function SessionIdleLock() {
       window.removeEventListener(AUTH_CHANGED_EVENT, syncLockedState);
     };
   }, [syncLockedState]);
+
+  // Ctrl/⌘+L — verrouillage manuel immédiat (même depuis un champ de saisie).
+  useEffect(() => {
+    function onLockShortcut(event: KeyboardEvent) {
+      if (!isAdminLockSessionShortcut(event)) {
+        return;
+      }
+      if (!getSession()?.refreshToken || isSessionLocked()) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      setSessionLocked(true);
+      setLocked(true);
+    }
+
+    window.addEventListener('keydown', onLockShortcut, true);
+    return () => window.removeEventListener('keydown', onLockShortcut, true);
+  }, []);
 
   useEffect(() => {
     if (!getSession()?.refreshToken) {

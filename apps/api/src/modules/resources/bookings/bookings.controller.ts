@@ -88,6 +88,10 @@ import {
   CreateBookingManifestEntryDto,
   UpdateBookingManifestEntryDto,
 } from './dto/booking-manifest-entry.dto';
+import {
+  BookingEmergencyContactDto,
+  UpdateBookingEmergencyContactDto,
+} from './dto/booking-emergency-contact.dto';
 
 function sendPdfAttachmentHeaders(
   res: Response,
@@ -575,6 +579,27 @@ export class BookingsController {
     @Param('id') id: string,
   ): Promise<BookingManifestEntryDto[]> {
     return this.bookingManifestService.listForBooking(id);
+  }
+
+  @Get(':id/emergency-contact')
+  @RequirePermissions('bookings.read')
+  @ApiOperation({ summary: 'Get booking-level emergency contact (owner or staff)' })
+  getEmergencyContact(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingEmergencyContactDto | null> {
+    return this.bookingsService.getEmergencyContact(id, user.id);
+  }
+
+  @Patch(':id/emergency-contact')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Set booking-level emergency contact (owner or staff)' })
+  updateEmergencyContact(
+    @Param('id') id: string,
+    @Body() dto: UpdateBookingEmergencyContactDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingEmergencyContactDto> {
+    return this.bookingsService.updateEmergencyContact(id, user.id, dto);
   }
 
   @Post(':id/manifest-entries')

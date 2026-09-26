@@ -11,6 +11,7 @@ export type Translations = {
     cars: string;
     cruises: string;
     tours: string;
+    partners: string;
     mainAria: string;
     mobileAria: string;
     menu: string;
@@ -19,6 +20,22 @@ export type Translations = {
     signOut: string;
   };
   theme: { lightMode: string; darkMode: string; enableLight: string; enableDark: string };
+  connectionLock: {
+    title: string;
+    subtitle: string;
+    hint: string;
+    retry: string;
+    retrying: string;
+    retryFailed: string;
+  };
+  offlineLock: {
+    title: string;
+    subtitle: string;
+    hint: string;
+    retry: string;
+    retrying: string;
+    retryFailed: string;
+  };
   language: { label: string; select: string };
   listing: {
     clearFilters: string;
@@ -201,6 +218,7 @@ export type Translations = {
       dietaryNotes: string;
       dietaryNotesPlaceholder: string;
       emergencyContactSection: string;
+      emergencyContactHint: string;
       emergencyContactName: string;
       emergencyContactPhone: string;
       emergencyContactEmail: string;
@@ -819,6 +837,36 @@ export type Translations = {
       reservations: string;
       loyalty: string;
       paymentMethods: string;
+      tickets: string;
+      help: string;
+    };
+    support: {
+      detailTitle: string;
+      listSubtitle: string;
+      empty: string;
+      emptyHint: string;
+      newTicket: string;
+      loadError: string;
+      notFound: string;
+      backToList: string;
+      closedHint: string;
+      loading: string;
+      emptyThread: string;
+      threadAria: string;
+      authorStaff: string;
+      authorCustomer: string;
+      replyTitle: string;
+      replyLabel: string;
+      replyPlaceholder: string;
+      sendReply: string;
+      replyMinLength: string;
+      sendError: string;
+      status: {
+        open: string;
+        pending: string;
+        resolved: string;
+        closed: string;
+      };
     };
     profile: {
       email: string;
@@ -1045,8 +1093,6 @@ export type Translations = {
           fullNameRequired: string;
           nationalityRequired: string;
           idNumberRequired: string;
-          emergencyContactNameRequired: string;
-          emergencyContactPhoneRequired: string;
           save: string;
           saving: string;
           saveError: string;
@@ -1082,18 +1128,32 @@ export type Translations = {
             dietaryNotes: string;
             dietaryNotesPlaceholder: string;
             legacyConditions: string;
-            emergencyContactSection: string;
-            emergencyContactName: string;
-            emergencyContactPhone: string;
-            emergencyContactEmail: string;
-            emergencyContactCountry: string;
-            emergencyContactAddress: string;
-            emergencyContactAddressPlaceholder: string;
             comment: string;
             commentPlaceholder: string;
             other: string;
             otherPlaceholder: string;
           };
+        };
+        emergencyContact: {
+          title: string;
+          subtitle: string;
+          empty: string;
+          name: string;
+          phone: string;
+          email: string;
+          country: string;
+          address: string;
+          addressPlaceholder: string;
+          nationalityPlaceholder: string;
+          nationalitySearch: string;
+          nationalityEmpty: string;
+          nameRequired: string;
+          phoneRequired: string;
+          save: string;
+          saving: string;
+          saveError: string;
+          edit: string;
+          cancel: string;
         };
         messages: {
           title: string;

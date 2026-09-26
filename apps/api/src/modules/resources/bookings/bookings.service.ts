@@ -34,6 +34,11 @@ import {
   RequestIdentityDocumentUploadResponseDto,
 } from './dto/request-identity-document-upload.dto';
 import { NotificationsService } from '../notifications/notifications.service';
+import {
+  BookingEmergencyContactDto,
+  UpdateBookingEmergencyContactDto,
+  toBookingEmergencyContactDto,
+} from './dto/booking-emergency-contact.dto';
 
 @Injectable()
 export class BookingsService extends CrudService<Bookings> {
@@ -395,6 +400,51 @@ export class BookingsService extends CrudService<Bookings> {
     return booking;
   }
 
+  async getEmergencyContact(
+    bookingId: string,
+    currentUserId: string,
+  ): Promise<BookingEmergencyContactDto | null> {
+    const booking = await this.assertBookingOwnerOrStaff(bookingId, currentUserId);
+    return toBookingEmergencyContactDto(booking);
+  }
+
+  async updateEmergencyContact(
+    bookingId: string,
+    currentUserId: string,
+    dto: UpdateBookingEmergencyContactDto,
+  ): Promise<BookingEmergencyContactDto> {
+    const booking = await this.assertBookingOwnerOrStaff(bookingId, currentUserId);
+    const name = dto.name.trim();
+    const phone = dto.phone.trim();
+    if (!name) {
+      throw new BadRequestException("Le nom du contact d'urgence est obligatoire.");
+    }
+    if (!phone) {
+      throw new BadRequestException("Le téléphone du contact d'urgence est obligatoire.");
+    }
+
+    const normalizeOptional = (value: string | null | undefined): string | null => {
+      if (value === undefined) return null;
+      if (value === null) return null;
+      const trimmed = value.trim();
+      return trimmed || null;
+    };
+
+    booking.emergencyContactName = name;
+    booking.emergencyContactPhone = phone;
+    booking.emergencyContactEmail = normalizeOptional(dto.email);
+    booking.emergencyContactCountry = normalizeOptional(dto.country);
+    booking.emergencyContactAddress = normalizeOptional(dto.address);
+    booking.updatedByUserId = currentUserId;
+    await this.bookingsRepository.save(booking);
+
+    const result = toBookingEmergencyContactDto(booking);
+    if (!result) {
+      throw new BadRequestException("Le contact d'urgence n'a pas pu être enregistré.");
+    }
+    return result;
+  }
+
   async getAdminDetail(id: string): Promise<BookingAdminDetailDto> {
     const base = await this.bookingEngine.getBookingDetail(id);
     const clientUser = await this.usersRepository.findOne({
@@ -445,6 +495,7 @@ export class BookingsService extends CrudService<Bookings> {
       paidCents: base.paidCents,
       balanceCents: base.balanceCents,
       depositRequiredCents: base.depositRequiredCents,
+      emergencyContact: base.emergencyContact ?? null,
       client: {
         id: clientUser.id,
         email: clientUser.email,

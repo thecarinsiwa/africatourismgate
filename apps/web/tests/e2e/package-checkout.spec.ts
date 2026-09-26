@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { fillCheckoutManifest, mockManifestApi } from './helpers/fill-manifest';
 import { mockCheckoutAuth } from './helpers/mock-checkout-auth';
 

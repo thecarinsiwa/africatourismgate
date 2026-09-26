@@ -75,3 +75,35 @@ test('getAdminSearchSourceDefinition returns known sources', () => {
   assert.equal(users?.kind, 'api');
   assert.equal(getAdminSearchSourceDefinition('pages')?.kind, 'local');
 });
+
+test('new API sources are registered with deep-link listHrefs', () => {
+  const expected: Array<{
+    id:
+      | 'tourGuides'
+      | 'promotions'
+      | 'promoCodes'
+      | 'gapPages'
+      | 'gapActivities'
+      | 'roles'
+      | 'employees';
+    listHref: string;
+    group: string;
+  }> = [
+    { id: 'tourGuides', listHref: '/guides', group: 'content' },
+    { id: 'promotions', listHref: '/paiements/promotions', group: 'payments' },
+    { id: 'promoCodes', listHref: '/paiements/codes-promo', group: 'payments' },
+    { id: 'gapPages', listHref: '/gap/pages', group: 'content' },
+    { id: 'gapActivities', listHref: '/gap/activites', group: 'content' },
+    { id: 'roles', listHref: '/systeme/roles', group: 'content' },
+    { id: 'employees', listHref: '/utilisateurs/employes', group: 'users' },
+  ];
+
+  for (const item of expected) {
+    const def = getAdminSearchSourceDefinition(item.id);
+    assert.ok(def, `missing source ${item.id}`);
+    assert.equal(def?.kind, 'api');
+    assert.equal(def?.listHref, item.listHref);
+    assert.equal(def?.group, item.group);
+    assert.equal(def?.enabled, true);
+  }
+});

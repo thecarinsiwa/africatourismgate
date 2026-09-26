@@ -111,6 +111,8 @@ import type {
   BookingManifestEntry,
   CreateBookingManifestEntryRequest,
   UpdateBookingManifestEntryRequest,
+  BookingEmergencyContact,
+  UpdateBookingEmergencyContactRequest,
   CreateBookingResponse,
   BookingRequestResponse,
   BookingMessage,
@@ -133,9 +135,12 @@ import type {
   UpdateReviewStatusRequest,
   CreateSupportMessageRequest,
   CreateSupportMessageResponse,
+  CreateCustomerSupportMessageRequest,
   CreateSupportTicketRequest,
   AdminSupportTicketDetail,
   AdminSupportTicketListItem,
+  CustomerSupportTicketDetail,
+  SupportTicket,
   SupportTicketCreated,
   SupportTicketsListQuery,
   UpdateSupportTicketRequest,
@@ -277,6 +282,12 @@ import type {
   UpdateDonationRequest,
   PublicDonationsPayload,
   PublicDonationsQuery,
+  AnalyticsPeriodQuery,
+  AnalyticsSummary,
+  AnalyticsTopPages,
+  AnalyticsTopPagesQuery,
+  AnalyticsTrend,
+  TrackPageViewRequest,
   AboutTimelineMilestone,
   AboutTimelineMilestonesListQuery,
   CreateAboutTimelineMilestoneRequest,
@@ -427,6 +438,7 @@ import type {
   UsersListQuery,
   PublicSiteMaintenance,
   ResolvedBookingItemTypeModes,
+  ResolvedCatalogProducts,
   ResolvedWebPaymentMethods,
 } from '@africatourismgate/types';
 export type { PaginationQuery } from '@africatourismgate/types';
@@ -619,6 +631,8 @@ export interface ApiClientOptions {
   baseUrl: string;
   /** When set, sent as `Authorization: Bearer <token>` on every request (overridable per call). */
   accessToken?: string | null;
+  /** Called when fetch fails at the network layer (API down / CORS / offline). Does not absorb the error. */
+  onNetworkError?: () => void;
 }
 
 export interface RequestOptions {
@@ -627,16 +641,21 @@ export interface RequestOptions {
   headers?: Record<string, string>;
   /** When true, omit Authorization even if an access token is configured on the client. */
   skipAuth?: boolean;
+  /** Optional AbortSignal forwarded to fetch (cancel in-flight requests). */
+  signal?: AbortSignal;
 }
 
 export class ApiClient {
   private accessToken: string | null;
+  private readonly onNetworkError?: () => void;
 
   constructor(
     private readonly baseUrl: string,
     accessToken?: string | null,
+    options?: Pick<ApiClientOptions, 'onNetworkError'>,
   ) {
     this.accessToken = accessToken ?? null;
+    this.onNetworkError = options?.onNetworkError;
   }
 
   static fromEnv(accessToken?: string | null): ApiClient {
@@ -658,6 +677,10 @@ export class ApiClient {
     return this.accessToken;
   }
 
+  private notifyNetworkError(): void {
+    this.onNetworkError?.();
+  }
+
   async request<T>(path: string, options: RequestOptions = {}): Promise<T> {
     const url = `${this.baseUrl.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`;
     const isFormData =
@@ -673,16 +696,23 @@ export class ApiClient {
       headers.Authorization = `Bearer ${this.accessToken}`;
     }
 
-    const res = await fetch(url, {
-      method: options.method ?? 'GET',
-      headers,
-      body:
-        options.body === undefined
-          ? undefined
-          : isFormData
-            ? (options.body as FormData)
-            : JSON.stringify(options.body),
-    });
+    let res: Response;
+    try {
+      res = await fetch(url, {
+        method: options.method ?? 'GET',
+        headers,
+        body:
+          options.body === undefined
+            ? undefined
+            : isFormData
+              ? (options.body as FormData)
+              : JSON.stringify(options.body),
+        signal: options.signal,
+      });
+    } catch (error) {
+      this.notifyNetworkError();
+      throw error;
+    }
 
     if (!res.ok) {
       let body: unknown;
@@ -723,16 +753,23 @@ export class ApiClient {
       headers.Authorization = `Bearer ${this.accessToken}`;
     }
 
-    const res = await fetch(url, {
-      method: options.method ?? 'GET',
-      headers,
-      body:
-        options.body === undefined
-          ? undefined
-          : isFormData
-            ? (options.body as FormData)
-            : JSON.stringify(options.body),
-    });
+    let res: Response;
+    try {
+      res = await fetch(url, {
+        method: options.method ?? 'GET',
+        headers,
+        body:
+          options.body === undefined
+            ? undefined
+            : isFormData
+              ? (options.body as FormData)
+              : JSON.stringify(options.body),
+        signal: options.signal,
+      });
+    } catch (error) {
+      this.notifyNetworkError();
+      throw error;
+    }
 
     if (!res.ok) {
       let body: unknown;
@@ -875,8 +912,8 @@ export class ApiClient {
     });
   }
 
-  listUsers(query?: UsersListQuery): Promise<PaginatedResponse<User>> {
-    return fetchPaginated<User>(this, '/users', query);
+  listUsers(query?: UsersListQuery, requestOptions?: RequestOptions): Promise<PaginatedResponse<User>> {
+    return fetchPaginated<User>(this, '/users', query, requestOptions);
   }
 
   getUser(id: string): Promise<User> {
@@ -1004,8 +1041,9 @@ export class ApiClient {
 
   listProperties(
     query?: PropertiesListQuery,
+    requestOptions?: RequestOptions,
   ): Promise<PaginatedResponse<Property>> {
-    return fetchPaginated<Property>(this, '/properties', query);
+    return fetchPaginated<Property>(this, '/properties', query, requestOptions);
   }
 
   listPublicDestinations(): Promise<PublicDestination[]> {
@@ -1225,8 +1263,8 @@ export class ApiClient {
     });
   }
 
-  listPayments(query?: PaymentsListQuery): Promise<PaginatedResponse<PaymentListItem>> {
-    return fetchPaginated<PaymentListItem>(this, '/payments', query);
+  listPayments(query?: PaymentsListQuery, requestOptions?: RequestOptions): Promise<PaginatedResponse<PaymentListItem>> {
+    return fetchPaginated<PaymentListItem>(this, '/payments', query, requestOptions);
   }
 
   getPayment(id: string): Promise<PaymentAdminDetail> {
@@ -1240,8 +1278,11 @@ export class ApiClient {
     });
   }
 
-  listPromoCodes(query?: PromoCodesListQuery): Promise<PaginatedResponse<PromoCode>> {
-    return fetchPaginated<PromoCode>(this, '/promo-codes', query);
+  listPromoCodes(
+    query?: PromoCodesListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<PromoCode>> {
+    return fetchPaginated<PromoCode>(this, '/promo-codes', query, requestOptions);
   }
 
   getPromoCode(id: string): Promise<PromoCode> {
@@ -1267,8 +1308,11 @@ export class ApiClient {
     });
   }
 
-  listPromotions(query?: PromotionsListQuery): Promise<PaginatedResponse<Promotion>> {
-    return fetchPaginated<Promotion>(this, '/promotions', query);
+  listPromotions(
+    query?: PromotionsListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<Promotion>> {
+    return fetchPaginated<Promotion>(this, '/promotions', query, requestOptions);
   }
 
   getPromotion(id: string): Promise<Promotion> {
@@ -1308,8 +1352,9 @@ export class ApiClient {
 
   listOrganizations(
     query?: OrganizationsListQuery,
+    requestOptions?: RequestOptions,
   ): Promise<PaginatedResponse<OrganizationListItem>> {
-    return fetchPaginated<OrganizationListItem>(this, '/organizations', query);
+    return fetchPaginated<OrganizationListItem>(this, '/organizations', query, requestOptions);
   }
 
   getOrganization(id: string): Promise<Organization> {
@@ -1373,6 +1418,19 @@ export class ApiClient {
     const q = params.toString();
     return this.request<ResolvedWebPaymentMethods>(
       `/organization-settings/public/payment-methods${q ? `?${q}` : ''}`,
+    );
+  }
+
+  getPublicCatalogProducts(query?: {
+    organizationSlug?: string;
+  }): Promise<ResolvedCatalogProducts> {
+    const params = new URLSearchParams();
+    if (query?.organizationSlug) {
+      params.set('organizationSlug', query.organizationSlug);
+    }
+    const q = params.toString();
+    return this.request<ResolvedCatalogProducts>(
+      `/organization-settings/public/catalog-products${q ? `?${q}` : ''}`,
     );
   }
 
@@ -1678,8 +1736,9 @@ export class ApiClient {
 
   listEmployees(
     query?: EmployeesListQuery,
+    requestOptions?: RequestOptions,
   ): Promise<PaginatedResponse<Employee>> {
-    return fetchPaginated<Employee>(this, '/employees', query);
+    return fetchPaginated<Employee>(this, '/employees', query, requestOptions);
   }
 
   listDepartments(
@@ -1737,8 +1796,9 @@ export class ApiClient {
 
   listTourGuides(
     query?: TourGuidesListQuery,
+    requestOptions?: RequestOptions,
   ): Promise<PaginatedResponse<TourGuide>> {
-    return fetchPaginated<TourGuide>(this, '/tour-guides', query);
+    return fetchPaginated<TourGuide>(this, '/tour-guides', query, requestOptions);
   }
 
   getTourGuide(id: string): Promise<TourGuide> {
@@ -1824,8 +1884,9 @@ export class ApiClient {
 
   listBlogPosts(
     query?: BlogPostsListQuery,
+    requestOptions?: RequestOptions,
   ): Promise<PaginatedResponse<BlogPost>> {
-    return fetchPaginated<BlogPost>(this, '/blog-posts', query);
+    return fetchPaginated<BlogPost>(this, '/blog-posts', query, requestOptions);
   }
 
   getBlogPost(id: string): Promise<BlogPost> {
@@ -2133,8 +2194,11 @@ export class ApiClient {
     return this.request<void>(`/gap-site-settings/${id}`, { method: 'DELETE' });
   }
 
-  listGapPages(query?: GapPagesListQuery): Promise<PaginatedResponse<GapPage>> {
-    return fetchPaginated<GapPage>(this, '/gap-pages', query);
+  listGapPages(
+    query?: GapPagesListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<GapPage>> {
+    return fetchPaginated<GapPage>(this, '/gap-pages', query, requestOptions);
   }
 
   getGapPage(id: string): Promise<GapPage> {
@@ -2161,8 +2225,9 @@ export class ApiClient {
 
   listGapActivities(
     query?: GapActivitiesListQuery,
+    requestOptions?: RequestOptions,
   ): Promise<PaginatedResponse<GapActivity>> {
-    return fetchPaginated<GapActivity>(this, '/gap-activities', query);
+    return fetchPaginated<GapActivity>(this, '/gap-activities', query, requestOptions);
   }
 
   getGapActivity(id: string): Promise<GapActivity> {
@@ -2316,6 +2381,50 @@ export class ApiClient {
     return this.request<void>(`/donations/${id}`, { method: 'DELETE' });
   }
 
+  getAnalyticsSummary(query?: AnalyticsPeriodQuery): Promise<AnalyticsSummary> {
+    const params = new URLSearchParams();
+    if (query?.period) {
+      params.set('period', query.period);
+    }
+    const qs = params.toString();
+    return this.request<AnalyticsSummary>(
+      `/analytics/summary${qs ? `?${qs}` : ''}`,
+    );
+  }
+
+  getAnalyticsTrend(query?: AnalyticsPeriodQuery): Promise<AnalyticsTrend> {
+    const params = new URLSearchParams();
+    if (query?.period) {
+      params.set('period', query.period);
+    }
+    const qs = params.toString();
+    return this.request<AnalyticsTrend>(
+      `/analytics/trend${qs ? `?${qs}` : ''}`,
+    );
+  }
+
+  getAnalyticsTopPages(query?: AnalyticsTopPagesQuery): Promise<AnalyticsTopPages> {
+    const params = new URLSearchParams();
+    if (query?.period) {
+      params.set('period', query.period);
+    }
+    if (query?.limit != null) {
+      params.set('limit', String(query.limit));
+    }
+    const qs = params.toString();
+    return this.request<AnalyticsTopPages>(
+      `/analytics/top-pages${qs ? `?${qs}` : ''}`,
+    );
+  }
+
+  trackPageView(body: TrackPageViewRequest): Promise<void> {
+    return this.request<void>('/public/analytics/page-views', {
+      method: 'POST',
+      body,
+      skipAuth: true,
+    });
+  }
+
   uploadDonationDescriptionAsset(
     body: FormData,
     donationId?: string,
@@ -2407,8 +2516,11 @@ export class ApiClient {
     return sumSucceededPaymentsRevenue(this);
   }
 
-  listRoles(query?: RolesListQuery): Promise<PaginatedResponse<Role>> {
-    return fetchPaginated<Role>(this, '/roles', query);
+  listRoles(
+    query?: RolesListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<Role>> {
+    return fetchPaginated<Role>(this, '/roles', query, requestOptions);
   }
 
   getRole(id: string): Promise<Role> {
@@ -2488,8 +2600,9 @@ export class ApiClient {
 
   listDestinations(
     query?: DestinationsListQuery,
+    requestOptions?: RequestOptions,
   ): Promise<PaginatedResponse<Destination>> {
-    return fetchPaginated<Destination>(this, '/destinations', query);
+    return fetchPaginated<Destination>(this, '/destinations', query, requestOptions);
   }
 
   getDestination(id: string): Promise<Destination> {
@@ -2519,6 +2632,12 @@ export class ApiClient {
 
   deleteDestination(id: string): Promise<void> {
     return this.request<void>(`/destinations/${id}`, { method: 'DELETE' });
+  }
+
+  restoreDestination(id: string): Promise<Destination> {
+    return this.request<Destination>(`/destinations/${id}/restore`, {
+      method: 'POST',
+    });
   }
 
   listPointsOfInterest(
@@ -2594,8 +2713,8 @@ export class ApiClient {
     });
   }
 
-  listActivities(query?: ActivitiesListQuery): Promise<PaginatedResponse<Activity>> {
-    return fetchPaginated<Activity>(this, '/activities', query);
+  listActivities(query?: ActivitiesListQuery, requestOptions?: RequestOptions): Promise<PaginatedResponse<Activity>> {
+    return fetchPaginated<Activity>(this, '/activities', query, requestOptions);
   }
 
   getActivity(id: string): Promise<Activity> {
@@ -2751,8 +2870,8 @@ export class ApiClient {
     });
   }
 
-  listPackages(query?: PackagesListQuery): Promise<PaginatedResponse<Package>> {
-    return fetchPaginated<Package>(this, '/packages', query);
+  listPackages(query?: PackagesListQuery, requestOptions?: RequestOptions): Promise<PaginatedResponse<Package>> {
+    return fetchPaginated<Package>(this, '/packages', query, requestOptions);
   }
 
   getPackage(id: string): Promise<PackageDetail> {
@@ -2939,8 +3058,8 @@ export class ApiClient {
     });
   }
 
-  listBookings(query?: BookingsListQuery): Promise<PaginatedResponse<BookingListItem>> {
-    return fetchPaginated<BookingListItem>(this, '/bookings', query);
+  listBookings(query?: BookingsListQuery, requestOptions?: RequestOptions): Promise<PaginatedResponse<BookingListItem>> {
+    return fetchPaginated<BookingListItem>(this, '/bookings', query, requestOptions);
   }
 
   listBookingItems(
@@ -3063,12 +3182,22 @@ export class ApiClient {
 
   listSupportTickets(
     query?: SupportTicketsListQuery,
-  ): Promise<PaginatedResponse<AdminSupportTicketListItem>> {
-    return fetchPaginated<AdminSupportTicketListItem>(this, '/support-tickets', query);
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<SupportTicket | AdminSupportTicketListItem>> {
+    return fetchPaginated<SupportTicket | AdminSupportTicketListItem>(
+      this,
+      '/support-tickets',
+      query,
+      requestOptions,
+    );
   }
 
-  getSupportTicket(id: string): Promise<AdminSupportTicketDetail> {
-    return this.request<AdminSupportTicketDetail>(`/support-tickets/${id}`);
+  getSupportTicket(
+    id: string,
+  ): Promise<CustomerSupportTicketDetail | AdminSupportTicketDetail> {
+    return this.request<CustomerSupportTicketDetail | AdminSupportTicketDetail>(
+      `/support-tickets/${id}`,
+    );
   }
 
   createSupportTicket(
@@ -3097,6 +3226,19 @@ export class ApiClient {
       method: 'POST',
       body,
     });
+  }
+
+  createCustomerSupportMessage(
+    ticketId: string,
+    body: CreateCustomerSupportMessageRequest,
+  ): Promise<CreateSupportMessageResponse> {
+    return this.request<CreateSupportMessageResponse>(
+      `/support-tickets/${ticketId}/messages`,
+      {
+        method: 'POST',
+        body,
+      },
+    );
   }
 
   updateBookingStatus(
@@ -3290,6 +3432,24 @@ export class ApiClient {
     );
   }
 
+  getBookingEmergencyContact(
+    bookingId: string,
+  ): Promise<BookingEmergencyContact | null> {
+    return this.request<BookingEmergencyContact | null>(
+      `/bookings/${bookingId}/emergency-contact`,
+    );
+  }
+
+  updateBookingEmergencyContact(
+    bookingId: string,
+    body: UpdateBookingEmergencyContactRequest,
+  ): Promise<BookingEmergencyContact> {
+    return this.request<BookingEmergencyContact>(
+      `/bookings/${bookingId}/emergency-contact`,
+      { method: 'PATCH', body },
+    );
+  }
+
   createBookingManifestEntry(
     bookingId: string,
     body: CreateBookingManifestEntryRequest,
@@ -3454,8 +3614,8 @@ export class ApiClient {
     return this.request<void>(`/airports/${id}`, { method: 'DELETE' });
   }
 
-  listFlights(query?: FlightsListQuery): Promise<PaginatedResponse<Flight>> {
-    return fetchPaginated<Flight>(this, '/flights', query);
+  listFlights(query?: FlightsListQuery, requestOptions?: RequestOptions): Promise<PaginatedResponse<Flight>> {
+    return fetchPaginated<Flight>(this, '/flights', query, requestOptions);
   }
 
   getFlight(id: string): Promise<Flight> {
@@ -3629,8 +3789,8 @@ export class ApiClient {
     return this.request<void>(`/vehicle-categories/${id}`, { method: 'DELETE' });
   }
 
-  listVehicles(query?: VehiclesListQuery): Promise<PaginatedResponse<Vehicle>> {
-    return fetchPaginated<Vehicle>(this, '/vehicles', query);
+  listVehicles(query?: VehiclesListQuery, requestOptions?: RequestOptions): Promise<PaginatedResponse<Vehicle>> {
+    return fetchPaginated<Vehicle>(this, '/vehicles', query, requestOptions);
   }
 
   getVehicle(id: string): Promise<Vehicle> {
@@ -3794,8 +3954,9 @@ export class ApiClient {
 
   listItineraries(
     query?: ItinerariesListQuery,
+    requestOptions?: RequestOptions,
   ): Promise<PaginatedResponse<Itinerary>> {
-    return fetchPaginated<Itinerary>(this, '/itineraries', query);
+    return fetchPaginated<Itinerary>(this, '/itineraries', query, requestOptions);
   }
 
   getItinerary(id: string): Promise<Itinerary> {
@@ -3864,8 +4025,9 @@ export class ApiClient {
 
   listCruiseSailings(
     query?: CruiseSailingsListQuery,
+    requestOptions?: RequestOptions,
   ): Promise<PaginatedResponse<CruiseSailing>> {
-    return fetchPaginated<CruiseSailing>(this, '/cruise-sailings', query);
+    return fetchPaginated<CruiseSailing>(this, '/cruise-sailings', query, requestOptions);
   }
 
   getCruiseSailing(id: string): Promise<CruiseSailing> {
@@ -3925,5 +4087,7 @@ export class ApiClient {
 }
 
 export function createApiClient(options: ApiClientOptions): ApiClient {
-  return new ApiClient(options.baseUrl, options.accessToken);
+  return new ApiClient(options.baseUrl, options.accessToken, {
+    onNetworkError: options.onNetworkError,
+  });
 }

@@ -1,8 +1,10 @@
 'use client';
 
-import { Input, Modal, Skeleton, cn } from '@africatourismgate/ui';
+import { Input, Modal, Skeleton, Spinner, cn } from '@africatourismgate/ui';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useTopLoader } from 'nextjs-toploader';
 import {
   createContext,
   useCallback,
@@ -12,14 +14,25 @@ import {
   useMemo,
   useRef,
   useState,
+  type KeyboardEvent as ReactKeyboardEvent,
+  type MouseEvent as ReactMouseEvent,
   type ReactNode,
 } from 'react';
 import {
+  ADMIN_SEARCH_API_MIN_QUERY_LENGTH,
   useAdminGlobalSearch,
   type AdminSearchGroupId,
   type AdminSearchResultItem,
 } from '../lib/admin-search';
 import { shouldHandleAdminSearchShortcut } from '../lib/admin-search/shortcuts';
+
+const SUGGESTIONS_LIMIT = 8;
+
+const EMPTY_QUICK_LINKS = [
+  { href: '/dashboard', labelKey: 'quickLinks.dashboard' },
+  { href: '/aide', labelKey: 'quickLinks.help' },
+  { href: '/utilisateurs', labelKey: 'quickLinks.users' },
+] as const;
 
 type AdminSearchNavigatorContextValue = {
   open: boolean;
@@ -76,36 +89,99 @@ export function AdminSearchNavigator() {
 
 function AdminSearchNavigatorModal() {
   const router = useRouter();
+  const pathname = usePathname();
+  const topLoader = useTopLoader();
   const { open, setOpen, toggle } = useAdminSearchNavigator();
   const t = useTranslations('common.globalSearch');
   const listId = useId();
-  const [activeIndex, setActiveIndex] = useState(0);
-  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const [navigating, setNavigating] = useState(false);
+  const optionRefs = useRef<Array<HTMLAnchorElement | null>>([]);
+  const pathAtNavStartRef = useRef<string | null>(null);
 
   const {
     query,
     setQuery,
     groups,
-    flatItems,
     loading,
     hasResults,
     isEmpty,
   } = useAdminGlobalSearch({ enabled: open });
 
+  const trimmedQuery = query.trim();
+  const showSuggestions = trimmedQuery.length === 0 && hasResults && !loading;
+  const showMinQueryHint =
+    trimmedQuery.length > 0 &&
+    trimmedQuery.length < ADMIN_SEARCH_API_MIN_QUERY_LENGTH;
+
+  const displayGroups = useMemo(() => {
+    if (!showSuggestions) return groups;
+    const pagesGroup = groups.find((g) => g.group === 'pages');
+    if (!pagesGroup || pagesGroup.items.length === 0) return groups;
+    return [
+      {
+        ...pagesGroup,
+        items: pagesGroup.items.slice(0, SUGGESTIONS_LIMIT),
+      },
+    ];
+  }, [groups, showSuggestions]);
+
+  const displayFlatItems = useMemo(
+    () => displayGroups.flatMap((group) => group.items),
+    [displayGroups],
+  );
+
+  const navigableCount = displayFlatItems.length;
+  const activeOptionId =
+    activeIndex >= 0 && activeIndex < navigableCount
+      ? `${listId}-option-${activeIndex}`
+      : undefined;
+
   const handleOpenChange = useCallback(
     (next: boolean) => {
+      if (!next && navigating) {
+        return;
+      }
       setOpen(next);
     },
-    [setOpen],
+    [navigating, setOpen],
   );
 
   const navigate = useCallback(
     (href: string) => {
-      handleOpenChange(false);
+      if (navigating) {
+        return;
+      }
+      pathAtNavStartRef.current = pathname;
+      setNavigating(true);
+      topLoader.start();
       router.push(href);
     },
-    [handleOpenChange, router],
+    [navigating, pathname, router, topLoader],
   );
+
+  useEffect(() => {
+    if (!navigating) {
+      return;
+    }
+    if (pathname !== pathAtNavStartRef.current) {
+      topLoader.done();
+      setNavigating(false);
+      setOpen(false);
+    }
+  }, [pathname, navigating, setOpen, topLoader]);
+
+  useEffect(() => {
+    if (!navigating) {
+      return;
+    }
+    const timeoutId = window.setTimeout(() => {
+      topLoader.done();
+      setNavigating(false);
+      setOpen(false);
+    }, 12_000);
+    return () => window.clearTimeout(timeoutId);
+  }, [navigating, setOpen, topLoader]);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -122,32 +198,44 @@ function AdminSearchNavigatorModal() {
   useEffect(() => {
     if (!open) {
       setQuery('');
-      setActiveIndex(0);
+      setActiveIndex(-1);
+      setNavigating(false);
+      pathAtNavStartRef.current = null;
     }
   }, [open, setQuery]);
 
   useEffect(() => {
-    setActiveIndex(0);
-  }, [query, open, flatItems.length]);
+    setActiveIndex(-1);
+  }, [query, open, displayFlatItems.length]);
 
   useEffect(() => {
+    if (activeIndex < 0) return;
     const node = optionRefs.current[activeIndex];
     node?.scrollIntoView({ block: 'nearest' });
   }, [activeIndex]);
 
-  function handleListKeyDown(event: React.KeyboardEvent) {
-    if (flatItems.length === 0) return;
+  function moveActive(delta: number) {
+    if (navigableCount === 0) return;
+    setActiveIndex((current) => {
+      if (current < 0) {
+        return delta > 0 ? 0 : navigableCount - 1;
+      }
+      return (current + delta + navigableCount) % navigableCount;
+    });
+  }
+
+  function handleListKeyDown(event: ReactKeyboardEvent) {
+    if (navigating || navigableCount === 0) return;
     if (event.key === 'ArrowDown') {
       event.preventDefault();
-      setActiveIndex((index) => (index + 1) % flatItems.length);
+      moveActive(1);
     } else if (event.key === 'ArrowUp') {
       event.preventDefault();
-      setActiveIndex(
-        (index) => (index - 1 + flatItems.length) % flatItems.length,
-      );
+      moveActive(-1);
     } else if (event.key === 'Enter') {
+      if (activeIndex < 0 || activeIndex >= navigableCount) return;
       event.preventDefault();
-      const item = flatItems[activeIndex];
+      const item = displayFlatItems[activeIndex];
       if (item) navigate(item.href);
     }
   }
@@ -162,37 +250,65 @@ function AdminSearchNavigatorModal() {
       open={open}
       onOpenChange={handleOpenChange}
       title={t('title')}
-      showClose
+      showClose={!navigating}
       closeAriaLabel={t('close')}
-      className="max-w-xl"
+      className="relative max-w-xl"
       containerClassName="z-[80]"
     >
       <div
-        className="space-y-3 p-4"
+        className="relative space-y-3 p-4"
         onKeyDown={handleListKeyDown}
         data-testid="admin-search-navigator"
+        aria-busy={navigating}
       >
+        {navigating ? (
+          <div
+            className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 rounded-xl bg-atg-elevated/90 backdrop-blur-[1px]"
+            role="status"
+            data-testid="admin-search-navigating"
+          >
+            <Spinner size="lg" label={t('opening')} showLabel />
+          </div>
+        ) : null}
+
         <Input
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder={t('placeholder')}
           autoFocus
+          autoComplete="off"
+          disabled={navigating}
+          role="combobox"
           aria-label={t('placeholder')}
           aria-controls={listId}
+          aria-expanded={open}
           aria-autocomplete="list"
+          aria-activedescendant={activeOptionId}
           data-testid="admin-search-input"
         />
         <p className="text-xs text-atg-muted">{t('shortcutHint')}</p>
+        {showMinQueryHint ? (
+          <p
+            className="rounded-md bg-atg-surface px-3 py-2 text-xs text-atg-muted"
+            role="status"
+            data-testid="admin-search-min-query-hint"
+          >
+            {t('minQueryHint', { count: ADMIN_SEARCH_API_MIN_QUERY_LENGTH })}
+          </p>
+        ) : null}
 
         <div
           id={listId}
           role="listbox"
-          aria-label={t('resultsLabel')}
+          aria-label={
+            showSuggestions ? t('suggestionsAria') : t('resultsLabel')
+          }
           className="max-h-80 overflow-y-auto rounded-lg border border-atg-border"
         >
           {loading && !hasResults ? (
             <div className="space-y-2 p-3" aria-busy="true" aria-live="polite">
+              <p className="text-xs text-atg-muted">{t('loading')}</p>
               <Skeleton className="h-4 w-24" />
               <Skeleton className="h-10 w-full" />
               <Skeleton className="h-10 w-full" />
@@ -201,9 +317,29 @@ function AdminSearchNavigatorModal() {
           ) : null}
 
           {!loading && isEmpty ? (
-            <p className="px-4 py-6 text-center text-sm text-atg-muted">
-              {t('empty')}
-            </p>
+            <div
+              className="space-y-3 px-4 py-6 text-center"
+              data-testid="admin-search-empty"
+            >
+              <p className="text-sm text-atg-muted">{t('empty')}</p>
+              <p className="text-sm font-medium text-atg-fg">{t('emptyHint')}</p>
+              <ul className="space-y-1">
+                {EMPTY_QUICK_LINKS.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-sm font-medium text-primary outline-none hover:underline focus-visible:underline"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        navigate(link.href);
+                      }}
+                    >
+                      {t(link.labelKey)}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ) : null}
 
           {!loading && !hasResults && !isEmpty && groups.some((g) => g.error) ? (
@@ -212,17 +348,20 @@ function AdminSearchNavigatorModal() {
             </p>
           ) : null}
 
-          {groups.map((group) => {
+          {displayGroups.map((group) => {
             if (group.items.length === 0 && !group.error) return null;
+            const sectionLabel = showSuggestions
+              ? t('suggestionsTitle')
+              : groupLabel(group.group);
             return (
               <section
                 key={group.group}
-                aria-label={groupLabel(group.group)}
+                aria-label={sectionLabel}
                 className="border-b border-atg-border last:border-b-0"
               >
                 <header className="sticky top-0 z-[1] flex items-center justify-between gap-2 bg-atg-elevated/95 px-3 py-2 backdrop-blur-sm">
                   <h3 className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
-                    {groupLabel(group.group)}
+                    {sectionLabel}
                   </h3>
                   {group.error ? (
                     <span className="text-xs text-amber-700 dark:text-amber-400">
@@ -235,19 +374,19 @@ function AdminSearchNavigatorModal() {
                     const index = runningIndex;
                     runningIndex += 1;
                     return (
-                      <li key={item.id}>
-                        <SearchResultOption
-                          item={item}
-                          index={index}
-                          active={index === activeIndex}
-                          listId={listId}
-                          optionRef={(node) => {
-                            optionRefs.current[index] = node;
-                          }}
-                          onActivate={() => navigate(item.href)}
-                          onHover={() => setActiveIndex(index)}
-                        />
-                      </li>
+                      <SearchResultOption
+                        key={item.id}
+                        item={item}
+                        index={index}
+                        active={index === activeIndex}
+                        listId={listId}
+                        disabled={navigating}
+                        optionRef={(node) => {
+                          optionRefs.current[index] = node;
+                        }}
+                        onActivate={() => navigate(item.href)}
+                        onHover={() => setActiveIndex(index)}
+                      />
                     );
                   })}
                 </ul>
@@ -271,6 +410,7 @@ function SearchResultOption({
   index,
   active,
   listId,
+  disabled,
   optionRef,
   onActivate,
   onHover,
@@ -279,29 +419,46 @@ function SearchResultOption({
   index: number;
   active: boolean;
   listId: string;
-  optionRef: (node: HTMLButtonElement | null) => void;
+  disabled?: boolean;
+  optionRef: (node: HTMLAnchorElement | null) => void;
   onActivate: () => void;
   onHover: () => void;
 }) {
+  const optionId = `${listId}-option-${index}`;
+
+  function handleClick(event: ReactMouseEvent<HTMLAnchorElement>) {
+    if (disabled) {
+      event.preventDefault();
+      return;
+    }
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
+    event.preventDefault();
+    onActivate();
+  }
+
   return (
-    <button
-      ref={optionRef}
-      type="button"
-      id={`${listId}-option-${index}`}
-      role="option"
-      aria-selected={active}
-      data-testid="admin-search-result"
-      className={cn(
-        'flex w-full flex-col gap-0.5 px-4 py-3 text-left transition-colors',
-        active ? 'bg-atg-surface' : 'hover:bg-atg-surface/70',
-      )}
-      onMouseEnter={onHover}
-      onClick={onActivate}
-    >
-      <span className="text-sm font-medium text-atg-fg">{item.title}</span>
-      {item.subtitle ? (
-        <span className="truncate text-xs text-atg-muted">{item.subtitle}</span>
-      ) : null}
-    </button>
+    <li id={optionId} role="option" aria-selected={active}>
+      <Link
+        ref={optionRef}
+        href={item.href}
+        data-testid="admin-search-result"
+        tabIndex={-1}
+        aria-disabled={disabled || undefined}
+        className={cn(
+          'flex w-full flex-col gap-0.5 px-4 py-3 text-left transition-colors',
+          active ? 'bg-atg-surface' : 'hover:bg-atg-surface/70',
+          disabled && 'pointer-events-none opacity-60',
+        )}
+        onMouseEnter={onHover}
+        onClick={handleClick}
+      >
+        <span className="text-sm font-medium text-atg-fg">{item.title}</span>
+        {item.subtitle ? (
+          <span className="truncate text-xs text-atg-muted">{item.subtitle}</span>
+        ) : null}
+      </Link>
+    </li>
   );
 }

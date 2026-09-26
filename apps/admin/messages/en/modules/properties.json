@@ -46,6 +46,7 @@
     "sections": {
       "identity": "Identity",
       "location": "Location",
+      "geography": "Geography",
       "classification": "Classification"
     },
     "name": "Name",
@@ -55,6 +56,12 @@
     "address": "Address",
     "starRating": "Star rating",
     "starRatingHint": "Optional, 0 to 5",
+    "geographyIntro": "Place the exact accommodation pin on the map so it displays correctly on the public site.",
+    "mapPicker": "Location map",
+    "mapPickerHint": "Click the map or drag the marker to set latitude and longitude.",
+    "mapPickerAria": "Interactive map to select accommodation coordinates",
+    "latitudeHint": "Optional, -90 to 90",
+    "longitudeHint": "Optional, -180 to 180",
     "validation": {
       "destinationRequired": "Destination is required.",
       "formIncomplete": "Check the required fields (destination, name, slug)."

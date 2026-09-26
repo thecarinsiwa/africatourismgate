@@ -8,6 +8,7 @@ employees
 user_sessions
 password_reset_tokens
 email_operation_verifications
+site_page_views
 user_addresses
 user_payment_methods
 loyalty_accounts

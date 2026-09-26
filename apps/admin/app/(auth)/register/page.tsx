@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { Suspense } from 'react';
 import { RegisterPageContent } from '../../../components/auth/register-page-content';
+import { AdminPageLoading } from '../../../components/pages/admin-page-loading';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('auth.register');
@@ -10,11 +12,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-type Props = {
-  searchParams?: Promise<{ error?: string }>;
-};
-
-export default async function RegisterPage({ searchParams }: Props) {
-  const params = (await searchParams) ?? {};
-  return <RegisterPageContent oauthError={params.error} />;
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<AdminPageLoading />}>
+      <RegisterPageContent />
+    </Suspense>
+  );
 }

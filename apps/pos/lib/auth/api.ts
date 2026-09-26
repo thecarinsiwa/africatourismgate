@@ -1,4 +1,5 @@
 import { ApiClient } from '@africatourismgate/api-client';
+import { notifyApiUnreachable } from '@africatourismgate/ui';
 import { ensureClientSession, getSession } from './session';
 
 const DEFAULT_DEV_API_URL = 'http://localhost:3000/api';
@@ -44,15 +45,26 @@ export function resolveApiBaseUrl(): string {
   return getApiBaseUrl();
 }
 
+function browserNetworkErrorHandler(): (() => void) | undefined {
+  if (typeof window === 'undefined') {
+    return undefined;
+  }
+  return () => notifyApiUnreachable();
+}
+
+function createPosApiClient(accessToken: string | null): ApiClient {
+  return new ApiClient(resolveApiBaseUrl(), accessToken, {
+    onNetworkError: browserNetworkErrorHandler(),
+  });
+}
+
 export function getApiClient(): ApiClient {
-  const baseUrl = resolveApiBaseUrl();
   const session = getSession();
-  return new ApiClient(baseUrl, session?.accessToken ?? null);
+  return createPosApiClient(session?.accessToken ?? null);
 }
 
 /** API client with cookie sync and silent token refresh before requests. */
 export async function getValidApiClient(): Promise<ApiClient> {
-  const baseUrl = resolveApiBaseUrl();
   const session = await ensureClientSession();
-  return new ApiClient(baseUrl, session?.accessToken ?? null);
+  return createPosApiClient(session?.accessToken ?? null);
 }

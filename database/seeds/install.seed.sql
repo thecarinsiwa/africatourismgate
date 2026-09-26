@@ -56,7 +56,8 @@ INSERT INTO `permissions` (`id`, `code`, `resource`, `action`, `description`) VA
 ('00000000-0000-4000-8000-000000001042', 'promotions.write', 'promotions', 'write', 'Manage promotions'),
 ('00000000-0000-4000-8000-000000001043', 'guides.read', 'guides', 'read', 'View tour guides'),
 ('00000000-0000-4000-8000-000000001044', 'guides.write', 'guides', 'write', 'Manage tour guides'),
-('00000000-0000-4000-8000-000000001045', 'bookings.approve', 'bookings', 'approve', 'Approve or reject assisted booking requests');
+('00000000-0000-4000-8000-000000001045', 'bookings.approve', 'bookings', 'approve', 'Approve or reject assisted booking requests'),
+('00000000-0000-4000-8000-000000001056', 'analytics.read', 'analytics', 'read', 'View site analytics (visitors, page views)');
 
 -- -----------------------------------------------------------------------------
 -- 2. roles
@@ -170,7 +171,8 @@ INSERT INTO `role_permissions` (`role_id`, `permission_id`, `granted_by_user_id`
 ('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001052', '00000000-0000-4000-8000-000000000010'),
 ('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001053', '00000000-0000-4000-8000-000000000010'),
 ('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001029', '00000000-0000-4000-8000-000000000010'),
-('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001030', '00000000-0000-4000-8000-000000000010');
+('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001030', '00000000-0000-4000-8000-000000000010'),
+('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001056', '00000000-0000-4000-8000-000000000010');
 
 -- support
 INSERT INTO `role_permissions` (`role_id`, `permission_id`, `granted_by_user_id`) VALUES
@@ -181,14 +183,12 @@ INSERT INTO `role_permissions` (`role_id`, `permission_id`, `granted_by_user_id`
 ('00000000-0000-4000-8000-000000000102', '00000000-0000-4000-8000-000000001019', '00000000-0000-4000-8000-000000000010'),
 ('00000000-0000-4000-8000-000000000102', '00000000-0000-4000-8000-000000001045', '00000000-0000-4000-8000-000000000010');
 
--- customer
+-- customer (own tickets via ownership — no support_tickets.* staff perms)
 INSERT INTO `role_permissions` (`role_id`, `permission_id`, `granted_by_user_id`) VALUES
 ('00000000-0000-4000-8000-000000000103', '00000000-0000-4000-8000-000000001012', '00000000-0000-4000-8000-000000000010'),
 ('00000000-0000-4000-8000-000000000103', '00000000-0000-4000-8000-000000001013', '00000000-0000-4000-8000-000000000010'),
 ('00000000-0000-4000-8000-000000000103', '00000000-0000-4000-8000-000000001019', '00000000-0000-4000-8000-000000000010'),
-('00000000-0000-4000-8000-000000000103', '00000000-0000-4000-8000-000000001020', '00000000-0000-4000-8000-000000000010'),
-('00000000-0000-4000-8000-000000000103', '00000000-0000-4000-8000-000000001021', '00000000-0000-4000-8000-000000000010'),
-('00000000-0000-4000-8000-000000000103', '00000000-0000-4000-8000-000000001022', '00000000-0000-4000-8000-000000000010');
+('00000000-0000-4000-8000-000000000103', '00000000-0000-4000-8000-000000001020', '00000000-0000-4000-8000-000000000010');
 
 -- -----------------------------------------------------------------------------
 -- 6. organization_settings
@@ -275,6 +275,14 @@ INSERT INTO `organization_settings` (
   'booking',
   'deposits',
   '{"enabled":false}',
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000000023',
+  '00000000-0000-4000-8000-000000000001',
+  'catalog',
+  'products_enabled',
+  '{"hotels":true,"flights":true,"cars":true,"cruises":true,"tours":true,"packages":true}',
   '00000000-0000-4000-8000-000000000010'
 ),
 (
@@ -389,7 +397,7 @@ INSERT INTO `points_of_interest` (
 
 INSERT INTO `properties` (
   `id`, `destination_id`, `name`, `slug`, `property_type`, `star_rating`,
-  `description`, `address_line`, `created_by_user_id`
+  `description`, `address_line`, `latitude`, `longitude`, `created_by_user_id`
 ) VALUES (
   '00000000-0000-4000-8000-000000002010',
   '00000000-0000-4000-8000-000000002001',
@@ -399,6 +407,8 @@ INSERT INTO `properties` (
   4.0,
   'Sample property for staging and demos',
   'Av. du Tourisme, Gombe, Kinshasa',
+  -4.3058,
+  15.3000,
   '00000000-0000-4000-8000-000000000010'
 );
 
@@ -789,7 +799,7 @@ INSERT INTO `activity_providers` (
 
 INSERT INTO `activities` (
   `id`, `provider_id`, `title`, `description`, `duration_minutes`, `difficulty_level`,
-  `price_cents`, `currency`, `organization_id`, `created_by_user_id`
+  `price_cents`, `currency`, `latitude`, `longitude`, `organization_id`, `created_by_user_id`
 ) VALUES
 (
   '00000000-0000-4000-8000-000000004031',
@@ -800,6 +810,8 @@ INSERT INTO `activities` (
   'moderate',
   4500,
   'USD',
+  -4.3058,
+  15.3000,
   NULL,
   '00000000-0000-4000-8000-000000000010'
 ),
@@ -812,6 +824,8 @@ INSERT INTO `activities` (
   'easy',
   3500,
   'USD',
+  -4.3125,
+  15.2950,
   NULL,
   '00000000-0000-4000-8000-000000000010'
 ),
@@ -824,6 +838,8 @@ INSERT INTO `activities` (
   'easy',
   7500,
   'USD',
+  NULL,
+  NULL,
   '00000000-0000-4000-8000-000000000002',
   '00000000-0000-4000-8000-000000000010'
 );

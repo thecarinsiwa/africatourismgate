@@ -606,6 +606,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/bookings/{id}/emergency-contact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get booking-level emergency contact (owner or staff) */
+        get: operations["BookingsController_getEmergencyContact"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Set booking-level emergency contact (owner or staff) */
+        patch: operations["BookingsController_updateEmergencyContact"];
+        trace?: never;
+    };
     "/api/bookings/{id}/manifest-entries/{entryId}": {
         parameters: {
             query?: never;
@@ -5651,22 +5669,72 @@ export interface components {
             age?: number;
             /** @enum {string} */
             sex?: "M" | "F" | "other";
-            nationality?: string;
-            idNumber?: string;
+            nationality: string;
+            idNumber: string;
+            /**
+             * @deprecated
+             * @description Ignored — use booking-level PATCH …/emergency-contact
+             */
+            emergencyContactName?: string;
+            /**
+             * @deprecated
+             * @description Ignored — use booking-level PATCH …/emergency-contact
+             */
+            emergencyContactPhone?: string;
+            /** @deprecated */
+            emergencyContactEmail?: string;
+            /** @deprecated */
+            emergencyContactCountry?: string;
+            /** @deprecated */
+            emergencyContactAddress?: string;
+            /** @deprecated */
             conditions?: string;
+            allergies?: string;
+            seriousMedicalConditions?: string;
+            currentMedications?: string;
+            dietaryNotes?: string;
             comment?: string;
             other?: string;
             sortOrder?: number;
         };
+        BookingEmergencyContactDto: {
+            name: string | null;
+            phone: string | null;
+            email: string | null;
+            country: string | null;
+            address: string | null;
+        };
+        UpdateBookingEmergencyContactDto: {
+            name: string;
+            phone: string;
+            email?: string | null;
+            country?: string | null;
+            address?: string | null;
+        };
         UpdateBookingManifestEntryDto: {
             priceCents?: number;
-            fullName: string;
+            fullName?: string;
             age?: number;
             /** @enum {string} */
             sex?: "M" | "F" | "other";
             nationality?: string;
             idNumber?: string;
+            /** @deprecated */
+            emergencyContactName?: string;
+            /** @deprecated */
+            emergencyContactPhone?: string;
+            /** @deprecated */
+            emergencyContactEmail?: string;
+            /** @deprecated */
+            emergencyContactCountry?: string;
+            /** @deprecated */
+            emergencyContactAddress?: string;
+            /** @deprecated */
             conditions?: string;
+            allergies?: string;
+            seriousMedicalConditions?: string;
+            currentMedications?: string;
+            dietaryNotes?: string;
             comment?: string;
             other?: string;
             sortOrder?: number;
@@ -8005,6 +8073,66 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BookingsController_getEmergencyContact: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BookingEmergencyContactDto"] | null;
+                };
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BookingsController_updateEmergencyContact: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateBookingEmergencyContactDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BookingEmergencyContactDto"];
+                };
             };
             /** @description Missing permission */
             403: {

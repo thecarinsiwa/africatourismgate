@@ -9,8 +9,15 @@ const PLATFORM_ORG_ID = '00000000-0000-4000-8000-000000000001';
 const USER_SUPER_ADMIN_ID = '00000000-0000-4000-8000-000000000010';
 const ROLE_SUPER_ADMIN_ID = '00000000-0000-4000-8000-000000000100';
 const ROLE_ORG_ADMIN_ID = '00000000-0000-4000-8000-000000000101';
+const ROLE_CUSTOMER_ID = '00000000-0000-4000-8000-000000000103';
 const ROLE_GAP_COORDINATOR_ID = '00000000-0000-4000-8000-000000000104';
 const URA_SUPER_ADMIN_ID = '00000000-0000-4000-8000-000000000050';
+
+/** Staff-only: customers access tickets by ownership, not these RBAC codes. */
+const CUSTOMER_SUPPORT_STAFF_PERMISSION_IDS = [
+  '00000000-0000-4000-8000-000000001021', // support_tickets.read
+  '00000000-0000-4000-8000-000000001022', // support_tickets.write
+] as const;
 
 const GAP_PERMISSION_IDS = [
   '00000000-0000-4000-8000-000000001050',
@@ -172,6 +179,13 @@ const PERMISSION_UPSERTS: Array<{
     action: 'write',
     description: 'Manage Mobile Money payment config',
   },
+  {
+    id: '00000000-0000-4000-8000-000000001056',
+    code: 'analytics.read',
+    resource: 'analytics',
+    action: 'read',
+    description: 'View site analytics (visitors, page views)',
+  },
 ];
 
 /** Full org_admin set (install.seed.sql) — repairs partial or missing grants. */
@@ -211,6 +225,7 @@ const ORG_ADMIN_PERMISSION_IDS = [
   '00000000-0000-4000-8000-000000001053',
   '00000000-0000-4000-8000-000000001054',
   '00000000-0000-4000-8000-000000001055',
+  '00000000-0000-4000-8000-000000001056',
 ];
 
 async function platformOrgExists(config: ConfigService): Promise<boolean> {
@@ -252,6 +267,7 @@ async function platformOrgExists(config: ConfigService): Promise<boolean> {
  * - repair full org_admin permission set (incl. users.read, roles.*)
  * - ensure gap_coordinator role exists with gap.read / gap.write
  * - ensure seed admin keeps an active super_admin assignment
+ * - revoke support_tickets.* from customer (ownership-based customer APIs)
  */
 export async function ensureRbacPermissions(config: ConfigService): Promise<void> {
   if (!(await platformOrgExists(config))) {
@@ -331,6 +347,18 @@ export async function ensureRbacPermissions(config: ConfigService): Promise<void
            \`deleted_at\` = NULL,
            \`granted_by_user_id\` = VALUES(\`granted_by_user_id\`)`,
         [ROLE_GAP_COORDINATOR_ID, permissionId, USER_SUPER_ADMIN_ID],
+      );
+    }
+
+    for (const permissionId of CUSTOMER_SUPPORT_STAFF_PERMISSION_IDS) {
+      await connection.query(
+        `UPDATE \`role_permissions\`
+         SET \`deleted_at\` = CURRENT_TIMESTAMP(3),
+             \`deleted_by_user_id\` = ?
+         WHERE \`role_id\` = ?
+           AND \`permission_id\` = ?
+           AND \`deleted_at\` IS NULL`,
+        [USER_SUPER_ADMIN_ID, ROLE_CUSTOMER_ID, permissionId],
       );
     }
 

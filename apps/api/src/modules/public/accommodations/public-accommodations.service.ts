@@ -36,7 +36,7 @@ const DISPLAY_AMENITY_CODES = new Set([
 ]);
 
 const PLACEHOLDER_IMAGE =
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg/1280px-Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg';
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/A_giraffe_with_a_beautiful_background_of_Nairobi_City_Skyline_%28cropped%29.jpg/1280px-A_giraffe_with_a_beautiful_background_of_Nairobi_City_Skyline_%28cropped%29.jpg';
 
 @Injectable()
 export class PublicAccommodationsService {
@@ -63,7 +63,13 @@ export class PublicAccommodationsService {
   async listDestinations(): Promise<PublicDestinationDto[]> {
     const rows = await this.destinationsRepository
       .createQueryBuilder('d')
-      .select(['d.id', 'd.name', 'd.countryCode'])
+      .select([
+        'd.id',
+        'd.name',
+        'd.countryCode',
+        'd.latitude',
+        'd.longitude',
+      ])
       .where('d.deletedAt IS NULL')
       .orderBy('d.name', 'ASC')
       .getMany();
@@ -72,6 +78,8 @@ export class PublicAccommodationsService {
       id: d.id,
       name: d.name,
       countryCode: d.countryCode,
+      latitude: this.toCoord(d.latitude),
+      longitude: this.toCoord(d.longitude),
     }));
   }
 
@@ -165,7 +173,18 @@ export class PublicAccommodationsService {
     const destById = new Map(
       destinations
         .filter((d) => !d.deletedAt)
-        .map((d) => [d.id, { name: d.name, countryCode: d.countryCode }] as const),
+        .map(
+          (d) =>
+            [
+              d.id,
+              {
+                name: d.name,
+                countryCode: d.countryCode,
+                latitude: d.latitude,
+                longitude: d.longitude,
+              },
+            ] as const,
+        ),
     );
 
     const propertyIds = propertyEntities.map((p) => p.id);
@@ -225,6 +244,10 @@ export class PublicAccommodationsService {
 
       const starRating = this.parseStarRating(prop.starRating);
 
+      const propLat = this.toCoord(prop.latitude);
+      const propLng = this.toCoord(prop.longitude);
+      const hasPropertyCoords = propLat != null && propLng != null;
+
       results.push({
         id: prop.id,
         slug: prop.slug,
@@ -238,6 +261,8 @@ export class PublicAccommodationsService {
         minPriceCents: pricing.minPriceCents,
         currency: pricing.currency,
         amenityCodes: amenityCodesByProperty.get(prop.id) ?? [],
+        latitude: hasPropertyCoords ? propLat : this.toCoord(dest.latitude),
+        longitude: hasPropertyCoords ? propLng : this.toCoord(dest.longitude),
       });
     }
 
@@ -694,5 +719,13 @@ export class PublicAccommodationsService {
       result.set(link.propertyId, list);
     }
     return result;
+  }
+
+  private toCoord(value: string | null | undefined): number | null {
+    if (value == null) {
+      return null;
+    }
+    const n = Number(value);
+    return Number.isFinite(n) ? n : null;
   }
 }

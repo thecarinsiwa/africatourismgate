@@ -1,0 +1,47 @@
+{
+  "title": "Analytics",
+  "description": "Visiteurs et pages vues du site web public",
+  "metaTitle": "Analytics — Africa Tourism Gate Admin",
+  "period": {
+    "label": "Période",
+    "7d": "7 jours",
+    "30d": "30 jours",
+    "90d": "90 jours"
+  },
+  "kpi": {
+    "visitors": {
+      "label": "Visiteurs",
+      "subtitle": "Visiteurs uniques sur la période"
+    },
+    "pageViews": {
+      "label": "Pages vues",
+      "subtitle": "Vues de pages sur la période"
+    },
+    "change": {
+      "vsPreviousPeriod": "vs période précédente"
+    }
+  },
+  "chart": {
+    "title": "Tendances",
+    "visitors": "Visiteurs",
+    "pageViews": "Pages vues",
+    "loading": "Chargement du graphique…",
+    "empty": "Aucune donnée sur cette période",
+    "error": "Impossible de charger les tendances",
+    "ariaLabel": "Graphique des visiteurs et pages vues par jour",
+    "dateColumn": "Date"
+  },
+  "topPages": {
+    "title": "Pages les plus vues",
+    "path": "Chemin",
+    "pageViews": "Pages vues",
+    "visitors": "Visiteurs",
+    "loading": "Chargement…",
+    "empty": "Aucune page vue sur cette période",
+    "error": "Impossible de charger le classement"
+  },
+  "error": {
+    "loadFailed": "Impossible de charger les analytics",
+    "forbidden": "Vous n'avez pas la permission de voir les analytics"
+  }
+}

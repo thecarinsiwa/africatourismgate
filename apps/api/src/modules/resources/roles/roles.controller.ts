@@ -11,12 +11,12 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { Roles } from '../../../entities/generated';
 import {
   ReplaceRolePermissionsDto,
   RolePermissionsPayloadDto,
 } from './dto/replace-role-permissions.dto';
+import { RolesListQueryDto } from './dto/roles-list-query.dto';
 import { RolesService } from './roles.service';
 
 @ApiTags('roles')
@@ -26,7 +26,7 @@ export class RolesController {
 
   @Get()
   @ApiOperation({ summary: 'List roles' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: RolesListQueryDto) {
     return this.service.findAll(query);
   }
 

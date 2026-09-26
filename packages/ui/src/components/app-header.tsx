@@ -12,7 +12,14 @@ export type AppHeaderProps = {
   breadcrumb?: ReactNode;
   user: Pick<
     UserMenuProps,
-    'displayName' | 'email' | 'avatarSrc' | 'onLogout' | 'logoutLabel' | 'loggingOutLabel' | 'menuLinks'
+    | 'displayName'
+    | 'email'
+    | 'avatarSrc'
+    | 'onLogout'
+    | 'logoutLabel'
+    | 'loggingOutLabel'
+    | 'menuLinks'
+    | 'menuActions'
   >;
   themeLabels?: ThemeToggleProps['labels'];
   actions?: ReactNode;

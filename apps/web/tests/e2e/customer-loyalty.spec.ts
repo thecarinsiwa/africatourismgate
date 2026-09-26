@@ -1,8 +1,6 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 const USER_ID = 'user-e2e-loyalty';
-
-test.use({ storageState: { cookies: [], origins: [] } });
 
 function mockSessionInit(page: import('@playwright/test').Page) {
   return page.addInitScript((userId: string) => {

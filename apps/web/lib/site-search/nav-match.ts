@@ -19,6 +19,13 @@ export const SITE_SEARCH_PAGE_ALIASES: Readonly<
     'support',
   ],
   '/donate': ['don', 'donation', 'donate', 'donacion'],
+  '/partners': [
+    'partenaires',
+    'partners',
+    'socios',
+    'operateurs',
+    'operators',
+  ],
   '/legal/terms': ['cgu', 'terms', 'conditions', 'tos'],
   '/legal/privacy': [
     'privacy',

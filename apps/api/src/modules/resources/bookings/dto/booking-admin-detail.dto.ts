@@ -3,6 +3,7 @@ import { BookingItems, Bookings, Payments } from '../../../../entities/generated
 import type { BookingStatusHistoryEntry } from '../booking-status-history.service';
 import type { BookingIdentityDocumentDto } from './booking-identity-document.dto';
 import type { BookingPaymentProofDto } from './booking-payment-proof.dto';
+import { BookingEmergencyContactDto } from './booking-emergency-contact.dto';
 
 export class BookingClientDto {
   @ApiProperty({ format: 'uuid' })
@@ -47,6 +48,13 @@ export class BookingAdminDetailDto {
     description: 'Montant du premier encaissement attendu (acompte ou total)',
   })
   depositRequiredCents!: number;
+
+  @ApiPropertyOptional({
+    type: BookingEmergencyContactDto,
+    nullable: true,
+    description: 'Single emergency contact for the whole reservation.',
+  })
+  emergencyContact?: BookingEmergencyContactDto | null;
 
   @ApiProperty({ type: BookingClientDto })
   client!: BookingClientDto;

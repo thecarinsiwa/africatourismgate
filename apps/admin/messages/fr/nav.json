@@ -1,5 +1,6 @@
 {
   "dashboard": "Tableau de bord",
+  "analytics": "Analytics",
   "groups": {
     "usersAuth": "Utilisateurs & authentification",
     "loyalty": "Fidélité (OneKey)",
@@ -113,6 +114,7 @@
     "profile": "Mon profil",
     "notifications": "Notifications",
     "settings": "Paramètres",
+    "lockSession": "Verrouiller la session",
     "defaultUser": "Utilisateur"
   },
   "shell": {

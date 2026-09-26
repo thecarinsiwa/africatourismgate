@@ -60,6 +60,20 @@
   animation: fade-in-up 0.6s ease-out both;
 }
 
+@keyframes partner-hero-ken {
+  from { transform: scale(1.05) translate3d(0, 0, 0); }
+  to   { transform: scale(1.12) translate3d(-1.5%, -1%, 0); }
+}
+.animate-partner-hero-ken {
+  animation: partner-hero-ken 18s ease-in-out infinite alternate;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-partner-hero-ken {
+    animation: none;
+    transform: scale(1.05);
+  }
+}
+
 @keyframes fade-in-left {
   from { opacity: 0; transform: translateX(-30px); }
   to   { opacity: 1; transform: translateX(0); }
@@ -113,6 +127,15 @@
 .delay-500 { animation-delay: 500ms; }
 .delay-600 { animation-delay: 600ms; }
 
+/* ── Soft float (404 illustration) ────────────────────── */
+@keyframes soft-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.animate-soft-float {
+  animation: soft-float 4.5s ease-in-out infinite;
+}
+
 /* ── Parallax section ─────────────────────────────────── */
 .parallax-bg {
   background-attachment: fixed;
@@ -156,10 +179,14 @@
   opacity: 1;
 }
 
-/* ── Leaflet map (activities section) ─────────────────── */
+/* ── Leaflet map (activities / package itinerary) ─────── */
 .leaflet-container {
   font-family: inherit;
   background: var(--atg-surface);
+  /* Contain Leaflet pane/control z-indexes (400–1000) under the fixed site header (z-50). */
+  position: relative;
+  z-index: 0;
+  isolation: isolate;
 }
 .leaflet-popup-content-wrapper {
   border-radius: 0.75rem;
@@ -172,6 +199,46 @@
 .atg-itinerary-marker {
   background: transparent;
   border: none;
+}
+
+.atg-destinations-map-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.atg-destinations-map-marker__pin {
+  filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.35));
+}
+
+.atg-destinations-map-popup-wrap .leaflet-popup-content-wrapper {
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
+}
+
+.atg-destinations-map-popup-wrap .leaflet-popup-content {
+  margin: 8px 10px;
+  min-width: 0 !important;
+}
+
+.atg-destinations-map-popup-wrap .leaflet-popup-close-button {
+  top: 2px !important;
+  right: 4px !important;
+  width: 22px !important;
+  height: 22px !important;
+  font-size: 16px !important;
+}
+
+@media (max-width: 639px) {
+  .leaflet-control-zoom {
+    margin-top: 3.25rem !important;
+    margin-right: 0.5rem !important;
+  }
+
+  .leaflet-control-zoom a {
+    width: 30px !important;
+    height: 30px !important;
+    line-height: 30px !important;
+  }
 }
 
 .atg-itinerary-marker__badge {

@@ -42,7 +42,7 @@ export class BookingManifestEntryDto {
   @ApiPropertyOptional()
   idNumber?: string | null;
 
-  /** May be null on legacy rows created before emergency contact became required. */
+  /** May be null — emergency contact is booking-level (legacy per-traveler fields deprecated). */
   @ApiPropertyOptional()
   emergencyContactName?: string | null;
 
@@ -124,31 +124,42 @@ export class CreateBookingManifestEntryDto {
   @MaxLength(64)
   idNumber!: string;
 
-  @ApiProperty()
+  /**
+   * @deprecated Ignored — use booking-level emergency contact (`PATCH …/emergency-contact`).
+   * Accepted so older clients are not rejected by forbidNonWhitelisted.
+   */
+  @ApiPropertyOptional({ deprecated: true })
+  @IsOptional()
   @IsString()
-  @IsNotEmpty({ message: "Le nom du contact d'urgence est obligatoire." })
   @MaxLength(200)
-  emergencyContactName!: string;
+  emergencyContactName?: string;
 
-  @ApiProperty()
+  /**
+   * @deprecated Ignored — use booking-level emergency contact (`PATCH …/emergency-contact`).
+   * Accepted so older clients are not rejected by forbidNonWhitelisted.
+   */
+  @ApiPropertyOptional({ deprecated: true })
+  @IsOptional()
   @IsString()
-  @IsNotEmpty({ message: "Le téléphone du contact d'urgence est obligatoire." })
   @MaxLength(40)
-  emergencyContactPhone!: string;
+  emergencyContactPhone?: string;
 
-  @ApiPropertyOptional()
+  /** @deprecated Ignored — use booking-level emergency contact. */
+  @ApiPropertyOptional({ deprecated: true })
   @IsOptional()
   @IsEmail({}, { message: "L'e-mail du contact d'urgence est invalide." })
   @MaxLength(255)
   emergencyContactEmail?: string;
 
-  @ApiPropertyOptional()
+  /** @deprecated Ignored — use booking-level emergency contact. */
+  @ApiPropertyOptional({ deprecated: true })
   @IsOptional()
   @IsString()
   @MaxLength(100)
   emergencyContactCountry?: string;
 
-  @ApiPropertyOptional()
+  /** @deprecated Ignored — use booking-level emergency contact. */
+  @ApiPropertyOptional({ deprecated: true })
   @IsOptional()
   @IsString()
   @MaxLength(500)

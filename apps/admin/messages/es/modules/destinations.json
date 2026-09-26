@@ -48,7 +48,17 @@
     "mapBoundaryAria": "Mapa con contorno del país y selección del punto central",
     "mapBoundaryLoading": "Cargando el contorno del país…",
     "mapBoundaryUnavailable": "Contorno no disponible para este país. Aun así puede colocar un punto.",
-    "openStreetMap": "Abrir en OpenStreetMap"
+    "openStreetMap": "Abrir en OpenStreetMap",
+    "restoreModal": {
+      "title": "¿Restaurar el destino?",
+      "description": "El destino « {name} » (slug « {slug} ») fue eliminado. ¿Desea restaurarlo en lugar de crear uno nuevo?",
+      "confirm": "Restaurar",
+      "cancel": "Cancelar",
+      "close": "Cerrar",
+      "restoring": "Restaurando…",
+      "successTitle": "Destino restaurado",
+      "successMessage": "« {name} » ha sido restaurado."
+    }
   },
   "detail": {
     "title": "Modificar el destino",

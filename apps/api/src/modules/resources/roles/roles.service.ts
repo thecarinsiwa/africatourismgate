@@ -7,7 +7,9 @@ import {
   Roles,
 } from '../../../entities/generated';
 import { CrudService } from '../../../common/crud/crud.service';
+import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import type { RolePermissionsPayloadDto } from './dto/replace-role-permissions.dto';
+import { RolesListQueryDto } from './dto/roles-list-query.dto';
 
 @Injectable()
 export class RolesService extends CrudService<Roles> {
@@ -20,6 +22,43 @@ export class RolesService extends CrudService<Roles> {
     private readonly permissionsRepository: Repository<Permissions>,
   ) {
     super(rolesRepository);
+  }
+
+  override async findAll(
+    query: RolesListQueryDto,
+  ): Promise<PaginatedResult<Roles>> {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+
+    const qb = this.rolesRepository.createQueryBuilder('role');
+
+    const search = query.search?.trim();
+    if (search) {
+      qb.andWhere(
+        '(role.name LIKE :term OR role.code LIKE :term OR role.description LIKE :term)',
+        { term: `%${search}%` },
+      );
+    }
+
+    if (query.includeSystem === false) {
+      qb.andWhere('role.isSystem = :isSystem', { isSystem: 0 });
+    }
+
+    qb.orderBy('role.createdAt', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit);
+
+    const [data, total] = await qb.getManyAndCount();
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit) || 1,
+      },
+    };
   }
 
   async getPermissions(roleId: string): Promise<RolePermissionsPayloadDto> {

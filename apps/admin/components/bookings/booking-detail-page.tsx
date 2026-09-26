@@ -55,6 +55,7 @@ import { BookingAssistedApprovalPanel } from './booking-assisted-approval-panel'
 import { BookingIdentityDocumentsPanel } from './booking-identity-documents-panel';
 import { BookingPaymentProofsPanel } from './booking-payment-proofs-panel';
 import { BookingManifestSection } from './booking-manifest-section';
+import { BookingEmergencyContactSection } from './booking-emergency-contact-section';
 import { BookingMessagesSection } from './booking-messages-section';
 import { BookingStatusTimeline } from './booking-status-timeline';
 
@@ -741,14 +742,23 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
           </TabsList>
 
           <TabsContent value="manifest">
-            <BookingManifestSection
-              bookingId={bookingId}
-              canWrite={canWrite}
-              suggestedCount={suggestedTravelerCount}
-              syncKey={manifestSync}
-              onChanged={bumpManifestSync}
-              embedded
-            />
+            <div className="space-y-0">
+              <BookingEmergencyContactSection
+                bookingId={bookingId}
+                canWrite={canWrite}
+                initialContact={detail.emergencyContact ?? null}
+                onUpdated={load}
+                embedded
+              />
+              <BookingManifestSection
+                bookingId={bookingId}
+                canWrite={canWrite}
+                suggestedCount={suggestedTravelerCount}
+                syncKey={manifestSync}
+                onChanged={bumpManifestSync}
+                embedded
+              />
+            </div>
           </TabsContent>
 
           <TabsContent value="guides">

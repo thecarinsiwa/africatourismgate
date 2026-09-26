@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class PublicDestinationDto {
   @ApiProperty({ format: 'uuid' })
@@ -9,4 +9,10 @@ export class PublicDestinationDto {
 
   @ApiProperty()
   countryCode!: string;
+
+  @ApiPropertyOptional({ nullable: true, type: Number })
+  latitude?: number | null;
+
+  @ApiPropertyOptional({ nullable: true, type: Number })
+  longitude?: number | null;
 }

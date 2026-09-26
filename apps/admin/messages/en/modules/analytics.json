@@ -1,0 +1,47 @@
+{
+  "title": "Analytics",
+  "description": "Visitors and page views on the public website",
+  "metaTitle": "Analytics — Africa Tourism Gate Admin",
+  "period": {
+    "label": "Period",
+    "7d": "7 days",
+    "30d": "30 days",
+    "90d": "90 days"
+  },
+  "kpi": {
+    "visitors": {
+      "label": "Visitors",
+      "subtitle": "Unique visitors in the selected period"
+    },
+    "pageViews": {
+      "label": "Page views",
+      "subtitle": "Page views in the selected period"
+    },
+    "change": {
+      "vsPreviousPeriod": "vs previous period"
+    }
+  },
+  "chart": {
+    "title": "Trends",
+    "visitors": "Visitors",
+    "pageViews": "Page views",
+    "loading": "Loading chart…",
+    "empty": "No data for this period",
+    "error": "Unable to load trends",
+    "ariaLabel": "Chart of daily visitors and page views",
+    "dateColumn": "Date"
+  },
+  "topPages": {
+    "title": "Top pages",
+    "path": "Path",
+    "pageViews": "Page views",
+    "visitors": "Visitors",
+    "loading": "Loading…",
+    "empty": "No page views for this period",
+    "error": "Unable to load top pages"
+  },
+  "error": {
+    "loadFailed": "Unable to load analytics",
+    "forbidden": "You do not have permission to view analytics"
+  }
+}

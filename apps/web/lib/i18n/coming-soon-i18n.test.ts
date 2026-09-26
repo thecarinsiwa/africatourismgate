@@ -43,10 +43,22 @@ const REQUIRED_RESERVATION_EMPTY_KEYS = [
   'emptyFilter',
 ] as const;
 
+const REQUIRED_NOT_FOUND_KEYS = [
+  'code',
+  'badge',
+  'title',
+  'description',
+  'backHome',
+  'help',
+  'metaTitle',
+  'metaDescription',
+] as const;
+
 function loadMessages(locale: Locale) {
   return JSON.parse(readFileSync(join(MESSAGES_DIR, `${locale}.json`), 'utf8')) as {
     comingSoon: Record<string, string>;
     maintenance: Record<string, string>;
+    notFound: Record<string, string>;
     account: { reservations: Record<string, string> };
   };
 }
@@ -77,6 +89,15 @@ test('account reservations empty i18n keys are present in fr/en/es messages', ()
         reservations[key]?.trim(),
         `${locale}.account.reservations.${key} must be non-empty`,
       );
+    }
+  }
+});
+
+test('notFound i18n keys are present in fr/en/es messages', () => {
+  for (const locale of LOCALES) {
+    const notFound = loadMessages(locale).notFound;
+    for (const key of REQUIRED_NOT_FOUND_KEYS) {
+      assert.ok(notFound[key]?.trim(), `${locale}.notFound.${key} must be non-empty`);
     }
   }
 });

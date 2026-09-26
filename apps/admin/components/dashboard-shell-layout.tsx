@@ -17,6 +17,7 @@ import type { StoredSession } from '../lib/auth/session';
 import {
   isSessionLocked,
   SESSION_LOCK_CHANGED_EVENT,
+  setSessionLocked,
 } from '../lib/auth/session-idle';
 import {
   breadcrumbFromPath,
@@ -129,6 +130,13 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
     router.refresh();
   }, [router]);
 
+  const handleLockSession = useCallback(() => {
+    if (!session?.refreshToken || isSessionLocked()) {
+      return;
+    }
+    setSessionLocked(true);
+  }, [session?.refreshToken]);
+
   return (
     <AdminSearchNavigatorProvider>
       <DashboardShell
@@ -164,6 +172,13 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
             { href: '/dashboard', label: tNav('userMenu.dashboard') },
             { href: '/notifications', label: tNav('userMenu.notifications') },
             { href: '/parametres', label: tNav('userMenu.settings') },
+          ],
+          menuActions: [
+            {
+              id: 'lock-session',
+              label: tNav('userMenu.lockSession'),
+              onSelect: handleLockSession,
+            },
           ],
         }}
         themeLabels={{

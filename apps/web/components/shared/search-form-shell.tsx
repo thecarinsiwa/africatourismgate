@@ -53,7 +53,7 @@ export function SearchFormShell({
                   title={tab.label}
                   onClick={() => onTabChange(tab.id)}
                   className={cn(
-                    'flex min-w-[3.5rem] flex-1 items-center justify-center border-b-[3px] px-3 py-4 transition-all sm:min-w-0',
+                    'flex min-h-11 min-w-[3rem] flex-1 items-center justify-center border-b-[3px] px-2 py-3 transition-all sm:min-h-0 sm:min-w-0 sm:px-3 sm:py-4',
                     selected
                       ? 'border-primary bg-primary text-white'
                       : 'border-transparent bg-atg-surface text-atg-muted hover:bg-atg-surface hover:text-atg-fg dark:hover:bg-white/5 dark:hover:text-white',

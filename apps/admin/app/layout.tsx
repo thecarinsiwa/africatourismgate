@@ -6,6 +6,7 @@ import { getLocale, getMessages, getTranslations } from 'next-intl/server';
 import { ThemeProvider, ToastProvider } from '@africatourismgate/ui';
 import { getAdminAppUrl, normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import './globals.css';
+import { AdminConnectionLockProvider } from '../components/connection-lock/admin-connection-lock-provider';
 import { resolveApiBaseUrl } from '../lib/auth/api-url';
 import { DEFAULT_ADMIN_FAVICON_HREF } from '../lib/organization-theme';
 
@@ -75,7 +76,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeProvider defaultTheme="system">
-            <ToastProvider>{children}</ToastProvider>
+            <ToastProvider>
+              <AdminConnectionLockProvider>{children}</AdminConnectionLockProvider>
+            </ToastProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

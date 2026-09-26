@@ -101,6 +101,12 @@ export class DestinationsController {
     return { url: destinationUploadUrl(file.filename) };
   }
 
+  @Post(':id/restore')
+  @ApiOperation({ summary: 'Restore a soft-deleted destination' })
+  restore(@Param('id') id: string) {
+    return this.service.restore(id);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get destinations by id' })
   findOne(@Param('id') id: string) {

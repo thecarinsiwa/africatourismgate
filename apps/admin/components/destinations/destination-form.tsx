@@ -2,12 +2,16 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Checkbox, Input, useToast } from '@africatourismgate/ui';
+import { Button, Checkbox, Input, Modal, useToast } from '@africatourismgate/ui';
 import type { CreateDestinationRequest, Destination } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useId, useState } from 'react';
 import { parseDestinationCoord } from '../../lib/destination-coords';
+import {
+  getSoftDeletedDestinationFromError,
+  type SoftDeletedDestinationInfo,
+} from '../../lib/destinations-errors';
 import { getApiClient } from '../../lib/auth/api';
 import { isRichTextEmpty } from '../../lib/rich-text';
 import { isValidSlug, slugifyName } from '../../lib/slug';
@@ -134,6 +138,10 @@ export function DestinationForm({
   >({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [restoreModalOpen, setRestoreModalOpen] = useState(false);
+  const [deletedDestination, setDeletedDestination] =
+    useState<SoftDeletedDestinationInfo | null>(null);
+  const [restoring, setRestoring] = useState(false);
 
   const updateField = useCallback(
     <K extends keyof DestinationFormValues>(key: K, value: DestinationFormValues[K]) => {
@@ -208,6 +216,12 @@ export function DestinationForm({
         router.refresh();
       }
     } catch (error) {
+      const softDeleted = getSoftDeletedDestinationFromError(error);
+      if (softDeleted) {
+        setDeletedDestination(softDeleted);
+        setRestoreModalOpen(true);
+        return;
+      }
       const message = getDestinationsErrorMessage(error);
       setFormError(message);
       if (mode === 'edit') {
@@ -222,7 +236,76 @@ export function DestinationForm({
     }
   }
 
+  async function handleRestore() {
+    if (!deletedDestination) return;
+    setRestoring(true);
+    setFormError(null);
+    try {
+      const restored = await getApiClient().restoreDestination(deletedDestination.id);
+      setRestoreModalOpen(false);
+      setDeletedDestination(null);
+      toast({
+        title: t('restoreModal.successTitle'),
+        message: t('restoreModal.successMessage', { name: restored.name }),
+        variant: 'success',
+      });
+      router.push(`/produits/destinations/${restored.id}`);
+      router.refresh();
+    } catch (error) {
+      const message = getDestinationsErrorMessage(error);
+      setFormError(message);
+      setRestoreModalOpen(false);
+      toast({
+        title: tToast('saveError'),
+        message,
+        variant: 'error',
+      });
+    } finally {
+      setRestoring(false);
+    }
+  }
+
   return (
+    <>
+      <Modal
+        open={restoreModalOpen}
+        onOpenChange={(open) => {
+          setRestoreModalOpen(open);
+          if (!open) {
+            setDeletedDestination(null);
+          }
+        }}
+        title={t('restoreModal.title')}
+        description={t('restoreModal.description', {
+          name: deletedDestination?.name ?? '—',
+          slug: deletedDestination?.slug ?? '—',
+        })}
+        showClose
+        closeAriaLabel={t('restoreModal.close')}
+      >
+        <div className="flex flex-wrap justify-end gap-3 pt-2">
+          <Button
+            type="button"
+            variant="outline"
+            disabled={restoring}
+            onClick={() => {
+              setRestoreModalOpen(false);
+              setDeletedDestination(null);
+            }}
+          >
+            {t('restoreModal.cancel')}
+          </Button>
+          <Button
+            type="button"
+            loading={restoring}
+            loadingText={t('restoreModal.restoring')}
+            onClick={() => void handleRestore()}
+          >
+            {t('restoreModal.confirm')}
+          </Button>
+        </div>
+      </Modal>
+
     <form
       onSubmit={(e) => void handleSubmit(e)}
       className={mode === 'create' ? 'mx-auto w-full max-w-5xl space-y-6' : 'w-full space-y-6'}
@@ -350,5 +433,6 @@ export function DestinationForm({
         </Button>
       </div>
     </form>
+    </>
   );
 }

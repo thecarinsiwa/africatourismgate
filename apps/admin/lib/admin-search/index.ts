@@ -11,7 +11,7 @@ export {
 export { listLocalAdminSearchSources } from './local-sources';
 export { listCoreAdminSearchSources } from './core-sources';
 export { listCatalogAdminSearchSources } from './catalog-sources';
-export { listWiredAdminSearchSources } from './wired-sources';
+export { listWiredAdminSearchSources, listWiredAdminSearchSourcesByPhase } from './wired-sources';
 export {
   isAdminSearchToggleShortcut,
   isEditableKeyboardTarget,
@@ -21,7 +21,11 @@ export {
   aggregateAdminSearchResults,
   flattenAdminSearchGroups,
   runAdminSearchFanOut,
+  runAdminSearchPhasedFanOut,
   selectRunnableAdminSearchSources,
+  ADMIN_SEARCH_FANOUT_PHASES,
+  type AdminSearchFanOutPhase,
+  type AdminSearchPhasedFanOutOptions,
   type AdminSearchSourceRun,
 } from './aggregate';
 export {
@@ -49,9 +53,13 @@ export {
 } from './search-help';
 export {
   searchAdminBookings,
+  searchAdminEmployees,
   searchAdminOrganizations,
   searchAdminPayments,
+  searchAdminPromoCodes,
+  searchAdminPromotions,
   searchAdminProperties,
+  searchAdminRoles,
   searchAdminSupportTickets,
   searchAdminUsers,
   type SearchApiCoreOptions,
@@ -60,10 +68,12 @@ export {
   searchAdminActivities,
   searchAdminBlogPosts,
   searchAdminDestinations,
-  searchAdminEmployees,
   searchAdminFlights,
+  searchAdminGapActivities,
+  searchAdminGapPages,
   searchAdminPackages,
   searchAdminSailings,
+  searchAdminTourGuides,
   searchAdminVehicles,
 } from './search-api-catalog';
 export {
@@ -77,6 +87,7 @@ export {
   type AdminSearchLabelKey,
   type AdminSearchNavItem,
   type AdminSearchResultItem,
+  type AdminSearchRunOptions,
   type AdminSearchSource,
   type AdminSearchSourceDefinition,
   type AdminSearchSourceId,

@@ -46,6 +46,7 @@
     "sections": {
       "identity": "Identidad",
       "location": "Ubicación",
+      "geography": "Geografía",
       "classification": "Clasificación"
     },
     "name": "Nombre",
@@ -55,6 +56,12 @@
     "address": "Dirección",
     "starRating": "Clasificación (estrellas)",
     "starRatingHint": "Opcional, de 0 a 5",
+    "geographyIntro": "Coloque el punto exacto del alojamiento en el mapa para mostrarlo correctamente en el sitio público.",
+    "mapPicker": "Mapa de ubicación",
+    "mapPickerHint": "Haga clic en el mapa o mueva el marcador para definir latitud y longitud.",
+    "mapPickerAria": "Mapa interactivo para seleccionar las coordenadas del alojamiento",
+    "latitudeHint": "Opcional, -90 a 90",
+    "longitudeHint": "Opcional, -180 a 180",
     "validation": {
       "destinationRequired": "El destino es obligatorio.",
       "formIncomplete": "Compruebe los campos obligatorios (destino, nombre, slug)."

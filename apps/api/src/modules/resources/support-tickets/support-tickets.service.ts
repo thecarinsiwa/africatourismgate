@@ -19,6 +19,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { AdminSupportTicketDetailDto } from './dto/admin-support-ticket-detail.dto';
 import { AdminSupportTicketListItemDto } from './dto/admin-support-ticket-list-item.dto';
 import { CreateSupportTicketDto } from './dto/create-support-ticket.dto';
+import { CustomerSupportTicketDetailDto } from './dto/customer-support-ticket-detail.dto';
 import {
   SupportTicketCreatedDto,
   SupportTicketDto,
@@ -155,7 +156,7 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
   async findOneForActor(
     id: string,
     actorUserId: string,
-  ): Promise<SupportTicketDto | AdminSupportTicketDetailDto> {
+  ): Promise<CustomerSupportTicketDetailDto | AdminSupportTicketDetailDto> {
     const staff = await this.canReadTickets(actorUserId);
     if (staff) {
       return this.findOneForAdmin(id);
@@ -265,6 +266,14 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
       qb.andWhere('t.priority = :priority', { priority: query.priority });
     }
 
+    const search = query.search?.trim();
+    if (search) {
+      qb.andWhere(
+        '(t.subject LIKE :term OR t.id LIKE :term OR u.email LIKE :term OR u.firstName LIKE :term OR u.lastName LIKE :term)',
+        { term: `%${search}%` },
+      );
+    }
+
     if (sortByLastMessage) {
       qb.addSelect(
         `(SELECT MAX(m.created_at) FROM support_messages m WHERE m.ticket_id = t.id AND m.deleted_at IS NULL)`,
@@ -286,6 +295,14 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
     }
     if (query.priority) {
       countQb.andWhere('t.priority = :priority', { priority: query.priority });
+    }
+    if (search) {
+      countQb
+        .innerJoin(Users, 'u', 'u.id = t.userId AND u.deletedAt IS NULL')
+        .andWhere(
+          '(t.subject LIKE :term OR t.id LIKE :term OR u.email LIKE :term OR u.firstName LIKE :term OR u.lastName LIKE :term)',
+          { term: `%${search}%` },
+        );
     }
 
     const [rows, total] = await Promise.all([
@@ -329,7 +346,7 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
           message.createdAt instanceof Date
             ? message.createdAt.toISOString()
             : new Date(message.createdAt).toISOString(),
-        isStaff: message.isStaff === 1,
+        isStaff: Number(message.isStaff) === 1,
       });
     }
 
@@ -345,7 +362,7 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
   private async findOneForCustomer(
     id: string,
     userId: string,
-  ): Promise<SupportTicketDto> {
+  ): Promise<CustomerSupportTicketDetailDto> {
     const ticket = await this.ticketsRepository.findOne({
       where: { id, deletedAt: IsNull() },
     });
@@ -355,7 +372,16 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
     if (ticket.userId !== userId) {
       throw new ForbiddenException('Accès refusé');
     }
-    return this.toTicketDto(ticket);
+
+    const messages = await this.messagesRepository.find({
+      where: { ticketId: id, deletedAt: IsNull() },
+      order: { createdAt: 'ASC', id: 'ASC' },
+    });
+
+    return {
+      ...this.toTicketDto(ticket),
+      messages: messages.map((message) => this.toMessageDto(message)),
+    };
   }
 
   async findOneForAdmin(id: string): Promise<AdminSupportTicketDetailDto> {
@@ -380,7 +406,7 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
 
     const messages = await this.messagesRepository.find({
       where: { ticketId: id, deletedAt: IsNull() },
-      order: { createdAt: 'ASC' },
+      order: { createdAt: 'ASC', id: 'ASC' },
     });
 
     const lastMessage = messages[messages.length - 1];
@@ -391,7 +417,7 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
             lastMessage.createdAt instanceof Date
               ? lastMessage.createdAt.toISOString()
               : new Date(lastMessage.createdAt).toISOString(),
-          isStaff: lastMessage.isStaff === 1,
+          isStaff: Number(lastMessage.isStaff) === 1,
         }
       : undefined;
 
@@ -457,7 +483,7 @@ export class SupportTicketsService extends CrudService<SupportTickets> {
       id: message.id,
       ticketId: message.ticketId,
       body: message.body,
-      isStaff: message.isStaff === 1,
+      isStaff: Number(message.isStaff) === 1,
       createdAt: message.createdAt.toISOString(),
     };
   }

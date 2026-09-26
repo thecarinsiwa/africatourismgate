@@ -79,7 +79,6 @@ function sexLabel(
 function travelerNotes(
   traveler: BookingDetailPdfInput['travelers'][number],
   labels: BookingDetailPdfLabels,
-  locale: BookingDetailPdfInput['locale'],
 ): string {
   const medicalLabeled: string[] = [];
   const allergies = traveler.allergies?.trim();
@@ -108,20 +107,25 @@ function travelerNotes(
     .map((value) => value?.trim())
     .filter(Boolean);
 
-  const emergencyParts = [
-    traveler.emergencyContactName?.trim(),
-    traveler.emergencyContactPhone?.trim(),
-    traveler.emergencyContactEmail?.trim(),
-    formatNationalityDisplay(traveler.emergencyContactCountry, locale) ||
-      traveler.emergencyContactCountry?.trim(),
-    traveler.emergencyContactAddress?.trim(),
-  ].filter(Boolean);
+  return [...medicalLabeled, ...extras].join(' · ');
+}
 
-  const parts = [...medicalLabeled, ...extras];
-  if (emergencyParts.length > 0) {
-    parts.push(`${labels.emergencyContactPrefix}: ${emergencyParts.join(' · ')}`);
+function formatEmergencyContactLine(
+  contact: NonNullable<BookingDetailPdfInput['emergencyContact']>,
+  labels: BookingDetailPdfLabels,
+  locale: BookingDetailPdfInput['locale'],
+): string | null {
+  const parts = [
+    contact.name?.trim(),
+    contact.phone?.trim(),
+    contact.email?.trim(),
+    formatNationalityDisplay(contact.country, locale) || contact.country?.trim(),
+    contact.address?.trim(),
+  ].filter(Boolean);
+  if (parts.length === 0) {
+    return null;
   }
-  return parts.join(' · ');
+  return `${labels.emergencyContactPrefix}: ${parts.join(' · ')}`;
 }
 
 function guideRoleLabel(
@@ -363,7 +367,7 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
         traveler.priceCents != null
           ? formatMoney(traveler.priceCents, input.currency)
           : '-';
-      const notes = travelerNotes(traveler, labels, input.locale) || '-';
+      const notes = travelerNotes(traveler, labels) || '-';
       const cells = [
         String(index + 1),
         traveler.fullName,
@@ -389,6 +393,24 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
       });
       doc.y = rowTop + rowHeight + 4;
     });
+  }
+
+  if (input.emergencyContact) {
+    const emergencyLine = formatEmergencyContactLine(
+      input.emergencyContact,
+      labels,
+      input.locale,
+    );
+    if (emergencyLine) {
+      drawSectionTitle(doc, labels.emergencyContactSection, brandColor);
+      ensureSpace(doc, 20);
+      doc
+        .fillColor('#0f1a16')
+        .fontSize(9)
+        .font('Helvetica')
+        .text(emergencyLine, PAGE_MARGIN, doc.y, { width: CONTENT_WIDTH });
+      doc.moveDown(0.4);
+    }
   }
 
   if (input.guides.length > 0) {

@@ -10,35 +10,69 @@ import { buildSocialLinks } from '../../lib/contact/social-links';
 import { buildVerticalListRoute } from '../../lib/search/route';
 import { ABOUT_NAV_ITEMS, ABOUT_PATHS } from '../../lib/about/routes';
 import { LEGAL_PATHS } from '../../lib/legal/routes';
+import { partnersListHref } from '../../lib/partners/listings';
+import { useCatalogProducts } from '../catalog-products-provider';
+import type { CatalogProductKey } from '@africatourismgate/types/organization-settings';
 
 export function HomeFooter() {
   const t = useTranslations('footer');
   const tAbout = useTranslations('about');
+  const tPartners = useTranslations('partners');
   const [email, setEmail] = useState('');
   const gapUrl = process.env.NEXT_PUBLIC_GAP_URL?.trim() || null;
   const { branding, logoBroken, setLogoBroken } = useResolvedPublicBranding();
   const contact = useResolvedPublicContact();
+  const catalogProducts = useCatalogProducts();
   const socialLinks = useMemo(() => buildSocialLinks(contact), [contact]);
 
   const productLinks = useMemo(
-    () => [
-      { href: buildVerticalListRoute('hotels'), label: t('specialistLinks.premium') },
-      { href: buildVerticalListRoute('flights'), label: t('specialistLinks.flights') },
-      { href: buildVerticalListRoute('cars'), label: t('specialistLinks.cars') },
-      { href: buildVerticalListRoute('tours'), label: t('specialistLinks.safaris') },
-      { href: buildVerticalListRoute('cruises'), label: t('specialistLinks.cruises') },
-      { href: '/packages', label: t('specialistLinks.packages') },
-    ],
-    [t],
+    () =>
+      (
+        [
+          {
+            key: 'hotels' as const,
+            href: buildVerticalListRoute('hotels'),
+            label: t('specialistLinks.premium'),
+          },
+          {
+            key: 'flights' as const,
+            href: buildVerticalListRoute('flights'),
+            label: t('specialistLinks.flights'),
+          },
+          {
+            key: 'cars' as const,
+            href: buildVerticalListRoute('cars'),
+            label: t('specialistLinks.cars'),
+          },
+          {
+            key: 'tours' as const,
+            href: buildVerticalListRoute('tours'),
+            label: t('specialistLinks.safaris'),
+          },
+          {
+            key: 'cruises' as const,
+            href: buildVerticalListRoute('cruises'),
+            label: t('specialistLinks.cruises'),
+          },
+          {
+            key: 'packages' as const,
+            href: '/packages',
+            label: t('specialistLinks.packages'),
+          },
+        ] satisfies { key: CatalogProductKey; href: string; label: string }[]
+      ).filter((link) => catalogProducts[link.key]),
+    [catalogProducts, t],
   );
 
   const aboutLinks = useMemo(
-    () =>
-      ABOUT_NAV_ITEMS.map((item) => ({
+    () => [
+      { href: partnersListHref(), label: tPartners('title') },
+      ...ABOUT_NAV_ITEMS.map((item) => ({
         href: item.href,
         label: tAbout(`nav.${item.labelKey}`),
       })),
-    [tAbout],
+    ],
+    [tAbout, tPartners],
   );
 
   return (
@@ -64,26 +98,28 @@ export function HomeFooter() {
               </Link>
             </div>
 
-            <div>
-              <h3 className="text-sm font-bold uppercase tracking-wide text-white mb-5">
-                {t('products')}
-              </h3>
-              <ul className="space-y-2.5">
-                {productLinks.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-white/60 hover:text-white transition-colors flex items-center gap-1.5"
-                    >
-                      <svg className="h-3 w-3 text-primary" fill="currentColor" viewBox="0 0 6 10" aria-hidden>
-                        <path d="M1 1l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {productLinks.length > 0 ? (
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wide text-white mb-5">
+                  {t('products')}
+                </h3>
+                <ul className="space-y-2.5">
+                  {productLinks.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="text-sm text-white/60 hover:text-white transition-colors flex items-center gap-1.5"
+                      >
+                        <svg className="h-3 w-3 text-primary" fill="currentColor" viewBox="0 0 6 10" aria-hidden>
+                          <path d="M1 1l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
 
             <div>
               <h3 className="text-sm font-bold uppercase tracking-wide text-white mb-5">

@@ -91,6 +91,7 @@ export function AccountProfileForm() {
   }, [user, firstName, lastName, phone, preferredLanguage]);
 
   function applyUser(updated: AuthUser) {
+    const previousLanguage = user?.preferredLanguage ?? null;
     setUser(updated);
     setFirstName(updated.firstName);
     setLastName(updated.lastName);
@@ -104,7 +105,12 @@ export function AccountProfileForm() {
     const savedLocale = localeFromPreferredLanguage(updated.preferredLanguage);
     if (savedLocale) {
       applyLocaleToDocument(savedLocale);
-      router.refresh();
+      // Avoid refresh on hydrate / same-locale saves: router.refresh() remounts the
+      // client tree and wipes ephemeral success messages (and in-progress edits).
+      const prevLocale = localeFromPreferredLanguage(previousLanguage);
+      if (previousLanguage !== null && prevLocale !== savedLocale) {
+        router.refresh();
+      }
     }
   }
 

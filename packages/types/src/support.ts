@@ -31,6 +31,11 @@ export interface AdminSupportTicketDetail extends AdminSupportTicketListItem {
   messages: SupportTicketMessage[];
 }
 
+/** Owner-scoped ticket detail (web account) — includes the message thread. */
+export interface CustomerSupportTicketDetail extends SupportTicket {
+  messages: SupportTicketMessage[];
+}
+
 export interface CreateSupportTicketRequest {
   subject: string;
   body: string;
@@ -46,6 +51,8 @@ export interface SupportTicketCreated {
 export interface SupportTicketsListQuery {
   page?: number;
   limit?: number;
+  /** Partial match on subject, customer email/name, or ticket id. */
+  search?: string;
   status?: SupportTicketStatus;
   priority?: SupportTicketPriority;
   /** Admin list: sort by ticket creation or latest message activity. */
@@ -59,6 +66,11 @@ export interface UpdateSupportTicketRequest {
 
 export interface CreateSupportMessageRequest {
   ticketId: string;
+  body: string;
+}
+
+/** Customer reply on an owned ticket (`POST /support-tickets/:id/messages`). */
+export interface CreateCustomerSupportMessageRequest {
   body: string;
 }
 

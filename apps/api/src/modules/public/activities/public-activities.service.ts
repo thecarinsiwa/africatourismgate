@@ -24,7 +24,10 @@ import { ActivityDetailQueryDto } from './dto/activity-detail-query.dto';
 import { ActivityDetailDto } from './dto/activity-detail.dto';
 import { ActivitySearchQueryDto } from './dto/activity-search-query.dto';
 import { ActivitySearchResultDto } from './dto/activity-search-result.dto';
-import { PublicActivityProviderDto } from './dto/public-activity-provider.dto';
+import {
+  PublicActivityProviderDetailDto,
+  PublicActivityProviderDto,
+} from './dto/public-activity-provider.dto';
 import { parseDateOnly } from './activity-dates.util';
 
 type ScheduleOffer = ActivityDetailDto['schedules'][number];
@@ -51,7 +54,13 @@ export class PublicActivitiesService {
   async listDestinations(): Promise<PublicDestinationDto[]> {
     const rows = await this.destinationsRepository
       .createQueryBuilder('d')
-      .select(['d.id', 'd.name', 'd.countryCode'])
+      .select([
+        'd.id',
+        'd.name',
+        'd.countryCode',
+        'd.latitude',
+        'd.longitude',
+      ])
       .innerJoin(
         ActivityProviders,
         'ap',
@@ -71,14 +80,15 @@ export class PublicActivitiesService {
       id: d.id,
       name: d.name,
       countryCode: d.countryCode,
+      latitude: this.toCoord(d.latitude),
+      longitude: this.toCoord(d.longitude),
     }));
   }
 
-  /** Active activity partners for the public home / trust strip. */
+  /** Active activity partners for the public partners listing / home strip. */
   async listProviders(): Promise<PublicActivityProviderDto[]> {
     const rows = await this.providersRepository.find({
       order: { name: 'ASC' },
-      take: 24,
     });
 
     return rows.map((provider) => ({
@@ -86,6 +96,94 @@ export class PublicActivitiesService {
       name: provider.name,
       logoUrl: provider.logoUrl?.trim() || null,
     }));
+  }
+
+  async getProviderById(id: string): Promise<PublicActivityProviderDetailDto> {
+    const provider = await this.providersRepository.findOne({ where: { id } });
+    if (!provider || provider.deletedAt) {
+      throw new NotFoundException('Partenaire introuvable.');
+    }
+
+    const destination = await this.destinationsRepository.findOne({
+      where: { id: provider.destinationId },
+    });
+    if (!destination || destination.deletedAt) {
+      throw new NotFoundException('Partenaire introuvable.');
+    }
+
+    const activities = await this.activitiesRepository.find({
+      where: { providerId: provider.id },
+      order: { title: 'ASC' },
+    });
+    const activeActivities = activities.filter((a) => !a.deletedAt);
+
+    const activityIds = activeActivities.map((a) => a.id);
+    const imageUrlByActivityId =
+      await this.loadPrimaryImageUrlByActivityId(activityIds);
+    const reviewSummaryByActivityId =
+      await this.loadReviewSummariesByActivityIds(activityIds);
+
+    const schedules = activityIds.length
+      ? await this.schedulesRepository
+          .createQueryBuilder('schedule')
+          .where('schedule.activityId IN (:...activityIds)', { activityIds })
+          .andWhere('schedule.deletedAt IS NULL')
+          .andWhere('schedule.startDatetime >= NOW()')
+          .orderBy('schedule.startDatetime', 'ASC')
+          .getMany()
+      : [];
+
+    const schedulesByActivityId = new Map<string, ActivitySchedules[]>();
+    for (const schedule of schedules) {
+      const list = schedulesByActivityId.get(schedule.activityId) ?? [];
+      list.push(schedule);
+      schedulesByActivityId.set(schedule.activityId, list);
+    }
+
+    const activityResults: ActivitySearchResultDto[] = activeActivities.map(
+      (activity) => {
+        const activitySchedules = schedulesByActivityId.get(activity.id) ?? [];
+        const availableSchedules = activitySchedules.filter(
+          (schedule) => this.remainingPlaces(schedule) >= 1,
+        );
+        const mapCoords = this.resolveActivityMapCoords(activity, destination);
+
+        const result: ActivitySearchResultDto = {
+          id: activity.id,
+          title: activity.title,
+          durationMinutes: activity.durationMinutes,
+          priceCents: activity.priceCents,
+          currency: activity.currency,
+          destination: destination.name,
+          latitude: mapCoords.latitude,
+          longitude: mapCoords.longitude,
+          providerName: provider.name,
+          availableSchedulesCount: availableSchedules.length,
+          imageUrl: imageUrlByActivityId.get(activity.id) ?? null,
+          difficultyLevel: activity.difficultyLevel,
+          ...this.toReviewFields(reviewSummaryByActivityId.get(activity.id)),
+        };
+
+        if (availableSchedules[0]) {
+          result.nextStartDatetime = this.toIsoDatetime(
+            availableSchedules[0].startDatetime,
+          );
+        }
+
+        return result;
+      },
+    );
+
+    activityResults.sort((a, b) => a.priceCents - b.priceCents);
+
+    return {
+      id: provider.id,
+      name: provider.name,
+      logoUrl: provider.logoUrl?.trim() || null,
+      destinationId: destination.id,
+      destinationName: destination.name,
+      activities: activityResults,
+    };
   }
 
   async browse(
@@ -168,6 +266,7 @@ export class PublicActivitiesService {
       );
 
       const dest = destinationById.get(provider.destinationId);
+      const mapCoords = this.resolveActivityMapCoords(activity, dest);
 
       const result: ActivitySearchResultDto = {
         id: activity.id,
@@ -176,8 +275,8 @@ export class PublicActivitiesService {
         priceCents: activity.priceCents,
         currency: activity.currency,
         destination: dest?.name ?? '',
-        latitude: this.toCoord(dest?.latitude),
-        longitude: this.toCoord(dest?.longitude),
+        latitude: mapCoords.latitude,
+        longitude: mapCoords.longitude,
         providerName: provider.name,
         availableSchedulesCount: availableSchedules.length,
         imageUrl: imageUrlByActivityId.get(activity.id) ?? null,
@@ -297,6 +396,7 @@ export class PublicActivitiesService {
 
       const dest = destinationById.get(provider.destinationId);
       const destinationName = dest?.name ?? query.destination?.trim() ?? '';
+      const mapCoords = this.resolveActivityMapCoords(activity, dest);
 
       results.push({
         id: activity.id,
@@ -305,8 +405,8 @@ export class PublicActivitiesService {
         priceCents: activity.priceCents,
         currency: activity.currency,
         destination: destinationName,
-        latitude: this.toCoord(dest?.latitude),
-        longitude: this.toCoord(dest?.longitude),
+        latitude: mapCoords.latitude,
+        longitude: mapCoords.longitude,
         providerName: provider.name,
         availableSchedulesCount: availableSchedules.length,
         nextStartDatetime: this.toIsoDatetime(availableSchedules[0].startDatetime),
@@ -397,6 +497,22 @@ export class PublicActivitiesService {
       activities.map((a) => a.id),
     );
 
+    const activityIds = activities.map((a) => a.id);
+    const upcomingSchedules = await this.schedulesRepository
+      .createQueryBuilder('schedule')
+      .where('schedule.activityId IN (:...activityIds)', { activityIds })
+      .andWhere('schedule.deletedAt IS NULL')
+      .andWhere('schedule.startDatetime >= NOW()')
+      .orderBy('schedule.startDatetime', 'ASC')
+      .getMany();
+
+    const schedulesByActivityId = new Map<string, ActivitySchedules[]>();
+    for (const schedule of upcomingSchedules) {
+      const list = schedulesByActivityId.get(schedule.activityId) ?? [];
+      list.push(schedule);
+      schedulesByActivityId.set(schedule.activityId, list);
+    }
+
     const hits: PublicSiteSearchHit[] = [];
 
     for (const activity of activities) {
@@ -422,12 +538,18 @@ export class PublicActivitiesService {
       ]);
       if (score <= 0) continue;
 
+      const activitySchedules = schedulesByActivityId.get(activity.id) ?? [];
+      const bookable = activitySchedules.find(
+        (schedule) => this.remainingPlaces(schedule) >= 1,
+      );
+      const nextSchedule = bookable ?? activitySchedules[0];
+
       hits.push({
         type: 'activities',
         id: activity.id,
         title: activity.title,
         subtitle: `${dest.name} · ${dest.countryCode}`,
-        href: `/activities/${encodeURIComponent(activity.id)}`,
+        href: this.buildActivitySiteSearchHref(activity.id, dest.name, nextSchedule),
         imageUrl: imageUrlByActivityId.get(activity.id) ?? null,
         score,
       });
@@ -435,6 +557,26 @@ export class PublicActivitiesService {
 
     hits.sort((a, b) => b.score - a.score || a.title.localeCompare(b.title));
     return hits.slice(0, limit);
+  }
+
+  /** Deep-link détail avec params requis (date) pour la fiche publique. */
+  private buildActivitySiteSearchHref(
+    activityId: string,
+    destinationName: string,
+    schedule?: ActivitySchedules,
+  ): string {
+    const params = new URLSearchParams();
+    if (destinationName) {
+      params.set('destination', destinationName);
+    }
+    params.set('participants', '1');
+    if (schedule) {
+      params.set('date', this.toIsoDatetime(schedule.startDatetime).slice(0, 10));
+      params.set('scheduleId', schedule.id);
+    } else {
+      params.set('date', new Date().toISOString().slice(0, 10));
+    }
+    return `/activities/${encodeURIComponent(activityId)}?${params.toString()}`;
   }
 
   async getById(
@@ -655,6 +797,21 @@ export class PublicActivitiesService {
 
   private remainingPlaces(schedule: ActivitySchedules): number {
     return schedule.capacity - schedule.bookedCount;
+  }
+
+  private resolveActivityMapCoords(
+    activity: Activities,
+    destination: Destinations | undefined,
+  ): { latitude: number | null; longitude: number | null } {
+    const activityLat = this.toCoord(activity.latitude);
+    const activityLng = this.toCoord(activity.longitude);
+    if (activityLat != null && activityLng != null) {
+      return { latitude: activityLat, longitude: activityLng };
+    }
+    return {
+      latitude: this.toCoord(destination?.latitude),
+      longitude: this.toCoord(destination?.longitude),
+    };
   }
 
   private toCoord(value: string | null | undefined): number | null {

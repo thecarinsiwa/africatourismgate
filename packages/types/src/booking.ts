@@ -233,6 +233,23 @@ export interface ReviewBookingPaymentProofRequest {
 
 export type BookingManifestSex = 'M' | 'F' | 'other';
 
+/** Single emergency contact for a booking (not per traveler). */
+export interface BookingEmergencyContact {
+  name: string | null;
+  phone: string | null;
+  email: string | null;
+  country: string | null;
+  address: string | null;
+}
+
+export interface UpdateBookingEmergencyContactRequest {
+  name: string;
+  phone: string;
+  email?: string | null;
+  country?: string | null;
+  address?: string | null;
+}
+
 export interface BookingManifestEntry {
   id: string;
   bookingId: string;
@@ -243,10 +260,15 @@ export interface BookingManifestEntry {
   sex?: BookingManifestSex | null;
   nationality?: string | null;
   idNumber?: string | null;
+  /** @deprecated Prefer booking-level `BookingDetail.emergencyContact`. */
   emergencyContactName?: string | null;
+  /** @deprecated Prefer booking-level `BookingDetail.emergencyContact`. */
   emergencyContactPhone?: string | null;
+  /** @deprecated Prefer booking-level `BookingDetail.emergencyContact`. */
   emergencyContactEmail?: string | null;
+  /** @deprecated Prefer booking-level `BookingDetail.emergencyContact`. */
   emergencyContactCountry?: string | null;
+  /** @deprecated Prefer booking-level `BookingDetail.emergencyContact`. */
   emergencyContactAddress?: string | null;
   /** Legacy free-text medical notes — read-only; prefer structured fields. */
   conditions?: string | null;
@@ -266,15 +288,24 @@ export interface CreateBookingManifestEntryRequest {
   nationality: string;
   /** Required on create — passport or national ID number. */
   idNumber: string;
-  /** Required on create — emergency contact full name. */
-  emergencyContactName: string;
-  /** Required on create — emergency contact phone. */
-  emergencyContactPhone: string;
+  /**
+   * @deprecated Ignored for new writes — use booking-level emergency contact.
+   * Kept optional for backward-compatible clients.
+   */
+  emergencyContactName?: string;
+  /**
+   * @deprecated Ignored for new writes — use booking-level emergency contact.
+   * Kept optional for backward-compatible clients.
+   */
+  emergencyContactPhone?: string;
   priceCents?: number;
   age?: number;
   sex?: BookingManifestSex;
+  /** @deprecated Ignored for new writes — use booking-level emergency contact. */
   emergencyContactEmail?: string;
+  /** @deprecated Ignored for new writes — use booking-level emergency contact. */
   emergencyContactCountry?: string;
+  /** @deprecated Ignored for new writes — use booking-level emergency contact. */
   emergencyContactAddress?: string;
   /** @deprecated Ignored for persistence; use structured medical fields or `other`. */
   conditions?: string;
@@ -301,6 +332,8 @@ export interface BookingDetail {
   balanceCents: number;
   /** Montant du premier encaissement attendu (acompte ou total). */
   depositRequiredCents: number;
+  /** Single emergency contact for the whole reservation. */
+  emergencyContact?: BookingEmergencyContact | null;
   review?: Review | null;
   canReview?: boolean;
   statusHistory?: BookingStatusHistoryEntry[];

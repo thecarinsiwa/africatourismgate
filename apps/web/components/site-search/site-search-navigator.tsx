@@ -1,9 +1,10 @@
 'use client';
 
-import { Input, Modal, Skeleton, cn } from '@africatourismgate/ui';
+import { Input, Modal, Skeleton, Spinner, cn } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useTopLoader } from 'nextjs-toploader';
 import {
   createContext,
   useCallback,
@@ -14,6 +15,7 @@ import {
   useRef,
   useState,
   type KeyboardEvent as ReactKeyboardEvent,
+  type MouseEvent as ReactMouseEvent,
   type ReactNode,
 } from 'react';
 import {
@@ -89,11 +91,15 @@ function buildResultsPageHref(query: string): string {
 
 function SiteSearchNavigatorModal() {
   const router = useRouter();
+  const pathname = usePathname();
+  const topLoader = useTopLoader();
   const { open, setOpen, toggle } = useSiteSearchNavigator();
   const t = useTranslations('siteSearch');
   const listId = useId();
   const [activeIndex, setActiveIndex] = useState(0);
-  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const [navigating, setNavigating] = useState(false);
+  const optionRefs = useRef<Array<HTMLAnchorElement | null>>([]);
+  const pathAtNavStartRef = useRef<string | null>(null);
 
   const {
     query,
@@ -107,18 +113,49 @@ function SiteSearchNavigatorModal() {
 
   const handleOpenChange = useCallback(
     (next: boolean) => {
+      if (!next && navigating) {
+        return;
+      }
       setOpen(next);
     },
-    [setOpen],
+    [navigating, setOpen],
   );
 
   const navigate = useCallback(
     (href: string) => {
-      handleOpenChange(false);
+      if (navigating) {
+        return;
+      }
+      pathAtNavStartRef.current = pathname;
+      setNavigating(true);
+      topLoader.start();
       router.push(href);
     },
-    [handleOpenChange, router],
+    [navigating, pathname, router, topLoader],
   );
+
+  useEffect(() => {
+    if (!navigating) {
+      return;
+    }
+    if (pathname !== pathAtNavStartRef.current) {
+      topLoader.done();
+      setNavigating(false);
+      setOpen(false);
+    }
+  }, [pathname, navigating, setOpen, topLoader]);
+
+  useEffect(() => {
+    if (!navigating) {
+      return;
+    }
+    const timeoutId = window.setTimeout(() => {
+      topLoader.done();
+      setNavigating(false);
+      setOpen(false);
+    }, 12_000);
+    return () => window.clearTimeout(timeoutId);
+  }, [navigating, setOpen, topLoader]);
 
   const seeAllHref = buildResultsPageHref(query);
   const showSeeAll = query.trim().length > 0;
@@ -139,6 +176,8 @@ function SiteSearchNavigatorModal() {
     if (!open) {
       setQuery('');
       setActiveIndex(0);
+      setNavigating(false);
+      pathAtNavStartRef.current = null;
     }
   }, [open, setQuery]);
 
@@ -152,6 +191,9 @@ function SiteSearchNavigatorModal() {
   }, [activeIndex]);
 
   function handleListKeyDown(event: ReactKeyboardEvent) {
+    if (navigating) {
+      return;
+    }
     if (event.key === 'ArrowDown') {
       if (flatItems.length === 0) return;
       event.preventDefault();
@@ -190,22 +232,34 @@ function SiteSearchNavigatorModal() {
       open={open}
       onOpenChange={handleOpenChange}
       title={t('title')}
-      showClose
+      showClose={!navigating}
       closeAriaLabel={t('close')}
-      className="max-w-xl"
+      className="relative max-w-xl"
       containerClassName="z-[80]"
     >
       <div
-        className="space-y-3 p-4"
+        className="relative space-y-3 p-4"
         onKeyDown={handleListKeyDown}
         data-testid="site-search-navigator"
+        aria-busy={navigating}
       >
+        {navigating ? (
+          <div
+            className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 rounded-xl bg-atg-elevated/90 backdrop-blur-[1px]"
+            role="status"
+            data-testid="site-search-navigating"
+          >
+            <Spinner size="lg" label={t('opening')} showLabel />
+          </div>
+        ) : null}
+
         <Input
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder={t('placeholder')}
           autoFocus
+          disabled={navigating}
           aria-label={t('placeholder')}
           aria-controls={listId}
           aria-autocomplete="list"
@@ -280,6 +334,7 @@ function SiteSearchNavigatorModal() {
                           active={index === activeIndex}
                           listId={listId}
                           labels={resultLabels}
+                          disabled={navigating}
                           optionRef={(node) => {
                             optionRefs.current[index] = node;
                           }}
@@ -307,7 +362,10 @@ function SiteSearchNavigatorModal() {
               href={seeAllHref}
               className="text-sm font-medium text-primary hover:underline"
               data-testid="site-search-see-all"
-              onClick={() => handleOpenChange(false)}
+              onClick={(event) => {
+                event.preventDefault();
+                navigate(seeAllHref);
+              }}
             >
               {t('seeAllResults')}
             </Link>
@@ -324,6 +382,7 @@ function SearchResultOption({
   active,
   listId,
   labels,
+  disabled,
   optionRef,
   onActivate,
   onHover,
@@ -333,26 +392,42 @@ function SearchResultOption({
   active: boolean;
   listId: string;
   labels: { kindEntity: string; kindPrefilled: string };
-  optionRef: (node: HTMLButtonElement | null) => void;
+  disabled?: boolean;
+  optionRef: (node: HTMLAnchorElement | null) => void;
   onActivate: () => void;
   onHover: () => void;
 }) {
+  function handleClick(event: ReactMouseEvent<HTMLAnchorElement>) {
+    if (disabled) {
+      event.preventDefault();
+      return;
+    }
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
+    event.preventDefault();
+    onActivate();
+  }
+
   return (
-    <button
+    <Link
       ref={optionRef}
-      type="button"
+      href={item.href}
       id={`${listId}-option-${index}`}
       role="option"
       aria-selected={active}
+      aria-disabled={disabled || undefined}
+      tabIndex={disabled ? -1 : undefined}
       data-testid="site-search-result"
       className={cn(
         'flex w-full px-4 py-3 text-left transition-colors',
         active ? 'bg-atg-surface' : 'hover:bg-atg-surface/70',
+        disabled && 'pointer-events-none opacity-60',
       )}
       onMouseEnter={onHover}
-      onClick={onActivate}
+      onClick={handleClick}
     >
       <SiteSearchResultBody item={item} labels={labels} compact />
-    </button>
+    </Link>
   );
 }

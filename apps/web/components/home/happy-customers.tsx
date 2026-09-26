@@ -9,10 +9,10 @@ import type {
 } from '@africatourismgate/types';
 import { useLocale, useTranslations } from 'next-intl';
 import { getPublicHappyCustomersForLocale } from '../../lib/api/public';
+import { STOCK_IMAGES } from '../../lib/media/stock-images';
 import { useScrollAnimation } from './use-scroll-animation';
 
-const FALLBACK_IMAGE =
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/A_giraffe_with_a_beautiful_background_of_Nairobi_City_Skyline_%28cropped%29.jpg/1280px-A_giraffe_with_a_beautiful_background_of_Nairobi_City_Skyline_%28cropped%29.jpg';
+const FALLBACK_IMAGE = STOCK_IMAGES.nairobiGiraffe;
 
 const COLOR_MAP: Record<HappyCustomersColorKey, string> = {
   primary: 'var(--atg-primary)',

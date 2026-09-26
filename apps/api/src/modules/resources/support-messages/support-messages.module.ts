@@ -15,5 +15,6 @@ import { SupportMessagesService } from './support-messages.service';
   ],
   controllers: [SupportMessagesController],
   providers: [SupportMessagesService],
+  exports: [SupportMessagesService],
 })
 export class SupportMessagesModule {}

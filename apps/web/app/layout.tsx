@@ -21,12 +21,14 @@ import {
 import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import { BrandingProvider } from '../components/branding-provider';
 import { BookingModesProvider } from '../components/booking-modes-provider';
+import { CatalogProductsProvider } from '../components/catalog-products-provider';
 import { PaymentMethodsProvider } from '../components/payment-methods-provider';
 import { ContactProvider } from '../components/contact-provider';
 import { DonationProvider } from '../components/donation-provider';
 import { Providers } from '../components/providers';
 import { SiteSearchProvider } from '../components/site-search/site-search-navigator';
 import { getPublicDonationsForLocale } from '../lib/api/public-donations';
+import { getPublicCatalogProducts } from '../lib/catalog/products';
 import {
   buildLanguageAlternates,
   openGraphLocale,
@@ -240,6 +242,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const contact = await getPublicContact();
   const bookingModes = await getPublicBookingModes();
   const paymentMethods = await getPublicPaymentMethods();
+  const catalogProducts = await getPublicCatalogProducts();
   const donations = await getPublicDonationsForLocale(locale, 'web').catch(() => null);
   const themeStyle = {
     '--atg-primary': branding.primaryColor,
@@ -280,11 +283,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <DonationProvider donations={donations}>
                 <BookingModesProvider modes={bookingModes}>
                   <PaymentMethodsProvider methods={paymentMethods}>
-                    <Providers>
-                      <SiteSearchProvider>
-                        <AppShell>{children}</AppShell>
-                      </SiteSearchProvider>
-                    </Providers>
+                    <CatalogProductsProvider products={catalogProducts}>
+                      <Providers>
+                        <SiteSearchProvider>
+                          <AppShell>{children}</AppShell>
+                        </SiteSearchProvider>
+                      </Providers>
+                    </CatalogProductsProvider>
                   </PaymentMethodsProvider>
                 </BookingModesProvider>
               </DonationProvider>

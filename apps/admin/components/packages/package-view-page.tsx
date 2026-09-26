@@ -59,6 +59,7 @@ export function PackageViewPage({ packageId }: PackageViewPageProps) {
   const tDates = useTranslations('modules.common.dates');
   const tActions = useTranslations('common.actions');
   const tAttachments = useTranslations('modules.packages.form.attachments');
+  const tDataTable = useTranslations('modules.common.dataTable');
   const itemTypeLabels = usePackageItemTypeLabels();
   const packageStatusLabels = usePackageStatusLabels();
   const formatDateTime = useFormatDateTime('short');
@@ -104,22 +105,29 @@ export function PackageViewPage({ packageId }: PackageViewPageProps) {
   const itemColumns = useMemo<ColumnDef<PackageItemEnriched, unknown>[]>(
     () => [
       {
-        id: 'type',
-        header: tColumns('type'),
-        cell: ({ row }) => (
-          <PackageItemTypeIcon itemType={row.original.itemType} showLabel size="sm" />
-        ),
-      },
-      {
         accessorKey: 'label',
         header: tColumns('product'),
-        cell: ({ row }) => (
-          <span className="font-medium text-atg-fg">{row.original.label}</span>
-        ),
+        meta: { cellClassName: 'min-w-0' },
+        cell: ({ row }) => {
+          const item = row.original;
+          const typeLabel = getPackageItemTypeLabel(item.itemType, itemTypeLabels);
+          const priceLabel = formatMoney(item.unitPriceCents, item.currency);
+          return (
+            <div className="flex min-w-0 items-start gap-2">
+              <PackageItemTypeIcon itemType={item.itemType} size="sm" className="shrink-0" />
+              <div className="min-w-0 flex-1">
+                <span className="block truncate font-medium text-atg-fg">{item.label}</span>
+                <p className="truncate text-xs text-atg-muted sm:hidden">
+                  {typeLabel} · {priceLabel}
+                </p>
+              </div>
+            </div>
+          );
+        },
       },
       {
-        id: 'itemTypeLabel',
-        header: tColumns('category'),
+        id: 'type',
+        header: tColumns('type'),
         meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <span className="text-sm text-atg-muted">
@@ -130,9 +138,9 @@ export function PackageViewPage({ packageId }: PackageViewPageProps) {
       {
         id: 'price',
         header: tColumns('unitPrice'),
-        meta: { align: 'right' },
+        meta: { align: 'right', hideOnMobile: true },
         cell: ({ row }) => (
-          <span className="tabular-nums text-sm">
+          <span className="whitespace-nowrap tabular-nums text-sm">
             {formatMoney(row.original.unitPriceCents, row.original.currency)}
           </span>
         ),
@@ -290,13 +298,17 @@ export function PackageViewPage({ packageId }: PackageViewPageProps) {
           </p>
         </div>
         <PackageCompositionBanner items={items} />
-        <Card variant="dashboard" padding="none" className="overflow-hidden">
+        <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
           <DataTable
             columns={itemColumns}
             data={items}
             emptyMessage={t('noIncludedProducts')}
             getRowId={(row) => row.id}
             aria-label={t('includedProducts')}
+            expandRowLabel={tDataTable('expandRow')}
+            collapseRowLabel={tDataTable('collapseRow')}
+            expandRowAriaLabel={tDataTable('expandRowAria')}
+            className="min-w-0"
           />
         </Card>
       </section>

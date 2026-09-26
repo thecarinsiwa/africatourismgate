@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  isAdminLockSessionShortcut,
   isAdminSearchToggleShortcut,
   shouldHandleAdminSearchShortcut,
 } from './shortcuts';
@@ -49,6 +50,33 @@ test('isAdminSearchToggleShortcut accepts Ctrl/Meta F and K', () => {
   assert.equal(
     isAdminSearchToggleShortcut(
       asKeyboardEvent({ key: 'f', ctrlKey: true, defaultPrevented: true }),
+    ),
+    false,
+  );
+});
+
+test('isAdminLockSessionShortcut accepts Ctrl/Meta L only', () => {
+  assert.equal(
+    isAdminLockSessionShortcut(asKeyboardEvent({ key: 'l', ctrlKey: true })),
+    true,
+  );
+  assert.equal(
+    isAdminLockSessionShortcut(asKeyboardEvent({ key: 'L', metaKey: true })),
+    true,
+  );
+  assert.equal(
+    isAdminLockSessionShortcut(asKeyboardEvent({ key: 'l' })),
+    false,
+  );
+  assert.equal(
+    isAdminLockSessionShortcut(
+      asKeyboardEvent({ key: 'l', ctrlKey: true, shiftKey: true }),
+    ),
+    false,
+  );
+  assert.equal(
+    isAdminLockSessionShortcut(
+      asKeyboardEvent({ key: 'f', ctrlKey: true }),
     ),
     false,
   );

@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 test('customer registration stores session and redirects to next', async ({ page }) => {
   await page.route('**/api/auth/register/customer', async (route) => {
@@ -34,7 +34,7 @@ test('customer registration stores session and redirects to next', async ({ page
   await page.getByRole('textbox', { name: /Confirmer le mot de passe|Confirm password|Confirmar contraseña/i }).fill(
     'secret-password',
   );
-  await page.getByRole('checkbox').check();
+  await page.locator('#acceptTerms').check();
   await page.getByRole('button', { name: /Créer mon compte|Create my account|Crear mi cuenta/i }).click();
 
   await expect(page).toHaveURL(/\/account\/profile$/);
@@ -81,7 +81,7 @@ test('shows friendly message when email is already registered', async ({ page })
   await page.getByRole('textbox', { name: /Confirmer le mot de passe|Confirm password|Confirmar contraseña/i }).fill(
     'secret-password',
   );
-  await page.getByRole('checkbox').check();
+  await page.locator('#acceptTerms').check();
   await page.getByRole('button', { name: /Créer mon compte|Create my account|Crear mi cuenta/i }).click();
 
   const errorAlert = page.locator('[role="alert"]').filter({ hasText: /déjà utilisée|already in use|ya está en uso/i });

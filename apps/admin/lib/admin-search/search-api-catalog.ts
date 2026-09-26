@@ -4,17 +4,21 @@ import { formatMoney } from '../format-money';
 import {
   adminSearchDeepLinks,
   formatAdminSearchIdPrefix,
-  formatAdminSearchPersonName,
 } from './deep-links';
 import { buildAdminSearchResultId } from './sources';
 import type { AdminSearchResultItem } from './types';
 import type { SearchApiCoreOptions } from './search-api-core';
 
 const DEFAULT_LIMIT = 5;
-const CLIENT_FILTER_FETCH_LIMIT = 100;
 
 function resolveLimit(options?: SearchApiCoreOptions): number {
   return options?.resultLimit ?? DEFAULT_LIMIT;
+}
+
+function requestOptions(
+  options?: SearchApiCoreOptions,
+): { signal: AbortSignal } | undefined {
+  return options?.signal ? { signal: options.signal } : undefined;
 }
 
 export async function searchAdminActivities(
@@ -23,11 +27,14 @@ export async function searchAdminActivities(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listActivities({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listActivities(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((activity) => ({
@@ -46,11 +53,14 @@ export async function searchAdminFlights(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listFlights({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listFlights(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((flight) => ({
@@ -69,11 +79,14 @@ export async function searchAdminVehicles(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listVehicles({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listVehicles(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((vehicle) => {
@@ -95,11 +108,14 @@ export async function searchAdminPackages(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listPackages({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listPackages(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((pkg) => ({
@@ -113,64 +129,63 @@ export async function searchAdminPackages(
 }
 
 /**
- * Les départs croisière n’ont pas de `search` API : fetch + jointure
- * itinéraires + filtre client (date / nom itinéraire / id).
+ * Départs croisière via `search=` API (date, id, nom d’itinéraire).
+ * Les noms d’itinéraire sont résolus pour les résultats retournés uniquement.
  */
 export async function searchAdminSailings(
   query: string,
   options?: SearchApiCoreOptions,
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
-  const normalized = query.trim().toLowerCase();
-  if (!normalized) {
+  const search = query.trim();
+  if (!search) {
     return [];
   }
 
-  const [sailingsResult, itinerariesResult] = await withApiClient(
-    (client: ApiClient) =>
-      Promise.all([
-        client.listCruiseSailings({
-          page: 1,
-          limit: CLIENT_FILTER_FETCH_LIMIT,
-        }),
-        client.listItineraries({
-          page: 1,
-          limit: CLIENT_FILTER_FETCH_LIMIT,
-        }),
-      ]),
+  const sailingsResult = await withApiClient((client: ApiClient) =>
+    client.listCruiseSailings(
+      {
+        page: 1,
+        limit,
+        search,
+      },
+      requestOptions(options),
+    ),
   );
 
-  const itineraryNameById = new Map(
-    itinerariesResult.data.map((itinerary) => [itinerary.id, itinerary.name]),
+  const itineraryIds = Array.from(
+    new Set(sailingsResult.data.map((sailing) => sailing.itineraryId)),
   );
+  const itineraryNameById = new Map<string, string>();
 
-  return sailingsResult.data
-    .filter((sailing) => {
-      const itineraryName = itineraryNameById.get(sailing.itineraryId) ?? '';
-      const haystacks = [
-        sailing.departureDate,
-        itineraryName,
-        sailing.id,
-        sailing.itineraryId,
-      ];
-      return haystacks.some((value) =>
-        value.toLowerCase().includes(normalized),
+  if (itineraryIds.length > 0) {
+    await withApiClient(async (client: ApiClient) => {
+      await Promise.all(
+        itineraryIds.map(async (id) => {
+          try {
+            const itinerary = await client.getItinerary(id);
+            itineraryNameById.set(id, itinerary.name);
+          } catch {
+            /* ignore missing itinerary for label */
+          }
+        }),
       );
-    })
-    .slice(0, limit)
-    .map((sailing) => {
-      const itineraryName = itineraryNameById.get(sailing.itineraryId);
-      return {
-        id: buildAdminSearchResultId('sailings', sailing.id),
-        sourceId: 'sailings' as const,
-        group: 'catalog' as const,
-        title: itineraryName
-          ? `${itineraryName} — ${sailing.departureDate}`
-          : sailing.departureDate,
-        subtitle: formatAdminSearchIdPrefix(sailing.id),
-        href: adminSearchDeepLinks.sailing(sailing.id),
-      };
     });
+  }
+
+  return sailingsResult.data.map((sailing) => {
+    const itineraryName = itineraryNameById.get(sailing.itineraryId);
+    return {
+      id: buildAdminSearchResultId('sailings', sailing.id),
+      sourceId: 'sailings' as const,
+      group: 'catalog' as const,
+      title: itineraryName
+        ? `${itineraryName} — ${sailing.departureDate}`
+        : sailing.departureDate,
+      subtitle: formatAdminSearchIdPrefix(sailing.id),
+      href: adminSearchDeepLinks.sailing(sailing.id),
+    };
+  });
 }
 
 export async function searchAdminBlogPosts(
@@ -179,11 +194,14 @@ export async function searchAdminBlogPosts(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listBlogPosts({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listBlogPosts(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((post) => ({
@@ -202,57 +220,103 @@ export async function searchAdminDestinations(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listDestinations({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listDestinations(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((destination) => ({
     id: buildAdminSearchResultId('destinations', destination.id),
     sourceId: 'destinations' as const,
-    group: 'content' as const,
+    group: 'catalog' as const,
     title: destination.name,
     subtitle: `${destination.countryCode} · ${destination.slug}`,
     href: adminSearchDeepLinks.destination(destination.id),
   }));
 }
 
-export async function searchAdminEmployees(
+export async function searchAdminTourGuides(
   query: string,
   options?: SearchApiCoreOptions,
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listEmployees({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listTourGuides(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
-  return result.data.map((employee) => {
-    const user = employee.user;
-    const name = user
-      ? formatAdminSearchPersonName(
-          user.firstName,
-          user.lastName,
-          user.email,
-        )
-      : employee.employeeCode?.trim() ||
-        formatAdminSearchIdPrefix(employee.id);
-    return {
-      id: buildAdminSearchResultId('employees', employee.id),
-      sourceId: 'employees' as const,
-      group: 'content' as const,
-      title: name,
-      subtitle:
-        employee.jobTitle?.trim() ||
-        employee.employeeCode?.trim() ||
-        user?.email ||
-        employee.status,
-      href: adminSearchDeepLinks.employee(employee.id),
-    };
-  });
+  return result.data.map((guide) => ({
+    id: buildAdminSearchResultId('tourGuides', guide.id),
+    sourceId: 'tourGuides' as const,
+    group: 'content' as const,
+    title: guide.displayName,
+    subtitle:
+      guide.contactEmail?.trim() ||
+      guide.user?.email ||
+      guide.status,
+    href: adminSearchDeepLinks.tourGuide(guide.id),
+  }));
+}
+
+export async function searchAdminGapPages(
+  query: string,
+  options?: SearchApiCoreOptions,
+): Promise<AdminSearchResultItem[]> {
+  const limit = resolveLimit(options);
+  const result = await withApiClient((client: ApiClient) =>
+    client.listGapPages(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
+  );
+
+  return result.data.map((page) => ({
+    id: buildAdminSearchResultId('gapPages', page.id),
+    sourceId: 'gapPages' as const,
+    group: 'content' as const,
+    title: page.title,
+    subtitle: `${page.status} · ${page.locale}`,
+    href: adminSearchDeepLinks.gapPage(page.id),
+  }));
+}
+
+export async function searchAdminGapActivities(
+  query: string,
+  options?: SearchApiCoreOptions,
+): Promise<AdminSearchResultItem[]> {
+  const limit = resolveLimit(options);
+  const result = await withApiClient((client: ApiClient) =>
+    client.listGapActivities(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
+  );
+
+  return result.data.map((activity) => ({
+    id: buildAdminSearchResultId('gapActivities', activity.id),
+    sourceId: 'gapActivities' as const,
+    group: 'content' as const,
+    title: activity.title,
+    subtitle: `${activity.status} · ${activity.locale}`,
+    href: adminSearchDeepLinks.gapActivity(activity.id),
+  }));
 }

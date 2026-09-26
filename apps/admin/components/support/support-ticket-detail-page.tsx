@@ -5,21 +5,23 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 import {
   Button,
   Card,
+  ConversationChat,
   DataTableBadge,
   Select,
   Skeleton,
-  Textarea,
 } from '@africatourismgate/ui';
 import type {
   AdminSupportTicketDetail,
   SupportTicketPriority,
   SupportTicketStatus,
 } from '@africatourismgate/types';
-import { useTranslations } from 'next-intl';
+import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
+import { useFormatter, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { AdminIntroPage } from '../pages/admin-intro-page';
 import { getApiClient } from '../../lib/auth/api';
+import { AUTH_CHANGED_EVENT, getSession } from '../../lib/auth/session';
 import { usePermissions } from '../../lib/auth/use-permissions';
 import {
   useFormatDateTime,
@@ -32,6 +34,7 @@ import {
   supportTicketPriorityVariants,
   supportTicketStatusVariants,
 } from '../../lib/support-ticket-display';
+import { useOrganizationThemeOptional } from '../organization-theme-provider';
 
 export const SUPPORT_TICKETS_HUB_HREF = '/contenu/support?tab=tickets';
 
@@ -50,17 +53,19 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
   const tDetail = useTranslations('modules.support.detail');
   const tColumns = useTranslations('modules.common.columns');
   const tCommon = useTranslations('modules.common');
+  const format = useFormatter();
   const formatDateTime = useFormatDateTime('long');
   const statusLabels = useSupportTicketStatusLabels();
   const priorityLabels = useSupportTicketPriorityLabels();
   const { hasPermission, isSuperAdmin } = usePermissions();
   const canWrite = isSuperAdmin || hasPermission('support_tickets.write');
+  const orgTheme = useOrganizationThemeOptional();
 
   const [acting, setActing] = useState(false);
   const [replyBody, setReplyBody] = useState('');
   const [replyError, setReplyError] = useState<string | null>(null);
-  const [replyValidationError, setReplyValidationError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [staffAvatarUrl, setStaffAvatarUrl] = useState<string | null>(null);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -73,10 +78,43 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
     entityLabel: state.status === 'ready' ? state.ticket.subject : undefined,
   });
 
+  const formatDateSeparator = useCallback(
+    (iso: string) => {
+      try {
+        return format.dateTime(new Date(iso), {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        });
+      } catch {
+        return iso;
+      }
+    },
+    [format],
+  );
+
+  useEffect(() => {
+    const syncStaffAvatar = () => {
+      const sessionAvatar = normalizeBrandingAssetUrl(
+        getSession()?.user?.avatarUrl ?? null,
+      );
+      const logoAvatar = normalizeBrandingAssetUrl(
+        orgTheme?.branding?.logoUrl ?? null,
+      );
+      setStaffAvatarUrl(sessionAvatar ?? logoAvatar);
+    };
+    syncStaffAvatar();
+    window.addEventListener(AUTH_CHANGED_EVENT, syncStaffAvatar);
+    return () => window.removeEventListener(AUTH_CHANGED_EVENT, syncStaffAvatar);
+  }, [orgTheme?.branding?.logoUrl]);
+
   const load = useCallback(async () => {
     setState({ status: 'loading' });
     try {
-      const ticket = await getApiClient().getSupportTicket(ticketId);
+      const ticket = (await getApiClient().getSupportTicket(
+        ticketId,
+      )) as AdminSupportTicketDetail;
       setState({ status: 'ready', ticket });
     } catch (error) {
       setState({ status: 'error', message: getSupportTicketsErrorMessage(error) });
@@ -104,12 +142,11 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
   );
 
   const submitReply = useCallback(async () => {
-    setReplyValidationError(null);
     setReplyError(null);
 
     const trimmed = replyBody.trim();
     if (trimmed.length < 10) {
-      setReplyValidationError(tDetail('replyMinLength'));
+      setReplyError(tDetail('replyMinLength'));
       return;
     }
 
@@ -155,6 +192,20 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
     });
   }, [formatDateTime, state, tDetail]);
 
+  const chatMessages = useMemo(() => {
+    if (state.status !== 'ready') return [];
+    const customerName = state.ticket.customerFirstName?.trim() || null;
+    return state.ticket.messages.map((message) => ({
+      id: message.id,
+      body: message.body,
+      isStaff: message.isStaff,
+      createdAt: message.createdAt,
+      authorName: message.isStaff
+        ? tDetail('messageAuthor.staff')
+        : customerName || tDetail('messageAuthor.customer'),
+    }));
+  }, [state, tDetail]);
+
   if (state.status === 'loading') {
     return (
       <AdminIntroPage
@@ -184,6 +235,7 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
 
   const { ticket } = state;
   const forwardStatus = nextStatus[ticket.status];
+  const canReply = canWrite && ticket.status !== 'closed';
 
   return (
     <AdminIntroPage
@@ -204,130 +256,119 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
           </div>
         </div>
 
-        <Card className="p-4">
-          <h3 className="text-sm font-semibold text-atg-fg">{tDetail('sections.client')}</h3>
-          <p className="mt-2 text-sm text-atg-fg">
-            {ticket.customerFirstName?.trim() || emptyDash}
-          </p>
-          {ticket.customerEmail ? (
-            <p className="text-sm text-atg-muted">{ticket.customerEmail}</p>
-          ) : null}
-        </Card>
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(260px,320px)]">
+          <section className="min-w-0 space-y-3" aria-labelledby="ticket-messages-heading">
+            <h3
+              id="ticket-messages-heading"
+              className="text-sm font-semibold text-atg-fg"
+            >
+              {tDetail('sections.messages')}
+            </h3>
 
-        {canWrite ? (
-          <Card className="p-4">
-            <h3 className="text-sm font-semibold text-atg-fg">{tDetail('sections.handling')}</h3>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <Select
-                label={tColumns('status')}
-                value={ticket.status}
-                options={statusOptions}
-                disabled={acting}
-                onChange={(e) =>
-                  void updateTicket({
-                    status: e.target.value as SupportTicketStatus,
-                  })
-                }
-              />
-              <Select
-                label={tDetail('fields.priority')}
-                value={ticket.priority}
-                options={priorityOptions}
-                disabled={acting}
-                onChange={(e) =>
-                  void updateTicket({
-                    priority: e.target.value as SupportTicketPriority,
-                  })
-                }
-              />
-            </div>
-            {forwardStatus && ticket.status !== 'closed' ? (
-              <div className="mt-4">
-                <Button
-                  type="button"
-                  disabled={acting}
-                  loading={acting}
-                  loadingText="…"
-                  onClick={() => void updateTicket({ status: forwardStatus })}
-                >
-                  {tDetail('advanceStatus', { status: statusLabels[forwardStatus] })}
-                </Button>
-              </div>
+            {!canReply && ticket.status === 'closed' ? (
+              <p className="text-sm text-atg-muted">{tDetail('closedHint')}</p>
             ) : null}
-            {actionError ? (
-              <p className="mt-3 text-sm text-red-600 dark:text-red-400" role="alert">
-                {actionError}
+
+            <ConversationChat
+              messages={chatMessages}
+              labels={{
+                threadAria: tDetail('threadAria'),
+                loading: tDetail('loading'),
+                empty: tDetail('noMessages'),
+                authorStaff: tDetail('messageAuthor.staff'),
+                authorCustomer: tDetail('messageAuthor.customer'),
+                replyTitle: canReply ? tDetail('sections.reply') : undefined,
+                replyLabel: tDetail('fields.agentMessage'),
+                replyPlaceholder: tDetail('replyPlaceholder'),
+                sendReply: tDetail('sendReply'),
+              }}
+              formatDateTime={formatDateTime}
+              formatDateSeparator={formatDateSeparator}
+              staffAvatarUrl={staffAvatarUrl}
+              canReply={canReply}
+              replyBody={replyBody}
+              onReplyBodyChange={setReplyBody}
+              onSend={() => void submitReply()}
+              sending={acting}
+              replyError={replyError}
+              className="min-h-[22rem]"
+            />
+          </section>
+
+          <aside className="space-y-4 xl:sticky xl:top-6 xl:self-start">
+            <Card className="p-4">
+              <h3 className="text-sm font-semibold text-atg-fg">
+                {tDetail('sections.client')}
+              </h3>
+              <p className="mt-2 text-sm font-medium text-atg-fg">
+                {ticket.customerFirstName?.trim() || emptyDash}
               </p>
-            ) : null}
-          </Card>
-        ) : null}
-
-        <Card className="p-4">
-          <h3 className="text-sm font-semibold text-atg-fg">{tDetail('sections.messages')}</h3>
-          {ticket.messages.length === 0 ? (
-            <p className="mt-3 text-sm text-atg-muted">{tDetail('noMessages')}</p>
-          ) : (
-            <ul className="mt-4 space-y-4">
-              {ticket.messages.map((message) => (
-                <li
-                  key={message.id}
-                  className={`rounded-lg border p-4 ${
-                    message.isStaff
-                      ? 'border-primary/30 bg-primary/5 dark:border-primary/40 dark:bg-primary/10'
-                      : 'border-atg-border bg-atg-surface'
-                  }`}
+              {ticket.customerEmail ? (
+                <a
+                  href={`mailto:${ticket.customerEmail}`}
+                  className="mt-1 block break-all text-sm text-primary hover:underline"
                 >
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-                      {message.isStaff
-                        ? tDetail('messageAuthor.staff')
-                        : tDetail('messageAuthor.customer')}
-                    </span>
-                    <time className="text-xs text-atg-muted">
-                      {formatDateTime(message.createdAt)}
-                    </time>
+                  {ticket.customerEmail}
+                </a>
+              ) : null}
+            </Card>
+
+            {canWrite ? (
+              <Card className="p-4">
+                <h3 className="text-sm font-semibold text-atg-fg">
+                  {tDetail('sections.handling')}
+                </h3>
+                <div className="mt-4 grid gap-4">
+                  <Select
+                    label={tColumns('status')}
+                    value={ticket.status}
+                    options={statusOptions}
+                    disabled={acting}
+                    onChange={(e) =>
+                      void updateTicket({
+                        status: e.target.value as SupportTicketStatus,
+                      })
+                    }
+                  />
+                  <Select
+                    label={tDetail('fields.priority')}
+                    value={ticket.priority}
+                    options={priorityOptions}
+                    disabled={acting}
+                    onChange={(e) =>
+                      void updateTicket({
+                        priority: e.target.value as SupportTicketPriority,
+                      })
+                    }
+                  />
+                </div>
+                {forwardStatus && ticket.status !== 'closed' ? (
+                  <div className="mt-4">
+                    <Button
+                      type="button"
+                      disabled={acting}
+                      loading={acting}
+                      loadingText="…"
+                      onClick={() => void updateTicket({ status: forwardStatus })}
+                    >
+                      {tDetail('advanceStatus', {
+                        status: statusLabels[forwardStatus],
+                      })}
+                    </Button>
                   </div>
-                  <p className="mt-2 whitespace-pre-wrap text-sm text-atg-fg">{message.body}</p>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Card>
-
-        {canWrite && ticket.status !== 'closed' ? (
-          <Card className="p-4">
-            <h3 className="text-sm font-semibold text-atg-fg">{tDetail('sections.reply')}</h3>
-            <div className="mt-4">
-              <Textarea
-                label={tDetail('fields.agentMessage')}
-                name="replyBody"
-                value={replyBody}
-                onChange={(e) => setReplyBody(e.target.value)}
-                rows={4}
-                disabled={acting}
-                minLength={10}
-                placeholder={tDetail('replyPlaceholder')}
-                error={replyValidationError ?? undefined}
-              />
-            </div>
-            {replyError ? (
-              <p className="mt-3 text-sm text-red-600 dark:text-red-400" role="alert">
-                {replyError}
-              </p>
+                ) : null}
+                {actionError ? (
+                  <p
+                    className="mt-3 text-sm text-red-600 dark:text-red-400"
+                    role="alert"
+                  >
+                    {actionError}
+                  </p>
+                ) : null}
+              </Card>
             ) : null}
-            <div className="mt-4">
-              <Button
-                type="button"
-                disabled={acting || replyBody.trim().length < 10}
-                loading={acting}
-                loadingText={tDetail('sending')}
-                onClick={() => void submitReply()}
-              >
-                {tDetail('sendReply')}
-              </Button>
-            </div>
-          </Card>
-        ) : null}
+          </aside>
+        </div>
       </div>
     </AdminIntroPage>
   );

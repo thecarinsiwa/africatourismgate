@@ -46,7 +46,7 @@ export {
   SidebarUsersIcon,
 } from './components/sidebar-nav-icons';
 export { AppHeader, type AppHeaderProps } from './components/app-header';
-export { UserMenu, type UserMenuLink, type UserMenuProps } from './components/user-menu';
+export { UserMenu, type UserMenuAction, type UserMenuLink, type UserMenuProps } from './components/user-menu';
 export { ThemeProvider } from './theme-provider';
 export { ThemeToggle, type ThemeToggleProps } from './components/theme-toggle';
 export { Button, type ButtonProps, type ButtonVariant, type ButtonSize } from './components/button';
@@ -167,3 +167,19 @@ export {
   type RegisterFormData,
   type RegisterFormProps,
 } from './components/register-form';
+export {
+  ConnectionLockProvider,
+  useConnectionLock,
+  type ConnectionLockMessages,
+  type ConnectionLockProviderProps,
+} from './connection-lock/connection-lock-provider';
+export {
+  isApiUnreachableError,
+  isConnectionLocked,
+  isConnectionLockSuppressed,
+  E2E_DISABLE_CONNECTION_LOCK_KEY,
+  lockConnection,
+  notifyApiUnreachable,
+  subscribeConnectionLock,
+  unlockConnection,
+} from './connection-lock/store';

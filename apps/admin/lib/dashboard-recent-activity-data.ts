@@ -130,7 +130,7 @@ async function fetchReviewsActivity(): Promise<DashboardActivityReviewItem[]> {
 async function fetchTicketsActivity(): Promise<DashboardActivityTicketItem[]> {
   const client = getApiClient();
   const result = await client.listSupportTickets({ page: 1, limit: ACTIVITY_FETCH_LIMIT });
-  return result.data.map(mapTicket);
+  return result.data.map((ticket) => mapTicket(ticket as AdminSupportTicketListItem));
 }
 
 async function fetchActivitySource<T>(

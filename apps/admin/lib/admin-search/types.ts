@@ -29,7 +29,13 @@ export type AdminSearchSourceId =
   | 'sailings'
   | 'blogPosts'
   | 'destinations'
-  | 'employees';
+  | 'employees'
+  | 'tourGuides'
+  | 'promotions'
+  | 'promoCodes'
+  | 'gapPages'
+  | 'gapActivities'
+  | 'roles';
 
 export type AdminSearchSourceKind = 'local' | 'api';
 
@@ -99,9 +105,15 @@ export type AdminSearchSourceDefinition = {
   enabled: boolean;
 };
 
+/** Options runtime passées au fan-out / searchers (abort, etc.). */
+export type AdminSearchRunOptions = {
+  signal?: AbortSignal;
+};
+
 export type AdminSearchSourceSearcher = (
   query: string,
   context: AdminSearchContext,
+  options?: AdminSearchRunOptions,
 ) => Promise<AdminSearchResultItem[]>;
 
 /** Source complète une fois l’adapter branché. */

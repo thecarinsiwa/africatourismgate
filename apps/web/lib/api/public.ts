@@ -25,6 +25,7 @@ import type {
   PublicHappyCustomersContent,
   PublicHappyCustomersListQuery,
   PublicActivityProvider,
+  PublicActivityProviderDetail,
   PublicHeroSlide,
   PublicHeroSlidesListQuery,
   PublicFeaturedReviewsListQuery,
@@ -57,6 +58,7 @@ import type {
   PackageListItem,
   PackagesBrowseQuery,
 } from '../packages/types';
+import { notifyApiUnreachable } from '@africatourismgate/ui';
 import type {
   FlightDetail,
   FlightDetailQuery,
@@ -137,6 +139,13 @@ async function fetchPublic<T>(path: string): Promise<T> {
       cache: 'no-store',
     });
   } catch (cause) {
+    // Web e2e runs without the API; do not raise the global lock overlay under Playwright.
+    if (
+      typeof window !== 'undefined' &&
+      !(typeof navigator !== 'undefined' && navigator.webdriver)
+    ) {
+      notifyApiUnreachable();
+    }
     const detail = cause instanceof Error ? cause.message : 'network error';
     throw new Error(`API unreachable: ${path} (${detail})`, { cause });
   }
@@ -181,6 +190,14 @@ export async function listActivityDestinations(): Promise<PublicDestination[]> {
 
 export async function listPublicActivityProviders(): Promise<PublicActivityProvider[]> {
   return fetchPublic<PublicActivityProvider[]>('/public/activity-providers');
+}
+
+export async function getPublicActivityProvider(
+  id: string,
+): Promise<PublicActivityProviderDetail> {
+  return fetchPublic<PublicActivityProviderDetail>(
+    `/public/activity-providers/${encodeURIComponent(id)}`,
+  );
 }
 
 export async function listPublicAirports(): Promise<PublicAirport[]> {

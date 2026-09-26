@@ -15,6 +15,7 @@ import { formatDuration, formatFlightPrice, buildFlightDetailHref } from '../../
 import { formatHotelPrice, buildHotelDetailHref } from '../../lib/hotels/listings';
 import {
   loadPackageItemDetail,
+  resolvePackageItemPreviewDates,
   type PackageItemDetailData,
 } from '../../lib/packages/package-item-detail-load';
 import { formatPackagePrice } from '../../lib/packages/listings';
@@ -88,37 +89,43 @@ function resolveFullPageHref(
   endDate: string | undefined,
   travelers: number,
 ): string | null {
-  const { start, end } = (() => {
-    if (startDate?.trim()) {
-      const endDateValue =
-        endDate?.trim() && endDate > startDate ? endDate : undefined;
-      return { start: startDate, end: endDateValue };
-    }
-    return { start: undefined, end: undefined };
-  })();
+  const { start, end } = resolvePackageItemPreviewDates(startDate, endDate);
 
   switch (item.itemType) {
-    case 'activity':
-      return buildActivityDetailHref(item.itemId, {
-        date: start,
-        participants: String(travelers),
+    case 'activity': {
+      const activityId = data?.kind === 'activity' ? data.detail.id : item.itemId;
+      const date = data?.kind === 'activity' ? data.detail.date : start;
+      const participants =
+        data?.kind === 'activity'
+          ? String(data.detail.participants)
+          : String(travelers);
+      return buildActivityDetailHref(activityId, {
+        date,
+        participants,
       });
+    }
     case 'vehicle':
-      if (!start || !end) return `/cars/${encodeURIComponent(item.itemId)}`;
-      return buildCarDetailHref(item.itemId, { pickupDate: start, returnDate: end });
+      return buildCarDetailHref(
+        data?.kind === 'vehicle' ? data.detail.id : item.itemId,
+        { pickupDate: start, returnDate: end },
+      );
     case 'property':
-      if (!start || !end) return `/hotels/${encodeURIComponent(item.itemId)}`;
-      return buildHotelDetailHref(item.itemId, {
-        checkIn: start,
-        checkOut: end,
-        guests: String(travelers),
-      });
+      return buildHotelDetailHref(
+        data?.kind === 'property' ? data.detail.id : item.itemId,
+        {
+          checkIn: start,
+          checkOut: end,
+          guests: String(travelers),
+        },
+      );
     case 'flight':
-      if (!start) return `/flights/${encodeURIComponent(item.itemId)}`;
-      return buildFlightDetailHref(item.itemId, {
-        departureDate: start,
-        passengers: String(travelers),
-      });
+      return buildFlightDetailHref(
+        data?.kind === 'flight' ? data.detail.id : item.itemId,
+        {
+          departureDate: start,
+          passengers: String(travelers),
+        },
+      );
     case 'cruise':
       if (data?.kind === 'cruise') {
         return buildCruiseDetailHref(data.sailingId, {

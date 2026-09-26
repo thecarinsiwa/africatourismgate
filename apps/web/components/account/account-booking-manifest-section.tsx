@@ -20,11 +20,6 @@ type FormState = {
   seriousMedicalConditions: string;
   currentMedications: string;
   dietaryNotes: string;
-  emergencyContactName: string;
-  emergencyContactPhone: string;
-  emergencyContactEmail: string;
-  emergencyContactCountry: string;
-  emergencyContactAddress: string;
   comment: string;
   other: string;
 };
@@ -39,11 +34,6 @@ const EMPTY_FORM: FormState = {
   seriousMedicalConditions: '',
   currentMedications: '',
   dietaryNotes: '',
-  emergencyContactName: '',
-  emergencyContactPhone: '',
-  emergencyContactEmail: '',
-  emergencyContactCountry: '',
-  emergencyContactAddress: '',
   comment: '',
   other: '',
 };
@@ -59,11 +49,6 @@ function entryToForm(entry: BookingManifestEntry): FormState {
     seriousMedicalConditions: entry.seriousMedicalConditions ?? '',
     currentMedications: entry.currentMedications ?? '',
     dietaryNotes: entry.dietaryNotes ?? '',
-    emergencyContactName: entry.emergencyContactName ?? '',
-    emergencyContactPhone: entry.emergencyContactPhone ?? '',
-    emergencyContactEmail: entry.emergencyContactEmail ?? '',
-    emergencyContactCountry: entry.emergencyContactCountry ?? '',
-    emergencyContactAddress: entry.emergencyContactAddress ?? '',
     comment: entry.comment ?? '',
     other: entry.other ?? '',
   };
@@ -78,11 +63,6 @@ function formToPayload(form: FormState) {
     sex: form.sex || undefined,
     nationality: form.nationality.trim(),
     idNumber: form.idNumber.trim(),
-    emergencyContactName: form.emergencyContactName.trim(),
-    emergencyContactPhone: form.emergencyContactPhone.trim(),
-    emergencyContactEmail: form.emergencyContactEmail.trim() || undefined,
-    emergencyContactCountry: form.emergencyContactCountry.trim() || undefined,
-    emergencyContactAddress: form.emergencyContactAddress.trim() || undefined,
     allergies: form.allergies.trim() || undefined,
     seriousMedicalConditions: form.seriousMedicalConditions.trim() || undefined,
     currentMedications: form.currentMedications.trim() || undefined,
@@ -238,14 +218,6 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
     }
     if (!form.idNumber.trim()) {
       setActionError(m.idNumberRequired);
-      return;
-    }
-    if (!form.emergencyContactName.trim()) {
-      setActionError(m.emergencyContactNameRequired);
-      return;
-    }
-    if (!form.emergencyContactPhone.trim()) {
-      setActionError(m.emergencyContactPhoneRequired);
       return;
     }
     setSaving(true);
@@ -410,26 +382,6 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
                               {entry.conditions}
                             </p>
                           ) : null}
-                        </dd>
-                      </div>
-                    ) : null}
-                    {entry.emergencyContactName || entry.emergencyContactPhone ? (
-                      <div className="col-span-2 sm:col-span-3">
-                        <dt className="text-xs text-atg-muted">
-                          {m.fields.emergencyContactSection}
-                        </dt>
-                        <dd className="text-atg-fg">
-                          {[
-                            entry.emergencyContactName,
-                            entry.emergencyContactPhone,
-                            entry.emergencyContactEmail,
-                            entry.emergencyContactCountry
-                              ? formatNationalityDisplay(entry.emergencyContactCountry, locale)
-                              : null,
-                            entry.emergencyContactAddress,
-                          ]
-                            .filter(Boolean)
-                            .join(' · ')}
                         </dd>
                       </div>
                     ) : null}
@@ -647,113 +599,6 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
                       }
                       className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
                       placeholder={m.fields.dietaryNotesPlaceholder}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="sm:col-span-2 space-y-2.5 rounded-lg border border-atg-border/80 p-3 dark:border-atg-border">
-                <p className="text-sm font-semibold text-atg-fg">
-                  {m.fields.emergencyContactSection}
-                </p>
-                <div className="grid gap-2.5 sm:grid-cols-2 sm:gap-3">
-                  <div>
-                    <label
-                      className="block text-sm font-medium text-atg-fg"
-                      htmlFor="manifest-em-name"
-                    >
-                      {m.fields.emergencyContactName}
-                      <span className="ml-1 text-red-500">*</span>
-                    </label>
-                    <input
-                      id="manifest-em-name"
-                      type="text"
-                      value={form.emergencyContactName}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          emergencyContactName: e.target.value,
-                        }))
-                      }
-                      className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label
-                      className="block text-sm font-medium text-atg-fg"
-                      htmlFor="manifest-em-phone"
-                    >
-                      {m.fields.emergencyContactPhone}
-                      <span className="ml-1 text-red-500">*</span>
-                    </label>
-                    <input
-                      id="manifest-em-phone"
-                      type="tel"
-                      value={form.emergencyContactPhone}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          emergencyContactPhone: e.target.value,
-                        }))
-                      }
-                      className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label
-                      className="block text-sm font-medium text-atg-fg"
-                      htmlFor="manifest-em-email"
-                    >
-                      {m.fields.emergencyContactEmail}
-                    </label>
-                    <input
-                      id="manifest-em-email"
-                      type="email"
-                      value={form.emergencyContactEmail}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          emergencyContactEmail: e.target.value,
-                        }))
-                      }
-                      className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
-                    />
-                  </div>
-                  <div>
-                    <NationalitySelect
-                      id="manifest-em-country"
-                      label={m.fields.emergencyContactCountry}
-                      value={form.emergencyContactCountry}
-                      onChange={(code) =>
-                        setForm((prev) => ({ ...prev, emergencyContactCountry: code }))
-                      }
-                      locale={locale}
-                      placeholder={m.fields.nationalityPlaceholder}
-                      searchPlaceholder={m.fields.nationalitySearch}
-                      emptyMessage={m.fields.nationalityEmpty}
-                    />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label
-                      className="block text-sm font-medium text-atg-fg"
-                      htmlFor="manifest-em-addr"
-                    >
-                      {m.fields.emergencyContactAddress}
-                    </label>
-                    <input
-                      id="manifest-em-addr"
-                      type="text"
-                      value={form.emergencyContactAddress}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          emergencyContactAddress: e.target.value,
-                        }))
-                      }
-                      placeholder={m.fields.emergencyContactAddressPlaceholder}
-                      className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
                     />
                   </div>
                 </div>

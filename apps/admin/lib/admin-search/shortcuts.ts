@@ -1,6 +1,7 @@
 /**
  * Raccourcis du navigateur de recherche admin.
  * Principal : Ctrl/⌘+F — alias : Ctrl/⌘+K.
+ * Verrouillage session : Ctrl/⌘+L.
  */
 
 export function isAdminSearchToggleShortcut(event: KeyboardEvent): boolean {
@@ -10,6 +11,15 @@ export function isAdminSearchToggleShortcut(event: KeyboardEvent): boolean {
   }
   const key = event.key.toLowerCase();
   return key === 'f' || key === 'k';
+}
+
+/** Ctrl/⌘+L — verrouiller la session admin. */
+export function isAdminLockSessionShortcut(event: KeyboardEvent): boolean {
+  if (event.defaultPrevented) return false;
+  if (!(event.metaKey || event.ctrlKey) || event.altKey || event.shiftKey) {
+    return false;
+  }
+  return event.key.toLowerCase() === 'l';
 }
 
 export function isEditableKeyboardTarget(target: EventTarget | null): boolean {

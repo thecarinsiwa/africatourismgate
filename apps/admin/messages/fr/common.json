@@ -43,6 +43,22 @@
     "conflict": "Conflit : cette ressource existe déjà.",
     "kpiLoadFailed": "Impossible de charger les indicateurs."
   },
+  "connectionLock": {
+    "title": "Connexion interrompue",
+    "subtitle": "Impossible de joindre l’API. Vérifiez votre connexion réseau.",
+    "hint": "Si vous êtes en développement, assurez-vous que l’API est démarrée sur le port configuré.",
+    "retry": "Réessayer",
+    "retrying": "Vérification…",
+    "retryFailed": "L’API est toujours injoignable. Réessayez dans un instant."
+  },
+  "offlineLock": {
+    "title": "Vous êtes hors ligne",
+    "subtitle": "Aucune connexion Internet détectée. L’administration ne peut pas se charger.",
+    "hint": "Vérifiez le Wi‑Fi ou les données mobiles, puis réessayez.",
+    "retry": "Réessayer",
+    "retrying": "Vérification…",
+    "retryFailed": "Vous êtes toujours hors ligne. Réessayez lorsque la connexion revient."
+  },
   "commandPalette": {
     "title": "Navigation rapide",
     "placeholder": "Rechercher une page…",
@@ -53,13 +69,24 @@
     "title": "Recherche admin",
     "placeholder": "Rechercher pages, aide, utilisateurs, réservations…",
     "empty": "Aucun résultat",
+    "emptyHint": "Essayez plutôt ces raccourcis :",
+    "minQueryHint": "Tapez au moins {count} caractères pour chercher dans les données métier.",
+    "suggestionsTitle": "Suggestions",
+    "suggestionsAria": "Suggestions de pages",
+    "loading": "Recherche en cours…",
     "shortcutHint": "Ctrl+F · ⌘F (alias Ctrl/⌘+K) — ↑↓ pour naviguer, Entrée pour ouvrir",
     "close": "Fermer la recherche",
     "resultsLabel": "Résultats de recherche",
     "updating": "Mise à jour…",
+    "opening": "Ouverture de la page…",
     "partialError": "Certaines sources n’ont pas pu être chargées.",
     "groupError": "Erreur partielle",
     "openLabel": "Ouvrir la recherche",
+    "quickLinks": {
+      "dashboard": "Tableau de bord",
+      "help": "Centre d'aide",
+      "users": "Utilisateurs"
+    },
     "groups": {
       "pages": "Pages",
       "help": "Aide",
@@ -83,6 +110,7 @@
       "search": "Ouvrir / fermer la recherche admin",
       "searchAlias": "Alias — ouvrir / fermer la recherche",
       "palette": "Ouvrir / fermer la navigation rapide",
+      "lockSession": "Verrouiller la session",
       "escape": "Fermer la recherche ou l’aide",
       "help": "Afficher cette aide"
     }

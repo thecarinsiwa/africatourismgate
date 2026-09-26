@@ -43,6 +43,22 @@
     "conflict": "Conflict: this resource already exists.",
     "kpiLoadFailed": "Unable to load metrics."
   },
+  "connectionLock": {
+    "title": "Connection interrupted",
+    "subtitle": "Unable to reach the API. Check your network connection.",
+    "hint": "If you are in development, make sure the API is running on the configured port.",
+    "retry": "Try again",
+    "retrying": "Checking…",
+    "retryFailed": "The API is still unreachable. Please try again shortly."
+  },
+  "offlineLock": {
+    "title": "You are offline",
+    "subtitle": "No Internet connection detected. The admin cannot load.",
+    "hint": "Check your Wi‑Fi or mobile data, then try again.",
+    "retry": "Try again",
+    "retrying": "Checking…",
+    "retryFailed": "You are still offline. Try again when your connection returns."
+  },
   "commandPalette": {
     "title": "Quick navigation",
     "placeholder": "Search for a page…",
@@ -53,13 +69,24 @@
     "title": "Admin search",
     "placeholder": "Search pages, help, users, bookings…",
     "empty": "No results",
+    "emptyHint": "Try these shortcuts instead:",
+    "minQueryHint": "Type at least {count} characters to search business data.",
+    "suggestionsTitle": "Suggestions",
+    "suggestionsAria": "Page suggestions",
+    "loading": "Searching…",
     "shortcutHint": "Ctrl+F · ⌘F (alias Ctrl/⌘+K) — ↑↓ to navigate, Enter to open",
     "close": "Close search",
     "resultsLabel": "Search results",
     "updating": "Updating…",
+    "opening": "Opening page…",
     "partialError": "Some sources could not be loaded.",
     "groupError": "Partial error",
     "openLabel": "Open search",
+    "quickLinks": {
+      "dashboard": "Dashboard",
+      "help": "Help centre",
+      "users": "Users"
+    },
     "groups": {
       "pages": "Pages",
       "help": "Help",
@@ -83,6 +110,7 @@
       "search": "Open / close admin search",
       "searchAlias": "Alias — open / close search",
       "palette": "Open / close quick navigation",
+      "lockSession": "Lock the session",
       "escape": "Close search or this help",
       "help": "Show this help"
     }

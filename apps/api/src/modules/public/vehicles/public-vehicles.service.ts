@@ -48,7 +48,13 @@ export class PublicVehiclesService {
   async listPickupLocations(): Promise<PublicDestinationDto[]> {
     const rows = await this.destinationsRepository
       .createQueryBuilder('d')
-      .select(['d.id', 'd.name', 'd.countryCode'])
+      .select([
+        'd.id',
+        'd.name',
+        'd.countryCode',
+        'd.latitude',
+        'd.longitude',
+      ])
       .innerJoin(
         RentalAgencies,
         'ra',
@@ -68,6 +74,8 @@ export class PublicVehiclesService {
       id: d.id,
       name: d.name,
       countryCode: d.countryCode,
+      latitude: this.toCoord(d.latitude),
+      longitude: this.toCoord(d.longitude),
     }));
   }
 
@@ -555,6 +563,14 @@ export class PublicVehiclesService {
 
   private toDate(value: Date | string): Date {
     return value instanceof Date ? value : new Date(value);
+  }
+
+  private toCoord(value: string | null | undefined): number | null {
+    if (value == null) {
+      return null;
+    }
+    const n = Number(value);
+    return Number.isFinite(n) ? n : null;
   }
 
   private toIsoDatetime(value: Date | string): string {

@@ -29,7 +29,10 @@
       "agentMessage": "Mensaje del agente"
     },
     "advanceStatus": "Pasar a « {status} »",
-    "noMessages": "Ningún mensaje.",
+    "noMessages": "Ningún mensaje por ahora.",
+    "threadAria": "Hilo de conversación del ticket",
+    "loading": "Cargando mensajes…",
+    "closedHint": "Este ticket está cerrado: ya no se pueden enviar respuestas.",
     "messageAuthor": {
       "staff": "Agente",
       "customer": "Cliente"
@@ -42,8 +45,17 @@
   "list": {
     "filters": {
       "priority": "Prioridad",
-      "apply": "Aplicar filtros"
+      "apply": "Aplicar filtros",
+      "search": "Buscar por asunto, cliente o correo…",
+      "searchAria": "Buscar tickets de soporte"
     },
+    "tabs": {
+      "ariaLabel": "Filtrar tickets por estado",
+      "all": "Todos"
+    },
+    "resultsCount": "{count, plural, =0 {Ningún ticket} one {# ticket} other {# tickets}}",
+    "awaitingAgent": "Espera agente",
+    "awaitingCustomer": "Espera cliente",
     "assignedLabel": "Asignado:",
     "empty": {
       "default": {
@@ -56,7 +68,7 @@
       },
       "filtered": {
         "title": "Ningún ticket coincide con los filtros",
-        "description": "Amplíe los criterios de estado o prioridad para mostrar más solicitudes."
+        "description": "Amplíe los criterios de estado, prioridad o búsqueda para mostrar más solicitudes."
       }
     },
     "ariaLabel": "Bandeja de entrada de tickets de soporte"

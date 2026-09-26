@@ -19,7 +19,8 @@ export type ListingMetaNamespace =
   | 'cars'
   | 'cruises'
   | 'activities'
-  | 'packages';
+  | 'packages'
+  | 'partners';
 
 export function openGraphLocale(locale: string): string {
   if (locale === 'en') return 'en_US';

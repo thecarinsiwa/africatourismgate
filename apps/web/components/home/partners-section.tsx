@@ -2,35 +2,13 @@
 
 import type { PublicActivityProvider } from '@africatourismgate/types';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { listPublicActivityProviders } from '../../lib/api/public';
+import { partnerColor, partnerInitials } from '../../lib/partners/display';
+import { partnerHref, partnersListHref } from '../../lib/partners/listings';
 import { useScrollAnimation } from './use-scroll-animation';
-
-const PARTNER_COLORS = [
-  '#0f2744',
-  '#008751',
-  '#003b73',
-  '#c8102e',
-  '#1a9ed7',
-  '#5c4b37',
-] as const;
-
-function partnerInitials(name: string): string {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-  if (parts.length >= 2) {
-    return `${parts[0]![0] ?? ''}${parts[1]![0] ?? ''}`.toUpperCase();
-  }
-  return name.trim().slice(0, 2).toUpperCase() || '?';
-}
-
-function partnerColor(name: string): string {
-  let hash = 0;
-  for (let i = 0; i < name.length; i += 1) {
-    hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
-  }
-  return PARTNER_COLORS[hash % PARTNER_COLORS.length]!;
-}
 
 export function PartnersSection() {
   const t = useTranslations('partners');
@@ -63,7 +41,7 @@ export function PartnersSection() {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div
-          className={`mb-10 max-w-2xl text-center sm:mx-auto ${
+          className={`mx-auto mb-10 max-w-2xl text-center ${
             isVisible ? 'animate-fade-in-up' : 'opacity-0'
           }`}
         >
@@ -73,19 +51,20 @@ export function PartnersSection() {
           <p className="mt-2 text-sm text-atg-muted sm:text-base">{t('subtitle')}</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 sm:gap-8 md:grid-cols-4 lg:grid-cols-6">
+        <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 md:gap-10">
           {partners.map((partner, i) => {
             const logo = partner.logoUrl?.trim() || null;
             return (
               <div
                 key={partner.id}
-                className={`group flex items-center justify-center ${
+                className={`group flex w-[7.5rem] items-center justify-center sm:w-[8.5rem] ${
                   isVisible ? 'animate-flip-in-x' : 'opacity-0'
                 }`}
                 style={{ animationDelay: `${(i + 1) * 80}ms` }}
               >
-                <div
-                  className="flex flex-col items-center gap-2 transition-transform duration-300 group-hover:scale-105"
+                <Link
+                  href={partnerHref(partner.id)}
+                  className="flex flex-col items-center gap-2 rounded-lg outline-none transition-transform duration-300 group-hover:scale-105 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                   title={partner.name}
                 >
                   {logo ? (
@@ -111,10 +90,22 @@ export function PartnersSection() {
                   <span className="line-clamp-2 max-w-[7.5rem] text-center text-xs text-atg-muted transition-colors group-hover:text-atg-fg sm:max-w-[8.5rem]">
                     {partner.name}
                   </span>
-                </div>
+                </Link>
               </div>
             );
           })}
+        </div>
+
+        <div
+          className={`mt-10 text-center ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}
+          style={{ animationDelay: '200ms' }}
+        >
+          <Link
+            href={partnersListHref()}
+            className="inline-flex min-h-[44px] items-center text-sm font-semibold text-primary underline-offset-4 transition-colors hover:underline"
+          >
+            {t('seeAll')}
+          </Link>
         </div>
       </div>
     </section>

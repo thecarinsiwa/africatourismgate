@@ -48,7 +48,17 @@
     "mapBoundaryAria": "Carte avec contour du pays et sélection du point central",
     "mapBoundaryLoading": "Chargement du contour du pays…",
     "mapBoundaryUnavailable": "Contour indisponible pour ce pays. Vous pouvez quand même placer un point.",
-    "openStreetMap": "Ouvrir dans OpenStreetMap"
+    "openStreetMap": "Ouvrir dans OpenStreetMap",
+    "restoreModal": {
+      "title": "Restaurer la destination ?",
+      "description": "La destination « {name} » (slug « {slug} ») a été supprimée. Voulez-vous la restaurer plutôt que d’en créer une nouvelle ?",
+      "confirm": "Restaurer",
+      "cancel": "Annuler",
+      "close": "Fermer",
+      "restoring": "Restauration…",
+      "successTitle": "Destination restaurée",
+      "successMessage": "« {name} » a été restaurée."
+    }
   },
   "detail": {
     "title": "Modifier la destination",

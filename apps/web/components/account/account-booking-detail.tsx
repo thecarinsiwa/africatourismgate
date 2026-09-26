@@ -30,6 +30,7 @@ import { BookingReviewForm } from './booking-review-form';
 import { BookingStatusBadge } from './booking-status-badge';
 import { BookingStatusTimeline, isAssistedBookingDetail } from './booking-status-timeline';
 import { AccountBookingManifestSection } from './account-booking-manifest-section';
+import { AccountBookingEmergencyContactSection } from './account-booking-emergency-contact-section';
 import { BookingIdentityDocumentsSection } from './booking-identity-documents-section';
 import { BankTransferAccountsPanel } from '../reservations/bank-transfer-accounts-panel';
 import { MobileMoneyInstructionsPanel } from '../reservations/mobile-money-instructions-panel';
@@ -387,6 +388,13 @@ export function AccountBookingDetail({
           autoOpen={autoOpenChat}
         />
       ) : null}
+
+      <AccountBookingEmergencyContactSection
+        bookingId={bookingId}
+        bookingStatus={booking.status}
+        initialContact={detail.emergencyContact ?? null}
+        onUpdated={load}
+      />
 
       <AccountBookingManifestSection
         bookingId={bookingId}

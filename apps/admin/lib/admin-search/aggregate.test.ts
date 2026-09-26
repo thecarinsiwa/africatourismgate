@@ -162,3 +162,132 @@ test('aggregateAdminSearchResults omits empty groups without errors', () => {
   const groups = aggregateAdminSearchResults([]);
   assert.equal(groups.length, 0);
 });
+
+test('runAdminSearchFanOut aborts when signal already aborted', async () => {
+  const { runAdminSearchFanOut } = await import('./aggregate');
+  const controller = new AbortController();
+  controller.abort();
+  const source = makeSource({
+    id: 'pages',
+    group: 'pages',
+    listHref: '/dashboard',
+    kind: 'local',
+    minQueryLength: 0,
+    search: async () => {
+      assert.fail('search should not run when already aborted');
+      return [];
+    },
+  });
+
+  await assert.rejects(
+    () =>
+      runAdminSearchFanOut([source], '', { permissions: [], isSuperAdmin: true }, {
+        signal: controller.signal,
+      }),
+    (error: unknown) =>
+      error instanceof Error && error.name === 'AbortError',
+  );
+});
+
+test('runAdminSearchFanOut passes signal to searchers', async () => {
+  const { runAdminSearchFanOut } = await import('./aggregate');
+  const controller = new AbortController();
+  let seenSignal: AbortSignal | undefined;
+  const source = makeSource({
+    id: 'pages',
+    group: 'pages',
+    listHref: '/dashboard',
+    kind: 'local',
+    minQueryLength: 0,
+    search: async (_query, _context, options) => {
+      seenSignal = options?.signal;
+      return [];
+    },
+  });
+
+  await runAdminSearchFanOut(
+    [source],
+    '',
+    { permissions: [], isSuperAdmin: true },
+    { signal: controller.signal },
+  );
+  assert.equal(seenSignal, controller.signal);
+});
+
+test('runAdminSearchPhasedFanOut runs local then core then catalog', async () => {
+  const { runAdminSearchPhasedFanOut } = await import('./aggregate');
+  const order: string[] = [];
+  const phasesSeen: string[] = [];
+
+  const local = makeSource({
+    id: 'pages',
+    group: 'pages',
+    listHref: '/dashboard',
+    kind: 'local',
+    minQueryLength: 0,
+    search: async () => {
+      order.push('local');
+      return [
+        {
+          id: 'pages:/dashboard',
+          sourceId: 'pages',
+          group: 'pages',
+          title: 'Dashboard',
+          href: '/dashboard',
+        },
+      ];
+    },
+  });
+  const core = makeSource({
+    id: 'users',
+    group: 'users',
+    listHref: '/utilisateurs',
+    minQueryLength: 0,
+    search: async () => {
+      order.push('core');
+      return [
+        {
+          id: 'users:1',
+          sourceId: 'users',
+          group: 'users',
+          title: 'Ada',
+          href: '/utilisateurs/1',
+        },
+      ];
+    },
+  });
+  const catalog = makeSource({
+    id: 'activities',
+    group: 'catalog',
+    listHref: '/produits/activites',
+    minQueryLength: 0,
+    search: async () => {
+      order.push('catalog');
+      return [];
+    },
+  });
+
+  const all = await runAdminSearchPhasedFanOut(
+    { local: [local], core: [core], catalog: [catalog] },
+    'ab',
+    { permissions: [], isSuperAdmin: true },
+    {
+      onPhaseComplete: (phase, _phaseRuns, allRuns) => {
+        phasesSeen.push(phase);
+        if (phase === 'local') {
+          assert.equal(allRuns.length, 1);
+        }
+        if (phase === 'core') {
+          assert.equal(allRuns.length, 2);
+        }
+        if (phase === 'catalog') {
+          assert.equal(allRuns.length, 3);
+        }
+      },
+    },
+  );
+
+  assert.deepEqual(order, ['local', 'core', 'catalog']);
+  assert.deepEqual(phasesSeen, ['local', 'core', 'catalog']);
+  assert.equal(all.length, 3);
+});

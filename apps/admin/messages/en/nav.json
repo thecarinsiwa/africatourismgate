@@ -1,5 +1,6 @@
 {
   "dashboard": "Dashboard",
+  "analytics": "Analytics",
   "groups": {
     "usersAuth": "Users & Authentication",
     "loyalty": "Loyalty (OneKey)",
@@ -113,6 +114,7 @@
     "profile": "My profile",
     "notifications": "Notifications",
     "settings": "Settings",
+    "lockSession": "Lock session",
     "defaultUser": "User"
   },
   "shell": {

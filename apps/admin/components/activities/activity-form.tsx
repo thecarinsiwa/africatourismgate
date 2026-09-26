@@ -8,15 +8,21 @@ import type {
   ActivityDifficultyLevel,
   ActivityProvider,
   CreateActivityRequest,
+  Destination,
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { RichTextEditor, type RichTextUploadedAsset } from '../rich-text-editor';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
+import {
+  hasValidDestinationCoords,
+  parseDestinationCoord,
+} from '../../lib/destination-coords';
 import { isRichTextEmpty } from '../../lib/rich-text';
 import { getSession } from '../../lib/auth/session';
 import { useActivityDifficultyOptions } from '../../lib/i18n/use-module-labels';
+import { CoordinatePickerMap } from '../maps/coordinate-picker-map';
 
 export type ActivityFormValues = {
   providerId: string;
@@ -26,9 +32,9 @@ export type ActivityFormValues = {
   difficultyLevel: string;
   priceCents: string;
   currency: string;
+  latitude: string;
+  longitude: string;
 };
-
-const DESCRIPTION_MAX_LENGTH = 5000;
 
 const defaultValues: ActivityFormValues = {
   providerId: '',
@@ -38,7 +44,17 @@ const defaultValues: ActivityFormValues = {
   difficultyLevel: '',
   priceCents: '',
   currency: 'USD',
+  latitude: '',
+  longitude: '',
 };
+
+function formatCoordInput(value: string | number | null | undefined): string {
+  if (value === null || value === undefined || value === '') {
+    return '';
+  }
+  const num = Number(value);
+  return Number.isFinite(num) ? String(num) : '';
+}
 
 function activityToFormValues(activity: Activity): ActivityFormValues {
   return {
@@ -50,10 +66,15 @@ function activityToFormValues(activity: Activity): ActivityFormValues {
     difficultyLevel: activity.difficultyLevel ?? '',
     priceCents: String(activity.priceCents),
     currency: activity.currency,
+    latitude: formatCoordInput(activity.latitude),
+    longitude: formatCoordInput(activity.longitude),
   };
 }
 
-function toPayload(values: ActivityFormValues): CreateActivityRequest {
+function toPayload(
+  values: ActivityFormValues,
+  mode: 'create' | 'edit',
+): CreateActivityRequest {
   const duration =
     values.durationMinutes.trim() !== ''
       ? Number(values.durationMinutes)
@@ -62,7 +83,7 @@ function toPayload(values: ActivityFormValues): CreateActivityRequest {
     values.difficultyLevel === ''
       ? null
       : (values.difficultyLevel as ActivityDifficultyLevel);
-  return {
+  const payload: CreateActivityRequest = {
     providerId: values.providerId,
     title: values.title.trim(),
     priceCents: Number(values.priceCents),
@@ -73,6 +94,18 @@ function toPayload(values: ActivityFormValues): CreateActivityRequest {
     ...(duration !== undefined && Number.isFinite(duration) ? { durationMinutes: duration } : {}),
     difficultyLevel,
   };
+
+  const latTrimmed = values.latitude.trim();
+  const lngTrimmed = values.longitude.trim();
+  if (latTrimmed && lngTrimmed) {
+    payload.latitude = Number(latTrimmed);
+    payload.longitude = Number(lngTrimmed);
+  } else if (mode === 'edit') {
+    payload.latitude = null;
+    payload.longitude = null;
+  }
+
+  return payload;
 }
 
 type ActivityFormProps = {
@@ -86,6 +119,7 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
   const { activities: getActivitiesErrorMessage } = useAdminErrorMessages();
   const tForm = useTranslations('modules.activities.form');
   const tValidation = useTranslations('modules.activities.form.validation');
+  const tCommonValidation = useTranslations('modules.common.validation');
   const tCommonForm = useTranslations('modules.common.form');
   const tActions = useTranslations('common.actions');
   const tLoading = useTranslations('common.loading');
@@ -93,6 +127,7 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
   const difficultyOptions = useActivityDifficultyOptions();
   const router = useRouter();
   const [providers, setProviders] = useState<ActivityProvider[]>([]);
+  const [destinations, setDestinations] = useState<Destination[]>([]);
   const [values, setValues] = useState<ActivityFormValues>(() =>
     initialActivity ? activityToFormValues(initialActivity) : defaultValues,
   );
@@ -107,7 +142,34 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
       .listActivityProviders({ page: 1, limit: 100 })
       .then((r) => setProviders(r.data))
       .catch(() => setProviders([]));
+    void getApiClient()
+      .listDestinations({ page: 1, limit: 100 })
+      .then((r) => setDestinations(r.data))
+      .catch(() => setDestinations([]));
   }, []);
+
+  const selectedProvider = useMemo(
+    () => providers.find((p) => p.id === values.providerId) ?? null,
+    [providers, values.providerId],
+  );
+
+  const selectedDestination = useMemo(() => {
+    if (!selectedProvider) return null;
+    return destinations.find((d) => d.id === selectedProvider.destinationId) ?? null;
+  }, [destinations, selectedProvider]);
+
+  const mapDefaults = useMemo(() => {
+    if (
+      selectedDestination &&
+      hasValidDestinationCoords(selectedDestination.latitude, selectedDestination.longitude)
+    ) {
+      return {
+        latitude: parseDestinationCoord(selectedDestination.latitude)!,
+        longitude: parseDestinationCoord(selectedDestination.longitude)!,
+      };
+    }
+    return { latitude: 0, longitude: 20 };
+  }, [selectedDestination]);
 
   const providerOptions = useMemo(
     () => [
@@ -164,15 +226,28 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
     const errors: Partial<Record<keyof ActivityFormValues, string>> = {};
     if (!values.providerId) errors.providerId = tValidation('providerRequired');
     if (!values.title.trim()) errors.title = tValidation('titleRequired');
-    const cents = Number(values.priceCents);
-    if (!Number.isFinite(cents) || cents < 0) errors.priceCents = tValidation('invalidPrice');
-    if (values.currency.trim().length !== 3) errors.currency = tValidation('currencyThreeLetters');
-    if (values.durationMinutes.trim()) {
-      const d = Number(values.durationMinutes);
-      if (!Number.isFinite(d) || d < 1) errors.durationMinutes = tValidation('invalidDuration');
+    if (!Number.isFinite(Number(values.priceCents)) || Number(values.priceCents) < 0) {
+      errors.priceCents = tValidation('invalidPrice');
     }
-    if (values.description.length > DESCRIPTION_MAX_LENGTH) {
-      errors.description = tValidation('descriptionTooLong', { max: DESCRIPTION_MAX_LENGTH });
+    if (values.currency.trim().length !== 3) {
+      errors.currency = tValidation('currencyThreeLetters');
+    }
+    if (values.durationMinutes.trim()) {
+      const n = Number(values.durationMinutes);
+      if (!Number.isFinite(n) || n < 1) {
+        errors.durationMinutes = tValidation('invalidDuration');
+      }
+    }
+    const hasLat = values.latitude.trim().length > 0;
+    const hasLng = values.longitude.trim().length > 0;
+    if (hasLat !== hasLng) {
+      errors.latitude = tCommonValidation('coordsBothRequired');
+      errors.longitude = tCommonValidation('coordsBothRequired');
+    } else if (hasLat && hasLng) {
+      const lat = parseDestinationCoord(values.latitude);
+      const lng = parseDestinationCoord(values.longitude);
+      if (lat === null) errors.latitude = tCommonValidation('latitudeInvalid');
+      if (lng === null) errors.longitude = tCommonValidation('longitudeInvalid');
     }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
@@ -184,7 +259,7 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
     if (!validate()) return;
     setSubmitting(true);
     try {
-      const body = toPayload(values);
+      const body = toPayload(values, mode);
       if (mode === 'create') {
         const created = await getApiClient().createActivity(body);
         router.push(`/produits/activites/${created.id}`);
@@ -270,6 +345,42 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
           maxLength={3}
         />
       </div>
+
+      <div className="space-y-3 rounded-xl border border-atg-border p-4">
+        <h3 className="text-sm font-semibold text-atg-fg">{tForm('geographyTitle')}</h3>
+        <p className="text-xs text-atg-muted">{tForm('geographyIntro')}</p>
+        <CoordinatePickerMap
+          latitude={values.latitude}
+          longitude={values.longitude}
+          onCoordinateChange={(lat, lng) => {
+            updateField('latitude', lat);
+            updateField('longitude', lng);
+          }}
+          defaultLatitude={mapDefaults.latitude}
+          defaultLongitude={mapDefaults.longitude}
+          countryCode={selectedDestination?.countryCode}
+          title={tForm('mapPicker')}
+          hint={tForm('mapPickerHint')}
+          ariaLabel={tForm('mapPickerAria')}
+        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Input
+            label={tCommonForm('latitude')}
+            value={values.latitude}
+            onChange={(e) => updateField('latitude', e.target.value)}
+            hint={tForm('latitudeHint')}
+            error={fieldErrors.latitude}
+          />
+          <Input
+            label={tCommonForm('longitude')}
+            value={values.longitude}
+            onChange={(e) => updateField('longitude', e.target.value)}
+            hint={tForm('longitudeHint')}
+            error={fieldErrors.longitude}
+          />
+        </div>
+      </div>
+
       <div className="flex flex-wrap gap-3 pt-2">
         <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
           {mode === 'create' ? tForm('submitCreate') : tActions('save')}

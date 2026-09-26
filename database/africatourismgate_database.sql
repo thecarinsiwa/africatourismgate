@@ -161,6 +161,18 @@ CREATE TABLE `email_operation_verifications` (
   KEY `idx_email_op_verif_pending` (`verified_at`, `expires_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE `site_page_views` (
+  `id` CHAR(36) NOT NULL,
+  `visitor_id` CHAR(36) NOT NULL,
+  `path` VARCHAR(512) NOT NULL,
+  `locale` VARCHAR(10) DEFAULT NULL,
+  `created_at` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  PRIMARY KEY (`id`),
+  KEY `idx_spv_created` (`created_at`),
+  KEY `idx_spv_visitor_created` (`visitor_id`, `created_at`),
+  KEY `idx_spv_path_created` (`path`(191), `created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE `user_addresses` (
   `id` CHAR(36) NOT NULL,
   `user_id` CHAR(36) NOT NULL,
@@ -540,6 +552,8 @@ CREATE TABLE `properties` (
   `star_rating` DECIMAL(2,1) DEFAULT NULL,
   `description` TEXT,
   `address_line` VARCHAR(255) DEFAULT NULL,
+  `latitude` DECIMAL(10,7) DEFAULT NULL,
+  `longitude` DECIMAL(10,7) DEFAULT NULL,
   `organization_id` CHAR(36) DEFAULT NULL,
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,
@@ -1132,6 +1146,8 @@ CREATE TABLE `activities` (
   `difficulty_level` ENUM('easy', 'moderate', 'hard', 'expert') DEFAULT NULL,
   `price_cents` INT UNSIGNED NOT NULL,
   `currency` CHAR(3) NOT NULL DEFAULT 'USD',
+  `latitude` DECIMAL(10,7) DEFAULT NULL,
+  `longitude` DECIMAL(10,7) DEFAULT NULL,
   `organization_id` CHAR(36) DEFAULT NULL,
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,
@@ -1355,7 +1371,12 @@ CREATE TABLE `bookings` (
   `customer_thread_presence_at` DATETIME DEFAULT NULL,
   `staff_thread_last_seen_at` DATETIME DEFAULT NULL,
   `payment_reminder_sent_at` DATETIME DEFAULT NULL,
-  `preferred_payment_method` ENUM('stripe','cash','bank_transfer') DEFAULT NULL,
+  `preferred_payment_method` ENUM('stripe','cash','bank_transfer','mobile_money') DEFAULT NULL,
+  `emergency_contact_name` VARCHAR(200) DEFAULT NULL,
+  `emergency_contact_phone` VARCHAR(40) DEFAULT NULL,
+  `emergency_contact_email` VARCHAR(255) DEFAULT NULL,
+  `emergency_contact_country` VARCHAR(100) DEFAULT NULL,
+  `emergency_contact_address` VARCHAR(500) DEFAULT NULL,
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,
   `deleted_by_user_id` CHAR(36) DEFAULT NULL,

@@ -1,6 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeepPartial, QueryFailedError, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { CrudService } from '../../../common/crud/crud.service';
 import {
@@ -13,6 +18,9 @@ import {
 } from '../../../entities/generated';
 import { DestinationRelatedCountsDto } from './dto/destination-related-counts.dto';
 import { DestinationsListQueryDto } from './dto/destinations-list-query.dto';
+
+const DESTINATION_SLUG_SOFT_DELETED = 'DESTINATION_SLUG_SOFT_DELETED';
+const DESTINATION_SLUG_TAKEN = 'DESTINATION_SLUG_TAKEN';
 
 @Injectable()
 export class DestinationsService extends CrudService<Destinations> {
@@ -70,6 +78,51 @@ export class DestinationsService extends CrudService<Destinations> {
     };
   }
 
+  override async create(
+    dto: DeepPartial<Destinations>,
+    actorUserId?: string,
+  ): Promise<Destinations> {
+    try {
+      return await super.create(dto, actorUserId);
+    } catch (error) {
+      await this.rethrowSlugConflict(error, dto.slug);
+      throw error;
+    }
+  }
+
+  override async update(
+    id: string,
+    dto: DeepPartial<Destinations>,
+    actorUserId?: string,
+  ): Promise<Destinations> {
+    try {
+      return await super.update(id, dto, actorUserId);
+    } catch (error) {
+      await this.rethrowSlugConflict(error, dto.slug, id);
+      throw error;
+    }
+  }
+
+  async restore(id: string, actorUserId?: string): Promise<Destinations> {
+    const existing = await this.destinationsRepository.findOne({
+      where: { id },
+      withDeleted: true,
+    });
+    if (!existing) {
+      throw new NotFoundException(`Resource ${id} not found`);
+    }
+    if (!existing.deletedAt) {
+      throw new BadRequestException("Cette destination n'est pas soft-supprimée.");
+    }
+
+    await this.destinationsRepository.recover(existing);
+    const restored = this.destinationsRepository.merge(existing, {
+      deletedByUserId: null,
+      updatedByUserId: actorUserId ?? null,
+    });
+    return this.destinationsRepository.save(restored);
+  }
+
   async getRelatedCounts(id: string): Promise<DestinationRelatedCountsDto> {
     await this.findOne(id);
 
@@ -120,5 +173,53 @@ export class DestinationsService extends CrudService<Destinations> {
       activities,
       packages: Number(packagesRow?.count ?? 0),
     };
+  }
+
+  private async rethrowSlugConflict(
+    error: unknown,
+    slug: unknown,
+    excludeId?: string,
+  ): Promise<void> {
+    if (!this.isDuplicateEntryError(error)) {
+      return;
+    }
+
+    const normalizedSlug = typeof slug === 'string' ? slug.trim() : '';
+    if (!normalizedSlug) {
+      throw new ConflictException({
+        code: DESTINATION_SLUG_TAKEN,
+        message: 'Ce slug est déjà utilisé.',
+      });
+    }
+
+    const existing = await this.destinationsRepository.findOne({
+      where: { slug: normalizedSlug },
+      withDeleted: true,
+    });
+
+    if (existing && existing.id !== excludeId && existing.deletedAt) {
+      throw new ConflictException({
+        code: DESTINATION_SLUG_SOFT_DELETED,
+        message:
+          'Une destination avec ce slug a été supprimée. Vous pouvez la restaurer.',
+        deletedDestination: {
+          id: existing.id,
+          name: existing.name,
+          slug: existing.slug,
+        },
+      });
+    }
+
+    throw new ConflictException({
+      code: DESTINATION_SLUG_TAKEN,
+      message: 'Ce slug est déjà utilisé.',
+    });
+  }
+
+  private isDuplicateEntryError(error: unknown): boolean {
+    return (
+      error instanceof QueryFailedError &&
+      (error.driverError as { code?: string })?.code === 'ER_DUP_ENTRY'
+    );
   }
 }

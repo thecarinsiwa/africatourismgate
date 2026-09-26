@@ -7,7 +7,7 @@ export interface ActivityProvider {
   updatedAt: string | null;
 }
 
-/** Public catalogue partner (home partners strip). */
+/** Public catalogue partner (home partners strip / listing). */
 export interface PublicActivityProvider {
   id: string;
   name: string;
@@ -38,6 +38,35 @@ export const ACTIVITY_DIFFICULTY_LEVELS = [
 
 export type ActivityDifficultyLevel = (typeof ACTIVITY_DIFFICULTY_LEVELS)[number];
 
+/**
+ * Activity card fields returned by public browse/search
+ * and nested under partner detail.
+ */
+export interface PublicActivityListItem {
+  id: string;
+  title: string;
+  durationMinutes: number | null;
+  priceCents: number;
+  currency: string;
+  destination: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  providerName: string;
+  availableSchedulesCount: number;
+  nextStartDatetime?: string;
+  imageUrl?: string | null;
+  difficultyLevel?: ActivityDifficultyLevel | null;
+  averageRating?: number | null;
+  reviewCount?: number;
+}
+
+/** Public partner detail page payload. */
+export interface PublicActivityProviderDetail extends PublicActivityProvider {
+  destinationId: string;
+  destinationName: string;
+  activities: PublicActivityListItem[];
+}
+
 export interface Activity {
   id: string;
   providerId: string;
@@ -47,6 +76,8 @@ export interface Activity {
   difficultyLevel: ActivityDifficultyLevel | null;
   priceCents: number;
   currency: string;
+  latitude?: string | number | null;
+  longitude?: string | number | null;
   /** NULL = catalogue partagé (toutes orgs). */
   organizationId: string | null;
   createdAt: string;
@@ -61,6 +92,8 @@ export interface CreateActivityRequest {
   difficultyLevel?: ActivityDifficultyLevel | null;
   priceCents: number;
   currency: string;
+  latitude?: number | string | null;
+  longitude?: number | string | null;
   organizationId?: string | null;
 }
 

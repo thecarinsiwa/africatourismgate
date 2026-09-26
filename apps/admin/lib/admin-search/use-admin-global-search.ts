@@ -8,7 +8,7 @@ import { usePermissions } from '../auth/use-permissions';
 import {
   aggregateAdminSearchResults,
   flattenAdminSearchGroups,
-  runAdminSearchFanOut,
+  runAdminSearchPhasedFanOut,
 } from './aggregate';
 import { buildAdminNavSearchItems } from './search-pages';
 import {
@@ -18,7 +18,7 @@ import {
   type AdminSearchHelpArticleStrings,
   type AdminSearchResultItem,
 } from './types';
-import { listWiredAdminSearchSources } from './wired-sources';
+import { listWiredAdminSearchSourcesByPhase } from './wired-sources';
 
 export type UseAdminGlobalSearchOptions = {
   /** Quand `false`, aucun fan-out n’est lancé (modal fermée). */
@@ -42,6 +42,15 @@ export type UseAdminGlobalSearchResult = {
   isEmpty: boolean;
 };
 
+function isAbortError(error: unknown): boolean {
+  return (
+    (typeof DOMException !== 'undefined' &&
+      error instanceof DOMException &&
+      error.name === 'AbortError') ||
+    (error instanceof Error && error.name === 'AbortError')
+  );
+}
+
 function useHelpStringsBySlug(): Record<string, AdminSearchHelpArticleStrings> {
   const t = useTranslations('modules.adminHelp');
   return useMemo(() => {
@@ -58,7 +67,7 @@ function useHelpStringsBySlug(): Record<string, AdminSearchHelpArticleStrings> {
 }
 
 /**
- * Debounce + fan-out `Promise.allSettled` + agrégation par groupe.
+ * Debounce + fan-out phasé (local → core → catalog) avec merge progressif.
  */
 export function useAdminGlobalSearch(
   options?: UseAdminGlobalSearchOptions,
@@ -79,7 +88,7 @@ export function useAdminGlobalSearch(
   const [hasResolved, setHasResolved] = useState(false);
 
   const requestIdRef = useRef(0);
-  const wiredSources = useMemo(() => listWiredAdminSearchSources(), []);
+  const phasedSources = useMemo(() => listWiredAdminSearchSourcesByPhase(), []);
 
   const navItems = useMemo(
     () =>
@@ -125,16 +134,39 @@ export function useAdminGlobalSearch(
     }
 
     const requestId = ++requestIdRef.current;
+    const controller = new AbortController();
     setLoading(true);
+    setHasResolved(false);
 
-    void runAdminSearchFanOut(wiredSources, debouncedQuery, searchContext)
-      .then((runs) => {
-        if (requestId !== requestIdRef.current) return;
-        setGroups(aggregateAdminSearchResults(runs));
+    void runAdminSearchPhasedFanOut(
+      phasedSources,
+      debouncedQuery,
+      searchContext,
+      {
+        signal: controller.signal,
+        onPhaseComplete: (_phase, _phaseRuns, allRuns) => {
+          if (requestId !== requestIdRef.current || controller.signal.aborted) {
+            return;
+          }
+          setGroups(aggregateAdminSearchResults(allRuns));
+          setHasResolved(true);
+        },
+      },
+    )
+      .then((allRuns) => {
+        if (requestId !== requestIdRef.current || controller.signal.aborted) {
+          return;
+        }
+        setGroups(aggregateAdminSearchResults(allRuns));
         setHasResolved(true);
       })
-      .catch(() => {
-        if (requestId !== requestIdRef.current) return;
+      .catch((error: unknown) => {
+        if (requestId !== requestIdRef.current || controller.signal.aborted) {
+          return;
+        }
+        if (isAbortError(error)) {
+          return;
+        }
         setGroups([]);
         setHasResolved(true);
       })
@@ -142,17 +174,22 @@ export function useAdminGlobalSearch(
         if (requestId !== requestIdRef.current) return;
         setLoading(false);
       });
+
+    return () => {
+      controller.abort();
+    };
   }, [
     enabled,
     debouncedQuery,
     searchContext,
-    wiredSources,
+    phasedSources,
     permissionsLoading,
   ]);
 
   const flatItems = useMemo(() => flattenAdminSearchGroups(groups), [groups]);
   const hasResults = flatItems.length > 0;
-  const isEmpty = hasResolved && !loading && !hasResults && groups.every((g) => !g.error);
+  const isEmpty =
+    hasResolved && !loading && !hasResults && groups.every((g) => !g.error);
 
   return {
     query,

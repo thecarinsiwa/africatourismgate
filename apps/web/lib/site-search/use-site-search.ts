@@ -18,6 +18,7 @@ import {
   type SiteSearchResultItem,
 } from './types';
 import { listWiredSiteSearchSources } from './wired-sources';
+import { useCatalogProducts } from '../../components/catalog-products-provider';
 
 export type UseSiteSearchOptions = {
   /** Quand `false`, aucun fan-out n’est lancé (modal fermée). */
@@ -84,15 +85,19 @@ export function useSiteSearch(
   const requestIdRef = useRef(0);
   const wiredSources = useMemo(() => listWiredSiteSearchSources(), []);
 
+  const catalogProducts = useCatalogProducts();
   const navItems = useMemo(
     () =>
-      buildSiteNavSearchItems({
-        nav: (key) => tNav(key as Parameters<typeof tNav>[0]),
-        aboutNav: (key) =>
-          tAbout(`nav.${key}` as Parameters<typeof tAbout>[0]),
-        legal: (key) => tLegal(key as Parameters<typeof tLegal>[0]),
-      }),
-    [tNav, tAbout, tLegal],
+      buildSiteNavSearchItems(
+        {
+          nav: (key) => tNav(key as Parameters<typeof tNav>[0]),
+          aboutNav: (key) =>
+            tAbout(`nav.${key}` as Parameters<typeof tAbout>[0]),
+          legal: (key) => tLegal(key as Parameters<typeof tLegal>[0]),
+        },
+        catalogProducts,
+      ),
+    [catalogProducts, tNav, tAbout, tLegal],
   );
 
   const searchContext = useMemo<SiteSearchContext>(

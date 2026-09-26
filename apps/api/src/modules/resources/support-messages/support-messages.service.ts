@@ -48,7 +48,53 @@ export class SupportMessagesService extends CrudService<SupportMessages> {
       );
     }
 
-    const body = dto.body.trim();
+    return this.appendMessage({
+      ticket,
+      actorUserId,
+      body: dto.body.trim(),
+      isStaff: true,
+    });
+  }
+
+  /**
+   * Owner reply on their ticket (`isStaff: 0`).
+   * Re-opens `pending` → `open` so staff sees new activity.
+   */
+  async createCustomerReply(
+    ticketId: string,
+    body: string,
+    actorUserId: string,
+  ): Promise<CreateSupportMessageResponseDto> {
+    const ticket = await this.ticketsRepository.findOne({
+      where: { id: ticketId, deletedAt: IsNull() },
+    });
+    if (!ticket) {
+      throw new NotFoundException('Ticket introuvable.');
+    }
+    if (ticket.userId !== actorUserId) {
+      throw new ForbiddenException('Accès refusé');
+    }
+    if (ticket.status === 'closed') {
+      throw new BadRequestException(
+        'Impossible de répondre à un ticket fermé.',
+      );
+    }
+
+    return this.appendMessage({
+      ticket,
+      actorUserId,
+      body: body.trim(),
+      isStaff: false,
+    });
+  }
+
+  private async appendMessage(params: {
+    ticket: SupportTickets;
+    actorUserId: string;
+    body: string;
+    isStaff: boolean;
+  }): Promise<CreateSupportMessageResponseDto> {
+    const { ticket, actorUserId, body, isStaff } = params;
     const messageId = newId();
     let updatedStatus = ticket.status;
 
@@ -59,18 +105,24 @@ export class SupportMessagesService extends CrudService<SupportMessages> {
       await messagesRepo.save(
         messagesRepo.create({
           id: messageId,
-          ticketId: dto.ticketId,
+          ticketId: ticket.id,
           userId: actorUserId,
           body,
-          isStaff: 1,
+          isStaff: isStaff ? 1 : 0,
           createdByUserId: actorUserId,
         }),
       );
 
-      if (ticket.status === 'open') {
+      if (isStaff && ticket.status === 'open') {
         updatedStatus = 'pending';
-        await ticketsRepo.update(dto.ticketId, {
+        await ticketsRepo.update(ticket.id, {
           status: 'pending',
+          updatedByUserId: actorUserId,
+        });
+      } else if (!isStaff && ticket.status === 'pending') {
+        updatedStatus = 'open';
+        await ticketsRepo.update(ticket.id, {
+          status: 'open',
           updatedByUserId: actorUserId,
         });
       }
@@ -100,7 +152,7 @@ export class SupportMessagesService extends CrudService<SupportMessages> {
       id: message.id,
       ticketId: message.ticketId,
       body: message.body,
-      isStaff: message.isStaff === 1,
+      isStaff: Number(message.isStaff) === 1,
       createdAt: message.createdAt.toISOString(),
     };
   }

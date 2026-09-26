@@ -37,6 +37,12 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
   },
   {
     type: 'link',
+    href: '/analytics',
+    labelKey: 'analytics',
+    iconKey: 'chart',
+  },
+  {
+    type: 'link',
     href: '/mise-en-route',
     labelKey: 'setupGuide',
     iconKey: 'list',

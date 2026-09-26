@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { SupportCategoryGrid } from './support-category-grid';
@@ -23,6 +24,14 @@ export function SupportPageContent() {
             </h1>
             <p className="mt-2 text-base text-atg-muted sm:text-lg">
               {t('pageSubtitle')}
+            </p>
+            <p className="mt-3">
+              <Link
+                href="/account/support"
+                className="text-sm font-medium text-primary hover:underline"
+              >
+                {t('myTicketsLink')}
+              </Link>
             </p>
           </header>
 

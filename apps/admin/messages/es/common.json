@@ -43,6 +43,22 @@
     "conflict": "Conflicto: este recurso ya existe.",
     "kpiLoadFailed": "No se pudieron cargar los indicadores."
   },
+  "connectionLock": {
+    "title": "Conexión interrumpida",
+    "subtitle": "No se pudo contactar con la API. Compruebe su conexión de red.",
+    "hint": "Si está en desarrollo, asegúrese de que la API esté en marcha en el puerto configurado.",
+    "retry": "Reintentar",
+    "retrying": "Comprobando…",
+    "retryFailed": "La API sigue sin estar disponible. Inténtelo de nuevo en un momento."
+  },
+  "offlineLock": {
+    "title": "Está sin conexión",
+    "subtitle": "No se detectó conexión a Internet. La administración no puede cargarse.",
+    "hint": "Compruebe el Wi‑Fi o los datos móviles y vuelva a intentarlo.",
+    "retry": "Reintentar",
+    "retrying": "Comprobando…",
+    "retryFailed": "Sigue sin conexión. Inténtelo de nuevo cuando vuelva la red."
+  },
   "commandPalette": {
     "title": "Navegación rápida",
     "placeholder": "Buscar una página…",
@@ -53,13 +69,24 @@
     "title": "Búsqueda admin",
     "placeholder": "Buscar páginas, ayuda, usuarios, reservas…",
     "empty": "Sin resultados",
+    "emptyHint": "Pruebe estos atajos en su lugar:",
+    "minQueryHint": "Escriba al menos {count} caracteres para buscar datos de negocio.",
+    "suggestionsTitle": "Sugerencias",
+    "suggestionsAria": "Sugerencias de páginas",
+    "loading": "Buscando…",
     "shortcutHint": "Ctrl+F · ⌘F (alias Ctrl/⌘+K) — ↑↓ para navegar, Entrar para abrir",
     "close": "Cerrar la búsqueda",
     "resultsLabel": "Resultados de búsqueda",
     "updating": "Actualizando…",
+    "opening": "Abriendo la página…",
     "partialError": "Algunas fuentes no se pudieron cargar.",
     "groupError": "Error parcial",
     "openLabel": "Abrir la búsqueda",
+    "quickLinks": {
+      "dashboard": "Panel",
+      "help": "Centro de ayuda",
+      "users": "Usuarios"
+    },
     "groups": {
       "pages": "Páginas",
       "help": "Ayuda",
@@ -83,6 +110,7 @@
       "search": "Abrir / cerrar la búsqueda admin",
       "searchAlias": "Alias — abrir / cerrar la búsqueda",
       "palette": "Abrir / cerrar la navegación rápida",
+      "lockSession": "Bloquear la sesión",
       "escape": "Cerrar la búsqueda o esta ayuda",
       "help": "Mostrar esta ayuda"
     }

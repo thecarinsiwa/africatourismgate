@@ -39,6 +39,7 @@ export function KeyboardShortcutsHelp() {
 
   const paletteKeys = isMac ? ['⌘', 'F'] : ['Ctrl', 'F'];
   const paletteAliasKeys = isMac ? ['⌘', 'K'] : ['Ctrl', 'K'];
+  const lockKeys = isMac ? ['⌘', 'L'] : ['Ctrl', 'L'];
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -66,6 +67,11 @@ export function KeyboardShortcutsHelp() {
       id: 'searchAlias',
       keys: paletteAliasKeys,
       label: t('items.searchAlias'),
+    },
+    {
+      id: 'lockSession',
+      keys: lockKeys,
+      label: t('items.lockSession'),
     },
     {
       id: 'escape',

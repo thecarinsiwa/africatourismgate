@@ -10,10 +10,12 @@ import { useResolvedPublicContact } from '../../lib/contact/use-resolved-public-
 import { useNavbarDonation } from '../donation-provider';
 import { DonateButton } from '../donate-button';
 import { buildSocialLinks } from '../../lib/contact/social-links';
-import { buildVerticalListRoute } from '../../lib/search/route';
+import { buildVerticalListRoute, type SearchVertical } from '../../lib/search/route';
 import { ABOUT_NAV_ITEMS, ABOUT_PATHS } from '../../lib/about/routes';
 import { useTranslations as useIntlTranslations } from 'next-intl';
 import { SiteSearchTrigger } from '../site-search/site-search-trigger';
+import { useCatalogProducts } from '../catalog-products-provider';
+import type { CatalogProductKey } from '@africatourismgate/types/organization-settings';
 
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -103,6 +105,7 @@ export function HomeHeader() {
   const tTheme = useIntlTranslations('theme');
   const tAbout = useIntlTranslations('about');
   const tLanguage = useIntlTranslations('language');
+  const catalogProducts = useCatalogProducts();
   const pathname = usePathname();
   const onAccountArea = pathname.startsWith('/account');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -134,9 +137,28 @@ export function HomeHeader() {
     };
   }, [menuOpen]);
 
-  const navLinks = useMemo(
-    () => [
-      { href: '/', label: t('home'), children: [] as { href: string; label: string }[] },
+  const navLinks = useMemo(() => {
+    const productChildren = (
+      [
+        { vertical: 'hotels' as const, labelKey: 'hotels' as const },
+        { vertical: 'flights' as const, labelKey: 'flights' as const },
+        { vertical: 'cars' as const, labelKey: 'cars' as const },
+        { vertical: 'cruises' as const, labelKey: 'cruises' as const },
+        { vertical: 'tours' as const, labelKey: 'tours' as const },
+      ] satisfies { vertical: SearchVertical; labelKey: CatalogProductKey }[]
+    )
+      .filter(({ vertical }) => catalogProducts[vertical])
+      .map(({ vertical, labelKey }) => ({
+        href: buildVerticalListRoute(vertical),
+        label: t(labelKey),
+      }));
+
+    const links: {
+      href: string;
+      label: string;
+      children: { href: string; label: string }[];
+    }[] = [
+      { href: '/', label: t('home'), children: [] },
       {
         href: ABOUT_PATHS.whoWeAre,
         label: t('about'),
@@ -145,23 +167,26 @@ export function HomeHeader() {
           label: tAbout(`nav.${item.labelKey}`),
         })),
       },
-      {
+    ];
+
+    if (productChildren.length > 0) {
+      links.push({
         href: '/#search',
         label: t('pages'),
-        children: [
-          { href: buildVerticalListRoute('hotels'), label: t('hotels') },
-          { href: buildVerticalListRoute('flights'), label: t('flights') },
-          { href: buildVerticalListRoute('cars'), label: t('cars') },
-          { href: buildVerticalListRoute('cruises'), label: t('cruises') },
-          { href: buildVerticalListRoute('tours'), label: t('tours') },
-        ],
-      },
-      { href: '/blog', label: t('blog'), children: [] },
-      { href: '/packages', label: t('packages'), children: [] },
-      { href: '/support', label: t('help'), children: [] },
-    ],
-    [t, tAbout],
-  );
+        children: productChildren,
+      });
+    }
+
+    links.push({ href: '/blog', label: t('blog'), children: [] });
+
+    if (catalogProducts.packages) {
+      links.push({ href: '/packages', label: t('packages'), children: [] });
+    }
+
+    links.push({ href: '/support', label: t('help'), children: [] });
+
+    return links;
+  }, [catalogProducts, t, tAbout]);
 
   const donateHref = navbarDonation?.url?.trim() || null;
   const donateText = navbarDonation?.buttonLabel?.trim() || t('donate');

@@ -51,6 +51,7 @@ import {
 } from './dto/booking-checkout-preview-response.dto';
 import type { CreateBookingResponseDto } from './dto/create-booking-response.dto';
 import { BookingDetailDto } from './dto/booking-detail.dto';
+import { toBookingEmergencyContactDto } from './dto/booking-emergency-contact.dto';
 import {
   BOOKING_REQUEST_REGISTERED_MESSAGE,
   BookingRequestResponseDto,
@@ -918,6 +919,7 @@ export class BookingEngineService {
       paidCents: paymentSummary.paidCents,
       balanceCents: paymentSummary.balanceCents,
       depositRequiredCents: paymentSummary.depositRequiredCents,
+      emergencyContact: toBookingEmergencyContactDto(booking),
     };
   }
 

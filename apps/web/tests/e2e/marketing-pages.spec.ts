@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './fixtures';
 
 /** Mock public CMS so marketing pages show graceful empty states (no live API). */
 async function mockEmptyMarketingCms(page: Page) {

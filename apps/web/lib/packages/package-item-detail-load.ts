@@ -40,7 +40,8 @@ function addDays(isoDate: string, days: number): string {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
-function resolveStayDates(
+/** Dates used to load / deep-link product pages when the package has no departure yet. */
+export function resolvePackageItemPreviewDates(
   startDate?: string,
   endDate?: string,
 ): { start: string; end: string } {
@@ -48,6 +49,13 @@ function resolveStayDates(
   const end =
     endDate?.trim() && endDate > start ? endDate.trim() : addDays(start, 3);
   return { start, end };
+}
+
+function resolveStayDates(
+  startDate?: string,
+  endDate?: string,
+): { start: string; end: string } {
+  return resolvePackageItemPreviewDates(startDate, endDate);
 }
 
 async function resolveCruiseSailingId(

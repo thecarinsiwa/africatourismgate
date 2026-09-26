@@ -307,12 +307,12 @@ export function SearchFormSubmit({ label, className }: SearchFormSubmitProps) {
 
 export type SearchViewAllLinkProps = {
   href: string;
-  /** Libellé accessible et infobulle — fourni par le parent (i18n). */
+  /** Libellé visible — fourni par le parent (i18n). */
   label: string;
   className?: string;
 };
 
-/** Lien « voir tout » — icône seule, libellé en sr-only pour l'accessibilité. */
+/** Lien « voir tous » vers le catalogue complet de l’onglet actif. */
 export function SearchViewAllLink({ href, label, className }: SearchViewAllLinkProps) {
   return (
     <Link
@@ -320,19 +320,11 @@ export function SearchViewAllLink({ href, label, className }: SearchViewAllLinkP
       aria-label={label}
       title={label}
       className={cn(
-        'inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-lg border border-primary px-3 py-2 text-primary transition-colors hover:bg-primary/5 dark:hover:bg-primary/10',
+        'inline-flex min-h-[44px] shrink-0 items-center justify-center whitespace-nowrap rounded-lg border border-primary px-3 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 dark:hover:bg-primary/10',
         className,
       )}
     >
-      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={1.5}
-          d="M4 6h16M4 12h16M4 18h16"
-        />
-      </svg>
-      <span className="sr-only">{label}</span>
+      {label}
     </Link>
   );
 }

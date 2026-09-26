@@ -7,6 +7,7 @@ import {
 } from '../../../entities/generated';
 import { RbacModule } from '../../rbac/rbac.module';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { SupportMessagesModule } from '../support-messages/support-messages.module';
 import { SupportTicketsController } from './support-tickets.controller';
 import { SupportTicketsService } from './support-tickets.service';
 
@@ -15,6 +16,7 @@ import { SupportTicketsService } from './support-tickets.service';
     TypeOrmModule.forFeature([SupportTickets, SupportMessages, Users]),
     RbacModule,
     NotificationsModule,
+    SupportMessagesModule,
   ],
   controllers: [SupportTicketsController],
   providers: [SupportTicketsService],

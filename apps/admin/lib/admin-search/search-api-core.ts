@@ -1,4 +1,5 @@
 import type { ApiClient } from '@africatourismgate/api-client';
+import type { AdminSupportTicketListItem } from '@africatourismgate/types';
 import { withApiClient } from '../auth/api';
 import { formatMoney } from '../format-money';
 import {
@@ -11,15 +12,19 @@ import type { AdminSearchResultItem } from './types';
 
 export type SearchApiCoreOptions = {
   resultLimit?: number;
+  signal?: AbortSignal;
 };
 
 const DEFAULT_LIMIT = 5;
 
-/** Fetch plus large pour filtrer côté client (API tickets sans `search`). */
-const SUPPORT_TICKETS_CLIENT_FILTER_LIMIT = 100;
-
 function resolveLimit(options?: SearchApiCoreOptions): number {
   return options?.resultLimit ?? DEFAULT_LIMIT;
+}
+
+function requestOptions(
+  options?: SearchApiCoreOptions,
+): { signal: AbortSignal } | undefined {
+  return options?.signal ? { signal: options.signal } : undefined;
 }
 
 export async function searchAdminUsers(
@@ -28,7 +33,10 @@ export async function searchAdminUsers(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listUsers({ page: 1, limit, search: query.trim() || undefined }),
+    client.listUsers(
+      { page: 1, limit, search: query.trim() || undefined },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((user) => {
@@ -54,11 +62,14 @@ export async function searchAdminOrganizations(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listOrganizations({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listOrganizations(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((org) => ({
@@ -77,11 +88,14 @@ export async function searchAdminBookings(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listBookings({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listBookings(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((booking) => {
@@ -107,11 +121,14 @@ export async function searchAdminProperties(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listProperties({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listProperties(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((property) => ({
@@ -130,11 +147,14 @@ export async function searchAdminPayments(
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
   const result = await withApiClient((client: ApiClient) =>
-    client.listPayments({
-      page: 1,
-      limit,
-      search: query.trim() || undefined,
-    }),
+    client.listPayments(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
   );
 
   return result.data.map((payment) => {
@@ -155,48 +175,160 @@ export async function searchAdminPayments(
 }
 
 /**
- * L’API support-tickets n’expose pas `search` : fetch paginé + filtre client
- * sur sujet / email / prénom / préfixe d’id.
+ * Tickets support via `search=` API (sujet, email, prénom, id).
  */
 export async function searchAdminSupportTickets(
   query: string,
   options?: SearchApiCoreOptions,
 ): Promise<AdminSearchResultItem[]> {
   const limit = resolveLimit(options);
-  const normalized = query.trim().toLowerCase();
-  if (!normalized) {
+  const search = query.trim();
+  if (!search) {
     return [];
   }
 
   const result = await withApiClient((client: ApiClient) =>
-    client.listSupportTickets({
-      page: 1,
-      limit: SUPPORT_TICKETS_CLIENT_FILTER_LIMIT,
-    }),
+    client.listSupportTickets(
+      {
+        page: 1,
+        limit,
+        search,
+      },
+      requestOptions(options),
+    ),
   );
 
-  return result.data
-    .filter((ticket) => {
-      const haystacks = [
-        ticket.subject,
-        ticket.customerEmail ?? '',
-        ticket.customerFirstName ?? '',
-        ticket.id,
-      ];
-      return haystacks.some((value) =>
-        value.toLowerCase().includes(normalized),
-      );
-    })
-    .slice(0, limit)
-    .map((ticket) => ({
+  return result.data.map((ticket) => {
+    const adminTicket = ticket as AdminSupportTicketListItem;
+    return {
       id: buildAdminSearchResultId('supportTickets', ticket.id),
       sourceId: 'supportTickets' as const,
       group: 'support' as const,
       title: ticket.subject,
       subtitle:
-        ticket.customerEmail?.trim() ||
-        ticket.customerFirstName?.trim() ||
+        adminTicket.customerEmail?.trim() ||
+        adminTicket.customerFirstName?.trim() ||
         ticket.status,
       href: adminSearchDeepLinks.supportTicket(ticket.id),
-    }));
+    };
+  });
+}
+
+export async function searchAdminPromotions(
+  query: string,
+  options?: SearchApiCoreOptions,
+): Promise<AdminSearchResultItem[]> {
+  const limit = resolveLimit(options);
+  const result = await withApiClient((client: ApiClient) =>
+    client.listPromotions(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
+  );
+
+  return result.data.map((promotion) => ({
+    id: buildAdminSearchResultId('promotions', promotion.id),
+    sourceId: 'promotions' as const,
+    group: 'payments' as const,
+    title: promotion.name,
+    subtitle: promotion.active === 1 ? 'active' : 'inactive',
+    href: adminSearchDeepLinks.promotion(promotion.id),
+  }));
+}
+
+export async function searchAdminPromoCodes(
+  query: string,
+  options?: SearchApiCoreOptions,
+): Promise<AdminSearchResultItem[]> {
+  const limit = resolveLimit(options);
+  const result = await withApiClient((client: ApiClient) =>
+    client.listPromoCodes(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
+  );
+
+  return result.data.map((promo) => ({
+    id: buildAdminSearchResultId('promoCodes', promo.id),
+    sourceId: 'promoCodes' as const,
+    group: 'payments' as const,
+    title: promo.code,
+    subtitle: `${promo.discountType} · ${promo.discountValue}`,
+    href: adminSearchDeepLinks.promoCode(promo.id),
+  }));
+}
+
+export async function searchAdminRoles(
+  query: string,
+  options?: SearchApiCoreOptions,
+): Promise<AdminSearchResultItem[]> {
+  const limit = resolveLimit(options);
+  const result = await withApiClient((client: ApiClient) =>
+    client.listRoles(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
+  );
+
+  return result.data.map((role) => ({
+    id: buildAdminSearchResultId('roles', role.id),
+    sourceId: 'roles' as const,
+    group: 'content' as const,
+    title: role.name,
+    subtitle: role.code,
+    href: adminSearchDeepLinks.role(role.id),
+  }));
+}
+
+export async function searchAdminEmployees(
+  query: string,
+  options?: SearchApiCoreOptions,
+): Promise<AdminSearchResultItem[]> {
+  const limit = resolveLimit(options);
+  const result = await withApiClient((client: ApiClient) =>
+    client.listEmployees(
+      {
+        page: 1,
+        limit,
+        search: query.trim() || undefined,
+      },
+      requestOptions(options),
+    ),
+  );
+
+  return result.data.map((employee) => {
+    const user = employee.user;
+    const name = user
+      ? formatAdminSearchPersonName(
+          user.firstName,
+          user.lastName,
+          user.email,
+        )
+      : employee.employeeCode?.trim() ||
+        formatAdminSearchIdPrefix(employee.id);
+    return {
+      id: buildAdminSearchResultId('employees', employee.id),
+      sourceId: 'employees' as const,
+      group: 'users' as const,
+      title: name,
+      subtitle:
+        employee.jobTitle?.trim() ||
+        employee.employeeCode?.trim() ||
+        user?.email ||
+        employee.status,
+      href: adminSearchDeepLinks.employee(employee.id),
+    };
+  });
 }

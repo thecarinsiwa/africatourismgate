@@ -219,6 +219,47 @@ test.describe('Admin help center', () => {
     ).toBeVisible();
   });
 
+  test('palette-commandes article documents phased search coverage', async ({
+    page,
+  }) => {
+    await page.goto('/aide/prise-en-main/palette-commandes');
+
+    await expect(
+      page.getByRole('heading', {
+        name: /Recherche admin|Admin search|Búsqueda admin/i,
+        level: 1,
+      }),
+    ).toBeVisible();
+
+    const article = page.locator('article');
+    await expect(article).toContainText(
+      /promotions|promo codes|códigos promo|codes promo/i,
+    );
+    await expect(article).toContainText(/guides|guías|tour guides/i);
+    await expect(article).toContainText(/rôles|\broles\b/i);
+    await expect(article).toContainText(/vagues|waves|oleadas/i);
+    await expect(
+      article.getByRole('link', {
+        name: /promotions|promociones/i,
+      }),
+    ).toHaveAttribute('href', '/paiements/promotions');
+    await expect(
+      article.getByRole('link', {
+        name: /codes promo|promo codes|códigos promo/i,
+      }),
+    ).toHaveAttribute('href', '/paiements/codes-promo');
+    await expect(
+      article.getByRole('link', {
+        name: /guides|tour guides|guías/i,
+      }),
+    ).toHaveAttribute('href', '/guides');
+    await expect(
+      article.getByRole('link', {
+        name: /rôles|roles/i,
+      }),
+    ).toHaveAttribute('href', '/systeme/roles');
+  });
+
   test('empty search shows no-results message and quick-start links', async ({
     page,
   }) => {

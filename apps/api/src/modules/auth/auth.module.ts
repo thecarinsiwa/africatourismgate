@@ -48,6 +48,11 @@ import { GoogleStrategy } from './strategies/google.strategy';
           ttl: 60_000,
           limit: 5,
         },
+        {
+          name: 'analyticsBeacon',
+          ttl: 60_000,
+          limit: 60,
+        },
       ],
     }),
   ],

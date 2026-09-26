@@ -4,6 +4,7 @@ import {
   isSessionLockedApiError,
   type RequestOptions,
 } from '@africatourismgate/api-client';
+import { notifyApiUnreachable } from '@africatourismgate/ui';
 import { getApiBaseUrl, resolveApiBaseUrl } from './api-url';
 import { getSessionFromDocumentCookies } from './cookies';
 import { refreshAccessToken } from './refresh';
@@ -18,6 +19,19 @@ import {
 import { isSessionLocked, setSessionLocked } from './session-idle';
 
 export { getApiBaseUrl, resolveApiBaseUrl };
+
+function browserNetworkErrorHandler(): (() => void) | undefined {
+  if (typeof window === 'undefined') {
+    return undefined;
+  }
+  return () => notifyApiUnreachable();
+}
+
+function createAdminApiClient(accessToken: string | null): ApiClient {
+  return new ApiClient(resolveApiBaseUrl(), accessToken, {
+    onNetworkError: browserNetworkErrorHandler(),
+  });
+}
 
 let refreshInFlight: Promise<StoredSession | null> | null = null;
 
@@ -189,9 +203,8 @@ function attachAuthRefresh(client: ApiClient): ApiClient {
 }
 
 export function getApiClient(): ApiClient {
-  const baseUrl = resolveApiBaseUrl();
   const session = getSession();
-  return attachAuthRefresh(new ApiClient(baseUrl, session?.accessToken ?? null));
+  return attachAuthRefresh(createAdminApiClient(session?.accessToken ?? null));
 }
 
 export async function getRefreshedApiClient(): Promise<ApiClient> {
@@ -202,9 +215,7 @@ export async function getRefreshedApiClient(): Promise<ApiClient> {
   if (isSessionLocked()) {
     throw sessionLockedError();
   }
-  return attachAuthRefresh(
-    new ApiClient(resolveApiBaseUrl(), session?.accessToken ?? null),
-  );
+  return attachAuthRefresh(createAdminApiClient(session?.accessToken ?? null));
 }
 
 /** Runs an API call with a fresh token; retries once after refresh on 401. */

@@ -14,6 +14,7 @@ import {
   AccountPaymentIcon,
   AccountProfileIcon,
   AccountReservationsIcon,
+  AccountSupportTicketsIcon,
 } from './account-nav-icons';
 
 const NAV = [
@@ -22,6 +23,7 @@ const NAV = [
   { href: '/account/reservations', key: 'reservations' as const, Icon: AccountReservationsIcon },
   { href: '/account/loyalty', key: 'loyalty' as const, Icon: AccountLoyaltyIcon },
   { href: '/account/payment-methods', key: 'paymentMethods' as const, Icon: AccountPaymentIcon },
+  { href: '/account/support', key: 'tickets' as const, Icon: AccountSupportTicketsIcon },
   { href: '/support', key: 'help' as const, Icon: AccountHelpIcon },
 ] as const;
 
@@ -31,21 +33,30 @@ function resolvePageTitle(
   pathname: string,
   labels: Record<NavKey, string>,
   fallback: string,
-  detailTitle: string,
+  reservationDetailTitle: string,
+  supportDetailTitle: string,
 ): string {
   if (pathname.startsWith('/account/profile')) return labels.profile;
   if (pathname.startsWith('/account/addresses')) return labels.addresses;
   if (pathname.startsWith('/account/reservations/') && pathname !== '/account/reservations') {
-    return detailTitle;
+    return reservationDetailTitle;
   }
   if (pathname.startsWith('/account/reservations')) return labels.reservations;
   if (pathname.startsWith('/account/loyalty')) return labels.loyalty;
   if (pathname.startsWith('/account/payment-methods')) return labels.paymentMethods;
+  if (pathname.startsWith('/account/support/') && pathname !== '/account/support') {
+    return supportDetailTitle;
+  }
+  if (pathname.startsWith('/account/support')) return labels.tickets;
   return fallback;
 }
 
-function isDetailPage(pathname: string): boolean {
+function isReservationDetailPage(pathname: string): boolean {
   return Boolean(pathname.match(/^\/account\/reservations\/[^/]+$/));
+}
+
+function isSupportDetailPage(pathname: string): boolean {
+  return Boolean(pathname.match(/^\/account\/support\/[^/]+$/));
 }
 
 type Props = {
@@ -62,6 +73,7 @@ export function AccountShell({ children }: Props) {
     reservations: t('nav.reservations'),
     loyalty: t('nav.loyalty'),
     paymentMethods: t('nav.paymentMethods'),
+    tickets: t('nav.tickets'),
     help: t('nav.help'),
   };
   const pageTitle = resolvePageTitle(
@@ -69,8 +81,11 @@ export function AccountShell({ children }: Props) {
     navLabels,
     t('title'),
     t('reservations.detail.title'),
+    t('support.detailTitle'),
   );
-  const onReservationsDetail = isDetailPage(pathname);
+  const onReservationsDetail = isReservationDetailPage(pathname);
+  const onSupportDetail = isSupportDetailPage(pathname);
+  const onNestedDetail = onReservationsDetail || onSupportDetail;
 
   const breadcrumb = (
     <nav
@@ -92,19 +107,19 @@ export function AccountShell({ children }: Props) {
       {pathname !== '/account' && pathname !== '/account/profile' ? (
         <>
           <span aria-hidden>/</span>
-          {onReservationsDetail ? (
+          {onNestedDetail ? (
             <Link
-              href="/account/reservations"
+              href={onSupportDetail ? '/account/support' : '/account/reservations'}
               className="transition-colors hover:text-white"
             >
-              {t('nav.reservations')}
+              {onSupportDetail ? t('nav.tickets') : t('nav.reservations')}
             </Link>
           ) : (
             <span className="font-medium text-white">{pageTitle}</span>
           )}
         </>
       ) : null}
-      {onReservationsDetail ? (
+      {onNestedDetail ? (
         <>
           <span aria-hidden>/</span>
           <span className="font-medium text-white">{pageTitle}</span>
@@ -139,7 +154,9 @@ export function AccountShell({ children }: Props) {
               <ul className="flex gap-1 overflow-x-auto p-2 lg:flex-col lg:overflow-visible">
                 {NAV.map((item) => {
                   const active =
-                    pathname === item.href || pathname.startsWith(`${item.href}/`);
+                    item.href === '/support'
+                      ? pathname === item.href || pathname.startsWith(`${item.href}/`)
+                      : pathname === item.href || pathname.startsWith(`${item.href}/`);
                   const Icon = item.Icon;
                   return (
                     <li key={item.href} className="min-w-0 shrink-0 lg:shrink">

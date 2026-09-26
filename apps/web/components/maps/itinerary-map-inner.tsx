@@ -37,11 +37,10 @@ export function ItineraryMapInner({
 
       const map = L.map(containerRef.current!, {
         scrollWheelZoom: false,
+        attributionControl: false,
       }).setView([2, 20], 4);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 18,
       }).addTo(map);
 

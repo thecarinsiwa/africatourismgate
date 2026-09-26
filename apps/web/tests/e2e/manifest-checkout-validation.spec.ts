@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { fillCheckoutManifest, mockManifestApi } from './helpers/fill-manifest';
 import { mockCheckoutAuth } from './helpers/mock-checkout-auth';
 
@@ -45,6 +45,41 @@ const packageDetailMock = {
   },
   images: [],
 };
+
+async function fillEmergencyContact(
+  page: import('@playwright/test').Page,
+  opts?: { name?: string; phone?: string },
+) {
+  await page
+    .getByLabel(/nom du contact|contact name|nombre del contacto/i)
+    .first()
+    .fill(opts?.name ?? 'Contact Urgence');
+  // Labels include required "*"; emergency phone is the only input[type=tel] on recap.
+  await page.locator('input[type="tel"]').first().fill(opts?.phone ?? '+243900000001');
+}
+
+async function fillTravelersWithoutId(
+  page: import('@playwright/test').Page,
+) {
+  const nameInputs = page.getByLabel(/nom complet|full name|nombre completo/i);
+  const count = await nameInputs.count();
+  expect(count).toBeGreaterThan(0);
+  for (let i = 0; i < count; i += 1) {
+    await nameInputs.nth(i).fill(`Voyageur ${i + 1}`);
+  }
+
+  // Traveler "Nationalité" only (emergency country is labeled "Pays").
+  for (let i = 0; i < count; i += 1) {
+    const nat = page
+      .getByRole('button', {
+        name: /nationalit|nationality|nacionalidad/i,
+      })
+      .nth(i);
+    await nat.click();
+    await page.locator('input[type="search"]').last().fill('Congo');
+    await page.getByRole('option').filter({ hasText: /\(CD\)/i }).first().click();
+  }
+}
 
 async function gotoPackageRecap(page: import('@playwright/test').Page) {
   await mockCheckoutAuth(page);
@@ -99,7 +134,14 @@ async function gotoPackageRecap(page: import('@playwright/test').Page) {
     `/booking/recap?kind=package&packageId=${PACKAGE_ID}&startDate=${DATE}&endDate=2026-08-02&travelers=${TRAVELERS}`,
   );
   await expect(page.getByRole('heading', { name: /r[ée]capitulatif|summary|resumen/i })).toBeVisible();
-  await expect(page.getByText(/informations des voyageurs|traveler information|información de los viajeros/i)).toBeVisible();
+  await expect(
+    page.getByText(/informations des voyageurs|traveler information|información de los viajeros/i),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('heading', {
+      name: /contact d.urgence|emergency contact|contacto de emergencia/i,
+    }),
+  ).toBeVisible();
 }
 
 test('manifeste checkout: bloqué si n° pièce manquant', async ({ page }) => {
@@ -107,34 +149,23 @@ test('manifeste checkout: bloqué si n° pièce manquant', async ({ page }) => {
   await gotoPackageRecap(page);
 
   await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();
-
-  const nameInputs = page.getByLabel(/nom complet|full name|nombre completo/i);
-  const count = await nameInputs.count();
-  expect(count).toBeGreaterThan(0);
-  for (let i = 0; i < count; i += 1) {
-    await nameInputs.nth(i).fill(`Voyageur ${i + 1}`);
-  }
-
-  for (let i = 0; i < count; i += 1) {
-    const nat = page
-      .getByRole('button', {
-        name: /choisir un pays|choose a country|elegir un pa[ií]s|nationalit|nationality|nacionalidad/i,
-      })
-      .nth(i);
-    await nat.click();
-    await page.locator('input[type="search"]').last().fill('Congo');
-    await page.getByRole('option').filter({ hasText: /\(CD\)/i }).first().click();
-  }
+  await fillEmergencyContact(page);
+  await fillTravelersWithoutId(page);
   // Leave idNumber empty on purpose
 
   await page
-    .getByRole('button', { name: /demander une r[ée]servation|request a booking|solicitar una reserva/i })
+    .getByRole('button', {
+      name: /demander une r[ée]servation|request a booking|solicitar una reserva/i,
+    })
     .click();
 
   await expect(
-    page.getByRole('alert').filter({
-      hasText: /pi[eè]ce d.identit|passport number|documento/i,
-    }).first(),
+    page
+      .getByRole('alert')
+      .filter({
+        hasText: /pi[eè]ce d.identit|passport number|documento/i,
+      })
+      .first(),
   ).toBeVisible();
   await expect(page).toHaveURL(/\/booking\/recap/);
 });
@@ -146,28 +177,26 @@ test('manifeste checkout: bloqué si téléphone urgence manquant', async ({ pag
   await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();
   await fillCheckoutManifest(page);
 
-  const emPhoneInputs = page.getByLabel(/t[ée]l[ée]phone|phone|tel[ée]fono/i);
-  const phoneCount = await emPhoneInputs.count();
-  expect(phoneCount).toBeGreaterThan(0);
-  for (let i = 0; i < phoneCount; i += 1) {
-    await emPhoneInputs.nth(i).fill('');
-  }
+  await page.locator('input[type="tel"]').first().fill('');
 
   await page
-    .getByRole('button', { name: /demander une r[ée]servation|request a booking|solicitar una reserva/i })
+    .getByRole('button', {
+      name: /demander une r[ée]servation|request a booking|solicitar una reserva/i,
+    })
     .click();
 
   await expect(
-    page.getByRole('alert').filter({
-      hasText: /t[ée]l[ée]phone.*urgence|emergency contact phone|tel[ée]fono.*emergencia/i,
-    }).first(),
+    page
+      .getByRole('alert')
+      .filter({
+        hasText: /t[ée]l[ée]phone.*urgence|emergency contact phone|tel[ée]fono.*emergencia/i,
+      })
+      .first(),
   ).toBeVisible();
   await expect(page).toHaveURL(/\/booking\/recap/);
 });
 
-test('manifeste checkout: OK avec nom + nationalité + n° pièce + urgence (genre vide)', async ({
-  page,
-}) => {
+test('manifeste checkout: bloqué si nom urgence manquant', async ({ page }) => {
   test.setTimeout(60_000);
   await gotoPackageRecap(page);
 
@@ -175,10 +204,57 @@ test('manifeste checkout: OK avec nom + nationalité + n° pièce + urgence (gen
   await fillCheckoutManifest(page);
 
   await page
-    .getByRole('button', { name: /demander une r[ée]servation|request a booking|solicitar una reserva/i })
+    .getByLabel(/nom du contact|contact name|nombre del contacto/i)
+    .first()
+    .fill('');
+
+  await page
+    .getByRole('button', {
+      name: /demander une r[ée]servation|request a booking|solicitar una reserva/i,
+    })
+    .click();
+
+  await expect(
+    page
+      .getByRole('alert')
+      .filter({
+        hasText: /nom.*urgence|emergency contact name|nombre.*emergencia/i,
+      })
+      .first(),
+  ).toBeVisible();
+  await expect(page).toHaveURL(/\/booking\/recap/);
+});
+
+test('manifeste checkout: OK avec contact urgence booking-level + voyageurs', async ({
+  page,
+}) => {
+  test.setTimeout(60_000);
+  await gotoPackageRecap(page);
+
+  const emergencyPatches: unknown[] = [];
+  page.on('request', (req) => {
+    if (req.method() === 'PATCH' && req.url().includes('/emergency-contact')) {
+      emergencyPatches.push(req.postDataJSON());
+    }
+  });
+
+  await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();
+  await fillCheckoutManifest(page);
+
+  await page
+    .getByRole('button', {
+      name: /demander une r[ée]servation|request a booking|solicitar una reserva/i,
+    })
     .click();
 
   await expect(page).toHaveURL(new RegExp(`/booking/request-success\\?booking_id=${BOOKING_ID}`), {
     timeout: 15_000,
   });
+  expect(emergencyPatches.length).toBeGreaterThanOrEqual(1);
+  expect(emergencyPatches[0]).toEqual(
+    expect.objectContaining({
+      name: 'Contact Urgence',
+      phone: '+243900000001',
+    }),
+  );
 });

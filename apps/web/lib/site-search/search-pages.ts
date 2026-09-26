@@ -9,6 +9,10 @@ import type {
   SiteSearchNavItem,
   SiteSearchResultItem,
 } from './types';
+import {
+  DEFAULT_CATALOG_PRODUCTS,
+  type ResolvedCatalogProducts,
+} from '@africatourismgate/types/organization-settings';
 
 export type SiteNavSearchTranslate = {
   /** Clés sous `nav.*` (ex. `home`, `hotels`, `donate`). */
@@ -29,29 +33,22 @@ export type SearchSitePagesOptions = {
  */
 export function buildSiteNavSearchItems(
   translate: SiteNavSearchTranslate,
+  catalogProducts: ResolvedCatalogProducts = DEFAULT_CATALOG_PRODUCTS,
 ): SiteSearchNavItem[] {
-  const productVerticals: SiteSearchNavItem[] = [
-    {
-      href: buildVerticalListRoute('hotels'),
-      label: translate.nav('hotels'),
-    },
-    {
-      href: buildVerticalListRoute('flights'),
-      label: translate.nav('flights'),
-    },
-    {
-      href: buildVerticalListRoute('cars'),
-      label: translate.nav('cars'),
-    },
-    {
-      href: buildVerticalListRoute('cruises'),
-      label: translate.nav('cruises'),
-    },
-    {
-      href: buildVerticalListRoute('tours'),
-      label: translate.nav('tours'),
-    },
-  ];
+  const productVerticals: SiteSearchNavItem[] = (
+    [
+      { vertical: 'hotels' as const, labelKey: 'hotels' },
+      { vertical: 'flights' as const, labelKey: 'flights' },
+      { vertical: 'cars' as const, labelKey: 'cars' },
+      { vertical: 'cruises' as const, labelKey: 'cruises' },
+      { vertical: 'tours' as const, labelKey: 'tours' },
+    ] as const
+  )
+    .filter(({ vertical }) => catalogProducts[vertical])
+    .map(({ vertical, labelKey }) => ({
+      href: buildVerticalListRoute(vertical),
+      label: translate.nav(labelKey),
+    }));
 
   const aboutItems: SiteSearchNavItem[] = ABOUT_NAV_ITEMS.map((item) => ({
     href: item.href,
@@ -61,7 +58,10 @@ export function buildSiteNavSearchItems(
   const extras: SiteSearchNavItem[] = [
     { href: '/', label: translate.nav('home') },
     { href: '/blog', label: translate.nav('blog') },
-    { href: '/packages', label: translate.nav('packages') },
+    { href: '/partners', label: translate.nav('partners') },
+    ...(catalogProducts.packages
+      ? [{ href: '/packages', label: translate.nav('packages') }]
+      : []),
     { href: '/support', label: translate.nav('help') },
     { href: '/donate', label: translate.nav('donate') },
     {
@@ -82,7 +82,7 @@ export function buildSiteNavSearchItems(
   }
 
   return Array.from(byHref.values()).sort((a, b) =>
-    a.label.localeCompare(b.label),
+    a.label.localeCompare(b.label, undefined, { sensitivity: 'base' }),
   );
 }
 

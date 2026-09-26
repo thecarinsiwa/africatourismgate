@@ -23,6 +23,13 @@
     "difficulty": "Difficulté",
     "priceCents": "Prix (centimes)",
     "descriptionPlaceholder": "Décrivez l'activité, le programme, les conditions…",
+    "geographyTitle": "Point de rendez-vous",
+    "geographyIntro": "Placez le point de départ / rendez-vous de l'activité pour l'afficher sur la carte des destinations.",
+    "mapPicker": "Carte de localisation",
+    "mapPickerHint": "Cliquez sur la carte ou déplacez le marqueur pour renseigner latitude et longitude.",
+    "mapPickerAria": "Carte interactive pour sélectionner les coordonnées de l'activité",
+    "latitudeHint": "Optionnel, -90 à 90",
+    "longitudeHint": "Optionnel, -180 à 180",
     "validation": {
       "providerRequired": "Le partenaire est obligatoire.",
       "titleRequired": "Le titre est obligatoire.",

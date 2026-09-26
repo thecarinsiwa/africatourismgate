@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './fixtures';
 
 async function mockAccommodationsApiDown(page: Page) {
   await page.route('**/api/public/accommodations/search**', async (route) => {
@@ -20,6 +20,11 @@ async function mockFlightsApiDown(page: Page) {
   });
 }
 
+/** Listing retry CTA (connection-lock overlay is suppressed in e2e fixtures). */
+function listingRetryButton(page: Page) {
+  return page.getByRole('button', { name: /^Réessayer$|^Retry$|^Reintentar$/i });
+}
+
 test.describe('Listing API error states (WEB-011)', () => {
   test.describe.configure({ timeout: 60_000 });
 
@@ -36,7 +41,7 @@ test.describe('Listing API error states (WEB-011)', () => {
     await expect(
       page.getByText(/Impossible de charger les résultats/i).first(),
     ).toBeVisible({ timeout: 20_000 });
-    await expect(page.getByRole('button', { name: 'Réessayer' })).toBeVisible();
+    await expect(listingRetryButton(page)).toBeVisible();
   });
 
   test('flights listing shows load error + retry when API returns 503', async ({ page }) => {
@@ -45,10 +50,8 @@ test.describe('Listing API error states (WEB-011)', () => {
     await page.goto('/flights');
 
     await expect(
-      page.getByRole('button', { name: 'Réessayer' }),
-    ).toBeVisible({ timeout: 20_000 });
-    await expect(
       page.getByText(/Impossible de charger les vols/i).first(),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 20_000 });
+    await expect(listingRetryButton(page)).toBeVisible();
   });
 });
