@@ -325,6 +325,14 @@ export type {
   TreasuryExternalCollaboratorsListQuery,
   TreasuryExternalScope,
   TreasuryPaymentMethod,
+  TreasuryReportAmountBucket,
+  TreasuryReportDimensionBucket,
+  TreasuryReportGroupBy,
+  TreasuryReportSideTotals,
+  TreasuryReportsByDimension,
+  TreasuryReportsByDimensionQuery,
+  TreasuryReportsSummary,
+  TreasuryReportsSummaryQuery,
   UpdateBudgetRequest,
   UpdateExpenseRequestRequest,
   UpdateFundEntryRequest,
@@ -350,6 +358,7 @@ export {
   TREASURY_AUDIT_ENTITY_TYPES,
   TREASURY_EXTERNAL_SCOPES,
   TREASURY_PAYMENT_METHODS,
+  TREASURY_REPORT_GROUP_BY,
 } from './treasury.js';
 
 export {

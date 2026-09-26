@@ -367,6 +367,10 @@ import type {
   TreasuryAuditLogsListQuery,
   TreasuryExternalCollaborator,
   TreasuryExternalCollaboratorsListQuery,
+  TreasuryReportsByDimension,
+  TreasuryReportsByDimensionQuery,
+  TreasuryReportsSummary,
+  TreasuryReportsSummaryQuery,
   UpdateTreasuryExternalCollaboratorRequest,
   ExpenseRequest,
   ExpenseRequestStatusHistoryEntry,
@@ -1528,6 +1532,43 @@ export class ApiClient {
     const qs = params.toString();
     return this.request<BudgetVsActualSummary>(
       `/budgets/vs-actual${qs ? `?${qs}` : ''}`,
+      requestOptions,
+    );
+  }
+
+  getTreasuryReportsSummary(
+    query: TreasuryReportsSummaryQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<TreasuryReportsSummary> {
+    const params = new URLSearchParams();
+    params.set('dateFrom', query.dateFrom);
+    params.set('dateTo', query.dateTo);
+    if (query.organizationId) params.set('organizationId', query.organizationId);
+    if (query.currency) params.set('currency', query.currency);
+    if (query.source) params.set('source', query.source);
+    if (query.paymentMethod) params.set('paymentMethod', query.paymentMethod);
+    const qs = params.toString();
+    return this.request<TreasuryReportsSummary>(
+      `/treasury-reports/summary${qs ? `?${qs}` : ''}`,
+      requestOptions,
+    );
+  }
+
+  getTreasuryReportsByDimension(
+    query: TreasuryReportsByDimensionQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<TreasuryReportsByDimension> {
+    const params = new URLSearchParams();
+    params.set('dateFrom', query.dateFrom);
+    params.set('dateTo', query.dateTo);
+    params.set('groupBy', query.groupBy);
+    if (query.organizationId) params.set('organizationId', query.organizationId);
+    if (query.currency) params.set('currency', query.currency);
+    if (query.source) params.set('source', query.source);
+    if (query.paymentMethod) params.set('paymentMethod', query.paymentMethod);
+    const qs = params.toString();
+    return this.request<TreasuryReportsByDimension>(
+      `/treasury-reports/by-dimension${qs ? `?${qs}` : ''}`,
       requestOptions,
     );
   }

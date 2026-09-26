@@ -110,7 +110,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-032 | UI Admin consultation audit trésorerie — ✅              | Haute    | Admin       | M      |
 | TRESO-033 | Annulation / void d’opérations + gates — ✅              | Haute    | API / Admin | M      |
 | TRESO-034 | Lien croisé fiche réservation → opérations — ✅         | Moyenne  | Admin       | S      |
-| TRESO-035 | API agrégats rapports (période, source, mode)            | Moyenne  | API         | M      |
+| TRESO-035 | API agrégats rapports (période, source, mode) — ✅       | Moyenne  | API         | M      |
 | TRESO-036 | UI Admin page rapports trésorerie                        | Moyenne  | Admin       | M      |
 | TRESO-037 | Export CSV des opérations                                | Moyenne  | API / Admin | S      |
 | TRESO-038 | Hub `/tresorerie` + cartes stats                         | Moyenne  | Admin       | S      |
@@ -1599,10 +1599,11 @@ Lier une entrée à une booking ; ouvrir fiche booking.
 
 ---
 
-### TRESO-035 — API agrégats rapports
+### TRESO-035 — API agrégats rapports — ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:medium`  
-**Branche suggérée :** `feature/tresorerie-api-reports`
+**Branche suggérée :** `feature/tresorerie-api-reports`  
+**Livrable :** `GET /treasury-reports/summary` · `GET /treasury-reports/by-dimension?groupBy=source|paymentMethod` · permission `treasury.reports.read` · hors voided (+ draft sorties)
 
 #### Modèle GitHub
 
@@ -1623,9 +1624,9 @@ Rapports légers : entrées/sorties par période, source, mode.
 
 ## Critères d'acceptation
 
-- [ ] Totaux cohérents avec CRUD
-- [ ] GroupBy source/mode
-- [ ] RBAC reports
+- [x] Totaux cohérents avec CRUD
+- [x] GroupBy source/mode
+- [x] RBAC reports
 
 ## Plan de test
 

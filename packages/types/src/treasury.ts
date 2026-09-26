@@ -521,6 +521,71 @@ export interface TreasuryAuditLogsListQuery {
   dateTo?: string;
 }
 
+// ─── Rapports légers (TRESO-035) ─────────────────────────────────────────────
+
+export const TREASURY_REPORT_GROUP_BY = ['source', 'paymentMethod'] as const;
+export type TreasuryReportGroupBy = (typeof TREASURY_REPORT_GROUP_BY)[number];
+
+export interface TreasuryReportsSummaryQuery {
+  dateFrom: string;
+  dateTo: string;
+  organizationId?: string;
+  currency?: string;
+  source?: FundEntrySource;
+  paymentMethod?: TreasuryPaymentMethod;
+}
+
+export interface TreasuryReportAmountBucket {
+  currency: string;
+  totalCents: number;
+  count: number;
+}
+
+export interface TreasuryReportSideTotals {
+  totalCents: number;
+  count: number;
+  /** Présent si aucune devise filtrée (totaux non convertis). */
+  byCurrency?: TreasuryReportAmountBucket[];
+}
+
+export interface TreasuryReportsSummary {
+  dateFrom: string;
+  dateTo: string;
+  organizationId: string | null;
+  currency: string | null;
+  entries: TreasuryReportSideTotals;
+  exits: TreasuryReportSideTotals;
+  /** entries − exits ; null si multi-devises. */
+  netCents: number | null;
+}
+
+export interface TreasuryReportsByDimensionQuery
+  extends TreasuryReportsSummaryQuery {
+  groupBy: TreasuryReportGroupBy;
+}
+
+export interface TreasuryReportDimensionBucket {
+  key: string;
+  entriesCents: number;
+  entriesCount: number;
+  exitsCents: number;
+  exitsCount: number;
+}
+
+export interface TreasuryReportsByDimension {
+  groupBy: TreasuryReportGroupBy;
+  dateFrom: string;
+  dateTo: string;
+  organizationId: string | null;
+  currency: string | null;
+  buckets: TreasuryReportDimensionBucket[];
+  totals: {
+    entriesCents: number;
+    exitsCents: number;
+    netCents: number | null;
+  };
+}
+
 // ─── Pont comptable stub (TRESO-039) ────────────────────────────────────────
 
 export const ACCOUNTING_LINK_STATUSES = [
