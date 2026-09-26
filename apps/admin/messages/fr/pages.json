@@ -803,7 +803,24 @@
     "besoins": {
       "title": "États de besoin",
       "description": "Demandes de dépense et circuit de validation. Accès : treasury.expense_requests.*.",
-      "metaTitle": "États de besoin"
+      "metaTitle": "États de besoin",
+      "nouveau": {
+        "title": "Nouvel état de besoin",
+        "description": "Créer une demande de dépense (brouillon).",
+        "metaTitle": "Nouvel état de besoin",
+        "backLabel": "Retour aux besoins"
+      },
+      "id": {
+        "title": "Modifier l'état de besoin",
+        "description": "Mettre à jour une demande en brouillon.",
+        "metaTitle": "Modifier le besoin",
+        "backLabel": "Retour aux besoins",
+        "voir": {
+          "metaTitle": "Voir l'état de besoin",
+          "title": "Détail du besoin",
+          "backLabel": "Retour aux besoins"
+        }
+      }
     },
     "budgets": {
       "title": "Budgets",

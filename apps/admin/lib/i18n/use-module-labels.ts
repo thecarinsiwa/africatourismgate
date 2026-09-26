@@ -6,6 +6,7 @@ import type {
   BookingGuideRole,
   BookingStatus,
   EmployeeStatus,
+  ExpenseRequestStatus,
   FlightClassName,
   FundEntrySource,
   FundEntryStatus,
@@ -25,6 +26,7 @@ import type {
   VehicleAvailabilityStatus,
 } from '@africatourismgate/types';
 import {
+  EXPENSE_REQUEST_STATUSES,
   FUND_ENTRY_SOURCES,
   FUND_ENTRY_STATUSES,
   TREASURY_PAYMENT_METHODS,
@@ -737,6 +739,37 @@ export function useTreasuryPaymentMethodFilterOptions() {
     () => [
       { value: '', label: tAll('all') },
       ...TREASURY_PAYMENT_METHODS.map((value) => ({
+        value,
+        label: labels[value],
+      })),
+    ],
+    [labels, tAll],
+  );
+}
+
+export function useExpenseRequestStatusLabels() {
+  const t = useTranslations('modules.treasury.expenseRequestStatus');
+  return useMemo(
+    (): Record<ExpenseRequestStatus, string> => ({
+      draft: t('draft'),
+      submitted: t('submitted'),
+      validated: t('validated'),
+      authorized: t('authorized'),
+      rejected: t('rejected'),
+      cancelled: t('cancelled'),
+      closed: t('closed'),
+    }),
+    [t],
+  );
+}
+
+export function useExpenseRequestStatusFilterOptions() {
+  const tAll = useTranslations('modules.common.filters');
+  const labels = useExpenseRequestStatusLabels();
+  return useMemo(
+    () => [
+      { value: '', label: tAll('all') },
+      ...EXPENSE_REQUEST_STATUSES.map((value) => ({
         value,
         label: labels[value],
       })),

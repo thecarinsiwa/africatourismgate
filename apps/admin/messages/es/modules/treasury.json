@@ -245,18 +245,39 @@
         "currency": "Moneda",
         "neededByDate": "Fecha de necesidad"
       },
+      "hints": {
+        "amountCents": "Importe en unidades mayores (ej. 1500,00)."
+      },
       "validation": {
         "titleRequired": "El título es obligatorio.",
         "descriptionRequired": "La justificación es obligatoria.",
-        "amountPositive": "El importe debe ser mayor que cero."
+        "amountPositive": "El importe debe ser mayor que cero.",
+        "currencyRequired": "La moneda es obligatoria.",
+        "organizationRequired": "La organización es obligatoria."
+      },
+      "organization": "Organización",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.expense_requests.create.",
+      "draftOnlyHint": "Solo se pueden editar los borradores.",
+      "toast": {
+        "createdTitle": "Solicitud creada",
+        "createdMessage": "El estado de necesidad se ha guardado.",
+        "updatedTitle": "Solicitud actualizada",
+        "updatedMessage": "Los cambios se han guardado.",
+        "errorTitle": "Error"
       },
       "submitCreate": "Crear solicitud",
       "submitUpdate": "Guardar"
     },
     "detail": {
       "title": "Detalle del estado de necesidad",
+      "editButton": "Editar",
       "timeline": "Historial de estados",
-      "linkedExits": "Salidas vinculadas"
+      "timelineEmpty": "Aún no hay eventos de historial.",
+      "linkedExits": "Salidas vinculadas",
+      "linkedExitsEmpty": "Aún no hay salidas vinculadas.",
+      "createdBy": "Solicitado por",
+      "id": "Identificador",
+      "rejectionReason": "Motivo de rechazo"
     }
   },
   "budgets": {

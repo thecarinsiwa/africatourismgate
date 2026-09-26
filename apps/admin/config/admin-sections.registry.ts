@@ -182,6 +182,21 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Demandes de dépense et circuit de validation.',
     apiResource: 'expense-requests',
   },
+  'tresorerie/besoins/nouveau': {
+    title: 'Nouvel état de besoin',
+    description: 'Créer une demande de dépense.',
+    apiResource: 'expense-requests',
+  },
+  'tresorerie/besoins/id': {
+    title: 'Modifier état de besoin',
+    description: 'Éditer une demande de dépense.',
+    apiResource: 'expense-requests',
+  },
+  'tresorerie/besoins/id/voir': {
+    title: 'Voir état de besoin',
+    description: 'Fiche détail d’un état de besoin.',
+    apiResource: 'expense-requests',
+  },
   'tresorerie/budgets': {
     title: 'Budgets',
     description: 'Budgétisation mensuelle, annuelle et par activité/produit.',

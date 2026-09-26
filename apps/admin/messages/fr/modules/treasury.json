@@ -245,18 +245,39 @@
         "currency": "Devise",
         "neededByDate": "Date de besoin"
       },
+      "hints": {
+        "amountCents": "Montant en unités majeures (ex. 1500,00)."
+      },
       "validation": {
         "titleRequired": "Le titre est obligatoire.",
         "descriptionRequired": "La justification est obligatoire.",
-        "amountPositive": "Le montant doit être supérieur à zéro."
+        "amountPositive": "Le montant doit être supérieur à zéro.",
+        "currencyRequired": "La devise est obligatoire.",
+        "organizationRequired": "L'organisation est obligatoire."
+      },
+      "organization": "Organisation",
+      "accessDenied": "Accès refusé : permission treasury.expense_requests.create requise.",
+      "draftOnlyHint": "Seuls les brouillons peuvent être modifiés.",
+      "toast": {
+        "createdTitle": "Demande créée",
+        "createdMessage": "L'état de besoin a été enregistré.",
+        "updatedTitle": "Demande mise à jour",
+        "updatedMessage": "Les modifications ont été enregistrées.",
+        "errorTitle": "Erreur"
       },
       "submitCreate": "Créer la demande",
       "submitUpdate": "Enregistrer"
     },
     "detail": {
       "title": "Détail de l'état de besoin",
+      "editButton": "Modifier",
       "timeline": "Historique des statuts",
-      "linkedExits": "Sorties liées"
+      "timelineEmpty": "Aucun événement d'historique.",
+      "linkedExits": "Sorties liées",
+      "linkedExitsEmpty": "Aucune sortie liée pour le moment.",
+      "createdBy": "Demandé par",
+      "id": "Identifiant",
+      "rejectionReason": "Motif de rejet"
     }
   },
   "budgets": {

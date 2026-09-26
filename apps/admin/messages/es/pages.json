@@ -803,7 +803,24 @@
     "besoins": {
       "title": "Estados de necesidad",
       "description": "Solicitudes de gasto y circuito de validación. Acceso: treasury.expense_requests.*.",
-      "metaTitle": "Estados de necesidad"
+      "metaTitle": "Estados de necesidad",
+      "nouveau": {
+        "title": "Nuevo estado de necesidad",
+        "description": "Crear una solicitud de gasto (borrador).",
+        "metaTitle": "Nuevo estado de necesidad",
+        "backLabel": "Volver a las solicitudes"
+      },
+      "id": {
+        "title": "Editar estado de necesidad",
+        "description": "Actualizar una solicitud en borrador.",
+        "metaTitle": "Editar solicitud",
+        "backLabel": "Volver a las solicitudes",
+        "voir": {
+          "metaTitle": "Ver estado de necesidad",
+          "title": "Detalle de la solicitud",
+          "backLabel": "Volver a las solicitudes"
+        }
+      }
     },
     "budgets": {
       "title": "Presupuestos",

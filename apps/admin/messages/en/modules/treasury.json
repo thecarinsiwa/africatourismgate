@@ -245,18 +245,39 @@
         "currency": "Currency",
         "neededByDate": "Needed-by date"
       },
+      "hints": {
+        "amountCents": "Amount in major units (e.g. 1500.00)."
+      },
       "validation": {
         "titleRequired": "Title is required.",
         "descriptionRequired": "Justification is required.",
-        "amountPositive": "Amount must be greater than zero."
+        "amountPositive": "Amount must be greater than zero.",
+        "currencyRequired": "Currency is required.",
+        "organizationRequired": "Organization is required."
+      },
+      "organization": "Organization",
+      "accessDenied": "Access denied: treasury.expense_requests.create permission required.",
+      "draftOnlyHint": "Only draft requests can be edited.",
+      "toast": {
+        "createdTitle": "Request created",
+        "createdMessage": "The expense request has been saved.",
+        "updatedTitle": "Request updated",
+        "updatedMessage": "Changes have been saved.",
+        "errorTitle": "Error"
       },
       "submitCreate": "Create request",
       "submitUpdate": "Save"
     },
     "detail": {
       "title": "Expense request details",
+      "editButton": "Edit",
       "timeline": "Status history",
-      "linkedExits": "Linked exits"
+      "timelineEmpty": "No history events yet.",
+      "linkedExits": "Linked exits",
+      "linkedExitsEmpty": "No linked exits yet.",
+      "createdBy": "Requested by",
+      "id": "Identifier",
+      "rejectionReason": "Rejection reason"
     }
   },
   "budgets": {

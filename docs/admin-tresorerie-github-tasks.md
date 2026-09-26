@@ -94,7 +94,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-016 | API Nest `expense-requests` CRUD + statuts — ✅          | Haute    | API         | L      |
 | TRESO-017 | API Nest `fund-exits` liées à un état de besoin — ✅     | Haute    | API         | L      |
 | TRESO-018 | API sorties ↔ réservations (0,N) + justificatifs — ✅    | Haute    | API         | M      |
-| TRESO-019 | UI Admin liste/création états de besoin                  | Haute    | Admin       | M      |
+| TRESO-019 | UI Admin liste/création états de besoin — ✅             | Haute    | Admin       | M      |
 | TRESO-020 | UI Admin circuit validation → décaissement               | Haute    | Admin       | L      |
 | TRESO-021 | UI Admin liste/création/détail sorties                   | Haute    | Admin       | L      |
 | TRESO-022 | API transitions d’état + historique immutable            | Haute    | API         | M      |
@@ -949,7 +949,7 @@ Lier 0/1/N bookings ; ajouter justificatif.
 
 ---
 
-### TRESO-019 — UI Admin liste/création états de besoin
+### TRESO-019 — UI Admin liste/création états de besoin — ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-ui-expense-requests`

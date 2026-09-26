@@ -803,7 +803,24 @@
     "besoins": {
       "title": "Expense requests",
       "description": "Spend requests and validation workflow. Access: treasury.expense_requests.*.",
-      "metaTitle": "Expense requests"
+      "metaTitle": "Expense requests",
+      "nouveau": {
+        "title": "New expense request",
+        "description": "Create a spend request (draft).",
+        "metaTitle": "New expense request",
+        "backLabel": "Back to requests"
+      },
+      "id": {
+        "title": "Edit expense request",
+        "description": "Update a draft request.",
+        "metaTitle": "Edit request",
+        "backLabel": "Back to requests",
+        "voir": {
+          "metaTitle": "View expense request",
+          "title": "Request details",
+          "backLabel": "Back to requests"
+        }
+      }
     },
     "budgets": {
       "title": "Budgets",
