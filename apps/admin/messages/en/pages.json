@@ -787,7 +787,12 @@
         "title": "Edit fund entry",
         "description": "Update a fund entry.",
         "metaTitle": "Edit entry",
-        "backLabel": "Back to entries"
+        "backLabel": "Back to entries",
+        "voir": {
+          "metaTitle": "View fund entry",
+          "title": "Entry details",
+          "backLabel": "Back to entries"
+        }
       }
     },
     "sorties": {

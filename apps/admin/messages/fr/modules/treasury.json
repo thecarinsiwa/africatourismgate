@@ -157,8 +157,18 @@
     "detail": {
       "title": "Détail de l'entrée",
       "voidButton": "Annuler l'entrée",
+      "voidUnavailable": "L'annulation sera disponible prochainement (TRESO-033).",
+      "editButton": "Modifier",
       "attachments": "Justificatifs",
-      "audit": "Historique"
+      "audit": "Historique",
+      "auditEmpty": "Aucun événement d'audit pour le moment. Le journal sera branché avec TRESO-031.",
+      "bookings": "Réservations liées",
+      "bookingsEmpty": "Aucune réservation liée.",
+      "createdBy": "Créée par",
+      "voidedBy": "Annulée par",
+      "voidedAt": "Annulée le",
+      "voidReason": "Motif d'annulation",
+      "id": "Identifiant"
     }
   },
   "exits": {

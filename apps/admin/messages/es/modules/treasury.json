@@ -157,8 +157,18 @@
     "detail": {
       "title": "Detalle de la entrada",
       "voidButton": "Anular entrada",
+      "voidUnavailable": "La anulación estará disponible pronto (TRESO-033).",
+      "editButton": "Editar",
       "attachments": "Justificantes",
-      "audit": "Historial"
+      "audit": "Historial",
+      "auditEmpty": "Aún no hay eventos de auditoría. El diario se conectará con TRESO-031.",
+      "bookings": "Reservas vinculadas",
+      "bookingsEmpty": "No hay reservas vinculadas.",
+      "createdBy": "Creada por",
+      "voidedBy": "Anulada por",
+      "voidedAt": "Anulada el",
+      "voidReason": "Motivo de anulación",
+      "id": "Identificador"
     }
   },
   "exits": {

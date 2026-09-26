@@ -90,7 +90,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-012 | API liaison entrées ↔ réservations (0,N) + justificatifs — ✅ | Haute    | API         | M      |
 | TRESO-013 | UI Admin liste + filtres entrées de fonds — ✅           | Haute    | Admin       | M      |
 | TRESO-014 | UI Admin formulaire création/édition entrée — ✅         | Haute    | Admin       | L      |
-| TRESO-015 | UI Admin fiche détail entrée + traçabilité               | Haute    | Admin       | M      |
+| TRESO-015 | UI Admin fiche détail entrée + traçabilité — ✅          | Haute    | Admin       | M      |
 | TRESO-016 | API Nest `expense-requests` CRUD + statuts               | Haute    | API         | L      |
 | TRESO-017 | API Nest `fund-exits` liées à un état de besoin          | Haute    | API         | L      |
 | TRESO-018 | API sorties ↔ réservations (0,N) + justificatifs         | Haute    | API         | M      |
@@ -786,10 +786,11 @@ Créer entrée liée à 2 réservations ; éditer ; vérifier liste.
 
 ---
 
-### TRESO-015 — UI Admin fiche détail entrée + traçabilité
+### TRESO-015 — UI Admin fiche détail entrée + traçabilité — ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:high`  
-**Branche suggérée :** `feature/tresorerie-ui-fund-entry-detail`
+**Branche suggérée :** `feature/tresorerie-ui-fund-entry-detail`  
+**Livrable :** `fund-entry-view-page.tsx` + route `[id]/voir` (void/audit placeholders)
 
 #### Modèle GitHub
 
@@ -806,14 +807,14 @@ Traçabilité : auteur, dates, bookings, justificatifs, lien audit si dispo.
 
 ## Fichiers clés
 
-- `*-view-page.tsx`
-- route `[id]/voir`
+- `apps/admin/components/treasury/fund-entry-view-page.tsx`
+- `apps/admin/app/(dashboard)/tresorerie/entrees/[id]/voir/page.tsx`
 
 ## Critères d'acceptation
 
-- [ ] Toutes métadonnées visibles
-- [ ] Liens bookings cliquables
-- [ ] Gate permissions
+- [x] Toutes métadonnées visibles
+- [x] Liens bookings cliquables (`/reservations/:id`)
+- [x] Gate permissions (`treasury.entries.write` / `treasury.void`)
 
 ## Plan de test
 
@@ -821,7 +822,7 @@ Ouvrir détail d’une entrée seed/test.
 
 ## Références
 
-- TRESO-031, TRESO-033
+- TRESO-031, TRESO-033 (placeholders jusqu’aux APIs)
 ```
 
 ---

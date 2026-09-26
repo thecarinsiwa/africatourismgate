@@ -787,7 +787,12 @@
         "title": "Editar entrada de fondos",
         "description": "Actualizar una entrada de fondos.",
         "metaTitle": "Editar entrada",
-        "backLabel": "Volver a las entradas"
+        "backLabel": "Volver a las entradas",
+        "voir": {
+          "metaTitle": "Ver entrada de fondos",
+          "title": "Detalle de la entrada",
+          "backLabel": "Volver a las entradas"
+        }
       }
     },
     "sorties": {

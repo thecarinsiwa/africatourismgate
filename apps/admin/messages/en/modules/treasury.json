@@ -157,8 +157,18 @@
     "detail": {
       "title": "Entry details",
       "voidButton": "Void entry",
+      "voidUnavailable": "Voiding will be available soon (TRESO-033).",
+      "editButton": "Edit",
       "attachments": "Supporting documents",
-      "audit": "History"
+      "audit": "History",
+      "auditEmpty": "No audit events yet. The journal will be wired with TRESO-031.",
+      "bookings": "Linked bookings",
+      "bookingsEmpty": "No linked bookings.",
+      "createdBy": "Created by",
+      "voidedBy": "Voided by",
+      "voidedAt": "Voided at",
+      "voidReason": "Void reason",
+      "id": "Identifier"
     }
   },
   "exits": {

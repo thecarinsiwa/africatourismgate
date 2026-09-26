@@ -787,7 +787,12 @@
         "title": "Modifier l'entrée de fonds",
         "description": "Mettre à jour une entrée de fonds.",
         "metaTitle": "Modifier l'entrée",
-        "backLabel": "Retour aux entrées"
+        "backLabel": "Retour aux entrées",
+        "voir": {
+          "metaTitle": "Voir l'entrée de fonds",
+          "title": "Détail de l'entrée",
+          "backLabel": "Retour aux entrées"
+        }
       }
     },
     "sorties": {
