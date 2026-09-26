@@ -109,7 +109,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-031 | API journal d’audit (user, action, old/new) — ✅         | Haute    | API         | M      |
 | TRESO-032 | UI Admin consultation audit trésorerie — ✅              | Haute    | Admin       | M      |
 | TRESO-033 | Annulation / void d’opérations + gates — ✅              | Haute    | API / Admin | M      |
-| TRESO-034 | Lien croisé fiche réservation → opérations               | Moyenne  | Admin       | S      |
+| TRESO-034 | Lien croisé fiche réservation → opérations — ✅         | Moyenne  | Admin       | S      |
 | TRESO-035 | API agrégats rapports (période, source, mode)            | Moyenne  | API         | M      |
 | TRESO-036 | UI Admin page rapports trésorerie                        | Moyenne  | Admin       | M      |
 | TRESO-037 | Export CSV des opérations                                | Moyenne  | API / Admin | S      |
@@ -1558,10 +1558,11 @@ Void avec/sans permission.
 
 ---
 
-### TRESO-034 — Lien croisé fiche réservation → opérations
+### TRESO-034 — Lien croisé fiche réservation → opérations — ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:medium`  
-**Branche suggérée :** `feature/tresorerie-booking-crosslink`
+**Branche suggérée :** `feature/tresorerie-booking-crosslink`  
+**Livrable :** `BookingTreasuryOpsPanel` sur `/reservations/[id]` · `listFundEntries|Exits({ bookingId })` · `PermissionGate treasury.read` · liens `/tresorerie/…/voir`
 
 #### Modèle GitHub
 
@@ -1583,9 +1584,9 @@ Depuis une réservation Admin, voir entrées/sorties liées.
 
 ## Critères d'acceptation
 
-- [ ] Panneau visible si permission treasury.read
-- [ ] Liste opérations liées
-- [ ] Empty state si aucune
+- [x] Panneau visible si permission treasury.read
+- [x] Liste opérations liées
+- [x] Empty state si aucune
 
 ## Plan de test
 

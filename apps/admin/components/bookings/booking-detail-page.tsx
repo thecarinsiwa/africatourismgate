@@ -58,6 +58,8 @@ import { BookingManifestSection } from './booking-manifest-section';
 import { BookingEmergencyContactSection } from './booking-emergency-contact-section';
 import { BookingMessagesSection } from './booking-messages-section';
 import { BookingStatusTimeline } from './booking-status-timeline';
+import { BookingTreasuryOpsPanel } from './booking-treasury-ops-panel';
+import { PermissionGate } from '../permission-gate';
 
 function parseMoneyToCents(value: string): number | null {
   const trimmed = value.trim();
@@ -680,6 +682,10 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
           </Card>
         </section>
       </div>
+
+      <PermissionGate permission="treasury.read">
+        <BookingTreasuryOpsPanel bookingId={bookingId} />
+      </PermissionGate>
 
       <BookingAssistedApprovalPanel
         bookingId={bookingId}

@@ -56,6 +56,7 @@
       "actions": "Actions",
       "bookingLines": "Lignes de réservation",
       "payments": "Paiements",
+      "treasury": "Trésorerie liée",
       "assignedGuides": "Guides assignés"
     },
     "clientFields": {
@@ -139,6 +140,21 @@
     "downloadConfirmationError": "Impossible de télécharger le PDF de confirmation.",
     "paymentsEmpty": "Aucun paiement enregistré pour cette réservation.",
     "paymentsAriaLabel": "Paiements",
+    "treasuryOps": {
+      "ariaLabel": "Opérations de trésorerie liées",
+      "empty": "Aucune entrée ou sortie de fonds liée à cette réservation.",
+      "kindEntry": "Entrée",
+      "kindExit": "Sortie",
+      "openDetail": "Voir",
+      "columns": {
+        "kind": "Type",
+        "date": "Date",
+        "amount": "Montant",
+        "status": "Statut",
+        "reference": "Référence",
+        "link": "Fiche"
+      }
+    },
     "statusDialog": {
       "title": "Confirmer le changement de statut",
       "description": "Passer la réservation de « {fromStatus} » à « {toStatus} » ?{reasonSuffix}",
