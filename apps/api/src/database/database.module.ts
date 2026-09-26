@@ -30,6 +30,11 @@ import { HeroSlides } from '../entities/hero-slide.entity';
 import { EmailOperationVerifications } from '../entities/email-operation-verification.entity';
 import { Notifications } from '../entities/notification.entity';
 import { SitePageViews } from '../entities/site-page-view.entity';
+import {
+  FundEntries,
+  FundEntryAttachments,
+  FundEntryBookings,
+} from '../entities/fund-entry.entity';
 import { ensureMigrations } from './ensure-migrations';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
 import { ensureSchema } from './ensure-schema';
@@ -64,6 +69,9 @@ const entityList = [
   MobileMoneyPaymentNumbers,
   Notifications,
   SitePageViews,
+  FundEntries,
+  FundEntryBookings,
+  FundEntryAttachments,
 ] as (new () => unknown)[];
 
 @Module({

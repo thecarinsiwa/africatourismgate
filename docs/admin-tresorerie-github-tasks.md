@@ -77,7 +77,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | ID        | Titre court                                              | Priorité | Type        | Effort |
 | --------- | -------------------------------------------------------- | -------- | ----------- | ------ |
 | TRESO-001 | Spec domaine Trésorerie + schéma cible — ✅              | Haute    | Docs / Spec | M      |
-| TRESO-002 | Migration DB entrées de fonds + pivots réservations      | Haute    | API / DB    | M      |
+| TRESO-002 | Migration DB entrées de fonds + pivots réservations — ✅ | Haute    | API / DB    | M      |
 | TRESO-003 | Migration DB états de besoin + sorties + pivots          | Haute    | API / DB    | M      |
 | TRESO-004 | Migration DB budgets (période / activité / produit)      | Haute    | API / DB    | M      |
 | TRESO-005 | Migration DB collaborateurs externes + jetons            | Haute    | API / DB    | M      |
@@ -171,14 +171,15 @@ Revue documentaire ; croisement avec TRESO-002…006.
 
 ---
 
-### TRESO-002 — Migration DB entrées de fonds + pivots réservations
+### TRESO-002 — Migration DB entrées de fonds + pivots réservations — ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
-**Branche suggérée :** `feature/tresorerie-migration-fund-entries`
+**Branche suggérée :** `feature/tresorerie-migration-fund-entries`  
+**Livrable :** [`database/migrations/add_treasury_fund_entries.sql`](../database/migrations/add_treasury_fund_entries.sql) · [`apps/api/src/entities/fund-entry.entity.ts`](../apps/api/src/entities/fund-entry.entity.ts)
 
 #### Modèle GitHub
 
-````markdown
+```markdown
 ## Contexte
 
 Les entrées de fonds doivent stocker montant, date, devise, source, mode, référence, auteur, observations, et lier 0..N réservations.
@@ -191,30 +192,28 @@ Les entrées de fonds doivent stocker montant, date, devise, source, mode, réf�
 
 ## Fichiers clés
 
-- `database/migrations/*`
-- `apps/api/src/entities/` (ou regenerated)
-- scripts `generate-entities.mjs` si applicable
+- `database/migrations/add_treasury_fund_entries.sql`
+- `apps/api/src/entities/fund-entry.entity.ts`
+- `apps/api/src/database/database.module.ts`
 
 ## Critères d'acceptation
 
-- [ ] Migration up/down OK
-- [ ] Pivot (0,N) avec Bookings
-- [ ] Colonnes métier présentes (montant, date, devise, source, mode, référence, user, observations)
+- [x] Migration up/down OK (`pnpm db:sync` ; DOWN commenté en bas du SQL)
+- [x] Pivot (0,N) avec Bookings (`fund_entry_bookings`)
+- [x] Colonnes métier présentes (montant, date, devise, source, mode, référence, user, observations)
 
 ## Plan de test
 
 ```bash
-# appliquer migration locale et vérifier schéma MySQL
+pnpm db:sync
+# SHOW TABLES LIKE 'fund_%';
 ```
-````
 
 ## Références
 
 - TRESO-001, Bookings existants
-
-````
-
----
+- docs/tresorerie-domain-model.md §4.1
+```
 
 ### TRESO-003 — Migration DB états de besoin + sorties + pivots
 
