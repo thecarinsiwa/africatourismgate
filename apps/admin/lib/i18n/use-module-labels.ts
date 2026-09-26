@@ -31,7 +31,6 @@ import type {
 } from '@africatourismgate/types';
 import {
   BUDGET_PERIOD_TYPES,
-  BUDGET_PRODUCT_TYPES,
   BUDGET_SCOPE_TYPES,
   EXPENSE_REQUEST_STATUSES,
   FUND_ENTRY_SOURCES,
