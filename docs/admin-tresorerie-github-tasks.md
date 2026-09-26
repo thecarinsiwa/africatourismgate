@@ -98,7 +98,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-020 | UI Admin circuit validation → décaissement — ✅          | Haute    | Admin       | L      |
 | TRESO-021 | UI Admin liste/création/détail sorties — ✅              | Haute    | Admin       | L      |
 | TRESO-022 | API transitions d’état + historique immutable — ✅       | Haute    | API         | M      |
-| TRESO-023 | API budgets mensuels / annuels                           | Moyenne  | API         | M      |
+| TRESO-023 | API budgets mensuels / annuels — ✅                      | Moyenne  | API         | M      |
 | TRESO-024 | API budgets par activité et produit/service              | Moyenne  | API         | M      |
 | TRESO-025 | UI Admin budgets liste + formulaires                     | Moyenne  | Admin       | M      |
 | TRESO-026 | UI suivi budget vs réalisé (agrégats légers)             | Moyenne  | Admin       | M      |
@@ -1110,7 +1110,7 @@ Matrice de transitions unitaires / e2e API.
 
 ---
 
-### TRESO-023 — API budgets mensuels / annuels
+### TRESO-023 — API budgets mensuels / annuels — ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:medium`  
 **Branche suggérée :** `feature/tresorerie-api-budgets-period`
@@ -1134,9 +1134,9 @@ Budgets période sans encore le détail activité/produit (TRESO-024).
 
 ## Critères d'acceptation
 
-- [ ] CRUD OK
-- [ ] Types month/year
-- [ ] RBAC
+- [x] CRUD OK
+- [x] Types month/year
+- [x] RBAC
 
 ## Plan de test
 

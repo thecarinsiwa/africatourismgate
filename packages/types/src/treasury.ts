@@ -349,6 +349,7 @@ export interface BudgetsListQuery {
   productType?: BudgetProductType;
   productId?: string;
   currency?: string;
+  search?: string;
 }
 
 export interface CreateBudgetRequest {
@@ -359,10 +360,8 @@ export interface CreateBudgetRequest {
   month?: number | null;
   amountCents: number;
   currency: string;
-  scopeType: BudgetScopeType;
-  activityId?: string | null;
-  productType?: BudgetProductType | null;
-  productId?: string | null;
+  /** TRESO-023: general only; activity/product → TRESO-024 */
+  scopeType?: 'general';
   notes?: string | null;
 }
 

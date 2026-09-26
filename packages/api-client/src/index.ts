@@ -352,6 +352,9 @@ import type {
   CreateFundEntryRequest,
   CreateExpenseRequestRequest,
   CreateFundExitRequest,
+  CreateBudgetRequest,
+  Budget,
+  BudgetsListQuery,
   ExpenseRequest,
   ExpenseRequestStatusHistoryEntry,
   ExpenseRequestsListQuery,
@@ -362,6 +365,7 @@ import type {
   FundExitsListQuery,
   TransitionExpenseRequestRequest,
   TransitionFundExitRequest,
+  UpdateBudgetRequest,
   UpdateExpenseRequestRequest,
   UpdateFundEntryRequest,
   UpdateFundExitRequest,
@@ -1458,6 +1462,29 @@ export class ApiClient {
     return this.request<void>(`/fund-exits/${id}/attachments/${attachmentId}`, {
       method: 'DELETE',
     });
+  }
+
+  listBudgets(
+    query?: BudgetsListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<Budget>> {
+    return fetchPaginated<Budget>(this, '/budgets', query, requestOptions);
+  }
+
+  getBudget(id: string): Promise<Budget> {
+    return this.request<Budget>(`/budgets/${id}`);
+  }
+
+  createBudget(body: CreateBudgetRequest): Promise<Budget> {
+    return this.request<Budget>('/budgets', { method: 'POST', body });
+  }
+
+  updateBudget(id: string, body: UpdateBudgetRequest): Promise<Budget> {
+    return this.request<Budget>(`/budgets/${id}`, { method: 'PATCH', body });
+  }
+
+  deleteBudget(id: string): Promise<void> {
+    return this.request<void>(`/budgets/${id}`, { method: 'DELETE' });
   }
 
   getPayment(id: string): Promise<PaymentAdminDetail> {
