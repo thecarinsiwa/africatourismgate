@@ -54,10 +54,8 @@ async function fillEmergencyContact(
     .getByLabel(/nom du contact|contact name|nombre del contacto/i)
     .first()
     .fill(opts?.name ?? 'Contact Urgence');
-  await page
-    .getByLabel(/^t[ée]l[ée]phone$|^phone$|^tel[ée]fono$/i)
-    .first()
-    .fill(opts?.phone ?? '+243900000001');
+  // Labels include required "*"; emergency phone is the only input[type=tel] on recap.
+  await page.locator('input[type="tel"]').first().fill(opts?.phone ?? '+243900000001');
 }
 
 async function fillTravelersWithoutId(
@@ -70,13 +68,13 @@ async function fillTravelersWithoutId(
     await nameInputs.nth(i).fill(`Voyageur ${i + 1}`);
   }
 
-  // Traveler nationality selects come after the emergency-contact country select.
+  // Traveler "Nationalité" only (emergency country is labeled "Pays").
   for (let i = 0; i < count; i += 1) {
     const nat = page
       .getByRole('button', {
-        name: /choisir un pays|choose a country|elegir un pa[ií]s|nationalit|nationality|nacionalidad/i,
+        name: /nationalit|nationality|nacionalidad/i,
       })
-      .nth(i + 1);
+      .nth(i);
     await nat.click();
     await page.locator('input[type="search"]').last().fill('Congo');
     await page.getByRole('option').filter({ hasText: /\(CD\)/i }).first().click();
@@ -179,7 +177,7 @@ test('manifeste checkout: bloqué si téléphone urgence manquant', async ({ pag
   await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();
   await fillCheckoutManifest(page);
 
-  await page.getByLabel(/^t[ée]l[ée]phone$|^phone$|^tel[ée]fono$/i).first().fill('');
+  await page.locator('input[type="tel"]').first().fill('');
 
   await page
     .getByRole('button', {

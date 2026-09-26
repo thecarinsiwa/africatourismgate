@@ -139,7 +139,11 @@ async function fetchPublic<T>(path: string): Promise<T> {
       cache: 'no-store',
     });
   } catch (cause) {
-    if (typeof window !== 'undefined') {
+    // Web e2e runs without the API; do not raise the global lock overlay under Playwright.
+    if (
+      typeof window !== 'undefined' &&
+      !(typeof navigator !== 'undefined' && navigator.webdriver)
+    ) {
       notifyApiUnreachable();
     }
     const detail = cause instanceof Error ? cause.message : 'network error';
