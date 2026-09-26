@@ -67,6 +67,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 ### Documents liés
 
 - [tresorerie-domain-model.md](./tresorerie-domain-model.md) — TRESO-001
+- [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md) — TRESO-041 handoff épic suivant
 - [web-github-tasks.md](./web-github-tasks.md) — convention documentaire
 - Patterns : `apps/admin/config/dashboard-nav.config.ts`, `admin-route-permissions.ts`, `apps/api/src/modules/rbac/`
 
@@ -116,7 +117,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-038 | Hub `/tresorerie` + cartes stats — ✅                    | Moyenne  | Admin       | S      |
 | TRESO-039 | Stub pont comptable `accounting_link` + mapping — ✅     | Basse    | API         | M      |
 | TRESO-040 | UI placeholder section Comptabilité — ✅                 | Basse    | Admin       | S      |
-| TRESO-041 | Doc handoff épic SYSCOHADA suivant                       | Basse    | Docs        | S      |
+| TRESO-041 | Doc handoff épic SYSCOHADA suivant — ✅                  | Basse    | Docs        | S      |
 | TRESO-042 | E2E smoke nav + CRUD entrée                              | Haute    | Testing     | M      |
 | TRESO-043 | E2E happy path circuit sortie                            | Haute    | Testing     | M      |
 | TRESO-044 | QA manuelle RBAC rôles trésorerie                        | Haute    | Testing     | M      |
@@ -1843,10 +1844,11 @@ Navigation manuelle.
 
 ---
 
-### TRESO-041 — Doc handoff épic SYSCOHADA suivant
+### TRESO-041 — Doc handoff épic SYSCOHADA suivant — ✅
 
-**Labels :** `admin`, `tresorerie`, `docs`, `priority:low`  
+**Labels :** `admin`, `tresorerie`, `docs`, `priority:low`
 **Branche suggérée :** `docs/tresorerie-syscohada-epic`
+**Livrable :** [`docs/tresorerie-syscohada-epic-next.md`](./tresorerie-syscohada-epic-next.md) — périmètre reporté, dépendances TRESO, consommation `accounting_link`, esquisse `SYSCO-xxx`
 
 #### Modèle GitHub
 
@@ -1868,9 +1870,9 @@ Ce lot exclut volontairement la comptabilité réglementaire.
 
 ## Critères d'acceptation
 
-- [ ] Périmètre reporté exhaustif
-- [ ] Dépendances au lot actuel listées
-- [ ] Prêt à dériver un futur doc tâches
+- [x] Périmètre reporté exhaustif
+- [x] Dépendances au lot actuel listées
+- [x] Prêt à dériver un futur doc tâches
 
 ## Plan de test
 

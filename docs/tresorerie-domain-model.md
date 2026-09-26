@@ -2,7 +2,7 @@
 
 > **Statut :** spécification cible avant migrations (TRESO-002…006) et API.  
 > **Périmètre lot :** UI Admin + contrats API minimaux.  
-> **Hors scope :** comptabilité SYSCOHADA complète → voir **TRESO-041** dans [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md) et futur `docs/tresorerie-syscohada-epic-next.md`.
+> **Hors scope :** comptabilité SYSCOHADA complète → voir [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md) (TRESO-041) et [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md).
 
 **Documents liés :** [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md) · `Bookings` dans [`commerce.entity.ts`](../apps/api/src/entities/generated/commerce.entity.ts)
 
