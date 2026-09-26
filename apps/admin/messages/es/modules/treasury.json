@@ -705,6 +705,44 @@
       "accounting_link": "Enlace contable"
     }
   },
+  "accounting": {
+    "notice": {
+      "title": "Épica SYSCOHADA próximamente",
+      "body": "Esta sección solo expone el puente stub (accounting_links). No hay diario, libro mayor, balance ni plan contable en este lote.",
+      "outOfScope": "La contabilidad regulatoria SYSCOHADA se entregará en una épica dedicada (TRESO-041).",
+      "docLink": "Documentación handoff TRESO-041"
+    },
+    "list": {
+      "ariaLabel": "Enlaces contables stub",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.accounting_link.read.",
+      "emptyDefault": "No hay enlaces contables stub.",
+      "emptyFiltered": "Ningún enlace coincide con los filtros.",
+      "columns": {
+        "createdAt": "Creado",
+        "fundOpType": "Tipo de operación",
+        "fundOp": "Operación",
+        "status": "Estado",
+        "mappingRuleKey": "Regla de mapping",
+        "journalEntryId": "Asiento (futuro)"
+      }
+    },
+    "filters": {
+      "fundOpType": "Tipo de operación",
+      "status": "Estado"
+    },
+    "fundOpTypes": {
+      "fund_entry": "Entrada de fondos",
+      "fund_exit": "Salida de fondos"
+    },
+    "statuses": {
+      "pending": "Pendiente",
+      "linked": "Vinculado",
+      "skipped": "Omitido"
+    },
+    "pagination": {
+      "item": "enlace"
+    }
+  },
   "void": {
     "title": "Anular operación",
     "description": "La operación pasará al estado anulado. Esta acción queda registrada en la auditoría.",

@@ -705,6 +705,44 @@
       "accounting_link": "Accounting link"
     }
   },
+  "accounting": {
+    "notice": {
+      "title": "SYSCOHADA epic coming soon",
+      "body": "This section only exposes the stub bridge (accounting_links). No journal, general ledger, balance sheet, or chart of accounts is available in this release.",
+      "outOfScope": "Regulatory SYSCOHADA accounting will ship in a dedicated epic (TRESO-041).",
+      "docLink": "TRESO-041 handoff documentation"
+    },
+    "list": {
+      "ariaLabel": "Stub accounting links",
+      "accessDenied": "Access denied: treasury.accounting_link.read permission required.",
+      "emptyDefault": "No stub accounting links.",
+      "emptyFiltered": "No link matches the filters.",
+      "columns": {
+        "createdAt": "Created",
+        "fundOpType": "Operation type",
+        "fundOp": "Operation",
+        "status": "Status",
+        "mappingRuleKey": "Mapping rule",
+        "journalEntryId": "Journal entry (future)"
+      }
+    },
+    "filters": {
+      "fundOpType": "Operation type",
+      "status": "Status"
+    },
+    "fundOpTypes": {
+      "fund_entry": "Fund entry",
+      "fund_exit": "Fund exit"
+    },
+    "statuses": {
+      "pending": "Pending",
+      "linked": "Linked",
+      "skipped": "Skipped"
+    },
+    "pagination": {
+      "item": "link"
+    }
+  },
   "void": {
     "title": "Void operation",
     "description": "The operation will be marked as voided. This action is recorded in the audit log.",
