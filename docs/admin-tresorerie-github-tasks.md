@@ -95,9 +95,9 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-017 | API Nest `fund-exits` liées à un état de besoin — ✅     | Haute    | API         | L      |
 | TRESO-018 | API sorties ↔ réservations (0,N) + justificatifs — ✅    | Haute    | API         | M      |
 | TRESO-019 | UI Admin liste/création états de besoin — ✅             | Haute    | Admin       | M      |
-| TRESO-020 | UI Admin circuit validation → décaissement               | Haute    | Admin       | L      |
+| TRESO-020 | UI Admin circuit validation → décaissement — ✅          | Haute    | Admin       | L      |
 | TRESO-021 | UI Admin liste/création/détail sorties                   | Haute    | Admin       | L      |
-| TRESO-022 | API transitions d’état + historique immutable            | Haute    | API         | M      |
+| TRESO-022 | API transitions d’état + historique immutable — ✅       | Haute    | API         | M      |
 | TRESO-023 | API budgets mensuels / annuels                           | Moyenne  | API         | M      |
 | TRESO-024 | API budgets par activité et produit/service              | Moyenne  | API         | M      |
 | TRESO-025 | UI Admin budgets liste + formulaires                     | Moyenne  | Admin       | M      |
@@ -989,7 +989,7 @@ Créer une demande ; la retrouver en liste.
 
 ---
 
-### TRESO-020 — UI Admin circuit validation → décaissement
+### TRESO-020 — UI Admin circuit validation → décaissement — ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-ui-expense-workflow`
@@ -1070,7 +1070,7 @@ Créer sortie depuis besoin autorisé ; vérifier détail.
 
 ---
 
-### TRESO-022 — API transitions d’état + historique immutable
+### TRESO-022 — API transitions d’état + historique immutable — ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-api-workflow-transitions`

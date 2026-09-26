@@ -18,6 +18,7 @@ import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { CreateExpenseRequestDto } from './dto/create-expense-request.dto';
 import { ExpenseRequestsListQueryDto } from './dto/expense-requests-list-query.dto';
+import { TransitionExpenseRequestDto } from './dto/transition-expense-request.dto';
 import { UpdateExpenseRequestDto } from './dto/update-expense-request.dto';
 import { ExpenseRequestsService } from './expense-requests.service';
 
@@ -56,6 +57,25 @@ export class ExpenseRequestsController {
     @CurrentUser() user: AuthUserDto,
   ) {
     return this.service.createFromDto(dto, user.id);
+  }
+
+  @RequirePermissions(
+    'treasury.expense_requests.create',
+    'treasury.expense_requests.validate',
+    'treasury.expense_requests.authorize',
+    'treasury.exits.write',
+  )
+  @Post(':id/transition')
+  @ApiOperation({
+    summary:
+      'Transition expense request status (state machine + immutable history)',
+  })
+  transition(
+    @Param('id') id: string,
+    @Body() dto: TransitionExpenseRequestDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.transition(id, dto, user.id);
   }
 
   @RequirePermissions('treasury.expense_requests.create')

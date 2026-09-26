@@ -58,6 +58,10 @@
   },
   "workflow": {
     "title": "Validation workflow",
+    "progressAria": "Expense request workflow progress",
+    "historyTitle": "Transition history",
+    "historyEmpty": "No history events yet.",
+    "transition": "{fromStatus} → {toStatus}",
     "steps": {
       "draft": "Draft",
       "submitted": "Submission",
@@ -77,6 +81,28 @@
       "attachProof": "Add supporting document",
       "markRecorded": "Mark as recorded"
     },
+    "confirm": {
+      "submitTitle": "Submit this request?",
+      "submitDescription": "The request will become submitted and can no longer be edited.",
+      "validateTitle": "Validate this request?",
+      "validateDescription": "Confirm the business review of this request.",
+      "authorizeTitle": "Authorize this spend?",
+      "authorizeDescription": "Once authorized, a fund exit can be created.",
+      "rejectTitle": "Reject this request?",
+      "rejectDescription": "The request will be rejected. A reason is required.",
+      "cancelTitle": "Cancel this request?",
+      "cancelDescription": "The request will be permanently cancelled.",
+      "markRecordedTitle": "Close this request?",
+      "markRecordedDescription": "Marks the expense request as closed after disbursement and recording.",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
+    "toast": {
+      "successTitle": "Transition completed",
+      "successMessage": "Status has been updated.",
+      "errorTitle": "Transition refused"
+    },
+    "disbursementHint": "Fund exit details (disbursement / attachments) arrive with TRESO-021.",
     "commentLabel": "Comment",
     "commentPlaceholder": "Reason or note (optional)…",
     "rejectReasonRequired": "Please provide a rejection reason."

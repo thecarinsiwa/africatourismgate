@@ -58,6 +58,10 @@
   },
   "workflow": {
     "title": "Circuito de validación",
+    "progressAria": "Progreso del circuito de validación",
+    "historyTitle": "Historial de transiciones",
+    "historyEmpty": "Aún no hay eventos de historial.",
+    "transition": "{fromStatus} → {toStatus}",
     "steps": {
       "draft": "Borrador",
       "submitted": "Envío",
@@ -77,6 +81,28 @@
       "attachProof": "Añadir justificante",
       "markRecorded": "Marcar como registrado"
     },
+    "confirm": {
+      "submitTitle": "¿Enviar la solicitud?",
+      "submitDescription": "La solicitud pasará a enviada y ya no podrá modificarse.",
+      "validateTitle": "¿Validar la solicitud?",
+      "validateDescription": "Confirme el control de negocio de esta solicitud.",
+      "authorizeTitle": "¿Autorizar el gasto?",
+      "authorizeDescription": "Una vez autorizada, se podrá crear una salida de fondos.",
+      "rejectTitle": "¿Rechazar la solicitud?",
+      "rejectDescription": "La solicitud será rechazada. Se requiere un motivo.",
+      "cancelTitle": "¿Cancelar la solicitud?",
+      "cancelDescription": "La solicitud se cancelará de forma definitiva.",
+      "markRecordedTitle": "¿Cerrar la solicitud?",
+      "markRecordedDescription": "Marca el estado de necesidad como cerrado tras el desembolso y el registro.",
+      "confirm": "Confirmar",
+      "cancel": "Cancelar"
+    },
+    "toast": {
+      "successTitle": "Transición realizada",
+      "successMessage": "El estado se ha actualizado.",
+      "errorTitle": "Transición rechazada"
+    },
+    "disbursementHint": "El detalle de salidas (desembolso / justificantes) llega con TRESO-021.",
     "commentLabel": "Comentario",
     "commentPlaceholder": "Motivo u observación (opcional)…",
     "rejectReasonRequired": "Indique un motivo de rechazo."

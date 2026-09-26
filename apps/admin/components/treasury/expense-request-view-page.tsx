@@ -24,6 +24,8 @@ import {
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { PermissionGate } from '../permission-gate';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
+import { ExpenseRequestWorkflowActions } from './expense-request-workflow-actions';
+import { ExpenseRequestWorkflowTimeline } from './expense-request-workflow-timeline';
 
 const STATUS_BADGE: Record<ExpenseRequestStatus, DataTableBadgeVariant> = {
   draft: 'muted',
@@ -120,6 +122,24 @@ export function ExpenseRequestViewPage({
     void load();
   }, [load]);
 
+  const refreshHistory = useCallback(async () => {
+    try {
+      const statusHistory =
+        await getApiClient().listExpenseRequestStatusHistory(expenseRequestId);
+      setHistory(statusHistory);
+    } catch {
+      /* keep previous history */
+    }
+  }, [expenseRequestId]);
+
+  const handleTransitioned = useCallback(
+    (updated: ExpenseRequest) => {
+      setRequest(updated);
+      void refreshHistory();
+    },
+    [refreshHistory],
+  );
+
   const formatDate = useCallback(
     (value: string | null) => {
       if (!value) return emptyDash;
@@ -189,6 +209,18 @@ export function ExpenseRequestViewPage({
         <p className="font-mono text-xs text-atg-muted">{request.id}</p>
       </div>
 
+      <ExpenseRequestWorkflowActions
+        expenseRequest={request}
+        onTransitioned={handleTransitioned}
+      />
+
+      <Card variant="dashboard" padding="md">
+        <ExpenseRequestWorkflowTimeline
+          currentStatus={request.status}
+          history={history}
+        />
+      </Card>
+
       <Card variant="dashboard" padding="md">
         <dl className="grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
           <ProfileField
@@ -247,34 +279,6 @@ export function ExpenseRequestViewPage({
             </div>
           ) : null}
         </dl>
-      </Card>
-
-      <Card variant="dashboard" padding="md">
-        <h2 className="mb-3 text-sm font-semibold text-atg-fg">{t('timeline')}</h2>
-        {history.length === 0 ? (
-          <p className="text-sm text-atg-muted">{t('timelineEmpty')}</p>
-        ) : (
-          <ul className="space-y-3">
-            {history.map((entry) => (
-              <li
-                key={entry.id}
-                className="flex flex-col gap-0.5 border-l-2 border-atg-border pl-3"
-              >
-                <div className="flex flex-wrap items-center gap-2">
-                  <DataTableBadge variant={STATUS_BADGE[entry.toStatus] ?? 'muted'}>
-                    {statusLabels[entry.toStatus] ?? entry.toStatus}
-                  </DataTableBadge>
-                  <span className="text-xs text-atg-muted">
-                    {formatDateTime(entry.createdAt)}
-                  </span>
-                </div>
-                {entry.comment ? (
-                  <p className="text-sm text-atg-muted">{entry.comment}</p>
-                ) : null}
-              </li>
-            ))}
-          </ul>
-        )}
       </Card>
 
       <Card variant="dashboard" padding="md">

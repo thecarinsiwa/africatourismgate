@@ -360,6 +360,7 @@ import type {
   FundEntry,
   FundExit,
   FundExitsListQuery,
+  TransitionExpenseRequestRequest,
   UpdateExpenseRequestRequest,
   UpdateFundEntryRequest,
   UpdateFundExitRequest,
@@ -1380,6 +1381,16 @@ export class ApiClient {
 
   deleteExpenseRequest(id: string): Promise<void> {
     return this.request<void>(`/expense-requests/${id}`, { method: 'DELETE' });
+  }
+
+  transitionExpenseRequest(
+    id: string,
+    body: TransitionExpenseRequestRequest,
+  ): Promise<ExpenseRequest> {
+    return this.request<ExpenseRequest>(`/expense-requests/${id}/transition`, {
+      method: 'POST',
+      body,
+    });
   }
 
   listFundExits(

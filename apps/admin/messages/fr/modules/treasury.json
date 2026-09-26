@@ -58,6 +58,10 @@
   },
   "workflow": {
     "title": "Circuit de validation",
+    "progressAria": "Progression du circuit de validation",
+    "historyTitle": "Historique des transitions",
+    "historyEmpty": "Aucun événement d'historique.",
+    "transition": "{fromStatus} → {toStatus}",
     "steps": {
       "draft": "Brouillon",
       "submitted": "Soumission",
@@ -77,6 +81,28 @@
       "attachProof": "Ajouter un justificatif",
       "markRecorded": "Marquer comme enregistré"
     },
+    "confirm": {
+      "submitTitle": "Soumettre la demande ?",
+      "submitDescription": "La demande passera en statut soumis et ne pourra plus être modifiée.",
+      "validateTitle": "Valider la demande ?",
+      "validateDescription": "Confirmez le contrôle métier de cette demande.",
+      "authorizeTitle": "Autoriser la dépense ?",
+      "authorizeDescription": "Une fois autorisée, une sortie de fonds pourra être créée.",
+      "rejectTitle": "Rejeter la demande ?",
+      "rejectDescription": "La demande sera rejetée. Un motif est obligatoire.",
+      "cancelTitle": "Annuler la demande ?",
+      "cancelDescription": "La demande sera annulée de façon définitive.",
+      "markRecordedTitle": "Clôturer la demande ?",
+      "markRecordedDescription": "Marque l'état de besoin comme clôturé après décaissement et enregistrement.",
+      "confirm": "Confirmer",
+      "cancel": "Annuler"
+    },
+    "toast": {
+      "successTitle": "Transition effectuée",
+      "successMessage": "Le statut a été mis à jour.",
+      "errorTitle": "Transition refusée"
+    },
+    "disbursementHint": "Le détail des sorties (décaissement / justificatifs) arrive avec TRESO-021.",
     "commentLabel": "Commentaire",
     "commentPlaceholder": "Motif ou observation (optionnel)…",
     "rejectReasonRequired": "Indiquez un motif de rejet."
