@@ -102,7 +102,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-024 | API budgets par activité et produit/service — ✅         | Moyenne  | API         | M      |
 | TRESO-025 | UI Admin budgets liste + formulaires — ✅                | Moyenne  | Admin       | M      |
 | TRESO-026 | UI suivi budget vs réalisé (agrégats légers) — ✅        | Moyenne  | Admin       | M      |
-| TRESO-027 | API invitation e-mail + jeton/lien sécurisé              | Moyenne  | API         | M      |
+| TRESO-027 | API invitation e-mail + jeton/lien sécurisé — ✅         | Moyenne  | API         | M      |
 | TRESO-028 | API activate/deactivate + permissions externes           | Moyenne  | API         | M      |
 | TRESO-029 | UI Admin gestion collaborateurs externes                 | Moyenne  | Admin       | M      |
 | TRESO-030 | Flux minimal état de besoin via jeton                    | Moyenne  | Admin / API | L      |
@@ -1271,10 +1271,11 @@ Budget + quelques opérations ; vérifier écarts.
 
 ---
 
-### TRESO-027 — API invitation e-mail + jeton/lien sécurisé
+### TRESO-027 — API invitation e-mail + jeton/lien sécurisé — ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:medium`  
-**Branche suggérée :** `feature/tresorerie-api-external-invite`
+**Branche suggérée :** `feature/tresorerie-api-external-invite`  
+**Livrable :** `POST /treasury-external-collaborators/invite` · `POST …/tokens/validate` · `POST …/tokens/:id/revoke` · e-mail `sendTreasuryExternalInvite` (SHA-256 + TTL)
 
 #### Modèle GitHub
 
@@ -1297,9 +1298,9 @@ Création d’accès externe à partir d’un e-mail + lien sécurisé.
 
 ## Critères d'acceptation
 
-- [ ] Invite crée collaborateur + jeton
-- [ ] E-mail envoyé (ou stub log en dev)
-- [ ] Jeton expire / invalidable
+- [x] Invite crée collaborateur + jeton
+- [x] E-mail envoyé (ou stub log en dev)
+- [x] Jeton expire / invalidable
 
 ## Plan de test
 

@@ -311,6 +311,7 @@ export type {
   FundExitStatus,
   FundExitsListQuery,
   InviteTreasuryExternalCollaboratorRequest,
+  InviteTreasuryExternalCollaboratorResponse,
   TransitionExpenseRequestRequest,
   TransitionFundExitRequest,
   TreasuryAccessToken,
@@ -327,6 +328,8 @@ export type {
   UpdateFundEntryRequest,
   UpdateFundExitRequest,
   UpdateTreasuryExternalCollaboratorRequest,
+  ValidateTreasuryAccessTokenRequest,
+  ValidateTreasuryAccessTokenResponse,
   VoidTreasuryOperationRequest,
 } from './treasury.js';
 

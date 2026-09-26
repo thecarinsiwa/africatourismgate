@@ -13,6 +13,7 @@ import type {
   BookingConfirmationEmailPayload,
   OperationAlertEmailPayload,
   PasswordResetEmailPayload,
+  TreasuryExternalInviteEmailPayload,
   WelcomeEmailPayload,
 } from './email.types';
 
@@ -344,6 +345,30 @@ ${noticeBox('Si vous n\'êtes pas à l\'origine de cette demande, ignorez cet e-
     },
   );
   const text = `Bonjour ${payload.firstName},\n\nRéinitialisez votre mot de passe : ${payload.resetUrl}\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail.`;
+  return { subject, html, text };
+}
+
+export function renderTreasuryExternalInviteEmail(
+  payload: TreasuryExternalInviteEmailPayload,
+  branding: EmailBrandingValue,
+): { subject: string; html: string; text: string } {
+  const name = escapeHtml(payload.displayName.trim() || 'Collaborateur');
+  const ttl = escapeHtml(payload.ttlLabel);
+  const subject = 'Invitation — accès trésorerie externe';
+  const html = layout(
+    subject,
+    `${headline('Accès trésorerie externe', branding)}
+${paragraph(`Bonjour <strong>${name}</strong>,`)}
+${paragraph(`Vous êtes invité(e) à accéder à l’espace trésorerie en tant que collaborateur externe. Ce lien est valide <strong>${ttl}</strong>.`)}
+${ctaButton(payload.inviteUrl, 'Ouvrir mon accès', branding)}
+${noticeBox('Si vous n’attendiez pas cette invitation, ignorez cet e-mail.')}
+<p style="margin:16px 0 0;font-size:12px;line-height:1.5;color:${BRAND.muted};word-break:break-all;">Lien direct : ${escapeHtml(payload.inviteUrl)}</p>`,
+    branding,
+    {
+      preheader: `Invitation trésorerie | Lien valide ${ttl}.`,
+    },
+  );
+  const text = `Bonjour ${payload.displayName},\n\nVous êtes invité(e) à accéder à l’espace trésorerie. Lien (valide ${payload.ttlLabel}) : ${payload.inviteUrl}\n\nSi vous n’attendiez pas cette invitation, ignorez cet e-mail.`;
   return { subject, html, text };
 }
 

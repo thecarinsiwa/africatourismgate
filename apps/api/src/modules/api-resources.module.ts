@@ -26,6 +26,7 @@ import { FundEntriesModule } from './resources/fund-entries/fund-entries.module'
 import { ExpenseRequestsModule } from './resources/expense-requests/expense-requests.module';
 import { FundExitsModule } from './resources/fund-exits/fund-exits.module';
 import { BudgetsModule } from './resources/budgets/budgets.module';
+import { ExternalCollaboratorsModule } from './resources/external-collaborators/external-collaborators.module';
 import { OrganizationMaintenancesModule } from './resources/organization-maintenances/organization-maintenances.module';
 import { PermissionsModule } from './resources/permissions/permissions.module';
 import { RolesModule } from './resources/roles/roles.module';
@@ -127,6 +128,7 @@ import { Module } from '@nestjs/common';
     ExpenseRequestsModule,
     FundExitsModule,
     BudgetsModule,
+    ExternalCollaboratorsModule,
     OrganizationMaintenancesModule,
     PermissionsModule,
     RolesModule,

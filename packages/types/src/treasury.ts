@@ -447,6 +447,25 @@ export interface InviteTreasuryExternalCollaboratorRequest {
   tokenTtlHours?: number;
 }
 
+export interface InviteTreasuryExternalCollaboratorResponse {
+  collaborator: TreasuryExternalCollaborator;
+  token: TreasuryAccessToken;
+  emailSent: boolean;
+  /** Présent si l’e-mail n’a pas pu être envoyé (dev / stub) */
+  inviteUrl?: string;
+}
+
+export interface ValidateTreasuryAccessTokenRequest {
+  token: string;
+}
+
+export interface ValidateTreasuryAccessTokenResponse {
+  valid: true;
+  collaborator: TreasuryExternalCollaborator;
+  token: TreasuryAccessToken;
+  effectiveScopes: string[];
+}
+
 export interface UpdateTreasuryExternalCollaboratorRequest {
   displayName?: string | null;
   isActive?: boolean;

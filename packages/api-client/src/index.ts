@@ -357,6 +357,11 @@ import type {
   BudgetVsActualSummary,
   BudgetsListQuery,
   BudgetsVsActualQuery,
+  InviteTreasuryExternalCollaboratorRequest,
+  InviteTreasuryExternalCollaboratorResponse,
+  ValidateTreasuryAccessTokenRequest,
+  ValidateTreasuryAccessTokenResponse,
+  TreasuryAccessToken,
   ExpenseRequest,
   ExpenseRequestStatusHistoryEntry,
   ExpenseRequestsListQuery,
@@ -1504,6 +1509,31 @@ export class ApiClient {
 
   deleteBudget(id: string): Promise<void> {
     return this.request<void>(`/budgets/${id}`, { method: 'DELETE' });
+  }
+
+  inviteTreasuryExternalCollaborator(
+    body: InviteTreasuryExternalCollaboratorRequest,
+  ): Promise<InviteTreasuryExternalCollaboratorResponse> {
+    return this.request<InviteTreasuryExternalCollaboratorResponse>(
+      '/treasury-external-collaborators/invite',
+      { method: 'POST', body },
+    );
+  }
+
+  validateTreasuryAccessToken(
+    body: ValidateTreasuryAccessTokenRequest,
+  ): Promise<ValidateTreasuryAccessTokenResponse> {
+    return this.request<ValidateTreasuryAccessTokenResponse>(
+      '/treasury-external-collaborators/tokens/validate',
+      { method: 'POST', body, skipAuth: true },
+    );
+  }
+
+  revokeTreasuryAccessToken(tokenId: string): Promise<TreasuryAccessToken> {
+    return this.request<TreasuryAccessToken>(
+      `/treasury-external-collaborators/tokens/${tokenId}/revoke`,
+      { method: 'POST' },
+    );
   }
 
   getPayment(id: string): Promise<PaymentAdminDetail> {
