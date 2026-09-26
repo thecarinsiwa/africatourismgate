@@ -1,10 +1,11 @@
 # Handoff — Épic SYSCOHADA (suite Trésorerie)
 
-> **Document de bascule** pour un futur lot de tâches GitHub (comptabilité réglementaire).  
+> **Document de bascule** pour le lot de tâches GitHub comptabilité réglementaire.  
 > **Lot actuel (Admin + API trésorerie opérationnelle) :** hors scope volontaire — voir [admin-tresorerie-readme.md](./admin-tresorerie-readme.md), [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md) (TRESO-001 → TRESO-045) et [tresorerie-domain-model.md](./tresorerie-domain-model.md) §10.  
-> **Stub livré :** TRESO-039 (`accounting_links`) · TRESO-040 (UI `/tresorerie/comptabilite`).
+> **Stub livré :** TRESO-039 (`accounting_links`) · TRESO-040 (UI `/tresorerie/comptabilite`).  
+> **Doc tâches épic :** [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md) (SYSCO-001 → SYSCO-012).
 
-**Statut :** prêt à dériver un doc tâches du type `docs/admin-syscohada-github-tasks.md`.  
+**Statut :** doc tâches dérivé — prêt à ouvrir issues GitHub après revue finance / tech lead.  
 **Références métier :** cahier des charges module Trésorerie §2 (comptabilité / états réglementaires) · domaine §4.7 / §10.
 
 ---
@@ -188,14 +189,14 @@ sequenceDiagram
 
 ---
 
-## 5. Esquisse de découpage tâches (futur doc)
+## 5. Découpage tâches
 
-Préfixe suggéré : **`SYSCO-xxx`**. Document dérivé cible : `docs/admin-syscohada-github-tasks.md` (même convention que TRESO).
+Préfixe : **`SYSCO-xxx`**. Document opérationnel : [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md) (même convention que TRESO).
 
-| ID indicatif | Titre court | Dépendances lot actuel |
-| ------------ | ----------- | ---------------------- |
+| ID | Titre court | Dépendances lot actuel |
+| -- | ----------- | ---------------------- |
 | SYSCO-001 | Spec domaine comptable OHADA + schéma `chart_of_accounts` / `journal_*` | Domaine TRESO §10 |
-| SYSCO-002 | Migration plan comptable + exercices | — |
+| SYSCO-002 | Migration plan comptable + exercices | SYSCO-001 |
 | SYSCO-003 | Migration journaux / écritures / lignes | SYSCO-002 |
 | SYSCO-004 | Moteur mapping (remplace skeleton) + job/API « comptabiliser » | TRESO-039 |
 | SYSCO-005 | Remplir `accounting_links.journal_entry_id` + statuts | TRESO-039, SYSCO-003–004 |
@@ -207,7 +208,7 @@ Préfixe suggéré : **`SYSCO-xxx`**. Document dérivé cible : `docs/admin-sysc
 | SYSCO-011 | E2E : opération → linked → visible au journal | TRESO-042/043 patterns |
 | SYSCO-012 | Sync OpenAPI + doc module compta | TRESO-045 pattern |
 
-Effort et priorités à caler avec finance / tech lead lors de l’ouverture de l’épic.
+Effort et priorités à caler avec finance / tech lead lors de l’ouverture de l’épic. Détail (labels, branches, modèles GitHub) → doc tâches.
 
 ---
 
@@ -230,8 +231,9 @@ Effort et priorités à caler avec finance / tech lead lors de l’ouverture de 
 - [x] Dépendances lot TRESO listées (§3)
 - [x] Consommation `accounting_link` décrite (§4)
 - [x] Esquisse IDs tâches pour dériver un doc issues (§5)
+- [x] Création du doc tâches [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md) (SYSCO-001…012)
 - [ ] Revue finance / tech lead (comptes, moments de comptabilisation)
-- [ ] Création du doc tâches `admin-syscohada-github-tasks.md` + labels GitHub
+- [ ] Labels GitHub `syscohada` / `comptabilite` + issues créées
 
 ---
 
@@ -239,6 +241,7 @@ Effort et priorités à caler avec finance / tech lead lors de l’ouverture de 
 
 | Doc | Rôle |
 | --- | ---- |
+| [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md) | Lot SYSCO-001…012 · modèles issues |
 | [tresorerie-domain-model.md](./tresorerie-domain-model.md) | Modèle + hors scope §10 |
 | [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md) | Lot TRESO-001…045 · TRESO-039/040/041 |
 | `apps/api/.../treasury-accounting-mapping.config.ts` | Skeleton mapping |

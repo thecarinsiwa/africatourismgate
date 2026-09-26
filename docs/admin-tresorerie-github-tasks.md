@@ -5,7 +5,8 @@
 
 **Guide module (routes / permissions / client) :** [admin-tresorerie-readme.md](./admin-tresorerie-readme.md)  
 **Modèle de domaine (TRESO-001) :** [tresorerie-domain-model.md](./tresorerie-domain-model.md)  
-**Handoff SYSCOHADA :** [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md)
+**Handoff SYSCOHADA :** [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md)  
+**Tâches épic suivant :** [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md) (SYSCO-001 → SYSCO-012)
 
 ---
 
@@ -70,6 +71,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 
 - [tresorerie-domain-model.md](./tresorerie-domain-model.md) — TRESO-001
 - [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md) — TRESO-041 handoff épic suivant
+- [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md) — SYSCO-001…012 (comptabilité réglementaire)
 - [web-github-tasks.md](./web-github-tasks.md) — convention documentaire
 - Patterns : `apps/admin/config/dashboard-nav.config.ts`, `admin-route-permissions.ts`, `apps/api/src/modules/rbac/`
 
