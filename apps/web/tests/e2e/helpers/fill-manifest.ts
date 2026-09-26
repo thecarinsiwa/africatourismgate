@@ -64,11 +64,11 @@ export async function mockManifestApi(page: Page): Promise<void> {
   });
 }
 
-async function selectNationality(page: Page, index: number, countryQuery: string) {
-  // Label text includes a required "*", so avoid exact ^…$ getByLabel matches.
+/** Fill traveler nationality SearchableSelect (label Nationalité — not emergency "Pays"). */
+async function selectTravelerNationality(page: Page, index: number, countryQuery: string) {
   const nat = page
     .getByRole('button', {
-      name: /choisir un pays|choose a country|elegir un pa[ií]s|nationalit|nationality|nacionalidad/i,
+      name: /nationalit|nationality|nacionalidad/i,
     })
     .nth(index);
   await nat.click();
@@ -93,9 +93,9 @@ export async function fillCheckoutManifest(page: Page): Promise<number> {
     await nameInputs.nth(i).fill(`Voyageur ${i + 1}`);
   }
 
-  // Traveler nationality selects come after the emergency-contact country select.
+  // Index from 0: emergency country is labeled "Pays" and is excluded from this locator.
   for (let i = 0; i < count; i += 1) {
-    await selectNationality(page, i + 1, 'Congo');
+    await selectTravelerNationality(page, i, 'Congo');
   }
 
   const idInputs = page.getByLabel(
