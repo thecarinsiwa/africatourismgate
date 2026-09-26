@@ -8,6 +8,7 @@ import {
 } from '../../../entities/fund-exit.entity';
 import { Bookings } from '../../../entities/generated';
 import { ExpenseRequestsModule } from '../expense-requests/expense-requests.module';
+import { TreasuryAuditModule } from '../treasury-audit/treasury-audit.module';
 import { FundExitsController } from './fund-exits.controller';
 import { FundExitsService } from './fund-exits.service';
 
@@ -21,6 +22,7 @@ import { FundExitsService } from './fund-exits.service';
       Bookings,
     ]),
     ExpenseRequestsModule,
+    TreasuryAuditModule,
   ],
   controllers: [FundExitsController],
   providers: [FundExitsService],

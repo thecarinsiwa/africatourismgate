@@ -6,6 +6,7 @@ import {
   FundEntryBookings,
 } from '../../../entities/fund-entry.entity';
 import { Bookings } from '../../../entities/generated';
+import { TreasuryAuditModule } from '../treasury-audit/treasury-audit.module';
 import { FundEntriesController } from './fund-entries.controller';
 import { FundEntriesService } from './fund-entries.service';
 
@@ -17,6 +18,7 @@ import { FundEntriesService } from './fund-entries.service';
       FundEntryAttachments,
       Bookings,
     ]),
+    TreasuryAuditModule,
   ],
   controllers: [FundEntriesController],
   providers: [FundEntriesService],

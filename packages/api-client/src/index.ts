@@ -363,6 +363,8 @@ import type {
   ValidateTreasuryAccessTokenRequest,
   ValidateTreasuryAccessTokenResponse,
   TreasuryAccessToken,
+  TreasuryAuditLog,
+  TreasuryAuditLogsListQuery,
   TreasuryExternalCollaborator,
   TreasuryExternalCollaboratorsListQuery,
   UpdateTreasuryExternalCollaboratorRequest,
@@ -2919,6 +2921,20 @@ export class ApiClient {
 
   getRbacAuditLog(id: string): Promise<RbacAuditLog> {
     return this.request<RbacAuditLog>(`/rbac-audit-logs/${id}`);
+  }
+
+  listTreasuryAuditLogs(
+    query?: TreasuryAuditLogsListQuery,
+  ): Promise<PaginatedResponse<TreasuryAuditLog>> {
+    return fetchPaginated<TreasuryAuditLog>(
+      this,
+      '/treasury-audit-logs',
+      query,
+    );
+  }
+
+  getTreasuryAuditLog(id: string): Promise<TreasuryAuditLog> {
+    return this.request<TreasuryAuditLog>(`/treasury-audit-logs/${id}`);
   }
 
   listDestinations(

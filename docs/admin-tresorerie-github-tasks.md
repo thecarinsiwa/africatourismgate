@@ -106,7 +106,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-028 | API activate/deactivate + permissions externes — ✅      | Moyenne  | API         | M      |
 | TRESO-029 | UI Admin gestion collaborateurs externes — ✅            | Moyenne  | Admin       | M      |
 | TRESO-030 | Flux minimal état de besoin via jeton — ✅               | Moyenne  | Admin / API | L      |
-| TRESO-031 | API journal d’audit (user, action, old/new)              | Haute    | API         | M      |
+| TRESO-031 | API journal d’audit (user, action, old/new) — ✅         | Haute    | API         | M      |
 | TRESO-032 | UI Admin consultation audit trésorerie                   | Haute    | Admin       | M      |
 | TRESO-033 | Annulation / void d’opérations + gates                   | Haute    | API / Admin | M      |
 | TRESO-034 | Lien croisé fiche réservation → opérations               | Moyenne  | Admin       | S      |
@@ -1436,10 +1436,11 @@ Parcours invite → lien → submit → visible en liste besoins.
 
 ---
 
-### TRESO-031 — API journal d’audit (user, action, old/new)
+### TRESO-031 — API journal d’audit (user, action, old/new) — ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
-**Branche suggérée :** `feature/tresorerie-api-audit`
+**Branche suggérée :** `feature/tresorerie-api-audit`  
+**Livrable :** `GET /treasury-audit-logs` (+ `:id`) · hooks `TreasuryAuditService.log` sur fund-entries / fund-exits / expense-requests (create/update/transition) · permission `treasury.audit.read` · void → TRESO-033
 
 #### Modèle GitHub
 
@@ -1461,9 +1462,9 @@ Toutes opérations sensibles doivent être auditables.
 
 ## Critères d'acceptation
 
-- [ ] Create/update/void/transition audités
-- [ ] List API paginée
-- [ ] Permission `treasury.audit.read` (ou équivalent)
+- [x] Create/update/transition audités (void branché avec TRESO-033)
+- [x] List API paginée
+- [x] Permission `treasury.audit.read` (ou équivalent)
 
 ## Plan de test
 

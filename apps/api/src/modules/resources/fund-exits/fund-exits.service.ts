@@ -21,6 +21,7 @@ import {
 } from '../../../entities/fund-exit.entity';
 import { Bookings } from '../../../entities/generated';
 import { ExpenseRequestsService } from '../expense-requests/expense-requests.service';
+import { TreasuryAuditService } from '../treasury-audit/treasury-audit.service';
 import { CreateFundExitDto } from './dto/create-fund-exit.dto';
 import { FundExitAttachmentDto } from './dto/fund-exit-attachment.dto';
 import { FundExitsListQueryDto } from './dto/fund-exits-list-query.dto';
@@ -132,6 +133,7 @@ export class FundExitsService extends CrudService<FundExits> {
     @InjectRepository(Bookings)
     private readonly bookingsRepository: Repository<Bookings>,
     private readonly expenseRequestsService: ExpenseRequestsService,
+    private readonly treasuryAudit: TreasuryAuditService,
   ) {
     super(fundExitsRepository);
   }
@@ -161,6 +163,16 @@ export class FundExitsService extends CrudService<FundExits> {
       actorUserId,
     );
     await this.syncBookingIds(exit.id, bookingIds ?? []);
+    await this.treasuryAudit.log({
+      organizationId: exit.organizationId,
+      entityType: 'fund_exit',
+      entityId: exit.id,
+      action: 'create',
+      actorType: 'user',
+      actorId: actorUserId ?? null,
+      oldJson: null,
+      newJson: this.exitAuditSnapshot(exit, bookingIds ?? []),
+    });
     return this.toResponse(exit, true);
   }
 
@@ -171,6 +183,8 @@ export class FundExitsService extends CrudService<FundExits> {
   ): Promise<FundExitResponse> {
     const existing = await this.findOne(id);
     this.assertNotVoided(existing);
+    const oldBookingIds = await this.listBookingIds(id);
+    const oldJson = this.exitAuditSnapshot(existing, oldBookingIds);
 
     const { bookingIds, ...fields } = dto;
     const payload: DeepPartial<FundExits> = { ...fields };
@@ -185,6 +199,18 @@ export class FundExitsService extends CrudService<FundExits> {
     if (bookingIds !== undefined) {
       await this.syncBookingIds(id, bookingIds);
     }
+    const newBookingIds =
+      bookingIds !== undefined ? bookingIds : oldBookingIds;
+    await this.treasuryAudit.log({
+      organizationId: exit.organizationId,
+      entityType: 'fund_exit',
+      entityId: exit.id,
+      action: 'update',
+      actorType: 'user',
+      actorId: actorUserId ?? null,
+      oldJson,
+      newJson: this.exitAuditSnapshot(exit, newBookingIds),
+    });
     return this.toResponse(exit, true);
   }
 
@@ -230,6 +256,20 @@ export class FundExitsService extends CrudService<FundExits> {
       { status: toStatus } as DeepPartial<FundExits>,
       actorUserId,
     );
+
+    await this.treasuryAudit.log({
+      organizationId: exit.organizationId,
+      entityType: 'fund_exit',
+      entityId: exit.id,
+      action: 'transition',
+      actorType: 'user',
+      actorId: actorUserId,
+      oldJson: { status: fromStatus },
+      newJson: {
+        status: toStatus,
+        comment: dto.comment?.trim() || null,
+      },
+    });
 
     if (toStatus === 'recorded') {
       const expenseRequest = await this.expenseRequestsRepository.findOne({
@@ -503,6 +543,31 @@ export class FundExitsService extends CrudService<FundExits> {
     if (exit.status === 'voided') {
       throw new BadRequestException('Cannot modify a voided fund exit');
     }
+  }
+
+  private async listBookingIds(fundExitId: string): Promise<string[]> {
+    const links = await this.fundExitBookingsRepository.find({
+      where: { fundExitId },
+    });
+    return links.map((link) => link.bookingId);
+  }
+
+  private exitAuditSnapshot(
+    exit: FundExits,
+    bookingIds: string[],
+  ): Record<string, unknown> {
+    return {
+      organizationId: exit.organizationId,
+      expenseRequestId: exit.expenseRequestId,
+      amountCents: exit.amountCents,
+      currency: exit.currency,
+      operationDate: exit.operationDate,
+      paymentMethod: exit.paymentMethod,
+      reference: exit.reference,
+      notes: exit.notes,
+      status: exit.status,
+      bookingIds,
+    };
   }
 
   private async syncBookingIds(

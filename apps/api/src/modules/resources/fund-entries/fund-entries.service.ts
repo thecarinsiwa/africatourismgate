@@ -18,6 +18,7 @@ import {
   FundEntryBookings,
 } from '../../../entities/fund-entry.entity';
 import { Bookings } from '../../../entities/generated';
+import { TreasuryAuditService } from '../treasury-audit/treasury-audit.service';
 import { CreateFundEntryDto } from './dto/create-fund-entry.dto';
 import { FundEntriesListQueryDto } from './dto/fund-entries-list-query.dto';
 import { FundEntryAttachmentDto } from './dto/fund-entry-attachment.dto';
@@ -121,6 +122,7 @@ export class FundEntriesService extends CrudService<FundEntries> {
     private readonly fundEntryAttachmentsRepository: Repository<FundEntryAttachments>,
     @InjectRepository(Bookings)
     private readonly bookingsRepository: Repository<Bookings>,
+    private readonly treasuryAudit: TreasuryAuditService,
   ) {
     super(fundEntriesRepository);
   }
@@ -139,6 +141,16 @@ export class FundEntriesService extends CrudService<FundEntries> {
       actorUserId,
     );
     await this.syncBookingIds(entry.id, bookingIds ?? []);
+    await this.treasuryAudit.log({
+      organizationId: entry.organizationId,
+      entityType: 'fund_entry',
+      entityId: entry.id,
+      action: 'create',
+      actorType: 'user',
+      actorId: actorUserId ?? null,
+      oldJson: null,
+      newJson: this.entryAuditSnapshot(entry, bookingIds ?? []),
+    });
     return this.toResponse(entry, true);
   }
 
@@ -149,6 +161,8 @@ export class FundEntriesService extends CrudService<FundEntries> {
   ): Promise<FundEntryResponse> {
     const existing = await this.findOne(id);
     this.assertNotVoided(existing);
+    const oldBookingIds = await this.listBookingIds(id);
+    const oldJson = this.entryAuditSnapshot(existing, oldBookingIds);
 
     const { bookingIds, ...fields } = dto;
     const payload: DeepPartial<FundEntries> = { ...fields };
@@ -160,6 +174,18 @@ export class FundEntriesService extends CrudService<FundEntries> {
     if (bookingIds !== undefined) {
       await this.syncBookingIds(id, bookingIds);
     }
+    const newBookingIds =
+      bookingIds !== undefined ? bookingIds : oldBookingIds;
+    await this.treasuryAudit.log({
+      organizationId: entry.organizationId,
+      entityType: 'fund_entry',
+      entityId: entry.id,
+      action: 'update',
+      actorType: 'user',
+      actorId: actorUserId ?? null,
+      oldJson,
+      newJson: this.entryAuditSnapshot(entry, newBookingIds),
+    });
     return this.toResponse(entry, true);
   }
 
@@ -443,6 +469,31 @@ export class FundEntriesService extends CrudService<FundEntries> {
     if (entry.status === 'voided') {
       throw new BadRequestException('Cannot modify a voided fund entry');
     }
+  }
+
+  private async listBookingIds(fundEntryId: string): Promise<string[]> {
+    const links = await this.fundEntryBookingsRepository.find({
+      where: { fundEntryId },
+    });
+    return links.map((link) => link.bookingId);
+  }
+
+  private entryAuditSnapshot(
+    entry: FundEntries,
+    bookingIds: string[],
+  ): Record<string, unknown> {
+    return {
+      organizationId: entry.organizationId,
+      amountCents: entry.amountCents,
+      currency: entry.currency,
+      operationDate: entry.operationDate,
+      source: entry.source,
+      paymentMethod: entry.paymentMethod,
+      reference: entry.reference,
+      notes: entry.notes,
+      status: entry.status,
+      bookingIds,
+    };
   }
 
   private async attachBookingIds(

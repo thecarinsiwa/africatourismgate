@@ -80,6 +80,17 @@ export class ExpenseRequestsService extends CrudService<ExpenseRequests> {
       comment: null,
     });
 
+    await this.treasuryAudit.log({
+      organizationId: entry.organizationId,
+      entityType: 'expense_request',
+      entityId: entry.id,
+      action: 'create',
+      actorType: 'user',
+      actorId: actorUserId ?? null,
+      oldJson: null,
+      newJson: this.expenseAuditSnapshot(entry),
+    });
+
     return entry;
   }
 
@@ -144,24 +155,19 @@ export class ExpenseRequestsService extends CrudService<ExpenseRequests> {
       comment: null,
     });
 
+    const submitted = await this.findOne(entry.id);
     await this.treasuryAudit.log({
       organizationId: collaborator.organizationId,
       entityType: 'expense_request',
-      entityId: entry.id,
+      entityId: submitted.id,
       action: 'create',
       actorType: 'external',
       actorId: collaborator.id,
       oldJson: null,
-      newJson: {
-        title: entry.title,
-        requestedAmountCents: entry.requestedAmountCents,
-        currency: entry.currency,
-        status: 'submitted',
-        requestedByExternalId: collaborator.id,
-      },
+      newJson: this.expenseAuditSnapshot(submitted),
     });
 
-    return this.findOne(entry.id);
+    return submitted;
   }
 
   async updateFromDto(
@@ -195,7 +201,19 @@ export class ExpenseRequestsService extends CrudService<ExpenseRequests> {
         : null;
     }
 
-    return super.update(id, payload, actorUserId);
+    const oldJson = this.expenseAuditSnapshot(existing);
+    const updated = await super.update(id, payload, actorUserId);
+    await this.treasuryAudit.log({
+      organizationId: updated.organizationId,
+      entityType: 'expense_request',
+      entityId: updated.id,
+      action: 'update',
+      actorType: 'user',
+      actorId: actorUserId ?? null,
+      oldJson,
+      newJson: this.expenseAuditSnapshot(updated),
+    });
+    return updated;
   }
 
   override async findAll(
@@ -336,7 +354,38 @@ export class ExpenseRequestsService extends CrudService<ExpenseRequests> {
       comment,
     });
 
+    await this.treasuryAudit.log({
+      organizationId: updated.organizationId,
+      entityType: 'expense_request',
+      entityId: updated.id,
+      action: 'transition',
+      actorType: 'user',
+      actorId: actorUserId,
+      oldJson: { status: fromStatus },
+      newJson: {
+        status: toStatus,
+        comment,
+        rejectionReason: updated.rejectionReason,
+      },
+    });
+
     return updated;
+  }
+
+  private expenseAuditSnapshot(
+    entry: ExpenseRequests,
+  ): Record<string, unknown> {
+    return {
+      title: entry.title,
+      description: entry.description,
+      requestedAmountCents: entry.requestedAmountCents,
+      currency: entry.currency,
+      neededByDate: entry.neededByDate,
+      status: entry.status,
+      requestedByUserId: entry.requestedByUserId,
+      requestedByExternalId: entry.requestedByExternalId,
+      rejectionReason: entry.rejectionReason,
+    };
   }
 
   private async appendHistory(params: {
