@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 const SEARCH_TITLE = /Rechercher sur le site|Search the site|Buscar en el sitio/i;
 const OPEN_SEARCH = /Ouvrir la recherche|Open search|Abrir la búsqueda/i;

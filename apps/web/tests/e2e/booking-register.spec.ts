@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 test('customer registration stores session and redirects to next', async ({ page }) => {
   await page.route('**/api/auth/register/customer', async (route) => {

@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 const USER_ID = 'user-e2e-account';
 const BOOKING_ID = 'bbbb2222-3333-4444-5555-666677778888';

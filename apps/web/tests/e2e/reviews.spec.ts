@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 const USER_ID = 'user-e2e-reviews';
 const PROPERTY_ID = '00000000-0000-4000-8000-000000002010';

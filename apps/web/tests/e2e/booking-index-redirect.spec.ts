@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 test('WEB-003: /booking without draft redirects to /hotels', async ({ page }) => {
   await page.goto('/booking');

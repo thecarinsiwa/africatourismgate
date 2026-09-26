@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 test('email login stores session in sessionStorage and redirects to next', async ({ page }) => {
   test.setTimeout(60_000);

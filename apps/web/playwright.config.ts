@@ -1,7 +1,5 @@
 import { defineConfig } from '@playwright/test';
 import { cookieConsentStorageState } from './tests/e2e/helpers/cookie-consent';
-// Registers a catch-all **/api/** stub so unmocked fetches never raise Connexion interrompue.
-import './tests/e2e/helpers/stub-missing-api';
 
 const port = Number(process.env.PLAYWRIGHT_PORT ?? 3002);
 const baseURL =

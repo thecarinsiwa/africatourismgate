@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import {
   E2E_VERIFY_ACCESS_TOKEN,
   E2E_VERIFY_ID,

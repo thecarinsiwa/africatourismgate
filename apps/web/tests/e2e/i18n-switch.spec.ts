@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './fixtures';
 
 /** Force empty legal CMS so UI copy comes from next-intl messages. */
 async function mockEmptyLegalPages(page: Page) {
