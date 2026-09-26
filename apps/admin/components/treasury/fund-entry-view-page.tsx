@@ -23,6 +23,7 @@ import { AdminPageBackLink } from '../admin-page-back-link';
 import { PermissionGate } from '../permission-gate';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { FundEntryAttachmentsSection } from './fund-entry-attachments-section';
+import { TreasuryVoidDialog } from './treasury-void-dialog';
 
 type FundEntryViewPageProps = {
   fundEntryId: string;
@@ -62,6 +63,7 @@ export function FundEntryViewPage({ fundEntryId }: FundEntryViewPageProps) {
   const emptyDash = tCommon('empty.dash');
 
   const [entry, setEntry] = useState<FundEntry | null>(null);
+  const [voidOpen, setVoidOpen] = useState(false);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -163,8 +165,7 @@ export function FundEntryViewPage({ fundEntryId }: FundEntryViewPageProps) {
                 type="button"
                 variant="outline"
                 className="w-full sm:w-auto"
-                disabled
-                title={t('voidUnavailable')}
+                onClick={() => setVoidOpen(true)}
               >
                 {t('voidButton')}
               </Button>
@@ -172,6 +173,14 @@ export function FundEntryViewPage({ fundEntryId }: FundEntryViewPageProps) {
           </PermissionGate>
         </div>
       </div>
+
+      <TreasuryVoidDialog
+        open={voidOpen}
+        onOpenChange={setVoidOpen}
+        kind="fund_entry"
+        entityId={entry.id}
+        onVoided={load}
+      />
 
       <div className="space-y-1">
         <div className="flex flex-wrap items-center gap-2">

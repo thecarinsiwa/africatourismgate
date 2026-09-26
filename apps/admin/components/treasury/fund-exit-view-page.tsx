@@ -23,6 +23,7 @@ import { AdminPageBackLink } from '../admin-page-back-link';
 import { PermissionGate } from '../permission-gate';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { FundExitAttachmentsSection } from './fund-exit-attachments-section';
+import { TreasuryVoidDialog } from './treasury-void-dialog';
 
 const STATUS_BADGE: Record<FundExitStatus, DataTableBadgeVariant> = {
   draft: 'muted',
@@ -68,6 +69,7 @@ export function FundExitViewPage({ fundExitId }: FundExitViewPageProps) {
   const emptyDash = tCommon('empty.dash');
 
   const [exit, setExit] = useState<FundExit | null>(null);
+  const [voidOpen, setVoidOpen] = useState(false);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -169,8 +171,7 @@ export function FundExitViewPage({ fundExitId }: FundExitViewPageProps) {
                 type="button"
                 variant="outline"
                 className="w-full sm:w-auto"
-                disabled
-                title={t('voidUnavailable')}
+                onClick={() => setVoidOpen(true)}
               >
                 {t('voidButton')}
               </Button>
@@ -178,6 +179,14 @@ export function FundExitViewPage({ fundExitId }: FundExitViewPageProps) {
           </PermissionGate>
         </div>
       </div>
+
+      <TreasuryVoidDialog
+        open={voidOpen}
+        onOpenChange={setVoidOpen}
+        kind="fund_exit"
+        entityId={exit.id}
+        onVoided={load}
+      />
 
       <div className="space-y-1">
         <div className="flex flex-wrap items-center gap-2">

@@ -633,12 +633,18 @@
   },
   "void": {
     "title": "Anular operación",
+    "description": "La operación pasará al estado anulado. Esta acción queda registrada en la auditoría.",
     "reasonLabel": "Motivo de anulación",
     "reasonPlaceholder": "Explique por qué se anula esta operación…",
     "confirm": "Confirmar anulación",
     "accessDenied": "Acceso denegado: se requiere el permiso treasury.void.",
     "validation": {
       "reasonRequired": "El motivo es obligatorio."
+    },
+    "toast": {
+      "successTitle": "Operación anulada",
+      "successMessage": "La operación se ha marcado como anulada.",
+      "errorTitle": "No se pudo anular"
     }
   },
   "errors": {
@@ -647,7 +653,8 @@
     "forbidden": "No tiene permiso para realizar esta acción.",
     "notFound": "Elemento no encontrado.",
     "invalidTransition": "Transición de estado no permitida.",
-    "expenseRequestRequired": "Una salida debe estar vinculada a un estado de necesidad."
+    "expenseRequestRequired": "Una salida debe estar vinculada a un estado de necesidad.",
+    "accountingLinked": "No se puede anular una operación ya vinculada a la contabilidad."
   },
   "common": {
     "save": "Guardar",

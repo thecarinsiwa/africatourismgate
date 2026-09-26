@@ -108,7 +108,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-030 | Flux minimal état de besoin via jeton — ✅               | Moyenne  | Admin / API | L      |
 | TRESO-031 | API journal d’audit (user, action, old/new) — ✅         | Haute    | API         | M      |
 | TRESO-032 | UI Admin consultation audit trésorerie — ✅              | Haute    | Admin       | M      |
-| TRESO-033 | Annulation / void d’opérations + gates                   | Haute    | API / Admin | M      |
+| TRESO-033 | Annulation / void d’opérations + gates — ✅              | Haute    | API / Admin | M      |
 | TRESO-034 | Lien croisé fiche réservation → opérations               | Moyenne  | Admin       | S      |
 | TRESO-035 | API agrégats rapports (période, source, mode)            | Moyenne  | API         | M      |
 | TRESO-036 | UI Admin page rapports trésorerie                        | Moyenne  | Admin       | M      |
@@ -1440,7 +1440,7 @@ Parcours invite → lien → submit → visible en liste besoins.
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-api-audit`  
-**Livrable :** `GET /treasury-audit-logs` (+ `:id`) · hooks `TreasuryAuditService.log` sur fund-entries / fund-exits / expense-requests (create/update/transition) · permission `treasury.audit.read` · void → TRESO-033
+**Livrable :** `GET /treasury-audit-logs` (+ `:id`) · hooks `TreasuryAuditService.log` sur fund-entries / fund-exits / expense-requests (create/update/transition/void) · permission `treasury.audit.read`
 
 #### Modèle GitHub
 
@@ -1462,7 +1462,7 @@ Toutes opérations sensibles doivent être auditables.
 
 ## Critères d'acceptation
 
-- [x] Create/update/transition audités (void branché avec TRESO-033)
+- [x] Create/update/void/transition audités
 - [x] List API paginée
 - [x] Permission `treasury.audit.read` (ou équivalent)
 
@@ -1517,10 +1517,11 @@ Générer 3 logs ; filtrer par entity.
 
 ---
 
-### TRESO-033 — Annulation / void d’opérations + gates
+### TRESO-033 — Annulation / void d’opérations + gates — ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
-**Branche suggérée :** `feature/tresorerie-void-operations`
+**Branche suggérée :** `feature/tresorerie-void-operations`  
+**Livrable :** `POST /fund-entries|fund-exits/:id/void` · permission `treasury.void` · audit `action: void` · UI `TreasuryVoidDialog` · gate compta si `accounting_links.status=linked` (no-op tant que TRESO-039)
 
 #### Modèle GitHub
 
@@ -1542,9 +1543,9 @@ Modification/annulation sensibles avec permission dédiée + audit.
 
 ## Critères d'acceptation
 
-- [ ] Void réservé aux droits adaptés
-- [ ] Audit old/new
-- [ ] Opération marquée annulée en liste
+- [x] Void réservé aux droits adaptés
+- [x] Audit old/new
+- [x] Opération marquée annulée en liste
 
 ## Plan de test
 

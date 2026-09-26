@@ -23,6 +23,8 @@ import { CreateFundEntryDto } from './dto/create-fund-entry.dto';
 import { FundEntriesListQueryDto } from './dto/fund-entries-list-query.dto';
 import { FundEntryAttachmentDto } from './dto/fund-entry-attachment.dto';
 import { UpdateFundEntryDto } from './dto/update-fund-entry.dto';
+import { VoidTreasuryOperationDto } from './dto/void-treasury-operation.dto';
+import { assertFundOpNotAccountingLinked } from '../assert-fund-op-not-accounting-linked';
 
 export const FUND_ENTRY_ATTACHMENT_MAX_BYTES = 10 * 1024 * 1024;
 
@@ -186,6 +188,60 @@ export class FundEntriesService extends CrudService<FundEntries> {
       oldJson,
       newJson: this.entryAuditSnapshot(entry, newBookingIds),
     });
+    return this.toResponse(entry, true);
+  }
+
+  /**
+   * Soft-cancel: status → voided (pas de delete hard). Permission HTTP: treasury.void.
+   */
+  async voidFromDto(
+    id: string,
+    dto: VoidTreasuryOperationDto,
+    actorUserId: string,
+  ): Promise<FundEntryResponse> {
+    const existing = await this.findOne(id);
+    this.assertNotVoided(existing);
+    await assertFundOpNotAccountingLinked(
+      this.fundEntriesRepository.manager,
+      'fund_entry',
+      id,
+    );
+
+    const reason = dto.reason.trim();
+    if (!reason) {
+      throw new BadRequestException('Void reason is required');
+    }
+
+    const oldBookingIds = await this.listBookingIds(id);
+    const oldJson = this.entryAuditSnapshot(existing, oldBookingIds);
+    const now = new Date();
+
+    const entry = await super.update(
+      id,
+      {
+        status: 'voided',
+        voidedAt: now,
+        voidedByUserId: actorUserId,
+        voidReason: reason,
+      } as DeepPartial<FundEntries>,
+      actorUserId,
+    );
+
+    await this.treasuryAudit.log({
+      organizationId: entry.organizationId,
+      entityType: 'fund_entry',
+      entityId: entry.id,
+      action: 'void',
+      actorType: 'user',
+      actorId: actorUserId,
+      oldJson,
+      newJson: {
+        ...this.entryAuditSnapshot(entry, oldBookingIds),
+        voidReason: reason,
+        voidedByUserId: actorUserId,
+      },
+    });
+
     return this.toResponse(entry, true);
   }
 

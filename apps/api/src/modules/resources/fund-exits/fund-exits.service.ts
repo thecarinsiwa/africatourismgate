@@ -22,11 +22,13 @@ import {
 import { Bookings } from '../../../entities/generated';
 import { ExpenseRequestsService } from '../expense-requests/expense-requests.service';
 import { TreasuryAuditService } from '../treasury-audit/treasury-audit.service';
+import { assertFundOpNotAccountingLinked } from '../assert-fund-op-not-accounting-linked';
 import { CreateFundExitDto } from './dto/create-fund-exit.dto';
 import { FundExitAttachmentDto } from './dto/fund-exit-attachment.dto';
 import { FundExitsListQueryDto } from './dto/fund-exits-list-query.dto';
 import { TransitionFundExitDto } from './dto/transition-fund-exit.dto';
 import { UpdateFundExitDto } from './dto/update-fund-exit.dto';
+import { VoidTreasuryOperationDto } from './dto/void-treasury-operation.dto';
 import { isFundExitTransitionAllowed } from './fund-exit-transitions';
 
 /** Domain rule TRESO-017 / §6 : décaissement uniquement si besoin autorisé */
@@ -289,6 +291,60 @@ export class FundExitsService extends CrudService<FundExits> {
         );
       }
     }
+
+    return this.toResponse(exit, true);
+  }
+
+  /**
+   * Soft-cancel: status → voided (pas de delete hard). Permission HTTP: treasury.void.
+   */
+  async voidFromDto(
+    id: string,
+    dto: VoidTreasuryOperationDto,
+    actorUserId: string,
+  ): Promise<FundExitResponse> {
+    const existing = await this.findOne(id);
+    this.assertNotVoided(existing);
+    await assertFundOpNotAccountingLinked(
+      this.fundExitsRepository.manager,
+      'fund_exit',
+      id,
+    );
+
+    const reason = dto.reason.trim();
+    if (!reason) {
+      throw new BadRequestException('Void reason is required');
+    }
+
+    const oldBookingIds = await this.listBookingIds(id);
+    const oldJson = this.exitAuditSnapshot(existing, oldBookingIds);
+    const now = new Date();
+
+    const exit = await super.update(
+      id,
+      {
+        status: 'voided',
+        voidedAt: now,
+        voidedByUserId: actorUserId,
+        voidReason: reason,
+      } as DeepPartial<FundExits>,
+      actorUserId,
+    );
+
+    await this.treasuryAudit.log({
+      organizationId: exit.organizationId,
+      entityType: 'fund_exit',
+      entityId: exit.id,
+      action: 'void',
+      actorType: 'user',
+      actorId: actorUserId,
+      oldJson,
+      newJson: {
+        ...this.exitAuditSnapshot(exit, oldBookingIds),
+        voidReason: reason,
+        voidedByUserId: actorUserId,
+      },
+    });
 
     return this.toResponse(exit, true);
   }

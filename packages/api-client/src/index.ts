@@ -382,6 +382,7 @@ import type {
   UpdateExpenseRequestRequest,
   UpdateFundEntryRequest,
   UpdateFundExitRequest,
+  VoidTreasuryOperationRequest,
   CreatePromoCodeRequest,
   CreatePromotionRequest,
   PromoCode,
@@ -1319,6 +1320,16 @@ export class ApiClient {
     return this.request<FundEntry>(`/fund-entries/${id}`, { method: 'PATCH', body });
   }
 
+  voidFundEntry(
+    id: string,
+    body: VoidTreasuryOperationRequest,
+  ): Promise<FundEntry> {
+    return this.request<FundEntry>(`/fund-entries/${id}/void`, {
+      method: 'POST',
+      body,
+    });
+  }
+
   deleteFundEntry(id: string): Promise<void> {
     return this.request<void>(`/fund-entries/${id}`, { method: 'DELETE' });
   }
@@ -1449,6 +1460,16 @@ export class ApiClient {
     body: TransitionFundExitRequest,
   ): Promise<FundExit> {
     return this.request<FundExit>(`/fund-exits/${id}/transition`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  voidFundExit(
+    id: string,
+    body: VoidTreasuryOperationRequest,
+  ): Promise<FundExit> {
+    return this.request<FundExit>(`/fund-exits/${id}/void`, {
       method: 'POST',
       body,
     });

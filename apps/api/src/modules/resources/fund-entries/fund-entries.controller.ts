@@ -34,6 +34,7 @@ import { CreateFundEntryDto } from './dto/create-fund-entry.dto';
 import { FundEntriesListQueryDto } from './dto/fund-entries-list-query.dto';
 import { FundEntryAttachmentDto } from './dto/fund-entry-attachment.dto';
 import { UpdateFundEntryDto } from './dto/update-fund-entry.dto';
+import { VoidTreasuryOperationDto } from './dto/void-treasury-operation.dto';
 import {
   FUND_ENTRY_ATTACHMENT_MAX_BYTES,
   FundEntriesService,
@@ -178,6 +179,19 @@ export class FundEntriesController {
     @CurrentUser() user: AuthUserDto,
   ) {
     return this.service.updateFromDto(id, dto, user.id);
+  }
+
+  @RequirePermissions('treasury.void')
+  @Post(':id/void')
+  @ApiOperation({
+    summary: 'Void (soft-cancel) a fund entry — requires reason',
+  })
+  voidEntry(
+    @Param('id') id: string,
+    @Body() dto: VoidTreasuryOperationDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.voidFromDto(id, dto, user.id);
   }
 
   @RequirePermissions('treasury.entries.write')

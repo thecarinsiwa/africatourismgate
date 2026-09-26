@@ -633,15 +633,22 @@
   },
   "void": {
     "title": "Annuler l'opération",
+    "description": "L'opération passera au statut annulé. Cette action est tracée dans le journal d'audit.",
     "reasonLabel": "Motif d'annulation",
     "reasonPlaceholder": "Expliquez pourquoi cette opération est annulée…",
     "confirm": "Confirmer l'annulation",
     "accessDenied": "Accès refusé : permission treasury.void requise.",
     "validation": {
       "reasonRequired": "Le motif est obligatoire."
+    },
+    "toast": {
+      "successTitle": "Opération annulée",
+      "successMessage": "L'opération a été marquée comme annulée.",
+      "errorTitle": "Annulation impossible"
     }
   },
   "errors": {
+    "accountingLinked": "Impossible d'annuler une opération déjà liée à la comptabilité.",
     "loadFailed": "Impossible de charger les données trésorerie.",
     "saveFailed": "Impossible d'enregistrer.",
     "forbidden": "Vous n'avez pas la permission d'effectuer cette action.",

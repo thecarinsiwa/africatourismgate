@@ -35,6 +35,7 @@ import { FundExitAttachmentDto } from './dto/fund-exit-attachment.dto';
 import { FundExitsListQueryDto } from './dto/fund-exits-list-query.dto';
 import { TransitionFundExitDto } from './dto/transition-fund-exit.dto';
 import { UpdateFundExitDto } from './dto/update-fund-exit.dto';
+import { VoidTreasuryOperationDto } from './dto/void-treasury-operation.dto';
 import {
   FUND_EXIT_ATTACHMENT_MAX_BYTES,
   FundExitsService,
@@ -185,6 +186,19 @@ export class FundExitsController {
     @CurrentUser() user: AuthUserDto,
   ) {
     return this.service.transition(id, dto, user.id);
+  }
+
+  @RequirePermissions('treasury.void')
+  @Post(':id/void')
+  @ApiOperation({
+    summary: 'Void (soft-cancel) a fund exit — requires reason',
+  })
+  voidExit(
+    @Param('id') id: string,
+    @Body() dto: VoidTreasuryOperationDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.voidFromDto(id, dto, user.id);
   }
 
   @RequirePermissions('treasury.exits.write')

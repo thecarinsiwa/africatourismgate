@@ -633,12 +633,18 @@
   },
   "void": {
     "title": "Void operation",
+    "description": "The operation will be marked as voided. This action is recorded in the audit log.",
     "reasonLabel": "Void reason",
     "reasonPlaceholder": "Explain why this operation is voided…",
     "confirm": "Confirm void",
     "accessDenied": "Access denied: treasury.void permission required.",
     "validation": {
       "reasonRequired": "Reason is required."
+    },
+    "toast": {
+      "successTitle": "Operation voided",
+      "successMessage": "The operation has been marked as voided.",
+      "errorTitle": "Unable to void"
     }
   },
   "errors": {
@@ -647,7 +653,8 @@
     "forbidden": "You do not have permission to perform this action.",
     "notFound": "Item not found.",
     "invalidTransition": "Status transition not allowed.",
-    "expenseRequestRequired": "An exit must be linked to an expense request."
+    "expenseRequestRequired": "An exit must be linked to an expense request.",
+    "accountingLinked": "Cannot void an operation already linked to accounting."
   },
   "common": {
     "save": "Save",
