@@ -5,7 +5,8 @@
 
 **Handoff / périmètre :** [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md)  
 **Lot amont (stub pont) :** [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md) — TRESO-039 / TRESO-040 / TRESO-041  
-**Modèle domaine Trésorerie :** [tresorerie-domain-model.md](./tresorerie-domain-model.md) §4.7 / §10
+**Modèle domaine Trésorerie :** [tresorerie-domain-model.md](./tresorerie-domain-model.md) §4.7 / §10  
+**Modèle domaine SYSCOHADA (SYSCO-001) :** [syscohada-domain-model.md](./syscohada-domain-model.md)
 
 ---
 
@@ -69,6 +70,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 
 ### Documents liés
 
+- [syscohada-domain-model.md](./syscohada-domain-model.md) — SYSCO-001
 - [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md) — handoff TRESO-041
 - [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md) — lot TRESO-001…045
 - [tresorerie-domain-model.md](./tresorerie-domain-model.md) — domaine + hors scope §10
@@ -87,7 +89,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 
 | ID        | Titre court                                              | Priorité | Type           | Effort | Dépendances |
 | --------- | -------------------------------------------------------- | -------- | -------------- | ------ | ----------- |
-| SYSCO-001 | Spec domaine comptable OHADA + schéma cible              | Haute    | Docs / Spec    | M      | Domaine TRESO §10 |
+| SYSCO-001 | Spec domaine comptable OHADA + schéma cible — ✅         | Haute    | Docs / Spec    | M      | Domaine TRESO §10 |
 | SYSCO-002 | Migration plan comptable + exercices                     | Haute    | API / DB       | L      | SYSCO-001 |
 | SYSCO-003 | Migration journaux / écritures / lignes                  | Haute    | API / DB       | L      | SYSCO-002 |
 | SYSCO-004 | Moteur mapping + job/API « comptabiliser »               | Haute    | API            | L      | TRESO-039, SYSCO-002 |
@@ -116,11 +118,11 @@ ensemble MVP ──► SYSCO-012
 
 ## Modèles GitHub — prêts à copier
 
-### SYSCO-001 — Spec domaine comptable OHADA + schéma cible
+### SYSCO-001 — Spec domaine comptable OHADA + schéma cible — ✅
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `docs`, `priority:high`  
 **Branche suggérée :** `docs/syscohada-domain-model`  
-**Livrable :** `docs/syscohada-domain-model.md` (ou extension domaine TRESO §10) — schéma `chart_of_accounts` / `journal_*` / exercices / mapping
+**Livrable :** [`docs/syscohada-domain-model.md`](./syscohada-domain-model.md) — schéma `chart_of_accounts` / `journal_*` / exercices / mapping · décisions §3 · permissions `accounting.*`
 
 #### Modèle GitHub
 
@@ -144,10 +146,10 @@ Le lot Trésorerie livre un stub `accounting_links` sans plan SYSCOHADA ni écri
 
 ## Critères d'acceptation
 
-- [ ] Schéma tables + enums documentés
-- [ ] Moments de comptabilisation tranchés (ou options listées + recommandation)
-- [ ] Consommation stub `accounting_link` alignée handoff §4
-- [ ] Hors-scope explicite (payments, fusion tables, liasse…)
+- [x] Schéma tables + enums documentés
+- [x] Moments de comptabilisation tranchés (recommandations §3 — revue humaine à confirmer)
+- [x] Consommation stub `accounting_link` alignée handoff §4
+- [x] Hors-scope explicite (payments, fusion tables, liasse…)
 
 ## Plan de test
 
@@ -157,6 +159,7 @@ Revue documentaire finance / tech lead.
 
 - TRESO-001, TRESO-041
 - cahier des charges module Trésorerie §2
+- livrable : docs/syscohada-domain-model.md
 ```
 
 ---
@@ -670,14 +673,16 @@ pnpm --filter @africatourismgate/admin exec tsc --noEmit
 
 ## Décisions à trancher avant / pendant l’épic
 
+Recommandations figées dans [syscohada-domain-model.md](./syscohada-domain-model.md) §3 — confirmation revue finance / tech lead encore ouverte.
+
 | Sujet | Question | Impact tâches |
 | ----- | -------- | ------------- |
-| Moment de comptabilisation | `recorded` seul ? Aussi `disbursed` ? Batch ? Manuel ? | SYSCO-001, SYSCO-004 |
-| Multi-devise | Tenue XOF/XAF + reports vs une devise d’exercice | SYSCO-001, SYSCO-002, SYSCO-008 |
-| Soft-delete + unique | Recreate link après soft-delete ? | SYSCO-005 |
-| Contrepassation | Nouvelle écriture + historique vs update in-place | SYSCO-005, SYSCO-008 |
-| Périmètre tiers / immos | Inclus cahier §2 ou épic satellite | SYSCO-001 (hors-scope) |
-| Coexistence `payments` | Écriture SYSCO séparée des encaissements commerce | SYSCO-004 |
+| Moment de comptabilisation | `recorded` + action manuelle MVP (reco) | SYSCO-001 ✅, SYSCO-004 |
+| Multi-devise | Une devise de tenue / exercice (reco) | SYSCO-001 ✅, SYSCO-002, SYSCO-008 |
+| Soft-delete + unique | Unique parmi non soft-deleted (reco) | SYSCO-005 |
+| Contrepassation | Nouvelle écriture + historique (reco) | SYSCO-005, SYSCO-008 |
+| Périmètre tiers / immos | Épic satellite (reco) | SYSCO-001 ✅ |
+| Coexistence `payments` | Écriture via `fund_*` uniquement (reco) | SYSCO-004 |
 
 ---
 

@@ -2,7 +2,7 @@
 
 > **Statut :** spécification cible avant migrations (TRESO-002…006) et API.  
 > **Périmètre lot :** UI Admin + contrats API minimaux.  
-> **Hors scope :** comptabilité SYSCOHADA complète → voir [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md) (TRESO-041) et [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md).
+> **Hors scope :** comptabilité SYSCOHADA complète → voir [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md) (TRESO-041), [syscohada-domain-model.md](./syscohada-domain-model.md) (SYSCO-001) et [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md).
 
 **Documents liés :** [admin-tresorerie-readme.md](./admin-tresorerie-readme.md) · [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md) · `Bookings` dans [`commerce.entity.ts`](../apps/api/src/entities/generated/commerce.entity.ts)
 
@@ -422,7 +422,8 @@ Fichiers config : `dashboard-nav.config.ts`, `admin-route-permissions.ts`, `admi
 - Clôtures, bilan, compte de résultat, états financiers réglementaires
 - Génération automatique d’écritures comptables
 
-**Livré à la place :** `accounting_links` (stub) + UI placeholder + doc handoff **TRESO-041** (`docs/tresorerie-syscohada-epic-next.md`).
+**Livré à la place :** `accounting_links` (stub) + UI placeholder + doc handoff **TRESO-041** (`docs/tresorerie-syscohada-epic-next.md`).  
+**Suite épic :** modèle de domaine [syscohada-domain-model.md](./syscohada-domain-model.md) (SYSCO-001) · tâches [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md).
 
 ---
 

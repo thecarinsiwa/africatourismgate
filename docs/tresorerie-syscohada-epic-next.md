@@ -214,14 +214,16 @@ Effort et priorités à caler avec finance / tech lead lors de l’ouverture de 
 
 ## 6. Risques & décisions ouvertes
 
-| Sujet | Question |
-| ----- | -------- |
-| Moment de comptabilisation | À `recorded` uniquement ? Aussi `disbursed` ? Batch ? |
-| Multi-devise | Tenue en XOF/XAF + reports ; ou une devise d’exercice |
-| Soft-delete + unique | Lien soft-deleted vs unique `(fund_op_type, fund_op_id)` — politique de recreate |
-| Contrepassation | Nouveau `journal_entry` + lien historique vs update in-place |
-| Périmètre tiers / immos | Inclus §2 cahier ou épic satellite |
-| Coexistence `payments` | Mapping paiement commerce → entrée déjà métier ; écriture SYSCO séparée |
+Décisions tranchées en **recommandation** dans [syscohada-domain-model.md](./syscohada-domain-model.md) §3 — à confirmer en revue finance / tech lead.
+
+| Sujet | Question | Recommandation SYSCO-001 |
+| ----- | -------- | ------------------------ |
+| Moment de comptabilisation | À `recorded` uniquement ? Aussi `disbursed` ? Batch ? | Éligible à `recorded` ; déclencheur MVP = action manuelle « Comptabiliser » |
+| Multi-devise | Tenue en XOF/XAF + reports ; ou une devise d’exercice | Une devise de tenue / exercice |
+| Soft-delete + unique | Lien soft-deleted vs unique `(fund_op_type, fund_op_id)` — politique de recreate | Unique parmi non soft-deleted |
+| Contrepassation | Nouveau `journal_entry` + lien historique vs update in-place | Nouvelle pièce de contrepassation |
+| Périmètre tiers / immos | Inclus §2 cahier ou épic satellite | Épic satellite |
+| Coexistence `payments` | Mapping paiement commerce → entrée déjà métier ; écriture SYSCO séparée | Écriture uniquement via `fund_*` |
 
 ---
 
@@ -241,6 +243,7 @@ Effort et priorités à caler avec finance / tech lead lors de l’ouverture de 
 
 | Doc | Rôle |
 | --- | ---- |
+| [syscohada-domain-model.md](./syscohada-domain-model.md) | Spec domaine SYSCO-001 (schéma, décisions, RBAC) |
 | [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md) | Lot SYSCO-001…012 · modèles issues |
 | [tresorerie-domain-model.md](./tresorerie-domain-model.md) | Modèle + hors scope §10 |
 | [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md) | Lot TRESO-001…045 · TRESO-039/040/041 |
