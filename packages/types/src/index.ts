@@ -352,12 +352,23 @@ export type {
   AccountingExercise,
   AccountingExerciseStatus,
   AccountingExercisesListQuery,
+  AccountingJournal,
+  AccountingJournalType,
+  AccountingJournalsListQuery,
   AccountingPeriod,
   AccountingPeriodStatus,
   AccountingPeriodsListQuery,
   ChartAccount,
   ChartAccountType,
   ChartAccountsListQuery,
+  CreateJournalEntryRequest,
+  CreateJournalLineRequest,
+  JournalEntriesListQuery,
+  JournalEntry,
+  JournalEntrySource,
+  JournalEntryStatus,
+  JournalLine,
+  JournalLinesListQuery,
 } from './syscohada.js';
 
 export {
@@ -380,8 +391,11 @@ export {
 
 export {
   ACCOUNTING_EXERCISE_STATUSES,
+  ACCOUNTING_JOURNAL_TYPES,
   ACCOUNTING_PERIOD_STATUSES,
   CHART_ACCOUNT_TYPES,
+  JOURNAL_ENTRY_SOURCES,
+  JOURNAL_ENTRY_STATUSES,
 } from './syscohada.js';
 
 export {

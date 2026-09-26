@@ -548,7 +548,7 @@ Pas de faux écrans avant données réelles (règle TRESO-040 conservée).
 | Tâche | Livrable |
 | ----- | -------- |
 | SYSCO-002 — ✅ | Migrations `chart_of_accounts` + `accounting_exercises` / `accounting_periods` + seed + API lecture |
-| SYSCO-003 | Migration `accounting_journals` + `journal_entries` + `journal_lines` |
+| SYSCO-003 — ✅ | Migrations `accounting_journals` + `journal_entries` + `journal_lines` + API create/list |
 | SYSCO-004 | Moteur mapping + API « Comptabiliser » |
 | SYSCO-005 | Remplir `journal_entry_id` + statuts link |
 | SYSCO-009 | Seed RBAC `accounting.*` (peut démarrer en parallèle dès API) |

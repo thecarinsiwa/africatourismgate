@@ -91,7 +91,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | --------- | -------------------------------------------------------- | -------- | -------------- | ------ | ----------- |
 | SYSCO-001 | Spec domaine comptable OHADA + schéma cible — ✅         | Haute    | Docs / Spec    | M      | Domaine TRESO §10 |
 | SYSCO-002 | Migration plan comptable + exercices — ✅                | Haute    | API / DB       | L      | SYSCO-001 |
-| SYSCO-003 | Migration journaux / écritures / lignes                  | Haute    | API / DB       | L      | SYSCO-002 |
+| SYSCO-003 | Migration journaux / écritures / lignes — ✅             | Haute    | API / DB       | L      | SYSCO-002 |
 | SYSCO-004 | Moteur mapping + job/API « comptabiliser »               | Haute    | API            | L      | TRESO-039, SYSCO-002 |
 | SYSCO-005 | Remplir `accounting_links.journal_entry_id` + statuts    | Haute    | API            | M      | TRESO-039, SYSCO-003–004 |
 | SYSCO-006 | UI journal + grand livre + balance                       | Haute    | Admin          | L      | SYSCO-003 |
@@ -217,11 +217,11 @@ pnpm db:sync
 
 ---
 
-### SYSCO-003 — Migration journaux / écritures / lignes
+### SYSCO-003 — Migration journaux / écritures / lignes — ✅
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `api`, `priority:high`  
 **Branche suggérée :** `feature/syscohada-journals-entries`  
-**Livrable :** tables `journals`, `journal_entries`, `journal_lines` · API CRUD consultation · équilibre débit/crédit · numérotation
+**Livrable :** [`database/migrations/add_syscohada_journals_entries.sql`](../database/migrations/add_syscohada_journals_entries.sql) · API `GET/POST /journal-entries` · `GET /journal-lines` · `GET /accounting-journals` · types `JournalEntry` / `AccountingJournal`
 
 #### Modèle GitHub
 
@@ -239,24 +239,30 @@ Les écritures SYSCOHADA doivent vivre hors stub : journal paramétrable + pièc
 
 ## Fichiers clés
 
-- migrations journaux / écritures / lignes
-- module Nest `accounting` (ou `syscohada`)
-- `packages/types`
+- `database/migrations/add_syscohada_journals_entries.sql`
+- `apps/api/src/modules/resources/accounting-journals/`
+- `apps/api/src/modules/resources/journal-entries/`
+- `packages/types/src/syscohada.ts`
 
 ## Critères d'acceptation
 
-- [ ] Écriture équilibrée persistée
-- [ ] Rejet si période verrouillée / exercice clos
-- [ ] Numérotation légale documentée (séquence par journal/exercice)
-- [ ] `journal_entry_id` encore non branché sur `accounting_links` (SYSCO-005)
+- [x] Écriture équilibrée persistée
+- [x] Rejet si période verrouillée / exercice clos
+- [x] Numérotation légale `{journal.code}-{exercise.code}-{seq:05d}` par journal+exercice
+- [x] `journal_entry_id` encore non branché sur `accounting_links` (SYSCO-005)
 
 ## Plan de test
 
-POST écriture 2 lignes équilibrées ; POST déséquilibrée → 400 ; GET grand-livre raw via filtres.
+```bash
+pnpm db:sync
+# POST /api/journal-entries — 2 lignes équilibrées (status posted)
+# POST déséquilibrée → 400
+# GET /api/journal-lines?accountId=…&postedOnly=true
+```
 
 ## Références
 
-- SYSCO-002
+- SYSCO-002 · docs/syscohada-domain-model.md §5.4–5.6 / §8
 - handoff §2.2
 ```
 

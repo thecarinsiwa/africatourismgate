@@ -32,6 +32,8 @@ import { TreasuryReportsModule } from './resources/treasury-reports/treasury-rep
 import { AccountingLinksModule } from './resources/accounting-links/accounting-links.module';
 import { ChartOfAccountsModule } from './resources/chart-of-accounts/chart-of-accounts.module';
 import { AccountingExercisesModule } from './resources/accounting-exercises/accounting-exercises.module';
+import { AccountingJournalsModule } from './resources/accounting-journals/accounting-journals.module';
+import { JournalEntriesModule } from './resources/journal-entries/journal-entries.module';
 import { OrganizationMaintenancesModule } from './resources/organization-maintenances/organization-maintenances.module';
 import { PermissionsModule } from './resources/permissions/permissions.module';
 import { RolesModule } from './resources/roles/roles.module';
@@ -139,6 +141,8 @@ import { Module } from '@nestjs/common';
     AccountingLinksModule,
     ChartOfAccountsModule,
     AccountingExercisesModule,
+    AccountingJournalsModule,
+    JournalEntriesModule,
     OrganizationMaintenancesModule,
     PermissionsModule,
     RolesModule,

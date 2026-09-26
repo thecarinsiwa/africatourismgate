@@ -54,6 +54,11 @@ import {
   AccountingExercises,
   AccountingPeriods,
 } from '../entities/accounting-exercise.entity';
+import { AccountingJournals } from '../entities/accounting-journal.entity';
+import {
+  JournalEntries,
+  JournalLines,
+} from '../entities/journal-entry.entity';
 import { ensureMigrations } from './ensure-migrations';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
 import { ensureSchema } from './ensure-schema';
@@ -104,6 +109,9 @@ const entityList = [
   ChartOfAccounts,
   AccountingExercises,
   AccountingPeriods,
+  AccountingJournals,
+  JournalEntries,
+  JournalLines,
 ] as (new () => unknown)[];
 
 @Module({
