@@ -13,6 +13,15 @@ import {
 } from 'class-validator';
 
 const PERIOD_TYPES = ['monthly', 'annual'] as const;
+const SCOPE_TYPES = ['general', 'activity', 'product'] as const;
+const PRODUCT_TYPES = [
+  'room',
+  'flight_class',
+  'vehicle',
+  'cabin',
+  'activity_schedule',
+  'package',
+] as const;
 
 export class CreateBudgetDto {
   @ApiProperty({ format: 'uuid' })
@@ -57,13 +66,38 @@ export class CreateBudgetDto {
   currency!: string;
 
   @ApiPropertyOptional({
-    description: 'TRESO-023: only general is accepted (activity/product → TRESO-024)',
-    enum: ['general'],
+    enum: SCOPE_TYPES,
     default: 'general',
+    description:
+      'general | activity (requires activityId) | product (requires productType + productId)',
   })
   @IsOptional()
-  @IsIn(['general'])
-  scopeType?: 'general';
+  @IsIn(SCOPE_TYPES)
+  scopeType?: (typeof SCOPE_TYPES)[number];
+
+  @ApiPropertyOptional({
+    format: 'uuid',
+    description: 'Required when scopeType=activity',
+  })
+  @ValidateIf((o: CreateBudgetDto) => (o.scopeType ?? 'general') === 'activity')
+  @IsUUID('4')
+  activityId?: string | null;
+
+  @ApiPropertyOptional({
+    enum: PRODUCT_TYPES,
+    description: 'Required when scopeType=product',
+  })
+  @ValidateIf((o: CreateBudgetDto) => (o.scopeType ?? 'general') === 'product')
+  @IsIn(PRODUCT_TYPES)
+  productType?: (typeof PRODUCT_TYPES)[number] | null;
+
+  @ApiPropertyOptional({
+    format: 'uuid',
+    description: 'Polymorphic product id (required when scopeType=product)',
+  })
+  @ValidateIf((o: CreateBudgetDto) => (o.scopeType ?? 'general') === 'product')
+  @IsUUID('4')
+  productId?: string | null;
 
   @ApiPropertyOptional()
   @IsOptional()

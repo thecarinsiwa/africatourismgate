@@ -99,7 +99,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-021 | UI Admin liste/création/détail sorties — ✅              | Haute    | Admin       | L      |
 | TRESO-022 | API transitions d’état + historique immutable — ✅       | Haute    | API         | M      |
 | TRESO-023 | API budgets mensuels / annuels — ✅                      | Moyenne  | API         | M      |
-| TRESO-024 | API budgets par activité et produit/service              | Moyenne  | API         | M      |
+| TRESO-024 | API budgets par activité et produit/service — ✅         | Moyenne  | API         | M      |
 | TRESO-025 | UI Admin budgets liste + formulaires                     | Moyenne  | Admin       | M      |
 | TRESO-026 | UI suivi budget vs réalisé (agrégats légers)             | Moyenne  | Admin       | M      |
 | TRESO-027 | API invitation e-mail + jeton/lien sécurisé              | Moyenne  | API         | M      |
@@ -1149,7 +1149,7 @@ Swagger create mois + année.
 
 ---
 
-### TRESO-024 — API budgets par activité et produit/service
+### TRESO-024 — API budgets par activité et produit/service — ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:medium`  
 **Branche suggérée :** `feature/tresorerie-api-budgets-activity-product`
@@ -1174,9 +1174,9 @@ Budgets liés à une activité ou un produit/service vendu.
 
 ## Critères d'acceptation
 
-- [ ] Budget activité OK
-- [ ] Budget produit/service OK
-- [ ] Erreurs si cible invalide
+- [x] Budget activité OK
+- [x] Budget produit/service OK
+- [x] Erreurs si cible invalide
 
 ## Plan de test
 

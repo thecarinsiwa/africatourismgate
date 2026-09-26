@@ -15,6 +15,14 @@ import { PaginationQueryDto } from '../../../../common/dto/pagination-query.dto'
 
 const PERIOD_TYPES = ['monthly', 'annual'] as const;
 const SCOPE_TYPES = ['general', 'activity', 'product'] as const;
+const PRODUCT_TYPES = [
+  'room',
+  'flight_class',
+  'vehicle',
+  'cabin',
+  'activity_schedule',
+  'package',
+] as const;
 
 export class BudgetsListQueryDto extends PaginationQueryDto {
   @ApiPropertyOptional({ format: 'uuid' })
@@ -47,6 +55,21 @@ export class BudgetsListQueryDto extends PaginationQueryDto {
   @IsOptional()
   @IsIn(SCOPE_TYPES)
   scopeType?: (typeof SCOPE_TYPES)[number];
+
+  @ApiPropertyOptional({ format: 'uuid' })
+  @IsOptional()
+  @IsUUID('4')
+  activityId?: string;
+
+  @ApiPropertyOptional({ enum: PRODUCT_TYPES })
+  @IsOptional()
+  @IsIn(PRODUCT_TYPES)
+  productType?: (typeof PRODUCT_TYPES)[number];
+
+  @ApiPropertyOptional({ format: 'uuid' })
+  @IsOptional()
+  @IsUUID('4')
+  productId?: string;
 
   @ApiPropertyOptional({ example: 'XOF' })
   @IsOptional()

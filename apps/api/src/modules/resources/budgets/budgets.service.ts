@@ -2,24 +2,60 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, IsNull, Not, Repository } from 'typeorm';
+import { DeepPartial, IsNull, Repository } from 'typeorm';
 import { CrudService } from '../../../common/crud/crud.service';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
-import { Budgets } from '../../../entities/budget.entity';
+import {
+  Budgets,
+  BudgetPeriodType,
+  BudgetProductType,
+  BudgetScopeType,
+} from '../../../entities/budget.entity';
+import {
+  Activities,
+  ActivitySchedules,
+  Cabins,
+  FlightClasses,
+  Packages,
+  Rooms,
+  Vehicles,
+} from '../../../entities/generated';
 import { BudgetsListQueryDto } from './dto/budgets-list-query.dto';
 import { CreateBudgetDto } from './dto/create-budget.dto';
 import { UpdateBudgetDto } from './dto/update-budget.dto';
 
 const BUDGET_CONFLICT_MESSAGE =
-  'A budget already exists for this organization, period and currency';
+  'A budget already exists for this organization, period, scope and currency';
+
+type ResolvedScope = {
+  scopeType: BudgetScopeType;
+  activityId: string | null;
+  productType: BudgetProductType | null;
+  productId: string | null;
+};
 
 @Injectable()
 export class BudgetsService extends CrudService<Budgets> {
   constructor(
     @InjectRepository(Budgets)
     private readonly budgetsRepository: Repository<Budgets>,
+    @InjectRepository(Activities)
+    private readonly activitiesRepository: Repository<Activities>,
+    @InjectRepository(ActivitySchedules)
+    private readonly activitySchedulesRepository: Repository<ActivitySchedules>,
+    @InjectRepository(Packages)
+    private readonly packagesRepository: Repository<Packages>,
+    @InjectRepository(Rooms)
+    private readonly roomsRepository: Repository<Rooms>,
+    @InjectRepository(FlightClasses)
+    private readonly flightClassesRepository: Repository<FlightClasses>,
+    @InjectRepository(Vehicles)
+    private readonly vehiclesRepository: Repository<Vehicles>,
+    @InjectRepository(Cabins)
+    private readonly cabinsRepository: Repository<Cabins>,
   ) {
     super(budgetsRepository);
   }
@@ -29,17 +65,24 @@ export class BudgetsService extends CrudService<Budgets> {
     actorUserId?: string,
   ): Promise<Budgets> {
     this.assertPeriodFields(dto.periodType, dto.month);
-    this.assertGeneralScopeOnly(dto.scopeType);
 
     const month = dto.periodType === 'annual' ? null : (dto.month as number);
     const currency = dto.currency.toUpperCase();
+    const scope = await this.resolveAndValidateScope({
+      organizationId: dto.organizationId,
+      scopeType: dto.scopeType ?? 'general',
+      activityId: dto.activityId,
+      productType: dto.productType,
+      productId: dto.productId,
+    });
 
-    await this.assertUniquePeriod({
+    await this.assertUniqueBudget({
       organizationId: dto.organizationId,
       periodType: dto.periodType,
       year: dto.year,
       month,
       currency,
+      ...scope,
     });
 
     try {
@@ -52,10 +95,10 @@ export class BudgetsService extends CrudService<Budgets> {
           month,
           amountCents: dto.amountCents,
           currency,
-          scopeType: 'general',
-          activityId: null,
-          productType: null,
-          productId: null,
+          scopeType: scope.scopeType,
+          activityId: scope.activityId,
+          productType: scope.productType,
+          productId: scope.productId,
           notes: dto.notes?.trim() || null,
         } as DeepPartial<Budgets>,
         actorUserId,
@@ -73,37 +116,44 @@ export class BudgetsService extends CrudService<Budgets> {
   ): Promise<Budgets> {
     const existing = await this.findOne(id);
 
-    if (dto.scopeType !== undefined) {
-      this.assertGeneralScopeOnly(dto.scopeType);
-    }
-
     const periodType = dto.periodType ?? existing.periodType;
     const year = dto.year ?? existing.year;
-    const monthInput =
-      dto.month !== undefined ? dto.month : existing.month;
+    const monthInput = dto.month !== undefined ? dto.month : existing.month;
     this.assertPeriodFields(periodType, monthInput);
 
     const month = periodType === 'annual' ? null : (monthInput as number);
     const currency = (dto.currency ?? existing.currency).toUpperCase();
 
-    await this.assertUniquePeriod({
+    const scope = await this.resolveAndValidateScope({
+      organizationId: existing.organizationId,
+      scopeType: dto.scopeType ?? existing.scopeType,
+      activityId:
+        dto.activityId !== undefined ? dto.activityId : existing.activityId,
+      productType:
+        dto.productType !== undefined ? dto.productType : existing.productType,
+      productId:
+        dto.productId !== undefined ? dto.productId : existing.productId,
+    });
+
+    await this.assertUniqueBudget({
       organizationId: existing.organizationId,
       periodType,
       year,
       month,
       currency,
+      ...scope,
       excludeId: id,
     });
 
     const payload: DeepPartial<Budgets> = {
-      scopeType: 'general',
-      activityId: null,
-      productType: null,
-      productId: null,
       periodType,
       year,
       month,
       currency,
+      scopeType: scope.scopeType,
+      activityId: scope.activityId,
+      productType: scope.productType,
+      productId: scope.productId,
     };
     if (dto.label !== undefined) {
       payload.label = dto.label.trim();
@@ -154,6 +204,21 @@ export class BudgetsService extends CrudService<Budgets> {
         scopeType: query.scopeType,
       });
     }
+    if (query.activityId) {
+      qb.andWhere('budget.activityId = :activityId', {
+        activityId: query.activityId,
+      });
+    }
+    if (query.productType) {
+      qb.andWhere('budget.productType = :productType', {
+        productType: query.productType,
+      });
+    }
+    if (query.productId) {
+      qb.andWhere('budget.productId = :productId', {
+        productId: query.productId,
+      });
+    }
     if (query.currency) {
       qb.andWhere('budget.currency = :currency', {
         currency: query.currency.toUpperCase(),
@@ -186,16 +251,146 @@ export class BudgetsService extends CrudService<Budgets> {
     };
   }
 
-  private assertGeneralScopeOnly(scopeType: string | undefined): void {
-    if (scopeType != null && scopeType !== 'general') {
+  private async resolveAndValidateScope(input: {
+    organizationId: string;
+    scopeType: BudgetScopeType;
+    activityId?: string | null;
+    productType?: BudgetProductType | null;
+    productId?: string | null;
+  }): Promise<ResolvedScope> {
+    const scopeType = input.scopeType ?? 'general';
+
+    if (scopeType === 'general') {
+      if (input.activityId || input.productType || input.productId) {
+        throw new BadRequestException(
+          'activityId / productType / productId must be omitted when scopeType is general',
+        );
+      }
+      return {
+        scopeType: 'general',
+        activityId: null,
+        productType: null,
+        productId: null,
+      };
+    }
+
+    if (scopeType === 'activity') {
+      const activityId = input.activityId?.trim() || null;
+      if (!activityId) {
+        throw new BadRequestException(
+          'activityId is required when scopeType is activity',
+        );
+      }
+      if (input.productType || input.productId) {
+        throw new BadRequestException(
+          'productType / productId must be omitted when scopeType is activity',
+        );
+      }
+      await this.assertActivityExists(activityId, input.organizationId);
+      return {
+        scopeType: 'activity',
+        activityId,
+        productType: null,
+        productId: null,
+      };
+    }
+
+    // product
+    const productType = input.productType ?? null;
+    const productId = input.productId?.trim() || null;
+    if (!productType || !productId) {
       throw new BadRequestException(
-        'Activity/product budget scopes are not available yet (TRESO-024). Use scopeType=general.',
+        'productType and productId are required when scopeType is product',
+      );
+    }
+    if (input.activityId) {
+      throw new BadRequestException(
+        'activityId must be omitted when scopeType is product',
+      );
+    }
+    await this.assertProductExists(productType, productId);
+    return {
+      scopeType: 'product',
+      activityId: null,
+      productType,
+      productId,
+    };
+  }
+
+  private async assertActivityExists(
+    activityId: string,
+    organizationId: string,
+  ): Promise<void> {
+    const activity = await this.activitiesRepository.findOne({
+      where: { id: activityId, deletedAt: IsNull() },
+    });
+    if (!activity) {
+      throw new NotFoundException(`Activity ${activityId} not found`);
+    }
+    if (
+      activity.organizationId != null &&
+      activity.organizationId !== organizationId
+    ) {
+      throw new BadRequestException(
+        'activityId does not belong to the budget organization',
+      );
+    }
+  }
+
+  private async assertProductExists(
+    productType: BudgetProductType,
+    productId: string,
+  ): Promise<void> {
+    let found: { id: string } | null = null;
+    switch (productType) {
+      case 'room':
+        found = await this.roomsRepository.findOne({
+          where: { id: productId, deletedAt: IsNull() },
+          select: ['id'],
+        });
+        break;
+      case 'flight_class':
+        found = await this.flightClassesRepository.findOne({
+          where: { id: productId, deletedAt: IsNull() },
+          select: ['id'],
+        });
+        break;
+      case 'vehicle':
+        found = await this.vehiclesRepository.findOne({
+          where: { id: productId, deletedAt: IsNull() },
+          select: ['id'],
+        });
+        break;
+      case 'cabin':
+        found = await this.cabinsRepository.findOne({
+          where: { id: productId, deletedAt: IsNull() },
+          select: ['id'],
+        });
+        break;
+      case 'activity_schedule':
+        found = await this.activitySchedulesRepository.findOne({
+          where: { id: productId, deletedAt: IsNull() },
+          select: ['id'],
+        });
+        break;
+      case 'package':
+        found = await this.packagesRepository.findOne({
+          where: { id: productId, deletedAt: IsNull() },
+          select: ['id'],
+        });
+        break;
+      default:
+        throw new BadRequestException(`Unsupported productType: ${productType}`);
+    }
+    if (!found) {
+      throw new NotFoundException(
+        `Product ${productType}/${productId} not found`,
       );
     }
   }
 
   private assertPeriodFields(
-    periodType: 'monthly' | 'annual',
+    periodType: BudgetPeriodType,
     month: number | null | undefined,
   ): void {
     if (periodType === 'monthly') {
@@ -213,38 +408,68 @@ export class BudgetsService extends CrudService<Budgets> {
     }
   }
 
-  private async assertUniquePeriod(params: {
+  private async assertUniqueBudget(params: {
     organizationId: string;
-    periodType: 'monthly' | 'annual';
+    periodType: BudgetPeriodType;
     year: number;
     month: number | null;
     currency: string;
+    scopeType: BudgetScopeType;
+    activityId: string | null;
+    productType: BudgetProductType | null;
+    productId: string | null;
     excludeId?: string;
   }): Promise<void> {
-    const where =
-      params.month == null
-        ? {
-            organizationId: params.organizationId,
-            periodType: params.periodType,
-            year: params.year,
-            month: IsNull(),
-            scopeType: 'general' as const,
-            currency: params.currency,
-            deletedAt: IsNull(),
-            ...(params.excludeId ? { id: Not(params.excludeId) } : {}),
-          }
-        : {
-            organizationId: params.organizationId,
-            periodType: params.periodType,
-            year: params.year,
-            month: params.month,
-            scopeType: 'general' as const,
-            currency: params.currency,
-            deletedAt: IsNull(),
-            ...(params.excludeId ? { id: Not(params.excludeId) } : {}),
-          };
+    const qb = this.budgetsRepository
+      .createQueryBuilder('budget')
+      .where('budget.deletedAt IS NULL')
+      .andWhere('budget.organizationId = :organizationId', {
+        organizationId: params.organizationId,
+      })
+      .andWhere('budget.periodType = :periodType', {
+        periodType: params.periodType,
+      })
+      .andWhere('budget.year = :year', { year: params.year })
+      .andWhere('budget.currency = :currency', { currency: params.currency })
+      .andWhere('budget.scopeType = :scopeType', {
+        scopeType: params.scopeType,
+      });
 
-    const existing = await this.budgetsRepository.findOne({ where });
+    if (params.month == null) {
+      qb.andWhere('budget.month IS NULL');
+    } else {
+      qb.andWhere('budget.month = :month', { month: params.month });
+    }
+
+    if (params.activityId == null) {
+      qb.andWhere('budget.activityId IS NULL');
+    } else {
+      qb.andWhere('budget.activityId = :activityId', {
+        activityId: params.activityId,
+      });
+    }
+
+    if (params.productType == null) {
+      qb.andWhere('budget.productType IS NULL');
+    } else {
+      qb.andWhere('budget.productType = :productType', {
+        productType: params.productType,
+      });
+    }
+
+    if (params.productId == null) {
+      qb.andWhere('budget.productId IS NULL');
+    } else {
+      qb.andWhere('budget.productId = :productId', {
+        productId: params.productId,
+      });
+    }
+
+    if (params.excludeId) {
+      qb.andWhere('budget.id != :excludeId', { excludeId: params.excludeId });
+    }
+
+    const existing = await qb.getOne();
     if (existing) {
       throw new ConflictException(BUDGET_CONFLICT_MESSAGE);
     }

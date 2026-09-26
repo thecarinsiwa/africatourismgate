@@ -47,7 +47,7 @@ export class BudgetsController {
   @Post()
   @ApiOperation({
     summary:
-      'Create monthly or annual general budget (activity/product → TRESO-024)',
+      'Create budget (general / activity / product scopes; validates target existence)',
   })
   create(@Body() dto: CreateBudgetDto, @CurrentUser() user: AuthUserDto) {
     return this.service.createFromDto(dto, user.id);

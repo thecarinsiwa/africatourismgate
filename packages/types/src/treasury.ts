@@ -360,8 +360,10 @@ export interface CreateBudgetRequest {
   month?: number | null;
   amountCents: number;
   currency: string;
-  /** TRESO-023: general only; activity/product → TRESO-024 */
-  scopeType?: 'general';
+  scopeType?: BudgetScopeType;
+  activityId?: string | null;
+  productType?: BudgetProductType | null;
+  productId?: string | null;
   notes?: string | null;
 }
 
