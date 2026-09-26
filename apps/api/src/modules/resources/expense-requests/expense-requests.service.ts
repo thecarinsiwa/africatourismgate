@@ -9,12 +9,16 @@ import { CrudService } from '../../../common/crud/crud.service';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { newId } from '../../../common/utils/uuid';
 import {
+  ExpenseRequestActorType,
   ExpenseRequests,
   ExpenseRequestStatus,
   ExpenseRequestStatusHistory,
 } from '../../../entities/fund-exit.entity';
 import { PermissionsService } from '../../rbac/permissions.service';
+import { ExternalCollaboratorsService } from '../external-collaborators/external-collaborators.service';
+import { TreasuryAuditService } from '../treasury-audit/treasury-audit.service';
 import { CreateExpenseRequestDto } from './dto/create-expense-request.dto';
+import { CreateExpenseRequestExternalDto } from './dto/create-expense-request-external.dto';
 import { ExpenseRequestsListQueryDto } from './dto/expense-requests-list-query.dto';
 import { TransitionExpenseRequestDto } from './dto/transition-expense-request.dto';
 import { UpdateExpenseRequestDto } from './dto/update-expense-request.dto';
@@ -22,6 +26,8 @@ import {
   isExpenseRequestTransitionAllowed,
   permissionForExpenseRequestTransition,
 } from './expense-request-transitions';
+
+const EXTERNAL_CREATE_SCOPE = 'expense_requests.create';
 
 @Injectable()
 export class ExpenseRequestsService extends CrudService<ExpenseRequests> {
@@ -31,6 +37,8 @@ export class ExpenseRequestsService extends CrudService<ExpenseRequests> {
     @InjectRepository(ExpenseRequestStatusHistory)
     private readonly statusHistoryRepository: Repository<ExpenseRequestStatusHistory>,
     private readonly permissionsService: PermissionsService,
+    private readonly externalCollaborators: ExternalCollaboratorsService,
+    private readonly treasuryAudit: TreasuryAuditService,
   ) {
     super(expenseRequestsRepository);
   }
@@ -67,11 +75,93 @@ export class ExpenseRequestsService extends CrudService<ExpenseRequests> {
       expenseRequestId: entry.id,
       fromStatus: null,
       toStatus: 'draft',
-      actorUserId,
+      actorType: 'user',
+      actorId: actorUserId ?? null,
       comment: null,
     });
 
     return entry;
+  }
+
+  /**
+   * Création d’un état de besoin par collaborateur externe (jeton invite).
+   * Statut initial draft puis auto-soumission → visible dans le circuit Admin.
+   */
+  async createFromExternalToken(
+    dto: CreateExpenseRequestExternalDto,
+  ): Promise<ExpenseRequests> {
+    const access = await this.externalCollaborators.assertTokenHasScope(
+      dto.token,
+      EXTERNAL_CREATE_SCOPE,
+    );
+    const collaborator = access.collaborator;
+
+    const entry = await super.create(
+      {
+        organizationId: collaborator.organizationId,
+        title: dto.title.trim(),
+        description: dto.description.trim(),
+        requestedAmountCents: dto.requestedAmountCents,
+        currency: dto.currency.toUpperCase(),
+        neededByDate: dto.neededByDate
+          ? dto.neededByDate.slice(0, 10)
+          : null,
+        status: 'draft',
+        requestedByUserId: null,
+        requestedByExternalId: collaborator.id,
+        rejectionReason: null,
+        submittedAt: null,
+        validatedAt: null,
+        validatedByUserId: null,
+        authorizedAt: null,
+        authorizedByUserId: null,
+        closedAt: null,
+      } as DeepPartial<ExpenseRequests>,
+      undefined,
+    );
+
+    await this.appendHistory({
+      expenseRequestId: entry.id,
+      fromStatus: null,
+      toStatus: 'draft',
+      actorType: 'external',
+      actorId: collaborator.id,
+      comment: null,
+    });
+
+    const now = new Date();
+    await this.expenseRequestsRepository.update(entry.id, {
+      status: 'submitted',
+      submittedAt: now,
+    });
+
+    await this.appendHistory({
+      expenseRequestId: entry.id,
+      fromStatus: 'draft',
+      toStatus: 'submitted',
+      actorType: 'external',
+      actorId: collaborator.id,
+      comment: null,
+    });
+
+    await this.treasuryAudit.log({
+      organizationId: collaborator.organizationId,
+      entityType: 'expense_request',
+      entityId: entry.id,
+      action: 'create',
+      actorType: 'external',
+      actorId: collaborator.id,
+      oldJson: null,
+      newJson: {
+        title: entry.title,
+        requestedAmountCents: entry.requestedAmountCents,
+        currency: entry.currency,
+        status: 'submitted',
+        requestedByExternalId: collaborator.id,
+      },
+    });
+
+    return this.findOne(entry.id);
   }
 
   async updateFromDto(
@@ -241,7 +331,8 @@ export class ExpenseRequestsService extends CrudService<ExpenseRequests> {
       expenseRequestId: id,
       fromStatus,
       toStatus,
-      actorUserId,
+      actorType: 'user',
+      actorId: actorUserId,
       comment,
     });
 
@@ -252,7 +343,8 @@ export class ExpenseRequestsService extends CrudService<ExpenseRequests> {
     expenseRequestId: string;
     fromStatus: ExpenseRequests['status'] | null;
     toStatus: ExpenseRequests['status'];
-    actorUserId?: string;
+    actorType: ExpenseRequestActorType;
+    actorId: string | null;
     comment: string | null;
   }): Promise<void> {
     const row = this.statusHistoryRepository.create({
@@ -260,8 +352,8 @@ export class ExpenseRequestsService extends CrudService<ExpenseRequests> {
       expenseRequestId: params.expenseRequestId,
       fromStatus: params.fromStatus,
       toStatus: params.toStatus,
-      actorType: 'user',
-      actorId: params.actorUserId ?? null,
+      actorType: params.actorType,
+      actorId: params.actorId,
       comment: params.comment,
     });
     await this.statusHistoryRepository.save(row);

@@ -481,6 +481,44 @@
     "empty": "Aucune donnée pour cette période.",
     "accessDenied": "Accès refusé : permission treasury.reports.read requise."
   },
+  "externalAccess": {
+    "metaTitle": "Soumettre un état de besoin",
+    "title": "Nouvel état de besoin",
+    "subtitle": "Soumettez une demande de dépense via votre lien d'accès sécurisé.",
+    "welcome": "Bonjour {name}",
+    "validating": "Vérification de votre lien d'accès…",
+    "tokenMissing": "Lien invalide : jeton manquant.",
+    "tokenExpired": "Ce lien d'accès a expiré. Demandez une nouvelle invitation.",
+    "tokenRevoked": "Ce lien d'accès a été révoqué.",
+    "tokenInactive": "Votre accès a été désactivé. Contactez le responsable financier.",
+    "tokenInvalid": "Lien d'accès invalide ou inconnu.",
+    "tokenForbidden": "Vous n'êtes pas autorisé à créer un état de besoin.",
+    "fields": {
+      "title": "Titre",
+      "description": "Description / justification",
+      "amountCents": "Montant demandé",
+      "currency": "Devise",
+      "neededByDate": "Date souhaitée"
+    },
+    "hints": {
+      "amountCents": "Montant en unités majeures (ex. 1500,00)."
+    },
+    "validation": {
+      "titleRequired": "Le titre est obligatoire.",
+      "descriptionRequired": "La description est obligatoire.",
+      "amountPositive": "Le montant doit être supérieur à zéro.",
+      "currencyRequired": "La devise est obligatoire."
+    },
+    "submit": "Envoyer la demande",
+    "successTitle": "Demande envoyée",
+    "successMessage": "Votre état de besoin a été soumis et est visible côté administration.",
+    "successRef": "Référence : {id}",
+    "backToLogin": "Retour à la connexion",
+    "toast": {
+      "errorTitle": "Erreur",
+      "successTitle": "Succès"
+    }
+  },
   "externals": {
     "list": {
       "ariaLabel": "Collaborateurs externes",

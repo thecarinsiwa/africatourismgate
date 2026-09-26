@@ -235,6 +235,16 @@ export interface CreateExpenseRequestRequest {
   neededByDate?: string | null;
 }
 
+/** Création via jeton collaborateur externe (TRESO-030) */
+export interface CreateExpenseRequestExternalRequest {
+  token: string;
+  title: string;
+  description: string;
+  requestedAmountCents: number;
+  currency: string;
+  neededByDate?: string | null;
+}
+
 export interface UpdateExpenseRequestRequest {
   title?: string;
   description?: string;

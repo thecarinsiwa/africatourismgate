@@ -349,8 +349,9 @@ import type {
   PaymentAdminDetail,
   PaymentListItem,
   PaymentsListQuery,
-  CreateFundEntryRequest,
   CreateExpenseRequestRequest,
+  CreateExpenseRequestExternalRequest,
+  CreateFundEntryRequest,
   CreateFundExitRequest,
   CreateBudgetRequest,
   Budget,
@@ -1381,6 +1382,16 @@ export class ApiClient {
     return this.request<ExpenseRequest>('/expense-requests', {
       method: 'POST',
       body,
+    });
+  }
+
+  createExpenseRequestExternal(
+    body: CreateExpenseRequestExternalRequest,
+  ): Promise<ExpenseRequest> {
+    return this.request<ExpenseRequest>('/expense-requests/external', {
+      method: 'POST',
+      body,
+      skipAuth: true,
     });
   }
 

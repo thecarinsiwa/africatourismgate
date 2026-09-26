@@ -105,7 +105,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-027 | API invitation e-mail + jeton/lien sécurisé — ✅         | Moyenne  | API         | M      |
 | TRESO-028 | API activate/deactivate + permissions externes — ✅      | Moyenne  | API         | M      |
 | TRESO-029 | UI Admin gestion collaborateurs externes — ✅            | Moyenne  | Admin       | M      |
-| TRESO-030 | Flux minimal état de besoin via jeton                    | Moyenne  | Admin / API | L      |
+| TRESO-030 | Flux minimal état de besoin via jeton — ✅               | Moyenne  | Admin / API | L      |
 | TRESO-031 | API journal d’audit (user, action, old/new)              | Haute    | API         | M      |
 | TRESO-032 | UI Admin consultation audit trésorerie                   | Haute    | Admin       | M      |
 | TRESO-033 | Annulation / void d’opérations + gates                   | Haute    | API / Admin | M      |
@@ -1394,10 +1394,11 @@ Inviter un email test ; désactiver.
 
 ---
 
-### TRESO-030 — Flux minimal état de besoin via jeton
+### TRESO-030 — Flux minimal état de besoin via jeton — ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:medium`  
-**Branche suggérée :** `feature/tresorerie-external-need-flow`
+**Branche suggérée :** `feature/tresorerie-external-need-flow`  
+**Livrable :** `/tresorerie/externe/acces?token=` · `POST /expense-requests/external` · actor `external` + audit · auto-submit
 
 #### Modèle GitHub
 
@@ -1420,9 +1421,9 @@ Page minimale (route token) pour qu’un externe crée un état de besoin sans c
 
 ## Critères d'acceptation
 
-- [ ] Lien jeton ouvre le formulaire
-- [ ] Jeton expiré → erreur claire
-- [ ] Demande visible côté Admin
+- [x] Lien jeton ouvre le formulaire
+- [x] Jeton expiré → erreur claire
+- [x] Demande visible côté Admin
 
 ## Plan de test
 

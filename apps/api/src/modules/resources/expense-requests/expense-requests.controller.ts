@@ -12,11 +12,14 @@ import {
   ApiForbiddenResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { Public } from '../../auth/decorators/public.decorator';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { CreateExpenseRequestDto } from './dto/create-expense-request.dto';
+import { CreateExpenseRequestExternalDto } from './dto/create-expense-request-external.dto';
 import { ExpenseRequestsListQueryDto } from './dto/expense-requests-list-query.dto';
 import { TransitionExpenseRequestDto } from './dto/transition-expense-request.dto';
 import { UpdateExpenseRequestDto } from './dto/update-expense-request.dto';
@@ -47,6 +50,20 @@ export class ExpenseRequestsController {
   @ApiOperation({ summary: 'Get expense request by id' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
+  }
+
+  @Public()
+  @Post('external')
+  @ApiUnauthorizedResponse({
+    description: 'Invalid, expired, revoked or deactivated token',
+  })
+  @ApiForbiddenResponse({ description: 'Missing expense_requests.create scope' })
+  @ApiOperation({
+    summary:
+      'Create expense request via external invite token (auto-submitted; no admin session)',
+  })
+  createExternal(@Body() dto: CreateExpenseRequestExternalDto) {
+    return this.service.createFromExternalToken(dto);
   }
 
   @RequirePermissions('treasury.expense_requests.create')

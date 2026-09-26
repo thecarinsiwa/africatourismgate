@@ -296,6 +296,7 @@ export type {
   BudgetsVsActualQuery,
   CreateBudgetRequest,
   CreateExpenseRequestRequest,
+  CreateExpenseRequestExternalRequest,
   CreateFundEntryRequest,
   CreateFundExitRequest,
   ExpenseRequest,

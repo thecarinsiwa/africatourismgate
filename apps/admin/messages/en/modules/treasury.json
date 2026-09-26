@@ -481,6 +481,44 @@
     "empty": "No data for this period.",
     "accessDenied": "Access denied: treasury.reports.read permission required."
   },
+  "externalAccess": {
+    "metaTitle": "Submit an expense request",
+    "title": "New expense request",
+    "subtitle": "Submit a spending request using your secure access link.",
+    "welcome": "Hello {name}",
+    "validating": "Verifying your access link…",
+    "tokenMissing": "Invalid link: missing token.",
+    "tokenExpired": "This access link has expired. Request a new invitation.",
+    "tokenRevoked": "This access link has been revoked.",
+    "tokenInactive": "Your access has been deactivated. Contact the finance manager.",
+    "tokenInvalid": "Invalid or unknown access link.",
+    "tokenForbidden": "You are not allowed to create an expense request.",
+    "fields": {
+      "title": "Title",
+      "description": "Description / justification",
+      "amountCents": "Requested amount",
+      "currency": "Currency",
+      "neededByDate": "Needed by"
+    },
+    "hints": {
+      "amountCents": "Amount in major units (e.g. 1500.00)."
+    },
+    "validation": {
+      "titleRequired": "Title is required.",
+      "descriptionRequired": "Description is required.",
+      "amountPositive": "Amount must be greater than zero.",
+      "currencyRequired": "Currency is required."
+    },
+    "submit": "Submit request",
+    "successTitle": "Request submitted",
+    "successMessage": "Your expense request has been submitted and is visible in admin.",
+    "successRef": "Reference: {id}",
+    "backToLogin": "Back to login",
+    "toast": {
+      "errorTitle": "Error",
+      "successTitle": "Success"
+    }
+  },
   "externals": {
     "list": {
       "ariaLabel": "External collaborators",

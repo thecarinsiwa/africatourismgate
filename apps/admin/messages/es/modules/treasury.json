@@ -481,6 +481,44 @@
     "empty": "No hay datos para este periodo.",
     "accessDenied": "Acceso denegado: se requiere el permiso treasury.reports.read."
   },
+  "externalAccess": {
+    "metaTitle": "Enviar un estado de necesidad",
+    "title": "Nuevo estado de necesidad",
+    "subtitle": "Envíe una solicitud de gasto con su enlace de acceso seguro.",
+    "welcome": "Hola {name}",
+    "validating": "Verificando su enlace de acceso…",
+    "tokenMissing": "Enlace no válido: falta el token.",
+    "tokenExpired": "Este enlace de acceso ha caducado. Solicite una nueva invitación.",
+    "tokenRevoked": "Este enlace de acceso ha sido revocado.",
+    "tokenInactive": "Su acceso ha sido desactivado. Contacte al responsable financiero.",
+    "tokenInvalid": "Enlace de acceso no válido o desconocido.",
+    "tokenForbidden": "No está autorizado a crear un estado de necesidad.",
+    "fields": {
+      "title": "Título",
+      "description": "Descripción / justificación",
+      "amountCents": "Importe solicitado",
+      "currency": "Moneda",
+      "neededByDate": "Fecha deseada"
+    },
+    "hints": {
+      "amountCents": "Importe en unidades mayores (ej. 1500,00)."
+    },
+    "validation": {
+      "titleRequired": "El título es obligatorio.",
+      "descriptionRequired": "La descripción es obligatoria.",
+      "amountPositive": "El importe debe ser mayor que cero.",
+      "currencyRequired": "La moneda es obligatoria."
+    },
+    "submit": "Enviar solicitud",
+    "successTitle": "Solicitud enviada",
+    "successMessage": "Su estado de necesidad ha sido enviado y es visible en administración.",
+    "successRef": "Referencia: {id}",
+    "backToLogin": "Volver al inicio de sesión",
+    "toast": {
+      "errorTitle": "Error",
+      "successTitle": "Éxito"
+    }
+  },
   "externals": {
     "list": {
       "ariaLabel": "Colaboradores externos",
