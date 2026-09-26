@@ -10,9 +10,11 @@ import { PermissionGate } from '../permission-gate';
 
 type ExitActionId = 'markDisbursed' | 'markRecorded';
 
+type ExitTransitionTarget = Extract<FundExitStatus, 'disbursed' | 'recorded'>;
+
 type PendingAction = {
   id: ExitActionId;
-  toStatus: FundExitStatus;
+  toStatus: ExitTransitionTarget;
 };
 
 function actionsForStatus(status: FundExitStatus): PendingAction[] {

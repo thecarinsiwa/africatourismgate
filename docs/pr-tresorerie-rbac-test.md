@@ -1,7 +1,7 @@
 # TRESO-044 — QA manuelle RBAC trésorerie
 
 Branche suggérée : `docs/tresorerie-rbac-qa`  
-Réf. : [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md) (TRESO-008, TRESO-044) · [tresorerie-domain-model.md](./tresorerie-domain-model.md) §7
+Réf. : [admin-tresorerie-readme.md](./admin-tresorerie-readme.md) · [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md) (TRESO-008, TRESO-044) · [tresorerie-domain-model.md](./tresorerie-domain-model.md) §7
 
 ## Objectif
 

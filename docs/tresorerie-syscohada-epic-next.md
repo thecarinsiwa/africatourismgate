@@ -1,7 +1,7 @@
 # Handoff — Épic SYSCOHADA (suite Trésorerie)
 
 > **Document de bascule** pour un futur lot de tâches GitHub (comptabilité réglementaire).  
-> **Lot actuel (Admin + API trésorerie opérationnelle) :** hors scope volontaire — voir [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md) (TRESO-001 → TRESO-045) et [tresorerie-domain-model.md](./tresorerie-domain-model.md) §10.  
+> **Lot actuel (Admin + API trésorerie opérationnelle) :** hors scope volontaire — voir [admin-tresorerie-readme.md](./admin-tresorerie-readme.md), [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md) (TRESO-001 → TRESO-045) et [tresorerie-domain-model.md](./tresorerie-domain-model.md) §10.  
 > **Stub livré :** TRESO-039 (`accounting_links`) · TRESO-040 (UI `/tresorerie/comptabilite`).
 
 **Statut :** prêt à dériver un doc tâches du type `docs/admin-syscohada-github-tasks.md`.  

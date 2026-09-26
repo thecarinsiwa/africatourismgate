@@ -3,7 +3,9 @@
 > **Document opérationnel** pour créer des issues GitHub destinées à intégrer le **module Trésorerie** côté Admin (`apps/admin`) avec contrats API Nest minimaux (`apps/api`).  
 > **Mise à jour : septembre 2026** — Basé sur le plan feature `feature/tresorerie-admin-module`.
 
-**Modèle de domaine (TRESO-001) :** [tresorerie-domain-model.md](./tresorerie-domain-model.md)
+**Guide module (routes / permissions / client) :** [admin-tresorerie-readme.md](./admin-tresorerie-readme.md)  
+**Modèle de domaine (TRESO-001) :** [tresorerie-domain-model.md](./tresorerie-domain-model.md)  
+**Handoff SYSCOHADA :** [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md)
 
 ---
 
@@ -121,7 +123,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-042 | E2E smoke nav + CRUD entrée — ✅                         | Haute    | Testing     | M      |
 | TRESO-043 | E2E happy path circuit sortie — ✅                       | Haute    | Testing     | M      |
 | TRESO-044 | QA manuelle RBAC rôles trésorerie — ✅                   | Haute    | Testing     | M      |
-| TRESO-045 | Sync OpenAPI + api-client + README module                | Basse    | Docs / API  | S      |
+| TRESO-045 | Sync OpenAPI + api-client + README module — ✅           | Basse    | Docs / API  | S      |
 
 ---
 
@@ -2025,14 +2027,15 @@ Parcourir [`docs/pr-tresorerie-rbac-test.md`](./pr-tresorerie-rbac-test.md) avec
 
 ---
 
-### TRESO-045 — Sync OpenAPI + api-client + README module
+### TRESO-045 — Sync OpenAPI + api-client + README module — ✅
 
 **Labels :** `admin`, `tresorerie`, `docs`, `priority:low`  
-**Branche suggérée :** `feature/tresorerie-openapi-readme`
+**Branche suggérée :** `feature/tresorerie-openapi-readme`  
+**Livrable :** `apps/api/openapi.json` régénéré (chemins treasury) · `packages/api-client/src/generated/*` · [admin-tresorerie-readme.md](./admin-tresorerie-readme.md)
 
 #### Modèle GitHub
 
-```markdown
+````markdown
 ## Contexte
 
 Finaliser l’intégration client Admin et documenter le module.
@@ -2051,17 +2054,22 @@ Finaliser l’intégration client Admin et documenter le module.
 
 ## Critères d'acceptation
 
-- [ ] Client régénéré consommé par Admin
-- [ ] README à jour
-- [ ] Liens docs croisés
+- [x] Client régénéré consommé par Admin (`openapi:export` + `pnpm codegen:api` ; méthodes `ApiClient` treasury)
+- [x] README à jour ([admin-tresorerie-readme.md](./admin-tresorerie-readme.md))
+- [x] Liens docs croisés (tasks, domain, SYSCOHADA, QA RBAC)
 
 ## Plan de test
 
-Build api-client ; smoke import Admin.
+```bash
+pnpm --filter @africatourismgate/api openapi:export
+pnpm codegen:api
+pnpm --filter @africatourismgate/api-client build
+pnpm --filter @africatourismgate/admin exec tsc --noEmit
+```
 
 ## Références
 
 - ensemble TRESO-011…040
-```
+````
 
 ---
