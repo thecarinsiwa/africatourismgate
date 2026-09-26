@@ -349,6 +349,10 @@ import type {
   PaymentAdminDetail,
   PaymentListItem,
   PaymentsListQuery,
+  CreateFundEntryRequest,
+  FundEntriesListQuery,
+  FundEntry,
+  UpdateFundEntryRequest,
   CreatePromoCodeRequest,
   CreatePromotionRequest,
   PromoCode,
@@ -1265,6 +1269,29 @@ export class ApiClient {
 
   listPayments(query?: PaymentsListQuery, requestOptions?: RequestOptions): Promise<PaginatedResponse<PaymentListItem>> {
     return fetchPaginated<PaymentListItem>(this, '/payments', query, requestOptions);
+  }
+
+  listFundEntries(
+    query?: FundEntriesListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<FundEntry>> {
+    return fetchPaginated<FundEntry>(this, '/fund-entries', query, requestOptions);
+  }
+
+  getFundEntry(id: string): Promise<FundEntry> {
+    return this.request<FundEntry>(`/fund-entries/${id}`);
+  }
+
+  createFundEntry(body: CreateFundEntryRequest): Promise<FundEntry> {
+    return this.request<FundEntry>('/fund-entries', { method: 'POST', body });
+  }
+
+  updateFundEntry(id: string, body: UpdateFundEntryRequest): Promise<FundEntry> {
+    return this.request<FundEntry>(`/fund-entries/${id}`, { method: 'PATCH', body });
+  }
+
+  deleteFundEntry(id: string): Promise<void> {
+    return this.request<void>(`/fund-entries/${id}`, { method: 'DELETE' });
   }
 
   getPayment(id: string): Promise<PaymentAdminDetail> {

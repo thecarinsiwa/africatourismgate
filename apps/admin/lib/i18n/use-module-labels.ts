@@ -7,6 +7,8 @@ import type {
   BookingStatus,
   EmployeeStatus,
   FlightClassName,
+  FundEntrySource,
+  FundEntryStatus,
   LoyaltyTier,
   OrganizationStatus,
   PackageItemType,
@@ -18,8 +20,14 @@ import type {
   SupportTicketStatus,
   TourGuideStatus,
   TourGuideType,
+  TreasuryPaymentMethod,
   UserStatus,
   VehicleAvailabilityStatus,
+} from '@africatourismgate/types';
+import {
+  FUND_ENTRY_SOURCES,
+  FUND_ENTRY_STATUSES,
+  TREASURY_PAYMENT_METHODS,
 } from '@africatourismgate/types';
 import { useFormatter, useTranslations } from 'next-intl';
 import { useCallback, useMemo } from 'react';
@@ -647,5 +655,92 @@ export function useFormatChartAxisDate() {
       return format.dateTime(date, { day: 'numeric', month: 'short' });
     },
     [format],
+  );
+}
+
+export function useFundEntrySourceLabels() {
+  const t = useTranslations('modules.treasury.sources');
+  return useMemo(
+    (): Record<FundEntrySource, string> => ({
+      booking_payment: t('booking_payment'),
+      customer_direct: t('customer_direct'),
+      partner: t('partner'),
+      grant_donation: t('grant_donation'),
+      owner_capital: t('owner_capital'),
+      bank_interest: t('bank_interest'),
+      other: t('other'),
+    }),
+    [t],
+  );
+}
+
+export function useTreasuryPaymentMethodLabels() {
+  const t = useTranslations('modules.treasury.paymentMethods');
+  return useMemo(
+    (): Record<TreasuryPaymentMethod, string> => ({
+      cash: t('cash'),
+      bank_transfer: t('bank_transfer'),
+      mobile_money: t('mobile_money'),
+      stripe: t('stripe'),
+      cheque: t('cheque'),
+      other: t('other'),
+    }),
+    [t],
+  );
+}
+
+export function useFundEntryStatusLabels() {
+  const t = useTranslations('modules.treasury.fundEntryStatus');
+  return useMemo(
+    (): Record<FundEntryStatus, string> => ({
+      recorded: t('recorded'),
+      voided: t('voided'),
+    }),
+    [t],
+  );
+}
+
+export function useFundEntrySourceFilterOptions() {
+  const tAll = useTranslations('modules.common.filters');
+  const labels = useFundEntrySourceLabels();
+  return useMemo(
+    () => [
+      { value: '', label: tAll('allFeminine') },
+      ...FUND_ENTRY_SOURCES.map((value) => ({
+        value,
+        label: labels[value],
+      })),
+    ],
+    [labels, tAll],
+  );
+}
+
+export function useFundEntryStatusFilterOptions() {
+  const tAll = useTranslations('modules.common.filters');
+  const labels = useFundEntryStatusLabels();
+  return useMemo(
+    () => [
+      { value: '', label: tAll('all') },
+      ...FUND_ENTRY_STATUSES.map((value) => ({
+        value,
+        label: labels[value],
+      })),
+    ],
+    [labels, tAll],
+  );
+}
+
+export function useTreasuryPaymentMethodFilterOptions() {
+  const tAll = useTranslations('modules.common.filters');
+  const labels = useTreasuryPaymentMethodLabels();
+  return useMemo(
+    () => [
+      { value: '', label: tAll('all') },
+      ...TREASURY_PAYMENT_METHODS.map((value) => ({
+        value,
+        label: labels[value],
+      })),
+    ],
+    [labels, tAll],
   );
 }

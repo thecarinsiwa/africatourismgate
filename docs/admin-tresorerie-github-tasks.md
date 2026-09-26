@@ -88,7 +88,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-010 | Scaffold i18n fr/en/es modules trésorerie — ✅           | Haute    | i18n        | S      |
 | TRESO-011 | API Nest CRUD `fund-entries` + filtres — ✅              | Haute    | API         | L      |
 | TRESO-012 | API liaison entrées ↔ réservations (0,N) + justificatifs — ✅ | Haute    | API         | M      |
-| TRESO-013 | UI Admin liste + filtres entrées de fonds                | Haute    | Admin       | M      |
+| TRESO-013 | UI Admin liste + filtres entrées de fonds — ✅           | Haute    | Admin       | M      |
 | TRESO-014 | UI Admin formulaire création/édition entrée              | Haute    | Admin       | L      |
 | TRESO-015 | UI Admin fiche détail entrée + traçabilité               | Haute    | Admin       | M      |
 | TRESO-016 | API Nest `expense-requests` CRUD + statuts               | Haute    | API         | L      |
@@ -697,10 +697,11 @@ Créer entrée sans / avec 1 / avec N bookings ; upload justificatif.
 
 ---
 
-### TRESO-013 — UI Admin liste + filtres entrées
+### TRESO-013 — UI Admin liste + filtres entrées — ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:high`  
-**Branche suggérée :** `feature/tresorerie-ui-fund-entries-list`
+**Branche suggérée :** `feature/tresorerie-ui-fund-entries-list`  
+**Livrable :** `fund-entries-list.tsx` + `tresorerie-entrees-page-content.tsx` + `listFundEntries` api-client
 
 #### Modèle GitHub
 
@@ -718,16 +719,16 @@ Pattern DataTable + `getApiClient` + `AdminListPageHeader`.
 
 ## Fichiers clés
 
-- `apps/admin/components/treasury/` (ou `fund-entries/`)
+- `apps/admin/components/treasury/fund-entries-list.tsx`
 - `apps/admin/components/pages/tresorerie-entrees-page-content.tsx`
 - `apps/admin/app/(dashboard)/tresorerie/entrees/page.tsx`
 
 ## Critères d'acceptation
 
-- [ ] Liste paginée
-- [ ] Filtres fonctionnels
-- [ ] i18n
-- [ ] Empty / error states
+- [x] Liste paginée
+- [x] Filtres fonctionnels (date, devise, source, search)
+- [x] i18n
+- [x] Empty / error states
 
 ## Plan de test
 
