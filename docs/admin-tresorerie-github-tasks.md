@@ -111,7 +111,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-033 | Annulation / void d’opérations + gates — ✅              | Haute    | API / Admin | M      |
 | TRESO-034 | Lien croisé fiche réservation → opérations — ✅         | Moyenne  | Admin       | S      |
 | TRESO-035 | API agrégats rapports (période, source, mode) — ✅       | Moyenne  | API         | M      |
-| TRESO-036 | UI Admin page rapports trésorerie                        | Moyenne  | Admin       | M      |
+| TRESO-036 | UI Admin page rapports trésorerie — ✅                   | Moyenne  | Admin       | M      |
 | TRESO-037 | Export CSV des opérations                                | Moyenne  | API / Admin | S      |
 | TRESO-038 | Hub `/tresorerie` + cartes stats                         | Moyenne  | Admin       | S      |
 | TRESO-039 | Stub pont comptable `accounting_link` + mapping          | Basse    | API         | M      |
@@ -1639,10 +1639,11 @@ Seed opérations ; comparer agrégats.
 
 ---
 
-### TRESO-036 — UI Admin page rapports trésorerie
+### TRESO-036 — UI Admin page rapports trésorerie — ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:medium`  
-**Branche suggérée :** `feature/tresorerie-ui-reports`
+**Branche suggérée :** `feature/tresorerie-ui-reports`  
+**Livrable :** `/tresorerie/rapports` · `TreasuryReportsPanel` (filtres période/devise, KPIs, tableaux source/mode, BarChart Recharts) · gate `treasury.reports.read`
 
 #### Modèle GitHub
 
@@ -1664,9 +1665,9 @@ Page rapports consommant TRESO-035.
 
 ## Critères d'acceptation
 
-- [ ] Affichage totaux + groupements
-- [ ] Permission reports
-- [ ] Responsive OK
+- [x] Affichage totaux + groupements
+- [x] Permission reports
+- [x] Responsive OK
 
 ## Plan de test
 

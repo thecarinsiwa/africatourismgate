@@ -475,11 +475,36 @@
       "dateFrom": "From",
       "dateTo": "To",
       "currency": "Currency",
+      "currencyAll": "All currencies",
       "apply": "Apply"
     },
     "exportCsv": "Export CSV",
     "empty": "No data for this period.",
-    "accessDenied": "Access denied: treasury.reports.read permission required."
+    "accessDenied": "Access denied: treasury.reports.read permission required.",
+    "kpi": {
+      "entries": "Entries",
+      "exits": "Exits",
+      "net": "Net",
+      "netHint": "Entries − exits (single currency)",
+      "netUnavailable": "Select a currency",
+      "multiCurrency": "Multi-currency",
+      "count": "{count, plural, one {# operation} other {# operations}}",
+      "period": "Period"
+    },
+    "byCurrencyTitle": "Breakdown by currency",
+    "sections": {
+      "bySource": "By source (entries)",
+      "byPaymentMethod": "By payment method",
+      "chartPaymentMethod": "Chart — payment methods"
+    },
+    "chartUnit": "Amounts in {currency} (major units)",
+    "columns": {
+      "dimension": "Dimension",
+      "entries": "Entries",
+      "entriesCount": "Entry count",
+      "exits": "Exits",
+      "exitsCount": "Exit count"
+    }
   },
   "externalAccess": {
     "metaTitle": "Submit an expense request",

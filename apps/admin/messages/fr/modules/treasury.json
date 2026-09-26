@@ -475,11 +475,36 @@
       "dateFrom": "Du",
       "dateTo": "Au",
       "currency": "Devise",
+      "currencyAll": "Toutes devises",
       "apply": "Appliquer"
     },
     "exportCsv": "Exporter CSV",
     "empty": "Aucune donnée pour cette période.",
-    "accessDenied": "Accès refusé : permission treasury.reports.read requise."
+    "accessDenied": "Accès refusé : permission treasury.reports.read requise.",
+    "kpi": {
+      "entries": "Entrées",
+      "exits": "Sorties",
+      "net": "Net",
+      "netHint": "Entrées − sorties (une devise)",
+      "netUnavailable": "Sélectionnez une devise",
+      "multiCurrency": "Multi-devises",
+      "count": "{count, plural, one {# opération} other {# opérations}}",
+      "period": "Période"
+    },
+    "byCurrencyTitle": "Répartition par devise",
+    "sections": {
+      "bySource": "Par source (entrées)",
+      "byPaymentMethod": "Par mode de paiement",
+      "chartPaymentMethod": "Graphique — modes de paiement"
+    },
+    "chartUnit": "Montants en {currency} (unités majeures)",
+    "columns": {
+      "dimension": "Dimension",
+      "entries": "Entrées",
+      "entriesCount": "Nb entrées",
+      "exits": "Sorties",
+      "exitsCount": "Nb sorties"
+    }
   },
   "externalAccess": {
     "metaTitle": "Soumettre un état de besoin",

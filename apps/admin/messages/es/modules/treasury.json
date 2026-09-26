@@ -475,11 +475,36 @@
       "dateFrom": "Desde",
       "dateTo": "Hasta",
       "currency": "Moneda",
+      "currencyAll": "Todas las monedas",
       "apply": "Aplicar"
     },
     "exportCsv": "Exportar CSV",
     "empty": "No hay datos para este periodo.",
-    "accessDenied": "Acceso denegado: se requiere el permiso treasury.reports.read."
+    "accessDenied": "Acceso denegado: se requiere el permiso treasury.reports.read.",
+    "kpi": {
+      "entries": "Entradas",
+      "exits": "Salidas",
+      "net": "Neto",
+      "netHint": "Entradas − salidas (una moneda)",
+      "netUnavailable": "Seleccione una moneda",
+      "multiCurrency": "Multimoneda",
+      "count": "{count, plural, one {# operación} other {# operaciones}}",
+      "period": "Periodo"
+    },
+    "byCurrencyTitle": "Desglose por moneda",
+    "sections": {
+      "bySource": "Por origen (entradas)",
+      "byPaymentMethod": "Por método de pago",
+      "chartPaymentMethod": "Gráfico — métodos de pago"
+    },
+    "chartUnit": "Importes en {currency} (unidades mayores)",
+    "columns": {
+      "dimension": "Dimensión",
+      "entries": "Entradas",
+      "entriesCount": "N.º entradas",
+      "exits": "Salidas",
+      "exitsCount": "N.º salidas"
+    }
   },
   "externalAccess": {
     "metaTitle": "Enviar un estado de necesidad",
