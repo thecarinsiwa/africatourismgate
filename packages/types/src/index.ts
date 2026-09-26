@@ -348,6 +348,18 @@ export type {
   VoidTreasuryOperationRequest,
 } from './treasury.js';
 
+export type {
+  AccountingExercise,
+  AccountingExerciseStatus,
+  AccountingExercisesListQuery,
+  AccountingPeriod,
+  AccountingPeriodStatus,
+  AccountingPeriodsListQuery,
+  ChartAccount,
+  ChartAccountType,
+  ChartAccountsListQuery,
+} from './syscohada.js';
+
 export {
   ACCOUNTING_FUND_OP_TYPES,
   ACCOUNTING_LINK_STATUSES,
@@ -365,6 +377,12 @@ export {
   TREASURY_PAYMENT_METHODS,
   TREASURY_REPORT_GROUP_BY,
 } from './treasury.js';
+
+export {
+  ACCOUNTING_EXERCISE_STATUSES,
+  ACCOUNTING_PERIOD_STATUSES,
+  CHART_ACCOUNT_TYPES,
+} from './syscohada.js';
 
 export {
   BOOKING_ITEM_TYPE_KEYS,

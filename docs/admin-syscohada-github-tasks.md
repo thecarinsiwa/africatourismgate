@@ -90,7 +90,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | ID        | Titre court                                              | Priorité | Type           | Effort | Dépendances |
 | --------- | -------------------------------------------------------- | -------- | -------------- | ------ | ----------- |
 | SYSCO-001 | Spec domaine comptable OHADA + schéma cible — ✅         | Haute    | Docs / Spec    | M      | Domaine TRESO §10 |
-| SYSCO-002 | Migration plan comptable + exercices                     | Haute    | API / DB       | L      | SYSCO-001 |
+| SYSCO-002 | Migration plan comptable + exercices — ✅                | Haute    | API / DB       | L      | SYSCO-001 |
 | SYSCO-003 | Migration journaux / écritures / lignes                  | Haute    | API / DB       | L      | SYSCO-002 |
 | SYSCO-004 | Moteur mapping + job/API « comptabiliser »               | Haute    | API            | L      | TRESO-039, SYSCO-002 |
 | SYSCO-005 | Remplir `accounting_links.journal_entry_id` + statuts    | Haute    | API            | M      | TRESO-039, SYSCO-003–004 |
@@ -164,11 +164,11 @@ Revue documentaire finance / tech lead.
 
 ---
 
-### SYSCO-002 — Migration plan comptable + exercices
+### SYSCO-002 — Migration plan comptable + exercices — ✅
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `api`, `priority:high`  
 **Branche suggérée :** `feature/syscohada-chart-exercises`  
-**Livrable :** migrations `chart_of_accounts` (+ sous-comptes) · `accounting_exercises` / périodes · seed minimal classes SYSCOHADA · types partagés
+**Livrable :** [`database/migrations/add_syscohada_chart_of_accounts.sql`](../database/migrations/add_syscohada_chart_of_accounts.sql) · [`database/migrations/add_syscohada_exercises.sql`](../database/migrations/add_syscohada_exercises.sql) · [`packages/types/src/syscohada.ts`](../packages/types/src/syscohada.ts) · API `GET /chart-of-accounts` · `GET /accounting-exercises` · `GET /accounting-periods`
 
 #### Modèle GitHub
 
@@ -186,25 +186,32 @@ Sans référentiel de comptes et d’exercices, aucun journal ni mapping ne peut
 
 ## Fichiers clés
 
-- `database/migrations/add_syscohada_chart_of_accounts.sql` (nom indicatif)
+- `database/migrations/add_syscohada_chart_of_accounts.sql`
 - `database/migrations/add_syscohada_exercises.sql`
-- `packages/types` — accounting / syscohada
+- `packages/types/src/syscohada.ts`
+- `apps/api/src/modules/resources/chart-of-accounts/`
+- `apps/api/src/modules/resources/accounting-exercises/`
 - seed RBAC optionnel plus tard (SYSCO-009)
 
 ## Critères d'acceptation
 
-- [ ] CRUD lecture plan + exercices via API minimale ou seed inspectable
-- [ ] Contraintes unicité (org + code compte ; org + code exercice)
-- [ ] Soft-delete / actif cohérents avec conventions TRESO
-- [ ] Pas encore d’écritures (SYSCO-003)
+- [x] CRUD lecture plan + exercices via API minimale (`treasury.accounting_link.read` bridge)
+- [x] Contraintes unicité (org + code compte ; org + code exercice) via colonne générée soft-delete
+- [x] Soft-delete / actif cohérents avec conventions TRESO
+- [x] Pas encore d’écritures (SYSCO-003)
 
 ## Plan de test
 
-Appliquer migrations ; vérifier seed comptes ; GET list comptes / exercices.
+```bash
+pnpm db:sync
+# puis API démarrée :
+# GET /api/chart-of-accounts?organizationId=00000000-0000-4000-8000-000000000001
+# GET /api/accounting-exercises?organizationId=…&includePeriods=true
+```
 
 ## Références
 
-- SYSCO-001
+- SYSCO-001 · docs/syscohada-domain-model.md §5.1–5.3
 - handoff §2.1
 ```
 

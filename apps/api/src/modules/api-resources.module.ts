@@ -30,6 +30,8 @@ import { ExternalCollaboratorsModule } from './resources/external-collaborators/
 import { TreasuryAuditModule } from './resources/treasury-audit/treasury-audit.module';
 import { TreasuryReportsModule } from './resources/treasury-reports/treasury-reports.module';
 import { AccountingLinksModule } from './resources/accounting-links/accounting-links.module';
+import { ChartOfAccountsModule } from './resources/chart-of-accounts/chart-of-accounts.module';
+import { AccountingExercisesModule } from './resources/accounting-exercises/accounting-exercises.module';
 import { OrganizationMaintenancesModule } from './resources/organization-maintenances/organization-maintenances.module';
 import { PermissionsModule } from './resources/permissions/permissions.module';
 import { RolesModule } from './resources/roles/roles.module';
@@ -135,6 +137,8 @@ import { Module } from '@nestjs/common';
     TreasuryAuditModule,
     TreasuryReportsModule,
     AccountingLinksModule,
+    ChartOfAccountsModule,
+    AccountingExercisesModule,
     OrganizationMaintenancesModule,
     PermissionsModule,
     RolesModule,

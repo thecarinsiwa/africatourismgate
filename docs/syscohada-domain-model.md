@@ -117,19 +117,19 @@ Comptes SYSCOHADA par organisation (classes 1–8). Sous-comptes = lignes avec `
 
 **Unicité :** `(organization_id, code)` parmi non soft-deleted.
 
-**Seed MVP (indicatif — validation finance SYSCO-002) :**
+**Seed MVP (SYSCO-002 — org plateforme, codes alignés hints stub) :**
 
-| Code | Classe | Usage trésorerie |
-| ---- | ------ | ---------------- |
-| `521` | 5 | Caisse |
-| `5211` | 5 | Sous-caisse (optionnel) |
-| `52` / banques | 5 | Banques (ex. `521` vs `55` selon plan local — **à figer en revue**) |
-| `538` / équiv. | 5 | Autres moyens de paiement / mobile money |
-| `411` | 4 | Clients (collectif ; auxiliaires hors MVP) |
-| `601`–`628` | 6 | Charges (sortie défaut) |
-| `701`–`707` | 7 | Produits (entrée défaut) |
+| Code | Classe | Type | Usage |
+| ---- | ------ | ---- | ----- |
+| `57` | 5 | treasury | Caisse (hint stub `57`) |
+| `521` | 5 | treasury | Banques locales |
+| `538` | 5 | treasury | Mobile money et assimilés |
+| `411` | 4 | third_party | Clients (collectif) |
+| `60` | 6 | expense | Achats (sortie défaut / hint `60`) |
+| `61` | 6 | expense | Services extérieurs (hint `61`) |
+| `70` | 7 | revenue | Ventes (entrée défaut / hint `70`) |
 
-> Les hints stub actuels (`57`, `70`, `60`, `61`, `411`) sont des **placeholders** ; le seed SYSCO-002 doit les remplacer par des comptes validés du plan retenu.
+> Revue finance peut ajuster libellés / sous-comptes ; les codes ci-dessus sont le référentiel seed jusqu’à validation.
 
 ---
 
@@ -547,7 +547,7 @@ Pas de faux écrans avant données réelles (règle TRESO-040 conservée).
 
 | Tâche | Livrable |
 | ----- | -------- |
-| SYSCO-002 | Migration `chart_of_accounts` + `accounting_exercises` / `accounting_periods` + seed comptes |
+| SYSCO-002 — ✅ | Migrations `chart_of_accounts` + `accounting_exercises` / `accounting_periods` + seed + API lecture |
 | SYSCO-003 | Migration `accounting_journals` + `journal_entries` + `journal_lines` |
 | SYSCO-004 | Moteur mapping + API « Comptabiliser » |
 | SYSCO-005 | Remplir `journal_entry_id` + statuts link |

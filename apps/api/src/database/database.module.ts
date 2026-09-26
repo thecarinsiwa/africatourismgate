@@ -49,6 +49,11 @@ import {
 } from '../entities/treasury-external.entity';
 import { TreasuryAuditLogs } from '../entities/treasury-audit-log.entity';
 import { AccountingLinks } from '../entities/accounting-link.entity';
+import { ChartOfAccounts } from '../entities/chart-of-account.entity';
+import {
+  AccountingExercises,
+  AccountingPeriods,
+} from '../entities/accounting-exercise.entity';
 import { ensureMigrations } from './ensure-migrations';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
 import { ensureSchema } from './ensure-schema';
@@ -96,6 +101,9 @@ const entityList = [
   TreasuryAccessTokens,
   TreasuryAuditLogs,
   AccountingLinks,
+  ChartOfAccounts,
+  AccountingExercises,
+  AccountingPeriods,
 ] as (new () => unknown)[];
 
 @Module({
