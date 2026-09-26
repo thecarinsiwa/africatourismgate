@@ -82,7 +82,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-004 | Migration DB budgets (période / activité / produit) — ✅ | Haute    | API / DB    | M      |
 | TRESO-005 | Migration DB collaborateurs externes + jetons — ✅       | Haute    | API / DB    | M      |
 | TRESO-006 | Migration / extension journal d’audit trésorerie — ✅    | Haute    | API / DB    | S      |
-| TRESO-007 | Types partagés `packages/types` (enums, DTOs)            | Haute    | API / Types | M      |
+| TRESO-007 | Types partagés `packages/types` (enums, DTOs) — ✅       | Haute    | API / Types | M      |
 | TRESO-008 | Catalogue RBAC `treasury.*` + sync seed                  | Haute    | API / RBAC  | M      |
 | TRESO-009 | Shell Admin nav + routes + permissions + registry        | Haute    | Admin       | M      |
 | TRESO-010 | Scaffold i18n fr/en/es modules trésorerie                | Haute    | i18n        | S      |
@@ -399,14 +399,15 @@ pnpm db:sync
 
 ---
 
-### TRESO-007 — Types partagés packages/types
+### TRESO-007 — Types partagés packages/types — ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
-**Branche suggérée :** `feature/tresorerie-shared-types`
+**Branche suggérée :** `feature/tresorerie-shared-types`  
+**Livrable :** [`packages/types/src/treasury.ts`](../packages/types/src/treasury.ts)
 
 #### Modèle GitHub
 
-````markdown
+```markdown
 ## Contexte
 
 Admin et API doivent partager enums/DTOs (comme `packages/types/src/booking.ts`).
@@ -424,22 +425,21 @@ Admin et API doivent partager enums/DTOs (comme `packages/types/src/booking.ts`)
 
 ## Critères d'acceptation
 
-- [ ] Enums workflow et sources documentés
-- [ ] Types consommables Admin + API
-- [ ] Build package types OK
+- [x] Enums workflow et sources documentés (+ constantes runtime `FUND_ENTRY_SOURCES`, etc.)
+- [x] Types consommables Admin + API (Create/Update/ListQuery)
+- [x] Build package types OK
 
 ## Plan de test
 
 ```bash
 pnpm --filter @africatourismgate/types build
 ```
-````
 
 ## Références
 
 - TRESO-001, packages/types/src/booking.ts
-
-````
+- docs/tresorerie-domain-model.md
+```
 
 ---
 
