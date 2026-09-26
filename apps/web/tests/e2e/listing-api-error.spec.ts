@@ -20,9 +20,9 @@ async function mockFlightsApiDown(page: Page) {
   });
 }
 
-/** Listing retry CTA — exclude the global "Connexion interrompue" overlay button. */
+/** Listing retry CTA (connection-lock overlay is suppressed in e2e fixtures). */
 function listingRetryButton(page: Page) {
-  return page.locator('main').getByRole('button', { name: /r[ée]essayer|retry|reintentar/i });
+  return page.getByRole('button', { name: /^Réessayer$|^Retry$|^Reintentar$/i });
 }
 
 test.describe('Listing API error states (WEB-011)', () => {
@@ -49,9 +49,9 @@ test.describe('Listing API error states (WEB-011)', () => {
 
     await page.goto('/flights');
 
-    await expect(listingRetryButton(page)).toBeVisible({ timeout: 20_000 });
     await expect(
       page.getByText(/Impossible de charger les vols/i).first(),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 20_000 });
+    await expect(listingRetryButton(page)).toBeVisible();
   });
 });
