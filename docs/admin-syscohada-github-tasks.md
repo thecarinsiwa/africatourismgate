@@ -322,7 +322,7 @@ pnpm db:sync
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `api`, `priority:high`  
 **Branche suggérée :** `feature/syscohada-accounting-links-link`  
-**Livrable :** `AccountingPostingService` (linked / noop / reprise) · `DELETE` soft-delete pending/skipped · migration `add_syscohada_accounting_links_unique_active.sql` · void ignore soft-deleted · politique [domaine §5.8](./syscohada-domain-model.md)
+**Livrable :** `AccountingPostingService` (linked / noop / reprise) · `DELETE` soft-delete pending/skipped · migration `add_treasury_accounting_links_sysco005_unique_active.sql` · void ignore soft-deleted · politique [domaine §5.8](./syscohada-domain-model.md)
 
 #### Modèle GitHub
 
@@ -343,7 +343,7 @@ Le stub permet déjà `accounting_links` et interdit le void si `status = linked
 - `accounting-posting.service.ts`
 - `accounting-links.service.ts` (softDelete)
 - `assert-fund-op-not-accounting-linked.ts`
-- `database/migrations/add_syscohada_accounting_links_unique_active.sql`
+- `database/migrations/add_treasury_accounting_links_sysco005_unique_active.sql`
 - `docs/syscohada-domain-model.md` §5.8
 
 ## Critères d'acceptation
