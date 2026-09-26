@@ -3,10 +3,28 @@ type Listener = (locked: boolean) => void;
 let locked = false;
 const listeners = new Set<Listener>();
 
+/** Set via Playwright storageState / init script so e2e never shows the lock overlay. */
+export const E2E_DISABLE_CONNECTION_LOCK_KEY = 'atg.e2e.disableConnectionLock';
+
 function emit(): void {
   listeners.forEach((listener) => {
     listener(locked);
   });
+}
+
+/** True under Playwright (`navigator.webdriver`) or when the e2e localStorage flag is set. */
+export function isConnectionLockSuppressed(): boolean {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+  try {
+    if (typeof navigator !== 'undefined' && navigator.webdriver) {
+      return true;
+    }
+    return window.localStorage?.getItem(E2E_DISABLE_CONNECTION_LOCK_KEY) === '1';
+  } catch {
+    return false;
+  }
 }
 
 export function isConnectionLocked(): boolean {
@@ -22,6 +40,9 @@ export function subscribeConnectionLock(listener: Listener): () => void {
 }
 
 export function lockConnection(): void {
+  if (isConnectionLockSuppressed()) {
+    return;
+  }
   if (locked) {
     return;
   }

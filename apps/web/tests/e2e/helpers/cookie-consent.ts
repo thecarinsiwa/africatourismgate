@@ -10,6 +10,9 @@ export const E2E_COOKIE_CONSENT_VALUE = JSON.stringify({
   decidedAt: '2026-01-01T00:00:00.000Z',
 });
 
+/** Matches `E2E_DISABLE_CONNECTION_LOCK_KEY` in `@africatourismgate/ui` connection-lock store. */
+export const E2E_DISABLE_CONNECTION_LOCK_KEY = 'atg.e2e.disableConnectionLock';
+
 /** Playwright storageState snippet so the cookie modal never blocks e2e clicks. */
 export function cookieConsentStorageOrigin(origin: string) {
   return {
@@ -18,6 +21,10 @@ export function cookieConsentStorageOrigin(origin: string) {
       {
         name: E2E_COOKIE_CONSENT_KEY,
         value: E2E_COOKIE_CONSENT_VALUE,
+      },
+      {
+        name: E2E_DISABLE_CONNECTION_LOCK_KEY,
+        value: '1',
       },
     ],
   };
@@ -35,13 +42,18 @@ export async function seedCookieConsent(
   target: Page | BrowserContext,
 ): Promise<void> {
   await target.addInitScript(
-    ({ key, value }) => {
+    ({ consentKey, consentValue, lockKey }) => {
       try {
-        window.localStorage.setItem(key, value);
+        window.localStorage.setItem(consentKey, consentValue);
+        window.localStorage.setItem(lockKey, '1');
       } catch {
         /* ignore */
       }
     },
-    { key: E2E_COOKIE_CONSENT_KEY, value: E2E_COOKIE_CONSENT_VALUE },
+    {
+      consentKey: E2E_COOKIE_CONSENT_KEY,
+      consentValue: E2E_COOKIE_CONSENT_VALUE,
+      lockKey: E2E_DISABLE_CONNECTION_LOCK_KEY,
+    },
   );
 }

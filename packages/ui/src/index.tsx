@@ -176,6 +176,8 @@ export {
 export {
   isApiUnreachableError,
   isConnectionLocked,
+  isConnectionLockSuppressed,
+  E2E_DISABLE_CONNECTION_LOCK_KEY,
   lockConnection,
   notifyApiUnreachable,
   subscribeConnectionLock,

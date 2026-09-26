@@ -1,5 +1,6 @@
 import { defineConfig } from '@playwright/test';
 import { cookieConsentStorageState } from './tests/e2e/helpers/cookie-consent';
+import './tests/e2e/helpers/stub-missing-api';
 
 const port = 3099;
 const baseURL = `http://127.0.0.1:${port}`;

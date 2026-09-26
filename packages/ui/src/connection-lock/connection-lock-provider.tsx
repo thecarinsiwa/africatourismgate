@@ -12,6 +12,7 @@ import {
 import { Button } from '../components/button';
 import {
   isConnectionLocked,
+  isConnectionLockSuppressed,
   lockConnection,
   subscribeConnectionLock,
   unlockConnection,
@@ -159,7 +160,7 @@ function ConnectionLockOverlay({
     }
   }, [healthUrl, messages.retryFailed]);
 
-  if (!locked || suppressed) {
+  if (!locked || suppressed || isConnectionLockSuppressed()) {
     return null;
   }
 
