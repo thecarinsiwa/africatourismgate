@@ -24,7 +24,7 @@ export class AccountingLinks extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'fund_op_id', length: 36 })
   fundOpId!: string;
 
-  /** Nullable — rempli uniquement par l’épic SYSCOHADA futur. */
+  /** Rempli par SYSCO-004/005 (Comptabiliser → écriture posted). */
   @Column({ type: 'varchar', name: 'journal_entry_id', length: 36, nullable: true })
   journalEntryId!: string | null;
 

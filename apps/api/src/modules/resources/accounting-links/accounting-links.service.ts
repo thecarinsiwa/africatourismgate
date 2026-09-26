@@ -19,15 +19,12 @@ import {
 } from './dto/accounting-link.dto';
 import { CreateAccountingLinkDto } from './dto/create-accounting-link.dto';
 import { UpdateAccountingLinkDto } from './dto/update-accounting-link.dto';
-import {
-  findAccountingMappingRule,
-  TREASURY_ACCOUNTING_MAPPING_CONFIG,
-  type AccountingMappingConfig,
-} from './treasury-accounting-mapping.config';
+import { AccountingMappingEngine } from './accounting-mapping.engine';
 
 /**
- * Stub pont comptable (TRESO-039) — traçabilité opération ↔ écriture future.
- * Aucune génération d’écritures SYSCOHADA.
+ * Pont comptable (TRESO-039 → SYSCO-004).
+ * Mapping config lue depuis `accounting_mapping_rules` (stub: false).
+ * Génération d’écritures : AccountingPostingService.
  */
 @Injectable()
 export class AccountingLinksService {
@@ -39,10 +36,36 @@ export class AccountingLinksService {
     @InjectRepository(FundExits)
     private readonly fundExitsRepo: Repository<FundExits>,
     private readonly treasuryAudit: TreasuryAuditService,
+    private readonly mappingEngine: AccountingMappingEngine,
   ) {}
 
-  getMappingConfig(): AccountingMappingConfig {
-    return TREASURY_ACCOUNTING_MAPPING_CONFIG;
+  async getMappingConfig(organizationId?: string) {
+    const rules = await this.mappingEngine.listActiveRules(organizationId);
+    const maxVersion =
+      rules.length > 0 ? Math.max(...rules.map((r) => r.version)) : 0;
+
+    return {
+      version: maxVersion,
+      schemaVersion: this.mappingEngine.schemaVersion,
+      stub: false as const,
+      description:
+        'Règles de mapping trésorerie → plan SYSCOHADA (référentiel DB).',
+      rules: rules.map((r) => ({
+        key: r.key,
+        fundOpType: r.fundOpType,
+        version: r.version,
+        matchSource: r.matchSource,
+        matchPaymentMethod: r.matchPaymentMethod,
+        journalId: r.journalId,
+        debitAccountId: r.debitAccountId,
+        creditAccountId: r.creditAccountId,
+        debitAccountCode: r.debitAccountCode,
+        creditAccountCode: r.creditAccountCode,
+        priority: r.priority,
+        label: r.label,
+        notes: r.notes,
+      })),
+    };
   }
 
   async findAll(
@@ -104,7 +127,10 @@ export class AccountingLinksService {
     await this.assertFundOpExists(dto.fundOpType, dto.fundOpId, dto.organizationId);
 
     if (dto.mappingRuleKey) {
-      const rule = findAccountingMappingRule(dto.mappingRuleKey);
+      const rule = await this.mappingEngine.findByKey(
+        dto.organizationId,
+        dto.mappingRuleKey,
+      );
       if (!rule) {
         throw new BadRequestException(
           `Unknown mapping rule key: ${dto.mappingRuleKey}`,
@@ -183,7 +209,10 @@ export class AccountingLinksService {
 
     if (dto.mappingRuleKey !== undefined) {
       if (dto.mappingRuleKey) {
-        const rule = findAccountingMappingRule(dto.mappingRuleKey);
+        const rule = await this.mappingEngine.findByKey(
+          row.organizationId,
+          dto.mappingRuleKey,
+        );
         if (!rule) {
           throw new BadRequestException(
             `Unknown mapping rule key: ${dto.mappingRuleKey}`,

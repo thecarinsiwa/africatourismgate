@@ -38,6 +38,8 @@ export const PROD_MIGRATION_DATA_TABLES = new Set([
   'accounting_periods',
   // SYSCO-003 — journaux seed plateforme
   'accounting_journals',
+  // SYSCO-004 — mapping rules seed
+  'accounting_mapping_rules',
 ]);
 
 export function isProdSeedProfile(env = process.env) {

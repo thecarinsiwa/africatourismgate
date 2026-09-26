@@ -1,14 +1,14 @@
 /**
- * Skeleton de règles de mapping trésorerie → comptes SYSCOHADA (TRESO-039).
+ * @deprecated SYSCO-004 — remplacé par la table `accounting_mapping_rules`
+ * et `AccountingMappingEngine`. Conservé uniquement pour référence historique
+ * des clés stub TRESO-039. Ne plus importer en production.
  *
- * STUB UNIQUEMENT — aucune écriture de journal n’est générée.
- * L’épic suivant (TRESO-041 / docs/tresorerie-syscohada-epic-next.md) consommera
- * ces clés via `accounting_links.mapping_rule_key`.
+ * Voir : docs/syscohada-domain-model.md §5.7 · GET /accounting-links/mapping-config
  */
 export type AccountingMappingRule = {
   key: string;
   fundOpType: 'fund_entry' | 'fund_exit';
-  /** Indices de comptes SYSCOHADA (placeholders, non validés). */
+  /** @deprecated Hints texte — utiliser debit_account_id / credit_account_id en DB */
   debitAccountHint: string;
   creditAccountHint: string;
   label: string;
@@ -22,11 +22,12 @@ export type AccountingMappingConfig = {
   rules: AccountingMappingRule[];
 };
 
+/** @deprecated */
 export const TREASURY_ACCOUNTING_MAPPING_CONFIG: AccountingMappingConfig = {
   version: 1,
   stub: true,
   description:
-    'Règles de mapping skeleton pour le pont comptable. Pas de génération d’écritures dans ce lot.',
+    'DEPRECATED — utiliser accounting_mapping_rules (SYSCO-004).',
   rules: [
     {
       key: 'fund_entry.default',
@@ -34,7 +35,6 @@ export const TREASURY_ACCOUNTING_MAPPING_CONFIG: AccountingMappingConfig = {
       debitAccountHint: '57',
       creditAccountHint: '70',
       label: 'Entrée de fonds — mapping par défaut',
-      notes: 'Placeholder caisse/banque vs produits.',
     },
     {
       key: 'fund_entry.booking_payment',
@@ -49,7 +49,6 @@ export const TREASURY_ACCOUNTING_MAPPING_CONFIG: AccountingMappingConfig = {
       debitAccountHint: '60',
       creditAccountHint: '57',
       label: 'Sortie de fonds — mapping par défaut',
-      notes: 'Placeholder charges vs caisse/banque.',
     },
     {
       key: 'fund_exit.expense_request',
@@ -61,6 +60,7 @@ export const TREASURY_ACCOUNTING_MAPPING_CONFIG: AccountingMappingConfig = {
   ],
 };
 
+/** @deprecated */
 export function findAccountingMappingRule(
   key: string,
 ): AccountingMappingRule | undefined {

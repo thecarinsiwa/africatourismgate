@@ -35,7 +35,7 @@ export class CreateAccountingLinkDto {
 
   @ApiPropertyOptional({
     maxLength: 120,
-    description: 'Key from TREASURY_ACCOUNTING_MAPPING_CONFIG.rules',
+    description: 'Key from accounting_mapping_rules (SYSCO-004)',
   })
   @IsOptional()
   @IsString()

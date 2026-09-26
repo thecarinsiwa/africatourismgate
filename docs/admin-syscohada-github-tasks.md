@@ -92,8 +92,8 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | SYSCO-001 | Spec domaine comptable OHADA + schéma cible — ✅         | Haute    | Docs / Spec    | M      | Domaine TRESO §10 |
 | SYSCO-002 | Migration plan comptable + exercices — ✅                | Haute    | API / DB       | L      | SYSCO-001 |
 | SYSCO-003 | Migration journaux / écritures / lignes — ✅             | Haute    | API / DB       | L      | SYSCO-002 |
-| SYSCO-004 | Moteur mapping + job/API « comptabiliser »               | Haute    | API            | L      | TRESO-039, SYSCO-002 |
-| SYSCO-005 | Remplir `accounting_links.journal_entry_id` + statuts    | Haute    | API            | M      | TRESO-039, SYSCO-003–004 |
+| SYSCO-004 | Moteur mapping + job/API « comptabiliser » — ✅          | Haute    | API            | L      | TRESO-039, SYSCO-002 |
+| SYSCO-005 | Remplir `accounting_links.journal_entry_id` + statuts — ✅ | Haute    | API            | M      | TRESO-039, SYSCO-003–004 |
 | SYSCO-006 | UI journal + grand livre + balance                       | Haute    | Admin          | L      | SYSCO-003 |
 | SYSCO-007 | Livres caisse / banque + rapprochements                  | Moyenne  | Admin / API    | L      | SYSCO-003, comptes classe 5 |
 | SYSCO-008 | Clôtures + bilan + compte de résultat                    | Moyenne  | Admin / API    | L      | SYSCO-006 |
@@ -268,11 +268,11 @@ pnpm db:sync
 
 ---
 
-### SYSCO-004 — Moteur mapping (remplace skeleton) + job/API « comptabiliser »
+### SYSCO-004 — Moteur mapping (remplace skeleton) + job/API « comptabiliser » — ✅
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `api`, `priority:high`  
 **Branche suggérée :** `feature/syscohada-mapping-engine`  
-**Livrable :** règles mapping versionnées (table/settings org) · service résolution `mapping_rule_key` · endpoint/job « Comptabiliser » · retrait progressif du stub JSON
+**Livrable :** [`database/migrations/add_syscohada_mapping_rules.sql`](../database/migrations/add_syscohada_mapping_rules.sql) · `AccountingMappingEngine` · `POST /accounting-links/post` · `POST /accounting-links/skip` · `GET mapping-config` `stub:false`
 
 #### Modèle GitHub
 
@@ -284,41 +284,45 @@ Aujourd’hui `TREASURY_ACCOUNTING_MAPPING_CONFIG` expose des hints texte (`57`,
 ## Objectif
 
 1. Remplacer le skeleton in-process par référentiel mapping (org + version)
-2. Résoudre `mapping_rule_key` depuis `source` / `payment_method` / type d’op (`fund_entry` | `fund_exit`)
-3. API ou job : « Comptabiliser » une opération (ou batch) → crée/maj `accounting_links` `pending` puis génère écriture (avec SYSCO-003/005)
-4. Flag `stub: false` ou schema version sur `GET /accounting-links/mapping-config`
+2. Résoudre `mapping_rule_key` depuis `source` / `payment_method` / type d’op
+3. API « Comptabiliser » → pending → écriture → linked
+4. Flag `stub: false` + schemaVersion sur mapping-config
 
 ## Fichiers clés
 
-- `apps/api/.../treasury-accounting-mapping.config.ts` (à déprécier)
-- table / settings `accounting_mapping_rules`
-- service `AccountingMappingEngine`
-- déclencheur : recorded / disbursed / action manuelle (selon SYSCO-001)
+- `database/migrations/add_syscohada_mapping_rules.sql`
+- `apps/api/.../accounting-mapping.engine.ts`
+- `apps/api/.../accounting-posting.service.ts`
+- `treasury-accounting-mapping.config.ts` (deprecated)
 
 ## Critères d'acceptation
 
-- [ ] Mapping résolu vers comptes du plan (SYSCO-002)
-- [ ] Idempotence : rejeu safe si déjà `pending`/`linked`
-- [ ] Cas `skipped` sans écriture
-- [ ] Hints stub plus utilisés en prod une fois seed mapping validé
+- [x] Mapping résolu vers comptes du plan (SYSCO-002)
+- [x] Idempotence : rejeu safe si déjà `linked` (noop)
+- [x] Cas `skipped` sans écriture (`POST /accounting-links/skip`)
+- [x] Hints stub plus utilisés (`stub: false`, config DB)
 
 ## Plan de test
 
-Comptabiliser une entrée cash → règle caisse ; une sortie → charges ; mapping inconnu → erreur métier claire.
+```bash
+pnpm db:sync
+# POST /api/accounting-links/post { fundOpType, fundOpId } sur entrée cash recorded
+# Rejeu → noop:true
+# POST /api/accounting-links/skip …
+```
 
 ## Références
 
-- TRESO-039
-- handoff §4
+- TRESO-039 · SYSCO-001 §3 · handoff §4 · SYSCO-005 inclus dans le flux post
 ```
 
 ---
 
-### SYSCO-005 — Remplir `accounting_links.journal_entry_id` + statuts
+### SYSCO-005 — Remplir `accounting_links.journal_entry_id` + statuts — ✅
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `api`, `priority:high`  
 **Branche suggérée :** `feature/syscohada-accounting-links-link`  
-**Livrable :** pont réel `pending` → `linked` · `journal_entry_id` renseigné · gate void inchangée · politique soft-delete / recreate
+**Livrable :** flux `pending` → `linked` dans `AccountingPostingService` · gate void inchangée · skip / recreate documentés
 
 #### Modèle GitHub
 
@@ -330,26 +334,25 @@ Le stub permet déjà `accounting_links` et interdit le void si `status = linked
 ## Objectif
 
 1. Après génération écriture : upsert link, `journal_entry_id`, `status = linked`
-2. Flux `pending` → reprise génération ; `linked` → no-op ou erreur métier
-3. `skipped` : pas d’écriture, traçabilité conservée
-4. Documenter politique soft-delete vs unique `(fund_op_type, fund_op_id)`
+2. Flux `pending` → reprise ; `linked` → no-op
+3. `skipped` : pas d’écriture
+4. Soft-delete : unique parmi non-deleted (existant)
 
 ## Fichiers clés
 
-- module `accounting-links` existant
-- `assertFundOpNotAccountingLinked` (void)
-- migration si colonnes/status manquants
+- `accounting-posting.service.ts`
+- `assertFundOpNotAccountingLinked` (void — inchangé)
 
 ## Critères d'acceptation
 
-- [ ] Opération comptabilisée → link `linked` + UUID écriture
-- [ ] Void fond toujours bloqué si linked
-- [ ] Contrepassation : stratégie documentée (nouvelle écriture vs update — handoff §6)
-- [ ] Unique contrainte respectée (idempotence)
+- [x] Opération comptabilisée → link `linked` + UUID écriture
+- [x] Void fond toujours bloqué si linked
+- [x] Contrepassation : nouvelle pièce (doc domaine) — hors MVP post
+- [x] Unique contrainte respectée (idempotence)
 
 ## Plan de test
 
-Créer entrée → comptabiliser → GET link ; tenter void → refus ; rejeu comptabiliser → no-op.
+Créer entrée recorded → POST post → GET link ; tenter void → refus ; rejeu post → noop.
 
 ## Références
 

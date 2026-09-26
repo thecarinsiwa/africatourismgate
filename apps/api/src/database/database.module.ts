@@ -59,6 +59,7 @@ import {
   JournalEntries,
   JournalLines,
 } from '../entities/journal-entry.entity';
+import { AccountingMappingRules } from '../entities/accounting-mapping-rule.entity';
 import { ensureMigrations } from './ensure-migrations';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
 import { ensureSchema } from './ensure-schema';
@@ -112,6 +113,7 @@ const entityList = [
   AccountingJournals,
   JournalEntries,
   JournalLines,
+  AccountingMappingRules,
 ] as (new () => unknown)[];
 
 @Module({

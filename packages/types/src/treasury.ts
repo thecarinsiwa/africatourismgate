@@ -635,19 +635,51 @@ export interface UpdateAccountingLinkRequest {
   status?: AccountingLinkStatus;
 }
 
-/** Skeleton mapping config (TRESO-039 stub — no journal generation). */
+/** Mapping rule exposée API (SYSCO-004 — comptes réels du plan). */
 export interface AccountingMappingRule {
   key: string;
   fundOpType: AccountingFundOpType;
-  debitAccountHint: string;
-  creditAccountHint: string;
+  version: number;
+  matchSource: string | null;
+  matchPaymentMethod: string | null;
+  journalId: string;
+  debitAccountId: string;
+  creditAccountId: string;
+  /** Code compte (enrichissement lecture config) */
+  debitAccountCode?: string;
+  creditAccountCode?: string;
+  priority: number;
   label: string;
-  notes?: string;
+  notes?: string | null;
+  /** @deprecated TRESO-039 hints — absents dès stub:false */
+  debitAccountHint?: string;
+  creditAccountHint?: string;
 }
 
 export interface AccountingMappingConfig {
   version: number;
-  stub: true;
+  schemaVersion: number;
+  stub: boolean;
   description: string;
   rules: AccountingMappingRule[];
+}
+
+export interface PostAccountingLinkRequest {
+  fundOpType: AccountingFundOpType;
+  fundOpId: string;
+}
+
+export interface SkipAccountingLinkRequest {
+  fundOpType: AccountingFundOpType;
+  fundOpId: string;
+  organizationId: string;
+  reason?: string | null;
+}
+
+export interface PostAccountingLinkResult {
+  link: AccountingLink;
+  journalEntryId: string | null;
+  /** true si déjà linked — rejeu no-op */
+  noop: boolean;
+  mappingRuleKey: string | null;
 }
