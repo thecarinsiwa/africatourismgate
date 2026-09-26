@@ -595,6 +595,20 @@
         "diff": "Cambios"
       }
     },
+    "filters": {
+      "entityType": "Tipo de entidad",
+      "action": "Acción"
+    },
+    "showDiff": "Ver diff",
+    "diffModalTitle": "Valores anteriores / nuevos",
+    "oldJson": "Antes",
+    "newJson": "Después",
+    "openEntity": "Abrir entidad",
+    "actorTypes": {
+      "user": "Usuario",
+      "external": "Externo",
+      "system": "Sistema"
+    },
     "actions": {
       "create": "Creación",
       "update": "Actualización",

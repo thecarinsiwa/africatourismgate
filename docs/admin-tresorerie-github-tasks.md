@@ -107,7 +107,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-029 | UI Admin gestion collaborateurs externes — ✅            | Moyenne  | Admin       | M      |
 | TRESO-030 | Flux minimal état de besoin via jeton — ✅               | Moyenne  | Admin / API | L      |
 | TRESO-031 | API journal d’audit (user, action, old/new) — ✅         | Haute    | API         | M      |
-| TRESO-032 | UI Admin consultation audit trésorerie                   | Haute    | Admin       | M      |
+| TRESO-032 | UI Admin consultation audit trésorerie — ✅              | Haute    | Admin       | M      |
 | TRESO-033 | Annulation / void d’opérations + gates                   | Haute    | API / Admin | M      |
 | TRESO-034 | Lien croisé fiche réservation → opérations               | Moyenne  | Admin       | S      |
 | TRESO-035 | API agrégats rapports (période, source, mode)            | Moyenne  | API         | M      |
@@ -1477,10 +1477,11 @@ Effectuer mutation ; vérifier log.
 
 ---
 
-### TRESO-032 — UI Admin consultation audit trésorerie
+### TRESO-032 — UI Admin consultation audit trésorerie — ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:high`  
-**Branche suggérée :** `feature/tresorerie-ui-audit`
+**Branche suggérée :** `feature/tresorerie-ui-audit`  
+**Livrable :** `/tresorerie/audit` · `TreasuryAuditLogsList` (filtres entity/action/dates) · modal old/new JSON · liens entité · gate `treasury.audit.read`
 
 #### Modèle GitHub
 
@@ -1501,9 +1502,9 @@ Effectuer mutation ; vérifier log.
 
 ## Critères d'acceptation
 
-- [ ] Liste filtrable
-- [ ] Diff lisible
-- [ ] Gate permission audit
+- [x] Liste filtrable
+- [x] Diff lisible
+- [x] Gate permission audit
 
 ## Plan de test
 

@@ -595,6 +595,20 @@
         "diff": "Changes"
       }
     },
+    "filters": {
+      "entityType": "Entity type",
+      "action": "Action"
+    },
+    "showDiff": "View diff",
+    "diffModalTitle": "Old / new values",
+    "oldJson": "Before",
+    "newJson": "After",
+    "openEntity": "Open entity",
+    "actorTypes": {
+      "user": "User",
+      "external": "External",
+      "system": "System"
+    },
     "actions": {
       "create": "Create",
       "update": "Update",

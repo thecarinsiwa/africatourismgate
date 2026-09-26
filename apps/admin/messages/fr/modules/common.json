@@ -104,6 +104,7 @@
     "budget": "budget",
     "expenseRequest": "besoin",
     "externalCollaborator": "collaborateur",
+    "auditEvent": "événement",
     "property": "hébergement",
     "room": "chambre",
     "flight": "vol",
