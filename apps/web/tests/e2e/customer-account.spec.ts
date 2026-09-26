@@ -37,7 +37,7 @@ test('shows only current user bookings on /account/reservations', async ({ page 
 
   await page.route('**/api/bookings**', async (route) => {
     if (route.request().method() !== 'GET') {
-      await route.continue();
+      await route.fallback();
       return;
     }
     await route.fulfill({
@@ -116,7 +116,7 @@ test('profile form submits PATCH /auth/me', async ({ page }) => {
       });
       return;
     }
-    await route.continue();
+    await route.fallback();
   });
 
   await page.route('**/api/auth/refresh', async (route) => {
