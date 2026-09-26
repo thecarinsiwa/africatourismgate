@@ -4,6 +4,7 @@ import {
   TreasuryAccessTokens,
   TreasuryExternalCollaborators,
 } from '../../../entities/treasury-external.entity';
+import { TreasuryAuditModule } from '../treasury-audit/treasury-audit.module';
 import { ExternalCollaboratorsController } from './external-collaborators.controller';
 import { ExternalCollaboratorsService } from './external-collaborators.service';
 
@@ -13,6 +14,7 @@ import { ExternalCollaboratorsService } from './external-collaborators.service';
       TreasuryExternalCollaborators,
       TreasuryAccessTokens,
     ]),
+    TreasuryAuditModule,
   ],
   controllers: [ExternalCollaboratorsController],
   providers: [ExternalCollaboratorsService],

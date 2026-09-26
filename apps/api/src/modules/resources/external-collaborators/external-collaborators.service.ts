@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto';
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   Logger,
   NotFoundException,
@@ -15,9 +16,12 @@ import {
   TreasuryExternalCollaborators,
 } from '../../../entities/treasury-external.entity';
 import { EmailService } from '../../email/email.service';
+import { TreasuryAuditService } from '../treasury-audit/treasury-audit.service';
 import { InviteTreasuryExternalCollaboratorDto } from './dto/invite-treasury-external-collaborator.dto';
+import { UpdateTreasuryExternalCollaboratorDto } from './dto/update-treasury-external-collaborator.dto';
 
 const DEFAULT_TTL_HOURS = 72;
+const EXPENSE_CREATE_SCOPE = 'expense_requests.create';
 
 export type TreasuryExternalCollaboratorDto = {
   id: string;
@@ -57,6 +61,12 @@ export type ValidateTreasuryAccessTokenResult = {
   effectiveScopes: string[];
 };
 
+export type AuditActorMeta = {
+  actorUserId?: string;
+  ipAddress?: string | null;
+  userAgent?: string | null;
+};
+
 @Injectable()
 export class ExternalCollaboratorsService {
   private readonly logger = new Logger(ExternalCollaboratorsService.name);
@@ -68,11 +78,12 @@ export class ExternalCollaboratorsService {
     private readonly tokensRepo: Repository<TreasuryAccessTokens>,
     private readonly emailService: EmailService,
     private readonly config: ConfigService,
+    private readonly treasuryAudit: TreasuryAuditService,
   ) {}
 
   async invite(
     dto: InviteTreasuryExternalCollaboratorDto,
-    actorUserId?: string,
+    meta: AuditActorMeta = {},
   ): Promise<InviteTreasuryExternalResult> {
     const email = dto.email.trim().toLowerCase();
     const scopes = [...new Set(dto.scopes)];
@@ -81,9 +92,8 @@ export class ExternalCollaboratorsService {
     }
 
     const ttlHours =
-      dto.tokenTtlHours ??
-      this.readDefaultTtlHours() ??
-      DEFAULT_TTL_HOURS;
+      dto.tokenTtlHours ?? this.readDefaultTtlHours() ?? DEFAULT_TTL_HOURS;
+    const actorUserId = meta.actorUserId;
 
     let collaborator = await this.collaboratorsRepo.findOne({
       where: {
@@ -93,6 +103,11 @@ export class ExternalCollaboratorsService {
       },
     });
 
+    const wasCreate = !collaborator;
+    const oldSnapshot = collaborator
+      ? this.collaboratorAuditSnapshot(collaborator)
+      : null;
+
     if (collaborator) {
       collaborator.displayName =
         dto.displayName?.trim() || collaborator.displayName;
@@ -101,7 +116,6 @@ export class ExternalCollaboratorsService {
       collaborator.updatedByUserId = actorUserId ?? null;
       collaborator = await this.collaboratorsRepo.save(collaborator);
     } else {
-      // Soft-deleted row with same org+email would still hit UNIQUE — restore if present
       const softDeleted = await this.collaboratorsRepo.findOne({
         where: { organizationId: dto.organizationId, email },
         withDeleted: true,
@@ -130,7 +144,6 @@ export class ExternalCollaboratorsService {
       }
     }
 
-    // Invalidate previous active tokens for this collaborator
     await this.tokensRepo.update(
       { collaboratorId: collaborator.id, revokedAt: IsNull() },
       { revokedAt: new Date() },
@@ -154,8 +167,7 @@ export class ExternalCollaboratorsService {
     );
 
     const inviteUrl = `${this.getInviteBaseUrl()}?token=${rawToken}`;
-    const ttlLabel =
-      ttlHours === 1 ? '1 heure' : `${ttlHours} heures`;
+    const ttlLabel = ttlHours === 1 ? '1 heure' : `${ttlHours} heures`;
 
     const mailResult = await this.emailService.sendTreasuryExternalInvite({
       to: collaborator.email,
@@ -180,6 +192,25 @@ export class ExternalCollaboratorsService {
       );
     }
 
+    await this.treasuryAudit.log({
+      organizationId: collaborator.organizationId,
+      entityType: 'external_collaborator',
+      entityId: collaborator.id,
+      action: 'invite',
+      actorType: 'user',
+      actorId: actorUserId ?? null,
+      oldJson: oldSnapshot,
+      newJson: {
+        ...this.collaboratorAuditSnapshot(collaborator),
+        tokenId: tokenRow.id,
+        expiresAt: expiresAt.toISOString(),
+        emailSent: mailResult.sent,
+        created: wasCreate,
+      },
+      ipAddress: meta.ipAddress,
+      userAgent: meta.userAgent,
+    });
+
     const result: InviteTreasuryExternalResult = {
       collaborator: this.toCollaboratorDto(collaborator),
       token: this.toTokenDto(tokenRow),
@@ -191,8 +222,136 @@ export class ExternalCollaboratorsService {
     return result;
   }
 
+  async activate(
+    id: string,
+    meta: AuditActorMeta = {},
+  ): Promise<TreasuryExternalCollaboratorDto> {
+    const collaborator = await this.findCollaboratorOrFail(id);
+    if (collaborator.isActive) {
+      return this.toCollaboratorDto(collaborator);
+    }
+    const oldJson = this.collaboratorAuditSnapshot(collaborator);
+    collaborator.isActive = true;
+    collaborator.updatedByUserId = meta.actorUserId ?? null;
+    const saved = await this.collaboratorsRepo.save(collaborator);
+
+    await this.treasuryAudit.log({
+      organizationId: saved.organizationId,
+      entityType: 'external_collaborator',
+      entityId: saved.id,
+      action: 'activate',
+      actorType: 'user',
+      actorId: meta.actorUserId ?? null,
+      oldJson,
+      newJson: this.collaboratorAuditSnapshot(saved),
+      ipAddress: meta.ipAddress,
+      userAgent: meta.userAgent,
+    });
+
+    return this.toCollaboratorDto(saved);
+  }
+
+  async deactivate(
+    id: string,
+    meta: AuditActorMeta = {},
+  ): Promise<TreasuryExternalCollaboratorDto> {
+    const collaborator = await this.findCollaboratorOrFail(id);
+    const oldJson = this.collaboratorAuditSnapshot(collaborator);
+
+    if (collaborator.isActive) {
+      collaborator.isActive = false;
+      collaborator.updatedByUserId = meta.actorUserId ?? null;
+      await this.collaboratorsRepo.save(collaborator);
+    }
+
+    // Refuser tout accès immédiat : révoquer les jetons actifs
+    await this.tokensRepo.update(
+      { collaboratorId: collaborator.id, revokedAt: IsNull() },
+      { revokedAt: new Date() },
+    );
+
+    const saved = await this.findCollaboratorOrFail(id);
+
+    await this.treasuryAudit.log({
+      organizationId: saved.organizationId,
+      entityType: 'external_collaborator',
+      entityId: saved.id,
+      action: 'deactivate',
+      actorType: 'user',
+      actorId: meta.actorUserId ?? null,
+      oldJson,
+      newJson: {
+        ...this.collaboratorAuditSnapshot(saved),
+        tokensRevoked: true,
+      },
+      ipAddress: meta.ipAddress,
+      userAgent: meta.userAgent,
+    });
+
+    return this.toCollaboratorDto(saved);
+  }
+
+  async update(
+    id: string,
+    dto: UpdateTreasuryExternalCollaboratorDto,
+    meta: AuditActorMeta = {},
+  ): Promise<TreasuryExternalCollaboratorDto> {
+    const collaborator = await this.findCollaboratorOrFail(id);
+    const oldJson = this.collaboratorAuditSnapshot(collaborator);
+    let changed = false;
+
+    if (dto.displayName !== undefined) {
+      const next = dto.displayName?.trim() || null;
+      if (next !== collaborator.displayName) {
+        collaborator.displayName = next;
+        changed = true;
+      }
+    }
+    if (dto.scopes !== undefined) {
+      const scopes = [...new Set(dto.scopes)];
+      if (scopes.length === 0) {
+        throw new BadRequestException('At least one scope is required');
+      }
+      const same =
+        scopes.length === collaborator.scopes.length &&
+        scopes.every((s) => collaborator.scopes.includes(s));
+      if (!same) {
+        collaborator.scopes = scopes;
+        changed = true;
+        // Aligner les jetons actifs encore valides sur les nouveaux scopes
+        await this.tokensRepo.update(
+          { collaboratorId: collaborator.id, revokedAt: IsNull() },
+          { scopes },
+        );
+      }
+    }
+
+    if (!changed) {
+      return this.toCollaboratorDto(collaborator);
+    }
+
+    collaborator.updatedByUserId = meta.actorUserId ?? null;
+    const saved = await this.collaboratorsRepo.save(collaborator);
+
+    await this.treasuryAudit.log({
+      organizationId: saved.organizationId,
+      entityType: 'external_collaborator',
+      entityId: saved.id,
+      action: 'update',
+      actorType: 'user',
+      actorId: meta.actorUserId ?? null,
+      oldJson,
+      newJson: this.collaboratorAuditSnapshot(saved),
+      ipAddress: meta.ipAddress,
+      userAgent: meta.userAgent,
+    });
+
+    return this.toCollaboratorDto(saved);
+  }
+
   async validateToken(
     rawToken: string,
+    requiredScope?: string,
   ): Promise<ValidateTreasuryAccessTokenResult> {
     const tokenHash = hashAccessToken(rawToken.trim());
     const token = await this.tokensRepo.findOne({ where: { tokenHash } });
@@ -224,6 +383,12 @@ export class ExternalCollaboratorsService {
         ? token.scopes
         : collaborator.scopes;
 
+    if (requiredScope && !effectiveScopes.includes(requiredScope)) {
+      throw new ForbiddenException(
+        `Missing required scope: ${requiredScope}`,
+      );
+    }
+
     return {
       valid: true,
       collaborator: this.toCollaboratorDto(collaborator),
@@ -232,19 +397,79 @@ export class ExternalCollaboratorsService {
     };
   }
 
+  /**
+   * À utiliser par les flux métier (ex. création d’état de besoin via jeton).
+   * Refuse si désactivé, jeton invalide, ou scope manquant.
+   */
+  async assertTokenHasScope(
+    rawToken: string,
+    requiredScope: string = EXPENSE_CREATE_SCOPE,
+  ): Promise<ValidateTreasuryAccessTokenResult> {
+    return this.validateToken(rawToken, requiredScope);
+  }
+
   async revokeToken(
     tokenId: string,
-    _actorUserId?: string,
+    meta: AuditActorMeta = {},
   ): Promise<TreasuryAccessTokenDto> {
     const token = await this.tokensRepo.findOne({ where: { id: tokenId } });
     if (!token) {
       throw new NotFoundException(`Token ${tokenId} not found`);
     }
-    if (!token.revokedAt) {
+
+    const collaborator = await this.collaboratorsRepo.findOne({
+      where: { id: token.collaboratorId },
+      withDeleted: true,
+    });
+
+    const alreadyRevoked = !!token.revokedAt;
+    if (!alreadyRevoked) {
       token.revokedAt = new Date();
       await this.tokensRepo.save(token);
     }
+
+    if (collaborator && !alreadyRevoked) {
+      await this.treasuryAudit.log({
+        organizationId: collaborator.organizationId,
+        entityType: 'access_token',
+        entityId: token.id,
+        action: 'revoke_token',
+        actorType: 'user',
+        actorId: meta.actorUserId ?? null,
+        oldJson: { revokedAt: null, collaboratorId: token.collaboratorId },
+        newJson: {
+          revokedAt: token.revokedAt?.toISOString() ?? null,
+          collaboratorId: token.collaboratorId,
+        },
+        ipAddress: meta.ipAddress,
+        userAgent: meta.userAgent,
+      });
+    }
+
     return this.toTokenDto(token);
+  }
+
+  private async findCollaboratorOrFail(
+    id: string,
+  ): Promise<TreasuryExternalCollaborators> {
+    const row = await this.collaboratorsRepo.findOne({
+      where: { id, deletedAt: IsNull() },
+    });
+    if (!row) {
+      throw new NotFoundException(`External collaborator ${id} not found`);
+    }
+    return row;
+  }
+
+  private collaboratorAuditSnapshot(
+    row: TreasuryExternalCollaborators,
+  ): Record<string, unknown> {
+    return {
+      email: row.email,
+      displayName: row.displayName,
+      isActive: row.isActive,
+      scopes: row.scopes ?? [],
+    };
   }
 
   private toCollaboratorDto(

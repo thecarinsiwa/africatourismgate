@@ -103,7 +103,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-025 | UI Admin budgets liste + formulaires — ✅                | Moyenne  | Admin       | M      |
 | TRESO-026 | UI suivi budget vs réalisé (agrégats légers) — ✅        | Moyenne  | Admin       | M      |
 | TRESO-027 | API invitation e-mail + jeton/lien sécurisé — ✅         | Moyenne  | API         | M      |
-| TRESO-028 | API activate/deactivate + permissions externes           | Moyenne  | API         | M      |
+| TRESO-028 | API activate/deactivate + permissions externes — ✅      | Moyenne  | API         | M      |
 | TRESO-029 | UI Admin gestion collaborateurs externes                 | Moyenne  | Admin       | M      |
 | TRESO-030 | Flux minimal état de besoin via jeton                    | Moyenne  | Admin / API | L      |
 | TRESO-031 | API journal d’audit (user, action, old/new)              | Haute    | API         | M      |
@@ -1313,10 +1313,11 @@ Invite → recevoir lien → validate token.
 
 ---
 
-### TRESO-028 — API activate/deactivate + permissions externes
+### TRESO-028 — API activate/deactivate + permissions externes — ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:medium`  
-**Branche suggérée :** `feature/tresorerie-api-external-permissions`
+**Branche suggérée :** `feature/tresorerie-api-external-permissions`  
+**Livrable :** `POST …/:id/activate|deactivate` · `PATCH …/:id` (scopes) · audit hooks (`TreasuryAuditService`) · validate + `requiredScope`
 
 #### Modèle GitHub
 
@@ -1338,9 +1339,9 @@ Responsable financier active/désactive ; scopes limités (ex. créer état de b
 
 ## Critères d'acceptation
 
-- [ ] Désactivé → accès refusé
-- [ ] Scopes respectés
-- [ ] Actions loggées
+- [x] Désactivé → accès refusé
+- [x] Scopes respectés
+- [x] Actions loggées
 
 ## Plan de test
 

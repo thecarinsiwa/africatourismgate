@@ -457,6 +457,8 @@ export interface InviteTreasuryExternalCollaboratorResponse {
 
 export interface ValidateTreasuryAccessTokenRequest {
   token: string;
+  /** Si fourni, 403 lorsque le scope est absent */
+  requiredScope?: TreasuryExternalScope | string;
 }
 
 export interface ValidateTreasuryAccessTokenResponse {
@@ -468,7 +470,6 @@ export interface ValidateTreasuryAccessTokenResponse {
 
 export interface UpdateTreasuryExternalCollaboratorRequest {
   displayName?: string | null;
-  isActive?: boolean;
   scopes?: TreasuryExternalScope[] | string[];
 }
 

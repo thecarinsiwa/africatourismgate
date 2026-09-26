@@ -1,5 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsString, Length, Matches } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsIn, IsOptional, IsString, Length, Matches } from 'class-validator';
+
+const EXTERNAL_SCOPES = ['expense_requests.create'] as const;
 
 export class ValidateTreasuryAccessTokenDto {
   @ApiProperty({
@@ -13,4 +15,12 @@ export class ValidateTreasuryAccessTokenDto {
     message: 'token must be a 64-character hex string',
   })
   token!: string;
+
+  @ApiPropertyOptional({
+    enum: EXTERNAL_SCOPES,
+    description: 'If set, validation fails with 403 when the scope is missing',
+  })
+  @IsOptional()
+  @IsIn(EXTERNAL_SCOPES)
+  requiredScope?: (typeof EXTERNAL_SCOPES)[number];
 }

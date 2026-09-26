@@ -362,6 +362,8 @@ import type {
   ValidateTreasuryAccessTokenRequest,
   ValidateTreasuryAccessTokenResponse,
   TreasuryAccessToken,
+  TreasuryExternalCollaborator,
+  UpdateTreasuryExternalCollaboratorRequest,
   ExpenseRequest,
   ExpenseRequestStatusHistoryEntry,
   ExpenseRequestsListQuery,
@@ -1533,6 +1535,34 @@ export class ApiClient {
     return this.request<TreasuryAccessToken>(
       `/treasury-external-collaborators/tokens/${tokenId}/revoke`,
       { method: 'POST' },
+    );
+  }
+
+  activateTreasuryExternalCollaborator(
+    id: string,
+  ): Promise<TreasuryExternalCollaborator> {
+    return this.request<TreasuryExternalCollaborator>(
+      `/treasury-external-collaborators/${id}/activate`,
+      { method: 'POST' },
+    );
+  }
+
+  deactivateTreasuryExternalCollaborator(
+    id: string,
+  ): Promise<TreasuryExternalCollaborator> {
+    return this.request<TreasuryExternalCollaborator>(
+      `/treasury-external-collaborators/${id}/deactivate`,
+      { method: 'POST' },
+    );
+  }
+
+  updateTreasuryExternalCollaborator(
+    id: string,
+    body: UpdateTreasuryExternalCollaboratorRequest,
+  ): Promise<TreasuryExternalCollaborator> {
+    return this.request<TreasuryExternalCollaborator>(
+      `/treasury-external-collaborators/${id}`,
+      { method: 'PATCH', body },
     );
   }
 
