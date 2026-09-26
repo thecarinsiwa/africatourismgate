@@ -849,6 +849,12 @@
         "metaTitle": "Nouveau budget",
         "backLabel": "Retour aux budgets"
       },
+      "suivi": {
+        "title": "Budget vs réalisé",
+        "description": "Écarts prévu / réalisé par période, avec alertes de dépassement.",
+        "metaTitle": "Budget vs réalisé",
+        "backLabel": "Retour aux budgets"
+      },
       "id": {
         "title": "Modifier le budget",
         "description": "Mettre à jour un budget.",

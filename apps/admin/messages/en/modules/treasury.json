@@ -443,7 +443,31 @@
       "planned": "Planned",
       "actual": "Actual",
       "variance": "Variance",
-      "overBudget": "Over budget"
+      "overBudget": "Over budget",
+      "accessDenied": "Access denied: treasury.read permission required.",
+      "empty": "No budgets for this period.",
+      "hint": "Actual is the sum of disbursed or recorded fund exits over the budget period (same organization and currency).",
+      "alertOverBudget": "{count, plural, one {# budget over budget} other {# budgets over budget}}.",
+      "totalsTitle": "Period totals",
+      "filterYear": "Year",
+      "filterMonth": "Month",
+      "filterMonthAll": "Full year",
+      "filterCurrency": "Currency",
+      "filterCurrencyAll": "All currencies",
+      "filterPeriodType": "Period type",
+      "apply": "Apply",
+      "openSuivi": "Budget vs actual",
+      "columns": {
+        "label": "Label",
+        "period": "Period",
+        "scope": "Scope",
+        "planned": "Planned",
+        "actual": "Actual",
+        "variance": "Variance",
+        "status": "Status"
+      },
+      "statusOk": "On track",
+      "statusOver": "Over budget"
     }
   },
   "reports": {

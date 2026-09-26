@@ -222,6 +222,11 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Créer un budget.',
     apiResource: 'budgets',
   },
+  'tresorerie/budgets/suivi': {
+    title: 'Budget vs réalisé',
+    description: 'Écarts prévu / réalisé par période.',
+    apiResource: 'budgets',
+  },
   'tresorerie/budgets/id': {
     title: 'Modifier budget',
     description: 'Éditer un budget.',

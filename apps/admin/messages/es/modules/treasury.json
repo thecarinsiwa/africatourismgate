@@ -443,7 +443,31 @@
       "planned": "Planificado",
       "actual": "Realizado",
       "variance": "Desviación",
-      "overBudget": "Sobre presupuesto"
+      "overBudget": "Sobre presupuesto",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.read.",
+      "empty": "No hay presupuestos para este periodo.",
+      "hint": "El realizado es la suma de las salidas desembolsadas o registradas en el periodo del presupuesto (misma organización y moneda).",
+      "alertOverBudget": "{count, plural, one {# presupuesto sobrepasado} other {# presupuestos sobrepasados}}.",
+      "totalsTitle": "Totales del periodo",
+      "filterYear": "Año",
+      "filterMonth": "Mes",
+      "filterMonthAll": "Todo el año",
+      "filterCurrency": "Moneda",
+      "filterCurrencyAll": "Todas las monedas",
+      "filterPeriodType": "Tipo de periodo",
+      "apply": "Aplicar",
+      "openSuivi": "Seguimiento vs realizado",
+      "columns": {
+        "label": "Etiqueta",
+        "period": "Periodo",
+        "scope": "Ámbito",
+        "planned": "Planificado",
+        "actual": "Realizado",
+        "variance": "Desviación",
+        "status": "Estado"
+      },
+      "statusOk": "En línea",
+      "statusOver": "Sobre presupuesto"
     }
   },
   "reports": {

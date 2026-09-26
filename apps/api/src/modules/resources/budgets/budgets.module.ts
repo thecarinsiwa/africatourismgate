@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Budgets } from '../../../entities/budget.entity';
+import { FundExits } from '../../../entities/fund-exit.entity';
 import {
   Activities,
   ActivitySchedules,
@@ -17,6 +18,7 @@ import { BudgetsService } from './budgets.service';
   imports: [
     TypeOrmModule.forFeature([
       Budgets,
+      FundExits,
       Activities,
       ActivitySchedules,
       Packages,

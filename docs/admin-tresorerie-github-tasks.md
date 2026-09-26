@@ -101,7 +101,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-023 | API budgets mensuels / annuels — ✅                      | Moyenne  | API         | M      |
 | TRESO-024 | API budgets par activité et produit/service — ✅         | Moyenne  | API         | M      |
 | TRESO-025 | UI Admin budgets liste + formulaires — ✅                | Moyenne  | Admin       | M      |
-| TRESO-026 | UI suivi budget vs réalisé (agrégats légers)             | Moyenne  | Admin       | M      |
+| TRESO-026 | UI suivi budget vs réalisé (agrégats légers) — ✅        | Moyenne  | Admin       | M      |
 | TRESO-027 | API invitation e-mail + jeton/lien sécurisé              | Moyenne  | API         | M      |
 | TRESO-028 | API activate/deactivate + permissions externes           | Moyenne  | API         | M      |
 | TRESO-029 | UI Admin gestion collaborateurs externes                 | Moyenne  | Admin       | M      |
@@ -1230,10 +1230,11 @@ Créer 3 types de budgets ; lister.
 
 ---
 
-### TRESO-026 — UI suivi budget vs réalisé
+### TRESO-026 — UI suivi budget vs réalisé — ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:medium`  
-**Branche suggérée :** `feature/tresorerie-ui-budget-vs-actual`
+**Branche suggérée :** `feature/tresorerie-ui-budget-vs-actual`  
+**Livrable :** `GET /budgets/vs-actual` · page `/tresorerie/budgets/suivi` · totaux + alertes dépassement · i18n
 
 #### Modèle GitHub
 
@@ -1255,9 +1256,9 @@ Agrégats légers depuis entrées/sorties (pas de compta SYSCOHADA).
 
 ## Critères d'acceptation
 
-- [ ] Affichage prévu vs réalisé
-- [ ] Filtres période
-- [ ] i18n
+- [x] Affichage prévu vs réalisé
+- [x] Filtres période
+- [x] i18n
 
 ## Plan de test
 

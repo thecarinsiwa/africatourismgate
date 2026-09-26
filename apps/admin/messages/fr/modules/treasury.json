@@ -443,7 +443,31 @@
       "planned": "Prévu",
       "actual": "Réalisé",
       "variance": "Écart",
-      "overBudget": "Dépassement"
+      "overBudget": "Dépassement",
+      "accessDenied": "Accès refusé : permission treasury.read requise.",
+      "empty": "Aucun budget pour cette période.",
+      "hint": "Le réalisé correspond à la somme des sorties décaissées ou enregistrées sur la période du budget (même organisation et devise).",
+      "alertOverBudget": "{count, plural, one {# budget en dépassement} other {# budgets en dépassement}}.",
+      "totalsTitle": "Totaux période",
+      "filterYear": "Année",
+      "filterMonth": "Mois",
+      "filterMonthAll": "Toute l'année",
+      "filterCurrency": "Devise",
+      "filterCurrencyAll": "Toutes les devises",
+      "filterPeriodType": "Type de période",
+      "apply": "Appliquer",
+      "openSuivi": "Suivi vs réalisé",
+      "columns": {
+        "label": "Libellé",
+        "period": "Période",
+        "scope": "Périmètre",
+        "planned": "Prévu",
+        "actual": "Réalisé",
+        "variance": "Écart",
+        "status": "Statut"
+      },
+      "statusOk": "Dans les clous",
+      "statusOver": "Dépassement"
     }
   },
   "reports": {

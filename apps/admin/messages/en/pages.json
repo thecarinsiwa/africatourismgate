@@ -849,6 +849,12 @@
         "metaTitle": "New budget",
         "backLabel": "Back to budgets"
       },
+      "suivi": {
+        "title": "Budget vs actual",
+        "description": "Planned vs actual variance by period, with over-budget alerts.",
+        "metaTitle": "Budget vs actual",
+        "backLabel": "Back to budgets"
+      },
       "id": {
         "title": "Edit budget",
         "description": "Update a budget.",

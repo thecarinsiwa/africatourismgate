@@ -18,6 +18,7 @@ import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { BudgetsService } from './budgets.service';
 import { BudgetsListQueryDto } from './dto/budgets-list-query.dto';
+import { BudgetsVsActualQueryDto } from './dto/budgets-vs-actual-query.dto';
 import { CreateBudgetDto } from './dto/create-budget.dto';
 import { UpdateBudgetDto } from './dto/update-budget.dto';
 
@@ -34,6 +35,16 @@ export class BudgetsController {
   })
   findAll(@Query() query: BudgetsListQueryDto) {
     return this.service.findAll(query);
+  }
+
+  @RequirePermissions('treasury.read')
+  @Get('vs-actual')
+  @ApiOperation({
+    summary:
+      'Budget vs actual (light aggregate: planned budgets vs realized fund exits)',
+  })
+  getVsActual(@Query() query: BudgetsVsActualQueryDto) {
+    return this.service.getVsActualSummary(query);
   }
 
   @RequirePermissions('treasury.read')

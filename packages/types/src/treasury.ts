@@ -371,6 +371,47 @@ export type UpdateBudgetRequest = Partial<
   Omit<CreateBudgetRequest, 'organizationId'>
 >;
 
+export interface BudgetsVsActualQuery {
+  year: number;
+  month?: number;
+  organizationId?: string;
+  currency?: string;
+  periodType?: BudgetPeriodType;
+}
+
+export interface BudgetVsActualRow {
+  budgetId: string;
+  label: string;
+  periodType: BudgetPeriodType;
+  year: number;
+  month: number | null;
+  currency: string;
+  scopeType: BudgetScopeType;
+  organizationId: string;
+  plannedCents: number;
+  actualCents: number;
+  /** plannedCents − actualCents (négatif = dépassement) */
+  varianceCents: number;
+  overBudget: boolean;
+  dateFrom: string;
+  dateTo: string;
+}
+
+export interface BudgetVsActualSummary {
+  year: number;
+  month: number | null;
+  currency: string | null;
+  organizationId: string | null;
+  periodType: BudgetPeriodType | null;
+  rows: BudgetVsActualRow[];
+  totals: {
+    plannedCents: number;
+    actualCents: number;
+    varianceCents: number;
+    overBudgetCount: number;
+  };
+}
+
 // ─── Collaborateurs externes ────────────────────────────────────────────────
 
 export interface TreasuryExternalCollaborator {

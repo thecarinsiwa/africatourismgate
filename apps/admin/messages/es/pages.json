@@ -849,6 +849,12 @@
         "metaTitle": "Nuevo presupuesto",
         "backLabel": "Volver a los presupuestos"
       },
+      "suivi": {
+        "title": "Presupuesto vs realizado",
+        "description": "Desviaciones planificado / realizado por periodo, con alertas de sobrepaso.",
+        "metaTitle": "Presupuesto vs realizado",
+        "backLabel": "Volver a los presupuestos"
+      },
       "id": {
         "title": "Editar presupuesto",
         "description": "Actualizar un presupuesto.",

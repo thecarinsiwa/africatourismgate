@@ -354,7 +354,9 @@ import type {
   CreateFundExitRequest,
   CreateBudgetRequest,
   Budget,
+  BudgetVsActualSummary,
   BudgetsListQuery,
+  BudgetsVsActualQuery,
   ExpenseRequest,
   ExpenseRequestStatusHistoryEntry,
   ExpenseRequestsListQuery,
@@ -1469,6 +1471,23 @@ export class ApiClient {
     requestOptions?: RequestOptions,
   ): Promise<PaginatedResponse<Budget>> {
     return fetchPaginated<Budget>(this, '/budgets', query, requestOptions);
+  }
+
+  getBudgetsVsActual(
+    query: BudgetsVsActualQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<BudgetVsActualSummary> {
+    const params = new URLSearchParams();
+    params.set('year', String(query.year));
+    if (query.month != null) params.set('month', String(query.month));
+    if (query.organizationId) params.set('organizationId', query.organizationId);
+    if (query.currency) params.set('currency', query.currency);
+    if (query.periodType) params.set('periodType', query.periodType);
+    const qs = params.toString();
+    return this.request<BudgetVsActualSummary>(
+      `/budgets/vs-actual${qs ? `?${qs}` : ''}`,
+      requestOptions,
+    );
   }
 
   getBudget(id: string): Promise<Budget> {

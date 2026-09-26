@@ -14,6 +14,7 @@ import {
   BudgetProductType,
   BudgetScopeType,
 } from '../../../entities/budget.entity';
+import { FundExits } from '../../../entities/fund-exit.entity';
 import {
   Activities,
   ActivitySchedules,
@@ -24,11 +25,15 @@ import {
   Vehicles,
 } from '../../../entities/generated';
 import { BudgetsListQueryDto } from './dto/budgets-list-query.dto';
+import { BudgetsVsActualQueryDto } from './dto/budgets-vs-actual-query.dto';
 import { CreateBudgetDto } from './dto/create-budget.dto';
 import { UpdateBudgetDto } from './dto/update-budget.dto';
 
 const BUDGET_CONFLICT_MESSAGE =
   'A budget already exists for this organization, period, scope and currency';
+
+/** Sorties comptées dans le « réalisé » (décaissées ou justifiées). */
+const REALIZED_EXIT_STATUSES = ['disbursed', 'recorded'] as const;
 
 type ResolvedScope = {
   scopeType: BudgetScopeType;
@@ -37,11 +42,45 @@ type ResolvedScope = {
   productId: string | null;
 };
 
+export type BudgetVsActualRow = {
+  budgetId: string;
+  label: string;
+  periodType: BudgetPeriodType;
+  year: number;
+  month: number | null;
+  currency: string;
+  scopeType: BudgetScopeType;
+  organizationId: string;
+  plannedCents: number;
+  actualCents: number;
+  varianceCents: number;
+  overBudget: boolean;
+  dateFrom: string;
+  dateTo: string;
+};
+
+export type BudgetVsActualSummary = {
+  year: number;
+  month: number | null;
+  currency: string | null;
+  organizationId: string | null;
+  periodType: BudgetPeriodType | null;
+  rows: BudgetVsActualRow[];
+  totals: {
+    plannedCents: number;
+    actualCents: number;
+    varianceCents: number;
+    overBudgetCount: number;
+  };
+};
+
 @Injectable()
 export class BudgetsService extends CrudService<Budgets> {
   constructor(
     @InjectRepository(Budgets)
     private readonly budgetsRepository: Repository<Budgets>,
+    @InjectRepository(FundExits)
+    private readonly fundExitsRepository: Repository<FundExits>,
     @InjectRepository(Activities)
     private readonly activitiesRepository: Repository<Activities>,
     @InjectRepository(ActivitySchedules)
@@ -249,6 +288,166 @@ export class BudgetsService extends CrudService<Budgets> {
         totalPages: Math.ceil(total / limit) || 1,
       },
     };
+  }
+
+  /**
+   * Agrégat léger budget vs réalisé (sorties disbursed|recorded).
+   * Pas de compta SYSCOHADA — somme des fund_exits sur la fenêtre du budget.
+   */
+  async getVsActualSummary(
+    query: BudgetsVsActualQueryDto,
+  ): Promise<BudgetVsActualSummary> {
+    const year = query.year;
+    const month = query.month ?? null;
+    const currency = query.currency?.toUpperCase() ?? null;
+    const organizationId = query.organizationId ?? null;
+    const periodType = query.periodType ?? null;
+
+    const qb = this.budgetsRepository
+      .createQueryBuilder('budget')
+      .where('budget.deletedAt IS NULL')
+      .andWhere('budget.year = :year', { year });
+
+    if (organizationId) {
+      qb.andWhere('budget.organizationId = :organizationId', {
+        organizationId,
+      });
+    }
+    if (currency) {
+      qb.andWhere('budget.currency = :currency', { currency });
+    }
+    if (periodType) {
+      qb.andWhere('budget.periodType = :periodType', { periodType });
+    }
+    if (month != null) {
+      // Filtre mois : budgets mensuels de ce mois uniquement
+      qb.andWhere('budget.periodType = :monthly', { monthly: 'monthly' });
+      qb.andWhere('budget.month = :month', { month });
+    }
+
+    qb.orderBy('budget.currency', 'ASC')
+      .addOrderBy('budget.periodType', 'ASC')
+      .addOrderBy('budget.month', 'ASC')
+      .addOrderBy('budget.label', 'ASC');
+
+    const budgets = await qb.getMany();
+
+    const actualCache = new Map<string, number>();
+    const rows: BudgetVsActualRow[] = [];
+
+    for (const budget of budgets) {
+      const { dateFrom, dateTo } = this.budgetDateWindow(budget);
+      const cacheKey = [
+        budget.organizationId,
+        budget.currency,
+        dateFrom,
+        dateTo,
+      ].join('|');
+
+      let actualCents = actualCache.get(cacheKey);
+      if (actualCents === undefined) {
+        actualCents = await this.sumRealizedExits({
+          organizationId: budget.organizationId,
+          currency: budget.currency,
+          dateFrom,
+          dateTo,
+        });
+        actualCache.set(cacheKey, actualCents);
+      }
+
+      const plannedCents = budget.amountCents;
+      const varianceCents = plannedCents - actualCents;
+      rows.push({
+        budgetId: budget.id,
+        label: budget.label,
+        periodType: budget.periodType,
+        year: budget.year,
+        month: budget.month,
+        currency: budget.currency,
+        scopeType: budget.scopeType,
+        organizationId: budget.organizationId,
+        plannedCents,
+        actualCents,
+        varianceCents,
+        overBudget: actualCents > plannedCents,
+        dateFrom,
+        dateTo,
+      });
+    }
+
+    // Totaux : prévu = somme des lignes ; réalisé = somme distincte des fenêtres
+    // (évite de compter deux fois les mêmes sorties si plusieurs budgets partagent
+    // la même fenêtre org/devise/dates).
+    const plannedCents = rows.reduce((sum, r) => sum + r.plannedCents, 0);
+    const uniqueActual = [...actualCache.values()].reduce(
+      (sum, v) => sum + v,
+      0,
+    );
+    // Si plusieurs org/devises : uniqueActual est la somme des fenêtres distinctes.
+    const actualCents = uniqueActual;
+    const overBudgetCount = rows.filter((r) => r.overBudget).length;
+
+    return {
+      year,
+      month,
+      currency,
+      organizationId,
+      periodType,
+      rows,
+      totals: {
+        plannedCents,
+        actualCents,
+        varianceCents: plannedCents - actualCents,
+        overBudgetCount,
+      },
+    };
+  }
+
+  private budgetDateWindow(budget: Budgets): {
+    dateFrom: string;
+    dateTo: string;
+  } {
+    if (budget.periodType === 'monthly' && budget.month != null) {
+      const y = budget.year;
+      const m = budget.month;
+      const lastDay = new Date(y, m, 0).getDate();
+      const pad = (n: number) => String(n).padStart(2, '0');
+      return {
+        dateFrom: `${y}-${pad(m)}-01`,
+        dateTo: `${y}-${pad(m)}-${pad(lastDay)}`,
+      };
+    }
+    return {
+      dateFrom: `${budget.year}-01-01`,
+      dateTo: `${budget.year}-12-31`,
+    };
+  }
+
+  private async sumRealizedExits(params: {
+    organizationId: string;
+    currency: string;
+    dateFrom: string;
+    dateTo: string;
+  }): Promise<number> {
+    const raw = await this.fundExitsRepository
+      .createQueryBuilder('exit')
+      .select('COALESCE(SUM(exit.amountCents), 0)', 'total')
+      .where('exit.deletedAt IS NULL')
+      .andWhere('exit.organizationId = :organizationId', {
+        organizationId: params.organizationId,
+      })
+      .andWhere('exit.currency = :currency', { currency: params.currency })
+      .andWhere('exit.status IN (:...statuses)', {
+        statuses: [...REALIZED_EXIT_STATUSES],
+      })
+      .andWhere('exit.operationDate >= :dateFrom', {
+        dateFrom: params.dateFrom,
+      })
+      .andWhere('exit.operationDate <= :dateTo', { dateTo: params.dateTo })
+      .getRawOne<{ total: string | number }>();
+
+    const total = raw?.total ?? 0;
+    return typeof total === 'string' ? Number.parseInt(total, 10) || 0 : total;
   }
 
   private async resolveAndValidateScope(input: {
