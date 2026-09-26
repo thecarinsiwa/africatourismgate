@@ -652,7 +652,9 @@
       }
     },
     "scopes": {
-      "expense_requests.create": "Créer un état de besoin"
+      "expense_requests": {
+        "create": "Créer un état de besoin"
+      }
     }
   },
   "audit": {

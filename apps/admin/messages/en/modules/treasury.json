@@ -652,7 +652,9 @@
       }
     },
     "scopes": {
-      "expense_requests.create": "Create an expense request"
+      "expense_requests": {
+        "create": "Create an expense request"
+      }
     }
   },
   "audit": {

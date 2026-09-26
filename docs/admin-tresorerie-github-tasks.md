@@ -118,7 +118,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-039 | Stub pont comptable `accounting_link` + mapping — ✅     | Basse    | API         | M      |
 | TRESO-040 | UI placeholder section Comptabilité — ✅                 | Basse    | Admin       | S      |
 | TRESO-041 | Doc handoff épic SYSCOHADA suivant — ✅                  | Basse    | Docs        | S      |
-| TRESO-042 | E2E smoke nav + CRUD entrée                              | Haute    | Testing     | M      |
+| TRESO-042 | E2E smoke nav + CRUD entrée — ✅                         | Haute    | Testing     | M      |
 | TRESO-043 | E2E happy path circuit sortie                            | Haute    | Testing     | M      |
 | TRESO-044 | QA manuelle RBAC rôles trésorerie                        | Haute    | Testing     | M      |
 | TRESO-045 | Sync OpenAPI + api-client + README module                | Basse    | Docs / API  | S      |
@@ -1885,10 +1885,11 @@ Revue documentaire.
 
 ---
 
-### TRESO-042 — E2E smoke nav + CRUD entrée
+### TRESO-042 — E2E smoke nav + CRUD entrée — ✅
 
-**Labels :** `admin`, `tresorerie`, `testing`, `priority:high`  
+**Labels :** `admin`, `tresorerie`, `testing`, `priority:high`
 **Branche suggérée :** `feature/tresorerie-e2e-fund-entry`
+**Livrable :** `tests/e2e/tresorerie-fund-entry-smoke.spec.ts` · helper `treasury-e2e.ts` · pas de job CI admin (aucun pipeline admin e2e existant — cf. POS/web seulement)
 
 #### Modèle GitHub
 
@@ -1910,21 +1911,26 @@ Couvrir le happy path Admin entrées (Playwright / helpers e2e existants).
 
 ## Critères d'acceptation
 
-- [ ] Spec verte localement
-- [ ] Couvre create + view
-- [ ] Sélecteurs stables
+- [x] Spec verte localement
+- [x] Couvre create + view
+- [x] Sélecteurs stables
 
 ## Plan de test
 
 ```bash
 pnpm --filter @africatourismgate/admin test:e2e -- tresorerie
 ```
-````
+
+## Notes
+
+- CI : pas de job `admin` Playwright dans `.github/workflows/ci.yml` (uniquement API / POS / web). Ne pas ajouter un job lourd hors demande explicite.
+- Isolation : référence unique `E2E-TRESO-<timestamp>`.
+- Prérequis local : API + MySQL seedés (`SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`), Chromium Playwright installé.
+- Correctif annexe : clés i18n `externals.scopes.expense_requests.create` (nested) — les clés plates avec `.` cassaient next-intl.
 
 ## Références
 
 - TRESO-013, TRESO-014, TRESO-015
-
 ````
 
 ---

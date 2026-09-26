@@ -6,8 +6,8 @@
 
 # Test info
 
-- Name: admin-global-search.spec.ts >> Admin global search >> shows suggestions when opened with an empty query
-- Location: tests\e2e\admin-global-search.spec.ts:43:7
+- Name: tresorerie-fund-entry-smoke.spec.ts >> Trésorerie — smoke entrées de fonds >> login → nav → créer entrée → liste → détail
+- Location: tests\e2e\tresorerie-fund-entry-smoke.spec.ts:27:7
 
 # Error details
 
