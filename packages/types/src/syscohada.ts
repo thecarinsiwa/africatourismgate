@@ -259,3 +259,31 @@ export interface JournalLinesListQuery {
   dateFrom?: string;
   dateTo?: string;
 }
+
+/** Balance générale (SYSCO-006) — agrégat lignes postées */
+export interface AccountingBalanceRow {
+  accountId: string;
+  accountCode: string;
+  accountLabel: string;
+  classNumber: number;
+  debitCents: number;
+  creditCents: number;
+  /** debit − credit (convention soldes débit/crédit) */
+  balanceCents: number;
+}
+
+export interface AccountingBalanceQuery {
+  organizationId?: string;
+  exerciseId?: string;
+  periodId?: string;
+  journalId?: string;
+}
+
+export interface AccountingBalanceSummary {
+  rows: AccountingBalanceRow[];
+  totals: {
+    debitCents: number;
+    creditCents: number;
+    balanceCents: number;
+  };
+}

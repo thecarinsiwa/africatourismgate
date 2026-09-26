@@ -26,6 +26,7 @@ import {
   toJournalLineDto,
 } from './dto/journal-entry.dto';
 import { JournalLinesListQueryDto } from './dto/journal-lines-list-query.dto';
+import { AccountingBalanceQueryDto } from './dto/accounting-balance-query.dto';
 
 function dateOnly(value: string | Date): string {
   if (typeof value === 'string') return value.slice(0, 10);
@@ -288,6 +289,100 @@ export class JournalEntriesService {
         totalPages: Math.max(1, Math.ceil(total / limit)),
       },
     };
+  }
+
+  /**
+   * Balance générale — agrégat des lignes d’écritures `posted` (SYSCO-006).
+   */
+  async getBalance(query: AccountingBalanceQueryDto): Promise<{
+    rows: Array<{
+      accountId: string;
+      accountCode: string;
+      accountLabel: string;
+      classNumber: number;
+      debitCents: number;
+      creditCents: number;
+      balanceCents: number;
+    }>;
+    totals: {
+      debitCents: number;
+      creditCents: number;
+      balanceCents: number;
+    };
+  }> {
+    const qb = this.linesRepo
+      .createQueryBuilder('line')
+      .innerJoin(JournalEntries, 'entry', 'entry.id = line.journalEntryId')
+      .innerJoin(ChartOfAccounts, 'account', 'account.id = line.accountId')
+      .where('line.deletedAt IS NULL')
+      .andWhere('entry.deletedAt IS NULL')
+      .andWhere('entry.status = :posted', { posted: 'posted' })
+      .andWhere('account.deletedAt IS NULL');
+
+    if (query.organizationId) {
+      qb.andWhere('line.organizationId = :organizationId', {
+        organizationId: query.organizationId,
+      });
+    }
+    if (query.exerciseId) {
+      qb.andWhere('entry.exerciseId = :exerciseId', {
+        exerciseId: query.exerciseId,
+      });
+    }
+    if (query.periodId) {
+      qb.andWhere('entry.periodId = :periodId', { periodId: query.periodId });
+    }
+    if (query.journalId) {
+      qb.andWhere('entry.journalId = :journalId', {
+        journalId: query.journalId,
+      });
+    }
+
+    qb.select('account.id', 'accountId')
+      .addSelect('account.code', 'accountCode')
+      .addSelect('account.label', 'accountLabel')
+      .addSelect('account.classNumber', 'classNumber')
+      .addSelect('COALESCE(SUM(line.debitCents), 0)', 'debitCents')
+      .addSelect('COALESCE(SUM(line.creditCents), 0)', 'creditCents')
+      .groupBy('account.id')
+      .addGroupBy('account.code')
+      .addGroupBy('account.label')
+      .addGroupBy('account.classNumber')
+      .orderBy('account.code', 'ASC');
+
+    const raw = await qb.getRawMany<{
+      accountId: string;
+      accountCode: string;
+      accountLabel: string;
+      classNumber: number | string;
+      debitCents: number | string;
+      creditCents: number | string;
+    }>();
+
+    const rows = raw.map((r) => {
+      const debitCents = Number(r.debitCents);
+      const creditCents = Number(r.creditCents);
+      return {
+        accountId: r.accountId,
+        accountCode: r.accountCode,
+        accountLabel: r.accountLabel,
+        classNumber: Number(r.classNumber),
+        debitCents,
+        creditCents,
+        balanceCents: debitCents - creditCents,
+      };
+    });
+
+    const totals = rows.reduce(
+      (acc, row) => ({
+        debitCents: acc.debitCents + row.debitCents,
+        creditCents: acc.creditCents + row.creditCents,
+        balanceCents: acc.balanceCents + row.balanceCents,
+      }),
+      { debitCents: 0, creditCents: 0, balanceCents: 0 },
+    );
+
+    return { rows, totals };
   }
 
   async create(

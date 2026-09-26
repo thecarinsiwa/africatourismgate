@@ -884,8 +884,29 @@
     },
     "comptabilite": {
       "title": "Accounting",
-      "description": "Stub bridge to SYSCOHADA accounting (later epic). Access: treasury.accounting_link.read.",
-      "metaTitle": "Accounting"
+      "description": "Accounting links bridge and SYSCOHADA books. Access: treasury.accounting_link.read.",
+      "metaTitle": "Accounting",
+      "journal": {
+        "title": "Journal",
+        "description": "Journal entries filtered by exercise and period.",
+        "metaTitle": "Accounting journal",
+        "id": {
+          "title": "Journal entry detail",
+          "description": "Debit and credit lines for the entry.",
+          "metaTitle": "Journal entry",
+          "backLabel": "Back to journal"
+        }
+      },
+      "grand-livre": {
+        "title": "General ledger",
+        "description": "Posted movements by account.",
+        "metaTitle": "General ledger"
+      },
+      "balance": {
+        "title": "Trial balance",
+        "description": "Debit / credit totals by account for the period.",
+        "metaTitle": "Trial balance"
+      }
     }
   },
   "profil": {

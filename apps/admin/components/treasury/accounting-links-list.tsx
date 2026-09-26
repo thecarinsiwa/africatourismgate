@@ -226,13 +226,17 @@ export function AccountingLinksList() {
       {
         accessorKey: 'journalEntryId',
         header: tColumns('journalEntryId'),
-        cell: ({ row }) => (
-          <span className="font-mono text-xs text-atg-muted">
-            {row.original.journalEntryId
-              ? `${row.original.journalEntryId.slice(0, 8)}…`
-              : emptyDash}
-          </span>
-        ),
+        cell: ({ row }) =>
+          row.original.journalEntryId ? (
+            <Link
+              href={`/tresorerie/comptabilite/journal/${row.original.journalEntryId}`}
+              className="font-mono text-xs font-medium text-primary hover:underline"
+            >
+              {row.original.journalEntryId.slice(0, 8)}…
+            </Link>
+          ) : (
+            emptyDash
+          ),
       },
     ],
     [emptyDash, formatDateTime, t, tColumns],

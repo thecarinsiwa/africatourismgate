@@ -884,8 +884,29 @@
     },
     "comptabilite": {
       "title": "Comptabilité",
-      "description": "Pont stub vers la comptabilité SYSCOHADA (épic ultérieur). Accès : treasury.accounting_link.read.",
-      "metaTitle": "Comptabilité"
+      "description": "Pont accounting_links et livres SYSCOHADA. Accès : treasury.accounting_link.read.",
+      "metaTitle": "Comptabilité",
+      "journal": {
+        "title": "Journal",
+        "description": "Écritures d’un journal filtrées par exercice et période.",
+        "metaTitle": "Journal comptable",
+        "id": {
+          "title": "Détail de l’écriture",
+          "description": "Lignes débit et crédit de la pièce.",
+          "metaTitle": "Écriture comptable",
+          "backLabel": "Retour au journal"
+        }
+      },
+      "grand-livre": {
+        "title": "Grand livre",
+        "description": "Mouvements postés par compte.",
+        "metaTitle": "Grand livre"
+      },
+      "balance": {
+        "title": "Balance générale",
+        "description": "Totaux débit / crédit par compte pour la période.",
+        "metaTitle": "Balance générale"
+      }
     }
   },
   "profil": {

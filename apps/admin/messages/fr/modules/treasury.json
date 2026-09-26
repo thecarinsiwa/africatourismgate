@@ -38,7 +38,7 @@
         "description": "Journal des actions"
       },
       "accounting": {
-        "description": "Pont comptable (stub)"
+        "description": "Livres et pont comptable SYSCOHADA"
       }
     }
   },
@@ -721,15 +721,113 @@
   },
   "accounting": {
     "notice": {
-      "title": "Épic SYSCOHADA à venir",
-      "body": "Cette section expose uniquement le pont stub (accounting_links). Aucun journal, grand livre, bilan ni plan comptable n’est disponible dans ce lot.",
-      "outOfScope": "La comptabilité réglementaire SYSCOHADA sera livrée dans un épic dédié (TRESO-041).",
-      "docLink": "Documentation handoff TRESO-041"
+      "title": "Livres SYSCOHADA",
+      "body": "Consultez le journal, le grand livre et la balance à partir des écritures réelles. Les liens ci-dessous relient les opérations de trésorerie aux écritures générées.",
+      "outOfScope": "Bilan, compte de résultat et livres caisse/banque suivent dans les lots SYSCO-007 / SYSCO-008."
+    },
+    "booksSubnav": {
+      "ariaLabel": "Navigation livres comptables",
+      "links": "Liens",
+      "journal": "Journal",
+      "generalLedger": "Grand livre",
+      "balance": "Balance"
+    },
+    "booksFilters": {
+      "organization": "Organisation",
+      "exercise": "Exercice",
+      "period": "Période",
+      "journal": "Journal",
+      "account": "Compte",
+      "accountPlaceholder": "Choisir un compte"
+    },
+    "entryStatuses": {
+      "draft": "Brouillon",
+      "posted": "Comptabilisée",
+      "reversed": "Contrepassée"
+    },
+    "entrySources": {
+      "treasury_mapping": "Mapping trésorerie",
+      "manual": "Saisie manuelle",
+      "closing": "Clôture",
+      "reversal": "Contrepassation"
+    },
+    "journal": {
+      "ariaLabel": "Liste des écritures du journal",
+      "accessDenied": "Accès refusé : permission treasury.accounting_link.read requise.",
+      "emptyDefault": "Aucune écriture comptable.",
+      "emptyFiltered": "Aucune écriture ne correspond aux filtres.",
+      "pagination": {
+        "item": "écriture"
+      },
+      "columns": {
+        "entryNumber": "N° pièce",
+        "entryDate": "Date",
+        "description": "Libellé",
+        "status": "Statut",
+        "debit": "Débit",
+        "credit": "Crédit"
+      }
+    },
+    "journalDetail": {
+      "accessDenied": "Accès refusé : permission treasury.accounting_link.read requise.",
+      "emptyLines": "Aucune ligne sur cette écriture.",
+      "linesAriaLabel": "Lignes de l’écriture",
+      "fields": {
+        "entryDate": "Date",
+        "status": "Statut",
+        "source": "Origine",
+        "currency": "Devise",
+        "totalDebit": "Total débit",
+        "totalCredit": "Total crédit"
+      },
+      "columns": {
+        "lineNo": "N°",
+        "account": "Compte",
+        "label": "Libellé",
+        "debit": "Débit",
+        "credit": "Crédit"
+      }
+    },
+    "generalLedger": {
+      "ariaLabel": "Grand livre par compte",
+      "accessDenied": "Accès refusé : permission treasury.accounting_link.read requise.",
+      "selectAccount": "Sélectionnez un compte pour afficher le grand livre.",
+      "emptyDefault": "Aucun mouvement posté pour ce compte.",
+      "pagination": {
+        "item": "ligne"
+      },
+      "columns": {
+        "entryDate": "Date",
+        "entryNumber": "N° pièce",
+        "journal": "Journal",
+        "label": "Libellé",
+        "debit": "Débit",
+        "credit": "Crédit"
+      }
+    },
+    "balance": {
+      "ariaLabel": "Balance générale",
+      "accessDenied": "Accès refusé : permission treasury.accounting_link.read requise.",
+      "emptyDefault": "Aucune ligne de balance pour les filtres sélectionnés.",
+      "emptyFiltered": "Aucun compte ne correspond aux filtres.",
+      "unbalancedHint": "Écart débit/crédit : {delta} (vérifier les écritures de la période).",
+      "totals": {
+        "debit": "Total débit",
+        "credit": "Total crédit",
+        "balance": "Solde (D − C)"
+      },
+      "columns": {
+        "class": "Classe",
+        "account": "Compte",
+        "debit": "Débit",
+        "credit": "Crédit",
+        "balance": "Solde"
+      }
     },
     "list": {
-      "ariaLabel": "Liens comptables stub",
+      "ariaLabel": "Liens comptables",
       "accessDenied": "Accès refusé : permission treasury.accounting_link.read requise.",
-      "emptyDefault": "Aucun lien comptable stub.",
+      "emptyDefault": "Aucun lien comptable.",
       "emptyFiltered": "Aucun lien ne correspond aux filtres.",
       "columns": {
         "createdAt": "Créé le",
@@ -737,7 +835,7 @@
         "fundOp": "Opération",
         "status": "Statut",
         "mappingRuleKey": "Règle mapping",
-        "journalEntryId": "Écriture (futur)"
+        "journalEntryId": "Écriture"
       }
     },
     "filters": {

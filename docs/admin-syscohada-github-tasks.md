@@ -94,7 +94,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | SYSCO-003 | Migration journaux / écritures / lignes — ✅             | Haute    | API / DB       | L      | SYSCO-002 |
 | SYSCO-004 | Moteur mapping + job/API « comptabiliser » — ✅          | Haute    | API            | L      | TRESO-039, SYSCO-002 |
 | SYSCO-005 | Remplir `accounting_links.journal_entry_id` + statuts — ✅ | Haute    | API            | M      | TRESO-039, SYSCO-003–004 |
-| SYSCO-006 | UI journal + grand livre + balance                       | Haute    | Admin          | L      | SYSCO-003 |
+| SYSCO-006 | UI journal + grand livre + balance — ✅                       | Haute    | Admin          | L      | SYSCO-003 |
 | SYSCO-007 | Livres caisse / banque + rapprochements                  | Moyenne  | Admin / API    | L      | SYSCO-003, comptes classe 5 |
 | SYSCO-008 | Clôtures + bilan + compte de résultat                    | Moyenne  | Admin / API    | L      | SYSCO-006 |
 | SYSCO-009 | RBAC `accounting.*` + audit écritures                    | Haute    | API / RBAC     | M      | TRESO-008 pattern |
@@ -369,11 +369,11 @@ pnpm db:sync
 
 ---
 
-### SYSCO-006 — UI journal + grand livre + balance
+### SYSCO-006 — UI journal + grand livre + balance — ✅
 
-**Labels :** `admin`, `syscohada`, `comptabilite`, `enhancement`, `priority:high`  
-**Branche suggérée :** `feature/syscohada-ui-books`  
-**Livrable :** pages Admin journal / grand livre / balance · filtres période/journal/compte · i18n · permissions lecture
+**Labels :** `admin`, `syscohada`, `comptabilite`, `enhancement`, `priority:high`
+**Branche suggérée :** `feature/syscohada-ui-books`
+**Livrable :** pages Admin `/tresorerie/comptabilite/{journal,grand-livre,balance}` · `GET /journal-entries`, `/journal-lines`, `/accounting-balance` · client API · i18n fr/en/es · permission `treasury.accounting_link.read`
 
 #### Modèle GitHub
 
@@ -398,10 +398,10 @@ Les états de livres sont le cœur de la consultation réglementaire ; pas de fa
 
 ## Critères d'acceptation
 
-- [ ] Écritures créées via API visibles au journal
-- [ ] Balance cohérente avec lignes (totaux débit/crédit)
-- [ ] Accès restreint permissions lecture compta
-- [ ] Pas de données mock inventées
+- [x] Écritures créées via API visibles au journal
+- [x] Balance cohérente avec lignes (totaux débit/crédit)
+- [x] Accès restreint permissions lecture compta
+- [x] Pas de données mock inventées
 
 ## Plan de test
 

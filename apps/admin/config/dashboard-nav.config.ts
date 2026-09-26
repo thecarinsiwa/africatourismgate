@@ -120,6 +120,9 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
       { href: '/tresorerie/externes', labelKey: 'treasuryExternals', iconKey: 'users' },
       { href: '/tresorerie/audit', labelKey: 'treasuryAudit', iconKey: 'shield' },
       { href: '/tresorerie/comptabilite', labelKey: 'treasuryAccounting', iconKey: 'document' },
+      { href: '/tresorerie/comptabilite/journal', labelKey: 'treasuryJournal', iconKey: 'list' },
+      { href: '/tresorerie/comptabilite/grand-livre', labelKey: 'treasuryGeneralLedger', iconKey: 'list' },
+      { href: '/tresorerie/comptabilite/balance', labelKey: 'treasuryBalance', iconKey: 'chart' },
     ],
   },
   {

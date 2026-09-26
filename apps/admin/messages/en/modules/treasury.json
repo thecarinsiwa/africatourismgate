@@ -38,7 +38,7 @@
         "description": "Action audit log"
       },
       "accounting": {
-        "description": "Accounting bridge (stub)"
+        "description": "SYSCOHADA books and accounting bridge"
       }
     }
   },
@@ -721,15 +721,113 @@
   },
   "accounting": {
     "notice": {
-      "title": "SYSCOHADA epic coming soon",
-      "body": "This section only exposes the stub bridge (accounting_links). No journal, general ledger, balance sheet, or chart of accounts is available in this release.",
-      "outOfScope": "Regulatory SYSCOHADA accounting will ship in a dedicated epic (TRESO-041).",
-      "docLink": "TRESO-041 handoff documentation"
+      "title": "SYSCOHADA books",
+      "body": "Browse the journal, general ledger, and trial balance from real postings. The links below connect treasury operations to generated entries.",
+      "outOfScope": "Balance sheet, income statement, and cash/bank books follow in SYSCO-007 / SYSCO-008."
+    },
+    "booksSubnav": {
+      "ariaLabel": "Accounting books navigation",
+      "links": "Links",
+      "journal": "Journal",
+      "generalLedger": "General ledger",
+      "balance": "Trial balance"
+    },
+    "booksFilters": {
+      "organization": "Organization",
+      "exercise": "Fiscal year",
+      "period": "Period",
+      "journal": "Journal",
+      "account": "Account",
+      "accountPlaceholder": "Select an account"
+    },
+    "entryStatuses": {
+      "draft": "Draft",
+      "posted": "Posted",
+      "reversed": "Reversed"
+    },
+    "entrySources": {
+      "treasury_mapping": "Treasury mapping",
+      "manual": "Manual entry",
+      "closing": "Closing",
+      "reversal": "Reversal"
+    },
+    "journal": {
+      "ariaLabel": "Journal entries list",
+      "accessDenied": "Access denied: treasury.accounting_link.read permission required.",
+      "emptyDefault": "No journal entries.",
+      "emptyFiltered": "No entry matches the filters.",
+      "pagination": {
+        "item": "entry"
+      },
+      "columns": {
+        "entryNumber": "Entry no.",
+        "entryDate": "Date",
+        "description": "Description",
+        "status": "Status",
+        "debit": "Debit",
+        "credit": "Credit"
+      }
+    },
+    "journalDetail": {
+      "accessDenied": "Access denied: treasury.accounting_link.read permission required.",
+      "emptyLines": "No lines on this entry.",
+      "linesAriaLabel": "Journal entry lines",
+      "fields": {
+        "entryDate": "Date",
+        "status": "Status",
+        "source": "Source",
+        "currency": "Currency",
+        "totalDebit": "Total debit",
+        "totalCredit": "Total credit"
+      },
+      "columns": {
+        "lineNo": "No.",
+        "account": "Account",
+        "label": "Label",
+        "debit": "Debit",
+        "credit": "Credit"
+      }
+    },
+    "generalLedger": {
+      "ariaLabel": "General ledger by account",
+      "accessDenied": "Access denied: treasury.accounting_link.read permission required.",
+      "selectAccount": "Select an account to display the general ledger.",
+      "emptyDefault": "No posted movements for this account.",
+      "pagination": {
+        "item": "line"
+      },
+      "columns": {
+        "entryDate": "Date",
+        "entryNumber": "Entry no.",
+        "journal": "Journal",
+        "label": "Label",
+        "debit": "Debit",
+        "credit": "Credit"
+      }
+    },
+    "balance": {
+      "ariaLabel": "Trial balance",
+      "accessDenied": "Access denied: treasury.accounting_link.read permission required.",
+      "emptyDefault": "No balance rows for the selected filters.",
+      "emptyFiltered": "No account matches the filters.",
+      "unbalancedHint": "Debit/credit gap: {delta} (check entries for the period).",
+      "totals": {
+        "debit": "Total debit",
+        "credit": "Total credit",
+        "balance": "Balance (D − C)"
+      },
+      "columns": {
+        "class": "Class",
+        "account": "Account",
+        "debit": "Debit",
+        "credit": "Credit",
+        "balance": "Balance"
+      }
     },
     "list": {
-      "ariaLabel": "Stub accounting links",
+      "ariaLabel": "Accounting links",
       "accessDenied": "Access denied: treasury.accounting_link.read permission required.",
-      "emptyDefault": "No stub accounting links.",
+      "emptyDefault": "No accounting links.",
       "emptyFiltered": "No link matches the filters.",
       "columns": {
         "createdAt": "Created",
@@ -737,7 +835,7 @@
         "fundOp": "Operation",
         "status": "Status",
         "mappingRuleKey": "Mapping rule",
-        "journalEntryId": "Journal entry (future)"
+        "journalEntryId": "Journal entry"
       }
     },
     "filters": {

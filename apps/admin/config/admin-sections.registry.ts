@@ -253,9 +253,29 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     apiResource: 'treasury-audit-logs',
   },
   'tresorerie/comptabilite': {
-    title: 'Comptabilité (pont)',
-    description: 'Stub pont opération financière ↔ écriture future (SYSCOHADA hors lot).',
+    title: 'Comptabilité',
+    description: 'Pont accounting_links + livres SYSCOHADA (journal, grand livre, balance).',
     apiResource: 'accounting-links',
+  },
+  'tresorerie/comptabilite/journal': {
+    title: 'Journal',
+    description: 'Écritures comptables filtrées par journal et période.',
+    apiResource: 'journal-entries',
+  },
+  'tresorerie/comptabilite/journal/id': {
+    title: 'Détail écriture',
+    description: 'Lignes débit/crédit d’une pièce comptable.',
+    apiResource: 'journal-entries',
+  },
+  'tresorerie/comptabilite/grand-livre': {
+    title: 'Grand livre',
+    description: 'Mouvements par compte (écritures postées).',
+    apiResource: 'journal-lines',
+  },
+  'tresorerie/comptabilite/balance': {
+    title: 'Balance générale',
+    description: 'Totaux débit/crédit par compte pour la période.',
+    apiResource: 'accounting-balance',
   },
   'paiements/codes-promo': {
     title: 'Codes promo',

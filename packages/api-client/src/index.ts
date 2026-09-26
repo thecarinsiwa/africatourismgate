@@ -359,6 +359,24 @@ import type {
   AccountingLink,
   AccountingLinksListQuery,
   AccountingMappingConfig,
+  AccountingBalanceQuery,
+  AccountingBalanceSummary,
+  AccountingExercise,
+  AccountingExercisesListQuery,
+  AccountingJournal,
+  AccountingJournalsListQuery,
+  AccountingPeriod,
+  AccountingPeriodsListQuery,
+  ChartAccount,
+  ChartAccountsListQuery,
+  CreateJournalEntryRequest,
+  JournalEntriesListQuery,
+  JournalEntry,
+  JournalLine,
+  JournalLinesListQuery,
+  PostAccountingLinkRequest,
+  PostAccountingLinkResult,
+  SkipAccountingLinkRequest,
   Budget,
   BudgetVsActualSummary,
   BudgetsListQuery,
@@ -1607,10 +1625,16 @@ export class ApiClient {
   }
 
   getAccountingMappingConfig(
+    query?: { organizationId?: string },
     requestOptions?: RequestOptions,
   ): Promise<AccountingMappingConfig> {
+    const params = new URLSearchParams();
+    if (query?.organizationId) {
+      params.set('organizationId', query.organizationId);
+    }
+    const qs = params.toString();
     return this.request<AccountingMappingConfig>(
-      '/accounting-links/mapping-config',
+      `/accounting-links/mapping-config${qs ? `?${qs}` : ''}`,
       requestOptions,
     );
   }
@@ -1636,6 +1660,150 @@ export class ApiClient {
       method: 'PATCH',
       body,
     });
+  }
+
+  postAccountingLink(
+    body: PostAccountingLinkRequest,
+  ): Promise<PostAccountingLinkResult> {
+    return this.request<PostAccountingLinkResult>('/accounting-links/post', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  skipAccountingLink(
+    body: SkipAccountingLinkRequest,
+  ): Promise<AccountingLink> {
+    return this.request<AccountingLink>('/accounting-links/skip', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  softDeleteAccountingLink(id: string): Promise<{ id: string; deleted: true }> {
+    return this.request<{ id: string; deleted: true }>(
+      `/accounting-links/${id}`,
+      { method: 'DELETE' },
+    );
+  }
+
+  listChartOfAccounts(
+    query?: ChartAccountsListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<ChartAccount>> {
+    return fetchPaginated<ChartAccount>(
+      this,
+      '/chart-of-accounts',
+      query,
+      requestOptions,
+    );
+  }
+
+  getChartOfAccount(id: string): Promise<ChartAccount> {
+    return this.request<ChartAccount>(`/chart-of-accounts/${id}`);
+  }
+
+  listAccountingExercises(
+    query?: AccountingExercisesListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<AccountingExercise>> {
+    return fetchPaginated<AccountingExercise>(
+      this,
+      '/accounting-exercises',
+      query,
+      requestOptions,
+    );
+  }
+
+  getAccountingExercise(id: string): Promise<AccountingExercise> {
+    return this.request<AccountingExercise>(`/accounting-exercises/${id}`);
+  }
+
+  listAccountingPeriods(
+    query?: AccountingPeriodsListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<AccountingPeriod>> {
+    return fetchPaginated<AccountingPeriod>(
+      this,
+      '/accounting-periods',
+      query,
+      requestOptions,
+    );
+  }
+
+  listAccountingJournals(
+    query?: AccountingJournalsListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<AccountingJournal>> {
+    return fetchPaginated<AccountingJournal>(
+      this,
+      '/accounting-journals',
+      query,
+      requestOptions,
+    );
+  }
+
+  getAccountingJournal(id: string): Promise<AccountingJournal> {
+    return this.request<AccountingJournal>(`/accounting-journals/${id}`);
+  }
+
+  listJournalEntries(
+    query?: JournalEntriesListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<JournalEntry>> {
+    return fetchPaginated<JournalEntry>(
+      this,
+      '/journal-entries',
+      query,
+      requestOptions,
+    );
+  }
+
+  getJournalEntry(id: string): Promise<JournalEntry> {
+    return this.request<JournalEntry>(`/journal-entries/${id}`);
+  }
+
+  createJournalEntry(body: CreateJournalEntryRequest): Promise<JournalEntry> {
+    return this.request<JournalEntry>('/journal-entries', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  listJournalLines(
+    query?: JournalLinesListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<JournalLine>> {
+    return fetchPaginated<JournalLine>(
+      this,
+      '/journal-lines',
+      query,
+      requestOptions,
+    );
+  }
+
+  getAccountingBalance(
+    query?: AccountingBalanceQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<AccountingBalanceSummary> {
+    const params = new URLSearchParams();
+    if (query?.organizationId) {
+      params.set('organizationId', query.organizationId);
+    }
+    if (query?.exerciseId) {
+      params.set('exerciseId', query.exerciseId);
+    }
+    if (query?.periodId) {
+      params.set('periodId', query.periodId);
+    }
+    if (query?.journalId) {
+      params.set('journalId', query.journalId);
+    }
+    const qs = params.toString();
+    return this.request<AccountingBalanceSummary>(
+      `/accounting-balance${qs ? `?${qs}` : ''}`,
+      requestOptions,
+    );
   }
 
   inviteTreasuryExternalCollaborator(

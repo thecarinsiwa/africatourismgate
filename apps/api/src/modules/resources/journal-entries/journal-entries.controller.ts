@@ -10,6 +10,7 @@ import { RequirePermissions } from '../../rbac/decorators/require-permissions.de
 import { CreateJournalEntryDto } from './dto/create-journal-entry.dto';
 import { JournalEntriesListQueryDto } from './dto/journal-entries-list-query.dto';
 import { JournalLinesListQueryDto } from './dto/journal-lines-list-query.dto';
+import { AccountingBalanceQueryDto } from './dto/accounting-balance-query.dto';
 import { JournalEntriesService } from './journal-entries.service';
 
 /**
@@ -61,5 +62,15 @@ export class JournalEntriesController {
   })
   findLines(@Query() query: JournalLinesListQueryDto) {
     return this.service.findLines(query);
+  }
+
+  @RequirePermissions('treasury.accounting_link.read')
+  @Get('accounting-balance')
+  @ApiOperation({
+    summary:
+      'Balance générale (agrégat lignes postées par compte — SYSCO-006)',
+  })
+  getBalance(@Query() query: AccountingBalanceQueryDto) {
+    return this.service.getBalance(query);
   }
 }

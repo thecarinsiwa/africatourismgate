@@ -38,7 +38,7 @@
         "description": "Registro de acciones"
       },
       "accounting": {
-        "description": "Puente contable (stub)"
+        "description": "Libros SYSCOHADA y puente contable"
       }
     }
   },
@@ -721,15 +721,113 @@
   },
   "accounting": {
     "notice": {
-      "title": "Épica SYSCOHADA próximamente",
-      "body": "Esta sección solo expone el puente stub (accounting_links). No hay diario, libro mayor, balance ni plan contable en este lote.",
-      "outOfScope": "La contabilidad regulatoria SYSCOHADA se entregará en una épica dedicada (TRESO-041).",
-      "docLink": "Documentación handoff TRESO-041"
+      "title": "Libros SYSCOHADA",
+      "body": "Consulte el diario, libro mayor y balance a partir de asientos reales. Los enlaces siguientes conectan operaciones de tesorería con los asientos generados.",
+      "outOfScope": "Balance, cuenta de resultados y libros de caja/banco en los lotes SYSCO-007 / SYSCO-008."
+    },
+    "booksSubnav": {
+      "ariaLabel": "Navegación libros contables",
+      "links": "Enlaces",
+      "journal": "Diario",
+      "generalLedger": "Libro mayor",
+      "balance": "Balance"
+    },
+    "booksFilters": {
+      "organization": "Organización",
+      "exercise": "Ejercicio",
+      "period": "Período",
+      "journal": "Diario",
+      "account": "Cuenta",
+      "accountPlaceholder": "Elegir una cuenta"
+    },
+    "entryStatuses": {
+      "draft": "Borrador",
+      "posted": "Contabilizado",
+      "reversed": "Contrapartida"
+    },
+    "entrySources": {
+      "treasury_mapping": "Mapping tesorería",
+      "manual": "Entrada manual",
+      "closing": "Cierre",
+      "reversal": "Contrapartida"
+    },
+    "journal": {
+      "ariaLabel": "Lista de asientos del diario",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.accounting_link.read.",
+      "emptyDefault": "Ningún asiento contable.",
+      "emptyFiltered": "Ningún asiento coincide con los filtros.",
+      "pagination": {
+        "item": "asiento"
+      },
+      "columns": {
+        "entryNumber": "N° asiento",
+        "entryDate": "Fecha",
+        "description": "Descripción",
+        "status": "Estado",
+        "debit": "Débito",
+        "credit": "Crédito"
+      }
+    },
+    "journalDetail": {
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.accounting_link.read.",
+      "emptyLines": "Sin líneas en este asiento.",
+      "linesAriaLabel": "Líneas del asiento",
+      "fields": {
+        "entryDate": "Fecha",
+        "status": "Estado",
+        "source": "Origen",
+        "currency": "Divisa",
+        "totalDebit": "Total débito",
+        "totalCredit": "Total crédito"
+      },
+      "columns": {
+        "lineNo": "N°",
+        "account": "Cuenta",
+        "label": "Etiqueta",
+        "debit": "Débito",
+        "credit": "Crédito"
+      }
+    },
+    "generalLedger": {
+      "ariaLabel": "Libro mayor por cuenta",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.accounting_link.read.",
+      "selectAccount": "Seleccione una cuenta para ver el libro mayor.",
+      "emptyDefault": "Sin movimientos contabilizados para esta cuenta.",
+      "pagination": {
+        "item": "línea"
+      },
+      "columns": {
+        "entryDate": "Fecha",
+        "entryNumber": "N° asiento",
+        "journal": "Diario",
+        "label": "Etiqueta",
+        "debit": "Débito",
+        "credit": "Crédito"
+      }
+    },
+    "balance": {
+      "ariaLabel": "Balance de comprobación",
+      "accessDenied": "Acceso denegado: se requiere el permiso treasury.accounting_link.read.",
+      "emptyDefault": "Sin filas de balance para los filtros seleccionados.",
+      "emptyFiltered": "Ninguna cuenta coincide con los filtros.",
+      "unbalancedHint": "Diferencia débito/crédito: {delta} (verifique los asientos del período).",
+      "totals": {
+        "debit": "Total débito",
+        "credit": "Total crédito",
+        "balance": "Saldo (D − C)"
+      },
+      "columns": {
+        "class": "Clase",
+        "account": "Cuenta",
+        "debit": "Débito",
+        "credit": "Crédito",
+        "balance": "Saldo"
+      }
     },
     "list": {
-      "ariaLabel": "Enlaces contables stub",
+      "ariaLabel": "Enlaces contables",
       "accessDenied": "Acceso denegado: se requiere el permiso treasury.accounting_link.read.",
-      "emptyDefault": "No hay enlaces contables stub.",
+      "emptyDefault": "Ningún enlace contable.",
       "emptyFiltered": "Ningún enlace coincide con los filtros.",
       "columns": {
         "createdAt": "Creado",
@@ -737,7 +835,7 @@
         "fundOp": "Operación",
         "status": "Estado",
         "mappingRuleKey": "Regla de mapping",
-        "journalEntryId": "Asiento (futuro)"
+        "journalEntryId": "Asiento"
       }
     },
     "filters": {

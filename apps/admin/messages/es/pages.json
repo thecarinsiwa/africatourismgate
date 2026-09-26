@@ -884,8 +884,29 @@
     },
     "comptabilite": {
       "title": "Contabilidad",
-      "description": "Puente stub hacia SYSCOHADA (épica posterior). Acceso: treasury.accounting_link.read.",
-      "metaTitle": "Contabilidad"
+      "description": "Puente accounting_links y libros SYSCOHADA. Acceso: treasury.accounting_link.read.",
+      "metaTitle": "Contabilidad",
+      "journal": {
+        "title": "Diario",
+        "description": "Asientos filtrados por ejercicio y período.",
+        "metaTitle": "Diario contable",
+        "id": {
+          "title": "Detalle del asiento",
+          "description": "Líneas de débito y crédito del asiento.",
+          "metaTitle": "Asiento contable",
+          "backLabel": "Volver al diario"
+        }
+      },
+      "grand-livre": {
+        "title": "Libro mayor",
+        "description": "Movimientos contabilizados por cuenta.",
+        "metaTitle": "Libro mayor"
+      },
+      "balance": {
+        "title": "Balance de comprobación",
+        "description": "Totales débito / crédito por cuenta para el período.",
+        "metaTitle": "Balance de comprobación"
+      }
     }
   },
   "profil": {
