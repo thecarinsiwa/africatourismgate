@@ -9,6 +9,7 @@
     "searchPlaceholder": "Search sailings…",
     "searchAria": "Search sailings",
     "emptySailings": "No sailings scheduled.",
+    "emptyShips": "No ships.",
     "emptyFiltered": "No sailing matches this filter.",
     "ariaLabel": "Cruise sailings list",
     "deleteSailingTitle": "Delete sailing",

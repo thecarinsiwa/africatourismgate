@@ -85,7 +85,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-007 | Types partagés `packages/types` (enums, DTOs) — ✅       | Haute    | API / Types | M      |
 | TRESO-008 | Catalogue RBAC `treasury.*` + sync seed — ✅             | Haute    | API / RBAC  | M      |
 | TRESO-009 | Shell Admin nav + routes + permissions + registry — ✅   | Haute    | Admin       | M      |
-| TRESO-010 | Scaffold i18n fr/en/es modules trésorerie                | Haute    | i18n        | S      |
+| TRESO-010 | Scaffold i18n fr/en/es modules trésorerie — ✅           | Haute    | i18n        | S      |
 | TRESO-011 | API Nest CRUD `fund-entries` + filtres                   | Haute    | API         | L      |
 | TRESO-012 | API liaison entrées ↔ réservations (0,N) + justificatifs | Haute    | API         | M      |
 | TRESO-013 | UI Admin liste + filtres entrées de fonds                | Haute    | Admin       | M      |
@@ -566,14 +566,15 @@ Connexion admin ; ouvrir `/tresorerie` et chaque sous-route.
 
 ---
 
-### TRESO-010 — Scaffold i18n fr/en/es modules trésorerie
+### TRESO-010 — Scaffold i18n fr/en/es modules trésorerie — ✅
 
 **Labels :** `admin`, `tresorerie`, `i18n`, `priority:high`  
-**Branche suggérée :** `feature/tresorerie-i18n-scaffold`
+**Branche suggérée :** `feature/tresorerie-i18n-scaffold`  
+**Livrable :** `messages/{fr,en,es}/modules/treasury.json` + enregistrement `ADMIN_MODULE_NAMES`
 
 #### Modèle GitHub
 
-````markdown
+```markdown
 ## Contexte
 
 Admin i18n via `messages/{fr,en,es}/` + `pnpm check:admin-i18n`.
@@ -581,31 +582,30 @@ Admin i18n via `messages/{fr,en,es}/` + `pnpm check:admin-i18n`.
 ## Objectif
 
 1. Créer modules JSON treasury (pages, listes, formulaires, workflow, erreurs)
-2. Clés nav + pages
+2. Clés nav + pages (déjà posées en TRESO-009)
 3. Parité fr/en/es
 
 ## Fichiers clés
 
-- `apps/admin/messages/fr|en|es/modules/treasury*.json`
-- `apps/admin/messages/*/pages.json` / nav keys
+- `apps/admin/messages/{fr,en,es}/modules/treasury.json`
+- `apps/admin/lib/i18n/load-messages.ts`
+- `apps/admin/messages/*/nav.json` + `pages.json`
 
 ## Critères d'acceptation
 
-- [ ] Parité i18n validée
-- [ ] Aucune clé manquante pour shell TRESO-009
+- [x] Parité i18n validée (`pnpm check:admin-i18n`)
+- [x] Aucune clé manquante pour shell TRESO-009
 
 ## Plan de test
 
 ```bash
 pnpm check:admin-i18n
 ```
-````
 
 ## Références
 
 - TRESO-009
-
-````
+```
 
 ---
 

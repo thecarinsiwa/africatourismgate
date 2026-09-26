@@ -9,6 +9,7 @@
     "searchPlaceholder": "Buscar salidas…",
     "searchAria": "Buscar salidas",
     "emptySailings": "No hay salidas programadas.",
+    "emptyShips": "Ningún buque.",
     "emptyFiltered": "Ninguna salida coincide con este filtro.",
     "ariaLabel": "Lista de salidas de crucero",
     "deleteSailingTitle": "Eliminar salida",

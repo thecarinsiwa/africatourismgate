@@ -1,0 +1,387 @@
+{
+  "subnav": {
+    "ariaLabel": "Navigation trésorerie",
+    "hub": "Vue d'ensemble",
+    "entries": "Entrées",
+    "exits": "Sorties",
+    "expenseRequests": "États de besoin",
+    "budgets": "Budgets",
+    "reports": "Rapports",
+    "externals": "Externes",
+    "audit": "Audit",
+    "accounting": "Comptabilité"
+  },
+  "sources": {
+    "booking_payment": "Paiement réservation",
+    "customer_direct": "Client direct",
+    "partner": "Partenaire",
+    "grant_donation": "Subvention / don",
+    "owner_capital": "Apport",
+    "bank_interest": "Intérêts bancaires",
+    "other": "Autre"
+  },
+  "paymentMethods": {
+    "cash": "Espèces",
+    "bank_transfer": "Virement",
+    "mobile_money": "Mobile Money",
+    "stripe": "Stripe / carte",
+    "cheque": "Chèque",
+    "other": "Autre"
+  },
+  "fundEntryStatus": {
+    "recorded": "Enregistrée",
+    "voided": "Annulée"
+  },
+  "fundExitStatus": {
+    "draft": "Brouillon",
+    "disbursed": "Décaissée",
+    "recorded": "Enregistrée",
+    "voided": "Annulée"
+  },
+  "expenseRequestStatus": {
+    "draft": "Brouillon",
+    "submitted": "Soumis",
+    "validated": "Validé",
+    "authorized": "Autorisé",
+    "rejected": "Rejeté",
+    "cancelled": "Annulé",
+    "closed": "Clôturé"
+  },
+  "budgetPeriod": {
+    "monthly": "Mensuel",
+    "annual": "Annuel"
+  },
+  "budgetScope": {
+    "general": "Général",
+    "activity": "Activité",
+    "product": "Produit / service"
+  },
+  "workflow": {
+    "title": "Circuit de validation",
+    "steps": {
+      "draft": "Brouillon",
+      "submitted": "Soumission",
+      "validated": "Validation",
+      "authorized": "Autorisation",
+      "disbursement": "Décaissement",
+      "justification": "Justificatif",
+      "recorded": "Enregistrement"
+    },
+    "actions": {
+      "submit": "Soumettre",
+      "validate": "Valider",
+      "authorize": "Autoriser",
+      "reject": "Rejeter",
+      "cancel": "Annuler",
+      "disburse": "Enregistrer le décaissement",
+      "attachProof": "Ajouter un justificatif",
+      "markRecorded": "Marquer comme enregistré"
+    },
+    "commentLabel": "Commentaire",
+    "commentPlaceholder": "Motif ou observation (optionnel)…",
+    "rejectReasonRequired": "Indiquez un motif de rejet."
+  },
+  "entries": {
+    "list": {
+      "ariaLabel": "Liste des entrées de fonds",
+      "accessDenied": "Accès refusé : permission treasury.read requise.",
+      "emptyDefault": "Aucune entrée de fonds pour le moment.",
+      "emptyFiltered": "Aucune entrée ne correspond à vos critères.",
+      "searchPlaceholder": "Rechercher par référence ou notes…",
+      "searchAria": "Rechercher des entrées",
+      "newButton": "Nouvelle entrée",
+      "columns": {
+        "date": "Date",
+        "amount": "Montant",
+        "currency": "Devise",
+        "source": "Source",
+        "paymentMethod": "Mode",
+        "reference": "Référence",
+        "status": "Statut",
+        "bookings": "Réservations"
+      }
+    },
+    "form": {
+      "createTitle": "Nouvelle entrée de fonds",
+      "editTitle": "Modifier l'entrée de fonds",
+      "fields": {
+        "amountCents": "Montant",
+        "currency": "Devise",
+        "operationDate": "Date d'opération",
+        "source": "Source des fonds",
+        "paymentMethod": "Mode de paiement",
+        "reference": "Référence",
+        "notes": "Observations",
+        "bookingIds": "Réservations liées"
+      },
+      "hints": {
+        "bookingIds": "Aucune, une ou plusieurs réservations (cardinalité 0,N).",
+        "sourceOther": "Précisez l'origine dans les observations."
+      },
+      "validation": {
+        "amountPositive": "Le montant doit être supérieur à zéro.",
+        "currencyRequired": "La devise est obligatoire.",
+        "operationDateRequired": "La date est obligatoire.",
+        "sourceRequired": "La source est obligatoire.",
+        "paymentMethodRequired": "Le mode de paiement est obligatoire.",
+        "notesRequiredForOther": "Les observations sont obligatoires pour la source « Autre »."
+      },
+      "submitCreate": "Enregistrer l'entrée",
+      "submitUpdate": "Enregistrer les modifications"
+    },
+    "detail": {
+      "title": "Détail de l'entrée",
+      "voidButton": "Annuler l'entrée",
+      "attachments": "Justificatifs",
+      "audit": "Historique"
+    }
+  },
+  "exits": {
+    "list": {
+      "ariaLabel": "Liste des sorties de fonds",
+      "accessDenied": "Accès refusé : permission treasury.read requise.",
+      "emptyDefault": "Aucune sortie de fonds pour le moment.",
+      "emptyFiltered": "Aucune sortie ne correspond à vos critères.",
+      "searchPlaceholder": "Rechercher par référence ou notes…",
+      "searchAria": "Rechercher des sorties",
+      "newButton": "Nouvelle sortie",
+      "columns": {
+        "date": "Date",
+        "amount": "Montant",
+        "expenseRequest": "État de besoin",
+        "paymentMethod": "Mode",
+        "status": "Statut",
+        "bookings": "Réservations"
+      }
+    },
+    "form": {
+      "createTitle": "Nouvelle sortie de fonds",
+      "editTitle": "Modifier la sortie de fonds",
+      "fields": {
+        "expenseRequestId": "État de besoin",
+        "amountCents": "Montant",
+        "currency": "Devise",
+        "operationDate": "Date de décaissement",
+        "paymentMethod": "Mode de paiement",
+        "reference": "Référence",
+        "notes": "Observations",
+        "bookingIds": "Réservations liées"
+      },
+      "hints": {
+        "expenseRequestId": "Seuls les besoins autorisés sont sélectionnables."
+      },
+      "validation": {
+        "expenseRequestRequired": "Un état de besoin est obligatoire.",
+        "amountPositive": "Le montant doit être supérieur à zéro."
+      },
+      "submitCreate": "Enregistrer la sortie",
+      "submitUpdate": "Enregistrer les modifications"
+    },
+    "detail": {
+      "title": "Détail de la sortie",
+      "voidButton": "Annuler la sortie",
+      "attachments": "Justificatifs"
+    }
+  },
+  "expenseRequests": {
+    "list": {
+      "ariaLabel": "Liste des états de besoin",
+      "accessDenied": "Accès refusé : permission treasury.read requise.",
+      "emptyDefault": "Aucun état de besoin pour le moment.",
+      "emptyFiltered": "Aucun besoin ne correspond à vos critères.",
+      "searchPlaceholder": "Rechercher par titre…",
+      "searchAria": "Rechercher des états de besoin",
+      "newButton": "Nouveau besoin",
+      "columns": {
+        "title": "Titre",
+        "amount": "Montant demandé",
+        "status": "Statut",
+        "neededBy": "Échéance",
+        "createdAt": "Créé le"
+      }
+    },
+    "form": {
+      "createTitle": "Nouvel état de besoin",
+      "editTitle": "Modifier l'état de besoin",
+      "fields": {
+        "title": "Titre",
+        "description": "Justification",
+        "requestedAmountCents": "Montant demandé",
+        "currency": "Devise",
+        "neededByDate": "Date de besoin"
+      },
+      "validation": {
+        "titleRequired": "Le titre est obligatoire.",
+        "descriptionRequired": "La justification est obligatoire.",
+        "amountPositive": "Le montant doit être supérieur à zéro."
+      },
+      "submitCreate": "Créer la demande",
+      "submitUpdate": "Enregistrer"
+    },
+    "detail": {
+      "title": "Détail de l'état de besoin",
+      "timeline": "Historique des statuts",
+      "linkedExits": "Sorties liées"
+    }
+  },
+  "budgets": {
+    "list": {
+      "ariaLabel": "Liste des budgets",
+      "accessDenied": "Accès refusé : permission treasury.read requise.",
+      "emptyDefault": "Aucun budget pour le moment.",
+      "emptyFiltered": "Aucun budget ne correspond à vos critères.",
+      "newButton": "Nouveau budget",
+      "columns": {
+        "label": "Libellé",
+        "period": "Période",
+        "scope": "Périmètre",
+        "amount": "Montant",
+        "currency": "Devise"
+      }
+    },
+    "form": {
+      "createTitle": "Nouveau budget",
+      "editTitle": "Modifier le budget",
+      "fields": {
+        "label": "Libellé",
+        "periodType": "Type de période",
+        "year": "Année",
+        "month": "Mois",
+        "amountCents": "Montant budgété",
+        "currency": "Devise",
+        "scopeType": "Périmètre",
+        "activityId": "Activité",
+        "productType": "Type de produit",
+        "productId": "Produit / service",
+        "notes": "Notes"
+      },
+      "validation": {
+        "labelRequired": "Le libellé est obligatoire.",
+        "yearRequired": "L'année est obligatoire.",
+        "monthRequiredForMonthly": "Le mois est obligatoire pour un budget mensuel.",
+        "amountPositive": "Le montant doit être supérieur à zéro."
+      },
+      "submitCreate": "Créer le budget",
+      "submitUpdate": "Enregistrer"
+    },
+    "vsActual": {
+      "title": "Budget vs réalisé",
+      "planned": "Prévu",
+      "actual": "Réalisé",
+      "variance": "Écart",
+      "overBudget": "Dépassement"
+    }
+  },
+  "reports": {
+    "filters": {
+      "dateFrom": "Du",
+      "dateTo": "Au",
+      "currency": "Devise",
+      "apply": "Appliquer"
+    },
+    "exportCsv": "Exporter CSV",
+    "empty": "Aucune donnée pour cette période.",
+    "accessDenied": "Accès refusé : permission treasury.reports.read requise."
+  },
+  "externals": {
+    "list": {
+      "ariaLabel": "Collaborateurs externes",
+      "accessDenied": "Accès refusé : permission treasury.externals.manage ou treasury.read requise.",
+      "emptyDefault": "Aucun collaborateur externe.",
+      "inviteButton": "Inviter par e-mail",
+      "columns": {
+        "email": "E-mail",
+        "displayName": "Nom",
+        "active": "Actif",
+        "scopes": "Autorisations"
+      }
+    },
+    "form": {
+      "inviteTitle": "Inviter un collaborateur externe",
+      "fields": {
+        "email": "Adresse e-mail",
+        "displayName": "Nom affiché",
+        "scopes": "Autorisations",
+        "tokenTtlHours": "Validité du lien (heures)"
+      },
+      "actions": {
+        "activate": "Activer",
+        "deactivate": "Désactiver",
+        "regenerateLink": "Régénérer le lien"
+      },
+      "validation": {
+        "emailRequired": "L'e-mail est obligatoire.",
+        "emailInvalid": "E-mail invalide.",
+        "scopesRequired": "Au moins une autorisation est requise."
+      },
+      "submitInvite": "Envoyer l'invitation"
+    },
+    "scopes": {
+      "expense_requests.create": "Créer un état de besoin"
+    }
+  },
+  "audit": {
+    "list": {
+      "ariaLabel": "Journal d'audit trésorerie",
+      "accessDenied": "Accès refusé : permission treasury.audit.read requise.",
+      "emptyDefault": "Aucun événement d'audit.",
+      "emptyFiltered": "Aucun événement ne correspond aux filtres.",
+      "columns": {
+        "createdAt": "Date",
+        "entityType": "Entité",
+        "action": "Action",
+        "actor": "Acteur",
+        "diff": "Modifications"
+      }
+    },
+    "actions": {
+      "create": "Création",
+      "update": "Modification",
+      "transition": "Transition",
+      "void": "Annulation",
+      "attach": "Pièce jointe",
+      "detach": "Détachement",
+      "invite": "Invitation",
+      "activate": "Activation",
+      "deactivate": "Désactivation",
+      "revoke_token": "Révocation jeton"
+    },
+    "entityTypes": {
+      "fund_entry": "Entrée",
+      "fund_exit": "Sortie",
+      "expense_request": "État de besoin",
+      "budget": "Budget",
+      "external_collaborator": "Collaborateur externe",
+      "access_token": "Jeton d'accès",
+      "accounting_link": "Lien comptable"
+    }
+  },
+  "void": {
+    "title": "Annuler l'opération",
+    "reasonLabel": "Motif d'annulation",
+    "reasonPlaceholder": "Expliquez pourquoi cette opération est annulée…",
+    "confirm": "Confirmer l'annulation",
+    "accessDenied": "Accès refusé : permission treasury.void requise.",
+    "validation": {
+      "reasonRequired": "Le motif est obligatoire."
+    }
+  },
+  "errors": {
+    "loadFailed": "Impossible de charger les données trésorerie.",
+    "saveFailed": "Impossible d'enregistrer.",
+    "forbidden": "Vous n'avez pas la permission d'effectuer cette action.",
+    "notFound": "Élément introuvable.",
+    "invalidTransition": "Transition d'état non autorisée.",
+    "expenseRequestRequired": "Une sortie doit être liée à un état de besoin."
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "back": "Retour",
+    "edit": "Modifier",
+    "view": "Voir",
+    "loading": "Chargement…",
+    "yes": "Oui",
+    "no": "Non"
+  }
+}

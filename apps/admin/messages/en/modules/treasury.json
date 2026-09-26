@@ -1,0 +1,387 @@
+{
+  "subnav": {
+    "ariaLabel": "Treasury navigation",
+    "hub": "Overview",
+    "entries": "Entries",
+    "exits": "Exits",
+    "expenseRequests": "Expense requests",
+    "budgets": "Budgets",
+    "reports": "Reports",
+    "externals": "Externals",
+    "audit": "Audit",
+    "accounting": "Accounting"
+  },
+  "sources": {
+    "booking_payment": "Booking payment",
+    "customer_direct": "Direct customer",
+    "partner": "Partner",
+    "grant_donation": "Grant / donation",
+    "owner_capital": "Owner capital",
+    "bank_interest": "Bank interest",
+    "other": "Other"
+  },
+  "paymentMethods": {
+    "cash": "Cash",
+    "bank_transfer": "Bank transfer",
+    "mobile_money": "Mobile Money",
+    "stripe": "Stripe / card",
+    "cheque": "Cheque",
+    "other": "Other"
+  },
+  "fundEntryStatus": {
+    "recorded": "Recorded",
+    "voided": "Voided"
+  },
+  "fundExitStatus": {
+    "draft": "Draft",
+    "disbursed": "Disbursed",
+    "recorded": "Recorded",
+    "voided": "Voided"
+  },
+  "expenseRequestStatus": {
+    "draft": "Draft",
+    "submitted": "Submitted",
+    "validated": "Validated",
+    "authorized": "Authorized",
+    "rejected": "Rejected",
+    "cancelled": "Cancelled",
+    "closed": "Closed"
+  },
+  "budgetPeriod": {
+    "monthly": "Monthly",
+    "annual": "Annual"
+  },
+  "budgetScope": {
+    "general": "General",
+    "activity": "Activity",
+    "product": "Product / service"
+  },
+  "workflow": {
+    "title": "Validation workflow",
+    "steps": {
+      "draft": "Draft",
+      "submitted": "Submission",
+      "validated": "Validation",
+      "authorized": "Authorization",
+      "disbursement": "Disbursement",
+      "justification": "Supporting document",
+      "recorded": "Recording"
+    },
+    "actions": {
+      "submit": "Submit",
+      "validate": "Validate",
+      "authorize": "Authorize",
+      "reject": "Reject",
+      "cancel": "Cancel",
+      "disburse": "Record disbursement",
+      "attachProof": "Add supporting document",
+      "markRecorded": "Mark as recorded"
+    },
+    "commentLabel": "Comment",
+    "commentPlaceholder": "Reason or note (optional)…",
+    "rejectReasonRequired": "Please provide a rejection reason."
+  },
+  "entries": {
+    "list": {
+      "ariaLabel": "Fund entries list",
+      "accessDenied": "Access denied: treasury.read permission required.",
+      "emptyDefault": "No fund entries yet.",
+      "emptyFiltered": "No entry matches your criteria.",
+      "searchPlaceholder": "Search by reference or notes…",
+      "searchAria": "Search fund entries",
+      "newButton": "New entry",
+      "columns": {
+        "date": "Date",
+        "amount": "Amount",
+        "currency": "Currency",
+        "source": "Source",
+        "paymentMethod": "Method",
+        "reference": "Reference",
+        "status": "Status",
+        "bookings": "Bookings"
+      }
+    },
+    "form": {
+      "createTitle": "New fund entry",
+      "editTitle": "Edit fund entry",
+      "fields": {
+        "amountCents": "Amount",
+        "currency": "Currency",
+        "operationDate": "Operation date",
+        "source": "Fund source",
+        "paymentMethod": "Payment method",
+        "reference": "Reference",
+        "notes": "Notes",
+        "bookingIds": "Linked bookings"
+      },
+      "hints": {
+        "bookingIds": "None, one, or many bookings (0,N cardinality).",
+        "sourceOther": "Clarify the origin in the notes."
+      },
+      "validation": {
+        "amountPositive": "Amount must be greater than zero.",
+        "currencyRequired": "Currency is required.",
+        "operationDateRequired": "Date is required.",
+        "sourceRequired": "Source is required.",
+        "paymentMethodRequired": "Payment method is required.",
+        "notesRequiredForOther": "Notes are required when source is Other."
+      },
+      "submitCreate": "Save entry",
+      "submitUpdate": "Save changes"
+    },
+    "detail": {
+      "title": "Entry details",
+      "voidButton": "Void entry",
+      "attachments": "Supporting documents",
+      "audit": "History"
+    }
+  },
+  "exits": {
+    "list": {
+      "ariaLabel": "Fund exits list",
+      "accessDenied": "Access denied: treasury.read permission required.",
+      "emptyDefault": "No fund exits yet.",
+      "emptyFiltered": "No exit matches your criteria.",
+      "searchPlaceholder": "Search by reference or notes…",
+      "searchAria": "Search fund exits",
+      "newButton": "New exit",
+      "columns": {
+        "date": "Date",
+        "amount": "Amount",
+        "expenseRequest": "Expense request",
+        "paymentMethod": "Method",
+        "status": "Status",
+        "bookings": "Bookings"
+      }
+    },
+    "form": {
+      "createTitle": "New fund exit",
+      "editTitle": "Edit fund exit",
+      "fields": {
+        "expenseRequestId": "Expense request",
+        "amountCents": "Amount",
+        "currency": "Currency",
+        "operationDate": "Disbursement date",
+        "paymentMethod": "Payment method",
+        "reference": "Reference",
+        "notes": "Notes",
+        "bookingIds": "Linked bookings"
+      },
+      "hints": {
+        "expenseRequestId": "Only authorized expense requests can be selected."
+      },
+      "validation": {
+        "expenseRequestRequired": "An expense request is required.",
+        "amountPositive": "Amount must be greater than zero."
+      },
+      "submitCreate": "Save exit",
+      "submitUpdate": "Save changes"
+    },
+    "detail": {
+      "title": "Exit details",
+      "voidButton": "Void exit",
+      "attachments": "Supporting documents"
+    }
+  },
+  "expenseRequests": {
+    "list": {
+      "ariaLabel": "Expense requests list",
+      "accessDenied": "Access denied: treasury.read permission required.",
+      "emptyDefault": "No expense requests yet.",
+      "emptyFiltered": "No request matches your criteria.",
+      "searchPlaceholder": "Search by title…",
+      "searchAria": "Search expense requests",
+      "newButton": "New request",
+      "columns": {
+        "title": "Title",
+        "amount": "Requested amount",
+        "status": "Status",
+        "neededBy": "Needed by",
+        "createdAt": "Created"
+      }
+    },
+    "form": {
+      "createTitle": "New expense request",
+      "editTitle": "Edit expense request",
+      "fields": {
+        "title": "Title",
+        "description": "Justification",
+        "requestedAmountCents": "Requested amount",
+        "currency": "Currency",
+        "neededByDate": "Needed-by date"
+      },
+      "validation": {
+        "titleRequired": "Title is required.",
+        "descriptionRequired": "Justification is required.",
+        "amountPositive": "Amount must be greater than zero."
+      },
+      "submitCreate": "Create request",
+      "submitUpdate": "Save"
+    },
+    "detail": {
+      "title": "Expense request details",
+      "timeline": "Status history",
+      "linkedExits": "Linked exits"
+    }
+  },
+  "budgets": {
+    "list": {
+      "ariaLabel": "Budgets list",
+      "accessDenied": "Access denied: treasury.read permission required.",
+      "emptyDefault": "No budgets yet.",
+      "emptyFiltered": "No budget matches your criteria.",
+      "newButton": "New budget",
+      "columns": {
+        "label": "Label",
+        "period": "Period",
+        "scope": "Scope",
+        "amount": "Amount",
+        "currency": "Currency"
+      }
+    },
+    "form": {
+      "createTitle": "New budget",
+      "editTitle": "Edit budget",
+      "fields": {
+        "label": "Label",
+        "periodType": "Period type",
+        "year": "Year",
+        "month": "Month",
+        "amountCents": "Budgeted amount",
+        "currency": "Currency",
+        "scopeType": "Scope",
+        "activityId": "Activity",
+        "productType": "Product type",
+        "productId": "Product / service",
+        "notes": "Notes"
+      },
+      "validation": {
+        "labelRequired": "Label is required.",
+        "yearRequired": "Year is required.",
+        "monthRequiredForMonthly": "Month is required for a monthly budget.",
+        "amountPositive": "Amount must be greater than zero."
+      },
+      "submitCreate": "Create budget",
+      "submitUpdate": "Save"
+    },
+    "vsActual": {
+      "title": "Budget vs actual",
+      "planned": "Planned",
+      "actual": "Actual",
+      "variance": "Variance",
+      "overBudget": "Over budget"
+    }
+  },
+  "reports": {
+    "filters": {
+      "dateFrom": "From",
+      "dateTo": "To",
+      "currency": "Currency",
+      "apply": "Apply"
+    },
+    "exportCsv": "Export CSV",
+    "empty": "No data for this period.",
+    "accessDenied": "Access denied: treasury.reports.read permission required."
+  },
+  "externals": {
+    "list": {
+      "ariaLabel": "External collaborators",
+      "accessDenied": "Access denied: treasury.externals.manage or treasury.read required.",
+      "emptyDefault": "No external collaborators.",
+      "inviteButton": "Invite by email",
+      "columns": {
+        "email": "Email",
+        "displayName": "Name",
+        "active": "Active",
+        "scopes": "Permissions"
+      }
+    },
+    "form": {
+      "inviteTitle": "Invite an external collaborator",
+      "fields": {
+        "email": "Email address",
+        "displayName": "Display name",
+        "scopes": "Permissions",
+        "tokenTtlHours": "Link validity (hours)"
+      },
+      "actions": {
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "regenerateLink": "Regenerate link"
+      },
+      "validation": {
+        "emailRequired": "Email is required.",
+        "emailInvalid": "Invalid email.",
+        "scopesRequired": "At least one permission is required."
+      },
+      "submitInvite": "Send invitation"
+    },
+    "scopes": {
+      "expense_requests.create": "Create an expense request"
+    }
+  },
+  "audit": {
+    "list": {
+      "ariaLabel": "Treasury audit journal",
+      "accessDenied": "Access denied: treasury.audit.read permission required.",
+      "emptyDefault": "No audit events.",
+      "emptyFiltered": "No event matches the filters.",
+      "columns": {
+        "createdAt": "Date",
+        "entityType": "Entity",
+        "action": "Action",
+        "actor": "Actor",
+        "diff": "Changes"
+      }
+    },
+    "actions": {
+      "create": "Create",
+      "update": "Update",
+      "transition": "Transition",
+      "void": "Void",
+      "attach": "Attachment",
+      "detach": "Detach",
+      "invite": "Invite",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "revoke_token": "Revoke token"
+    },
+    "entityTypes": {
+      "fund_entry": "Entry",
+      "fund_exit": "Exit",
+      "expense_request": "Expense request",
+      "budget": "Budget",
+      "external_collaborator": "External collaborator",
+      "access_token": "Access token",
+      "accounting_link": "Accounting link"
+    }
+  },
+  "void": {
+    "title": "Void operation",
+    "reasonLabel": "Void reason",
+    "reasonPlaceholder": "Explain why this operation is voided…",
+    "confirm": "Confirm void",
+    "accessDenied": "Access denied: treasury.void permission required.",
+    "validation": {
+      "reasonRequired": "Reason is required."
+    }
+  },
+  "errors": {
+    "loadFailed": "Unable to load treasury data.",
+    "saveFailed": "Unable to save.",
+    "forbidden": "You do not have permission to perform this action.",
+    "notFound": "Item not found.",
+    "invalidTransition": "Status transition not allowed.",
+    "expenseRequestRequired": "An exit must be linked to an expense request."
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back",
+    "edit": "Edit",
+    "view": "View",
+    "loading": "Loading…",
+    "yes": "Yes",
+    "no": "No"
+  }
+}
