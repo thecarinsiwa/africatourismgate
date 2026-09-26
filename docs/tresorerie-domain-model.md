@@ -351,17 +351,21 @@ Convention existante : `{resource}.read` / `{resource}.write` + permissions mét
 | `treasury.audit.read` | Consulter le journal d’audit |
 | `treasury.accounting_link.read` | Lire le stub pont comptable |
 
-**Profils indicatifs (TRESO-008 / 044) :**
+IDs seed : `…001057` → `…001068`. Synchronisés via `ensure-rbac-permissions`, migration `add_treasury_rbac_permissions.sql`, et `pnpm --filter @africatourismgate/api sync:rbac`.  
+Constantes : `TREASURY_PERMISSION_CODES` / `TREASURY_ROLE_PROFILE_PERMISSIONS` dans `rbac.constants.ts`.
 
-| Profil | Permissions typiques |
-| ------ | -------------------- |
-| Créateur demandes | `treasury.read`, `expense_requests.create` |
-| Valideur | + `expense_requests.validate` |
+**Profils indicatifs (assignation `/systeme/roles` — TRESO-044) :**
+
+| Profil | Permissions |
+| ------ | ----------- |
+| Créateur demandes | `treasury.read`, `treasury.expense_requests.create` |
+| Valideur | + `treasury.expense_requests.validate` |
 | Autorisateur / responsable financier | + `authorize`, `externals.manage`, `void` |
 | Trésorier (saisie flux) | `entries.write`, `exits.write` |
-| Contrôle / lecture | `read`, `reports.read`, `audit.read` |
+| Contrôle / lecture | `read`, `reports.read`, `audit.read`, `accounting_link.read` |
+| Finance admin | toutes les `treasury.*` |
 
-Noms exacts seed : à figer dans TRESO-008 (`ensure-rbac-permissions` / catalogue).
+`super_admin` : bypass PermissionsGuard inchangé (+ grants explicites sur toutes les permissions).
 
 ---
 

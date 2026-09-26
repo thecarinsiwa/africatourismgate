@@ -83,7 +83,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-005 | Migration DB collaborateurs externes + jetons — ✅       | Haute    | API / DB    | M      |
 | TRESO-006 | Migration / extension journal d’audit trésorerie — ✅    | Haute    | API / DB    | S      |
 | TRESO-007 | Types partagés `packages/types` (enums, DTOs) — ✅       | Haute    | API / Types | M      |
-| TRESO-008 | Catalogue RBAC `treasury.*` + sync seed                  | Haute    | API / RBAC  | M      |
+| TRESO-008 | Catalogue RBAC `treasury.*` + sync seed — ✅             | Haute    | API / RBAC  | M      |
 | TRESO-009 | Shell Admin nav + routes + permissions + registry        | Haute    | Admin       | M      |
 | TRESO-010 | Scaffold i18n fr/en/es modules trésorerie                | Haute    | i18n        | S      |
 | TRESO-011 | API Nest CRUD `fund-entries` + filtres                   | Haute    | API         | L      |
@@ -443,47 +443,80 @@ pnpm --filter @africatourismgate/types build
 
 ---
 
-### TRESO-008 — Catalogue RBAC treasury.* + sync seed
+### TRESO-008 — Catalogue RBAC treasury.* + sync seed — ✅
 
-**Labels :** `admin`, `tresorerie`, `api`, `priority:high`
-**Branche suggérée :** `feature/tresorerie-rbac`
+**Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
+**Branche suggérée :** `feature/tresorerie-rbac`  
+**Livrable :** migration + `ensure-rbac-permissions` + `TREASURY_PERMISSION_CODES`
+
+#### Permissions `treasury.*` (figées)
+
+| Code | ID | Usage |
+| ---- | -- | ----- |
+| `treasury.read` | …001057 | Navigation / listes / fiches |
+| `treasury.entries.write` | …001058 | CRUD entrées |
+| `treasury.exits.write` | …001059 | CRUD sorties |
+| `treasury.expense_requests.create` | …001060 | Créer / soumettre besoins |
+| `treasury.expense_requests.validate` | …001061 | Validation |
+| `treasury.expense_requests.authorize` | …001062 | Autorisation dépense |
+| `treasury.budgets.write` | …001063 | CRUD budgets |
+| `treasury.reports.read` | …001064 | Rapports / export |
+| `treasury.externals.manage` | …001065 | Collaborateurs externes |
+| `treasury.void` | …001066 | Annulation opérations |
+| `treasury.audit.read` | …001067 | Journal d’audit |
+| `treasury.accounting_link.read` | …001068 | Stub pont comptable |
+
+#### Profils → permissions (`TREASURY_ROLE_PROFILE_PERMISSIONS`)
+
+| Profil | Permissions |
+| ------ | ----------- |
+| Créateur | `read` + `expense_requests.create` |
+| Valideur | + `expense_requests.validate` |
+| Autorisateur | + `authorize`, `externals.manage`, `void` |
+| Trésorier | `read` + `entries.write` + `exits.write` |
+| Contrôle | `read` + `reports.read` + `audit.read` + `accounting_link.read` |
+| Finance admin | toutes |
 
 #### Modèle GitHub
 
 ```markdown
 ## Contexte
 
-Permissions fines : créer demande, valider, autoriser, enregistrer entrées/sorties, void, rapports, audit. Pattern `{resource}.read|write` + permissions métier.
+Permissions fines trésorerie. Pattern `{resource}.{action}` + permissions métier.
 
 ## Objectif
 
-1. Ajouter ressources/permissions dans seed / `ensure-rbac-permissions`
-2. Étendre catalogue si besoin (`rbac.constants.ts`)
-3. Documenter mapping rôle → permissions (créateur, valideur, autorisateur, lecture)
+1. Seed / ensure-rbac-permissions / migration SQL
+2. Constantes `TREASURY_PERMISSION_CODES` + profils dans rbac.constants.ts
+3. Documenter mapping rôles
 
 ## Fichiers clés
 
 - `apps/api/src/modules/rbac/rbac.constants.ts`
-- scripts `ensure-rbac-permissions` / seeds `database/seeds`
-- UI `/systeme/roles`
+- `apps/api/src/database/ensure-rbac-permissions.ts`
+- `apps/api/scripts/sync-rbac-permissions.mjs`
+- `database/migrations/add_treasury_rbac_permissions.sql`
+- `database/seeds/install.seed.sql` / `install.seed.prod.sql`
 
 ## Critères d'acceptation
 
-- [ ] Permissions `treasury.*` synchronisées
-- [ ] super_admin bypass inchangé
-- [ ] Liste des permissions documentée dans le doc tâches
+- [x] Permissions `treasury.*` synchronisées
+- [x] super_admin bypass inchangé (grant all + PermissionsGuard)
+- [x] Liste documentée dans ce doc + domain model §7
 
 ## Plan de test
 
 ```bash
-pnpm … sync:rbac
-````
+pnpm db:sync
+pnpm --filter @africatourismgate/api sync:rbac
+# SELECT code FROM permissions WHERE code LIKE 'treasury.%';
+```
 
 ## Références
 
-- TRESO-044, admin-route-permissions
-
-````
+- TRESO-044, admin-route-permissions (TRESO-009)
+- docs/tresorerie-domain-model.md §7
+```
 
 ---
 

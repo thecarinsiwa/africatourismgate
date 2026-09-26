@@ -103,4 +103,57 @@ export const CATALOG_PERMISSION_MAP = {
   ],
 } as const;
 
+/**
+ * Permissions trésorerie (TRESO-008) — codes exacts pour `@RequirePermissions`.
+ * `super_admin` bypass inchangé via PermissionsGuard.
+ */
+export const TREASURY_PERMISSION_CODES = [
+  'treasury.read',
+  'treasury.entries.write',
+  'treasury.exits.write',
+  'treasury.expense_requests.create',
+  'treasury.expense_requests.validate',
+  'treasury.expense_requests.authorize',
+  'treasury.budgets.write',
+  'treasury.reports.read',
+  'treasury.externals.manage',
+  'treasury.void',
+  'treasury.audit.read',
+  'treasury.accounting_link.read',
+] as const;
+
+export type TreasuryPermissionCode = (typeof TREASURY_PERMISSION_CODES)[number];
+
+/** Profils indicatifs pour assignation manuelle via /systeme/roles (TRESO-044). */
+export const TREASURY_ROLE_PROFILE_PERMISSIONS = {
+  requestCreator: [
+    'treasury.read',
+    'treasury.expense_requests.create',
+  ],
+  validator: [
+    'treasury.read',
+    'treasury.expense_requests.create',
+    'treasury.expense_requests.validate',
+  ],
+  authorizer: [
+    'treasury.read',
+    'treasury.expense_requests.validate',
+    'treasury.expense_requests.authorize',
+    'treasury.externals.manage',
+    'treasury.void',
+  ],
+  cashier: [
+    'treasury.read',
+    'treasury.entries.write',
+    'treasury.exits.write',
+  ],
+  controller: [
+    'treasury.read',
+    'treasury.reports.read',
+    'treasury.audit.read',
+    'treasury.accounting_link.read',
+  ],
+  financeAdmin: [...TREASURY_PERMISSION_CODES],
+} as const satisfies Record<string, readonly TreasuryPermissionCode[]>;
+
 export type CatalogPermissionResource = keyof typeof CATALOG_PERMISSION_MAP;
