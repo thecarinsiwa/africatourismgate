@@ -350,9 +350,14 @@ import type {
   PaymentListItem,
   PaymentsListQuery,
   CreateFundEntryRequest,
+  CreateExpenseRequestRequest,
+  ExpenseRequest,
+  ExpenseRequestStatusHistoryEntry,
+  ExpenseRequestsListQuery,
   FundAttachment,
   FundEntriesListQuery,
   FundEntry,
+  UpdateExpenseRequestRequest,
   UpdateFundEntryRequest,
   CreatePromoCodeRequest,
   CreatePromotionRequest,
@@ -1326,6 +1331,51 @@ export class ApiClient {
     return this.request<void>(`/fund-entries/${id}/attachments/${attachmentId}`, {
       method: 'DELETE',
     });
+  }
+
+  listExpenseRequests(
+    query?: ExpenseRequestsListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<ExpenseRequest>> {
+    return fetchPaginated<ExpenseRequest>(
+      this,
+      '/expense-requests',
+      query,
+      requestOptions,
+    );
+  }
+
+  getExpenseRequest(id: string): Promise<ExpenseRequest> {
+    return this.request<ExpenseRequest>(`/expense-requests/${id}`);
+  }
+
+  listExpenseRequestStatusHistory(
+    id: string,
+  ): Promise<ExpenseRequestStatusHistoryEntry[]> {
+    return this.request<ExpenseRequestStatusHistoryEntry[]>(
+      `/expense-requests/${id}/status-history`,
+    );
+  }
+
+  createExpenseRequest(body: CreateExpenseRequestRequest): Promise<ExpenseRequest> {
+    return this.request<ExpenseRequest>('/expense-requests', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateExpenseRequest(
+    id: string,
+    body: UpdateExpenseRequestRequest,
+  ): Promise<ExpenseRequest> {
+    return this.request<ExpenseRequest>(`/expense-requests/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteExpenseRequest(id: string): Promise<void> {
+    return this.request<void>(`/expense-requests/${id}`, { method: 'DELETE' });
   }
 
   getPayment(id: string): Promise<PaymentAdminDetail> {

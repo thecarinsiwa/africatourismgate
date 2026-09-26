@@ -23,6 +23,7 @@ import { OrganizationBankAccountsModule } from './resources/organization-bank-ac
 import { MobileMoneyConfigModule } from './resources/mobile-money-config/mobile-money-config.module';
 import { DonationsModule } from './resources/donations/donations.module';
 import { FundEntriesModule } from './resources/fund-entries/fund-entries.module';
+import { ExpenseRequestsModule } from './resources/expense-requests/expense-requests.module';
 import { OrganizationMaintenancesModule } from './resources/organization-maintenances/organization-maintenances.module';
 import { PermissionsModule } from './resources/permissions/permissions.module';
 import { RolesModule } from './resources/roles/roles.module';
@@ -121,6 +122,7 @@ import { Module } from '@nestjs/common';
     MobileMoneyConfigModule,
     DonationsModule,
     FundEntriesModule,
+    ExpenseRequestsModule,
     OrganizationMaintenancesModule,
     PermissionsModule,
     RolesModule,

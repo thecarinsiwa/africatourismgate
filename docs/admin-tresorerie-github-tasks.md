@@ -91,7 +91,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-013 | UI Admin liste + filtres entrées de fonds — ✅           | Haute    | Admin       | M      |
 | TRESO-014 | UI Admin formulaire création/édition entrée — ✅         | Haute    | Admin       | L      |
 | TRESO-015 | UI Admin fiche détail entrée + traçabilité — ✅          | Haute    | Admin       | M      |
-| TRESO-016 | API Nest `expense-requests` CRUD + statuts               | Haute    | API         | L      |
+| TRESO-016 | API Nest `expense-requests` CRUD + statuts — ✅          | Haute    | API         | L      |
 | TRESO-017 | API Nest `fund-exits` liées à un état de besoin          | Haute    | API         | L      |
 | TRESO-018 | API sorties ↔ réservations (0,N) + justificatifs         | Haute    | API         | M      |
 | TRESO-019 | UI Admin liste/création états de besoin                  | Haute    | Admin       | M      |
@@ -827,10 +827,11 @@ Ouvrir détail d’une entrée seed/test.
 
 ---
 
-### TRESO-016 — API Nest expense-requests CRUD + statuts
+### TRESO-016 — API Nest expense-requests CRUD + statuts — ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
-**Branche suggérée :** `feature/tresorerie-api-expense-requests`
+**Branche suggérée :** `feature/tresorerie-api-expense-requests`  
+**Livrable :** `apps/api/src/modules/resources/expense-requests/**` + api-client
 
 #### Modèle GitHub
 
@@ -852,10 +853,10 @@ Ouvrir détail d’une entrée seed/test.
 
 ## Critères d'acceptation
 
-- [ ] CRUD + pagination
-- [ ] Statuts persistés
-- [ ] RBAC
-- [ ] OpenAPI
+- [x] CRUD + pagination
+- [x] Statuts persistés (`draft` à la création + historique)
+- [x] RBAC (`treasury.read` / `treasury.expense_requests.create` ; transitions validate/authorize → TRESO-022)
+- [x] OpenAPI (tag `expense-requests`)
 
 ## Plan de test
 
