@@ -87,7 +87,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-009 | Shell Admin nav + routes + permissions + registry — ✅   | Haute    | Admin       | M      |
 | TRESO-010 | Scaffold i18n fr/en/es modules trésorerie — ✅           | Haute    | i18n        | S      |
 | TRESO-011 | API Nest CRUD `fund-entries` + filtres — ✅              | Haute    | API         | L      |
-| TRESO-012 | API liaison entrées ↔ réservations (0,N) + justificatifs | Haute    | API         | M      |
+| TRESO-012 | API liaison entrées ↔ réservations (0,N) + justificatifs — ✅ | Haute    | API         | M      |
 | TRESO-013 | UI Admin liste + filtres entrées de fonds                | Haute    | Admin       | M      |
 | TRESO-014 | UI Admin formulaire création/édition entrée              | Haute    | Admin       | L      |
 | TRESO-015 | UI Admin fiche détail entrée + traçabilité               | Haute    | Admin       | M      |
@@ -656,10 +656,11 @@ pnpm dev:api
 
 ---
 
-### TRESO-012 — API liaison entrées ↔ réservations + justificatifs
+### TRESO-012 — API liaison entrées ↔ réservations + justificatifs — ✅
 
-**Labels :** `admin`, `tresorerie`, `api`, `priority:high`
-**Branche suggérée :** `feature/tresorerie-api-fund-entry-links`
+**Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
+**Branche suggérée :** `feature/tresorerie-api-fund-entry-links`  
+**Livrable :** attach/detach bookings + upload/list/delete attachments sur `fund-entries`
 
 #### Modèle GitHub
 
@@ -681,13 +682,13 @@ Cardinalité (0,N) entrée ↔ bookings ; justificatifs optionnels.
 
 ## Critères d'acceptation
 
-- [ ] 0, 1 ou N réservations
-- [ ] Erreur claire si booking inexistant
-- [ ] Justificatifs listables sur l’entrée
+- [x] 0, 1 ou N réservations (`POST/DELETE …/bookings`)
+- [x] Erreur claire si booking inexistant (`404 Booking(s) not found: …`)
+- [x] Justificatifs listables sur l’entrée (`GET …/attachments`, inclus dans `GET :id`)
 
 ## Plan de test
 
-Créer entrée sans / avec 1 / avec N bookings.
+Créer entrée sans / avec 1 / avec N bookings ; upload justificatif.
 
 ## Références
 
