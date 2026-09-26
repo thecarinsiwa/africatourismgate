@@ -93,7 +93,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-015 | UI Admin fiche détail entrée + traçabilité — ✅          | Haute    | Admin       | M      |
 | TRESO-016 | API Nest `expense-requests` CRUD + statuts — ✅          | Haute    | API         | L      |
 | TRESO-017 | API Nest `fund-exits` liées à un état de besoin — ✅     | Haute    | API         | L      |
-| TRESO-018 | API sorties ↔ réservations (0,N) + justificatifs         | Haute    | API         | M      |
+| TRESO-018 | API sorties ↔ réservations (0,N) + justificatifs — ✅    | Haute    | API         | M      |
 | TRESO-019 | UI Admin liste/création états de besoin                  | Haute    | Admin       | M      |
 | TRESO-020 | UI Admin circuit validation → décaissement               | Haute    | Admin       | L      |
 | TRESO-021 | UI Admin liste/création/détail sorties                   | Haute    | Admin       | L      |
@@ -909,10 +909,11 @@ Tenter create sans / avec besoin autorisé.
 
 ---
 
-### TRESO-018 — API sorties ↔ réservations + justificatifs
+### TRESO-018 — API sorties ↔ réservations + justificatifs — ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
-**Branche suggérée :** `feature/tresorerie-api-fund-exit-links`
+**Branche suggérée :** `feature/tresorerie-api-fund-exit-links`  
+**Livrable :** attach/detach bookings + upload/list/delete attachments sur `fund-exits`
 
 #### Modèle GitHub
 
@@ -933,9 +934,9 @@ Même cardinalité (0,N) que les entrées.
 
 ## Critères d'acceptation
 
-- [ ] 0..N bookings
-- [ ] Justificatifs rattachables
-- [ ] Erreurs métier claires
+- [x] 0..N bookings (`POST/DELETE …/bookings`)
+- [x] Justificatifs rattachables (`GET/POST/DELETE …/attachments`)
+- [x] Erreurs métier claires (booking inexistant, voided)
 
 ## Plan de test
 

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   ExpenseRequests,
+  FundExitAttachments,
   FundExitBookings,
   FundExits,
 } from '../../../entities/fund-exit.entity';
@@ -14,6 +15,7 @@ import { FundExitsService } from './fund-exits.service';
     TypeOrmModule.forFeature([
       FundExits,
       FundExitBookings,
+      FundExitAttachments,
       ExpenseRequests,
       Bookings,
     ]),

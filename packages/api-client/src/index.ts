@@ -1405,6 +1405,39 @@ export class ApiClient {
     return this.request<void>(`/fund-exits/${id}`, { method: 'DELETE' });
   }
 
+  attachFundExitBookings(
+    id: string,
+    body: { bookingIds: string[] },
+  ): Promise<FundExit> {
+    return this.request<FundExit>(`/fund-exits/${id}/bookings`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  detachFundExitBooking(id: string, bookingId: string): Promise<FundExit> {
+    return this.request<FundExit>(`/fund-exits/${id}/bookings/${bookingId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  listFundExitAttachments(id: string): Promise<FundAttachment[]> {
+    return this.request<FundAttachment[]>(`/fund-exits/${id}/attachments`);
+  }
+
+  uploadFundExitAttachment(id: string, body: FormData): Promise<FundAttachment> {
+    return this.request<FundAttachment>(`/fund-exits/${id}/attachments`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  deleteFundExitAttachment(id: string, attachmentId: string): Promise<void> {
+    return this.request<void>(`/fund-exits/${id}/attachments/${attachmentId}`, {
+      method: 'DELETE',
+    });
+  }
+
   getPayment(id: string): Promise<PaymentAdminDetail> {
     return this.request<PaymentAdminDetail>(`/payments/${id}`);
   }

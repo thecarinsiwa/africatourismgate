@@ -1,7 +1,11 @@
+import { createReadStream, existsSync, mkdirSync, unlinkSync } from 'node:fs';
+import { extname, join } from 'node:path';
+import { randomUUID } from 'node:crypto';
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  StreamableFile,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, In, IsNull, Repository } from 'typeorm';
@@ -10,18 +14,105 @@ import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { newId } from '../../../common/utils/uuid';
 import {
   ExpenseRequests,
+  FundExitAttachments,
   FundExitBookings,
   FundExits,
 } from '../../../entities/fund-exit.entity';
 import { Bookings } from '../../../entities/generated';
 import { CreateFundExitDto } from './dto/create-fund-exit.dto';
+import { FundExitAttachmentDto } from './dto/fund-exit-attachment.dto';
 import { FundExitsListQueryDto } from './dto/fund-exits-list-query.dto';
 import { UpdateFundExitDto } from './dto/update-fund-exit.dto';
 
 /** Domain rule TRESO-017 / §6 : décaissement uniquement si besoin autorisé */
 const DISBURSABLE_EXPENSE_STATUSES = ['authorized'] as const;
 
-export type FundExitResponse = FundExits & { bookingIds: string[] };
+export const FUND_EXIT_ATTACHMENT_MAX_BYTES = 10 * 1024 * 1024;
+
+const ALLOWED_MIMES = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'application/pdf',
+]);
+
+const ALLOWED_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.webp', '.pdf']);
+
+const UPLOAD_DIR = join(process.cwd(), 'uploads', 'fund-exit-attachments');
+
+export type FundExitResponse = FundExits & {
+  bookingIds: string[];
+  attachments?: FundExitAttachmentDto[];
+};
+
+export function assertAllowedFundExitAttachment(
+  file: Express.Multer.File,
+): void {
+  const extension = extname(file.originalname || '').toLowerCase();
+  if (
+    !ALLOWED_MIMES.has(file.mimetype) ||
+    !ALLOWED_EXTENSIONS.has(extension)
+  ) {
+    throw new BadRequestException(
+      'Format non accepté. Utilisez JPEG, PNG, WebP ou PDF (max 10 Mo).',
+    );
+  }
+}
+
+export function ensureFundExitAttachmentUploadDir(): string {
+  if (!existsSync(UPLOAD_DIR)) {
+    mkdirSync(UPLOAD_DIR, { recursive: true });
+  }
+  return UPLOAD_DIR;
+}
+
+export function fundExitAttachmentStorage() {
+  return {
+    destination: (
+      _req: unknown,
+      _file: Express.Multer.File,
+      cb: (err: Error | null, dest: string) => void,
+    ) => {
+      cb(null, ensureFundExitAttachmentUploadDir());
+    },
+    filename: (
+      _req: unknown,
+      file: Express.Multer.File,
+      cb: (err: Error | null, name: string) => void,
+    ) => {
+      const extension = extname(file.originalname || '').toLowerCase();
+      cb(null, `${Date.now()}-${randomUUID()}${extension}`);
+    },
+  };
+}
+
+export function fundExitAttachmentFileFilter(
+  _req: unknown,
+  file: Express.Multer.File,
+  cb: (err: Error | null, accept: boolean) => void,
+): void {
+  const extension = extname(file.originalname || '').toLowerCase();
+  if (
+    !ALLOWED_MIMES.has(file.mimetype) ||
+    !ALLOWED_EXTENSIONS.has(extension)
+  ) {
+    cb(null, false);
+    return;
+  }
+  cb(null, true);
+}
+
+function toAttachmentDto(row: FundExitAttachments): FundExitAttachmentDto {
+  return {
+    id: row.id,
+    originalFilename: row.originalFilename,
+    storedFilename: row.storedFilename,
+    mimeType: row.mimeType,
+    fileSizeBytes: row.fileSizeBytes,
+    uploadedByUserId: row.uploadedByUserId,
+    createdAt: row.createdAt.toISOString(),
+  };
+}
 
 @Injectable()
 export class FundExitsService extends CrudService<FundExits> {
@@ -30,6 +121,8 @@ export class FundExitsService extends CrudService<FundExits> {
     private readonly fundExitsRepository: Repository<FundExits>,
     @InjectRepository(FundExitBookings)
     private readonly fundExitBookingsRepository: Repository<FundExitBookings>,
+    @InjectRepository(FundExitAttachments)
+    private readonly fundExitAttachmentsRepository: Repository<FundExitAttachments>,
     @InjectRepository(ExpenseRequests)
     private readonly expenseRequestsRepository: Repository<ExpenseRequests>,
     @InjectRepository(Bookings)
@@ -63,7 +156,7 @@ export class FundExitsService extends CrudService<FundExits> {
       actorUserId,
     );
     await this.syncBookingIds(exit.id, bookingIds ?? []);
-    return this.toResponse(exit);
+    return this.toResponse(exit, true);
   }
 
   async updateFromDto(
@@ -87,12 +180,12 @@ export class FundExitsService extends CrudService<FundExits> {
     if (bookingIds !== undefined) {
       await this.syncBookingIds(id, bookingIds);
     }
-    return this.toResponse(exit);
+    return this.toResponse(exit, true);
   }
 
   async findOneDto(id: string): Promise<FundExitResponse> {
     const exit = await this.findOne(id);
-    return this.toResponse(exit);
+    return this.toResponse(exit, true);
   }
 
   override async findAll(
@@ -191,6 +284,133 @@ export class FundExitsService extends CrudService<FundExits> {
     return super.remove(id, actorUserId);
   }
 
+  /** Attach bookings (additive, idempotent). */
+  async attachBookings(
+    fundExitId: string,
+    bookingIds: string[],
+  ): Promise<FundExitResponse> {
+    const exit = await this.findOne(fundExitId);
+    this.assertNotVoided(exit);
+    await this.assertBookingsExist(bookingIds);
+
+    const uniqueIds = [...new Set(bookingIds)];
+    if (uniqueIds.length === 0) {
+      return this.toResponse(exit, true);
+    }
+
+    const existing = await this.fundExitBookingsRepository.find({
+      where: { fundExitId },
+    });
+    const alreadyLinked = new Set(existing.map((row) => row.bookingId));
+    const toInsert = uniqueIds.filter((id) => !alreadyLinked.has(id));
+
+    if (toInsert.length > 0) {
+      const rows = toInsert.map((bookingId) =>
+        this.fundExitBookingsRepository.create({
+          id: newId(),
+          fundExitId,
+          bookingId,
+        }),
+      );
+      await this.fundExitBookingsRepository.save(rows);
+    }
+
+    return this.toResponse(exit, true);
+  }
+
+  async detachBooking(
+    fundExitId: string,
+    bookingId: string,
+  ): Promise<FundExitResponse> {
+    const exit = await this.findOne(fundExitId);
+    this.assertNotVoided(exit);
+
+    const link = await this.fundExitBookingsRepository.findOne({
+      where: { fundExitId, bookingId },
+    });
+    if (!link) {
+      throw new NotFoundException(
+        `Booking ${bookingId} is not linked to this fund exit`,
+      );
+    }
+    await this.fundExitBookingsRepository.delete({ id: link.id });
+    return this.toResponse(exit, true);
+  }
+
+  async listAttachments(fundExitId: string): Promise<FundExitAttachmentDto[]> {
+    await this.findOne(fundExitId);
+    const rows = await this.fundExitAttachmentsRepository.find({
+      where: { fundExitId, deletedAt: IsNull() },
+      order: { createdAt: 'DESC' },
+    });
+    return rows.map(toAttachmentDto);
+  }
+
+  async uploadAttachment(
+    fundExitId: string,
+    file: Express.Multer.File,
+    actorUserId?: string,
+  ): Promise<FundExitAttachmentDto> {
+    const exit = await this.findOne(fundExitId);
+    this.assertNotVoided(exit);
+    if (!file) {
+      throw new BadRequestException(
+        'Fichier requis (JPEG, PNG, WebP ou PDF, max 10 Mo).',
+      );
+    }
+    assertAllowedFundExitAttachment(file);
+
+    const row = this.fundExitAttachmentsRepository.create({
+      id: newId(),
+      fundExitId,
+      originalFilename: file.originalname || file.filename,
+      storedFilename: file.filename,
+      mimeType: file.mimetype,
+      fileSizeBytes: file.size,
+      uploadedByUserId: actorUserId ?? null,
+      deletedAt: null,
+    });
+    const saved = await this.fundExitAttachmentsRepository.save(row);
+    return toAttachmentDto(saved);
+  }
+
+  async softDeleteAttachment(
+    fundExitId: string,
+    attachmentId: string,
+  ): Promise<void> {
+    const exit = await this.findOne(fundExitId);
+    this.assertNotVoided(exit);
+    const row = await this.findActiveAttachment(fundExitId, attachmentId);
+    row.deletedAt = new Date();
+    await this.fundExitAttachmentsRepository.save(row);
+
+    const filePath = join(UPLOAD_DIR, row.storedFilename);
+    if (existsSync(filePath)) {
+      try {
+        unlinkSync(filePath);
+      } catch {
+        // Metadata already soft-deleted; ignore FS errors.
+      }
+    }
+  }
+
+  async getAttachmentFileStream(
+    fundExitId: string,
+    attachmentId: string,
+  ): Promise<{ file: StreamableFile; mimeType: string; filename: string }> {
+    await this.findOne(fundExitId);
+    const row = await this.findActiveAttachment(fundExitId, attachmentId);
+    const filePath = join(UPLOAD_DIR, row.storedFilename);
+    if (!existsSync(filePath)) {
+      throw new NotFoundException('Attachment file not found on disk');
+    }
+    return {
+      file: new StreamableFile(createReadStream(filePath)),
+      mimeType: row.mimeType,
+      filename: row.originalFilename,
+    };
+  }
+
   private async assertDisbursableExpenseRequest(
     expenseRequestId: string,
   ): Promise<ExpenseRequests> {
@@ -257,6 +477,19 @@ export class FundExitsService extends CrudService<FundExits> {
     }
   }
 
+  private async findActiveAttachment(
+    fundExitId: string,
+    attachmentId: string,
+  ): Promise<FundExitAttachments> {
+    const row = await this.fundExitAttachmentsRepository.findOne({
+      where: { id: attachmentId, fundExitId, deletedAt: IsNull() },
+    });
+    if (!row) {
+      throw new NotFoundException('Attachment not found');
+    }
+    return row;
+  }
+
   private async attachBookingIds(
     exits: FundExits[],
   ): Promise<FundExitResponse[]> {
@@ -278,8 +511,15 @@ export class FundExitsService extends CrudService<FundExits> {
     }));
   }
 
-  private async toResponse(exit: FundExits): Promise<FundExitResponse> {
+  private async toResponse(
+    exit: FundExits,
+    includeAttachments: boolean,
+  ): Promise<FundExitResponse> {
     const [withBookings] = await this.attachBookingIds([exit]);
-    return withBookings;
+    if (!includeAttachments) {
+      return withBookings;
+    }
+    const attachments = await this.listAttachments(exit.id);
+    return { ...withBookings, attachments };
   }
 }
