@@ -79,7 +79,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-001 | Spec domaine Trésorerie + schéma cible — ✅              | Haute    | Docs / Spec | M      |
 | TRESO-002 | Migration DB entrées de fonds + pivots réservations — ✅ | Haute    | API / DB    | M      |
 | TRESO-003 | Migration DB états de besoin + sorties + pivots — ✅     | Haute    | API / DB    | M      |
-| TRESO-004 | Migration DB budgets (période / activité / produit)      | Haute    | API / DB    | M      |
+| TRESO-004 | Migration DB budgets (période / activité / produit) — ✅ | Haute    | API / DB    | M      |
 | TRESO-005 | Migration DB collaborateurs externes + jetons            | Haute    | API / DB    | M      |
 | TRESO-006 | Migration / extension journal d’audit trésorerie         | Haute    | API / DB    | S      |
 | TRESO-007 | Types partagés `packages/types` (enums, DTOs)            | Haute    | API / Types | M      |
@@ -261,10 +261,11 @@ pnpm db:sync
 
 ---
 
-### TRESO-004 — Migration DB budgets
+### TRESO-004 — Migration DB budgets — ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
-**Branche suggérée :** `feature/tresorerie-migration-budgets`
+**Branche suggérée :** `feature/tresorerie-migration-budgets`  
+**Livrable :** [`database/migrations/add_treasury_budgets.sql`](../database/migrations/add_treasury_budgets.sql) · [`apps/api/src/entities/budget.entity.ts`](../apps/api/src/entities/budget.entity.ts)
 
 #### Modèle GitHub
 
@@ -281,22 +282,27 @@ Budgétisation mensuelle/annuelle, par activité, et liée à un produit/service
 
 ## Fichiers clés
 
-- `database/migrations/*`
-- `apps/api/src/entities/`
+- `database/migrations/add_treasury_budgets.sql`
+- `apps/api/src/entities/budget.entity.ts`
+- `apps/api/src/database/database.module.ts`
 
 ## Critères d'acceptation
 
-- [ ] Support mensuel + annuel
-- [ ] Support activité + produit/service
-- [ ] Migration réversible
+- [x] Support mensuel + annuel (`period_type` monthly|annual)
+- [x] Support activité + produit/service (`scope_type` + `activity_id` / `product_type`+`product_id`)
+- [x] Migration réversible (DOWN commenté en bas du SQL)
 
 ## Plan de test
 
-Migration + insert smoke SQL.
+```bash
+pnpm db:sync
+# INSERT smoke mensuel / annuel / activité / produit
+```
 
 ## Références
 
 - TRESO-001
+- docs/tresorerie-domain-model.md §4.4
 ```
 
 ---

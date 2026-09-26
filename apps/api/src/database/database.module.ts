@@ -42,6 +42,7 @@ import {
   FundExitBookings,
   FundExits,
 } from '../entities/fund-exit.entity';
+import { Budgets } from '../entities/budget.entity';
 import { ensureMigrations } from './ensure-migrations';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
 import { ensureSchema } from './ensure-schema';
@@ -84,6 +85,7 @@ const entityList = [
   FundExits,
   FundExitBookings,
   FundExitAttachments,
+  Budgets,
 ] as (new () => unknown)[];
 
 @Module({
