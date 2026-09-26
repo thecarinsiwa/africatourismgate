@@ -354,6 +354,11 @@ import type {
   CreateFundEntryRequest,
   CreateFundExitRequest,
   CreateBudgetRequest,
+  CreateAccountingLinkRequest,
+  UpdateAccountingLinkRequest,
+  AccountingLink,
+  AccountingLinksListQuery,
+  AccountingMappingConfig,
   Budget,
   BudgetVsActualSummary,
   BudgetsListQuery,
@@ -1587,6 +1592,50 @@ export class ApiClient {
 
   deleteBudget(id: string): Promise<void> {
     return this.request<void>(`/budgets/${id}`, { method: 'DELETE' });
+  }
+
+  listAccountingLinks(
+    query?: AccountingLinksListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<AccountingLink>> {
+    return fetchPaginated<AccountingLink>(
+      this,
+      '/accounting-links',
+      query,
+      requestOptions,
+    );
+  }
+
+  getAccountingMappingConfig(
+    requestOptions?: RequestOptions,
+  ): Promise<AccountingMappingConfig> {
+    return this.request<AccountingMappingConfig>(
+      '/accounting-links/mapping-config',
+      requestOptions,
+    );
+  }
+
+  getAccountingLink(id: string): Promise<AccountingLink> {
+    return this.request<AccountingLink>(`/accounting-links/${id}`);
+  }
+
+  createAccountingLink(
+    body: CreateAccountingLinkRequest,
+  ): Promise<AccountingLink> {
+    return this.request<AccountingLink>('/accounting-links', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateAccountingLink(
+    id: string,
+    body: UpdateAccountingLinkRequest,
+  ): Promise<AccountingLink> {
+    return this.request<AccountingLink>(`/accounting-links/${id}`, {
+      method: 'PATCH',
+      body,
+    });
   }
 
   inviteTreasuryExternalCollaborator(

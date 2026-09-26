@@ -230,6 +230,13 @@ Traçabilité opération financière ↔ écriture comptable **future** (SYSCOHA
 
 **Interdit dans ce lot :** génération d’écritures, plan comptable, journaux, bilans.
 
+**API stub (TRESO-039) :**
+- `GET/POST /accounting-links` · `GET/PATCH /accounting-links/:id`
+- `GET /accounting-links/mapping-config` — skeleton JSON (`TREASURY_ACCOUNTING_MAPPING_CONFIG`)
+- Permission : `treasury.accounting_link.read` (lecture **et** création stub)
+- `journal_entry_id` optionnel ; statut `pending` | `linked` | `skipped`
+- Gate void : `assertFundOpNotAccountingLinked` bloque si `status=linked`
+
 ---
 
 ## 5. Enums

@@ -3,7 +3,7 @@ import type { EntityManager } from 'typeorm';
 
 /**
  * Bloque l’annulation si un pont comptable `linked` existe (TRESO-039).
- * No-op tant que la table `accounting_links` n’est pas migrée.
+ * No-op si la table `accounting_links` n’est pas encore migrée.
  */
 export async function assertFundOpNotAccountingLinked(
   manager: EntityManager,

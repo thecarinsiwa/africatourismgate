@@ -609,3 +609,45 @@ export interface AccountingLink {
   createdAt: string;
   updatedAt: string | null;
 }
+
+export interface AccountingLinksListQuery {
+  page?: number;
+  limit?: number;
+  organizationId?: string;
+  fundOpType?: AccountingFundOpType;
+  fundOpId?: string;
+  status?: AccountingLinkStatus;
+}
+
+export interface CreateAccountingLinkRequest {
+  organizationId: string;
+  fundOpType: AccountingFundOpType;
+  fundOpId: string;
+  /** Optional — filled by future SYSCOHADA epic */
+  journalEntryId?: string | null;
+  mappingRuleKey?: string | null;
+  status?: AccountingLinkStatus;
+}
+
+export interface UpdateAccountingLinkRequest {
+  journalEntryId?: string | null;
+  mappingRuleKey?: string | null;
+  status?: AccountingLinkStatus;
+}
+
+/** Skeleton mapping config (TRESO-039 stub — no journal generation). */
+export interface AccountingMappingRule {
+  key: string;
+  fundOpType: AccountingFundOpType;
+  debitAccountHint: string;
+  creditAccountHint: string;
+  label: string;
+  notes?: string;
+}
+
+export interface AccountingMappingConfig {
+  version: number;
+  stub: true;
+  description: string;
+  rules: AccountingMappingRule[];
+}

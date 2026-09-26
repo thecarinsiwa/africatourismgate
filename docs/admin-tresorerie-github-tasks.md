@@ -114,7 +114,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-036 | UI Admin page rapports trésorerie — ✅                   | Moyenne  | Admin       | M      |
 | TRESO-037 | Export CSV des opérations — ✅                           | Moyenne  | API / Admin | S      |
 | TRESO-038 | Hub `/tresorerie` + cartes stats — ✅                    | Moyenne  | Admin       | S      |
-| TRESO-039 | Stub pont comptable `accounting_link` + mapping          | Basse    | API         | M      |
+| TRESO-039 | Stub pont comptable `accounting_link` + mapping — ✅     | Basse    | API         | M      |
 | TRESO-040 | UI placeholder section Comptabilité                      | Basse    | Admin       | S      |
 | TRESO-041 | Doc handoff épic SYSCOHADA suivant                       | Basse    | Docs        | S      |
 | TRESO-042 | E2E smoke nav + CRUD entrée                              | Haute    | Testing     | M      |
@@ -1521,7 +1521,7 @@ Générer 3 logs ; filtrer par entity.
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-void-operations`  
-**Livrable :** `POST /fund-entries|fund-exits/:id/void` · permission `treasury.void` · audit `action: void` · UI `TreasuryVoidDialog` · gate compta si `accounting_links.status=linked` (no-op tant que TRESO-039)
+**Livrable :** `POST /fund-entries|fund-exits/:id/void` · permission `treasury.void` · audit `action: void` · UI `TreasuryVoidDialog` · gate compta si `accounting_links.status=linked` (actif dès TRESO-039)
 
 #### Modèle GitHub
 
@@ -1762,10 +1762,11 @@ Ouvrir `/tresorerie` avec jeu de données.
 
 ---
 
-### TRESO-039 — Stub pont comptable accounting_link + mapping
+### TRESO-039 — Stub pont comptable accounting_link + mapping — ✅
 
-**Labels :** `admin`, `tresorerie`, `api`, `priority:low`  
+**Labels :** `admin`, `tresorerie`, `api`, `priority:low`
 **Branche suggérée :** `feature/tresorerie-accounting-bridge-stub`
+**Livrable :** migration `accounting_links` · module Nest `accounting-links` · config mapping skeleton · `journal_entry_id` nullable · api-client · documenté stub (pas de génération d’écritures)
 
 #### Modèle GitHub
 
@@ -1787,9 +1788,9 @@ Traçabilité opération financière ↔ écriture future, sans moteur SYSCOHADA
 
 ## Critères d'acceptation
 
-- [ ] Lien créable/consultable
-- [ ] journal_entry_id optionnel
-- [ ] Documenté comme stub
+- [x] Lien créable/consultable
+- [x] journal_entry_id optionnel
+- [x] Documenté comme stub
 
 ## Plan de test
 
