@@ -341,6 +341,20 @@ const PERMISSION_UPSERTS: Array<{
     action: 'reports.read',
     description: 'View balance sheet and P&L reports',
   },
+  {
+    id: '00000000-0000-4000-8000-000000001079',
+    code: 'treasury.fx_rates.read',
+    resource: 'treasury',
+    action: 'fx_rates.read',
+    description: 'View exchange rates catalog',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001080',
+    code: 'treasury.fx_rates.write',
+    resource: 'treasury',
+    action: 'fx_rates.write',
+    description: 'Manage exchange rates catalog',
+  },
 ];
 
 /** Full org_admin set (install.seed.sql) — repairs partial or missing grants. */
@@ -404,6 +418,8 @@ const ORG_ADMIN_PERMISSION_IDS = [
   '00000000-0000-4000-8000-000000001076',
   '00000000-0000-4000-8000-000000001077',
   '00000000-0000-4000-8000-000000001078',
+  '00000000-0000-4000-8000-000000001079',
+  '00000000-0000-4000-8000-000000001080',
 ];
 
 async function platformOrgExists(config: ConfigService): Promise<boolean> {

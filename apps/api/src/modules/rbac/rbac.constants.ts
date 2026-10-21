@@ -120,6 +120,8 @@ export const TREASURY_PERMISSION_CODES = [
   'treasury.void',
   'treasury.audit.read',
   'treasury.accounting_link.read',
+  'treasury.fx_rates.read',
+  'treasury.fx_rates.write',
 ] as const;
 
 export type TreasuryPermissionCode = (typeof TREASURY_PERMISSION_CODES)[number];
@@ -153,6 +155,7 @@ export const TREASURY_ROLE_PROFILE_PERMISSIONS = {
     'treasury.reports.read',
     'treasury.audit.read',
     'treasury.accounting_link.read',
+    'treasury.fx_rates.read',
   ],
   financeAdmin: [...TREASURY_PERMISSION_CODES],
 } as const satisfies Record<string, readonly TreasuryPermissionCode[]>;

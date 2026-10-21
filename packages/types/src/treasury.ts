@@ -422,6 +422,50 @@ export interface BudgetVsActualSummary {
   };
 }
 
+// ─── Taux de change (MVP manuel) ────────────────────────────────────────────
+
+/**
+ * Catalogue org-scoped. Convention : 1 `fromCurrency` = `rate` × `toCurrency`
+ * (montants écriture ≈ originalCents × rate).
+ */
+export interface ExchangeRate {
+  id: string;
+  organizationId: string;
+  fromCurrency: string;
+  toCurrency: string;
+  rate: number;
+  effectiveOn: string;
+  notes: string | null;
+  createdByUserId: string | null;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface ExchangeRatesListQuery {
+  page?: number;
+  limit?: number;
+  organizationId?: string;
+  fromCurrency?: string;
+  toCurrency?: string;
+  /** Inclusive lower bound on effectiveOn (YYYY-MM-DD) */
+  effectiveOnFrom?: string;
+  /** Inclusive upper bound on effectiveOn (YYYY-MM-DD) */
+  effectiveOnTo?: string;
+}
+
+export interface CreateExchangeRateRequest {
+  organizationId: string;
+  fromCurrency: string;
+  toCurrency: string;
+  rate: number;
+  effectiveOn: string;
+  notes?: string | null;
+}
+
+export type UpdateExchangeRateRequest = Partial<
+  Omit<CreateExchangeRateRequest, 'organizationId'>
+>;
+
 // ─── Collaborateurs externes ────────────────────────────────────────────────
 
 export interface TreasuryExternalCollaborator {

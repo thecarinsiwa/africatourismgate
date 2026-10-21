@@ -43,6 +43,7 @@ import {
   FundExits,
 } from '../entities/fund-exit.entity';
 import { Budgets } from '../entities/budget.entity';
+import { ExchangeRates } from '../entities/exchange-rate.entity';
 import {
   TreasuryAccessTokens,
   TreasuryExternalCollaborators,
@@ -104,6 +105,7 @@ const entityList = [
   FundExitBookings,
   FundExitAttachments,
   Budgets,
+  ExchangeRates,
   TreasuryExternalCollaborators,
   TreasuryAccessTokens,
   TreasuryAuditLogs,

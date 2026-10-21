@@ -79,7 +79,9 @@ INSERT INTO `permissions` (`id`, `code`, `resource`, `action`, `description`) VA
 ('00000000-0000-4000-8000-000000001075', 'accounting.reconcile', 'accounting', 'reconcile', 'Bank/cash reconciliations (SYSCO-007)'),
 ('00000000-0000-4000-8000-000000001076', 'accounting.close', 'accounting', 'close', 'Lock periods and close exercises'),
 ('00000000-0000-4000-8000-000000001077', 'accounting.audit.read', 'accounting', 'audit.read', 'View accounting audit journal'),
-('00000000-0000-4000-8000-000000001078', 'accounting.reports.read', 'accounting', 'reports.read', 'View balance sheet and P&L reports');
+('00000000-0000-4000-8000-000000001078', 'accounting.reports.read', 'accounting', 'reports.read', 'View balance sheet and P&L reports'),
+('00000000-0000-4000-8000-000000001079', 'treasury.fx_rates.read', 'treasury', 'fx_rates.read', 'View exchange rates catalog'),
+('00000000-0000-4000-8000-000000001080', 'treasury.fx_rates.write', 'treasury', 'fx_rates.write', 'Manage exchange rates catalog');
 
 -- -----------------------------------------------------------------------------
 -- 2. roles
@@ -216,7 +218,9 @@ INSERT INTO `role_permissions` (`role_id`, `permission_id`, `granted_by_user_id`
 ('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001075', '00000000-0000-4000-8000-000000000010'),
 ('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001076', '00000000-0000-4000-8000-000000000010'),
 ('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001077', '00000000-0000-4000-8000-000000000010'),
-('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001078', '00000000-0000-4000-8000-000000000010');
+('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001078', '00000000-0000-4000-8000-000000000010'),
+('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001079', '00000000-0000-4000-8000-000000000010'),
+('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001080', '00000000-0000-4000-8000-000000000010');
 
 -- support
 INSERT INTO `role_permissions` (`role_id`, `permission_id`, `granted_by_user_id`) VALUES
