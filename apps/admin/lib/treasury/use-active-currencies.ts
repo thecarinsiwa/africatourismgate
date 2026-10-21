@@ -93,10 +93,8 @@ export function useActiveCurrencies(
         labelsByCode,
         includeEmpty,
         emptyLabel,
-        extraCodes,
+        extraCodes: extraKey ? extraKey.split('|') : [],
       }),
-    // extraKey tracks extraCodes contents without unstable array identity
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- extraCodes via extraKey
     [codes, labelsByCode, includeEmpty, emptyLabel, extraKey],
   );
 
