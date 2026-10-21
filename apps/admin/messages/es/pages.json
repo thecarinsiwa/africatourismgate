@@ -872,6 +872,11 @@
       "description": "Agregados y exportaciones. Acceso: treasury.reports.read.",
       "metaTitle": "Informes de tesorería"
     },
+    "taux-change": {
+      "title": "Tipos de cambio",
+      "description": "Catálogo manual de tipos para la contabilización. Acceso: treasury.fx_rates.read.",
+      "metaTitle": "Tipos de cambio"
+    },
     "externes": {
       "title": "Colaboradores externos",
       "description": "Invitaciones, tokens y permisos externos. Acceso: treasury.externals.manage.",

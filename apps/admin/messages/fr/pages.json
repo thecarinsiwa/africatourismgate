@@ -872,6 +872,11 @@
       "description": "Agrégats et exports des opérations. Accès : treasury.reports.read.",
       "metaTitle": "Rapports trésorerie"
     },
+    "taux-change": {
+      "title": "Taux de change",
+      "description": "Catalogue manuel des taux pour la comptabilisation. Accès : treasury.fx_rates.read.",
+      "metaTitle": "Taux de change"
+    },
     "externes": {
       "title": "Collaborateurs externes",
       "description": "Invitations, jetons et permissions externes. Accès : treasury.externals.manage.",

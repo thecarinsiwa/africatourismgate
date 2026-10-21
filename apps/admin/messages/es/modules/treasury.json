@@ -956,6 +956,49 @@
     "expenseRequestRequired": "Una salida debe estar vinculada a un estado de necesidad.",
     "accountingLinked": "No se puede anular una operación ya vinculada a la contabilidad."
   },
+  "fxRates": {
+    "ariaLabel": "Lista de tipos de cambio",
+    "accessDenied": "Acceso denegado: se requiere treasury.fx_rates.read.",
+    "empty": "Ningún tipo de cambio.",
+    "hint": "1 unidad de moneda origen = tipo × moneda destino. Se usa al contabilizar si la moneda de la operación difiere de la del ejercicio.",
+    "newButton": "Nuevo tipo",
+    "filters": {
+      "organization": "Organización",
+      "fromCurrency": "Moneda origen",
+      "toCurrency": "Moneda destino"
+    },
+    "columns": {
+      "pair": "Par",
+      "rate": "Tipo",
+      "effectiveOn": "Vigente desde",
+      "notes": "Notas",
+      "actions": "Acciones"
+    },
+    "pagination": {
+      "item": "tipo"
+    },
+    "form": {
+      "createTitle": "Nuevo tipo de cambio",
+      "editTitle": "Editar tipo",
+      "description": "Entrada manual — 1 origen = tipo × destino.",
+      "fromCurrency": "Moneda origen",
+      "toCurrency": "Moneda destino",
+      "rate": "Tipo",
+      "rateHint": "Ej. 655,957 para 1 EUR → XOF",
+      "effectiveOn": "Fecha de vigencia",
+      "notes": "Notas",
+      "saving": "Guardando…"
+    },
+    "validation": {
+      "required": "Complete origen, destino, tipo (> 0) y fecha.",
+      "sameCurrency": "Las monedas origen y destino deben ser distintas.",
+      "organizationRequired": "Organización obligatoria."
+    },
+    "delete": {
+      "title": "¿Eliminar este tipo?",
+      "description": "Se eliminará de forma lógica. Los asientos ya contabilizados no cambian."
+    }
+  },
   "common": {
     "save": "Guardar",
     "cancel": "Cancelar",

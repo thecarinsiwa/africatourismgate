@@ -139,6 +139,11 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
     iconKey: 'shield',
     children: [
       { href: '/tresorerie/rapports', labelKey: 'treasuryReports', iconKey: 'chart' },
+      {
+        href: '/tresorerie/taux-change',
+        labelKey: 'treasuryFxRates',
+        iconKey: 'creditCard',
+      },
       { href: '/tresorerie/externes', labelKey: 'treasuryExternals', iconKey: 'users' },
       { href: '/tresorerie/audit', labelKey: 'treasuryAudit', iconKey: 'shield' },
     ],

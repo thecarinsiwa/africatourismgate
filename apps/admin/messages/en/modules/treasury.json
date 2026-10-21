@@ -956,6 +956,49 @@
     "expenseRequestRequired": "An exit must be linked to an expense request.",
     "accountingLinked": "Cannot void an operation already linked to accounting."
   },
+  "fxRates": {
+    "ariaLabel": "Exchange rates list",
+    "accessDenied": "Access denied: treasury.fx_rates.read permission required.",
+    "empty": "No exchange rates.",
+    "hint": "1 unit of source currency = rate × target currency. Used when posting if the operation currency differs from the exercise currency.",
+    "newButton": "New rate",
+    "filters": {
+      "organization": "Organization",
+      "fromCurrency": "Source currency",
+      "toCurrency": "Target currency"
+    },
+    "columns": {
+      "pair": "Pair",
+      "rate": "Rate",
+      "effectiveOn": "Effective on",
+      "notes": "Notes",
+      "actions": "Actions"
+    },
+    "pagination": {
+      "item": "rate"
+    },
+    "form": {
+      "createTitle": "New exchange rate",
+      "editTitle": "Edit rate",
+      "description": "Manual entry — 1 source = rate × target.",
+      "fromCurrency": "Source currency",
+      "toCurrency": "Target currency",
+      "rate": "Rate",
+      "rateHint": "e.g. 655.957 for 1 EUR → XOF",
+      "effectiveOn": "Effective date",
+      "notes": "Notes",
+      "saving": "Saving…"
+    },
+    "validation": {
+      "required": "Fill source, target, rate (> 0) and effective date.",
+      "sameCurrency": "Source and target currencies must differ.",
+      "organizationRequired": "Organization is required."
+    },
+    "delete": {
+      "title": "Delete this rate?",
+      "description": "The rate will be soft-deleted. Already posted entries are unchanged."
+    }
+  },
   "common": {
     "save": "Save",
     "cancel": "Cancel",

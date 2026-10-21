@@ -354,6 +354,7 @@ import type {
   CreateFundEntryRequest,
   CreateFundExitRequest,
   CreateBudgetRequest,
+  CreateExchangeRateRequest,
   CreateAccountingLinkRequest,
   UpdateAccountingLinkRequest,
   AccountingLink,
@@ -385,6 +386,8 @@ import type {
   BudgetVsActualSummary,
   BudgetsListQuery,
   BudgetsVsActualQuery,
+  ExchangeRate,
+  ExchangeRatesListQuery,
   InviteTreasuryExternalCollaboratorRequest,
   InviteTreasuryExternalCollaboratorResponse,
   ValidateTreasuryAccessTokenRequest,
@@ -410,6 +413,7 @@ import type {
   TransitionExpenseRequestRequest,
   TransitionFundExitRequest,
   UpdateBudgetRequest,
+  UpdateExchangeRateRequest,
   UpdateExpenseRequestRequest,
   UpdateFundEntryRequest,
   UpdateFundExitRequest,
@@ -1614,6 +1618,45 @@ export class ApiClient {
 
   deleteBudget(id: string): Promise<void> {
     return this.request<void>(`/budgets/${id}`, { method: 'DELETE' });
+  }
+
+  listExchangeRates(
+    query?: ExchangeRatesListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<ExchangeRate>> {
+    return fetchPaginated<ExchangeRate>(
+      this,
+      '/exchange-rates',
+      query,
+      requestOptions,
+    );
+  }
+
+  getExchangeRate(id: string): Promise<ExchangeRate> {
+    return this.request<ExchangeRate>(`/exchange-rates/${id}`);
+  }
+
+  createExchangeRate(
+    body: CreateExchangeRateRequest,
+  ): Promise<ExchangeRate> {
+    return this.request<ExchangeRate>('/exchange-rates', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateExchangeRate(
+    id: string,
+    body: UpdateExchangeRateRequest,
+  ): Promise<ExchangeRate> {
+    return this.request<ExchangeRate>(`/exchange-rates/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteExchangeRate(id: string): Promise<void> {
+    return this.request<void>(`/exchange-rates/${id}`, { method: 'DELETE' });
   }
 
   listAccountingLinks(

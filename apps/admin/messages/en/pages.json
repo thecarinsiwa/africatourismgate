@@ -872,6 +872,11 @@
       "description": "Aggregates and exports. Access: treasury.reports.read.",
       "metaTitle": "Treasury reports"
     },
+    "taux-change": {
+      "title": "Exchange rates",
+      "description": "Manual FX catalog for accounting posts. Access: treasury.fx_rates.read.",
+      "metaTitle": "Exchange rates"
+    },
     "externes": {
       "title": "External collaborators",
       "description": "Invites, tokens and external permissions. Access: treasury.externals.manage.",

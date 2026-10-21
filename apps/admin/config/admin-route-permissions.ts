@@ -29,6 +29,10 @@ export const ADMIN_ROUTE_ACCESS_RULES: RouteAccessRule[] = [
   { prefix: '/paiements/promotions', permission: 'promotions.read' },
   { prefix: '/paiements', permission: 'payments.read' },
   { prefix: '/tresorerie/rapports', permission: 'treasury.reports.read' },
+  {
+    prefix: '/tresorerie/taux-change',
+    permission: 'treasury.fx_rates.read',
+  },
   { prefix: '/tresorerie/audit', permission: 'treasury.audit.read' },
   {
     prefix: '/tresorerie/comptabilite/audit',

@@ -242,6 +242,11 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Agrégats et exports des opérations financières.',
     apiResource: 'treasury-reports',
   },
+  'tresorerie/taux-change': {
+    title: 'Taux de change',
+    description: 'Catalogue manuel des taux pour la comptabilisation multi-devises.',
+    apiResource: 'exchange-rates',
+  },
   'tresorerie/externes': {
     title: 'Collaborateurs externes',
     description: 'Accès externes (e-mail, jetons, permissions).',
