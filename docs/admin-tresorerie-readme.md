@@ -2,11 +2,11 @@
 
 Guide court d’intégration : routes UI, permissions RBAC, flux métier, client API.
 
-**Lot :** TRESO-001 → TRESO-045  
+**Lot :** TRESO-001 → TRESO-046  
 **Tâches détaillées :** [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md)  
 **Modèle domaine :** [tresorerie-domain-model.md](./tresorerie-domain-model.md)  
 **QA RBAC :** [pr-tresorerie-rbac-test.md](./pr-tresorerie-rbac-test.md)  
-**Suite compta (hors scope) :** [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md)
+**Suite compta :** [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md) · [syscohada-domain-model.md](./syscohada-domain-model.md)
 
 ---
 
@@ -24,7 +24,8 @@ Préfixe hub : `/tresorerie` · permission de base `treasury.read` (sauf excepti
 | `/tresorerie/rapports` | Agrégats + export CSV | `treasury.reports.read` |
 | `/tresorerie/externes` | Collaborateurs externes | `read` **ou** `externals.manage` |
 | `/tresorerie/audit` | Journal d’audit | `treasury.audit.read` |
-| `/tresorerie/comptabilite` | Stub pont `accounting_links` | `treasury.accounting_link.read` |
+| `/tresorerie/taux-change` | Catalogue taux de change (manuel) | `treasury.fx_rates.read` |
+| `/tresorerie/comptabilite` | Hub pont / livres SYSCOHADA | `treasury.accounting_link.read` **ou** `accounting.*` |
 
 Config : `apps/admin/config/admin-route-permissions.ts`, `dashboard-nav.config.ts`.
 
@@ -45,9 +46,11 @@ Config : `apps/admin/config/admin-route-permissions.ts`, `dashboard-nav.config.t
 | `treasury.externals.manage` | Inviter / activer externes |
 | `treasury.void` | Annuler (void) une opération |
 | `treasury.audit.read` | Journal d’audit |
-| `treasury.accounting_link.read` | Stub pont comptable |
+| `treasury.accounting_link.read` | Stub / lecture pont comptable |
+| `treasury.fx_rates.read` | Catalogue taux de change |
+| `treasury.fx_rates.write` | CRUD taux de change |
 
-Profils indicatifs (`TREASURY_ROLE_PROFILE_PERMISSIONS`) : créateur, valideur, autorisateur, trésorier (enregistreur), contrôle, finance admin — voir QA RBAC.  
+Profils indicatifs (`TREASURY_ROLE_PROFILE_PERMISSIONS`) : créateur, valideur, autorisateur, trésorier (enregistreur), contrôle (+ `fx_rates.read`), finance admin (toutes `treasury.*`) — voir QA RBAC.  
 `super_admin` : bypass inchangé.
 
 ---
@@ -79,7 +82,8 @@ E2E : `apps/admin/tests/e2e/tresorerie-expense-workflow-smoke.spec.ts` (TRESO-04
 | Rapports | `/api/treasury-reports/*` |
 | Audit | `/api/treasury-audit-logs` |
 | Externes | `/api/treasury-external-collaborators` |
-| Pont compta (stub) | `/api/accounting-links` |
+| Pont compta (stub → SYSCO) | `/api/accounting-links` |
+| Taux de change | `/api/exchange-rates` |
 
 **Client Admin :** méthodes typées sur `ApiClient` dans `packages/api-client/src/index.ts` (consommées via `getApiClient()`).  
 **Schéma OpenAPI généré :** `packages/api-client/src/generated/schema.ts` (types `paths` / `components`).
@@ -98,7 +102,15 @@ Export CSV rapports : `GET /treasury-reports/export` — helper Admin `apps/admi
 
 ---
 
-## Hors scope (SYSCOHADA)
+## Taux de change (TRESO-046)
 
-Pas de plan comptable, journal, bilan, génération d’écritures.  
-Le stub `accounting_links` + UI `/tresorerie/comptabilite` prépare le handoff — détails dans [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md).
+Catalogue **manuel** org-scoped : `1 fromCurrency = rate × toCurrency`.  
+Utilisé à la comptabilisation SYSCO quand `fund_*.currency ≠ accounting_exercises.currency` ([syscohada-domain-model.md](./syscohada-domain-model.md) §7.4).  
+Sans taux applicable → `POST /accounting-links/post` refuse (400).  
+**Hors MVP :** feed BCEAO/API, inverse auto, conversion des rapports trésorerie.
+
+---
+
+## Hors scope (SYSCOHADA — lot TRESO initial)
+
+Le lot TRESO-001…045 ne livrait pas plan / journal / bilan. L’épic SYSCOHADA + TRESO-046 (taux) complètent la chaîne — détails [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md) · [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md).

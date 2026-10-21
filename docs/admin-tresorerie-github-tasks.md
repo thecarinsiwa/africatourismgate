@@ -13,7 +13,7 @@
 ## Comment utiliser ce document
 
 1. **Lire** la [prise en main](#prise-en-main-contributeur) et le [modèle de domaine](./tresorerie-domain-model.md).
-2. **Parcourir** le [tableau récapitulatif](#tableau-récapitulatif-treso-001--treso-045).
+2. **Parcourir** le [tableau récapitulatif](#tableau-récapitulatif-treso-001--treso-046).
 3. **Copier** le bloc « Modèle GitHub » de chaque tâche dans une nouvelle issue.
 4. **Adapter** labels, assignation et priorité.
 5. Une PR d'implémentation = un scope testable (`feature/tresorerie-*`).
@@ -66,6 +66,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | Migrations, RBAC, audit, budgets | Moteur d'écritures automatiques |
 | Lien (0,N) ↔ `Bookings` | Refonte du module `payments` |
 | Stub `accounting_links` | États financiers réglementaires |
+| **Add-on TRESO-046** : taux manuels + conversion au post SYSCO | Feed marché / multi-tenue / FX rapports |
 
 ### Documents liés
 
@@ -77,7 +78,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 
 ---
 
-## Tableau récapitulatif TRESO-001 → TRESO-045
+## Tableau récapitulatif TRESO-001 → TRESO-046
 
 | ID        | Titre court                                              | Priorité | Type        | Effort |
 | --------- | -------------------------------------------------------- | -------- | ----------- | ------ |
@@ -126,6 +127,7 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | TRESO-043 | E2E happy path circuit sortie — ✅                       | Haute    | Testing     | M      |
 | TRESO-044 | QA manuelle RBAC rôles trésorerie — ✅                   | Haute    | Testing     | M      |
 | TRESO-045 | Sync OpenAPI + api-client + README module — ✅           | Basse    | Docs / API  | S      |
+| TRESO-046 | Catalogue taux manuels + conversion au post SYSCO — ✅   | Haute    | API / Admin | M      |
 
 ---
 
@@ -2072,6 +2074,64 @@ pnpm --filter @africatourismgate/admin exec tsc --noEmit
 ## Références
 
 - ensemble TRESO-011…040
+````
+
+---
+
+### TRESO-046 — Catalogue taux manuels + conversion au post SYSCO — ✅
+
+**Labels :** `admin`, `tresorerie`, `syscohada`, `api`, `priority:high`  
+**Branche suggérée :** `feature/tresorerie-exchange-rates`  
+**Livrable :** [`database/migrations/add_treasury_exchange_rates.sql`](../database/migrations/add_treasury_exchange_rates.sql) · module Nest `exchange-rates` · page `/tresorerie/taux-change` · conversion dans `AccountingPostingService` · docs domaine
+
+#### Modèle GitHub
+
+````markdown
+## Contexte
+
+Les opérations `fund_*` portent une devise ISO ; les écritures SYSCOHADA sont en **devise de tenue** de l’exercice. Il faut un catalogue de taux **saisis manuellement** (pas de feed marché MVP) et l’appliquer à « Comptabiliser ».
+
+## Objectif
+
+1. Table `exchange_rates` + permissions `treasury.fx_rates.read|write` + types partagés
+2. API Nest CRUD + `resolveRate(onDate)` (dernier `effective_on ≤ date`)
+3. Conversion dans `AccountingPostingService` : `bookCents ≈ originalCents × rate` ; `journal_lines.original_*` + `fx_rate` ; **400** si taux absent
+4. UI Admin `/tresorerie/taux-change` (nav Pilotage) + api-client + i18n fr/en/es
+5. Maj docs SYSCO / trésorerie (§7.4, hors-scope feed BCEAO)
+
+## Décisions
+
+- Convention : `1 fromCurrency = rate × toCurrency`
+- Devise de tenue = `accounting_exercises.currency` (pas `organizations.currency`)
+- Même devise → pas de lookup ; `fx_rate` null
+- Hors MVP : feed BCEAO/API, inverse auto, conversion rapports trésorerie
+
+## Fichiers clés
+
+- `database/migrations/add_treasury_exchange_rates.sql`
+- `apps/api/src/modules/resources/exchange-rates/`
+- `apps/api/src/modules/resources/accounting-links/accounting-posting.service.ts`
+- `apps/admin/app/(dashboard)/tresorerie/taux-change/`
+- `docs/syscohada-domain-model.md` §7.4 · `docs/tresorerie-domain-model.md` §4.8
+
+## Critères d'acceptation
+
+- [x] CRUD taux filtré par org ; unique (org, from, to, date)
+- [x] Op = devise exercice → post inchangé, `fx_rate` null
+- [x] Op ≠ devise exercice + taux ≤ date op → lignes en tenue + `originalCurrency` / `fxRate`
+- [x] Sans taux applicable → post 400 ; link reste `pending`
+- [x] Write absent → mutations 403 ; menu masqué sans `fx_rates.read`
+- [x] Docs alignées
+
+## Plan de test
+
+1. Créer taux EUR→XOF `effective_on` ≤ date op ; comptabiliser entrée EUR → lignes XOF.
+2. Même op sans taux → 400 + message « Taux de change ».
+3. Entrée XOF / exercice XOF → pas de `fx_rate`.
+
+## Références
+
+- SYSCO-004 / SYSCO-005 · [syscohada-domain-model.md](./syscohada-domain-model.md) §2 / §7.4
 ````
 
 ---

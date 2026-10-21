@@ -34,7 +34,7 @@ Référentiel cible : **SYSCOHADA** (Système Comptable OHADA) — classes 1–8
 | Montants | Entiers en **cents** (`*_cents`), alignés Trésorerie / Bookings |
 | Devise opération | ISO 4217 sur chaque `fund_*` (inchangé) |
 | Devise de tenue | **Une devise d’exercice** par org (`accounting_exercises.currency`) — typiquement `XOF` ou `XAF` |
-| Conversion | Si `fund_*.currency ≠` devise de tenue : taux à la date d’opération → montants d’écriture en devise de tenue ; conserver devise/montant d’origine en métadonnées ligne ou sur le link |
+| Conversion | Si `fund_*.currency ≠` devise de tenue : lookup `exchange_rates` (taux **manuels**, TRESO-046) à la date d’op → montants d’écriture en tenue ; `journal_lines.original_*` + `fx_rate` ; **refus** du post si aucun taux applicable |
 | Identifiants | UUID `char(36)` |
 | Multi-tenant | `organization_id` sur **tous** les agrégats comptables |
 | Soft delete | Comptes / règles / journaux : soft-delete possible ; **écritures postées** : pas de delete — contrepassation uniquement |
@@ -51,7 +51,7 @@ Référentiel cible : **SYSCOHADA** (Système Comptable OHADA) — classes 1–8
 | Sujet | Options | **Recommandation** | Raison |
 | ----- | ------- | ------------------ | ------ |
 | Moment de comptabilisation | (A) auto à `recorded` (B) aussi à `disbursed` (C) batch (D) manuel seul | **(A)+(D)** : éligible dès `recorded` ; déclencheur MVP = action **« Comptabiliser »** (API) ; auto-post à `recorded` en option post-MVP | Sortie `disbursed` sans justificatif trop tôt ; manuel maîtrise le go-live |
-| Multi-devise | Multi-tenue vs une devise d’exercice | **Une devise de tenue / exercice** ; conversion à la date d’op | États OHADA mono-devise ; ops multi-devises restent possibles |
+| Multi-devise | Multi-tenue vs une devise d’exercice | **Une devise de tenue / exercice** ; conversion à la date d’op via catalogue `exchange_rates` (saisie Admin, pas de feed externe MVP) | États OHADA mono-devise ; ops multi-devises restent possibles |
 | Soft-delete + unique | Unique global vs actif seul | Unique `(fund_op_type, fund_op_id)` **parmi `deleted_at IS NULL`** (index partiel ou recreate après soft-delete) | Permet recreate après `skipped` / erreur `pending` |
 | Contrepassation | Update in-place vs nouvelle pièce | **Nouvelle `journal_entry` de contrepassation** ; link historique conservé ; void fond reste bloqué si `linked` | Intégrité légale des pièces |
 | Tiers / immos / stocks | Inclus MVP vs satellite | **Épic satellite** — hors SYSCO-001…012 sauf comptes collectifs minimaux au plan | Focus trésorerie → écritures |
@@ -227,7 +227,7 @@ Comptes SYSCOHADA par organisation (classes 1–8). Sous-comptes = lignes avec `
 | `credit_cents` | int | ≥ 0 |
 | `original_amount_cents` | int null | Montant op. source si conversion |
 | `original_currency` | char(3) null | |
-| `fx_rate` | decimal null | Taux utilisé si conversion |
+| `fx_rate` | decimal null | Taux utilisé si conversion (§7.4 / TRESO-046) |
 | `analytic_ref_type` | varchar null | Optionnel MVP+ : `booking`, `activity`, … |
 | `analytic_ref_id` | UUID null | |
 
@@ -409,9 +409,10 @@ sequenceDiagram
 1. Vérifier éligibilité (§3.1) + org + exercice/période ouverts pour `entry_date` (= `operation_date` fond, sauf override).
 2. Résoudre règle mapping → comptes + journal.
 3. Upsert `accounting_links` `pending` (idempotent sur clé fond).
-4. Créer `journal_entries` + `journal_lines` équilibrées (`source = treasury_mapping`).
-5. Poster l’écriture ; renseigner `journal_entry_id` ; `status = linked`.
-6. Audit accounting + optionnel corrélation treasury.
+4. **Conversion FX** (§7.4) : montants lignes en devise de tenue ; métadonnées `original_*` / `fx_rate`.
+5. Créer `journal_entries` + `journal_lines` équilibrées (`source = treasury_mapping`).
+6. Poster l’écriture ; renseigner `journal_entry_id` ; `status = linked`.
+7. Audit accounting + optionnel corrélation treasury (incl. `fxRate` / devises si conversion).
 
 ### 7.2. Cas `skipped`
 
@@ -427,6 +428,21 @@ sequenceDiagram
 | `pending` | Reprend génération |
 | `linked` | No-op succès ou 409 (à figer en API : **recommandé no-op 200**) |
 | `skipped` | 409 sauf force explicite (hors MVP) |
+
+### 7.4. Conversion multi-devise (taux manuels — TRESO-046)
+
+Catalogue org-scoped `exchange_rates` (CRUD Admin `/tresorerie/taux-change`, API `/exchange-rates`).  
+**Convention :** `rate` = unités de devise **cible** pour 1 unité **source** (`bookCents ≈ originalCents × rate`, arrondi entier ; min 1 si montant op > 0).  
+**Devise de tenue :** `accounting_exercises.currency` (pas `organizations.currency`).  
+**Résolution :** dernier taux avec `effective_on ≤ operation_date` pour la paire `(from=op.currency, to=exercise.currency)`.
+
+| Cas | Comportement au `POST …/accounting-links/post` |
+| --- | ---------------------------------------------- |
+| `op.currency = exercise.currency` | Pas de lookup ; `bookCents = amount_cents` ; `fx_rate` null |
+| Devises différentes + taux trouvé | Lignes en tenue ; `original_amount_cents` / `original_currency` = op ; `fx_rate` = taux |
+| Devises différentes **sans** taux | **400** — message orientant vers Trésorerie › Taux de change ; link reste `pending` |
+
+**Hors MVP FX :** feed BCEAO / API marché, taux inverse auto, multi-tenue concurrente, conversion des rapports / KPIs trésorerie.
 
 ---
 
@@ -523,6 +539,9 @@ Pas de faux écrans avant données réelles (règle TRESO-040 conservée).
 - Fusion `fund_entries` ↔ `payments`
 - Refonte RBAC hors `accounting.*` / pont
 - Multi-devise de tenue concurrente dans un même exercice
+- Feed de taux externe (BCEAO, ECB, …) — saisie manuelle uniquement (TRESO-046)
+- Taux inverse automatique / croisement de paires non saisies
+- Conversion des agrégats / rapports trésorerie hors écritures SYSCO
 
 ### 12.2. Toujours hors cible produit (handoff §2.7)
 
@@ -541,7 +560,8 @@ Pas de faux écrans avant données réelles (règle TRESO-040 conservée).
 | `fund_entries` / `fund_exits` | Uniques sources auto-post MVP |
 | `treasury_audit_logs` | Corrélation ; audit pièces dans `accounting_audit_logs` |
 | `/tresorerie/comptabilite` | Hub réel (SYSCO-010) |
-| Montants cents + ISO | Identiques sur lines (devise de tenue) |
+| Montants cents + ISO | Lines en devise de tenue ; `original_*` + `fx_rate` si conversion |
+| `exchange_rates` + `/tresorerie/taux-change` | Catalogue manuel (TRESO-046) consommé au post |
 
 ---
 
@@ -569,6 +589,7 @@ Pas de faux écrans avant données réelles (règle TRESO-040 conservée).
 | SYSCO-009 — ✅ | Seed RBAC `accounting.*` + `accounting_audit_logs` + UI audit |
 | SYSCO-010 — ✅ | Actions Comptabiliser / Ignorer + détail link sur le hub |
 | SYSCO-008 — ✅ | Clôtures (lock/close) + OD + RAN MVP + bilan + compte de résultat |
+| TRESO-046 — ✅ | Catalogue `exchange_rates` + conversion FX au post (§7.4) |
 | SYSCO-007 | Livres caisse/banque + rapprochements (après clôtures MVP) |
 | SYSCO-011 | Smoke E2E fond → Comptabiliser → linked / journal |
 | SYSCO-012 | Sync OpenAPI + README module compta (basse priorité) |

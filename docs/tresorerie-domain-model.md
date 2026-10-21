@@ -28,7 +28,7 @@ Deux branches :
 | Principe | Décision |
 | -------- | -------- |
 | Montants | Entiers en **cents** (`amount_cents`), comme `Bookings.totalCents` / `Payments` |
-| Devise | ISO 4217, `varchar(3)` (ex. `XOF`, `EUR`, `USD`) |
+| Devise | ISO 4217, `varchar(3)` (ex. `XOF`, `EUR`, `USD`) sur chaque opération ; conversion vers devise de tenue **à la comptabilisation** via catalogue manuel `exchange_rates` (TRESO-046) — pas de feed externe MVP |
 | Identifiants | UUID `char(36)` |
 | Multi-tenant | `organization_id` sur les agrégats trésorerie (aligné departments / catalog) |
 | Soft delete / annulation | Pas de delete hard des opérations validées → statut `voided` + audit |
@@ -45,6 +45,7 @@ erDiagram
   Organizations ||--o{ FundExits : owns
   Organizations ||--o{ ExpenseRequests : owns
   Organizations ||--o{ Budgets : owns
+  Organizations ||--o{ ExchangeRates : owns
   Organizations ||--o{ TreasuryExternalCollaborators : owns
 
   FundEntries ||--o{ FundEntryBookings : links
@@ -239,6 +240,30 @@ Traçabilité opération financière ↔ écriture comptable **future** (SYSCOHA
 
 ---
 
+### 4.8. `exchange_rates` — Catalogue de taux manuels (TRESO-046)
+
+Référentiel org-scoped pour convertir une opération `fund_*` vers la **devise de tenue** de l’exercice (`accounting_exercises.currency`) lors de « Comptabiliser ».  
+Pas de connecteur marché MVP ; saisie Admin uniquement.
+
+| Champ | Type | Notes |
+| ----- | ---- | ----- |
+| `id` | UUID PK | |
+| `organization_id` | UUID FK | |
+| `from_currency` | char(3) | Devise source (ex. op) |
+| `to_currency` | char(3) | Devise cible (ex. tenue) — ≠ `from` |
+| `rate` | decimal(18,8) | **1 from = rate × to** (`bookCents ≈ originalCents × rate`) |
+| `effective_on` | date | Applicable à partir de cette date |
+| `notes` | varchar(500) null | |
+| audit / soft-delete | | BaseAudit |
+
+**Unicité :** `(organization_id, from_currency, to_currency, effective_on)` parmi non soft-deleted.  
+**Résolution :** dernier taux avec `effective_on ≤ onDate` pour la paire. Même devise → rate 1 (pas de ligne catalogue).  
+**API :** `GET/POST/PATCH/DELETE /exchange-rates` · permissions `treasury.fx_rates.read` / `write`.  
+**UI :** `/tresorerie/taux-change` (nav Pilotage).  
+**Consommation SYSCO :** `AccountingPostingService` — détail [syscohada-domain-model.md](./syscohada-domain-model.md) §7.4.
+
+---
+
 ## 5. Enums
 
 ### 5.1. Source d’entrée (`FundEntrySource`)
@@ -357,8 +382,10 @@ Convention existante : `{resource}.read` / `{resource}.write` + permissions mét
 | `treasury.void` | Annuler (void) une opération |
 | `treasury.audit.read` | Consulter le journal d’audit |
 | `treasury.accounting_link.read` | Lire le stub pont comptable |
+| `treasury.fx_rates.read` | Catalogue taux de change (lecture) |
+| `treasury.fx_rates.write` | CRUD taux de change |
 
-IDs seed : `…001057` → `…001068`. Synchronisés via `ensure-rbac-permissions`, migration `add_treasury_rbac_permissions.sql`, et `pnpm --filter @africatourismgate/api sync:rbac`.  
+IDs seed : `…001057` → `…001068` (lot initial) + `…001079` / `…001080` (`fx_rates.*`, TRESO-046). Synchronisés via `ensure-rbac-permissions`, migrations RBAC / `add_treasury_exchange_rates.sql`, et `pnpm --filter @africatourismgate/api sync:rbac`.  
 Constantes : `TREASURY_PERMISSION_CODES` / `TREASURY_ROLE_PROFILE_PERMISSIONS` dans `rbac.constants.ts`.
 
 **Profils indicatifs (assignation `/systeme/roles` — TRESO-044) :**
@@ -369,8 +396,8 @@ Constantes : `TREASURY_PERMISSION_CODES` / `TREASURY_ROLE_PROFILE_PERMISSIONS` d
 | Valideur | + `treasury.expense_requests.validate` |
 | Autorisateur / responsable financier | + `authorize`, `externals.manage`, `void` |
 | Trésorier (saisie flux) | `entries.write`, `exits.write` |
-| Contrôle / lecture | `read`, `reports.read`, `audit.read`, `accounting_link.read` |
-| Finance admin | toutes les `treasury.*` |
+| Contrôle / lecture | `read`, `reports.read`, `audit.read`, `accounting_link.read`, `fx_rates.read` |
+| Finance admin | toutes les `treasury.*` (incl. `fx_rates.write`) |
 
 `super_admin` : bypass PermissionsGuard inchangé (+ grants explicites sur toutes les permissions).
 
@@ -390,7 +417,8 @@ Préfixe hub : `/tresorerie`
 | `/tresorerie/rapports` | Rapports |
 | `/tresorerie/externes` | Collaborateurs externes |
 | `/tresorerie/audit` | Journal d’audit |
-| `/tresorerie/comptabilite` | Placeholder pont (TRESO-040) |
+| `/tresorerie/taux-change` | Catalogue taux manuels (TRESO-046) |
+| `/tresorerie/comptabilite` | Placeholder pont (TRESO-040) → hub SYSCO |
 
 Fichiers config : `dashboard-nav.config.ts`, `admin-route-permissions.ts`, `admin-sections.registry.ts`.
 
@@ -423,6 +451,7 @@ Fichiers config : `dashboard-nav.config.ts`, `admin-route-permissions.ts`, `admi
 - Génération automatique d’écritures comptables
 
 **Livré à la place :** `accounting_links` (stub) + UI placeholder + doc handoff **TRESO-041** (`docs/tresorerie-syscohada-epic-next.md`).  
+**Add-on devises :** catalogue `exchange_rates` + UI `/tresorerie/taux-change` (**TRESO-046**) — consommé par la comptabilisation SYSCO (§7.4 domaine SYSCO).  
 **Suite épic :** modèle de domaine [syscohada-domain-model.md](./syscohada-domain-model.md) (SYSCO-001) · tâches [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md).
 
 ---

@@ -701,7 +701,7 @@ Recommandations figées dans [syscohada-domain-model.md](./syscohada-domain-mode
 | Sujet | Question | Impact tâches |
 | ----- | -------- | ------------- |
 | Moment de comptabilisation | `recorded` + action manuelle MVP (reco) | SYSCO-001 ✅, SYSCO-004 |
-| Multi-devise | Une devise de tenue / exercice (reco) | SYSCO-001 ✅, SYSCO-002, SYSCO-008 |
+| Multi-devise | Une devise de tenue / exercice + taux manuels au post (reco) | SYSCO-001 ✅, SYSCO-002, SYSCO-008, **TRESO-046 ✅** |
 | Soft-delete + unique | Unique parmi non soft-deleted (reco) | SYSCO-005 |
 | Contrepassation | Nouvelle écriture + historique (reco) | SYSCO-005, SYSCO-008 |
 | Périmètre tiers / immos | Épic satellite (reco) | SYSCO-001 ✅ |
@@ -730,8 +730,10 @@ Parcours minimal (sans job CI Playwright lourd — SYSCO-011 reste ouvert pour s
 3. Lock période → `POST` écriture refuse ; unlock restaure.
 4. Clôture exercice (dernière période ouverte, pas de `draft`) → OD clôture + RAN si exercice N+1 ; bilan/CR cohérents avec balance.
 5. Permission `accounting.audit.read` → liste `/tresorerie/comptabilite/audit` ; compte lecture sans `accounting.post` → POST 403.
+6. **FX (TRESO-046) :** op devise ≠ tenue + taux manuel ≤ date op → lignes converties + `fx_rate` ; sans taux → post 400.
 
-**Reporté ensuite :** SYSCO-007 (caisse/banque/rapprochements), SYSCO-012 (OpenAPI/README).
+**Reporté ensuite :** SYSCO-007 (caisse/banque/rapprochements), SYSCO-012 (OpenAPI/README).  
+**Livré hors numérotation SYSCO :** TRESO-046 catalogue `exchange_rates` + conversion au post ([syscohada-domain-model.md](./syscohada-domain-model.md) §7.4).
 
 ---
 
