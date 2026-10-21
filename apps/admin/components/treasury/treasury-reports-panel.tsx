@@ -34,19 +34,9 @@ import {
   useFundEntrySourceLabels,
   useTreasuryPaymentMethodLabels,
 } from '../../lib/i18n/use-module-labels';
+import { treasuryCurrencySelectOptions } from '../../lib/treasury/currency-options';
 import { downloadTreasuryOperationsCsv } from '../../lib/treasury-reports-export';
 import { useChartTheme } from '../../lib/use-chart-theme';
-
-const CURRENCY_FILTER_OPTIONS = [
-  '',
-  'XOF',
-  'XAF',
-  'EUR',
-  'USD',
-  'MAD',
-  'GHS',
-  'NGN',
-] as const;
 
 function defaultDateFrom(): string {
   const now = new Date();
@@ -182,10 +172,10 @@ export function TreasuryReportsPanel() {
 
   const currencyOptions = useMemo(
     () =>
-      CURRENCY_FILTER_OPTIONS.map((code) => ({
-        value: code,
-        label: code === '' ? t('filters.currencyAll') : code,
-      })),
+      treasuryCurrencySelectOptions({
+        includeEmpty: true,
+        emptyLabel: t('filters.currencyAll'),
+      }),
     [t],
   );
 

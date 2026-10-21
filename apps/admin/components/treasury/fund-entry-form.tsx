@@ -22,7 +22,7 @@ import {
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { resolveUnknownApiError } from '../../lib/common-api-errors';
 import { formatMoney } from '../../lib/format-money';
@@ -30,9 +30,13 @@ import {
   useFundEntrySourceLabels,
   useTreasuryPaymentMethodLabels,
 } from '../../lib/i18n/use-module-labels';
+import {
+  FALLBACK_TREASURY_CURRENCY,
+  treasuryCurrencySelectOptions,
+} from '../../lib/treasury/currency-options';
+import { useOrganizationCurrency } from '../../lib/treasury/use-organization-currency';
 
 const SEARCH_DEBOUNCE_MS = 300;
-const CURRENCY_OPTIONS = ['XOF', 'XAF', 'EUR', 'USD', 'MAD', 'GHS', 'NGN'] as const;
 
 export type FundEntryFormValues = {
   organizationId: string;
@@ -49,7 +53,7 @@ export type FundEntryFormValues = {
 const defaultValues: FundEntryFormValues = {
   organizationId: '',
   amountMajor: '',
-  currency: 'XOF',
+  currency: FALLBACK_TREASURY_CURRENCY,
   operationDate: new Date().toISOString().slice(0, 10),
   source: '',
   paymentMethod: '',
@@ -140,6 +144,11 @@ export function FundEntryForm({
   );
   const [bookingsLoading, setBookingsLoading] = useState(false);
   const [pendingFiles, setPendingFiles] = useState<File[]>([]);
+  const currencyTouchedRef = useRef(false);
+  const prevOrgIdRef = useRef(values.organizationId);
+  const orgCurrency = useOrganizationCurrency(
+    mode === 'create' ? values.organizationId : undefined,
+  );
 
   const commonErrors = useMemo(
     () => ({
@@ -150,6 +159,20 @@ export function FundEntryForm({
     }),
     [tCommonErrors, tErrors],
   );
+
+  useEffect(() => {
+    if (values.organizationId !== prevOrgIdRef.current) {
+      prevOrgIdRef.current = values.organizationId;
+      currencyTouchedRef.current = false;
+    }
+  }, [values.organizationId]);
+
+  useEffect(() => {
+    if (mode !== 'create' || !orgCurrency || currencyTouchedRef.current) return;
+    setValues((prev) =>
+      prev.currency === orgCurrency ? prev : { ...prev, currency: orgCurrency },
+    );
+  }, [mode, orgCurrency]);
 
   useEffect(() => {
     let cancelled = false;
@@ -289,8 +312,11 @@ export function FundEntryForm({
   );
 
   const currencyOptions = useMemo(
-    () => CURRENCY_OPTIONS.map((code) => ({ value: code, label: code })),
-    [],
+    () =>
+      treasuryCurrencySelectOptions({
+        extraCodes: [orgCurrency, values.currency],
+      }),
+    [orgCurrency, values.currency],
   );
 
   const organizationOptions = useMemo(
@@ -462,7 +488,10 @@ export function FundEntryForm({
           label={tFields('currency')}
           value={values.currency}
           options={currencyOptions}
-          onChange={(e) => updateField('currency', e.target.value)}
+          onChange={(e) => {
+            currencyTouchedRef.current = true;
+            updateField('currency', e.target.value);
+          }}
           error={fieldErrors.currency}
           required
           disabled={disabled}

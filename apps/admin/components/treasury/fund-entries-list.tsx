@@ -31,13 +31,12 @@ import {
   useTreasuryPaymentMethodLabels,
 } from '../../lib/i18n/use-module-labels';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { treasuryCurrencySelectOptions } from '../../lib/treasury/currency-options';
 import { downloadTreasuryOperationsCsv } from '../../lib/treasury-reports-export';
 import { PermissionGate } from '../permission-gate';
 
 const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
-
-const CURRENCY_OPTIONS = ['XOF', 'XAF', 'EUR', 'USD', 'MAD', 'GHS', 'NGN'] as const;
 
 function formatBookingCount(count: number): string {
   return String(count);
@@ -125,10 +124,11 @@ export function FundEntriesList() {
   }, [searchInput]);
 
   const currencyOptions = useMemo(
-    () => [
-      { value: '', label: tCommon('filters.allFeminine') },
-      ...CURRENCY_OPTIONS.map((code) => ({ value: code, label: code })),
-    ],
+    () =>
+      treasuryCurrencySelectOptions({
+        includeEmpty: true,
+        emptyLabel: tCommon('filters.allFeminine'),
+      }),
     [tCommon],
   );
 

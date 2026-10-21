@@ -28,8 +28,7 @@ import {
   useBudgetPeriodLabels,
   useBudgetScopeLabels,
 } from '../../lib/i18n/use-module-labels';
-
-const CURRENCY_FILTER_OPTIONS = ['', 'XOF', 'XAF', 'EUR', 'USD', 'MAD', 'GHS', 'NGN'] as const;
+import { treasuryCurrencySelectOptions } from '../../lib/treasury/currency-options';
 
 export function BudgetVsActualPanel() {
   const t = useTranslations('modules.treasury.budgets.vsActual');
@@ -136,10 +135,10 @@ export function BudgetVsActualPanel() {
 
   const currencyOptions = useMemo(
     () =>
-      CURRENCY_FILTER_OPTIONS.map((code) => ({
-        value: code,
-        label: code === '' ? t('filterCurrencyAll') : code,
-      })),
+      treasuryCurrencySelectOptions({
+        includeEmpty: true,
+        emptyLabel: t('filterCurrencyAll'),
+      }),
     [t],
   );
 

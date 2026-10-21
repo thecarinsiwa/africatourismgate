@@ -13,12 +13,15 @@ import {
 import type { ValidateTreasuryAccessTokenResponse } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
-import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { resolveUnknownApiError } from '../../lib/common-api-errors';
+import {
+  FALLBACK_TREASURY_CURRENCY,
+  treasuryCurrencySelectOptions,
+} from '../../lib/treasury/currency-options';
+import { useOrganizationCurrency } from '../../lib/treasury/use-organization-currency';
 import { BrandingLogo } from '../branding-logo';
-
-const CURRENCY_OPTIONS = ['XOF', 'XAF', 'EUR', 'USD', 'MAD', 'GHS', 'NGN'] as const;
 
 function parseMoneyToCents(value: string): number | null {
   const trimmed = value.trim();
@@ -64,17 +67,29 @@ function ExternalExpenseRequestFormInner() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [amountMajor, setAmountMajor] = useState('');
-  const [currency, setCurrency] = useState('XOF');
+  const [currency, setCurrency] = useState<string>(FALLBACK_TREASURY_CURRENCY);
   const [neededByDate, setNeededByDate] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [createdId, setCreatedId] = useState<string | null>(null);
+  const currencyTouchedRef = useRef(false);
+  const orgCurrency = useOrganizationCurrency(
+    access?.collaborator.organizationId,
+  );
 
   const currencyOptions = useMemo(
-    () => CURRENCY_OPTIONS.map((code) => ({ value: code, label: code })),
-    [],
+    () =>
+      treasuryCurrencySelectOptions({
+        extraCodes: [orgCurrency, currency],
+      }),
+    [orgCurrency, currency],
   );
+
+  useEffect(() => {
+    if (!orgCurrency || currencyTouchedRef.current) return;
+    setCurrency((prev) => (prev === orgCurrency ? prev : orgCurrency));
+  }, [orgCurrency]);
 
   const validateToken = useCallback(async () => {
     if (!token) {
@@ -279,7 +294,10 @@ function ExternalExpenseRequestFormInner() {
                     label={tFields('currency')}
                     value={currency}
                     options={currencyOptions}
-                    onChange={(e) => setCurrency(e.target.value)}
+                    onChange={(e) => {
+                      currencyTouchedRef.current = true;
+                      setCurrency(e.target.value);
+                    }}
                     error={fieldErrors.currency}
                     required
                     disabled={submitting}

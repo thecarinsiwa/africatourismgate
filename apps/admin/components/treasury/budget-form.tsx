@@ -17,7 +17,7 @@ import {
 } from '@africatourismgate/types';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { resolveUnknownApiError } from '../../lib/common-api-errors';
 import {
@@ -25,8 +25,12 @@ import {
   useBudgetProductTypeLabels,
   useBudgetScopeLabels,
 } from '../../lib/i18n/use-module-labels';
+import {
+  FALLBACK_TREASURY_CURRENCY,
+  treasuryCurrencySelectOptions,
+} from '../../lib/treasury/currency-options';
+import { useOrganizationCurrency } from '../../lib/treasury/use-organization-currency';
 
-const CURRENCY_OPTIONS = ['XOF', 'XAF', 'EUR', 'USD', 'MAD', 'GHS', 'NGN'] as const;
 const SEARCH_DEBOUNCE_MS = 300;
 
 type SearchOption = { id: string; label: string };
@@ -53,7 +57,7 @@ const defaultValues: FormValues = {
   year: String(new Date().getFullYear()),
   month: String(new Date().getMonth() + 1),
   amountMajor: '',
-  currency: 'XOF',
+  currency: FALLBACK_TREASURY_CURRENCY,
   scopeType: 'general',
   activityId: '',
   productType: '',
@@ -235,6 +239,11 @@ export function BudgetForm({ mode, budgetId, initialBudget }: BudgetFormProps) {
       ? `${initialBudget.productId.slice(0, 8)}…`
       : '',
   );
+  const currencyTouchedRef = useRef(false);
+  const prevOrgIdRef = useRef(values.organizationId);
+  const orgCurrency = useOrganizationCurrency(
+    mode === 'create' ? values.organizationId : undefined,
+  );
 
   const commonErrors = useMemo(
     () => ({
@@ -245,6 +254,20 @@ export function BudgetForm({ mode, budgetId, initialBudget }: BudgetFormProps) {
     }),
     [tCommonErrors, tErrors],
   );
+
+  useEffect(() => {
+    if (values.organizationId !== prevOrgIdRef.current) {
+      prevOrgIdRef.current = values.organizationId;
+      currencyTouchedRef.current = false;
+    }
+  }, [values.organizationId]);
+
+  useEffect(() => {
+    if (mode !== 'create' || !orgCurrency || currencyTouchedRef.current) return;
+    setValues((prev) =>
+      prev.currency === orgCurrency ? prev : { ...prev, currency: orgCurrency },
+    );
+  }, [mode, orgCurrency]);
 
   useEffect(() => {
     let cancelled = false;
@@ -424,8 +447,11 @@ export function BudgetForm({ mode, budgetId, initialBudget }: BudgetFormProps) {
   }, [locale]);
 
   const currencyOptions = useMemo(
-    () => CURRENCY_OPTIONS.map((code) => ({ value: code, label: code })),
-    [],
+    () =>
+      treasuryCurrencySelectOptions({
+        extraCodes: [orgCurrency, values.currency],
+      }),
+    [orgCurrency, values.currency],
   );
 
   const organizationOptions = useMemo(
@@ -676,7 +702,10 @@ export function BudgetForm({ mode, budgetId, initialBudget }: BudgetFormProps) {
           label={tFields('currency')}
           value={values.currency}
           options={currencyOptions}
-          onChange={(e) => updateField('currency', e.target.value)}
+          onChange={(e) => {
+            currencyTouchedRef.current = true;
+            updateField('currency', e.target.value);
+          }}
           error={fieldErrors.currency}
           required
           disabled={disabled}

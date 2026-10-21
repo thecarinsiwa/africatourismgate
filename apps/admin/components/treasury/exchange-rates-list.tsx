@@ -16,22 +16,18 @@ import {
 } from '@africatourismgate/ui';
 import type { ExchangeRate, OrganizationListItem } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { resolveUnknownApiError } from '../../lib/common-api-errors';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import {
+  FALLBACK_TREASURY_CURRENCY,
+  treasuryCurrencySelectOptions,
+} from '../../lib/treasury/currency-options';
+import { useOrganizationCurrency } from '../../lib/treasury/use-organization-currency';
 import { PermissionGate } from '../permission-gate';
 
 const PAGE_SIZE = 20;
-const CURRENCY_OPTIONS = [
-  'XOF',
-  'XAF',
-  'EUR',
-  'USD',
-  'MAD',
-  'GHS',
-  'NGN',
-] as const;
 
 type FormState = {
   fromCurrency: string;
@@ -43,7 +39,7 @@ type FormState = {
 
 const EMPTY_FORM: FormState = {
   fromCurrency: 'EUR',
-  toCurrency: 'XOF',
+  toCurrency: FALLBACK_TREASURY_CURRENCY,
   rate: '',
   effectiveOn: '',
   notes: '',
@@ -85,6 +81,9 @@ export function ExchangeRatesList() {
         totalPages: number;
       }
   >({ status: 'loading' });
+  const toCurrencyTouchedRef = useRef(false);
+  const prevOrgIdRef = useRef(organizationId);
+  const orgCurrency = useOrganizationCurrency(organizationId || undefined);
 
   const commonErrorMessages = useMemo(
     () => ({
@@ -98,17 +97,44 @@ export function ExchangeRatesList() {
   );
 
   const currencySelectOptions = useMemo(
-    () => [
-      { value: '', label: tFilters('filters.all') },
-      ...CURRENCY_OPTIONS.map((code) => ({ value: code, label: code })),
-    ],
-    [tFilters],
+    () =>
+      treasuryCurrencySelectOptions({
+        includeEmpty: true,
+        emptyLabel: tFilters('filters.all'),
+        extraCodes: [orgCurrency],
+      }),
+    [tFilters, orgCurrency],
   );
 
   const formCurrencyOptions = useMemo(
-    () => CURRENCY_OPTIONS.map((code) => ({ value: code, label: code })),
-    [],
+    () =>
+      treasuryCurrencySelectOptions({
+        extraCodes: [orgCurrency, form.toCurrency, form.fromCurrency],
+      }),
+    [orgCurrency, form.toCurrency, form.fromCurrency],
   );
+
+  useEffect(() => {
+    if (organizationId !== prevOrgIdRef.current) {
+      prevOrgIdRef.current = organizationId;
+      toCurrencyTouchedRef.current = false;
+    }
+  }, [organizationId]);
+
+  useEffect(() => {
+    if (
+      !orgCurrency ||
+      toCurrencyTouchedRef.current ||
+      (modalOpen && editing)
+    ) {
+      return;
+    }
+    setForm((prev) =>
+      prev.toCurrency === orgCurrency
+        ? prev
+        : { ...prev, toCurrency: orgCurrency },
+    );
+  }, [orgCurrency, modalOpen, editing]);
 
   useEffect(() => {
     let cancelled = false;
@@ -185,8 +211,10 @@ export function ExchangeRatesList() {
 
   const openCreate = () => {
     setEditing(null);
+    toCurrencyTouchedRef.current = false;
     setForm({
       ...EMPTY_FORM,
+      toCurrency: orgCurrency ?? FALLBACK_TREASURY_CURRENCY,
       effectiveOn: new Date().toISOString().slice(0, 10),
     });
     setFormError(null);
@@ -195,6 +223,7 @@ export function ExchangeRatesList() {
 
   const openEdit = (row: ExchangeRate) => {
     setEditing(row);
+    toCurrencyTouchedRef.current = true;
     setForm({
       fromCurrency: row.fromCurrency,
       toCurrency: row.toCurrency,
@@ -443,9 +472,10 @@ export function ExchangeRatesList() {
               label={t('form.toCurrency')}
               value={form.toCurrency}
               options={formCurrencyOptions}
-              onChange={(e) =>
-                setForm((prev) => ({ ...prev, toCurrency: e.target.value }))
-              }
+              onChange={(e) => {
+                toCurrencyTouchedRef.current = true;
+                setForm((prev) => ({ ...prev, toCurrency: e.target.value }));
+              }}
             />
           </div>
           <Input
