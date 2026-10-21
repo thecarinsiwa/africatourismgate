@@ -11,6 +11,7 @@ import {
   renderBookingConfirmationEmail,
   renderOperationAlertEmail,
   renderPasswordResetEmail,
+  renderTreasuryExternalInviteEmail,
   renderWelcomeEmail,
 } from './email.templates';
 import {
@@ -48,6 +49,7 @@ import type {
   PosReceiptEmailPayload,
   SendMailResult,
   EmailAttachment,
+  TreasuryExternalInviteEmailPayload,
   WelcomeEmailPayload,
 } from './email.types';
 
@@ -77,6 +79,17 @@ export class EmailService implements OnModuleInit {
   ): Promise<SendMailResult> {
     const branding = await this.resolveBranding();
     const { subject, html, text } = renderPasswordResetEmail(payload, branding);
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendTreasuryExternalInvite(
+    payload: TreasuryExternalInviteEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderTreasuryExternalInviteEmail(
+      payload,
+      branding,
+    );
     return this.send('service', { to: payload.to, subject, html, text });
   }
 

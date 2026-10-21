@@ -108,6 +108,48 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
   },
   {
     type: 'group',
+    id: 'treasury',
+    iconKey: 'creditCard',
+    children: [
+      { href: '/tresorerie', labelKey: 'treasuryHub', iconKey: 'creditCard' },
+      { href: '/tresorerie/entrees', labelKey: 'treasuryEntries', iconKey: 'list' },
+      { href: '/tresorerie/sorties', labelKey: 'treasuryExits', iconKey: 'list' },
+      { href: '/tresorerie/besoins', labelKey: 'treasuryExpenseRequests', iconKey: 'document' },
+      { href: '/tresorerie/budgets', labelKey: 'treasuryBudgets', iconKey: 'chart' },
+    ],
+  },
+  {
+    type: 'group',
+    id: 'treasury-accounting',
+    iconKey: 'document',
+    children: [
+      { href: '/tresorerie/comptabilite', labelKey: 'treasuryAccounting', iconKey: 'document' },
+      { href: '/tresorerie/comptabilite/journal', labelKey: 'treasuryJournal', iconKey: 'list' },
+      {
+        href: '/tresorerie/comptabilite/grand-livre',
+        labelKey: 'treasuryGeneralLedger',
+        iconKey: 'list',
+      },
+      { href: '/tresorerie/comptabilite/balance', labelKey: 'treasuryBalance', iconKey: 'chart' },
+    ],
+  },
+  {
+    type: 'group',
+    id: 'treasury-control',
+    iconKey: 'shield',
+    children: [
+      { href: '/tresorerie/rapports', labelKey: 'treasuryReports', iconKey: 'chart' },
+      {
+        href: '/tresorerie/taux-change',
+        labelKey: 'treasuryFxRates',
+        iconKey: 'creditCard',
+      },
+      { href: '/tresorerie/externes', labelKey: 'treasuryExternals', iconKey: 'users' },
+      { href: '/tresorerie/audit', labelKey: 'treasuryAudit', iconKey: 'shield' },
+    ],
+  },
+  {
+    type: 'group',
     id: 'gap',
     iconKey: 'globe',
     children: [
@@ -142,6 +184,7 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
     children: [
       { href: '/organisations', labelKey: 'organizations', iconKey: 'organisations' },
       { href: '/systeme/roles', labelKey: 'roles', iconKey: 'roles' },
+      { href: '/systeme/devises', labelKey: 'currencies', iconKey: 'creditCard' },
       { href: '/parametres', labelKey: 'settings', iconKey: 'sliders' },
     ],
   },

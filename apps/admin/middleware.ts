@@ -19,7 +19,16 @@ function isAuthPath(pathname: string): boolean {
   return AUTH_PATHS.has(pathname) || pathname.startsWith('/register/');
 }
 
+/** Lien jeton collaborateur externe (pas de session admin). */
+function isExternalAccessPath(pathname: string): boolean {
+  return (
+    pathname === '/tresorerie/externe/acces' ||
+    pathname.startsWith('/tresorerie/externe/acces/')
+  );
+}
+
 function isProtectedPath(pathname: string): boolean {
+  if (isExternalAccessPath(pathname)) return false;
   return adminProtectedPaths.some(
     (path) => pathname === path || pathname.startsWith(`${path}/`),
   );
@@ -135,5 +144,7 @@ export const config = {
     '/profil',
     '/guides',
     '/guides/:path*',
+    '/tresorerie',
+    '/tresorerie/:path*',
   ],
 };

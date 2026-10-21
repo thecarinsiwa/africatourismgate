@@ -1,0 +1,59 @@
+﻿{
+  "currencies": {
+    "ariaLabel": "Lista de divisas",
+    "accessDenied": "Acceso denegado: se requiere el permiso currencies.read.",
+    "empty": "Ninguna divisa.",
+    "hint": "Catálogo de plataforma (ISO 4217). Las divisas activas alimentan los desplegables de organización, tesorería y contabilidad.",
+    "newButton": "Nueva divisa",
+    "filters": {
+      "search": "Buscar",
+      "searchPlaceholder": "Código o etiqueta…",
+      "activeOnly": "Solo activas"
+    },
+    "columns": {
+      "code": "Código",
+      "label": "Etiqueta",
+      "symbol": "Símbolo",
+      "decimalPlaces": "Decimales",
+      "sortOrder": "Orden",
+      "status": "Estado",
+      "actions": "Acciones"
+    },
+    "status": {
+      "active": "Activa",
+      "inactive": "Inactiva"
+    },
+    "pagination": {
+      "item": "divisa"
+    },
+    "form": {
+      "createTitle": "Nueva divisa",
+      "editTitle": "Editar divisa",
+      "description": "Código ISO 4217 (3 letras). El código no se puede cambiar después de crearlo.",
+      "code": "Código",
+      "codeHint": "Ej. XOF, EUR, USD",
+      "label": "Etiqueta",
+      "symbol": "Símbolo",
+      "decimalPlaces": "Decimales",
+      "sortOrder": "Orden de visualización",
+      "isActive": "Activa",
+      "saving": "Guardando…"
+    },
+    "validation": {
+      "required": "El código (3 letras) y la etiqueta son obligatorios.",
+      "codeFormat": "El código debe ser 3 letras A–Z (ISO 4217)."
+    },
+    "delete": {
+      "title": "¿Eliminar esta divisa?",
+      "description": "La divisa se eliminará de forma lógica. No permitido si es la última divisa activa."
+    },
+    "common": {
+      "save": "Guardar",
+      "cancel": "Cancelar"
+    }
+  },
+  "errors": {
+    "loadFailed": "No se pueden cargar las divisas.",
+    "forbidden": "No tiene permiso para realizar esta acción."
+  }
+}

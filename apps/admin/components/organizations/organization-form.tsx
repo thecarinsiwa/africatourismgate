@@ -2,7 +2,15 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Card, Input, SearchableSelect, Textarea, useToast } from '@africatourismgate/ui';
+import {
+  Button,
+  Card,
+  Input,
+  SearchableSelect,
+  Select,
+  Textarea,
+  useToast,
+} from '@africatourismgate/ui';
 import type {
   CreateOrganizationRequest,
   Organization,
@@ -17,6 +25,8 @@ import {
   useOrganizationLegalFormOptions,
 } from '../../lib/i18n/use-module-labels';
 import { isValidSlug, slugifyName } from '../../lib/slug';
+import { FALLBACK_TREASURY_CURRENCY } from '../../lib/treasury/currency-options';
+import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
 
 export type OrganizationFormValues = {
   name: string;
@@ -46,7 +56,7 @@ const defaultValues: OrganizationFormValues = {
   idNat: '',
   nif: '',
   cnss: '',
-  currency: 'USD',
+  currency: FALLBACK_TREASURY_CURRENCY,
   status: 'active',
 };
 
@@ -147,6 +157,9 @@ export function OrganizationForm({
   const [values, setValues] = useState<OrganizationFormValues>(() =>
     initialOrganization ? organizationToFormValues(initialOrganization) : defaultValues,
   );
+  const { options: currencyOptions } = useActiveCurrencies({
+    extraCodes: [values.currency, initialOrganization?.currency],
+  });
   const [slugTouched, setSlugTouched] = useState(Boolean(initialOrganization));
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof OrganizationFormValues, string>>>(
     {},
@@ -364,12 +377,12 @@ export function OrganizationForm({
           <Card variant="dashboard" className="space-y-4">
             <h3 className="text-sm font-semibold text-atg-fg">{t('sections.configuration')}</h3>
             <div className="grid gap-4 sm:grid-cols-2">
-              <Input
+              <Select
                 label={t('currency')}
                 name="currency"
                 value={values.currency}
-                onChange={(e) => updateField('currency', e.target.value.toUpperCase())}
-                maxLength={3}
+                options={currencyOptions}
+                onChange={(e) => updateField('currency', e.target.value)}
                 error={fieldErrors.currency}
                 required
               />

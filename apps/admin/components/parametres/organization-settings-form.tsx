@@ -59,6 +59,8 @@ import { useOrganizationThemeOptional } from '../organization-theme-provider';
 import { BrandColorPaletteField } from './brand-color-palette-field';
 import { AuthVisualIconsField } from './auth-visual-icons-field';
 import { authVisualFromSetting } from '../../lib/auth-visual';
+import { FALLBACK_TREASURY_CURRENCY } from '../../lib/treasury/currency-options';
+import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
 import { OrganizationOrgSelector } from '../organizations/organization-org-selector';
 
 const BRANDING_IMAGE_MAX_BYTES = 2 * 1024 * 1024;
@@ -168,7 +170,7 @@ const defaultValues: SettingsFormValues = {
   facebookUrl: 'https://www.facebook.com/africatourismgate/',
   twitterUrl: 'https://x.com/Congotourismga1',
   instagramUrl: 'https://www.instagram.com/africatourismgate/',
-  currency: 'USD',
+  currency: FALLBACK_TREASURY_CURRENCY,
   language: 'fr',
   timezone: 'Africa/Kinshasa',
   holdMinutes: '15',
@@ -229,7 +231,7 @@ function toFormValues(
     facebookUrl: contactWeb?.facebookUrl ?? '',
     twitterUrl: contactWeb?.twitterUrl ?? '',
     instagramUrl: contactWeb?.instagramUrl ?? '',
-    currency: org.currency ?? locale?.currency ?? 'USD',
+    currency: org.currency ?? locale?.currency ?? FALLBACK_TREASURY_CURRENCY,
     language: locale?.language ?? 'fr',
     timezone: locale?.timezone ?? 'Africa/Kinshasa',
     holdMinutes: String(defaults?.holdMinutes ?? 15),
@@ -301,6 +303,9 @@ export function OrganizationSettingsForm({
   const router = useRouter();
   const orgTheme = useOrganizationThemeOptional();
   const [values, setValues] = useState<SettingsFormValues>(defaultValues);
+  const { options: currencyOptions } = useActiveCurrencies({
+    extraCodes: [values.currency],
+  });
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<keyof SettingsFormValues, string>>
   >({});
@@ -741,12 +746,12 @@ export function OrganizationSettingsForm({
                 onChange={(e) => updateField('instagramUrl', e.target.value)}
                 placeholder="https://www.instagram.com/..."
               />
-              <Input
+              <Select
                 label={t('sections.contact.currency')}
                 value={values.currency}
-                onChange={(e) => updateField('currency', e.target.value.toUpperCase())}
+                options={currencyOptions}
+                onChange={(e) => updateField('currency', e.target.value)}
                 error={fieldErrors.currency}
-                maxLength={3}
               />
             </div>
           </Card>
@@ -893,7 +898,9 @@ export function OrganizationSettingsForm({
                   onChange={(e) => updateField('depositFixedMajor', e.target.value)}
                   error={fieldErrors.depositFixedMajor}
                   hint={t('sections.booking.depositFixedHint', {
-                    currency: values.currency.trim().toUpperCase() || 'USD',
+                    currency:
+                      values.currency.trim().toUpperCase() ||
+                      FALLBACK_TREASURY_CURRENCY,
                   })}
                   placeholder="50.00"
                 />

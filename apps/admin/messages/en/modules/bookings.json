@@ -56,6 +56,7 @@
       "actions": "Actions",
       "bookingLines": "Booking lines",
       "payments": "Payments",
+      "treasury": "Linked treasury",
       "assignedGuides": "Assigned guides"
     },
     "clientFields": {
@@ -139,6 +140,21 @@
     "downloadConfirmationError": "Unable to download the confirmation PDF.",
     "paymentsEmpty": "No payments recorded for this booking.",
     "paymentsAriaLabel": "Payments",
+    "treasuryOps": {
+      "ariaLabel": "Linked treasury operations",
+      "empty": "No fund entries or exits linked to this booking.",
+      "kindEntry": "Entry",
+      "kindExit": "Exit",
+      "openDetail": "View",
+      "columns": {
+        "kind": "Type",
+        "date": "Date",
+        "amount": "Amount",
+        "status": "Status",
+        "reference": "Reference",
+        "link": "Detail"
+      }
+    },
     "statusDialog": {
       "title": "Confirm status change",
       "description": "Change this booking from “{fromStatus}” to “{toStatus}”?{reasonSuffix}",

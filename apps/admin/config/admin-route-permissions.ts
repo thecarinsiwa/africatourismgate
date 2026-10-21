@@ -28,6 +28,41 @@ export const ADMIN_ROUTE_ACCESS_RULES: RouteAccessRule[] = [
   { prefix: '/paiements/codes-promo', permission: 'promo_codes.read' },
   { prefix: '/paiements/promotions', permission: 'promotions.read' },
   { prefix: '/paiements', permission: 'payments.read' },
+  { prefix: '/tresorerie/rapports', permission: 'treasury.reports.read' },
+  {
+    prefix: '/tresorerie/taux-change',
+    permission: 'treasury.fx_rates.read',
+  },
+  { prefix: '/tresorerie/audit', permission: 'treasury.audit.read' },
+  {
+    prefix: '/tresorerie/comptabilite/audit',
+    permission: 'accounting.audit.read',
+  },
+  {
+    prefix: '/tresorerie/comptabilite/exercices',
+    anyOf: ['accounting.read', 'treasury.accounting_link.read'],
+  },
+  {
+    prefix: '/tresorerie/comptabilite/cloture',
+    permission: 'accounting.close',
+  },
+  {
+    prefix: '/tresorerie/comptabilite/bilan',
+    anyOf: ['accounting.reports.read', 'accounting.journal.read'],
+  },
+  {
+    prefix: '/tresorerie/comptabilite/compte-resultat',
+    anyOf: ['accounting.reports.read', 'accounting.journal.read'],
+  },
+  {
+    prefix: '/tresorerie/comptabilite',
+    anyOf: ['accounting.read', 'treasury.accounting_link.read'],
+  },
+  {
+    prefix: '/tresorerie/externes',
+    anyOf: ['treasury.externals.manage', 'treasury.read'],
+  },
+  { prefix: '/tresorerie', permission: 'treasury.read' },
   { prefix: '/gap', permission: 'gap.read' },
   { prefix: '/contenu/blog', permission: 'blog.read' },
   { prefix: '/contenu/site', permission: 'content.read' },
@@ -50,6 +85,7 @@ export const ADMIN_ROUTE_ACCESS_RULES: RouteAccessRule[] = [
   { prefix: '/aide', authenticatedOnly: true },
   { prefix: '/mise-en-route', authenticatedOnly: true },
   { prefix: '/organisations', authenticatedOnly: true },
+  { prefix: '/systeme/devises', permission: 'currencies.read' },
   { prefix: '/systeme/roles', authenticatedOnly: true },
   { prefix: '/analytics', permission: 'analytics.read' },
   { prefix: '/dashboard', authenticatedOnly: true },

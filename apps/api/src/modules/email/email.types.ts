@@ -16,6 +16,14 @@ export type PasswordResetEmailPayload = {
   resetUrl: string;
 };
 
+export type TreasuryExternalInviteEmailPayload = {
+  to: string;
+  displayName: string;
+  inviteUrl: string;
+  /** Durée de validité affichée (ex. « 72 heures ») */
+  ttlLabel: string;
+};
+
 export type WelcomeEmailPayload = {
   to: string;
   firstName: string;

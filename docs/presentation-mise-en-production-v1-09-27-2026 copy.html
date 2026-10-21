@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Africa Tourism Gate — Mise en production V1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="presentation-plateforme-users.css" />
+  <style>
+    .slide--scroll .slide-inner {
+      max-height: calc(100vh - 7.5rem);
+      overflow-y: auto;
+      padding-right: 0.35rem;
+      scrollbar-width: thin;
+    }
+
+    .slide--scroll .slide-inner::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .slide--scroll .slide-inner::-webkit-scrollbar-thumb {
+      background: rgba(27, 94, 74, 0.25);
+      border-radius: 3px;
+    }
+
+    .integration-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 0.85rem;
+      margin-top: 1rem;
+    }
+
+    .integration-block {
+      background: #fff;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 1rem 1.15rem;
+      box-shadow: var(--shadow);
+    }
+
+    .integration-block h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--color-primary-dark);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .integration-block .feature-list {
+      margin: 0;
+      font-size: 0.84rem;
+    }
+
+    .integration-block .feature-list li {
+      padding: 0.2rem 0 0.2rem 1.35rem;
+      line-height: 1.35;
+    }
+
+    .integration-panel {
+      margin-top: 1rem;
+      padding: 0.85rem 1.1rem;
+      background: rgba(27, 94, 74, 0.07);
+      border-radius: var(--radius);
+      border-left: 4px solid var(--color-primary);
+    }
+
+    .integration-panel h4 {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--color-primary);
+      margin-bottom: 0.45rem;
+    }
+
+    .integration-panel p,
+    .integration-panel ul {
+      font-size: 0.84rem;
+      color: var(--color-text-muted);
+      margin: 0;
+    }
+
+    .integration-panel ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .integration-panel li {
+      padding: 0.15rem 0;
+    }
+
+    .integration-panel li::before {
+      content: "·";
+      color: var(--color-primary-light);
+      font-weight: 700;
+      margin-right: 0.35rem;
+    }
+
+    .space-overview {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    .space-overview .card {
+      padding: 1rem 1.15rem;
+    }
+
+    .space-overview .card h3 {
+      font-size: 1rem;
+    }
+
+    .space-overview .card-url {
+      display: block;
+      margin-top: 0.5rem;
+      font-size: 0.78rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <symbol id="i-globe" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+      <path d="M2 12h20" />
+    </symbol>
+    <symbol id="i-credit-card" viewBox="0 0 24 24">
+      <rect width="20" height="14" x="2" y="5" rx="2" />
+      <path d="M2 10h20" />
+    </symbol>
+    <symbol id="i-star" viewBox="0 0 24 24">
+      <polygon
+        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24">
+      <rect width="20" height="14" x="2" y="3" rx="2" />
+      <path d="M8 21h8" />
+      <path d="M12 17v4" />
+    </symbol>
+    <symbol id="i-store" viewBox="0 0 24 24">
+      <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7" />
+      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+      <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4" />
+      <path d="M2 7h20" />
+      <path
+        d="M22 7v3a2 2 0 0 1-2 2a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7" />
+    </symbol>
+    <symbol id="i-bed" viewBox="0 0 24 24">
+      <path d="M2 4v16" />
+      <path d="M2 8h18a2 2 0 0 1 2 2v10" />
+      <path d="M2 17h20" />
+      <path d="M6 8v9" />
+    </symbol>
+    <symbol id="i-plane" viewBox="0 0 24 24">
+      <path
+        d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" />
+    </symbol>
+    <symbol id="i-car" viewBox="0 0 24 24">
+      <path
+        d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2" />
+      <circle cx="7" cy="17" r="2" />
+      <path d="M9 17h6" />
+      <circle cx="17" cy="17" r="2" />
+    </symbol>
+    <symbol id="i-ship" viewBox="0 0 24 24">
+      <path
+        d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+      <path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.25" />
+      <path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6" />
+      <path d="M12 10v4" />
+      <path d="M12 2v3" />
+    </symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10" />
+      <path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z" />
+    </symbol>
+    <symbol id="i-package" viewBox="0 0 24 24">
+      <path d="m7.5 4.27 9 5.15" />
+      <path
+        d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+      <path d="m3.3 7 8.7 5 8.7-5" />
+      <path d="M12 22V12" />
+    </symbol>
+    <symbol id="i-users" viewBox="0 0 24 24">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </symbol>
+    <symbol id="i-file-text" viewBox="0 0 24 24">
+      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+      <path d="M10 9H8" />
+      <path d="M16 13H8" />
+      <path d="M16 17H8" />
+    </symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24">
+      <path
+        d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+    </symbol>
+    <symbol id="i-handshake" viewBox="0 0 24 24">
+      <path d="m11 17 2 2a1 1 0 1 0 3-3" />
+      <path
+        d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4" />
+      <path d="m21 3 1 11h-2" />
+      <path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3" />
+      <path d="M3 4h8" />
+    </symbol>
+    <symbol id="i-luggage" viewBox="0 0 24 24">
+      <path d="M6 20a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2" />
+      <path d="M8 18V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v14" />
+      <path d="M10 20h4" />
+      <circle cx="16" cy="20" r="2" />
+      <circle cx="8" cy="20" r="2" />
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24">
+      <path d="M20 6 9 17l-5-5" />
+    </symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 6v6l4 2" />
+    </symbol>
+    <symbol id="i-megaphone" viewBox="0 0 24 24">
+      <path d="m3 11 18-5v12L3 14v-3z" />
+      <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" />
+    </symbol>
+    <symbol id="i-heart-handshake" viewBox="0 0 24 24">
+      <path
+        d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+      <path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66" />
+      <path d="m18 15-2-2" />
+      <path d="m15 18-2-2" />
+    </symbol>
+    <symbol id="i-sprout" viewBox="0 0 24 24">
+      <path d="M7 20h10" />
+      <path d="M10 20c5.5-2.5.8-6.4 3-10" />
+      <path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z" />
+      <path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z" />
+    </symbol>
+  </svg>
+
+  <div class="deck" id="deck">
+
+    <!-- 1 — Titre -->
+    <section class="slide slide--hero slide--hero-image active" data-slide="1">
+      <div class="slide-inner">
+        <img src="presentation-assets/logo.png" alt="Africa Tourism Gate" class="slide-logo" />
+        <span class="badge">Réunion · 27 septembre 2026</span>
+        <h1>Mise en production<br />— Version 1 —</h1>
+        <p class="subtitle">
+          Ce que nous ouvrons au public et à nos équipes&nbsp;: services, parcours clients et outils du quotidien.
+        </p>
+        <p class="meta">Direction · Commercial · Opérations · Partenaires</p>
+      </div>
+    </section>
+
+    <!-- 2 — Objectif -->
+    <section class="slide slide--light" data-slide="2" style="background-color: #fff;">
+      <div class="slide-inner">
+        <span class="slide-label">Objectif de la réunion</span>
+        <h2>Pourquoi sommes-nous réunis&nbsp;?</h2>
+        <p class="lead">
+          La <strong>première version</strong> de Africa Tourism Gate est prête à être utilisée en conditions réelles.
+          Cette séance sert à <span class="highlight">partager ce qui sera disponible</span> dès la mise en ligne —
+          sans entrer dans le détail technique.
+        </p>
+        <ul class="feature-list" style="margin-top:1.25rem">
+          <li>Parcourir les <strong>quatre espaces</strong> (Web, Admin, POS, GAP) et leurs modules livrés</li>
+          <li>Repérer les <strong>connexions disponibles</strong> (paiements, e-mails, cartes, etc.) dans chaque espace
+          </li>
+          <li>Clarifier ce qui relève d’une <strong>évolution ultérieure</strong> (hors V1)</li>
+          <li>Aligner les prochaines actions <strong>contenu, formation et support</strong></li>
+        </ul>
+      </div>
+      <img src="presentation-assets/africa-outline.svg" alt="" class="decor-africa" aria-hidden="true" />
+    </section>
+
+    <!-- 3 — En une phrase -->
+    <section class="slide slide--white" data-slide="3">
+      <div class="slide-inner slide-split">
+        <div class="slide-split__content">
+          <span class="slide-label">En bref</span>
+          <h2>Qu’ouvre cette V1&nbsp;?</h2>
+          <p class="lead">
+            Un <strong>guichet de voyage en ligne</strong> à votre marque&nbsp;: recherche, réservation, paiement et
+            suivi —
+            plus un <strong>espace de gestion</strong> pour traiter les dossiers, le catalogue et la relation client.
+          </p>
+          <p class="subtitle">
+            Conçu pour le terrain africain&nbsp;: réservation directe quand le produit le permet,
+            <strong>accompagnement humain</strong> quand une validation ou un devis est nécessaire.
+          </p>
+        </div>
+        <div class="slide-split__media">
+          <img src="presentation-assets/activity.jpg" alt="Expérience touristique"
+            class="slide-image slide-image--tall" />
+          <p class="image-caption">Votre offre touristique, présentée et vendue sur vos propres canaux</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 — Vue 4 espaces -->
+    <section class="slide slide--accent" data-slide="4">
+      <div class="slide-inner">
+        <span class="slide-label">Architecture</span>
+        <h2>Les 4 espaces de la V1</h2>
+        <p class="subtitle">Chaque interface regroupe des modules métier — le détail suit sur les slides suivantes.</p>
+        <div class="space-overview">
+          <div class="card card--space">
+            <div class="card-icon"><svg class="icon" aria-hidden="true">
+                <use href="#i-globe" />
+              </svg></div>
+            <h3>Site Web</h3>
+            <p>Voyageurs · catalogue, réservation, compte, support.</p>
+            <span class="card-url">africatourismgate.org</span>
+          </div>
+          <div class="card card--space">
+            <div class="card-icon"><svg class="icon" aria-hidden="true">
+                <use href="#i-monitor" />
+              </svg></div>
+            <h3>Admin</h3>
+            <p>Équipe · pilotage, catalogue, réservations, trésorerie.</p>
+            <span class="card-url">app-africatourismgate.org</span>
+          </div>
+          <div class="card card--space">
+            <div class="card-icon"><svg class="icon" aria-hidden="true">
+                <use href="#i-store" />
+              </svg></div>
+            <h3>POS</h3>
+            <p>Agence · vente sur place, manifeste, encaissement.</p>
+            <span class="card-url">pos.africatourismgate.org</span>
+          </div>
+          <div class="card card--space">
+            <div class="card-icon"><svg class="icon" aria-hidden="true">
+                <use href="#i-sprout" />
+              </svg></div>
+            <h3>GAP</h3>
+            <p>Programme Gorilla Ambassadors · sensibilisation et dons.</p>
+            <span class="card-url">gap.africatourismgate.org</span>
+          </div>
+        </div>
+        <p class="subtitle" style="margin-top:1.25rem;font-size:0.9rem">
+          En production initiale&nbsp;: site Web + Admin sont le cœur du lancement&nbsp;; POS et GAP selon activation
+          serveur.
+        </p>
+      </div>
+    </section>
+
+    <!-- 5 — Web -->
+    <section class="slide slide--white slide--scroll" data-slide="5">
+      <div class="slide-inner">
+        <span class="slide-label">Espace 1 · Site Web</span>
+        <h2>Modules &amp; connexions — voyageurs</h2>
+        <p class="lead" style="font-size:1rem">Interface publique multilingue (<strong>FR / EN / ES</strong>) pour
+          découvrir, réserver et suivre un séjour.</p>
+        <div class="integration-grid">
+          <div class="integration-block">
+            <h3>Découverte &amp; catalogue</h3>
+            <ul class="feature-list">
+              <li>Page d’accueil (hero, «&nbsp;Pourquoi nous&nbsp;», clients satisfaits)</li>
+              <li>Recherche globale et par vertical</li>
+              <li>Hébergements, vols, voitures, croisières, activités, forfaits</li>
+              <li>Destinations, partenaires, fiches détaillées avec photos</li>
+              <li>Cartes de localisation (OpenStreetMap)</li>
+              <li>Verticals masquables selon votre catalogue actif</li>
+            </ul>
+          </div>
+          <div class="integration-block">
+            <h3>Réservation &amp; checkout</h3>
+            <ul class="feature-list">
+              <li>Panier multi-produits et parcours de paiement</li>
+              <li>Réservation immédiate ou <strong>sur demande</strong> (validation équipe)</li>
+              <li>Manifeste multi-voyageurs, pièces d’identité (upload / caméra)</li>
+              <li>Contact d’urgence, infos médicales optionnelles</li>
+              <li>Codes promo et remises forfait</li>
+              <li>Confirmation e-mail + PDF de réservation</li>
+            </ul>
+          </div>
+          <div class="integration-block">
+            <h3>Compte client</h3>
+            <ul class="feature-list">
+              <li>Profil, adresses, moyens de paiement enregistrés</li>
+              <li>Liste et détail des réservations, statuts en direct</li>
+              <li>Téléchargement PDF, documents, messagerie par dossier</li>
+              <li>Programme fidélité <strong>OneKey</strong> (points)</li>
+              <li>Tickets support depuis le compte</li>
+            </ul>
+          </div>
+          <div class="integration-block">
+            <h3>Contenu &amp; engagement</h3>
+            <ul class="feature-list">
+              <li>Blog, pages À propos (équipe, gouvernance, rapports…)</li>
+              <li>Centre d’aide / FAQ par catégories</li>
+              <li>Pages légales (CGU, confidentialité)</li>
+              <li>Page dons · lien vers le site GAP</li>
+              <li>Mode maintenance si besoin</li>
+            </ul>
+          </div>
+        </div>
+        <div class="integration-panel">
+          <h4>Connexions disponibles (Web)</h4>
+          <ul>
+            <li><strong>Paiement carte</strong> — encaissement en ligne sécurisé</li>
+            <li><strong>Virement bancaire</strong> — consignes + dépôt de preuve de paiement</li>
+            <li><strong>Mobile money</strong> — instructions opérateur + preuve (sans débit auto en V1)</li>
+            <li><strong>Acomptes</strong> — premier versement puis solde avant confirmation finale</li>
+            <li><strong>Connexion Google</strong> — création / connexion compte au checkout</li>
+            <li><strong>E-mails transactionnels</strong> — confirmations et pièces jointes PDF</li>
+            <li>Espèces&nbsp;: réservées au guichet POS (non proposées par défaut sur le web)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 — Admin -->
+    <section class="slide slide--light slide--scroll" data-slide="6">
+      <div class="slide-inner">
+        <span class="slide-label">Espace 2 · Admin</span>
+        <h2>Modules &amp; connexions — équipe</h2>
+        <p class="lead" style="font-size:1rem">Back-office complet pour piloter l’activité, avec droits par rôle (RBAC).
+        </p>
+        <div class="integration-grid">
+          <div class="integration-block">
+            <h3>Pilotage</h3>
+            <ul class="feature-list">
+              <li>Tableau de bord et statistiques</li>
+              <li>Guide de mise en route</li>
+              <li>Centre de notifications (alertes staff)</li>
+              <li>Aide intégrée</li>
+            </ul>
+          </div>
+          <div class="integration-block">
+            <h3>Utilisateurs &amp; sécurité</h3>
+            <ul class="feature-list">
+              <li>Clients, employés, départements</li>
+              <li>Adresses et moyens de paiement clients</li>
+              <li>Sessions actives, journaux de sécurité</li>
+              <li>Rôles, permissions, assignations</li>
+              <li>Organisations multi-entités</li>
+            </ul>
+          </div>
+          <div class="integration-block">
+            <h3>Catalogue voyage</h3>
+            <ul class="feature-list">
+              <li>Hébergements, chambres, équipements, calendriers</li>
+              <li>Vols (compagnies, aéroports), locations, croisières</li>
+              <li>Activités, partenaires terrain, créneaux guides</li>
+              <li>Forfaits, destinations, contenus médias</li>
+              <li>Comptes fidélité OneKey</li>
+            </ul>
+          </div>
+          <div class="integration-block">
+            <h3>Réservations &amp; commercial</h3>
+            <ul class="feature-list">
+              <li>Suivi des dossiers, validation assistée, void</li>
+              <li>Guides touristiques et calendrier de disponibilité</li>
+              <li>Paiements, preuves, documents voyageurs</li>
+              <li>Codes promo et campagnes promotionnelles</li>
+            </ul>
+          </div>
+          <div class="integration-block">
+            <h3>Trésorerie &amp; comptabilité</h3>
+            <ul class="feature-list">
+              <li>Entrées / sorties de fonds, états de besoin</li>
+              <li>Budgets et suivi prévu vs réalisé</li>
+              <li>Rapports, collaborateurs externes, journal d’audit</li>
+              <li>Pont comptable, journal, grand livre, balance (socle SYSCOHADA)</li>
+            </ul>
+          </div>
+          <div class="integration-block">
+            <h3>Contenu, GAP &amp; paramètres</h3>
+            <ul class="feature-list">
+              <li>Blog, vitrine site, pages légales, modération avis</li>
+              <li>Support tickets · hero, «&nbsp;Pourquoi nous&nbsp;», équipe, timeline</li>
+              <li>Administration site GAP (pages, activités, impact, médias)</li>
+              <li>Paramètres&nbsp;: e-mails, maintenance, dons, comptes bancaires, mobile money</li>
+            </ul>
+          </div>
+        </div>
+        <div class="integration-panel" style="background-color: #fff; color: #000;">
+          <h4>Connexions disponibles (Admin)</h4>
+          <ul>
+            <li><strong>Stripe</strong> — suivi des paiements carte (aligné web / POS)</li>
+            <li><strong>Comptes bancaires &amp; mobile money</strong> — affichés aux clients selon activation</li>
+            <li><strong>E-mails</strong> — modèles et envois transactionnels</li>
+            <li><strong>Branding</strong> — logo, favicon, contacts publics</li>
+            <li><strong>Catalogue par organisation</strong> — activation des verticales produits</li>
+            <li><strong>Acomptes &amp; politique cash web</strong> — réglages organisation</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 — POS -->
+    <section class="slide slide--white slide--scroll" data-slide="7">
+      <div class="slide-inner">
+        <span class="slide-label">Espace 3 · POS</span>
+        <h2>Modules &amp; connexions — guichet agence</h2>
+        <p class="lead" style="font-size:1rem">Caisse tactile pour vendeurs&nbsp;: même catalogue que le web, adapté au
+          comptoir.</p>
+        <div class="integration-grid">
+          <div class="integration-block">
+            <h3>Session caisse</h3>
+            <ul class="feature-list">
+              <li>Connexion employé, choix d’établissement / organisation</li>
+              <li>Accueil avec actions rapides</li>
+              <li>Changement d’organisation sans déconnexion</li>
+              <li>Mode clair / sombre</li>
+            </ul>
+          </div>
+          <div class="integration-block">
+            <h3>Nouvelle vente</h3>
+            <ul class="feature-list">
+              <li>Recherche catalogue (activité, chambre, vol, véhicule, croisière, forfait)</li>
+              <li>Filtres par type de produit, panier et remises forfait</li>
+              <li>Client enregistré ou client de passage</li>
+              <li>Configuration dates, créneaux, croisières, voyageurs</li>
+              <li>Produits «&nbsp;sur demande&nbsp;» (réservation assistée)</li>
+              <li>Codes promo</li>
+            </ul>
+          </div>
+          <div class="integration-block">
+            <h3>Manifeste &amp; clôture</h3>
+            <ul class="feature-list">
+              <li>Manifeste voyageurs complet (identité, urgence, médical)</li>
+              <li>Encaissement <strong>espèces</strong> ou <strong>carte</strong></li>
+              <li>Reçu imprimable, PDF, envoi par e-mail</li>
+              <li>Annulation / libération stock si paiement carte en attente</li>
+            </ul>
+          </div>
+          <div class="integration-block">
+            <h3>Historique</h3>
+            <ul class="feature-list">
+              <li>Ventes du jour depuis cette caisse</li>
+              <li>Statuts réservation et mode de paiement</li>
+              <li>Accès détail et reçu</li>
+            </ul>
+          </div>
+        </div>
+        <div class="integration-panel">
+          <h4>Connexions disponibles (POS)</h4>
+          <ul>
+            <li><strong>API centrale</strong> — même moteur de réservation et de stock que le site</li>
+            <li><strong>Stripe (carte)</strong> — terminal de paiement intégré à l’écran de vente</li>
+            <li><strong>E-mail</strong> — envoi du reçu au client</li>
+            <li>Historique affiche aussi virement / mobile money si dossier créé avec ces modes ailleurs</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 — GAP -->
+    <section class="slide slide--accent slide--scroll" data-slide="8">
+      <div class="slide-inner">
+        <span class="slide-label">Espace 4 · GAP</span>
+        <h2>Modules &amp; connexions — Gorilla Ambassadors</h2>
+        <p class="lead" style="font-size:1rem">Site dédié au programme de conservation, alimenté depuis l’admin section
+          GAP.</p>
+        <div class="integration-grid">
+          <div class="integration-block">
+            <h3>Pages publiques</h3>
+            <ul class="feature-list">
+              <li>Accueil (bannière, chiffres d’impact, aperçu activités &amp; médias)</li>
+              <li>À propos du programme</li>
+              <li>Objectifs &amp; mission</li>
+              <li>UNESCO &amp; patrimoine</li>
+              <li>Liste des activités du programme</li>
+              <li>Galerie médias (photos / vidéos)</li>
+              <li>Page don — lien configurable vers votre collecte</li>
+            </ul>
+          </div>
+          <div class="integration-block">
+            <h3>Expérience visiteur</h3>
+            <ul class="feature-list">
+              <li>Multilingue (FR / EN / ES)</li>
+              <li>Thème clair / sombre</li>
+              <li>Lien retour vers le site principal Africa Tourism Gate</li>
+              <li>Bouton «&nbsp;Faire un don&nbsp;» en en-tête</li>
+            </ul>
+          </div>
+          <div class="integration-block">
+            <h3>Gestion (depuis Admin)</h3>
+            <ul class="feature-list">
+              <li>Paramètres site (titre, sous-titre, visuels, lien don)</li>
+              <li>Pages institutionnelles GAP</li>
+              <li>Activités et statistiques d’impact</li>
+              <li>Bibliothèque médias</li>
+            </ul>
+          </div>
+          <div class="integration-block">
+            <h3>Lien avec le site Web</h3>
+            <ul class="feature-list">
+              <li>Page dons sur africatourismgate.org</li>
+              <li>Renvoi vers gap.africatourismgate.org depuis le pied de page</li>
+              <li>Contenu synchronisé via la même plateforme</li>
+            </ul>
+          </div>
+        </div>
+        <div class="integration-panel">
+          <h4>Connexions disponibles (GAP)</h4>
+          <ul>
+            <li><strong>URL de don externe</strong> — boutons et CTA configurables (admin GAP)</li>
+            <li><strong>Site principal</strong> — navigation croisée pour le voyageur</li>
+            <li>Pas de réservation voyage sur GAP&nbsp;: focus sensibilisation &amp; collecte</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 — Hors V1 -->
+    <section class="slide slide--light" data-slide="9" style="background-color: #fff;">
+      <div class="slide-inner">
+        <span class="slide-label">Périmètre honnête</span>
+        <h2>Ce qui n’est pas dans cette première mise en ligne</h2>
+        <p class="lead">Choix assumés pour une V1 <strong>fiable et opérationnelle</strong> — pas un manque de vision.
+        </p>
+        <ul class="feature-list">
+          <li>Synchronisation automatique avec les systèmes des hôtels / agences partenaires (stock géré par votre
+            équipe)</li>
+          <li>Débit mobile money entièrement automatique via opérateur (preuve manuelle en V1)</li>
+          <li>Portail d’auto-inscription pour les partenaires externes (onboarding progressif)</li>
+          <li>Application mobile dédiée et cartographie avancée type Google Maps</li>
+          <li>États comptables réglementaires complets (SYSCOHADA)&nbsp;: socle préparé, exploitation métier à venir
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 10 — Après lancement -->
+    <section class="slide slide--white" data-slide="10">
+      <div class="slide-inner">
+        <span class="slide-label">Prochaines étapes</span>
+        <h2>Après la mise en production</h2>
+        <div class="card-grid card-grid--2">
+          <div class="card card--highlight">
+            <h3>Contenu &amp; catalogue</h3>
+            <p>Finaliser les fiches produits réelles, tarifs, photos et disponibilités avant communication large.</p>
+          </div>
+          <div class="card card--highlight">
+            <h3>Formation équipe</h3>
+            <p>Parcours type&nbsp;: nouvelle réservation assistée, validation paiement, manifeste, notifications.</p>
+          </div>
+          <div class="card card--highlight">
+            <h3>Support clients</h3>
+            <p>Canaux de contact, délais de réponse et escalade vers le back-office.</p>
+          </div>
+          <div class="card card--highlight">
+            <h3>Communication lancement</h3>
+            <p>Message cohérent sur les moyens de paiement acceptés et les délais de confirmation.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11 — Clôture -->
+    <section class="slide slide--hero slide--hero-image" data-slide="11">
+      <div class="slide-inner">
+        <span class="badge">Africa Tourism Gate · V1</span>
+        <h2 style="font-size:clamp(1.75rem,4vw,2.5rem);margin-bottom:1rem">Prêt pour le terrain</h2>
+        <p class="subtitle" style="max-width:640px;margin:0 auto 1.5rem">
+          Une plateforme complète pour vendre vos voyages en ligne, accompagner vos clients et piloter votre activité —
+          sous votre marque, avec vos règles.
+        </p>
+        <div class="link-grid" style="max-width:640px;margin:0 auto">
+          <a class="link-card" href="https://africatourismgate.org" target="_blank" rel="noopener">
+            <div class="link-card-head">
+              <span class="icon-wrap"><svg class="icon" aria-hidden="true">
+                  <use href="#i-globe" />
+                </svg></span>
+              <strong>Web</strong>
+            </div>
+            <span>africatourismgate.org</span>
+          </a>
+          <a class="link-card" href="https://app-africatourismgate.org/login" target="_blank" rel="noopener">
+            <div class="link-card-head">
+              <span class="icon-wrap"><svg class="icon" aria-hidden="true">
+                  <use href="#i-monitor" />
+                </svg></span>
+              <strong>Admin</strong>
+            </div>
+            <span>app-africatourismgate.org</span>
+          </a>
+          <a class="link-card" href="https://pos.africatourismgate.org" target="_blank" rel="noopener">
+            <div class="link-card-head">
+              <span class="icon-wrap"><svg class="icon" aria-hidden="true">
+                  <use href="#i-store" />
+                </svg></span>
+              <strong>POS</strong>
+            </div>
+            <span>pos.africatourismgate.org</span>
+          </a>
+          <a class="link-card" href="https://gap.africatourismgate.org" target="_blank" rel="noopener">
+            <div class="link-card-head">
+              <span class="icon-wrap"><svg class="icon" aria-hidden="true">
+                  <use href="#i-sprout" />
+                </svg></span>
+              <strong>GAP</strong>
+            </div>
+            <span>gap.africatourismgate.org</span>
+          </a>
+        </div>
+        <p class="meta" style="margin-top:2rem">Merci · Questions &amp; échanges</p>
+      </div>
+    </section>
+
+  </div>
+
+  <p class="nav-hint">← → ou clic pour naviguer · F plein écran</p>
+
+  <nav class="nav-bar" aria-label="Navigation présentation">
+    <button class="nav-prev" id="btnPrev" aria-label="Slide précédente">← Précédent</button>
+    <div class="nav-info">
+      <span class="nav-counter" id="navCounter">1 / 11</span>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width: 9.09%"></div>
+      </div>
+    </div>
+    <button class="nav-next" id="btnNext" aria-label="Slide suivante">Suivant →</button>
+  </nav>
+
+  <script>
+    (function () {
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const total = slides.length;
+      let current = 0;
+
+      const btnPrev = document.getElementById("btnPrev");
+      const btnNext = document.getElementById("btnNext");
+      const navCounter = document.getElementById("navCounter");
+      const progressFill = document.getElementById("progressFill");
+
+      function goTo(index) {
+        if (index < 0 || index >= total) return;
+
+        slides[current].classList.remove("active", "prev");
+        if (index < current) slides[current].classList.add("prev");
+
+        current = index;
+        slides[current].classList.add("active");
+        slides[current].classList.remove("prev");
+
+        navCounter.textContent = (current + 1) + " / " + total;
+        progressFill.style.width = ((current + 1) / total * 100) + "%";
+
+        btnPrev.disabled = current === 0;
+        btnNext.disabled = current === total - 1;
+
+        history.replaceState(null, "", "#slide-" + (current + 1));
+      }
+
+      function next() { goTo(current + 1); }
+      function prev() { goTo(current - 1); }
+
+      btnNext.addEventListener("click", next);
+      btnPrev.addEventListener("click", prev);
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
+          e.preventDefault();
+          next();
+        } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+          e.preventDefault();
+          prev();
+        } else if (e.key === "Home") {
+          goTo(0);
+        } else if (e.key === "End") {
+          goTo(total - 1);
+        } else if (e.key === "f" || e.key === "F") {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(function () { });
+          } else {
+            document.exitFullscreen();
+          }
+        }
+      });
+
+      document.getElementById("deck").addEventListener("click", function (e) {
+        if (e.target.closest("button, a, summary, .demo-tab")) return;
+        var rect = e.currentTarget.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        if (x > rect.width / 2) next(); else prev();
+      });
+
+      var hash = location.hash.match(/^#slide-(\d+)$/);
+      if (hash) goTo(Math.min(parseInt(hash[1], 10) - 1, total - 1));
+      else goTo(0);
+    })();
+  </script>
+
+</body>
+
+</html>

@@ -7,6 +7,7 @@ import {
   TourGuides,
   Users,
 } from '../../../entities/generated';
+import { CurrenciesModule } from '../currencies/currencies.module';
 import { OrganizationsController } from './organizations.controller';
 import { OrganizationsService } from './organizations.service';
 
@@ -19,6 +20,7 @@ import { OrganizationsService } from './organizations.service';
       Employees,
       TourGuides,
     ]),
+    CurrenciesModule,
   ],
   controllers: [OrganizationsController],
   providers: [OrganizationsService],

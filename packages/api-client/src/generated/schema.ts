@@ -106,6 +106,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/me/avatar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload current user profile photo (JPEG, PNG or WebP, max 5 Mo) */
+        post: operations["AuthController_uploadAvatar"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/login": {
         parameters: {
             query?: never;
@@ -270,6 +287,23 @@ export interface paths {
         put?: never;
         /** Verify email operation code (register, Google signup, booking) */
         post: operations["AuthController_verifyOperation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/resend-verification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Resend email verification code for a pending operation */
+        post: operations["AuthController_resendVerification"];
         delete?: never;
         options?: never;
         head?: never;
@@ -588,6 +622,92 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/bookings/{id}/payment-proofs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List payment proofs for a booking */
+        get: operations["BookingsController_listPaymentProofs"];
+        put?: never;
+        /** Upload a payment proof (JPEG, PNG, WebP or PDF, max 10 MB) and create a pending payment */
+        post: operations["BookingsController_uploadPaymentProof"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bookings/{id}/payment-proofs/{proofId}/file": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download a payment proof file (authenticated) */
+        get: operations["BookingsController_downloadPaymentProof"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bookings/{id}/payment-proofs/{proofId}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve a payment proof and mark its payment succeeded (confirm only when fully paid) */
+        post: operations["BookingsController_approvePaymentProof"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bookings/{id}/payment-proofs/{proofId}/request-resubmit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Request a clearer payment proof (staff) */
+        post: operations["BookingsController_requestPaymentProofResubmit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bookings/{id}/payment-proofs/{proofId}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reject a payment proof (staff) */
+        post: operations["BookingsController_rejectPaymentProof"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/bookings/{id}/manifest-entries": {
         parameters: {
             query?: never;
@@ -642,6 +762,23 @@ export interface paths {
         patch: operations["BookingsController_updateManifestEntry"];
         trace?: never;
     };
+    "/api/bookings/{id}/confirmation-pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download booking confirmation PDF (owner or staff) */
+        get: operations["BookingsController_downloadConfirmationPdf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/bookings/{id}": {
         parameters: {
             query?: never;
@@ -685,8 +822,59 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Record cash payment and confirm booking (POS) */
+        /** Record cash payment (partial or full); confirm only when fully paid */
         post: operations["BookingsController_recordCashPayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bookings/{id}/bank-transfer-payment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Record bank transfer / Mobile Money payment (partial or full); confirm only when fully paid */
+        post: operations["BookingsController_recordBankTransferPayment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bookings/{id}/receipt-email": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send POS cash register receipt by email (SMTP) */
+        post: operations["BookingsController_sendReceiptEmail"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bookings/{id}/receipt-pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download POS cash register receipt PDF */
+        get: operations["BookingsController_downloadReceiptPdf"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -914,6 +1102,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/organization-settings/public/payment-methods": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get enabled payment methods for the public web checkout */
+        get: operations["OrganizationSettingsController_findPublicPaymentMethods"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/organization-settings/public/catalog-products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get enabled product verticals for the public site menu and routes */
+        get: operations["OrganizationSettingsController_findPublicCatalogProducts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/organization-settings/public/maintenance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get public site maintenance mode settings */
+        get: operations["OrganizationSettingsController_findPublicSiteMaintenance"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/organization-settings/bulk": {
         parameters: {
             query?: never;
@@ -983,6 +1222,259 @@ export interface paths {
         head?: never;
         /** Update organization-settings */
         patch: operations["OrganizationSettingsController_update"];
+        trace?: never;
+    };
+    "/api/organization-maintenances": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List organization maintenances (scoped) */
+        get: operations["OrganizationMaintenancesController_findAll"];
+        put?: never;
+        /** Create organization maintenance (scoped) */
+        post: operations["OrganizationMaintenancesController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/organization-maintenances/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get organization maintenance by id (scoped) */
+        get: operations["OrganizationMaintenancesController_findOne"];
+        put?: never;
+        post?: never;
+        /** Soft-delete organization maintenance (scoped) */
+        delete: operations["OrganizationMaintenancesController_remove"];
+        options?: never;
+        head?: never;
+        /** Update organization maintenance (scoped) */
+        patch: operations["OrganizationMaintenancesController_update"];
+        trace?: never;
+    };
+    "/api/public/organization-maintenances/current": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Current active site-maintenance window for the public site (by organization slug + locale) */
+        get: operations["PublicOrganizationMaintenancesController_current"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/organization-bank-accounts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List organization bank accounts (scoped) */
+        get: operations["OrganizationBankAccountsController_findAll"];
+        put?: never;
+        /** Create organization bank account (scoped) */
+        post: operations["OrganizationBankAccountsController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/organization-bank-accounts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get organization bank account by id (scoped) */
+        get: operations["OrganizationBankAccountsController_findOne"];
+        put?: never;
+        post?: never;
+        /** Soft-delete organization bank account (scoped) */
+        delete: operations["OrganizationBankAccountsController_remove"];
+        options?: never;
+        head?: never;
+        /** Update organization bank account (scoped) */
+        patch: operations["OrganizationBankAccountsController_update"];
+        trace?: never;
+    };
+    "/api/public/payment-bank-accounts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List active organization bank accounts for bank transfer payment instructions (unmasked) */
+        get: operations["PublicPaymentBankAccountsController_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/mobile-money/countries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Mobile Money countries (org-scoped) */
+        get: operations["MobileMoneyConfigController_listCountries"];
+        put?: never;
+        /** Create Mobile Money country */
+        post: operations["MobileMoneyConfigController_createCountry"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/mobile-money/countries/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Mobile Money country by id */
+        get: operations["MobileMoneyConfigController_getCountry"];
+        put?: never;
+        post?: never;
+        /** Soft-delete Mobile Money country */
+        delete: operations["MobileMoneyConfigController_removeCountry"];
+        options?: never;
+        head?: never;
+        /** Update Mobile Money country */
+        patch: operations["MobileMoneyConfigController_updateCountry"];
+        trace?: never;
+    };
+    "/api/mobile-money/operators": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Mobile Money operators for a country */
+        get: operations["MobileMoneyConfigController_listOperators"];
+        put?: never;
+        /** Create Mobile Money operator */
+        post: operations["MobileMoneyConfigController_createOperator"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/mobile-money/operators/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Mobile Money operator by id */
+        get: operations["MobileMoneyConfigController_getOperator"];
+        put?: never;
+        post?: never;
+        /** Soft-delete Mobile Money operator */
+        delete: operations["MobileMoneyConfigController_removeOperator"];
+        options?: never;
+        head?: never;
+        /** Update Mobile Money operator */
+        patch: operations["MobileMoneyConfigController_updateOperator"];
+        trace?: never;
+    };
+    "/api/mobile-money/operators/{id}/upload-logo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload Mobile Money operator logo (JPEG/PNG/WebP, max 2 MB) */
+        post: operations["MobileMoneyConfigController_uploadOperatorLogo"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/mobile-money/numbers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Mobile Money payment numbers for an operator */
+        get: operations["MobileMoneyConfigController_listNumbers"];
+        put?: never;
+        /** Create Mobile Money payment number */
+        post: operations["MobileMoneyConfigController_createNumber"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/mobile-money/numbers/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Mobile Money payment number by id */
+        get: operations["MobileMoneyConfigController_getNumber"];
+        put?: never;
+        post?: never;
+        /** Soft-delete Mobile Money payment number */
+        delete: operations["MobileMoneyConfigController_removeNumber"];
+        options?: never;
+        head?: never;
+        /** Update Mobile Money payment number */
+        patch: operations["MobileMoneyConfigController_updateNumber"];
+        trace?: never;
+    };
+    "/api/public/mobile-money-config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Active Mobile Money countries → operators → payment numbers for checkout instructions */
+        get: operations["PublicMobileMoneyConfigController_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/tour-guides": {
@@ -1158,6 +1650,74 @@ export interface paths {
         head?: never;
         /** Approve or hide a review */
         patch: operations["ReviewsController_updateStatus"];
+        trace?: never;
+    };
+    "/api/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List staff notifications for the current user */
+        get: operations["NotificationsController_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/unread-count": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Unread notification count for the current user */
+        get: operations["NotificationsController_unreadCount"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/notifications/{id}/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Mark a notification as read */
+        patch: operations["NotificationsController_markRead"];
+        trace?: never;
+    };
+    "/api/notifications/mark-all-read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark all notifications as read for the current user */
+        post: operations["NotificationsController_markAllRead"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/packages": {
@@ -1509,10 +2069,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List user-addresses */
+        /** List user addresses (scoped to current user unless staff) */
         get: operations["UserAddressesController_findAll"];
         put?: never;
-        /** Create user-addresses */
+        /** Create user address for current user */
         post: operations["UserAddressesController_create"];
         delete?: never;
         options?: never;
@@ -1527,15 +2087,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get user-addresses by id */
+        /** Get user address by id */
         get: operations["UserAddressesController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete user-addresses */
+        /** Soft-delete user address */
         delete: operations["UserAddressesController_remove"];
         options?: never;
         head?: never;
-        /** Update user-addresses */
+        /** Update user address */
         patch: operations["UserAddressesController_update"];
         trace?: never;
     };
@@ -1546,10 +2106,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List user-payment-methods */
+        /** List user payment methods (scoped to current user unless staff) */
         get: operations["UserPaymentMethodsController_findAll"];
         put?: never;
-        /** Create user-payment-methods */
+        /** Create user payment method for current user */
         post: operations["UserPaymentMethodsController_create"];
         delete?: never;
         options?: never;
@@ -1564,15 +2124,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get user-payment-methods by id */
+        /** Get user payment method by id */
         get: operations["UserPaymentMethodsController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete user-payment-methods */
+        /** Soft-delete user payment method */
         delete: operations["UserPaymentMethodsController_remove"];
         options?: never;
         head?: never;
-        /** Update user-payment-methods */
+        /** Update user payment method */
         patch: operations["UserPaymentMethodsController_update"];
         trace?: never;
     };
@@ -1983,43 +2543,6 @@ export interface paths {
         patch: operations["OrganizationsController_update"];
         trace?: never;
     };
-    "/api/organization-bank-accounts": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List organization bank accounts (scoped) */
-        get: operations["OrganizationBankAccountsController_findAll"];
-        put?: never;
-        /** Create organization bank account (scoped) */
-        post: operations["OrganizationBankAccountsController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/organization-bank-accounts/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get organization bank account by id (scoped) */
-        get: operations["OrganizationBankAccountsController_findOne"];
-        put?: never;
-        post?: never;
-        /** Soft-delete organization bank account (scoped) */
-        delete: operations["OrganizationBankAccountsController_remove"];
-        options?: never;
-        head?: never;
-        /** Update organization bank account (scoped) */
-        patch: operations["OrganizationBankAccountsController_update"];
-        trace?: never;
-    };
     "/api/donations": {
         parameters: {
             query?: never;
@@ -2089,6 +2612,702 @@ export interface paths {
         head?: never;
         /** Update donation campaign */
         patch: operations["DonationsController_update"];
+        trace?: never;
+    };
+    "/api/fund-entries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List fund entries (paginated, filtered) */
+        get: operations["FundEntriesController_findAll"];
+        put?: never;
+        /** Create fund entry */
+        post: operations["FundEntriesController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fund-entries/{id}/attachments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List attachments for a fund entry */
+        get: operations["FundEntriesController_listAttachments"];
+        put?: never;
+        /** Upload fund entry attachment (JPEG, PNG, WebP or PDF, max 10 MB) */
+        post: operations["FundEntriesController_uploadAttachment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fund-entries/{id}/attachments/{attachmentId}/file": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download fund entry attachment file */
+        get: operations["FundEntriesController_downloadAttachment"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fund-entries/{id}/attachments/{attachmentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Soft-delete fund entry attachment */
+        delete: operations["FundEntriesController_removeAttachment"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fund-entries/{id}/bookings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Attach booking(s) to a fund entry (additive, 0..N) */
+        post: operations["FundEntriesController_attachBookings"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fund-entries/{id}/bookings/{bookingId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Detach a booking from a fund entry */
+        delete: operations["FundEntriesController_detachBooking"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fund-entries/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get fund entry by id (with bookingIds + attachments) */
+        get: operations["FundEntriesController_findOne"];
+        put?: never;
+        post?: never;
+        /** Soft-delete fund entry */
+        delete: operations["FundEntriesController_remove"];
+        options?: never;
+        head?: never;
+        /** Update fund entry */
+        patch: operations["FundEntriesController_update"];
+        trace?: never;
+    };
+    "/api/fund-entries/{id}/void": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Void (soft-cancel) a fund entry — requires reason */
+        post: operations["FundEntriesController_voidEntry"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/treasury-audit-logs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List treasury audit logs (paginated, filtered) */
+        get: operations["TreasuryAuditLogsController_findAll"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/treasury-audit-logs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get treasury audit log by id */
+        get: operations["TreasuryAuditLogsController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/expense-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List expense requests (paginated, filtered) */
+        get: operations["ExpenseRequestsController_findAll"];
+        put?: never;
+        /** Create expense request (status = draft) */
+        post: operations["ExpenseRequestsController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/expense-requests/{id}/status-history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List status history for an expense request */
+        get: operations["ExpenseRequestsController_listStatusHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/expense-requests/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get expense request by id */
+        get: operations["ExpenseRequestsController_findOne"];
+        put?: never;
+        post?: never;
+        /** Soft-delete draft expense request */
+        delete: operations["ExpenseRequestsController_remove"];
+        options?: never;
+        head?: never;
+        /** Update draft expense request (fields only; transitions = TRESO-022) */
+        patch: operations["ExpenseRequestsController_update"];
+        trace?: never;
+    };
+    "/api/expense-requests/external": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create expense request via external invite token (auto-submitted; no admin session) */
+        post: operations["ExpenseRequestsController_createExternal"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/expense-requests/{id}/transition": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Transition expense request status (state machine + immutable history) */
+        post: operations["ExpenseRequestsController_transition"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/treasury-external-collaborators": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List external collaborators (paginated) */
+        get: operations["ExternalCollaboratorsController_findAll"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/treasury-external-collaborators/invite": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Invite external collaborator by email (creates/updates collab + hashed token + email) */
+        post: operations["ExternalCollaboratorsController_invite"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/treasury-external-collaborators/tokens/validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Validate a raw invite/access token (optional requiredScope; updates lastUsedAt) */
+        post: operations["ExternalCollaboratorsController_validate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/treasury-external-collaborators/tokens/{tokenId}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Revoke an access token (invalidate invite link) */
+        post: operations["ExternalCollaboratorsController_revoke"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/treasury-external-collaborators/{id}/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Activate an external collaborator */
+        post: operations["ExternalCollaboratorsController_activate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/treasury-external-collaborators/{id}/deactivate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Deactivate an external collaborator and revoke all active access tokens */
+        post: operations["ExternalCollaboratorsController_deactivate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/treasury-external-collaborators/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update external collaborator display name and/or scopes */
+        patch: operations["ExternalCollaboratorsController_update"];
+        trace?: never;
+    };
+    "/api/fund-exits": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List fund exits (paginated, filtered) */
+        get: operations["FundExitsController_findAll"];
+        put?: never;
+        /** Create fund exit (requires expense request with status = authorized) */
+        post: operations["FundExitsController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fund-exits/{id}/attachments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List attachments for a fund exit */
+        get: operations["FundExitsController_listAttachments"];
+        put?: never;
+        /** Upload fund exit attachment (JPEG, PNG, WebP or PDF, max 10 MB) */
+        post: operations["FundExitsController_uploadAttachment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fund-exits/{id}/attachments/{attachmentId}/file": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download fund exit attachment file */
+        get: operations["FundExitsController_downloadAttachment"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fund-exits/{id}/attachments/{attachmentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Soft-delete fund exit attachment */
+        delete: operations["FundExitsController_removeAttachment"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fund-exits/{id}/bookings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Attach booking(s) to a fund exit (additive, 0..N) */
+        post: operations["FundExitsController_attachBookings"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fund-exits/{id}/bookings/{bookingId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Detach a booking from a fund exit */
+        delete: operations["FundExitsController_detachBooking"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fund-exits/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get fund exit by id (with bookingIds + attachments) */
+        get: operations["FundExitsController_findOne"];
+        put?: never;
+        post?: never;
+        /** Soft-delete draft fund exit */
+        delete: operations["FundExitsController_remove"];
+        options?: never;
+        head?: never;
+        /** Update fund exit */
+        patch: operations["FundExitsController_update"];
+        trace?: never;
+    };
+    "/api/fund-exits/{id}/transition": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Transition fund exit status (draft→disbursed→recorded; attachment required for recorded) */
+        post: operations["FundExitsController_transition"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/fund-exits/{id}/void": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Void (soft-cancel) a fund exit — requires reason */
+        post: operations["FundExitsController_voidExit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/budgets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List budgets (paginated; filter by year / period / currency) */
+        get: operations["BudgetsController_findAll"];
+        put?: never;
+        /** Create budget (general / activity / product scopes; validates target existence) */
+        post: operations["BudgetsController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/budgets/vs-actual": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Budget vs actual (light aggregate: planned budgets vs realized fund exits) */
+        get: operations["BudgetsController_getVsActual"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/budgets/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get budget by id */
+        get: operations["BudgetsController_findOne"];
+        put?: never;
+        post?: never;
+        /** Soft-delete budget */
+        delete: operations["BudgetsController_remove"];
+        options?: never;
+        head?: never;
+        /** Update budget */
+        patch: operations["BudgetsController_update"];
+        trace?: never;
+    };
+    "/api/treasury-reports/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Treasury summary totals (entries/exits) for a date range — excludes voided (and draft exits) */
+        get: operations["TreasuryReportsController_getSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/treasury-reports/by-dimension": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Treasury totals grouped by source or payment method */
+        get: operations["TreasuryReportsController_getByDimension"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/treasury-reports/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export fund entries and/or exits as UTF-8 CSV (BOM) — filters aligned with lists/reports */
+        get: operations["TreasuryReportsController_exportCsv"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/accounting-links/mapping-config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Stub mapping rules skeleton (SYSCOHADA placeholders — no journal generation) */
+        get: operations["AccountingLinksController_getMappingConfig"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/accounting-links": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List accounting links (stub bridge, paginated) */
+        get: operations["AccountingLinksController_findAll"];
+        put?: never;
+        /** Create accounting link stub (journal_entry_id optional; no SYSCOHADA write) */
+        post: operations["AccountingLinksController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/accounting-links/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get accounting link by id */
+        get: operations["AccountingLinksController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update stub link (status / journal_entry_id / mapping_rule_key) */
+        patch: operations["AccountingLinksController_update"];
         trace?: never;
     };
     "/api/permissions": {
@@ -2357,6 +3576,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/destinations/{id}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Restore a soft-deleted destination */
+        post: operations["DestinationsController_restore"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/destinations/{id}": {
         parameters: {
             query?: never;
@@ -2498,6 +3734,91 @@ export interface paths {
         put?: never;
         /** Upload property image (JPEG, PNG or WebP, max 5 MB) */
         post: operations["PropertiesController_uploadImage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/properties/reports/workbook": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export accommodation workbook (Excel, multi-sheet) */
+        get: operations["AccommodationReportsController_downloadWorkbook"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/properties/reports/pdf/kpi-summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export accommodation KPI summary PDF */
+        get: operations["AccommodationReportsController_downloadKpiSummaryPdf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/properties/reports/pdf/catalog": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export accommodation catalog PDF */
+        get: operations["AccommodationReportsController_downloadCatalogPdf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/properties/reports/pdf/bookings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export room bookings PDF for a date range */
+        get: operations["AccommodationReportsController_downloadBookingsPdf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/properties/{id}/reports/pdf/dossier": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export single property dossier PDF */
+        get: operations["AccommodationReportsController_downloadPropertyDossierPdf"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -2846,6 +4167,91 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/flights/reports/workbook": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export flights workbook (Excel, multi-sheet) */
+        get: operations["FlightReportsController_downloadWorkbook"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/flights/reports/pdf/kpi-summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export flights KPI summary PDF */
+        get: operations["FlightReportsController_downloadKpiSummaryPdf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/flights/reports/pdf/catalog": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export flights catalog PDF */
+        get: operations["FlightReportsController_downloadCatalogPdf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/flights/reports/pdf/bookings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export flight bookings PDF for a date range */
+        get: operations["FlightReportsController_downloadBookingsPdf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/flights/{id}/reports/pdf/dossier": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export single flight dossier PDF */
+        get: operations["FlightReportsController_downloadFlightDossierPdf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/flight-classes": {
         parameters: {
             query?: never;
@@ -3048,6 +4454,91 @@ export interface paths {
         patch: operations["VehiclesController_update"];
         trace?: never;
     };
+    "/api/vehicles/{id}/upload-image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload vehicle image (JPEG, PNG or WebP, max 5 MB) */
+        post: operations["VehiclesController_uploadImage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/vehicles/reports/workbook": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export vehicles workbook (Excel, multi-sheet) */
+        get: operations["VehicleReportsController_downloadWorkbook"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/vehicles/reports/pdf/kpi-summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export vehicles KPI summary PDF */
+        get: operations["VehicleReportsController_downloadKpiSummaryPdf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/vehicles/reports/pdf/catalog": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export vehicles catalog PDF */
+        get: operations["VehicleReportsController_downloadCatalogPdf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/vehicles/reports/pdf/bookings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export vehicle bookings PDF for a date range */
+        get: operations["VehicleReportsController_downloadBookingsPdf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/vehicle-availability": {
         parameters: {
             query?: never;
@@ -3194,6 +4685,23 @@ export interface paths {
         head?: never;
         /** Update ships */
         patch: operations["ShipsController_update"];
+        trace?: never;
+    };
+    "/api/ships/{id}/upload-image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload ship image (JPEG, PNG or WebP, max 5 MB) */
+        post: operations["ShipsController_uploadImage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/itineraries": {
@@ -3416,6 +4924,23 @@ export interface paths {
         head?: never;
         /** Update activity-providers */
         patch: operations["ActivityProvidersController_update"];
+        trace?: never;
+    };
+    "/api/activity-providers/{id}/upload-image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload activity-provider logo (JPEG, PNG or WebP, max 5 MB) */
+        post: operations["ActivityProvidersController_uploadImage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/activities": {
@@ -3897,10 +5422,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List support-tickets */
+        /** List support tickets (scoped to current user unless staff) */
         get: operations["SupportTicketsController_findAll"];
         put?: never;
-        /** Create support-tickets */
+        /** Open a support ticket with an initial message */
         post: operations["SupportTicketsController_create"];
         delete?: never;
         options?: never;
@@ -3915,16 +5440,33 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get support-tickets by id */
+        /** Get support ticket by id (staff: admin detail; customer: own ticket + messages) */
         get: operations["SupportTicketsController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete support-tickets */
+        /** Soft-delete support ticket (staff) */
         delete: operations["SupportTicketsController_remove"];
         options?: never;
         head?: never;
-        /** Update support-tickets */
+        /** Update support ticket status or priority (staff) */
         patch: operations["SupportTicketsController_update"];
+        trace?: never;
+    };
+    "/api/support-tickets/{id}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post a customer reply on an owned support ticket */
+        post: operations["SupportTicketsController_createCustomerMessage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/support-messages": {
@@ -3934,10 +5476,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List support-messages */
+        /** List support-messages (staff) */
         get: operations["SupportMessagesController_findAll"];
         put?: never;
-        /** Create support-messages */
+        /** Post a staff reply on a support ticket */
         post: operations["SupportMessagesController_create"];
         delete?: never;
         options?: never;
@@ -3952,7 +5494,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get support-messages by id */
+        /** Get support-messages by id (staff) */
         get: operations["SupportMessagesController_findOne"];
         put?: never;
         post?: never;
@@ -4016,6 +5558,43 @@ export interface paths {
         head?: never;
         /** Update about page */
         patch: operations["AboutPagesController_update"];
+        trace?: never;
+    };
+    "/api/legal-pages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List legal pages */
+        get: operations["LegalPagesController_findAll"];
+        put?: never;
+        /** Create legal page */
+        post: operations["LegalPagesController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/legal-pages/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get legal page by id */
+        get: operations["LegalPagesController_findOne"];
+        put?: never;
+        post?: never;
+        /** Soft-delete legal page */
+        delete: operations["LegalPagesController_remove"];
+        options?: never;
+        head?: never;
+        /** Update legal page */
+        patch: operations["LegalPagesController_update"];
         trace?: never;
     };
     "/api/team-members": {
@@ -4723,6 +6302,57 @@ export interface paths {
         patch: operations["GapSiteSettingsController_update"];
         trace?: never;
     };
+    "/api/analytics/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Unique visitors and page views for a period, with vs-previous deltas */
+        get: operations["AnalyticsController_getSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/analytics/trend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Daily visitors and page views series for a period */
+        get: operations["AnalyticsController_getTrend"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/analytics/top-pages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Most viewed paths for a period */
+        get: operations["AnalyticsController_getTopPages"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/public/about-pages": {
         parameters: {
             query?: never;
@@ -4851,6 +6481,40 @@ export interface paths {
         };
         /** List published homepage hero slides */
         get: operations["PublicAboutController_listHeroSlides"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/legal-pages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List published legal pages */
+        get: operations["PublicLegalController_listPages"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/legal-pages/{sectionKey}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get published legal page by section key */
+        get: operations["PublicLegalController_getPageBySectionKey"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5165,6 +6829,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/activity-providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List active activity partners (name + logo) for the public site */
+        get: operations["PublicActivitiesController_listProviders"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/activity-providers/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Activity partner detail with destination and public activities */
+        get: operations["PublicActivitiesController_getProviderById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/public/activities/{id}": {
         parameters: {
             query?: never;
@@ -5369,6 +7067,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/site-search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Unified catalogue + blog site search
+         * @description Searches accommodations, flights, cars, cruises, activities, packages and blog posts. Returns typed hits with deep-links. Catalogue providers fill groups in follow-up work.
+         */
+        get: operations["PublicSiteSearchController_search"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/analytics/page-views": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Record an anonymous page view from the public web app */
+        post: operations["PublicAnalyticsController_trackPageView"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -5394,7 +7129,7 @@ export interface components {
              * @example welcome
              * @enum {string}
              */
-            template: "welcome" | "booking" | "password_reset" | "booking_request_received" | "booking_approved_chat" | "booking_rejected" | "booking_payment_invite";
+            template: "welcome" | "booking" | "booking_receipt" | "password_reset" | "booking_request_received" | "booking_approved_chat" | "booking_rejected" | "booking_payment_invite";
             /** Format: uuid */
             organizationId?: string;
             branding?: components["schemas"]["EmailPreviewBrandingOverrideDto"];
@@ -5419,6 +7154,7 @@ export interface components {
             phone?: Record<string, never>;
             /** @example fr */
             preferredLanguage?: Record<string, never>;
+            avatarUrl?: Record<string, never> | null;
             /** Format: uuid */
             organizationId?: Record<string, never>;
             /** @enum {string} */
@@ -5445,6 +7181,8 @@ export interface components {
             phone?: Record<string, never>;
             /** @example fr */
             preferredLanguage?: Record<string, never>;
+            /** @description URL publique de la photo de profil (après upload) */
+            avatarUrl?: Record<string, never> | null;
         };
         LoginDto: {
             /** @example admin@africatourismgate.local */
@@ -5558,6 +7296,16 @@ export interface components {
              */
             clientInstanceId?: string;
         };
+        ResendVerificationDto: {
+            /** @description Current verification record ID from the verify page URL */
+            verificationId: string;
+        };
+        ResendVerificationResponseDto: {
+            /** @description New verification id — replace the one in the client URL */
+            verificationId: string;
+            /** @example Un nouveau code a été envoyé. */
+            message: string;
+        };
         BookingCheckoutItemDto: {
             /** @enum {string} */
             itemType: "room" | "flight_class" | "vehicle" | "cabin" | "activity_schedule" | "package";
@@ -5611,6 +7359,16 @@ export interface components {
              * @description Forfait combiné : applique la remise du forfait après validation des items du panier
              */
             packageId?: string;
+            /**
+             * @description Requis pour create/request : Stripe (immédiat), cash (sur place), bank_transfer (virement) ou mobile_money. Ignoré sur checkout-preview.
+             * @enum {string}
+             */
+            preferredPaymentMethod?: "stripe" | "cash" | "bank_transfer" | "mobile_money";
+            /**
+             * Format: uuid
+             * @description Organisation de caisse (POS) : chaque produit doit être partagé (NULL) ou appartenir à cette org
+             */
+            organizationId?: string;
         };
         AssignBookingGuideItemDto: {
             /** Format: uuid */
@@ -5663,6 +7421,19 @@ export interface components {
             /** @description Note for the customer (required for resubmit request) */
             staffNote?: string;
         };
+        ReviewBookingPaymentProofDto: {
+            /** @description Note for the customer (required for resubmit request) */
+            staffNote?: string;
+            /** @description Montant validé en centimes. Défaut : montant du paiement lié (acompte ou solde). */
+            amountCents?: number;
+        };
+        UpdateBookingEmergencyContactDto: {
+            name: string;
+            phone: string;
+            email?: Record<string, never> | null;
+            country?: Record<string, never> | null;
+            address?: Record<string, never> | null;
+        };
         CreateBookingManifestEntryDto: {
             priceCents?: number;
             fullName: string;
@@ -5671,15 +7442,9 @@ export interface components {
             sex?: "M" | "F" | "other";
             nationality: string;
             idNumber: string;
-            /**
-             * @deprecated
-             * @description Ignored — use booking-level PATCH …/emergency-contact
-             */
+            /** @deprecated */
             emergencyContactName?: string;
-            /**
-             * @deprecated
-             * @description Ignored — use booking-level PATCH …/emergency-contact
-             */
+            /** @deprecated */
             emergencyContactPhone?: string;
             /** @deprecated */
             emergencyContactEmail?: string;
@@ -5696,20 +7461,6 @@ export interface components {
             comment?: string;
             other?: string;
             sortOrder?: number;
-        };
-        BookingEmergencyContactDto: {
-            name: string | null;
-            phone: string | null;
-            email: string | null;
-            country: string | null;
-            address: string | null;
-        };
-        UpdateBookingEmergencyContactDto: {
-            name: string;
-            phone: string;
-            email?: string | null;
-            country?: string | null;
-            address?: string | null;
         };
         UpdateBookingManifestEntryDto: {
             priceCents?: number;
@@ -5746,8 +7497,31 @@ export interface components {
             reason?: string;
         };
         RecordCashPaymentDto: {
+            /** @description Montant en centimes. Défaut : acompte (1er paiement si acomptes activés) ou solde restant. */
+            amountCents?: number;
             /** @description Note interne caisse (historique réservation) */
             note?: string;
+        };
+        RecordBankTransferPaymentDto: {
+            /** @description Montant en centimes. Défaut : acompte (1er paiement si acomptes activés) ou solde restant. */
+            amountCents?: number;
+            /** @description Note interne staff (preuve / référence virement) */
+            note?: string;
+        };
+        SendReceiptEmailDto: {
+            /**
+             * @description Destinataire du reçu
+             * @example client@exemple.com
+             */
+            to: string;
+        };
+        SendReceiptEmailResponseDto: {
+            /** @example true */
+            sent: boolean;
+            /** @example <message-id@mailpit> */
+            messageId?: string;
+            /** @description URL de prévisualisation (Ethereal uniquement) */
+            previewUrl?: string;
         };
         CancelBookingDto: {
             /** @description Motif d’annulation (affiché dans l’historique) */
@@ -5830,6 +7604,49 @@ export interface components {
             /** @enum {string} */
             package: "immediate" | "assisted";
         };
+        PublicPaymentMethodsDto: {
+            /** @description Card (Stripe) enabled on public web checkout */
+            stripe: boolean;
+            /** @description Cash on site enabled on public web checkout */
+            cash: boolean;
+            /** @description Bank transfer enabled on public web checkout */
+            bank_transfer: boolean;
+            /** @description Mobile Money enabled on public web checkout */
+            mobile_money: boolean;
+        };
+        PublicCatalogProductsDto: {
+            /** @description Hotels vertical enabled on the public site */
+            hotels: boolean;
+            /** @description Flights vertical enabled on the public site */
+            flights: boolean;
+            /** @description Cars vertical enabled on the public site */
+            cars: boolean;
+            /** @description Cruises vertical enabled on the public site */
+            cruises: boolean;
+            /** @description Tours / activities vertical enabled on the public site */
+            tours: boolean;
+            /** @description Packages vertical enabled on the public site */
+            packages: boolean;
+        };
+        PublicSiteMaintenanceDto: {
+            /** @description Whether the public site is in maintenance mode */
+            enabled: boolean;
+            /**
+             * @description Locale of the matched maintenance window
+             * @enum {string|null}
+             */
+            locale?: "fr" | "en" | "es" | null;
+            /** @description True when the matched window locale differs from the requested UI locale */
+            localeFallback: boolean;
+            /** @description Custom maintenance page title */
+            title?: Record<string, never> | null;
+            /** @description Custom maintenance page message */
+            message?: Record<string, never> | null;
+            /** @description Window start datetime (ISO 8601), or null if unset */
+            startsAt?: Record<string, never> | null;
+            /** @description Planned end datetime (ISO 8601), or null if unset */
+            endsAt?: Record<string, never> | null;
+        };
         UpsertOrganizationSettingItemDto: {
             /** @example general */
             settingGroup: string;
@@ -5858,6 +7675,245 @@ export interface components {
             };
             createdAt: string;
             updatedAt?: Record<string, never> | null;
+        };
+        OrganizationMaintenanceDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            organizationId: string;
+            /** @enum {string} */
+            locale: "fr" | "en" | "es";
+            title?: Record<string, never> | null;
+            message?: Record<string, never> | null;
+            enabled: boolean;
+            /** @description ISO 8601 */
+            startsAt: string;
+            /** @description ISO 8601 */
+            endsAt?: Record<string, never> | null;
+            /** Format: uuid */
+            createdByUserId?: Record<string, never> | null;
+            /** Format: uuid */
+            updatedByUserId?: Record<string, never> | null;
+            /** Format: uuid */
+            deletedByUserId?: Record<string, never> | null;
+            createdAt: string;
+            updatedAt?: Record<string, never> | null;
+            deletedAt?: Record<string, never> | null;
+        };
+        CreateOrganizationMaintenanceDto: {
+            /** Format: uuid */
+            organizationId?: string;
+            /**
+             * @default fr
+             * @enum {string}
+             */
+            locale: "fr" | "en" | "es";
+            title?: Record<string, never> | null;
+            message?: Record<string, never> | null;
+            /** @default false */
+            enabled: boolean;
+            /**
+             * @description Début de la fenêtre de maintenance (ISO 8601)
+             * @example 2026-09-23T08:00:00.000Z
+             */
+            startsAt: string;
+            /** @description Fin prévue (ISO 8601), ou null si indéterminée */
+            endsAt?: Record<string, never> | null;
+        };
+        UpdateOrganizationMaintenanceDto: {
+            /** Format: uuid */
+            organizationId?: string;
+            /**
+             * @default fr
+             * @enum {string}
+             */
+            locale: "fr" | "en" | "es";
+            title?: Record<string, never> | null;
+            message?: Record<string, never> | null;
+            /** @default false */
+            enabled: boolean;
+            /**
+             * @description Début de la fenêtre de maintenance (ISO 8601)
+             * @example 2026-09-23T08:00:00.000Z
+             */
+            startsAt?: string;
+            /** @description Fin prévue (ISO 8601), ou null si indéterminée */
+            endsAt?: Record<string, never> | null;
+        };
+        OrganizationBankAccountDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            organizationId: string;
+            bankName: string;
+            accountName: string;
+            /** @description Full or masked account number */
+            accountNumber: string;
+            swiftBic?: Record<string, never> | null;
+            /** @example USD */
+            currency: string;
+            isDefault: boolean;
+            createdAt: string;
+            updatedAt?: Record<string, never> | null;
+        };
+        CreateOrganizationBankAccountDto: {
+            /** Format: uuid */
+            organizationId?: string;
+            /** @example Rawbank */
+            bankName: string;
+            /** @example Africa Tourism Gate SARL */
+            accountName: string;
+            /** @example 0001234567890 */
+            accountNumber: string;
+            /** @example RAWBCDKI */
+            swiftBic?: string;
+            /**
+             * @default USD
+             * @example USD
+             */
+            currency: string;
+            /** @default false */
+            isDefault: boolean;
+        };
+        UpdateOrganizationBankAccountDto: {
+            bankName?: string;
+            accountName?: string;
+            accountNumber?: string;
+            swiftBic?: string;
+            /** @example USD */
+            currency?: string;
+            isDefault?: boolean;
+        };
+        PublicPaymentBankAccountDto: {
+            /** Format: uuid */
+            id: string;
+            bankName: string;
+            /** @description Account holder name */
+            accountName: string;
+            /** @description Account number / IBAN (full, for transfer) */
+            accountNumber: string;
+            swiftBic?: Record<string, never> | null;
+            /** @example USD */
+            currency: string;
+            isDefault: boolean;
+        };
+        MobileMoneyCountryDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            organizationId: string;
+            /** @example CD */
+            code: string;
+            name: string;
+            isActive: boolean;
+            sortOrder: number;
+            createdAt: string;
+            updatedAt?: Record<string, never> | null;
+        };
+        CreateMobileMoneyCountryDto: {
+            /** Format: uuid */
+            organizationId?: string;
+            /**
+             * @description ISO 3166-1 alpha-2
+             * @example CD
+             */
+            code: string;
+            /** @example République démocratique du Congo */
+            name: string;
+            /** @default true */
+            isActive: boolean;
+            /** @default 0 */
+            sortOrder: number;
+        };
+        UpdateMobileMoneyCountryDto: {
+            /** @example CD */
+            code?: string;
+            name?: string;
+            isActive?: boolean;
+            sortOrder?: number;
+        };
+        MobileMoneyOperatorDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            countryId: string;
+            name: string;
+            logoUrl?: Record<string, never> | null;
+            isActive: boolean;
+            sortOrder: number;
+            createdAt: string;
+            updatedAt?: Record<string, never> | null;
+        };
+        CreateMobileMoneyOperatorDto: {
+            /** Format: uuid */
+            countryId: string;
+            /** @example M-Pesa */
+            name: string;
+            logoUrl?: Record<string, never> | null;
+            /** @default true */
+            isActive: boolean;
+            /** @default 0 */
+            sortOrder: number;
+        };
+        UpdateMobileMoneyOperatorDto: {
+            name?: string;
+            logoUrl?: Record<string, never> | null;
+            isActive?: boolean;
+            sortOrder?: number;
+        };
+        MobileMoneyPaymentNumberDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            operatorId: string;
+            /** @example +243970000000 */
+            phoneE164: string;
+            label?: Record<string, never> | null;
+            isActive: boolean;
+            sortOrder: number;
+            createdAt: string;
+            updatedAt?: Record<string, never> | null;
+        };
+        CreateMobileMoneyPaymentNumberDto: {
+            /** Format: uuid */
+            operatorId: string;
+            /** @example +243970000000 */
+            phoneE164: string;
+            /** @example Paiements ATG Kinshasa */
+            label?: Record<string, never>;
+            /** @default true */
+            isActive: boolean;
+            /** @default 0 */
+            sortOrder: number;
+        };
+        UpdateMobileMoneyPaymentNumberDto: {
+            /** @example +243970000000 */
+            phoneE164?: string;
+            label?: Record<string, never> | null;
+            isActive?: boolean;
+            sortOrder?: number;
+        };
+        PublicMobileMoneyPaymentNumberDto: {
+            /** Format: uuid */
+            id: string;
+            /** @example +243970000000 */
+            phoneE164: string;
+            label?: Record<string, never> | null;
+        };
+        PublicMobileMoneyOperatorDto: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            logoUrl?: Record<string, never> | null;
+            numbers: components["schemas"]["PublicMobileMoneyPaymentNumberDto"][];
+        };
+        PublicMobileMoneyCountryDto: {
+            /** Format: uuid */
+            id: string;
+            /** @example CD */
+            code: string;
+            name: string;
+            operators: components["schemas"]["PublicMobileMoneyOperatorDto"][];
         };
         UpsertGuideAvailabilityDto: {
             /**
@@ -5930,6 +7986,26 @@ export interface components {
         UpdateReviewStatusDto: {
             /** @enum {string} */
             status: "approved" | "hidden";
+        };
+        StaffNotificationDto: {
+            id: string;
+            userId: string;
+            /** @enum {string} */
+            type: "booking_pending_approval" | "booking_client_message" | "review_pending" | "support_ticket_open";
+            /**
+             * @example {
+             *       "href": "/reservations",
+             *       "priority": "high"
+             *     }
+             */
+            payload: {
+                [key: string]: unknown;
+            };
+            readAt?: string | null;
+            createdAt: string;
+        };
+        StaffNotificationsUnreadCountDto: {
+            count: number;
         };
         CreatePackageDto: {
             /** @example Kinshasa City Break */
@@ -6110,48 +8186,52 @@ export interface components {
             name?: string;
             description?: Record<string, never> | null;
         };
-        OrganizationBankAccountDto: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            organizationId: string;
-            bankName: string;
-            accountName: string;
-            /** @description Full or masked account number */
-            accountNumber: string;
-            swiftBic?: Record<string, never> | null;
-            /** @example USD */
-            currency: string;
-            isDefault: boolean;
-            createdAt: string;
-            updatedAt?: Record<string, never> | null;
-        };
-        CreateOrganizationBankAccountDto: {
-            /** Format: uuid */
-            organizationId?: string;
-            /** @example Rawbank */
-            bankName: string;
-            /** @example Africa Tourism Gate SARL */
-            accountName: string;
-            /** @example 0001234567890 */
-            accountNumber: string;
-            /** @example RAWBCDKI */
-            swiftBic?: string;
-            /**
-             * @default USD
-             * @example USD
-             */
-            currency: string;
+        CreateUserAddressDto: {
+            /** @example Domicile */
+            label?: string;
+            /** @example 12 Avenue de la Paix */
+            line1: string;
+            line2?: string;
+            /** @example Kinshasa */
+            city: string;
+            region?: string;
+            postalCode?: string;
+            /** @example CD */
+            countryCode: string;
             /** @default false */
             isDefault: boolean;
+            /** @description Staff only: target user id */
+            userId?: string;
         };
-        UpdateOrganizationBankAccountDto: {
-            bankName?: string;
-            accountName?: string;
-            accountNumber?: string;
-            swiftBic?: string;
-            /** @example USD */
-            currency?: string;
+        UpdateUserAddressDto: {
+            label?: Record<string, never>;
+            line1?: string;
+            line2?: Record<string, never>;
+            city?: string;
+            region?: Record<string, never>;
+            postalCode?: Record<string, never>;
+            countryCode?: string;
+            isDefault?: boolean;
+        };
+        CreateUserPaymentMethodDto: {
+            /** @enum {string} */
+            type: "card" | "paypal" | "other";
+            /** @example visa */
+            provider?: string;
+            /** @example 4242 */
+            lastFour?: string;
+            externalToken?: string;
+            /** @default false */
+            isDefault: boolean;
+            /** @description Staff only: target user id */
+            userId?: string;
+        };
+        UpdateUserPaymentMethodDto: {
+            /** @enum {string} */
+            type?: "card" | "paypal" | "other";
+            provider?: Record<string, never>;
+            lastFour?: Record<string, never>;
+            externalToken?: Record<string, never>;
             isDefault?: boolean;
         };
         CreateDonationDto: {
@@ -6200,10 +8280,404 @@ export interface components {
             /** @example 0 */
             sortOrder?: number;
         };
+        FundEntryAttachmentDto: {
+            /** Format: uuid */
+            id: string;
+            originalFilename: string;
+            storedFilename: string;
+            /** @example application/pdf */
+            mimeType: string;
+            /** @example 20480 */
+            fileSizeBytes: number;
+            /** Format: uuid */
+            uploadedByUserId: Record<string, never> | null;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        AttachFundEntryBookingsDto: {
+            /** @description Booking ids to attach (0,N). Existing links are kept. */
+            bookingIds: string[];
+        };
+        CreateFundEntryDto: {
+            /** Format: uuid */
+            organizationId: string;
+            /**
+             * @description Amount in minor units (cents)
+             * @example 150000
+             */
+            amountCents: number;
+            /** @example XOF */
+            currency: string;
+            /**
+             * @description Operation date (YYYY-MM-DD)
+             * @example 2026-09-26
+             */
+            operationDate: string;
+            /** @enum {string} */
+            source: "booking_payment" | "customer_direct" | "partner" | "grant_donation" | "owner_capital" | "bank_interest" | "other";
+            /** @enum {string} */
+            paymentMethod: "cash" | "bank_transfer" | "mobile_money" | "stripe" | "cheque" | "other";
+            /** @example VIR-2026-001 */
+            reference?: Record<string, never>;
+            /** @description Free-text notes / observations */
+            notes?: Record<string, never>;
+            /** @description Linked booking ids (0,N). Synced on create/update. */
+            bookingIds?: string[];
+        };
+        UpdateFundEntryDto: {
+            /**
+             * @description Amount in minor units (cents)
+             * @example 150000
+             */
+            amountCents?: number;
+            /** @example XOF */
+            currency?: string;
+            /**
+             * @description Operation date (YYYY-MM-DD)
+             * @example 2026-09-26
+             */
+            operationDate?: string;
+            /** @enum {string} */
+            source?: "booking_payment" | "customer_direct" | "partner" | "grant_donation" | "owner_capital" | "bank_interest" | "other";
+            /** @enum {string} */
+            paymentMethod?: "cash" | "bank_transfer" | "mobile_money" | "stripe" | "cheque" | "other";
+            /** @example VIR-2026-001 */
+            reference?: Record<string, never>;
+            /** @description Free-text notes / observations */
+            notes?: Record<string, never>;
+            /** @description Linked booking ids (0,N). Synced on create/update. */
+            bookingIds?: string[];
+        };
+        VoidTreasuryOperationDto: {
+            /**
+             * @description Motif d’annulation (obligatoire)
+             * @example Saisie en double
+             */
+            reason: string;
+        };
+        CreateExpenseRequestExternalDto: {
+            /** @description Raw access token from the invite link (64 hex chars) */
+            token: string;
+            /** @example Achat fournitures bureau */
+            title: string;
+            /** @example Justification détaillée… */
+            description: string;
+            /**
+             * @description Amount in minor units (cents)
+             * @example 50000
+             */
+            requestedAmountCents: number;
+            /** @example XOF */
+            currency: string;
+            /**
+             * @description Needed-by date (YYYY-MM-DD)
+             * @example 2026-10-15
+             */
+            neededByDate?: Record<string, never>;
+        };
+        CreateExpenseRequestDto: {
+            /** Format: uuid */
+            organizationId: string;
+            /** @example Achat fournitures bureau */
+            title: string;
+            /** @example Justification détaillée… */
+            description: string;
+            /**
+             * @description Amount in minor units (cents)
+             * @example 50000
+             */
+            requestedAmountCents: number;
+            /** @example XOF */
+            currency: string;
+            /**
+             * @description Needed-by date (YYYY-MM-DD)
+             * @example 2026-10-15
+             */
+            neededByDate?: Record<string, never>;
+        };
+        TransitionExpenseRequestDto: {
+            /**
+             * @description Target status (must be a legal transition from current status)
+             * @example submitted
+             * @enum {string}
+             */
+            toStatus: "submitted" | "validated" | "authorized" | "rejected" | "cancelled" | "closed";
+            /** @description Comment / rejection reason (required when toStatus = rejected) */
+            comment?: Record<string, never>;
+        };
+        UpdateExpenseRequestDto: {
+            /** @example Achat fournitures bureau */
+            title?: string;
+            /** @example Justification détaillée… */
+            description?: string;
+            /**
+             * @description Amount in minor units (cents)
+             * @example 50000
+             */
+            requestedAmountCents?: number;
+            /** @example XOF */
+            currency?: string;
+            /**
+             * @description Needed-by date (YYYY-MM-DD)
+             * @example 2026-10-15
+             */
+            neededByDate?: Record<string, never>;
+        };
+        InviteTreasuryExternalCollaboratorDto: {
+            /** Format: uuid */
+            organizationId: string;
+            /** @example partenaire@example.com */
+            email: string;
+            /** @example Marie Partenaire */
+            displayName?: Record<string, never>;
+            /**
+             * @example [
+             *       "expense_requests.create"
+             *     ]
+             */
+            scopes: "expense_requests.create"[];
+            /**
+             * @description Token TTL in hours (default 72)
+             * @example 72
+             */
+            tokenTtlHours?: number;
+        };
+        ValidateTreasuryAccessTokenDto: {
+            /** @description Raw access token from the invite link (64 hex chars) */
+            token: string;
+            /**
+             * @description If set, validation fails with 403 when the scope is missing
+             * @enum {string}
+             */
+            requiredScope?: "expense_requests.create";
+        };
+        UpdateTreasuryExternalCollaboratorDto: {
+            /** @example Marie Partenaire */
+            displayName?: Record<string, never>;
+            /**
+             * @example [
+             *       "expense_requests.create"
+             *     ]
+             */
+            scopes?: "expense_requests.create"[];
+        };
+        FundExitAttachmentDto: {
+            /** Format: uuid */
+            id: string;
+            originalFilename: string;
+            storedFilename: string;
+            /** @example application/pdf */
+            mimeType: string;
+            /** @example 20480 */
+            fileSizeBytes: number;
+            /** Format: uuid */
+            uploadedByUserId: Record<string, never> | null;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        AttachFundExitBookingsDto: {
+            /** @description Booking ids to attach (0,N). Existing links are kept. */
+            bookingIds: string[];
+        };
+        CreateFundExitDto: {
+            /** Format: uuid */
+            organizationId: string;
+            /**
+             * Format: uuid
+             * @description Must reference an authorized expense request
+             */
+            expenseRequestId: string;
+            /**
+             * @description Amount in minor units (cents)
+             * @example 50000
+             */
+            amountCents: number;
+            /** @example XOF */
+            currency: string;
+            /**
+             * @description Disbursement date (YYYY-MM-DD)
+             * @example 2026-09-26
+             */
+            operationDate: string;
+            /** @enum {string} */
+            paymentMethod: "cash" | "bank_transfer" | "mobile_money" | "stripe" | "cheque" | "other";
+            /** @example VIR-OUT-001 */
+            reference?: Record<string, never>;
+            notes?: Record<string, never>;
+            /** @description Linked booking ids (0,N) */
+            bookingIds?: string[];
+        };
+        TransitionFundExitDto: {
+            /**
+             * @description Target status (draft→disbursed→recorded; void = TRESO-033). recorded requires ≥1 attachment.
+             * @example disbursed
+             * @enum {string}
+             */
+            toStatus: "disbursed" | "recorded";
+            /** @description Optional comment for the transition */
+            comment?: Record<string, never>;
+        };
+        UpdateFundExitDto: {
+            /**
+             * @description Amount in minor units (cents)
+             * @example 50000
+             */
+            amountCents?: number;
+            /** @example XOF */
+            currency?: string;
+            /**
+             * @description Disbursement date (YYYY-MM-DD)
+             * @example 2026-09-26
+             */
+            operationDate?: string;
+            /** @enum {string} */
+            paymentMethod?: "cash" | "bank_transfer" | "mobile_money" | "stripe" | "cheque" | "other";
+            /** @example VIR-OUT-001 */
+            reference?: Record<string, never>;
+            notes?: Record<string, never>;
+            /** @description Linked booking ids (0,N) */
+            bookingIds?: string[];
+        };
+        CreateBudgetDto: {
+            /** Format: uuid */
+            organizationId: string;
+            /** @example Budget trésorerie 2026 */
+            label: string;
+            /**
+             * @example monthly
+             * @enum {string}
+             */
+            periodType: "monthly" | "annual";
+            /** @example 2026 */
+            year: number;
+            /**
+             * @description Required when periodType=monthly; must be null/omitted for annual
+             * @example 3
+             */
+            month?: Record<string, never>;
+            /**
+             * @description Amount in minor units (cents)
+             * @example 5000000
+             */
+            amountCents: number;
+            /** @example XOF */
+            currency: string;
+            /**
+             * @description general | activity (requires activityId) | product (requires productType + productId)
+             * @default general
+             * @enum {string}
+             */
+            scopeType: "general" | "activity" | "product";
+            /**
+             * Format: uuid
+             * @description Required when scopeType=activity
+             */
+            activityId?: Record<string, never>;
+            /**
+             * @description Required when scopeType=product
+             * @enum {string}
+             */
+            productType?: "room" | "flight_class" | "vehicle" | "cabin" | "activity_schedule" | "package";
+            /**
+             * Format: uuid
+             * @description Polymorphic product id (required when scopeType=product)
+             */
+            productId?: Record<string, never>;
+            notes?: Record<string, never>;
+        };
+        UpdateBudgetDto: {
+            /** @example Budget trésorerie 2026 */
+            label?: string;
+            /**
+             * @example monthly
+             * @enum {string}
+             */
+            periodType?: "monthly" | "annual";
+            /** @example 2026 */
+            year?: number;
+            /**
+             * @description Required when periodType=monthly; must be null/omitted for annual
+             * @example 3
+             */
+            month?: Record<string, never>;
+            /**
+             * @description Amount in minor units (cents)
+             * @example 5000000
+             */
+            amountCents?: number;
+            /** @example XOF */
+            currency?: string;
+            /**
+             * @description general | activity (requires activityId) | product (requires productType + productId)
+             * @default general
+             * @enum {string}
+             */
+            scopeType: "general" | "activity" | "product";
+            /**
+             * Format: uuid
+             * @description Required when scopeType=activity
+             */
+            activityId?: Record<string, never>;
+            /**
+             * @description Required when scopeType=product
+             * @enum {string}
+             */
+            productType?: "room" | "flight_class" | "vehicle" | "cabin" | "activity_schedule" | "package";
+            /**
+             * Format: uuid
+             * @description Polymorphic product id (required when scopeType=product)
+             */
+            productId?: Record<string, never>;
+            notes?: Record<string, never>;
+        };
+        CreateAccountingLinkDto: {
+            /** Format: uuid */
+            organizationId: string;
+            /** @enum {string} */
+            fundOpType: "fund_entry" | "fund_exit";
+            /**
+             * Format: uuid
+             * @description fund_entries.id or fund_exits.id
+             */
+            fundOpId: string;
+            /**
+             * Format: uuid
+             * @description Optional future journal entry id (SYSCOHADA). Null in this stub unless provided manually.
+             */
+            journalEntryId?: Record<string, never> | null;
+            /** @description Key from TREASURY_ACCOUNTING_MAPPING_CONFIG.rules */
+            mappingRuleKey?: Record<string, never>;
+            /**
+             * @default pending
+             * @enum {string}
+             */
+            status: "pending" | "linked" | "skipped";
+        };
+        UpdateAccountingLinkDto: {
+            /**
+             * Format: uuid
+             * @description Optional journal entry id (SYSCOHADA future).
+             */
+            journalEntryId?: Record<string, never> | null;
+            mappingRuleKey?: Record<string, never> | null;
+            /** @enum {string} */
+            status?: "pending" | "linked" | "skipped";
+        };
         ReplaceRolePermissionsDto: {
             permissionIds: string[];
         };
-        CreateUserRoleAssignmentBodyDto: Record<string, never>;
+        CreateUserRoleAssignmentDto: {
+            /** Format: uuid */
+            userId: string;
+            /** Format: uuid */
+            roleId: string;
+            /** @enum {string} */
+            scopeType: "global" | "property" | "agency" | "support_queue";
+            /** Format: uuid */
+            scopeId?: Record<string, never> | null;
+            /** Format: date-time */
+            expiresAt?: Record<string, never> | null;
+        };
         ReplacePropertyAmenitiesDto: {
             /** Format: uuid */
             propertyId: string;
@@ -6326,6 +8800,30 @@ export interface components {
             sortOrder: number;
         };
         RefundPaymentDto: Record<string, never>;
+        CreateCustomerSupportMessageDto: {
+            /** @description Customer reply body */
+            body: string;
+        };
+        CreateSupportTicketDto: {
+            /** @example Question sur ma réservation */
+            subject: string;
+            /** @description Initial customer message (required for end-user submissions) */
+            body: string;
+            /** @description Target user (staff only). Defaults to the authenticated user. */
+            userId?: string;
+        };
+        UpdateSupportTicketStatusDto: {
+            /** @enum {string} */
+            status?: "open" | "pending" | "resolved" | "closed";
+            /** @enum {string} */
+            priority?: "low" | "normal" | "high" | "urgent";
+        };
+        CreateSupportMessageDto: {
+            /** @description Target support ticket id */
+            ticketId: string;
+            /** @description Staff reply body */
+            body: string;
+        };
         CreateAboutPageDto: {
             /**
              * @example who-we-are
@@ -6357,6 +8855,40 @@ export interface components {
             /** @description HTML or plain text body */
             content?: string;
             coverImageUrl?: Record<string, never>;
+            /** @enum {string} */
+            status?: "draft" | "published";
+            /** @example 2026-06-01T12:00:00.000Z */
+            publishedAt?: Record<string, never>;
+            /** @example fr */
+            locale?: string;
+        };
+        CreateLegalPageDto: {
+            /**
+             * @example terms-of-use
+             * @enum {string}
+             */
+            sectionKey: "terms-of-use" | "privacy-policy";
+            /** @example Conditions d'utilisation */
+            title: string;
+            /** @description HTML body (TipTap / rich text) */
+            content: string;
+            /** @enum {string} */
+            status?: "draft" | "published";
+            /** @example 2026-06-01T12:00:00.000Z */
+            publishedAt?: Record<string, never>;
+            /** @example fr */
+            locale?: string;
+        };
+        UpdateLegalPageDto: {
+            /**
+             * @example terms-of-use
+             * @enum {string}
+             */
+            sectionKey?: "terms-of-use" | "privacy-policy";
+            /** @example Conditions d'utilisation */
+            title?: string;
+            /** @description HTML body (TipTap / rich text) */
+            content?: string;
             /** @enum {string} */
             status?: "draft" | "published";
             /** @example 2026-06-01T12:00:00.000Z */
@@ -6872,6 +9404,109 @@ export interface components {
             /** @example fr */
             locale?: string;
         };
+        AnalyticsChangeDto: {
+            /** @example 12.5 */
+            percent: number;
+            /** @enum {string} */
+            direction: "up" | "down" | "flat";
+        };
+        AnalyticsSummaryDto: {
+            /** @enum {string} */
+            period: "7d" | "30d" | "90d";
+            /** @example 2026-08-27 */
+            dateFrom: string;
+            /** @example 2026-09-25 */
+            dateTo: string;
+            /** @example 420 */
+            visitors: number;
+            /** @example 1850 */
+            pageViews: number;
+            visitorsChange: components["schemas"]["AnalyticsChangeDto"];
+            pageViewsChange: components["schemas"]["AnalyticsChangeDto"];
+        };
+        AnalyticsTrendPointDto: {
+            /** @example 2026-09-25 */
+            date: string;
+            /** @example 42 */
+            visitors: number;
+            /** @example 180 */
+            pageViews: number;
+        };
+        AnalyticsTrendDto: {
+            /** @enum {string} */
+            period: "7d" | "30d" | "90d";
+            /** @example 2026-08-27 */
+            dateFrom: string;
+            /** @example 2026-09-25 */
+            dateTo: string;
+            points: components["schemas"]["AnalyticsTrendPointDto"][];
+        };
+        AnalyticsTopPageDto: {
+            /** @example /destinations/kinshasa */
+            path: string;
+            /** @example 320 */
+            pageViews: number;
+            /** @example 95 */
+            visitors: number;
+        };
+        AnalyticsTopPagesDto: {
+            /** @enum {string} */
+            period: "7d" | "30d" | "90d";
+            /** @example 2026-08-27 */
+            dateFrom: string;
+            /** @example 2026-09-25 */
+            dateTo: string;
+            items: components["schemas"]["AnalyticsTopPageDto"][];
+        };
+        SiteSearchHitDto: {
+            /** @enum {string} */
+            type: "hotels" | "flights" | "cars" | "cruises" | "activities" | "packages" | "blog";
+            /**
+             * @description Entity UUID or blog slug
+             * @example 550e8400-e29b-41d4-a716-446655440000
+             */
+            id: string;
+            /** @example Safari Lodge Nairobi */
+            title: string;
+            /** @example Nairobi, KE */
+            subtitle?: Record<string, never> | null;
+            /**
+             * @description Public web path
+             * @example /hotels/550e8400-e29b-41d4-a716-446655440000
+             */
+            href: string;
+            imageUrl?: Record<string, never> | null;
+            /**
+             * @description Relevance score (higher is better)
+             * @example 100
+             */
+            score: number;
+        };
+        SiteSearchGroupDto: {
+            /** @enum {string} */
+            type: "hotels" | "flights" | "cars" | "cruises" | "activities" | "packages" | "blog";
+            hits: components["schemas"]["SiteSearchHitDto"][];
+            /** @description Partial failure for this type; other groups may still succeed */
+            error?: Record<string, never> | null;
+        };
+        SiteSearchResponseDto: {
+            /** @example Safari Nairobi */
+            query: string;
+            /** @example fr */
+            locale?: Record<string, never> | null;
+            /** @example 5 */
+            limit: number;
+            types: ("hotels" | "flights" | "cars" | "cruises" | "activities" | "packages" | "blog")[];
+            groups: components["schemas"]["SiteSearchGroupDto"][];
+        };
+        TrackPageViewDto: {
+            /** Format: uuid */
+            visitorId: string;
+            /** @example /destinations/kinshasa */
+            path: string;
+            /** @example fr */
+            locale?: string;
+        };
     };
     responses: never;
     parameters: never;
@@ -7027,6 +9662,44 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuthController_uploadAvatar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthUserDto"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -7321,6 +9994,36 @@ export interface operations {
             };
         };
     };
+    AuthController_resendVerification: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResendVerificationDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResendVerificationResponseDto"];
+                };
+            };
+            /** @description Verification already confirmed or invalid */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     BookingsController_previewCheckout: {
         parameters: {
             query?: never;
@@ -7385,6 +10088,8 @@ export interface operations {
                 status?: "draft" | "pending_approval" | "pending_payment" | "confirmed" | "cancelled" | "refunded";
                 /** @description Filter by client (booking owner) */
                 userId?: string;
+                /** @description Staff only: filter by creator (e.g. POS cashier) */
+                createdByUserId?: string;
                 /** @description Filter by client organization */
                 organizationId?: string;
                 /** @description Inclusive start (created_at) */
@@ -8027,6 +10732,178 @@ export interface operations {
             };
         };
     };
+    BookingsController_listPaymentProofs: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BookingsController_uploadPaymentProof: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BookingsController_downloadPaymentProof: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                proofId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BookingsController_approvePaymentProof: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                proofId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReviewBookingPaymentProofDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BookingsController_requestPaymentProofResubmit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                proofId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReviewBookingPaymentProofDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BookingsController_rejectPaymentProof: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                proofId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReviewBookingPaymentProofDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     BookingsController_listManifestEntries: {
         parameters: {
             query?: never;
@@ -8098,9 +10975,7 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["BookingEmergencyContactDto"] | null;
-                };
+                content?: never;
             };
             /** @description Missing permission */
             403: {
@@ -8130,9 +11005,7 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["BookingEmergencyContactDto"];
-                };
+                content?: never;
             };
             /** @description Missing permission */
             403: {
@@ -8185,6 +11058,32 @@ export interface operations {
                 "application/json": components["schemas"]["UpdateBookingManifestEntryDto"];
             };
         };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BookingsController_downloadConfirmationPdf: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             200: {
                 headers: {
@@ -8273,6 +11172,94 @@ export interface operations {
         };
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BookingsController_recordBankTransferPayment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RecordBankTransferPaymentDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BookingsController_sendReceiptEmail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SendReceiptEmailDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SendReceiptEmailResponseDto"];
+                };
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BookingsController_downloadReceiptPdf: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8650,6 +11637,93 @@ export interface operations {
             };
         };
     };
+    OrganizationSettingsController_findPublicPaymentMethods: {
+        parameters: {
+            query?: {
+                /** @description Organization slug (defaults to the platform organization) */
+                organizationSlug?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicPaymentMethodsDto"];
+                };
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrganizationSettingsController_findPublicCatalogProducts: {
+        parameters: {
+            query?: {
+                /** @description Organization slug (defaults to the platform organization) */
+                organizationSlug?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicCatalogProductsDto"];
+                };
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrganizationSettingsController_findPublicSiteMaintenance: {
+        parameters: {
+            query?: {
+                /** @description Organization slug (defaults to the platform organization) */
+                organizationSlug?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicSiteMaintenanceDto"];
+                };
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     OrganizationSettingsController_bulkUpsert: {
         parameters: {
             query?: never;
@@ -8838,6 +11912,861 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    OrganizationMaintenancesController_findAll: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                locale?: "fr" | "en" | "es";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrganizationMaintenanceDto"][];
+                };
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrganizationMaintenancesController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateOrganizationMaintenanceDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrganizationMaintenancesController_findOne: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                locale?: "fr" | "en" | "es";
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrganizationMaintenancesController_remove: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                locale?: "fr" | "en" | "es";
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrganizationMaintenancesController_update: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                locale?: "fr" | "en" | "es";
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateOrganizationMaintenanceDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicOrganizationMaintenancesController_current: {
+        parameters: {
+            query?: {
+                /** @description Organization slug (defaults to the platform organization) */
+                organizationSlug?: string;
+                /** @description UI locale (fr | en | es). Falls back to fr, then any active window. */
+                locale?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicSiteMaintenanceDto"];
+                };
+            };
+        };
+    };
+    OrganizationBankAccountsController_findAll: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrganizationBankAccountDto"][];
+                };
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrganizationBankAccountsController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateOrganizationBankAccountDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrganizationBankAccountsController_findOne: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrganizationBankAccountsController_remove: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrganizationBankAccountsController_update: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateOrganizationBankAccountDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicPaymentBankAccountsController_list: {
+        parameters: {
+            query?: {
+                /** @description Organization slug (defaults to the platform organization) */
+                organizationSlug?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicPaymentBankAccountDto"][];
+                };
+            };
+        };
+    };
+    MobileMoneyConfigController_listCountries: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MobileMoneyCountryDto"][];
+                };
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MobileMoneyConfigController_createCountry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateMobileMoneyCountryDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MobileMoneyConfigController_getCountry: {
+        parameters: {
+            query?: {
+                organizationId?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MobileMoneyConfigController_removeCountry: {
+        parameters: {
+            query?: {
+                organizationId?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MobileMoneyConfigController_updateCountry: {
+        parameters: {
+            query?: {
+                organizationId?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateMobileMoneyCountryDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MobileMoneyConfigController_listOperators: {
+        parameters: {
+            query: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                countryId: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MobileMoneyOperatorDto"][];
+                };
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MobileMoneyConfigController_createOperator: {
+        parameters: {
+            query?: {
+                organizationId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateMobileMoneyOperatorDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MobileMoneyConfigController_getOperator: {
+        parameters: {
+            query?: {
+                organizationId?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MobileMoneyConfigController_removeOperator: {
+        parameters: {
+            query?: {
+                organizationId?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MobileMoneyConfigController_updateOperator: {
+        parameters: {
+            query?: {
+                organizationId?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateMobileMoneyOperatorDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MobileMoneyConfigController_uploadOperatorLogo: {
+        parameters: {
+            query?: {
+                organizationId?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MobileMoneyConfigController_listNumbers: {
+        parameters: {
+            query: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                operatorId: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MobileMoneyPaymentNumberDto"][];
+                };
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MobileMoneyConfigController_createNumber: {
+        parameters: {
+            query?: {
+                organizationId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateMobileMoneyPaymentNumberDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MobileMoneyConfigController_getNumber: {
+        parameters: {
+            query?: {
+                organizationId?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MobileMoneyConfigController_removeNumber: {
+        parameters: {
+            query?: {
+                organizationId?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    MobileMoneyConfigController_updateNumber: {
+        parameters: {
+            query?: {
+                organizationId?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateMobileMoneyPaymentNumberDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicMobileMoneyConfigController_list: {
+        parameters: {
+            query?: {
+                /** @description Organization slug (defaults to the platform organization) */
+                organizationSlug?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicMobileMoneyCountryDto"][];
+                };
             };
         };
     };
@@ -9282,6 +13211,85 @@ export interface operations {
             };
             /** @description Missing permission */
             403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    NotificationsController_list: {
+        parameters: {
+            query?: {
+                unreadOnly?: boolean;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffNotificationDto"][];
+                };
+            };
+        };
+    };
+    NotificationsController_unreadCount: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffNotificationsUnreadCountDto"];
+                };
+            };
+        };
+    };
+    NotificationsController_markRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffNotificationDto"];
+                };
+            };
+        };
+    };
+    NotificationsController_markAllRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -10285,7 +14293,11 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateUserAddressDto"];
+            };
+        };
         responses: {
             201: {
                 headers: {
@@ -10325,7 +14337,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            200: {
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -10342,7 +14354,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateUserAddressDto"];
+            };
+        };
         responses: {
             200: {
                 headers: {
@@ -10381,7 +14397,11 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateUserPaymentMethodDto"];
+            };
+        };
         responses: {
             201: {
                 headers: {
@@ -10421,7 +14441,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            200: {
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -10438,7 +14458,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateUserPaymentMethodDto"];
+            };
+        };
         responses: {
             200: {
                 headers: {
@@ -11596,158 +15620,6 @@ export interface operations {
             };
         };
     };
-    OrganizationBankAccountsController_findAll: {
-        parameters: {
-            query?: {
-                page?: number;
-                limit?: number;
-                organizationId?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrganizationBankAccountDto"][];
-                };
-            };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    OrganizationBankAccountsController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateOrganizationBankAccountDto"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    OrganizationBankAccountsController_findOne: {
-        parameters: {
-            query?: {
-                page?: number;
-                limit?: number;
-                organizationId?: string;
-            };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    OrganizationBankAccountsController_remove: {
-        parameters: {
-            query?: {
-                page?: number;
-                limit?: number;
-                organizationId?: string;
-            };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    OrganizationBankAccountsController_update: {
-        parameters: {
-            query?: {
-                page?: number;
-                limit?: number;
-                organizationId?: string;
-            };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateOrganizationBankAccountDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     DonationsController_findAll: {
         parameters: {
             query?: {
@@ -11952,6 +15824,1655 @@ export interface operations {
             };
         };
     };
+    FundEntriesController_findAll: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                /** @description Inclusive start on operation_date */
+                dateFrom?: string;
+                /** @description Inclusive end on operation_date */
+                dateTo?: string;
+                currency?: string;
+                source?: "booking_payment" | "customer_direct" | "partner" | "grant_donation" | "owner_capital" | "bank_interest" | "other";
+                paymentMethod?: "cash" | "bank_transfer" | "mobile_money" | "stripe" | "cheque" | "other";
+                status?: "recorded" | "voided";
+                /** @description Filter entries linked to this booking */
+                bookingId?: string;
+                /** @description Search by reference or notes */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundEntriesController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateFundEntryDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundEntriesController_listAttachments: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FundEntryAttachmentDto"][];
+                };
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundEntriesController_uploadAttachment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FundEntryAttachmentDto"];
+                };
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundEntriesController_downloadAttachment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                attachmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundEntriesController_removeAttachment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                attachmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundEntriesController_attachBookings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttachFundEntryBookingsDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundEntriesController_detachBooking: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                bookingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundEntriesController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundEntriesController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundEntriesController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateFundEntryDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundEntriesController_voidEntry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VoidTreasuryOperationDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TreasuryAuditLogsController_findAll: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                entityType?: "fund_entry" | "fund_exit" | "expense_request" | "budget" | "external_collaborator" | "access_token" | "accounting_link";
+                entityId?: string;
+                action?: "create" | "update" | "transition" | "void" | "attach" | "detach" | "invite" | "activate" | "deactivate" | "revoke_token";
+                /** @description Filter by actor id (user or external collaborator) */
+                actorId?: string;
+                /** @description Inclusive start date (created_at) */
+                dateFrom?: string;
+                /** @description Inclusive end date (created_at) */
+                dateTo?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TreasuryAuditLogsController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ExpenseRequestsController_findAll: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                status?: "draft" | "submitted" | "validated" | "authorized" | "rejected" | "cancelled" | "closed";
+                /** @description Search by title or description */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ExpenseRequestsController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateExpenseRequestDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ExpenseRequestsController_listStatusHistory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ExpenseRequestsController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ExpenseRequestsController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ExpenseRequestsController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateExpenseRequestDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ExpenseRequestsController_createExternal: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateExpenseRequestExternalDto"];
+            };
+        };
+        responses: {
+            /** @description Invalid, expired, revoked or deactivated token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing expense_requests.create scope */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ExpenseRequestsController_transition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TransitionExpenseRequestDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ExternalCollaboratorsController_findAll: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                /** @description Search email or display name */
+                search?: string;
+                isActive?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ExternalCollaboratorsController_invite: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InviteTreasuryExternalCollaboratorDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ExternalCollaboratorsController_validate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ValidateTreasuryAccessTokenDto"];
+            };
+        };
+        responses: {
+            /** @description Invalid, expired or revoked token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing required scope */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ExternalCollaboratorsController_revoke: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                tokenId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ExternalCollaboratorsController_activate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ExternalCollaboratorsController_deactivate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ExternalCollaboratorsController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTreasuryExternalCollaboratorDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundExitsController_findAll: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                expenseRequestId?: string;
+                /** @description Inclusive start on operation_date */
+                dateFrom?: string;
+                /** @description Inclusive end on operation_date */
+                dateTo?: string;
+                currency?: string;
+                paymentMethod?: "cash" | "bank_transfer" | "mobile_money" | "stripe" | "cheque" | "other";
+                status?: "draft" | "disbursed" | "recorded" | "voided";
+                /** @description Filter exits linked to this booking */
+                bookingId?: string;
+                /** @description Search by reference or notes */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundExitsController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateFundExitDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundExitsController_listAttachments: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FundExitAttachmentDto"][];
+                };
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundExitsController_uploadAttachment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FundExitAttachmentDto"];
+                };
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundExitsController_downloadAttachment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                attachmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundExitsController_removeAttachment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                attachmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundExitsController_attachBookings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttachFundExitBookingsDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundExitsController_detachBooking: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                bookingId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundExitsController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundExitsController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundExitsController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateFundExitDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundExitsController_transition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TransitionFundExitDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FundExitsController_voidExit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VoidTreasuryOperationDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BudgetsController_findAll: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                periodType?: "monthly" | "annual";
+                year?: number;
+                month?: number;
+                scopeType?: "general" | "activity" | "product";
+                activityId?: string;
+                productType?: "room" | "flight_class" | "vehicle" | "cabin" | "activity_schedule" | "package";
+                productId?: string;
+                currency?: string;
+                /** @description Search by label or notes */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BudgetsController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateBudgetDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BudgetsController_getVsActual: {
+        parameters: {
+            query: {
+                /** @description Année budgétaire (obligatoire) */
+                year: number;
+                /** @description Mois (1–12). Si fourni, ne retourne que les budgets mensuels de ce mois. */
+                month?: number;
+                organizationId?: string;
+                currency?: string;
+                periodType?: "monthly" | "annual";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BudgetsController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BudgetsController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BudgetsController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateBudgetDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TreasuryReportsController_getSummary: {
+        parameters: {
+            query: {
+                /** @description Inclusive start (operation_date) */
+                dateFrom: string;
+                /** @description Inclusive end (operation_date) */
+                dateTo: string;
+                organizationId?: string;
+                currency?: string;
+                source?: "booking_payment" | "customer_direct" | "partner" | "grant_donation" | "owner_capital" | "bank_interest" | "other";
+                paymentMethod?: "cash" | "bank_transfer" | "mobile_money" | "stripe" | "cheque" | "other";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TreasuryReportsController_getByDimension: {
+        parameters: {
+            query: {
+                /** @description Inclusive start (operation_date) */
+                dateFrom: string;
+                /** @description Inclusive end (operation_date) */
+                dateTo: string;
+                organizationId?: string;
+                currency?: string;
+                source?: "booking_payment" | "customer_direct" | "partner" | "grant_donation" | "owner_capital" | "bank_interest" | "other";
+                paymentMethod?: "cash" | "bank_transfer" | "mobile_money" | "stripe" | "cheque" | "other";
+                /** @description source = entrées seulement ; paymentMethod = entrées + sorties */
+                groupBy: "source" | "paymentMethod";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TreasuryReportsController_exportCsv: {
+        parameters: {
+            query?: {
+                /** @description all | entries | exits */
+                type?: "all" | "entries" | "exits";
+                dateFrom?: string;
+                dateTo?: string;
+                organizationId?: string;
+                currency?: string;
+                source?: "booking_payment" | "customer_direct" | "partner" | "grant_donation" | "owner_capital" | "bank_interest" | "other";
+                paymentMethod?: "cash" | "bank_transfer" | "mobile_money" | "stripe" | "cheque" | "other";
+                /** @description Status filter. If omitted: entries=recorded, exits=disbursed|recorded (realized). Pass explicitly to include voided/draft. */
+                status?: string;
+                bookingId?: string;
+                expenseRequestId?: string;
+                search?: string;
+                realizedOnly?: "true" | "false";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountingLinksController_getMappingConfig: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountingLinksController_findAll: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                fundOpType?: "fund_entry" | "fund_exit";
+                fundOpId?: string;
+                status?: "pending" | "linked" | "skipped";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountingLinksController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateAccountingLinkDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountingLinksController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountingLinksController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateAccountingLinkDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     PermissionsController_findAll: {
         parameters: {
             query?: {
@@ -12051,6 +17572,8 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                search?: string;
+                includeSystem?: boolean;
             };
             header?: never;
             path?: never;
@@ -12274,7 +17797,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateUserRoleAssignmentBodyDto"];
+                "application/json": components["schemas"]["CreateUserRoleAssignmentDto"];
             };
         };
         responses: {
@@ -12482,6 +18005,25 @@ export interface operations {
                 };
             };
         };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    DestinationsController_restore: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             201: {
                 headers: {
@@ -12745,6 +18287,11 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                /** @description Search by name or slug */
+                search?: string;
+                destinationId?: string;
+                /** @description Filtre catalogue : produits partagés (NULL) + exclusifs de cette organisation */
+                organizationId?: string;
             };
             header?: never;
             path?: never;
@@ -12853,6 +18400,154 @@ export interface operations {
         };
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccommodationReportsController_downloadWorkbook: {
+        parameters: {
+            query: {
+                /** @description Search by property name or slug */
+                search?: string;
+                destinationId?: string;
+                locale?: "fr" | "en" | "es";
+                dateFrom: string;
+                dateTo: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccommodationReportsController_downloadKpiSummaryPdf: {
+        parameters: {
+            query?: {
+                /** @description Search by property name or slug */
+                search?: string;
+                destinationId?: string;
+                locale?: "fr" | "en" | "es";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccommodationReportsController_downloadCatalogPdf: {
+        parameters: {
+            query?: {
+                /** @description Search by property name or slug */
+                search?: string;
+                destinationId?: string;
+                locale?: "fr" | "en" | "es";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccommodationReportsController_downloadBookingsPdf: {
+        parameters: {
+            query: {
+                /** @description Search by property name or slug */
+                search?: string;
+                destinationId?: string;
+                locale?: "fr" | "en" | "es";
+                dateFrom: string;
+                dateTo: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccommodationReportsController_downloadPropertyDossierPdf: {
+        parameters: {
+            query?: {
+                locale?: "fr" | "en" | "es";
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -13550,6 +19245,10 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                /** @description Search by flight number (code vol) */
+                search?: string;
+                /** @description Filtre catalogue : produits partagés (NULL) + exclusifs de cette organisation */
+                organizationId?: string;
             };
             header?: never;
             path?: never;
@@ -13658,6 +19357,150 @@ export interface operations {
         };
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FlightReportsController_downloadWorkbook: {
+        parameters: {
+            query: {
+                /** @description Search by flight number */
+                search?: string;
+                locale?: "fr" | "en" | "es";
+                dateFrom: string;
+                dateTo: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FlightReportsController_downloadKpiSummaryPdf: {
+        parameters: {
+            query?: {
+                /** @description Search by flight number */
+                search?: string;
+                locale?: "fr" | "en" | "es";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FlightReportsController_downloadCatalogPdf: {
+        parameters: {
+            query?: {
+                /** @description Search by flight number */
+                search?: string;
+                locale?: "fr" | "en" | "es";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FlightReportsController_downloadBookingsPdf: {
+        parameters: {
+            query: {
+                /** @description Search by flight number */
+                search?: string;
+                locale?: "fr" | "en" | "es";
+                dateFrom: string;
+                dateTo: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    FlightReportsController_downloadFlightDossierPdf: {
+        parameters: {
+            query?: {
+                locale?: "fr" | "en" | "es";
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -14094,6 +19937,8 @@ export interface operations {
                 search?: string;
                 agencyId?: string;
                 categoryId?: string;
+                /** @description Filtre catalogue : produits partagés (NULL) + exclusifs de cette organisation */
+                organizationId?: string;
             };
             header?: never;
             path?: never;
@@ -14176,6 +20021,156 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    VehiclesController_uploadImage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    VehicleReportsController_downloadWorkbook: {
+        parameters: {
+            query: {
+                /** @description Search by license plate */
+                search?: string;
+                agencyId?: string;
+                categoryId?: string;
+                locale?: "fr" | "en" | "es";
+                dateFrom: string;
+                dateTo: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    VehicleReportsController_downloadKpiSummaryPdf: {
+        parameters: {
+            query?: {
+                /** @description Search by license plate */
+                search?: string;
+                agencyId?: string;
+                categoryId?: string;
+                locale?: "fr" | "en" | "es";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    VehicleReportsController_downloadCatalogPdf: {
+        parameters: {
+            query?: {
+                /** @description Search by license plate */
+                search?: string;
+                agencyId?: string;
+                categoryId?: string;
+                locale?: "fr" | "en" | "es";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    VehicleReportsController_downloadBookingsPdf: {
+        parameters: {
+            query: {
+                /** @description Search by license plate */
+                search?: string;
+                agencyId?: string;
+                categoryId?: string;
+                locale?: "fr" | "en" | "es";
+                dateFrom: string;
+                dateTo: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -14571,6 +20566,32 @@ export interface operations {
             };
         };
     };
+    ShipsController_uploadImage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     ItinerariesController_findAll: {
         parameters: {
             query?: {
@@ -14764,6 +20785,9 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                shipId?: string;
+                /** @description Filtre catalogue : produits partagés (NULL) + exclusifs de cette organisation */
+                organizationId?: string;
             };
             header?: never;
             path?: never;
@@ -14859,6 +20883,8 @@ export interface operations {
                 page?: number;
                 limit?: number;
                 itineraryId?: string;
+                /** @description Partial match on sailing id, departure date, itinerary id, or itinerary name */
+                search?: string;
             };
             header?: never;
             path?: never;
@@ -15060,6 +21086,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     ActivityProvidersController_create: {
@@ -15072,6 +21105,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -15096,6 +21136,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     ActivityProvidersController_remove: {
@@ -15110,6 +21157,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -15134,6 +21188,46 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ActivityProvidersController_uploadImage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     ActivitiesController_findAll: {
@@ -15143,6 +21237,8 @@ export interface operations {
                 limit?: number;
                 providerId?: string;
                 destinationId?: string;
+                /** @description Filtre catalogue : produits partagés (NULL) + exclusifs de cette organisation */
+                organizationId?: string;
                 /** @description Search by activity title */
                 search?: string;
             };
@@ -15910,6 +22006,11 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                itemType?: "room" | "flight_class" | "vehicle" | "cabin" | "activity_schedule" | "package";
+                /** @description Filter by parent booking status */
+                status?: "draft" | "pending_approval" | "pending_payment" | "confirmed" | "cancelled" | "refunded";
+                /** @description Filter by booking */
+                bookingId?: string;
             };
             header?: never;
             path?: never;
@@ -16473,8 +22574,12 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                /** @description Partial match on subject, customer email/name, or ticket id */
+                search?: string;
                 status?: "open" | "pending" | "resolved" | "closed";
                 priority?: "low" | "normal" | "high" | "urgent";
+                /** @description Sort tickets by creation date or latest message activity */
+                sortBy?: "createdAt" | "lastMessageAt";
             };
             header?: never;
             path?: never;
@@ -16483,6 +22588,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -16497,9 +22609,20 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateSupportTicketDto"];
+            };
+        };
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -16524,6 +22647,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     SupportTicketsController_remove: {
@@ -16537,7 +22667,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            200: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -16554,9 +22691,50 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateSupportTicketStatusDto"];
+            };
+        };
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    SupportTicketsController_createCustomerMessage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateCustomerSupportMessageDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -16582,6 +22760,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     SupportMessagesController_create: {
@@ -16591,9 +22776,20 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateSupportMessageDto"];
+            };
+        };
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -16618,6 +22814,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     SupportMessagesController_remove: {
@@ -16637,6 +22840,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     SupportMessagesController_update: {
@@ -16651,6 +22861,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -16812,6 +23029,147 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["UpdateAboutPageDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    LegalPagesController_findAll: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                search?: string;
+                status?: "draft" | "published";
+                sectionKey?: "terms-of-use" | "privacy-policy";
+                locale?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    LegalPagesController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateLegalPageDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    LegalPagesController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    LegalPagesController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    LegalPagesController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateLegalPageDto"];
             };
         };
         responses: {
@@ -19131,6 +25489,91 @@ export interface operations {
             };
         };
     };
+    AnalyticsController_getSummary: {
+        parameters: {
+            query?: {
+                period?: "7d" | "30d" | "90d";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalyticsSummaryDto"];
+                };
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AnalyticsController_getTrend: {
+        parameters: {
+            query?: {
+                period?: "7d" | "30d" | "90d";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalyticsTrendDto"];
+                };
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AnalyticsController_getTopPages: {
+        parameters: {
+            query?: {
+                period?: "7d" | "30d" | "90d";
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalyticsTopPagesDto"];
+                };
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     PublicAboutController_listPages: {
         parameters: {
             query?: {
@@ -19281,6 +25724,47 @@ export interface operations {
             };
             header?: never;
             path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicLegalController_listPages: {
+        parameters: {
+            query?: {
+                sectionKey?: "terms-of-use" | "privacy-policy";
+                locale?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicLegalController_getPageBySectionKey: {
+        parameters: {
+            query: {
+                locale: string;
+            };
+            header?: never;
+            path: {
+                sectionKey: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -19690,6 +26174,42 @@ export interface operations {
             };
         };
     };
+    PublicActivitiesController_listProviders: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicActivitiesController_getProviderById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     PublicActivitiesController_getById: {
         parameters: {
             query: {
@@ -19717,7 +26237,7 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                /** @description Search by package name */
+                /** @description Search by package name or description */
                 search?: string;
             };
             header?: never;
@@ -19928,6 +26448,55 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicSiteSearchController_search: {
+        parameters: {
+            query: {
+                /** @description Free-text catalogue search query */
+                q: string;
+                locale?: string;
+                /** @description Max hits per catalogue type */
+                limit?: number;
+                /** @description Catalogue types to search (comma-separated or repeated). Omit for all. */
+                types?: ("hotels" | "flights" | "cars" | "cruises" | "activities" | "packages" | "blog")[];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteSearchResponseDto"];
+                };
+            };
+        };
+    };
+    PublicAnalyticsController_trackPageView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TrackPageViewDto"];
+            };
+        };
+        responses: {
+            /** @description Page view recorded */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
