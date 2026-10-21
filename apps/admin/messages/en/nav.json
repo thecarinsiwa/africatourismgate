@@ -8,6 +8,8 @@
     "bookings": "Bookings",
     "payments": "Payments",
     "treasury": "Treasury",
+    "treasuryAccounting": "Accounting",
+    "treasuryControl": "Oversight",
     "contentSupport": "Content & Customer Care",
     "gap": "GAP (Gorilla Ambassadors)",
     "system": "System"
