@@ -28,7 +28,7 @@ Deux branches :
 | Principe | Décision |
 | -------- | -------- |
 | Montants | Entiers en **cents** (`amount_cents`), comme `Bookings.totalCents` / `Payments` |
-| Devise | ISO 4217, `varchar(3)` sur chaque opération ; **défaut formulaires Admin** = `organizations.currency` (Paramètres) ; conversion vers devise de tenue d’exercice **à la comptabilisation** via `exchange_rates` (TRESO-046) — pas de feed externe MVP |
+| Devise | ISO 4217, `varchar(3)` sur chaque opération ; codes issus du catalogue plateforme `currencies` (`/systeme/devises`) ; **défaut formulaires Admin** = `organizations.currency` (Paramètres, ∈ catalogue actif) ; conversion vers devise de tenue d’exercice **à la comptabilisation** via `exchange_rates` (TRESO-046) — pas de feed externe MVP |
 | Identifiants | UUID `char(36)` |
 | Multi-tenant | `organization_id` sur les agrégats trésorerie (aligné departments / catalog) |
 | Soft delete / annulation | Pas de delete hard des opérations validées → statut `voided` + audit |
@@ -240,9 +240,33 @@ Traçabilité opération financière ↔ écriture comptable **future** (SYSCOHA
 
 ---
 
-### 4.8. `exchange_rates` — Catalogue de taux manuels (TRESO-046)
+### 4.8. `currencies` — Catalogue global de devises (plateforme)
+
+Référentiel **unique plateforme** (pas par org) des codes ISO 4217 disponibles dans les sélecteurs Admin (trésorerie, taux, exercices, paramètres org).  
+Migration : [`database/migrations/add_platform_currencies.sql`](../database/migrations/add_platform_currencies.sql).
+
+| Champ | Type | Notes |
+| ----- | ---- | ----- |
+| `id` | UUID PK | |
+| `code` | char(3) | ISO 4217 unique parmi non soft-deleted |
+| `label` | varchar(120) | Libellé affichage |
+| `symbol` | varchar(16) null | |
+| `decimal_places` | tinyint | 0–6 (ex. XOF = 0) |
+| `is_active` | bool | `false` → hors sélecteurs |
+| `sort_order` | int | Ordre listes |
+| audit / soft-delete | | BaseAudit |
+
+**API :** `GET/POST/PATCH/DELETE /currencies` · filtres `activeOnly`, `search`.  
+**Permissions :** page Admin `currencies.read` / write `currencies.write` ; `GET` liste = session authentifiée (sélecteurs).  
+**UI :** `/systeme/devises` (nav Système).  
+**Consommation Admin :** `useActiveCurrencies` → options formulaires ; seed offline si API KO.  
+**Validation Nest :** `CurrenciesService.assertActiveCode` sur create fund/budget/besoin/taux/exercice/org (et update si devise changée).  
+**Désactivation :** retire des listes ; lignes `fund_*` / exercices historiques **conservent** leur code ISO.
+
+### 4.9. `exchange_rates` — Catalogue de taux manuels (TRESO-046)
 
 Référentiel org-scoped pour convertir une opération `fund_*` vers la **devise de tenue** de l’exercice (`accounting_exercises.currency`) lors de « Comptabiliser ».  
+Les codes `from` / `to` doivent appartenir au catalogue `currencies` actif à la création.  
 Pas de connecteur marché MVP ; saisie Admin uniquement.
 
 | Champ | Type | Notes |
@@ -385,8 +409,15 @@ Convention existante : `{resource}.read` / `{resource}.write` + permissions mét
 | `treasury.fx_rates.read` | Catalogue taux de change (lecture) |
 | `treasury.fx_rates.write` | CRUD taux de change |
 
-IDs seed : `…001057` → `…001068` (lot initial) + `…001079` / `…001080` (`fx_rates.*`, TRESO-046). Synchronisés via `ensure-rbac-permissions`, migrations RBAC / `add_treasury_exchange_rates.sql`, et `pnpm --filter @africatourismgate/api sync:rbac`.  
-Constantes : `TREASURY_PERMISSION_CODES` / `TREASURY_ROLE_PROFILE_PERMISSIONS` dans `rbac.constants.ts`.
+**Catalogue devises plateforme (hors préfixe `treasury.*`) :**
+
+| Code | Usage |
+| ---- | ----- |
+| `currencies.read` | Page `/systeme/devises` (lecture) |
+| `currencies.write` | CRUD catalogue devises |
+
+IDs seed : `…001057` → `…001068` (lot initial) + `…001079` / `…001080` (`fx_rates.*`, TRESO-046) + `…001081` / `…001082` (`currencies.*`). Synchronisés via `ensure-rbac-permissions`, migrations RBAC / `add_treasury_exchange_rates.sql` / `add_platform_currencies.sql`, et `pnpm --filter @africatourismgate/api sync:rbac`.  
+Constantes : `TREASURY_PERMISSION_CODES` / `TREASURY_ROLE_PROFILE_PERMISSIONS` dans `rbac.constants.ts` ; ressource `currencies` dans le catalogue RBAC.
 
 **Profils indicatifs (assignation `/systeme/roles` — TRESO-044) :**
 
@@ -420,6 +451,7 @@ Préfixe hub : `/tresorerie`
 | `/tresorerie/taux-change` | Catalogue taux manuels (TRESO-046) ; `toCurrency` défaut = devise org |
 | `/tresorerie/comptabilite` | Hub SYSCO (pont + livres) |
 | `/tresorerie/comptabilite/exercices` | Exercices + devise de tenue (SYSCO) |
+| `/systeme/devises` | Catalogue global ISO (`currencies`) — sélecteurs plateforme |
 
 Fichiers config : `dashboard-nav.config.ts`, `admin-route-permissions.ts`, `admin-sections.registry.ts`.
 
@@ -452,7 +484,7 @@ Fichiers config : `dashboard-nav.config.ts`, `admin-route-permissions.ts`, `admi
 - Génération automatique d’écritures comptables
 
 **Livré à la place :** `accounting_links` (stub) + UI placeholder + doc handoff **TRESO-041** (`docs/tresorerie-syscohada-epic-next.md`).  
-**Add-on devises :** catalogue `exchange_rates` + UI `/tresorerie/taux-change` (**TRESO-046**) ; défaut formulaires = `organizations.currency` ; tenue = exercice (`/tresorerie/comptabilite/exercices`, immutabilité si écritures postées) — [syscohada-domain-model.md](./syscohada-domain-model.md) §5.2 / §7.4.  
+**Add-on devises :** catalogue plateforme `currencies` + UI `/systeme/devises` ; taux `exchange_rates` + UI `/tresorerie/taux-change` (**TRESO-046**) ; défaut formulaires = `organizations.currency` (∈ catalogue actif) ; tenue = exercice (`/tresorerie/comptabilite/exercices`, immutabilité si écritures postées) — [syscohada-domain-model.md](./syscohada-domain-model.md) §5.2 / §7.4.  
 **Suite épic :** modèle de domaine [syscohada-domain-model.md](./syscohada-domain-model.md) (SYSCO-001) · tâches [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md).
 
 ---

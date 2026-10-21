@@ -27,6 +27,7 @@ Préfixe hub : `/tresorerie` · permission de base `treasury.read` (sauf excepti
 | `/tresorerie/taux-change` | Catalogue taux de change (manuel) | `treasury.fx_rates.read` |
 | `/tresorerie/comptabilite` | Hub pont / livres SYSCOHADA | `treasury.accounting_link.read` **ou** `accounting.read` |
 | `/tresorerie/comptabilite/exercices` | Exercices + devise de tenue | `accounting.read` **ou** `treasury.accounting_link.read` (write : `accounting.chart.write`) |
+| `/systeme/devises` | Catalogue **global** devises ISO (plateforme) | `currencies.read` (write : `currencies.write`) |
 
 Config : `apps/admin/config/admin-route-permissions.ts`, `dashboard-nav.config.ts`.
 
@@ -85,6 +86,7 @@ E2E : `apps/admin/tests/e2e/tresorerie-expense-workflow-smoke.spec.ts` (TRESO-04
 | Externes | `/api/treasury-external-collaborators` |
 | Pont compta (stub → SYSCO) | `/api/accounting-links` |
 | Taux de change | `/api/exchange-rates` |
+| Devises (catalogue plateforme) | `/api/currencies` |
 
 **Client Admin :** méthodes typées sur `ApiClient` dans `packages/api-client/src/index.ts` (consommées via `getApiClient()`).  
 **Schéma OpenAPI généré :** `packages/api-client/src/generated/schema.ts` (types `paths` / `components`).
@@ -105,16 +107,23 @@ Export CSV rapports : `GET /treasury-reports/export` — helper Admin `apps/admi
 
 ## Devises
 
+Trois niveaux distincts :
+
 | Rôle | Source | Où configurer |
 | ---- | ------ | ------------- |
-| Défaut formulaires TRESO / `toCurrency` taux | `organizations.currency` | Paramètres organisation |
-| Devise de tenue (écritures SYSCO) | `accounting_exercises.currency` | `/tresorerie/comptabilite/exercices` |
-| Taux manuels | `exchange_rates` | `/tresorerie/taux-change` (TRESO-046) |
+| **Catalogue ISO actif** (sélecteurs) | Table plateforme `currencies` | `/systeme/devises` · API `/currencies` |
+| Défaut formulaires TRESO / `toCurrency` taux | `organizations.currency` (∈ catalogue actif) | Paramètres organisation / fiche org |
+| Devise de tenue (écritures SYSCO) | `accounting_exercises.currency` (∈ catalogue actif) | `/tresorerie/comptabilite/exercices` |
+| Taux manuels | `exchange_rates` (paires org-scoped) | `/tresorerie/taux-change` (TRESO-046) |
 
+- Catalogue global : CRUD Admin (nav Système) ; `is_active` / soft-delete retire la devise des listes ; ops historiques gardent leur code ISO.  
+- Permissions : page `currencies.read` / bouton créer `currencies.write` ; `GET /currencies` = toute session authentifiée (sélecteurs).  
+- Admin : hook `useActiveCurrencies` (`activeOnly=true`) ; seed offline = XOF/XAF/EUR/USD/MAD/GHS/NGN si API KO.  
+- API create (fund / budget / besoin / taux / exercice / org) : `assertActiveCode` — code hors catalogue actif → **400**.  
 - Création d’exercice : `currency` défaut = devise org ; périodes mensuelles auto.  
 - Changer la devise d’exercice : seulement si `open` et **aucune** écriture `posted` (sinon 409) — [syscohada-domain-model.md](./syscohada-domain-model.md) §5.2.  
 - Comptabilisation : si `fund_*.currency ≠` tenue → lookup taux ; sans taux → post **400** (§7.4).  
-**Hors MVP :** feed BCEAO/API, inverse auto, conversion des rapports trésorerie.
+**Hors MVP :** feed BCEAO/API, inverse auto, conversion des rapports trésorerie, catalogue multi-org.
 
 ---
 

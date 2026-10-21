@@ -2112,7 +2112,7 @@ Les opérations `fund_*` portent une devise ISO ; les écritures SYSCOHADA sont 
 - `apps/api/src/modules/resources/exchange-rates/`
 - `apps/api/src/modules/resources/accounting-links/accounting-posting.service.ts`
 - `apps/admin/app/(dashboard)/tresorerie/taux-change/`
-- `docs/syscohada-domain-model.md` §7.4 · `docs/tresorerie-domain-model.md` §4.8
+- `docs/syscohada-domain-model.md` §7.4 · `docs/tresorerie-domain-model.md` §4.9 (`exchange_rates`) · §4.8 (`currencies` plateforme)
 
 ## Critères d'acceptation
 

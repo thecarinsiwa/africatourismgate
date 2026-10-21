@@ -701,7 +701,7 @@ Recommandations figées dans [syscohada-domain-model.md](./syscohada-domain-mode
 | Sujet | Question | Impact tâches |
 | ----- | -------- | ------------- |
 | Moment de comptabilisation | `recorded` + action manuelle MVP (reco) | SYSCO-001 ✅, SYSCO-004 |
-| Multi-devise | Une devise de tenue / exercice + taux manuels + défaut org sur formulaires | SYSCO-001 ✅, SYSCO-002, SYSCO-008, **TRESO-046 ✅**, UI `/exercices` ✅ |
+| Multi-devise | Catalogue plateforme `currencies` + une devise de tenue / exercice + taux manuels + défaut org | SYSCO-001 ✅, SYSCO-002, SYSCO-008, **TRESO-046 ✅**, UI `/exercices` ✅, `/systeme/devises` ✅ |
 | Soft-delete + unique | Unique parmi non soft-deleted (reco) | SYSCO-005 |
 | Contrepassation | Nouvelle écriture + historique (reco) | SYSCO-005, SYSCO-008 |
 | Périmètre tiers / immos | Épic satellite (reco) | SYSCO-001 ✅ |
@@ -732,9 +732,10 @@ Parcours minimal (sans job CI Playwright lourd — SYSCO-011 reste ouvert pour s
 5. Permission `accounting.audit.read` → liste `/tresorerie/comptabilite/audit` ; compte lecture sans `accounting.post` → POST 403.
 6. **FX (TRESO-046) :** op devise ≠ tenue + taux manuel ≤ date op → lignes converties + `fx_rate` ; sans taux → post 400.
 7. **Devise :** Paramètres org → nouvelle entrée préremplie ; `/tresorerie/comptabilite/exercices` crée exercice (périodes mensuelles) ; PATCH devise avec écritures postées → 409 ; clôture affiche la devise.
+8. **Catalogue global :** `/systeme/devises` → créer `GBP` → apparaît dans sélecteurs entrées / taux / exercices / paramètres ; désactiver `GHS` → disparaît des listes ; ops `GHS` existantes restent lisibles ; create avec code hors catalogue → 400.
 
 **Reporté ensuite :** SYSCO-007 (caisse/banque/rapprochements), SYSCO-012 (OpenAPI/README).  
-**Livré hors numérotation SYSCO :** TRESO-046 + défaut `organizations.currency` + UI/API exercices ([syscohada-domain-model.md](./syscohada-domain-model.md) §5.2 / §7.4).
+**Livré hors numérotation SYSCO :** TRESO-046 + défaut `organizations.currency` + UI/API exercices + catalogue `currencies` `/systeme/devises` ([syscohada-domain-model.md](./syscohada-domain-model.md) §5.2 / §7.4 · [tresorerie-domain-model.md](./tresorerie-domain-model.md) §4.8).
 
 ---
 

@@ -32,8 +32,9 @@ Référentiel cible : **SYSCOHADA** (Système Comptable OHADA) — classes 1–8
 | Principe | Décision |
 | -------- | -------- |
 | Montants | Entiers en **cents** (`*_cents`), alignés Trésorerie / Bookings |
-| Devise opération | ISO 4217 sur chaque `fund_*` ; **défaut formulaires Admin** = `organizations.currency` (Paramètres) |
-| Devise de tenue | **Une devise d’exercice** (`accounting_exercises.currency`) — typiquement `XOF` ou `XAF` ; distincte de `organizations.currency` |
+| Catalogue devises | Table plateforme `currencies` (`/systeme/devises`) — codes ISO actifs pour tous les sélecteurs ; validation Nest `assertActiveCode` à la création |
+| Devise opération | ISO 4217 sur chaque `fund_*` ; **défaut formulaires Admin** = `organizations.currency` (Paramètres, ∈ catalogue actif) |
+| Devise de tenue | **Une devise d’exercice** (`accounting_exercises.currency`, ∈ catalogue actif) — typiquement `XOF` ou `XAF` ; distincte de `organizations.currency` |
 | Conversion | Si `fund_*.currency ≠` devise de tenue : lookup `exchange_rates` (taux **manuels**, TRESO-046) à la date d’op → montants d’écriture en tenue ; `journal_lines.original_*` + `fx_rate` ; **refus** du post si aucun taux applicable |
 | Identifiants | UUID `char(36)` |
 | Multi-tenant | `organization_id` sur **tous** les agrégats comptables |
@@ -51,7 +52,7 @@ Référentiel cible : **SYSCOHADA** (Système Comptable OHADA) — classes 1–8
 | Sujet | Options | **Recommandation** | Raison |
 | ----- | ------- | ------------------ | ------ |
 | Moment de comptabilisation | (A) auto à `recorded` (B) aussi à `disbursed` (C) batch (D) manuel seul | **(A)+(D)** : éligible dès `recorded` ; déclencheur MVP = action **« Comptabiliser »** (API) ; auto-post à `recorded` en option post-MVP | Sortie `disbursed` sans justificatif trop tôt ; manuel maîtrise le go-live |
-| Multi-devise | Multi-tenue vs une devise d’exercice | **Une devise de tenue / exercice** ; conversion à la date d’op via catalogue `exchange_rates` (saisie Admin, pas de feed externe MVP) | États OHADA mono-devise ; ops multi-devises restent possibles |
+| Multi-devise | Multi-tenue vs une devise d’exercice | **Une devise de tenue / exercice** ; codes ISO issus du catalogue plateforme `currencies` ; conversion à la date d’op via `exchange_rates` (saisie Admin, pas de feed externe MVP) | États OHADA mono-devise ; ops multi-devises restent possibles |
 | Soft-delete + unique | Unique global vs actif seul | Unique `(fund_op_type, fund_op_id)` **parmi `deleted_at IS NULL`** (index partiel ou recreate après soft-delete) | Permet recreate après `skipped` / erreur `pending` |
 | Contrepassation | Update in-place vs nouvelle pièce | **Nouvelle `journal_entry` de contrepassation** ; link historique conservé ; void fond reste bloqué si `linked` | Intégrité légale des pièces |
 | Tiers / immos / stocks | Inclus MVP vs satellite | **Épic satellite** — hors SYSCO-001…012 sauf comptes collectifs minimaux au plan | Focus trésorerie → écritures |
@@ -441,10 +442,19 @@ sequenceDiagram
 
 ### 7.4. Conversion multi-devise (taux manuels — TRESO-046)
 
-Catalogue org-scoped `exchange_rates` (CRUD Admin `/tresorerie/taux-change`, API `/exchange-rates`).  
+**Couches devises :**
+
+| Couche | Table / champ | UI |
+| ------ | ------------- | -- |
+| Catalogue ISO actif | `currencies` (plateforme) | `/systeme/devises` |
+| Défaut formulaires | `organizations.currency` | Paramètres / fiche org |
+| Devise de tenue | `accounting_exercises.currency` | `/tresorerie/comptabilite/exercices` |
+| Taux manuels | `exchange_rates` (org-scoped) | `/tresorerie/taux-change` |
+
+Catalogue org-scoped `exchange_rates` (CRUD Admin `/tresorerie/taux-change`, API `/exchange-rates`) ; `from`/`to` ∈ catalogue `currencies` actif à la création.  
 **Convention :** `rate` = unités de devise **cible** pour 1 unité **source** (`bookCents ≈ originalCents × rate`, arrondi entier ; min 1 si montant op > 0).  
 **Devise de tenue :** `accounting_exercises.currency` (configurée sur `/tresorerie/comptabilite/exercices` — **pas** `organizations.currency` au post).  
-**Défaut ops / taux :** formulaires trésorerie et `toCurrency` des taux préremplissent avec `organizations.currency` (Paramètres) — l’utilisateur peut changer.  
+**Défaut ops / taux :** formulaires trésorerie et `toCurrency` des taux préremplissent avec `organizations.currency` (Paramètres) — l’utilisateur peut changer (options = devises actives via `useActiveCurrencies`).  
 **Résolution :** dernier taux avec `effective_on ≤ operation_date` pour la paire `(from=op.currency, to=exercise.currency)`.  
 **Paire typique :** `from` = devise op · `to` = devise d’exercice.
 
@@ -454,7 +464,7 @@ Catalogue org-scoped `exchange_rates` (CRUD Admin `/tresorerie/taux-change`, API
 | Devises différentes + taux trouvé | Lignes en tenue ; `original_amount_cents` / `original_currency` = op ; `fx_rate` = taux |
 | Devises différentes **sans** taux | **400** — message orientant vers Trésorerie › Taux de change ; link reste `pending` |
 
-**Hors MVP FX :** feed BCEAO / API marché, taux inverse auto, multi-tenue concurrente, conversion des rapports / KPIs trésorerie.
+**Hors MVP FX :** feed BCEAO / API marché, taux inverse auto, multi-tenue concurrente, conversion des rapports / KPIs trésorerie, catalogue devises multi-org.
 
 ---
 
@@ -574,8 +584,9 @@ Pas de faux écrans avant données réelles (règle TRESO-040 conservée).
 | `treasury_audit_logs` | Corrélation ; audit pièces dans `accounting_audit_logs` |
 | `/tresorerie/comptabilite` | Hub réel (SYSCO-010) |
 | Montants cents + ISO | Lines en devise de tenue ; `original_*` + `fx_rate` si conversion |
+| `currencies` + `/systeme/devises` | Catalogue ISO plateforme (sélecteurs + `assertActiveCode`) |
 | `exchange_rates` + `/tresorerie/taux-change` | Catalogue manuel (TRESO-046) consommé au post |
-| `organizations.currency` | Défaut formulaires TRESO / `toCurrency` taux ; **pas** devise de tenue |
+| `organizations.currency` | Défaut formulaires TRESO / `toCurrency` taux (∈ catalogue actif) ; **pas** devise de tenue |
 | `POST/PATCH /accounting-exercises` + `/tresorerie/comptabilite/exercices` | Création + immutabilité devise (§5.2) |
 
 ---
@@ -606,6 +617,7 @@ Pas de faux écrans avant données réelles (règle TRESO-040 conservée).
 | SYSCO-008 — ✅ | Clôtures (lock/close) + OD + RAN MVP + bilan + compte de résultat |
 | TRESO-046 — ✅ | Catalogue `exchange_rates` + conversion FX au post (§7.4) |
 | Devise org + exercices — ✅ | Défaut formulaires = `organizations.currency` ; UI/API exercices + immutabilité devise (§5.2) |
+| Catalogue `currencies` — ✅ | Table + CRUD `/systeme/devises` + sélecteurs `useActiveCurrencies` + validation API (§2 / §7.4) |
 | SYSCO-007 | Livres caisse/banque + rapprochements (après clôtures MVP) |
 | SYSCO-011 | Smoke E2E fond → Comptabiliser → linked / journal |
 | SYSCO-012 | Sync OpenAPI + README module compta (basse priorité) |
