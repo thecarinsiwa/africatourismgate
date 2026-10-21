@@ -355,7 +355,9 @@ import type {
   CreateFundExitRequest,
   CreateBudgetRequest,
   CreateExchangeRateRequest,
+  CreateAccountingExerciseRequest,
   CreateAccountingLinkRequest,
+  UpdateAccountingExerciseRequest,
   UpdateAccountingLinkRequest,
   AccountingLink,
   AccountingLinksListQuery,
@@ -1764,6 +1766,25 @@ export class ApiClient {
 
   getAccountingExercise(id: string): Promise<AccountingExercise> {
     return this.request<AccountingExercise>(`/accounting-exercises/${id}`);
+  }
+
+  createAccountingExercise(
+    body: CreateAccountingExerciseRequest,
+  ): Promise<AccountingExercise> {
+    return this.request<AccountingExercise>('/accounting-exercises', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateAccountingExercise(
+    id: string,
+    body: UpdateAccountingExerciseRequest,
+  ): Promise<AccountingExercise> {
+    return this.request<AccountingExercise>(`/accounting-exercises/${id}`, {
+      method: 'PATCH',
+      body,
+    });
   }
 
   listAccountingPeriods(

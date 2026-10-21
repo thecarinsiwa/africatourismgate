@@ -126,6 +126,24 @@ export interface AccountingExercisesListQuery {
   includePeriods?: boolean;
 }
 
+export interface CreateAccountingExerciseRequest {
+  organizationId: string;
+  code: string;
+  label: string;
+  startsOn: string;
+  endsOn: string;
+  /** Defaults to organizations.currency when omitted */
+  currency?: string;
+}
+
+export interface UpdateAccountingExerciseRequest {
+  label?: string;
+  /**
+   * Allowed only when exercise is `open` and has no posted journal entries.
+   */
+  currency?: string;
+}
+
 export interface AccountingPeriodsListQuery {
   page?: number;
   limit?: number;
