@@ -28,7 +28,7 @@ import {
   useBudgetPeriodLabels,
   useBudgetScopeLabels,
 } from '../../lib/i18n/use-module-labels';
-import { treasuryCurrencySelectOptions } from '../../lib/treasury/currency-options';
+import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
 
 export function BudgetVsActualPanel() {
   const t = useTranslations('modules.treasury.budgets.vsActual');
@@ -133,14 +133,10 @@ export function BudgetVsActualPanel() {
     return opts;
   }, [locale, t]);
 
-  const currencyOptions = useMemo(
-    () =>
-      treasuryCurrencySelectOptions({
-        includeEmpty: true,
-        emptyLabel: t('filterCurrencyAll'),
-      }),
-    [t],
-  );
+  const { options: currencyOptions } = useActiveCurrencies({
+    includeEmpty: true,
+    emptyLabel: t('filterCurrencyAll'),
+  });
 
   const handleApply = useCallback(() => {
     const yearNum = Number.parseInt(year.trim(), 10);

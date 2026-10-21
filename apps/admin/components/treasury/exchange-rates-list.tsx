@@ -24,6 +24,7 @@ import {
   FALLBACK_TREASURY_CURRENCY,
   treasuryCurrencySelectOptions,
 } from '../../lib/treasury/currency-options';
+import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
 import { useOrganizationCurrency } from '../../lib/treasury/use-organization-currency';
 import { PermissionGate } from '../permission-gate';
 
@@ -96,22 +97,34 @@ export function ExchangeRatesList() {
     [t, tCommonErrors, tErrors],
   );
 
+  const { codes: activeCurrencyCodes, labelsByCode } = useActiveCurrencies();
+
   const currencySelectOptions = useMemo(
     () =>
       treasuryCurrencySelectOptions({
+        codes: activeCurrencyCodes,
+        labelsByCode,
         includeEmpty: true,
         emptyLabel: tFilters('filters.all'),
         extraCodes: [orgCurrency],
       }),
-    [tFilters, orgCurrency],
+    [activeCurrencyCodes, labelsByCode, tFilters, orgCurrency],
   );
 
   const formCurrencyOptions = useMemo(
     () =>
       treasuryCurrencySelectOptions({
+        codes: activeCurrencyCodes,
+        labelsByCode,
         extraCodes: [orgCurrency, form.toCurrency, form.fromCurrency],
       }),
-    [orgCurrency, form.toCurrency, form.fromCurrency],
+    [
+      activeCurrencyCodes,
+      labelsByCode,
+      orgCurrency,
+      form.toCurrency,
+      form.fromCurrency,
+    ],
   );
 
   useEffect(() => {

@@ -1,4 +1,7 @@
-/** Shared ISO currency list for Treasury Admin forms & filters. */
+/**
+ * Fallback ISO list when GET /currencies is unavailable (offline / external token UI).
+ * Prefer live catalog via {@link useActiveCurrencies}.
+ */
 export const TREASURY_CURRENCY_OPTIONS = [
   'XOF',
   'XAF',
@@ -22,23 +25,38 @@ export function normalizeCurrencyCode(
   return code;
 }
 
+export type CurrencySelectOption = { value: string; label: string };
+
 export function treasuryCurrencySelectOptions(options?: {
+  /** Active catalog codes; defaults to {@link TREASURY_CURRENCY_OPTIONS}. */
+  codes?: readonly string[];
+  /** Optional display labels keyed by ISO code (e.g. from API). */
+  labelsByCode?: Record<string, string>;
   includeEmpty?: boolean;
   emptyLabel?: string;
   /** Codes not in the shared list (e.g. org currency) still appear in the select. */
   extraCodes?: Array<string | null | undefined>;
-}): Array<{ value: string; label: string }> {
+}): CurrencySelectOption[] {
   const seen = new Set<string>();
-  const items: Array<{ value: string; label: string }> = [];
+  const items: CurrencySelectOption[] = [];
+  const labels = options?.labelsByCode;
 
   const push = (raw: string | null | undefined) => {
     const code = normalizeCurrencyCode(raw);
     if (!code || seen.has(code)) return;
     seen.add(code);
-    items.push({ value: code, label: code });
+    const catalogLabel = labels?.[code]?.trim();
+    items.push({
+      value: code,
+      label: catalogLabel ? `${code} — ${catalogLabel}` : code,
+    });
   };
 
-  for (const code of TREASURY_CURRENCY_OPTIONS) {
+  const baseCodes = options?.codes?.length
+    ? options.codes
+    : TREASURY_CURRENCY_OPTIONS;
+
+  for (const code of baseCodes) {
     push(code);
   }
   for (const code of options?.extraCodes ?? []) {

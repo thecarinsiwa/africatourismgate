@@ -20,6 +20,7 @@ import {
   FundExits,
 } from '../../../entities/fund-exit.entity';
 import { Bookings } from '../../../entities/generated';
+import { CurrenciesService } from '../currencies/currencies.service';
 import { ExpenseRequestsService } from '../expense-requests/expense-requests.service';
 import { TreasuryAuditService } from '../treasury-audit/treasury-audit.service';
 import { assertFundOpNotAccountingLinked } from '../assert-fund-op-not-accounting-linked';
@@ -135,6 +136,7 @@ export class FundExitsService extends CrudService<FundExits> {
     @InjectRepository(Bookings)
     private readonly bookingsRepository: Repository<Bookings>,
     private readonly expenseRequestsService: ExpenseRequestsService,
+    private readonly currencies: CurrenciesService,
     private readonly treasuryAudit: TreasuryAuditService,
   ) {
     super(fundExitsRepository);
@@ -155,10 +157,11 @@ export class FundExitsService extends CrudService<FundExits> {
     }
 
     const { bookingIds, ...fields } = dto;
+    const currency = await this.currencies.assertActiveCode(fields.currency);
     const exit = await super.create(
       {
         ...fields,
-        currency: fields.currency.toUpperCase(),
+        currency,
         operationDate: fields.operationDate.slice(0, 10),
         status: 'draft',
       } as DeepPartial<FundExits>,
@@ -191,7 +194,7 @@ export class FundExitsService extends CrudService<FundExits> {
     const { bookingIds, ...fields } = dto;
     const payload: DeepPartial<FundExits> = { ...fields };
     if (fields.currency) {
-      payload.currency = fields.currency.toUpperCase();
+      payload.currency = await this.currencies.assertActiveCode(fields.currency);
     }
     if (fields.operationDate) {
       payload.operationDate = fields.operationDate.slice(0, 10);

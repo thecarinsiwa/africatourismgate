@@ -13,13 +13,11 @@ import {
 import type { ValidateTreasuryAccessTokenResponse } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { resolveUnknownApiError } from '../../lib/common-api-errors';
-import {
-  FALLBACK_TREASURY_CURRENCY,
-  treasuryCurrencySelectOptions,
-} from '../../lib/treasury/currency-options';
+import { FALLBACK_TREASURY_CURRENCY } from '../../lib/treasury/currency-options';
+import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
 import { useOrganizationCurrency } from '../../lib/treasury/use-organization-currency';
 import { BrandingLogo } from '../branding-logo';
 
@@ -78,13 +76,9 @@ function ExternalExpenseRequestFormInner() {
     access?.collaborator.organizationId,
   );
 
-  const currencyOptions = useMemo(
-    () =>
-      treasuryCurrencySelectOptions({
-        extraCodes: [orgCurrency, currency],
-      }),
-    [orgCurrency, currency],
-  );
+  const { options: currencyOptions } = useActiveCurrencies({
+    extraCodes: [orgCurrency, currency],
+  });
 
   useEffect(() => {
     if (!orgCurrency || currencyTouchedRef.current) return;

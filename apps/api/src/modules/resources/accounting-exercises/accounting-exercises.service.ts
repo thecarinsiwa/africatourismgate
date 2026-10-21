@@ -17,6 +17,7 @@ import { ChartOfAccounts } from '../../../entities/chart-of-account.entity';
 import { JournalEntries } from '../../../entities/journal-entry.entity';
 import { Organizations } from '../../../entities/generated/organizations.entity';
 import { AccountingAuditService } from '../accounting-audit/accounting-audit.service';
+import { CurrenciesService } from '../currencies/currencies.service';
 import { JournalEntriesService } from '../journal-entries/journal-entries.service';
 import { CreateAccountingExerciseDto } from './dto/create-accounting-exercise.dto';
 import { UpdateAccountingExerciseDto } from './dto/update-accounting-exercise.dto';
@@ -54,6 +55,7 @@ export class AccountingExercisesService {
     @InjectRepository(JournalEntries)
     private readonly journalEntriesRepo: Repository<JournalEntries>,
     private readonly journalEntries: JournalEntriesService,
+    private readonly currencies: CurrenciesService,
     private readonly accountingAudit: AccountingAuditService,
   ) {}
 
@@ -138,14 +140,9 @@ export class AccountingExercisesService {
       throw new BadRequestException('code and label are required');
     }
 
-    const currency = (
-      dto.currency?.trim() ||
-      org.currency?.trim() ||
-      'XOF'
-    ).toUpperCase();
-    if (!/^[A-Z]{3}$/.test(currency)) {
-      throw new BadRequestException('currency must be a 3-letter ISO code');
-    }
+    const currency = await this.currencies.assertActiveCode(
+      dto.currency?.trim() || org.currency?.trim() || 'XOF',
+    );
 
     await this.assertUniqueCode(dto.organizationId, code);
 
@@ -238,10 +235,7 @@ export class AccountingExercisesService {
     }
 
     if (dto.currency !== undefined) {
-      const currency = dto.currency.trim().toUpperCase();
-      if (!/^[A-Z]{3}$/.test(currency)) {
-        throw new BadRequestException('currency must be a 3-letter ISO code');
-      }
+      const currency = await this.currencies.assertActiveCode(dto.currency);
       if (currency !== exercise.currency) {
         if (exercise.status !== 'open') {
           throw new ConflictException(

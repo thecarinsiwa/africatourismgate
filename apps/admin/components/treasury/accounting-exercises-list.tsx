@@ -22,10 +22,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { resolveUnknownApiError } from '../../lib/common-api-errors';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
-import {
-  FALLBACK_TREASURY_CURRENCY,
-  treasuryCurrencySelectOptions,
-} from '../../lib/treasury/currency-options';
+import { FALLBACK_TREASURY_CURRENCY } from '../../lib/treasury/currency-options';
+import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
 import { useOrganizationCurrency } from '../../lib/treasury/use-organization-currency';
 import { PermissionGate } from '../permission-gate';
 
@@ -101,13 +99,9 @@ export function AccountingExercisesList() {
     [t, tCommonErrors, tErrors],
   );
 
-  const currencyOptions = useMemo(
-    () =>
-      treasuryCurrencySelectOptions({
-        extraCodes: [orgCurrency, form.currency, editing?.currency],
-      }),
-    [orgCurrency, form.currency, editing?.currency],
-  );
+  const { options: currencyOptions } = useActiveCurrencies({
+    extraCodes: [orgCurrency, form.currency, editing?.currency],
+  });
 
   useEffect(() => {
     if (!modalOpen || editing || !orgCurrency || currencyTouchedRef.current) {

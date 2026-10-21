@@ -24,6 +24,7 @@ import {
   Rooms,
   Vehicles,
 } from '../../../entities/generated';
+import { CurrenciesService } from '../currencies/currencies.service';
 import { BudgetsListQueryDto } from './dto/budgets-list-query.dto';
 import { BudgetsVsActualQueryDto } from './dto/budgets-vs-actual-query.dto';
 import { CreateBudgetDto } from './dto/create-budget.dto';
@@ -95,6 +96,7 @@ export class BudgetsService extends CrudService<Budgets> {
     private readonly vehiclesRepository: Repository<Vehicles>,
     @InjectRepository(Cabins)
     private readonly cabinsRepository: Repository<Cabins>,
+    private readonly currencies: CurrenciesService,
   ) {
     super(budgetsRepository);
   }
@@ -106,7 +108,7 @@ export class BudgetsService extends CrudService<Budgets> {
     this.assertPeriodFields(dto.periodType, dto.month);
 
     const month = dto.periodType === 'annual' ? null : (dto.month as number);
-    const currency = dto.currency.toUpperCase();
+    const currency = await this.currencies.assertActiveCode(dto.currency);
     const scope = await this.resolveAndValidateScope({
       organizationId: dto.organizationId,
       scopeType: dto.scopeType ?? 'general',
@@ -161,7 +163,10 @@ export class BudgetsService extends CrudService<Budgets> {
     this.assertPeriodFields(periodType, monthInput);
 
     const month = periodType === 'annual' ? null : (monthInput as number);
-    const currency = (dto.currency ?? existing.currency).toUpperCase();
+    const currency =
+      dto.currency !== undefined
+        ? await this.currencies.assertActiveCode(dto.currency)
+        : existing.currency.toUpperCase();
 
     const scope = await this.resolveAndValidateScope({
       organizationId: existing.organizationId,

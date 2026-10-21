@@ -18,6 +18,7 @@ import {
   FundEntryBookings,
 } from '../../../entities/fund-entry.entity';
 import { Bookings } from '../../../entities/generated';
+import { CurrenciesService } from '../currencies/currencies.service';
 import { TreasuryAuditService } from '../treasury-audit/treasury-audit.service';
 import { CreateFundEntryDto } from './dto/create-fund-entry.dto';
 import { FundEntriesListQueryDto } from './dto/fund-entries-list-query.dto';
@@ -124,6 +125,7 @@ export class FundEntriesService extends CrudService<FundEntries> {
     private readonly fundEntryAttachmentsRepository: Repository<FundEntryAttachments>,
     @InjectRepository(Bookings)
     private readonly bookingsRepository: Repository<Bookings>,
+    private readonly currencies: CurrenciesService,
     private readonly treasuryAudit: TreasuryAuditService,
   ) {
     super(fundEntriesRepository);
@@ -134,10 +136,11 @@ export class FundEntriesService extends CrudService<FundEntries> {
     actorUserId?: string,
   ): Promise<FundEntryResponse> {
     const { bookingIds, ...fields } = dto;
+    const currency = await this.currencies.assertActiveCode(fields.currency);
     const entry = await super.create(
       {
         ...fields,
-        currency: fields.currency.toUpperCase(),
+        currency,
         status: 'recorded',
       } as DeepPartial<FundEntries>,
       actorUserId,
@@ -169,7 +172,7 @@ export class FundEntriesService extends CrudService<FundEntries> {
     const { bookingIds, ...fields } = dto;
     const payload: DeepPartial<FundEntries> = { ...fields };
     if (fields.currency) {
-      payload.currency = fields.currency.toUpperCase();
+      payload.currency = await this.currencies.assertActiveCode(fields.currency);
     }
 
     const entry = await super.update(id, payload, actorUserId);

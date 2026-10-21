@@ -27,11 +27,7 @@ import { CurrenciesService } from './currencies.service';
 export class CurrenciesController {
   constructor(private readonly service: CurrenciesService) {}
 
-  @RequirePermissions(
-    'currencies.read',
-    'treasury.read',
-    'accounting.read',
-  )
+  /** Any authenticated session — used by org / treasury / accounting selects. */
   @Get()
   @ApiOperation({
     summary:
@@ -41,11 +37,7 @@ export class CurrenciesController {
     return this.service.findAll(query);
   }
 
-  @RequirePermissions(
-    'currencies.read',
-    'treasury.read',
-    'accounting.read',
-  )
+  /** Any authenticated session. */
   @Get(':id')
   @ApiOperation({ summary: 'Get currency by id' })
   findOne(@Param('id') id: string) {

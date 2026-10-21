@@ -24,10 +24,8 @@ import { getApiClient } from '../../lib/auth/api';
 import { resolveUnknownApiError } from '../../lib/common-api-errors';
 import { formatMoney } from '../../lib/format-money';
 import { useTreasuryPaymentMethodLabels } from '../../lib/i18n/use-module-labels';
-import {
-  FALLBACK_TREASURY_CURRENCY,
-  treasuryCurrencySelectOptions,
-} from '../../lib/treasury/currency-options';
+import { FALLBACK_TREASURY_CURRENCY } from '../../lib/treasury/currency-options';
+import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
 import { useOrganizationCurrency } from '../../lib/treasury/use-organization-currency';
 
 const SEARCH_DEBOUNCE_MS = 300;
@@ -376,13 +374,9 @@ export function FundExitForm({
     [paymentMethodLabels],
   );
 
-  const currencyOptions = useMemo(
-    () =>
-      treasuryCurrencySelectOptions({
-        extraCodes: [orgCurrency, values.currency],
-      }),
-    [orgCurrency, values.currency],
-  );
+  const { options: currencyOptions } = useActiveCurrencies({
+    extraCodes: [orgCurrency, values.currency],
+  });
 
   const organizationOptions = useMemo(
     () => [

@@ -31,7 +31,7 @@ import {
   useTreasuryPaymentMethodLabels,
 } from '../../lib/i18n/use-module-labels';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
-import { treasuryCurrencySelectOptions } from '../../lib/treasury/currency-options';
+import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
 import { downloadTreasuryOperationsCsv } from '../../lib/treasury-reports-export';
 import { PermissionGate } from '../permission-gate';
 
@@ -123,14 +123,10 @@ export function FundEntriesList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const currencyOptions = useMemo(
-    () =>
-      treasuryCurrencySelectOptions({
-        includeEmpty: true,
-        emptyLabel: tCommon('filters.allFeminine'),
-      }),
-    [tCommon],
-  );
+  const { options: currencyOptions } = useActiveCurrencies({
+    includeEmpty: true,
+    emptyLabel: tCommon('filters.allFeminine'),
+  });
 
   const load = useCallback(async () => {
     if (!canRead) {

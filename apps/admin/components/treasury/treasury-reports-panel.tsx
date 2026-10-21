@@ -34,7 +34,7 @@ import {
   useFundEntrySourceLabels,
   useTreasuryPaymentMethodLabels,
 } from '../../lib/i18n/use-module-labels';
-import { treasuryCurrencySelectOptions } from '../../lib/treasury/currency-options';
+import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
 import { downloadTreasuryOperationsCsv } from '../../lib/treasury-reports-export';
 import { useChartTheme } from '../../lib/use-chart-theme';
 
@@ -170,14 +170,10 @@ export function TreasuryReportsPanel() {
     void load();
   }, [load]);
 
-  const currencyOptions = useMemo(
-    () =>
-      treasuryCurrencySelectOptions({
-        includeEmpty: true,
-        emptyLabel: t('filters.currencyAll'),
-      }),
-    [t],
-  );
+  const { options: currencyOptions } = useActiveCurrencies({
+    includeEmpty: true,
+    emptyLabel: t('filters.currencyAll'),
+  });
 
   const handleApply = useCallback(() => {
     if (!dateFrom || !dateTo) return;

@@ -25,10 +25,8 @@ import {
   useBudgetProductTypeLabels,
   useBudgetScopeLabels,
 } from '../../lib/i18n/use-module-labels';
-import {
-  FALLBACK_TREASURY_CURRENCY,
-  treasuryCurrencySelectOptions,
-} from '../../lib/treasury/currency-options';
+import { FALLBACK_TREASURY_CURRENCY } from '../../lib/treasury/currency-options';
+import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
 import { useOrganizationCurrency } from '../../lib/treasury/use-organization-currency';
 
 const SEARCH_DEBOUNCE_MS = 300;
@@ -446,13 +444,9 @@ export function BudgetForm({ mode, budgetId, initialBudget }: BudgetFormProps) {
     return opts;
   }, [locale]);
 
-  const currencyOptions = useMemo(
-    () =>
-      treasuryCurrencySelectOptions({
-        extraCodes: [orgCurrency, values.currency],
-      }),
-    [orgCurrency, values.currency],
-  );
+  const { options: currencyOptions } = useActiveCurrencies({
+    extraCodes: [orgCurrency, values.currency],
+  });
 
   const organizationOptions = useMemo(
     () => [

@@ -7,6 +7,7 @@ import {
   FundExits,
 } from '../../../entities/fund-exit.entity';
 import { Bookings } from '../../../entities/generated';
+import { CurrenciesModule } from '../currencies/currencies.module';
 import { ExpenseRequestsModule } from '../expense-requests/expense-requests.module';
 import { TreasuryAuditModule } from '../treasury-audit/treasury-audit.module';
 import { FundExitsController } from './fund-exits.controller';
@@ -21,6 +22,7 @@ import { FundExitsService } from './fund-exits.service';
       ExpenseRequests,
       Bookings,
     ]),
+    CurrenciesModule,
     ExpenseRequestsModule,
     TreasuryAuditModule,
   ],

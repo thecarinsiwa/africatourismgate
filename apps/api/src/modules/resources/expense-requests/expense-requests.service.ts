@@ -15,6 +15,7 @@ import {
   ExpenseRequestStatusHistory,
 } from '../../../entities/fund-exit.entity';
 import { PermissionsService } from '../../rbac/permissions.service';
+import { CurrenciesService } from '../currencies/currencies.service';
 import { ExternalCollaboratorsService } from '../external-collaborators/external-collaborators.service';
 import { TreasuryAuditService } from '../treasury-audit/treasury-audit.service';
 import { CreateExpenseRequestDto } from './dto/create-expense-request.dto';
@@ -38,6 +39,7 @@ export class ExpenseRequestsService extends CrudService<ExpenseRequests> {
     private readonly statusHistoryRepository: Repository<ExpenseRequestStatusHistory>,
     private readonly permissionsService: PermissionsService,
     private readonly externalCollaborators: ExternalCollaboratorsService,
+    private readonly currencies: CurrenciesService,
     private readonly treasuryAudit: TreasuryAuditService,
   ) {
     super(expenseRequestsRepository);
@@ -47,13 +49,14 @@ export class ExpenseRequestsService extends CrudService<ExpenseRequests> {
     dto: CreateExpenseRequestDto,
     actorUserId?: string,
   ): Promise<ExpenseRequests> {
+    const currency = await this.currencies.assertActiveCode(dto.currency);
     const entry = await super.create(
       {
         organizationId: dto.organizationId,
         title: dto.title.trim(),
         description: dto.description.trim(),
         requestedAmountCents: dto.requestedAmountCents,
-        currency: dto.currency.toUpperCase(),
+        currency,
         neededByDate: dto.neededByDate
           ? dto.neededByDate.slice(0, 10)
           : null,
@@ -106,6 +109,7 @@ export class ExpenseRequestsService extends CrudService<ExpenseRequests> {
       EXTERNAL_CREATE_SCOPE,
     );
     const collaborator = access.collaborator;
+    const currency = await this.currencies.assertActiveCode(dto.currency);
 
     const entry = await super.create(
       {
@@ -113,7 +117,7 @@ export class ExpenseRequestsService extends CrudService<ExpenseRequests> {
         title: dto.title.trim(),
         description: dto.description.trim(),
         requestedAmountCents: dto.requestedAmountCents,
-        currency: dto.currency.toUpperCase(),
+        currency,
         neededByDate: dto.neededByDate
           ? dto.neededByDate.slice(0, 10)
           : null,
@@ -193,7 +197,7 @@ export class ExpenseRequestsService extends CrudService<ExpenseRequests> {
       payload.requestedAmountCents = dto.requestedAmountCents;
     }
     if (dto.currency !== undefined) {
-      payload.currency = dto.currency.toUpperCase();
+      payload.currency = await this.currencies.assertActiveCode(dto.currency);
     }
     if (dto.neededByDate !== undefined) {
       payload.neededByDate = dto.neededByDate

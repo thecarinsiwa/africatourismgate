@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, IsNull, Repository } from 'typeorm';
+import { DeepPartial, In, IsNull, Repository } from 'typeorm';
 import {
   Employees,
   Organizations,
@@ -10,6 +10,7 @@ import {
 } from '../../../entities/generated';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { CrudService } from '../../../common/crud/crud.service';
+import { CurrenciesService } from '../currencies/currencies.service';
 import type { OrganizationListItemDto } from './dto/organization-list-item.dto';
 import type { OrganizationsListQueryDto } from './dto/organizations-list-query.dto';
 
@@ -32,8 +33,36 @@ export class OrganizationsService extends CrudService<Organizations> {
     private readonly employeesRepository: Repository<Employees>,
     @InjectRepository(TourGuides)
     private readonly tourGuidesRepository: Repository<TourGuides>,
+    private readonly currencies: CurrenciesService,
   ) {
     super(organizationsRepository);
+  }
+
+  override async create(
+    dto: DeepPartial<Organizations>,
+    actorUserId?: string,
+  ): Promise<Organizations> {
+    const payload: DeepPartial<Organizations> = { ...dto };
+    if (payload.currency != null && String(payload.currency).trim() !== '') {
+      payload.currency = await this.currencies.assertActiveCode(
+        String(payload.currency),
+      );
+    }
+    return super.create(payload, actorUserId);
+  }
+
+  override async update(
+    id: string,
+    dto: DeepPartial<Organizations>,
+    actorUserId?: string,
+  ): Promise<Organizations> {
+    const payload: DeepPartial<Organizations> = { ...dto };
+    if (payload.currency != null && String(payload.currency).trim() !== '') {
+      payload.currency = await this.currencies.assertActiveCode(
+        String(payload.currency),
+      );
+    }
+    return super.update(id, payload, actorUserId);
   }
 
   async findAllWithCounts(

@@ -12,10 +12,8 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { resolveUnknownApiError } from '../../lib/common-api-errors';
-import {
-  FALLBACK_TREASURY_CURRENCY,
-  treasuryCurrencySelectOptions,
-} from '../../lib/treasury/currency-options';
+import { FALLBACK_TREASURY_CURRENCY } from '../../lib/treasury/currency-options';
+import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
 import { useOrganizationCurrency } from '../../lib/treasury/use-organization-currency';
 
 type FormValues = {
@@ -173,13 +171,9 @@ export function ExpenseRequestForm({
     [],
   );
 
-  const currencyOptions = useMemo(
-    () =>
-      treasuryCurrencySelectOptions({
-        extraCodes: [orgCurrency, values.currency],
-      }),
-    [orgCurrency, values.currency],
-  );
+  const { options: currencyOptions } = useActiveCurrencies({
+    extraCodes: [orgCurrency, values.currency],
+  });
 
   const organizationOptions = useMemo(
     () => [

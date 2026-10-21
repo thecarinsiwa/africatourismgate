@@ -9,6 +9,7 @@ import { IsNull, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { newId } from '../../../common/utils/uuid';
 import { ExchangeRates } from '../../../entities/exchange-rate.entity';
+import { CurrenciesService } from '../currencies/currencies.service';
 import { CreateExchangeRateDto } from './dto/create-exchange-rate.dto';
 import {
   ExchangeRateDto,
@@ -38,6 +39,7 @@ export class ExchangeRatesService {
   constructor(
     @InjectRepository(ExchangeRates)
     private readonly ratesRepo: Repository<ExchangeRates>,
+    private readonly currencies: CurrenciesService,
   ) {}
 
   async findAll(
@@ -102,8 +104,10 @@ export class ExchangeRatesService {
     dto: CreateExchangeRateDto,
     actorUserId?: string,
   ): Promise<ExchangeRateDto> {
-    const fromCurrency = dto.fromCurrency.toUpperCase();
-    const toCurrency = dto.toCurrency.toUpperCase();
+    const fromCurrency = await this.currencies.assertActiveCode(
+      dto.fromCurrency,
+    );
+    const toCurrency = await this.currencies.assertActiveCode(dto.toCurrency);
     const effectiveOn = dateOnly(dto.effectiveOn);
     this.assertPair(fromCurrency, toCurrency, dto.rate);
 
@@ -139,10 +143,14 @@ export class ExchangeRatesService {
     actorUserId?: string,
   ): Promise<ExchangeRateDto> {
     const existing = await this.requireRow(id);
-    const fromCurrency = (
-      dto.fromCurrency ?? existing.fromCurrency
-    ).toUpperCase();
-    const toCurrency = (dto.toCurrency ?? existing.toCurrency).toUpperCase();
+    const fromCurrency =
+      dto.fromCurrency !== undefined
+        ? await this.currencies.assertActiveCode(dto.fromCurrency)
+        : existing.fromCurrency.toUpperCase();
+    const toCurrency =
+      dto.toCurrency !== undefined
+        ? await this.currencies.assertActiveCode(dto.toCurrency)
+        : existing.toCurrency.toUpperCase();
     const effectiveOn = dateOnly(dto.effectiveOn ?? existing.effectiveOn);
     const rate = dto.rate ?? Number(existing.rate);
     this.assertPair(fromCurrency, toCurrency, rate);

@@ -11,6 +11,7 @@ import {
   Rooms,
   Vehicles,
 } from '../../../entities/generated';
+import { CurrenciesModule } from '../currencies/currencies.module';
 import { BudgetsController } from './budgets.controller';
 import { BudgetsService } from './budgets.service';
 
@@ -27,6 +28,7 @@ import { BudgetsService } from './budgets.service';
       Vehicles,
       Cabins,
     ]),
+    CurrenciesModule,
   ],
   controllers: [BudgetsController],
   providers: [BudgetsService],
