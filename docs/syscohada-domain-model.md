@@ -32,8 +32,8 @@ Référentiel cible : **SYSCOHADA** (Système Comptable OHADA) — classes 1–8
 | Principe | Décision |
 | -------- | -------- |
 | Montants | Entiers en **cents** (`*_cents`), alignés Trésorerie / Bookings |
-| Devise opération | ISO 4217 sur chaque `fund_*` (inchangé) |
-| Devise de tenue | **Une devise d’exercice** par org (`accounting_exercises.currency`) — typiquement `XOF` ou `XAF` |
+| Devise opération | ISO 4217 sur chaque `fund_*` ; **défaut formulaires Admin** = `organizations.currency` (Paramètres) |
+| Devise de tenue | **Une devise d’exercice** (`accounting_exercises.currency`) — typiquement `XOF` ou `XAF` ; distincte de `organizations.currency` |
 | Conversion | Si `fund_*.currency ≠` devise de tenue : lookup `exchange_rates` (taux **manuels**, TRESO-046) à la date d’op → montants d’écriture en tenue ; `journal_lines.original_*` + `fx_rate` ; **refus** du post si aucun taux applicable |
 | Identifiants | UUID `char(36)` |
 | Multi-tenant | `organization_id` sur **tous** les agrégats comptables |
@@ -147,8 +147,18 @@ Comptes SYSCOHADA par organisation (classes 1–8). Sous-comptes = lignes avec `
 | `status` | enum | `open` \| `closing` \| `closed` |
 | `closed_at` / `closed_by_user_id` | nullable | |
 
-**Unicité :** `(organization_id, code)`.  
+**Unicité :** `(organization_id, code)` parmi non soft-deleted.  
 **Règle :** au plus un exercice `open` « courant » recommandé (plusieurs `open` possibles si chevauchement interdit par dates).
+
+**API / Admin (création + devise) :**
+
+| Action | Endpoint / UI | Permission | Comportement |
+| ------ | ------------- | ---------- | ------------ |
+| Créer | `POST /accounting-exercises` · `/tresorerie/comptabilite/exercices` | `accounting.chart.write` | `currency` défaut = `organizations.currency` si omis ; génère périodes **mensuelles** sur `[starts_on, ends_on]` |
+| Modifier | `PATCH /accounting-exercises/:id` | `accounting.chart.write` | `label` libre ; `currency` **seulement** si `status = open` **et** aucune `journal_entries` `posted` pour l’exercice — sinon **409** |
+| Lire | `GET /accounting-exercises` | `accounting.read` (bridge `treasury.accounting_link.read`) | Inclut `periods` si demandé |
+
+**Immutabilité devise :** une fois des écritures postées (ou exercice non `open`), la devise de tenue est figée — éviter de casser les montants déjà comptabilisés.
 
 ---
 
@@ -433,8 +443,10 @@ sequenceDiagram
 
 Catalogue org-scoped `exchange_rates` (CRUD Admin `/tresorerie/taux-change`, API `/exchange-rates`).  
 **Convention :** `rate` = unités de devise **cible** pour 1 unité **source** (`bookCents ≈ originalCents × rate`, arrondi entier ; min 1 si montant op > 0).  
-**Devise de tenue :** `accounting_exercises.currency` (pas `organizations.currency`).  
-**Résolution :** dernier taux avec `effective_on ≤ operation_date` pour la paire `(from=op.currency, to=exercise.currency)`.
+**Devise de tenue :** `accounting_exercises.currency` (configurée sur `/tresorerie/comptabilite/exercices` — **pas** `organizations.currency` au post).  
+**Défaut ops / taux :** formulaires trésorerie et `toCurrency` des taux préremplissent avec `organizations.currency` (Paramètres) — l’utilisateur peut changer.  
+**Résolution :** dernier taux avec `effective_on ≤ operation_date` pour la paire `(from=op.currency, to=exercise.currency)`.  
+**Paire typique :** `from` = devise op · `to` = devise d’exercice.
 
 | Cas | Comportement au `POST …/accounting-links/post` |
 | --- | ---------------------------------------------- |
@@ -465,7 +477,7 @@ Complète `treasury.*` (inchangé). Pattern TRESO-008 / SYSCO-009.
 | ---------- | ----- |
 | `accounting.read` | Navigation hub compta, listes lectures |
 | `accounting.chart.read` | Plan comptable |
-| `accounting.chart.write` | CRUD comptes (finance admin) |
+| `accounting.chart.write` | CRUD comptes + **création / édition exercices** (devise de tenue) |
 | `accounting.journal.read` | Journal / grand livre / balance |
 | `accounting.journal.write` | Saisie manuelle OD / draft |
 | `accounting.post` | Comptabiliser / poster / ignorer (skip) |
@@ -503,8 +515,9 @@ Préfixe : sous `/tresorerie/comptabilite` (évolution TRESO-040) et/ou `/compta
 | `…/journal` | Livre-journal | SYSCO-006 |
 | `…/grand-livre` | Grand livre | SYSCO-006 |
 | `…/balance` | Balance | SYSCO-006 |
+| `…/exercices` | Exercices + devise de tenue (create/patch) | SYSCO-002 UI |
 | `…/caisse` / `…/banque` | Livres + rapprochements | SYSCO-007 |
-| `…/cloture` | Clôtures | SYSCO-008 |
+| `…/cloture` | Clôtures (affiche devise exercice) | SYSCO-008 |
 | `…/bilan` / `…/compte-resultat` | États | SYSCO-008 |
 | `…/plan` | Plan comptable | SYSCO-002 UI légère |
 | `…/audit` | Audit écritures | SYSCO-009 |
@@ -562,6 +575,8 @@ Pas de faux écrans avant données réelles (règle TRESO-040 conservée).
 | `/tresorerie/comptabilite` | Hub réel (SYSCO-010) |
 | Montants cents + ISO | Lines en devise de tenue ; `original_*` + `fx_rate` si conversion |
 | `exchange_rates` + `/tresorerie/taux-change` | Catalogue manuel (TRESO-046) consommé au post |
+| `organizations.currency` | Défaut formulaires TRESO / `toCurrency` taux ; **pas** devise de tenue |
+| `POST/PATCH /accounting-exercises` + `/tresorerie/comptabilite/exercices` | Création + immutabilité devise (§5.2) |
 
 ---
 
@@ -590,6 +605,7 @@ Pas de faux écrans avant données réelles (règle TRESO-040 conservée).
 | SYSCO-010 — ✅ | Actions Comptabiliser / Ignorer + détail link sur le hub |
 | SYSCO-008 — ✅ | Clôtures (lock/close) + OD + RAN MVP + bilan + compte de résultat |
 | TRESO-046 — ✅ | Catalogue `exchange_rates` + conversion FX au post (§7.4) |
+| Devise org + exercices — ✅ | Défaut formulaires = `organizations.currency` ; UI/API exercices + immutabilité devise (§5.2) |
 | SYSCO-007 | Livres caisse/banque + rapprochements (après clôtures MVP) |
 | SYSCO-011 | Smoke E2E fond → Comptabiliser → linked / journal |
 | SYSCO-012 | Sync OpenAPI + README module compta (basse priorité) |

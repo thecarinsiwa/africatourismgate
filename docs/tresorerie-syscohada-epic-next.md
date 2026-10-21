@@ -32,7 +32,7 @@ Tout ce qui suit est **exclu** du lot TRESO actuel et **cible** de l’épic SYS
 | Plan comptable SYSCOHADA | Classes 1–8, comptes, sous-comptes ; multi-org |
 | Journaux paramétrables | Achats, ventes, banque, caisse, OD, etc. |
 | Exercices / périodes comptables | Ouverture, clôture, verrouillage |
-| Devises & taux | **MVP livré (TRESO-046) :** catalogue manuel `exchange_rates` + conversion à la comptabilisation. **Reste hors MVP :** feed marché, multi-tenue, conversion rapports / états hors écritures |
+| Devises & taux | **MVP livré :** `exchange_rates` (TRESO-046) + conversion au post ; défaut formulaires = `organizations.currency` ; tenue = exercice (UI `/exercices`, immutabilité si posté). **Reste hors MVP :** feed marché, multi-tenue, conversion rapports / états hors écritures |
 | Établissements / axes analytiques | Optionnel ; croisement budgets TRESO |
 | Numérotation légale | Pièces, journaux, pièces justificatives |
 

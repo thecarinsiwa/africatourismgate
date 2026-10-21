@@ -28,7 +28,7 @@ Deux branches :
 | Principe | Décision |
 | -------- | -------- |
 | Montants | Entiers en **cents** (`amount_cents`), comme `Bookings.totalCents` / `Payments` |
-| Devise | ISO 4217, `varchar(3)` (ex. `XOF`, `EUR`, `USD`) sur chaque opération ; conversion vers devise de tenue **à la comptabilisation** via catalogue manuel `exchange_rates` (TRESO-046) — pas de feed externe MVP |
+| Devise | ISO 4217, `varchar(3)` sur chaque opération ; **défaut formulaires Admin** = `organizations.currency` (Paramètres) ; conversion vers devise de tenue d’exercice **à la comptabilisation** via `exchange_rates` (TRESO-046) — pas de feed externe MVP |
 | Identifiants | UUID `char(36)` |
 | Multi-tenant | `organization_id` sur les agrégats trésorerie (aligné departments / catalog) |
 | Soft delete / annulation | Pas de delete hard des opérations validées → statut `voided` + audit |
@@ -417,8 +417,9 @@ Préfixe hub : `/tresorerie`
 | `/tresorerie/rapports` | Rapports |
 | `/tresorerie/externes` | Collaborateurs externes |
 | `/tresorerie/audit` | Journal d’audit |
-| `/tresorerie/taux-change` | Catalogue taux manuels (TRESO-046) |
-| `/tresorerie/comptabilite` | Placeholder pont (TRESO-040) → hub SYSCO |
+| `/tresorerie/taux-change` | Catalogue taux manuels (TRESO-046) ; `toCurrency` défaut = devise org |
+| `/tresorerie/comptabilite` | Hub SYSCO (pont + livres) |
+| `/tresorerie/comptabilite/exercices` | Exercices + devise de tenue (SYSCO) |
 
 Fichiers config : `dashboard-nav.config.ts`, `admin-route-permissions.ts`, `admin-sections.registry.ts`.
 
@@ -451,7 +452,7 @@ Fichiers config : `dashboard-nav.config.ts`, `admin-route-permissions.ts`, `admi
 - Génération automatique d’écritures comptables
 
 **Livré à la place :** `accounting_links` (stub) + UI placeholder + doc handoff **TRESO-041** (`docs/tresorerie-syscohada-epic-next.md`).  
-**Add-on devises :** catalogue `exchange_rates` + UI `/tresorerie/taux-change` (**TRESO-046**) — consommé par la comptabilisation SYSCO (§7.4 domaine SYSCO).  
+**Add-on devises :** catalogue `exchange_rates` + UI `/tresorerie/taux-change` (**TRESO-046**) ; défaut formulaires = `organizations.currency` ; tenue = exercice (`/tresorerie/comptabilite/exercices`, immutabilité si écritures postées) — [syscohada-domain-model.md](./syscohada-domain-model.md) §5.2 / §7.4.  
 **Suite épic :** modèle de domaine [syscohada-domain-model.md](./syscohada-domain-model.md) (SYSCO-001) · tâches [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md).
 
 ---

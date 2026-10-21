@@ -25,7 +25,8 @@ Préfixe hub : `/tresorerie` · permission de base `treasury.read` (sauf excepti
 | `/tresorerie/externes` | Collaborateurs externes | `read` **ou** `externals.manage` |
 | `/tresorerie/audit` | Journal d’audit | `treasury.audit.read` |
 | `/tresorerie/taux-change` | Catalogue taux de change (manuel) | `treasury.fx_rates.read` |
-| `/tresorerie/comptabilite` | Hub pont / livres SYSCOHADA | `treasury.accounting_link.read` **ou** `accounting.*` |
+| `/tresorerie/comptabilite` | Hub pont / livres SYSCOHADA | `treasury.accounting_link.read` **ou** `accounting.read` |
+| `/tresorerie/comptabilite/exercices` | Exercices + devise de tenue | `accounting.read` **ou** `treasury.accounting_link.read` (write : `accounting.chart.write`) |
 
 Config : `apps/admin/config/admin-route-permissions.ts`, `dashboard-nav.config.ts`.
 
@@ -102,15 +103,21 @@ Export CSV rapports : `GET /treasury-reports/export` — helper Admin `apps/admi
 
 ---
 
-## Taux de change (TRESO-046)
+## Devises
 
-Catalogue **manuel** org-scoped : `1 fromCurrency = rate × toCurrency`.  
-Utilisé à la comptabilisation SYSCO quand `fund_*.currency ≠ accounting_exercises.currency` ([syscohada-domain-model.md](./syscohada-domain-model.md) §7.4).  
-Sans taux applicable → `POST /accounting-links/post` refuse (400).  
+| Rôle | Source | Où configurer |
+| ---- | ------ | ------------- |
+| Défaut formulaires TRESO / `toCurrency` taux | `organizations.currency` | Paramètres organisation |
+| Devise de tenue (écritures SYSCO) | `accounting_exercises.currency` | `/tresorerie/comptabilite/exercices` |
+| Taux manuels | `exchange_rates` | `/tresorerie/taux-change` (TRESO-046) |
+
+- Création d’exercice : `currency` défaut = devise org ; périodes mensuelles auto.  
+- Changer la devise d’exercice : seulement si `open` et **aucune** écriture `posted` (sinon 409) — [syscohada-domain-model.md](./syscohada-domain-model.md) §5.2.  
+- Comptabilisation : si `fund_*.currency ≠` tenue → lookup taux ; sans taux → post **400** (§7.4).  
 **Hors MVP :** feed BCEAO/API, inverse auto, conversion des rapports trésorerie.
 
 ---
 
 ## Hors scope (SYSCOHADA — lot TRESO initial)
 
-Le lot TRESO-001…045 ne livrait pas plan / journal / bilan. L’épic SYSCOHADA + TRESO-046 (taux) complètent la chaîne — détails [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md) · [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md).
+Le lot TRESO-001…045 ne livrait pas plan / journal / bilan. L’épic SYSCOHADA + TRESO-046 (taux) + UI exercices complètent la chaîne — détails [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md) · [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md).
