@@ -5,9 +5,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, IsNull, Repository } from 'typeorm';
-import { CrudService } from '../../../common/crud/crud.service';
+import { IsNull, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
+import { newId } from '../../../common/utils/uuid';
 import { ExchangeRates } from '../../../entities/exchange-rate.entity';
 import { CreateExchangeRateDto } from './dto/create-exchange-rate.dto';
 import {
@@ -34,15 +34,13 @@ export type ResolvedExchangeRate = {
 };
 
 @Injectable()
-export class ExchangeRatesService extends CrudService<ExchangeRates> {
+export class ExchangeRatesService {
   constructor(
     @InjectRepository(ExchangeRates)
     private readonly ratesRepo: Repository<ExchangeRates>,
-  ) {
-    super(ratesRepo);
-  }
+  ) {}
 
-  override async findAll(
+  async findAll(
     query: ExchangeRatesListQueryDto,
   ): Promise<PaginatedResult<ExchangeRateDto>> {
     const page = query.page ?? 1;
@@ -96,9 +94,8 @@ export class ExchangeRatesService extends CrudService<ExchangeRates> {
     };
   }
 
-  override async findOne(id: string): Promise<ExchangeRateDto> {
-    const row = await this.requireRow(id);
-    return toExchangeRateDto(row);
+  async findOne(id: string): Promise<ExchangeRateDto> {
+    return toExchangeRateDto(await this.requireRow(id));
   }
 
   async createFromDto(
@@ -118,17 +115,17 @@ export class ExchangeRatesService extends CrudService<ExchangeRates> {
     });
 
     try {
-      const saved = await super.create(
-        {
-          organizationId: dto.organizationId,
-          fromCurrency,
-          toCurrency,
-          rate: dto.rate,
-          effectiveOn,
-          notes: dto.notes?.trim() || null,
-        } as DeepPartial<ExchangeRates>,
-        actorUserId,
-      );
+      const entity = this.ratesRepo.create({
+        id: newId(),
+        organizationId: dto.organizationId,
+        fromCurrency,
+        toCurrency,
+        rate: dto.rate,
+        effectiveOn,
+        notes: dto.notes?.trim() || null,
+        createdByUserId: actorUserId ?? null,
+      });
+      const saved = await this.ratesRepo.save(entity);
       return toExchangeRateDto(saved);
     } catch (error) {
       this.rethrowDuplicate(error);
@@ -147,7 +144,7 @@ export class ExchangeRatesService extends CrudService<ExchangeRates> {
     ).toUpperCase();
     const toCurrency = (dto.toCurrency ?? existing.toCurrency).toUpperCase();
     const effectiveOn = dateOnly(dto.effectiveOn ?? existing.effectiveOn);
-    const rate = dto.rate ?? existing.rate;
+    const rate = dto.rate ?? Number(existing.rate);
     this.assertPair(fromCurrency, toCurrency, rate);
 
     await this.assertUnique({
@@ -158,18 +155,17 @@ export class ExchangeRatesService extends CrudService<ExchangeRates> {
       excludeId: id,
     });
 
-    const payload: DeepPartial<ExchangeRates> = {
-      fromCurrency,
-      toCurrency,
-      effectiveOn,
-      rate,
-    };
+    existing.fromCurrency = fromCurrency;
+    existing.toCurrency = toCurrency;
+    existing.effectiveOn = effectiveOn;
+    existing.rate = rate;
+    existing.updatedByUserId = actorUserId ?? null;
     if (dto.notes !== undefined) {
-      payload.notes = dto.notes?.trim() || null;
+      existing.notes = dto.notes?.trim() || null;
     }
 
     try {
-      const saved = await super.update(id, payload, actorUserId);
+      const saved = await this.ratesRepo.save(existing);
       return toExchangeRateDto(saved);
     } catch (error) {
       this.rethrowDuplicate(error);
@@ -177,14 +173,17 @@ export class ExchangeRatesService extends CrudService<ExchangeRates> {
     }
   }
 
-  override async remove(id: string, actorUserId?: string): Promise<void> {
+  async remove(id: string, actorUserId?: string): Promise<void> {
     await this.requireRow(id);
-    await super.remove(id, actorUserId);
+    await this.ratesRepo.softDelete(id);
+    if (actorUserId) {
+      await this.ratesRepo.update(id, { deletedByUserId: actorUserId });
+    }
   }
 
   /**
    * Dernier taux avec effective_on ≤ onDate pour la paire (org, from → to).
-   * Retourne null si aucun taux applicable (appelant : erreur métier au post).
+   * Même devise → rate 1 (pas de ligne catalogue). Absent → null.
    */
   async resolveRate(params: {
     organizationId: string;
