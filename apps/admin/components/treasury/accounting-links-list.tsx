@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  Button,
   Card,
   DataTable,
   DataTableBadge,
@@ -53,10 +54,14 @@ export function AccountingLinksList() {
   const paginationLabels = useDataTablePaginationLabels();
   const emptyDash = tCommon('empty.dash');
 
+  const tActions = useTranslations('modules.treasury.accounting.actions');
   const [page, setPage] = useState(1);
   const [fundOpType, setFundOpType] = useState<'' | AccountingFundOpType>('');
   const [status, setStatus] = useState<'' | AccountingLinkStatus>('');
   const [canRead, setCanRead] = useState(true);
+  const [canPost, setCanPost] = useState(false);
+  const [actionBusyId, setActionBusyId] = useState<string | null>(null);
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -85,13 +90,19 @@ export function AccountingLinksList() {
       .getAuthMe()
       .then((me) => {
         if (cancelled) return;
+        const perms = me.permissions ?? [];
         setCanRead(
           me.isSuperAdmin ||
-            me.permissions.includes('treasury.accounting_link.read'),
+            perms.includes('treasury.accounting_link.read') ||
+            perms.includes('accounting.read'),
         );
+        setCanPost(me.isSuperAdmin || perms.includes('accounting.post'));
       })
       .catch(() => {
-        if (!cancelled) setCanRead(false);
+        if (!cancelled) {
+          setCanRead(false);
+          setCanPost(false);
+        }
       });
     return () => {
       cancelled = true;
@@ -131,6 +142,58 @@ export function AccountingLinksList() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  const handlePost = useCallback(
+    async (link: AccountingLink) => {
+      setActionBusyId(link.id);
+      setActionMessage(null);
+      try {
+        await getApiClient().postAccountingLink({
+          fundOpType: link.fundOpType,
+          fundOpId: link.fundOpId,
+        });
+        setActionMessage(tActions('postSuccess'));
+        await load();
+      } catch (error) {
+        setActionMessage(
+          resolveUnknownApiError(error, commonErrorMessages, {
+            useParseApiMessage: true,
+            forbidden: tActions('postError'),
+          }),
+        );
+      } finally {
+        setActionBusyId(null);
+      }
+    },
+    [commonErrorMessages, load, tActions],
+  );
+
+  const handleSkip = useCallback(
+    async (link: AccountingLink) => {
+      if (!window.confirm(tActions('confirmSkip'))) return;
+      setActionBusyId(link.id);
+      setActionMessage(null);
+      try {
+        await getApiClient().skipAccountingLink({
+          fundOpType: link.fundOpType,
+          fundOpId: link.fundOpId,
+          organizationId: link.organizationId,
+        });
+        setActionMessage(tActions('skipSuccess'));
+        await load();
+      } catch (error) {
+        setActionMessage(
+          resolveUnknownApiError(error, commonErrorMessages, {
+            useParseApiMessage: true,
+            forbidden: tActions('skipError'),
+          }),
+        );
+      } finally {
+        setActionBusyId(null);
+      }
+    },
+    [commonErrorMessages, load, tActions],
+  );
 
   const activeFilterCount = [fundOpType !== '', status !== ''].filter(
     Boolean,
@@ -238,8 +301,65 @@ export function AccountingLinksList() {
             emptyDash
           ),
       },
+      {
+        id: 'actions',
+        header: tColumns('actions'),
+        cell: ({ row }) => {
+          const link = row.original;
+          const busy = actionBusyId === link.id;
+          if (!canPost) return emptyDash;
+          if (link.status === 'linked') {
+            return link.journalEntryId ? (
+              <Link
+                href={`/tresorerie/comptabilite/journal/${link.journalEntryId}`}
+                className="text-sm font-medium text-primary hover:underline"
+              >
+                {tColumns('journalEntryId')}
+              </Link>
+            ) : (
+              emptyDash
+            );
+          }
+          return (
+            <div className="flex flex-wrap gap-2">
+              {link.status === 'pending' || link.status === 'skipped' ? (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="primary"
+                  disabled={busy || link.status === 'skipped'}
+                  onClick={() => void handlePost(link)}
+                >
+                  {tActions('post')}
+                </Button>
+              ) : null}
+              {link.status === 'pending' ? (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="secondary"
+                  disabled={busy}
+                  onClick={() => void handleSkip(link)}
+                >
+                  {tActions('skip')}
+                </Button>
+              ) : null}
+            </div>
+          );
+        },
+      },
     ],
-    [emptyDash, formatDateTime, t, tColumns],
+    [
+      actionBusyId,
+      canPost,
+      emptyDash,
+      formatDateTime,
+      handlePost,
+      handleSkip,
+      t,
+      tActions,
+      tColumns,
+    ],
   );
 
   if (!canRead && state.status === 'error') {
@@ -295,6 +415,12 @@ export function AccountingLinksList() {
           </>
         }
       />
+
+      {actionMessage ? (
+        <p className="text-sm text-atg-muted" role="status">
+          {actionMessage}
+        </p>
+      ) : null}
 
       {isError ? (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">

@@ -385,6 +385,115 @@ export class JournalEntriesService {
     return { rows, totals };
   }
 
+  /**
+   * Bilan (classes 1–5) ou compte de résultat (6–7) — SYSCO-008.
+   */
+  async getFinancialStatement(
+    kind: 'balance_sheet' | 'income_statement',
+    query: AccountingBalanceQueryDto,
+  ): Promise<{
+    kind: 'balance_sheet' | 'income_statement';
+    organizationId: string;
+    exerciseId: string | null;
+    periodId: string | null;
+    currency: string | null;
+    sections: Array<{
+      label: string;
+      classNumbers: number[];
+      rows: Array<{
+        accountId: string;
+        accountCode: string;
+        accountLabel: string;
+        classNumber: number;
+        debitCents: number;
+        creditCents: number;
+        balanceCents: number;
+      }>;
+      totalCents: number;
+    }>;
+    netCents: number;
+  }> {
+    const balance = await this.getBalance(query);
+    let currency: string | null = null;
+    if (query.exerciseId) {
+      const exercise = await this.exercisesRepo.findOne({
+        where: { id: query.exerciseId, deletedAt: IsNull() },
+      });
+      currency = exercise?.currency ?? null;
+    }
+
+    if (kind === 'balance_sheet') {
+      const equityRows = balance.rows.filter((r) => r.classNumber === 1);
+      const assetRows = balance.rows.filter(
+        (r) => r.classNumber >= 2 && r.classNumber <= 5,
+      );
+      const equityTotal = equityRows.reduce(
+        (s, r) => s + -r.balanceCents,
+        0,
+      );
+      const assetTotal = assetRows.reduce((s, r) => s + r.balanceCents, 0);
+      return {
+        kind,
+        organizationId: query.organizationId ?? '',
+        exerciseId: query.exerciseId ?? null,
+        periodId: query.periodId ?? null,
+        currency,
+        sections: [
+          {
+            label: 'Capitaux propres et passifs (classe 1)',
+            classNumbers: [1],
+            rows: equityRows,
+            totalCents: equityTotal,
+          },
+          {
+            label: 'Actif (classes 2–5)',
+            classNumbers: [2, 3, 4, 5],
+            rows: assetRows,
+            totalCents: assetTotal,
+          },
+        ],
+        netCents: assetTotal - equityTotal,
+      };
+    }
+
+    const expenseRows = balance.rows.filter((r) => r.classNumber === 6);
+    const revenueRows = balance.rows.filter((r) => r.classNumber === 7);
+    const expenseTotal = expenseRows.reduce((s, r) => s + r.balanceCents, 0);
+    const revenueTotal = revenueRows.reduce((s, r) => s + -r.balanceCents, 0);
+    return {
+      kind,
+      organizationId: query.organizationId ?? '',
+      exerciseId: query.exerciseId ?? null,
+      periodId: query.periodId ?? null,
+      currency,
+      sections: [
+        {
+          label: 'Charges (classe 6)',
+          classNumbers: [6],
+          rows: expenseRows,
+          totalCents: expenseTotal,
+        },
+        {
+          label: 'Produits (classe 7)',
+          classNumbers: [7],
+          rows: revenueRows,
+          totalCents: revenueTotal,
+        },
+      ],
+      netCents: revenueTotal - expenseTotal,
+    };
+  }
+
+  async countDraftEntries(exerciseId: string): Promise<number> {
+    return this.entriesRepo.count({
+      where: {
+        exerciseId,
+        status: 'draft',
+        deletedAt: IsNull(),
+      },
+    });
+  }
+
   async create(
     dto: CreateJournalEntryDto,
     actorUserId?: string | null,

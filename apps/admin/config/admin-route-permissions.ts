@@ -30,7 +30,26 @@ export const ADMIN_ROUTE_ACCESS_RULES: RouteAccessRule[] = [
   { prefix: '/paiements', permission: 'payments.read' },
   { prefix: '/tresorerie/rapports', permission: 'treasury.reports.read' },
   { prefix: '/tresorerie/audit', permission: 'treasury.audit.read' },
-  { prefix: '/tresorerie/comptabilite', permission: 'treasury.accounting_link.read' },
+  {
+    prefix: '/tresorerie/comptabilite/audit',
+    permission: 'accounting.audit.read',
+  },
+  {
+    prefix: '/tresorerie/comptabilite/cloture',
+    permission: 'accounting.close',
+  },
+  {
+    prefix: '/tresorerie/comptabilite/bilan',
+    anyOf: ['accounting.reports.read', 'accounting.journal.read'],
+  },
+  {
+    prefix: '/tresorerie/comptabilite/compte-resultat',
+    anyOf: ['accounting.reports.read', 'accounting.journal.read'],
+  },
+  {
+    prefix: '/tresorerie/comptabilite',
+    anyOf: ['accounting.read', 'treasury.accounting_link.read'],
+  },
   {
     prefix: '/tresorerie/externes',
     anyOf: ['treasury.externals.manage', 'treasury.read'],

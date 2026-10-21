@@ -723,14 +723,42 @@
     "notice": {
       "title": "Libros SYSCOHADA",
       "body": "Consulte el diario, libro mayor y balance a partir de asientos reales. Los enlaces siguientes conectan operaciones de tesorería con los asientos generados.",
-      "outOfScope": "Balance, cuenta de resultados y libros de caja/banco en los lotes SYSCO-007 / SYSCO-008."
+      "outOfScope": "Libros de caja/banco y conciliaciones bancarias: lote SYSCO-007 (después de este MVP)."
     },
     "booksSubnav": {
       "ariaLabel": "Navegación libros contables",
       "links": "Enlaces",
       "journal": "Diario",
       "generalLedger": "Libro mayor",
-      "balance": "Balance"
+      "balance": "Balance",
+      "audit": "Auditoría",
+      "closing": "Cierre",
+      "balanceSheet": "Balance general",
+      "incomeStatement": "Cuenta de resultados"
+    },
+    "audit": {
+      "accessDenied": "Acceso denegado: se requiere accounting.audit.read.",
+      "empty": "Sin eventos de auditoría contable.",
+      "filters": {
+        "entityType": "Tipo de entidad",
+        "action": "Acción"
+      },
+      "columns": {
+        "createdAt": "Fecha",
+        "action": "Acción",
+        "entityType": "Entidad",
+        "entityId": "ID",
+        "actor": "Actor"
+      }
+    },
+    "actions": {
+      "post": "Contabilizar",
+      "skip": "Ignorar",
+      "postSuccess": "Operación contabilizada.",
+      "skipSuccess": "Operación ignorada.",
+      "postError": "No se pudo contabilizar.",
+      "skipError": "No se pudo ignorar.",
+      "confirmSkip": "¿Ignorar esta operación (sin asiento SYSCOHADA)?"
     },
     "booksFilters": {
       "organization": "Organización",
@@ -824,6 +852,53 @@
         "balance": "Saldo"
       }
     },
+    "periodStatuses": {
+      "open": "Abierto",
+      "locked": "Bloqueado",
+      "closed": "Cerrado"
+    },
+    "exerciseStatuses": {
+      "open": "Abierto",
+      "closing": "En cierre",
+      "closed": "Cerrado"
+    },
+    "closing": {
+      "ariaLabel": "Períodos del ejercicio",
+      "accessDenied": "Acceso denegado: se requiere accounting.close.",
+      "selectExercise": "Seleccione un ejercicio para bloquear períodos y cerrar el año.",
+      "loading": "Cargando…",
+      "emptyPeriods": "Ningún período para este ejercicio.",
+      "lock": "Bloquear",
+      "unlock": "Desbloquear",
+      "lockSuccess": "Período bloqueado.",
+      "unlockSuccess": "Período desbloqueado.",
+      "closeExercise": "Cerrar ejercicio",
+      "confirmClose": "¿Cerrar este ejercicio? Se generará un asiento de cierre y un reporte a nuevo (si existe el ejercicio siguiente). Acción irreversible.",
+      "closeSuccess": "Ejercicio cerrado. Cierre: {closingId} · RAN: {openingId}",
+      "alreadyClosed": "Este ejercicio ya está cerrado.",
+      "viewBalanceSheet": "Ver balance general",
+      "viewIncomeStatement": "Ver cuenta de resultados",
+      "columns": {
+        "code": "Período",
+        "range": "Fechas",
+        "status": "Estado",
+        "actions": "Acciones"
+      }
+    },
+    "balanceSheet": {
+      "accessDenied": "Acceso denegado: se requiere accounting.reports.read.",
+      "loading": "Cargando balance general…",
+      "netLabel": "Diferencia activo / pasivo",
+      "sectionTotal": "Total sección",
+      "emptySection": "Ninguna cuenta en esta sección."
+    },
+    "incomeStatement": {
+      "accessDenied": "Acceso denegado: se requiere accounting.reports.read.",
+      "loading": "Cargando cuenta de resultados…",
+      "netLabel": "Resultado neto (ingresos − gastos)",
+      "sectionTotal": "Total sección",
+      "emptySection": "Ninguna cuenta en esta sección."
+    },
     "list": {
       "ariaLabel": "Enlaces contables",
       "accessDenied": "Acceso denegado: se requiere el permiso treasury.accounting_link.read.",
@@ -835,7 +910,8 @@
         "fundOp": "Operación",
         "status": "Estado",
         "mappingRuleKey": "Regla de mapping",
-        "journalEntryId": "Asiento"
+        "journalEntryId": "Asiento",
+        "actions": "Acciones"
       }
     },
     "filters": {

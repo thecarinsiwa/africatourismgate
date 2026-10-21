@@ -884,7 +884,7 @@
     },
     "comptabilite": {
       "title": "Contabilidad",
-      "description": "Puente accounting_links y libros SYSCOHADA. Acceso: treasury.accounting_link.read.",
+      "description": "Puente accounting_links y libros SYSCOHADA. Acceso: accounting.read o treasury.accounting_link.read.",
       "metaTitle": "Contabilidad",
       "journal": {
         "title": "Diario",
@@ -906,6 +906,26 @@
         "title": "Balance de comprobación",
         "description": "Totales débito / crédito por cuenta para el período.",
         "metaTitle": "Balance de comprobación"
+      },
+      "audit": {
+        "title": "Auditoría contable",
+        "description": "Diario de acciones SYSCOHADA. Acceso: accounting.audit.read.",
+        "metaTitle": "Auditoría contable"
+      },
+      "cloture": {
+        "title": "Cierre",
+        "description": "Bloquear períodos y cerrar el ejercicio. Acceso: accounting.close.",
+        "metaTitle": "Cierre contable"
+      },
+      "bilan": {
+        "title": "Balance general",
+        "description": "Activo / pasivo (clases 1–5). Acceso: accounting.reports.read.",
+        "metaTitle": "Balance general"
+      },
+      "compte-resultat": {
+        "title": "Cuenta de resultados",
+        "description": "Gastos e ingresos (clases 6–7). Acceso: accounting.reports.read.",
+        "metaTitle": "Cuenta de resultados"
       }
     }
   },

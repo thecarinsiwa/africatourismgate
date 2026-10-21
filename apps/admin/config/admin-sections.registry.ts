@@ -277,6 +277,26 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Totaux débit/crédit par compte pour la période.',
     apiResource: 'accounting-balance',
   },
+  'tresorerie/comptabilite/audit': {
+    title: 'Audit comptable',
+    description: 'Journal append-only des actions comptables SYSCOHADA.',
+    apiResource: 'accounting-audit-logs',
+  },
+  'tresorerie/comptabilite/cloture': {
+    title: 'Clôture',
+    description: 'Verrouillage des périodes et clôture d’exercice.',
+    apiResource: 'accounting-exercises',
+  },
+  'tresorerie/comptabilite/bilan': {
+    title: 'Bilan',
+    description: 'Bilan actif/passif (classes 1–5) à partir des écritures postées.',
+    apiResource: 'accounting-balance-sheet',
+  },
+  'tresorerie/comptabilite/compte-resultat': {
+    title: 'Compte de résultat',
+    description: 'Charges et produits (classes 6–7).',
+    apiResource: 'accounting-income-statement',
+  },
   'paiements/codes-promo': {
     title: 'Codes promo',
     description: 'Codes promotionnels.',

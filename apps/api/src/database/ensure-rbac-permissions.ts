@@ -271,6 +271,76 @@ const PERMISSION_UPSERTS: Array<{
     action: 'accounting_link.read',
     description: 'View accounting bridge stub links',
   },
+  {
+    id: '00000000-0000-4000-8000-000000001069',
+    code: 'accounting.read',
+    resource: 'accounting',
+    action: 'read',
+    description: 'View accounting hub and link lists',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001070',
+    code: 'accounting.chart.read',
+    resource: 'accounting',
+    action: 'chart.read',
+    description: 'View chart of accounts',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001071',
+    code: 'accounting.chart.write',
+    resource: 'accounting',
+    action: 'chart.write',
+    description: 'Manage chart of accounts',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001072',
+    code: 'accounting.journal.read',
+    resource: 'accounting',
+    action: 'journal.read',
+    description: 'View journal, general ledger and trial balance',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001073',
+    code: 'accounting.journal.write',
+    resource: 'accounting',
+    action: 'journal.write',
+    description: 'Create draft/manual journal entries',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001074',
+    code: 'accounting.post',
+    resource: 'accounting',
+    action: 'post',
+    description: 'Post fund ops to SYSCOHADA / skip links',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001075',
+    code: 'accounting.reconcile',
+    resource: 'accounting',
+    action: 'reconcile',
+    description: 'Bank/cash reconciliations (SYSCO-007)',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001076',
+    code: 'accounting.close',
+    resource: 'accounting',
+    action: 'close',
+    description: 'Lock periods and close exercises',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001077',
+    code: 'accounting.audit.read',
+    resource: 'accounting',
+    action: 'audit.read',
+    description: 'View accounting audit journal',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001078',
+    code: 'accounting.reports.read',
+    resource: 'accounting',
+    action: 'reports.read',
+    description: 'View balance sheet and P&L reports',
+  },
 ];
 
 /** Full org_admin set (install.seed.sql) — repairs partial or missing grants. */
@@ -324,6 +394,16 @@ const ORG_ADMIN_PERMISSION_IDS = [
   '00000000-0000-4000-8000-000000001066',
   '00000000-0000-4000-8000-000000001067',
   '00000000-0000-4000-8000-000000001068',
+  '00000000-0000-4000-8000-000000001069',
+  '00000000-0000-4000-8000-000000001070',
+  '00000000-0000-4000-8000-000000001071',
+  '00000000-0000-4000-8000-000000001072',
+  '00000000-0000-4000-8000-000000001073',
+  '00000000-0000-4000-8000-000000001074',
+  '00000000-0000-4000-8000-000000001075',
+  '00000000-0000-4000-8000-000000001076',
+  '00000000-0000-4000-8000-000000001077',
+  '00000000-0000-4000-8000-000000001078',
 ];
 
 async function platformOrgExists(config: ConfigService): Promise<boolean> {

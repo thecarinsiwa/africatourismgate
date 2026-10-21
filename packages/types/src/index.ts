@@ -366,9 +366,16 @@ export type {
   ChartAccountsListQuery,
   CreateJournalEntryRequest,
   CreateJournalLineRequest,
+  AccountingAuditAction,
+  AccountingAuditEntityType,
+  AccountingAuditLog,
+  AccountingAuditLogsListQuery,
   AccountingBalanceQuery,
   AccountingBalanceRow,
   AccountingBalanceSummary,
+  AccountingFinancialStatement,
+  AccountingFinancialStatementQuery,
+  AccountingStatementSection,
   JournalEntriesListQuery,
   JournalEntry,
   JournalEntrySource,
@@ -396,6 +403,8 @@ export {
 } from './treasury.js';
 
 export {
+  ACCOUNTING_AUDIT_ACTIONS,
+  ACCOUNTING_AUDIT_ENTITY_TYPES,
   ACCOUNTING_EXERCISE_STATUSES,
   ACCOUNTING_JOURNAL_TYPES,
   ACCOUNTING_PERIOD_STATUSES,

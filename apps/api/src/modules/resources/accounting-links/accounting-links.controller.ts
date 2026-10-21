@@ -27,8 +27,7 @@ import {
 import { UpdateAccountingLinkDto } from './dto/update-accounting-link.dto';
 
 /**
- * Pont comptable (TRESO-039 → SYSCO-004/005).
- * Mapping DB + Comptabiliser / Ignorer.
+ * Pont comptable (TRESO-039 → SYSCO-004/005/009).
  */
 @ApiTags('accounting-links')
 @ApiForbiddenResponse({ description: 'Missing permission' })
@@ -39,7 +38,7 @@ export class AccountingLinksController {
     private readonly posting: AccountingPostingService,
   ) {}
 
-  @RequirePermissions('treasury.accounting_link.read')
+  @RequirePermissions('accounting.read', 'treasury.accounting_link.read')
   @Get('mapping-config')
   @ApiOperation({
     summary:
@@ -49,7 +48,7 @@ export class AccountingLinksController {
     return this.service.getMappingConfig(organizationId);
   }
 
-  @RequirePermissions('treasury.accounting_link.read')
+  @RequirePermissions('accounting.post')
   @Post('post')
   @ApiOperation({
     summary:
@@ -66,7 +65,7 @@ export class AccountingLinksController {
     );
   }
 
-  @RequirePermissions('treasury.accounting_link.read')
+  @RequirePermissions('accounting.post')
   @Post('skip')
   @ApiOperation({
     summary: 'Ignorer une opération (status skipped, pas d’écriture)',
@@ -84,7 +83,7 @@ export class AccountingLinksController {
     );
   }
 
-  @RequirePermissions('treasury.accounting_link.read')
+  @RequirePermissions('accounting.read', 'treasury.accounting_link.read')
   @Get()
   @ApiOperation({
     summary: 'List accounting links (paginated)',
@@ -93,14 +92,14 @@ export class AccountingLinksController {
     return this.service.findAll(query);
   }
 
-  @RequirePermissions('treasury.accounting_link.read')
+  @RequirePermissions('accounting.read', 'treasury.accounting_link.read')
   @Get(':id')
   @ApiOperation({ summary: 'Get accounting link by id' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
-  @RequirePermissions('treasury.accounting_link.read')
+  @RequirePermissions('accounting.post')
   @Post()
   @ApiOperation({
     summary:
@@ -113,7 +112,7 @@ export class AccountingLinksController {
     return this.service.create(dto, user.id);
   }
 
-  @RequirePermissions('treasury.accounting_link.read')
+  @RequirePermissions('accounting.post')
   @Patch(':id')
   @ApiOperation({
     summary: 'Update link (status / journal_entry_id / mapping_rule_key)',
@@ -126,7 +125,7 @@ export class AccountingLinksController {
     return this.service.update(id, dto, user.id);
   }
 
-  @RequirePermissions('treasury.accounting_link.read')
+  @RequirePermissions('accounting.post')
   @Delete(':id')
   @ApiOperation({
     summary:

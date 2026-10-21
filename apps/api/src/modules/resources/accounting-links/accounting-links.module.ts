@@ -5,6 +5,7 @@ import { AccountingMappingRules } from '../../../entities/accounting-mapping-rul
 import { ChartOfAccounts } from '../../../entities/chart-of-account.entity';
 import { FundEntries } from '../../../entities/fund-entry.entity';
 import { FundExits } from '../../../entities/fund-exit.entity';
+import { AccountingAuditModule } from '../accounting-audit/accounting-audit.module';
 import { JournalEntriesModule } from '../journal-entries/journal-entries.module';
 import { TreasuryAuditModule } from '../treasury-audit/treasury-audit.module';
 import { AccountingLinksController } from './accounting-links.controller';
@@ -22,6 +23,7 @@ import { AccountingPostingService } from './accounting-posting.service';
       FundExits,
     ]),
     TreasuryAuditModule,
+    AccountingAuditModule,
     JournalEntriesModule,
   ],
   controllers: [AccountingLinksController],

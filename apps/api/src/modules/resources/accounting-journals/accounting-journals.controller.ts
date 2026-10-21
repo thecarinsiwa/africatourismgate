@@ -10,7 +10,7 @@ import { AccountingJournalsListQueryDto } from './dto/accounting-journals-list-q
 
 /**
  * Journaux SYSCOHADA (SYSCO-003) — lecture.
- * Permission bridge : `treasury.accounting_link.read` (→ `accounting.journal.read` SYSCO-009).
+ * Bridge : `accounting.journal.read` OU `treasury.accounting_link.read`.
  */
 @ApiTags('accounting-journals')
 @ApiForbiddenResponse({ description: 'Missing permission' })
@@ -18,14 +18,20 @@ import { AccountingJournalsListQueryDto } from './dto/accounting-journals-list-q
 export class AccountingJournalsController {
   constructor(private readonly service: AccountingJournalsService) {}
 
-  @RequirePermissions('treasury.accounting_link.read')
+  @RequirePermissions(
+    'accounting.journal.read',
+    'treasury.accounting_link.read',
+  )
   @Get()
   @ApiOperation({ summary: 'List accounting journals (paginated)' })
   findAll(@Query() query: AccountingJournalsListQueryDto) {
     return this.service.findAll(query);
   }
 
-  @RequirePermissions('treasury.accounting_link.read')
+  @RequirePermissions(
+    'accounting.journal.read',
+    'treasury.accounting_link.read',
+  )
   @Get(':id')
   @ApiOperation({ summary: 'Get accounting journal by id' })
   findOne(@Param('id') id: string) {

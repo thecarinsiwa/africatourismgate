@@ -287,3 +287,81 @@ export interface AccountingBalanceSummary {
     balanceCents: number;
   };
 }
+
+// ─── Audit écritures (SYSCO-009) ────────────────────────────────────────────
+
+export const ACCOUNTING_AUDIT_ENTITY_TYPES = [
+  'journal_entry',
+  'journal_line',
+  'chart_account',
+  'exercise',
+  'period',
+  'mapping_rule',
+  'accounting_link',
+  'journal',
+] as const;
+export type AccountingAuditEntityType =
+  (typeof ACCOUNTING_AUDIT_ENTITY_TYPES)[number];
+
+export const ACCOUNTING_AUDIT_ACTIONS = [
+  'create',
+  'update',
+  'post',
+  'reverse',
+  'lock',
+  'unlock',
+  'close',
+  'skip',
+  'delete',
+] as const;
+export type AccountingAuditAction = (typeof ACCOUNTING_AUDIT_ACTIONS)[number];
+
+export interface AccountingAuditLog {
+  id: string;
+  organizationId: string;
+  entityType: AccountingAuditEntityType;
+  entityId: string;
+  action: AccountingAuditAction;
+  actorType: 'user' | 'system';
+  actorId: string | null;
+  oldJson: Record<string, unknown> | null;
+  newJson: Record<string, unknown> | null;
+  correlationTreasuryAuditId: string | null;
+  createdAt: string;
+}
+
+export interface AccountingAuditLogsListQuery {
+  page?: number;
+  limit?: number;
+  organizationId?: string;
+  entityType?: AccountingAuditEntityType;
+  entityId?: string;
+  action?: AccountingAuditAction;
+  actorId?: string;
+  dateFrom?: string;
+  dateTo?: string;
+}
+
+/** Bilan MVP (classes 1–5) / CR (classes 6–7) — SYSCO-008 */
+export interface AccountingStatementSection {
+  label: string;
+  classNumbers: number[];
+  rows: AccountingBalanceRow[];
+  totalCents: number;
+}
+
+export interface AccountingFinancialStatement {
+  kind: 'balance_sheet' | 'income_statement';
+  organizationId: string;
+  exerciseId: string | null;
+  periodId: string | null;
+  currency: string | null;
+  sections: AccountingStatementSection[];
+  netCents: number;
+}
+
+export interface AccountingFinancialStatementQuery {
+  organizationId?: string;
+  exerciseId?: string;
+  periodId?: string;
+}

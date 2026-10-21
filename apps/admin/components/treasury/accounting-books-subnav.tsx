@@ -12,6 +12,13 @@ const linkKeys = [
     labelKey: 'generalLedger' as const,
   },
   { href: '/tresorerie/comptabilite/balance', labelKey: 'balance' as const },
+  { href: '/tresorerie/comptabilite/bilan', labelKey: 'balanceSheet' as const },
+  {
+    href: '/tresorerie/comptabilite/compte-resultat',
+    labelKey: 'incomeStatement' as const,
+  },
+  { href: '/tresorerie/comptabilite/cloture', labelKey: 'closing' as const },
+  { href: '/tresorerie/comptabilite/audit', labelKey: 'audit' as const },
 ];
 
 export function AccountingBooksSubnav() {

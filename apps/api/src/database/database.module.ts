@@ -48,6 +48,7 @@ import {
   TreasuryExternalCollaborators,
 } from '../entities/treasury-external.entity';
 import { TreasuryAuditLogs } from '../entities/treasury-audit-log.entity';
+import { AccountingAuditLogs } from '../entities/accounting-audit-log.entity';
 import { AccountingLinks } from '../entities/accounting-link.entity';
 import { ChartOfAccounts } from '../entities/chart-of-account.entity';
 import {
@@ -106,6 +107,7 @@ const entityList = [
   TreasuryExternalCollaborators,
   TreasuryAccessTokens,
   TreasuryAuditLogs,
+  AccountingAuditLogs,
   AccountingLinks,
   ChartOfAccounts,
   AccountingExercises,

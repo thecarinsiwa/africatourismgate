@@ -28,6 +28,7 @@ import { FundExitsModule } from './resources/fund-exits/fund-exits.module';
 import { BudgetsModule } from './resources/budgets/budgets.module';
 import { ExternalCollaboratorsModule } from './resources/external-collaborators/external-collaborators.module';
 import { TreasuryAuditModule } from './resources/treasury-audit/treasury-audit.module';
+import { AccountingAuditModule } from './resources/accounting-audit/accounting-audit.module';
 import { TreasuryReportsModule } from './resources/treasury-reports/treasury-reports.module';
 import { AccountingLinksModule } from './resources/accounting-links/accounting-links.module';
 import { ChartOfAccountsModule } from './resources/chart-of-accounts/chart-of-accounts.module';
@@ -137,6 +138,7 @@ import { Module } from '@nestjs/common';
     BudgetsModule,
     ExternalCollaboratorsModule,
     TreasuryAuditModule,
+    AccountingAuditModule,
     TreasuryReportsModule,
     AccountingLinksModule,
     ChartOfAccountsModule,

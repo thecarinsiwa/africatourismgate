@@ -359,8 +359,12 @@ import type {
   AccountingLink,
   AccountingLinksListQuery,
   AccountingMappingConfig,
+  AccountingAuditLog,
+  AccountingAuditLogsListQuery,
   AccountingBalanceQuery,
   AccountingBalanceSummary,
+  AccountingFinancialStatement,
+  AccountingFinancialStatementQuery,
   AccountingExercise,
   AccountingExercisesListQuery,
   AccountingJournal,
@@ -1806,6 +1810,70 @@ export class ApiClient {
     );
   }
 
+  getAccountingBalanceSheet(
+    query?: AccountingFinancialStatementQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<AccountingFinancialStatement> {
+    const params = new URLSearchParams();
+    if (query?.organizationId) {
+      params.set('organizationId', query.organizationId);
+    }
+    if (query?.exerciseId) {
+      params.set('exerciseId', query.exerciseId);
+    }
+    if (query?.periodId) {
+      params.set('periodId', query.periodId);
+    }
+    const qs = params.toString();
+    return this.request<AccountingFinancialStatement>(
+      `/accounting-balance-sheet${qs ? `?${qs}` : ''}`,
+      requestOptions,
+    );
+  }
+
+  getAccountingIncomeStatement(
+    query?: AccountingFinancialStatementQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<AccountingFinancialStatement> {
+    const params = new URLSearchParams();
+    if (query?.organizationId) {
+      params.set('organizationId', query.organizationId);
+    }
+    if (query?.exerciseId) {
+      params.set('exerciseId', query.exerciseId);
+    }
+    if (query?.periodId) {
+      params.set('periodId', query.periodId);
+    }
+    const qs = params.toString();
+    return this.request<AccountingFinancialStatement>(
+      `/accounting-income-statement${qs ? `?${qs}` : ''}`,
+      requestOptions,
+    );
+  }
+
+  lockAccountingPeriod(id: string): Promise<AccountingPeriod> {
+    return this.request<AccountingPeriod>(`/accounting-periods/${id}/lock`, {
+      method: 'POST',
+    });
+  }
+
+  unlockAccountingPeriod(id: string): Promise<AccountingPeriod> {
+    return this.request<AccountingPeriod>(`/accounting-periods/${id}/unlock`, {
+      method: 'POST',
+    });
+  }
+
+  closeAccountingExercise(id: string): Promise<{
+    exercise: AccountingExercise;
+    closingJournalEntryId: string | null;
+    openingJournalEntryId: string | null;
+  }> {
+    return this.request(`/accounting-exercises/${id}/close`, {
+      method: 'POST',
+    });
+  }
+
   inviteTreasuryExternalCollaborator(
     body: InviteTreasuryExternalCollaboratorRequest,
   ): Promise<InviteTreasuryExternalCollaboratorResponse> {
@@ -3214,6 +3282,20 @@ export class ApiClient {
 
   getTreasuryAuditLog(id: string): Promise<TreasuryAuditLog> {
     return this.request<TreasuryAuditLog>(`/treasury-audit-logs/${id}`);
+  }
+
+  listAccountingAuditLogs(
+    query?: AccountingAuditLogsListQuery,
+  ): Promise<PaginatedResponse<AccountingAuditLog>> {
+    return fetchPaginated<AccountingAuditLog>(
+      this,
+      '/accounting-audit-logs',
+      query,
+    );
+  }
+
+  getAccountingAuditLog(id: string): Promise<AccountingAuditLog> {
+    return this.request<AccountingAuditLog>(`/accounting-audit-logs/${id}`);
   }
 
   listDestinations(

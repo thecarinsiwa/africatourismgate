@@ -10,8 +10,7 @@ import { ChartAccountsListQueryDto } from './dto/chart-accounts-list-query.dto';
 
 /**
  * Plan comptable SYSCOHADA (SYSCO-002) — lecture.
- * Permission bridge temporaire : `treasury.accounting_link.read`
- * (remplacée / complétée par `accounting.chart.read` en SYSCO-009).
+ * Bridge : `accounting.chart.read` OU `treasury.accounting_link.read` (SYSCO-009).
  */
 @ApiTags('chart-of-accounts')
 @ApiForbiddenResponse({ description: 'Missing permission' })
@@ -19,7 +18,10 @@ import { ChartAccountsListQueryDto } from './dto/chart-accounts-list-query.dto';
 export class ChartOfAccountsController {
   constructor(private readonly service: ChartOfAccountsService) {}
 
-  @RequirePermissions('treasury.accounting_link.read')
+  @RequirePermissions(
+    'accounting.chart.read',
+    'treasury.accounting_link.read',
+  )
   @Get()
   @ApiOperation({
     summary: 'List chart of accounts (SYSCOHADA, paginated)',
@@ -28,7 +30,10 @@ export class ChartOfAccountsController {
     return this.service.findAll(query);
   }
 
-  @RequirePermissions('treasury.accounting_link.read')
+  @RequirePermissions(
+    'accounting.chart.read',
+    'treasury.accounting_link.read',
+  )
   @Get(':id')
   @ApiOperation({ summary: 'Get chart account by id' })
   findOne(@Param('id') id: string) {

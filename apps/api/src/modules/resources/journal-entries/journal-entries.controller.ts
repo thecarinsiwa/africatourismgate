@@ -14,9 +14,7 @@ import { AccountingBalanceQueryDto } from './dto/accounting-balance-query.dto';
 import { JournalEntriesService } from './journal-entries.service';
 
 /**
- * Écritures + lignes SYSCOHADA (SYSCO-003).
- * Permission bridge : `treasury.accounting_link.read`
- * (→ `accounting.journal.read|write` / `accounting.post` en SYSCO-009).
+ * Écritures + lignes SYSCOHADA (SYSCO-003 / SYSCO-009 permissions).
  */
 @ApiTags('journal-entries')
 @ApiForbiddenResponse({ description: 'Missing permission' })
@@ -24,7 +22,10 @@ import { JournalEntriesService } from './journal-entries.service';
 export class JournalEntriesController {
   constructor(private readonly service: JournalEntriesService) {}
 
-  @RequirePermissions('treasury.accounting_link.read')
+  @RequirePermissions(
+    'accounting.journal.read',
+    'treasury.accounting_link.read',
+  )
   @Get('journal-entries')
   @ApiOperation({
     summary:
@@ -34,14 +35,17 @@ export class JournalEntriesController {
     return this.service.findAll(query);
   }
 
-  @RequirePermissions('treasury.accounting_link.read')
+  @RequirePermissions(
+    'accounting.journal.read',
+    'treasury.accounting_link.read',
+  )
   @Get('journal-entries/:id')
   @ApiOperation({ summary: 'Get journal entry with lines' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
-  @RequirePermissions('treasury.accounting_link.read')
+  @RequirePermissions('accounting.journal.write')
   @Post('journal-entries')
   @ApiOperation({
     summary:
@@ -54,7 +58,10 @@ export class JournalEntriesController {
     return this.service.create(dto, user.id);
   }
 
-  @RequirePermissions('treasury.accounting_link.read')
+  @RequirePermissions(
+    'accounting.journal.read',
+    'treasury.accounting_link.read',
+  )
   @Get('journal-lines')
   @ApiOperation({
     summary:
@@ -64,7 +71,11 @@ export class JournalEntriesController {
     return this.service.findLines(query);
   }
 
-  @RequirePermissions('treasury.accounting_link.read')
+  @RequirePermissions(
+    'accounting.journal.read',
+    'accounting.reports.read',
+    'treasury.accounting_link.read',
+  )
   @Get('accounting-balance')
   @ApiOperation({
     summary:
@@ -72,5 +83,31 @@ export class JournalEntriesController {
   })
   getBalance(@Query() query: AccountingBalanceQueryDto) {
     return this.service.getBalance(query);
+  }
+
+  @RequirePermissions(
+    'accounting.reports.read',
+    'accounting.journal.read',
+    'treasury.accounting_link.read',
+  )
+  @Get('accounting-balance-sheet')
+  @ApiOperation({
+    summary: 'Bilan MVP classes 1–5 (SYSCO-008)',
+  })
+  getBalanceSheet(@Query() query: AccountingBalanceQueryDto) {
+    return this.service.getFinancialStatement('balance_sheet', query);
+  }
+
+  @RequirePermissions(
+    'accounting.reports.read',
+    'accounting.journal.read',
+    'treasury.accounting_link.read',
+  )
+  @Get('accounting-income-statement')
+  @ApiOperation({
+    summary: 'Compte de résultat MVP classes 6–7 (SYSCO-008)',
+  })
+  getIncomeStatement(@Query() query: AccountingBalanceQueryDto) {
+    return this.service.getFinancialStatement('income_statement', query);
   }
 }

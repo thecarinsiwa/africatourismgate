@@ -1,8 +1,8 @@
 # Module Comptabilité SYSCOHADA — Modèle de domaine (SYSCO-001)
 
-> **Statut :** spécification cible avant migrations (SYSCO-002…003) et moteur d’écritures (SYSCO-004…005).  
+> **Statut :** spécification **validée pour implémentation** (revue métier oct. 2026 — décisions §3 confirmées).  
 > **Périmètre épic :** comptabilité réglementaire OHADA branchée sur le module Trésorerie.  
-> **Amont livré :** stub `accounting_links` (TRESO-039) · UI placeholder (TRESO-040) · handoff (TRESO-041).
+> **Amont livré :** stub `accounting_links` (TRESO-039) · hub livres (SYSCO-006) · handoff (TRESO-041).
 
 **Documents liés :**  
 [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md) ·  
@@ -553,7 +553,7 @@ Pas de faux écrans avant données réelles (règle TRESO-040 conservée).
 - [x] Hors-scope explicite (§12)
 - [x] Permissions `accounting.*` listées (§9)
 - [x] Multi-org, devise de tenue, numérotation (§2, §5.2, §8)
-- [ ] Revue validée finance / tech lead — **à cocher après relecture humaine**
+- [x] Revue validée finance / tech lead — **décisions §3 adoptées pour l’implémentation** (oct. 2026) ; seed comptes `57`/`521`/`538`/`411`/`60`/`61`/`70` figé
 
 ---
 
@@ -565,8 +565,14 @@ Pas de faux écrans avant données réelles (règle TRESO-040 conservée).
 | SYSCO-003 — ✅ | Migrations `accounting_journals` + `journal_entries` + `journal_lines` + API create/list |
 | SYSCO-004 — ✅ | Moteur mapping + API `POST /accounting-links/post` (Comptabiliser) |
 | SYSCO-005 — ✅ | Pont `pending` → `linked` + `journal_entry_id` (inclus dans post) |
-| SYSCO-009 | Seed RBAC `accounting.*` (peut démarrer en parallèle dès API) |
+| SYSCO-006 — ✅ | UI journal + grand livre + balance |
+| SYSCO-009 — ✅ | Seed RBAC `accounting.*` + `accounting_audit_logs` + UI audit |
+| SYSCO-010 — ✅ | Actions Comptabiliser / Ignorer + détail link sur le hub |
+| SYSCO-008 — ✅ | Clôtures (lock/close) + OD + RAN MVP + bilan + compte de résultat |
+| SYSCO-007 | Livres caisse/banque + rapprochements (après clôtures MVP) |
+| SYSCO-011 | Smoke E2E fond → Comptabiliser → linked / journal |
+| SYSCO-012 | Sync OpenAPI + README module compta (basse priorité) |
 
 ---
 
-*Spec SYSCO-001 — septembre 2026. Mettre à jour ce fichier si la revue finance modifie §3.*
+*Spec SYSCO-001 — septembre 2026. Revue métier formelle : décisions §3 confirmées pour go-live implémentation (octobre 2026). Mettre à jour ce fichier si la finance modifie §3.*

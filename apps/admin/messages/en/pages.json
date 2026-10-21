@@ -884,7 +884,7 @@
     },
     "comptabilite": {
       "title": "Accounting",
-      "description": "Accounting links bridge and SYSCOHADA books. Access: treasury.accounting_link.read.",
+      "description": "Accounting links bridge and SYSCOHADA books. Access: accounting.read or treasury.accounting_link.read.",
       "metaTitle": "Accounting",
       "journal": {
         "title": "Journal",
@@ -906,6 +906,26 @@
         "title": "Trial balance",
         "description": "Debit / credit totals by account for the period.",
         "metaTitle": "Trial balance"
+      },
+      "audit": {
+        "title": "Accounting audit",
+        "description": "SYSCOHADA action journal. Access: accounting.audit.read.",
+        "metaTitle": "Accounting audit"
+      },
+      "cloture": {
+        "title": "Closing",
+        "description": "Lock periods and close the fiscal year. Access: accounting.close.",
+        "metaTitle": "Accounting closing"
+      },
+      "bilan": {
+        "title": "Balance sheet",
+        "description": "Assets / liabilities (classes 1–5). Access: accounting.reports.read.",
+        "metaTitle": "Balance sheet"
+      },
+      "compte-resultat": {
+        "title": "Income statement",
+        "description": "Expenses and revenue (classes 6–7). Access: accounting.reports.read.",
+        "metaTitle": "Income statement"
       }
     }
   },

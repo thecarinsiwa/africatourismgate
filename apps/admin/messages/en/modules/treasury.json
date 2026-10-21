@@ -723,14 +723,42 @@
     "notice": {
       "title": "SYSCOHADA books",
       "body": "Browse the journal, general ledger, and trial balance from real postings. The links below connect treasury operations to generated entries.",
-      "outOfScope": "Balance sheet, income statement, and cash/bank books follow in SYSCO-007 / SYSCO-008."
+      "outOfScope": "Cash/bank books and bank reconciliations: SYSCO-007 (after this MVP)."
     },
     "booksSubnav": {
       "ariaLabel": "Accounting books navigation",
       "links": "Links",
       "journal": "Journal",
       "generalLedger": "General ledger",
-      "balance": "Trial balance"
+      "balance": "Trial balance",
+      "audit": "Audit",
+      "closing": "Closing",
+      "balanceSheet": "Balance sheet",
+      "incomeStatement": "Income statement"
+    },
+    "audit": {
+      "accessDenied": "Access denied: accounting.audit.read permission required.",
+      "empty": "No accounting audit events.",
+      "filters": {
+        "entityType": "Entity type",
+        "action": "Action"
+      },
+      "columns": {
+        "createdAt": "Date",
+        "action": "Action",
+        "entityType": "Entity",
+        "entityId": "ID",
+        "actor": "Actor"
+      }
+    },
+    "actions": {
+      "post": "Post to ledger",
+      "skip": "Skip",
+      "postSuccess": "Operation posted.",
+      "skipSuccess": "Operation skipped.",
+      "postError": "Could not post the operation.",
+      "skipError": "Could not skip the operation.",
+      "confirmSkip": "Skip this operation (no SYSCOHADA entry)?"
     },
     "booksFilters": {
       "organization": "Organization",
@@ -824,6 +852,53 @@
         "balance": "Balance"
       }
     },
+    "periodStatuses": {
+      "open": "Open",
+      "locked": "Locked",
+      "closed": "Closed"
+    },
+    "exerciseStatuses": {
+      "open": "Open",
+      "closing": "Closing",
+      "closed": "Closed"
+    },
+    "closing": {
+      "ariaLabel": "Exercise periods",
+      "accessDenied": "Access denied: accounting.close permission required.",
+      "selectExercise": "Select an exercise to lock periods and close the year.",
+      "loading": "Loading…",
+      "emptyPeriods": "No periods for this exercise.",
+      "lock": "Lock",
+      "unlock": "Unlock",
+      "lockSuccess": "Period locked.",
+      "unlockSuccess": "Period unlocked.",
+      "closeExercise": "Close exercise",
+      "confirmClose": "Close this exercise? A closing journal entry and opening carry-forward (if a next exercise exists) will be posted. This cannot be undone.",
+      "closeSuccess": "Exercise closed. Closing entry: {closingId} · Opening: {openingId}",
+      "alreadyClosed": "This exercise is already closed.",
+      "viewBalanceSheet": "View balance sheet",
+      "viewIncomeStatement": "View income statement",
+      "columns": {
+        "code": "Period",
+        "range": "Dates",
+        "status": "Status",
+        "actions": "Actions"
+      }
+    },
+    "balanceSheet": {
+      "accessDenied": "Access denied: accounting.reports.read permission required.",
+      "loading": "Loading balance sheet…",
+      "netLabel": "Assets / liabilities gap",
+      "sectionTotal": "Section total",
+      "emptySection": "No accounts in this section."
+    },
+    "incomeStatement": {
+      "accessDenied": "Access denied: accounting.reports.read permission required.",
+      "loading": "Loading income statement…",
+      "netLabel": "Net result (revenue − expenses)",
+      "sectionTotal": "Section total",
+      "emptySection": "No accounts in this section."
+    },
     "list": {
       "ariaLabel": "Accounting links",
       "accessDenied": "Access denied: treasury.accounting_link.read permission required.",
@@ -835,7 +910,8 @@
         "fundOp": "Operation",
         "status": "Status",
         "mappingRuleKey": "Mapping rule",
-        "journalEntryId": "Journal entry"
+        "journalEntryId": "Journal entry",
+        "actions": "Actions"
       }
     },
     "filters": {

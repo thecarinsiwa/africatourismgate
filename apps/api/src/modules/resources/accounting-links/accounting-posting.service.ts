@@ -13,6 +13,7 @@ import {
 } from '../../../entities/accounting-link.entity';
 import { FundEntries } from '../../../entities/fund-entry.entity';
 import { FundExits } from '../../../entities/fund-exit.entity';
+import { AccountingAuditService } from '../accounting-audit/accounting-audit.service';
 import { TreasuryAuditService } from '../treasury-audit/treasury-audit.service';
 import { JournalEntriesService } from '../journal-entries/journal-entries.service';
 import {
@@ -47,6 +48,7 @@ export class AccountingPostingService {
     private readonly mappingEngine: AccountingMappingEngine,
     private readonly journalEntries: JournalEntriesService,
     private readonly treasuryAudit: TreasuryAuditService,
+    private readonly accountingAudit: AccountingAuditService,
   ) {}
 
   async postFundOperation(
@@ -164,7 +166,7 @@ export class AccountingPostingService {
     link.updatedByUserId = actorUserId ?? null;
     await this.linksRepo.save(link);
 
-    await this.treasuryAudit.log({
+    const treasuryLog = await this.treasuryAudit.log({
       organizationId: link.organizationId,
       entityType: 'accounting_link',
       entityId: link.id,
@@ -173,6 +175,36 @@ export class AccountingPostingService {
       actorId: actorUserId ?? null,
       oldJson,
       newJson: this.linkSnapshot(link),
+    });
+    await this.accountingAudit.log({
+      organizationId: link.organizationId,
+      entityType: 'accounting_link',
+      entityId: link.id,
+      action: 'post',
+      actorType: 'user',
+      actorId: actorUserId ?? null,
+      oldJson,
+      newJson: {
+        ...this.linkSnapshot(link),
+        journalEntryId: journalEntry.id,
+      },
+      correlationTreasuryAuditId: treasuryLog.id,
+    });
+    await this.accountingAudit.log({
+      organizationId: link.organizationId,
+      entityType: 'journal_entry',
+      entityId: journalEntry.id,
+      action: 'post',
+      actorType: 'user',
+      actorId: actorUserId ?? null,
+      oldJson: null,
+      newJson: {
+        source: 'treasury_mapping',
+        fundOpType,
+        fundOpId,
+        mappingRuleKey: rule.key,
+      },
+      correlationTreasuryAuditId: treasuryLog.id,
     });
 
     return {
@@ -214,7 +246,7 @@ export class AccountingPostingService {
         createdByUserId: actorUserId ?? null,
       });
       await this.linksRepo.save(link);
-      await this.treasuryAudit.log({
+      const createdTreasury = await this.treasuryAudit.log({
         organizationId,
         entityType: 'accounting_link',
         entityId: link.id,
@@ -227,6 +259,20 @@ export class AccountingPostingService {
           skipReason: reason ?? null,
         },
       });
+      await this.accountingAudit.log({
+        organizationId,
+        entityType: 'accounting_link',
+        entityId: link.id,
+        action: 'skip',
+        actorType: 'user',
+        actorId: actorUserId ?? null,
+        oldJson: null,
+        newJson: {
+          ...this.linkSnapshot(link),
+          skipReason: reason ?? null,
+        },
+        correlationTreasuryAuditId: createdTreasury.id,
+      });
       return toAccountingLinkDto(link);
     }
 
@@ -235,7 +281,7 @@ export class AccountingPostingService {
     link.journalEntryId = null;
     link.updatedByUserId = actorUserId ?? null;
     await this.linksRepo.save(link);
-    await this.treasuryAudit.log({
+    const updatedTreasury = await this.treasuryAudit.log({
       organizationId,
       entityType: 'accounting_link',
       entityId: link.id,
@@ -247,6 +293,20 @@ export class AccountingPostingService {
         ...this.linkSnapshot(link),
         skipReason: reason ?? null,
       },
+    });
+    await this.accountingAudit.log({
+      organizationId,
+      entityType: 'accounting_link',
+      entityId: link.id,
+      action: 'skip',
+      actorType: 'user',
+      actorId: actorUserId ?? null,
+      oldJson,
+      newJson: {
+        ...this.linkSnapshot(link),
+        skipReason: reason ?? null,
+      },
+      correlationTreasuryAuditId: updatedTreasury.id,
     });
     return toAccountingLinkDto(link);
   }

@@ -190,6 +190,25 @@ SELECT
 FROM `organizations` o
 WHERE o.`id` = '00000000-0000-4000-8000-000000000001';
 
+-- Compte résultat net (SYSCO-008 OD de clôture) — aussi via add_syscohada_result_account.sql
+INSERT IGNORE INTO `chart_of_accounts` (
+  `id`, `organization_id`, `code`, `label`, `class_number`, `account_type`,
+  `parent_id`, `is_postable`, `is_active`, `syscohada_ref`
+)
+SELECT
+  '00000000-0000-4000-8000-000000002008',
+  o.`id`,
+  '13',
+  'Résultat net de l''exercice',
+  1,
+  'equity',
+  NULL,
+  1,
+  1,
+  '13'
+FROM `organizations` o
+WHERE o.`id` = '00000000-0000-4000-8000-000000000001';
+
 -- ---------------------------------------------------------------------------
 -- DOWN (manuel — ne pas placer dans un .sql auto-appliqué par db:sync)
 -- ---------------------------------------------------------------------------

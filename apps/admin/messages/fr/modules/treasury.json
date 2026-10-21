@@ -723,14 +723,42 @@
     "notice": {
       "title": "Livres SYSCOHADA",
       "body": "Consultez le journal, le grand livre et la balance à partir des écritures réelles. Les liens ci-dessous relient les opérations de trésorerie aux écritures générées.",
-      "outOfScope": "Bilan, compte de résultat et livres caisse/banque suivent dans les lots SYSCO-007 / SYSCO-008."
+      "outOfScope": "Livres caisse/banque et rapprochements bancaires : lot SYSCO-007 (après ce MVP)."
     },
     "booksSubnav": {
       "ariaLabel": "Navigation livres comptables",
       "links": "Liens",
       "journal": "Journal",
       "generalLedger": "Grand livre",
-      "balance": "Balance"
+      "balance": "Balance",
+      "audit": "Audit",
+      "closing": "Clôture",
+      "balanceSheet": "Bilan",
+      "incomeStatement": "Compte de résultat"
+    },
+    "audit": {
+      "accessDenied": "Accès refusé : permission accounting.audit.read requise.",
+      "empty": "Aucun événement d’audit comptable.",
+      "filters": {
+        "entityType": "Type d’entité",
+        "action": "Action"
+      },
+      "columns": {
+        "createdAt": "Date",
+        "action": "Action",
+        "entityType": "Entité",
+        "entityId": "ID",
+        "actor": "Acteur"
+      }
+    },
+    "actions": {
+      "post": "Comptabiliser",
+      "skip": "Ignorer",
+      "postSuccess": "Opération comptabilisée.",
+      "skipSuccess": "Opération ignorée.",
+      "postError": "Impossible de comptabiliser.",
+      "skipError": "Impossible d’ignorer.",
+      "confirmSkip": "Ignorer cette opération (pas d’écriture SYSCOHADA) ?"
     },
     "booksFilters": {
       "organization": "Organisation",
@@ -824,6 +852,53 @@
         "balance": "Solde"
       }
     },
+    "periodStatuses": {
+      "open": "Ouverte",
+      "locked": "Verrouillée",
+      "closed": "Clôturée"
+    },
+    "exerciseStatuses": {
+      "open": "Ouvert",
+      "closing": "En clôture",
+      "closed": "Clôturé"
+    },
+    "closing": {
+      "ariaLabel": "Périodes de l’exercice",
+      "accessDenied": "Accès refusé : permission accounting.close requise.",
+      "selectExercise": "Sélectionnez un exercice pour gérer le verrouillage et la clôture.",
+      "loading": "Chargement…",
+      "emptyPeriods": "Aucune période pour cet exercice.",
+      "lock": "Verrouiller",
+      "unlock": "Déverrouiller",
+      "lockSuccess": "Période verrouillée.",
+      "unlockSuccess": "Période déverrouillée.",
+      "closeExercise": "Clôturer l’exercice",
+      "confirmClose": "Clôturer cet exercice ? Une OD de clôture et un report à nouveau (si exercice suivant) seront générés. Action irréversible.",
+      "closeSuccess": "Exercice clôturé. OD : {closingId} · RAN : {openingId}",
+      "alreadyClosed": "Cet exercice est déjà clôturé.",
+      "viewBalanceSheet": "Voir le bilan",
+      "viewIncomeStatement": "Voir le compte de résultat",
+      "columns": {
+        "code": "Période",
+        "range": "Dates",
+        "status": "Statut",
+        "actions": "Actions"
+      }
+    },
+    "balanceSheet": {
+      "accessDenied": "Accès refusé : permission accounting.reports.read requise.",
+      "loading": "Chargement du bilan…",
+      "netLabel": "Écart actif / passif",
+      "sectionTotal": "Total section",
+      "emptySection": "Aucun compte dans cette section."
+    },
+    "incomeStatement": {
+      "accessDenied": "Accès refusé : permission accounting.reports.read requise.",
+      "loading": "Chargement du compte de résultat…",
+      "netLabel": "Résultat net (produits − charges)",
+      "sectionTotal": "Total section",
+      "emptySection": "Aucun compte dans cette section."
+    },
     "list": {
       "ariaLabel": "Liens comptables",
       "accessDenied": "Accès refusé : permission treasury.accounting_link.read requise.",
@@ -835,7 +910,8 @@
         "fundOp": "Opération",
         "status": "Statut",
         "mappingRuleKey": "Règle mapping",
-        "journalEntryId": "Écriture"
+        "journalEntryId": "Écriture",
+        "actions": "Actions"
       }
     },
     "filters": {

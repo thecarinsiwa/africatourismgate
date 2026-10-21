@@ -96,9 +96,9 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 | SYSCO-005 | Remplir `accounting_links.journal_entry_id` + statuts — ✅ | Haute    | API            | M      | TRESO-039, SYSCO-003–004 |
 | SYSCO-006 | UI journal + grand livre + balance — ✅                       | Haute    | Admin          | L      | SYSCO-003 |
 | SYSCO-007 | Livres caisse / banque + rapprochements                  | Moyenne  | Admin / API    | L      | SYSCO-003, comptes classe 5 |
-| SYSCO-008 | Clôtures + bilan + compte de résultat                    | Moyenne  | Admin / API    | L      | SYSCO-006 |
-| SYSCO-009 | RBAC `accounting.*` + audit écritures                    | Haute    | API / RBAC     | M      | TRESO-008 pattern |
-| SYSCO-010 | Remplacer placeholder `/tresorerie/comptabilite`         | Haute    | Admin          | M      | TRESO-040, SYSCO-005–006 |
+| SYSCO-008 | Clôtures + bilan + compte de résultat — ✅               | Moyenne  | Admin / API    | L      | SYSCO-006 |
+| SYSCO-009 | RBAC `accounting.*` + audit écritures — ✅               | Haute    | API / RBAC     | M      | TRESO-008 pattern |
+| SYSCO-010 | Remplacer placeholder `/tresorerie/comptabilite` — ✅    | Haute    | Admin          | M      | TRESO-040, SYSCO-005–006 |
 | SYSCO-011 | E2E : opération → linked → visible au journal            | Haute    | Testing        | M      | TRESO-042/043, SYSCO-005–006 |
 | SYSCO-012 | Sync OpenAPI + doc module compta                         | Basse    | Docs / API     | S      | TRESO-045 pattern, SYSCO-003–010 |
 
@@ -459,7 +459,7 @@ Comptabiliser entrée cash + sortie virement ; vérifier livres ; pointer 1 lign
 
 ---
 
-### SYSCO-008 — Clôtures + bilan + compte de résultat
+### SYSCO-008 — Clôtures + bilan + compte de résultat — ✅
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `enhancement`, `priority:medium`  
 **Branche suggérée :** `feature/syscohada-closing-statements`  
@@ -504,7 +504,7 @@ Clôturer période test ; tenter POST écriture → refus ; générer bilan/CR.
 
 ---
 
-### SYSCO-009 — RBAC `accounting.*` + audit écritures
+### SYSCO-009 — RBAC `accounting.*` + audit écritures — ✅
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `api`, `priority:high`  
 **Branche suggérée :** `feature/syscohada-rbac-audit`  
@@ -550,7 +550,7 @@ Compte lecture seule : GET OK, POST 403 ; super_admin bypass ; entrée audit apr
 
 ---
 
-### SYSCO-010 — Remplacer placeholder `/tresorerie/comptabilite`
+### SYSCO-010 — Remplacer placeholder `/tresorerie/comptabilite` — ✅
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `enhancement`, `priority:high`  
 **Branche suggérée :** `feature/syscohada-ui-comptabilite-hub`  
@@ -696,7 +696,7 @@ pnpm --filter @africatourismgate/admin exec tsc --noEmit
 
 ## Décisions à trancher avant / pendant l’épic
 
-Recommandations figées dans [syscohada-domain-model.md](./syscohada-domain-model.md) §3 — confirmation revue finance / tech lead encore ouverte.
+Recommandations figées dans [syscohada-domain-model.md](./syscohada-domain-model.md) §3 — **confirmées pour implémentation** (revue oct. 2026).
 
 | Sujet | Question | Impact tâches |
 | ----- | -------- | ------------- |
@@ -715,9 +715,23 @@ Recommandations figées dans [syscohada-domain-model.md](./syscohada-domain-mode
 - [x] Dépendances lot TRESO listées (handoff §3)
 - [x] Consommation `accounting_link` décrite (handoff §4)
 - [x] Doc tâches `admin-syscohada-github-tasks.md` (SYSCO-001…012)
-- [ ] Revue finance / tech lead (comptes, moments de comptabilisation)
-- [ ] Labels GitHub `syscohada` / `comptabilite` créés sur le dépôt
-- [ ] Issues GitHub créées depuis les modèles ci-dessus
+- [x] Revue finance / tech lead (comptes, moments de comptabilisation) — décisions §3 adoptées oct. 2026
+- [ ] Labels GitHub `syscohada` / `comptabilite` créés sur le dépôt (manuel)
+- [ ] Issues GitHub créées depuis les modèles SYSCO-008 / 009 / 010 — **reporté** (`gh` indisponible en atelier ; créer manuellement si suivi GitHub requis)
+
+---
+
+## Smoke manuel (lot SYSCO-008/009/010 — oct. 2026)
+
+Parcours minimal (sans job CI Playwright lourd — SYSCO-011 reste ouvert pour spec dédiée) :
+
+1. Entrée de fonds `recorded` → hub `/tresorerie/comptabilite` → **Comptabiliser** → statut `linked` → deep-link journal.
+2. Même flux → **Ignorer** → statut `skipped`.
+3. Lock période → `POST` écriture refuse ; unlock restaure.
+4. Clôture exercice (dernière période ouverte, pas de `draft`) → OD clôture + RAN si exercice N+1 ; bilan/CR cohérents avec balance.
+5. Permission `accounting.audit.read` → liste `/tresorerie/comptabilite/audit` ; compte lecture sans `accounting.post` → POST 403.
+
+**Reporté ensuite :** SYSCO-007 (caisse/banque/rapprochements), SYSCO-012 (OpenAPI/README).
 
 ---
 
