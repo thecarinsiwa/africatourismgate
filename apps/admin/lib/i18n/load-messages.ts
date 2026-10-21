@@ -31,6 +31,7 @@ export const ADMIN_MODULE_NAMES = [
   'heroSlides',
   'analytics',
   'treasury',
+  'system',
   'adminHelp',
   'setupGuide',
 ] as const;

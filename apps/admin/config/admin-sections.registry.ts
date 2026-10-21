@@ -527,6 +527,11 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: "Profil organisation, contact et employés.",
     apiResource: 'organizations',
   },
+  'systeme/devises': {
+    title: 'Devises',
+    description: 'Catalogue global des devises de la plateforme.',
+    apiResource: 'currencies',
+  },
   'systeme/roles': {
     title: 'Rôles et permissions',
     description: 'Contrôle d’accès (RBAC).',

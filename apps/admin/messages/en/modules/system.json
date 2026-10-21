@@ -1,0 +1,59 @@
+﻿{
+  "currencies": {
+    "ariaLabel": "Currencies list",
+    "accessDenied": "Access denied: currencies.read permission required.",
+    "empty": "No currencies.",
+    "hint": "Platform catalog (ISO 4217). Active currencies power organization, treasury and accounting dropdowns.",
+    "newButton": "New currency",
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Code or label…",
+      "activeOnly": "Active only"
+    },
+    "columns": {
+      "code": "Code",
+      "label": "Label",
+      "symbol": "Symbol",
+      "decimalPlaces": "Decimals",
+      "sortOrder": "Order",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "pagination": {
+      "item": "currency"
+    },
+    "form": {
+      "createTitle": "New currency",
+      "editTitle": "Edit currency",
+      "description": "ISO 4217 code (3 letters). The code cannot be changed after creation.",
+      "code": "Code",
+      "codeHint": "E.g. XOF, EUR, USD",
+      "label": "Label",
+      "symbol": "Symbol",
+      "decimalPlaces": "Decimals",
+      "sortOrder": "Sort order",
+      "isActive": "Active",
+      "saving": "Saving…"
+    },
+    "validation": {
+      "required": "Code (3 letters) and label are required.",
+      "codeFormat": "Code must be 3 letters A–Z (ISO 4217)."
+    },
+    "delete": {
+      "title": "Delete this currency?",
+      "description": "The currency will be soft-deleted. Not allowed if it is the last active currency."
+    },
+    "common": {
+      "save": "Save",
+      "cancel": "Cancel"
+    }
+  },
+  "errors": {
+    "loadFailed": "Unable to load currencies.",
+    "forbidden": "You do not have permission to perform this action."
+  }
+}

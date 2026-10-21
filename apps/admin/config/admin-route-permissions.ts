@@ -85,6 +85,7 @@ export const ADMIN_ROUTE_ACCESS_RULES: RouteAccessRule[] = [
   { prefix: '/aide', authenticatedOnly: true },
   { prefix: '/mise-en-route', authenticatedOnly: true },
   { prefix: '/organisations', authenticatedOnly: true },
+  { prefix: '/systeme/devises', permission: 'currencies.read' },
   { prefix: '/systeme/roles', authenticatedOnly: true },
   { prefix: '/analytics', permission: 'analytics.read' },
   { prefix: '/dashboard', authenticatedOnly: true },

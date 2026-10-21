@@ -646,6 +646,10 @@
     }
   },
   "systeme": {
+    "devises": {
+      "title": "Divisas",
+      "description": "Catálogo global de divisas ISO 4217 usado por organizaciones, tesorería y contabilidad."
+    },
     "roles": {
       "title": "Roles y permisos",
       "description": "Gestione roles, matriz de permisos y asignaciones de usuarios.",

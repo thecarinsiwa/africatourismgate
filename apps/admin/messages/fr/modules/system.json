@@ -1,0 +1,59 @@
+﻿{
+  "currencies": {
+    "ariaLabel": "Liste des devises",
+    "accessDenied": "Accès refusé : permission currencies.read requise.",
+    "empty": "Aucune devise.",
+    "hint": "Catalogue plateforme (ISO 4217). Les devises actives alimentent les listes déroulantes organisation, trésorerie et comptabilité.",
+    "newButton": "Nouvelle devise",
+    "filters": {
+      "search": "Rechercher",
+      "searchPlaceholder": "Code ou libellé…",
+      "activeOnly": "Actives uniquement"
+    },
+    "columns": {
+      "code": "Code",
+      "label": "Libellé",
+      "symbol": "Symbole",
+      "decimalPlaces": "Décimales",
+      "sortOrder": "Ordre",
+      "status": "Statut",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "pagination": {
+      "item": "devise"
+    },
+    "form": {
+      "createTitle": "Nouvelle devise",
+      "editTitle": "Modifier la devise",
+      "description": "Code ISO 4217 (3 lettres). Le code n’est pas modifiable après création.",
+      "code": "Code",
+      "codeHint": "Ex. XOF, EUR, USD",
+      "label": "Libellé",
+      "symbol": "Symbole",
+      "decimalPlaces": "Décimales",
+      "sortOrder": "Ordre d’affichage",
+      "isActive": "Active",
+      "saving": "Enregistrement…"
+    },
+    "validation": {
+      "required": "Code (3 lettres) et libellé sont obligatoires.",
+      "codeFormat": "Le code doit être 3 lettres A–Z (ISO 4217)."
+    },
+    "delete": {
+      "title": "Supprimer cette devise ?",
+      "description": "La devise sera soft-supprimée. Impossible si c’est la dernière devise active."
+    },
+    "common": {
+      "save": "Enregistrer",
+      "cancel": "Annuler"
+    }
+  },
+  "errors": {
+    "loadFailed": "Impossible de charger les devises.",
+    "forbidden": "Vous n'avez pas la permission d'effectuer cette action."
+  }
+}

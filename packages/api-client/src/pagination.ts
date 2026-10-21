@@ -40,6 +40,8 @@ import type {
   GapMediaItemsListQuery,
   PublicGapMediaListQuery,
   PublicGapPagesListQuery,
+  CurrenciesListQuery,
+  ExchangeRatesListQuery,
 } from '@africatourismgate/types';
 import type { RequestOptions } from './index';
 
@@ -92,6 +94,9 @@ const RESOURCE_QUERY_KEYS = [
   'sectionKey',
   'mediaType',
   'type',
+  'activeOnly',
+  'fromCurrency',
+  'toCurrency',
 ] as const;
 
 export type PaginatedListQuery =
@@ -132,7 +137,9 @@ export type PaginatedListQuery =
   | GapImpactStatsListQuery
   | GapMediaItemsListQuery
   | PublicGapMediaListQuery
-  | PublicGapPagesListQuery;
+  | PublicGapPagesListQuery
+  | CurrenciesListQuery
+  | ExchangeRatesListQuery;
 
 function buildQueryString(query?: PaginatedListQuery): string {
   const params = new URLSearchParams();

@@ -646,6 +646,10 @@
     }
   },
   "systeme": {
+    "devises": {
+      "title": "Currencies",
+      "description": "Global ISO 4217 currency catalog used by organizations, treasury and accounting."
+    },
     "roles": {
       "title": "Roles & permissions",
       "description": "Manage roles, permission matrix and user assignments.",

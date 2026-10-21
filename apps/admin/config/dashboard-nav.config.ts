@@ -184,6 +184,7 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
     children: [
       { href: '/organisations', labelKey: 'organizations', iconKey: 'organisations' },
       { href: '/systeme/roles', labelKey: 'roles', iconKey: 'roles' },
+      { href: '/systeme/devises', labelKey: 'currencies', iconKey: 'creditCard' },
       { href: '/parametres', labelKey: 'settings', iconKey: 'sliders' },
     ],
   },

@@ -354,6 +354,7 @@ import type {
   CreateFundEntryRequest,
   CreateFundExitRequest,
   CreateBudgetRequest,
+  CreateCurrencyRequest,
   CreateExchangeRateRequest,
   CreateAccountingExerciseRequest,
   CreateAccountingLinkRequest,
@@ -388,6 +389,8 @@ import type {
   BudgetVsActualSummary,
   BudgetsListQuery,
   BudgetsVsActualQuery,
+  CurrenciesListQuery,
+  Currency,
   ExchangeRate,
   ExchangeRatesListQuery,
   InviteTreasuryExternalCollaboratorRequest,
@@ -415,6 +418,7 @@ import type {
   TransitionExpenseRequestRequest,
   TransitionFundExitRequest,
   UpdateBudgetRequest,
+  UpdateCurrencyRequest,
   UpdateExchangeRateRequest,
   UpdateExpenseRequestRequest,
   UpdateFundEntryRequest,
@@ -1659,6 +1663,43 @@ export class ApiClient {
 
   deleteExchangeRate(id: string): Promise<void> {
     return this.request<void>(`/exchange-rates/${id}`, { method: 'DELETE' });
+  }
+
+  listCurrencies(
+    query?: CurrenciesListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<Currency>> {
+    return fetchPaginated<Currency>(
+      this,
+      '/currencies',
+      query,
+      requestOptions,
+    );
+  }
+
+  getCurrency(id: string): Promise<Currency> {
+    return this.request<Currency>(`/currencies/${id}`);
+  }
+
+  createCurrency(body: CreateCurrencyRequest): Promise<Currency> {
+    return this.request<Currency>('/currencies', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateCurrency(
+    id: string,
+    body: UpdateCurrencyRequest,
+  ): Promise<Currency> {
+    return this.request<Currency>(`/currencies/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteCurrency(id: string): Promise<void> {
+    return this.request<void>(`/currencies/${id}`, { method: 'DELETE' });
   }
 
   listAccountingLinks(

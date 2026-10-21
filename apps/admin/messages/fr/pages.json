@@ -646,6 +646,10 @@
     }
   },
   "systeme": {
+    "devises": {
+      "title": "Devises",
+      "description": "Catalogue global des devises ISO 4217 utilisées par les organisations, la trésorerie et la comptabilité."
+    },
     "roles": {
       "title": "Rôles et permissions",
       "description": "Gérez les rôles, la matrice des permissions et les assignations utilisateurs.",
