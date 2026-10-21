@@ -917,6 +917,11 @@
         "description": "Journal des actions SYSCOHADA. Accès : accounting.audit.read.",
         "metaTitle": "Audit comptable"
       },
+      "exercices": {
+        "title": "Exercices",
+        "description": "Exercices comptables et devise de tenue. Accès : accounting.read ; création : accounting.chart.write.",
+        "metaTitle": "Exercices comptables"
+      },
       "cloture": {
         "title": "Clôture",
         "description": "Verrouiller les périodes et clôturer l’exercice. Accès : accounting.close.",

@@ -17,6 +17,10 @@ const linkKeys = [
     href: '/tresorerie/comptabilite/compte-resultat',
     labelKey: 'incomeStatement' as const,
   },
+  {
+    href: '/tresorerie/comptabilite/exercices',
+    labelKey: 'exercises' as const,
+  },
   { href: '/tresorerie/comptabilite/cloture', labelKey: 'closing' as const },
   { href: '/tresorerie/comptabilite/audit', labelKey: 'audit' as const },
 ];

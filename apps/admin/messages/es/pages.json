@@ -917,6 +917,11 @@
         "description": "Diario de acciones SYSCOHADA. Acceso: accounting.audit.read.",
         "metaTitle": "Auditoría contable"
       },
+      "exercices": {
+        "title": "Ejercicios",
+        "description": "Ejercicios contables y moneda de tenencia. Acceso: accounting.read; crear: accounting.chart.write.",
+        "metaTitle": "Ejercicios contables"
+      },
       "cloture": {
         "title": "Cierre",
         "description": "Bloquear períodos y cerrar el ejercicio. Acceso: accounting.close.",

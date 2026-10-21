@@ -224,7 +224,10 @@ export function AccountingClosingPanel() {
               </p>
               <p className="text-sm text-atg-muted">
                 {exercise.startsOn} → {exercise.endsOn} ·{' '}
-                {tExerciseStatuses(exercise.status)}
+                <span className="font-medium tabular-nums text-atg-fg">
+                  {exercise.currency}
+                </span>{' '}
+                · {tExerciseStatuses(exercise.status)}
               </p>
             </div>
             {canClose && exercise.status !== 'closed' ? (

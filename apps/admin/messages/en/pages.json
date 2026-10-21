@@ -917,6 +917,11 @@
         "description": "SYSCOHADA action journal. Access: accounting.audit.read.",
         "metaTitle": "Accounting audit"
       },
+      "exercices": {
+        "title": "Exercises",
+        "description": "Accounting exercises and book currency. Access: accounting.read; create: accounting.chart.write.",
+        "metaTitle": "Accounting exercises"
+      },
       "cloture": {
         "title": "Closing",
         "description": "Lock periods and close the fiscal year. Access: accounting.close.",

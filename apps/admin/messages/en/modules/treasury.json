@@ -732,9 +732,52 @@
       "generalLedger": "General ledger",
       "balance": "Trial balance",
       "audit": "Audit",
+      "exercises": "Exercises",
       "closing": "Closing",
       "balanceSheet": "Balance sheet",
       "incomeStatement": "Income statement"
+    },
+    "exercises": {
+      "ariaLabel": "Accounting exercises list",
+      "accessDenied": "Access denied: accounting.read or treasury.accounting_link.read required.",
+      "hint": "Book currency per exercise (FX conversion at posting). Create: accounting.chart.write.",
+      "empty": "No accounting exercises.",
+      "newButton": "New exercise",
+      "filters": {
+        "organization": "Organization",
+        "organizationAll": "All organizations"
+      },
+      "pagination": {
+        "item": "exercise"
+      },
+      "columns": {
+        "code": "Code",
+        "label": "Label",
+        "range": "Range",
+        "currency": "Currency",
+        "periods": "Months",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "form": {
+        "createTitle": "Create exercise",
+        "editTitle": "Edit exercise",
+        "createDescription": "Monthly periods are generated automatically.",
+        "editDescription": "Currency can change only while open and with no posted entries.",
+        "organization": "Organization",
+        "code": "Code",
+        "label": "Label",
+        "startsOn": "Start",
+        "endsOn": "End",
+        "currency": "Book currency",
+        "currencyHint": "Defaults to the organization currency.",
+        "currencyHintEdit": "Blocked after posted journal entries.",
+        "saving": "Saving…"
+      },
+      "validation": {
+        "required": "All required fields must be filled.",
+        "dateRange": "Start date must be on or before end date."
+      }
     },
     "audit": {
       "accessDenied": "Access denied: accounting.audit.read permission required.",

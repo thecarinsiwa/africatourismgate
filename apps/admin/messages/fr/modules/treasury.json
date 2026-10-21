@@ -732,9 +732,52 @@
       "generalLedger": "Grand livre",
       "balance": "Balance",
       "audit": "Audit",
+      "exercises": "Exercices",
       "closing": "Clôture",
       "balanceSheet": "Bilan",
       "incomeStatement": "Compte de résultat"
+    },
+    "exercises": {
+      "ariaLabel": "Liste des exercices comptables",
+      "accessDenied": "Accès refusé : permission accounting.read ou treasury.accounting_link.read requise.",
+      "hint": "Devise de tenue de chaque exercice (conversion FX à la comptabilisation). Création : accounting.chart.write.",
+      "empty": "Aucun exercice comptable.",
+      "newButton": "Nouvel exercice",
+      "filters": {
+        "organization": "Organisation",
+        "organizationAll": "Toutes les organisations"
+      },
+      "pagination": {
+        "item": "exercice"
+      },
+      "columns": {
+        "code": "Code",
+        "label": "Libellé",
+        "range": "Période",
+        "currency": "Devise",
+        "periods": "Mois",
+        "status": "Statut",
+        "actions": "Actions"
+      },
+      "form": {
+        "createTitle": "Créer un exercice",
+        "editTitle": "Modifier l’exercice",
+        "createDescription": "Les périodes mensuelles sont générées automatiquement.",
+        "editDescription": "La devise ne peut être changée que si l’exercice est ouvert et sans écritures postées.",
+        "organization": "Organisation",
+        "code": "Code",
+        "label": "Libellé",
+        "startsOn": "Début",
+        "endsOn": "Fin",
+        "currency": "Devise de tenue",
+        "currencyHint": "Par défaut : devise de l’organisation.",
+        "currencyHintEdit": "Impossible après des écritures postées.",
+        "saving": "Enregistrement…"
+      },
+      "validation": {
+        "required": "Tous les champs obligatoires doivent être renseignés.",
+        "dateRange": "La date de début doit précéder la date de fin."
+      }
     },
     "audit": {
       "accessDenied": "Accès refusé : permission accounting.audit.read requise.",

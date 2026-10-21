@@ -732,9 +732,52 @@
       "generalLedger": "Libro mayor",
       "balance": "Balance",
       "audit": "Auditoría",
+      "exercises": "Ejercicios",
       "closing": "Cierre",
       "balanceSheet": "Balance general",
       "incomeStatement": "Cuenta de resultados"
+    },
+    "exercises": {
+      "ariaLabel": "Lista de ejercicios contables",
+      "accessDenied": "Acceso denegado: se requiere accounting.read o treasury.accounting_link.read.",
+      "hint": "Moneda de tenencia por ejercicio (conversión FX al contabilizar). Crear: accounting.chart.write.",
+      "empty": "No hay ejercicios contables.",
+      "newButton": "Nuevo ejercicio",
+      "filters": {
+        "organization": "Organización",
+        "organizationAll": "Todas las organizaciones"
+      },
+      "pagination": {
+        "item": "ejercicio"
+      },
+      "columns": {
+        "code": "Código",
+        "label": "Etiqueta",
+        "range": "Periodo",
+        "currency": "Moneda",
+        "periods": "Meses",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "form": {
+        "createTitle": "Crear ejercicio",
+        "editTitle": "Editar ejercicio",
+        "createDescription": "Los periodos mensuales se generan automáticamente.",
+        "editDescription": "La moneda solo se puede cambiar si está abierto y sin asientos publicados.",
+        "organization": "Organización",
+        "code": "Código",
+        "label": "Etiqueta",
+        "startsOn": "Inicio",
+        "endsOn": "Fin",
+        "currency": "Moneda de tenencia",
+        "currencyHint": "Por defecto: moneda de la organización.",
+        "currencyHintEdit": "Bloqueado tras asientos publicados.",
+        "saving": "Guardando…"
+      },
+      "validation": {
+        "required": "Debe completar todos los campos obligatorios.",
+        "dateRange": "La fecha de inicio debe ser anterior o igual a la de fin."
+      }
     },
     "audit": {
       "accessDenied": "Acceso denegado: se requiere accounting.audit.read.",

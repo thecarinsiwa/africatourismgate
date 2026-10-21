@@ -287,6 +287,11 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Journal append-only des actions comptables SYSCOHADA.',
     apiResource: 'accounting-audit-logs',
   },
+  'tresorerie/comptabilite/exercices': {
+    title: 'Exercices',
+    description: 'Exercices comptables et devise de tenue.',
+    apiResource: 'accounting-exercises',
+  },
   'tresorerie/comptabilite/cloture': {
     title: 'Clôture',
     description: 'Verrouillage des périodes et clôture d’exercice.',

@@ -39,6 +39,10 @@ export const ADMIN_ROUTE_ACCESS_RULES: RouteAccessRule[] = [
     permission: 'accounting.audit.read',
   },
   {
+    prefix: '/tresorerie/comptabilite/exercices',
+    anyOf: ['accounting.read', 'treasury.accounting_link.read'],
+  },
+  {
     prefix: '/tresorerie/comptabilite/cloture',
     permission: 'accounting.close',
   },
