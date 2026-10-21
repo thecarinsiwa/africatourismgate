@@ -11,6 +11,13 @@ export interface AuditFields {
 export type UUID = string;
 
 export type {
+  CreateCurrencyRequest,
+  CurrenciesListQuery,
+  Currency,
+  UpdateCurrencyRequest,
+} from './currency.js';
+
+export type {
   AuthResponse,
   AuthMe,
   AuthTokens,

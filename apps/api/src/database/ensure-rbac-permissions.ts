@@ -355,6 +355,20 @@ const PERMISSION_UPSERTS: Array<{
     action: 'fx_rates.write',
     description: 'Manage exchange rates catalog',
   },
+  {
+    id: '00000000-0000-4000-8000-000000001081',
+    code: 'currencies.read',
+    resource: 'currencies',
+    action: 'read',
+    description: 'View platform currencies catalog',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001082',
+    code: 'currencies.write',
+    resource: 'currencies',
+    action: 'write',
+    description: 'Manage platform currencies catalog',
+  },
 ];
 
 /** Full org_admin set (install.seed.sql) — repairs partial or missing grants. */
@@ -420,6 +434,8 @@ const ORG_ADMIN_PERMISSION_IDS = [
   '00000000-0000-4000-8000-000000001078',
   '00000000-0000-4000-8000-000000001079',
   '00000000-0000-4000-8000-000000001080',
+  // Platform currencies catalog (read for form selects)
+  '00000000-0000-4000-8000-000000001081',
 ];
 
 async function platformOrgExists(config: ConfigService): Promise<boolean> {

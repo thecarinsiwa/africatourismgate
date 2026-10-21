@@ -101,6 +101,7 @@ export const CATALOG_PERMISSION_MAP = {
     'gap-impact-stats',
     'gap-media-items',
   ],
+  currencies: ['currencies'],
 } as const;
 
 /**

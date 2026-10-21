@@ -93,7 +93,9 @@ INSERT INTO `permissions` (`id`, `code`, `resource`, `action`, `description`) VA
 ('00000000-0000-4000-8000-000000001077', 'accounting.audit.read', 'accounting', 'audit.read', 'View accounting audit journal'),
 ('00000000-0000-4000-8000-000000001078', 'accounting.reports.read', 'accounting', 'reports.read', 'View balance sheet and P&L reports'),
 ('00000000-0000-4000-8000-000000001079', 'treasury.fx_rates.read', 'treasury', 'fx_rates.read', 'View exchange rates catalog'),
-('00000000-0000-4000-8000-000000001080', 'treasury.fx_rates.write', 'treasury', 'fx_rates.write', 'Manage exchange rates catalog');
+('00000000-0000-4000-8000-000000001080', 'treasury.fx_rates.write', 'treasury', 'fx_rates.write', 'Manage exchange rates catalog'),
+('00000000-0000-4000-8000-000000001081', 'currencies.read', 'currencies', 'read', 'View platform currencies catalog'),
+('00000000-0000-4000-8000-000000001082', 'currencies.write', 'currencies', 'write', 'Manage platform currencies catalog');
 
 -- -----------------------------------------------------------------------------
 -- 2. roles
@@ -218,7 +220,8 @@ INSERT INTO `role_permissions` (`role_id`, `permission_id`, `granted_by_user_id`
 ('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001077', '00000000-0000-4000-8000-000000000010'),
 ('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001078', '00000000-0000-4000-8000-000000000010'),
 ('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001079', '00000000-0000-4000-8000-000000000010'),
-('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001080', '00000000-0000-4000-8000-000000000010');
+('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001080', '00000000-0000-4000-8000-000000000010'),
+('00000000-0000-4000-8000-000000000101', '00000000-0000-4000-8000-000000001081', '00000000-0000-4000-8000-000000000010');
 
 INSERT INTO `role_permissions` (`role_id`, `permission_id`, `granted_by_user_id`) VALUES
 ('00000000-0000-4000-8000-000000000102', '00000000-0000-4000-8000-000000001001', '00000000-0000-4000-8000-000000000010'),
