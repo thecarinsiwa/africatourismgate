@@ -243,7 +243,7 @@ export function AccountingAuditLogsList() {
       <DataTable
         columns={columns}
         data={logs}
-        loading={state.status === 'loading'}
+        isLoading={state.status === 'loading'}
         emptyMessage={t('empty')}
       />
       <DataTablePagination
