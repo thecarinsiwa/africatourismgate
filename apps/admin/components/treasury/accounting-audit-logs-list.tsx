@@ -246,14 +246,17 @@ export function AccountingAuditLogsList() {
         isLoading={state.status === 'loading'}
         emptyMessage={t('empty')}
       />
-      <DataTablePagination
-        page={page}
-        pageSize={PAGE_SIZE}
-        total={total}
-        totalPages={totalPages}
-        onPageChange={setPage}
-        labels={paginationLabels}
-      />
+      {state.status === 'ready' && totalPages > 1 ? (
+        <DataTablePagination
+          page={page}
+          pageSize={PAGE_SIZE}
+          totalPages={totalPages}
+          totalItems={total}
+          itemLabel={tCommon('pagination.auditEvent')}
+          labels={paginationLabels}
+          onPageChange={setPage}
+        />
+      ) : null}
     </div>
   );
 }
