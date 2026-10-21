@@ -8,14 +8,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { newId } from '../../../common/utils/uuid';
 import {
+  AccountingExercises,
+  AccountingPeriods,
+} from '../../../entities/accounting-exercise.entity';
+import {
   AccountingFundOpType,
   AccountingLinks,
 } from '../../../entities/accounting-link.entity';
 import { FundEntries } from '../../../entities/fund-entry.entity';
 import { FundExits } from '../../../entities/fund-exit.entity';
 import { AccountingAuditService } from '../accounting-audit/accounting-audit.service';
-import { TreasuryAuditService } from '../treasury-audit/treasury-audit.service';
+import { ExchangeRatesService } from '../exchange-rates/exchange-rates.service';
 import { JournalEntriesService } from '../journal-entries/journal-entries.service';
+import { TreasuryAuditService } from '../treasury-audit/treasury-audit.service';
 import {
   AccountingLinkDto,
   toAccountingLinkDto,
@@ -32,9 +37,15 @@ export type PostFundOpResult = {
   mappingRuleKey: string | null;
 };
 
+function dateOnly(value: string | Date): string {
+  if (typeof value === 'string') return value.slice(0, 10);
+  return value.toISOString().slice(0, 10);
+}
+
 /**
  * Comptabilisation fond → écriture SYSCOHADA (SYSCO-004 + pont SYSCO-005).
  * Déclencheur MVP : action manuelle « Comptabiliser » (éligible si recorded).
+ * Conversion FX : devise op → devise de tenue de l’exercice (taux manuels).
  */
 @Injectable()
 export class AccountingPostingService {
@@ -45,8 +56,13 @@ export class AccountingPostingService {
     private readonly fundEntriesRepo: Repository<FundEntries>,
     @InjectRepository(FundExits)
     private readonly fundExitsRepo: Repository<FundExits>,
+    @InjectRepository(AccountingExercises)
+    private readonly exercisesRepo: Repository<AccountingExercises>,
+    @InjectRepository(AccountingPeriods)
+    private readonly periodsRepo: Repository<AccountingPeriods>,
     private readonly mappingEngine: AccountingMappingEngine,
     private readonly journalEntries: JournalEntriesService,
+    private readonly exchangeRates: ExchangeRatesService,
     private readonly treasuryAudit: TreasuryAuditService,
     private readonly accountingAudit: AccountingAuditService,
   ) {}
@@ -157,7 +173,11 @@ export class AccountingPostingService {
       });
     }
 
-    const journalEntry = await this.createJournalFromFundOp(op, rule, actorUserId);
+    const { journalEntry, fxMeta } = await this.createJournalFromFundOp(
+      op,
+      rule,
+      actorUserId,
+    );
 
     const oldJson = this.linkSnapshot(link);
     link.journalEntryId = journalEntry.id;
@@ -187,6 +207,7 @@ export class AccountingPostingService {
       newJson: {
         ...this.linkSnapshot(link),
         journalEntryId: journalEntry.id,
+        ...fxMeta,
       },
       correlationTreasuryAuditId: treasuryLog.id,
     });
@@ -203,6 +224,7 @@ export class AccountingPostingService {
         fundOpType,
         fundOpId,
         mappingRuleKey: rule.key,
+        ...fxMeta,
       },
       correlationTreasuryAuditId: treasuryLog.id,
     });
@@ -323,18 +345,71 @@ export class AccountingPostingService {
     },
     rule: ResolvedMappingRule,
     actorUserId?: string | null,
-  ) {
-    const entryDate =
-      typeof op.operationDate === 'string'
-        ? op.operationDate.slice(0, 10)
-        : new Date(op.operationDate).toISOString().slice(0, 10);
+  ): Promise<{
+    journalEntry: Awaited<ReturnType<JournalEntriesService['create']>>;
+    fxMeta: {
+      originalCurrency: string;
+      bookCurrency: string;
+      originalAmountCents: number;
+      bookAmountCents: number;
+      fxRate: number | null;
+      exchangeRateId: string | null;
+    };
+  }> {
+    const entryDate = dateOnly(op.operationDate);
+    const opCurrency = op.currency.trim().toUpperCase();
+
+    const { exercise, period } = await this.resolveExerciseForDate(
+      op.organizationId,
+      entryDate,
+    );
+    const bookCurrency = exercise.currency.trim().toUpperCase();
+
+    let bookCents = op.amountCents;
+    let fxRate: number | null = null;
+    let exchangeRateId: string | null = null;
+
+    if (opCurrency !== bookCurrency) {
+      const resolved = await this.exchangeRates.resolveRate({
+        organizationId: op.organizationId,
+        fromCurrency: opCurrency,
+        toCurrency: bookCurrency,
+        onDate: entryDate,
+      });
+      if (!resolved) {
+        throw new BadRequestException(
+          `No exchange rate for ${opCurrency}→${bookCurrency} on or before ${entryDate} — add a rate under Trésorerie › Taux de change`,
+        );
+      }
+      fxRate = resolved.rate;
+      exchangeRateId = resolved.exchangeRateId || null;
+      bookCents = Math.round(op.amountCents * resolved.rate);
+      if (op.amountCents > 0 && bookCents < 1) {
+        bookCents = 1;
+      }
+    }
 
     const description = `Comptabilisation ${op.fundOpType} ${op.reference ?? op.fundOpId.slice(0, 8)}`;
 
-    return this.journalEntries.create(
+    const lineFx =
+      fxRate != null
+        ? {
+            originalAmountCents: op.amountCents,
+            originalCurrency: opCurrency,
+            fxRate,
+          }
+        : {
+            originalAmountCents: op.amountCents,
+            originalCurrency: opCurrency,
+            fxRate: null as number | null,
+          };
+
+    const journalEntry = await this.journalEntries.create(
       {
         organizationId: op.organizationId,
         journalId: rule.journalId,
+        exerciseId: exercise.id,
+        periodId: period.id,
         entryDate,
         description,
         status: 'posted',
@@ -343,23 +418,71 @@ export class AccountingPostingService {
           {
             accountId: rule.debitAccountId,
             label: description,
-            debitCents: op.amountCents,
+            debitCents: bookCents,
             creditCents: 0,
-            originalAmountCents: op.amountCents,
-            originalCurrency: op.currency,
+            ...lineFx,
           },
           {
             accountId: rule.creditAccountId,
             label: description,
             debitCents: 0,
-            creditCents: op.amountCents,
-            originalAmountCents: op.amountCents,
-            originalCurrency: op.currency,
+            creditCents: bookCents,
+            ...lineFx,
           },
         ],
       },
       actorUserId,
     );
+
+    return {
+      journalEntry,
+      fxMeta: {
+        originalCurrency: opCurrency,
+        bookCurrency,
+        originalAmountCents: op.amountCents,
+        bookAmountCents: bookCents,
+        fxRate,
+        exchangeRateId,
+      },
+    };
+  }
+
+  private async resolveExerciseForDate(
+    organizationId: string,
+    entryDate: string,
+  ): Promise<{ exercise: AccountingExercises; period: AccountingPeriods }> {
+    const exercise = await this.exercisesRepo
+      .createQueryBuilder('exercise')
+      .where('exercise.deletedAt IS NULL')
+      .andWhere('exercise.organizationId = :organizationId', { organizationId })
+      .andWhere('exercise.startsOn <= :entryDate', { entryDate })
+      .andWhere('exercise.endsOn >= :entryDate', { entryDate })
+      .andWhere('exercise.status != :closed', { closed: 'closed' })
+      .orderBy('exercise.startsOn', 'DESC')
+      .getOne();
+
+    if (!exercise) {
+      throw new BadRequestException(
+        `No open accounting exercise covers ${entryDate} for this organization`,
+      );
+    }
+
+    const period = await this.periodsRepo
+      .createQueryBuilder('period')
+      .where('period.deletedAt IS NULL')
+      .andWhere('period.exerciseId = :exerciseId', { exerciseId: exercise.id })
+      .andWhere('period.startsOn <= :entryDate', { entryDate })
+      .andWhere('period.endsOn >= :entryDate', { entryDate })
+      .orderBy('period.sequenceNo', 'ASC')
+      .getOne();
+
+    if (!period) {
+      throw new BadRequestException(
+        `No accounting period covers ${entryDate} in exercise ${exercise.code}`,
+      );
+    }
+
+    return { exercise, period };
   }
 
   private async loadEligibleFundOp(

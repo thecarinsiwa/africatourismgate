@@ -1,11 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import {
+  AccountingExercises,
+  AccountingPeriods,
+} from '../../../entities/accounting-exercise.entity';
 import { AccountingLinks } from '../../../entities/accounting-link.entity';
 import { AccountingMappingRules } from '../../../entities/accounting-mapping-rule.entity';
 import { ChartOfAccounts } from '../../../entities/chart-of-account.entity';
 import { FundEntries } from '../../../entities/fund-entry.entity';
 import { FundExits } from '../../../entities/fund-exit.entity';
 import { AccountingAuditModule } from '../accounting-audit/accounting-audit.module';
+import { ExchangeRatesModule } from '../exchange-rates/exchange-rates.module';
 import { JournalEntriesModule } from '../journal-entries/journal-entries.module';
 import { TreasuryAuditModule } from '../treasury-audit/treasury-audit.module';
 import { AccountingLinksController } from './accounting-links.controller';
@@ -21,10 +26,13 @@ import { AccountingPostingService } from './accounting-posting.service';
       ChartOfAccounts,
       FundEntries,
       FundExits,
+      AccountingExercises,
+      AccountingPeriods,
     ]),
     TreasuryAuditModule,
     AccountingAuditModule,
     JournalEntriesModule,
+    ExchangeRatesModule,
   ],
   controllers: [AccountingLinksController],
   providers: [
