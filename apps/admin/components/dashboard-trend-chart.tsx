@@ -17,6 +17,7 @@ import { formatMoney } from '../lib/format-money';
 import { useFormatChartAxisDate } from '../lib/i18n/use-module-labels';
 import { useChartTheme } from '../lib/use-chart-theme';
 import { useDashboardTrendData } from './dashboard-data-context';
+import { useDefaultCurrency } from './organization-currency-provider';
 import { usePermissions } from '../lib/auth/use-permissions';
 
 type ChartRow = {
@@ -121,6 +122,7 @@ export function DashboardTrendChart({ className }: { className?: string }) {
   const trendState = useDashboardTrendData();
   const chartTheme = useChartTheme();
   const formatAxisDate = useFormatChartAxisDate();
+  const defaultCurrency = useDefaultCurrency();
 
   const canReadBookings = hasPermission('bookings.read');
   const canReadPayments = hasPermission('payments.read');
@@ -149,7 +151,8 @@ export function DashboardTrendChart({ className }: { className?: string }) {
 
   const chartKey = `${chartTheme.bookings}-${chartTheme.revenue}-${chartTheme.tick}`;
   const loading = permissionsLoading || trendState.status === 'loading';
-  const currency = trendState.status === 'ready' ? trendState.result.currency : 'CDF';
+  const currency =
+    (trendState.status === 'ready' ? trendState.result.currency : null) ?? defaultCurrency;
 
   if (!canShowChart || trendState.status === 'hidden') {
     return null;

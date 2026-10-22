@@ -9,7 +9,8 @@ import {
   formatKpiChangePercent,
   type DashboardKpiChange,
 } from '../lib/dashboard-kpi-data';
-import { formatCount, formatMoney } from '../lib/format-money';
+import { formatCount } from '../lib/format-money';
+import { useFormatMoney } from '../lib/use-format-money';
 import { useDashboardData } from './dashboard-data-context';
 import { usePermissions } from '../lib/auth/use-permissions';
 
@@ -42,6 +43,7 @@ export function DashboardKpiCards({ className }: { className?: string }) {
   const { kpis, dataLoading } = useDashboardData();
   const locale = useLocale();
   const t = useTranslations('dashboard');
+  const formatMoney = useFormatMoney();
 
   const visibleKpis = useMemo(
     () => dashboardKpis.filter((kpi) => hasPermission(kpi.permission)),
@@ -83,7 +85,7 @@ export function DashboardKpiCards({ className }: { className?: string }) {
           const displayValue =
             slot.status === 'ready'
               ? kpi.key === 'revenue'
-                ? formatMoney(slot.data.rawValue, slot.data.currency ?? 'CDF')
+                ? formatMoney(slot.data.rawValue, slot.data.currency)
                 : formatCount(slot.data.rawValue)
               : undefined;
 

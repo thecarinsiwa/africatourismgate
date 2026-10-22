@@ -14,7 +14,8 @@ export type TrendPoint = {
 
 export type DashboardTrendResult = {
   points: TrendPoint[];
-  currency: string;
+  /** Currency of the payments; `null` when none — UI falls back to the Admin default. */
+  currency: string | null;
 };
 
 export type DashboardTrendAccess = {
@@ -154,7 +155,7 @@ export function buildDashboardTrendResult(
   const succeededInRange = payments.filter(
     (p) => p.status === 'succeeded' && isWithinRange(p.createdAt, dateFrom, dateTo),
   );
-  const currency = succeededInRange[0]?.currency ?? payments[0]?.currency ?? 'CDF';
+  const currency = succeededInRange[0]?.currency ?? payments[0]?.currency ?? null;
 
   const points = days.map((date) => ({
     date,

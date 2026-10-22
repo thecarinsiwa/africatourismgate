@@ -49,7 +49,8 @@ export interface PaginatedRequestClient {
   request<T>(path: string, options?: RequestOptions): Promise<T>;
 }
 
-const DEFAULT_CURRENCY = 'CDF';
+/** Used when no succeeded payment and no caller fallback (e.g. organization currency) are available. */
+const DEFAULT_CURRENCY = 'XOF';
 
 /** Query keys forwarded as URL search params (beyond page/limit). */
 const RESOURCE_QUERY_KEYS = [
@@ -179,13 +180,19 @@ export async function fetchTotal(client: PaginatedRequestClient, path: string): 
   return result.meta.total;
 }
 
+/**
+ * @param fallbackCurrency Currency reported when there is no succeeded payment
+ * (typically the organization's default currency).
+ */
 export async function sumSucceededPaymentsRevenue(
   client: PaginatedRequestClient,
+  fallbackCurrency?: string | null,
 ): Promise<SucceededPaymentsRevenue> {
+  const defaultCurrency = fallbackCurrency?.trim().toUpperCase() || DEFAULT_CURRENCY;
   let page = 1;
   let totalPages = 1;
   let totalCents = 0;
-  let currency = DEFAULT_CURRENCY;
+  let currency = defaultCurrency;
 
   while (page <= totalPages) {
     const result = await fetchPaginated<PaymentListItem>(client, '/payments', {
@@ -199,7 +206,7 @@ export async function sumSucceededPaymentsRevenue(
         continue;
       }
       if (totalCents === 0) {
-        currency = payment.currency || DEFAULT_CURRENCY;
+        currency = payment.currency || defaultCurrency;
       }
       totalCents += payment.amountCents;
     }
