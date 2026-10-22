@@ -196,6 +196,7 @@
     "image": "Imagen",
     "chooseFile": "Elegir un archivo",
     "uploading": "Cargando…",
+    "loading": "Cargando…",
     "imageFormatHint": "JPEG, PNG o WebP, máx. 5 MB",
     "centsHint": "Ej. 8500 = 85,00",
     "urlPlaceholder": "https://..."
