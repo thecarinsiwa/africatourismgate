@@ -1410,7 +1410,16 @@
     "itineraryMapAria": "Activity itinerary map",
     "itineraryStopLabel": "Coordinates",
     "itineraryStopDuration": "Duration",
-    "galleryCounter": "Photo {current} of {total}"
+    "galleryCounter": "Photo {current} of {total}",
+    "viewModeLabel": "Display mode",
+    "viewGrid": "Switch to grid view",
+    "viewList": "Switch to list view",
+    "viewTable": "Switch to table view",
+    "tableCaption": "Activities comparison",
+    "tableName": "Activity",
+    "tablePrice": "Price",
+    "tableAvailability": "Availability",
+    "tableActions": "Actions"
   },
   "packages": {
     "metaTitle": "Combined packages in Africa",

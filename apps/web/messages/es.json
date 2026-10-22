@@ -1410,7 +1410,16 @@
     "itineraryMapAria": "Mapa del itinerario de la actividad",
     "itineraryStopLabel": "Coordenadas",
     "itineraryStopDuration": "Duración",
-    "galleryCounter": "Foto {current} de {total}"
+    "galleryCounter": "Foto {current} de {total}",
+    "viewModeLabel": "Modo de visualización",
+    "viewGrid": "Cambiar a vista de cuadrícula",
+    "viewList": "Cambiar a vista de lista",
+    "viewTable": "Cambiar a vista de tabla",
+    "tableCaption": "Comparativa de actividades",
+    "tableName": "Actividad",
+    "tablePrice": "Precio",
+    "tableAvailability": "Disponibilidad",
+    "tableActions": "Acciones"
   },
   "packages": {
     "metaTitle": "Paquetes combinados en África",

@@ -10,14 +10,28 @@ import {
   type ActivitiesSearchParams,
 } from '../../lib/activities/listings';
 import type { ActivitySearchResult } from '../../lib/activities/types';
+import {
+  ACTIVITIES_VIEW_MODE_STORAGE_KEY,
+  DEFAULT_ACTIVITIES_VIEW_MODE,
+  isActivitiesViewMode,
+  type ActivitiesViewMode,
+} from '../../lib/activities/view-mode';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { useLocale, useTranslations } from 'next-intl';
+import { usePersistentState } from '../../lib/hooks/use-persistent-state';
 import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { ListingPageBody, ListingPaginationBar, ListingSortBar } from '../shared/listing-patterns';
+import {
+  GridViewIcon,
+  ListViewIcon,
+  TableViewIcon,
+  ViewModeToggle,
+} from '../shared/view-mode-toggle';
 import { ActivitiesSearchForm } from './activities-search-form';
 import { ActivityCard } from './activity-card';
+import { ActivityTable } from './activity-table';
 import { toListingPaginationLabels, scrollListingToTop } from '../../lib/listing/pagination-labels';
 import { useListingPagination } from '../../lib/listing/pagination';
 
@@ -35,6 +49,11 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
   const locale = useLocale();
 
   const [sort, setSort] = useState<SortKey>('recommended');
+  const [viewMode, setViewMode] = usePersistentState<ActivitiesViewMode>(
+    ACTIVITIES_VIEW_MODE_STORAGE_KEY,
+    DEFAULT_ACTIVITIES_VIEW_MODE,
+    isActivitiesViewMode,
+  );
   const [results, setResults] = useState<ActivitySearchResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -115,12 +134,48 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
 
   const paginationLabels = useMemo(() => toListingPaginationLabels(tListing), [tListing]);
 
+  const viewOptions = useMemo(
+    () => [
+      { value: 'grid' as const, label: a.viewGrid, icon: <GridViewIcon /> },
+      { value: 'list' as const, label: a.viewList, icon: <ListViewIcon /> },
+      {
+        value: 'table' as const,
+        label: a.viewTable,
+        icon: <TableViewIcon />,
+        className: 'hidden md:inline-flex',
+      },
+    ],
+    [a.viewGrid, a.viewList, a.viewTable],
+  );
+
   const searchSummary = [
     initialSearch.destination && `${a.destination}: ${initialSearch.destination}`,
     initialSearch.date && `${a.date}: ${formatDisplayDate(initialSearch.date, locale)}`,
   ]
     .filter(Boolean)
     .join(' · ');
+
+  const listCards = pageItems.map((activity) => (
+    <ActivityCard
+      key={activity.id}
+      activity={activity}
+      t={a}
+      searchParams={initialSearch}
+      locale={locale}
+      layout="list"
+    />
+  ));
+
+  const gridCards = pageItems.map((activity) => (
+    <ActivityCard
+      key={activity.id}
+      activity={activity}
+      t={a}
+      searchParams={initialSearch}
+      locale={locale}
+      layout="grid"
+    />
+  ));
 
   return (
     <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
@@ -183,6 +238,14 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
         ]}
         onSortChange={(value) => setSort(value as SortKey)}
         disabled={loading}
+        actions={
+          <ViewModeToggle
+            value={viewMode}
+            options={viewOptions}
+            onChange={setViewMode}
+            ariaLabel={a.viewModeLabel}
+          />
+        }
       />
 
       <ListingPageBody
@@ -198,6 +261,7 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
         }
         loading={loading}
         loadingMessage={a.loading}
+        loadingSkeletonCount={viewMode === 'grid' ? 6 : 4}
         isEmpty={!loading && !error && listings.length === 0}
         empty={{
           title: a.noResults,
@@ -206,6 +270,7 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
           modifySearchLabel: a.modifySearch,
           modifySearchHref: '#activities-search',
         }}
+        resultsVariant={viewMode === 'grid' ? 'grid' : 'list'}
         pagination={
           showPagination ? (
             <ListingPaginationBar
@@ -223,15 +288,20 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
           ) : undefined
         }
       >
-        {pageItems.map((activity) => (
-          <ActivityCard
-            key={activity.id}
-            activity={activity}
-            t={a}
-            searchParams={initialSearch}
-            locale={locale}
-          />
-        ))}
+        {viewMode === 'grid' ? gridCards : null}
+        {viewMode === 'list' ? listCards : null}
+        {viewMode === 'table' ? (
+          <>
+            <div className="md:hidden space-y-6">{listCards}</div>
+            <div className="hidden md:block">
+              <ActivityTable
+                activities={pageItems}
+                t={a}
+                searchParams={initialSearch}
+              />
+            </div>
+          </>
+        ) : null}
       </ListingPageBody>
 
       <HomeFooter />

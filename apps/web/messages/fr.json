@@ -1410,7 +1410,16 @@
     "itineraryMapAria": "Carte de l'itinéraire de l'activité",
     "itineraryStopLabel": "Coordonnées",
     "itineraryStopDuration": "Durée",
-    "galleryCounter": "Photo {current} sur {total}"
+    "galleryCounter": "Photo {current} sur {total}",
+    "viewModeLabel": "Mode d’affichage",
+    "viewGrid": "Afficher en grille",
+    "viewList": "Afficher en liste",
+    "viewTable": "Afficher en tableau",
+    "tableCaption": "Comparatif des activités",
+    "tableName": "Activité",
+    "tablePrice": "Prix",
+    "tableAvailability": "Disponibilité",
+    "tableActions": "Actions"
   },
   "packages": {
     "metaTitle": "Forfaits combinés en Afrique",

@@ -17,6 +17,11 @@ export type ProductCardProps = {
   price: ReactNode;
   /** Boutons ou liens d'action dans le pied de carte. */
   actions: ReactNode;
+  /**
+   * `horizontal` (défaut) : image à gauche dès `sm`.
+   * `vertical` : image au-dessus (cartes grille).
+   */
+  orientation?: 'horizontal' | 'vertical';
   className?: string;
 };
 
@@ -28,16 +33,24 @@ export function ProductCard({
   body,
   price,
   actions,
+  orientation = 'horizontal',
   className,
 }: ProductCardProps) {
+  const vertical = orientation === 'vertical';
   return (
     <article
       className={cn(
-        'group flex flex-col overflow-hidden rounded-2xl border border-atg-border bg-atg-elevated shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-atg-border dark:bg-atg-elevated sm:flex-row',
+        'group flex flex-col overflow-hidden rounded-2xl border border-atg-border bg-atg-elevated shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-atg-border dark:bg-atg-elevated',
+        !vertical && 'sm:flex-row',
         className,
       )}
     >
-      <div className="relative h-56 w-full shrink-0 sm:h-auto sm:w-72 lg:w-80">
+      <div
+        className={cn(
+          'relative w-full shrink-0',
+          vertical ? 'h-44 sm:h-48' : 'h-56 sm:h-auto sm:w-72 lg:w-80',
+        )}
+      >
         {image}
         {imageBadge}
       </div>

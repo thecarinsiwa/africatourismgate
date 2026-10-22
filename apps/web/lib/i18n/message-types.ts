@@ -669,6 +669,15 @@ export type Translations = {
     itineraryMapAria: string;
     itineraryStopLabel: string;
     itineraryStopDuration: string;
+    viewModeLabel: string;
+    viewGrid: string;
+    viewList: string;
+    viewTable: string;
+    tableCaption: string;
+    tableName: string;
+    tablePrice: string;
+    tableAvailability: string;
+    tableActions: string;
   };
   packages: {
     metaTitle: string;
