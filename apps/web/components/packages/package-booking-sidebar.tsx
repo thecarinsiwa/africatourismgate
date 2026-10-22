@@ -57,6 +57,7 @@ function PackageBookingContent({
         pricing={displayPricing}
         priceLabel={t.packagePrice}
         discountBadgeTemplate={t.discountBadge}
+        originalPriceAria={t.originalPriceAria}
         className="text-left [&_div]:justify-start"
       />
 

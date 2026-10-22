@@ -53,7 +53,9 @@
     "donate": "Donate",
     "myAccount": "My account",
     "signIn": "Sign in",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "breadcrumbAria": "Breadcrumb",
+    "loadingContent": "Loading content"
   },
   "booking": {
     "meta": {
@@ -177,6 +179,41 @@
       "invalidPassword": "Incorrect password.",
       "genericError": "Could not unlock the session. Please try again.",
       "idleHint": "Automatic lock after {minutes} min of inactivity."
+    },
+    "verify": {
+      "loginTitle": "Confirm your sign-in",
+      "loginSubtitle": "A security code was sent to your email. Enter it to sign in.",
+      "registerTitle": "Finish creating your account",
+      "registerSubtitle": "A security code was sent to your email. Enter it to activate your account.",
+      "defaultTitle": "Email verification",
+      "defaultSubtitle": "A security code was sent to your email. Enter it to continue. If you did not start this action, ignore this email.",
+      "codeLabel": "6-digit code",
+      "codeRequired": "Enter the 6-digit code you received by email.",
+      "submit": "Confirm and continue",
+      "submitLoading": "Verifying…",
+      "resend": "Send another code",
+      "resendLoading": "Sending…",
+      "resendCooldown": "Resend code ({seconds} s)",
+      "resendSuccess": "A new code has been sent.",
+      "errors": {
+        "network": "Could not reach the server. Check your connection.",
+        "generic": "Invalid or expired code. If you already validated this code (e.g. on the production site), sign in with Google again to receive a new one.",
+        "envMissing": "Missing API configuration.",
+        "conflictGoogle": "This account already exists. Start “Sign in with Google” again to receive a new code, or sign in with your password.",
+        "conflictDefault": "This account already exists. Try “Sign in with Google” again or sign in with your password.",
+        "unauthorized": "Account inactive or not found.",
+        "resendGeneric": "Could not resend the code. Try again shortly.",
+        "resendUnauthorized": "Verification not found or already confirmed."
+      }
+    },
+    "oauthCallback": {
+      "title": "Google sign-in",
+      "pending": "Completing your session…",
+      "errors": {
+        "invalidParams": "Invalid OAuth parameters.",
+        "invalidSession": "Invalid OAuth session.",
+        "finalizeFailed": "Could not complete Google sign-in."
+      }
     }
   },
   "donate": {
@@ -204,7 +241,8 @@
         "title": "Privacy policy",
         "description": "Africa Tourism Gate privacy policy — collection, use and protection of personal data."
       }
-    }
+    },
+    "breadcrumbAria": "Breadcrumb"
   },
   "comingSoon": {
     "badge": "Coming soon",
@@ -249,18 +287,19 @@
     "heroTitle": "Blog",
     "heroSubtitle": "Guides, tips and inspiration for traveling in Africa.",
     "readMore": "Read more",
-    "loading": "Loading articles?",
+    "loading": "Loading articles…",
     "loadError": "Could not load the blog. Check that the API is running.",
     "retry": "Retry",
     "noResults": "No published articles",
     "noResultsHint": "Check back soon for new content.",
-    "localeFallback": "No articles in your language yet ? showing posts available in other languages.",
+    "localeFallback": "No articles in your language yet — showing posts available in other languages.",
     "backToBlog": "Back to blog",
     "publishedOn": "Published on",
     "breadcrumbHome": "Home",
     "breadcrumbBlog": "Blog",
     "detailMetaFallbackTitle": "Blog article",
-    "detailMetaFallbackDescription": "Discover our articles about travel in Africa with Africa Tourism Gate."
+    "detailMetaFallbackDescription": "Discover our articles about travel in Africa with Africa Tourism Gate.",
+    "breadcrumbAria": "Breadcrumb"
   },
   "support": {
     "metaTitle": "Help centre",
@@ -451,11 +490,11 @@
     "sidebarAria": "About sections",
     "breadcrumbHome": "Home",
     "breadcrumbAbout": "About",
-    "loading": "Loading?",
+    "loading": "Loading…",
     "loadError": "Could not load content. Check that the API is running.",
     "emptyPage": "Content coming soon",
     "emptyPageHint": "This section will be available shortly. Contact us to learn more.",
-    "localeFallback": "Showing content in another language ? your language version will be published soon.",
+    "localeFallback": "Showing content in another language — your language version will be published soon.",
     "nav": {
       "whoWeAre": "Who we are",
       "history": "Our history",
@@ -505,7 +544,7 @@
       "subtitle": "Our team is here to answer your questions.",
       "infoTitle": "Contact details",
       "formTitle": "Send a message",
-      "formSubtitle": "Describe your request ? we will get back to you as soon as possible."
+      "formSubtitle": "Describe your request — we will get back to you as soon as possible."
     },
     "meta": {
       "whoWeAre": {
@@ -514,7 +553,7 @@
       },
       "history": {
         "title": "Our history",
-        "description": "Trace the major milestones in Africa Tourism Gate?s development through an interactive timeline."
+        "description": "Trace the major milestones in Africa Tourism Gate's development through an interactive timeline."
       },
       "team": {
         "title": "Our team",
@@ -556,22 +595,23 @@
       {
         "subtitle": "7-day safari",
         "title": "MAGICAL MASAI MARA",
-        "description": "Witness the wildebeest migration and the Big Five in Africa?\"s most famous reserve."
+        "description": "Witness the wildebeest migration and the Big Five in Africa's most famous reserve."
       },
       {
         "subtitle": "5 days in",
         "title": "MARRAKECH (Pearl of the South)",
-        "description": "Immerse yourself in souks, riads and the spiced flavors of Morocco?\"s ochre city."
+        "description": "Immerse yourself in souks, riads and the spiced flavors of Morocco's ochre city."
       },
       {
         "subtitle": "12-day cruise",
         "title": "ZANZIBAR TO MADAGASCAR",
-        "description": "Coastal sailing along the Indian Ocean ?\u001d dream beaches and unique wildlife."
+        "description": "Coastal sailing along the Indian Ocean — dream beaches and unique wildlife."
       }
     ],
     "prev": "Previous slide",
     "next": "Next slide",
-    "goToSlide": "Go to slide {n}"
+    "goToSlide": "Go to slide {n}",
+    "carouselAria": "Hero carousel"
   },
   "search": {
     "tablistAria": "Search type",
@@ -727,7 +767,7 @@
       },
       {
         "title": "Discoveries",
-        "description": "Explore rich cultures, breathtaking landscapes and Africa?\"s incredible wildlife."
+        "description": "Explore rich cultures, breathtaking landscapes and Africa's incredible wildlife."
       },
       {
         "title": "Easy Booking",
@@ -741,7 +781,7 @@
   },
   "promo": {
     "badge": "Special offer",
-    "title": "Kenya Safari ? Holiday Package",
+    "title": "Kenya Safari — Holiday Package",
     "description": "Discover the endless plains of the Masai Mara, spot the Big Five in their natural habitat and enjoy luxury lodges in the heart of the savanna. An experience that will change how you see Africa.",
     "priceFrom": "From:",
     "perPerson": "/person",
@@ -770,7 +810,7 @@
     "subtitle": "Discover our most sought-after African destinations. From safaris to paradise beaches, every trip is a unique adventure.",
     "reviews": "Reviews",
     "details": "Details",
-    "loading": "Loading destinations?",
+    "loading": "Loading destinations…",
     "loadError": "Could not load destinations.",
     "empty": "No featured destinations at the moment.",
     "items": [
@@ -792,13 +832,13 @@
       {
         "title": "Zanzibar Beaches",
         "subtitle": "Tanzania, 6 days",
-        "description": "White sand, turquoise waters and spices ?\u001d Indian Ocean paradise."
+        "description": "White sand, turquoise waters and spices — Indian Ocean paradise."
       }
     ]
   },
   "customers": {
     "title": "Happy Customers",
-    "subtitle": "Our travelers?\" satisfaction is our top priority.",
+    "subtitle": "Our travelers' satisfaction is our top priority.",
     "p1": "Since launch, we have helped thousands of travelers discover Africa. Our commitment to excellence and authentic experiences has earned the trust of our growing community.",
     "p2": "Every positive review motivates us to keep improving and offering ever more memorable journeys across the continent.",
     "clients": "Clients",
@@ -931,7 +971,8 @@
     "tableCountry": "Country",
     "tableActivities": "Activities",
     "tableRating": "Rating",
-    "tableActions": "Actions"
+    "tableActions": "Actions",
+    "breadcrumbAria": "Breadcrumb"
   },
   "gapImpact": {
     "title": "Our impact",
@@ -956,7 +997,9 @@
     "pageAria": "Page {page}",
     "range": "{start}–{end} of {total} {itemLabel}{pluralSuffix}",
     "pageOf": "page {page} / {totalPages}",
-    "resultItem": "result"
+    "resultItem": "result",
+    "loadingResults": "Loading results",
+    "loadingDetails": "Loading details"
   },
   "bookingSidebar": {
     "trustDemoCatalog": "Demo catalogue — internal preview only.",
@@ -994,7 +1037,7 @@
     "breadcrumbHotels": "Stays",
     "breadcrumbHotelsDetail": "Hotels",
     "heroTitle": "Exceptional stays across Africa",
-    "heroSubtitle": "Safari lodges, authentic riads and beach resorts ?\u001d curated by our travel experts.",
+    "heroSubtitle": "Safari lodges, authentic riads and beach resorts — curated by our travel experts.",
     "resultsFor": "Results for",
     "allAfrica": "All Africa",
     "propertiesFound": "properties",
@@ -1003,7 +1046,7 @@
     "sortPriceLow": "Price: low to high",
     "sortPriceHigh": "Price: high to low",
     "sortRating": "Top rated",
-    "loading": "Searching accommodations?",
+    "loading": "Searching accommodations…",
     "loadError": "Could not load results. Make sure the API is running.",
     "retry": "Retry",
     "filters": "Filters",
@@ -1091,7 +1134,8 @@
     "reviewsPrev": "Previous review",
     "reviewsNext": "Next review",
     "anonymousGuest": "Guest",
-    "galleryCounter": "Photo {current} of {total}"
+    "galleryCounter": "Photo {current} of {total}",
+    "breadcrumbAria": "Breadcrumb"
   },
   "flights": {
     "metaTitle": "Flights in Africa",
@@ -1112,7 +1156,7 @@
     "sortPriceLow": "Price: low to high",
     "sortPriceHigh": "Price: high to low",
     "sortDuration": "Shortest duration",
-    "loading": "Searching flights?",
+    "loading": "Searching flights…",
     "loadError": "Could not load flights. Make sure the API is running.",
     "retry": "Retry",
     "modifySearch": "Modify search",
@@ -1122,10 +1166,10 @@
     "passengerSingular": "passenger",
     "passengerPlural": "{n} passengers",
     "noResults": "No flights match your criteria",
-    "noResultsHint": "Try different dates or airports (e.g. Kinshasa ? Nairobi).",
+    "noResultsHint": "Try different dates or airports (e.g. Kinshasa → Nairobi).",
     "noSearchParams": "Start a flight search",
     "noSearchParamsHint": "Enter departure, destination and a departure date.",
-    "browseAllHint": "All available flights ? fares shown for the next date with seats.",
+    "browseAllHint": "All available flights — fares shown for the next date with seats.",
     "startSearch": "Start search",
     "backHome": "Back to home",
     "viewDetails": "View details",
@@ -1164,7 +1208,8 @@
     "galleryClose": "Close gallery",
     "galleryPrevious": "Previous photo",
     "galleryNext": "Next photo",
-    "galleryCounter": "Photo {current} of {total}"
+    "galleryCounter": "Photo {current} of {total}",
+    "breadcrumbAria": "Breadcrumb"
   },
   "cars": {
     "metaTitle": "Car rental in Africa",
@@ -1176,7 +1221,7 @@
     "breadcrumbCars": "Cars",
     "breadcrumbCarsDetail": "Car rental",
     "heroTitle": "Car rental in Africa",
-    "heroSubtitle": "SUVs, sedans and 4?4 from trusted local agencies ? transparent daily rates.",
+    "heroSubtitle": "SUVs, sedans and 4×4 from trusted local agencies — transparent daily rates.",
     "resultsFor": "Results for",
     "anyLocation": "All cities",
     "vehiclesFound": "vehicles",
@@ -1184,7 +1229,7 @@
     "sortRecommended": "Recommended",
     "sortPriceLow": "Price: low to high",
     "sortPriceHigh": "Price: high to low",
-    "loading": "Searching vehicles?",
+    "loading": "Searching vehicles…",
     "loadError": "Could not load vehicles. Make sure the API is running.",
     "retry": "Retry",
     "modifySearch": "Modify search",
@@ -1195,7 +1240,7 @@
     "noResultsHint": "Try different dates or another city (e.g. Kinshasa).",
     "noSearchParams": "Start a car rental search",
     "noSearchParamsHint": "Enter a location, pick-up date and return date.",
-    "browseAllHint": "All available vehicles ? prices shown for the next available rental window.",
+    "browseAllHint": "All available vehicles — prices shown for the next available rental window.",
     "startSearch": "Start search",
     "backHome": "Back to home",
     "viewDetails": "View details",
@@ -1251,7 +1296,8 @@
     "galleryClose": "Close gallery",
     "galleryPrevious": "Previous photo",
     "galleryNext": "Next photo",
-    "galleryCounter": "Photo {current} of {total}"
+    "galleryCounter": "Photo {current} of {total}",
+    "breadcrumbAria": "Breadcrumb"
   },
   "cruises": {
     "metaTitle": "River & coastal cruises in Africa",
@@ -1263,7 +1309,7 @@
     "breadcrumbCruises": "Cruises",
     "breadcrumbCruisesDetail": "Cruises",
     "heroTitle": "Cruises in Africa",
-    "heroSubtitle": "River and coastal itineraries ? pick your cabin and sail with confidence.",
+    "heroSubtitle": "River and coastal itineraries — pick your cabin and sail with confidence.",
     "resultsFor": "Results for",
     "anyRoute": "All routes",
     "sailingsFound": "sailings",
@@ -1271,7 +1317,7 @@
     "sortRecommended": "Recommended",
     "sortPriceLow": "Price: low to high",
     "sortPriceHigh": "Price: high to low",
-    "loading": "Searching cruises?",
+    "loading": "Searching cruises…",
     "loadError": "Could not load cruises. Check that the API is running.",
     "retry": "Retry",
     "modifySearch": "Modify search",
@@ -1283,10 +1329,10 @@
     "guestSingular": "guest",
     "guestPlural": "{n} guests",
     "noResults": "No cruises for these criteria",
-    "noResultsHint": "Try other dates or ports (e.g. CDKIN ? CDBNW).",
+    "noResultsHint": "Try other dates or ports (e.g. CDKIN → CDBNW).",
     "noSearchParams": "Start a cruise search",
     "noSearchParamsHint": "Enter ports, a departure date range, and guest count.",
-    "browseAllHint": "All available cruises ? fares for cabins in stock.",
+    "browseAllHint": "All available cruises — fares for cabins in stock.",
     "startSearch": "Start search",
     "backHome": "Back to home",
     "viewDetails": "View details",
@@ -1329,7 +1375,8 @@
     "galleryClose": "Close gallery",
     "galleryPrevious": "Previous photo",
     "galleryNext": "Next photo",
-    "galleryCounter": "Photo {current} of {total}"
+    "galleryCounter": "Photo {current} of {total}",
+    "breadcrumbAria": "Breadcrumb"
   },
   "activities": {
     "metaTitle": "Activities & tours in Africa",
@@ -1340,7 +1387,7 @@
     "breadcrumbHome": "Home",
     "breadcrumbActivities": "Activities",
     "heroTitle": "Activities & tours in Africa",
-    "heroSubtitle": "Guided excursions and local experiences ? pick your time slot and book online.",
+    "heroSubtitle": "Guided excursions and local experiences — pick your time slot and book online.",
     "resultsFor": "Results for",
     "anyDestination": "All destinations",
     "activitiesFound": "activities",
@@ -1348,9 +1395,9 @@
     "sortRecommended": "Recommended",
     "sortPriceLow": "Price: low to high",
     "sortPriceHigh": "Price: high to low",
-    "loading": "Searching activities?",
+    "loading": "Searching activities…",
     "loadError": "Could not load activities. Check that the API is running.",
-    "destinationsLoading": "Loading?",
+    "destinationsLoading": "Loading…",
     "destinationsLoadError": "Could not load destinations.",
     "retry": "Retry",
     "modifySearch": "Modify search",
@@ -1419,18 +1466,19 @@
     "tableName": "Activity",
     "tablePrice": "Price",
     "tableAvailability": "Availability",
-    "tableActions": "Actions"
+    "tableActions": "Actions",
+    "breadcrumbAria": "Breadcrumb"
   },
   "packages": {
     "metaTitle": "Combined packages in Africa",
-    "metaDescription": "Save with bundled travel packages ? activities, stays and more on Africa Tourism Gate.",
+    "metaDescription": "Save with bundled travel packages — activities, stays and more on Africa Tourism Gate.",
     "detailMetaDescription": "Combined package {name} — Africa Tourism Gate.",
     "detailMetaFallbackTitle": "Package",
     "detailMetaFallbackDescription": "Package details — Africa Tourism Gate",
     "breadcrumbHome": "Home",
     "breadcrumbPackages": "Packages",
     "heroTitle": "Combined packages in Africa",
-    "heroSubtitle": "Bundle multiple services at a discount ? compare catalog price and package price.",
+    "heroSubtitle": "Bundle multiple services at a discount — compare catalog price and package price.",
     "cardBadge": "Combined package",
     "resultsFor": "Available packages",
     "packagesFound": "packages",
@@ -1442,13 +1490,13 @@
     "displayModeCards": "Cards",
     "displayModeList": "List",
     "displayModeCompact": "Compact",
-    "loading": "Loading packages?",
-    "loadingDetail": "Loading package?",
+    "loading": "Loading packages…",
+    "loadingDetail": "Loading package…",
     "loadError": "Could not load packages. Check that the API is running.",
     "retry": "Retry",
     "modifySearch": "Modify search",
     "searchLabel": "Search",
-    "searchPlaceholder": "Package name?",
+    "searchPlaceholder": "Package name…",
     "searchSubmit": "Search",
     "browseHint": "Browse all active packages or search by name.",
     "noResults": "No packages found",
@@ -1464,7 +1512,7 @@
     "noItems": "This package has no services yet.",
     "viewProduct": "View product",
     "itemDetailClose": "Close",
-    "itemDetailLoading": "Loading service details?",
+    "itemDetailLoading": "Loading service details…",
     "itemDetailError": "Could not load details for this service.",
     "itemDetailPriceLabel": "Indicative price",
     "itemDetailGenericHint": "Open the full product page to see all details for this service.",
@@ -1479,7 +1527,7 @@
     "configureOnProduct": "Configure on product page",
     "configureOnProductHint": "Complete booking on the dedicated product page.",
     "mixedCheckoutDisabled": "The package discount applies to grouped checkout once every service is configured.",
-    "loadingActivitySchedules": "Loading time slots?",
+    "loadingActivitySchedules": "Loading time slots…",
     "activitySchedulesError": "Could not load time slots for this activity.",
     "noActivitySchedules": "No time slots available for this date.",
     "schedulesProgress": "{selected} / {total} activity(ies) configured",
@@ -1487,19 +1535,19 @@
     "allSchedulesRequired": "Select a time slot for every activity in the package.",
     "allItemsRequired": "Configure every service in the package before adding to cart.",
     "selectStayDatesHint": "Enter check-in and check-out dates to choose a room.",
-    "loadingPropertyRooms": "Loading rooms?",
+    "loadingPropertyRooms": "Loading rooms…",
     "propertyRoomsError": "Could not load rooms for this property.",
     "selectDepartureDateHint": "Enter the flight departure date.",
-    "loadingFlightClasses": "Loading fare classes?",
+    "loadingFlightClasses": "Loading fare classes…",
     "flightClassesError": "Could not load classes for this flight.",
     "selectRentalDatesHint": "Enter pickup and return dates.",
-    "loadingVehicleAvailability": "Checking availability?",
+    "loadingVehicleAvailability": "Checking availability…",
     "vehicleAvailabilityError": "Vehicle unavailable for these dates.",
     "vehicleDatesConfirmed": "Vehicle available for these dates",
     "selectSailingHint": "Enter the cruise sailing ID (sailingId).",
     "sailingIdLabel": "Sailing ID",
     "sailingIdPlaceholder": "00000000-0000-4000-8000-000000003036",
-    "loadingCruiseCabins": "Loading cabins?",
+    "loadingCruiseCabins": "Loading cabins…",
     "cruiseCabinsError": "Could not load cabins for this sailing.",
     "addToCart": "Add to cart",
     "packageCartInvalid": "Package configuration is unavailable or incomplete.",
@@ -1512,8 +1560,8 @@
     "selectDepartureHint": "Enter a departure date to prepare your booking.",
     "includedServicesTitle": "Included services",
     "assistedBookingServicesHint": "Exact time slots will be assigned after our team validates your request.",
-    "resolvingPackage": "Checking availability?",
-    "resolvingItem": "Pending?",
+    "resolvingPackage": "Checking availability…",
+    "resolvingItem": "Pending…",
     "itemAutoResolved": "Included",
     "itemUnavailable": "Unavailable",
     "itemMissing": "Not configured",
@@ -1566,25 +1614,27 @@
     "configureSchedulesTitle": "Choose time slots",
     "itemConfigured": "Configured",
     "itemPending": "Pending",
-    "recapActivityLine": "{n} participant(s) ? slot selected",
+    "recapActivityLine": "{n} participant(s) — slot selected",
     "recapPropertyLine": "Stay from {checkIn} to {checkOut}",
     "recapFlightLine": "Departure on {date}",
     "recapVehicleLine": "From {pickup} to {return}",
-    "recapCruiseLine": "{guests} guest(s) ? cabin selected",
+    "recapCruiseLine": "{guests} guest(s) — cabin selected",
     "estimatedSavings": "Estimated savings: {amount}",
     "itineraryMapTitle": "Package map",
     "itineraryMapAria": "Map of locations included in this package",
     "itineraryMapLegendTitle": "Legend",
     "itineraryMapLegendPoints": "({count})",
     "itineraryMapPartialHint": "Some services (vehicle, cruise) are not shown on the map because geographic coordinates are unavailable.",
-    "galleryCounter": "Photo {current} of {total}"
+    "galleryCounter": "Photo {current} of {total}",
+    "originalPriceAria": "Original price",
+    "breadcrumbAria": "Breadcrumb"
   },
   "account": {
     "title": "My account",
     "subtitle": "Manage your profile, addresses and bookings.",
     "browseSite": "Browse accommodations",
     "navAria": "Account navigation",
-    "loading": "Loading?",
+    "loading": "Loading…",
     "meta": {
       "home": {
         "title": "My account",
@@ -1671,7 +1721,7 @@
       "phone": "Phone",
       "language": "Preferred language",
       "save": "Save",
-      "saving": "Saving?",
+      "saving": "Saving…",
       "saved": "Profile updated successfully.",
       "loadError": "Could not load profile.",
       "saveError": "Could not update profile.",
@@ -1744,7 +1794,7 @@
       "filterAria": "Filter by status",
       "actionRequired": "Action required",
       "leaveReviewCta": "Leave a review",
-      "reviewPrompt": "You have {count} completed stay(s) waiting for a review ? share your experience.",
+      "reviewPrompt": "You have {count} completed stay(s) waiting for a review — share your experience.",
       "detail": {
         "bookedOn": "Booked on",
         "itemsCount": "Items",
@@ -1761,10 +1811,10 @@
         "lineTotal": "Amount",
         "actions": "Actions",
         "payNow": "Pay now",
-        "paying": "Redirecting to payment?",
+        "paying": "Redirecting to payment…",
         "payError": "Could not open the payment page.",
         "cancelBooking": "Cancel booking",
-        "cancelling": "Cancelling?",
+        "cancelling": "Cancelling…",
         "cancelConfirm": "Cancel this booking?",
         "cancelError": "Could not cancel the booking.",
         "downloadConfirmation": "Download confirmation",
@@ -1780,14 +1830,14 @@
         "reviewBody": "Comment (optional)",
         "reviewBodyPlaceholder": "What did you enjoy?",
         "submitReview": "Submit review",
-        "submittingReview": "Submitting?",
+        "submittingReview": "Submitting…",
         "reviewSubmitError": "Could not submit your review.",
         "reviewRatingRequired": "Please select a rating from 1 to 5.",
         "reviewCharCount": "{current} / {max}",
         "reviewPublished": "Thank you, your review has been published.",
         "reviewStarAria": "{n} out of 5",
         "timelineTitle": "Booking progress",
-        "timelinePlaceholder": "Detailed history unavailable ? steps estimated from current status.",
+        "timelinePlaceholder": "Detailed history unavailable — steps estimated from current status.",
         "timelineStepCreated": "Booking created",
         "timelineStepPending": "Awaiting payment",
         "timelineStepConfirmed": "Confirmed",
@@ -1890,11 +1940,11 @@
           "nationalityRequired": "Nationality is required.",
           "idNumberRequired": "ID / passport number is required.",
           "save": "Save",
-          "saving": "Saving?",
+          "saving": "Saving…",
           "saveError": "Could not save the traveler.",
           "edit": "Edit",
           "delete": "Remove",
-          "deleting": "Removing?",
+          "deleting": "Removing…",
           "deleteError": "Could not remove the traveler.",
           "deleteTitle": "Remove this traveler?",
           "deleteDescription": "Confirm removal of {name} from the traveler list.",
@@ -1925,9 +1975,9 @@
             "dietaryNotesPlaceholder": "e.g. vegetarian, gluten-free…",
             "legacyConditions": "Legacy notes",
             "comment": "Comment",
-            "commentPlaceholder": "Additional information?",
+            "commentPlaceholder": "Additional information…",
             "other": "Other information",
-            "otherPlaceholder": "Any other relevant information?"
+            "otherPlaceholder": "Any other relevant information…"
           }
         },
         "emergencyContact": {
@@ -1954,14 +2004,14 @@
         "messages": {
           "title": "Conversation",
           "subtitle": "Chat with our team about your booking request.",
-          "loading": "Loading messages?",
+          "loading": "Loading messages…",
           "empty": "No messages yet. Our team will reply here.",
           "threadAria": "Booking message thread",
           "authorStaff": "Team",
           "authorCustomer": "You",
           "replyTitle": "Your message",
           "replyLabel": "Message",
-          "replyPlaceholder": "Write your message?",
+          "replyPlaceholder": "Write your message…",
           "sendReply": "Send",
           "loadError": "Could not load the conversation.",
           "sendError": "Could not send your message.",
@@ -1971,7 +2021,7 @@
           "pickerTitle": "Your conversations",
           "pickerSubtitle": "Select a booking to open the chat.",
           "pickerEmpty": "No bookings with an active conversation.",
-          "pickerLoading": "Loading your bookings?",
+          "pickerLoading": "Loading your bookings…",
           "backToReservations": "Back to bookings",
           "viewBooking": "View booking",
           "unreadBadge": "{count} unread message(s)"
@@ -1985,7 +2035,7 @@
           "leaveReviewHint": "Your review will be published after our team moderates it.",
           "submitReview": "Submit review",
           "yourReview": "Your review",
-          "reviewPublished": "Thank you ? your review was submitted and will be published after moderation."
+          "reviewPublished": "Thank you — your review was submitted and will be published after moderation."
         }
       }
     },
@@ -1993,7 +2043,7 @@
       "empty": "No payment methods saved.",
       "addNew": "Add payment method",
       "add": "Add",
-      "saving": "Saving?",
+      "saving": "Saving…",
       "cancel": "Cancel",
       "delete": "Delete",
       "deleteTitle": "Delete this payment method?",
@@ -2025,7 +2075,8 @@
       "tierSilver": "Silver",
       "tierGold": "Gold",
       "tierPlatinum": "Platinum"
-    }
+    },
+    "breadcrumbAria": "Breadcrumb"
   },
   "checkout": {
     "stepperAriaLabel": "Booking steps",
@@ -2074,10 +2125,10 @@
     "mobileMoneySelectCountry": "Select a country",
     "mobileMoneySelectOperator": "Select an operator",
     "requestBooking": "Request a booking",
-    "requestSubmitting": "Submitting request?",
-    "stripeRedirecting": "Redirecting to Stripe?",
+    "requestSubmitting": "Submitting request…",
+    "stripeRedirecting": "Redirecting to Stripe…",
     "estimatedTotal": "Estimated total",
-    "loading": "Loading?",
+    "loading": "Loading…",
     "authRequiredNext": "Customer sign-in required on the next step.",
     "authRequiredPayment": "Customer sign-in required to start payment.",
     "authRequiredRequest": "Customer sign-in required to submit your booking request.",
@@ -2104,7 +2155,7 @@
       "titleCashPending": "Booking registered",
       "titleBankTransferPending": "Booking registered",
       "titleMobileMoneyPending": "Booking registered",
-      "subtitle": "Your Stripe payment was received. We are finalizing your booking confirmation?",
+      "subtitle": "Your Stripe payment was received. We are finalizing your booking confirmation…",
       "subtitleConfirmed": "Your payment was received and your booking is confirmed.",
       "subtitleCashPending": "This booking is set to cash payment. It stays pending until collection at the agency (even if cash is no longer offered on web checkout).",
       "subtitleBankTransferPending": "You chose bank transfer. Your booking stays pending until our team validates the transfer.",
@@ -2126,7 +2177,7 @@
       "depositDueLabel": "Due now:",
       "cancellationPolicyTitle": "Cancellation policy (informational)",
       "cancellationPolicyBody": "When a deposit is paid, the remaining balance must be settled before the service date. Deposits are generally non-refundable unless otherwise agreed. This notice is informational — contact us with any questions.",
-      "verifying": "Checking status?",
+      "verifying": "Checking status…",
       "statusUnavailable": "Detailed status is unavailable for now. Refresh in a moment.",
       "backHome": "Back to home",
       "browseHotels": "Browse hotels",
@@ -2137,15 +2188,16 @@
       "nextStepAccount": "View your bookings in your account area.",
       "nextStepCash": "Have the cash amount ready for payment at the agency or on arrival — confirmation follows collection.",
       "nextStepBankTransfer": "Make the transfer and include the booking reference in the description.",
-      "nextStepMobileMoney": "Complete the Mobile Money transfer then upload a payment proof."
+      "nextStepMobileMoney": "Complete the Mobile Money transfer then upload a payment proof.",
+      "bookingIdMissing": "not provided"
     },
     "requestSuccess": {
       "title": "Request submitted",
-      "subtitle": "Your booking request has been sent to our team. You will be contacted within 24?48 hours.",
+      "subtitle": "Your booking request has been sent to our team. You will be contacted within 24–48 hours.",
       "bookingIdLabel": "Request ref:",
       "statusLabel": "Status:",
       "totalLabel": "Estimated total:",
-      "verifying": "Checking status?",
+      "verifying": "Checking status…",
       "statusUnavailable": "Detailed status is unavailable for now. Refresh in a moment.",
       "backHome": "Back to home",
       "browseActivities": "Browse activities",
@@ -2194,7 +2246,7 @@
       "emergencyContactNameRequired": "Emergency contact name is required.",
       "emergencyContactPhoneRequired": "Emergency contact phone is required.",
       "idDocument": "Identity document",
-      "idDocumentHint": "JPEG, PNG, WebP or PDF ? 10 MB max.",
+      "idDocumentHint": "JPEG, PNG, WebP or PDF — 10 MB max.",
       "idDocumentSelected": "Choose a file",
       "idDocumentRemove": "Remove",
       "viewDocument": "View document",
@@ -2203,7 +2255,8 @@
       "cameraRetake": "Retake",
       "cameraConfirm": "Confirm",
       "cameraCancel": "Cancel",
-      "cameraError": "Cannot access camera. Please check permissions."
+      "cameraError": "Cannot access camera. Please check permissions.",
+      "uploadFailed": "Upload failed"
     },
     "cancel": {
       "title": "Payment cancelled",
@@ -2211,5 +2264,9 @@
       "backToCart": "Return to cart",
       "continueSearch": "Continue browsing"
     }
+  },
+  "nationalitySelect": {
+    "search": "Search…",
+    "noResults": "No results."
   }
 }

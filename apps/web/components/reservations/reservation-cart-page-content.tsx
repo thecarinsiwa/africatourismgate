@@ -504,6 +504,7 @@ export function ReservationCartPageContent({ draft }: Props) {
                   <PackagePriceDisplay
                     pricing={packageDetail.pricing}
                     discountBadgeTemplate={p.discountBadge}
+                    originalPriceAria={p.originalPriceAria}
                   />
                 </div>
               ) : (

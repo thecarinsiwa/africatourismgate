@@ -99,6 +99,7 @@ export function PackageCard({ pkg, t, searchParams = {} }: PackageCardProps) {
           pricing={pkg.pricing}
           priceLabel={t.packagePrice}
           discountBadgeTemplate={t.discountBadge}
+          originalPriceAria={t.originalPriceAria}
         />
       }
       actions={

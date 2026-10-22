@@ -53,7 +53,9 @@
     "donate": "Donar",
     "myAccount": "Mi cuenta",
     "signIn": "Iniciar sesión",
-    "signOut": "Cerrar sesión"
+    "signOut": "Cerrar sesión",
+    "breadcrumbAria": "Miga de pan",
+    "loadingContent": "Cargando contenido"
   },
   "booking": {
     "meta": {
@@ -177,6 +179,41 @@
       "invalidPassword": "Contraseña incorrecta.",
       "genericError": "No se pudo desbloquear la sesión. Inténtelo de nuevo.",
       "idleHint": "Bloqueo automático tras {minutes} min de inactividad."
+    },
+    "verify": {
+      "loginTitle": "Confirme su inicio de sesión",
+      "loginSubtitle": "Se envió un código de seguridad a su correo. Introdúzcalo para iniciar sesión.",
+      "registerTitle": "Finalice la creación de su cuenta",
+      "registerSubtitle": "Se envió un código de seguridad a su correo. Introdúzcalo para activar su cuenta.",
+      "defaultTitle": "Verificación por correo",
+      "defaultSubtitle": "Se envió un código de seguridad a su correo. Introdúzcalo para continuar. Si no inició esta operación, ignore este correo.",
+      "codeLabel": "Código de 6 dígitos",
+      "codeRequired": "Introduzca el código de 6 dígitos recibido por correo.",
+      "submit": "Confirmar y continuar",
+      "submitLoading": "Verificando…",
+      "resend": "Enviar otro código",
+      "resendLoading": "Enviando…",
+      "resendCooldown": "Reenviar código ({seconds} s)",
+      "resendSuccess": "Se ha enviado un nuevo código.",
+      "errors": {
+        "network": "No se pudo contactar al servidor. Compruebe su conexión.",
+        "generic": "Código inválido o caducado. Si ya validó este código (p. ej. en el sitio de producción), vuelva a iniciar sesión con Google para recibir uno nuevo.",
+        "envMissing": "Falta la configuración de la API.",
+        "conflictGoogle": "Esta cuenta ya existe. Vuelva a iniciar «Iniciar sesión con Google» para recibir un nuevo código, o inicie sesión con su contraseña.",
+        "conflictDefault": "Esta cuenta ya existe. Pruebe «Iniciar sesión con Google» de nuevo o inicie sesión con su contraseña.",
+        "unauthorized": "Cuenta inactiva o no encontrada.",
+        "resendGeneric": "No se pudo reenviar el código. Inténtelo de nuevo en un momento.",
+        "resendUnauthorized": "Verificación no encontrada o ya confirmada."
+      }
+    },
+    "oauthCallback": {
+      "title": "Inicio de sesión con Google",
+      "pending": "Finalizando su sesión…",
+      "errors": {
+        "invalidParams": "Parámetros OAuth no válidos.",
+        "invalidSession": "Sesión OAuth no válida.",
+        "finalizeFailed": "No se pudo finalizar el inicio de sesión con Google."
+      }
     }
   },
   "donate": {
@@ -204,7 +241,8 @@
         "title": "Política de privacidad",
         "description": "Política de privacidad de Africa Tourism Gate — recogida, uso y protección de datos personales."
       }
-    }
+    },
+    "breadcrumbAria": "Miga de pan"
   },
   "comingSoon": {
     "badge": "Próximamente",
@@ -260,7 +298,8 @@
     "breadcrumbHome": "Inicio",
     "breadcrumbBlog": "Blog",
     "detailMetaFallbackTitle": "Artículo del blog",
-    "detailMetaFallbackDescription": "Descubre nuestros artículos sobre el turismo en África con Africa Tourism Gate."
+    "detailMetaFallbackDescription": "Descubre nuestros artículos sobre el turismo en África con Africa Tourism Gate.",
+    "breadcrumbAria": "Miga de pan"
   },
   "support": {
     "metaTitle": "Centro de ayuda",
@@ -571,7 +610,8 @@
     ],
     "prev": "Diapositiva anterior",
     "next": "Diapositiva siguiente",
-    "goToSlide": "Ir a la diapositiva {n}"
+    "goToSlide": "Ir a la diapositiva {n}",
+    "carouselAria": "Carrusel"
   },
   "search": {
     "tablistAria": "Tipo de búsqueda",
@@ -931,7 +971,8 @@
     "tableCountry": "País",
     "tableActivities": "Actividades",
     "tableRating": "Valoración",
-    "tableActions": "Acciones"
+    "tableActions": "Acciones",
+    "breadcrumbAria": "Miga de pan"
   },
   "gapImpact": {
     "title": "Nuestro impacto",
@@ -956,7 +997,9 @@
     "pageAria": "Página {page}",
     "range": "{start}–{end} de {total} {itemLabel}{pluralSuffix}",
     "pageOf": "página {page} / {totalPages}",
-    "resultItem": "resultado"
+    "resultItem": "resultado",
+    "loadingResults": "Cargando resultados",
+    "loadingDetails": "Cargando detalles"
   },
   "bookingSidebar": {
     "trustDemoCatalog": "Catálogo de demostración — vista previa interna únicamente.",
@@ -1091,7 +1134,8 @@
     "reviewsPrev": "Reseña anterior",
     "reviewsNext": "Reseña siguiente",
     "anonymousGuest": "Huésped",
-    "galleryCounter": "Foto {current} de {total}"
+    "galleryCounter": "Foto {current} de {total}",
+    "breadcrumbAria": "Miga de pan"
   },
   "flights": {
     "metaTitle": "Vuelos en África",
@@ -1164,7 +1208,8 @@
     "galleryClose": "Cerrar galería",
     "galleryPrevious": "Foto anterior",
     "galleryNext": "Foto siguiente",
-    "galleryCounter": "Foto {current} de {total}"
+    "galleryCounter": "Foto {current} de {total}",
+    "breadcrumbAria": "Miga de pan"
   },
   "cars": {
     "metaTitle": "Alquiler de coches en África",
@@ -1251,7 +1296,8 @@
     "galleryClose": "Cerrar galería",
     "galleryPrevious": "Foto anterior",
     "galleryNext": "Foto siguiente",
-    "galleryCounter": "Foto {current} de {total}"
+    "galleryCounter": "Foto {current} de {total}",
+    "breadcrumbAria": "Miga de pan"
   },
   "cruises": {
     "metaTitle": "Cruceros fluviales y costeros en África",
@@ -1329,7 +1375,8 @@
     "galleryClose": "Cerrar galería",
     "galleryPrevious": "Foto anterior",
     "galleryNext": "Foto siguiente",
-    "galleryCounter": "Foto {current} de {total}"
+    "galleryCounter": "Foto {current} de {total}",
+    "breadcrumbAria": "Miga de pan"
   },
   "activities": {
     "metaTitle": "Actividades y tours en África",
@@ -1419,7 +1466,8 @@
     "tableName": "Actividad",
     "tablePrice": "Precio",
     "tableAvailability": "Disponibilidad",
-    "tableActions": "Acciones"
+    "tableActions": "Acciones",
+    "breadcrumbAria": "Miga de pan"
   },
   "packages": {
     "metaTitle": "Paquetes combinados en África",
@@ -1577,7 +1625,9 @@
     "itineraryMapLegendTitle": "Leyenda",
     "itineraryMapLegendPoints": "({count})",
     "itineraryMapPartialHint": "Algunos servicios (vehículo, crucero) no aparecen en el mapa por falta de coordenadas geográficas.",
-    "galleryCounter": "Foto {current} de {total}"
+    "galleryCounter": "Foto {current} de {total}",
+    "originalPriceAria": "Precio original",
+    "breadcrumbAria": "Miga de pan"
   },
   "account": {
     "title": "Mi cuenta",
@@ -2025,7 +2075,8 @@
       "tierSilver": "Plata",
       "tierGold": "Oro",
       "tierPlatinum": "Platino"
-    }
+    },
+    "breadcrumbAria": "Miga de pan"
   },
   "checkout": {
     "stepperAriaLabel": "Pasos de reserva",
@@ -2137,7 +2188,8 @@
       "nextStepAccount": "Consulte sus reservas en su área de cuenta.",
       "nextStepCash": "Prepare el importe en efectivo para el pago en agencia o a la llegada — la confirmación sigue al cobro.",
       "nextStepBankTransfer": "Realice la transferencia e indique la referencia de reserva en el concepto.",
-      "nextStepMobileMoney": "Realice la transferencia Mobile Money y envíe un comprobante de pago."
+      "nextStepMobileMoney": "Realice la transferencia Mobile Money y envíe un comprobante de pago.",
+      "bookingIdMissing": "no facilitada"
     },
     "requestSuccess": {
       "title": "Solicitud enviada",
@@ -2203,7 +2255,8 @@
       "cameraRetake": "Repetir",
       "cameraConfirm": "Confirmar",
       "cameraCancel": "Cancelar",
-      "cameraError": "No se puede acceder a la cámara. Verifique los permisos."
+      "cameraError": "No se puede acceder a la cámara. Verifique los permisos.",
+      "uploadFailed": "Error al subir el archivo"
     },
     "cancel": {
       "title": "Pago cancelado",
@@ -2211,5 +2264,9 @@
       "backToCart": "Volver al carrito",
       "continueSearch": "Seguir buscando"
     }
+  },
+  "nationalitySelect": {
+    "search": "Buscar…",
+    "noResults": "Sin resultados."
   }
 }

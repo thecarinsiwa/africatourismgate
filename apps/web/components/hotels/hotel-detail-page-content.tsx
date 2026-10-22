@@ -241,7 +241,7 @@ export function HotelDetailPageContent({
 
       <div className="border-b border-atg-border bg-atg-elevated dark:border-atg-border dark:bg-atg-elevated">
         <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
-          <nav className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-atg-muted" aria-label="Breadcrumb">
+          <nav className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-atg-muted" aria-label={h.breadcrumbAria}>
             <Link href="/" className="transition-colors hover:text-primary">
               {h.breadcrumbHome}
             </Link>

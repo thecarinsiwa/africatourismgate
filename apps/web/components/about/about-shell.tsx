@@ -54,7 +54,7 @@ export function AboutShell({ children }: AboutShellProps) {
       <main className="flex-1">
         <PageHero
           breadcrumb={
-            <nav aria-label="Breadcrumb">
+            <nav aria-label={t('breadcrumbAria')}>
               <ol className="flex flex-wrap items-center gap-2 text-sm text-white/70">
                 <li>
                   <Link href="/" className="hover:text-white">

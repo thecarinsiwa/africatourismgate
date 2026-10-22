@@ -117,7 +117,7 @@ export function HeroSlider() {
       className="relative h-[520px] overflow-hidden sm:h-[600px] lg:h-[680px]"
       role="region"
       aria-roledescription="carousel"
-      aria-label={heroSlides[0]?.title ?? 'Hero'}
+      aria-label={heroSlides[0]?.title ?? t('carouselAria')}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}

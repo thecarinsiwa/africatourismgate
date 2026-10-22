@@ -18,6 +18,8 @@ export type Translations = {
     myAccount: string;
     signIn: string;
     signOut: string;
+    breadcrumbAria: string;
+    loadingContent: string;
   };
   theme: { lightMode: string; darkMode: string; enableLight: string; enableDark: string };
   connectionLock: {
@@ -54,6 +56,8 @@ export type Translations = {
     }) => string;
     pageOf: (params: { page: number; totalPages: number }) => string;
     resultItem: string;
+    loadingResults: string;
+    loadingDetails: string;
   };
   bookingSidebar: {
     trustDemoCatalog: string;
@@ -147,6 +151,7 @@ export type Translations = {
       subtitleBankTransferPending: string;
       subtitleMobileMoneyPending: string;
       bookingIdLabel: string;
+      bookingIdMissing: string;
       statusLabel: string;
       statusConfirmed: string;
       statusPendingPayment: string;
@@ -234,6 +239,7 @@ export type Translations = {
       idDocumentHint: string;
       idDocumentSelected: string;
       idDocumentRemove: string;
+      uploadFailed: string;
       viewDocument: string;
       takePhoto: string;
       cameraCapture: string;
@@ -268,6 +274,7 @@ export type Translations = {
   hotels: {
     metaTitle: string;
     metaDescription: string;
+    breadcrumbAria: string;
     breadcrumbHome: string;
     breadcrumbHotels: string;
     breadcrumbHotelsDetail: string;
@@ -366,6 +373,7 @@ export type Translations = {
   flights: {
     metaTitle: string;
     metaDescription: string;
+    breadcrumbAria: string;
     breadcrumbHome: string;
     breadcrumbFlights: string;
     breadcrumbFlightsDetail: string;
@@ -436,6 +444,7 @@ export type Translations = {
   cars: {
     metaTitle: string;
     metaDescription: string;
+    breadcrumbAria: string;
     breadcrumbHome: string;
     breadcrumbCars: string;
     breadcrumbCarsDetail: string;
@@ -520,6 +529,7 @@ export type Translations = {
   cruises: {
     metaTitle: string;
     metaDescription: string;
+    breadcrumbAria: string;
     breadcrumbHome: string;
     breadcrumbCruises: string;
     breadcrumbCruisesDetail: string;
@@ -595,6 +605,7 @@ export type Translations = {
   activities: {
     metaTitle: string;
     metaDescription: string;
+    breadcrumbAria: string;
     breadcrumbHome: string;
     breadcrumbActivities: string;
     heroTitle: string;
@@ -682,6 +693,7 @@ export type Translations = {
   packages: {
     metaTitle: string;
     metaDescription: string;
+    breadcrumbAria: string;
     breadcrumbHome: string;
     breadcrumbPackages: string;
     heroTitle: string;
@@ -712,6 +724,7 @@ export type Translations = {
     viewDetails: string;
     bookNow: string;
     packagePrice: string;
+    originalPriceAria: string;
     discountBadge: string;
     discountSummary: string;
     itemsIncluded: string;

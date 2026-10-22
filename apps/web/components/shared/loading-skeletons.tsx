@@ -1,6 +1,7 @@
 'use client';
 
 import { Skeleton, Spinner, cn } from '@africatourismgate/ui';
+import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
@@ -49,13 +50,15 @@ export type ListingCardsSkeletonProps = {
 export function ListingCardsSkeleton({
   count = 6,
   variant = 'list',
-  loadingLabel = 'Loading results',
+  loadingLabel,
 }: ListingCardsSkeletonProps) {
+  const tListing = useTranslations('listing');
+  const label = loadingLabel ?? tListing('loadingResults');
   return (
     <>
       <div className="mb-4 flex items-center gap-2.5" role="status" aria-live="polite">
         <Spinner size="sm" variant="primary" />
-        <span className="text-sm font-medium text-atg-muted">{loadingLabel}</span>
+        <span className="text-sm font-medium text-atg-muted">{label}</span>
       </div>
       <div
         className={cn(
@@ -147,14 +150,16 @@ function DetailMainColumnSkeleton() {
 
 /** LD1 — corps skeleton fiche détail (galerie + sections + sidebar). */
 export function DetailPageSkeleton({
-  loadingLabel = 'Loading details',
+  loadingLabel,
   layout = 'standard',
 }: DetailPageSkeletonProps) {
+  const tListing = useTranslations('listing');
+  const label = loadingLabel ?? tListing('loadingDetails');
   return (
     <>
       <div className="mb-4 flex items-center gap-2.5" role="status" aria-live="polite">
         <Spinner size="sm" variant="primary" />
-        <span className="text-sm font-medium text-atg-muted">{loadingLabel}</span>
+        <span className="text-sm font-medium text-atg-muted">{label}</span>
       </div>
       {layout === 'package' ? (
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">

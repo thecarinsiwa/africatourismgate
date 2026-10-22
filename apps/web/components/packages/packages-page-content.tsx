@@ -131,7 +131,7 @@ export function PackagesPageContent({ initialSearch }: PackagesPageContentProps)
         <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
           <nav
             className="mb-6 flex flex-wrap items-center gap-2 text-sm text-white/60"
-            aria-label="Breadcrumb"
+            aria-label={p.breadcrumbAria}
           >
             <Link href="/" className="transition-colors hover:text-white">
               {p.breadcrumbHome}
@@ -274,6 +274,7 @@ export function PackagesPageContent({ initialSearch }: PackagesPageContentProps)
                       pricing={pkg.pricing}
                       priceLabel={p.packagePrice}
                       discountBadgeTemplate={p.discountBadge}
+                      originalPriceAria={p.originalPriceAria}
                     />
                     <div className="flex gap-2 sm:justify-end">
                       <Link

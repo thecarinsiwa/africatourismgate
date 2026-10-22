@@ -227,7 +227,7 @@ export function FlightDetailPageContent({
         <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
           <nav
             className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-atg-muted"
-            aria-label="Breadcrumb"
+            aria-label={f.breadcrumbAria}
           >
             <Link href="/" className="transition-colors hover:text-primary">
               {f.breadcrumbHome}

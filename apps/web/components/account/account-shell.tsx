@@ -90,7 +90,7 @@ export function AccountShell({ children }: Props) {
   const breadcrumb = (
     <nav
       className="flex flex-wrap items-center gap-2 text-sm text-white/60"
-      aria-label="Breadcrumb"
+      aria-label={t('breadcrumbAria')}
     >
       <Link href="/" className="transition-colors hover:text-white">
         {tNav('home')}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { resendVerification, verifyOperation } from '../../lib/api/auth';
 import { createBookingCheckoutSession, getBooking } from '../../lib/api/booking';
@@ -20,38 +21,23 @@ function normalizeNextPath(nextPath: string | null): string {
   return nextPath;
 }
 
-function resolveVerifyCopy(purpose: string | null): {
-  title: string;
-  subtitle: string;
-} {
-  if (purpose === 'login') {
-    return {
-      title: 'Confirmez votre connexion',
-      subtitle:
-        'Un code de sécurité a été envoyé à votre adresse. Saisissez-le pour vous connecter.',
-    };
-  }
-  if (purpose === 'google_signup' || purpose === 'register') {
-    return {
-      title: 'Finalisez la création de votre compte',
-      subtitle:
-        'Un code de sécurité a été envoyé à votre adresse. Saisissez-le pour activer votre compte.',
-    };
-  }
-  return {
-    title: 'Vérification par e-mail',
-    subtitle:
-      "Un code de sécurité a été envoyé à votre adresse. Saisissez-le pour continuer. Si vous n'êtes pas à l'origine de cette opération, ignorez cet e-mail.",
-  };
-}
-
 export function BookingVerifyPageContent() {
+  const t = useTranslations('booking.verify');
+  const tErrors = useTranslations('booking.verify.errors');
   const router = useRouter();
   const searchParams = useSearchParams();
   useDevOAuthReturnRedirect('/booking/verify');
   const verificationId = searchParams.get('verificationId') ?? '';
   const purpose = searchParams.get('purpose');
-  const copy = useMemo(() => resolveVerifyCopy(purpose), [purpose]);
+  const copy = useMemo(() => {
+    if (purpose === 'login') {
+      return { title: t('loginTitle'), subtitle: t('loginSubtitle') };
+    }
+    if (purpose === 'google_signup' || purpose === 'register') {
+      return { title: t('registerTitle'), subtitle: t('registerSubtitle') };
+    }
+    return { title: t('defaultTitle'), subtitle: t('defaultSubtitle') };
+  }, [purpose, t]);
   const bookingId = searchParams.get('bookingId');
   const safeNext = useMemo(() => {
     const raw = searchParams.get('next');
@@ -84,7 +70,7 @@ export function BookingVerifyPageContent() {
     event.preventDefault();
     if (submitted || submitting) return;
     if (!verificationId || code.length !== 6) {
-      setError('Saisissez le code à 6 chiffres reçu par e-mail.');
+      setError(t('codeRequired'));
       return;
     }
 
@@ -129,15 +115,14 @@ export function BookingVerifyPageContent() {
     } catch (err: unknown) {
       setError(
         getAuthErrorMessage(err, {
-          network: 'Impossible de joindre le serveur. Vérifiez votre connexion.',
-          generic:
-            'Code invalide ou expiré. Si vous avez déjà validé ce code (ex. sur le site production), reconnectez-vous avec Google pour en recevoir un nouveau.',
-          envMissing: 'Configuration API manquante.',
+          network: tErrors('network'),
+          generic: tErrors('generic'),
+          envMissing: tErrors('envMissing'),
           conflict:
             purpose === 'google_signup' || purpose === 'login'
-              ? 'Ce compte existe déjà. Relancez « Se connecter avec Google » pour recevoir un nouveau code, ou connectez-vous avec votre mot de passe.'
-              : 'Ce compte existe déjà. Essayez « Se connecter avec Google » à nouveau ou connectez-vous avec votre mot de passe.',
-          unauthorized: 'Compte inactif ou introuvable.',
+              ? tErrors('conflictGoogle')
+              : tErrors('conflictDefault'),
+          unauthorized: tErrors('unauthorized'),
         }),
       );
       setSubmitting(false);
@@ -155,15 +140,15 @@ export function BookingVerifyPageContent() {
       const result = await resendVerification({ verificationId });
       replaceVerificationId(result.verificationId);
       setCode('');
-      setInfo(result.message || 'Un nouveau code a été envoyé.');
+      setInfo(result.message || t('resendSuccess'));
       setCooldown(RESEND_COOLDOWN_SECONDS);
     } catch (err: unknown) {
       setError(
         getAuthErrorMessage(err, {
-          network: 'Impossible de joindre le serveur. Vérifiez votre connexion.',
-          generic: 'Impossible de renvoyer le code. Réessayez dans un instant.',
-          envMissing: 'Configuration API manquante.',
-          unauthorized: 'Vérification introuvable ou déjà confirmée.',
+          network: tErrors('network'),
+          generic: tErrors('resendGeneric'),
+          envMissing: tErrors('envMissing'),
+          unauthorized: tErrors('resendUnauthorized'),
         }),
       );
     } finally {
@@ -204,7 +189,7 @@ export function BookingVerifyPageContent() {
           <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
             <label className="block">
               <span className="text-sm font-medium text-gray-700 dark:text-atg-muted">
-                Code à 6 chiffres
+                {t('codeLabel')}
               </span>
               <input
                 type="text"
@@ -224,7 +209,7 @@ export function BookingVerifyPageContent() {
               disabled={submitting || code.length !== 6}
               className="inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover disabled:opacity-60"
             >
-              {submitting ? 'Vérification…' : 'Confirmer et continuer'}
+              {submitting ? t('submitLoading') : t('submit')}
             </button>
           </form>
 
@@ -242,10 +227,10 @@ export function BookingVerifyPageContent() {
               className="text-sm font-medium text-primary underline-offset-2 hover:underline disabled:cursor-not-allowed disabled:opacity-60 disabled:no-underline"
             >
               {resending
-                ? 'Envoi…'
+                ? t('resendLoading')
                 : cooldown > 0
-                  ? `Renvoyer un code (${cooldown} s)`
-                  : 'Envoyer un autre code'}
+                  ? t('resendCooldown', { seconds: cooldown })
+                  : t('resend')}
             </button>
           </div>
         </section>

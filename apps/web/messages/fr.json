@@ -53,7 +53,9 @@
     "donate": "Faire un don",
     "myAccount": "Mon compte",
     "signIn": "Connexion",
-    "signOut": "Se déconnecter"
+    "signOut": "Se déconnecter",
+    "breadcrumbAria": "Fil d’Ariane",
+    "loadingContent": "Chargement du contenu"
   },
   "booking": {
     "meta": {
@@ -177,6 +179,41 @@
       "invalidPassword": "Mot de passe incorrect.",
       "genericError": "Impossible de déverrouiller la session. Réessayez.",
       "idleHint": "Verrouillage automatique après {minutes} min d'inactivité."
+    },
+    "verify": {
+      "loginTitle": "Confirmez votre connexion",
+      "loginSubtitle": "Un code de sécurité a été envoyé à votre adresse. Saisissez-le pour vous connecter.",
+      "registerTitle": "Finalisez la création de votre compte",
+      "registerSubtitle": "Un code de sécurité a été envoyé à votre adresse. Saisissez-le pour activer votre compte.",
+      "defaultTitle": "Vérification par e-mail",
+      "defaultSubtitle": "Un code de sécurité a été envoyé à votre adresse. Saisissez-le pour continuer. Si vous n'êtes pas à l'origine de cette opération, ignorez cet e-mail.",
+      "codeLabel": "Code à 6 chiffres",
+      "codeRequired": "Saisissez le code à 6 chiffres reçu par e-mail.",
+      "submit": "Confirmer et continuer",
+      "submitLoading": "Vérification…",
+      "resend": "Envoyer un autre code",
+      "resendLoading": "Envoi…",
+      "resendCooldown": "Renvoyer un code ({seconds} s)",
+      "resendSuccess": "Un nouveau code a été envoyé.",
+      "errors": {
+        "network": "Impossible de joindre le serveur. Vérifiez votre connexion.",
+        "generic": "Code invalide ou expiré. Si vous avez déjà validé ce code (ex. sur le site production), reconnectez-vous avec Google pour en recevoir un nouveau.",
+        "envMissing": "Configuration API manquante.",
+        "conflictGoogle": "Ce compte existe déjà. Relancez « Se connecter avec Google » pour recevoir un nouveau code, ou connectez-vous avec votre mot de passe.",
+        "conflictDefault": "Ce compte existe déjà. Essayez « Se connecter avec Google » à nouveau ou connectez-vous avec votre mot de passe.",
+        "unauthorized": "Compte inactif ou introuvable.",
+        "resendGeneric": "Impossible de renvoyer le code. Réessayez dans un instant.",
+        "resendUnauthorized": "Vérification introuvable ou déjà confirmée."
+      }
+    },
+    "oauthCallback": {
+      "title": "Connexion Google",
+      "pending": "Finalisation de votre session…",
+      "errors": {
+        "invalidParams": "Paramètres OAuth invalides.",
+        "invalidSession": "Session OAuth invalide.",
+        "finalizeFailed": "Impossible de finaliser la connexion Google."
+      }
     }
   },
   "donate": {
@@ -204,7 +241,8 @@
         "title": "Politique de confidentialité",
         "description": "Politique de confidentialité Africa Tourism Gate — collecte, usage et protection des données personnelles."
       }
-    }
+    },
+    "breadcrumbAria": "Fil d’Ariane"
   },
   "comingSoon": {
     "badge": "Bientôt disponible",
@@ -260,7 +298,8 @@
     "breadcrumbHome": "Accueil",
     "breadcrumbBlog": "Blog",
     "detailMetaFallbackTitle": "Article du blog",
-    "detailMetaFallbackDescription": "Découvrez nos articles sur le tourisme en Afrique avec Africa Tourism Gate."
+    "detailMetaFallbackDescription": "Découvrez nos articles sur le tourisme en Afrique avec Africa Tourism Gate.",
+    "breadcrumbAria": "Fil d’Ariane"
   },
   "support": {
     "metaTitle": "Centre d'aide",
@@ -571,7 +610,8 @@
     ],
     "prev": "Diapositive précédente",
     "next": "Diapositive suivante",
-    "goToSlide": "Aller à la diapositive {n}"
+    "goToSlide": "Aller à la diapositive {n}",
+    "carouselAria": "Diaporama"
   },
   "search": {
     "tablistAria": "Type de recherche",
@@ -931,7 +971,8 @@
     "tableCountry": "Pays",
     "tableActivities": "Activités",
     "tableRating": "Note",
-    "tableActions": "Actions"
+    "tableActions": "Actions",
+    "breadcrumbAria": "Fil d’Ariane"
   },
   "gapImpact": {
     "title": "Notre impact",
@@ -956,7 +997,9 @@
     "pageAria": "Page {page}",
     "range": "{start}–{end} sur {total} {itemLabel}{pluralSuffix}",
     "pageOf": "page {page} / {totalPages}",
-    "resultItem": "résultat"
+    "resultItem": "résultat",
+    "loadingResults": "Chargement des résultats",
+    "loadingDetails": "Chargement des détails"
   },
   "bookingSidebar": {
     "trustDemoCatalog": "Catalogue de démonstration — aperçu interne uniquement.",
@@ -1091,7 +1134,8 @@
     "reviewsPrev": "Avis précédent",
     "reviewsNext": "Avis suivant",
     "anonymousGuest": "Voyageur",
-    "galleryCounter": "Photo {current} sur {total}"
+    "galleryCounter": "Photo {current} sur {total}",
+    "breadcrumbAria": "Fil d’Ariane"
   },
   "flights": {
     "metaTitle": "Vols en Afrique",
@@ -1164,7 +1208,8 @@
     "galleryClose": "Fermer la galerie",
     "galleryPrevious": "Photo précédente",
     "galleryNext": "Photo suivante",
-    "galleryCounter": "Photo {current} sur {total}"
+    "galleryCounter": "Photo {current} sur {total}",
+    "breadcrumbAria": "Fil d’Ariane"
   },
   "cars": {
     "metaTitle": "Location de voitures en Afrique",
@@ -1251,7 +1296,8 @@
     "galleryClose": "Fermer la galerie",
     "galleryPrevious": "Photo précédente",
     "galleryNext": "Photo suivante",
-    "galleryCounter": "Photo {current} sur {total}"
+    "galleryCounter": "Photo {current} sur {total}",
+    "breadcrumbAria": "Fil d’Ariane"
   },
   "cruises": {
     "metaTitle": "Croisières fluviales en Afrique",
@@ -1329,7 +1375,8 @@
     "galleryClose": "Fermer la galerie",
     "galleryPrevious": "Photo précédente",
     "galleryNext": "Photo suivante",
-    "galleryCounter": "Photo {current} sur {total}"
+    "galleryCounter": "Photo {current} sur {total}",
+    "breadcrumbAria": "Fil d’Ariane"
   },
   "activities": {
     "metaTitle": "Activités et tours en Afrique",
@@ -1419,7 +1466,8 @@
     "tableName": "Activité",
     "tablePrice": "Prix",
     "tableAvailability": "Disponibilité",
-    "tableActions": "Actions"
+    "tableActions": "Actions",
+    "breadcrumbAria": "Fil d’Ariane"
   },
   "packages": {
     "metaTitle": "Forfaits combinés en Afrique",
@@ -1577,7 +1625,9 @@
     "itineraryMapLegendTitle": "Légende",
     "itineraryMapLegendPoints": "({count})",
     "itineraryMapPartialHint": "Certains services (véhicule, croisière) ne sont pas affichés sur la carte faute de coordonnées géographiques.",
-    "galleryCounter": "Photo {current} sur {total}"
+    "galleryCounter": "Photo {current} sur {total}",
+    "originalPriceAria": "Prix d’origine",
+    "breadcrumbAria": "Fil d’Ariane"
   },
   "account": {
     "title": "Mon compte",
@@ -1927,7 +1977,7 @@
             "comment": "Commentaire",
             "commentPlaceholder": "Informations complémentaires…",
             "other": "Autres informations",
-            "otherPlaceholder": "Toute autre information utile?"
+            "otherPlaceholder": "Toute autre information utile…"
           }
         },
         "emergencyContact": {
@@ -1954,7 +2004,7 @@
         "messages": {
           "title": "Conversation",
           "subtitle": "Échangez avec notre équipe au sujet de votre demande.",
-          "loading": "Chargement des messages?",
+          "loading": "Chargement des messages…",
           "empty": "Aucun message pour le moment. Notre équipe vous répondra ici.",
           "threadAria": "Fil de messages de la réservation",
           "authorStaff": "Équipe",
@@ -2025,7 +2075,8 @@
       "tierSilver": "Silver",
       "tierGold": "Gold",
       "tierPlatinum": "Platinum"
-    }
+    },
+    "breadcrumbAria": "Fil d’Ariane"
   },
   "checkout": {
     "stepperAriaLabel": "Étapes de réservation",
@@ -2137,7 +2188,8 @@
       "nextStepAccount": "Consultez vos réservations depuis votre espace compte.",
       "nextStepCash": "Préparez le montant en espèces pour le règlement en agence ou à l’arrivée — la confirmation suit l’encaissement.",
       "nextStepBankTransfer": "Effectuez le virement en indiquant la référence de réservation dans le libellé.",
-      "nextStepMobileMoney": "Effectuez le transfert Mobile Money puis envoyez une preuve de paiement."
+      "nextStepMobileMoney": "Effectuez le transfert Mobile Money puis envoyez une preuve de paiement.",
+      "bookingIdMissing": "non fourni"
     },
     "requestSuccess": {
       "title": "Demande envoyée",
@@ -2203,7 +2255,8 @@
       "cameraRetake": "Reprendre",
       "cameraConfirm": "Confirmer",
       "cameraCancel": "Annuler",
-      "cameraError": "Impossible d'accéder à la caméra. Vérifiez les autorisations."
+      "cameraError": "Impossible d'accéder à la caméra. Vérifiez les autorisations.",
+      "uploadFailed": "Échec du téléversement"
     },
     "cancel": {
       "title": "Paiement annulé",
@@ -2211,5 +2264,9 @@
       "backToCart": "Revenir au panier",
       "continueSearch": "Continuer la recherche"
     }
+  },
+  "nationalitySelect": {
+    "search": "Rechercher…",
+    "noResults": "Aucun résultat."
   }
 }

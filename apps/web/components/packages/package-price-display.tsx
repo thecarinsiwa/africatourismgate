@@ -9,6 +9,7 @@ type PackagePriceDisplayProps = {
   size?: 'sm' | 'md';
   priceLabel?: string;
   discountBadgeTemplate?: string;
+  originalPriceAria?: string;
   className?: string;
 };
 
@@ -17,6 +18,7 @@ export function PackagePriceDisplay({
   size = 'md',
   priceLabel,
   discountBadgeTemplate,
+  originalPriceAria,
   className = '',
 }: PackagePriceDisplayProps) {
   const showStrikethrough = hasPackageDiscount(pricing);
@@ -40,7 +42,7 @@ export function PackagePriceDisplay({
             className={`text-sm text-atg-muted line-through text-atg-muted ${
               size === 'sm' ? '' : 'text-base'
             }`}
-            aria-label="Original price"
+            aria-label={originalPriceAria}
           >
             {formatPackagePrice(pricing.subtotalCents, pricing.currency)}
           </p>

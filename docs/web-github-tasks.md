@@ -1172,7 +1172,14 @@ Corriger tous les textes hardcodés / non traduits identifiés :
 | Route | Langue | Texte incorrect | Fichier | Statut |
 | ----- | ------ | --------------- | ------- | ------ |
 | `/booking` | all | « Booking Checkout » EN (stub) | `app/booking/page.tsx` | ✅ WEB-003 Option A (redirect) |
-| … | | | | |
+| `/booking/verify` | FR-only | Titres, OTP, erreurs, CTA hardcodés FR | `booking-verify-page-content.tsx` | ✅ |
+| `/booking/oauth/callback` | FR-only | « Connexion Google », erreurs OAuth | `booking-oauth-callback-page-content.tsx` | ✅ |
+| (messages EN) | EN | `?` corrompus (`…` / `—` / `'`) | `messages/en.json` | ✅ |
+| (global) | EN a11y | `aria-label="Breadcrumb"` | shells + verticales | ✅ |
+| `/` loading | FR a11y | « Chargement du contenu » | `app/loading.tsx` | ✅ |
+| `/booking/success` | FR fallback | `non fourni` | `reservation-success-page-content.tsx` | ✅ |
+| `/booking/recap` | EN | `Upload failed` | `reservation-recap-page-content.tsx` | ✅ |
+| `/packages` | EN a11y | `Original price` | `package-price-display.tsx` | ✅ |
 
 ## Procédure correction
 
@@ -1183,9 +1190,9 @@ Corriger tous les textes hardcodés / non traduits identifiés :
 
 ## Critères d'acceptation
 
-- [ ] Toutes les lignes du tableau cochées
-- [ ] `node scripts/check-i18n-parity.mjs` OK
-- [ ] Specs `i18n-switch.spec.ts` + `i18n-pages.spec.ts` passantes
+- [x] Toutes les lignes du tableau cochées
+- [x] `node scripts/check-web-i18n-parity.mjs` OK (web ; `check-i18n-parity.mjs` = admin)
+- [ ] Specs `i18n-switch.spec.ts` + `i18n-pages.spec.ts` passantes (`i18n-pages` = WEB-I18N-06)
 - [ ] Aucune régression visuelle sur parcours checkout
 
 ## Dépendances

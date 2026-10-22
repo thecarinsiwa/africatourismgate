@@ -80,7 +80,7 @@ export function BlogDetailPageContent({ slug }: BlogDetailPageContentProps) {
               }
             />
             <article className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
-              <nav className="mb-6 text-sm text-atg-muted" aria-label="Breadcrumb">
+              <nav className="mb-6 text-sm text-atg-muted" aria-label={t('breadcrumbAria')}>
                 <ol className="flex flex-wrap items-center gap-2">
                   <li>
                     <Link href="/" className="hover:text-primary">
