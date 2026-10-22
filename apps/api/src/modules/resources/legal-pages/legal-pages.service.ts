@@ -75,6 +75,18 @@ export class LegalPagesService extends CrudService<LegalPages> {
       qb.andWhere('page.locale = :locale', { locale: query.locale });
     }
 
+    const activityExpr = 'COALESCE(page.updated_at, page.created_at)';
+    if (query.updatedWithinDays != null) {
+      const since = new Date();
+      since.setUTCDate(since.getUTCDate() - query.updatedWithinDays);
+      qb.andWhere(`${activityExpr} >= :updatedSince`, { updatedSince: since });
+    }
+    if (query.updatedOlderThanDays != null) {
+      const before = new Date();
+      before.setUTCDate(before.getUTCDate() - query.updatedOlderThanDays);
+      qb.andWhere(`${activityExpr} < :updatedBefore`, { updatedBefore: before });
+    }
+
     qb.orderBy('page.sectionKey', 'ASC')
       .addOrderBy('page.locale', 'ASC')
       .addOrderBy('page.publishedAt', 'DESC')

@@ -50,5 +50,27 @@
       "saveButton": "Enregistrer",
       "cancelButton": "Annuler"
     }
+  },
+  "stats": {
+    "total": {
+      "label": "Documents",
+      "subtitle": "Pages juridiques du catalogue"
+    },
+    "published": {
+      "label": "Publiées",
+      "subtitle": "Visibles sur le site"
+    },
+    "draft": {
+      "label": "Brouillons",
+      "subtitle": "Non publiées"
+    },
+    "recentlyUpdated": {
+      "label": "Mises à jour (30 j)",
+      "subtitle": "Modifiées au cours des 30 derniers jours"
+    },
+    "outdated": {
+      "label": "Obsolètes",
+      "subtitle": "Non revues depuis plus d’un an"
+    }
   }
 }

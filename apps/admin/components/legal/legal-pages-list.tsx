@@ -16,11 +16,18 @@ import {
 import type { LegalPage, LegalPageSectionKey, LegalPageStatus } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import type { LegalListFilter } from '../../config/legal-kpi';
 import { LEGAL_PAGE_SECTION_KEYS } from '../../lib/legal/constants';
 import { getApiClient } from '../../lib/auth/api';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
+
+type LegalPagesListProps = {
+  listFilter?: LegalListFilter;
+  onListFilterChange?: (filter: LegalListFilter) => void;
+  onChanged?: () => void;
+};
 
 function formatDateTime(iso: string | null): string {
   if (!iso) return '—';
@@ -35,7 +42,11 @@ function formatDateTime(iso: string | null): string {
   });
 }
 
-export function LegalPagesList() {
+export function LegalPagesList({
+  listFilter = {},
+  onListFilterChange,
+  onChanged,
+}: LegalPagesListProps) {
   const { about: getLegalErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.legal.pages.list');
   const tSections = useTranslations('modules.legal.sections');
@@ -79,6 +90,11 @@ export function LegalPagesList() {
     };
   }, []);
 
+  useEffect(() => {
+    setStatusFilter(listFilter.status ?? '');
+    setPage(1);
+  }, [listFilter]);
+
   const load = useCallback(async () => {
     setState({ status: 'loading' });
     try {
@@ -86,9 +102,11 @@ export function LegalPagesList() {
         page,
         limit: PAGE_SIZE,
         search: search || undefined,
-        status: statusFilter || undefined,
+        status: listFilter.status ?? (statusFilter || undefined),
         locale: localeFilter || undefined,
         sectionKey: sectionFilter || undefined,
+        updatedWithinDays: listFilter.updatedWithinDays,
+        updatedOlderThanDays: listFilter.updatedOlderThanDays,
       });
       setState({
         status: 'ready',
@@ -99,7 +117,16 @@ export function LegalPagesList() {
     } catch (error) {
       setState({ status: 'error', message: getLegalErrorMessage(error) });
     }
-  }, [page, search, statusFilter, localeFilter, sectionFilter, filterTick, getLegalErrorMessage]);
+  }, [
+    page,
+    search,
+    statusFilter,
+    localeFilter,
+    sectionFilter,
+    filterTick,
+    listFilter,
+    getLegalErrorMessage,
+  ]);
 
   useEffect(() => {
     void load();
@@ -129,12 +156,13 @@ export function LegalPagesList() {
     try {
       await getApiClient().deleteLegalPage(item.id);
       await load();
+      onChanged?.();
     } catch (error) {
       setDeleteError(getLegalErrorMessage(error));
     } finally {
       setDeletingId(null);
     }
-  }, [confirmTarget, getLegalErrorMessage, load]);
+  }, [confirmTarget, getLegalErrorMessage, load, onChanged]);
 
   const columns = useMemo<ColumnDef<LegalPage, unknown>[]>(
     () => [
@@ -207,7 +235,13 @@ export function LegalPagesList() {
   );
 
   const pages = state.status === 'ready' ? state.pages : [];
-  const hasActiveFilters = Boolean(statusFilter || localeFilter || sectionFilter);
+  const hasKpiFreshness =
+    listFilter.updatedWithinDays !== undefined ||
+    listFilter.updatedOlderThanDays !== undefined;
+  const effectiveStatus = listFilter.status ?? statusFilter;
+  const hasActiveFilters = Boolean(
+    effectiveStatus || localeFilter || sectionFilter || hasKpiFreshness,
+  );
 
   return (
     <>
@@ -271,8 +305,14 @@ export function LegalPagesList() {
                 </label>
                 <select
                   id={statusFilterId}
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value as '' | LegalPageStatus)}
+                  value={effectiveStatus}
+                  onChange={(e) => {
+                    const next = e.target.value as '' | LegalPageStatus;
+                    setStatusFilter(next);
+                    onListFilterChange?.({
+                      ...(next ? { status: next } : {}),
+                    });
+                  }}
                   className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                 >
                   <option value="">{tCommon('filters.all')}</option>

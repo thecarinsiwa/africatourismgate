@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsEnum, IsInt, IsOptional, IsString, Max, MaxLength, Min } from 'class-validator';
 import { PaginationQueryDto } from '../../../../common/dto/pagination-query.dto';
 import type { LegalPageSectionKey } from '../../../../entities/legal-page.entity';
 
@@ -29,4 +30,30 @@ export class LegalPagesListQueryDto extends PaginationQueryDto {
   @IsString()
   @MaxLength(5)
   locale?: string;
+
+  @ApiPropertyOptional({
+    description:
+      'Keep pages last edited (or created if never updated) within the last N days',
+    minimum: 1,
+    maximum: 3650,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(3650)
+  updatedWithinDays?: number;
+
+  @ApiPropertyOptional({
+    description:
+      'Keep pages last edited (or created if never updated) more than N days ago',
+    minimum: 1,
+    maximum: 3650,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(3650)
+  updatedOlderThanDays?: number;
 }
