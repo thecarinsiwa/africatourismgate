@@ -44,6 +44,10 @@
       "title": "Paiements & promos",
       "description": "Paiements, codes promo et promotions."
     },
+    "tresorerie-comptabilite": {
+      "title": "Trésorerie & comptabilité",
+      "description": "Entrées, sorties, besoins, budgets, taux de change et livres SYSCOHADA."
+    },
     "gap": {
       "title": "GAP",
       "description": "Paramètres, pages, activités, impact et médias."
@@ -58,7 +62,7 @@
     },
     "systeme": {
       "title": "Système & organisation",
-      "description": "Organisations, rôles, permissions et paramètres."
+      "description": "Organisations, rôles, permissions, devises et paramètres."
     }
   },
   "articles": {
@@ -201,6 +205,51 @@
       "title": "Paramètres système",
       "summary": "E-mails, dons, catalogue public, mobile money et réglages org.",
       "body": "Le [hub Paramètres](/parametres) regroupe la configuration de l'organisation. Depuis ce point d'entrée, accédez notamment aux e-mails transactionnels, aux dons, au mobile money et aux comptes bancaires.\n\nDans les paramètres d'organisation, la section catalogue / produits activés permet d'afficher ou de masquer chaque verticale du site public (hôtels, vols, locations, croisières, tours, forfaits). Une verticale désactivée disparaît de la navigation et renvoie une page introuvable côté site.\n\nModifiez un réglage avec prudence : un mauvais modèle d'e-mail, un compte bancaire incorrect ou un produit masqué par erreur impacte directement clients et opérations. Enregistrez puis vérifiez un parcours réel (paiement test, notification, menu public).\n\nPermissions typiques : organization_settings.read/write, et droits spécifiques pour mobile money ou comptes bancaires. Ces paramètres sont distincts de ceux du module [GAP](/gap/parametres)."
+    },
+    "vue-ensemble-tresorerie": {
+      "title": "Vue d'ensemble de la trésorerie",
+      "summary": "Hub, indicateurs du mois, accès rapides et devise d'affichage.",
+      "body": "Le [hub Trésorerie](/tresorerie) résume l'activité financière du mois en cours : total des entrées, total des sorties, besoins en attente (soumis ou validés) et solde net (entrées − sorties).\n\nLe bloc Accès rapide renvoie vers les sous-modules selon vos permissions : [entrées](/tresorerie/entrees), [sorties](/tresorerie/sorties), [besoins](/tresorerie/besoins), [budgets](/tresorerie/budgets), [rapports](/tresorerie/rapports), [collaborateurs externes](/tresorerie/externes), [audit](/tresorerie/audit) et [comptabilité](/tresorerie/comptabilite).\n\nLes montants s'affichent par défaut dans la devise de votre organisation, que les formulaires de saisie proposent aussi par défaut — voir [Devises et devise par défaut](/aide/systeme/devises-et-devise-par-defaut).\n\nPermission de base : treasury.read. Chaque sous-module ajoute ses propres droits (écriture, validation, rapports, audit) ; un menu absent signale en général une permission manquante — voir [Rôles et permissions](/systeme/roles)."
+    },
+    "entrees-et-sorties": {
+      "title": "Entrées et sorties de fonds",
+      "summary": "Enregistrer les encaissements, décaisser les besoins autorisés et annuler une opération.",
+      "body": "Les [entrées de fonds](/tresorerie/entrees) enregistrent l'argent reçu : paiement de réservation, client direct, partenaire, subvention / don, apport, intérêts bancaires ou autre. Indiquez le montant, la devise, la date et le mode de paiement (espèces, virement, mobile money, carte, chèque), puis joignez les pièces utiles. Une entrée est créée au statut Enregistrée.\n\nLes [sorties de fonds](/tresorerie/sorties) décaissent toujours un [état de besoin](/tresorerie/besoins) autorisé. Une sortie passe de Brouillon à Décaissée puis Enregistrée ; le passage à Enregistrée exige au moins un justificatif et clôture le besoin lié.\n\nLa devise proposée par défaut est celle de l'organisation ; seules les devises actives du catalogue sont sélectionnables. Si elle diffère de la devise de tenue de l'exercice, un [taux de change](/tresorerie/taux-change) est nécessaire pour la comptabilisation.\n\nUne opération erronée ne se supprime pas : utilisez Annuler avec un motif (permission treasury.void). L'annulation est tracée dans l'[audit](/tresorerie/audit) et refusée si l'opération est déjà liée à la comptabilité. Permissions d'écriture : treasury.entries.write et treasury.exits.write."
+    },
+    "besoins-et-externes": {
+      "title": "États de besoin et collaborateurs externes",
+      "summary": "Circuit soumission, validation, autorisation et accès des externes.",
+      "body": "Un [état de besoin](/tresorerie/besoins) formalise une demande de dépense avant tout décaissement. Il suit le circuit Brouillon → Soumis → Validé → Autorisé, puis passe à Clôturé lorsque la sortie liée est enregistrée. Il peut aussi être Rejeté ou Annulé en cours de route.\n\nChaque étape relève d'une permission distincte : treasury.expense_requests.create (créer, soumettre), treasury.expense_requests.validate (valider) et treasury.expense_requests.authorize (autoriser). Confiez ces étapes à des personnes différentes pour garantir un double contrôle.\n\nLes [collaborateurs externes](/tresorerie/externes) (prestataires, bénévoles, partenaires) n'ont pas de compte admin. Invitez-les par e-mail : ils reçoivent un lien d'accès sécurisé pour soumettre un état de besoin, qui apparaît ensuite dans la liste côté administration. Désactivez un externe dès que la collaboration se termine (permission treasury.externals.manage)."
+    },
+    "budgets-et-suivi": {
+      "title": "Budgets et suivi",
+      "summary": "Définir des enveloppes mensuelles ou annuelles et les comparer au réalisé.",
+      "body": "Les [budgets](/tresorerie/budgets) fixent une enveloppe par période (mensuelle ou annuelle) et par périmètre : général, activité ou produit / service (chambre, classe de vol, véhicule, cabine, créneau d'activité…). La devise proposée à la création est celle de l'organisation.\n\nLe [suivi budgétaire](/tresorerie/budgets/suivi) compare chaque budget au réalisé à partir des opérations enregistrées. Utilisez-le pour repérer les dépassements avant d'autoriser de nouveaux [besoins](/tresorerie/besoins).\n\nPermissions : treasury.read pour consulter, treasury.budgets.write pour créer ou modifier."
+    },
+    "taux-de-change": {
+      "title": "Taux de change",
+      "summary": "Saisir les taux manuels utilisés pour comptabiliser les opérations en devise.",
+      "body": "Le catalogue des [taux de change](/tresorerie/taux-change) contient les taux saisis manuellement par organisation. Un taux se lit ainsi : 1 unité de devise source = taux × devise cible (par exemple 1 EUR = 655,957 XOF). Il s'applique à partir de sa date d'effet.\n\nÀ la création, la devise cible proposée est celle de l'organisation et la devise source est EUR (ou USD si l'organisation est en EUR). Seules les devises actives du [catalogue](/systeme/devises) sont disponibles, et source et cible doivent être différentes.\n\nCes taux servent à la comptabilisation : si la devise d'une entrée ou d'une sortie diffère de la devise de tenue de l'exercice, le taux applicable est recherché ; sans taux, la comptabilisation est refusée. Supprimer un taux ne modifie pas les écritures déjà comptabilisées.\n\nPermissions : treasury.fx_rates.read pour consulter, treasury.fx_rates.write pour créer, modifier ou supprimer."
+    },
+    "comptabilite-syscohada": {
+      "title": "Comptabilité SYSCOHADA",
+      "summary": "Liens trésorerie-écritures, journal, grand livre, balance, bilan et compte de résultat.",
+      "body": "Le [hub Comptabilité](/tresorerie/comptabilite) relie chaque opération de trésorerie à une écriture SYSCOHADA. Chaque lien est En attente, Lié ou Ignoré : Comptabiliser génère l'écriture selon la règle de mapping, Ignorer exclut l'opération des livres.\n\nLe [journal](/tresorerie/comptabilite/journal) liste les écritures (Brouillon, Comptabilisée, Contrepassée) ; ouvrez-en une pour voir ses lignes, son origine et ses totaux débit / crédit. Le [grand livre](/tresorerie/comptabilite/grand-livre) détaille les mouvements d'un compte, et la [balance](/tresorerie/comptabilite/balance) totalise débits, crédits et soldes par compte ; un écart entre débit et crédit signale des écritures à vérifier.\n\nLe [bilan](/tresorerie/comptabilite/bilan) et le [compte de résultat](/tresorerie/comptabilite/compte-resultat) présentent les états financiers de l'exercice. Filtrez par organisation, exercice et période ; les montants sont exprimés dans la devise de tenue de l'exercice.\n\nPermissions : treasury.accounting_link.read ou accounting.read pour les livres, accounting.reports.read pour le bilan et le compte de résultat."
+    },
+    "exercices-et-cloture": {
+      "title": "Exercices et clôture",
+      "summary": "Créer les exercices, choisir la devise de tenue, verrouiller les périodes et clôturer.",
+      "body": "Les [exercices](/tresorerie/comptabilite/exercices) délimitent la période comptable d'une organisation. À la création, les périodes mensuelles sont générées automatiquement et la devise de tenue proposée est celle de l'organisation. Elle ne peut être modifiée que tant que l'exercice est ouvert et sans écriture comptabilisée.\n\nLa page [Clôture](/tresorerie/comptabilite/cloture) permet de verrouiller ou déverrouiller chaque période (Ouverte, Verrouillée, Clôturée), puis de clôturer l'exercice. La clôture génère une OD de clôture et, si un exercice suivant existe, un report à nouveau. Cette action est irréversible : vérifiez la [balance](/tresorerie/comptabilite/balance) et le [bilan](/tresorerie/comptabilite/bilan) avant de la lancer.\n\nL'[audit comptable](/tresorerie/comptabilite/audit) trace les actions sur les écritures, exercices et périodes (date, action, entité, acteur).\n\nPermissions : accounting.chart.write pour créer un exercice, accounting.close pour verrouiller et clôturer, accounting.audit.read pour l'audit."
+    },
+    "rapports-et-audit": {
+      "title": "Rapports et audit trésorerie",
+      "summary": "Agrégats par période, répartition par devise, export CSV et journal des actions.",
+      "body": "Les [rapports](/tresorerie/rapports) agrègent entrées et sorties sur une période : totaux, nombre d'opérations, répartition par source et par mode de paiement. Filtrez par dates et par devise ; le solde net n'est calculé que pour une devise donnée, sinon les montants sont présentés par devise. Utilisez Exporter CSV pour retravailler les chiffres.\n\nLe [journal d'audit](/tresorerie/audit) trace les actions de trésorerie : créations, changements de statut, annulations avec motif. Consultez-le pour reconstituer l'historique d'une opération ou d'un besoin.\n\nPermissions : treasury.reports.read pour les rapports, treasury.audit.read pour le journal. Pour l'audit des écritures comptables, voir [Exercices et clôture](/aide/tresorerie-comptabilite/exercices-et-cloture)."
+    },
+    "devises-et-devise-par-defaut": {
+      "title": "Devises et devise par défaut",
+      "summary": "Catalogue global des devises, devise de l'organisation et devise de tenue.",
+      "body": "Le [catalogue des devises](/systeme/devises) liste les codes ISO disponibles sur toute la plateforme. Seules les devises actives apparaissent dans les sélecteurs (montants, budgets, taux, exercices…). Désactiver une devise la retire des listes sans modifier les opérations existantes, qui gardent leur code. Permissions : currencies.read pour consulter, currencies.write pour créer ou modifier.\n\nChaque organisation a une devise par défaut, choisie parmi les devises actives. Elle sert à afficher les montants dans l'admin et pré-remplit les formulaires : activités, véhicules, cabines, chambres, employés, comptes bancaires, opérations de trésorerie, budgets et taux de change. Modifiez-la depuis la fiche [Organisations](/organisations) ou les [Paramètres](/parametres) ; le changement s'applique dès l'enregistrement. Sans devise définie, l'admin utilise XOF.\n\nLa comptabilité utilise sa propre devise de tenue, fixée par [exercice](/tresorerie/comptabilite/exercices). Lorsqu'une opération est dans une autre devise, un [taux de change](/tresorerie/taux-change) est requis pour la comptabiliser.\n\nAstuce : activez une devise dans le catalogue avant de l'attribuer à une organisation ; une devise hors catalogue actif est refusée à l'enregistrement."
     }
   }
 }

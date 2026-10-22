@@ -44,6 +44,10 @@
       "title": "Pagos y promociones",
       "description": "Pagos, códigos promo y promociones."
     },
+    "tresorerie-comptabilite": {
+      "title": "Tesorería y contabilidad",
+      "description": "Entradas, salidas, solicitudes de gasto, presupuestos, tipos de cambio y libros SYSCOHADA."
+    },
     "gap": {
       "title": "GAP",
       "description": "Ajustes, páginas, actividades, impacto y medios."
@@ -58,7 +62,7 @@
     },
     "systeme": {
       "title": "Sistema y organización",
-      "description": "Organizaciones, roles, permisos y ajustes."
+      "description": "Organizaciones, roles, permisos, divisas y ajustes."
     }
   },
   "articles": {
@@ -201,6 +205,51 @@
       "title": "Ajustes del sistema",
       "summary": "Correos, donaciones, catálogo público, mobile money y ajustes de org.",
       "body": "El hub [Ajustes](/parametres) agrupa la configuración de la organización. Desde ahí accede, entre otros, a correos transaccionales, donaciones, mobile money y cuentas bancarias.\n\nEn los ajustes de organización, la sección catálogo / productos activados permite mostrar u ocultar cada vertical del sitio público (hoteles, vuelos, alquileres, cruceros, tours, paquetes). Una vertical desactivada desaparece de la navegación y devuelve una página no encontrada en el sitio público.\n\nModifique con prudencia: una plantilla de correo, una cuenta bancaria incorrecta o un producto oculto por error impacta directamente a clientes y operaciones. Guarde y verifique un flujo real (pago de prueba, notificación, menú público).\n\nPermisos típicos: organization_settings.read/write, y derechos específicos para mobile money o cuentas bancarias. Estos ajustes son distintos de los del módulo [GAP](/gap/parametres)."
+    },
+    "vue-ensemble-tresorerie": {
+      "title": "Visión general de la tesorería",
+      "summary": "Hub, indicadores del mes, accesos rápidos y divisa de visualización.",
+      "body": "El [hub de Tesorería](/tresorerie) resume la actividad financiera del mes en curso: total de entradas, total de salidas, solicitudes de gasto pendientes (enviadas o validadas) y saldo neto (entradas − salidas).\n\nEl bloque Acceso rápido enlaza con los submódulos según sus permisos: [entradas](/tresorerie/entrees), [salidas](/tresorerie/sorties), [solicitudes de gasto](/tresorerie/besoins), [presupuestos](/tresorerie/budgets), [informes](/tresorerie/rapports), [colaboradores externos](/tresorerie/externes), [auditoría](/tresorerie/audit) y [contabilidad](/tresorerie/comptabilite).\n\nLos importes se muestran en la divisa predeterminada de su organización, que los formularios también proponen por defecto — consulte [Divisas y divisa predeterminada](/aide/systeme/devises-et-devise-par-defaut).\n\nPermiso base: treasury.read. Cada submódulo añade sus propios derechos (escritura, validación, informes, auditoría); un menú ausente suele indicar un permiso faltante — consulte [Roles y permisos](/systeme/roles)."
+    },
+    "entrees-et-sorties": {
+      "title": "Entradas y salidas de fondos",
+      "summary": "Registrar cobros, desembolsar solicitudes autorizadas y anular una operación.",
+      "body": "Las [entradas de fondos](/tresorerie/entrees) registran el dinero recibido: pago de reserva, cliente directo, socio, subvención / donación, aporte, intereses bancarios u otro. Indique el importe, la divisa, la fecha y el método de pago (efectivo, transferencia, mobile money, tarjeta, cheque), y adjunte los justificantes. Una entrada se crea con el estado Registrada.\n\nLas [salidas de fondos](/tresorerie/sorties) siempre desembolsan una [solicitud de gasto](/tresorerie/besoins) autorizada. Una salida pasa de Borrador a Desembolsada y luego a Registrada; pasar a Registrada exige al menos un justificante y cierra la solicitud vinculada.\n\nLa divisa propuesta por defecto es la de la organización; solo se pueden elegir divisas activas del catálogo. Si difiere de la divisa contable del ejercicio, se necesita un [tipo de cambio](/tresorerie/taux-change) para contabilizarla.\n\nUna operación errónea no se elimina: use Anular con un motivo (permiso treasury.void). La anulación queda registrada en la [auditoría](/tresorerie/audit) y se rechaza si la operación ya está vinculada a la contabilidad. Permisos de escritura: treasury.entries.write y treasury.exits.write."
+    },
+    "besoins-et-externes": {
+      "title": "Solicitudes de gasto y colaboradores externos",
+      "summary": "Circuito de envío, validación y autorización, y acceso de externos.",
+      "body": "Una [solicitud de gasto](/tresorerie/besoins) formaliza una petición de gasto antes de cualquier desembolso. Sigue el circuito Borrador → Enviada → Validada → Autorizada y pasa a Cerrada cuando se registra la salida vinculada. También puede ser Rechazada o Cancelada en el camino.\n\nCada paso requiere un permiso distinto: treasury.expense_requests.create (crear, enviar), treasury.expense_requests.validate (validar) y treasury.expense_requests.authorize (autorizar). Asigne estos pasos a personas diferentes para mantener un doble control.\n\nLos [colaboradores externos](/tresorerie/externes) (proveedores, voluntarios, socios) no tienen cuenta de administración. Invítelos por correo: reciben un enlace de acceso seguro para enviar una solicitud de gasto, que luego aparece en la lista de administración. Desactive a un externo en cuanto termine la colaboración (permiso treasury.externals.manage)."
+    },
+    "budgets-et-suivi": {
+      "title": "Presupuestos y seguimiento",
+      "summary": "Definir partidas mensuales o anuales y compararlas con lo real.",
+      "body": "Los [presupuestos](/tresorerie/budgets) fijan una partida por periodo (mensual o anual) y por ámbito: general, actividad o producto / servicio (habitación, clase de vuelo, vehículo, camarote, franja de actividad…). La divisa propuesta al crear es la de la organización.\n\nEl [seguimiento presupuestario](/tresorerie/budgets/suivi) compara cada presupuesto con lo real a partir de las operaciones registradas. Úselo para detectar desviaciones antes de autorizar nuevas [solicitudes de gasto](/tresorerie/besoins).\n\nPermisos: treasury.read para consultar, treasury.budgets.write para crear o modificar."
+    },
+    "taux-de-change": {
+      "title": "Tipos de cambio",
+      "summary": "Introducir los tipos manuales usados para contabilizar operaciones en divisa.",
+      "body": "El catálogo de [tipos de cambio](/tresorerie/taux-change) contiene los tipos introducidos manualmente por organización. Un tipo se lee así: 1 unidad de divisa origen = tipo × divisa destino (por ejemplo 1 EUR = 655,957 XOF). Se aplica a partir de su fecha de efecto.\n\nAl crear un tipo, la divisa destino propuesta es la de la organización y la divisa origen es EUR (o USD si la organización usa EUR). Solo están disponibles las divisas activas del [catálogo](/systeme/devises), y origen y destino deben ser distintas.\n\nEstos tipos sirven para contabilizar: si una entrada o salida está en una divisa distinta de la divisa contable del ejercicio, se busca el tipo aplicable; sin tipo, la contabilización se rechaza. Eliminar un tipo no modifica los asientos ya contabilizados.\n\nPermisos: treasury.fx_rates.read para consultar, treasury.fx_rates.write para crear, modificar o eliminar."
+    },
+    "comptabilite-syscohada": {
+      "title": "Contabilidad SYSCOHADA",
+      "summary": "Vínculos tesorería-asientos, diario, libro mayor, balance de comprobación, balance y cuenta de resultados.",
+      "body": "El [hub de Contabilidad](/tresorerie/comptabilite) vincula cada operación de tesorería con un asiento SYSCOHADA. Cada vínculo está Pendiente, Vinculado u Omitido: Contabilizar genera el asiento según la regla de mapeo, Omitir excluye la operación de los libros.\n\nEl [diario](/tresorerie/comptabilite/journal) lista los asientos (Borrador, Contabilizado, Anulado por contraasiento); abra uno para ver sus líneas, su origen y sus totales debe / haber. El [libro mayor](/tresorerie/comptabilite/grand-livre) detalla los movimientos de una cuenta y el [balance de comprobación](/tresorerie/comptabilite/balance) totaliza debe, haber y saldos por cuenta; una diferencia entre debe y haber señala asientos que revisar.\n\nEl [balance](/tresorerie/comptabilite/bilan) y la [cuenta de resultados](/tresorerie/comptabilite/compte-resultat) presentan los estados financieros del ejercicio. Filtre por organización, ejercicio y periodo; los importes se expresan en la divisa contable del ejercicio.\n\nPermisos: treasury.accounting_link.read o accounting.read para los libros, accounting.reports.read para el balance y la cuenta de resultados."
+    },
+    "exercices-et-cloture": {
+      "title": "Ejercicios y cierre",
+      "summary": "Crear ejercicios, elegir la divisa contable, bloquear periodos y cerrar.",
+      "body": "Los [ejercicios](/tresorerie/comptabilite/exercices) delimitan el periodo contable de una organización. Al crearlos, los periodos mensuales se generan automáticamente y la divisa contable propuesta es la de la organización. Solo puede cambiarse mientras el ejercicio esté abierto y sin asientos contabilizados.\n\nLa página [Cierre](/tresorerie/comptabilite/cloture) permite bloquear o desbloquear cada periodo (Abierto, Bloqueado, Cerrado) y luego cerrar el ejercicio. El cierre genera un asiento de cierre y, si existe un ejercicio siguiente, un asiento de apertura con los saldos trasladados. Esta acción es irreversible: revise antes el [balance de comprobación](/tresorerie/comptabilite/balance) y el [balance](/tresorerie/comptabilite/bilan).\n\nLa [auditoría contable](/tresorerie/comptabilite/audit) registra las acciones sobre asientos, ejercicios y periodos (fecha, acción, entidad, actor).\n\nPermisos: accounting.chart.write para crear un ejercicio, accounting.close para bloquear y cerrar, accounting.audit.read para la auditoría."
+    },
+    "rapports-et-audit": {
+      "title": "Informes y auditoría de tesorería",
+      "summary": "Agregados por periodo, desglose por divisa, exportación CSV y registro de acciones.",
+      "body": "Los [informes](/tresorerie/rapports) agregan entradas y salidas en un periodo: totales, número de operaciones, desglose por origen y por método de pago. Filtre por fechas y por divisa; el saldo neto solo se calcula para una divisa concreta, de lo contrario los importes se muestran por divisa. Use Exportar CSV para trabajar las cifras en otra herramienta.\n\nEl [registro de auditoría](/tresorerie/audit) recoge las acciones de tesorería: creaciones, cambios de estado y anulaciones con su motivo. Consúltelo para reconstruir el historial de una operación o solicitud.\n\nPermisos: treasury.reports.read para los informes, treasury.audit.read para el registro. Para la auditoría de asientos contables, consulte [Ejercicios y cierre](/aide/tresorerie-comptabilite/exercices-et-cloture)."
+    },
+    "devises-et-devise-par-defaut": {
+      "title": "Divisas y divisa predeterminada",
+      "summary": "Catálogo global de divisas, divisa de la organización y divisa contable.",
+      "body": "El [catálogo de divisas](/systeme/devises) lista los códigos ISO disponibles en toda la plataforma. Solo las divisas activas aparecen en los selectores (importes, presupuestos, tipos, ejercicios…). Desactivar una divisa la retira de las listas sin modificar las operaciones existentes, que conservan su código. Permisos: currencies.read para consultar, currencies.write para crear o modificar.\n\nCada organización tiene una divisa predeterminada, elegida entre las divisas activas. Se usa para mostrar los importes en la administración y prerrellena los formularios: actividades, vehículos, camarotes, habitaciones, empleados, cuentas bancarias, operaciones de tesorería, presupuestos y tipos de cambio. Cámbiela desde la ficha de [Organizaciones](/organisations) o en [Ajustes](/parametres); el cambio se aplica al guardar. Si no hay divisa definida, la administración usa XOF.\n\nLa contabilidad usa su propia divisa contable, fijada por [ejercicio](/tresorerie/comptabilite/exercices). Cuando una operación está en otra divisa, se necesita un [tipo de cambio](/tresorerie/taux-change) para contabilizarla.\n\nConsejo: active una divisa en el catálogo antes de asignarla a una organización; una divisa fuera del catálogo activo se rechaza al guardar."
     }
   }
 }

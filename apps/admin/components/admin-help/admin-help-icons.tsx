@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import {
   SidebarBookingsIcon,
+  SidebarCreditCardIcon,
   SidebarGiftIcon,
   SidebarGlobeIcon,
   SidebarHeadsetIcon,
@@ -42,6 +43,7 @@ const ADMIN_HELP_ICON_MAP: Record<
   package: SidebarPackageIcon,
   bookings: SidebarBookingsIcon,
   payments: SidebarPaymentsIcon,
+  treasury: SidebarCreditCardIcon,
   globe: SidebarGlobeIcon,
   headset: SidebarHeadsetIcon,
   gift: SidebarGiftIcon,
