@@ -45,7 +45,12 @@ const PAGE_SIZE = 20;
 /** Show all statuses by default so approved Tripadvisor entries and moderated reviews are visible. */
 const DEFAULT_STATUS: '' | ReviewStatus = '';
 
-export function ReviewsList() {
+type ReviewsListProps = {
+  /** Bump after Tripadvisor sync to reload the table. */
+  reloadToken?: number;
+};
+
+export function ReviewsList({ reloadToken = 0 }: ReviewsListProps) {
   const { reviews: getReviewsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.reviews');
   const tList = useTranslations('modules.reviews.list');
@@ -117,7 +122,7 @@ export function ReviewsList() {
 
   useEffect(() => {
     void load();
-  }, [load]);
+  }, [load, reloadToken]);
 
   const runAction = useCallback(
     async (

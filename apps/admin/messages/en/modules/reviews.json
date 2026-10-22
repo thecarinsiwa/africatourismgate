@@ -115,5 +115,43 @@
         "message": "The review has been saved."
       }
     }
+  },
+  "tripadvisorSync": {
+    "heading": "Tripadvisor import (Terra)",
+    "description": "Configure your establishment listing and import reviews via the Tripadvisor Terra API.",
+    "locationIdHelp": "The Location ID is in the Tripadvisor URL after “-d” (e.g. …-d12345678.html → 12345678).",
+    "fields": {
+      "locationId": "Location ID",
+      "locationIdPlaceholder": "e.g. 12345678",
+      "apiKey": "Terra API key",
+      "apiKeyPlaceholder": "Paste your API key",
+      "apiKeyPlaceholderConfigured": "Key saved ({masked}) — leave blank to keep it",
+      "apiKeyKeepHint": "Leave blank to keep the key already stored.",
+      "language": "Review language",
+      "languagePlaceholder": "primary",
+      "languageHint": "Terra codes: primary (original language), fr, en, etc."
+    },
+    "saveButton": "Save",
+    "saving": "Saving…",
+    "syncButton": "Sync",
+    "syncing": "Syncing…",
+    "readOnlyHint": "Read-only: organization_settings.write is required to edit.",
+    "settingsDeniedHint": "You can still sync with credentials already configured (settings read not allowed).",
+    "toast": {
+      "saved": {
+        "title": "Settings saved",
+        "message": "Tripadvisor credentials were updated."
+      },
+      "saveFailed": {
+        "title": "Could not save"
+      },
+      "synced": {
+        "title": "Sync complete",
+        "message": "{imported} imported, {updated} updated, {skipped} skipped ({pages} page(s))."
+      },
+      "syncFailed": {
+        "title": "Sync failed"
+      }
+    }
   }
 }

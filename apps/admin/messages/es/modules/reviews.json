@@ -115,5 +115,43 @@
         "message": "La reseña se ha guardado."
       }
     }
+  },
+  "tripadvisorSync": {
+    "heading": "Importación Tripadvisor (Terra)",
+    "description": "Configure el establecimiento e importe reseñas con la API Terra de Tripadvisor.",
+    "locationIdHelp": "El Location ID está en la URL de Tripadvisor tras « -d » (p. ej. …-d12345678.html → 12345678).",
+    "fields": {
+      "locationId": "Location ID",
+      "locationIdPlaceholder": "Ej. 12345678",
+      "apiKey": "Clave API Terra",
+      "apiKeyPlaceholder": "Pegue su clave API",
+      "apiKeyPlaceholderConfigured": "Clave guardada ({masked}) — déjelo vacío para conservarla",
+      "apiKeyKeepHint": "Deje el campo vacío para conservar la clave ya guardada.",
+      "language": "Idioma de las reseñas",
+      "languagePlaceholder": "primary",
+      "languageHint": "Códigos Terra: primary (idioma original), fr, en, etc."
+    },
+    "saveButton": "Guardar",
+    "saving": "Guardando…",
+    "syncButton": "Sincronizar",
+    "syncing": "Sincronizando…",
+    "readOnlyHint": "Solo lectura: se requiere organization_settings.write para editar.",
+    "settingsDeniedHint": "Puede sincronizar con credenciales ya configuradas (sin permiso de lectura de ajustes).",
+    "toast": {
+      "saved": {
+        "title": "Ajustes guardados",
+        "message": "Las credenciales de Tripadvisor se han actualizado."
+      },
+      "saveFailed": {
+        "title": "No se pudo guardar"
+      },
+      "synced": {
+        "title": "Sincronización terminada",
+        "message": "{imported} importada(s), {updated} actualizada(s), {skipped} omitida(s) ({pages} página(s))."
+      },
+      "syncFailed": {
+        "title": "Error de sincronización"
+      }
+    }
   }
 }

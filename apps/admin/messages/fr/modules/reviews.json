@@ -115,5 +115,43 @@
         "message": "L’avis a été enregistré."
       }
     }
+  },
+  "tripadvisorSync": {
+    "heading": "Import Tripadvisor (Terra)",
+    "description": "Configurez la fiche établissement et importez les avis via l’API Terra Tripadvisor.",
+    "locationIdHelp": "Le Location ID se trouve dans l’URL Tripadvisor, après « -d » (ex. …-d12345678.html → 12345678).",
+    "fields": {
+      "locationId": "Location ID",
+      "locationIdPlaceholder": "Ex. 12345678",
+      "apiKey": "Clé API Terra",
+      "apiKeyPlaceholder": "Collez votre clé API",
+      "apiKeyPlaceholderConfigured": "Clé enregistrée ({masked}) — laissez vide pour la conserver",
+      "apiKeyKeepHint": "Laissez le champ vide pour conserver la clé déjà enregistrée.",
+      "language": "Langue des avis",
+      "languagePlaceholder": "primary",
+      "languageHint": "Codes Terra : primary (langue d’origine), fr, en, etc."
+    },
+    "saveButton": "Enregistrer",
+    "saving": "Enregistrement…",
+    "syncButton": "Synchroniser",
+    "syncing": "Synchronisation…",
+    "readOnlyHint": "Lecture seule : permission organization_settings.write requise pour modifier.",
+    "settingsDeniedHint": "Vous pouvez lancer une sync avec les identifiants déjà configurés (lecture des réglages non autorisée).",
+    "toast": {
+      "saved": {
+        "title": "Paramètres enregistrés",
+        "message": "Les identifiants Tripadvisor ont été mis à jour."
+      },
+      "saveFailed": {
+        "title": "Enregistrement impossible"
+      },
+      "synced": {
+        "title": "Synchronisation terminée",
+        "message": "{imported} importé(s), {updated} mis à jour, {skipped} ignoré(s) ({pages} page(s))."
+      },
+      "syncFailed": {
+        "title": "Synchronisation échouée"
+      }
+    }
   }
 }
