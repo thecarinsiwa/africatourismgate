@@ -445,10 +445,15 @@
       "secondary": "Secondary green"
     },
     "section": {
-      "heading": "Section content",
+      "heading": "Section header",
       "validation": {
         "imageUrlRequired": "Image is required.",
         "imageUrlInvalid": "Image URL must be valid."
+      },
+      "groups": {
+        "content": "Content",
+        "media": "Image",
+        "badge": "Badge"
       },
       "fields": {
         "title": "Title",
@@ -465,7 +470,13 @@
         "badgeLabel": "Badge label"
       },
       "saving": "Saving…",
-      "saveButton": "Save section"
+      "saveButton": "Save header settings",
+      "hint": "Title, copy, image and badge for the Happy Customers section. Saved separately from the progress bars below.",
+      "statusHint": "Publication status for the whole section (independent of each stat).",
+      "badgeHint": "Highlight figure shown on the section image (e.g. 10K+ Clients).",
+      "emptyTitle": "No title yet",
+      "expand": "Edit header",
+      "collapse": "Hide header"
     },
     "stats": {
       "list": {
@@ -483,7 +494,15 @@
         "emptySearch": "No stats match your search.",
         "searchPlaceholder": "Search by label…",
         "newButton": "New stat",
-        "paginationItem": "stat"
+        "tableAria": "Happy Customers stats list",
+        "paginationItem": "stat",
+        "heading": "Progress bars",
+        "description": "Indicators shown in the homepage Happy Customers block. Managed separately from the header above.",
+        "searchLabel": "Search",
+        "statusFilter": "Filter by status",
+        "allStatuses": "All statuses",
+        "moveUp": "Move up",
+        "moveDown": "Move down"
       },
       "edit": {
         "pageTitle": "Edit stat"

@@ -445,10 +445,15 @@
       "secondary": "Verde secundario"
     },
     "section": {
-      "heading": "Contenido de la sección",
+      "heading": "Encabezado de sección",
       "validation": {
         "imageUrlRequired": "La imagen es obligatoria.",
         "imageUrlInvalid": "La URL de la imagen debe ser válida."
+      },
+      "groups": {
+        "content": "Contenido",
+        "media": "Imagen",
+        "badge": "Distintivo"
       },
       "fields": {
         "title": "Título",
@@ -465,7 +470,13 @@
         "badgeLabel": "Etiqueta del distintivo"
       },
       "saving": "Guardando…",
-      "saveButton": "Guardar sección"
+      "saveButton": "Guardar encabezado",
+      "hint": "Título, texto, imagen y distintivo de la sección «Clientes satisfechos». Se guarda por separado de las barras de abajo.",
+      "statusHint": "Estado de publicación de toda la sección (independiente de cada estadística).",
+      "badgeHint": "Cifra destacada sobre la imagen de la sección (p. ej. 10K+ Clientes).",
+      "emptyTitle": "Sin título todavía",
+      "expand": "Editar encabezado",
+      "collapse": "Ocultar encabezado"
     },
     "stats": {
       "list": {
@@ -483,7 +494,15 @@
         "emptySearch": "Ninguna estadística coincide con su búsqueda.",
         "searchPlaceholder": "Buscar por etiqueta…",
         "newButton": "Nueva estadística",
-        "paginationItem": "estadística"
+        "tableAria": "Lista de estadísticas Clientes satisfechos",
+        "paginationItem": "estadística",
+        "heading": "Barras de estadísticas",
+        "description": "Indicadores mostrados en el bloque «Clientes satisfechos» de la página de inicio. Se gestionan por separado del encabezado de arriba.",
+        "searchLabel": "Búsqueda",
+        "statusFilter": "Filtrar por estado",
+        "allStatuses": "Todos los estados",
+        "moveUp": "Subir",
+        "moveDown": "Bajar"
       },
       "edit": {
         "pageTitle": "Modificar estadística"

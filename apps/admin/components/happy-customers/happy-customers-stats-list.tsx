@@ -12,6 +12,7 @@ import {
   DataTableBadge,
   DataTablePagination,
   Input,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { HappyCustomersStat, HappyCustomersStatus } from '@africatourismgate/types';
@@ -28,17 +29,21 @@ type HappyCustomersStatsListProps = {
 
 export function HappyCustomersStatsList({ locale }: HappyCustomersStatsListProps) {
   const { about: getAboutErrorMessage } = useAdminErrorMessages();
+  const { toast } = useToast();
   const t = useTranslations('modules.about.happyCustomers.stats.list');
   const tColors = useTranslations('modules.about.happyCustomers.colors');
   const tStatus = useTranslations('modules.about.status');
   const tCommon = useTranslations('modules.common');
+  const tToast = useTranslations('modules.common.toast');
   const statusFilterId = useId();
+  const searchId = useId();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<'' | HappyCustomersStatus>('');
   const [filterTick, setFilterTick] = useState(0);
   const [canWrite, setCanWrite] = useState(false);
+  const [reorderingId, setReorderingId] = useState<string | null>(null);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -111,13 +116,40 @@ export function HappyCustomersStatsList({ locale }: HappyCustomersStatsListProps
     setDeletingId(stat.id);
     try {
       await getApiClient().deleteHappyCustomersStat(stat.id);
+      toast({ variant: 'success', message: tToast('deleted') });
       await load();
-    } catch {
-      /* reload at next load */
+    } catch (error) {
+      toast({ variant: 'error', message: getAboutErrorMessage(error) });
     } finally {
       setDeletingId(null);
     }
-  }, [confirmTarget, load]);
+  }, [confirmTarget, getAboutErrorMessage, load, tToast, toast]);
+
+  const handleMove = useCallback(
+    async (stat: HappyCustomersStat, direction: 'up' | 'down') => {
+      if (state.status !== 'ready') return;
+      const sorted = [...state.stats].sort((a, b) => a.sortOrder - b.sortOrder);
+      const index = sorted.findIndex((row) => row.id === stat.id);
+      const neighborIndex = direction === 'up' ? index - 1 : index + 1;
+      if (index < 0 || neighborIndex < 0 || neighborIndex >= sorted.length) return;
+
+      const neighbor = sorted[neighborIndex];
+      setReorderingId(stat.id);
+      try {
+        const client = getApiClient();
+        await Promise.all([
+          client.updateHappyCustomersStat(stat.id, { sortOrder: neighbor.sortOrder }),
+          client.updateHappyCustomersStat(neighbor.id, { sortOrder: stat.sortOrder }),
+        ]);
+        await load();
+      } catch (error) {
+        toast({ variant: 'error', message: getAboutErrorMessage(error) });
+      } finally {
+        setReorderingId(null);
+      }
+    },
+    [getAboutErrorMessage, load, state, toast],
+  );
 
   const columns = useMemo<ColumnDef<HappyCustomersStat, unknown>[]>(
     () => [
@@ -150,9 +182,47 @@ export function HappyCustomersStatsList({ locale }: HappyCustomersStatsListProps
         id: 'sortOrder',
         header: t('columns.sortOrder'),
         meta: { align: 'center' },
-        cell: ({ row }) => (
-          <span className="tabular-nums text-sm text-atg-muted">{row.original.sortOrder}</span>
-        ),
+        cell: ({ row }) => {
+          const stats =
+            state.status === 'ready'
+              ? [...state.stats].sort((a, b) => a.sortOrder - b.sortOrder)
+              : [];
+          const index = stats.findIndex((entry) => entry.id === row.original.id);
+          const busy = reorderingId === row.original.id;
+          return (
+            <div className="inline-flex items-center gap-1">
+              {canWrite ? (
+                <button
+                  type="button"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-md text-atg-muted hover:bg-atg-muted/10 hover:text-atg-fg disabled:opacity-40"
+                  aria-label={t('moveUp')}
+                  disabled={busy || index <= 0}
+                  onClick={() => void handleMove(row.original, 'up')}
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                  </svg>
+                </button>
+              ) : null}
+              <span className="min-w-[1.5rem] text-center tabular-nums text-sm text-atg-muted">
+                {row.original.sortOrder}
+              </span>
+              {canWrite ? (
+                <button
+                  type="button"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-md text-atg-muted hover:bg-atg-muted/10 hover:text-atg-fg disabled:opacity-40"
+                  aria-label={t('moveDown')}
+                  disabled={busy || index < 0 || index >= stats.length - 1}
+                  onClick={() => void handleMove(row.original, 'down')}
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+              ) : null}
+            </div>
+          );
+        },
       },
       {
         id: 'status',
@@ -186,7 +256,18 @@ export function HappyCustomersStatsList({ locale }: HappyCustomersStatsListProps
         ),
       },
     ],
-    [canWrite, deletingId, handleDeleteRequest, t, tColors, tCommon, tStatus],
+    [
+      canWrite,
+      deletingId,
+      handleDeleteRequest,
+      handleMove,
+      reorderingId,
+      state,
+      t,
+      tColors,
+      tCommon,
+      tStatus,
+    ],
   );
 
   const stats = state.status === 'ready' ? state.stats : [];
@@ -195,7 +276,9 @@ export function HappyCustomersStatsList({ locale }: HappyCustomersStatsListProps
     <>
       <AlertDialog
         open={!!confirmTarget}
-        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        onOpenChange={(open) => {
+          if (!open) setConfirmTarget(null);
+        }}
         title={t('deleteTitle')}
         description={confirmTarget ? t('deleteConfirm', { label: confirmTarget.label }) : ''}
         confirmLabel={t('deleteConfirmButton')}
@@ -204,68 +287,85 @@ export function HappyCustomersStatsList({ locale }: HappyCustomersStatsListProps
         loading={!!deletingId}
         onConfirm={() => void handleDeleteConfirm()}
       />
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
+      <div className="space-y-4">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-semibold text-atg-fg">{t('heading')}</h2>
+            <p className="mt-0.5 text-sm text-atg-muted">{t('description')}</p>
+          </div>
+          {canWrite ? (
+            <Button href={`/contenu/clients-satisfaits/nouveau?locale=${encodeURIComponent(locale)}`}>
+              {t('newButton')}
+            </Button>
+          ) : null}
+        </div>
+
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
           <div className="flex-1 sm:max-w-md">
+            <label htmlFor={searchId} className="mb-1 block text-xs font-medium text-atg-muted">
+              {t('searchLabel')}
+            </label>
             <Input
+              id={searchId}
               type="search"
               placeholder={t('searchPlaceholder')}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
             />
           </div>
-          <select
-            id={statusFilterId}
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value as '' | HappyCustomersStatus);
-              setPage(1);
-              setFilterTick((n) => n + 1);
-            }}
-            className="rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
-          >
-            <option value="">{tCommon('filters.all')}</option>
-            <option value="draft">{tStatus('draft')}</option>
-            <option value="published">{tStatus('published')}</option>
-          </select>
+          <div>
+            <label
+              htmlFor={statusFilterId}
+              className="mb-1 block text-xs font-medium text-atg-muted"
+            >
+              {t('statusFilter')}
+            </label>
+            <select
+              id={statusFilterId}
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value as '' | HappyCustomersStatus);
+                setPage(1);
+                setFilterTick((n) => n + 1);
+              }}
+              className="rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
+            >
+              <option value="">{t('allStatuses')}</option>
+              <option value="draft">{tStatus('draft')}</option>
+              <option value="published">{tStatus('published')}</option>
+            </select>
+          </div>
         </div>
 
-        {canWrite ? (
-          <Button href={`/contenu/clients-satisfaits/nouveau?locale=${encodeURIComponent(locale)}`}>
-            {t('newButton')}
-          </Button>
-        ) : null}
+        {state.status === 'error' ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {state.message}
+          </p>
+        ) : (
+          <>
+            <Card variant="dashboard" padding="none" className="overflow-hidden">
+              <DataTable
+                columns={columns}
+                data={stats}
+                isLoading={state.status === 'loading'}
+                emptyMessage={search ? t('emptySearch') : t('emptyDefault')}
+                getRowId={(row) => row.id}
+                aria-label={t('tableAria')}
+              />
+            </Card>
+            {state.status === 'ready' ? (
+              <DataTablePagination
+                page={page}
+                pageSize={PAGE_SIZE}
+                totalPages={state.totalPages}
+                totalItems={state.total}
+                itemLabel={t('paginationItem')}
+                onPageChange={setPage}
+              />
+            ) : null}
+          </>
+        )}
       </div>
-
-      {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {state.message}
-        </p>
-      ) : (
-        <>
-          <Card variant="dashboard" padding="none" className="overflow-hidden">
-            <DataTable
-              columns={columns}
-              data={stats}
-              isLoading={state.status === 'loading'}
-              emptyMessage={search ? t('emptySearch') : t('emptyDefault')}
-              getRowId={(row) => row.id}
-            />
-          </Card>
-          {state.status === 'ready' ? (
-            <DataTablePagination
-              page={page}
-              pageSize={PAGE_SIZE}
-              totalPages={state.totalPages}
-              totalItems={state.total}
-              itemLabel={t('paginationItem')}
-              onPageChange={setPage}
-            />
-          ) : null}
-        </>
-      )}
-    </div>
     </>
   );
 }
