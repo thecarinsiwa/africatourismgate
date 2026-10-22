@@ -65,12 +65,12 @@ export function AnnouncementBannerPreview({
       className={`overflow-hidden rounded-lg border border-atg-border ${ANNOUNCEMENT_BANNER_PREVIEW_CLASSES[color][intensity]}`}
     >
       <div className="flex items-center gap-2 px-4 py-2">
-        <p className="min-w-0 flex-1 text-center text-xs font-medium leading-snug sm:text-sm">
+        <p className="min-w-0 flex-1 truncate text-center text-xs font-medium leading-none sm:text-sm">
           {trimmed ? (
             <>
-              <span>{trimmed}</span>
+              <span className="whitespace-nowrap">{trimmed}</span>
               {ctaLabel?.trim() ? (
-                <span className="ml-2 font-semibold underline underline-offset-2">
+                <span className="ml-2 whitespace-nowrap font-semibold underline underline-offset-2">
                   {ctaLabel.trim()}
                 </span>
               ) : null}

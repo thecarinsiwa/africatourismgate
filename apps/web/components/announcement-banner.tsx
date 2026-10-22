@@ -119,7 +119,7 @@ export function AnnouncementBanner({
 
   const theme = ANNOUNCEMENT_BANNER_THEMES[themeColor][intensity];
   const showCta = Boolean(ctaLabel && ctaUrl);
-  const ctaClass = `ml-2 inline-block font-semibold underline underline-offset-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-1 rounded-sm ${theme.cta}`;
+  const ctaClass = `ml-2 inline-block whitespace-nowrap font-semibold underline underline-offset-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-1 rounded-sm ${theme.cta}`;
   const ctaContent = (
     <>
       {ctaLabel}
@@ -136,8 +136,8 @@ export function AnnouncementBanner({
       className={`banner--${themeColor}-${intensity} ${theme.container}`}
     >
       <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-2 sm:px-6 lg:px-8">
-        <p className="min-w-0 flex-1 text-center text-xs font-medium leading-snug sm:text-sm">
-          <span>{text}</span>
+        <p className="min-w-0 flex-1 truncate text-center text-xs font-medium leading-none sm:text-sm">
+          <span className="whitespace-nowrap">{text}</span>
           {showCta ? (
             ctaUrl!.startsWith('/') && !ctaNewTab ? (
               <Link href={ctaUrl!} className={ctaClass}>
