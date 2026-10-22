@@ -12,6 +12,11 @@
     "enableLight": "Enable light mode",
     "enableDark": "Enable dark mode"
   },
+  "announcement": {
+    "regionLabel": "Announcement",
+    "dismiss": "Dismiss announcement",
+    "opensInNewTab": "opens in a new tab"
+  },
   "connectionLock": {
     "title": "Connection interrupted",
     "subtitle": "Could not reach the server. Check your network connection.",

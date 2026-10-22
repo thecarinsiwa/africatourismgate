@@ -19,6 +19,7 @@ import {
   type ResolvedWebPaymentMethods,
 } from '@africatourismgate/types/organization-settings';
 import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
+import { AnnouncementBannerProvider } from '../components/announcement-banner-provider';
 import { BrandingProvider } from '../components/branding-provider';
 import { BookingModesProvider } from '../components/booking-modes-provider';
 import { CatalogProductsProvider } from '../components/catalog-products-provider';
@@ -29,6 +30,7 @@ import { Providers } from '../components/providers';
 import { SiteSearchProvider } from '../components/site-search/site-search-navigator';
 import { getPublicDonationsForLocale } from '../lib/api/public-donations';
 import { getPublicCatalogProducts } from '../lib/catalog/products';
+import { getPublicAnnouncementBanner } from '../lib/site/announcement-banner';
 import {
   buildLanguageAlternates,
   openGraphLocale,
@@ -243,6 +245,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const bookingModes = await getPublicBookingModes();
   const paymentMethods = await getPublicPaymentMethods();
   const catalogProducts = await getPublicCatalogProducts();
+  const announcementBanner = await getPublicAnnouncementBanner(locale);
   const donations = await getPublicDonationsForLocale(locale, 'web').catch(() => null);
   const themeStyle = {
     '--atg-primary': branding.primaryColor,
@@ -284,11 +287,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <BookingModesProvider modes={bookingModes}>
                   <PaymentMethodsProvider methods={paymentMethods}>
                     <CatalogProductsProvider products={catalogProducts}>
-                      <Providers>
-                        <SiteSearchProvider>
-                          <AppShell>{children}</AppShell>
-                        </SiteSearchProvider>
-                      </Providers>
+                      <AnnouncementBannerProvider banner={announcementBanner}>
+                        <Providers>
+                          <SiteSearchProvider>
+                            <AppShell>{children}</AppShell>
+                          </SiteSearchProvider>
+                        </Providers>
+                      </AnnouncementBannerProvider>
                     </CatalogProductsProvider>
                   </PaymentMethodsProvider>
                 </BookingModesProvider>

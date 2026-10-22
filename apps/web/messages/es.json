@@ -12,6 +12,11 @@
     "enableLight": "Activar modo claro",
     "enableDark": "Activar modo oscuro"
   },
+  "announcement": {
+    "regionLabel": "Anuncio",
+    "dismiss": "Cerrar anuncio",
+    "opensInNewTab": "se abre en una nueva pestaña"
+  },
   "connectionLock": {
     "title": "Conexión interrumpida",
     "subtitle": "No se pudo contactar con el servidor. Compruebe su conexión de red.",
