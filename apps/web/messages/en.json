@@ -908,7 +908,10 @@
     "notFoundDescription": "This partner does not exist or is no longer available.",
     "backToPartners": "Back to partners",
     "seeAll": "See all",
-    "resultItem": "partner"
+    "resultItem": "partner",
+    "offeredBy": "Activities offered by",
+    "sortRating": "Top rated",
+    "ratingSummary": "{rating}/5 · {count, plural, one {# review} other {# reviews}}"
   },
   "gapImpact": {
     "title": "Our impact",

@@ -908,7 +908,10 @@
     "notFoundDescription": "Este socio no existe o ya no está disponible.",
     "backToPartners": "Volver a socios",
     "seeAll": "Ver todos",
-    "resultItem": "socio"
+    "resultItem": "socio",
+    "offeredBy": "Actividades ofrecidas por",
+    "sortRating": "Mejor valoradas",
+    "ratingSummary": "{rating}/5 · {count, plural, one {# reseña} other {# reseñas}}"
   },
   "gapImpact": {
     "title": "Nuestro impacto",
