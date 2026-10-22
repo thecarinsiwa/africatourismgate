@@ -24,6 +24,8 @@ export type ListingSortBarProps = {
   sortOptions: ListingSortOption[];
   onSortChange: (value: string) => void;
   disabled?: boolean;
+  /** Contrôles additionnels à côté du tri (ex. bascule de vue). */
+  actions?: ReactNode;
 };
 
 /** Barre sticky : compteur résultats + tri (pattern hôtels). */
@@ -35,7 +37,25 @@ export function ListingSortBar({
   sortOptions,
   onSortChange,
   disabled,
+  actions,
 }: ListingSortBarProps) {
+  const sortControl = (
+    <label className="flex items-center gap-2">
+      <span className="text-sm font-medium text-atg-muted">{sortLabel}</span>
+      <select
+        value={sortValue}
+        onChange={(event) => onSortChange(event.target.value)}
+        disabled={disabled}
+        className={sortSelectClass}
+      >
+        {sortOptions.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
   return (
     <div className="sticky top-[var(--atg-header-h,7.5rem)] z-30 border-b border-atg-border bg-atg-elevated/95 shadow-sm backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95">
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
@@ -43,21 +63,14 @@ export function ListingSortBar({
           <p className="text-sm text-atg-muted">{resultsLine}</p>
           <p className="text-lg font-bold text-atg-fg">{countLine}</p>
         </div>
-        <label className="flex items-center gap-2">
-          <span className="text-sm font-medium text-atg-muted">{sortLabel}</span>
-          <select
-            value={sortValue}
-            onChange={(event) => onSortChange(event.target.value)}
-            disabled={disabled}
-            className={sortSelectClass}
-          >
-            {sortOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        {actions ? (
+          <div className="flex flex-wrap items-center gap-3">
+            {sortControl}
+            {actions}
+          </div>
+        ) : (
+          sortControl
+        )}
       </div>
     </div>
   );

@@ -24,7 +24,7 @@ import type {
   PublicWhyUsListQuery,
   PublicHappyCustomersContent,
   PublicHappyCustomersListQuery,
-  PublicActivityProvider,
+  PublicActivityProviderListItem,
   PublicActivityProviderDetail,
   PublicHeroSlide,
   PublicHeroSlidesListQuery,
@@ -190,8 +190,8 @@ export async function listActivityDestinations(): Promise<PublicDestination[]> {
   return fetchPublic<PublicDestination[]>('/public/activities/destinations');
 }
 
-export async function listPublicActivityProviders(): Promise<PublicActivityProvider[]> {
-  return fetchPublic<PublicActivityProvider[]>('/public/activity-providers');
+export async function listPublicActivityProviders(): Promise<PublicActivityProviderListItem[]> {
+  return fetchPublic<PublicActivityProviderListItem[]>('/public/activity-providers');
 }
 
 export async function getPublicActivityProvider(

@@ -216,6 +216,7 @@ export type {
   PublicActivityListItem,
   PublicActivityProvider,
   PublicActivityProviderDetail,
+  PublicActivityProviderListItem,
   UpdateActivityProviderRequest,
   UpdateActivityImageRequest,
   UpdateActivityDescriptionAssetRequest,
