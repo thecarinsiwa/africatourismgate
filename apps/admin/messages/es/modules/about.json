@@ -10,40 +10,112 @@
   },
   "stats": {
     "pages": {
-      "total": { "label": "Páginas", "subtitle": "Páginas institucionales" },
-      "published": { "label": "Publicadas", "subtitle": "Visibles en el sitio" },
-      "draft": { "label": "Borradores", "subtitle": "No publicadas" },
-      "french": { "label": "En francés", "subtitle": "Contenido locale FR" }
+      "total": {
+        "label": "Páginas",
+        "subtitle": "Páginas institucionales"
+      },
+      "published": {
+        "label": "Publicadas",
+        "subtitle": "Visibles en el sitio"
+      },
+      "draft": {
+        "label": "Borradores",
+        "subtitle": "No publicadas"
+      },
+      "french": {
+        "label": "En francés",
+        "subtitle": "Contenido locale FR"
+      }
     },
     "resources": {
-      "total": { "label": "Recursos", "subtitle": "Documentos y medios" },
-      "published": { "label": "Publicados", "subtitle": "Visibles en el sitio" },
-      "draft": { "label": "Borradores", "subtitle": "No publicados" },
-      "french": { "label": "En francés", "subtitle": "Contenido locale FR" }
+      "total": {
+        "label": "Recursos",
+        "subtitle": "Documentos y medios"
+      },
+      "published": {
+        "label": "Publicados",
+        "subtitle": "Visibles en el sitio"
+      },
+      "draft": {
+        "label": "Borradores",
+        "subtitle": "No publicados"
+      },
+      "french": {
+        "label": "En francés",
+        "subtitle": "Contenido locale FR"
+      }
     },
     "team": {
-      "total": { "label": "Miembros", "subtitle": "Equipo mostrado" },
-      "published": { "label": "Publicados", "subtitle": "Visibles en el sitio" },
-      "draft": { "label": "Borradores", "subtitle": "No publicados" },
-      "french": { "label": "En francés", "subtitle": "Perfiles locale FR" }
+      "total": {
+        "label": "Miembros",
+        "subtitle": "Equipo mostrado"
+      },
+      "published": {
+        "label": "Publicados",
+        "subtitle": "Visibles en el sitio"
+      },
+      "draft": {
+        "label": "Borradores",
+        "subtitle": "No publicados"
+      },
+      "french": {
+        "label": "En francés",
+        "subtitle": "Perfiles locale FR"
+      }
     },
     "timeline": {
-      "total": { "label": "Hitos", "subtitle": "Línea de tiempo" },
-      "published": { "label": "Publicados", "subtitle": "Visibles en el sitio" },
-      "draft": { "label": "Borradores", "subtitle": "No publicados" },
-      "french": { "label": "En francés", "subtitle": "Entradas locale FR" }
+      "total": {
+        "label": "Hitos",
+        "subtitle": "Línea de tiempo"
+      },
+      "published": {
+        "label": "Publicados",
+        "subtitle": "Visibles en el sitio"
+      },
+      "draft": {
+        "label": "Borradores",
+        "subtitle": "No publicados"
+      },
+      "french": {
+        "label": "En francés",
+        "subtitle": "Entradas locale FR"
+      }
     },
     "whyUs": {
-      "total": { "label": "Tarjetas", "subtitle": "Argumentos « Por qué nosotros »" },
-      "published": { "label": "Publicadas", "subtitle": "Visibles en el sitio" },
-      "draft": { "label": "Borradores", "subtitle": "No publicadas" },
-      "french": { "label": "En francés", "subtitle": "Tarjetas locale FR" }
+      "total": {
+        "label": "Tarjetas",
+        "subtitle": "Argumentos « Por qué nosotros »"
+      },
+      "published": {
+        "label": "Publicadas",
+        "subtitle": "Visibles en el sitio"
+      },
+      "draft": {
+        "label": "Borradores",
+        "subtitle": "No publicadas"
+      },
+      "french": {
+        "label": "En francés",
+        "subtitle": "Tarjetas locale FR"
+      }
     },
     "happyCustomers": {
-      "total": { "label": "Estadísticas", "subtitle": "Indicadores de satisfacción" },
-      "published": { "label": "Publicadas", "subtitle": "Visibles en el sitio" },
-      "draft": { "label": "Borradores", "subtitle": "No publicadas" },
-      "french": { "label": "En francés", "subtitle": "Stats locale FR" }
+      "total": {
+        "label": "Estadísticas",
+        "subtitle": "Indicadores de satisfacción"
+      },
+      "published": {
+        "label": "Publicadas",
+        "subtitle": "Visibles en el sitio"
+      },
+      "draft": {
+        "label": "Borradores",
+        "subtitle": "No publicadas"
+      },
+      "french": {
+        "label": "En francés",
+        "subtitle": "Stats locale FR"
+      }
     }
   },
   "sections": {
@@ -304,7 +376,11 @@
         "subtitle": "Subtítulo"
       },
       "saving": "Guardando…",
-      "saveButton": "Guardar sección"
+      "saveButton": "Guardar encabezado",
+      "hint": "Título, subtítulo y estado mostrados encima de las tarjetas en la página de inicio. Se guarda por separado de las tarjetas de abajo.",
+      "emptyTitle": "Sin título todavía",
+      "expand": "Editar encabezado",
+      "collapse": "Ocultar encabezado"
     },
     "items": {
       "list": {
@@ -313,7 +389,8 @@
         "deleteConfirmButton": "Eliminar",
         "cancel": "Cancelar",
         "columns": {
-          "title": "Tarjeta",
+          "title": "Título",
+          "description": "Descripción",
           "icon": "Icono",
           "sortOrder": "Orden"
         },
@@ -322,7 +399,14 @@
         "searchPlaceholder": "Buscar por título o descripción…",
         "newButton": "Nueva tarjeta",
         "tableAria": "Lista de tarjetas Por qué elegirnos",
-        "paginationItem": "tarjeta"
+        "paginationItem": "tarjeta",
+        "heading": "Contenido de la sección",
+        "description": "Tarjetas mostradas en el bloque « Por qué elegirnos » de la página de inicio.",
+        "searchLabel": "Búsqueda",
+        "statusFilter": "Filtrar por estado",
+        "allStatuses": "Todos los estados",
+        "moveUp": "Subir",
+        "moveDown": "Bajar"
       },
       "edit": {
         "pageTitle": "Modificar tarjeta"

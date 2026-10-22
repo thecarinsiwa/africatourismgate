@@ -10,40 +10,112 @@
   },
   "stats": {
     "pages": {
-      "total": { "label": "Pages", "subtitle": "Institutional pages" },
-      "published": { "label": "Published", "subtitle": "Visible on the site" },
-      "draft": { "label": "Drafts", "subtitle": "Not published" },
-      "french": { "label": "In French", "subtitle": "FR locale content" }
+      "total": {
+        "label": "Pages",
+        "subtitle": "Institutional pages"
+      },
+      "published": {
+        "label": "Published",
+        "subtitle": "Visible on the site"
+      },
+      "draft": {
+        "label": "Drafts",
+        "subtitle": "Not published"
+      },
+      "french": {
+        "label": "In French",
+        "subtitle": "FR locale content"
+      }
     },
     "resources": {
-      "total": { "label": "Resources", "subtitle": "Documents and media" },
-      "published": { "label": "Published", "subtitle": "Visible on the site" },
-      "draft": { "label": "Drafts", "subtitle": "Not published" },
-      "french": { "label": "In French", "subtitle": "FR locale content" }
+      "total": {
+        "label": "Resources",
+        "subtitle": "Documents and media"
+      },
+      "published": {
+        "label": "Published",
+        "subtitle": "Visible on the site"
+      },
+      "draft": {
+        "label": "Drafts",
+        "subtitle": "Not published"
+      },
+      "french": {
+        "label": "In French",
+        "subtitle": "FR locale content"
+      }
     },
     "team": {
-      "total": { "label": "Members", "subtitle": "Displayed team" },
-      "published": { "label": "Published", "subtitle": "Visible on the site" },
-      "draft": { "label": "Drafts", "subtitle": "Not published" },
-      "french": { "label": "In French", "subtitle": "FR locale profiles" }
+      "total": {
+        "label": "Members",
+        "subtitle": "Displayed team"
+      },
+      "published": {
+        "label": "Published",
+        "subtitle": "Visible on the site"
+      },
+      "draft": {
+        "label": "Drafts",
+        "subtitle": "Not published"
+      },
+      "french": {
+        "label": "In French",
+        "subtitle": "FR locale profiles"
+      }
     },
     "timeline": {
-      "total": { "label": "Milestones", "subtitle": "Timeline entries" },
-      "published": { "label": "Published", "subtitle": "Visible on the site" },
-      "draft": { "label": "Drafts", "subtitle": "Not published" },
-      "french": { "label": "In French", "subtitle": "FR locale entries" }
+      "total": {
+        "label": "Milestones",
+        "subtitle": "Timeline entries"
+      },
+      "published": {
+        "label": "Published",
+        "subtitle": "Visible on the site"
+      },
+      "draft": {
+        "label": "Drafts",
+        "subtitle": "Not published"
+      },
+      "french": {
+        "label": "In French",
+        "subtitle": "FR locale entries"
+      }
     },
     "whyUs": {
-      "total": { "label": "Cards", "subtitle": "Why choose us cards" },
-      "published": { "label": "Published", "subtitle": "Visible on the site" },
-      "draft": { "label": "Drafts", "subtitle": "Not published" },
-      "french": { "label": "In French", "subtitle": "FR locale cards" }
+      "total": {
+        "label": "Cards",
+        "subtitle": "Why choose us cards"
+      },
+      "published": {
+        "label": "Published",
+        "subtitle": "Visible on the site"
+      },
+      "draft": {
+        "label": "Drafts",
+        "subtitle": "Not published"
+      },
+      "french": {
+        "label": "In French",
+        "subtitle": "FR locale cards"
+      }
     },
     "happyCustomers": {
-      "total": { "label": "Statistics", "subtitle": "Satisfaction indicators" },
-      "published": { "label": "Published", "subtitle": "Visible on the site" },
-      "draft": { "label": "Drafts", "subtitle": "Not published" },
-      "french": { "label": "In French", "subtitle": "FR locale stats" }
+      "total": {
+        "label": "Statistics",
+        "subtitle": "Satisfaction indicators"
+      },
+      "published": {
+        "label": "Published",
+        "subtitle": "Visible on the site"
+      },
+      "draft": {
+        "label": "Drafts",
+        "subtitle": "Not published"
+      },
+      "french": {
+        "label": "In French",
+        "subtitle": "FR locale stats"
+      }
     }
   },
   "sections": {
@@ -304,7 +376,11 @@
         "subtitle": "Subtitle"
       },
       "saving": "Saving…",
-      "saveButton": "Save section"
+      "saveButton": "Save header settings",
+      "hint": "Title, subtitle and status shown above the homepage cards. Saved separately from the cards below.",
+      "emptyTitle": "No title yet",
+      "expand": "Edit header",
+      "collapse": "Hide header"
     },
     "items": {
       "list": {
@@ -313,7 +389,8 @@
         "deleteConfirmButton": "Delete",
         "cancel": "Cancel",
         "columns": {
-          "title": "Card",
+          "title": "Title",
+          "description": "Description",
           "icon": "Icon",
           "sortOrder": "Order"
         },
@@ -322,7 +399,14 @@
         "searchPlaceholder": "Search by title or description…",
         "newButton": "New card",
         "tableAria": "Why choose us cards list",
-        "paginationItem": "card"
+        "paginationItem": "card",
+        "heading": "Section content",
+        "description": "Cards displayed in the homepage « Why choose us » block.",
+        "searchLabel": "Search",
+        "statusFilter": "Filter by status",
+        "allStatuses": "All statuses",
+        "moveUp": "Move up",
+        "moveDown": "Move down"
       },
       "edit": {
         "pageTitle": "Edit card"
