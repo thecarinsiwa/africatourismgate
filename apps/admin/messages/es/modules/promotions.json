@@ -75,12 +75,18 @@
     "defaultName": "Nueva campaña",
     "ariaLabel": "Vista previa de la promoción {name}",
     "badge": "Promoción",
-    "usage": "Usos: {usage}"
+    "usage": "Usos: {usage}",
+    "target": "Audiencia: {target}"
   },
   "form": {
     "sections": {
       "campaign": "Campaña",
-      "campaignHint": "Título y texto visibles en los banners de marketing.",
+      "campaignHint": "Nombre y texto visibles en los banners de marketing.",
+      "target": "Audiencia y aplicabilidad",
+      "targetHint": "Quién ve o puede beneficiarse de esta campaña.",
+      "targetAllHint": "Campaña visible para todos los visitantes y clientes.",
+      "promoCode": "Código promocional (checkout)",
+      "promoCodeHint": "Los códigos introducidos en el checkout se gestionan por separado. Genere una sugerencia y cree el código vinculado.",
       "discount": "Descuento",
       "discountHint": "Opcional — déjelo desactivado para una campaña informativa.",
       "discountOff": "Sin descuento en el checkout: la campaña permanece puramente informativa.",
@@ -89,23 +95,34 @@
       "publication": "Publicación",
       "publicationHint": "Controla la visibilidad de la campaña para los clientes.",
       "preview": "Vista previa en vivo",
-      "previewHint": "Se actualiza al escribir — vista previa del renderizado de la campaña."
+      "previewHint": "Permanece visible al desplazarse — se actualiza al escribir."
     },
     "info": {
       "codesVsPromotions": "Los códigos promocionales los introduce el cliente en el checkout. Las promociones son campañas visibles (banners, páginas) — el descuento puede ser opcional.",
-      "managePromoCodesLink": "Gestionar códigos promocionales",
-      "targetHint": "Objetivo producto / destino (opcional, para visualización de marketing)."
+      "managePromoCodesLink": "Gestionar códigos promocionales"
+    },
+    "actions": {
+      "generateCode": "Generar",
+      "createPromoCode": "Crear este código promocional"
     },
     "validation": {
-      "nameRequired": "El título es obligatorio.",
+      "nameRequired": "El nombre de la promoción es obligatorio.",
       "discountPositive": "El valor debe ser positivo.",
       "percentMax": "El porcentaje no puede superar 100.",
       "endAfterStart": "La fecha de fin debe ser posterior a la de inicio.",
-      "maxRedemptionsInvalid": "Número máximo de usos no válido (entero ≥ 1)."
+      "maxRedemptionsInvalid": "Número máximo de usos no válido (entero ≥ 1).",
+      "targetDetailsRequired": "Indique los productos o destinos objetivo."
     },
     "fields": {
-      "name": "Título de la campaña",
+      "name": "Nombre de la promoción",
       "descriptionPlaceholder": "P. ej. −20 % en alojamientos…",
+      "targetAudience": "Audiencia objetivo",
+      "targetAudienceAll": "Todos los usuarios",
+      "targetAudienceNewUsers": "Nuevos usuarios",
+      "targetAudienceSpecific": "Productos / destinos específicos",
+      "targetDetails": "Productos o destinos",
+      "targetDetailsPlaceholder": "P. ej. paquetes Kenia, hoteles 4★, vuelos DLA–CDG…",
+      "suggestedCode": "Código promocional sugerido",
       "hasDiscount": "Aplicar un descuento en el checkout",
       "discountType": "Tipo de descuento",
       "discountTypePercent": "Porcentaje (%)",
@@ -118,6 +135,8 @@
       "active": "Campaña activa"
     },
     "hints": {
+      "name": "Se muestra como título de la campaña en la vista previa y en el sitio.",
+      "suggestedCode": "No se guarda con la promoción — sirve para crear un código promocional distinto.",
       "discountPercent": "Porcentaje (p. ej. 15 para −15 %).",
       "discountFixed": "Importe fijo en unidades monetarias (p. ej. 10 para −10 USD).",
       "maxRedemptions": "Dejar vacío para usos ilimitados."

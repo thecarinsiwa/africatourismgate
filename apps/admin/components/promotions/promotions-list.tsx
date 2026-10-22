@@ -31,6 +31,7 @@ import {
 } from '../../lib/i18n/use-module-labels';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import { useHydrated } from '../../lib/i18n/use-hydrated';
+import { displayPromotionDescription } from '../../lib/promotions-target-meta';
 import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import {
   formatPromotionDiscountBadge,
@@ -199,7 +200,7 @@ export function PromotionsList({ listFilter, onListFilterChange }: PromotionsLis
         header: t('columns.campaign'),
         cell: ({ row }) => {
           const promo = row.original;
-          const description = promo.description?.trim();
+          const description = displayPromotionDescription(promo.description);
           return (
             <div className="min-w-0 max-w-md">
               <span className="block truncate font-medium text-atg-fg">{promo.name}</span>
@@ -354,7 +355,7 @@ export function PromotionsList({ listFilter, onListFilterChange }: PromotionsLis
         },
         {
           header: t('columns.description'),
-          value: (row) => row.description?.trim() || emptyDash,
+          value: (row) => displayPromotionDescription(row.description) || emptyDash,
         },
         {
           header: t('columns.discount'),
