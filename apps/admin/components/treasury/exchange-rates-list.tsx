@@ -26,6 +26,7 @@ import {
 } from '../../lib/treasury/currency-options';
 import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
 import { useOrganizationCurrency } from '../../lib/treasury/use-organization-currency';
+import { useDefaultCurrency } from '../organization-currency-provider';
 import { PermissionGate } from '../permission-gate';
 
 const PAGE_SIZE = 20;
@@ -85,6 +86,7 @@ export function ExchangeRatesList() {
   const toCurrencyTouchedRef = useRef(false);
   const prevOrgIdRef = useRef(organizationId);
   const orgCurrency = useOrganizationCurrency(organizationId || undefined);
+  const defaultCurrency = useDefaultCurrency();
 
   const commonErrorMessages = useMemo(
     () => ({
@@ -225,9 +227,11 @@ export function ExchangeRatesList() {
   const openCreate = () => {
     setEditing(null);
     toCurrencyTouchedRef.current = false;
+    const nextToCurrency = orgCurrency ?? defaultCurrency;
     setForm({
       ...EMPTY_FORM,
-      toCurrency: orgCurrency ?? FALLBACK_TREASURY_CURRENCY,
+      fromCurrency: nextToCurrency === 'EUR' ? 'USD' : 'EUR',
+      toCurrency: nextToCurrency,
       effectiveOn: new Date().toISOString().slice(0, 10),
     });
     setFormError(null);

@@ -10,13 +10,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { resolveUnknownApiError } from '../../lib/common-api-errors';
 import { formatMoney } from '../../lib/format-money';
+import { useOrganizationCurrency } from '../../lib/treasury/use-organization-currency';
+import { useDefaultCurrency } from '../organization-currency-provider';
 import {
   AccountingBooksFilters,
   EMPTY_ACCOUNTING_BOOKS_FILTERS,
   type AccountingBooksFilterValues,
 } from './accounting-books-filters';
-
-const DEFAULT_CURRENCY = 'XOF';
 
 type Kind = 'balance_sheet' | 'income_statement';
 
@@ -39,6 +39,9 @@ export function AccountingFinancialStatementPanel({ kind }: Props) {
   const [filters, setFilters] = useState<AccountingBooksFilterValues>(
     EMPTY_ACCOUNTING_BOOKS_FILTERS,
   );
+  const defaultCurrency = useDefaultCurrency();
+  const orgCurrency =
+    useOrganizationCurrency(filters.organizationId || undefined) ?? defaultCurrency;
   const [canRead, setCanRead] = useState(true);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -108,9 +111,7 @@ export function AccountingFinancialStatementPanel({ kind }: Props) {
   }, [load]);
 
   const currency =
-    state.status === 'ready'
-      ? (state.statement.currency ?? DEFAULT_CURRENCY)
-      : DEFAULT_CURRENCY;
+    (state.status === 'ready' ? state.statement.currency : null) ?? orgCurrency;
 
   const rowColumns = useMemo<ColumnDef<AccountingBalanceRow>[]>(
     () => [

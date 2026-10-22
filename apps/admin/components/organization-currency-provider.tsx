@@ -35,7 +35,9 @@ const OrganizationCurrencyContext =
  * `GET /organizations/:id` may require `organizations.read`; regular users fall back
  * to `/auth/me/organizations`, which always includes their own organization.
  */
-async function fetchOrganizationCurrency(organizationId: string): Promise<string | null> {
+export async function fetchOrganizationCurrency(
+  organizationId: string,
+): Promise<string | null> {
   const client = getApiClient();
   try {
     const org = await client.getOrganization(organizationId);

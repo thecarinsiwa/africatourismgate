@@ -15,6 +15,8 @@ import { resolveUnknownApiError } from '../../lib/common-api-errors';
 import { formatMoney } from '../../lib/format-money';
 import { useFormatDateTime } from '../../lib/i18n/use-module-labels';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { useOrganizationCurrency } from '../../lib/treasury/use-organization-currency';
+import { useDefaultCurrency } from '../organization-currency-provider';
 import {
   AccountingBooksFilters,
   EMPTY_ACCOUNTING_BOOKS_FILTERS,
@@ -22,7 +24,6 @@ import {
 } from './accounting-books-filters';
 
 const PAGE_SIZE = 50;
-const DEFAULT_CURRENCY = 'XOF';
 
 type GeneralLedgerListProps = {
   initialAccountId?: string;
@@ -49,6 +50,10 @@ export function GeneralLedgerList({
     accountId: initialAccountId,
   }));
 
+  const defaultCurrency = useDefaultCurrency();
+  const currency =
+    useOrganizationCurrency(filters.organizationId || undefined) ?? defaultCurrency;
+
   useEffect(() => {
     if (!initialAccountId) return;
     setFilters((prev) =>
@@ -67,7 +72,6 @@ export function GeneralLedgerList({
         lines: JournalLine[];
         total: number;
         totalPages: number;
-        currency: string;
       }
   >({ status: 'idle' });
 
@@ -127,7 +131,6 @@ export function GeneralLedgerList({
         lines: result.data,
         total: result.meta.total,
         totalPages: result.meta.totalPages,
-        currency: DEFAULT_CURRENCY,
       });
     } catch (error) {
       setState({
@@ -187,7 +190,7 @@ export function GeneralLedgerList({
         align: 'right',
         cell: ({ row }) =>
           row.original.debitCents > 0
-            ? formatMoney(row.original.debitCents, DEFAULT_CURRENCY)
+            ? formatMoney(row.original.debitCents, currency)
             : emptyDash,
       },
       {
@@ -196,11 +199,11 @@ export function GeneralLedgerList({
         align: 'right',
         cell: ({ row }) =>
           row.original.creditCents > 0
-            ? formatMoney(row.original.creditCents, DEFAULT_CURRENCY)
+            ? formatMoney(row.original.creditCents, currency)
             : emptyDash,
       },
     ],
-    [tColumns, formatDate, emptyDash],
+    [currency, tColumns, formatDate, emptyDash],
   );
 
   if (!canRead && state.status === 'error') {
