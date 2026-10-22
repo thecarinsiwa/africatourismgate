@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Input, SearchableSelect } from '@africatourismgate/ui';
+import { Button, Input, SearchableSelect, Select } from '@africatourismgate/ui';
 import type {
   Activity,
   ActivityDifficultyLevel,
@@ -22,6 +22,9 @@ import {
 import { isRichTextEmpty } from '../../lib/rich-text';
 import { getSession } from '../../lib/auth/session';
 import { useActivityDifficultyOptions } from '../../lib/i18n/use-module-labels';
+import { FALLBACK_TREASURY_CURRENCY } from '../../lib/treasury/currency-options';
+import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
+import { useDefaultCurrencyField } from '../../lib/use-default-currency-field';
 import { CoordinatePickerMap } from '../maps/coordinate-picker-map';
 
 export type ActivityFormValues = {
@@ -43,7 +46,7 @@ const defaultValues: ActivityFormValues = {
   durationMinutes: '',
   difficultyLevel: '',
   priceCents: '',
-  currency: 'USD',
+  currency: FALLBACK_TREASURY_CURRENCY,
   latitude: '',
   longitude: '',
 };
@@ -136,6 +139,14 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
   >({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const { markTouched: markCurrencyTouched } = useDefaultCurrencyField(
+    mode === 'create' && !initialActivity,
+    (currency) =>
+      setValues((prev) => (prev.currency === currency ? prev : { ...prev, currency })),
+  );
+  const { options: currencyOptions } = useActiveCurrencies({
+    extraCodes: [values.currency, initialActivity?.currency],
+  });
 
   useEffect(() => {
     void getApiClient()
@@ -337,12 +348,15 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
           onChange={(e) => updateField('priceCents', e.target.value)}
           error={fieldErrors.priceCents}
         />
-        <Input
+        <Select
           label={tCommonForm('currency')}
           value={values.currency}
-          onChange={(e) => updateField('currency', e.target.value)}
+          options={currencyOptions}
+          onChange={(e) => {
+            markCurrencyTouched();
+            updateField('currency', e.target.value);
+          }}
           error={fieldErrors.currency}
-          maxLength={3}
         />
       </div>
 

@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Card, Input, SearchableSelect } from '@africatourismgate/ui';
+import { Button, Card, Input, SearchableSelect, Select } from '@africatourismgate/ui';
 import type {
   CreateVehicleRequest,
   RentalAgency,
@@ -13,6 +13,9 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { FALLBACK_TREASURY_CURRENCY } from '../../lib/treasury/currency-options';
+import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
+import { useDefaultCurrencyField } from '../../lib/use-default-currency-field';
 
 export type VehicleFormValues = {
   agencyId: string;
@@ -27,7 +30,7 @@ const defaultValues: VehicleFormValues = {
   categoryId: '',
   licensePlate: '',
   dailyPriceCents: '',
-  currency: 'USD',
+  currency: FALLBACK_TREASURY_CURRENCY,
 };
 
 function vehicleToFormValues(vehicle: Vehicle): VehicleFormValues {
@@ -82,6 +85,14 @@ export function VehicleForm({
   >({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const { markTouched: markCurrencyTouched } = useDefaultCurrencyField(
+    mode === 'create' && !initialVehicle,
+    (currency) =>
+      setValues((prev) => (prev.currency === currency ? prev : { ...prev, currency })),
+  );
+  const { options: currencyOptions } = useActiveCurrencies({
+    extraCodes: [values.currency, initialVehicle?.currency],
+  });
 
   useEffect(() => {
     void Promise.all([
@@ -209,11 +220,14 @@ export function VehicleForm({
           onChange={(e) => updateField('dailyPriceCents', e.target.value)}
           error={fieldErrors.dailyPriceCents}
         />
-        <Input
+        <Select
           label={tCommon('form.currency')}
-          maxLength={3}
           value={values.currency}
-          onChange={(e) => updateField('currency', e.target.value.toUpperCase())}
+          options={currencyOptions}
+          onChange={(e) => {
+            markCurrencyTouched();
+            updateField('currency', e.target.value);
+          }}
           error={fieldErrors.currency}
         />
       </div>

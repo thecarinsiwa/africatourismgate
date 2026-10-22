@@ -10,13 +10,16 @@ import {
   DataTableActions,
   Input,
   Modal,
+  Select,
 } from '@africatourismgate/ui';
 import type { Cabin } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 
 import { getApiClient } from '../../lib/auth/api';
+import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
 import { useFormatMoney } from '../../lib/use-format-money';
+import { useDefaultCurrency } from '../organization-currency-provider';
 
 type FormValues = {
   categoryName: string;
@@ -28,7 +31,7 @@ const emptyForm: FormValues = {
   categoryName: '',
   maxGuests: '',
   basePriceCents: '',
-  currency: 'USD',
+  currency: '',
 };
 
 type CabinsSectionProps = { shipId: string; embedded?: boolean };
@@ -41,6 +44,7 @@ export function CabinsSection({ shipId, embedded = false }: CabinsSectionProps) 
   const tActions = useTranslations('common.actions');
   const tLoading = useTranslations('common.loading');
   const formatPrice = useFormatMoney();
+  const defaultCurrency = useDefaultCurrency();
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -53,6 +57,9 @@ export function CabinsSection({ shipId, embedded = false }: CabinsSectionProps) 
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<Cabin | null>(null);
+  const { options: currencyOptions } = useActiveCurrencies({
+    extraCodes: [formValues.currency, editing?.currency],
+  });
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -77,7 +84,7 @@ export function CabinsSection({ shipId, embedded = false }: CabinsSectionProps) 
 
   function openCreate() {
     setEditing(null);
-    setFormValues(emptyForm);
+    setFormValues({ ...emptyForm, currency: defaultCurrency });
     setFormError(null);
     setShowForm(true);
   }
@@ -113,7 +120,7 @@ export function CabinsSection({ shipId, embedded = false }: CabinsSectionProps) 
         categoryName: formValues.categoryName.trim(),
         maxGuests: guests,
         basePriceCents: cents,
-        currency: formValues.currency.trim().toUpperCase() || 'USD',
+        currency: formValues.currency.trim().toUpperCase() || defaultCurrency,
       };
       if (editing) {
         await getApiClient().updateCabin(editing.id, body);
@@ -215,11 +222,11 @@ export function CabinsSection({ shipId, embedded = false }: CabinsSectionProps) 
               required
             />
           </div>
-          <Input
+          <Select
             label={tCommon('form.currency')}
             value={formValues.currency}
+            options={currencyOptions}
             onChange={(e) => setFormValues((p) => ({ ...p, currency: e.target.value }))}
-            maxLength={3}
             disabled={submitting}
           />
           <div className="flex justify-end gap-3">

@@ -12,6 +12,7 @@ import {
   DataTableBadge,
   Input,
   Modal,
+  Select,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Room } from '@africatourismgate/types';
@@ -21,6 +22,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
 import { formatMoney } from '../../lib/format-money';
+import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
+import { useDefaultCurrency } from '../organization-currency-provider';
 import { RoomViewModal } from './room-view-modal';
 
 type RoomFormValues = {
@@ -44,7 +47,7 @@ const emptyForm: RoomFormValues = {
   maxGuests: '2',
   bedConfig: '',
   basePriceCents: '',
-  currency: 'USD',
+  currency: '',
 };
 
 const ROOM_PHOTO_MAX_COUNT = 10;
@@ -83,6 +86,10 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
   const [confirmTarget, setConfirmTarget] = useState<Room | null>(null);
   const [photosRoom, setPhotosRoom] = useState<Room | null>(null);
   const [pendingPhotos, setPendingPhotos] = useState<PendingPhoto[]>([]);
+  const defaultCurrency = useDefaultCurrency();
+  const { options: currencyOptions } = useActiveCurrencies({
+    extraCodes: [formValues.currency, editing?.currency],
+  });
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -120,7 +127,7 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
   function openCreate() {
     setPhotosRoom(null);
     clearPendingPhotos();
-    setFormValues(emptyForm);
+    setFormValues({ ...emptyForm, currency: defaultCurrency });
     setEditing(null);
     setFormError(null);
     setShowForm(true);
@@ -476,13 +483,11 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
               }
               hint={tForm('centsHint')}
             />
-            <Input
+            <Select
               label={tForm('currency')}
-              maxLength={3}
               value={formValues.currency}
-              onChange={(e) =>
-                setFormValues((p) => ({ ...p, currency: e.target.value.toUpperCase() }))
-              }
+              options={currencyOptions}
+              onChange={(e) => setFormValues((p) => ({ ...p, currency: e.target.value }))}
             />
           </div>
 

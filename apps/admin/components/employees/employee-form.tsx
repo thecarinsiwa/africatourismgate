@@ -3,7 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 import { useEmployeeStatusLabels } from '../../lib/i18n/use-module-labels';
 
-import { Button, Input } from '@africatourismgate/ui';
+import { Button, Input, Select } from '@africatourismgate/ui';
 import type {
   CreateEmployeeRequest,
   Employee,
@@ -14,8 +14,10 @@ import type {
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
+import { useOrganizationCurrency } from '../../lib/treasury/use-organization-currency';
 import { suggestNextEmployeeCode } from '../../lib/employee-code';
 import {
   dayAfter,
@@ -46,7 +48,7 @@ const defaultValues: EmployeeFormValues = {
   hireDate: '',
   terminationDate: '',
   salary: '',
-  currency: 'USD',
+  currency: '',
   managerId: '',
   status: 'active',
 };
@@ -61,7 +63,7 @@ function employeeToFormValues(employee: Employee): EmployeeFormValues {
     hireDate: employee.hireDate ?? '',
     terminationDate: employee.terminationDate ?? '',
     salary: employee.salary ?? '',
-    currency: employee.currency ?? 'USD',
+    currency: employee.currency ?? '',
     managerId: employee.managerId ?? '',
     status: employee.status,
   };
@@ -148,6 +150,22 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
   const [formError, setFormError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const currencyTouchedRef = useRef(false);
+  const orgCurrency = useOrganizationCurrency(
+    mode === 'create' ? values.organizationId : undefined,
+  );
+  const { options: currencyOptions } = useActiveCurrencies({
+    includeEmpty: true,
+    emptyLabel: tForm('currencyNone'),
+    extraCodes: [values.currency, initialEmployee?.currency],
+  });
+
+  useEffect(() => {
+    if (mode !== 'create' || !orgCurrency || currencyTouchedRef.current) return;
+    setValues((prev) =>
+      prev.currency === orgCurrency ? prev : { ...prev, currency: orgCurrency },
+    );
+  }, [mode, orgCurrency]);
 
   useEffect(() => {
     let cancelled = false;
@@ -497,12 +515,15 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
           onChange={(e) => updateField('salary', e.target.value)}
           error={fieldErrors.salary}
         />
-        <Input
+        <Select
           label={tForm('currency')}
           name="currency"
           value={values.currency}
-          onChange={(e) => updateField('currency', e.target.value)}
-          maxLength={3}
+          options={currencyOptions}
+          onChange={(e) => {
+            currencyTouchedRef.current = true;
+            updateField('currency', e.target.value);
+          }}
           hint={tForm('currencyHint')}
         />
       </div>
