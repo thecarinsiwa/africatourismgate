@@ -38,6 +38,17 @@ const HUB_HELP_ARIA =
   /Ouvrir le centre d'aide|Open the Help Center|Abrir el centro de ayuda/i;
 const ARTICLE_COUNT =
   /\d+\s+(article|articles|artículo|artículos)/i;
+const TREASURY_CATEGORY =
+  /Trésorerie & comptabilité|Treasury & accounting|Tesorería y contabilidad/i;
+const TREASURY_OVERVIEW_ARTICLE =
+  /Vue d'ensemble de la trésorerie|Treasury overview|Visión general de la tesorería/i;
+const SYSCOHADA_ARTICLE =
+  /Comptabilité SYSCOHADA|SYSCOHADA accounting|Contabilidad SYSCOHADA/i;
+const FX_RATES_ARTICLE = /^(Taux de change|Exchange rates|Tipos de cambio)$/i;
+const CURRENCIES_ARTICLE =
+  /Devises et devise par défaut|Currencies and default currency|Divisas y divisa predeterminada/i;
+const CURRENCY_CATALOG_LINK =
+  /catalogue des devises|currency catalog|catálogo de divisas/i;
 
 test.describe('Admin help center', () => {
   test.beforeEach(async ({ page }) => {
@@ -314,6 +325,89 @@ test.describe('Admin help center', () => {
     await moduleLink.click();
 
     await expect(page).toHaveURL(/\/utilisateurs\/?$/);
+  });
+
+  test('treasury category lists its articles', async ({ page }) => {
+    await page.goto('/aide');
+
+    await page.getByRole('link', { name: TREASURY_CATEGORY }).click();
+    await expect(page).toHaveURL(/\/aide\/tresorerie-comptabilite\/?$/);
+    await expect(
+      page.getByRole('heading', { name: TREASURY_CATEGORY, level: 1 }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: TREASURY_OVERVIEW_ARTICLE }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: SYSCOHADA_ARTICLE }),
+    ).toBeVisible();
+
+    await page.getByRole('link', { name: FX_RATES_ARTICLE }).click();
+    await expect(page).toHaveURL(
+      /\/aide\/tresorerie-comptabilite\/taux-de-change\/?$/,
+    );
+    await expect(
+      page
+        .locator('article')
+        .getByRole('link', { name: FX_RATES_ARTICLE })
+        .first(),
+    ).toHaveAttribute('href', '/tresorerie/taux-change');
+  });
+
+  test('contextual help from treasury opens the overview article', async ({
+    page,
+  }) => {
+    await page.goto('/tresorerie');
+
+    const helpLink = page.getByTestId('admin-contextual-help-link');
+    await expect(helpLink).toHaveAttribute('data-contextual', 'true');
+    await helpLink.click();
+
+    await expect(page).toHaveURL(
+      /\/aide\/tresorerie-comptabilite\/vue-ensemble-tresorerie\/?$/,
+    );
+    await expect(
+      page.getByRole('heading', { name: TREASURY_OVERVIEW_ARTICLE, level: 1 }),
+    ).toBeVisible();
+  });
+
+  test('contextual help from the general ledger opens the SYSCOHADA article', async ({
+    page,
+  }) => {
+    await page.goto('/tresorerie/comptabilite/grand-livre');
+
+    const helpLink = page.getByTestId('admin-contextual-help-link');
+    await expect(helpLink).toHaveAttribute(
+      'href',
+      /\/aide\/tresorerie-comptabilite\/comptabilite-syscohada\/?$/,
+    );
+    await helpLink.click();
+
+    await expect(
+      page.getByRole('heading', { name: SYSCOHADA_ARTICLE, level: 1 }),
+    ).toBeVisible();
+  });
+
+  test('contextual help from currencies opens the currencies article', async ({
+    page,
+  }) => {
+    await page.goto('/systeme/devises');
+
+    const helpLink = page.getByTestId('admin-contextual-help-link');
+    await expect(helpLink).toHaveAttribute('data-contextual', 'true');
+    await helpLink.click();
+
+    await expect(page).toHaveURL(
+      /\/aide\/systeme\/devises-et-devise-par-defaut\/?$/,
+    );
+    await expect(
+      page.getByRole('heading', { name: CURRENCIES_ARTICLE, level: 1 }),
+    ).toBeVisible();
+    await expect(
+      page
+        .locator('article')
+        .getByRole('link', { name: CURRENCY_CATALOG_LINK }),
+    ).toHaveAttribute('href', '/systeme/devises');
   });
 
   test('hub stays usable on a mobile viewport', async ({ page }) => {
