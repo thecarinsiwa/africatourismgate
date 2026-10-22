@@ -651,7 +651,9 @@ function maskSensitiveOrganizationSettingDto(
   }
   return {
     ...dto,
-    settingValue: toTripadvisorSyncAdminSettingValue(dto.settingValue),
+    settingValue: toTripadvisorSyncAdminSettingValue(
+      dto.settingValue,
+    ) as unknown as Record<string, unknown>,
   };
 }
 
@@ -665,6 +667,6 @@ function maskSensitiveOrganizationSettingEntity(
     ...row,
     settingValue: toTripadvisorSyncAdminSettingValue(
       row.settingValue as Record<string, unknown>,
-    ),
+    ) as unknown as Record<string, unknown>,
   };
 }

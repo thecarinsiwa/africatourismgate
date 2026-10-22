@@ -533,6 +533,14 @@ export interface TripadvisorSyncAdminValue {
   apiKeyMasked: string;
 }
 
+/**
+ * `settingValue` returned by admin GET/list/bulk for `tripadvisor_sync`.
+ * `apiKey` is always empty so a save without retyping keeps the stored secret.
+ */
+export interface TripadvisorSyncAdminSettingValue extends TripadvisorSyncAdminValue {
+  apiKey: '';
+}
+
 export const DEFAULT_TRIPADVISOR_SYNC: TripadvisorSyncSettingValue = {
   locationId: '',
   apiKey: '',
@@ -590,7 +598,7 @@ export function toTripadvisorSyncAdminValue(
  */
 export function toTripadvisorSyncAdminSettingValue(
   value?: Partial<TripadvisorSyncSettingValue> | Record<string, unknown> | null,
-): Record<string, unknown> {
+): TripadvisorSyncAdminSettingValue {
   const admin = toTripadvisorSyncAdminValue(value);
   return {
     locationId: admin.locationId,
@@ -730,6 +738,10 @@ export interface OrganizationSetting {
   organizationId: string;
   settingGroup: string;
   settingKey: string;
+  /**
+   * For `tripadvisor_sync`, admin GET/list/bulk return
+   * {@link TripadvisorSyncAdminSettingValue} (`apiKey` always empty / masked).
+   */
   settingValue: Record<string, unknown>;
   createdAt: string;
   updatedAt: string | null;

@@ -133,6 +133,7 @@ import type {
   CreateAdminTripadvisorReviewRequest,
   CreateBookingReviewRequest,
   ReviewsListQuery,
+  SyncTripadvisorReviewsResult,
   UpdateReviewStatusRequest,
   CreateSupportMessageRequest,
   CreateSupportMessageResponse,
@@ -686,6 +687,10 @@ export type {
   CreateAdminTripadvisorReviewRequest,
   CreateBookingReviewRequest,
   ReviewsListQuery,
+  SyncTripadvisorReviewsResult,
+  TripadvisorSyncAdminSettingValue,
+  TripadvisorSyncAdminValue,
+  TripadvisorSyncSettingValue,
   UpdateReviewStatusRequest,
   PropertyType,
   PublicDestination,
@@ -2163,12 +2168,20 @@ export class ApiClient {
     return this.request<void>(`/organizations/${id}`, { method: 'DELETE' });
   }
 
+  /**
+   * Admin list. For `tripadvisor_sync`, `settingValue` is
+   * {@link TripadvisorSyncAdminSettingValue} (apiKey never returned in clear).
+   */
   listOrganizationSettings(
     query?: OrganizationSettingsListQuery,
   ): Promise<PaginatedResponse<OrganizationSetting>> {
     return fetchPaginated<OrganizationSetting>(this, '/organization-settings', query);
   }
 
+  /**
+   * Bulk upsert. Empty `tripadvisor_sync.apiKey` keeps the stored key;
+   * responses mask the key the same way as list GET.
+   */
   bulkUpsertOrganizationSettings(
     body: BulkUpsertOrganizationSettingsRequest,
   ): Promise<OrganizationSetting[]> {
@@ -4012,6 +4025,17 @@ export class ApiClient {
       method: 'POST',
       body,
     });
+  }
+
+  /**
+   * Import / upsert location reviews from Tripadvisor Terra
+   * (`POST /reviews/tripadvisor/sync`). Uses `site/tripadvisor_sync` settings.
+   */
+  syncTripadvisorReviews(): Promise<SyncTripadvisorReviewsResult> {
+    return this.request<SyncTripadvisorReviewsResult>(
+      '/reviews/tripadvisor/sync',
+      { method: 'POST' },
+    );
   }
 
   updateReviewStatus(

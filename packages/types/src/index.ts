@@ -850,6 +850,7 @@ export type {
   PublicHomepageReviews,
   TripadvisorSyncSettingValue,
   TripadvisorSyncAdminValue,
+  TripadvisorSyncAdminSettingValue,
 } from './organization-settings.js';
 
 export type {
