@@ -44,6 +44,10 @@
       "title": "Payments & promos",
       "description": "Payments, promo codes, and promotions."
     },
+    "tresorerie-comptabilite": {
+      "title": "Treasury & accounting",
+      "description": "Fund entries and exits, expense requests, budgets, exchange rates, and SYSCOHADA books."
+    },
     "gap": {
       "title": "GAP",
       "description": "Settings, pages, activities, impact, and media."
@@ -58,7 +62,7 @@
     },
     "systeme": {
       "title": "System & organization",
-      "description": "Organizations, roles, permissions, and settings."
+      "description": "Organizations, roles, permissions, currencies, and settings."
     }
   },
   "articles": {
@@ -201,6 +205,51 @@
       "title": "System settings",
       "summary": "Emails, donations, public catalog, mobile money, and org settings.",
       "body": "The [Settings](/parametres) hub groups organization configuration. From there you can reach transactional emails, donations, mobile money, and bank accounts.\n\nIn organization settings, the catalog / enabled products section lets you show or hide each public-site vertical (hotels, flights, car rentals, cruises, tours, packages). A disabled vertical is removed from navigation and returns a not-found page on the public site.\n\nChange settings carefully: a wrong email template, bank account, or accidentally hidden product directly affects customers and operations. Save, then verify a real flow (test payment, notification, public menu).\n\nTypical permissions: organization_settings.read/write, plus specific rights for mobile money or bank accounts. These settings are separate from the [GAP](/gap/parametres) module."
+    },
+    "vue-ensemble-tresorerie": {
+      "title": "Treasury overview",
+      "summary": "Hub, monthly indicators, quick links, and display currency.",
+      "body": "The [Treasury hub](/tresorerie) summarizes the current month's financial activity: total entries, total exits, pending expense requests (submitted or validated), and net balance (entries − exits).\n\nThe Quick access block links to the sub-modules you have permission for: [entries](/tresorerie/entrees), [exits](/tresorerie/sorties), [expense requests](/tresorerie/besoins), [budgets](/tresorerie/budgets), [reports](/tresorerie/rapports), [external collaborators](/tresorerie/externes), [audit](/tresorerie/audit), and [accounting](/tresorerie/comptabilite).\n\nAmounts are shown in your organization's default currency, which entry forms also suggest by default — see [Currencies and default currency](/aide/systeme/devises-et-devise-par-defaut).\n\nBase permission: treasury.read. Each sub-module adds its own rights (write, validation, reports, audit); a missing menu usually means a missing permission — see [Roles and permissions](/systeme/roles)."
+    },
+    "entrees-et-sorties": {
+      "title": "Fund entries and exits",
+      "summary": "Record incoming funds, disburse authorized requests, and void an operation.",
+      "body": "[Fund entries](/tresorerie/entrees) record money received: booking payment, direct customer, partner, grant / donation, owner capital, bank interest, or other. Enter the amount, currency, date, and payment method (cash, bank transfer, mobile money, card, cheque), then attach supporting documents. An entry is created with the Recorded status.\n\n[Fund exits](/tresorerie/sorties) always disburse an authorized [expense request](/tresorerie/besoins). An exit moves from Draft to Disbursed, then Recorded; moving to Recorded requires at least one supporting document and closes the linked request.\n\nThe default currency is the organization's; only active currencies from the catalog can be selected. If it differs from the exercise's bookkeeping currency, an [exchange rate](/tresorerie/taux-change) is needed to post it to accounting.\n\nA wrong operation is never deleted: use Void with a reason (permission treasury.void). Voiding is logged in the [audit trail](/tresorerie/audit) and refused if the operation is already linked to accounting. Write permissions: treasury.entries.write and treasury.exits.write."
+    },
+    "besoins-et-externes": {
+      "title": "Expense requests and external collaborators",
+      "summary": "Submission, validation, and authorization workflow, plus external access.",
+      "body": "An [expense request](/tresorerie/besoins) formalizes a spending request before any disbursement. It follows Draft → Submitted → Validated → Authorized, then becomes Closed when the linked exit is recorded. It can also be Rejected or Cancelled along the way.\n\nEach step needs a separate permission: treasury.expense_requests.create (create, submit), treasury.expense_requests.validate (validate), and treasury.expense_requests.authorize (authorize). Assign these steps to different people to keep a two-person check.\n\n[External collaborators](/tresorerie/externes) (contractors, volunteers, partners) have no admin account. Invite them by email: they receive a secure access link to submit an expense request, which then appears in the admin list. Deactivate an external collaborator as soon as the engagement ends (permission treasury.externals.manage)."
+    },
+    "budgets-et-suivi": {
+      "title": "Budgets and tracking",
+      "summary": "Set monthly or annual envelopes and compare them with actuals.",
+      "body": "[Budgets](/tresorerie/budgets) set an envelope per period (monthly or annual) and per scope: general, activity, or product / service (room, flight class, vehicle, cabin, activity slot…). The currency suggested at creation is the organization's.\n\n[Budget tracking](/tresorerie/budgets/suivi) compares each budget with actuals based on recorded operations. Use it to spot overruns before authorizing new [expense requests](/tresorerie/besoins).\n\nPermissions: treasury.read to view, treasury.budgets.write to create or edit."
+    },
+    "taux-de-change": {
+      "title": "Exchange rates",
+      "summary": "Enter the manual rates used to post foreign-currency operations.",
+      "body": "The [exchange rates](/tresorerie/taux-change) catalog holds rates entered manually per organization. A rate reads: 1 unit of source currency = rate × target currency (for example 1 EUR = 655.957 XOF). It applies from its effective date.\n\nWhen creating a rate, the suggested target currency is the organization's and the source currency is EUR (or USD if the organization uses EUR). Only active currencies from the [catalog](/systeme/devises) are available, and source and target must differ.\n\nThese rates are used for posting: when an entry or exit is in a currency other than the exercise's bookkeeping currency, the applicable rate is looked up; without a rate, posting is refused. Deleting a rate does not change entries already posted.\n\nPermissions: treasury.fx_rates.read to view, treasury.fx_rates.write to create, edit, or delete."
+    },
+    "comptabilite-syscohada": {
+      "title": "SYSCOHADA accounting",
+      "summary": "Treasury-to-entry links, journal, general ledger, trial balance, balance sheet, and income statement.",
+      "body": "The [Accounting hub](/tresorerie/comptabilite) links each treasury operation to a SYSCOHADA journal entry. Each link is Pending, Linked, or Skipped: Post generates the entry from the mapping rule, Skip excludes the operation from the books.\n\nThe [journal](/tresorerie/comptabilite/journal) lists entries (Draft, Posted, Reversed); open one to see its lines, origin, and debit / credit totals. The [general ledger](/tresorerie/comptabilite/grand-livre) details the movements of one account, and the [trial balance](/tresorerie/comptabilite/balance) totals debits, credits, and balances per account; a debit / credit gap points to entries that need checking.\n\nThe [balance sheet](/tresorerie/comptabilite/bilan) and the [income statement](/tresorerie/comptabilite/compte-resultat) present the exercise's financial statements. Filter by organization, exercise, and period; amounts are expressed in the exercise's bookkeeping currency.\n\nPermissions: treasury.accounting_link.read or accounting.read for the books, accounting.reports.read for the balance sheet and income statement."
+    },
+    "exercices-et-cloture": {
+      "title": "Fiscal years and closing",
+      "summary": "Create fiscal years, choose the bookkeeping currency, lock periods, and close.",
+      "body": "[Fiscal years](/tresorerie/comptabilite/exercices) define an organization's accounting period. On creation, monthly periods are generated automatically and the suggested bookkeeping currency is the organization's. It can only be changed while the fiscal year is open and has no posted entries.\n\nThe [Closing](/tresorerie/comptabilite/cloture) page lets you lock or unlock each period (Open, Locked, Closed), then close the fiscal year. Closing generates a closing entry and, if a following fiscal year exists, an opening balance carry-forward. This cannot be undone: check the [trial balance](/tresorerie/comptabilite/balance) and the [balance sheet](/tresorerie/comptabilite/bilan) first.\n\nThe [accounting audit](/tresorerie/comptabilite/audit) logs actions on entries, fiscal years, and periods (date, action, entity, actor).\n\nPermissions: accounting.chart.write to create a fiscal year, accounting.close to lock and close, accounting.audit.read for the audit."
+    },
+    "rapports-et-audit": {
+      "title": "Treasury reports and audit",
+      "summary": "Period aggregates, breakdown by currency, CSV export, and action log.",
+      "body": "[Reports](/tresorerie/rapports) aggregate entries and exits over a period: totals, operation counts, breakdown by source and by payment method. Filter by dates and currency; the net balance is only computed for a single currency, otherwise amounts are shown per currency. Use Export CSV to work on the figures elsewhere.\n\nThe [audit log](/tresorerie/audit) records treasury actions: creations, status changes, and voids with their reason. Use it to rebuild the history of an operation or expense request.\n\nPermissions: treasury.reports.read for reports, treasury.audit.read for the log. For the accounting entries audit, see [Fiscal years and closing](/aide/tresorerie-comptabilite/exercices-et-cloture)."
+    },
+    "devises-et-devise-par-defaut": {
+      "title": "Currencies and default currency",
+      "summary": "Global currency catalog, organization currency, and bookkeeping currency.",
+      "body": "The [currency catalog](/systeme/devises) lists the ISO codes available across the platform. Only active currencies appear in selectors (amounts, budgets, rates, fiscal years…). Deactivating a currency removes it from lists without changing existing operations, which keep their code. Permissions: currencies.read to view, currencies.write to create or edit.\n\nEach organization has a default currency, chosen from the active currencies. It is used to display amounts in the admin and prefills forms: activities, vehicles, cabins, rooms, employees, bank accounts, treasury operations, budgets, and exchange rates. Change it from the [Organizations](/organisations) record or [Settings](/parametres); the change applies as soon as you save. When no currency is set, the admin uses XOF.\n\nAccounting uses its own bookkeeping currency, set per [fiscal year](/tresorerie/comptabilite/exercices). When an operation is in another currency, an [exchange rate](/tresorerie/taux-change) is required to post it.\n\nTip: activate a currency in the catalog before assigning it to an organization; a currency outside the active catalog is rejected on save."
     }
   }
 }
