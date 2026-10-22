@@ -2,6 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
+import { ApiHttpError } from '@africatourismgate/api-client';
 import { Button, Card, Input, Select, Textarea } from '@africatourismgate/ui';
 import type {
   CreateTeamMemberRequest,
@@ -18,17 +19,29 @@ import { getSession } from '../../lib/auth/session';
 import { usePermissions } from '../../lib/auth/use-permissions';
 import { useContentLocaleOptions } from '../../lib/content/use-content-locale-options';
 import { resolveMediaUrl } from '../../lib/resolve-media-url';
+import { isValidSlug, slugifyName } from '../../lib/slug';
 
 export const ABOUT_TEAM_HUB_HREF = '/contenu/site?tab=about-team';
 
 const PHOTO_MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_PHOTO_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const SOCIAL_FIELDS = ['linkedinUrl', 'xUrl', 'facebookUrl', 'instagramUrl'] as const;
+type SocialField = (typeof SOCIAL_FIELDS)[number];
+
 export type TeamMemberFormValues = {
   name: string;
+  slug: string;
   role: string;
   bio: string;
   photoUrl: string;
+  email: string;
+  linkedinUrl: string;
+  xUrl: string;
+  facebookUrl: string;
+  instagramUrl: string;
   sortOrder: string;
   status: TeamMemberStatus;
   locale: string;
@@ -36,9 +49,15 @@ export type TeamMemberFormValues = {
 
 const defaultValues: TeamMemberFormValues = {
   name: '',
+  slug: '',
   role: '',
   bio: '',
   photoUrl: '',
+  email: '',
+  linkedinUrl: '',
+  xUrl: '',
+  facebookUrl: '',
+  instagramUrl: '',
   sortOrder: '0',
   status: 'draft',
   locale: 'fr',
@@ -47,9 +66,15 @@ const defaultValues: TeamMemberFormValues = {
 function teamMemberToFormValues(member: TeamMember): TeamMemberFormValues {
   return {
     name: member.name,
+    slug: member.slug ?? '',
     role: member.role,
     bio: member.bio ?? '',
     photoUrl: member.photoUrl ?? '',
+    email: member.email ?? '',
+    linkedinUrl: member.linkedinUrl ?? '',
+    xUrl: member.xUrl ?? '',
+    facebookUrl: member.facebookUrl ?? '',
+    instagramUrl: member.instagramUrl ?? '',
     sortOrder: String(member.sortOrder),
     status: member.status,
     locale: member.locale,
@@ -59,13 +84,28 @@ function teamMemberToFormValues(member: TeamMember): TeamMemberFormValues {
 function toPayload(values: TeamMemberFormValues): CreateTeamMemberRequest {
   return {
     name: values.name.trim(),
+    slug: values.slug.trim() || null,
     role: values.role.trim(),
     bio: values.bio.trim() || null,
     photoUrl: values.photoUrl.trim() || null,
+    email: values.email.trim() || null,
+    linkedinUrl: values.linkedinUrl.trim() || null,
+    xUrl: values.xUrl.trim() || null,
+    facebookUrl: values.facebookUrl.trim() || null,
+    instagramUrl: values.instagramUrl.trim() || null,
     sortOrder: Number.parseInt(values.sortOrder, 10) || 0,
     status: values.status,
     locale: values.locale,
   };
+}
+
+function isHttpUrl(value: string): boolean {
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+  } catch {
+    return false;
+  }
 }
 
 type TeamMemberFormProps = {
@@ -170,6 +210,14 @@ export function TeamMemberForm({
     if (photoUrl && !isValidMediaUrl(photoUrl)) {
       errors.photoUrl = t('validation.photoUrlInvalid');
     }
+    const slug = values.slug.trim();
+    if (slug && !isValidSlug(slug)) errors.slug = t('validation.slugInvalid');
+    const email = values.email.trim();
+    if (email && !EMAIL_PATTERN.test(email)) errors.email = t('validation.emailInvalid');
+    for (const field of SOCIAL_FIELDS) {
+      const url = values[field].trim();
+      if (url && !isHttpUrl(url)) errors[field] = t('validation.socialUrlInvalid');
+    }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   }
@@ -194,7 +242,12 @@ export function TeamMemberForm({
         router.refresh();
       }
     } catch (error) {
-      setFormError(getAboutErrorMessage(error));
+      if (error instanceof ApiHttpError && error.status === 409) {
+        setFieldErrors((prev) => ({ ...prev, slug: t('validation.slugTaken') }));
+        setFormError(t('validation.slugTaken'));
+      } else {
+        setFormError(getAboutErrorMessage(error));
+      }
     } finally {
       setSubmitting(false);
     }
@@ -244,6 +297,24 @@ export function TeamMemberForm({
           required
           disabled={!canWrite}
         />
+        <div className="space-y-1">
+          <Input
+            label={t('fields.slug')}
+            name="slug"
+            value={values.slug}
+            onChange={(e) => updateField('slug', e.target.value)}
+            onBlur={(e) => {
+              const raw = e.target.value.trim();
+              if (raw && !isValidSlug(raw)) updateField('slug', slugifyName(raw));
+            }}
+            placeholder={slugifyName(values.name) || t('placeholders.slug')}
+            error={fieldErrors.slug}
+            disabled={!canWrite}
+          />
+          <p className="text-xs text-atg-muted">
+            {t('hints.slug', { path: `/about/team/${values.slug.trim() || slugifyName(values.name) || '…'}` })}
+          </p>
+        </div>
         <Input
           label={t('fields.role')}
           name="role"
@@ -319,6 +390,36 @@ export function TeamMemberForm({
             disabled={!canWrite}
           />
         </div>
+
+        <fieldset className="space-y-4">
+          <legend className="text-sm font-medium text-atg-fg">{t('fields.contact')}</legend>
+          <p className="text-xs text-atg-muted">{t('hints.contact')}</p>
+          <Input
+            label={t('fields.email')}
+            name="email"
+            type="email"
+            value={values.email}
+            onChange={(e) => updateField('email', e.target.value)}
+            placeholder={t('placeholders.email')}
+            error={fieldErrors.email}
+            disabled={!canWrite}
+          />
+          <div className="grid gap-4 sm:grid-cols-2">
+            {SOCIAL_FIELDS.map((field: SocialField) => (
+              <Input
+                key={field}
+                label={t(`fields.${field}`)}
+                name={field}
+                type="url"
+                value={values[field]}
+                onChange={(e) => updateField(field, e.target.value)}
+                placeholder={t(`placeholders.${field}`)}
+                error={fieldErrors[field]}
+                disabled={!canWrite}
+              />
+            ))}
+          </div>
+        </fieldset>
 
         <Input
           label={t('fields.sortOrder')}

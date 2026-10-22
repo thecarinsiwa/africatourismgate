@@ -461,7 +461,26 @@
       "contact": "Nous contacter"
     },
     "team": {
-      "empty": "Aucun membre de l'équipe publié pour le moment."
+      "empty": "Aucun membre de l'équipe publié pour le moment.",
+      "readMore": "Lire la suite",
+      "readLess": "Réduire",
+      "viewProfile": "Voir le profil",
+      "viewProfileAria": "Voir le profil de {name}",
+      "backToTeam": "Retour à l'équipe",
+      "profile": {
+        "photoAlt": "Portrait de {name}",
+        "aboutHeading": "À propos de {name}",
+        "noBio": "La biographie de ce membre n'est pas encore disponible.",
+        "contactHeading": "Contact",
+        "email": "E-mail",
+        "linkedin": "LinkedIn",
+        "x": "X (Twitter)",
+        "facebook": "Facebook",
+        "instagram": "Instagram",
+        "externalLinkHint": "(ouvre un nouvel onglet)",
+        "notFoundTitle": "Profil introuvable",
+        "notFoundHint": "Ce membre de l'équipe n'existe pas ou n'est plus publié."
+      }
     },
     "timeline": {
       "intro": "Parcourez les étapes clés qui ont façonné Africa Tourism Gate, de la genèse du projet à notre vision pour l'avenir.",

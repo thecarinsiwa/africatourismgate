@@ -261,6 +261,218 @@ export function isCatalogProductEnabled(
 }
 
 /**
+ * Bandeau d’annonce affiché au-dessus du header public.
+ * `organization_settings` group `site`, key `announcement_banner`.
+ */
+export const ANNOUNCEMENT_BANNER_COLORS = [
+  'red',
+  'yellow',
+  'green',
+  'blue',
+  'gray',
+] as const;
+export type AnnouncementBannerColor = (typeof ANNOUNCEMENT_BANNER_COLORS)[number];
+
+export const ANNOUNCEMENT_BANNER_INTENSITIES = ['low', 'high'] as const;
+export type AnnouncementBannerIntensity =
+  (typeof ANNOUNCEMENT_BANNER_INTENSITIES)[number];
+
+export const ANNOUNCEMENT_BANNER_LOCALES = ['fr', 'en', 'es'] as const;
+export type AnnouncementBannerLocale = (typeof ANNOUNCEMENT_BANNER_LOCALES)[number];
+
+export const ANNOUNCEMENT_BANNER_FALLBACK_LOCALE: AnnouncementBannerLocale = 'fr';
+export const ANNOUNCEMENT_BANNER_TEXT_MAX_LENGTH = 280;
+export const ANNOUNCEMENT_BANNER_CTA_LABEL_MAX_LENGTH = 40;
+export const ANNOUNCEMENT_BANNER_CTA_URL_MAX_LENGTH = 512;
+
+export interface AnnouncementBannerMessage {
+  text: string;
+  ctaLabel?: string;
+}
+
+export interface AnnouncementBannerSettingValue {
+  enabled: boolean;
+  color: AnnouncementBannerColor;
+  intensity: AnnouncementBannerIntensity;
+  messages: Partial<Record<AnnouncementBannerLocale, AnnouncementBannerMessage>>;
+  /** `https://…` ou chemin relatif commençant par `/`. */
+  ctaUrl?: string;
+  ctaNewTab?: boolean;
+}
+
+/** Bandeau résolu pour une locale donnée (endpoint public). */
+export interface PublicAnnouncementBanner {
+  enabled: boolean;
+  text: string;
+  color: AnnouncementBannerColor;
+  intensity: AnnouncementBannerIntensity;
+  ctaLabel: string | null;
+  ctaUrl: string | null;
+  ctaNewTab: boolean;
+  /** Empreinte du contenu ; change à chaque modification (fermeture côté client). */
+  version: string;
+}
+
+export const DEFAULT_ANNOUNCEMENT_BANNER: AnnouncementBannerSettingValue = {
+  enabled: false,
+  color: 'blue',
+  intensity: 'low',
+  messages: {},
+};
+
+export const DEFAULT_PUBLIC_ANNOUNCEMENT_BANNER: PublicAnnouncementBanner = {
+  enabled: false,
+  text: '',
+  color: 'blue',
+  intensity: 'low',
+  ctaLabel: null,
+  ctaUrl: null,
+  ctaNewTab: false,
+  version: '',
+};
+
+export function isAnnouncementBannerColor(value: unknown): value is AnnouncementBannerColor {
+  return (
+    typeof value === 'string' &&
+    (ANNOUNCEMENT_BANNER_COLORS as readonly string[]).includes(value)
+  );
+}
+
+export function isAnnouncementBannerIntensity(
+  value: unknown,
+): value is AnnouncementBannerIntensity {
+  return (
+    typeof value === 'string' &&
+    (ANNOUNCEMENT_BANNER_INTENSITIES as readonly string[]).includes(value)
+  );
+}
+
+export function isAnnouncementBannerLocale(value: unknown): value is AnnouncementBannerLocale {
+  return (
+    typeof value === 'string' &&
+    (ANNOUNCEMENT_BANNER_LOCALES as readonly string[]).includes(value)
+  );
+}
+
+/** `https?://…` ou chemin interne `/…` (pas `//`, qui serait un lien protocol-relative). */
+export function isValidAnnouncementBannerCtaUrl(value: string): boolean {
+  if (value.startsWith('/')) {
+    return !value.startsWith('//');
+  }
+  return /^https?:\/\/[^\s]+$/i.test(value);
+}
+
+function normalizeAnnouncementBannerMessage(
+  value: unknown,
+): AnnouncementBannerMessage | null {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return null;
+  }
+  const raw = value as Record<string, unknown>;
+  const text = typeof raw.text === 'string' ? raw.text.trim() : '';
+  if (!text) {
+    return null;
+  }
+  const ctaLabel = typeof raw.ctaLabel === 'string' ? raw.ctaLabel.trim() : '';
+  return ctaLabel ? { text, ctaLabel } : { text };
+}
+
+/** Tolérant : ignore les valeurs invalides et retombe sur les valeurs par défaut. */
+export function normalizeAnnouncementBanner(
+  value?: Partial<AnnouncementBannerSettingValue> | Record<string, unknown> | null,
+): AnnouncementBannerSettingValue {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return { ...DEFAULT_ANNOUNCEMENT_BANNER, messages: {} };
+  }
+  const raw = value as Record<string, unknown>;
+
+  const messages: AnnouncementBannerSettingValue['messages'] = {};
+  const rawMessages = raw.messages;
+  if (rawMessages && typeof rawMessages === 'object' && !Array.isArray(rawMessages)) {
+    for (const locale of ANNOUNCEMENT_BANNER_LOCALES) {
+      const message = normalizeAnnouncementBannerMessage(
+        (rawMessages as Record<string, unknown>)[locale],
+      );
+      if (message) {
+        messages[locale] = message;
+      }
+    }
+  }
+
+  const resolved: AnnouncementBannerSettingValue = {
+    enabled: raw.enabled === true,
+    color: isAnnouncementBannerColor(raw.color)
+      ? raw.color
+      : DEFAULT_ANNOUNCEMENT_BANNER.color,
+    intensity: isAnnouncementBannerIntensity(raw.intensity)
+      ? raw.intensity
+      : DEFAULT_ANNOUNCEMENT_BANNER.intensity,
+    messages,
+  };
+
+  const ctaUrl = typeof raw.ctaUrl === 'string' ? raw.ctaUrl.trim() : '';
+  if (ctaUrl && isValidAnnouncementBannerCtaUrl(ctaUrl)) {
+    resolved.ctaUrl = ctaUrl;
+    resolved.ctaNewTab = raw.ctaNewTab === true;
+  }
+
+  return resolved;
+}
+
+/** djb2 — empreinte courte et déterministe (Node + navigateur). */
+function hashAnnouncementBannerContent(input: string): string {
+  let hash = 5381;
+  for (let i = 0; i < input.length; i += 1) {
+    hash = ((hash << 5) + hash + input.charCodeAt(i)) | 0;
+  }
+  return (hash >>> 0).toString(36);
+}
+
+/**
+ * Résout le bandeau pour une locale : locale demandée, puis `fr`.
+ * Sans texte disponible, le bandeau est considéré comme désactivé.
+ */
+export function resolvePublicAnnouncementBanner(
+  value: Partial<AnnouncementBannerSettingValue> | Record<string, unknown> | null | undefined,
+  locale?: string | null,
+): PublicAnnouncementBanner {
+  const normalized = normalizeAnnouncementBanner(value);
+  const requested = isAnnouncementBannerLocale(locale)
+    ? locale
+    : ANNOUNCEMENT_BANNER_FALLBACK_LOCALE;
+  const message =
+    normalized.messages[requested] ??
+    normalized.messages[ANNOUNCEMENT_BANNER_FALLBACK_LOCALE];
+
+  if (!normalized.enabled || !message) {
+    return { ...DEFAULT_PUBLIC_ANNOUNCEMENT_BANNER };
+  }
+
+  const ctaUrl = normalized.ctaUrl ?? null;
+  const ctaLabel = ctaUrl ? message.ctaLabel ?? null : null;
+  const ctaNewTab = ctaUrl ? normalized.ctaNewTab === true : false;
+
+  return {
+    enabled: true,
+    text: message.text,
+    color: normalized.color,
+    intensity: normalized.intensity,
+    ctaLabel,
+    ctaUrl: ctaLabel ? ctaUrl : null,
+    ctaNewTab: ctaLabel ? ctaNewTab : false,
+    version: hashAnnouncementBannerContent(
+      JSON.stringify([
+        message.text,
+        normalized.color,
+        normalized.intensity,
+        ctaLabel,
+        ctaUrl,
+      ]),
+    ),
+  };
+}
+
+/**
  * Acomptes checkout — `organization_settings` group `booking`, key `deposits`.
  * Exactement un de `depositPercent` | `depositFixedCents` quand `enabled`.
  * Statut réservation : reste `pending_payment` jusqu’au solde intégral.

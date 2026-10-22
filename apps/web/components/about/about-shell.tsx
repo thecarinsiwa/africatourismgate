@@ -4,7 +4,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
-import { ABOUT_PATHS, findAboutNavItem, normalizeAboutPathname } from '../../lib/about/routes';
+import {
+  ABOUT_PATHS,
+  findAboutNavItem,
+  isTeamMemberProfilePath,
+  normalizeAboutPathname,
+} from '../../lib/about/routes';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { PageHero } from '../shared/page-hero';
@@ -14,11 +19,34 @@ type AboutShellProps = {
   children: ReactNode;
 };
 
+/** Sidebar + main column shared by every About page. */
+export function AboutContentLayout({ children }: { children: ReactNode }) {
+  return (
+    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="flex flex-col gap-8 lg:flex-row lg:gap-12">
+        <AboutSidebar />
+        <div className="min-w-0 flex-1">{children}</div>
+      </div>
+    </div>
+  );
+}
+
 export function AboutShell({ children }: AboutShellProps) {
   const pathname = normalizeAboutPathname(usePathname());
   const t = useTranslations('about');
   const navItem = findAboutNavItem(pathname);
   const pageTitle = navItem ? t(`nav.${navItem.labelKey}`) : t('heroTitle');
+
+  // Team profiles render their own hero (photo, name, role) and breadcrumb.
+  if (isTeamMemberProfilePath(pathname)) {
+    return (
+      <div className="flex min-h-screen flex-col bg-atg-bg text-atg-fg">
+        <HomeHeader />
+        <main className="flex-1">{children}</main>
+        <HomeFooter />
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-atg-bg text-atg-fg">
@@ -49,12 +77,7 @@ export function AboutShell({ children }: AboutShellProps) {
             </p>
           }
         />
-        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-8 lg:flex-row lg:gap-12">
-            <AboutSidebar />
-            <div className="min-w-0 flex-1">{children}</div>
-          </div>
-        </div>
+        <AboutContentLayout>{children}</AboutContentLayout>
       </main>
       <HomeFooter />
     </div>

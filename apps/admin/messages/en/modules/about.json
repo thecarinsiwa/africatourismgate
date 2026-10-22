@@ -192,20 +192,41 @@
       "validation": {
         "nameRequired": "Name is required.",
         "roleRequired": "Role is required.",
-        "photoUrlInvalid": "Photo URL must be valid."
+        "photoUrlInvalid": "Photo URL must be valid.",
+        "slugInvalid": "The slug must be lowercase (letters, numbers and hyphens only).",
+        "slugTaken": "This slug is already used by another member in this language.",
+        "emailInvalid": "Email address must be valid.",
+        "socialUrlInvalid": "URL must start with http:// or https://."
       },
       "fields": {
         "name": "Name",
+        "slug": "Slug (profile URL)",
         "role": "Role",
         "bio": "Bio",
         "photo": "Photo",
         "photoPreviewAlt": "Photo preview",
         "removePhoto": "Remove photo",
+        "contact": "Contact and social links",
+        "email": "Email",
+        "linkedinUrl": "LinkedIn",
+        "xUrl": "X (Twitter)",
+        "facebookUrl": "Facebook",
+        "instagramUrl": "Instagram",
         "sortOrder": "Display order",
         "locale": "Language"
       },
       "hints": {
-        "photoUpload": "JPEG, PNG or WebP — max. 5 MB"
+        "photoUpload": "JPEG, PNG or WebP — max. 5 MB",
+        "slug": "Public profile: {path}. Leave empty to generate it from the name.",
+        "contact": "Optional — shown on the public profile page."
+      },
+      "placeholders": {
+        "slug": "first-last",
+        "email": "first.last@example.com",
+        "linkedinUrl": "https://www.linkedin.com/in/…",
+        "xUrl": "https://x.com/…",
+        "facebookUrl": "https://www.facebook.com/…",
+        "instagramUrl": "https://www.instagram.com/…"
       },
       "saving": "Saving…",
       "createButton": "Add member",

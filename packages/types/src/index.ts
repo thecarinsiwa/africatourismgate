@@ -548,6 +548,7 @@ export type {
   PublicTeamMember,
   PublicTeamMembersListQuery,
   TeamMember,
+  TeamMemberContactFields,
   TeamMemberStatus,
   TeamMembersListQuery,
   UpdateTeamMemberRequest,

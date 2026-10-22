@@ -36,9 +36,15 @@ export type PublicAboutPageDto = {
 export type PublicTeamMemberDto = {
   id: string;
   name: string;
+  slug: string;
   role: string;
   bio: string | null;
   photoUrl: string | null;
+  email: string | null;
+  linkedinUrl: string | null;
+  xUrl: string | null;
+  facebookUrl: string | null;
+  instagramUrl: string | null;
   sortOrder: number;
   locale: string;
 };
@@ -197,6 +203,22 @@ export class PublicAboutService {
     return result;
   }
 
+  async getTeamMemberBySlug(slug: string, locale?: string): Promise<PublicTeamMemberDto> {
+    if (locale) {
+      const localized = await this.findPublishedTeamMember(slug, locale);
+      if (localized) {
+        return this.toTeamMemberDto(localized);
+      }
+    }
+
+    const fallback = await this.findPublishedTeamMember(slug);
+    if (!fallback) {
+      throw new NotFoundException(`Team member "${slug}" not found`);
+    }
+
+    return this.toTeamMemberDto(fallback);
+  }
+
   async listResources(
     query: PublicAboutResourcesListQueryDto,
   ): Promise<PaginatedResult<PublicAboutResourceDto>> {
@@ -341,6 +363,25 @@ export class PublicAboutService {
     };
   }
 
+  private findPublishedTeamMember(slug: string, locale?: string): Promise<TeamMembers | null> {
+    const qb = this.teamMembersRepository
+      .createQueryBuilder('member')
+      .where('member.deletedAt IS NULL')
+      .andWhere('member.status = :status', { status: 'published' })
+      .andWhere('member.slug = :slug', { slug });
+
+    if (locale) {
+      qb.andWhere('member.locale = :locale', { locale });
+    } else {
+      qb.orderBy(`CASE WHEN member.locale = 'fr' THEN 0 ELSE 1 END`, 'ASC').addOrderBy(
+        'member.updatedAt',
+        'DESC',
+      );
+    }
+
+    return qb.getOne();
+  }
+
   private async queryResources(
     page: number,
     limit: number,
@@ -431,9 +472,15 @@ export class PublicAboutService {
     return {
       id: member.id,
       name: member.name,
+      slug: member.slug,
       role: member.role,
       bio: member.bio,
       photoUrl: member.photoUrl,
+      email: member.email,
+      linkedinUrl: member.linkedinUrl,
+      xUrl: member.xUrl,
+      facebookUrl: member.facebookUrl,
+      instagramUrl: member.instagramUrl,
       sortOrder: member.sortOrder,
       locale: member.locale,
     };

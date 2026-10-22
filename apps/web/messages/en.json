@@ -461,7 +461,26 @@
       "contact": "Contact us"
     },
     "team": {
-      "empty": "No team members published yet."
+      "empty": "No team members published yet.",
+      "readMore": "Read more",
+      "readLess": "Show less",
+      "viewProfile": "View Profile",
+      "viewProfileAria": "View {name}'s profile",
+      "backToTeam": "Back to Team",
+      "profile": {
+        "photoAlt": "Portrait of {name}",
+        "aboutHeading": "About {name}",
+        "noBio": "This member's biography is not available yet.",
+        "contactHeading": "Contact",
+        "email": "Email",
+        "linkedin": "LinkedIn",
+        "x": "X (Twitter)",
+        "facebook": "Facebook",
+        "instagram": "Instagram",
+        "externalLinkHint": "(opens in a new tab)",
+        "notFoundTitle": "Profile not found",
+        "notFoundHint": "This team member does not exist or is no longer published."
+      }
     },
     "timeline": {
       "intro": "Explore the key milestones that shaped Africa Tourism Gate, from our beginnings to our vision for the future.",

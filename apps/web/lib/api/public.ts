@@ -648,6 +648,15 @@ export async function browseTeamMembersForLocale(
   };
 }
 
+/** API falls back to any published locale when the slug is missing in `locale`. */
+export async function getTeamMemberBySlug(
+  slug: string,
+  locale?: string,
+): Promise<PublicTeamMember> {
+  const qs = locale ? `?locale=${encodeURIComponent(locale)}` : '';
+  return fetchPublic<PublicTeamMember>(`/public/team-members/${encodeURIComponent(slug)}${qs}`);
+}
+
 function buildAboutResourcesQuery(params: PublicAboutResourcesListQuery): string {
   const qs = new URLSearchParams();
   if (params.type) qs.set('type', params.type);

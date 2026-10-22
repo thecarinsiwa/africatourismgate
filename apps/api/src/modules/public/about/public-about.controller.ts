@@ -1,5 +1,6 @@
 import { BadRequestException, Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { SLUG_PATTERN } from '../../../common/constants/slug';
 import type { AboutPageSectionKey } from '../../../entities/about-page.entity';
 import { Public } from '../../auth/decorators/public.decorator';
 import { PublicAboutPagesListQueryDto } from './dto/public-about-pages-list-query.dto';
@@ -52,6 +53,16 @@ export class PublicAboutController {
   @ApiOperation({ summary: 'List published team members' })
   listTeamMembers(@Query() query: PublicTeamMembersListQueryDto) {
     return this.service.listTeamMembers(query);
+  }
+
+  @Public()
+  @Get('team-members/:slug')
+  @ApiOperation({ summary: 'Get published team member profile by slug' })
+  getTeamMemberBySlug(@Param('slug') slug: string, @Query('locale') locale?: string) {
+    if (!SLUG_PATTERN.test(slug)) {
+      throw new BadRequestException(`Invalid team member slug: ${slug}`);
+    }
+    return this.service.getTeamMemberBySlug(slug, locale);
   }
 
   @Public()
