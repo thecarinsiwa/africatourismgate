@@ -539,10 +539,14 @@ export function validateSettingValue(
           'showPlatformReviews doit être un booléen.',
         );
       }
-      return normalizeHomepageReviews({
+      const normalized = normalizeHomepageReviews({
         showTripadvisorReviews: value.showTripadvisorReviews,
         showPlatformReviews: value.showPlatformReviews,
       });
+      return {
+        showTripadvisorReviews: normalized.showTripadvisorReviews,
+        showPlatformReviews: normalized.showPlatformReviews,
+      };
     }
     case 'maintenance': {
       throw new BadRequestException(
