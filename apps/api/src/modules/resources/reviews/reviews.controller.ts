@@ -20,6 +20,7 @@ import { AdminReviewDetailDto } from './dto/admin-review-detail.dto';
 import { AdminReviewListItemDto } from './dto/admin-review-list-item.dto';
 import { CreateAdminTripadvisorReviewDto } from './dto/create-admin-tripadvisor-review.dto';
 import { ReviewsListQueryDto } from './dto/reviews-list-query.dto';
+import { SyncTripadvisorReviewsResultDto } from './dto/sync-tripadvisor-reviews-result.dto';
 import { UpdateReviewStatusDto } from './dto/update-review-status.dto';
 import { ReviewsService } from './reviews.service';
 
@@ -48,6 +49,18 @@ export class ReviewsController {
     @CurrentUser() user: AuthUserDto,
   ): Promise<AdminReviewDetailDto> {
     return this.service.createTripadvisorReview(dto, user.id);
+  }
+
+  @Post('tripadvisor/sync')
+  @RequirePermissions('reviews.write')
+  @ApiOperation({
+    summary:
+      'Import / upsert location reviews from Tripadvisor Terra using site/tripadvisor_sync settings',
+  })
+  syncTripadvisor(
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<SyncTripadvisorReviewsResultDto> {
+    return this.service.syncFromTripadvisor(user.id);
   }
 
   @Get(':id')

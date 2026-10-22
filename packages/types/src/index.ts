@@ -696,6 +696,7 @@ export type {
   ReviewSource,
   ReviewStatus,
   ReviewsListQuery,
+  SyncTripadvisorReviewsResult,
   UpdateReviewStatusRequest,
 } from './review.js';
 

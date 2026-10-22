@@ -23,7 +23,15 @@ import {
   TourGuides,
   Users,
 } from '../../../entities/generated';
-import type { ReviewSource } from '@africatourismgate/types';
+import type {
+  ReviewSource,
+  SyncTripadvisorReviewsResult,
+} from '@africatourismgate/types';
+import { TripadvisorTerraClient } from '../../integrations/tripadvisor/tripadvisor-terra.client';
+import {
+  mapTerraReviewToTripadvisor,
+  type MappedTripadvisorReview,
+} from '../../integrations/tripadvisor/tripadvisor-terra.mapper';
 import { AdminReviewDetailDto } from './dto/admin-review-detail.dto';
 import { AdminReviewListItemDto } from './dto/admin-review-list-item.dto';
 import { CreateAdminTripadvisorReviewDto } from './dto/create-admin-tripadvisor-review.dto';
@@ -34,6 +42,9 @@ import { isStayEnded } from './review-stay.util';
 import type { GuideReviewInviteDto } from '../bookings/dto/guide-review-invite.dto';
 import { NotificationsService } from '../notifications/notifications.service';
 import { OrganizationSettingsService } from '../organization-settings/organization-settings.service';
+
+const TERRA_PAGE_SIZE = 20;
+const TERRA_MAX_PAGES = 50;
 
 type ReviewRow = {
   id: string;
@@ -87,6 +98,7 @@ export class ReviewsService extends CrudService<Reviews> {
     private readonly tourGuidesRepository: Repository<TourGuides>,
     private readonly staffNotifications: NotificationsService,
     private readonly organizationSettings: OrganizationSettingsService,
+    private readonly tripadvisorTerra: TripadvisorTerraClient,
   ) {
     super(reviewsRepository);
   }
@@ -546,6 +558,135 @@ export class ReviewsService extends CrudService<Reviews> {
     );
 
     return this.findOneForAdmin(id);
+  }
+
+  /**
+   * Pulls location reviews from Tripadvisor Terra using `site/tripadvisor_sync`
+   * and upserts them as `source=tripadvisor` rows (`entityId` = Terra review id).
+   */
+  async syncFromTripadvisor(
+    actorUserId: string,
+  ): Promise<SyncTripadvisorReviewsResult> {
+    const sync = await this.organizationSettings.getResolvedTripadvisorSync();
+    if (!sync.apiKey.trim()) {
+      throw new BadRequestException(
+        'Configurez la clé API Tripadvisor (Contenu › Avis).',
+      );
+    }
+    if (!sync.locationId.trim()) {
+      throw new BadRequestException(
+        'Configurez le Location ID Tripadvisor (Contenu › Avis).',
+      );
+    }
+
+    let imported = 0;
+    let updated = 0;
+    let skipped = 0;
+    let pages = 0;
+    let page = 1;
+    let totalPages = 1;
+
+    while (page <= totalPages && page <= TERRA_MAX_PAGES) {
+      const response = await this.tripadvisorTerra.fetchLocationReviews({
+        apiKey: sync.apiKey,
+        locationId: sync.locationId,
+        page,
+        size: TERRA_PAGE_SIZE,
+        language: sync.language || 'primary',
+      });
+      pages += 1;
+
+      const items = response.data ?? [];
+      if (items.length === 0) {
+        break;
+      }
+
+      for (const item of items) {
+        const mapped = mapTerraReviewToTripadvisor(item);
+        if (!mapped) {
+          skipped += 1;
+          continue;
+        }
+        const outcome = await this.upsertSyncedTripadvisorReview(
+          mapped,
+          actorUserId,
+        );
+        if (outcome === 'imported') imported += 1;
+        else if (outcome === 'updated') updated += 1;
+        else skipped += 1;
+      }
+
+      const reportedTotal = response.pagination?.total_pages;
+      if (
+        typeof reportedTotal === 'number' &&
+        Number.isFinite(reportedTotal) &&
+        reportedTotal >= 1
+      ) {
+        totalPages = Math.min(Math.floor(reportedTotal), TERRA_MAX_PAGES);
+      } else if (items.length < TERRA_PAGE_SIZE) {
+        break;
+      } else {
+        totalPages = page + 1;
+      }
+
+      page += 1;
+    }
+
+    return { imported, updated, skipped, pages };
+  }
+
+  private async upsertSyncedTripadvisorReview(
+    mapped: MappedTripadvisorReview,
+    actorUserId: string,
+  ): Promise<'imported' | 'updated' | 'skipped'> {
+    const existing = await this.reviewsRepository.findOne({
+      where: {
+        entityType: 'tripadvisor',
+        entityId: mapped.entityId,
+      },
+      withDeleted: true,
+    });
+
+    if (existing) {
+      if (existing.source !== 'tripadvisor') {
+        return 'skipped';
+      }
+      if (existing.deletedAt) {
+        await this.reviewsRepository.recover(existing);
+        existing.deletedAt = null;
+        existing.deletedByUserId = null;
+      }
+      existing.rating = mapped.rating;
+      existing.title = mapped.title;
+      existing.body = mapped.body;
+      existing.externalAuthorName = mapped.authorName;
+      existing.status = 'approved';
+      existing.userId = null;
+      existing.updatedByUserId = actorUserId;
+      if (mapped.publishedAt) {
+        existing.createdAt = mapped.publishedAt;
+      }
+      await this.reviewsRepository.save(existing);
+      return 'updated';
+    }
+
+    const id = newId();
+    const entity = this.reviewsRepository.create({
+      id,
+      userId: null,
+      source: 'tripadvisor',
+      entityType: 'tripadvisor',
+      entityId: mapped.entityId,
+      rating: mapped.rating,
+      title: mapped.title,
+      body: mapped.body,
+      externalAuthorName: mapped.authorName,
+      status: 'approved',
+      createdByUserId: actorUserId,
+      ...(mapped.publishedAt ? { createdAt: mapped.publishedAt } : {}),
+    });
+    await this.reviewsRepository.save(entity);
+    return 'imported';
   }
 
   async listForAdmin(

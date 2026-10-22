@@ -79,6 +79,14 @@ export interface CreateAdminTripadvisorReviewRequest {
   status?: ReviewStatus;
 }
 
+/** Result of `POST /reviews/tripadvisor/sync` (Terra location reviews import). */
+export interface SyncTripadvisorReviewsResult {
+  imported: number;
+  updated: number;
+  skipped: number;
+  pages: number;
+}
+
 export type ReviewEntityType =
   | 'property'
   | 'flight'
