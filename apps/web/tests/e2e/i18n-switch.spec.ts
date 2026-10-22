@@ -113,7 +113,7 @@ test.describe('Language switch (FR/EN/ES)', () => {
 
     await expect(page.getByRole('heading', { name: 'Customer sign in' })).toBeVisible();
     await expect(page.getByLabel('Email address')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Sign in' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
   });
 
   test('home navigation shows English after switch', async ({ page }) => {
@@ -136,7 +136,7 @@ test.describe('Language switch (FR/EN/ES)', () => {
 
     await expect(page.getByRole('heading', { name: 'Inicio de sesión del cliente' })).toBeVisible();
     await expect(page.getByLabel('Correo electrónico')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Iniciar sesión' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Iniciar sesión', exact: true })).toBeVisible();
   });
 
   test('home navigation shows Spanish after switch', async ({ page }) => {
