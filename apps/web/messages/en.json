@@ -118,7 +118,10 @@
         "passwordLabel": "Password",
         "passwordPlaceholder": "••••••••",
         "submit": "Sign in",
-        "submitLoading": "Signing in…"
+        "submitLoading": "Signing in…",
+        "forgotPassword": "Forgot password?",
+        "showPassword": "Show password",
+        "hidePassword": "Hide password"
       },
       "errors": {
         "network": "Could not reach the server. Check your connection.",
@@ -151,7 +154,9 @@
         "termsLabel": "I accept the",
         "termsLink": "terms of use",
         "submit": "Create my account",
-        "submitLoading": "Creating account…"
+        "submitLoading": "Creating account…",
+        "showPassword": "Show password",
+        "hidePassword": "Hide password"
       },
       "terms": {
         "modalTitle": "Terms of use",
@@ -875,7 +880,9 @@
     "carouselTitle": "Products",
     "carouselAria": "Carousel of destination products",
     "viewMore": "See more",
-    "viewMoreProduct": "See more"
+    "viewMoreProduct": "See more",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out"
   },
   "customerReviews": {
     "title": "What our travelers say",

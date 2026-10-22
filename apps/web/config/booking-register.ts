@@ -12,6 +12,8 @@ type BookingRegisterFormTranslator = {
       | 'passwordHint'
       | 'confirmPasswordLabel'
       | 'confirmPasswordMismatch'
+      | 'showPassword'
+      | 'hidePassword'
       | 'termsLabel'
       | 'termsLink'
       | 'submit'
@@ -48,11 +50,15 @@ export function buildBookingRegisterFormConfig(
       label: t('passwordLabel'),
       required: true,
       hint: t('passwordHint'),
+      showPasswordLabel: t('showPassword'),
+      hidePasswordLabel: t('hidePassword'),
     },
     confirmPassword: {
       label: t('confirmPasswordLabel'),
       required: true,
       mismatchError: t('confirmPasswordMismatch'),
+      showPasswordLabel: t('showPassword'),
+      hidePasswordLabel: t('hidePassword'),
     },
     terms: {
       label: t('termsLabel'),

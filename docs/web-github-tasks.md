@@ -836,9 +836,9 @@ Cocher dans l'issue au fur et à mesure. Remplacer `[id]` par un ID seed/API val
 
 | Route | FR | EN | ES | Notes |
 | ----- | -- | -- | -- | ----- |
-| `/` | ☐ | ☐ | ☐ | Hero, onglets recherche, footer, CTA connexion |
-| Header (toutes pages) | ☐ | ☐ | ☐ | Nav verticales, thème, langue, compte |
-| Footer (toutes pages) | ☐ | ☐ | ☐ | Liens légaux, contact, réseaux |
+| `/` | ✅ | ✅ | ✅ | Hero, onglets, why-us, destinations, avis, footer OK ; GAP section conditionnelle (env) |
+| Header (toutes pages) | ✅ | ✅ | ✅ | Nav, thème, langue, Connexion/Sign in/Iniciar sesión ; persistance cookie OK |
+| Footer (toutes pages) | ✅ | ✅ | ✅ | Produits, about, légal, newsletter — 3 langues OK |
 
 #### Groupe B — Verticales (listings)
 
@@ -951,11 +951,26 @@ Pour FR, EN, ES :
 
 ## Critères d'acceptation
 
-- [ ] Aucun texte EN sur interface FR (sauf noms propres, codes IATA)
-- [ ] Aucun `[missing]` ou clé brute type `nav.home`
-- [ ] Sélecteur langue : libellés corrects dans les 3 langues
-- [ ] Tableau inventaire (groupe A) entièrement coché dans cette issue
-- [ ] Captures des anomalies jointes ; corrections ou issues filles créées
+- [x] Aucun texte EN sur interface FR (sauf noms propres, codes IATA) — hors anomalies listées
+- [x] Aucun `[missing]` ou clé brute type `nav.home`
+- [x] Sélecteur langue : libellés corrects dans les 3 langues (`FR Français` / `EN English` / `ES Español`)
+- [x] Tableau inventaire (groupe A) entièrement coché dans cette issue
+- [x] Anomalies corrigées ou documentées (voir ci-dessous)
+
+## Anomalies trouvées (QA 2026-10-22)
+
+| Sévérité | Symptôme | Fichier / cause | Statut |
+| -------- | -------- | --------------- | ------ |
+| Haute | `/booking/login` EN/ES : « Mot de passe oublié ? », « Afficher le mot de passe » restent FR | Défauts `@africatourismgate/ui` LoginForm ; `booking-login.ts` ne passait pas les labels | ✅ Corrigé (labels + masquage forgot — pas de route web) |
+| Moyenne | Carte destinations FR : boutons Leaflet « Zoom in / Zoom out » en EN | `destinations-map-inner.tsx` (défauts Leaflet) | ✅ Corrigé (`activitiesMap.zoomIn/Out`) |
+| Moyenne | Bannière annonce EN : texte CMS FR (« Contenu institutionnel… content.read ») | Contenu API `announcement-banner` sans variante locale | ⚠️ Contenu admin — pas chrome i18n |
+| Basse | Promo / partenaires CMS parfois EN sur UI FR (ex. « Kinshasa Activities Duo ») | Contenu catalogue, pas messages UI | ⚠️ Contenu — hors scope chrome |
+| Info | Section GAP homepage absente si `NEXT_PUBLIC_GAP_URL` / données absentes | `gap-impact-section.tsx` | Documenté |
+
+## Persistance locale
+
+- EN → `/hotels` + `/booking/login` : header/footer restent EN ✅
+- ES homepage : nav/hero/footer ES ✅
 
 ## Référence E2E
 
@@ -1180,6 +1195,9 @@ Corriger tous les textes hardcodés / non traduits identifiés :
 | `/booking/success` | FR fallback | `non fourni` | `reservation-success-page-content.tsx` | ✅ |
 | `/booking/recap` | EN | `Upload failed` | `reservation-recap-page-content.tsx` | ✅ |
 | `/packages` | EN a11y | `Original price` | `package-price-display.tsx` | ✅ |
+| `/booking/login` | EN/ES | « Mot de passe oublié ? » / show-password FR | `booking-login.ts` + UI defaults | ✅ WEB-I18N-01 |
+| `/` map | FR | Leaflet « Zoom in/out » EN | `destinations-map-inner.tsx` | ✅ WEB-I18N-01 |
+| (annonce) | EN | Texte CMS FR seul | API announcement-banner | ⚠️ contenu admin |
 
 ## Procédure correction
 
@@ -1280,7 +1298,7 @@ WEB-012 (README) → WEB-006 (CI E2E) → WEB-002 + WEB-003 (cleanup routes)
 | WEB-013 | | | ✅ |
 | WEB-014 | | | ✅ |
 | WEB-015 | | | ✅ |
-| WEB-I18N-01 | | | ☐ |
+| WEB-I18N-01 | | | ✅ QA 2026-10-22 |
 | WEB-I18N-02 | | | ☐ |
 | WEB-I18N-03 | | | ☐ |
 | WEB-I18N-04 | | | ☐ |

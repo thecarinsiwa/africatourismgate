@@ -118,7 +118,10 @@
         "passwordLabel": "Mot de passe",
         "passwordPlaceholder": "••••••••",
         "submit": "Se connecter",
-        "submitLoading": "Connexion…"
+        "submitLoading": "Connexion…",
+        "forgotPassword": "Mot de passe oublié ?",
+        "showPassword": "Afficher le mot de passe",
+        "hidePassword": "Masquer le mot de passe"
       },
       "errors": {
         "network": "Impossible de joindre le serveur. Vérifiez votre connexion.",
@@ -151,7 +154,9 @@
         "termsLabel": "J'accepte les",
         "termsLink": "conditions d'utilisation",
         "submit": "Créer mon compte",
-        "submitLoading": "Création du compte…"
+        "submitLoading": "Création du compte…",
+        "showPassword": "Afficher le mot de passe",
+        "hidePassword": "Masquer le mot de passe"
       },
       "terms": {
         "modalTitle": "Conditions d'utilisation",
@@ -875,7 +880,9 @@
     "carouselTitle": "Produits",
     "carouselAria": "Carrousel des produits de la destination",
     "viewMore": "Voir plus",
-    "viewMoreProduct": "Voir plus"
+    "viewMoreProduct": "Voir plus",
+    "zoomIn": "Zoom avant",
+    "zoomOut": "Zoom arrière"
   },
   "customerReviews": {
     "title": "Avis de nos clients",
