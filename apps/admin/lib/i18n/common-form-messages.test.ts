@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { loadAdminMessages } from './load-messages';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const LOCALES = ['fr', 'en', 'es'] as const;
@@ -22,6 +23,14 @@ test('modules.common.form.loading is translated in every locale', () => {
     const loading = loadCommonForm(locale).loading;
     assert.equal(typeof loading, 'string', `${locale}: form.loading`);
     assert.ok((loading as string).trim().length > 0, `${locale}: form.loading empty`);
+  }
+});
+
+test('loadAdminMessages exposes modules.common.form.loading', async () => {
+  const expected = { fr: 'Chargement…', en: 'Loading…', es: 'Cargando…' };
+  for (const locale of LOCALES) {
+    const messages = await loadAdminMessages(locale);
+    assert.equal(messages.modules.common.form.loading, expected[locale], locale);
   }
 });
 
