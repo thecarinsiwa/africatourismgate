@@ -332,6 +332,14 @@ INSERT INTO `organization_settings` (
   'products_enabled',
   '{"hotels":true,"flights":true,"cars":true,"cruises":true,"tours":true,"packages":true}',
   '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000000024',
+  '00000000-0000-4000-8000-000000000001',
+  'site',
+  'announcement_banner',
+  '{"enabled":false,"color":"blue","intensity":"low","messages":{}}',
+  '00000000-0000-4000-8000-000000000010'
 );
 
 -- -----------------------------------------------------------------------------
