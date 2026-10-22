@@ -15,13 +15,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { resolveUnknownApiError } from '../../lib/common-api-errors';
 import { formatMoney } from '../../lib/format-money';
+import { useOrganizationCurrency } from '../../lib/treasury/use-organization-currency';
+import { useDefaultCurrency } from '../organization-currency-provider';
 import {
   AccountingBooksFilters,
   EMPTY_ACCOUNTING_BOOKS_FILTERS,
   type AccountingBooksFilterValues,
 } from './accounting-books-filters';
-
-const DEFAULT_CURRENCY = 'XOF';
 
 export function AccountingBalancePanel() {
   const t = useTranslations('modules.treasury.accounting.balance');
@@ -37,6 +37,9 @@ export function AccountingBalancePanel() {
   const [filters, setFilters] = useState<AccountingBooksFilterValues>(
     EMPTY_ACCOUNTING_BOOKS_FILTERS,
   );
+  const defaultCurrency = useDefaultCurrency();
+  const currency =
+    useOrganizationCurrency(filters.organizationId || undefined) ?? defaultCurrency;
   const [canRead, setCanRead] = useState(true);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -124,24 +127,24 @@ export function AccountingBalancePanel() {
         header: tColumns('debit'),
         align: 'right',
         cell: ({ row }) =>
-          formatMoney(row.original.debitCents, DEFAULT_CURRENCY),
+          formatMoney(row.original.debitCents, currency),
       },
       {
         id: 'credit',
         header: tColumns('credit'),
         align: 'right',
         cell: ({ row }) =>
-          formatMoney(row.original.creditCents, DEFAULT_CURRENCY),
+          formatMoney(row.original.creditCents, currency),
       },
       {
         id: 'balance',
         header: tColumns('balance'),
         align: 'right',
         cell: ({ row }) =>
-          formatMoney(row.original.balanceCents, DEFAULT_CURRENCY),
+          formatMoney(row.original.balanceCents, currency),
       },
     ],
-    [tColumns],
+    [currency, tColumns],
   );
 
   if (!canRead && state.status === 'error') {
@@ -181,7 +184,7 @@ export function AccountingBalancePanel() {
               {t('totals.debit')}
             </dt>
             <dd className="mt-1 text-lg font-semibold text-atg-fg">
-              {formatMoney(totals.debitCents, DEFAULT_CURRENCY)}
+              {formatMoney(totals.debitCents, currency)}
             </dd>
           </Card>
           <Card variant="dashboard" padding="sm">
@@ -189,7 +192,7 @@ export function AccountingBalancePanel() {
               {t('totals.credit')}
             </dt>
             <dd className="mt-1 text-lg font-semibold text-atg-fg">
-              {formatMoney(totals.creditCents, DEFAULT_CURRENCY)}
+              {formatMoney(totals.creditCents, currency)}
             </dd>
           </Card>
           <Card variant="dashboard" padding="sm">
@@ -197,7 +200,7 @@ export function AccountingBalancePanel() {
               {t('totals.balance')}
             </dt>
             <dd className="mt-1 text-lg font-semibold text-atg-fg">
-              {formatMoney(totals.balanceCents, DEFAULT_CURRENCY)}
+              {formatMoney(totals.balanceCents, currency)}
             </dd>
           </Card>
         </dl>
@@ -228,7 +231,7 @@ export function AccountingBalancePanel() {
           {t('unbalancedHint', {
             delta: formatMoney(
               Math.abs(totals.debitCents - totals.creditCents),
-              DEFAULT_CURRENCY,
+              currency,
             ),
           })}
         </p>

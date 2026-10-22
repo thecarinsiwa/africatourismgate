@@ -26,6 +26,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
+import { useFormatMoney } from '../../lib/use-format-money';
 import { getVehicleStatusLabel } from '../../lib/vehicle-status-labels';
 import { useVehicleAvailabilityStatusLabels } from '../../lib/i18n/use-module-labels';
 import { VehiclePhotosCarousel } from './vehicle-photos-carousel';
@@ -45,10 +46,6 @@ function ProfileField({ label, value }: { label: string; value: React.ReactNode 
   );
 }
 
-function formatPrice(cents: number, currency: string): string {
-  return `${(cents / 100).toFixed(2)} ${currency}`;
-}
-
 export function VehicleViewPage({ vehicleId }: VehicleViewPageProps) {
   const { locations: getLocationsErrorMessage } = useAdminErrorMessages();
   const tDetail = useTranslations('modules.locations.detail');
@@ -60,6 +57,7 @@ export function VehicleViewPage({ vehicleId }: VehicleViewPageProps) {
   const tCommonColumns = useTranslations('modules.common.columns');
   const tDates = useTranslations('modules.common.dates');
   const tActions = useTranslations('common.actions');
+  const formatPrice = useFormatMoney();
   const statusLabels = useVehicleAvailabilityStatusLabels();
   const formatDateTime = useFormatDateTime('short');
   const locale = useLocale();

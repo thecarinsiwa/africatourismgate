@@ -3289,8 +3289,8 @@ export class ApiClient {
     return this.request<void>(`/about-resources/${id}`, { method: 'DELETE' });
   }
 
-  getSucceededPaymentsRevenue(): Promise<SucceededPaymentsRevenue> {
-    return sumSucceededPaymentsRevenue(this);
+  getSucceededPaymentsRevenue(fallbackCurrency?: string | null): Promise<SucceededPaymentsRevenue> {
+    return sumSucceededPaymentsRevenue(this, fallbackCurrency);
   }
 
   listRoles(

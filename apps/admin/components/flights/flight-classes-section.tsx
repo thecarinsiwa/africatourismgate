@@ -15,6 +15,7 @@ import type { FlightClass, FlightClassName } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { useFormatMoney } from '../../lib/use-format-money';
 import { getFlightClassLabel } from '../../lib/flight-class-labels';
 import {
   useFlightClassLabels,
@@ -33,10 +34,6 @@ const emptyForm: FormValues = {
   seatsTotal: '',
 };
 
-function formatPrice(cents: number): string {
-  return `${(cents / 100).toFixed(2)} USD`;
-}
-
 type FlightClassesSectionProps = {
   flightId: string;
   embedded?: boolean;
@@ -50,6 +47,7 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
   const tCommon = useTranslations('modules.common');
   const classLabels = useFlightClassLabels();
   const classOptions = useFlightClassOptions();
+  const formatMoney = useFormatMoney();
   const classSelectId = useId();
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -294,7 +292,7 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
                     {getFlightClassLabel(flightClass.className, classLabels)}
                   </h3>
                   <p className="mt-1 text-lg tabular-nums text-atg-fg">
-                    {formatPrice(flightClass.basePriceCents)}
+                    {formatMoney(flightClass.basePriceCents)}
                   </p>
                 </div>
                 <DataTableActions>

@@ -55,6 +55,7 @@ import {
   type OrganizationBranding,
   brandingFromSettingsForm,
 } from '../../lib/organization-theme';
+import { useOrganizationCurrencyContext } from '../organization-currency-provider';
 import { useOrganizationThemeOptional } from '../organization-theme-provider';
 import { BrandColorPaletteField } from './brand-color-palette-field';
 import { AuthVisualIconsField } from './auth-visual-icons-field';
@@ -302,6 +303,7 @@ export function OrganizationSettingsForm({
 
   const router = useRouter();
   const orgTheme = useOrganizationThemeOptional();
+  const orgCurrency = useOrganizationCurrencyContext();
   const [values, setValues] = useState<SettingsFormValues>(defaultValues);
   const { options: currencyOptions } = useActiveCurrencies({
     extraCodes: [values.currency],
@@ -569,6 +571,9 @@ export function OrganizationSettingsForm({
       applyPreviewBranding(brandingFromSettingsForm(values));
       setInitialValues(values);
       await orgTheme?.refreshTheme();
+      if (orgCurrency?.organizationId === organizationId) {
+        orgCurrency.applyCurrency(currency);
+      }
 
       router.refresh();
     } catch (error) {

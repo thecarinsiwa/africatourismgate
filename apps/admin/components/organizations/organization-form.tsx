@@ -27,6 +27,7 @@ import {
 import { isValidSlug, slugifyName } from '../../lib/slug';
 import { FALLBACK_TREASURY_CURRENCY } from '../../lib/treasury/currency-options';
 import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
+import { useOrganizationCurrencyContext } from '../organization-currency-provider';
 
 export type OrganizationFormValues = {
   name: string;
@@ -151,6 +152,7 @@ export function OrganizationForm({
   const legalFormSelectOptions = useOrganizationLegalFormOptions();
   const router = useRouter();
   const { toast } = useToast();
+  const orgCurrency = useOrganizationCurrencyContext();
   const statusId = useId();
   const legalFormId = useId();
   const descriptionId = useId();
@@ -233,6 +235,9 @@ export function OrganizationForm({
           payload as UpdateOrganizationRequest,
         );
         setValues(organizationToFormValues(updated));
+        if (orgCurrency?.organizationId === updated.id) {
+          orgCurrency.applyCurrency(updated.currency);
+        }
         onUpdated?.(updated);
         router.refresh();
         toast({

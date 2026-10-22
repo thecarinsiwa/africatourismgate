@@ -2,12 +2,15 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Input } from '@africatourismgate/ui';
+import { Button, Input, Select } from '@africatourismgate/ui';
 import type { OrganizationBankAccount } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { isValidCurrency } from '../../lib/org-settings-constants';
+import { FALLBACK_TREASURY_CURRENCY } from '../../lib/treasury/currency-options';
+import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
+import { useOrganizationCurrency } from '../../lib/treasury/use-organization-currency';
 import {
   containsMaskChars,
   maskAccountNumberForDisplay,
@@ -27,7 +30,7 @@ const emptyValues: BankAccountFormValues = {
   accountName: '',
   accountNumber: '',
   swiftBic: '',
-  currency: 'USD',
+  currency: FALLBACK_TREASURY_CURRENCY,
   isDefault: false,
 };
 
@@ -76,6 +79,21 @@ export function OrganizationBankAccountForm({
   >({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const currencyTouchedRef = useRef(false);
+  const orgCurrency = useOrganizationCurrency(isEdit ? undefined : organizationId);
+  const orgCurrencyRef = useRef(orgCurrency);
+  orgCurrencyRef.current = orgCurrency;
+  const { options: currencyOptions } = useActiveCurrencies({
+    extraCodes: [values.currency, account?.currency],
+  });
+
+  useEffect(() => {
+    if (isEdit || !orgCurrency || currencyTouchedRef.current) return;
+    const withCurrency = (prev: BankAccountFormValues) =>
+      prev.currency === orgCurrency ? prev : { ...prev, currency: orgCurrency };
+    setValues(withCurrency);
+    setInitialValues(withCurrency);
+  }, [isEdit, orgCurrency]);
 
   useEffect(() => {
     if (account) {
@@ -83,8 +101,12 @@ export function OrganizationBankAccountForm({
       setValues(nextValues);
       setInitialValues(nextValues);
     } else {
-      setValues(emptyValues);
-      setInitialValues(emptyValues);
+      currencyTouchedRef.current = false;
+      const nextValues = orgCurrencyRef.current
+        ? { ...emptyValues, currency: orgCurrencyRef.current }
+        : emptyValues;
+      setValues(nextValues);
+      setInitialValues(nextValues);
     }
   }, [account]);
 
@@ -209,12 +231,15 @@ export function OrganizationBankAccountForm({
         value={values.swiftBic}
         onChange={(e) => updateField('swiftBic', e.target.value)}
       />
-      <Input
+      <Select
         label={t('currency')}
         value={values.currency}
-        onChange={(e) => updateField('currency', e.target.value.toUpperCase())}
+        options={currencyOptions}
+        onChange={(e) => {
+          currencyTouchedRef.current = true;
+          updateField('currency', e.target.value);
+        }}
         error={fieldErrors.currency}
-        maxLength={3}
       />
       <label className="flex items-center gap-2 text-sm text-atg-fg">
         <input

@@ -24,6 +24,7 @@ export type DashboardKpiData = {
   rawValue: number;
   displayValue: string;
   change?: DashboardKpiChange;
+  /** Currency of the payments summed; absent when none — UI falls back to the Admin default. */
   currency?: string;
 };
 
@@ -68,14 +69,14 @@ async function countBookingsInRange(dateFrom: string, dateTo: string): Promise<n
 async function sumSucceededRevenueInRange(
   dateFrom: string,
   dateTo: string,
-): Promise<{ totalCents: number; currency: string }> {
+): Promise<{ totalCents: number; currency: string | null }> {
   const client = getApiClient();
   const payments = await fetchAllPaginated<PaymentListItem>((page, limit) =>
     client.listPayments({ page, limit }),
   );
 
   let totalCents = 0;
-  let currency = 'CDF';
+  let currency: string | null = null;
 
   for (const payment of payments) {
     if (payment.status !== 'succeeded') continue;
@@ -117,7 +118,7 @@ async function fetchRevenueKpi(period: DashboardPeriod): Promise<DashboardKpiDat
   return {
     rawValue: currentRevenue.totalCents,
     displayValue: String(currentRevenue.totalCents),
-    currency: currentRevenue.currency,
+    currency: currentRevenue.currency ?? undefined,
     change: computeKpiChange(currentRevenue.totalCents, previousRevenue.totalCents),
   };
 }

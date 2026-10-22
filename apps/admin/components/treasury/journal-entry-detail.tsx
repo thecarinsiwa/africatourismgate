@@ -20,6 +20,7 @@ import { getApiClient } from '../../lib/auth/api';
 import { resolveUnknownApiError } from '../../lib/common-api-errors';
 import { formatMoney } from '../../lib/format-money';
 import { useFormatDateTime } from '../../lib/i18n/use-module-labels';
+import { useDefaultCurrency } from '../organization-currency-provider';
 import { AccountingBooksSubnav } from './accounting-books-subnav';
 
 const STATUS_BADGE: Record<JournalEntryStatus, DataTableBadgeVariant> = {
@@ -46,6 +47,7 @@ export function JournalEntryDetail({ entryId }: JournalEntryDetailProps) {
   const tPages = useTranslations('pages.tresorerie.comptabilite.journal.id');
   const formatDate = useFormatDateTime('short');
   const emptyDash = tCommon('empty.dash');
+  const defaultCurrency = useDefaultCurrency();
 
   const [canRead, setCanRead] = useState(true);
   const [accountLabels, setAccountLabels] = useState<
@@ -158,7 +160,7 @@ export function JournalEntryDetail({ entryId }: JournalEntryDetailProps) {
           row.original.debitCents > 0
             ? formatMoney(
                 row.original.debitCents,
-                state.status === 'ready' ? state.entry.currency : 'XOF',
+                state.status === 'ready' ? state.entry.currency : defaultCurrency,
               )
             : emptyDash,
       },
@@ -170,12 +172,12 @@ export function JournalEntryDetail({ entryId }: JournalEntryDetailProps) {
           row.original.creditCents > 0
             ? formatMoney(
                 row.original.creditCents,
-                state.status === 'ready' ? state.entry.currency : 'XOF',
+                state.status === 'ready' ? state.entry.currency : defaultCurrency,
               )
             : emptyDash,
       },
     ],
-    [tColumns, emptyDash, state, accountLabels],
+    [tColumns, emptyDash, state, accountLabels, defaultCurrency],
   );
 
   if (state.status === 'loading') {

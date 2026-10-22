@@ -23,6 +23,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { resolveUnknownApiError } from '../../lib/common-api-errors';
 import { formatMoney } from '../../lib/format-money';
+import { useDefaultCurrency } from '../organization-currency-provider';
 import {
   useBudgetPeriodFilterOptions,
   useBudgetPeriodLabels,
@@ -42,6 +43,7 @@ export function BudgetVsActualPanel() {
   const periodLabels = useBudgetPeriodLabels();
   const periodFilterOptions = useBudgetPeriodFilterOptions();
   const scopeLabels = useBudgetScopeLabels();
+  const defaultCurrency = useDefaultCurrency();
 
   const currentYear = new Date().getFullYear();
   const [year, setYear] = useState(String(currentYear));
@@ -304,9 +306,9 @@ export function BudgetVsActualPanel() {
   const rows = summary?.rows ?? [];
   const totals = summary?.totals;
 
-  // Devise d'affichage des totaux : filtre ou première ligne
+  // Devise d'affichage des totaux : filtre, première ligne, puis devise par défaut
   const totalsCurrency =
-    applied.currency || rows[0]?.currency || 'XOF';
+    applied.currency || rows[0]?.currency || defaultCurrency;
 
   return (
     <div className="space-y-4">

@@ -21,13 +21,10 @@ import { getApiClient } from '../../lib/auth/api';
 import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import { usePackageStatusLabels } from '../../lib/i18n/use-module-labels';
+import { useFormatMoney } from '../../lib/use-format-money';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
-
-function formatMoney(cents: number, currency: string): string {
-  return `${(cents / 100).toFixed(2)} ${currency}`;
-}
 
 type PackageRow = Package & {
   totalCents?: number;
@@ -47,6 +44,7 @@ export function PackagesList() {
   const tCommon = useTranslations('modules.common');
   const packageStatusLabels = usePackageStatusLabels();
   const paginationLabels = useDataTablePaginationLabels();
+  const formatMoney = useFormatMoney();
   const tEmpty = useTranslations('modules.common.empty');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -180,7 +178,7 @@ export function PackagesList() {
         header: tColumns('total'),
         meta: { align: 'right', hideOnMobile: true },
         cell: ({ row }) =>
-          row.original.totalCents != null && row.original.currency ? (
+          row.original.totalCents != null ? (
             <span className="tabular-nums text-sm">
               {formatMoney(row.original.totalCents, row.original.currency)}
             </span>
@@ -223,7 +221,15 @@ export function PackagesList() {
         },
       },
     ],
-    [deletingId, handleDeleteRequest, packageStatusLabels, tColumns, tCommonColumns, tEmpty],
+    [
+      deletingId,
+      formatMoney,
+      handleDeleteRequest,
+      packageStatusLabels,
+      tColumns,
+      tCommonColumns,
+      tEmpty,
+    ],
   );
 
   const packages = state.status === 'ready' ? state.packages : [];

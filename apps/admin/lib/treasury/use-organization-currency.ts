@@ -1,47 +1,52 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getApiClient } from '../auth/api';
 import {
-  FALLBACK_TREASURY_CURRENCY,
-  normalizeCurrencyCode,
-} from './currency-options';
+  fetchOrganizationCurrency,
+  useOrganizationCurrencyContext,
+} from '../../components/organization-currency-provider';
+import { FALLBACK_TREASURY_CURRENCY } from './currency-options';
 
 /**
  * Loads `organizations.currency` for the given org id.
- * Returns `null` while idle/loading; falls back to {@link FALLBACK_TREASURY_CURRENCY} on error.
+ * Without an id (or for the session organization), returns the Admin default currency.
+ * Returns `null` while loading; falls back to the Admin default on error.
  */
 export function useOrganizationCurrency(
   organizationId: string | undefined | null,
 ): string | null {
-  const [currency, setCurrency] = useState<string | null>(null);
+  const ctx = useOrganizationCurrencyContext();
+  const sessionCurrency = ctx?.currency ?? FALLBACK_TREASURY_CURRENCY;
+  const sessionLoading = ctx?.loading ?? false;
+  const id = organizationId?.trim() || null;
+  const useSession = !id || id === ctx?.organizationId;
+
+  const [fetched, setFetched] = useState<{ id: string; currency: string | null } | null>(
+    null,
+  );
 
   useEffect(() => {
-    const id = organizationId?.trim();
-    if (!id) {
-      setCurrency(null);
-      return;
-    }
+    if (useSession || !id) return;
 
     let cancelled = false;
-    setCurrency(null);
+    setFetched(null);
 
-    void getApiClient()
-      .getOrganization(id)
-      .then((org) => {
-        if (cancelled) return;
-        setCurrency(
-          normalizeCurrencyCode(org.currency) ?? FALLBACK_TREASURY_CURRENCY,
-        );
+    void fetchOrganizationCurrency(id)
+      .then((currency) => {
+        if (!cancelled) setFetched({ id, currency });
       })
       .catch(() => {
-        if (!cancelled) setCurrency(FALLBACK_TREASURY_CURRENCY);
+        if (!cancelled) setFetched({ id, currency: null });
       });
 
     return () => {
       cancelled = true;
     };
-  }, [organizationId]);
+  }, [id, useSession]);
 
-  return currency;
+  if (useSession) {
+    return sessionLoading ? null : sessionCurrency;
+  }
+  if (fetched?.id !== id) return null;
+  return fetched.currency ?? sessionCurrency;
 }

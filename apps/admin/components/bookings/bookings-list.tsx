@@ -31,6 +31,7 @@ import {
 } from '../../lib/i18n/use-module-labels';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import { exportCsv } from '../../lib/export-csv';
+import { useFormatMoney } from '../../lib/use-format-money';
 import { BookingItemsListModal } from './booking-items-list-modal';
 
 const PAGE_SIZE = 10;
@@ -49,10 +50,6 @@ function formatDateTime(iso: string, locale: string): string {
   }
 }
 
-function formatMoney(cents: number, currency: string): string {
-  return `${(cents / 100).toFixed(2)} ${currency}`;
-}
-
 export function BookingsList() {
   const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
   const locale = useLocale();
@@ -68,6 +65,7 @@ export function BookingsList() {
   const statusLabels = useBookingStatusLabels();
   const statusOptions = useBookingStatusFilterOptions();
   const paginationLabels = useDataTablePaginationLabels();
+  const formatMoney = useFormatMoney();
   const { toast } = useToast();
 
   const [page, setPage] = useState(1);
@@ -307,7 +305,7 @@ export function BookingsList() {
         ),
       },
     ],
-    [emptyDash, locale, orgNameById, statusLabels, t, tActions, tCommon],
+    [emptyDash, formatMoney, locale, orgNameById, statusLabels, t, tActions, tCommon],
   );
 
   const isLoading = state.status === 'loading';
@@ -342,7 +340,17 @@ export function BookingsList() {
       rows: bookings,
     });
     toast({ variant: 'success', message: tExport('success') });
-  }, [bookings, emptyDash, locale, orgNameById, statusLabels, tCommon, tExport, toast]);
+  }, [
+    bookings,
+    emptyDash,
+    formatMoney,
+    locale,
+    orgNameById,
+    statusLabels,
+    tCommon,
+    tExport,
+    toast,
+  ]);
 
   return (
     <div className="min-w-0 space-y-6 overflow-x-hidden">

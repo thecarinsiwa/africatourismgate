@@ -20,6 +20,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { useFormatMoney } from '../../lib/use-format-money';
 import { getVehicleCategoryIcon } from '../../lib/vehicle-category-icon-map';
 import { ListViewModeToggle } from '../list-view-mode-toggle';
 import { VehicleThumbnail } from './vehicle-thumbnail';
@@ -29,10 +30,6 @@ const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
 
 type VehiclesViewMode = 'table' | 'grid' | 'compact';
-
-function formatPrice(cents: number, currency: string): string {
-  return `${(cents / 100).toFixed(2)} ${currency}`;
-}
 
 function getVehicleLabel(
   vehicle: Vehicle,
@@ -57,6 +54,7 @@ export function VehiclesList() {
   const tActions = useTranslations('common.actions');
   const tToast = useTranslations('modules.common.toast');
   const paginationLabels = useDataTablePaginationLabels();
+  const formatPrice = useFormatMoney();
   const { toast } = useToast();
 
   const [searchInput, setSearchInput] = useState('');
@@ -305,6 +303,7 @@ export function VehiclesList() {
       agencyById,
       categoryById,
       emptyDash,
+      formatPrice,
       renderCategory,
       renderVehicleActions,
       t,

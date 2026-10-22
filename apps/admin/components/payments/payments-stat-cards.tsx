@@ -13,6 +13,7 @@ import {
 import { useModuleStatCards } from '../../lib/auth/use-module-stat-cards';
 import { getApiClient } from '../../lib/auth/api';
 import { formatCount, formatMoney } from '../../lib/format-money';
+import { useOrganizationCurrencyContext } from '../organization-currency-provider';
 import type { PaymentsStatusFilter } from './payments-list';
 
 type KpiCardState = {
@@ -37,6 +38,9 @@ export function PaymentsStatCards({
   const { dashboardKpi: getDashboardKpiErrorMessage } = useAdminErrorMessages();
   const { canLoad, loading: permissionsLoading, shouldRender } = useModuleStatCards('payments.read');
   const t = useTranslations('modules.payments');
+  const orgCurrency = useOrganizationCurrencyContext();
+  const defaultCurrency = orgCurrency?.currency ?? null;
+  const currencyLoading = orgCurrency?.loading ?? false;
   const [cards, setCards] = useState<Record<PaymentsKpiKey, KpiCardState>>(() => ({
     total: { ...initialCardState },
     succeeded: { ...initialCardState },
@@ -45,7 +49,7 @@ export function PaymentsStatCards({
   }));
 
   useEffect(() => {
-    if (permissionsLoading || !canLoad) return;
+    if (permissionsLoading || currencyLoading || !canLoad) return;
 
     let cancelled = false;
     const client = getApiClient();
@@ -53,7 +57,7 @@ export function PaymentsStatCards({
     async function loadKpi(key: PaymentsKpiKey): Promise<KpiCardState> {
       try {
         if (key === 'revenue') {
-          const revenue = await client.getSucceededPaymentsRevenue();
+          const revenue = await client.getSucceededPaymentsRevenue(defaultCurrency);
           return {
             status: 'ready',
             displayValue: formatMoney(revenue.totalCents, revenue.currency),
@@ -93,7 +97,13 @@ export function PaymentsStatCards({
     return () => {
       cancelled = true;
     };
-  }, [canLoad, getDashboardKpiErrorMessage, permissionsLoading]);
+  }, [
+    canLoad,
+    currencyLoading,
+    defaultCurrency,
+    getDashboardKpiErrorMessage,
+    permissionsLoading,
+  ]);
 
   if (!shouldRender) {
     return null;

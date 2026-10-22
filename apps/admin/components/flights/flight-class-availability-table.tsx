@@ -13,6 +13,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 import { formatDateLabel, formatPrice } from '../../lib/availability-dates';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { useDefaultCurrency } from '../organization-currency-provider';
 
 const PAGE_SIZE = 2;
 
@@ -37,6 +38,7 @@ export function FlightClassAvailabilityTable({
   const tCommon = useTranslations('modules.common');
   const tPagination = useTranslations('modules.common.pagination');
   const paginationLabels = useDataTablePaginationLabels();
+  const defaultCurrency = useDefaultCurrency();
   const [page, setPage] = useState(1);
 
   const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
@@ -84,7 +86,7 @@ export function FlightClassAvailabilityTable({
         meta: { align: 'right' },
         cell: ({ row }) => (
           <span className="tabular-nums text-sm font-semibold text-atg-fg">
-            {formatPrice(row.original.priceCents, 'USD')}
+            {formatPrice(row.original.priceCents, defaultCurrency)}
           </span>
         ),
       },
@@ -112,7 +114,7 @@ export function FlightClassAvailabilityTable({
         ),
       },
     ],
-    [deletingId, onDelete, onEditDate, tCalendar, tColumns],
+    [defaultCurrency, deletingId, onDelete, onEditDate, tCalendar, tColumns],
   );
 
   return (

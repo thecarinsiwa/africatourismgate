@@ -32,9 +32,9 @@ function sumSucceededRevenueInPayments(
   payments: PaymentListItem[],
   dateFrom: string,
   dateTo: string,
-): { totalCents: number; currency: string } {
+): { totalCents: number; currency: string | null } {
   let totalCents = 0;
-  let currency = 'CDF';
+  let currency: string | null = null;
 
   for (const payment of payments) {
     if (payment.status !== 'succeeded') continue;
@@ -144,7 +144,7 @@ export async function fetchDashboardBatch(
     kpis.revenue = {
       rawValue: currentRevenue.totalCents,
       displayValue: String(currentRevenue.totalCents),
-      currency: currentRevenue.currency,
+      currency: currentRevenue.currency ?? undefined,
       change: computeKpiChange(currentRevenue.totalCents, previousRevenue.totalCents),
     };
   }
