@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { REVIEW_SOURCES, type ReviewSource } from '@africatourismgate/types';
 
 export class AdminReviewListItemDto {
   @ApiProperty({ format: 'uuid' })
@@ -10,6 +11,9 @@ export class AdminReviewListItemDto {
   @ApiProperty({ enum: ['pending', 'approved', 'hidden'] })
   status!: 'pending' | 'approved' | 'hidden';
 
+  @ApiProperty({ enum: REVIEW_SOURCES })
+  source!: ReviewSource;
+
   @ApiProperty()
   createdAt!: string;
 
@@ -19,8 +23,23 @@ export class AdminReviewListItemDto {
   @ApiPropertyOptional({ nullable: true })
   authorEmail!: string | null;
 
+  @ApiPropertyOptional({
+    nullable: true,
+    description: 'Display name for Tripadvisor / external reviews',
+  })
+  externalAuthorName!: string | null;
+
   @ApiProperty({
-    enum: ['property', 'flight', 'vehicle', 'cruise', 'activity', 'booking', 'tour_guide'],
+    enum: [
+      'property',
+      'flight',
+      'vehicle',
+      'cruise',
+      'activity',
+      'booking',
+      'tour_guide',
+      'tripadvisor',
+    ],
   })
   entityType!: string;
 

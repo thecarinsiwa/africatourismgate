@@ -1,6 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsIn, IsInt, IsOptional, IsUUID, Max, Min } from 'class-validator';
+import { REVIEW_SOURCES, type ReviewSource } from '@africatourismgate/types';
 import { PaginationQueryDto } from '../../../../common/dto/pagination-query.dto';
 import type { Reviews } from '../../../../entities/generated';
 
@@ -23,6 +24,11 @@ export class ReviewsListQueryDto extends PaginationQueryDto {
   @IsOptional()
   @IsIn(REVIEW_STATUSES)
   status?: Reviews['status'];
+
+  @ApiPropertyOptional({ enum: REVIEW_SOURCES })
+  @IsOptional()
+  @IsIn(REVIEW_SOURCES)
+  source?: ReviewSource;
 
   @ApiPropertyOptional({ format: 'uuid', description: 'Filter by accommodation property' })
   @IsOptional()

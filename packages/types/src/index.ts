@@ -685,6 +685,7 @@ export {
 export type {
   AdminReviewDetail,
   AdminReviewListItem,
+  CreateAdminTripadvisorReviewRequest,
   CreateBookingReviewRequest,
   GuideReviewInvite,
   PropertyReviewSummary,
@@ -692,10 +693,13 @@ export type {
   PublicFeaturedReviewsListQuery,
   Review,
   ReviewEntityType,
+  ReviewSource,
   ReviewStatus,
   ReviewsListQuery,
   UpdateReviewStatusRequest,
 } from './review.js';
+
+export { REVIEW_SOURCES } from './review.js';
 
 export type {
   AdminSupportTicketDetail,

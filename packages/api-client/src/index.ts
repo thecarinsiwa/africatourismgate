@@ -130,6 +130,7 @@ import type {
   BookingsListQuery,
   AdminReviewDetail,
   AdminReviewListItem,
+  CreateAdminTripadvisorReviewRequest,
   CreateBookingReviewRequest,
   ReviewsListQuery,
   UpdateReviewStatusRequest,
@@ -682,6 +683,7 @@ export type {
   Review,
   AdminReviewDetail,
   AdminReviewListItem,
+  CreateAdminTripadvisorReviewRequest,
   CreateBookingReviewRequest,
   ReviewsListQuery,
   UpdateReviewStatusRequest,
@@ -4001,6 +4003,15 @@ export class ApiClient {
 
   getReview(id: string): Promise<AdminReviewDetail> {
     return this.request<AdminReviewDetail>(`/reviews/${id}`);
+  }
+
+  createTripadvisorReview(
+    body: CreateAdminTripadvisorReviewRequest,
+  ): Promise<AdminReviewDetail> {
+    return this.request<AdminReviewDetail>('/reviews/tripadvisor', {
+      method: 'POST',
+      body,
+    });
   }
 
   updateReviewStatus(

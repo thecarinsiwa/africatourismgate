@@ -11,12 +11,14 @@ import {
   Users,
 } from '../../../entities/generated';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { OrganizationSettingsModule } from '../organization-settings/organization-settings.module';
 import { ReviewsController } from './reviews.controller';
 import { ReviewsService } from './reviews.service';
 
 @Module({
   imports: [
     NotificationsModule,
+    OrganizationSettingsModule,
     TypeOrmModule.forFeature([
       Reviews,
       Bookings,

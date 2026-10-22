@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { REVIEW_SOURCES, type ReviewSource } from '@africatourismgate/types';
 
 export class ReviewDto {
   @ApiProperty({ format: 'uuid' })
@@ -18,6 +19,9 @@ export class ReviewDto {
 
   @ApiPropertyOptional({ nullable: true, description: 'Reviewer avatar URL (public display)' })
   authorAvatarUrl!: string | null;
+
+  @ApiProperty({ enum: REVIEW_SOURCES })
+  source!: ReviewSource;
 
   @ApiProperty()
   createdAt!: string;

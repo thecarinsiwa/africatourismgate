@@ -1,11 +1,15 @@
+export type ReviewSource = 'platform' | 'tripadvisor';
+
 export interface Review {
   id: string;
   rating: number;
   title: string | null;
   body: string | null;
   authorFirstName: string | null;
-  /** Reviewer profile photo when available. */
+  /** Reviewer profile photo when available (platform reviews only). */
   authorAvatarUrl?: string | null;
+  /** Origin of the review — drives homepage badges and filtering. */
+  source: ReviewSource;
   createdAt: string;
 }
 
@@ -15,9 +19,12 @@ export interface AdminReviewListItem {
   id: string;
   rating: number;
   status: ReviewStatus;
+  source: ReviewSource;
   createdAt: string;
   authorFirstName: string | null;
   authorEmail: string | null;
+  /** Display name for Tripadvisor (or other external) reviews. */
+  externalAuthorName: string | null;
   entityType: string;
   entityId: string;
   propertyId: string | null;
@@ -31,7 +38,8 @@ export interface AdminReviewListItem {
 }
 
 export interface AdminReviewDetail extends AdminReviewListItem {
-  userId: string;
+  /** Null for Tripadvisor / external reviews. */
+  userId: string | null;
   updatedAt: string | null;
 }
 
@@ -40,6 +48,7 @@ export interface ReviewsListQuery {
   limit?: number;
   rating?: number;
   status?: ReviewStatus;
+  source?: ReviewSource;
   propertyId?: string;
 }
 
@@ -58,6 +67,18 @@ export interface CreateBookingReviewRequest {
   body?: string;
 }
 
+/** Admin Contenu › Avis — manual Tripadvisor review for the homepage carousel. */
+export interface CreateAdminTripadvisorReviewRequest {
+  rating: number;
+  title?: string;
+  /** Required non-empty review text. */
+  body: string;
+  /** Display name shown on the public site. */
+  authorName: string;
+  /** Defaults to `approved` so the review can appear on the homepage immediately. */
+  status?: ReviewStatus;
+}
+
 export type ReviewEntityType =
   | 'property'
   | 'flight'
@@ -65,7 +86,8 @@ export type ReviewEntityType =
   | 'cruise'
   | 'activity'
   | 'booking'
-  | 'tour_guide';
+  | 'tour_guide'
+  | 'tripadvisor';
 
 export interface GuideReviewInvite {
   assignmentId: string;
@@ -85,3 +107,5 @@ export interface PropertyReviewsListQuery {
   page?: number;
   limit?: number;
 }
+
+export const REVIEW_SOURCES = ['platform', 'tripadvisor'] as const satisfies readonly ReviewSource[];
