@@ -258,7 +258,9 @@
     "backToBlog": "Back to blog",
     "publishedOn": "Published on",
     "breadcrumbHome": "Home",
-    "breadcrumbBlog": "Blog"
+    "breadcrumbBlog": "Blog",
+    "detailMetaFallbackTitle": "Blog article",
+    "detailMetaFallbackDescription": "Discover our articles about travel in Africa with Africa Tourism Gate."
   },
   "support": {
     "metaTitle": "Help centre",

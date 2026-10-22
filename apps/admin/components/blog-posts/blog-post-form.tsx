@@ -267,19 +267,11 @@ export function BlogPostForm({ mode, postId, initialPost }: BlogPostFormProps) {
         placeholder={t('fields.excerptPlaceholder')}
       />
 
-      <RichTextEditor
-        label={t('fields.content')}
-        value={values.content}
-        onChange={(html) => updateField('content', html)}
-        placeholder={t('fields.contentPlaceholder')}
-        contentClassName="min-h-[280px]"
-      />
-      {fieldErrors.content ? (
-        <p className="mt-1 text-sm text-red-600 dark:text-red-400">{fieldErrors.content}</p>
-      ) : null}
-
       <div className="space-y-3">
-        <p className="text-sm font-medium text-atg-fg">{t('fields.coverImageUrl')}</p>
+        <div>
+          <p className="text-sm font-medium text-atg-fg">{t('fields.coverImageUrl')}</p>
+          <p className="mt-0.5 text-xs text-atg-muted">{t('fields.coverImageHint')}</p>
+        </div>
         <div className="flex flex-wrap items-center gap-3">
           <label
             htmlFor={coverFileInputId}
@@ -320,6 +312,17 @@ export function BlogPostForm({ mode, postId, initialPost }: BlogPostFormProps) {
           error={fieldErrors.coverImageUrl}
         />
       </div>
+
+      <RichTextEditor
+        label={t('fields.content')}
+        value={values.content}
+        onChange={(html) => updateField('content', html)}
+        placeholder={t('fields.contentPlaceholder')}
+        contentClassName="min-h-[280px]"
+      />
+      {fieldErrors.content ? (
+        <p className="mt-1 text-sm text-red-600 dark:text-red-400">{fieldErrors.content}</p>
+      ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>

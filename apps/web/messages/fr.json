@@ -258,7 +258,9 @@
     "backToBlog": "Retour au blog",
     "publishedOn": "Publié le",
     "breadcrumbHome": "Accueil",
-    "breadcrumbBlog": "Blog"
+    "breadcrumbBlog": "Blog",
+    "detailMetaFallbackTitle": "Article du blog",
+    "detailMetaFallbackDescription": "Découvrez nos articles sur le tourisme en Afrique avec Africa Tourism Gate."
   },
   "support": {
     "metaTitle": "Centre d'aide",

@@ -65,7 +65,8 @@
       "coverImageUrl": "Cover image (URL)",
       "coverPreviewAlt": "Cover image preview",
       "locale": "Language",
-      "publishedAtOptional": "Publish date (optional)"
+      "publishedAtOptional": "Publish date (optional)",
+      "coverImageHint": "Used as the featured image on the site and when sharing on Facebook, LinkedIn or X (ideal: 1200×630)."
     },
     "hints": {
       "contentHtml": "HTML allowed (p, h2, ul, a tags, etc.).",
