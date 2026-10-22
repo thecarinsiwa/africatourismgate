@@ -73,6 +73,28 @@
     },
     "ariaLabel": "Support tickets inbox"
   },
+  "stats": {
+    "total": {
+      "label": "Total",
+      "subtitle": "All support tickets"
+    },
+    "open": {
+      "label": "Open",
+      "subtitle": "Awaiting intake"
+    },
+    "pending": {
+      "label": "In progress",
+      "subtitle": "Currently being handled"
+    },
+    "resolved": {
+      "label": "Resolved",
+      "subtitle": "Requests completed"
+    },
+    "closed": {
+      "label": "Closed",
+      "subtitle": "Tickets closed"
+    }
+  },
   "messagesInbox": {
     "ariaLabel": "Support conversations",
     "fromStaff": "Agent",

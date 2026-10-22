@@ -73,6 +73,28 @@
     },
     "ariaLabel": "Bandeja de entrada de tickets de soporte"
   },
+  "stats": {
+    "total": {
+      "label": "Total",
+      "subtitle": "Todos los tickets de soporte"
+    },
+    "open": {
+      "label": "Abiertos",
+      "subtitle": "Pendientes de atención"
+    },
+    "pending": {
+      "label": "En curso",
+      "subtitle": "En tratamiento"
+    },
+    "resolved": {
+      "label": "Resueltos",
+      "subtitle": "Solicitudes completadas"
+    },
+    "closed": {
+      "label": "Cerrados",
+      "subtitle": "Tickets cerrados"
+    }
+  },
   "messagesInbox": {
     "ariaLabel": "Conversaciones de soporte",
     "fromStaff": "Agente",
