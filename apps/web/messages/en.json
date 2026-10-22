@@ -845,6 +845,10 @@
     "carouselAria": "Customer reviews carousel",
     "prev": "Previous review",
     "next": "Next review",
+    "badges": {
+      "platform": "Verified booking",
+      "tripadvisor": "Tripadvisor"
+    },
     "items": [
       {
         "rating": 5,

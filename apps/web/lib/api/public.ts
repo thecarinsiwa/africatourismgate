@@ -29,11 +29,13 @@ import type {
   PublicHeroSlide,
   PublicHeroSlidesListQuery,
   PublicFeaturedReviewsListQuery,
+  PublicHomepageReviews,
   PublicGapHome,
   PublicSiteSearchQuery,
   PublicSiteSearchResponse,
   AboutPageSectionKey,
 } from '@africatourismgate/types';
+import { normalizeHomepageReviews } from '@africatourismgate/types/organization-settings';
 import type {
   VehicleDetail,
   VehicleDetailQuery,
@@ -848,6 +850,22 @@ export async function getPublicFeaturedReviews(
   if (params.limit !== undefined) qs.set('limit', String(params.limit));
   const query = qs.toString();
   return fetchPublic<Review[]>(`/public/reviews/featured${query ? `?${query}` : ''}`);
+}
+
+/** Homepage “Avis de nos clients” visibility toggles. Never throws — defaults both on. */
+export async function getPublicHomepageReviews(): Promise<PublicHomepageReviews> {
+  try {
+    const raw = await fetchPublic<unknown>(
+      '/organization-settings/public/homepage-reviews',
+    );
+    return normalizeHomepageReviews(
+      raw && typeof raw === 'object' && !Array.isArray(raw)
+        ? (raw as Record<string, unknown>)
+        : null,
+    );
+  } catch {
+    return normalizeHomepageReviews(null);
+  }
 }
 
 export async function getPublicGapHome(locale?: string): Promise<PublicGapHome> {

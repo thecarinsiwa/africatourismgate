@@ -845,6 +845,10 @@
     "carouselAria": "Carrusel de opiniones de clientes",
     "prev": "Opinión anterior",
     "next": "Opinión siguiente",
+    "badges": {
+      "platform": "Reserva verificada",
+      "tripadvisor": "Tripadvisor"
+    },
     "items": [
       {
         "rating": 5,
