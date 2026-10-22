@@ -17,6 +17,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { useFormatMoney } from '../../lib/use-format-money';
 import {
   ActivityDifficultyBadge,
   ActivityDurationBadge,
@@ -24,10 +25,6 @@ import {
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
-
-function formatPrice(cents: number, currency: string): string {
-  return `${(cents / 100).toFixed(2)} ${currency}`;
-}
 
 export function ActivitiesList() {
   const { activities: getActivitiesErrorMessage } = useAdminErrorMessages();
@@ -38,6 +35,7 @@ export function ActivitiesList() {
   const tDataTable = useTranslations('modules.common.dataTable');
   const tCommon = useTranslations('modules.common');
   const paginationLabels = useDataTablePaginationLabels();
+  const formatPrice = useFormatMoney();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [destinationFilter, setDestinationFilter] = useState('');
@@ -193,7 +191,7 @@ export function ActivitiesList() {
         },
       },
     ],
-    [deletingId, handleDeleteRequest, providerById, tColumns, tCommonColumns],
+    [deletingId, formatPrice, handleDeleteRequest, providerById, tColumns, tCommonColumns],
   );
 
   const activities = state.status === 'ready' ? state.activities : [];

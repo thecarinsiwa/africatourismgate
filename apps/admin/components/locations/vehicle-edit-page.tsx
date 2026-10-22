@@ -19,6 +19,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
+import { useFormatMoney } from '../../lib/use-format-money';
 import { VehicleAvailabilitySection } from './vehicle-availability-section';
 import { VehicleForm } from './vehicle-form';
 import { VehicleImagesSection } from './vehicle-images-section';
@@ -36,14 +37,11 @@ function isTabValue(value: string | null): value is TabValue {
   return value !== null && (TAB_VALUES as readonly string[]).includes(value);
 }
 
-function formatPrice(cents: number, currency: string): string {
-  return `${(cents / 100).toFixed(2)} ${currency}`;
-}
-
 export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
   const { locations: getLocationsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.locations.detail');
   const tAvailability = useTranslations('modules.locations.sections.availability');
+  const formatPrice = useFormatMoney();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();

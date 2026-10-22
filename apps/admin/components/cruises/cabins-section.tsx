@@ -16,6 +16,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 
 import { getApiClient } from '../../lib/auth/api';
+import { useFormatMoney } from '../../lib/use-format-money';
 
 type FormValues = {
   categoryName: string;
@@ -30,10 +31,6 @@ const emptyForm: FormValues = {
   currency: 'USD',
 };
 
-function formatPrice(cents: number, currency: string): string {
-  return `${(cents / 100).toFixed(2)} ${currency}`;
-}
-
 type CabinsSectionProps = { shipId: string; embedded?: boolean };
 
 export function CabinsSection({ shipId, embedded = false }: CabinsSectionProps) {
@@ -43,6 +40,7 @@ export function CabinsSection({ shipId, embedded = false }: CabinsSectionProps) 
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
   const tLoading = useTranslations('common.loading');
+  const formatPrice = useFormatMoney();
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }

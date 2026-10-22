@@ -7,6 +7,7 @@ import type { Cabin, CabinAvailability, ItineraryPort } from '@africatourismgate
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { useFormatMoney } from '../../lib/use-format-money';
 
 type RowState = {
   cabin: Cabin;
@@ -14,10 +15,6 @@ type RowState = {
   availableCount: string;
   priceCents: string;
 };
-
-function formatPrice(cents: number, currency: string): string {
-  return `${(cents / 100).toFixed(2)} ${currency}`;
-}
 
 type CabinAvailabilitySectionProps = {
   sailingId: string;
@@ -37,6 +34,7 @@ export function CabinAvailabilitySection({
   const t = useTranslations('modules.cruises.sections.cabinAvailability');
   const tColumns = useTranslations('modules.common.columns');
   const tValidation = useTranslations('modules.common.validation');
+  const formatPrice = useFormatMoney();
   const [rows, setRows] = useState<RowState[]>([]);
   const [ports, setPorts] = useState<ItineraryPort[]>([]);
   const [portLabels, setPortLabels] = useState<Map<string, string>>(new Map());
@@ -211,7 +209,7 @@ export function CabinAvailabilitySection({
         ),
       },
     ],
-    [saveRow, savingCabinId, t, tColumns],
+    [formatPrice, saveRow, savingCabinId, t, tColumns],
   );
 
   return (

@@ -16,6 +16,7 @@ import {
   shiftYearMonth,
   weekdayOffset,
 } from '../../lib/availability-dates';
+import { useDefaultCurrency } from '../organization-currency-provider';
 
 type DayDraft = {
   availableSeats: string;
@@ -64,6 +65,7 @@ export function FlightClassAvailabilityGrid({
   const tToast = useTranslations('modules.common.toast');
   const tActions = useTranslations('common.actions');
   const emptyDash = tCommon('empty.dash');
+  const defaultCurrency = useDefaultCurrency();
   const { toast } = useToast();
   const gridRef = useRef<HTMLDivElement>(null);
   const [rows, setRows] = useState<Map<string, FlightClassAvailability>>(new Map());
@@ -495,7 +497,7 @@ export function FlightClassAvailabilityGrid({
                           : emptyDash}
                       </span>
                       <span className="text-[10px] tabular-nums opacity-90 sm:text-xs">
-                        {Number.isFinite(cents) ? formatPrice(cents, 'USD') : emptyDash}
+                        {Number.isFinite(cents) ? formatPrice(cents, defaultCurrency) : emptyDash}
                       </span>
                     </div>
                   )}

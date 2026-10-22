@@ -20,6 +20,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
+import { useFormatMoney } from '../../lib/use-format-money';
+import { useDefaultCurrency } from '../organization-currency-provider';
 import {
   formatDurationMinutes,
   formatFlightSchedule,
@@ -42,10 +44,6 @@ function ProfileField({ label, value }: { label: string; value: React.ReactNode 
   );
 }
 
-function formatPrice(cents: number): string {
-  return `${(cents / 100).toFixed(2)} USD`;
-}
-
 function formatAirportLabel(airport: Airport | null, emptyDash: string): string {
   if (!airport) return emptyDash;
   return `${airport.iataCode} — ${airport.city}`;
@@ -65,6 +63,8 @@ export function FlightViewPage({ flightId }: FlightViewPageProps) {
   const formatDateTime = useFormatDateTime('short');
   const locale = useLocale();
   const emptyDash = tCommon('empty.dash');
+  const defaultCurrency = useDefaultCurrency();
+  const formatMoney = useFormatMoney();
 
   const [flight, setFlight] = useState<Flight | null>(null);
   const [airline, setAirline] = useState<Airline | null>(null);
@@ -147,10 +147,10 @@ export function FlightViewPage({ flightId }: FlightViewPageProps) {
         cell: ({ row }) => (
           <div className="text-right">
             <p className="tabular-nums text-sm font-semibold text-atg-fg">
-              {formatPrice(row.original.basePriceCents)}
+              {formatMoney(row.original.basePriceCents)}
             </p>
             <p className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-atg-muted">
-              USD
+              {defaultCurrency}
             </p>
           </div>
         ),
@@ -174,7 +174,7 @@ export function FlightViewPage({ flightId }: FlightViewPageProps) {
         ),
       },
     ],
-    [classLabels, flightId, tActions, tColumns, tSections],
+    [classLabels, defaultCurrency, flightId, formatMoney, tActions, tColumns, tSections],
   );
 
   const filteredClasses = useMemo(() => {
@@ -192,13 +192,13 @@ export function FlightViewPage({ flightId }: FlightViewPageProps) {
         label,
         flightClass.className,
         String(flightClass.seatsTotal),
-        formatPrice(flightClass.basePriceCents),
+        formatMoney(flightClass.basePriceCents),
       ]
         .join(' ')
         .toLowerCase();
       return haystack.includes(query);
     });
-  }, [classes, classSearch, classLabels]);
+  }, [classes, classSearch, classLabels, formatMoney]);
 
   const hasClassSearch = classSearch.trim().length > 0;
 

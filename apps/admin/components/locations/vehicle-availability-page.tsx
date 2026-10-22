@@ -9,16 +9,13 @@ import { useEffect, useState } from 'react';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
+import { useFormatMoney } from '../../lib/use-format-money';
 import { VehicleAvailabilitySection } from './vehicle-availability-section';
 import { VehicleThumbnail } from './vehicle-thumbnail';
 
 type VehicleAvailabilityPageProps = {
   vehicleId: string;
 };
-
-function formatPrice(cents: number, currency: string): string {
-  return `${(cents / 100).toFixed(2)} ${currency}`;
-}
 
 export function VehicleAvailabilityPage({ vehicleId }: VehicleAvailabilityPageProps) {
   const { locations: getLocationsErrorMessage } = useAdminErrorMessages();
@@ -29,6 +26,7 @@ export function VehicleAvailabilityPage({ vehicleId }: VehicleAvailabilityPagePr
   const tDetail = useTranslations('modules.locations.detail');
   const tView = useTranslations('modules.locations.view');
   const tActions = useTranslations('common.actions');
+  const formatPrice = useFormatMoney();
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
