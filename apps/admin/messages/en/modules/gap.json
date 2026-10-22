@@ -4,7 +4,15 @@
     "deniedWrite": "You do not have gap.write permission to perform this action."
   },
   "parametres": {
-    "localeFilter": "Content language"
+    "localeFilter": "Content language",
+    "localeConfigured": "{locale} · configured",
+    "localeMissing": "{locale} · not set",
+    "unsaved": {
+      "title": "Unsaved changes",
+      "description": "Some changes have not been saved. Switch language without saving?",
+      "confirm": "Switch without saving",
+      "cancel": "Keep editing"
+    }
   },
   "sections": {
     "about": "About",
@@ -28,13 +36,33 @@
   },
   "siteSettings": {
     "heading": "GAP site settings",
+    "sections": {
+      "content": "Content",
+      "contentHint": "GAP hero title and subtitle for this language.",
+      "hero": "Hero image",
+      "heroHint": "Banner at the top of the GAP page. Upload and external URL share the same field.",
+      "preview": "Live preview",
+      "previewHint": "Stays visible while you scroll — approximate hero render."
+    },
+    "preview": {
+      "badge": "GAP hero",
+      "defaultTitle": "Gorilla Ambassadors Program",
+      "emptySubtitle": "Subtitle not set yet…",
+      "altLabel": "Alt: {alt}",
+      "ariaLabel": "GAP hero preview — {title}"
+    },
     "fields": {
       "title": "Title",
       "subtitle": "Subtitle",
+      "publishedToggle": "Publish GAP settings",
       "heroImage": "Hero image",
-      "heroImageUrl": "Hero image URL",
+      "heroImageUrl": "Image URL (or upload result)",
       "heroImageAlt": "Hero image alt text",
       "heroPreviewAlt": "Hero image preview",
+      "heroEmpty": "No image yet — upload a file or enter a URL.",
+      "heroUploadHint": "JPEG, PNG or WebP — max 5 MB · recommended 1920×1080",
+      "heroPriorityHint": "An uploaded file fills this field and replaces any previous URL.",
+      "heroAltHint": "Short description for accessibility and SEO.",
       "removeHero": "Remove image",
       "links": "Partner links",
       "linksHint": "UNESCO, partners, resources… up to 10 links.",
@@ -62,8 +90,10 @@
       "unescoUrlInvalid": "UNESCO URL must be valid.",
       "donateUrlInvalid": "Donate URL must be valid."
     },
+    "dirty": "Unsaved changes",
     "saving": "Saving…",
-    "saveButton": "Save"
+    "saveButton": "Save",
+    "cancelButton": "Cancel"
   },
   "pages": {
     "stats": {
