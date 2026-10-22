@@ -2694,6 +2694,52 @@
         ]
       }
     },
+    "/api/organization-settings/public/announcement-banner": {
+      "get": {
+        "operationId": "OrganizationSettingsController_findPublicAnnouncementBanner",
+        "parameters": [
+          {
+            "name": "organizationSlug",
+            "required": false,
+            "in": "query",
+            "description": "Organization slug (defaults to the platform organization)",
+            "schema": {
+              "example": "africa-tourism-gate",
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "UI locale (fr, en, es). Falls back to fr when missing or unsupported.",
+            "schema": {
+              "example": "fr",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicAnnouncementBannerDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Get the announcement banner displayed above the public site header",
+        "tags": [
+          "organization-settings"
+        ]
+      }
+    },
     "/api/organization-settings/public/maintenance": {
       "get": {
         "operationId": "OrganizationSettingsController_findPublicSiteMaintenance",
@@ -8121,6 +8167,177 @@
         ]
       }
     },
+    "/api/currencies": {
+      "get": {
+        "operationId": "CurrenciesController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "activeOnly",
+            "required": false,
+            "in": "query",
+            "description": "When true, only active currencies (form selects)",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search code or label",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "List platform currencies (paginated; activeOnly / search for selects)",
+        "tags": [
+          "currencies"
+        ]
+      },
+      "post": {
+        "operationId": "CurrenciesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCurrencyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Create platform currency (ISO 4217 code)",
+        "tags": [
+          "currencies"
+        ]
+      }
+    },
+    "/api/currencies/{id}": {
+      "get": {
+        "operationId": "CurrenciesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Get currency by id",
+        "tags": [
+          "currencies"
+        ]
+      },
+      "patch": {
+        "operationId": "CurrenciesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCurrencyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Update currency (cannot deactivate the last active catalog entry)",
+        "tags": [
+          "currencies"
+        ]
+      },
+      "delete": {
+        "operationId": "CurrenciesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Soft-delete currency",
+        "tags": [
+          "currencies"
+        ]
+      }
+    },
     "/api/donations": {
       "get": {
         "operationId": "DonationsController_findAll",
@@ -10467,6 +10684,352 @@
         ]
       }
     },
+    "/api/exchange-rates": {
+      "get": {
+        "operationId": "ExchangeRatesController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "organizationId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "fromCurrency",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "EUR",
+              "type": "string"
+            }
+          },
+          {
+            "name": "toCurrency",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "XOF",
+              "type": "string"
+            }
+          },
+          {
+            "name": "effectiveOnFrom",
+            "required": false,
+            "in": "query",
+            "description": "Inclusive lower bound on effectiveOn",
+            "schema": {
+              "example": "2026-01-01",
+              "type": "string"
+            }
+          },
+          {
+            "name": "effectiveOnTo",
+            "required": false,
+            "in": "query",
+            "description": "Inclusive upper bound on effectiveOn",
+            "schema": {
+              "example": "2026-12-31",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "List exchange rates (paginated; filter org / pair / dates)",
+        "tags": [
+          "exchange-rates"
+        ]
+      },
+      "post": {
+        "operationId": "ExchangeRatesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateExchangeRateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Create exchange rate (1 fromCurrency = rate × toCurrency; unique per org/pair/date)",
+        "tags": [
+          "exchange-rates"
+        ]
+      }
+    },
+    "/api/exchange-rates/{id}": {
+      "get": {
+        "operationId": "ExchangeRatesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Get exchange rate by id",
+        "tags": [
+          "exchange-rates"
+        ]
+      },
+      "patch": {
+        "operationId": "ExchangeRatesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateExchangeRateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Update exchange rate",
+        "tags": [
+          "exchange-rates"
+        ]
+      },
+      "delete": {
+        "operationId": "ExchangeRatesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Soft-delete exchange rate",
+        "tags": [
+          "exchange-rates"
+        ]
+      }
+    },
+    "/api/accounting-audit-logs": {
+      "get": {
+        "operationId": "AccountingAuditLogsController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "organizationId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "entityType",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "journal_entry",
+                "journal_line",
+                "chart_account",
+                "exercise",
+                "period",
+                "mapping_rule",
+                "accounting_link",
+                "journal"
+              ]
+            }
+          },
+          {
+            "name": "entityId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "action",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "create",
+                "update",
+                "post",
+                "reverse",
+                "lock",
+                "unlock",
+                "close",
+                "skip",
+                "delete"
+              ]
+            }
+          },
+          {
+            "name": "actorId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "required": false,
+            "in": "query",
+            "description": "YYYY-MM-DD",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateTo",
+            "required": false,
+            "in": "query",
+            "description": "YYYY-MM-DD",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "List accounting audit logs (paginated, filtered)",
+        "tags": [
+          "accounting-audit-logs"
+        ]
+      }
+    },
+    "/api/accounting-audit-logs/{id}": {
+      "get": {
+        "operationId": "AccountingAuditLogsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Get accounting audit log by id",
+        "tags": [
+          "accounting-audit-logs"
+        ]
+      }
+    },
     "/api/treasury-reports/summary": {
       "get": {
         "operationId": "TreasuryReportsController_getSummary",
@@ -10814,7 +11377,16 @@
     "/api/accounting-links/mapping-config": {
       "get": {
         "operationId": "AccountingLinksController_getMappingConfig",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": ""
@@ -10823,7 +11395,63 @@
             "description": "Missing permission"
           }
         },
-        "summary": "Stub mapping rules skeleton (SYSCOHADA placeholders — no journal generation)",
+        "summary": "Mapping rules from DB (stub:false) — real chart accounts (SYSCO-004)",
+        "tags": [
+          "accounting-links"
+        ]
+      }
+    },
+    "/api/accounting-links/post": {
+      "post": {
+        "operationId": "AccountingLinksController_post",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostAccountingLinkDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Comptabiliser une opération fond (recorded → écriture posted + link linked)",
+        "tags": [
+          "accounting-links"
+        ]
+      }
+    },
+    "/api/accounting-links/skip": {
+      "post": {
+        "operationId": "AccountingLinksController_skip",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SkipAccountingLinkDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Ignorer une opération (status skipped, pas d’écriture)",
         "tags": [
           "accounting-links"
         ]
@@ -10906,7 +11534,7 @@
             "description": "Missing permission"
           }
         },
-        "summary": "List accounting links (stub bridge, paginated)",
+        "summary": "List accounting links (paginated)",
         "tags": [
           "accounting-links"
         ]
@@ -10932,7 +11560,7 @@
             "description": "Missing permission"
           }
         },
-        "summary": "Create accounting link stub (journal_entry_id optional; no SYSCOHADA write)",
+        "summary": "Create accounting link manually (prefer POST /accounting-links/post)",
         "tags": [
           "accounting-links"
         ]
@@ -10994,9 +11622,1057 @@
             "description": "Missing permission"
           }
         },
-        "summary": "Update stub link (status / journal_entry_id / mapping_rule_key)",
+        "summary": "Update link (status / journal_entry_id / mapping_rule_key)",
         "tags": [
           "accounting-links"
+        ]
+      },
+      "delete": {
+        "operationId": "AccountingLinksController_softDelete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Soft-delete pending/skipped link (SYSCO-005) — frees unique key for recreate; forbidden if linked",
+        "tags": [
+          "accounting-links"
+        ]
+      }
+    },
+    "/api/journal-entries": {
+      "get": {
+        "operationId": "JournalEntriesController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "organizationId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "journalId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "exerciseId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "periodId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "draft",
+                "posted",
+                "reversed"
+              ]
+            }
+          },
+          {
+            "name": "accountId",
+            "required": false,
+            "in": "query",
+            "description": "Filter entries that touch this account",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeLines",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "2026-01-01",
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateTo",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "2026-12-31",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "List journal entries (filter journal / period / account; optional lines)",
+        "tags": [
+          "journal-entries"
+        ]
+      },
+      "post": {
+        "operationId": "JournalEntriesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateJournalEntryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Create balanced journal entry (draft or posted). Rejects locked/closed period.",
+        "tags": [
+          "journal-entries"
+        ]
+      }
+    },
+    "/api/journal-entries/{id}": {
+      "get": {
+        "operationId": "JournalEntriesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Get journal entry with lines",
+        "tags": [
+          "journal-entries"
+        ]
+      }
+    },
+    "/api/journal-lines": {
+      "get": {
+        "operationId": "JournalEntriesController_findLines",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "organizationId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "journalId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "exerciseId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "periodId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "postedOnly",
+            "required": false,
+            "in": "query",
+            "description": "Only lines from posted entries (default true)",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "2026-01-01",
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateTo",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "2026-12-31",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "List journal lines (raw ledger / grand livre filters by account, journal, period)",
+        "tags": [
+          "journal-entries"
+        ]
+      }
+    },
+    "/api/accounting-balance": {
+      "get": {
+        "operationId": "JournalEntriesController_getBalance",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "exerciseId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "periodId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "journalId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Balance générale (agrégat lignes postées par compte — SYSCO-006)",
+        "tags": [
+          "journal-entries"
+        ]
+      }
+    },
+    "/api/accounting-balance-sheet": {
+      "get": {
+        "operationId": "JournalEntriesController_getBalanceSheet",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "exerciseId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "periodId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "journalId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Bilan MVP classes 1–5 (SYSCO-008)",
+        "tags": [
+          "journal-entries"
+        ]
+      }
+    },
+    "/api/accounting-income-statement": {
+      "get": {
+        "operationId": "JournalEntriesController_getIncomeStatement",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "exerciseId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "periodId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "journalId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Compte de résultat MVP classes 6–7 (SYSCO-008)",
+        "tags": [
+          "journal-entries"
+        ]
+      }
+    },
+    "/api/chart-of-accounts": {
+      "get": {
+        "operationId": "ChartOfAccountsController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "organizationId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "classNumber",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 8,
+              "example": 5,
+              "type": "number"
+            }
+          },
+          {
+            "name": "accountType",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "equity",
+                "fixed_asset",
+                "inventory",
+                "third_party",
+                "treasury",
+                "expense",
+                "revenue",
+                "special"
+              ]
+            }
+          },
+          {
+            "name": "isActive",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "isPostable",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search by code, label or syscohadaRef",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "List chart of accounts (SYSCOHADA, paginated)",
+        "tags": [
+          "chart-of-accounts"
+        ]
+      }
+    },
+    "/api/chart-of-accounts/{id}": {
+      "get": {
+        "operationId": "ChartOfAccountsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Get chart account by id",
+        "tags": [
+          "chart-of-accounts"
+        ]
+      }
+    },
+    "/api/accounting-exercises": {
+      "get": {
+        "operationId": "AccountingExercisesController_findAllExercises",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "organizationId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "open",
+                "closing",
+                "closed"
+              ]
+            }
+          },
+          {
+            "name": "includePeriods",
+            "required": false,
+            "in": "query",
+            "description": "When true, embed periods on each exercise",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "List accounting exercises (paginated; optional periods)",
+        "tags": [
+          "accounting-exercises"
+        ]
+      },
+      "post": {
+        "operationId": "AccountingExercisesController_createExercise",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAccountingExerciseDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Create accounting exercise with monthly periods (currency defaults to org)",
+        "tags": [
+          "accounting-exercises"
+        ]
+      }
+    },
+    "/api/accounting-exercises/{id}": {
+      "get": {
+        "operationId": "AccountingExercisesController_findOneExercise",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Get accounting exercise by id (includes periods)",
+        "tags": [
+          "accounting-exercises"
+        ]
+      },
+      "patch": {
+        "operationId": "AccountingExercisesController_updateExercise",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAccountingExerciseDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Update exercise label; currency only if open and no posted entries",
+        "tags": [
+          "accounting-exercises"
+        ]
+      }
+    },
+    "/api/accounting-exercises/{id}/close": {
+      "post": {
+        "operationId": "AccountingExercisesController_closeExercise",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Close exercise (OD closing entry + lock/close periods) — SYSCO-008",
+        "tags": [
+          "accounting-exercises"
+        ]
+      }
+    },
+    "/api/accounting-periods": {
+      "get": {
+        "operationId": "AccountingExercisesController_findAllPeriods",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "organizationId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "exerciseId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "open",
+                "locked",
+                "closed"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "List accounting periods (paginated)",
+        "tags": [
+          "accounting-exercises"
+        ]
+      }
+    },
+    "/api/accounting-periods/{id}": {
+      "get": {
+        "operationId": "AccountingExercisesController_findOnePeriod",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Get accounting period by id",
+        "tags": [
+          "accounting-exercises"
+        ]
+      }
+    },
+    "/api/accounting-periods/{id}/lock": {
+      "post": {
+        "operationId": "AccountingExercisesController_lockPeriod",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Lock accounting period (no new postings)",
+        "tags": [
+          "accounting-exercises"
+        ]
+      }
+    },
+    "/api/accounting-periods/{id}/unlock": {
+      "post": {
+        "operationId": "AccountingExercisesController_unlockPeriod",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Unlock accounting period",
+        "tags": [
+          "accounting-exercises"
+        ]
+      }
+    },
+    "/api/accounting-journals": {
+      "get": {
+        "operationId": "AccountingJournalsController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "organizationId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "journalType",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "cash",
+                "bank",
+                "purchases",
+                "sales",
+                "general",
+                "other"
+              ]
+            }
+          },
+          {
+            "name": "isActive",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "List accounting journals (paginated)",
+        "tags": [
+          "accounting-journals"
+        ]
+      }
+    },
+    "/api/accounting-journals/{id}": {
+      "get": {
+        "operationId": "AccountingJournalsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Get accounting journal by id",
+        "tags": [
+          "accounting-journals"
         ]
       }
     },
@@ -22321,6 +23997,38 @@
         ]
       }
     },
+    "/api/public/team-members/{slug}": {
+      "get": {
+        "operationId": "PublicAboutController_getTeamMemberBySlug",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get published team member profile by slug",
+        "tags": [
+          "public"
+        ]
+      }
+    },
     "/api/public/about-resources": {
       "get": {
         "operationId": "PublicAboutController_listResources",
@@ -25326,6 +27034,64 @@
           "packages"
         ]
       },
+      "PublicAnnouncementBannerDto": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "description": "Whether the banner should be displayed (false when disabled or no text)"
+          },
+          "text": {
+            "type": "string",
+            "description": "Banner text for the requested locale (fr fallback)"
+          },
+          "color": {
+            "type": "string",
+            "enum": [
+              "red",
+              "yellow",
+              "green",
+              "blue",
+              "gray"
+            ],
+            "description": "Color theme"
+          },
+          "intensity": {
+            "type": "string",
+            "enum": [
+              "low",
+              "high"
+            ],
+            "description": "low = light background / dark text, high = solid background"
+          },
+          "ctaLabel": {
+            "type": "string",
+            "nullable": true,
+            "description": "Call-to-action label"
+          },
+          "ctaUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Call-to-action URL (http(s) or internal path starting with /)"
+          },
+          "ctaNewTab": {
+            "type": "boolean",
+            "description": "Open the call-to-action in a new tab"
+          },
+          "version": {
+            "type": "string",
+            "description": "Content fingerprint; changes whenever the banner content changes"
+          }
+        },
+        "required": [
+          "enabled",
+          "text",
+          "color",
+          "intensity",
+          "ctaNewTab",
+          "version"
+        ]
+      },
       "PublicSiteMaintenanceDto": {
         "type": "object",
         "properties": {
@@ -26864,6 +28630,86 @@
           }
         }
       },
+      "CreateCurrencyDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "GBP",
+            "minLength": 3,
+            "maxLength": 3
+          },
+          "label": {
+            "type": "string",
+            "example": "British pound",
+            "maxLength": 120
+          },
+          "symbol": {
+            "type": "object",
+            "example": "£",
+            "nullable": true,
+            "maxLength": 16
+          },
+          "decimalPlaces": {
+            "type": "number",
+            "example": 2,
+            "minimum": 0,
+            "maximum": 6,
+            "default": 2
+          },
+          "isActive": {
+            "type": "boolean",
+            "default": true
+          },
+          "sortOrder": {
+            "type": "number",
+            "example": 80,
+            "default": 0
+          }
+        },
+        "required": [
+          "code",
+          "label"
+        ]
+      },
+      "UpdateCurrencyDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "GBP",
+            "minLength": 3,
+            "maxLength": 3
+          },
+          "label": {
+            "type": "string",
+            "example": "British pound",
+            "maxLength": 120
+          },
+          "symbol": {
+            "type": "object",
+            "example": "£",
+            "nullable": true,
+            "maxLength": 16
+          },
+          "decimalPlaces": {
+            "type": "number",
+            "example": 2,
+            "minimum": 0,
+            "maximum": 6,
+            "default": 2
+          },
+          "isActive": {
+            "type": "boolean",
+            "default": true
+          },
+          "sortOrder": {
+            "type": "number",
+            "example": 80,
+            "default": 0
+          }
+        }
+      },
       "CreateDonationDto": {
         "type": "object",
         "properties": {
@@ -27753,6 +29599,131 @@
           }
         }
       },
+      "CreateExchangeRateDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fromCurrency": {
+            "type": "string",
+            "example": "EUR",
+            "minLength": 3,
+            "maxLength": 3
+          },
+          "toCurrency": {
+            "type": "string",
+            "example": "XOF",
+            "minLength": 3,
+            "maxLength": 3
+          },
+          "rate": {
+            "type": "number",
+            "example": 655.957,
+            "description": "1 fromCurrency = rate × toCurrency",
+            "minimum": 0
+          },
+          "effectiveOn": {
+            "type": "string",
+            "example": "2026-01-01"
+          },
+          "notes": {
+            "type": "object",
+            "maxLength": 500,
+            "nullable": true
+          }
+        },
+        "required": [
+          "organizationId",
+          "fromCurrency",
+          "toCurrency",
+          "rate",
+          "effectiveOn"
+        ]
+      },
+      "UpdateExchangeRateDto": {
+        "type": "object",
+        "properties": {
+          "fromCurrency": {
+            "type": "string",
+            "example": "EUR",
+            "minLength": 3,
+            "maxLength": 3
+          },
+          "toCurrency": {
+            "type": "string",
+            "example": "XOF",
+            "minLength": 3,
+            "maxLength": 3
+          },
+          "rate": {
+            "type": "number",
+            "example": 655.957,
+            "description": "1 fromCurrency = rate × toCurrency",
+            "minimum": 0
+          },
+          "effectiveOn": {
+            "type": "string",
+            "example": "2026-01-01"
+          },
+          "notes": {
+            "type": "object",
+            "maxLength": 500,
+            "nullable": true
+          }
+        }
+      },
+      "PostAccountingLinkDto": {
+        "type": "object",
+        "properties": {
+          "fundOpType": {
+            "type": "string",
+            "enum": [
+              "fund_entry",
+              "fund_exit"
+            ]
+          },
+          "fundOpId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "fundOpType",
+          "fundOpId"
+        ]
+      },
+      "SkipAccountingLinkDto": {
+        "type": "object",
+        "properties": {
+          "fundOpType": {
+            "type": "string",
+            "enum": [
+              "fund_entry",
+              "fund_exit"
+            ]
+          },
+          "fundOpId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reason": {
+            "type": "object",
+            "nullable": true,
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "fundOpType",
+          "fundOpId",
+          "organizationId"
+        ]
+      },
       "CreateAccountingLinkDto": {
         "type": "object",
         "properties": {
@@ -27781,7 +29752,7 @@
           "mappingRuleKey": {
             "type": "object",
             "maxLength": 120,
-            "description": "Key from TREASURY_ACCOUNTING_MAPPING_CONFIG.rules"
+            "description": "Key from accounting_mapping_rules (SYSCO-004)"
           },
           "status": {
             "type": "string",
@@ -27820,6 +29791,183 @@
               "linked",
               "skipped"
             ]
+          }
+        }
+      },
+      "CreateJournalLineDto": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "label": {
+            "type": "object",
+            "maxLength": 255,
+            "nullable": true
+          },
+          "debitCents": {
+            "type": "number",
+            "example": 10000,
+            "minimum": 0
+          },
+          "creditCents": {
+            "type": "number",
+            "example": 0,
+            "minimum": 0
+          },
+          "originalAmountCents": {
+            "type": "object",
+            "nullable": true
+          },
+          "originalCurrency": {
+            "type": "object",
+            "example": "EUR",
+            "nullable": true
+          },
+          "fxRate": {
+            "type": "object",
+            "nullable": true
+          },
+          "analyticRefType": {
+            "type": "object",
+            "nullable": true
+          },
+          "analyticRefId": {
+            "type": "object",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "required": [
+          "accountId",
+          "debitCents",
+          "creditCents"
+        ]
+      },
+      "CreateJournalEntryDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "journalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "exerciseId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Required when periodId is omitted"
+          },
+          "periodId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "When set, exercise is derived from the period"
+          },
+          "entryDate": {
+            "type": "string",
+            "example": "2026-09-26"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "posted"
+            ],
+            "default": "draft"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "treasury_mapping",
+              "manual",
+              "closing",
+              "reversal"
+            ],
+            "default": "manual"
+          },
+          "reversesEntryId": {
+            "type": "object",
+            "format": "uuid",
+            "nullable": true
+          },
+          "lines": {
+            "minItems": 2,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateJournalLineDto"
+            }
+          }
+        },
+        "required": [
+          "organizationId",
+          "journalId",
+          "entryDate",
+          "description",
+          "lines"
+        ]
+      },
+      "CreateAccountingExerciseDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "example": "2027",
+            "maxLength": 20
+          },
+          "label": {
+            "type": "string",
+            "example": "Exercice 2027",
+            "maxLength": 120
+          },
+          "startsOn": {
+            "type": "string",
+            "example": "2027-01-01"
+          },
+          "endsOn": {
+            "type": "string",
+            "example": "2027-12-31"
+          },
+          "currency": {
+            "type": "string",
+            "example": "XOF",
+            "description": "Book currency; defaults to organizations.currency",
+            "minLength": 3,
+            "maxLength": 3
+          }
+        },
+        "required": [
+          "organizationId",
+          "code",
+          "label",
+          "startsOn",
+          "endsOn"
+        ]
+      },
+      "UpdateAccountingExerciseDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "example": "Exercice 2027",
+            "maxLength": 120
+          },
+          "currency": {
+            "type": "string",
+            "example": "XAF",
+            "description": "Book currency — only when exercise is open and has no posted entries",
+            "minLength": 3,
+            "maxLength": 3
           }
         }
       },
@@ -28427,6 +30575,11 @@
             "type": "string",
             "example": "Marie Kabila"
           },
+          "slug": {
+            "type": "object",
+            "example": "marie-kabila",
+            "description": "Unique per locale; generated from the name when omitted or empty."
+          },
           "role": {
             "type": "string",
             "example": "Directrice générale"
@@ -28435,6 +30588,24 @@
             "type": "object"
           },
           "photoUrl": {
+            "type": "object"
+          },
+          "email": {
+            "type": "object",
+            "example": "marie.kabila@africatourismgate.com"
+          },
+          "linkedinUrl": {
+            "type": "object",
+            "example": "https://www.linkedin.com/in/marie-kabila"
+          },
+          "xUrl": {
+            "type": "object",
+            "example": "https://x.com/marie_kabila"
+          },
+          "facebookUrl": {
+            "type": "object"
+          },
+          "instagramUrl": {
             "type": "object"
           },
           "sortOrder": {
@@ -28465,6 +30636,11 @@
             "type": "string",
             "example": "Marie Kabila"
           },
+          "slug": {
+            "type": "object",
+            "example": "marie-kabila",
+            "description": "Unique per locale; generated from the name when omitted or empty."
+          },
           "role": {
             "type": "string",
             "example": "Directrice générale"
@@ -28473,6 +30649,24 @@
             "type": "object"
           },
           "photoUrl": {
+            "type": "object"
+          },
+          "email": {
+            "type": "object",
+            "example": "marie.kabila@africatourismgate.com"
+          },
+          "linkedinUrl": {
+            "type": "object",
+            "example": "https://www.linkedin.com/in/marie-kabila"
+          },
+          "xUrl": {
+            "type": "object",
+            "example": "https://x.com/marie_kabila"
+          },
+          "facebookUrl": {
+            "type": "object"
+          },
+          "instagramUrl": {
             "type": "object"
           },
           "sortOrder": {

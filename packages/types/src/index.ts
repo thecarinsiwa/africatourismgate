@@ -835,6 +835,12 @@ export type {
   UpsertOrganizationSettingItem,
   WebPaymentMethodKey,
   WebPaymentMethodsSettingValue,
+  AnnouncementBannerColor,
+  AnnouncementBannerIntensity,
+  AnnouncementBannerLocale,
+  AnnouncementBannerMessage,
+  AnnouncementBannerSettingValue,
+  PublicAnnouncementBanner,
 } from './organization-settings.js';
 
 export type {
@@ -872,6 +878,21 @@ export {
   normalizeBookingDeposits,
   normalizeCatalogProducts,
   normalizeWebPaymentMethods,
+  ANNOUNCEMENT_BANNER_COLORS,
+  ANNOUNCEMENT_BANNER_CTA_LABEL_MAX_LENGTH,
+  ANNOUNCEMENT_BANNER_CTA_URL_MAX_LENGTH,
+  ANNOUNCEMENT_BANNER_FALLBACK_LOCALE,
+  ANNOUNCEMENT_BANNER_INTENSITIES,
+  ANNOUNCEMENT_BANNER_LOCALES,
+  ANNOUNCEMENT_BANNER_TEXT_MAX_LENGTH,
+  DEFAULT_ANNOUNCEMENT_BANNER,
+  DEFAULT_PUBLIC_ANNOUNCEMENT_BANNER,
+  isAnnouncementBannerColor,
+  isAnnouncementBannerIntensity,
+  isAnnouncementBannerLocale,
+  isValidAnnouncementBannerCtaUrl,
+  normalizeAnnouncementBanner,
+  resolvePublicAnnouncementBanner,
 } from './organization-settings.js';
 
 export type {

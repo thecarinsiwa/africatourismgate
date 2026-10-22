@@ -515,6 +515,7 @@ import type {
   ResolvedBookingItemTypeModes,
   ResolvedCatalogProducts,
   ResolvedWebPaymentMethods,
+  PublicAnnouncementBanner,
 } from '@africatourismgate/types';
 export type { PaginationQuery } from '@africatourismgate/types';
 export { SESSION_LOCKED_CODE } from '@africatourismgate/types';
@@ -2208,6 +2209,23 @@ export class ApiClient {
     const q = params.toString();
     return this.request<ResolvedCatalogProducts>(
       `/organization-settings/public/catalog-products${q ? `?${q}` : ''}`,
+    );
+  }
+
+  getPublicAnnouncementBanner(query?: {
+    organizationSlug?: string;
+    locale?: string;
+  }): Promise<PublicAnnouncementBanner> {
+    const params = new URLSearchParams();
+    if (query?.organizationSlug) {
+      params.set('organizationSlug', query.organizationSlug);
+    }
+    if (query?.locale) {
+      params.set('locale', query.locale);
+    }
+    const q = params.toString();
+    return this.request<PublicAnnouncementBanner>(
+      `/organization-settings/public/announcement-banner${q ? `?${q}` : ''}`,
     );
   }
 

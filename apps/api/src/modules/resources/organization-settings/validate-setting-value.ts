@@ -5,17 +5,30 @@ import {
   AUTH_VISUAL_ICON_SIZES,
 } from './auth-visual.constants';
 import {
+  ANNOUNCEMENT_BANNER_COLORS,
+  ANNOUNCEMENT_BANNER_CTA_LABEL_MAX_LENGTH,
+  ANNOUNCEMENT_BANNER_CTA_URL_MAX_LENGTH,
+  ANNOUNCEMENT_BANNER_FALLBACK_LOCALE,
+  ANNOUNCEMENT_BANNER_INTENSITIES,
+  ANNOUNCEMENT_BANNER_LOCALES,
+  ANNOUNCEMENT_BANNER_TEXT_MAX_LENGTH,
   BOOKING_ITEM_TYPE_KEYS,
   CATALOG_PRODUCT_KEYS,
   WEB_PAYMENT_METHOD_KEYS,
+  isAnnouncementBannerColor,
+  isAnnouncementBannerIntensity,
   isBookingMode,
+  isValidAnnouncementBannerCtaUrl,
   normalizeBookingDeposits,
   normalizeBookingItemTypeModes,
   normalizeCatalogProducts,
   normalizeWebPaymentMethods,
   type BookingMode,
 } from '@africatourismgate/types';
-import type { AuthVisualDecorIcon } from '@africatourismgate/types';
+import type {
+  AnnouncementBannerSettingValue,
+  AuthVisualDecorIcon,
+} from '@africatourismgate/types';
 
 function requireString(
   value: unknown,
@@ -141,6 +154,110 @@ function validateAuthVisualIcon(raw: unknown, index: number): AuthVisualDecorIco
     enabled,
     ...(imageUrl ? { imageUrl } : {}),
   };
+}
+
+function optionalTrimmedString(
+  value: unknown,
+  field: string,
+  maxLength: number,
+): string | undefined {
+  if (typeof value === 'string' && !value.trim()) {
+    return undefined;
+  }
+  return optionalString(value, field, maxLength);
+}
+
+function validateAnnouncementBanner(
+  value: Record<string, unknown>,
+): Record<string, unknown> {
+  if (typeof value.enabled !== 'boolean') {
+    throw new BadRequestException('enabled doit être un booléen.');
+  }
+  if (!isAnnouncementBannerColor(value.color)) {
+    throw new BadRequestException(
+      `color doit être l'une des valeurs : ${ANNOUNCEMENT_BANNER_COLORS.join(', ')}.`,
+    );
+  }
+  if (!isAnnouncementBannerIntensity(value.intensity)) {
+    throw new BadRequestException(
+      `intensity doit être l'une des valeurs : ${ANNOUNCEMENT_BANNER_INTENSITIES.join(', ')}.`,
+    );
+  }
+
+  const rawMessages = value.messages ?? {};
+  if (typeof rawMessages !== 'object' || Array.isArray(rawMessages)) {
+    throw new BadRequestException('messages doit être un objet indexé par locale.');
+  }
+  const unknownLocale = Object.keys(rawMessages).find(
+    (key) => !(ANNOUNCEMENT_BANNER_LOCALES as readonly string[]).includes(key),
+  );
+  if (unknownLocale) {
+    throw new BadRequestException(
+      `messages.${unknownLocale} n'est pas une locale supportée (${ANNOUNCEMENT_BANNER_LOCALES.join(', ')}).`,
+    );
+  }
+
+  const messages: AnnouncementBannerSettingValue['messages'] = {};
+  for (const locale of ANNOUNCEMENT_BANNER_LOCALES) {
+    const raw = (rawMessages as Record<string, unknown>)[locale];
+    if (raw === undefined || raw === null) continue;
+    if (typeof raw !== 'object' || Array.isArray(raw)) {
+      throw new BadRequestException(`messages.${locale} est invalide.`);
+    }
+    const entry = raw as Record<string, unknown>;
+    const text = optionalTrimmedString(
+      entry.text,
+      `messages.${locale}.text`,
+      ANNOUNCEMENT_BANNER_TEXT_MAX_LENGTH,
+    );
+    const ctaLabel = optionalTrimmedString(
+      entry.ctaLabel,
+      `messages.${locale}.ctaLabel`,
+      ANNOUNCEMENT_BANNER_CTA_LABEL_MAX_LENGTH,
+    );
+    if (!text) {
+      if (ctaLabel) {
+        throw new BadRequestException(
+          `messages.${locale}.text est obligatoire lorsqu'un libellé de lien est renseigné.`,
+        );
+      }
+      continue;
+    }
+    messages[locale] = ctaLabel ? { text, ctaLabel } : { text };
+  }
+
+  if (value.enabled && !messages[ANNOUNCEMENT_BANNER_FALLBACK_LOCALE]) {
+    throw new BadRequestException(
+      `messages.${ANNOUNCEMENT_BANNER_FALLBACK_LOCALE}.text est obligatoire lorsque le bandeau est activé.`,
+    );
+  }
+
+  const ctaUrl = optionalTrimmedString(
+    value.ctaUrl,
+    'ctaUrl',
+    ANNOUNCEMENT_BANNER_CTA_URL_MAX_LENGTH,
+  );
+  if (ctaUrl && !isValidAnnouncementBannerCtaUrl(ctaUrl)) {
+    throw new BadRequestException(
+      'ctaUrl doit être une URL http(s) ou un chemin interne commençant par « / ».',
+    );
+  }
+  if (
+    value.ctaNewTab !== undefined &&
+    value.ctaNewTab !== null &&
+    typeof value.ctaNewTab !== 'boolean'
+  ) {
+    throw new BadRequestException('ctaNewTab doit être un booléen.');
+  }
+
+  const result: AnnouncementBannerSettingValue = {
+    enabled: value.enabled,
+    color: value.color,
+    intensity: value.intensity,
+    messages,
+    ...(ctaUrl ? { ctaUrl, ctaNewTab: value.ctaNewTab === true } : {}),
+  };
+  return result as unknown as Record<string, unknown>;
 }
 
 export function validateSettingValue(
@@ -406,6 +523,9 @@ export function validateSettingValue(
           ? { depositFixedCents: normalized.depositFixedCents }
           : {}),
       };
+    }
+    case 'announcement_banner': {
+      return validateAnnouncementBanner(value);
     }
     case 'maintenance': {
       throw new BadRequestException(

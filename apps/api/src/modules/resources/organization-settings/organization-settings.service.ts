@@ -26,6 +26,7 @@ import {
   normalizeBookingItemTypeModes,
   normalizeCatalogProducts,
   normalizeWebPaymentMethods,
+  resolvePublicAnnouncementBanner,
 } from '@africatourismgate/types';
 import { OrgScopeService, PLATFORM_ORG_ID } from '../../../common/org-scope/org-scope.service';
 import { CrudService } from '../../../common/crud/crud.service';
@@ -48,6 +49,7 @@ import { PublicBookingModesDto } from './dto/public-booking-modes.dto';
 import { PublicPaymentMethodsDto } from './dto/public-payment-methods.dto';
 import { PublicCatalogProductsDto } from './dto/public-catalog-products.dto';
 import { PublicSiteMaintenanceDto } from './dto/public-site-maintenance.dto';
+import { PublicAnnouncementBannerDto } from './dto/public-announcement-banner.dto';
 import { OrganizationSettingsListQueryDto } from './dto/organization-settings-list-query.dto';
 import { validateSettingValue } from './validate-setting-value';
 
@@ -375,6 +377,14 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
     return this.getResolvedCatalogProducts(organization.id);
   }
 
+  async findPublicAnnouncementBanner(
+    organizationSlug?: string,
+    locale?: string,
+  ): Promise<PublicAnnouncementBannerDto> {
+    const organization = await this.resolvePublicOrganization(organizationSlug);
+    return this.getResolvedAnnouncementBanner(organization.id, locale);
+  }
+
   async findPublicSiteMaintenance(
     organizationSlug?: string,
     locale?: string,
@@ -485,6 +495,29 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
         depositFixedCents?: number;
       },
     );
+  }
+
+  async getResolvedAnnouncementBanner(
+    organizationId: string = PLATFORM_ORG_ID,
+    locale?: string,
+  ): Promise<PublicAnnouncementBannerDto> {
+    const setting = await this.settingsRepository.findOne({
+      where: {
+        organizationId,
+        settingGroup: 'site',
+        settingKey: 'announcement_banner',
+        deletedAt: IsNull(),
+      },
+    });
+
+    const value =
+      setting?.settingValue &&
+      typeof setting.settingValue === 'object' &&
+      !Array.isArray(setting.settingValue)
+        ? (setting.settingValue as Record<string, unknown>)
+        : null;
+
+    return resolvePublicAnnouncementBanner(value, locale);
   }
 
   async getResolvedSiteMaintenance(
