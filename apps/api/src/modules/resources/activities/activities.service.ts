@@ -5,7 +5,7 @@ import { applyCatalogOrganizationScope } from '../../../common/org-scope/catalog
 import { OrgScopeService } from '../../../common/org-scope/org-scope.service';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { CrudService } from '../../../common/crud/crud.service';
-import { Activities } from '../../../entities/generated';
+import { Activities, ActivityProviders } from '../../../entities/generated';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { ActivitiesListQueryDto } from './dto/activities-list-query.dto';
 
@@ -36,6 +36,17 @@ export class ActivitiesService extends CrudService<Activities> {
       .where('activity.deletedAt IS NULL');
 
     applyCatalogOrganizationScope(qb, 'activity', organizationId);
+
+    if (query.destinationId) {
+      // Activities inherit destination from their provider (no destination_id on activities).
+      qb.innerJoin(
+        ActivityProviders,
+        'provider',
+        'provider.id = activity.providerId AND provider.deletedAt IS NULL',
+      ).andWhere('provider.destinationId = :destinationId', {
+        destinationId: query.destinationId,
+      });
+    }
 
     if (query.providerId) {
       qb.andWhere('activity.providerId = :providerId', {
