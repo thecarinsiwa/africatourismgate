@@ -102,9 +102,9 @@ export type AnnouncementBannerProps = {
   onDismiss?: () => void;
 };
 
-const MARQUEE_PX_PER_SECOND = 40;
-const MARQUEE_MIN_SECONDS = 8;
-const MARQUEE_MAX_SECONDS = 28;
+const MARQUEE_PX_PER_SECOND = 22;
+const MARQUEE_MIN_SECONDS = 12;
+const MARQUEE_MAX_SECONDS = 40;
 
 function BannerMessage({
   text,
