@@ -143,6 +143,73 @@ const CONTEXTUAL_HELP_RULES: readonly ContextualHelpRule[] = [
     articleSlug: 'suivre-les-paiements',
   },
 
+  // Trésorerie & comptabilité (specific before /tresorerie/comptabilite and /tresorerie)
+  {
+    prefix: '/tresorerie/comptabilite/exercices',
+    categorySlug: 'tresorerie-comptabilite',
+    articleSlug: 'exercices-et-cloture',
+  },
+  {
+    prefix: '/tresorerie/comptabilite/cloture',
+    categorySlug: 'tresorerie-comptabilite',
+    articleSlug: 'exercices-et-cloture',
+  },
+  {
+    prefix: '/tresorerie/comptabilite/audit',
+    categorySlug: 'tresorerie-comptabilite',
+    articleSlug: 'exercices-et-cloture',
+  },
+  {
+    prefix: '/tresorerie/comptabilite',
+    categorySlug: 'tresorerie-comptabilite',
+    articleSlug: 'comptabilite-syscohada',
+  },
+  {
+    prefix: '/tresorerie/entrees',
+    categorySlug: 'tresorerie-comptabilite',
+    articleSlug: 'entrees-et-sorties',
+  },
+  {
+    prefix: '/tresorerie/sorties',
+    categorySlug: 'tresorerie-comptabilite',
+    articleSlug: 'entrees-et-sorties',
+  },
+  {
+    prefix: '/tresorerie/besoins',
+    categorySlug: 'tresorerie-comptabilite',
+    articleSlug: 'besoins-et-externes',
+  },
+  {
+    prefix: '/tresorerie/externes',
+    categorySlug: 'tresorerie-comptabilite',
+    articleSlug: 'besoins-et-externes',
+  },
+  {
+    prefix: '/tresorerie/budgets',
+    categorySlug: 'tresorerie-comptabilite',
+    articleSlug: 'budgets-et-suivi',
+  },
+  {
+    prefix: '/tresorerie/taux-change',
+    categorySlug: 'tresorerie-comptabilite',
+    articleSlug: 'taux-de-change',
+  },
+  {
+    prefix: '/tresorerie/rapports',
+    categorySlug: 'tresorerie-comptabilite',
+    articleSlug: 'rapports-et-audit',
+  },
+  {
+    prefix: '/tresorerie/audit',
+    categorySlug: 'tresorerie-comptabilite',
+    articleSlug: 'rapports-et-audit',
+  },
+  {
+    prefix: '/tresorerie',
+    categorySlug: 'tresorerie-comptabilite',
+    articleSlug: 'vue-ensemble-tresorerie',
+  },
+
   // GAP
   {
     prefix: '/gap/parametres',
@@ -232,6 +299,11 @@ const CONTEXTUAL_HELP_RULES: readonly ContextualHelpRule[] = [
     prefix: '/systeme/roles',
     categorySlug: 'systeme',
     articleSlug: 'roles-et-permissions',
+  },
+  {
+    prefix: '/systeme/devises',
+    categorySlug: 'systeme',
+    articleSlug: 'devises-et-devise-par-defaut',
   },
   {
     prefix: '/parametres',
