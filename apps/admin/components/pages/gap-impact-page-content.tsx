@@ -14,15 +14,29 @@ export function GapImpactPageContent() {
 
   return (
     <GapAccessShell>
-      <div className="min-w-0">
+      <div className="relative min-w-0 pb-20 sm:pb-0">
         <AdminListPageHeader
           routePath="gap/impact"
           actions={
-            canWrite ? <Button href="/gap/impact/nouveau">{t('actions.new')}</Button> : null
+            canWrite ? (
+              <Button href="/gap/impact/nouveau" className="hidden sm:inline-flex">
+                {t('actions.new')}
+              </Button>
+            ) : null
           }
         />
         <GapImpactStatCards className="mb-6" />
         <GapImpactStatsList />
+
+        {canWrite ? (
+          <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 p-4 sm:hidden">
+            <div className="pointer-events-auto mx-auto max-w-lg">
+              <Button href="/gap/impact/nouveau" fullWidth size="lg">
+                {t('actions.new')}
+              </Button>
+            </div>
+          </div>
+        ) : null}
       </div>
     </GapAccessShell>
   );

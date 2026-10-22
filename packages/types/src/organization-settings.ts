@@ -473,6 +473,44 @@ export function resolvePublicAnnouncementBanner(
 }
 
 /**
+ * Homepage client reviews carousel — `organization_settings` group `site`, key `homepage_reviews`.
+ * Controls which review sources appear in the public “Avis de nos clients” section.
+ * When both flags are false, the section is hidden on the public site.
+ */
+export interface HomepageReviewsSettingValue {
+  showTripadvisorReviews: boolean;
+  showPlatformReviews: boolean;
+}
+
+/** Public payload — same shape as the stored setting. */
+export type PublicHomepageReviews = HomepageReviewsSettingValue;
+
+export const DEFAULT_HOMEPAGE_REVIEWS: HomepageReviewsSettingValue = {
+  showTripadvisorReviews: true,
+  showPlatformReviews: true,
+};
+
+/** Tolérant : ignore les valeurs invalides et retombe sur les valeurs par défaut. */
+export function normalizeHomepageReviews(
+  value?: Partial<HomepageReviewsSettingValue> | Record<string, unknown> | null,
+): HomepageReviewsSettingValue {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return { ...DEFAULT_HOMEPAGE_REVIEWS };
+  }
+  const raw = value as Record<string, unknown>;
+  return {
+    showTripadvisorReviews:
+      typeof raw.showTripadvisorReviews === 'boolean'
+        ? raw.showTripadvisorReviews
+        : DEFAULT_HOMEPAGE_REVIEWS.showTripadvisorReviews,
+    showPlatformReviews:
+      typeof raw.showPlatformReviews === 'boolean'
+        ? raw.showPlatformReviews
+        : DEFAULT_HOMEPAGE_REVIEWS.showPlatformReviews,
+  };
+}
+
+/**
  * Acomptes checkout — `organization_settings` group `booking`, key `deposits`.
  * Exactement un de `depositPercent` | `depositFixedCents` quand `enabled`.
  * Statut réservation : reste `pending_payment` jusqu’au solde intégral.

@@ -30,6 +30,7 @@ export const ADMIN_MODULE_NAMES = [
   'gap',
   'heroSlides',
   'announcementBanner',
+  'homepageReviews',
   'analytics',
   'treasury',
   'system',

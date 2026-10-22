@@ -340,6 +340,14 @@ INSERT INTO `organization_settings` (
   'announcement_banner',
   '{"enabled":false,"color":"blue","intensity":"low","messages":{}}',
   '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000000025',
+  '00000000-0000-4000-8000-000000000001',
+  'site',
+  'homepage_reviews',
+  '{"showTripadvisorReviews":true,"showPlatformReviews":true}',
+  '00000000-0000-4000-8000-000000000010'
 );
 
 -- -----------------------------------------------------------------------------

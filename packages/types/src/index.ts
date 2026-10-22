@@ -841,6 +841,8 @@ export type {
   AnnouncementBannerMessage,
   AnnouncementBannerSettingValue,
   PublicAnnouncementBanner,
+  HomepageReviewsSettingValue,
+  PublicHomepageReviews,
 } from './organization-settings.js';
 
 export type {
@@ -893,6 +895,8 @@ export {
   isValidAnnouncementBannerCtaUrl,
   normalizeAnnouncementBanner,
   resolvePublicAnnouncementBanner,
+  DEFAULT_HOMEPAGE_REVIEWS,
+  normalizeHomepageReviews,
 } from './organization-settings.js';
 
 export type {

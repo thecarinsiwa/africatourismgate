@@ -1,0 +1,16 @@
+{
+  "heading": "Avis clients (page d’accueil)",
+  "description": "Choisissez quelles sources d’avis apparaissent dans la section « Avis de nos clients » de la page d’accueil publique.",
+  "readOnlyHint": "Vous pouvez consulter ces options mais pas les modifier (permission organization_settings.write requise).",
+  "denied": "Vous n’avez pas accès à ces réglages (permission organization_settings.read requise).",
+  "fields": {
+    "tripadvisorOn": "Avis Tripadvisor affichés",
+    "tripadvisorOff": "Avis Tripadvisor masqués",
+    "platformOn": "Avis plateforme affichés",
+    "platformOff": "Avis plateforme masqués"
+  },
+  "bothOffHint": "Les deux sources sont désactivées : la section avis sera masquée sur le site public.",
+  "saveButton": "Enregistrer",
+  "saving": "Enregistrement…",
+  "saved": "Réglages enregistrés."
+}

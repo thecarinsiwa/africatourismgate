@@ -516,6 +516,7 @@ import type {
   ResolvedCatalogProducts,
   ResolvedWebPaymentMethods,
   PublicAnnouncementBanner,
+  PublicHomepageReviews,
 } from '@africatourismgate/types';
 export type { PaginationQuery } from '@africatourismgate/types';
 export { SESSION_LOCKED_CODE } from '@africatourismgate/types';
@@ -2226,6 +2227,19 @@ export class ApiClient {
     const q = params.toString();
     return this.request<PublicAnnouncementBanner>(
       `/organization-settings/public/announcement-banner${q ? `?${q}` : ''}`,
+    );
+  }
+
+  getPublicHomepageReviews(query?: {
+    organizationSlug?: string;
+  }): Promise<PublicHomepageReviews> {
+    const params = new URLSearchParams();
+    if (query?.organizationSlug) {
+      params.set('organizationSlug', query.organizationSlug);
+    }
+    const q = params.toString();
+    return this.request<PublicHomepageReviews>(
+      `/organization-settings/public/homepage-reviews${q ? `?${q}` : ''}`,
     );
   }
 

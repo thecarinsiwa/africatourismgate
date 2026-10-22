@@ -11,6 +11,7 @@ import { ContenuAboutTimelineTabPanel } from './contenu-about-timeline-tab-panel
 import { ContenuAnnouncementBannerTabPanel } from './contenu-announcement-banner-tab-panel';
 import { ContenuHappyCustomersTabPanel } from './contenu-happy-customers-tab-panel';
 import { ContenuHeroTabPanel } from './contenu-hero-tab-panel';
+import { ContenuHomepageReviewsTabPanel } from './contenu-homepage-reviews-tab-panel';
 import { ContenuWhyUsTabPanel } from './contenu-why-us-tab-panel';
 
 const SITE_TABS = [
@@ -22,6 +23,7 @@ const SITE_TABS = [
   'hero',
   'happy-customers',
   'announcement-banner',
+  'homepage-reviews',
 ] as const;
 
 export function ContenuSitePageContent() {
@@ -44,6 +46,7 @@ export function ContenuSitePageContent() {
           <TabsTrigger value="hero">{t('tabs.hero')}</TabsTrigger>
           <TabsTrigger value="happy-customers">{t('tabs.happyCustomers')}</TabsTrigger>
           <TabsTrigger value="announcement-banner">{t('tabs.announcementBanner')}</TabsTrigger>
+          <TabsTrigger value="homepage-reviews">{t('tabs.homepageReviews')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="about-pages">
@@ -76,6 +79,10 @@ export function ContenuSitePageContent() {
 
         <TabsContent value="announcement-banner">
           <ContenuAnnouncementBannerTabPanel />
+        </TabsContent>
+
+        <TabsContent value="homepage-reviews">
+          <ContenuHomepageReviewsTabPanel />
         </TabsContent>
       </Tabs>
     </AdminIntroPage>

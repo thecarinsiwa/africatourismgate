@@ -43,6 +43,7 @@ import { PublicCatalogProductsDto } from './dto/public-catalog-products.dto';
 import { PublicSiteMaintenanceDto } from './dto/public-site-maintenance.dto';
 import { PublicAnnouncementBannerDto } from './dto/public-announcement-banner.dto';
 import { PublicAnnouncementBannerQueryDto } from './dto/public-announcement-banner-query.dto';
+import { PublicHomepageReviewsDto } from './dto/public-homepage-reviews.dto';
 import { PublicContactDto } from './dto/public-contact.dto';
 import { OrganizationSettingsService } from './organization-settings.service';
 
@@ -134,6 +135,19 @@ export class OrganizationSettingsController {
       query.organizationSlug,
       query.locale,
     );
+  }
+
+  @Public()
+  @Get('public/homepage-reviews')
+  @ApiOperation({
+    summary:
+      'Get which review sources are shown in the public homepage reviews section',
+  })
+  @ApiOkResponse({ type: PublicHomepageReviewsDto })
+  findPublicHomepageReviews(
+    @Query() query: PublicBrandingQueryDto,
+  ): Promise<PublicHomepageReviewsDto> {
+    return this.service.findPublicHomepageReviews(query.organizationSlug);
   }
 
   @Public()

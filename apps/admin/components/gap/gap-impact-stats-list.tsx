@@ -31,6 +31,7 @@ export function GapImpactStatsList() {
   const tStatus = useTranslations('modules.about.status');
   const tLocale = useTranslations('modules.about.locale');
   const tCommon = useTranslations('modules.common');
+  const tDataTable = useTranslations('modules.common.dataTable');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -107,13 +108,25 @@ export function GapImpactStatsList() {
         accessorKey: 'label',
         header: t('columns.label'),
         cell: ({ row }) => (
-          <span className="font-medium text-atg-fg">{row.original.label}</span>
+          <div className="min-w-0 space-y-1">
+            <p className="truncate font-medium text-atg-fg" title={row.original.label}>
+              {row.original.label}
+            </p>
+            <p className="text-xs tabular-nums font-semibold text-primary sm:hidden">
+              {row.original.valueDisplay}
+            </p>
+            <p className="text-xs uppercase text-atg-muted sm:hidden">{row.original.locale}</p>
+          </div>
         ),
       },
       {
         id: 'valueDisplay',
         header: t('columns.value'),
-        meta: { align: 'center' },
+        meta: {
+          align: 'center',
+          hideOnMobile: true,
+          mobileDetailLabel: t('columns.value'),
+        },
         cell: ({ row }) => (
           <span className="tabular-nums text-sm font-semibold text-primary">
             {row.original.valueDisplay}
@@ -123,7 +136,11 @@ export function GapImpactStatsList() {
       {
         id: 'colorKey',
         header: t('columns.color'),
-        meta: { align: 'center' },
+        meta: {
+          align: 'center',
+          hideOnMobile: true,
+          mobileDetailLabel: t('columns.color'),
+        },
         cell: ({ row }) => (
           <span className="text-sm text-atg-muted">{tColors(row.original.colorKey)}</span>
         ),
@@ -131,7 +148,11 @@ export function GapImpactStatsList() {
       {
         id: 'sortOrder',
         header: t('columns.sortOrder'),
-        meta: { align: 'center' },
+        meta: {
+          align: 'center',
+          hideOnMobile: true,
+          mobileDetailLabel: t('columns.sortOrder'),
+        },
         cell: ({ row }) => (
           <span className="tabular-nums text-sm text-atg-muted">{row.original.sortOrder}</span>
         ),
@@ -139,7 +160,11 @@ export function GapImpactStatsList() {
       {
         id: 'locale',
         header: t('columns.locale'),
-        meta: { align: 'center' },
+        meta: {
+          align: 'center',
+          hideOnMobile: true,
+          mobileDetailLabel: t('columns.locale'),
+        },
         cell: ({ row }) => (
           <span className="text-sm uppercase text-atg-muted">{row.original.locale}</span>
         ),
@@ -157,7 +182,7 @@ export function GapImpactStatsList() {
       {
         id: 'actions',
         header: tCommon('columns.actions'),
-        meta: { align: 'right' },
+        meta: { align: 'right', cellClassName: 'w-[5.5rem] sm:w-auto' },
         cell: ({ row }) => (
           <DataTableActions>
             <DataTableActionButton action="edit" href={`/gap/impact/${row.original.id}`} />
@@ -282,6 +307,8 @@ export function GapImpactStatsList() {
               emptyMessage={search.trim() ? t('emptySearch') : t('emptyDefault')}
               emptyVariant={search.trim() || hasActiveFilters ? 'search' : 'default'}
               getRowId={(row) => row.id}
+              expandRowLabel={tDataTable('expandRow')}
+              collapseRowLabel={tDataTable('collapseRow')}
             />
           </Card>
           {state.status === 'ready' ? (

@@ -22,6 +22,7 @@ import {
   normalizeBookingDeposits,
   normalizeBookingItemTypeModes,
   normalizeCatalogProducts,
+  normalizeHomepageReviews,
   normalizeWebPaymentMethods,
   type BookingMode,
 } from '@africatourismgate/types';
@@ -526,6 +527,22 @@ export function validateSettingValue(
     }
     case 'announcement_banner': {
       return validateAnnouncementBanner(value);
+    }
+    case 'homepage_reviews': {
+      if (typeof value.showTripadvisorReviews !== 'boolean') {
+        throw new BadRequestException(
+          'showTripadvisorReviews doit être un booléen.',
+        );
+      }
+      if (typeof value.showPlatformReviews !== 'boolean') {
+        throw new BadRequestException(
+          'showPlatformReviews doit être un booléen.',
+        );
+      }
+      return normalizeHomepageReviews({
+        showTripadvisorReviews: value.showTripadvisorReviews,
+        showPlatformReviews: value.showPlatformReviews,
+      });
     }
     case 'maintenance': {
       throw new BadRequestException(

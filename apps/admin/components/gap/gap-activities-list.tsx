@@ -37,6 +37,7 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
   const tStatus = useTranslations('modules.about.status');
   const tLocale = useTranslations('modules.about.locale');
   const tCommon = useTranslations('modules.common');
+  const tDataTable = useTranslations('modules.common.dataTable');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -120,10 +121,15 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
         accessorKey: 'title',
         header: t('columns.title'),
         cell: ({ row }) => (
-          <div className="max-w-md space-y-1">
-            <p className="font-medium text-atg-fg">{row.original.title}</p>
-            <p className="line-clamp-2 text-sm text-atg-muted">
+          <div className="min-w-0 max-w-md space-y-1">
+            <p className="truncate font-medium text-atg-fg" title={row.original.title}>
+              {row.original.title}
+            </p>
+            <p className="line-clamp-1 text-sm text-atg-muted sm:line-clamp-2">
               {stripHtml(row.original.description)}
+            </p>
+            <p className="text-xs uppercase text-atg-muted sm:hidden">
+              {tIcons(row.original.iconKey)} · {row.original.locale}
             </p>
           </div>
         ),
@@ -131,7 +137,11 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
       {
         id: 'iconKey',
         header: t('columns.icon'),
-        meta: { align: 'center' },
+        meta: {
+          align: 'center',
+          hideOnMobile: true,
+          mobileDetailLabel: t('columns.icon'),
+        },
         cell: ({ row }) => (
           <span className="text-sm text-atg-muted">{tIcons(row.original.iconKey)}</span>
         ),
@@ -139,7 +149,11 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
       {
         id: 'sortOrder',
         header: t('columns.sortOrder'),
-        meta: { align: 'center' },
+        meta: {
+          align: 'center',
+          hideOnMobile: true,
+          mobileDetailLabel: t('columns.sortOrder'),
+        },
         cell: ({ row }) => (
           <span className="tabular-nums text-sm text-atg-muted">{row.original.sortOrder}</span>
         ),
@@ -147,7 +161,11 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
       {
         id: 'locale',
         header: t('columns.locale'),
-        meta: { align: 'center' },
+        meta: {
+          align: 'center',
+          hideOnMobile: true,
+          mobileDetailLabel: t('columns.locale'),
+        },
         cell: ({ row }) => (
           <span className="text-sm uppercase text-atg-muted">{row.original.locale}</span>
         ),
@@ -165,7 +183,7 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
       {
         id: 'actions',
         header: tCommon('columns.actions'),
-        meta: { align: 'right' },
+        meta: { align: 'right', cellClassName: 'w-[7.5rem] sm:w-auto' },
         cell: ({ row }) => (
           <DataTableActions>
             <DataTableActionButton
@@ -305,6 +323,8 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
               emptyMessage={search.trim() ? t('emptySearch') : t('emptyDefault')}
               emptyVariant={search.trim() || hasActiveFilters ? 'search' : 'default'}
               getRowId={(row) => row.id}
+              expandRowLabel={tDataTable('expandRow')}
+              collapseRowLabel={tDataTable('collapseRow')}
             />
           </Card>
           {state.status === 'ready' ? (
