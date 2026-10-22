@@ -323,6 +323,69 @@ test.describe('Language switch (FR/EN/ES)', () => {
     await switchLanguage(page, /English/i);
 
     await expect(page.getByRole('heading', { name: 'Payment cancelled' })).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Booking steps' })).toBeVisible();
+    await expect(page.getByText('Cancelled', { exact: true })).toBeVisible();
+  });
+
+  test('booking register shows English after switch', async ({ page }) => {
+    await page.goto('/booking/register');
+
+    await expect(page.getByRole('heading', { name: 'Créer un compte client' })).toBeVisible();
+
+    await switchLanguage(page, /English/i);
+
+    await expect(page.getByRole('heading', { name: 'Create a customer account' })).toBeVisible();
+    await expect(page.getByLabel('First name')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Create my account' })).toBeVisible();
+  });
+
+  test('booking verify shows English after switch', async ({ page }) => {
+    await page.goto('/booking/verify');
+
+    await expect(page.getByRole('heading', { name: 'Vérification par e-mail' })).toBeVisible();
+
+    await switchLanguage(page, /English/i);
+
+    await expect(page.getByRole('heading', { name: 'Email verification' })).toBeVisible();
+    await expect(page.getByLabel('6-digit code')).toBeVisible();
+  });
+
+  test('booking oauth callback error shows English after switch', async ({ page }) => {
+    await page.goto('/booking/oauth/callback');
+
+    await expect(page.getByRole('heading', { name: 'Connexion Google' })).toBeVisible();
+    await expect(page.getByText('Paramètres OAuth invalides.')).toBeVisible({
+      timeout: 15_000,
+    });
+
+    await switchLanguage(page, /English/i);
+
+    await expect(page.getByRole('heading', { name: 'Google sign-in' })).toBeVisible();
+    await expect(page.getByText('Invalid OAuth parameters.')).toBeVisible();
+  });
+
+  test('booking success shows English after switch', async ({ page }) => {
+    await page.goto('/booking/success');
+
+    await expect(page.getByRole('heading', { name: 'Confirmation en cours' })).toBeVisible();
+
+    await switchLanguage(page, /English/i);
+
+    await expect(page.getByRole('heading', { name: 'Confirming booking' })).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Booking steps' })).toBeVisible();
+    await expect(page.getByText('Confirmation', { exact: true })).toBeVisible();
+  });
+
+  test('booking request-success shows English after switch', async ({ page }) => {
+    await page.goto('/booking/request-success');
+
+    await expect(page.getByRole('heading', { name: 'Demande envoyée' })).toBeVisible();
+
+    await switchLanguage(page, /English/i);
+
+    await expect(page.getByRole('heading', { name: 'Request submitted' })).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Booking steps' })).toBeVisible();
+    await expect(page.getByText('Request', { exact: true })).toBeVisible();
   });
 
   test('account shell shows English after switch', async ({ page }) => {

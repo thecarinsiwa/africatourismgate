@@ -126,6 +126,9 @@ export type Translations = {
     invalidDraftBack: string;
     invalidRecap: string;
     modifySelection: string;
+    cartDisplayError: string;
+    vehicleSlotUnavailable: string;
+    activitySlotUnavailable: string;
     resumeSearch: string;
     stripeError: {
       authTitle: string;

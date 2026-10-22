@@ -867,21 +867,21 @@ Cocher dans l'issue au fur et à mesure. Remplacer `[id]` par un ID seed/API val
 
 | Route | FR | EN | ES | Notes |
 | ----- | -- | -- | -- | ----- |
-| `/booking/login` | ☐ | ☐ | ☐ | Déjà partiellement couvert E2E |
-| `/booking/register` | ☐ | ☐ | ☐ | |
-| `/booking/verify` | ☐ | ☐ | ☐ | OTP, messages erreur |
-| `/booking/logout` | ☐ | ☐ | ☐ | |
-| `/booking/oauth/callback` | ☐ | ☐ | ☐ | États erreur OAuth |
-| `/booking/cart` | ☐ | ☐ | ☐ | Lignes panier, empty state |
-| `/booking/recap` | ☐ | ☐ | ☐ | CTA payer / demander réservation |
-| `/booking/success` | ☐ | ☐ | ☐ | Post-paiement Stripe |
-| `/booking/request-success` | ☐ | ☐ | ☐ | Demande assistée |
-| `/booking/cancel` | ☐ | ☐ | ☐ | Annulation paiement |
-| `/booking` | ☐ | ☐ | ☐ | ✅ WEB-003 Option A (redirect cart/hotels) |
-| `/reservations/cart` | ☐ | ☐ | ☐ | Legacy — même i18n que booking ? |
-| `/reservations/recap` | ☐ | ☐ | ☐ | |
-| `/reservations/success` | ☐ | ☐ | ☐ | |
-| `/reservations/cancel` | ☐ | ☐ | ☐ | |
+| `/booking/login` | ✅ | ✅ | ✅ | Labels + show/hide pwd ; E2E switch |
+| `/booking/register` | ✅ | ✅ | ✅ | Champs / validation copy |
+| `/booking/verify` | ✅ | ✅ | ✅ | OTP + CTA (next-intl) |
+| `/booking/logout` | ✅ | ✅ | ✅ | Metadata locale → redirect `/booking/login` |
+| `/booking/oauth/callback` | ✅ | ✅ | ✅ | Erreur « Invalid OAuth parameters » locale |
+| `/booking/cart` | ✅ | ✅ | ✅ | Auth requise ; erreurs créneau/display via `checkout.*` |
+| `/booking/recap` | ✅ | ✅ | ✅ | CTA `payWithStripe` / `requestBooking` + stepper |
+| `/booking/success` | ✅ | ✅ | ✅ | Stepper + copy confirmation |
+| `/booking/request-success` | ✅ | ✅ | ✅ | Stepper mode demande (`stepRequest`) |
+| `/booking/cancel` | ✅ | ✅ | ✅ | Stepper « Annulé » ; E2E switch |
+| `/booking` | ✅ | ✅ | ✅ | Redirect serveur → `/booking/cart?…` (draft) ou `/hotels` |
+| `/reservations/cart` | ✅ | ✅ | ✅ | 308 → `/booking/cart` |
+| `/reservations/recap` | ✅ | ✅ | ✅ | 308 → `/booking/recap` |
+| `/reservations/success` | ✅ | ✅ | ✅ | 308 → `/booking/success` |
+| `/reservations/cancel` | ✅ | ✅ | ✅ | 308 → `/booking/cancel` |
 
 #### Groupe E — Compte client (auth requise)
 
@@ -1048,10 +1048,18 @@ Stub `/booking` : ✅ WEB-003 Option A (redirect serveur)
 
 ## Critères d'acceptation
 
-- [ ] 15 routes × 3 langues (ou redirects documentés)
-- [ ] Messages erreur Stripe (`stripe-payment-error.tsx`) traduits
-- [ ] Stepper checkout (`checkout-stepper.tsx`) traduit
-- [ ] Spec `i18n-switch.spec.ts` passante ; proposer extensions si manques
+- [x] 15 routes × 3 langues (ou redirects documentés) — QA 2026-10-22
+- [x] Messages erreur Stripe (`stripe-payment-error.tsx`) traduits (`checkout.stripeError.*` FR/EN/ES)
+- [x] Stepper checkout (`checkout-stepper.tsx`) traduit (labels injectés depuis `checkout.step*`)
+- [x] Spec `i18n-switch.spec.ts` : cancel + login déjà couverts ; extensions register / oauth / success / request-success / verify ajoutées
+
+## Anomalies trouvées (QA 2026-10-22)
+
+| Sévérité | Symptôme | Fichier / cause | Statut |
+| -------- | -------- | --------------- | ------ |
+| Haute | `/booking/cart` EN : messages créneau / display restaient FR | Hardcodes dans `reservation-cart-page-content.tsx` | ✅ `checkout.cartDisplayError` / `vehicleSlotUnavailable` / `activitySlotUnavailable` |
+| Info | Annonce CMS reste FR seule sur pages EN/ES | Contenu admin (pas next-intl) | ⚠️ documenté WEB-I18N-01 / 07 |
+| Info | `/booking/cart` + `/booking/recap` exigent session | Redirect login — QA labels via pages succès/cancel + messages | OK |
 ```
 
 ---
@@ -1197,6 +1205,7 @@ Corriger tous les textes hardcodés / non traduits identifiés :
 | `/packages` | EN a11y | `Original price` | `package-price-display.tsx` | ✅ |
 | `/booking/login` | EN/ES | « Mot de passe oublié ? » / show-password FR | `booking-login.ts` + UI defaults | ✅ WEB-I18N-01 |
 | `/` map | FR | Leaflet « Zoom in/out » EN | `destinations-map-inner.tsx` | ✅ WEB-I18N-01 |
+| `/booking/cart` | EN/ES | Erreurs créneau / « Impossible d'afficher… » FR | `reservation-cart-page-content.tsx` | ✅ WEB-I18N-03 |
 | (annonce) | EN | Texte CMS FR seul | API announcement-banner | ⚠️ contenu admin |
 
 ## Procédure correction
@@ -1300,7 +1309,7 @@ WEB-012 (README) → WEB-006 (CI E2E) → WEB-002 + WEB-003 (cleanup routes)
 | WEB-015 | | | ✅ |
 | WEB-I18N-01 | | | ✅ QA 2026-10-22 |
 | WEB-I18N-02 | | | ☐ |
-| WEB-I18N-03 | | | ☐ |
+| WEB-I18N-03 | | | ✅ QA 2026-10-22 |
 | WEB-I18N-04 | | | ☐ |
 | WEB-I18N-05 | | | ☐ |
 | WEB-I18N-06 | | | ☐ |

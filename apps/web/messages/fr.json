@@ -2270,7 +2270,10 @@
       "subtitle": "Aucun débit n'a été confirmé. Vous pouvez reprendre votre réservation quand vous voulez.",
       "backToCart": "Revenir au panier",
       "continueSearch": "Continuer la recherche"
-    }
+    },
+    "cartDisplayError": "Impossible d'afficher cette réservation.",
+    "vehicleSlotUnavailable": "Créneau indisponible ou modifié.",
+    "activitySlotUnavailable": "Créneau indisponible ou places insuffisantes."
   },
   "nationalitySelect": {
     "search": "Rechercher…",

@@ -2270,7 +2270,10 @@
       "subtitle": "No charge was confirmed. You can resume your booking whenever you like.",
       "backToCart": "Return to cart",
       "continueSearch": "Continue browsing"
-    }
+    },
+    "cartDisplayError": "Unable to display this booking.",
+    "vehicleSlotUnavailable": "This time slot is unavailable or has changed.",
+    "activitySlotUnavailable": "This time slot is unavailable or does not have enough places."
   },
   "nationalitySelect": {
     "search": "Search…",

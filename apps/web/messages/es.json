@@ -2270,7 +2270,10 @@
       "subtitle": "No se confirmó ningún cargo. Puede reanudar su reserva cuando quiera.",
       "backToCart": "Volver al carrito",
       "continueSearch": "Seguir buscando"
-    }
+    },
+    "cartDisplayError": "No se puede mostrar esta reserva.",
+    "vehicleSlotUnavailable": "El horario no está disponible o ha cambiado.",
+    "activitySlotUnavailable": "El horario no está disponible o no hay suficientes plazas."
   },
   "nationalitySelect": {
     "search": "Buscar…",
