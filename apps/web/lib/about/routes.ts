@@ -55,7 +55,19 @@ export function normalizeAboutPathname(pathname: string): string {
   return pathname;
 }
 
+export function teamMemberPath(slug: string): string {
+  return `${ABOUT_PATHS.team}/${encodeURIComponent(slug)}`;
+}
+
+export function isTeamMemberProfilePath(pathname: string): boolean {
+  const normalized = normalizeAboutPathname(pathname);
+  return normalized.startsWith(`${ABOUT_PATHS.team}/`) && normalized.length > ABOUT_PATHS.team.length + 1;
+}
+
+/** Nested pages (e.g. a team profile) resolve to their parent nav item. */
 export function findAboutNavItem(pathname: string): AboutNavItem | undefined {
   const normalized = normalizeAboutPathname(pathname);
-  return ABOUT_NAV_ITEMS.find((item) => item.href === normalized);
+  return ABOUT_NAV_ITEMS.find(
+    (item) => item.href === normalized || normalized.startsWith(`${item.href}/`),
+  );
 }

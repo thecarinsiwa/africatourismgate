@@ -65,7 +65,8 @@
       "coverImageUrl": "Imagen de portada (URL)",
       "coverPreviewAlt": "Vista previa de la imagen de portada",
       "locale": "Idioma",
-      "publishedAtOptional": "Fecha de publicación (opcional)"
+      "publishedAtOptional": "Fecha de publicación (opcional)",
+      "coverImageHint": "Imagen destacada en el sitio y al compartir en Facebook, LinkedIn o X (ideal: 1200×630)."
     },
     "hints": {
       "contentHtml": "HTML permitido (etiquetas p, h2, ul, a, etc.).",

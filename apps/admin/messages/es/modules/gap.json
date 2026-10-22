@@ -4,7 +4,15 @@
     "deniedWrite": "No tiene permiso gap.write para realizar esta acción."
   },
   "parametres": {
-    "localeFilter": "Idioma del contenido"
+    "localeFilter": "Idioma del contenido",
+    "localeConfigured": "{locale} · configurado",
+    "localeMissing": "{locale} · por crear",
+    "unsaved": {
+      "title": "Cambios sin guardar",
+      "description": "Hay cambios sin guardar. ¿Cambiar de idioma sin guardar?",
+      "confirm": "Cambiar sin guardar",
+      "cancel": "Seguir editando"
+    }
   },
   "sections": {
     "about": "Acerca de",
@@ -28,13 +36,33 @@
   },
   "siteSettings": {
     "heading": "Configuración del sitio GAP",
+    "sections": {
+      "content": "Contenido",
+      "contentHint": "Título y subtítulo del hero GAP para este idioma.",
+      "hero": "Imagen hero",
+      "heroHint": "Banner en la parte superior de la página GAP. La subida y la URL externa comparten el mismo campo.",
+      "preview": "Vista previa en vivo",
+      "previewHint": "Permanece visible al desplazarse — renderizado aproximado del hero."
+    },
+    "preview": {
+      "badge": "Hero GAP",
+      "defaultTitle": "Gorilla Ambassadors Program",
+      "emptySubtitle": "Subtítulo aún no definido…",
+      "altLabel": "Alt: {alt}",
+      "ariaLabel": "Vista previa del hero GAP — {title}"
+    },
     "fields": {
       "title": "Título",
       "subtitle": "Subtítulo",
+      "publishedToggle": "Publicar la configuración GAP",
       "heroImage": "Imagen principal",
-      "heroImageUrl": "URL de imagen principal",
+      "heroImageUrl": "URL de la imagen (o resultado de la subida)",
       "heroImageAlt": "Texto alternativo de la imagen",
       "heroPreviewAlt": "Vista previa de la imagen principal",
+      "heroEmpty": "Aún no hay imagen — suba un archivo o introduzca una URL.",
+      "heroUploadHint": "JPEG, PNG o WebP — máx. 5 MB · recomendado 1920×1080",
+      "heroPriorityHint": "Un archivo subido rellena este campo y sustituye la URL anterior.",
+      "heroAltHint": "Descripción breve para accesibilidad y SEO.",
       "removeHero": "Quitar la imagen",
       "links": "Enlaces de socios",
       "linksHint": "UNESCO, socios, recursos… hasta 10 enlaces.",
@@ -62,8 +90,10 @@
       "unescoUrlInvalid": "La URL de UNESCO debe ser válida.",
       "donateUrlInvalid": "La URL de donación debe ser válida."
     },
+    "dirty": "Cambios sin guardar",
     "saving": "Guardando…",
-    "saveButton": "Guardar"
+    "saveButton": "Guardar",
+    "cancelButton": "Cancelar"
   },
   "pages": {
     "stats": {

@@ -561,16 +561,29 @@
         "aboutResources": "Ressources",
         "whyUs": "Pourquoi nous",
         "hero": "Hero",
-        "happyCustomers": "Clients satisfaits"
+        "happyCustomers": "Clients satisfaits",
+        "announcementBanner": "Bandeau d’annonce",
+        "homepageReviews": "Avis clients"
       }
     },
     "avis": {
       "title": "Avis",
-      "description": "Modération des notes et commentaires clients. Filtres par note, propriété et statut. Actions : approuver, masquer ou supprimer. Accès : reviews.read / reviews.write.",
+      "description": "Modération des notes et commentaires clients. Filtres par note, propriété, statut et source. Actions : approuver, masquer, supprimer ou créer un avis Tripadvisor. Accès : reviews.read / reviews.write.",
+      "actions": {
+        "newTripadvisor": "Avis Tripadvisor"
+      },
       "id": {
         "metaTitle": "Détail avis",
         "description": "Consultez le contexte, le commentaire et les actions de modération.",
         "backLabel": "Retour aux avis"
+      },
+      "tripadvisor": {
+        "nouveau": {
+          "metaTitle": "Nouvel avis Tripadvisor",
+          "title": "Nouvel avis Tripadvisor",
+          "description": "Saisissez un avis Tripadvisor pour la page d’accueil.",
+          "backLabel": "Retour aux avis"
+        }
       }
     }
   },

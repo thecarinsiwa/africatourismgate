@@ -216,6 +216,7 @@ export type {
   PublicActivityListItem,
   PublicActivityProvider,
   PublicActivityProviderDetail,
+  PublicActivityProviderListItem,
   UpdateActivityProviderRequest,
   UpdateActivityImageRequest,
   UpdateActivityDescriptionAssetRequest,
@@ -548,6 +549,7 @@ export type {
   PublicTeamMember,
   PublicTeamMembersListQuery,
   TeamMember,
+  TeamMemberContactFields,
   TeamMemberStatus,
   TeamMembersListQuery,
   UpdateTeamMemberRequest,
@@ -684,6 +686,7 @@ export {
 export type {
   AdminReviewDetail,
   AdminReviewListItem,
+  CreateAdminTripadvisorReviewRequest,
   CreateBookingReviewRequest,
   GuideReviewInvite,
   PropertyReviewSummary,
@@ -691,10 +694,14 @@ export type {
   PublicFeaturedReviewsListQuery,
   Review,
   ReviewEntityType,
+  ReviewSource,
   ReviewStatus,
   ReviewsListQuery,
+  SyncTripadvisorReviewsResult,
   UpdateReviewStatusRequest,
 } from './review.js';
+
+export { REVIEW_SOURCES } from './review.js';
 
 export type {
   AdminSupportTicketDetail,
@@ -834,6 +841,17 @@ export type {
   UpsertOrganizationSettingItem,
   WebPaymentMethodKey,
   WebPaymentMethodsSettingValue,
+  AnnouncementBannerColor,
+  AnnouncementBannerIntensity,
+  AnnouncementBannerLocale,
+  AnnouncementBannerMessage,
+  AnnouncementBannerSettingValue,
+  PublicAnnouncementBanner,
+  HomepageReviewsSettingValue,
+  PublicHomepageReviews,
+  TripadvisorSyncSettingValue,
+  TripadvisorSyncAdminValue,
+  TripadvisorSyncAdminSettingValue,
 } from './organization-settings.js';
 
 export type {
@@ -871,6 +889,33 @@ export {
   normalizeBookingDeposits,
   normalizeCatalogProducts,
   normalizeWebPaymentMethods,
+  ANNOUNCEMENT_BANNER_COLORS,
+  ANNOUNCEMENT_BANNER_CTA_LABEL_MAX_LENGTH,
+  ANNOUNCEMENT_BANNER_CTA_URL_MAX_LENGTH,
+  ANNOUNCEMENT_BANNER_FALLBACK_LOCALE,
+  ANNOUNCEMENT_BANNER_INTENSITIES,
+  ANNOUNCEMENT_BANNER_LOCALES,
+  ANNOUNCEMENT_BANNER_TEXT_MAX_LENGTH,
+  DEFAULT_ANNOUNCEMENT_BANNER,
+  DEFAULT_PUBLIC_ANNOUNCEMENT_BANNER,
+  isAnnouncementBannerColor,
+  isAnnouncementBannerIntensity,
+  isAnnouncementBannerLocale,
+  isValidAnnouncementBannerCtaUrl,
+  normalizeAnnouncementBanner,
+  resolvePublicAnnouncementBanner,
+  DEFAULT_HOMEPAGE_REVIEWS,
+  normalizeHomepageReviews,
+  DEFAULT_TRIPADVISOR_SYNC,
+  TRIPADVISOR_SYNC_SETTING_KEY,
+  TRIPADVISOR_SYNC_LOCATION_ID_MAX_LENGTH,
+  TRIPADVISOR_SYNC_API_KEY_MAX_LENGTH,
+  TRIPADVISOR_SYNC_LANGUAGE_MAX_LENGTH,
+  normalizeTripadvisorSync,
+  maskTripadvisorApiKey,
+  toTripadvisorSyncAdminValue,
+  toTripadvisorSyncAdminSettingValue,
+  mergeTripadvisorSyncApiKey,
 } from './organization-settings.js';
 
 export type {

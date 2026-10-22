@@ -1,0 +1,59 @@
+{
+  "heading": "Bandeau d’annonce",
+  "description": "Message affiché tout en haut du site public, au-dessus de la barre de contact et de la navigation principale.",
+  "readOnlyHint": "Vous pouvez consulter ce bandeau mais pas le modifier (permission organization_settings.write requise).",
+  "denied": "Vous n’avez pas accès à ce bandeau (permission organization_settings.read requise).",
+  "fields": {
+    "enabledOn": "Bandeau affiché sur le site public",
+    "enabledOff": "Bandeau masqué",
+    "locale": "Langue en cours d’édition",
+    "localeHint": "Le français est obligatoire lorsque le bandeau est activé. Les langues laissées vides affichent le texte français.",
+    "localesFilled": "Langues renseignées : {list}",
+    "text": "Texte du bandeau",
+    "textPlaceholder": "Ex. Annulation gratuite sur toutes les réservations jusqu’au 31 décembre",
+    "ctaLabel": "Libellé du lien (facultatif)",
+    "ctaLabelPlaceholder": "Ex. En savoir plus",
+    "ctaUrl": "URL du lien (facultatif)",
+    "ctaUrlPlaceholder": "https://… ou /packages",
+    "ctaHint": "Commune à toutes les langues. Le lien n’est affiché que dans les langues qui ont un libellé.",
+    "ctaNewTab": "Ouvrir le lien dans un nouvel onglet",
+    "color": "Couleur",
+    "intensity": "Intensité"
+  },
+  "colors": {
+    "red": "Rouge",
+    "yellow": "Jaune",
+    "green": "Vert",
+    "blue": "Bleu",
+    "gray": "Gris"
+  },
+  "intensities": {
+    "low": {
+      "label": "Légère",
+      "hint": "Fond pâle, texte foncé — information discrète."
+    },
+    "high": {
+      "label": "Forte",
+      "hint": "Fond plein — message urgent ou important."
+    }
+  },
+  "preview": {
+    "title": "Aperçu",
+    "locale": "Affichage en {locale}",
+    "fallback": "Pas de texte dans cette langue : le texte français est affiché",
+    "disabled": "Bandeau désactivé — non visible sur le site",
+    "empty": "Votre texte apparaîtra ici"
+  },
+  "validation": {
+    "frenchTextRequired": "Le texte en français est obligatoire pour activer le bandeau.",
+    "textTooLong": "Le texte ne doit pas dépasser {max} caractères.",
+    "textRequiredForCta": "Ajoutez un texte pour cette langue ou retirez le libellé du lien.",
+    "ctaLabelTooLong": "Le libellé du lien ne doit pas dépasser {max} caractères.",
+    "ctaUrlInvalid": "Saisissez une URL http(s) ou un chemin interne commençant par /.",
+    "ctaUrlTooLong": "L’URL ne doit pas dépasser {max} caractères.",
+    "ctaUrlRequired": "Saisissez l’URL du lien ou retirez les libellés."
+  },
+  "saveButton": "Enregistrer le bandeau",
+  "saving": "Enregistrement…",
+  "saved": "Bandeau enregistré."
+}

@@ -24,16 +24,18 @@ import type {
   PublicWhyUsListQuery,
   PublicHappyCustomersContent,
   PublicHappyCustomersListQuery,
-  PublicActivityProvider,
+  PublicActivityProviderListItem,
   PublicActivityProviderDetail,
   PublicHeroSlide,
   PublicHeroSlidesListQuery,
   PublicFeaturedReviewsListQuery,
+  PublicHomepageReviews,
   PublicGapHome,
   PublicSiteSearchQuery,
   PublicSiteSearchResponse,
   AboutPageSectionKey,
 } from '@africatourismgate/types';
+import { normalizeHomepageReviews } from '@africatourismgate/types/organization-settings';
 import type {
   VehicleDetail,
   VehicleDetailQuery,
@@ -188,8 +190,8 @@ export async function listActivityDestinations(): Promise<PublicDestination[]> {
   return fetchPublic<PublicDestination[]>('/public/activities/destinations');
 }
 
-export async function listPublicActivityProviders(): Promise<PublicActivityProvider[]> {
-  return fetchPublic<PublicActivityProvider[]>('/public/activity-providers');
+export async function listPublicActivityProviders(): Promise<PublicActivityProviderListItem[]> {
+  return fetchPublic<PublicActivityProviderListItem[]>('/public/activity-providers');
 }
 
 export async function getPublicActivityProvider(
@@ -648,6 +650,15 @@ export async function browseTeamMembersForLocale(
   };
 }
 
+/** API falls back to any published locale when the slug is missing in `locale`. */
+export async function getTeamMemberBySlug(
+  slug: string,
+  locale?: string,
+): Promise<PublicTeamMember> {
+  const qs = locale ? `?locale=${encodeURIComponent(locale)}` : '';
+  return fetchPublic<PublicTeamMember>(`/public/team-members/${encodeURIComponent(slug)}${qs}`);
+}
+
 function buildAboutResourcesQuery(params: PublicAboutResourcesListQuery): string {
   const qs = new URLSearchParams();
   if (params.type) qs.set('type', params.type);
@@ -839,6 +850,22 @@ export async function getPublicFeaturedReviews(
   if (params.limit !== undefined) qs.set('limit', String(params.limit));
   const query = qs.toString();
   return fetchPublic<Review[]>(`/public/reviews/featured${query ? `?${query}` : ''}`);
+}
+
+/** Homepage “Avis de nos clients” visibility toggles. Never throws — defaults both on. */
+export async function getPublicHomepageReviews(): Promise<PublicHomepageReviews> {
+  try {
+    const raw = await fetchPublic<unknown>(
+      '/organization-settings/public/homepage-reviews',
+    );
+    return normalizeHomepageReviews(
+      raw && typeof raw === 'object' && !Array.isArray(raw)
+        ? (raw as Record<string, unknown>)
+        : null,
+    );
+  } catch {
+    return normalizeHomepageReviews(null);
+  }
 }
 
 export async function getPublicGapHome(locale?: string): Promise<PublicGapHome> {

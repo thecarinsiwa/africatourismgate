@@ -50,5 +50,27 @@
       "saveButton": "Save",
       "cancelButton": "Cancel"
     }
+  },
+  "stats": {
+    "total": {
+      "label": "Documents",
+      "subtitle": "Legal pages in catalog"
+    },
+    "published": {
+      "label": "Published",
+      "subtitle": "Visible on the site"
+    },
+    "draft": {
+      "label": "Drafts",
+      "subtitle": "Not published"
+    },
+    "recentlyUpdated": {
+      "label": "Updated (30d)",
+      "subtitle": "Edited in the last 30 days"
+    },
+    "outdated": {
+      "label": "Outdated",
+      "subtitle": "Not reviewed for over a year"
+    }
   }
 }

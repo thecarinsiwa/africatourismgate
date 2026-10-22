@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { SiteAnnouncementBanner } from '../announcement-banner';
 import { BrandingMark } from '../branding-mark';
 import { LanguageSwitcher } from '../language-switcher';
 import { AUTH_CHANGED_EVENT, hasWebSession } from '../../lib/auth/client-session';
@@ -269,6 +270,7 @@ export function HomeHeader() {
       ref={headerRef}
       className="fixed inset-x-0 top-0 z-50 w-full bg-atg-elevated/95 shadow-sm backdrop-blur-md dark:bg-atg-elevated/95"
     >
+      <SiteAnnouncementBanner />
       <div className="border-b border-atg-border bg-atg-surface text-atg-fg dark:border-white/10 dark:bg-[#1b1b2f] dark:text-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4 text-xs sm:text-sm">
@@ -448,7 +450,7 @@ export function HomeHeader() {
           ref={mobileNavRef}
           id="mobile-nav"
           tabIndex={-1}
-          className="border-t border-atg-border bg-atg-elevated px-4 py-4 shadow-lg transition-[opacity,transform] duration-200 ease-out opacity-100 translate-y-0 max-h-[calc(100dvh-8.5rem)] overflow-y-auto overscroll-contain dark:border-atg-border dark:bg-atg-elevated lg:hidden"
+          className="border-t border-atg-border bg-atg-elevated px-4 py-4 shadow-lg transition-[opacity,transform] duration-200 ease-out opacity-100 translate-y-0 max-h-[calc(100dvh-8.5rem-var(--atg-banner-h,0px))] overflow-y-auto overscroll-contain dark:border-atg-border dark:bg-atg-elevated lg:hidden"
           aria-label={t('mobileAria')}
         >
           <div className="mb-3 flex items-center justify-between gap-2">

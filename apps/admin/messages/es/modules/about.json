@@ -10,40 +10,112 @@
   },
   "stats": {
     "pages": {
-      "total": { "label": "Páginas", "subtitle": "Páginas institucionales" },
-      "published": { "label": "Publicadas", "subtitle": "Visibles en el sitio" },
-      "draft": { "label": "Borradores", "subtitle": "No publicadas" },
-      "french": { "label": "En francés", "subtitle": "Contenido locale FR" }
+      "total": {
+        "label": "Páginas",
+        "subtitle": "Páginas institucionales"
+      },
+      "published": {
+        "label": "Publicadas",
+        "subtitle": "Visibles en el sitio"
+      },
+      "draft": {
+        "label": "Borradores",
+        "subtitle": "No publicadas"
+      },
+      "french": {
+        "label": "En francés",
+        "subtitle": "Contenido locale FR"
+      }
     },
     "resources": {
-      "total": { "label": "Recursos", "subtitle": "Documentos y medios" },
-      "published": { "label": "Publicados", "subtitle": "Visibles en el sitio" },
-      "draft": { "label": "Borradores", "subtitle": "No publicados" },
-      "french": { "label": "En francés", "subtitle": "Contenido locale FR" }
+      "total": {
+        "label": "Recursos",
+        "subtitle": "Documentos y medios"
+      },
+      "published": {
+        "label": "Publicados",
+        "subtitle": "Visibles en el sitio"
+      },
+      "draft": {
+        "label": "Borradores",
+        "subtitle": "No publicados"
+      },
+      "french": {
+        "label": "En francés",
+        "subtitle": "Contenido locale FR"
+      }
     },
     "team": {
-      "total": { "label": "Miembros", "subtitle": "Equipo mostrado" },
-      "published": { "label": "Publicados", "subtitle": "Visibles en el sitio" },
-      "draft": { "label": "Borradores", "subtitle": "No publicados" },
-      "french": { "label": "En francés", "subtitle": "Perfiles locale FR" }
+      "total": {
+        "label": "Miembros",
+        "subtitle": "Equipo mostrado"
+      },
+      "published": {
+        "label": "Publicados",
+        "subtitle": "Visibles en el sitio"
+      },
+      "draft": {
+        "label": "Borradores",
+        "subtitle": "No publicados"
+      },
+      "french": {
+        "label": "En francés",
+        "subtitle": "Perfiles locale FR"
+      }
     },
     "timeline": {
-      "total": { "label": "Hitos", "subtitle": "Línea de tiempo" },
-      "published": { "label": "Publicados", "subtitle": "Visibles en el sitio" },
-      "draft": { "label": "Borradores", "subtitle": "No publicados" },
-      "french": { "label": "En francés", "subtitle": "Entradas locale FR" }
+      "total": {
+        "label": "Hitos",
+        "subtitle": "Línea de tiempo"
+      },
+      "published": {
+        "label": "Publicados",
+        "subtitle": "Visibles en el sitio"
+      },
+      "draft": {
+        "label": "Borradores",
+        "subtitle": "No publicados"
+      },
+      "french": {
+        "label": "En francés",
+        "subtitle": "Entradas locale FR"
+      }
     },
     "whyUs": {
-      "total": { "label": "Tarjetas", "subtitle": "Argumentos « Por qué nosotros »" },
-      "published": { "label": "Publicadas", "subtitle": "Visibles en el sitio" },
-      "draft": { "label": "Borradores", "subtitle": "No publicadas" },
-      "french": { "label": "En francés", "subtitle": "Tarjetas locale FR" }
+      "total": {
+        "label": "Tarjetas",
+        "subtitle": "Argumentos « Por qué nosotros »"
+      },
+      "published": {
+        "label": "Publicadas",
+        "subtitle": "Visibles en el sitio"
+      },
+      "draft": {
+        "label": "Borradores",
+        "subtitle": "No publicadas"
+      },
+      "french": {
+        "label": "En francés",
+        "subtitle": "Tarjetas locale FR"
+      }
     },
     "happyCustomers": {
-      "total": { "label": "Estadísticas", "subtitle": "Indicadores de satisfacción" },
-      "published": { "label": "Publicadas", "subtitle": "Visibles en el sitio" },
-      "draft": { "label": "Borradores", "subtitle": "No publicadas" },
-      "french": { "label": "En francés", "subtitle": "Stats locale FR" }
+      "total": {
+        "label": "Estadísticas",
+        "subtitle": "Indicadores de satisfacción"
+      },
+      "published": {
+        "label": "Publicadas",
+        "subtitle": "Visibles en el sitio"
+      },
+      "draft": {
+        "label": "Borradores",
+        "subtitle": "No publicadas"
+      },
+      "french": {
+        "label": "En francés",
+        "subtitle": "Stats locale FR"
+      }
     }
   },
   "sections": {
@@ -192,20 +264,41 @@
       "validation": {
         "nameRequired": "El nombre es obligatorio.",
         "roleRequired": "El rol es obligatorio.",
-        "photoUrlInvalid": "La URL de la foto debe ser válida."
+        "photoUrlInvalid": "La URL de la foto debe ser válida.",
+        "slugInvalid": "El slug debe estar en minúsculas (solo letras, números y guiones).",
+        "slugTaken": "Este slug ya lo usa otro miembro en este idioma.",
+        "emailInvalid": "El correo electrónico debe ser válido.",
+        "socialUrlInvalid": "La URL debe comenzar con http:// o https://."
       },
       "fields": {
         "name": "Nombre",
+        "slug": "Slug (URL del perfil)",
         "role": "Rol",
         "bio": "Biografía",
         "photo": "Foto",
         "photoPreviewAlt": "Vista previa de foto",
         "removePhoto": "Quitar la foto",
+        "contact": "Contacto y redes sociales",
+        "email": "Correo electrónico",
+        "linkedinUrl": "LinkedIn",
+        "xUrl": "X (Twitter)",
+        "facebookUrl": "Facebook",
+        "instagramUrl": "Instagram",
         "sortOrder": "Orden de visualización",
         "locale": "Idioma"
       },
       "hints": {
-        "photoUpload": "JPEG, PNG o WebP — máx. 5 MB"
+        "photoUpload": "JPEG, PNG o WebP — máx. 5 MB",
+        "slug": "Perfil público: {path}. Déjelo vacío para generarlo a partir del nombre.",
+        "contact": "Opcional — se muestra en la página de perfil pública."
+      },
+      "placeholders": {
+        "slug": "nombre-apellido",
+        "email": "nombre.apellido@ejemplo.com",
+        "linkedinUrl": "https://www.linkedin.com/in/…",
+        "xUrl": "https://x.com/…",
+        "facebookUrl": "https://www.facebook.com/…",
+        "instagramUrl": "https://www.instagram.com/…"
       },
       "saving": "Guardando…",
       "createButton": "Añadir miembro",
@@ -283,7 +376,11 @@
         "subtitle": "Subtítulo"
       },
       "saving": "Guardando…",
-      "saveButton": "Guardar sección"
+      "saveButton": "Guardar encabezado",
+      "hint": "Título, subtítulo y estado mostrados encima de las tarjetas en la página de inicio. Se guarda por separado de las tarjetas de abajo.",
+      "emptyTitle": "Sin título todavía",
+      "expand": "Editar encabezado",
+      "collapse": "Ocultar encabezado"
     },
     "items": {
       "list": {
@@ -292,7 +389,8 @@
         "deleteConfirmButton": "Eliminar",
         "cancel": "Cancelar",
         "columns": {
-          "title": "Tarjeta",
+          "title": "Título",
+          "description": "Descripción",
           "icon": "Icono",
           "sortOrder": "Orden"
         },
@@ -301,7 +399,14 @@
         "searchPlaceholder": "Buscar por título o descripción…",
         "newButton": "Nueva tarjeta",
         "tableAria": "Lista de tarjetas Por qué elegirnos",
-        "paginationItem": "tarjeta"
+        "paginationItem": "tarjeta",
+        "heading": "Contenido de la sección",
+        "description": "Tarjetas mostradas en el bloque « Por qué elegirnos » de la página de inicio.",
+        "searchLabel": "Búsqueda",
+        "statusFilter": "Filtrar por estado",
+        "allStatuses": "Todos los estados",
+        "moveUp": "Subir",
+        "moveDown": "Bajar"
       },
       "edit": {
         "pageTitle": "Modificar tarjeta"
@@ -340,10 +445,15 @@
       "secondary": "Verde secundario"
     },
     "section": {
-      "heading": "Contenido de la sección",
+      "heading": "Encabezado de sección",
       "validation": {
         "imageUrlRequired": "La imagen es obligatoria.",
         "imageUrlInvalid": "La URL de la imagen debe ser válida."
+      },
+      "groups": {
+        "content": "Contenido",
+        "media": "Imagen",
+        "badge": "Distintivo"
       },
       "fields": {
         "title": "Título",
@@ -360,7 +470,13 @@
         "badgeLabel": "Etiqueta del distintivo"
       },
       "saving": "Guardando…",
-      "saveButton": "Guardar sección"
+      "saveButton": "Guardar encabezado",
+      "hint": "Título, texto, imagen y distintivo de la sección «Clientes satisfechos». Se guarda por separado de las barras de abajo.",
+      "statusHint": "Estado de publicación de toda la sección (independiente de cada estadística).",
+      "badgeHint": "Cifra destacada sobre la imagen de la sección (p. ej. 10K+ Clientes).",
+      "emptyTitle": "Sin título todavía",
+      "expand": "Editar encabezado",
+      "collapse": "Ocultar encabezado"
     },
     "stats": {
       "list": {
@@ -378,7 +494,15 @@
         "emptySearch": "Ninguna estadística coincide con su búsqueda.",
         "searchPlaceholder": "Buscar por etiqueta…",
         "newButton": "Nueva estadística",
-        "paginationItem": "estadística"
+        "tableAria": "Lista de estadísticas Clientes satisfechos",
+        "paginationItem": "estadística",
+        "heading": "Barras de estadísticas",
+        "description": "Indicadores mostrados en el bloque «Clientes satisfechos» de la página de inicio. Se gestionan por separado del encabezado de arriba.",
+        "searchLabel": "Búsqueda",
+        "statusFilter": "Filtrar por estado",
+        "allStatuses": "Todos los estados",
+        "moveUp": "Subir",
+        "moveDown": "Bajar"
       },
       "edit": {
         "pageTitle": "Modificar estadística"

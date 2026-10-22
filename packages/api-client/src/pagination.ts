@@ -35,6 +35,7 @@ import type {
   VehiclesListQuery,
   GapSiteSettingsListQuery,
   GapPagesListQuery,
+  LegalPagesListQuery,
   GapActivitiesListQuery,
   GapImpactStatsListQuery,
   GapMediaItemsListQuery,
@@ -98,6 +99,8 @@ const RESOURCE_QUERY_KEYS = [
   'activeOnly',
   'fromCurrency',
   'toCurrency',
+  'updatedWithinDays',
+  'updatedOlderThanDays',
 ] as const;
 
 export type PaginatedListQuery =
@@ -134,6 +137,7 @@ export type PaginatedListQuery =
   | PropertySearchQuery
   | GapSiteSettingsListQuery
   | GapPagesListQuery
+  | LegalPagesListQuery
   | GapActivitiesListQuery
   | GapImpactStatsListQuery
   | GapMediaItemsListQuery

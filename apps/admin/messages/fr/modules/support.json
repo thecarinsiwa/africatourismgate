@@ -73,6 +73,28 @@
     },
     "ariaLabel": "Boîte de réception des tickets support"
   },
+  "stats": {
+    "total": {
+      "label": "Total",
+      "subtitle": "Tous les tickets support"
+    },
+    "open": {
+      "label": "Ouverts",
+      "subtitle": "En attente de prise en charge"
+    },
+    "pending": {
+      "label": "En cours",
+      "subtitle": "Traitement en cours"
+    },
+    "resolved": {
+      "label": "Résolus",
+      "subtitle": "Demandes traitées"
+    },
+    "closed": {
+      "label": "Fermés",
+      "subtitle": "Tickets clôturés"
+    }
+  },
   "messagesInbox": {
     "ariaLabel": "Conversations support",
     "fromStaff": "Agent",

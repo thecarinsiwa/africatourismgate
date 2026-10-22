@@ -186,7 +186,7 @@ function DataTableExpandButton({
       aria-expanded={expanded}
       aria-label={ariaLabel ?? (expanded ? collapseLabel : expandLabel)}
       className={cn(
-        'inline-flex h-8 w-8 items-center justify-center rounded-lg text-atg-muted transition-colors',
+        'inline-flex h-11 w-11 items-center justify-center rounded-lg text-atg-muted transition-colors sm:h-8 sm:w-8',
         'hover:bg-atg-surface hover:text-atg-fg',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-elevated',
       )}

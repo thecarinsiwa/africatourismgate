@@ -23,9 +23,17 @@ type ActivityCardProps = {
   t: Translations['activities'];
   searchParams?: ActivityDetailSearchParams;
   locale?: string;
+  /** `list` = horizontal card (default); `grid` = vertical card for multi-column layout. */
+  layout?: 'list' | 'grid';
 };
 
-export function ActivityCard({ activity, t, searchParams = {}, locale }: ActivityCardProps) {
+export function ActivityCard({
+  activity,
+  t,
+  searchParams = {},
+  locale,
+  layout = 'list',
+}: ActivityCardProps) {
   const effectiveDate =
     searchParams.date ??
     (activity.nextStartDatetime ? activity.nextStartDatetime.slice(0, 10) : undefined);
@@ -76,8 +84,11 @@ export function ActivityCard({ activity, t, searchParams = {}, locale }: Activit
     </div>
   );
 
+  const isGrid = layout === 'grid';
+
   return (
     <ProductCard
+      orientation={isGrid ? 'vertical' : 'horizontal'}
       image={
         activity.imageUrl ? (
           <>
@@ -86,23 +97,45 @@ export function ActivityCard({ activity, t, searchParams = {}, locale }: Activit
               alt={activity.title}
               fill
               className="object-cover"
-              sizes="(max-width: 640px) 100vw, 320px"
+              sizes={
+                isGrid
+                  ? '(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw'
+                  : '(max-width: 640px) 100vw, 320px'
+              }
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-            {imageOverlay}
+            {isGrid ? null : imageOverlay}
           </>
         ) : (
-          <div className="absolute inset-0 flex flex-col justify-center bg-gradient-to-br from-emerald-900 to-primary/80 px-6 py-8 text-white">
-            <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
-              {activity.destination}
-            </p>
-            <p className="mt-1 text-xl font-bold leading-tight">{activity.title}</p>
-            <p className="mt-2 text-sm text-white/80">{activity.providerName}</p>
+          <div
+            className={`absolute inset-0 flex flex-col justify-center bg-gradient-to-br from-emerald-900 to-primary/80 text-white ${
+              isGrid ? 'px-4 py-6' : 'px-6 py-8'
+            }`}
+          >
+            {isGrid ? (
+              <p className="text-sm font-semibold text-white/90">{activity.destination}</p>
+            ) : (
+              <>
+                <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
+                  {activity.destination}
+                </p>
+                <p className="mt-1 text-xl font-bold leading-tight">{activity.title}</p>
+                <p className="mt-2 text-sm text-white/80">{activity.providerName}</p>
+              </>
+            )}
           </div>
         )
       }
       title={
-        <h3 className="text-lg font-bold text-atg-fg sm:text-xl">{activity.title}</h3>
+        <h3
+          className={
+            isGrid
+              ? 'line-clamp-2 text-base font-bold text-atg-fg'
+              : 'text-lg font-bold text-atg-fg sm:text-xl'
+          }
+        >
+          {activity.title}
+        </h3>
       }
       meta={
         <>

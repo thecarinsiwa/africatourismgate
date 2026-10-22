@@ -20,6 +20,7 @@ import type {
   PaymentStatus,
   PromoCodeDiscountType,
   PropertyType,
+  ReviewSource,
   ReviewStatus,
   SupportTicketPriority,
   SupportTicketStatus,
@@ -46,7 +47,7 @@ import { VEHICLE_AVAILABILITY_STATUSES } from '../vehicle-status-labels';
 import { ACTIVITY_DIFFICULTY_LEVELS } from '../activity-difficulty';
 import { PACKAGE_ITEM_TYPES } from '../package-item-type';
 import type { RbacScopeDisplayLabels } from '../rbac-display';
-import { REVIEW_STATUSES } from '../review-display';
+import { REVIEW_SOURCES, REVIEW_STATUSES } from '../review-display';
 import {
   SUPPORT_TICKET_PRIORITIES,
   SUPPORT_TICKET_STATUSES,
@@ -488,6 +489,32 @@ export function useReviewStatusFilterOptions() {
       })),
     ],
     [statusLabels, tAll],
+  );
+}
+
+export function useReviewSourceLabels() {
+  const t = useTranslations('modules.reviews.source');
+  return useMemo(
+    (): Record<ReviewSource, string> => ({
+      platform: t('platform'),
+      tripadvisor: t('tripadvisor'),
+    }),
+    [t],
+  );
+}
+
+export function useReviewSourceFilterOptions() {
+  const tAll = useTranslations('modules.common.filters');
+  const sourceLabels = useReviewSourceLabels();
+  return useMemo(
+    () => [
+      { value: '', label: tAll('allFeminine') },
+      ...REVIEW_SOURCES.map((source) => ({
+        value: source,
+        label: sourceLabels[source],
+      })),
+    ],
+    [sourceLabels, tAll],
   );
 }
 

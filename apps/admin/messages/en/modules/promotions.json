@@ -75,12 +75,18 @@
     "defaultName": "New campaign",
     "ariaLabel": "Promotion preview {name}",
     "badge": "Promotion",
-    "usage": "Uses: {usage}"
+    "usage": "Uses: {usage}",
+    "target": "Audience: {target}"
   },
   "form": {
     "sections": {
       "campaign": "Campaign",
-      "campaignHint": "Title and copy shown on marketing banners.",
+      "campaignHint": "Name and copy shown on marketing banners.",
+      "target": "Audience & applicability",
+      "targetHint": "Who sees or can benefit from this campaign.",
+      "targetAllHint": "Campaign visible to all visitors and customers.",
+      "promoCode": "Promo code (checkout)",
+      "promoCodeHint": "Codes entered at checkout are managed separately. Generate a suggestion, then create the linked code.",
       "discount": "Discount",
       "discountHint": "Optional — leave off for an informative campaign.",
       "discountOff": "No checkout discount: the campaign stays purely informative.",
@@ -89,23 +95,34 @@
       "publication": "Publication",
       "publicationHint": "Controls whether the campaign is shown to customers.",
       "preview": "Live preview",
-      "previewHint": "Updates as you type — campaign render preview."
+      "previewHint": "Stays visible while you scroll — updates as you type."
     },
     "info": {
       "codesVsPromotions": "Promo codes are entered by the customer at checkout. Promotions are visible campaigns (banners, pages) — the discount may be optional.",
-      "managePromoCodesLink": "Manage promo codes",
-      "targetHint": "Product / destination target (optional, for marketing display)."
+      "managePromoCodesLink": "Manage promo codes"
+    },
+    "actions": {
+      "generateCode": "Generate",
+      "createPromoCode": "Create this promo code"
     },
     "validation": {
-      "nameRequired": "Title is required.",
+      "nameRequired": "Promotion name is required.",
       "discountPositive": "Value must be positive.",
       "percentMax": "Percentage cannot exceed 100.",
       "endAfterStart": "End date must be after start date.",
-      "maxRedemptionsInvalid": "Invalid max uses (integer ≥ 1)."
+      "maxRedemptionsInvalid": "Invalid max uses (integer ≥ 1).",
+      "targetDetailsRequired": "Specify the targeted products or destinations."
     },
     "fields": {
-      "name": "Campaign title",
+      "name": "Promotion name",
       "descriptionPlaceholder": "E.g. −20% on accommodations…",
+      "targetAudience": "Target audience",
+      "targetAudienceAll": "All users",
+      "targetAudienceNewUsers": "New users",
+      "targetAudienceSpecific": "Specific products / destinations",
+      "targetDetails": "Products or destinations",
+      "targetDetailsPlaceholder": "E.g. Kenya packages, 4★ hotels, DLA–CDG flights…",
+      "suggestedCode": "Suggested promo code",
       "hasDiscount": "Apply a discount at checkout",
       "discountType": "Discount type",
       "discountTypePercent": "Percentage (%)",
@@ -118,6 +135,8 @@
       "active": "Active campaign"
     },
     "hints": {
+      "name": "Shown as the campaign title in the preview and on the site.",
+      "suggestedCode": "Not saved with the promotion — used to create a separate promo code.",
       "discountPercent": "Percentage (e.g. 15 for −15%).",
       "discountFixed": "Fixed amount in currency units (e.g. 10 for −10 USD).",
       "maxRedemptions": "Leave empty for unlimited."

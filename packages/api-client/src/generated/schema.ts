@@ -1136,6 +1136,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/organization-settings/public/announcement-banner": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the announcement banner displayed above the public site header */
+        get: operations["OrganizationSettingsController_findPublicAnnouncementBanner"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/organization-settings/public/maintenance": {
         parameters: {
             query?: never;
@@ -2543,6 +2560,43 @@ export interface paths {
         patch: operations["OrganizationsController_update"];
         trace?: never;
     };
+    "/api/currencies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List platform currencies (paginated; activeOnly / search for selects) */
+        get: operations["CurrenciesController_findAll"];
+        put?: never;
+        /** Create platform currency (ISO 4217 code) */
+        post: operations["CurrenciesController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/currencies/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get currency by id */
+        get: operations["CurrenciesController_findOne"];
+        put?: never;
+        post?: never;
+        /** Soft-delete currency */
+        delete: operations["CurrenciesController_remove"];
+        options?: never;
+        head?: never;
+        /** Update currency (cannot deactivate the last active catalog entry) */
+        patch: operations["CurrenciesController_update"];
+        trace?: never;
+    };
     "/api/donations": {
         parameters: {
             query?: never;
@@ -3206,6 +3260,77 @@ export interface paths {
         patch: operations["BudgetsController_update"];
         trace?: never;
     };
+    "/api/exchange-rates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List exchange rates (paginated; filter org / pair / dates) */
+        get: operations["ExchangeRatesController_findAll"];
+        put?: never;
+        /** Create exchange rate (1 fromCurrency = rate × toCurrency; unique per org/pair/date) */
+        post: operations["ExchangeRatesController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/exchange-rates/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get exchange rate by id */
+        get: operations["ExchangeRatesController_findOne"];
+        put?: never;
+        post?: never;
+        /** Soft-delete exchange rate */
+        delete: operations["ExchangeRatesController_remove"];
+        options?: never;
+        head?: never;
+        /** Update exchange rate */
+        patch: operations["ExchangeRatesController_update"];
+        trace?: never;
+    };
+    "/api/accounting-audit-logs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List accounting audit logs (paginated, filtered) */
+        get: operations["AccountingAuditLogsController_findAll"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/accounting-audit-logs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get accounting audit log by id */
+        get: operations["AccountingAuditLogsController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/treasury-reports/summary": {
         parameters: {
             query?: never;
@@ -3264,10 +3389,44 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Stub mapping rules skeleton (SYSCOHADA placeholders — no journal generation) */
+        /** Mapping rules from DB (stub:false) — real chart accounts (SYSCO-004) */
         get: operations["AccountingLinksController_getMappingConfig"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/accounting-links/post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Comptabiliser une opération fond (recorded → écriture posted + link linked) */
+        post: operations["AccountingLinksController_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/accounting-links/skip": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Ignorer une opération (status skipped, pas d’écriture) */
+        post: operations["AccountingLinksController_skip"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3281,10 +3440,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List accounting links (stub bridge, paginated) */
+        /** List accounting links (paginated) */
         get: operations["AccountingLinksController_findAll"];
         put?: never;
-        /** Create accounting link stub (journal_entry_id optional; no SYSCOHADA write) */
+        /** Create accounting link manually (prefer POST /accounting-links/post) */
         post: operations["AccountingLinksController_create"];
         delete?: never;
         options?: never;
@@ -3303,11 +3462,304 @@ export interface paths {
         get: operations["AccountingLinksController_findOne"];
         put?: never;
         post?: never;
+        /** Soft-delete pending/skipped link (SYSCO-005) — frees unique key for recreate; forbidden if linked */
+        delete: operations["AccountingLinksController_softDelete"];
+        options?: never;
+        head?: never;
+        /** Update link (status / journal_entry_id / mapping_rule_key) */
+        patch: operations["AccountingLinksController_update"];
+        trace?: never;
+    };
+    "/api/journal-entries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List journal entries (filter journal / period / account; optional lines) */
+        get: operations["JournalEntriesController_findAll"];
+        put?: never;
+        /** Create balanced journal entry (draft or posted). Rejects locked/closed period. */
+        post: operations["JournalEntriesController_create"];
         delete?: never;
         options?: never;
         head?: never;
-        /** Update stub link (status / journal_entry_id / mapping_rule_key) */
-        patch: operations["AccountingLinksController_update"];
+        patch?: never;
+        trace?: never;
+    };
+    "/api/journal-entries/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get journal entry with lines */
+        get: operations["JournalEntriesController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/journal-lines": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List journal lines (raw ledger / grand livre filters by account, journal, period) */
+        get: operations["JournalEntriesController_findLines"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/accounting-balance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Balance générale (agrégat lignes postées par compte — SYSCO-006) */
+        get: operations["JournalEntriesController_getBalance"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/accounting-balance-sheet": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Bilan MVP classes 1–5 (SYSCO-008) */
+        get: operations["JournalEntriesController_getBalanceSheet"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/accounting-income-statement": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Compte de résultat MVP classes 6–7 (SYSCO-008) */
+        get: operations["JournalEntriesController_getIncomeStatement"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/chart-of-accounts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List chart of accounts (SYSCOHADA, paginated) */
+        get: operations["ChartOfAccountsController_findAll"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/chart-of-accounts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get chart account by id */
+        get: operations["ChartOfAccountsController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/accounting-exercises": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List accounting exercises (paginated; optional periods) */
+        get: operations["AccountingExercisesController_findAllExercises"];
+        put?: never;
+        /** Create accounting exercise with monthly periods (currency defaults to org) */
+        post: operations["AccountingExercisesController_createExercise"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/accounting-exercises/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get accounting exercise by id (includes periods) */
+        get: operations["AccountingExercisesController_findOneExercise"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update exercise label; currency only if open and no posted entries */
+        patch: operations["AccountingExercisesController_updateExercise"];
+        trace?: never;
+    };
+    "/api/accounting-exercises/{id}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Close exercise (OD closing entry + lock/close periods) — SYSCO-008 */
+        post: operations["AccountingExercisesController_closeExercise"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/accounting-periods": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List accounting periods (paginated) */
+        get: operations["AccountingExercisesController_findAllPeriods"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/accounting-periods/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get accounting period by id */
+        get: operations["AccountingExercisesController_findOnePeriod"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/accounting-periods/{id}/lock": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Lock accounting period (no new postings) */
+        post: operations["AccountingExercisesController_lockPeriod"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/accounting-periods/{id}/unlock": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Unlock accounting period */
+        post: operations["AccountingExercisesController_unlockPeriod"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/accounting-journals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List accounting journals (paginated) */
+        get: operations["AccountingJournalsController_findAll"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/accounting-journals/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get accounting journal by id */
+        get: operations["AccountingJournalsController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/permissions": {
@@ -6404,6 +6856,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/team-members/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get published team member profile by slug */
+        get: operations["PublicAboutController_getTeamMemberBySlug"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/public/about-resources": {
         parameters: {
             query?: never;
@@ -7628,6 +8097,30 @@ export interface components {
             /** @description Packages vertical enabled on the public site */
             packages: boolean;
         };
+        PublicAnnouncementBannerDto: {
+            /** @description Whether the banner should be displayed (false when disabled or no text) */
+            enabled: boolean;
+            /** @description Banner text for the requested locale (fr fallback) */
+            text: string;
+            /**
+             * @description Color theme
+             * @enum {string}
+             */
+            color: "red" | "yellow" | "green" | "blue" | "gray";
+            /**
+             * @description low = light background / dark text, high = solid background
+             * @enum {string}
+             */
+            intensity: "low" | "high";
+            /** @description Call-to-action label */
+            ctaLabel?: string | null;
+            /** @description Call-to-action URL (http(s) or internal path starting with /) */
+            ctaUrl?: string | null;
+            /** @description Open the call-to-action in a new tab */
+            ctaNewTab: boolean;
+            /** @description Content fingerprint; changes whenever the banner content changes */
+            version: string;
+        };
         PublicSiteMaintenanceDto: {
             /** @description Whether the public site is in maintenance mode */
             enabled: boolean;
@@ -8234,6 +8727,46 @@ export interface components {
             externalToken?: Record<string, never>;
             isDefault?: boolean;
         };
+        CreateCurrencyDto: {
+            /** @example GBP */
+            code: string;
+            /** @example British pound */
+            label: string;
+            /** @example £ */
+            symbol?: Record<string, never> | null;
+            /**
+             * @default 2
+             * @example 2
+             */
+            decimalPlaces: number;
+            /** @default true */
+            isActive: boolean;
+            /**
+             * @default 0
+             * @example 80
+             */
+            sortOrder: number;
+        };
+        UpdateCurrencyDto: {
+            /** @example GBP */
+            code?: string;
+            /** @example British pound */
+            label?: string;
+            /** @example £ */
+            symbol?: Record<string, never> | null;
+            /**
+             * @default 2
+             * @example 2
+             */
+            decimalPlaces: number;
+            /** @default true */
+            isActive: boolean;
+            /**
+             * @default 0
+             * @example 80
+             */
+            sortOrder: number;
+        };
         CreateDonationDto: {
             /** @example Soutien aux éco-gardes */
             title: string;
@@ -8630,6 +9163,51 @@ export interface components {
             productId?: Record<string, never>;
             notes?: Record<string, never>;
         };
+        CreateExchangeRateDto: {
+            /** Format: uuid */
+            organizationId: string;
+            /** @example EUR */
+            fromCurrency: string;
+            /** @example XOF */
+            toCurrency: string;
+            /**
+             * @description 1 fromCurrency = rate × toCurrency
+             * @example 655.957
+             */
+            rate: number;
+            /** @example 2026-01-01 */
+            effectiveOn: string;
+            notes?: Record<string, never> | null;
+        };
+        UpdateExchangeRateDto: {
+            /** @example EUR */
+            fromCurrency?: string;
+            /** @example XOF */
+            toCurrency?: string;
+            /**
+             * @description 1 fromCurrency = rate × toCurrency
+             * @example 655.957
+             */
+            rate?: number;
+            /** @example 2026-01-01 */
+            effectiveOn?: string;
+            notes?: Record<string, never> | null;
+        };
+        PostAccountingLinkDto: {
+            /** @enum {string} */
+            fundOpType: "fund_entry" | "fund_exit";
+            /** Format: uuid */
+            fundOpId: string;
+        };
+        SkipAccountingLinkDto: {
+            /** @enum {string} */
+            fundOpType: "fund_entry" | "fund_exit";
+            /** Format: uuid */
+            fundOpId: string;
+            /** Format: uuid */
+            organizationId: string;
+            reason?: Record<string, never> | null;
+        };
         CreateAccountingLinkDto: {
             /** Format: uuid */
             organizationId: string;
@@ -8645,7 +9223,7 @@ export interface components {
              * @description Optional future journal entry id (SYSCOHADA). Null in this stub unless provided manually.
              */
             journalEntryId?: Record<string, never> | null;
-            /** @description Key from TREASURY_ACCOUNTING_MAPPING_CONFIG.rules */
+            /** @description Key from accounting_mapping_rules (SYSCO-004) */
             mappingRuleKey?: Record<string, never>;
             /**
              * @default pending
@@ -8662,6 +9240,80 @@ export interface components {
             mappingRuleKey?: Record<string, never> | null;
             /** @enum {string} */
             status?: "pending" | "linked" | "skipped";
+        };
+        CreateJournalLineDto: {
+            /** Format: uuid */
+            accountId: string;
+            label?: Record<string, never> | null;
+            /** @example 10000 */
+            debitCents: number;
+            /** @example 0 */
+            creditCents: number;
+            originalAmountCents?: Record<string, never> | null;
+            /** @example EUR */
+            originalCurrency?: Record<string, never> | null;
+            fxRate?: Record<string, never> | null;
+            analyticRefType?: Record<string, never> | null;
+            /** Format: uuid */
+            analyticRefId?: Record<string, never> | null;
+        };
+        CreateJournalEntryDto: {
+            /** Format: uuid */
+            organizationId: string;
+            /** Format: uuid */
+            journalId: string;
+            /**
+             * Format: uuid
+             * @description Required when periodId is omitted
+             */
+            exerciseId?: string;
+            /**
+             * Format: uuid
+             * @description When set, exercise is derived from the period
+             */
+            periodId?: string;
+            /** @example 2026-09-26 */
+            entryDate: string;
+            description: string;
+            /**
+             * @default draft
+             * @enum {string}
+             */
+            status: "draft" | "posted";
+            /**
+             * @default manual
+             * @enum {string}
+             */
+            source: "treasury_mapping" | "manual" | "closing" | "reversal";
+            /** Format: uuid */
+            reversesEntryId?: Record<string, never> | null;
+            lines: components["schemas"]["CreateJournalLineDto"][];
+        };
+        CreateAccountingExerciseDto: {
+            /** Format: uuid */
+            organizationId: string;
+            /** @example 2027 */
+            code: string;
+            /** @example Exercice 2027 */
+            label: string;
+            /** @example 2027-01-01 */
+            startsOn: string;
+            /** @example 2027-12-31 */
+            endsOn: string;
+            /**
+             * @description Book currency; defaults to organizations.currency
+             * @example XOF
+             */
+            currency?: string;
+        };
+        UpdateAccountingExerciseDto: {
+            /** @example Exercice 2027 */
+            label?: string;
+            /**
+             * @description Book currency — only when exercise is open and has no posted entries
+             * @example XAF
+             */
+            currency?: string;
         };
         ReplaceRolePermissionsDto: {
             permissionIds: string[];
@@ -8899,10 +9551,23 @@ export interface components {
         CreateTeamMemberDto: {
             /** @example Marie Kabila */
             name: string;
+            /**
+             * @description Unique per locale; generated from the name when omitted or empty.
+             * @example marie-kabila
+             */
+            slug?: Record<string, never>;
             /** @example Directrice générale */
             role: string;
             bio?: Record<string, never>;
             photoUrl?: Record<string, never>;
+            /** @example marie.kabila@africatourismgate.com */
+            email?: Record<string, never>;
+            /** @example https://www.linkedin.com/in/marie-kabila */
+            linkedinUrl?: Record<string, never>;
+            /** @example https://x.com/marie_kabila */
+            xUrl?: Record<string, never>;
+            facebookUrl?: Record<string, never>;
+            instagramUrl?: Record<string, never>;
             /** @example 0 */
             sortOrder?: number;
             /** @enum {string} */
@@ -8913,10 +9578,23 @@ export interface components {
         UpdateTeamMemberDto: {
             /** @example Marie Kabila */
             name?: string;
+            /**
+             * @description Unique per locale; generated from the name when omitted or empty.
+             * @example marie-kabila
+             */
+            slug?: Record<string, never>;
             /** @example Directrice générale */
             role?: string;
             bio?: Record<string, never>;
             photoUrl?: Record<string, never>;
+            /** @example marie.kabila@africatourismgate.com */
+            email?: Record<string, never>;
+            /** @example https://www.linkedin.com/in/marie-kabila */
+            linkedinUrl?: Record<string, never>;
+            /** @example https://x.com/marie_kabila */
+            xUrl?: Record<string, never>;
+            facebookUrl?: Record<string, never>;
+            instagramUrl?: Record<string, never>;
             /** @example 0 */
             sortOrder?: number;
             /** @enum {string} */
@@ -11684,6 +12362,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PublicCatalogProductsDto"];
+                };
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrganizationSettingsController_findPublicAnnouncementBanner: {
+        parameters: {
+            query?: {
+                /** @description Organization slug (defaults to the platform organization) */
+                organizationSlug?: string;
+                /** @description UI locale (fr, en, es). Falls back to fr when missing or unsupported. */
+                locale?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicAnnouncementBannerDto"];
                 };
             };
             /** @description Missing permission */
@@ -15620,6 +16329,147 @@ export interface operations {
             };
         };
     };
+    CurrenciesController_findAll: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                /** @description When true, only active currencies (form selects) */
+                activeOnly?: boolean;
+                /** @description Search code or label */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CurrenciesController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateCurrencyDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CurrenciesController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CurrenciesController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CurrenciesController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCurrencyDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     DonationsController_findAll: {
         parameters: {
             query?: {
@@ -17227,6 +18077,212 @@ export interface operations {
             };
         };
     };
+    ExchangeRatesController_findAll: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                fromCurrency?: string;
+                toCurrency?: string;
+                /** @description Inclusive lower bound on effectiveOn */
+                effectiveOnFrom?: string;
+                /** @description Inclusive upper bound on effectiveOn */
+                effectiveOnTo?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ExchangeRatesController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateExchangeRateDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ExchangeRatesController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ExchangeRatesController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ExchangeRatesController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateExchangeRateDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountingAuditLogsController_findAll: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                entityType?: "journal_entry" | "journal_line" | "chart_account" | "exercise" | "period" | "mapping_rule" | "accounting_link" | "journal";
+                entityId?: string;
+                action?: "create" | "update" | "post" | "reverse" | "lock" | "unlock" | "close" | "skip" | "delete";
+                actorId?: string;
+                /** @description YYYY-MM-DD */
+                dateFrom?: string;
+                /** @description YYYY-MM-DD */
+                dateTo?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountingAuditLogsController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     TreasuryReportsController_getSummary: {
         parameters: {
             query: {
@@ -17336,7 +18392,9 @@ export interface operations {
     };
     AccountingLinksController_getMappingConfig: {
         parameters: {
-            query?: never;
+            query: {
+                organizationId: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -17344,6 +18402,62 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountingLinksController_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PostAccountingLinkDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountingLinksController_skip: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SkipAccountingLinkDto"];
+            };
+        };
+        responses: {
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -17443,6 +18557,32 @@ export interface operations {
             };
         };
     };
+    AccountingLinksController_softDelete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     AccountingLinksController_update: {
         parameters: {
             query?: never;
@@ -17457,6 +18597,585 @@ export interface operations {
                 "application/json": components["schemas"]["UpdateAccountingLinkDto"];
             };
         };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    JournalEntriesController_findAll: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                journalId?: string;
+                exerciseId?: string;
+                periodId?: string;
+                status?: "draft" | "posted" | "reversed";
+                /** @description Filter entries that touch this account */
+                accountId?: string;
+                includeLines?: boolean;
+                dateFrom?: string;
+                dateTo?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    JournalEntriesController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateJournalEntryDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    JournalEntriesController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    JournalEntriesController_findLines: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                accountId?: string;
+                journalId?: string;
+                exerciseId?: string;
+                periodId?: string;
+                /** @description Only lines from posted entries (default true) */
+                postedOnly?: boolean;
+                dateFrom?: string;
+                dateTo?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    JournalEntriesController_getBalance: {
+        parameters: {
+            query?: {
+                organizationId?: string;
+                exerciseId?: string;
+                periodId?: string;
+                journalId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    JournalEntriesController_getBalanceSheet: {
+        parameters: {
+            query?: {
+                organizationId?: string;
+                exerciseId?: string;
+                periodId?: string;
+                journalId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    JournalEntriesController_getIncomeStatement: {
+        parameters: {
+            query?: {
+                organizationId?: string;
+                exerciseId?: string;
+                periodId?: string;
+                journalId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ChartOfAccountsController_findAll: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                classNumber?: number;
+                accountType?: "equity" | "fixed_asset" | "inventory" | "third_party" | "treasury" | "expense" | "revenue" | "special";
+                isActive?: boolean;
+                isPostable?: boolean;
+                /** @description Search by code, label or syscohadaRef */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ChartOfAccountsController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountingExercisesController_findAllExercises: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                status?: "open" | "closing" | "closed";
+                /** @description When true, embed periods on each exercise */
+                includePeriods?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountingExercisesController_createExercise: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateAccountingExerciseDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountingExercisesController_findOneExercise: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountingExercisesController_updateExercise: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateAccountingExerciseDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountingExercisesController_closeExercise: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountingExercisesController_findAllPeriods: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                exerciseId?: string;
+                status?: "open" | "locked" | "closed";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountingExercisesController_findOnePeriod: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountingExercisesController_lockPeriod: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountingExercisesController_unlockPeriod: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountingJournalsController_findAll: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+                journalType?: "cash" | "bank" | "purchases" | "sales" | "general" | "other";
+                isActive?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AccountingJournalsController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             200: {
                 headers: {
@@ -25624,6 +27343,27 @@ export interface operations {
             };
             header?: never;
             path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicAboutController_getTeamMemberBySlug: {
+        parameters: {
+            query: {
+                locale: string;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
             cookie?: never;
         };
         requestBody?: never;

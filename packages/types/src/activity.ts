@@ -14,6 +14,15 @@ export interface PublicActivityProvider {
   logoUrl: string | null;
 }
 
+/** Partners directory row: provider + destination and catalogue summary. */
+export interface PublicActivityProviderListItem extends PublicActivityProvider {
+  destinationName?: string | null;
+  countryCode?: string | null;
+  activitiesCount?: number;
+  averageRating?: number | null;
+  reviewCount?: number;
+}
+
 export interface CreateActivityProviderRequest {
   destinationId: string;
   name: string;

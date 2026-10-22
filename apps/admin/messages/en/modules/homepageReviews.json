@@ -1,0 +1,16 @@
+{
+  "heading": "Client reviews (homepage)",
+  "description": "Choose which review sources appear in the “Reviews from our clients” section on the public homepage.",
+  "readOnlyHint": "You can view these options but not edit them (organization_settings.write permission required).",
+  "denied": "You do not have access to these settings (organization_settings.read permission required).",
+  "fields": {
+    "tripadvisorOn": "Tripadvisor reviews shown",
+    "tripadvisorOff": "Tripadvisor reviews hidden",
+    "platformOn": "Platform reviews shown",
+    "platformOff": "Platform reviews hidden"
+  },
+  "bothOffHint": "Both sources are off: the reviews section will be hidden on the public site.",
+  "saveButton": "Save",
+  "saving": "Saving…",
+  "saved": "Settings saved."
+}

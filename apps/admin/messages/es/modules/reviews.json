@@ -4,6 +4,10 @@
     "approved": "Aprobado",
     "hidden": "Oculto"
   },
+  "source": {
+    "platform": "Plataforma",
+    "tripadvisor": "Tripadvisor"
+  },
   "actions": {
     "approve": "Aprobar",
     "hide": "Ocultar",
@@ -35,6 +39,7 @@
       "comment": "Comentario"
     },
     "fields": {
+      "source": "Fuente",
       "author": "Autor",
       "property": "Propiedad",
       "entity": "Entidad vinculada",
@@ -49,7 +54,8 @@
       "cruise": "Crucero",
       "activity": "Actividad",
       "booking": "Reserva",
-      "tour_guide": "Guía turístico"
+      "tour_guide": "Guía turístico",
+      "tripadvisor": "Tripadvisor"
     },
     "viewBooking": "Ver reserva",
     "noComment": "Sin comentario.",
@@ -58,15 +64,16 @@
   "list": {
     "columns": {
       "author": "Autor",
-      "property": "Propiedad"
+      "property": "Propiedad",
+      "source": "Fuente"
     },
     "filters": {
       "apply": "Aplicar filtros"
     },
     "empty": {
       "default": {
-        "title": "Ninguna reseña pendiente",
-        "description": "La cola de moderación está vacía. Las nuevas reseñas aparecerán aquí.",
+        "title": "Ninguna reseña",
+        "description": "Las reseñas de clientes y de Tripadvisor aparecerán aquí. Use los filtros para acotar por estado o fuente.",
         "tableMessage": "Ninguna reseña por el momento."
       },
       "filtered": {
@@ -76,5 +83,75 @@
       }
     },
     "ariaLabel": "Lista de reseñas a moderar"
+  },
+  "createTripadvisor": {
+    "heading": "Nueva reseña de Tripadvisor",
+    "description": "Introduzca manualmente una reseña de Tripadvisor para mostrarla en la sección « Opiniones de nuestros clientes » de la página de inicio.",
+    "denied": "No tiene permiso para crear una reseña (se requiere reviews.write).",
+    "fields": {
+      "authorName": "Nombre del autor",
+      "authorNamePlaceholder": "Ej. Marie Dupont",
+      "rating": "Valoración",
+      "title": "Título (opcional)",
+      "titlePlaceholder": "Ej. Estancia inolvidable",
+      "titleHint": "Se muestra encima de la reseña en el sitio público.",
+      "body": "Comentario",
+      "bodyPlaceholder": "Texto de la reseña…",
+      "status": "Estado",
+      "statusHint": "Aprobado: visible en la página de inicio si los ajustes de reseñas lo permiten."
+    },
+    "validation": {
+      "authorNameRequired": "Indique el nombre del autor.",
+      "authorNameTooLong": "El nombre no debe superar 120 caracteres.",
+      "ratingRequired": "Elija una valoración entre 1 y 5.",
+      "bodyRequired": "El comentario es obligatorio.",
+      "titleTooLong": "El título no debe superar 180 caracteres."
+    },
+    "saveButton": "Crear reseña",
+    "saving": "Creando…",
+    "toast": {
+      "created": {
+        "title": "Reseña de Tripadvisor creada",
+        "message": "La reseña se ha guardado."
+      }
+    }
+  },
+  "tripadvisorSync": {
+    "heading": "Importación Tripadvisor (Terra)",
+    "description": "Configure el establecimiento e importe reseñas con la API Terra de Tripadvisor.",
+    "locationIdHelp": "El Location ID está en la URL de Tripadvisor tras « -d » (p. ej. …-d12345678.html → 12345678).",
+    "fields": {
+      "locationId": "Location ID",
+      "locationIdPlaceholder": "Ej. 12345678",
+      "apiKey": "Clave API Terra",
+      "apiKeyPlaceholder": "Pegue su clave API",
+      "apiKeyPlaceholderConfigured": "Clave guardada ({masked}) — déjelo vacío para conservarla",
+      "apiKeyKeepHint": "Deje el campo vacío para conservar la clave ya guardada.",
+      "language": "Idioma de las reseñas",
+      "languagePlaceholder": "primary",
+      "languageHint": "Códigos Terra: primary (idioma original), fr, en, etc."
+    },
+    "saveButton": "Guardar",
+    "saving": "Guardando…",
+    "syncButton": "Sincronizar",
+    "syncing": "Sincronizando…",
+    "readOnlyHint": "Solo lectura: se requiere organization_settings.write para editar.",
+    "settingsDeniedHint": "Puede sincronizar con credenciales ya configuradas (sin permiso de lectura de ajustes).",
+    "toast": {
+      "saved": {
+        "title": "Ajustes guardados",
+        "message": "Las credenciales de Tripadvisor se han actualizado."
+      },
+      "saveFailed": {
+        "title": "No se pudo guardar"
+      },
+      "synced": {
+        "title": "Sincronización terminada",
+        "message": "{imported} importada(s), {updated} actualizada(s), {skipped} omitida(s) ({pages} página(s))."
+      },
+      "syncFailed": {
+        "title": "Error de sincronización"
+      }
+    }
   }
 }

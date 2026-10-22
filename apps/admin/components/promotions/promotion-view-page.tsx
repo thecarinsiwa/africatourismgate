@@ -35,6 +35,7 @@ import {
   getPromoValidityBadgeVariant,
   getPromoValidityLabel,
 } from '../../lib/promo-validity';
+import { displayPromotionDescription } from '../../lib/promotions-target-meta';
 
 type PromotionViewPageProps = {
   promotionId: string;
@@ -173,7 +174,7 @@ export function PromotionViewPage({ promotionId }: PromotionViewPageProps) {
 
   const hasDiscount = promotion.discountType != null && promotion.discountValue != null;
   const coverUrl = promotion.coverImageUrl?.trim() || null;
-  const description = promotion.description?.trim() || null;
+  const description = displayPromotionDescription(promotion.description) || null;
   const validityState = hydrated
     ? getPromotionValidityState(promotion.validFrom, promotion.validUntil)
     : null;

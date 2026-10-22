@@ -130,8 +130,10 @@ import type {
   BookingsListQuery,
   AdminReviewDetail,
   AdminReviewListItem,
+  CreateAdminTripadvisorReviewRequest,
   CreateBookingReviewRequest,
   ReviewsListQuery,
+  SyncTripadvisorReviewsResult,
   UpdateReviewStatusRequest,
   CreateSupportMessageRequest,
   CreateSupportMessageResponse,
@@ -515,6 +517,8 @@ import type {
   ResolvedBookingItemTypeModes,
   ResolvedCatalogProducts,
   ResolvedWebPaymentMethods,
+  PublicAnnouncementBanner,
+  PublicHomepageReviews,
 } from '@africatourismgate/types';
 export type { PaginationQuery } from '@africatourismgate/types';
 export { SESSION_LOCKED_CODE } from '@africatourismgate/types';
@@ -680,8 +684,13 @@ export type {
   Review,
   AdminReviewDetail,
   AdminReviewListItem,
+  CreateAdminTripadvisorReviewRequest,
   CreateBookingReviewRequest,
   ReviewsListQuery,
+  SyncTripadvisorReviewsResult,
+  TripadvisorSyncAdminSettingValue,
+  TripadvisorSyncAdminValue,
+  TripadvisorSyncSettingValue,
   UpdateReviewStatusRequest,
   PropertyType,
   PublicDestination,
@@ -2159,12 +2168,20 @@ export class ApiClient {
     return this.request<void>(`/organizations/${id}`, { method: 'DELETE' });
   }
 
+  /**
+   * Admin list. For `tripadvisor_sync`, `settingValue` is
+   * {@link TripadvisorSyncAdminSettingValue} (apiKey never returned in clear).
+   */
   listOrganizationSettings(
     query?: OrganizationSettingsListQuery,
   ): Promise<PaginatedResponse<OrganizationSetting>> {
     return fetchPaginated<OrganizationSetting>(this, '/organization-settings', query);
   }
 
+  /**
+   * Bulk upsert. Empty `tripadvisor_sync.apiKey` keeps the stored key;
+   * responses mask the key the same way as list GET.
+   */
   bulkUpsertOrganizationSettings(
     body: BulkUpsertOrganizationSettingsRequest,
   ): Promise<OrganizationSetting[]> {
@@ -2208,6 +2225,36 @@ export class ApiClient {
     const q = params.toString();
     return this.request<ResolvedCatalogProducts>(
       `/organization-settings/public/catalog-products${q ? `?${q}` : ''}`,
+    );
+  }
+
+  getPublicAnnouncementBanner(query?: {
+    organizationSlug?: string;
+    locale?: string;
+  }): Promise<PublicAnnouncementBanner> {
+    const params = new URLSearchParams();
+    if (query?.organizationSlug) {
+      params.set('organizationSlug', query.organizationSlug);
+    }
+    if (query?.locale) {
+      params.set('locale', query.locale);
+    }
+    const q = params.toString();
+    return this.request<PublicAnnouncementBanner>(
+      `/organization-settings/public/announcement-banner${q ? `?${q}` : ''}`,
+    );
+  }
+
+  getPublicHomepageReviews(query?: {
+    organizationSlug?: string;
+  }): Promise<PublicHomepageReviews> {
+    const params = new URLSearchParams();
+    if (query?.organizationSlug) {
+      params.set('organizationSlug', query.organizationSlug);
+    }
+    const q = params.toString();
+    return this.request<PublicHomepageReviews>(
+      `/organization-settings/public/homepage-reviews${q ? `?${q}` : ''}`,
     );
   }
 
@@ -3969,6 +4016,26 @@ export class ApiClient {
 
   getReview(id: string): Promise<AdminReviewDetail> {
     return this.request<AdminReviewDetail>(`/reviews/${id}`);
+  }
+
+  createTripadvisorReview(
+    body: CreateAdminTripadvisorReviewRequest,
+  ): Promise<AdminReviewDetail> {
+    return this.request<AdminReviewDetail>('/reviews/tripadvisor', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  /**
+   * Import / upsert location reviews from Tripadvisor Terra
+   * (`POST /reviews/tripadvisor/sync`). Uses `site/tripadvisor_sync` settings.
+   */
+  syncTripadvisorReviews(): Promise<SyncTripadvisorReviewsResult> {
+    return this.request<SyncTripadvisorReviewsResult>(
+      '/reviews/tripadvisor/sync',
+      { method: 'POST' },
+    );
   }
 
   updateReviewStatus(

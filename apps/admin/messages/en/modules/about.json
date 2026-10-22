@@ -10,40 +10,112 @@
   },
   "stats": {
     "pages": {
-      "total": { "label": "Pages", "subtitle": "Institutional pages" },
-      "published": { "label": "Published", "subtitle": "Visible on the site" },
-      "draft": { "label": "Drafts", "subtitle": "Not published" },
-      "french": { "label": "In French", "subtitle": "FR locale content" }
+      "total": {
+        "label": "Pages",
+        "subtitle": "Institutional pages"
+      },
+      "published": {
+        "label": "Published",
+        "subtitle": "Visible on the site"
+      },
+      "draft": {
+        "label": "Drafts",
+        "subtitle": "Not published"
+      },
+      "french": {
+        "label": "In French",
+        "subtitle": "FR locale content"
+      }
     },
     "resources": {
-      "total": { "label": "Resources", "subtitle": "Documents and media" },
-      "published": { "label": "Published", "subtitle": "Visible on the site" },
-      "draft": { "label": "Drafts", "subtitle": "Not published" },
-      "french": { "label": "In French", "subtitle": "FR locale content" }
+      "total": {
+        "label": "Resources",
+        "subtitle": "Documents and media"
+      },
+      "published": {
+        "label": "Published",
+        "subtitle": "Visible on the site"
+      },
+      "draft": {
+        "label": "Drafts",
+        "subtitle": "Not published"
+      },
+      "french": {
+        "label": "In French",
+        "subtitle": "FR locale content"
+      }
     },
     "team": {
-      "total": { "label": "Members", "subtitle": "Displayed team" },
-      "published": { "label": "Published", "subtitle": "Visible on the site" },
-      "draft": { "label": "Drafts", "subtitle": "Not published" },
-      "french": { "label": "In French", "subtitle": "FR locale profiles" }
+      "total": {
+        "label": "Members",
+        "subtitle": "Displayed team"
+      },
+      "published": {
+        "label": "Published",
+        "subtitle": "Visible on the site"
+      },
+      "draft": {
+        "label": "Drafts",
+        "subtitle": "Not published"
+      },
+      "french": {
+        "label": "In French",
+        "subtitle": "FR locale profiles"
+      }
     },
     "timeline": {
-      "total": { "label": "Milestones", "subtitle": "Timeline entries" },
-      "published": { "label": "Published", "subtitle": "Visible on the site" },
-      "draft": { "label": "Drafts", "subtitle": "Not published" },
-      "french": { "label": "In French", "subtitle": "FR locale entries" }
+      "total": {
+        "label": "Milestones",
+        "subtitle": "Timeline entries"
+      },
+      "published": {
+        "label": "Published",
+        "subtitle": "Visible on the site"
+      },
+      "draft": {
+        "label": "Drafts",
+        "subtitle": "Not published"
+      },
+      "french": {
+        "label": "In French",
+        "subtitle": "FR locale entries"
+      }
     },
     "whyUs": {
-      "total": { "label": "Cards", "subtitle": "Why choose us cards" },
-      "published": { "label": "Published", "subtitle": "Visible on the site" },
-      "draft": { "label": "Drafts", "subtitle": "Not published" },
-      "french": { "label": "In French", "subtitle": "FR locale cards" }
+      "total": {
+        "label": "Cards",
+        "subtitle": "Why choose us cards"
+      },
+      "published": {
+        "label": "Published",
+        "subtitle": "Visible on the site"
+      },
+      "draft": {
+        "label": "Drafts",
+        "subtitle": "Not published"
+      },
+      "french": {
+        "label": "In French",
+        "subtitle": "FR locale cards"
+      }
     },
     "happyCustomers": {
-      "total": { "label": "Statistics", "subtitle": "Satisfaction indicators" },
-      "published": { "label": "Published", "subtitle": "Visible on the site" },
-      "draft": { "label": "Drafts", "subtitle": "Not published" },
-      "french": { "label": "In French", "subtitle": "FR locale stats" }
+      "total": {
+        "label": "Statistics",
+        "subtitle": "Satisfaction indicators"
+      },
+      "published": {
+        "label": "Published",
+        "subtitle": "Visible on the site"
+      },
+      "draft": {
+        "label": "Drafts",
+        "subtitle": "Not published"
+      },
+      "french": {
+        "label": "In French",
+        "subtitle": "FR locale stats"
+      }
     }
   },
   "sections": {
@@ -192,20 +264,41 @@
       "validation": {
         "nameRequired": "Name is required.",
         "roleRequired": "Role is required.",
-        "photoUrlInvalid": "Photo URL must be valid."
+        "photoUrlInvalid": "Photo URL must be valid.",
+        "slugInvalid": "The slug must be lowercase (letters, numbers and hyphens only).",
+        "slugTaken": "This slug is already used by another member in this language.",
+        "emailInvalid": "Email address must be valid.",
+        "socialUrlInvalid": "URL must start with http:// or https://."
       },
       "fields": {
         "name": "Name",
+        "slug": "Slug (profile URL)",
         "role": "Role",
         "bio": "Bio",
         "photo": "Photo",
         "photoPreviewAlt": "Photo preview",
         "removePhoto": "Remove photo",
+        "contact": "Contact and social links",
+        "email": "Email",
+        "linkedinUrl": "LinkedIn",
+        "xUrl": "X (Twitter)",
+        "facebookUrl": "Facebook",
+        "instagramUrl": "Instagram",
         "sortOrder": "Display order",
         "locale": "Language"
       },
       "hints": {
-        "photoUpload": "JPEG, PNG or WebP — max. 5 MB"
+        "photoUpload": "JPEG, PNG or WebP — max. 5 MB",
+        "slug": "Public profile: {path}. Leave empty to generate it from the name.",
+        "contact": "Optional — shown on the public profile page."
+      },
+      "placeholders": {
+        "slug": "first-last",
+        "email": "first.last@example.com",
+        "linkedinUrl": "https://www.linkedin.com/in/…",
+        "xUrl": "https://x.com/…",
+        "facebookUrl": "https://www.facebook.com/…",
+        "instagramUrl": "https://www.instagram.com/…"
       },
       "saving": "Saving…",
       "createButton": "Add member",
@@ -283,7 +376,11 @@
         "subtitle": "Subtitle"
       },
       "saving": "Saving…",
-      "saveButton": "Save section"
+      "saveButton": "Save header settings",
+      "hint": "Title, subtitle and status shown above the homepage cards. Saved separately from the cards below.",
+      "emptyTitle": "No title yet",
+      "expand": "Edit header",
+      "collapse": "Hide header"
     },
     "items": {
       "list": {
@@ -292,7 +389,8 @@
         "deleteConfirmButton": "Delete",
         "cancel": "Cancel",
         "columns": {
-          "title": "Card",
+          "title": "Title",
+          "description": "Description",
           "icon": "Icon",
           "sortOrder": "Order"
         },
@@ -301,7 +399,14 @@
         "searchPlaceholder": "Search by title or description…",
         "newButton": "New card",
         "tableAria": "Why choose us cards list",
-        "paginationItem": "card"
+        "paginationItem": "card",
+        "heading": "Section content",
+        "description": "Cards displayed in the homepage « Why choose us » block.",
+        "searchLabel": "Search",
+        "statusFilter": "Filter by status",
+        "allStatuses": "All statuses",
+        "moveUp": "Move up",
+        "moveDown": "Move down"
       },
       "edit": {
         "pageTitle": "Edit card"
@@ -340,10 +445,15 @@
       "secondary": "Secondary green"
     },
     "section": {
-      "heading": "Section content",
+      "heading": "Section header",
       "validation": {
         "imageUrlRequired": "Image is required.",
         "imageUrlInvalid": "Image URL must be valid."
+      },
+      "groups": {
+        "content": "Content",
+        "media": "Image",
+        "badge": "Badge"
       },
       "fields": {
         "title": "Title",
@@ -360,7 +470,13 @@
         "badgeLabel": "Badge label"
       },
       "saving": "Saving…",
-      "saveButton": "Save section"
+      "saveButton": "Save header settings",
+      "hint": "Title, copy, image and badge for the Happy Customers section. Saved separately from the progress bars below.",
+      "statusHint": "Publication status for the whole section (independent of each stat).",
+      "badgeHint": "Highlight figure shown on the section image (e.g. 10K+ Clients).",
+      "emptyTitle": "No title yet",
+      "expand": "Edit header",
+      "collapse": "Hide header"
     },
     "stats": {
       "list": {
@@ -378,7 +494,15 @@
         "emptySearch": "No stats match your search.",
         "searchPlaceholder": "Search by label…",
         "newButton": "New stat",
-        "paginationItem": "stat"
+        "tableAria": "Happy Customers stats list",
+        "paginationItem": "stat",
+        "heading": "Progress bars",
+        "description": "Indicators shown in the homepage Happy Customers block. Managed separately from the header above.",
+        "searchLabel": "Search",
+        "statusFilter": "Filter by status",
+        "allStatuses": "All statuses",
+        "moveUp": "Move up",
+        "moveDown": "Move down"
       },
       "edit": {
         "pageTitle": "Edit stat"

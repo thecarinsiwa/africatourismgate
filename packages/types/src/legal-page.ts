@@ -41,6 +41,16 @@ export interface LegalPagesListQuery {
   status?: LegalPageStatus;
   sectionKey?: LegalPageSectionKey;
   locale?: string;
+  /**
+   * Pages whose last edit (or creation if never updated) is within the last N days.
+   * Used by Contenu › Legal KPI cards (“Recently updated”).
+   */
+  updatedWithinDays?: number;
+  /**
+   * Pages whose last edit (or creation if never updated) is older than N days.
+   * Used by Contenu › Legal KPI cards (“Outdated”).
+   */
+  updatedOlderThanDays?: number;
 }
 
 export interface PublicLegalPagesListQuery {

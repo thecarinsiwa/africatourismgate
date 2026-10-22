@@ -4,6 +4,10 @@
     "approved": "Approuvé",
     "hidden": "Masqué"
   },
+  "source": {
+    "platform": "Plateforme",
+    "tripadvisor": "Tripadvisor"
+  },
   "actions": {
     "approve": "Approuver",
     "hide": "Masquer",
@@ -35,6 +39,7 @@
       "comment": "Commentaire"
     },
     "fields": {
+      "source": "Source",
       "author": "Auteur",
       "property": "Propriété",
       "entity": "Entité liée",
@@ -49,7 +54,8 @@
       "cruise": "Croisière",
       "activity": "Activité",
       "booking": "Réservation",
-      "tour_guide": "Guide touristique"
+      "tour_guide": "Guide touristique",
+      "tripadvisor": "Tripadvisor"
     },
     "viewBooking": "Voir la réservation",
     "noComment": "Aucun commentaire.",
@@ -58,15 +64,16 @@
   "list": {
     "columns": {
       "author": "Auteur",
-      "property": "Propriété"
+      "property": "Propriété",
+      "source": "Source"
     },
     "filters": {
       "apply": "Appliquer les filtres"
     },
     "empty": {
       "default": {
-        "title": "Aucun avis en attente",
-        "description": "La file de modération est vide. Les nouveaux avis clients apparaîtront ici.",
+        "title": "Aucun avis",
+        "description": "Les avis clients et Tripadvisor apparaîtront ici. Utilisez les filtres pour cibler un statut ou une source.",
         "tableMessage": "Aucun avis pour le moment."
       },
       "filtered": {
@@ -76,5 +83,75 @@
       }
     },
     "ariaLabel": "Liste des avis à modérer"
+  },
+  "createTripadvisor": {
+    "heading": "Nouvel avis Tripadvisor",
+    "description": "Saisissez manuellement un avis Tripadvisor pour l’afficher dans la section « Avis de nos clients » de la page d’accueil.",
+    "denied": "Vous n’avez pas la permission de créer un avis (reviews.write requise).",
+    "fields": {
+      "authorName": "Nom de l’auteur",
+      "authorNamePlaceholder": "Ex. Marie Dupont",
+      "rating": "Note",
+      "title": "Titre (facultatif)",
+      "titlePlaceholder": "Ex. Séjour inoubliable",
+      "titleHint": "Affiché en tête de l’avis sur le site public.",
+      "body": "Commentaire",
+      "bodyPlaceholder": "Texte de l’avis…",
+      "status": "Statut",
+      "statusHint": "Approuvé : visible sur la page d’accueil si les filtres « avis clients » l’autorisent."
+    },
+    "validation": {
+      "authorNameRequired": "Indiquez le nom de l’auteur.",
+      "authorNameTooLong": "Le nom ne doit pas dépasser 120 caractères.",
+      "ratingRequired": "Choisissez une note entre 1 et 5.",
+      "bodyRequired": "Le commentaire est obligatoire.",
+      "titleTooLong": "Le titre ne doit pas dépasser 180 caractères."
+    },
+    "saveButton": "Créer l’avis",
+    "saving": "Création…",
+    "toast": {
+      "created": {
+        "title": "Avis Tripadvisor créé",
+        "message": "L’avis a été enregistré."
+      }
+    }
+  },
+  "tripadvisorSync": {
+    "heading": "Import Tripadvisor (Terra)",
+    "description": "Configurez la fiche établissement et importez les avis via l’API Terra Tripadvisor.",
+    "locationIdHelp": "Le Location ID se trouve dans l’URL Tripadvisor, après « -d » (ex. …-d12345678.html → 12345678).",
+    "fields": {
+      "locationId": "Location ID",
+      "locationIdPlaceholder": "Ex. 12345678",
+      "apiKey": "Clé API Terra",
+      "apiKeyPlaceholder": "Collez votre clé API",
+      "apiKeyPlaceholderConfigured": "Clé enregistrée ({masked}) — laissez vide pour la conserver",
+      "apiKeyKeepHint": "Laissez le champ vide pour conserver la clé déjà enregistrée.",
+      "language": "Langue des avis",
+      "languagePlaceholder": "primary",
+      "languageHint": "Codes Terra : primary (langue d’origine), fr, en, etc."
+    },
+    "saveButton": "Enregistrer",
+    "saving": "Enregistrement…",
+    "syncButton": "Synchroniser",
+    "syncing": "Synchronisation…",
+    "readOnlyHint": "Lecture seule : permission organization_settings.write requise pour modifier.",
+    "settingsDeniedHint": "Vous pouvez lancer une sync avec les identifiants déjà configurés (lecture des réglages non autorisée).",
+    "toast": {
+      "saved": {
+        "title": "Paramètres enregistrés",
+        "message": "Les identifiants Tripadvisor ont été mis à jour."
+      },
+      "saveFailed": {
+        "title": "Enregistrement impossible"
+      },
+      "synced": {
+        "title": "Synchronisation terminée",
+        "message": "{imported} importé(s), {updated} mis à jour, {skipped} ignoré(s) ({pages} page(s))."
+      },
+      "syncFailed": {
+        "title": "Synchronisation échouée"
+      }
+    }
   }
 }

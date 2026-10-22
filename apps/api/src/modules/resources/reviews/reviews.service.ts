@@ -12,6 +12,7 @@ import {
   PaginationQueryDto,
 } from '../../../common/dto/pagination-query.dto';
 import { CrudService } from '../../../common/crud/crud.service';
+import { newId } from '../../../common/utils/uuid';
 import {
   BookingGuideAssignments,
   BookingItems,
@@ -22,14 +23,26 @@ import {
   TourGuides,
   Users,
 } from '../../../entities/generated';
+import type {
+  ReviewSource,
+  SyncTripadvisorReviewsResult,
+} from '@africatourismgate/types';
+import { TripadvisorTerraClient } from '../../integrations/tripadvisor/tripadvisor-terra.client';
+import { mapTerraReviewToTripadvisor } from '../../integrations/tripadvisor/tripadvisor-terra.mapper';
+import { upsertSyncedTripadvisorReview } from '../../integrations/tripadvisor/tripadvisor-sync.upsert';
 import { AdminReviewDetailDto } from './dto/admin-review-detail.dto';
 import { AdminReviewListItemDto } from './dto/admin-review-list-item.dto';
+import { CreateAdminTripadvisorReviewDto } from './dto/create-admin-tripadvisor-review.dto';
 import { CreateBookingReviewDto } from './dto/create-booking-review.dto';
 import { PropertyReviewSummaryDto, ReviewDto } from './dto/review.dto';
 import { ReviewsListQueryDto } from './dto/reviews-list-query.dto';
 import { isStayEnded } from './review-stay.util';
 import type { GuideReviewInviteDto } from '../bookings/dto/guide-review-invite.dto';
 import { NotificationsService } from '../notifications/notifications.service';
+import { OrganizationSettingsService } from '../organization-settings/organization-settings.service';
+
+const TERRA_PAGE_SIZE = 20;
+const TERRA_MAX_PAGES = 50;
 
 type ReviewRow = {
   id: string;
@@ -39,15 +52,18 @@ type ReviewRow = {
   createdAt: Date;
   authorFirstName: string | null;
   authorAvatarUrl: string | null;
+  source: ReviewSource;
 };
 
 type AdminReviewRow = {
   id: string;
   rating: string | number;
   status: Reviews['status'];
+  source: ReviewSource;
   createdAt: Date;
   authorFirstName: string | null;
   authorEmail: string | null;
+  externalAuthorName: string | null;
   entityType: Reviews['entityType'];
   entityId: string;
   propertyId: string | null;
@@ -79,6 +95,8 @@ export class ReviewsService extends CrudService<Reviews> {
     @InjectRepository(TourGuides)
     private readonly tourGuidesRepository: Repository<TourGuides>,
     private readonly staffNotifications: NotificationsService,
+    private readonly organizationSettings: OrganizationSettingsService,
+    private readonly tripadvisorTerra: TripadvisorTerraClient,
   ) {
     super(reviewsRepository);
   }
@@ -93,9 +111,9 @@ export class ReviewsService extends CrudService<Reviews> {
     });
     if (!review) return null;
 
-    const author = await this.usersRepository.findOne({
-      where: { id: review.userId },
-    });
+    const author = review.userId
+      ? await this.usersRepository.findOne({ where: { id: review.userId } })
+      : null;
 
     return this.toReviewDto(review, author);
   }
@@ -198,6 +216,7 @@ export class ReviewsService extends CrudService<Reviews> {
       const saved = await super.create(
         {
           userId,
+          source: 'platform',
           entityType: 'booking',
           entityId: bookingId,
           rating: dto.rating,
@@ -299,9 +318,9 @@ export class ReviewsService extends CrudService<Reviews> {
       return null;
     }
 
-    const author = await this.usersRepository.findOne({
-      where: { id: review.userId },
-    });
+    const author = review.userId
+      ? await this.usersRepository.findOne({ where: { id: review.userId } })
+      : null;
     return this.toReviewDto(review, author);
   }
 
@@ -358,6 +377,7 @@ export class ReviewsService extends CrudService<Reviews> {
       const saved = await super.create(
         {
           userId,
+          source: 'platform',
           entityType: 'tour_guide',
           entityId: assignment.id,
           rating: dto.rating,
@@ -435,6 +455,7 @@ export class ReviewsService extends CrudService<Reviews> {
       .addSelect('r.title', 'title')
       .addSelect('r.body', 'body')
       .addSelect('r.createdAt', 'createdAt')
+      .addSelect('r.source', 'source')
       .addSelect('u.firstName', 'authorFirstName')
       .addSelect('u.avatarUrl', 'authorAvatarUrl')
       .groupBy('r.id')
@@ -442,6 +463,7 @@ export class ReviewsService extends CrudService<Reviews> {
       .addGroupBy('r.title')
       .addGroupBy('r.body')
       .addGroupBy('r.createdAt')
+      .addGroupBy('r.source')
       .addGroupBy('u.firstName')
       .addGroupBy('u.avatarUrl')
       .orderBy('r.createdAt', 'DESC')
@@ -462,27 +484,186 @@ export class ReviewsService extends CrudService<Reviews> {
 
   async listFeaturedForHomepage(limit = 12): Promise<ReviewDto[]> {
     const cappedLimit = Math.min(Math.max(limit, 1), 24);
+    const homepageReviews =
+      await this.organizationSettings.getResolvedHomepageReviews();
+
+    const sources: ReviewSource[] = [];
+    if (homepageReviews.showPlatformReviews) sources.push('platform');
+    if (homepageReviews.showTripadvisorReviews) sources.push('tripadvisor');
+    if (sources.length === 0) {
+      return [];
+    }
 
     const rows = await this.reviewsRepository
       .createQueryBuilder('r')
-      .innerJoin(Users, 'u', 'u.id = r.userId AND u.deletedAt IS NULL')
+      .leftJoin(Users, 'u', 'u.id = r.userId AND u.deletedAt IS NULL')
       .select('r.id', 'id')
       .addSelect('r.rating', 'rating')
       .addSelect('r.title', 'title')
       .addSelect('r.body', 'body')
       .addSelect('r.createdAt', 'createdAt')
-      .addSelect('u.firstName', 'authorFirstName')
-      .addSelect('u.avatarUrl', 'authorAvatarUrl')
+      .addSelect('r.source', 'source')
+      .addSelect(
+        `CASE WHEN r.source = 'tripadvisor' THEN r.externalAuthorName ELSE u.firstName END`,
+        'authorFirstName',
+      )
+      .addSelect(
+        `CASE WHEN r.source = 'tripadvisor' THEN NULL ELSE u.avatarUrl END`,
+        'authorAvatarUrl',
+      )
       .where('r.deletedAt IS NULL')
       .andWhere("r.status = 'approved'")
       .andWhere('r.body IS NOT NULL')
       .andWhere("TRIM(r.body) != ''")
       .andWhere('r.rating >= :minRating', { minRating: 4 })
+      .andWhere('r.source IN (:...sources)', { sources })
       .orderBy('r.createdAt', 'DESC')
       .limit(cappedLimit)
       .getRawMany<ReviewRow>();
 
     return rows.map((row) => this.mapReviewRow(row));
+  }
+
+  async createTripadvisorReview(
+    dto: CreateAdminTripadvisorReviewDto,
+    actorUserId: string,
+  ): Promise<AdminReviewDetailDto> {
+    const authorName = dto.authorName.trim();
+    const body = dto.body.trim();
+    if (!authorName) {
+      throw new BadRequestException('authorName est obligatoire.');
+    }
+    if (!body) {
+      throw new BadRequestException('body est obligatoire.');
+    }
+
+    const id = newId();
+    const status = dto.status ?? 'approved';
+    await super.create(
+      {
+        id,
+        userId: null,
+        source: 'tripadvisor',
+        entityType: 'tripadvisor',
+        entityId: id,
+        rating: dto.rating,
+        title: dto.title?.trim() || undefined,
+        body,
+        externalAuthorName: authorName,
+        status,
+      },
+      actorUserId,
+    );
+
+    return this.findOneForAdmin(id);
+  }
+
+  /**
+   * Pulls location reviews from Tripadvisor Terra using `site/tripadvisor_sync`
+   * and upserts them as `source=tripadvisor` rows (`entityId` = Terra review id).
+   */
+  async syncFromTripadvisor(
+    actorUserId: string,
+  ): Promise<SyncTripadvisorReviewsResult> {
+    const sync = await this.organizationSettings.getResolvedTripadvisorSync();
+    if (!sync.apiKey.trim()) {
+      throw new BadRequestException(
+        'Configurez la clé API Tripadvisor (Contenu › Avis).',
+      );
+    }
+    if (!sync.locationId.trim()) {
+      throw new BadRequestException(
+        'Configurez le Location ID Tripadvisor (Contenu › Avis).',
+      );
+    }
+
+    let imported = 0;
+    let updated = 0;
+    let skipped = 0;
+    let pages = 0;
+    let page = 1;
+    let totalPages = 1;
+
+    while (page <= totalPages && page <= TERRA_MAX_PAGES) {
+      const response = await this.tripadvisorTerra.fetchLocationReviews({
+        apiKey: sync.apiKey,
+        locationId: sync.locationId,
+        page,
+        size: TERRA_PAGE_SIZE,
+        language: sync.language || 'primary',
+      });
+      pages += 1;
+
+      const items = response.data ?? [];
+      if (items.length === 0) {
+        break;
+      }
+
+      for (const item of items) {
+        const mapped = mapTerraReviewToTripadvisor(item);
+        if (!mapped) {
+          skipped += 1;
+          continue;
+        }
+        const outcome = await upsertSyncedTripadvisorReview(
+          {
+            findByEntityId: async (entityId) => {
+              const row = await this.reviewsRepository.findOne({
+                where: { entityType: 'tripadvisor', entityId },
+                withDeleted: true,
+              });
+              return row;
+            },
+            recover: async (row) => {
+              await this.reviewsRepository.recover(row as Reviews);
+            },
+            save: async (row) => {
+              await this.reviewsRepository.save(row as Reviews);
+            },
+            createNew: async ({ id, mapped: m, actorUserId: actor }) => {
+              const entity = this.reviewsRepository.create({
+                id,
+                userId: null,
+                source: 'tripadvisor',
+                entityType: 'tripadvisor',
+                entityId: m.entityId,
+                rating: m.rating,
+                title: m.title,
+                body: m.body,
+                externalAuthorName: m.authorName,
+                status: 'approved',
+                createdByUserId: actor,
+                ...(m.publishedAt ? { createdAt: m.publishedAt } : {}),
+              });
+              await this.reviewsRepository.save(entity);
+            },
+          },
+          mapped,
+          actorUserId,
+          newId,
+        );
+        if (outcome === 'imported') imported += 1;
+        else if (outcome === 'updated') updated += 1;
+        else skipped += 1;
+      }
+
+      const reportedTotal = response.pagination?.total_pages;
+      if (
+        typeof reportedTotal === 'number' &&
+        Number.isFinite(reportedTotal) &&
+        reportedTotal >= 1
+      ) {
+        totalPages = Math.min(Math.floor(reportedTotal), TERRA_MAX_PAGES);
+      } else if (items.length < TERRA_PAGE_SIZE) {
+        break;
+      } else {
+        totalPages = page + 1;
+      }
+
+      page += 1;
+    }
+
+    return { imported, updated, skipped, pages };
   }
 
   async listForAdmin(
@@ -497,6 +678,9 @@ export class ReviewsService extends CrudService<Reviews> {
     }
     if (query.status) {
       qb.andWhere('r.status = :status', { status: query.status });
+    }
+    if (query.source) {
+      qb.andWhere('r.source = :source', { source: query.source });
     }
     if (query.propertyId) {
       qb.andWhere('rm.propertyId = :propertyId', { propertyId: query.propertyId });
@@ -515,9 +699,14 @@ export class ReviewsService extends CrudService<Reviews> {
       .select('r.id', 'id')
       .addSelect('r.rating', 'rating')
       .addSelect('r.status', 'status')
+      .addSelect('r.source', 'source')
       .addSelect('r.createdAt', 'createdAt')
-      .addSelect('u.firstName', 'authorFirstName')
+      .addSelect(
+        `CASE WHEN r.source = 'tripadvisor' THEN r.externalAuthorName ELSE u.firstName END`,
+        'authorFirstName',
+      )
       .addSelect('u.email', 'authorEmail')
+      .addSelect('r.externalAuthorName', 'externalAuthorName')
       .addSelect('r.entityType', 'entityType')
       .addSelect('r.entityId', 'entityId')
       .addSelect('rm.propertyId', 'propertyId')
@@ -530,9 +719,11 @@ export class ReviewsService extends CrudService<Reviews> {
       .groupBy('r.id')
       .addGroupBy('r.rating')
       .addGroupBy('r.status')
+      .addGroupBy('r.source')
       .addGroupBy('r.createdAt')
       .addGroupBy('u.firstName')
       .addGroupBy('u.email')
+      .addGroupBy('r.externalAuthorName')
       .addGroupBy('r.entityType')
       .addGroupBy('r.entityId')
       .addGroupBy('rm.propertyId')
@@ -566,9 +757,11 @@ export class ReviewsService extends CrudService<Reviews> {
       throw new NotFoundException(`Resource ${id} not found`);
     }
 
-    const author = await this.usersRepository.findOne({
-      where: { id: review.userId, deletedAt: IsNull() },
-    });
+    const author = review.userId
+      ? await this.usersRepository.findOne({
+          where: { id: review.userId, deletedAt: IsNull() },
+        })
+      : null;
     const propertyId = await this.resolvePropertyIdForReview(review);
     let propertyName: string | null = null;
     if (propertyId) {
@@ -579,15 +772,21 @@ export class ReviewsService extends CrudService<Reviews> {
     }
 
     const guideContext = await this.resolveGuideContextForReview(review);
+    const authorFirstName =
+      review.source === 'tripadvisor'
+        ? review.externalAuthorName
+        : (author?.firstName ?? null);
 
     return {
       id: review.id,
       rating: review.rating,
       status: review.status,
+      source: review.source,
       createdAt: review.createdAt.toISOString(),
       updatedAt: review.updatedAt?.toISOString() ?? null,
-      authorFirstName: author?.firstName ?? null,
+      authorFirstName,
       authorEmail: author?.email ?? null,
+      externalAuthorName: review.externalAuthorName ?? null,
       entityType: review.entityType,
       entityId: review.entityId,
       propertyId,
@@ -668,7 +867,7 @@ export class ReviewsService extends CrudService<Reviews> {
   private adminListQueryBuilder() {
     return this.reviewsRepository
       .createQueryBuilder('r')
-      .innerJoin(Users, 'u', 'u.id = r.userId AND u.deletedAt IS NULL')
+      .leftJoin(Users, 'u', 'u.id = r.userId AND u.deletedAt IS NULL')
       .leftJoin(
         Bookings,
         'b',
@@ -728,12 +927,14 @@ export class ReviewsService extends CrudService<Reviews> {
       id: row.id,
       rating: Number(row.rating),
       status: row.status,
+      source: row.source,
       createdAt:
         row.createdAt instanceof Date
           ? row.createdAt.toISOString()
           : String(row.createdAt),
       authorFirstName: row.authorFirstName,
       authorEmail: row.authorEmail,
+      externalAuthorName: row.externalAuthorName ?? null,
       entityType: row.entityType,
       entityId: row.entityId,
       propertyId: row.propertyId,
@@ -754,6 +955,7 @@ export class ReviewsService extends CrudService<Reviews> {
       body: row.body,
       authorFirstName: row.authorFirstName,
       authorAvatarUrl: row.authorAvatarUrl?.trim() || null,
+      source: row.source ?? 'platform',
       createdAt:
         row.createdAt instanceof Date
           ? row.createdAt.toISOString()
@@ -765,13 +967,20 @@ export class ReviewsService extends CrudService<Reviews> {
     review: Reviews,
     author?: Pick<Users, 'firstName' | 'avatarUrl'> | null,
   ): ReviewDto {
+    const source = review.source ?? 'platform';
+    const authorFirstName =
+      source === 'tripadvisor'
+        ? review.externalAuthorName
+        : (author?.firstName ?? null);
     return {
       id: review.id,
       rating: review.rating,
       title: review.title || null,
       body: review.body || null,
-      authorFirstName: author?.firstName ?? null,
-      authorAvatarUrl: author?.avatarUrl?.trim() || null,
+      authorFirstName,
+      authorAvatarUrl:
+        source === 'tripadvisor' ? null : author?.avatarUrl?.trim() || null,
+      source,
       createdAt: review.createdAt.toISOString(),
     };
   }

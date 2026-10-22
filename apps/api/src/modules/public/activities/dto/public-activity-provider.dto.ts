@@ -12,6 +12,27 @@ export class PublicActivityProviderDto {
   logoUrl!: string | null;
 }
 
+export class PublicActivityProviderListItemDto extends PublicActivityProviderDto {
+  @ApiPropertyOptional({ nullable: true, example: 'Kinshasa' })
+  destinationName!: string | null;
+
+  @ApiPropertyOptional({ nullable: true, example: 'CD' })
+  countryCode!: string | null;
+
+  @ApiProperty({ example: 4, description: 'Active activities offered by the partner' })
+  activitiesCount!: number;
+
+  @ApiPropertyOptional({
+    nullable: true,
+    example: 4.6,
+    description: 'Average approved review rating across partner activities',
+  })
+  averageRating!: number | null;
+
+  @ApiProperty({ example: 12 })
+  reviewCount!: number;
+}
+
 export class PublicActivityProviderDetailDto extends PublicActivityProviderDto {
   @ApiProperty({ format: 'uuid' })
   destinationId!: string;

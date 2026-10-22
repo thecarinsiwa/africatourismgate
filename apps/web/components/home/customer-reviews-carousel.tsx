@@ -1,10 +1,13 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { Review } from '@africatourismgate/types';
+import type { Review, ReviewSource } from '@africatourismgate/types';
 import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import { useLocale, useTranslations } from 'next-intl';
-import { getPublicFeaturedReviews } from '../../lib/api/public';
+import {
+  getPublicFeaturedReviews,
+  getPublicHomepageReviews,
+} from '../../lib/api/public';
 import { getGuestInitials } from '../../lib/reviews/guest-initials';
 import { useScrollAnimation } from './use-scroll-animation';
 
@@ -18,6 +21,7 @@ type ReviewSlide = {
   body: string;
   authorName: string;
   authorAvatarUrl: string | null;
+  source: ReviewSource;
 };
 
 type ReviewFallbackItem = {
@@ -51,6 +55,62 @@ function Stars({ rating }: { rating: number }) {
   );
 }
 
+function TripadvisorOwlIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden
+    >
+      <path d="M12 3c-2.2 0-4.1 1.1-5.2 2.8C5.2 4.9 3.4 4 1.5 4v2.2c1.2 0 2.3.5 3.1 1.3C3.6 8.7 3 10.3 3 12c0 5 4 9 9 9s9-4 9-9c0-1.7-.6-3.3-1.6-4.5.8-.8 1.9-1.3 3.1-1.3V4c-1.9 0-3.7.9-4.8 2.3C16.1 4.6 14.2 3 12 3zm-3.2 8.2a1.6 1.6 0 110 3.2 1.6 1.6 0 010-3.2zm6.4 0a1.6 1.6 0 110 3.2 1.6 1.6 0 010-3.2zM8.5 16.2c.9.9 2.1 1.4 3.5 1.4s2.6-.5 3.5-1.4c.2-.2.2-.5 0-.7-.2-.2-.5-.2-.7 0-.7.7-1.7 1.1-2.8 1.1s-2.1-.4-2.8-1.1c-.2-.2-.5-.2-.7 0-.2.2-.2.5 0 .7z" />
+    </svg>
+  );
+}
+
+function VerifiedMarkIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      aria-hidden
+    >
+      <path
+        fillRule="evenodd"
+        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+}
+
+function SourceBadge({
+  source,
+  label,
+}: {
+  source: ReviewSource;
+  label: string;
+}) {
+  const isTripadvisor = source === 'tripadvisor';
+  return (
+    <span
+      className={`inline-flex max-w-full items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold tracking-wide ${
+        isTripadvisor
+          ? 'bg-[#00AA6C]/12 text-[#007A4D] dark:bg-[#00AA6C]/20 dark:text-[#5DDCAB]'
+          : 'bg-primary/10 text-primary'
+      }`}
+    >
+      {isTripadvisor ? (
+        <TripadvisorOwlIcon className="h-3.5 w-3.5 shrink-0" />
+      ) : (
+        <VerifiedMarkIcon className="h-3.5 w-3.5 shrink-0" />
+      )}
+      <span className="truncate">{label}</span>
+    </span>
+  );
+}
+
 function AuthorAvatar({
   name,
   avatarUrl,
@@ -80,10 +140,21 @@ function AuthorAvatar({
   );
 }
 
-function ReviewCard({ review }: { review: ReviewSlide }) {
+function ReviewCard({
+  review,
+  sourceLabel,
+}: {
+  review: ReviewSlide;
+  sourceLabel: string;
+}) {
   return (
-    <article className="flex h-full flex-col rounded-2xl border border-atg-border bg-atg-elevated p-6 shadow-sm dark:bg-atg-surface">
-      <Stars rating={review.rating} />
+    <article className="relative flex h-full flex-col rounded-2xl border border-atg-border bg-atg-elevated p-6 shadow-sm dark:bg-atg-surface">
+      <div className="absolute right-4 top-4">
+        <SourceBadge source={review.source} label={sourceLabel} />
+      </div>
+      <div className="pr-28 sm:pr-32">
+        <Stars rating={review.rating} />
+      </div>
       {review.title ? (
         <h3 className="mt-4 text-base font-bold text-atg-fg">{review.title}</h3>
       ) : null}
@@ -121,6 +192,7 @@ export function CustomerReviewsCarousel() {
   const { ref, isVisible } = useScrollAnimation(0.1);
   const [reviews, setReviews] = useState<ReviewSlide[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sectionHidden, setSectionHidden] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -134,34 +206,66 @@ export function CustomerReviewsCarousel() {
         body: item.body,
         authorName: item.author,
         authorAvatarUrl: null,
+        source: 'platform' as const,
       }));
 
     setLoading(true);
+    setSectionHidden(false);
 
-    void getPublicFeaturedReviews({ limit: FETCH_LIMIT })
-      .then((data) => {
+    void (async () => {
+      try {
+        const settings = await getPublicHomepageReviews();
         if (cancelled) return;
-        const anonymousLabel = t('anonymous');
-        const slides = data
-          .filter((review) => review.body?.trim())
-          .map((review: Review) => ({
-            id: review.id,
-            rating: review.rating,
-            title: review.title,
-            body: review.body!.trim(),
-            authorName: formatAuthorName(review.authorFirstName, anonymousLabel),
-            authorAvatarUrl: review.authorAvatarUrl?.trim() || null,
-          }));
-        setReviews(slides.length > 0 ? slides : buildFallbackSlides());
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setReviews(buildFallbackSlides());
+
+        const platformOn = settings.showPlatformReviews === true;
+        const tripadvisorOn = settings.showTripadvisorReviews === true;
+        if (!platformOn && !tripadvisorOn) {
+          setSectionHidden(true);
+          setReviews([]);
+          return;
         }
-      })
-      .finally(() => {
+
+        try {
+          const data = await getPublicFeaturedReviews({ limit: FETCH_LIMIT });
+          if (cancelled) return;
+          const anonymousLabel = t('anonymous');
+          const slides = data
+            .filter((review) => review.body?.trim())
+            .map((review: Review) => ({
+              id: review.id,
+              rating: review.rating,
+              title: review.title,
+              body: review.body!.trim(),
+              authorName: formatAuthorName(review.authorFirstName, anonymousLabel),
+              authorAvatarUrl:
+                review.source === 'tripadvisor'
+                  ? null
+                  : review.authorAvatarUrl?.trim() || null,
+              source: review.source ?? 'platform',
+            }));
+
+          if (slides.length > 0) {
+            setReviews(slides);
+          } else if (platformOn) {
+            setReviews(buildFallbackSlides());
+          } else {
+            setReviews([]);
+          }
+        } catch {
+          if (cancelled) return;
+          if (platformOn) {
+            setReviews(buildFallbackSlides());
+          } else {
+            setReviews([]);
+          }
+        }
+      } catch {
+        if (cancelled) return;
+        setReviews(buildFallbackSlides());
+      } finally {
         if (!cancelled) setLoading(false);
-      });
+      }
+    })();
 
     return () => {
       cancelled = true;
@@ -250,7 +354,7 @@ export function CustomerReviewsCarousel() {
     return () => window.clearInterval(timer);
   }, [isVisible, loading, next, slides.length]);
 
-  if (!loading && slides.length === 0) {
+  if (sectionHidden || (!loading && slides.length === 0)) {
     return null;
   }
 
@@ -308,7 +412,14 @@ export function CustomerReviewsCarousel() {
                         : 'w-[85%] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]'
                     }`}
                   >
-                    <ReviewCard review={review} />
+                    <ReviewCard
+                      review={review}
+                      sourceLabel={
+                        review.source === 'tripadvisor'
+                          ? t('badges.tripadvisor')
+                          : t('badges.platform')
+                      }
+                    />
                   </div>
                 ))}
               </div>

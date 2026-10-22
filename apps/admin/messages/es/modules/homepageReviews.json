@@ -1,0 +1,16 @@
+{
+  "heading": "Opiniones de clientes (inicio)",
+  "description": "Elija qué fuentes de opiniones aparecen en la sección « Opiniones de nuestros clientes » de la página de inicio pública.",
+  "readOnlyHint": "Puede consultar estas opciones pero no modificarlas (se requiere el permiso organization_settings.write).",
+  "denied": "No tiene acceso a estos ajustes (se requiere el permiso organization_settings.read).",
+  "fields": {
+    "tripadvisorOn": "Opiniones de Tripadvisor visibles",
+    "tripadvisorOff": "Opiniones de Tripadvisor ocultas",
+    "platformOn": "Opiniones de la plataforma visibles",
+    "platformOff": "Opiniones de la plataforma ocultas"
+  },
+  "bothOffHint": "Ambas fuentes están desactivadas: la sección de opiniones se ocultará en el sitio público.",
+  "saveButton": "Guardar",
+  "saving": "Guardando…",
+  "saved": "Ajustes guardados."
+}

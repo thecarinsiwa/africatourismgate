@@ -18,6 +18,7 @@ import type {
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { SupportListFilter } from '../../config/support-kpi';
 import { getApiClient } from '../../lib/auth/api';
 import {
   useSupportTicketPriorityFilterOptions,
@@ -34,7 +35,15 @@ const SEARCH_DEBOUNCE_MS = 300;
 
 type StatusFilter = '' | SupportTicketStatus;
 
-export function SupportTicketsList() {
+type SupportTicketsListProps = {
+  listFilter?: SupportListFilter;
+  onListFilterChange?: (filter: SupportListFilter) => void;
+};
+
+export function SupportTicketsList({
+  listFilter = {},
+  onListFilterChange,
+}: SupportTicketsListProps) {
   const { supportTickets: getSupportTicketsErrorMessage } = useAdminErrorMessages();
   const tList = useTranslations('modules.support.list');
   const tCommon = useTranslations('modules.common');
@@ -43,8 +52,6 @@ export function SupportTicketsList() {
   const priorityOptions = useSupportTicketPriorityFilterOptions();
 
   const [page, setPage] = useState(1);
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('');
-  const [priorityFilter, setPriorityFilter] = useState<'' | SupportTicketPriority>('');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [state, setState] = useState<
@@ -57,6 +64,13 @@ export function SupportTicketsList() {
         totalPages: number;
       }
   >({ status: 'loading' });
+
+  const statusFilter: StatusFilter = listFilter.status ?? '';
+  const priorityFilter: '' | SupportTicketPriority = listFilter.priority ?? '';
+
+  useEffect(() => {
+    setPage(1);
+  }, [listFilter]);
 
   useEffect(() => {
     const query = searchInput.trim();
@@ -114,12 +128,33 @@ export function SupportTicketsList() {
   ].filter(Boolean).length;
 
   const handleClearFilters = useCallback(() => {
-    setStatusFilter('');
-    setPriorityFilter('');
     setSearchInput('');
     setSearch('');
     setPage(1);
-  }, []);
+    onListFilterChange?.({});
+  }, [onListFilterChange]);
+
+  const handleStatusChange = useCallback(
+    (next: StatusFilter) => {
+      setPage(1);
+      onListFilterChange?.({
+        ...(next ? { status: next } : {}),
+        ...(priorityFilter ? { priority: priorityFilter } : {}),
+      });
+    },
+    [onListFilterChange, priorityFilter],
+  );
+
+  const handlePriorityChange = useCallback(
+    (next: '' | SupportTicketPriority) => {
+      setPage(1);
+      onListFilterChange?.({
+        ...(statusFilter ? { status: statusFilter } : {}),
+        ...(next ? { priority: next } : {}),
+      });
+    },
+    [onListFilterChange, statusFilter],
+  );
 
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
@@ -142,10 +177,7 @@ export function SupportTicketsList() {
             variant={statusFilter === tab.value ? 'primary' : 'outline'}
             role="tab"
             aria-selected={statusFilter === tab.value}
-            onClick={() => {
-              setStatusFilter(tab.value);
-              setPage(1);
-            }}
+            onClick={() => handleStatusChange(tab.value)}
           >
             {tab.label}
           </Button>
@@ -177,8 +209,7 @@ export function SupportTicketsList() {
                 value={priorityFilter}
                 options={priorityOptions}
                 onChange={(e) => {
-                  setPriorityFilter(e.target.value as '' | SupportTicketPriority);
-                  setPage(1);
+                  handlePriorityChange(e.target.value as '' | SupportTicketPriority);
                 }}
               />
             </div>

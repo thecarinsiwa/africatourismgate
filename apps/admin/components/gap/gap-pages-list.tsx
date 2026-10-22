@@ -46,6 +46,7 @@ export function GapPagesList() {
   const tStatus = useTranslations('modules.about.status');
   const tLocale = useTranslations('modules.about.locale');
   const tCommon = useTranslations('modules.common');
+  const tDataTable = useTranslations('modules.common.dataTable');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -124,6 +125,7 @@ export function GapPagesList() {
       {
         id: 'section',
         header: t('columns.section'),
+        meta: { hideOnMobile: true, mobileDetailLabel: t('columns.section') },
         cell: ({ row }) => (
           <span className="text-sm font-medium text-atg-fg">
             {tSections(row.original.sectionKey)}
@@ -134,18 +136,29 @@ export function GapPagesList() {
         accessorKey: 'title',
         header: t('columns.title'),
         cell: ({ row }) => (
-          <div className="max-w-md space-y-1">
-            <p className="font-medium text-atg-fg">{row.original.title}</p>
+          <div className="min-w-0 max-w-md space-y-1">
+            <p className="truncate font-medium text-atg-fg" title={row.original.title}>
+              {row.original.title}
+            </p>
             {row.original.excerpt ? (
-              <p className="line-clamp-2 text-sm text-atg-muted">{row.original.excerpt}</p>
+              <p className="line-clamp-1 text-sm text-atg-muted sm:line-clamp-2">
+                {row.original.excerpt}
+              </p>
             ) : null}
+            <p className="text-xs uppercase text-atg-muted sm:hidden">
+              {tSections(row.original.sectionKey)} · {row.original.locale}
+            </p>
           </div>
         ),
       },
       {
         id: 'locale',
         header: t('columns.locale'),
-        meta: { align: 'center' },
+        meta: {
+          align: 'center',
+          hideOnMobile: true,
+          mobileDetailLabel: t('columns.locale'),
+        },
         cell: ({ row }) => (
           <span className="text-sm uppercase text-atg-muted">{row.original.locale}</span>
         ),
@@ -163,6 +176,7 @@ export function GapPagesList() {
       {
         id: 'publishedAt',
         header: t('columns.publishedAt'),
+        meta: { hideOnMobile: true, mobileDetailLabel: t('columns.publishedAt') },
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm tabular-nums text-atg-muted">
             {formatDateTime(row.original.publishedAt)}
@@ -172,7 +186,7 @@ export function GapPagesList() {
       {
         id: 'actions',
         header: tCommon('columns.actions'),
-        meta: { align: 'right' },
+        meta: { align: 'right', cellClassName: 'w-[7.5rem] sm:w-auto' },
         cell: ({ row }) => (
           <DataTableActions>
             <DataTableActionButton
@@ -332,6 +346,8 @@ export function GapPagesList() {
               emptyVariant={search.trim() || hasActiveFilters ? 'search' : 'default'}
               getRowId={(row) => row.id}
               aria-label={t('tableAria')}
+              expandRowLabel={tDataTable('expandRow')}
+              collapseRowLabel={tDataTable('collapseRow')}
             />
           </Card>
           {state.status === 'ready' ? (

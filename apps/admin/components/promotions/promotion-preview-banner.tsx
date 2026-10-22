@@ -21,6 +21,7 @@ import {
   getPromoValidityBadgeVariant,
   getPromoValidityLabel,
 } from '../../lib/promo-validity';
+import { displayPromotionDescription } from '../../lib/promotions-target-meta';
 
 export type PromotionPreviewBannerProps = {
   name: string;
@@ -34,6 +35,10 @@ export type PromotionPreviewBannerProps = {
   active?: boolean;
   redemptionCount?: number;
   maxRedemptions?: number | null;
+  /** Libellé d’audience / cible affiché sous la description. */
+  targetLabel?: string | null;
+  /** Code promo suggéré (campagne ≠ code : affiché à titre indicatif). */
+  suggestedCode?: string | null;
   /** Version compacte pour la liste ou les espaces restreints. */
   compact?: boolean;
   className?: string;
@@ -51,6 +56,8 @@ export function PromotionPreviewBanner({
   active = true,
   redemptionCount,
   maxRedemptions,
+  targetLabel,
+  suggestedCode,
   compact = false,
   className,
 }: PromotionPreviewBannerProps) {
@@ -186,8 +193,19 @@ export function PromotionPreviewBanner({
             </p>
           ) : null}
 
+          {!compact && targetLabel?.trim() ? (
+            <p className="text-xs text-white/75">
+              {t('preview.target', { target: targetLabel.trim() })}
+            </p>
+          ) : null}
+
           <div className="flex flex-wrap items-center gap-1.5 gap-y-2 pt-0.5">
             {discountBadges}
+            {!compact && suggestedCode?.trim() ? (
+              <span className="inline-flex shrink-0 items-center rounded-full bg-white/10 px-2.5 py-0.5 font-mono text-[11px] font-semibold tracking-wide text-white ring-1 ring-inset ring-white/25">
+                {suggestedCode.trim().toUpperCase()}
+              </span>
+            ) : null}
           </div>
 
           <p
@@ -227,7 +245,7 @@ export function promotionToPreviewProps(promo: {
   const hasDiscount = promo.discountType != null && promo.discountValue != null;
   return {
     name: promo.name,
-    description: promo.description,
+    description: displayPromotionDescription(promo.description),
     coverImageUrl: promo.coverImageUrl ?? null,
     hasDiscount,
     discountType: promo.discountType,

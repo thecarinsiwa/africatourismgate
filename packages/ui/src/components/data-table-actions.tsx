@@ -65,7 +65,7 @@ export const DataTableActionButton = forwardRef<
   const isDanger = dangerActions.has(action);
 
   const classes = cn(
-    'inline-flex h-8 w-8 items-center justify-center rounded-lg transition-colors',
+    'inline-flex h-11 w-11 items-center justify-center rounded-lg transition-colors sm:h-8 sm:w-8',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface',
     isDanger
       ? 'text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40'
@@ -164,5 +164,7 @@ export type DataTableActionsProps = {
 };
 
 export function DataTableActions({ children, className }: DataTableActionsProps) {
-  return <div className={cn('flex justify-end gap-0.5', className)}>{children}</div>;
+  return (
+    <div className={cn('flex justify-end gap-1.5 sm:gap-0.5', className)}>{children}</div>
+  );
 }

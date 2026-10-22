@@ -1,0 +1,59 @@
+{
+  "heading": "Banner de anuncio",
+  "description": "Mensaje que se muestra en la parte superior del sitio público, encima de la barra de contacto y de la navegación principal.",
+  "readOnlyHint": "Puede ver este banner pero no modificarlo (se requiere organization_settings.write).",
+  "denied": "No tiene acceso a este banner (se requiere organization_settings.read).",
+  "fields": {
+    "enabledOn": "Banner visible en el sitio público",
+    "enabledOff": "Banner oculto",
+    "locale": "Idioma en edición",
+    "localeHint": "El francés es obligatorio cuando el banner está activado. Los idiomas vacíos muestran el texto en francés.",
+    "localesFilled": "Idiomas completados: {list}",
+    "text": "Texto del banner",
+    "textPlaceholder": "Ej. Cancelación gratuita en todas las reservas hasta el 31 de diciembre",
+    "ctaLabel": "Texto del enlace (opcional)",
+    "ctaLabelPlaceholder": "Ej. Más información",
+    "ctaUrl": "URL del enlace (opcional)",
+    "ctaUrlPlaceholder": "https://… o /packages",
+    "ctaHint": "Común a todos los idiomas. El enlace solo se muestra en los idiomas que tienen un texto de enlace.",
+    "ctaNewTab": "Abrir el enlace en una nueva pestaña",
+    "color": "Color",
+    "intensity": "Intensidad"
+  },
+  "colors": {
+    "red": "Rojo",
+    "yellow": "Amarillo",
+    "green": "Verde",
+    "blue": "Azul",
+    "gray": "Gris"
+  },
+  "intensities": {
+    "low": {
+      "label": "Suave",
+      "hint": "Fondo claro, texto oscuro — información discreta."
+    },
+    "high": {
+      "label": "Intensa",
+      "hint": "Fondo sólido — mensaje urgente o importante."
+    }
+  },
+  "preview": {
+    "title": "Vista previa",
+    "locale": "Visualización en {locale}",
+    "fallback": "Sin texto en este idioma: se muestra el texto en francés",
+    "disabled": "Banner desactivado — no visible en el sitio",
+    "empty": "Su texto aparecerá aquí"
+  },
+  "validation": {
+    "frenchTextRequired": "El texto en francés es obligatorio para activar el banner.",
+    "textTooLong": "El texto no debe superar {max} caracteres.",
+    "textRequiredForCta": "Añada un texto para este idioma o elimine el texto del enlace.",
+    "ctaLabelTooLong": "El texto del enlace no debe superar {max} caracteres.",
+    "ctaUrlInvalid": "Introduzca una URL http(s) o una ruta interna que empiece por /.",
+    "ctaUrlTooLong": "La URL no debe superar {max} caracteres.",
+    "ctaUrlRequired": "Introduzca la URL del enlace o elimine los textos del enlace."
+  },
+  "saveButton": "Guardar banner",
+  "saving": "Guardando…",
+  "saved": "Banner guardado."
+}

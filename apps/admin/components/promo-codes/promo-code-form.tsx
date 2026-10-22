@@ -67,18 +67,27 @@ type PromoCodeFormProps = {
   mode: 'create' | 'edit';
   promoCodeId?: string;
   initialPromoCode?: PromoCode;
+  /** Prefill code on create (e.g. from promotion form suggestion). */
+  initialCode?: string;
 };
 
-export function PromoCodeForm({ mode, promoCodeId, initialPromoCode }: PromoCodeFormProps) {
+export function PromoCodeForm({
+  mode,
+  promoCodeId,
+  initialPromoCode,
+  initialCode,
+}: PromoCodeFormProps) {
   const { promoCodes: getPromoCodesErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.promoCodes.form');
   const discountTypeLabels = usePromoDiscountTypeLabels();
   const router = useRouter();
   const discountTypeId = useId();
   const activeId = useId();
-  const [values, setValues] = useState<PromoCodeFormValues>(() =>
-    initialPromoCode ? promoCodeToFormValues(initialPromoCode) : defaultValues,
-  );
+  const [values, setValues] = useState<PromoCodeFormValues>(() => {
+    if (initialPromoCode) return promoCodeToFormValues(initialPromoCode);
+    const prefill = initialCode?.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '') ?? '';
+    return prefill ? { ...defaultValues, code: prefill } : defaultValues;
+  });
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<keyof PromoCodeFormValues, string>>
   >({});

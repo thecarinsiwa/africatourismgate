@@ -10,13 +10,16 @@ import {
   TourGuides,
   Users,
 } from '../../../entities/generated';
+import { TripadvisorTerraClient } from '../../integrations/tripadvisor/tripadvisor-terra.client';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { OrganizationSettingsModule } from '../organization-settings/organization-settings.module';
 import { ReviewsController } from './reviews.controller';
 import { ReviewsService } from './reviews.service';
 
 @Module({
   imports: [
     NotificationsModule,
+    OrganizationSettingsModule,
     TypeOrmModule.forFeature([
       Reviews,
       Bookings,
@@ -29,7 +32,7 @@ import { ReviewsService } from './reviews.service';
     ]),
   ],
   controllers: [ReviewsController],
-  providers: [ReviewsService],
+  providers: [ReviewsService, TripadvisorTerraClient],
   exports: [ReviewsService],
 })
 export class ReviewsModule {}

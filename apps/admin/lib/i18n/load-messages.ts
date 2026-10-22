@@ -29,6 +29,8 @@ export const ADMIN_MODULE_NAMES = [
   'tourGuides',
   'gap',
   'heroSlides',
+  'announcementBanner',
+  'homepageReviews',
   'analytics',
   'treasury',
   'system',

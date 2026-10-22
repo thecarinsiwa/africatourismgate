@@ -12,6 +12,11 @@
     "enableLight": "Enable light mode",
     "enableDark": "Enable dark mode"
   },
+  "announcement": {
+    "regionLabel": "Announcement",
+    "dismiss": "Dismiss announcement",
+    "opensInNewTab": "opens in a new tab"
+  },
   "connectionLock": {
     "title": "Connection interrupted",
     "subtitle": "Could not reach the server. Check your network connection.",
@@ -253,7 +258,9 @@
     "backToBlog": "Back to blog",
     "publishedOn": "Published on",
     "breadcrumbHome": "Home",
-    "breadcrumbBlog": "Blog"
+    "breadcrumbBlog": "Blog",
+    "detailMetaFallbackTitle": "Blog article",
+    "detailMetaFallbackDescription": "Discover our articles about travel in Africa with Africa Tourism Gate."
   },
   "support": {
     "metaTitle": "Help centre",
@@ -461,7 +468,26 @@
       "contact": "Contact us"
     },
     "team": {
-      "empty": "No team members published yet."
+      "empty": "No team members published yet.",
+      "readMore": "Read more",
+      "readLess": "Show less",
+      "viewProfile": "View Profile",
+      "viewProfileAria": "View {name}'s profile",
+      "backToTeam": "Back to Team",
+      "profile": {
+        "photoAlt": "Portrait of {name}",
+        "aboutHeading": "About {name}",
+        "noBio": "This member's biography is not available yet.",
+        "contactHeading": "Contact",
+        "email": "Email",
+        "linkedin": "LinkedIn",
+        "x": "X (Twitter)",
+        "facebook": "Facebook",
+        "instagram": "Instagram",
+        "externalLinkHint": "(opens in a new tab)",
+        "notFoundTitle": "Profile not found",
+        "notFoundHint": "This team member does not exist or is no longer published."
+      }
     },
     "timeline": {
       "intro": "Explore the key milestones that shaped Africa Tourism Gate, from our beginnings to our vision for the future.",
@@ -819,6 +845,10 @@
     "carouselAria": "Customer reviews carousel",
     "prev": "Previous review",
     "next": "Next review",
+    "badges": {
+      "platform": "Verified booking",
+      "tripadvisor": "Tripadvisor"
+    },
     "items": [
       {
         "rating": 5,
@@ -878,7 +908,30 @@
     "notFoundDescription": "This partner does not exist or is no longer available.",
     "backToPartners": "Back to partners",
     "seeAll": "See all",
-    "resultItem": "partner"
+    "resultItem": "partner",
+    "offeredBy": "Activities offered by",
+    "sortRating": "Top rated",
+    "ratingSummary": "{rating}/5 · {count, plural, one {# review} other {# reviews}}",
+    "ratingAria": "Rated {rating} out of 5",
+    "noRating": "No reviews yet",
+    "resultsLine": "Activity partners",
+    "countLine": "{count, plural, =0 {No partners} one {# partner} other {# partners}}",
+    "sortLabel": "Sort by",
+    "sortNameAsc": "Name (A–Z)",
+    "sortNameDesc": "Name (Z–A)",
+    "sortActivities": "Most activities",
+    "viewModeLabel": "Display mode",
+    "viewGrid": "Switch to grid view",
+    "viewList": "Switch to list view",
+    "viewTable": "Switch to table view",
+    "view": "View",
+    "viewPartnerAria": "View partner {name}",
+    "tableCaption": "Activity partners comparison",
+    "tableName": "Partner",
+    "tableCountry": "Country",
+    "tableActivities": "Activities",
+    "tableRating": "Rating",
+    "tableActions": "Actions"
   },
   "gapImpact": {
     "title": "Our impact",
@@ -1357,7 +1410,16 @@
     "itineraryMapAria": "Activity itinerary map",
     "itineraryStopLabel": "Coordinates",
     "itineraryStopDuration": "Duration",
-    "galleryCounter": "Photo {current} of {total}"
+    "galleryCounter": "Photo {current} of {total}",
+    "viewModeLabel": "Display mode",
+    "viewGrid": "Switch to grid view",
+    "viewList": "Switch to list view",
+    "viewTable": "Switch to table view",
+    "tableCaption": "Activities comparison",
+    "tableName": "Activity",
+    "tablePrice": "Price",
+    "tableAvailability": "Availability",
+    "tableActions": "Actions"
   },
   "packages": {
     "metaTitle": "Combined packages in Africa",

@@ -1,13 +1,15 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { PublicTeamMember } from '@africatourismgate/types';
 import { Spinner } from '@africatourismgate/ui';
+import { teamMemberPath } from '../../lib/about/routes';
 import { browseTeamMembersForLocale } from '../../lib/api/public';
 import { useScrollAnimation } from '../home/use-scroll-animation';
-import { RichText } from '../shared/rich-text';
+import { stripHtml } from '../shared/rich-text';
 
 export function AboutTeamPageContent() {
   const locale = useLocale();
@@ -68,42 +70,93 @@ export function AboutTeamPageContent() {
         </p>
       ) : null}
 
-      <ul className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-        {members.map((member, index) => (
-          <li
-            key={member.id}
-            className="rounded-xl border border-atg-border bg-atg-elevated/50 p-6 text-center transition-shadow hover:shadow-md"
-            style={{ animationDelay: `${index * 80}ms` }}
-          >
-            {member.photoUrl ? (
-              <Image
-                src={member.photoUrl}
-                alt=""
-                width={120}
-                height={120}
-                unoptimized
-                className="mx-auto mb-4 h-28 w-28 rounded-full border border-atg-border object-cover"
-              />
-            ) : (
-              <div
-                className="mx-auto mb-4 flex h-28 w-28 items-center justify-center rounded-full border border-atg-border bg-atg-surface text-2xl font-bold text-primary"
-                aria-hidden
-              >
-                {member.name.charAt(0)}
-              </div>
-            )}
-            <h2 className="text-lg font-semibold text-atg-fg">{member.name}</h2>
-            <p className="mt-1 text-sm font-medium text-primary">{member.role}</p>
-            {member.bio ? (
-              <RichText
-                content={member.bio}
-                className="mt-3 text-left text-sm leading-relaxed text-atg-muted"
-                fallbackClassName="mt-3 text-sm leading-relaxed text-atg-muted"
-              />
-            ) : null}
+      <ul className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,300px),1fr))] gap-8">
+        {members.map((member) => (
+          <li key={member.id} className="flex">
+            <TeamMemberCard member={member} />
           </li>
         ))}
       </ul>
     </div>
+  );
+}
+
+function TeamMemberCard({ member }: { member: PublicTeamMember }) {
+  const t = useTranslations('about.team');
+  const bio = stripHtml(member.bio);
+  const bioRef = useRef<HTMLParagraphElement>(null);
+  const [expanded, setExpanded] = useState(false);
+  const [overflowing, setOverflowing] = useState(false);
+  const profileHref = teamMemberPath(member.slug);
+
+  useLayoutEffect(() => {
+    const element = bioRef.current;
+    if (!element || expanded) return;
+    const measure = () => setOverflowing(element.scrollHeight > element.clientHeight + 1);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [bio, expanded]);
+
+  return (
+    <article className="flex w-full flex-col rounded-xl border border-atg-border bg-atg-elevated p-6 text-center shadow-sm transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-[5px] hover:shadow-xl focus-within:-translate-y-[5px] focus-within:shadow-xl motion-reduce:transition-none motion-reduce:hover:translate-y-0 dark:shadow-black/40">
+      <Link href={profileHref} tabIndex={-1} aria-hidden className="mx-auto mb-4 block">
+        {member.photoUrl ? (
+          <Image
+            src={member.photoUrl}
+            alt=""
+            width={128}
+            height={128}
+            unoptimized
+            className="h-28 w-28 rounded-full border-2 border-atg-border object-cover"
+          />
+        ) : (
+          <span className="flex h-28 w-28 items-center justify-center rounded-full border-2 border-atg-border bg-atg-surface text-3xl font-bold text-primary dark:text-emerald-300">
+            {member.name.charAt(0)}
+          </span>
+        )}
+      </Link>
+
+      <h2 className="text-lg font-semibold text-atg-fg">
+        <Link href={profileHref} className="hover:text-primary dark:hover:text-emerald-300">
+          {member.name}
+        </Link>
+      </h2>
+      <p className="mt-1 text-sm font-medium text-primary dark:text-emerald-300">{member.role}</p>
+
+      {bio ? (
+        <div className="mt-3 text-left">
+          <p
+            ref={bioRef}
+            id={`team-bio-${member.id}`}
+            className={`text-sm leading-relaxed text-atg-muted ${expanded ? '' : 'line-clamp-3'}`}
+          >
+            {bio}
+          </p>
+          {overflowing || expanded ? (
+            <button
+              type="button"
+              onClick={() => setExpanded((value) => !value)}
+              aria-expanded={expanded}
+              aria-controls={`team-bio-${member.id}`}
+              className="mt-1 text-sm font-medium text-primary underline-offset-2 hover:underline dark:text-emerald-300"
+            >
+              {expanded ? t('readLess') : t('readMore')}
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+
+      <div className="mt-auto pt-5">
+        <Link
+          href={profileHref}
+          aria-label={t('viewProfileAria', { name: member.name })}
+          className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-elevated"
+        >
+          {t('viewProfile')}
+        </Link>
+      </div>
+    </article>
   );
 }

@@ -3,11 +3,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { ABOUT_NAV_ITEMS, normalizeAboutPathname } from '../../lib/about/routes';
+import { ABOUT_NAV_ITEMS, findAboutNavItem } from '../../lib/about/routes';
 import { cn } from '@africatourismgate/ui';
 
 export function AboutSidebar() {
-  const pathname = normalizeAboutPathname(usePathname());
+  const activeHref = findAboutNavItem(usePathname())?.href;
   const t = useTranslations('about');
 
   return (
@@ -16,9 +16,9 @@ export function AboutSidebar() {
         className="hidden shrink-0 lg:block lg:w-56 xl:w-64"
         aria-label={t('sidebarAria')}
       >
-        <ul className="sticky top-24 space-y-1">
+        <ul className="sticky top-[calc(var(--atg-header-h,7.5rem)+20px)] space-y-1">
           {ABOUT_NAV_ITEMS.map((item) => {
-            const active = pathname === item.href;
+            const active = activeHref === item.href;
             return (
               <li key={item.href}>
                 <Link
@@ -26,7 +26,7 @@ export function AboutSidebar() {
                   className={cn(
                     'block rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
                     active
-                      ? 'bg-primary/10 text-primary'
+                      ? 'bg-primary/10 text-primary dark:bg-primary/25 dark:text-emerald-300'
                       : 'text-atg-muted hover:bg-atg-elevated hover:text-atg-fg',
                   )}
                   aria-current={active ? 'page' : undefined}
@@ -44,7 +44,7 @@ export function AboutSidebar() {
         aria-label={t('sidebarAria')}
       >
         {ABOUT_NAV_ITEMS.map((item) => {
-          const active = pathname === item.href;
+          const active = activeHref === item.href;
           return (
             <Link
               key={item.href}

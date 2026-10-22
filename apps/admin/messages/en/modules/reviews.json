@@ -4,6 +4,10 @@
     "approved": "Approved",
     "hidden": "Hidden"
   },
+  "source": {
+    "platform": "Platform",
+    "tripadvisor": "Tripadvisor"
+  },
   "actions": {
     "approve": "Approve",
     "hide": "Hide",
@@ -35,6 +39,7 @@
       "comment": "Comment"
     },
     "fields": {
+      "source": "Source",
       "author": "Author",
       "property": "Property",
       "entity": "Linked entity",
@@ -49,7 +54,8 @@
       "cruise": "Cruise",
       "activity": "Activity",
       "booking": "Booking",
-      "tour_guide": "Tour guide"
+      "tour_guide": "Tour guide",
+      "tripadvisor": "Tripadvisor"
     },
     "viewBooking": "View booking",
     "noComment": "No comment provided.",
@@ -58,15 +64,16 @@
   "list": {
     "columns": {
       "author": "Author",
-      "property": "Property"
+      "property": "Property",
+      "source": "Source"
     },
     "filters": {
       "apply": "Apply filters"
     },
     "empty": {
       "default": {
-        "title": "No pending reviews",
-        "description": "The moderation queue is empty. New customer reviews will appear here.",
+        "title": "No reviews",
+        "description": "Customer and Tripadvisor reviews will appear here. Use filters to narrow by status or source.",
         "tableMessage": "No reviews yet."
       },
       "filtered": {
@@ -76,5 +83,75 @@
       }
     },
     "ariaLabel": "Reviews moderation list"
+  },
+  "createTripadvisor": {
+    "heading": "New Tripadvisor review",
+    "description": "Manually enter a Tripadvisor review to show in the “Reviews from our clients” section on the homepage.",
+    "denied": "You do not have permission to create a review (reviews.write required).",
+    "fields": {
+      "authorName": "Author name",
+      "authorNamePlaceholder": "e.g. Marie Dupont",
+      "rating": "Rating",
+      "title": "Title (optional)",
+      "titlePlaceholder": "e.g. Unforgettable stay",
+      "titleHint": "Shown above the review on the public site.",
+      "body": "Comment",
+      "bodyPlaceholder": "Review text…",
+      "status": "Status",
+      "statusHint": "Approved: visible on the homepage if client-review settings allow it."
+    },
+    "validation": {
+      "authorNameRequired": "Enter the author name.",
+      "authorNameTooLong": "Name must not exceed 120 characters.",
+      "ratingRequired": "Choose a rating between 1 and 5.",
+      "bodyRequired": "Comment is required.",
+      "titleTooLong": "Title must not exceed 180 characters."
+    },
+    "saveButton": "Create review",
+    "saving": "Creating…",
+    "toast": {
+      "created": {
+        "title": "Tripadvisor review created",
+        "message": "The review has been saved."
+      }
+    }
+  },
+  "tripadvisorSync": {
+    "heading": "Tripadvisor import (Terra)",
+    "description": "Configure your establishment listing and import reviews via the Tripadvisor Terra API.",
+    "locationIdHelp": "The Location ID is in the Tripadvisor URL after “-d” (e.g. …-d12345678.html → 12345678).",
+    "fields": {
+      "locationId": "Location ID",
+      "locationIdPlaceholder": "e.g. 12345678",
+      "apiKey": "Terra API key",
+      "apiKeyPlaceholder": "Paste your API key",
+      "apiKeyPlaceholderConfigured": "Key saved ({masked}) — leave blank to keep it",
+      "apiKeyKeepHint": "Leave blank to keep the key already stored.",
+      "language": "Review language",
+      "languagePlaceholder": "primary",
+      "languageHint": "Terra codes: primary (original language), fr, en, etc."
+    },
+    "saveButton": "Save",
+    "saving": "Saving…",
+    "syncButton": "Sync",
+    "syncing": "Syncing…",
+    "readOnlyHint": "Read-only: organization_settings.write is required to edit.",
+    "settingsDeniedHint": "You can still sync with credentials already configured (settings read not allowed).",
+    "toast": {
+      "saved": {
+        "title": "Settings saved",
+        "message": "Tripadvisor credentials were updated."
+      },
+      "saveFailed": {
+        "title": "Could not save"
+      },
+      "synced": {
+        "title": "Sync complete",
+        "message": "{imported} imported, {updated} updated, {skipped} skipped ({pages} page(s))."
+      },
+      "syncFailed": {
+        "title": "Sync failed"
+      }
+    }
   }
 }

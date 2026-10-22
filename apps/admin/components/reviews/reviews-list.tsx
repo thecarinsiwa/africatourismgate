@@ -18,25 +18,39 @@ import {
   useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
-import type { AdminReviewListItem, Property, ReviewStatus } from '@africatourismgate/types';
+import type {
+  AdminReviewListItem,
+  Property,
+  ReviewSource,
+  ReviewStatus,
+} from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { usePermissions } from '../../lib/auth/use-permissions';
 import {
   useFormatDateTime,
+  useReviewSourceFilterOptions,
+  useReviewSourceLabels,
   useReviewStatusFilterOptions,
   useReviewStatusLabels,
 } from '../../lib/i18n/use-module-labels';
 import {
   formatReviewPreview,
+  reviewSourceVariants,
   reviewStatusVariants,
 } from '../../lib/review-display';
 
 const PAGE_SIZE = 20;
-const DEFAULT_STATUS: ReviewStatus = 'pending';
+/** Show all statuses by default so approved Tripadvisor entries and moderated reviews are visible. */
+const DEFAULT_STATUS: '' | ReviewStatus = '';
 
-export function ReviewsList() {
+type ReviewsListProps = {
+  /** Bump after Tripadvisor sync to reload the table. */
+  reloadToken?: number;
+};
+
+export function ReviewsList({ reloadToken = 0 }: ReviewsListProps) {
   const { reviews: getReviewsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.reviews');
   const tList = useTranslations('modules.reviews.list');
@@ -47,6 +61,8 @@ export function ReviewsList() {
   const formatDateTime = useFormatDateTime();
   const statusLabels = useReviewStatusLabels();
   const statusOptions = useReviewStatusFilterOptions();
+  const sourceLabels = useReviewSourceLabels();
+  const sourceOptions = useReviewSourceFilterOptions();
   const { hasPermission, isSuperAdmin } = usePermissions();
   const canWrite = isSuperAdmin || hasPermission('reviews.write');
   const { toast } = useToast();
@@ -55,6 +71,7 @@ export function ReviewsList() {
   const [ratingFilter, setRatingFilter] = useState('');
   const [propertyFilter, setPropertyFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState<'' | ReviewStatus>(DEFAULT_STATUS);
+  const [sourceFilter, setSourceFilter] = useState<'' | ReviewSource>('');
   const [properties, setProperties] = useState<Property[]>([]);
   const [actionError, setActionError] = useState<string | null>(null);
   const [actingId, setActingId] = useState<string | null>(null);
@@ -90,6 +107,7 @@ export function ReviewsList() {
         rating: ratingFilter ? Number(ratingFilter) : undefined,
         propertyId: propertyFilter || undefined,
         status: statusFilter || undefined,
+        source: sourceFilter || undefined,
       });
       setState({
         status: 'ready',
@@ -100,11 +118,11 @@ export function ReviewsList() {
     } catch (error) {
       setState({ status: 'error', message: getReviewsErrorMessage(error) });
     }
-  }, [page, ratingFilter, propertyFilter, statusFilter, getReviewsErrorMessage]);
+  }, [page, ratingFilter, propertyFilter, statusFilter, sourceFilter, getReviewsErrorMessage]);
 
   useEffect(() => {
     void load();
-  }, [load]);
+  }, [load, reloadToken]);
 
   const runAction = useCallback(
     async (
@@ -175,12 +193,14 @@ export function ReviewsList() {
     ratingFilter !== '',
     propertyFilter !== '',
     statusFilter !== DEFAULT_STATUS,
+    sourceFilter !== '',
   ].filter(Boolean).length;
 
   const handleClearFilters = useCallback(() => {
     setRatingFilter('');
     setPropertyFilter('');
     setStatusFilter(DEFAULT_STATUS);
+    setSourceFilter('');
     setPage(1);
   }, []);
 
@@ -193,6 +213,19 @@ export function ReviewsList() {
         cell: ({ row }) => (
           <StarRatingDisplay value={row.original.rating} size="sm" showValue />
         ),
+      },
+      {
+        accessorKey: 'source',
+        header: tList('columns.source'),
+        meta: { align: 'center' },
+        cell: ({ row }) => {
+          const source = row.original.source ?? 'platform';
+          return (
+            <DataTableBadge variant={reviewSourceVariants[source]}>
+              {sourceLabels[source]}
+            </DataTableBadge>
+          );
+        },
       },
       {
         id: 'author',
@@ -308,6 +341,7 @@ export function ReviewsList() {
       emptyDash,
       formatDateTime,
       runAction,
+      sourceLabels,
       statusLabels,
       t,
       tColumns,
@@ -361,6 +395,17 @@ export function ReviewsList() {
                 options={statusOptions}
                 onChange={(e) => {
                   setStatusFilter(e.target.value as '' | ReviewStatus);
+                  setPage(1);
+                }}
+              />
+            </div>
+            <div className="w-full sm:w-44">
+              <Select
+                label={tList('columns.source')}
+                value={sourceFilter}
+                options={sourceOptions}
+                onChange={(e) => {
+                  setSourceFilter(e.target.value as '' | ReviewSource);
                   setPage(1);
                 }}
               />

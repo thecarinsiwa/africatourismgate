@@ -9,9 +9,23 @@
  * See `apps/web/README.md` § SEO metadata.
  */
 import type { Metadata } from 'next';
+import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import { getLocale, getTranslations } from 'next-intl/server';
 
 export const SEO_LOCALES = ['fr', 'en', 'es'] as const;
+
+/** Recommended Open Graph / Twitter large-card dimensions. */
+export const OG_IMAGE_WIDTH = 1200;
+export const OG_IMAGE_HEIGHT = 630;
+
+export type OgImageInput =
+  | string
+  | {
+      url: string;
+      width?: number;
+      height?: number;
+      alt?: string;
+    };
 
 export type ListingMetaNamespace =
   | 'hotels'
@@ -49,10 +63,53 @@ export type BuildPageMetadataInput = {
   description: string;
   path: string;
   locale?: string;
-  images?: string[];
+  images?: OgImageInput[];
   robots?: Metadata['robots'];
   twitterCard?: 'summary' | 'summary_large_image';
+  openGraphType?: 'website' | 'article';
+  publishedTime?: string | null;
 };
+
+type ResolvedOgImage = {
+  url: string;
+  width: number;
+  height: number;
+  alt?: string;
+};
+
+function normalizeOgImages(images?: OgImageInput[]): ResolvedOgImage[] | undefined {
+  if (!images?.length) return undefined;
+  const normalized: ResolvedOgImage[] = [];
+  for (const image of images) {
+    if (typeof image === 'string') {
+      const url = resolveOgImageUrl(image);
+      if (url) {
+        normalized.push({ url, width: OG_IMAGE_WIDTH, height: OG_IMAGE_HEIGHT });
+      }
+      continue;
+    }
+    const url = resolveOgImageUrl(image.url);
+    if (!url) continue;
+    normalized.push({
+      url,
+      width: image.width ?? OG_IMAGE_WIDTH,
+      height: image.height ?? OG_IMAGE_HEIGHT,
+      ...(image.alt ? { alt: image.alt } : {}),
+    });
+  }
+  return normalized.length > 0 ? normalized : undefined;
+}
+
+/**
+ * Absolute HTTPS URL suitable for social cards.
+ * Rejects favicons (.ico) — crawlers render them as tiny / broken previews.
+ */
+export function resolveOgImageUrl(url: string | null | undefined): string | null {
+  const absolute = normalizeBrandingAssetUrl(url);
+  if (!absolute) return null;
+  if (/\.ico(?:\?|#|$)/i.test(absolute)) return null;
+  return absolute;
+}
 
 /** Shared title / description / OG / alternates for App Router pages. */
 export function buildPageMetadata(input: BuildPageMetadataInput): Metadata {
@@ -64,7 +121,12 @@ export function buildPageMetadata(input: BuildPageMetadataInput): Metadata {
     images,
     robots,
     twitterCard = 'summary',
+    openGraphType = 'website',
+    publishedTime,
   } = input;
+
+  const ogImages = normalizeOgImages(images);
+  const twitterImages = ogImages?.map((image) => image.url);
 
   return {
     title,
@@ -77,15 +139,18 @@ export function buildPageMetadata(input: BuildPageMetadataInput): Metadata {
       title,
       description,
       url: path,
-      type: 'website',
+      type: openGraphType,
       ...(locale ? { locale: openGraphLocale(locale) } : {}),
-      ...(images?.length ? { images } : {}),
+      ...(ogImages ? { images: ogImages } : {}),
+      ...(openGraphType === 'article' && publishedTime
+        ? { publishedTime }
+        : {}),
     },
     twitter: {
       card: twitterCard,
       title,
       description,
-      ...(images?.length ? { images } : {}),
+      ...(twitterImages?.length ? { images: twitterImages } : {}),
     },
     ...(robots ? { robots } : {}),
   };
@@ -154,9 +219,13 @@ export function pickOgImages(
   images?: ReadonlyArray<{ url?: string | null }> | null,
   coverUrl?: string | null,
 ): string[] | undefined {
-  if (coverUrl?.trim()) return [coverUrl.trim()];
-  const first = images?.find((image) => image.url?.trim())?.url?.trim();
-  return first ? [first] : undefined;
+  const cover = resolveOgImageUrl(coverUrl);
+  if (cover) return [cover];
+  for (const image of images ?? []) {
+    const resolved = resolveOgImageUrl(image.url);
+    if (resolved) return [resolved];
+  }
+  return undefined;
 }
 
 export function truncateMetaDescription(text: string, max = 160): string {

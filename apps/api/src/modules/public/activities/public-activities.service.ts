@@ -26,7 +26,7 @@ import { ActivitySearchQueryDto } from './dto/activity-search-query.dto';
 import { ActivitySearchResultDto } from './dto/activity-search-result.dto';
 import {
   PublicActivityProviderDetailDto,
-  PublicActivityProviderDto,
+  PublicActivityProviderListItemDto,
 } from './dto/public-activity-provider.dto';
 import { parseDateOnly } from './activity-dates.util';
 
@@ -86,16 +86,70 @@ export class PublicActivitiesService {
   }
 
   /** Active activity partners for the public partners listing / home strip. */
-  async listProviders(): Promise<PublicActivityProviderDto[]> {
+  async listProviders(): Promise<PublicActivityProviderListItemDto[]> {
     const rows = await this.providersRepository.find({
       order: { name: 'ASC' },
     });
+    const providers = rows.filter((p) => !p.deletedAt);
+    if (!providers.length) {
+      return [];
+    }
 
-    return rows.map((provider) => ({
-      id: provider.id,
-      name: provider.name,
-      logoUrl: provider.logoUrl?.trim() || null,
-    }));
+    const destIds = [...new Set(providers.map((p) => p.destinationId))];
+    const destinations = await this.destinationsRepository.find({
+      where: { id: In(destIds) },
+    });
+    const destinationById = new Map(
+      destinations.filter((d) => !d.deletedAt).map((d) => [d.id, d] as const),
+    );
+
+    const providerIds = providers.map((p) => p.id);
+    const activities = await this.activitiesRepository.find({
+      select: { id: true, providerId: true, deletedAt: true },
+      where: { providerId: In(providerIds) },
+    });
+    const activeActivities = activities.filter((a) => !a.deletedAt);
+
+    const activitiesCountByProviderId = new Map<string, number>();
+    const providerIdByActivityId = new Map<string, string>();
+    for (const activity of activeActivities) {
+      providerIdByActivityId.set(activity.id, activity.providerId);
+      activitiesCountByProviderId.set(
+        activity.providerId,
+        (activitiesCountByProviderId.get(activity.providerId) ?? 0) + 1,
+      );
+    }
+
+    const reviewSummaryByActivityId = await this.loadReviewSummariesByActivityIds(
+      activeActivities.map((a) => a.id),
+    );
+    const ratingTotals = new Map<string, { weighted: number; count: number }>();
+    for (const [activityId, summary] of reviewSummaryByActivityId) {
+      const providerId = providerIdByActivityId.get(activityId);
+      if (!providerId) continue;
+      const totals = ratingTotals.get(providerId) ?? { weighted: 0, count: 0 };
+      totals.weighted += summary.averageRating * summary.reviewCount;
+      totals.count += summary.reviewCount;
+      ratingTotals.set(providerId, totals);
+    }
+
+    return providers.map((provider) => {
+      const destination = destinationById.get(provider.destinationId);
+      const totals = ratingTotals.get(provider.id);
+      return {
+        id: provider.id,
+        name: provider.name,
+        logoUrl: provider.logoUrl?.trim() || null,
+        destinationName: destination?.name ?? null,
+        countryCode: destination?.countryCode ?? null,
+        activitiesCount: activitiesCountByProviderId.get(provider.id) ?? 0,
+        averageRating:
+          totals && totals.count > 0
+            ? Math.round((totals.weighted / totals.count) * 10) / 10
+            : null,
+        reviewCount: totals?.count ?? 0,
+      };
+    });
   }
 
   async getProviderById(id: string): Promise<PublicActivityProviderDetailDto> {

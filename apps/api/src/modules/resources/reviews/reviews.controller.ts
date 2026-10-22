@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   Query,
 } from '@nestjs/common';
 import {
@@ -17,7 +18,9 @@ import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { AdminReviewDetailDto } from './dto/admin-review-detail.dto';
 import { AdminReviewListItemDto } from './dto/admin-review-list-item.dto';
+import { CreateAdminTripadvisorReviewDto } from './dto/create-admin-tripadvisor-review.dto';
 import { ReviewsListQueryDto } from './dto/reviews-list-query.dto';
+import { SyncTripadvisorReviewsResultDto } from './dto/sync-tripadvisor-reviews-result.dto';
 import { UpdateReviewStatusDto } from './dto/update-review-status.dto';
 import { ReviewsService } from './reviews.service';
 
@@ -34,6 +37,30 @@ export class ReviewsController {
     @Query() query: ReviewsListQueryDto,
   ): Promise<{ data: AdminReviewListItemDto[]; meta: { total: number; page: number; limit: number; totalPages: number } }> {
     return this.service.listForAdmin(query);
+  }
+
+  @Post('tripadvisor')
+  @RequirePermissions('reviews.write')
+  @ApiOperation({
+    summary: 'Create a manual Tripadvisor review for the homepage carousel',
+  })
+  createTripadvisor(
+    @Body() dto: CreateAdminTripadvisorReviewDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<AdminReviewDetailDto> {
+    return this.service.createTripadvisorReview(dto, user.id);
+  }
+
+  @Post('tripadvisor/sync')
+  @RequirePermissions('reviews.write')
+  @ApiOperation({
+    summary:
+      'Import / upsert location reviews from Tripadvisor Terra using site/tripadvisor_sync settings',
+  })
+  syncTripadvisor(
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<SyncTripadvisorReviewsResultDto> {
+    return this.service.syncFromTripadvisor(user.id);
   }
 
   @Get(':id')

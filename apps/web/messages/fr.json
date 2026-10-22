@@ -12,6 +12,11 @@
     "enableLight": "Activer le mode clair",
     "enableDark": "Activer le mode sombre"
   },
+  "announcement": {
+    "regionLabel": "Annonce",
+    "dismiss": "Fermer l’annonce",
+    "opensInNewTab": "s’ouvre dans un nouvel onglet"
+  },
   "connectionLock": {
     "title": "Connexion interrompue",
     "subtitle": "Impossible de joindre le serveur. Vérifiez votre connexion réseau.",
@@ -253,7 +258,9 @@
     "backToBlog": "Retour au blog",
     "publishedOn": "Publié le",
     "breadcrumbHome": "Accueil",
-    "breadcrumbBlog": "Blog"
+    "breadcrumbBlog": "Blog",
+    "detailMetaFallbackTitle": "Article du blog",
+    "detailMetaFallbackDescription": "Découvrez nos articles sur le tourisme en Afrique avec Africa Tourism Gate."
   },
   "support": {
     "metaTitle": "Centre d'aide",
@@ -461,7 +468,26 @@
       "contact": "Nous contacter"
     },
     "team": {
-      "empty": "Aucun membre de l'équipe publié pour le moment."
+      "empty": "Aucun membre de l'équipe publié pour le moment.",
+      "readMore": "Lire la suite",
+      "readLess": "Réduire",
+      "viewProfile": "Voir le profil",
+      "viewProfileAria": "Voir le profil de {name}",
+      "backToTeam": "Retour à l'équipe",
+      "profile": {
+        "photoAlt": "Portrait de {name}",
+        "aboutHeading": "À propos de {name}",
+        "noBio": "La biographie de ce membre n'est pas encore disponible.",
+        "contactHeading": "Contact",
+        "email": "E-mail",
+        "linkedin": "LinkedIn",
+        "x": "X (Twitter)",
+        "facebook": "Facebook",
+        "instagram": "Instagram",
+        "externalLinkHint": "(ouvre un nouvel onglet)",
+        "notFoundTitle": "Profil introuvable",
+        "notFoundHint": "Ce membre de l'équipe n'existe pas ou n'est plus publié."
+      }
     },
     "timeline": {
       "intro": "Parcourez les étapes clés qui ont façonné Africa Tourism Gate, de la genèse du projet à notre vision pour l'avenir.",
@@ -819,6 +845,10 @@
     "carouselAria": "Carrousel des avis clients",
     "prev": "Avis précédent",
     "next": "Avis suivant",
+    "badges": {
+      "platform": "Réservation vérifiée",
+      "tripadvisor": "Tripadvisor"
+    },
     "items": [
       {
         "rating": 5,
@@ -878,7 +908,30 @@
     "notFoundDescription": "Ce partenaire n'existe pas ou n'est plus disponible.",
     "backToPartners": "Retour aux partenaires",
     "seeAll": "Voir tous",
-    "resultItem": "partenaire"
+    "resultItem": "partenaire",
+    "offeredBy": "Activités proposées par",
+    "sortRating": "Mieux notées",
+    "ratingSummary": "{rating}/5 · {count, plural, one {# avis} other {# avis}}",
+    "ratingAria": "Noté {rating} sur 5",
+    "noRating": "Pas encore d’avis",
+    "resultsLine": "Partenaires d’activités",
+    "countLine": "{count, plural, =0 {Aucun partenaire} one {# partenaire} other {# partenaires}}",
+    "sortLabel": "Trier par",
+    "sortNameAsc": "Nom (A–Z)",
+    "sortNameDesc": "Nom (Z–A)",
+    "sortActivities": "Plus d’activités",
+    "viewModeLabel": "Mode d’affichage",
+    "viewGrid": "Afficher en grille",
+    "viewList": "Afficher en liste",
+    "viewTable": "Afficher en tableau",
+    "view": "Voir",
+    "viewPartnerAria": "Voir le partenaire {name}",
+    "tableCaption": "Comparatif des partenaires d’activités",
+    "tableName": "Partenaire",
+    "tableCountry": "Pays",
+    "tableActivities": "Activités",
+    "tableRating": "Note",
+    "tableActions": "Actions"
   },
   "gapImpact": {
     "title": "Notre impact",
@@ -1357,7 +1410,16 @@
     "itineraryMapAria": "Carte de l'itinéraire de l'activité",
     "itineraryStopLabel": "Coordonnées",
     "itineraryStopDuration": "Durée",
-    "galleryCounter": "Photo {current} sur {total}"
+    "galleryCounter": "Photo {current} sur {total}",
+    "viewModeLabel": "Mode d’affichage",
+    "viewGrid": "Afficher en grille",
+    "viewList": "Afficher en liste",
+    "viewTable": "Afficher en tableau",
+    "tableCaption": "Comparatif des activités",
+    "tableName": "Activité",
+    "tablePrice": "Prix",
+    "tableAvailability": "Disponibilité",
+    "tableActions": "Actions"
   },
   "packages": {
     "metaTitle": "Forfaits combinés en Afrique",
