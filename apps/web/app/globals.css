@@ -51,6 +51,35 @@
   animation: panel-slide-down 0.2s ease-out;
 }
 
+/* ── Announcement banner marquee (overflowing text) ──── */
+@keyframes atg-banner-marquee {
+  0%,
+  12% {
+    transform: translateX(0);
+  }
+  45%,
+  57% {
+    transform: translateX(calc(-1 * var(--atg-banner-overflow, 0px)));
+  }
+  90%,
+  100% {
+    transform: translateX(0);
+  }
+}
+.atg-banner-marquee {
+  animation: atg-banner-marquee var(--atg-banner-duration, 12s) ease-in-out infinite;
+}
+.atg-banner-marquee:hover,
+.atg-banner-marquee:focus-within {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .atg-banner-marquee {
+    animation: none;
+    transform: none;
+  }
+}
+
 /* ── Fade-in on scroll / mount ────────────────────────── */
 @keyframes fade-in-up {
   from { opacity: 0; transform: translateY(24px); }

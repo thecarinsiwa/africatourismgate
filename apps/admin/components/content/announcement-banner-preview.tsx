@@ -65,20 +65,22 @@ export function AnnouncementBannerPreview({
       className={`overflow-hidden rounded-lg border border-atg-border ${ANNOUNCEMENT_BANNER_PREVIEW_CLASSES[color][intensity]}`}
     >
       <div className="flex items-center gap-2 px-4 py-2">
-        <p className="min-w-0 flex-1 truncate text-center text-xs font-medium leading-none sm:text-sm">
-          {trimmed ? (
-            <>
-              <span className="whitespace-nowrap">{trimmed}</span>
-              {ctaLabel?.trim() ? (
-                <span className="ml-2 whitespace-nowrap font-semibold underline underline-offset-2">
-                  {ctaLabel.trim()}
-                </span>
-              ) : null}
-            </>
-          ) : (
-            <span className="italic opacity-70">{emptyText}</span>
-          )}
-        </p>
+        <div className="min-w-0 flex-1 overflow-hidden">
+          <p className="inline-flex max-w-none items-center whitespace-nowrap text-xs font-medium leading-none sm:text-sm">
+            {trimmed ? (
+              <>
+                <span>{trimmed}</span>
+                {ctaLabel?.trim() ? (
+                  <span className="ml-2 font-semibold underline underline-offset-2">
+                    {ctaLabel.trim()}
+                  </span>
+                ) : null}
+              </>
+            ) : (
+              <span className="italic opacity-70">{emptyText}</span>
+            )}
+          </p>
+        </div>
         <span aria-hidden className="inline-flex h-6 w-6 items-center justify-center opacity-70">
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

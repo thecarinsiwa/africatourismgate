@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import type {
   AnnouncementBannerColor,
   AnnouncementBannerIntensity,
@@ -102,6 +102,104 @@ export type AnnouncementBannerProps = {
   onDismiss?: () => void;
 };
 
+const MARQUEE_PX_PER_SECOND = 40;
+const MARQUEE_MIN_SECONDS = 8;
+const MARQUEE_MAX_SECONDS = 28;
+
+function BannerMessage({
+  text,
+  ctaLabel,
+  ctaUrl,
+  ctaNewTab,
+  ctaClass,
+  newTabHint,
+}: {
+  text: string;
+  ctaLabel?: string | null;
+  ctaUrl?: string | null;
+  ctaNewTab?: boolean;
+  ctaClass: string;
+  newTabHint?: string;
+}) {
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLParagraphElement>(null);
+  const [overflowPx, setOverflowPx] = useState(0);
+
+  const showCta = Boolean(ctaLabel && ctaUrl);
+  const ctaContent = (
+    <>
+      {ctaLabel}
+      {ctaNewTab && newTabHint ? <span className="sr-only"> ({newTabHint})</span> : null}
+    </>
+  );
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    const track = trackRef.current;
+    if (!viewport || !track) return;
+
+    const measure = () => {
+      const overflow = Math.max(0, Math.ceil(track.scrollWidth - viewport.clientWidth));
+      setOverflowPx(overflow);
+    };
+
+    measure();
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', measure);
+      return () => window.removeEventListener('resize', measure);
+    }
+    const observer = new ResizeObserver(measure);
+    observer.observe(viewport);
+    observer.observe(track);
+    return () => observer.disconnect();
+  }, [text, ctaLabel, ctaUrl, ctaNewTab]);
+
+  const scrolling = overflowPx > 4;
+  const durationSec = scrolling
+    ? Math.min(
+        MARQUEE_MAX_SECONDS,
+        Math.max(MARQUEE_MIN_SECONDS, (overflowPx * 2) / MARQUEE_PX_PER_SECOND + 3),
+      )
+    : 0;
+
+  return (
+    <div ref={viewportRef} className="min-w-0 flex-1 overflow-hidden">
+      <p
+        ref={trackRef}
+        title={scrolling ? text : undefined}
+        className={`inline-flex max-w-none items-center whitespace-nowrap text-xs font-medium leading-none sm:text-sm ${
+          scrolling ? 'atg-banner-marquee' : 'w-full justify-center'
+        }`}
+        style={
+          scrolling
+            ? ({
+                '--atg-banner-overflow': `${overflowPx}px`,
+                '--atg-banner-duration': `${durationSec}s`,
+              } as CSSProperties)
+            : undefined
+        }
+      >
+        <span>{text}</span>
+        {showCta ? (
+          ctaUrl!.startsWith('/') && !ctaNewTab ? (
+            <Link href={ctaUrl!} className={ctaClass}>
+              {ctaContent}
+            </Link>
+          ) : (
+            <a
+              href={ctaUrl!}
+              className={ctaClass}
+              {...(ctaNewTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+            >
+              {ctaContent}
+            </a>
+          )
+        ) : null}
+      </p>
+    </div>
+  );
+}
+
 export function AnnouncementBanner({
   text,
   isVisible,
@@ -118,14 +216,7 @@ export function AnnouncementBanner({
   if (!isVisible || !text.trim()) return null;
 
   const theme = ANNOUNCEMENT_BANNER_THEMES[themeColor][intensity];
-  const showCta = Boolean(ctaLabel && ctaUrl);
   const ctaClass = `ml-2 inline-block whitespace-nowrap font-semibold underline underline-offset-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-1 rounded-sm ${theme.cta}`;
-  const ctaContent = (
-    <>
-      {ctaLabel}
-      {ctaNewTab && newTabHint ? <span className="sr-only"> ({newTabHint})</span> : null}
-    </>
-  );
 
   return (
     <div
@@ -136,24 +227,14 @@ export function AnnouncementBanner({
       className={`banner--${themeColor}-${intensity} ${theme.container}`}
     >
       <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-2 sm:px-6 lg:px-8">
-        <p className="min-w-0 flex-1 truncate text-center text-xs font-medium leading-none sm:text-sm">
-          <span className="whitespace-nowrap">{text}</span>
-          {showCta ? (
-            ctaUrl!.startsWith('/') && !ctaNewTab ? (
-              <Link href={ctaUrl!} className={ctaClass}>
-                {ctaContent}
-              </Link>
-            ) : (
-              <a
-                href={ctaUrl!}
-                className={ctaClass}
-                {...(ctaNewTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-              >
-                {ctaContent}
-              </a>
-            )
-          ) : null}
-        </p>
+        <BannerMessage
+          text={text}
+          ctaLabel={ctaLabel}
+          ctaUrl={ctaUrl}
+          ctaNewTab={ctaNewTab}
+          ctaClass={ctaClass}
+          newTabHint={newTabHint}
+        />
         {onDismiss && dismissLabel ? (
           <button
             type="button"
