@@ -28,10 +28,8 @@ import type {
   SyncTripadvisorReviewsResult,
 } from '@africatourismgate/types';
 import { TripadvisorTerraClient } from '../../integrations/tripadvisor/tripadvisor-terra.client';
-import {
-  mapTerraReviewToTripadvisor,
-  type MappedTripadvisorReview,
-} from '../../integrations/tripadvisor/tripadvisor-terra.mapper';
+import { mapTerraReviewToTripadvisor } from '../../integrations/tripadvisor/tripadvisor-terra.mapper';
+import { upsertSyncedTripadvisorReview } from '../../integrations/tripadvisor/tripadvisor-sync.upsert';
 import { AdminReviewDetailDto } from './dto/admin-review-detail.dto';
 import { AdminReviewListItemDto } from './dto/admin-review-list-item.dto';
 import { CreateAdminTripadvisorReviewDto } from './dto/create-admin-tripadvisor-review.dto';
@@ -607,9 +605,42 @@ export class ReviewsService extends CrudService<Reviews> {
           skipped += 1;
           continue;
         }
-        const outcome = await this.upsertSyncedTripadvisorReview(
+        const outcome = await upsertSyncedTripadvisorReview(
+          {
+            findByEntityId: async (entityId) => {
+              const row = await this.reviewsRepository.findOne({
+                where: { entityType: 'tripadvisor', entityId },
+                withDeleted: true,
+              });
+              return row;
+            },
+            recover: async (row) => {
+              await this.reviewsRepository.recover(row as Reviews);
+            },
+            save: async (row) => {
+              await this.reviewsRepository.save(row as Reviews);
+            },
+            createNew: async ({ id, mapped: m, actorUserId: actor }) => {
+              const entity = this.reviewsRepository.create({
+                id,
+                userId: null,
+                source: 'tripadvisor',
+                entityType: 'tripadvisor',
+                entityId: m.entityId,
+                rating: m.rating,
+                title: m.title,
+                body: m.body,
+                externalAuthorName: m.authorName,
+                status: 'approved',
+                createdByUserId: actor,
+                ...(m.publishedAt ? { createdAt: m.publishedAt } : {}),
+              });
+              await this.reviewsRepository.save(entity);
+            },
+          },
           mapped,
           actorUserId,
+          newId,
         );
         if (outcome === 'imported') imported += 1;
         else if (outcome === 'updated') updated += 1;
@@ -633,60 +664,6 @@ export class ReviewsService extends CrudService<Reviews> {
     }
 
     return { imported, updated, skipped, pages };
-  }
-
-  private async upsertSyncedTripadvisorReview(
-    mapped: MappedTripadvisorReview,
-    actorUserId: string,
-  ): Promise<'imported' | 'updated' | 'skipped'> {
-    const existing = await this.reviewsRepository.findOne({
-      where: {
-        entityType: 'tripadvisor',
-        entityId: mapped.entityId,
-      },
-      withDeleted: true,
-    });
-
-    if (existing) {
-      if (existing.source !== 'tripadvisor') {
-        return 'skipped';
-      }
-      if (existing.deletedAt) {
-        await this.reviewsRepository.recover(existing);
-        existing.deletedAt = null;
-        existing.deletedByUserId = null;
-      }
-      existing.rating = mapped.rating;
-      existing.title = mapped.title;
-      existing.body = mapped.body;
-      existing.externalAuthorName = mapped.authorName;
-      existing.status = 'approved';
-      existing.userId = null;
-      existing.updatedByUserId = actorUserId;
-      if (mapped.publishedAt) {
-        existing.createdAt = mapped.publishedAt;
-      }
-      await this.reviewsRepository.save(existing);
-      return 'updated';
-    }
-
-    const id = newId();
-    const entity = this.reviewsRepository.create({
-      id,
-      userId: null,
-      source: 'tripadvisor',
-      entityType: 'tripadvisor',
-      entityId: mapped.entityId,
-      rating: mapped.rating,
-      title: mapped.title,
-      body: mapped.body,
-      externalAuthorName: mapped.authorName,
-      status: 'approved',
-      createdByUserId: actorUserId,
-      ...(mapped.publishedAt ? { createdAt: mapped.publishedAt } : {}),
-    });
-    await this.reviewsRepository.save(entity);
-    return 'imported';
   }
 
   async listForAdmin(

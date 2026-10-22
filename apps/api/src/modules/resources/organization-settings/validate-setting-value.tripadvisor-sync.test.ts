@@ -2,8 +2,10 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { BadRequestException } from '@nestjs/common';
 import {
+  maskTripadvisorApiKey,
   mergeTripadvisorSyncApiKey,
   toTripadvisorSyncAdminSettingValue,
+  toTripadvisorSyncAdminValue,
 } from '@africatourismgate/types';
 import { validateSettingValue } from './validate-setting-value';
 
@@ -107,4 +109,16 @@ test('toTripadvisorSyncAdminSettingValue never echoes clear apiKey', () => {
   assert.equal(admin.locationId, '42');
   assert.equal(admin.apiKeyMasked, '••••-key');
   assert.ok(!JSON.stringify(admin).includes('super-secret'));
+});
+
+test('maskTripadvisorApiKey and admin view when no key', () => {
+  assert.equal(maskTripadvisorApiKey(''), '');
+  assert.equal(maskTripadvisorApiKey('abcd'), '••••abcd');
+  const empty = toTripadvisorSyncAdminValue({
+    locationId: '',
+    apiKey: '',
+    language: 'primary',
+  });
+  assert.equal(empty.hasApiKey, false);
+  assert.equal(empty.apiKeyMasked, '');
 });
