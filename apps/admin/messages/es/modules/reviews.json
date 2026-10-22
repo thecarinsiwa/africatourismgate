@@ -4,6 +4,10 @@
     "approved": "Aprobado",
     "hidden": "Oculto"
   },
+  "source": {
+    "platform": "Plataforma",
+    "tripadvisor": "Tripadvisor"
+  },
   "actions": {
     "approve": "Aprobar",
     "hide": "Ocultar",
@@ -35,6 +39,7 @@
       "comment": "Comentario"
     },
     "fields": {
+      "source": "Fuente",
       "author": "Autor",
       "property": "Propiedad",
       "entity": "Entidad vinculada",
@@ -49,7 +54,8 @@
       "cruise": "Crucero",
       "activity": "Actividad",
       "booking": "Reserva",
-      "tour_guide": "Guía turístico"
+      "tour_guide": "Guía turístico",
+      "tripadvisor": "Tripadvisor"
     },
     "viewBooking": "Ver reserva",
     "noComment": "Sin comentario.",
@@ -58,7 +64,8 @@
   "list": {
     "columns": {
       "author": "Autor",
-      "property": "Propiedad"
+      "property": "Propiedad",
+      "source": "Fuente"
     },
     "filters": {
       "apply": "Aplicar filtros"
@@ -76,5 +83,37 @@
       }
     },
     "ariaLabel": "Lista de reseñas a moderar"
+  },
+  "createTripadvisor": {
+    "heading": "Nueva reseña de Tripadvisor",
+    "description": "Introduzca manualmente una reseña de Tripadvisor para mostrarla en la sección « Opiniones de nuestros clientes » de la página de inicio.",
+    "denied": "No tiene permiso para crear una reseña (se requiere reviews.write).",
+    "fields": {
+      "authorName": "Nombre del autor",
+      "authorNamePlaceholder": "Ej. Marie Dupont",
+      "rating": "Valoración",
+      "title": "Título (opcional)",
+      "titlePlaceholder": "Ej. Estancia inolvidable",
+      "titleHint": "Se muestra encima de la reseña en el sitio público.",
+      "body": "Comentario",
+      "bodyPlaceholder": "Texto de la reseña…",
+      "status": "Estado",
+      "statusHint": "Aprobado: visible en la página de inicio si los ajustes de reseñas lo permiten."
+    },
+    "validation": {
+      "authorNameRequired": "Indique el nombre del autor.",
+      "authorNameTooLong": "El nombre no debe superar 120 caracteres.",
+      "ratingRequired": "Elija una valoración entre 1 y 5.",
+      "bodyRequired": "El comentario es obligatorio.",
+      "titleTooLong": "El título no debe superar 180 caracteres."
+    },
+    "saveButton": "Crear reseña",
+    "saving": "Creando…",
+    "toast": {
+      "created": {
+        "title": "Reseña de Tripadvisor creada",
+        "message": "La reseña se ha guardado."
+      }
+    }
   }
 }

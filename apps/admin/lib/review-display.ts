@@ -1,6 +1,12 @@
-import type { AdminReviewListItem, ReviewStatus } from '@africatourismgate/types';
+import type {
+  AdminReviewListItem,
+  ReviewSource,
+  ReviewStatus,
+} from '@africatourismgate/types';
 
 export const REVIEW_STATUSES: ReviewStatus[] = ['pending', 'approved', 'hidden'];
+
+export const REVIEW_SOURCES: ReviewSource[] = ['platform', 'tripadvisor'];
 
 export const reviewStatusVariants: Record<
   ReviewStatus,
@@ -9,6 +15,14 @@ export const reviewStatusVariants: Record<
   pending: 'warning',
   approved: 'success',
   hidden: 'muted',
+};
+
+export const reviewSourceVariants: Record<
+  ReviewSource,
+  'default' | 'success' | 'muted'
+> = {
+  platform: 'success',
+  tripadvisor: 'default',
 };
 
 export function formatReviewDateTime(

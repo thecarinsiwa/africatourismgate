@@ -20,9 +20,14 @@ import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { AdminIntroPage } from '../pages/admin-intro-page';
 import { getApiClient } from '../../lib/auth/api';
 import { usePermissions } from '../../lib/auth/use-permissions';
-import { useFormatDateTime, useReviewStatusLabels } from '../../lib/i18n/use-module-labels';
+import {
+  useFormatDateTime,
+  useReviewSourceLabels,
+  useReviewStatusLabels,
+} from '../../lib/i18n/use-module-labels';
 import {
   formatReviewEntity,
+  reviewSourceVariants,
   reviewStatusVariants,
 } from '../../lib/review-display';
 
@@ -54,6 +59,7 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
   const tLoading = useTranslations('common.loading');
   const formatDateTime = useFormatDateTime('long');
   const statusLabels = useReviewStatusLabels();
+  const sourceLabels = useReviewSourceLabels();
   const { hasPermission, isSuperAdmin } = usePermissions();
   const canWrite = isSuperAdmin || hasPermission('reviews.write');
   const router = useRouter();
@@ -204,9 +210,16 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
           <Card variant="dashboard" padding="md" className="lg:sticky lg:top-4">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <h2 className="text-lg font-semibold text-atg-fg">{tDetail('sections.context')}</h2>
-              <DataTableBadge variant={reviewStatusVariants[review.status]}>
-                {statusLabels[review.status]}
-              </DataTableBadge>
+              <div className="flex flex-wrap items-center gap-2">
+                <DataTableBadge
+                  variant={reviewSourceVariants[review.source ?? 'platform']}
+                >
+                  {sourceLabels[review.source ?? 'platform']}
+                </DataTableBadge>
+                <DataTableBadge variant={reviewStatusVariants[review.status]}>
+                  {statusLabels[review.status]}
+                </DataTableBadge>
+              </div>
             </div>
 
             <StarRatingDisplay
@@ -218,6 +231,14 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
 
             <dl className="divide-y divide-atg-border text-sm">
               <div className="grid gap-1 py-3 first:pt-0">
+                <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                  {tDetail('fields.source')}
+                </dt>
+                <dd className="font-medium text-atg-fg">
+                  {sourceLabels[review.source ?? 'platform']}
+                </dd>
+              </div>
+              <div className="grid gap-1 py-3">
                 <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
                   {tDetail('fields.author')}
                 </dt>

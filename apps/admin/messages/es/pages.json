@@ -568,11 +568,22 @@
     },
     "avis": {
       "title": "Reseñas",
-      "description": "Modere valoraciones y comentarios de clientes. Filtre por nota, propiedad y estado. Acciones: aprobar, ocultar o eliminar. Acceso: reviews.read / reviews.write.",
+      "description": "Modere valoraciones y comentarios de clientes. Filtre por nota, propiedad, estado y fuente. Acciones: aprobar, ocultar, eliminar o crear una reseña de Tripadvisor. Acceso: reviews.read / reviews.write.",
+      "actions": {
+        "newTripadvisor": "Reseña Tripadvisor"
+      },
       "id": {
         "metaTitle": "Detalle de reseña",
         "description": "Consulte el contexto, el comentario y las acciones de moderación.",
         "backLabel": "Volver a las reseñas"
+      },
+      "tripadvisor": {
+        "nouveau": {
+          "metaTitle": "Nueva reseña de Tripadvisor",
+          "title": "Nueva reseña de Tripadvisor",
+          "description": "Introduzca una reseña de Tripadvisor para la página de inicio.",
+          "backLabel": "Volver a las reseñas"
+        }
       }
     }
   },

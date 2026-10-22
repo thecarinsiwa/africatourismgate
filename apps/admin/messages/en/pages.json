@@ -568,11 +568,22 @@
     },
     "avis": {
       "title": "Reviews",
-      "description": "Moderate customer ratings and comments. Filter by score, property and status. Actions: approve, hide or delete. Access: reviews.read / reviews.write.",
+      "description": "Moderate customer ratings and comments. Filter by score, property, status and source. Actions: approve, hide, delete or create a Tripadvisor review. Access: reviews.read / reviews.write.",
+      "actions": {
+        "newTripadvisor": "Tripadvisor review"
+      },
       "id": {
         "metaTitle": "Review detail",
         "description": "View context, comment and moderation actions.",
         "backLabel": "Back to reviews"
+      },
+      "tripadvisor": {
+        "nouveau": {
+          "metaTitle": "New Tripadvisor review",
+          "title": "New Tripadvisor review",
+          "description": "Enter a Tripadvisor review for the homepage.",
+          "backLabel": "Back to reviews"
+        }
       }
     }
   },
