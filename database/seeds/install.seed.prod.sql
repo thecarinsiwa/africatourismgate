@@ -348,6 +348,14 @@ INSERT INTO `organization_settings` (
   'homepage_reviews',
   '{"showTripadvisorReviews":true,"showPlatformReviews":true}',
   '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000000026',
+  '00000000-0000-4000-8000-000000000001',
+  'site',
+  'tripadvisor_sync',
+  '{"locationId":"","apiKey":"","language":"primary"}',
+  '00000000-0000-4000-8000-000000000010'
 );
 
 -- -----------------------------------------------------------------------------

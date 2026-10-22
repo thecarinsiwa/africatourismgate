@@ -511,6 +511,117 @@ export function normalizeHomepageReviews(
 }
 
 /**
+ * Tripadvisor Terra sync credentials — `organization_settings` group `site`, key `tripadvisor_sync`.
+ * Admin-only: never exposed via public organization-settings endpoints.
+ * `apiKey` is stored in JSON; admin list/bulk responses must mask it.
+ */
+export interface TripadvisorSyncSettingValue {
+  /** Tripadvisor Location ID (digits from URL `-dXXXXXXXX`). Empty until configured. */
+  locationId: string;
+  /** Terra API key (`X-API-Key`). Empty until configured. */
+  apiKey: string;
+  /** Terra `language` query param (e.g. `primary`, `fr`, `en`). */
+  language: string;
+}
+
+/** Admin-safe view — never includes the clear API key. */
+export interface TripadvisorSyncAdminValue {
+  locationId: string;
+  language: string;
+  hasApiKey: boolean;
+  /** Empty when no key; otherwise `••••` + last 4 characters. */
+  apiKeyMasked: string;
+}
+
+export const DEFAULT_TRIPADVISOR_SYNC: TripadvisorSyncSettingValue = {
+  locationId: '',
+  apiKey: '',
+  language: 'primary',
+};
+
+export const TRIPADVISOR_SYNC_SETTING_KEY = 'tripadvisor_sync' as const;
+export const TRIPADVISOR_SYNC_LOCATION_ID_MAX_LENGTH = 32;
+export const TRIPADVISOR_SYNC_API_KEY_MAX_LENGTH = 256;
+export const TRIPADVISOR_SYNC_LANGUAGE_MAX_LENGTH = 16;
+
+/** Tolérant : ignore les valeurs invalides et retombe sur les valeurs par défaut. */
+export function normalizeTripadvisorSync(
+  value?: Partial<TripadvisorSyncSettingValue> | Record<string, unknown> | null,
+): TripadvisorSyncSettingValue {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return { ...DEFAULT_TRIPADVISOR_SYNC };
+  }
+  const raw = value as Record<string, unknown>;
+  const locationId =
+    typeof raw.locationId === 'string' ? raw.locationId.trim() : '';
+  const apiKey = typeof raw.apiKey === 'string' ? raw.apiKey.trim() : '';
+  const languageRaw =
+    typeof raw.language === 'string' ? raw.language.trim() : '';
+  return {
+    locationId,
+    apiKey,
+    language: languageRaw || DEFAULT_TRIPADVISOR_SYNC.language,
+  };
+}
+
+export function maskTripadvisorApiKey(apiKey: string): string {
+  const trimmed = apiKey.trim();
+  if (!trimmed) return '';
+  const last = trimmed.slice(-4);
+  return `••••${last}`;
+}
+
+export function toTripadvisorSyncAdminValue(
+  value?: Partial<TripadvisorSyncSettingValue> | Record<string, unknown> | null,
+): TripadvisorSyncAdminValue {
+  const normalized = normalizeTripadvisorSync(value);
+  const hasApiKey = normalized.apiKey.length > 0;
+  return {
+    locationId: normalized.locationId,
+    language: normalized.language,
+    hasApiKey,
+    apiKeyMasked: hasApiKey ? maskTripadvisorApiKey(normalized.apiKey) : '',
+  };
+}
+
+/**
+ * Admin list/bulk payload: same keys as stored value but `apiKey` always empty
+ * so a round-trip save without retyping the key keeps the existing secret (merge).
+ */
+export function toTripadvisorSyncAdminSettingValue(
+  value?: Partial<TripadvisorSyncSettingValue> | Record<string, unknown> | null,
+): Record<string, unknown> {
+  const admin = toTripadvisorSyncAdminValue(value);
+  return {
+    locationId: admin.locationId,
+    language: admin.language,
+    hasApiKey: admin.hasApiKey,
+    apiKeyMasked: admin.apiKeyMasked,
+    apiKey: '',
+  };
+}
+
+/** Empty incoming `apiKey` keeps the previously stored key. */
+export function mergeTripadvisorSyncApiKey(
+  existing: TripadvisorSyncSettingValue | null | undefined,
+  incoming: TripadvisorSyncSettingValue,
+): TripadvisorSyncSettingValue {
+  const nextKey = incoming.apiKey.trim();
+  if (nextKey) {
+    return {
+      locationId: incoming.locationId.trim(),
+      apiKey: nextKey,
+      language: incoming.language.trim() || DEFAULT_TRIPADVISOR_SYNC.language,
+    };
+  }
+  return {
+    locationId: incoming.locationId.trim(),
+    apiKey: existing?.apiKey?.trim() ?? '',
+    language: incoming.language.trim() || DEFAULT_TRIPADVISOR_SYNC.language,
+  };
+}
+
+/**
  * Acomptes checkout — `organization_settings` group `booking`, key `deposits`.
  * Exactement un de `depositPercent` | `depositFixedCents` quand `enabled`.
  * Statut réservation : reste `pending_payment` jusqu’au solde intégral.

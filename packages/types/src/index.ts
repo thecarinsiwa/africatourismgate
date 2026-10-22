@@ -847,6 +847,8 @@ export type {
   PublicAnnouncementBanner,
   HomepageReviewsSettingValue,
   PublicHomepageReviews,
+  TripadvisorSyncSettingValue,
+  TripadvisorSyncAdminValue,
 } from './organization-settings.js';
 
 export type {
@@ -901,6 +903,16 @@ export {
   resolvePublicAnnouncementBanner,
   DEFAULT_HOMEPAGE_REVIEWS,
   normalizeHomepageReviews,
+  DEFAULT_TRIPADVISOR_SYNC,
+  TRIPADVISOR_SYNC_SETTING_KEY,
+  TRIPADVISOR_SYNC_LOCATION_ID_MAX_LENGTH,
+  TRIPADVISOR_SYNC_API_KEY_MAX_LENGTH,
+  TRIPADVISOR_SYNC_LANGUAGE_MAX_LENGTH,
+  normalizeTripadvisorSync,
+  maskTripadvisorApiKey,
+  toTripadvisorSyncAdminValue,
+  toTripadvisorSyncAdminSettingValue,
+  mergeTripadvisorSyncApiKey,
 } from './organization-settings.js';
 
 export type {

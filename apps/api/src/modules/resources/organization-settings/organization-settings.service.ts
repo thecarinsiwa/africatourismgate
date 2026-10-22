@@ -22,13 +22,19 @@ import {
   DEFAULT_BOOKING_ITEM_TYPE_MODES,
   DEFAULT_CATALOG_PRODUCTS,
   DEFAULT_HOMEPAGE_REVIEWS,
+  DEFAULT_TRIPADVISOR_SYNC,
   DEFAULT_WEB_PAYMENT_METHODS,
+  mergeTripadvisorSyncApiKey,
   normalizeBookingDeposits,
   normalizeBookingItemTypeModes,
   normalizeCatalogProducts,
   normalizeHomepageReviews,
+  normalizeTripadvisorSync,
   normalizeWebPaymentMethods,
   resolvePublicAnnouncementBanner,
+  toTripadvisorSyncAdminSettingValue,
+  TRIPADVISOR_SYNC_SETTING_KEY,
+  type TripadvisorSyncSettingValue,
 } from '@africatourismgate/types';
 import { OrgScopeService, PLATFORM_ORG_ID } from '../../../common/org-scope/org-scope.service';
 import { CrudService } from '../../../common/crud/crud.service';
@@ -199,7 +205,7 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
         const results: OrganizationSettings[] = [];
 
         for (const item of dto.settings) {
-          const settingValue = validateSettingValue(
+          let settingValue = validateSettingValue(
             item.settingKey,
             item.settingValue,
           );
@@ -212,6 +218,18 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
             },
             withDeleted: true,
           });
+
+          if (item.settingKey === TRIPADVISOR_SYNC_SETTING_KEY) {
+            const existingSync = existing
+              ? normalizeTripadvisorSync(
+                  existing.settingValue as Record<string, unknown>,
+                )
+              : null;
+            settingValue = mergeTripadvisorSyncApiKey(
+              existingSync,
+              normalizeTripadvisorSync(settingValue),
+            ) as unknown as Record<string, unknown>;
+          }
 
           if (existing) {
             if (existing.deletedAt) {
@@ -240,7 +258,9 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
       },
     );
 
-    return saved.map(toOrganizationSettingDto);
+    return saved.map((row) =>
+      maskSensitiveOrganizationSettingDto(toOrganizationSettingDto(row)),
+    );
   }
 
   async findAllScoped(
@@ -262,7 +282,7 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
     });
 
     return {
-      data,
+      data: data.map(maskSensitiveOrganizationSettingEntity),
       meta: {
         total,
         page,
@@ -555,6 +575,40 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
     );
   }
 
+  /**
+   * Server-only: returns clear apiKey for Terra sync.
+   * Never wire this to a public HTTP endpoint.
+   */
+  async getResolvedTripadvisorSync(
+    organizationId: string = PLATFORM_ORG_ID,
+  ): Promise<TripadvisorSyncSettingValue> {
+    const setting = await this.settingsRepository.findOne({
+      where: {
+        organizationId,
+        settingGroup: 'site',
+        settingKey: TRIPADVISOR_SYNC_SETTING_KEY,
+        deletedAt: IsNull(),
+      },
+    });
+
+    if (
+      !setting?.settingValue ||
+      typeof setting.settingValue !== 'object' ||
+      Array.isArray(setting.settingValue)
+    ) {
+      return { ...DEFAULT_TRIPADVISOR_SYNC };
+    }
+
+    return normalizeTripadvisorSync(
+      setting.settingValue as Record<string, unknown>,
+    );
+  }
+
+  override async findOne(id: string): Promise<OrganizationSettings> {
+    const row = await super.findOne(id);
+    return maskSensitiveOrganizationSettingEntity(row);
+  }
+
   async getResolvedSiteMaintenance(
     organizationId: string = PLATFORM_ORG_ID,
     locale?: string,
@@ -587,4 +641,30 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
     }
     return platform;
   }
+}
+
+function maskSensitiveOrganizationSettingDto(
+  dto: OrganizationSettingDto,
+): OrganizationSettingDto {
+  if (dto.settingKey !== TRIPADVISOR_SYNC_SETTING_KEY) {
+    return dto;
+  }
+  return {
+    ...dto,
+    settingValue: toTripadvisorSyncAdminSettingValue(dto.settingValue),
+  };
+}
+
+function maskSensitiveOrganizationSettingEntity(
+  row: OrganizationSettings,
+): OrganizationSettings {
+  if (row.settingKey !== TRIPADVISOR_SYNC_SETTING_KEY) {
+    return row;
+  }
+  return {
+    ...row,
+    settingValue: toTripadvisorSyncAdminSettingValue(
+      row.settingValue as Record<string, unknown>,
+    ),
+  };
 }

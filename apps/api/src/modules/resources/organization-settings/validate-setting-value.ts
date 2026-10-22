@@ -23,7 +23,11 @@ import {
   normalizeBookingItemTypeModes,
   normalizeCatalogProducts,
   normalizeHomepageReviews,
+  normalizeTripadvisorSync,
   normalizeWebPaymentMethods,
+  TRIPADVISOR_SYNC_API_KEY_MAX_LENGTH,
+  TRIPADVISOR_SYNC_LANGUAGE_MAX_LENGTH,
+  TRIPADVISOR_SYNC_LOCATION_ID_MAX_LENGTH,
   type BookingMode,
 } from '@africatourismgate/types';
 import type {
@@ -259,6 +263,76 @@ function validateAnnouncementBanner(
     ...(ctaUrl ? { ctaUrl, ctaNewTab: value.ctaNewTab === true } : {}),
   };
   return result as unknown as Record<string, unknown>;
+}
+
+function validateTripadvisorSync(
+  value: Record<string, unknown>,
+): Record<string, unknown> {
+  if (value.locationId !== undefined && value.locationId !== null) {
+    if (typeof value.locationId !== 'string') {
+      throw new BadRequestException('locationId doit être une chaîne.');
+    }
+  }
+  if (value.apiKey !== undefined && value.apiKey !== null) {
+    if (typeof value.apiKey !== 'string') {
+      throw new BadRequestException('apiKey doit être une chaîne.');
+    }
+  }
+  if (value.language !== undefined && value.language !== null) {
+    if (typeof value.language !== 'string') {
+      throw new BadRequestException('language doit être une chaîne.');
+    }
+  }
+
+  const locationId =
+    typeof value.locationId === 'string' ? value.locationId.trim() : '';
+  const apiKey = typeof value.apiKey === 'string' ? value.apiKey.trim() : '';
+  const languageRaw =
+    typeof value.language === 'string' ? value.language.trim() : '';
+
+  if (locationId.length > TRIPADVISOR_SYNC_LOCATION_ID_MAX_LENGTH) {
+    throw new BadRequestException(
+      `locationId ne doit pas dépasser ${TRIPADVISOR_SYNC_LOCATION_ID_MAX_LENGTH} caractères.`,
+    );
+  }
+  if (locationId && !/^\d+$/.test(locationId)) {
+    throw new BadRequestException(
+      'locationId doit contenir uniquement des chiffres (ID Tripadvisor).',
+    );
+  }
+
+  if (apiKey.length > TRIPADVISOR_SYNC_API_KEY_MAX_LENGTH) {
+    throw new BadRequestException(
+      `apiKey ne doit pas dépasser ${TRIPADVISOR_SYNC_API_KEY_MAX_LENGTH} caractères.`,
+    );
+  }
+  if (apiKey.includes('•')) {
+    throw new BadRequestException(
+      'apiKey invalide : ne renvoyez pas la valeur masquée.',
+    );
+  }
+
+  if (languageRaw.length > TRIPADVISOR_SYNC_LANGUAGE_MAX_LENGTH) {
+    throw new BadRequestException(
+      `language ne doit pas dépasser ${TRIPADVISOR_SYNC_LANGUAGE_MAX_LENGTH} caractères.`,
+    );
+  }
+  if (languageRaw && !/^[a-zA-Z0-9_-]+$/.test(languageRaw)) {
+    throw new BadRequestException(
+      'language doit être un code Terra (ex. primary, fr, en).',
+    );
+  }
+
+  const normalized = normalizeTripadvisorSync({
+    locationId,
+    apiKey,
+    language: languageRaw,
+  });
+  return {
+    locationId: normalized.locationId,
+    apiKey: normalized.apiKey,
+    language: normalized.language,
+  };
 }
 
 export function validateSettingValue(
@@ -547,6 +621,9 @@ export function validateSettingValue(
         showTripadvisorReviews: normalized.showTripadvisorReviews,
         showPlatformReviews: normalized.showPlatformReviews,
       };
+    }
+    case 'tripadvisor_sync': {
+      return validateTripadvisorSync(value);
     }
     case 'maintenance': {
       throw new BadRequestException(
