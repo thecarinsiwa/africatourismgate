@@ -1,0 +1,59 @@
+{
+  "heading": "Announcement banner",
+  "description": "Message displayed at the very top of the public site, above the contact bar and the main navigation.",
+  "readOnlyHint": "You can view this banner but not edit it (organization_settings.write permission required).",
+  "denied": "You do not have access to this banner (organization_settings.read permission required).",
+  "fields": {
+    "enabledOn": "Banner displayed on the public site",
+    "enabledOff": "Banner hidden",
+    "locale": "Language being edited",
+    "localeHint": "French is required when the banner is enabled. Languages left empty fall back to the French text.",
+    "localesFilled": "Filled languages: {list}",
+    "text": "Banner text",
+    "textPlaceholder": "E.g. Free cancellation on all bookings until December 31",
+    "ctaLabel": "Link label (optional)",
+    "ctaLabelPlaceholder": "E.g. Learn more",
+    "ctaUrl": "Link URL (optional)",
+    "ctaUrlPlaceholder": "https://… or /packages",
+    "ctaHint": "Shared by all languages. The link is only shown in languages that have a label.",
+    "ctaNewTab": "Open the link in a new tab",
+    "color": "Color",
+    "intensity": "Intensity"
+  },
+  "colors": {
+    "red": "Red",
+    "yellow": "Yellow",
+    "green": "Green",
+    "blue": "Blue",
+    "gray": "Gray"
+  },
+  "intensities": {
+    "low": {
+      "label": "Light",
+      "hint": "Pale background, dark text — discreet information."
+    },
+    "high": {
+      "label": "Strong",
+      "hint": "Solid background — urgent or important message."
+    }
+  },
+  "preview": {
+    "title": "Preview",
+    "locale": "As shown in {locale}",
+    "fallback": "No text in this language: the French text is shown",
+    "disabled": "Banner disabled — not visible on the site",
+    "empty": "Your text will appear here"
+  },
+  "validation": {
+    "frenchTextRequired": "French text is required to enable the banner.",
+    "textTooLong": "Text must not exceed {max} characters.",
+    "textRequiredForCta": "Add a text for this language or remove the link label.",
+    "ctaLabelTooLong": "Link label must not exceed {max} characters.",
+    "ctaUrlInvalid": "Enter an http(s) URL or an internal path starting with /.",
+    "ctaUrlTooLong": "URL must not exceed {max} characters.",
+    "ctaUrlRequired": "Enter the link URL or remove the link labels."
+  },
+  "saveButton": "Save banner",
+  "saving": "Saving…",
+  "saved": "Banner saved."
+}
