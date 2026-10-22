@@ -42,7 +42,8 @@ import {
 } from '../../lib/review-display';
 
 const PAGE_SIZE = 20;
-const DEFAULT_STATUS: ReviewStatus = 'pending';
+/** Show all statuses by default so approved Tripadvisor entries and moderated reviews are visible. */
+const DEFAULT_STATUS: '' | ReviewStatus = '';
 
 export function ReviewsList() {
   const { reviews: getReviewsErrorMessage } = useAdminErrorMessages();

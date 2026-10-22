@@ -72,8 +72,8 @@
     },
     "empty": {
       "default": {
-        "title": "Ninguna reseña pendiente",
-        "description": "La cola de moderación está vacía. Las nuevas reseñas aparecerán aquí.",
+        "title": "Ninguna reseña",
+        "description": "Las reseñas de clientes y de Tripadvisor aparecerán aquí. Use los filtros para acotar por estado o fuente.",
         "tableMessage": "Ninguna reseña por el momento."
       },
       "filtered": {

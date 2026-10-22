@@ -72,8 +72,8 @@
     },
     "empty": {
       "default": {
-        "title": "Aucun avis en attente",
-        "description": "La file de modération est vide. Les nouveaux avis clients apparaîtront ici.",
+        "title": "Aucun avis",
+        "description": "Les avis clients et Tripadvisor apparaîtront ici. Utilisez les filtres pour cibler un statut ou une source.",
         "tableMessage": "Aucun avis pour le moment."
       },
       "filtered": {

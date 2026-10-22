@@ -72,8 +72,8 @@
     },
     "empty": {
       "default": {
-        "title": "No pending reviews",
-        "description": "The moderation queue is empty. New customer reviews will appear here.",
+        "title": "No reviews",
+        "description": "Customer and Tripadvisor reviews will appear here. Use filters to narrow by status or source.",
         "tableMessage": "No reviews yet."
       },
       "filtered": {
