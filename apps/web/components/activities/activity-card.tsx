@@ -40,14 +40,14 @@ export function ActivityCard({
     searchParams.date ??
     (activity.nextStartDatetime ? activity.nextStartDatetime.slice(0, 10) : undefined);
 
-  const detailParams: ActivityDetailSearchParams = {
-    destination: searchParams.destination ?? activity.destination,
+  const bookingParams: ActivityDetailSearchParams = {
     date: effectiveDate,
     participants: searchParams.participants,
   };
-  const detailHref = buildActivityDetailHref(activity.id, detailParams);
+  // « Voir le détail » → page fiche seule (sans ?destination= de la liste).
+  const detailHref = buildActivityDetailHref(activity.id, {});
   const reserveHref = effectiveDate
-    ? buildActivityDetailHref(activity.id, detailParams, '#schedules')
+    ? buildActivityDetailHref(activity.id, bookingParams, '#schedules')
     : detailHref;
 
   const durationLabel = formatDurationMinutes(activity.durationMinutes, {

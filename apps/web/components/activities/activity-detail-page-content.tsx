@@ -58,12 +58,11 @@ export function ActivityDetailPageContent({
 
   const searchContext = useMemo(
     (): ActivityDetailSearchParams => ({
-      destination: initialSearch.destination,
       date: initialSearch.date,
       participants: String(participants),
       scheduleId: selectedScheduleId ?? undefined,
     }),
-    [initialSearch.destination, initialSearch.date, participants, selectedScheduleId],
+    [initialSearch.date, participants, selectedScheduleId],
   );
 
   const apiQuery = useMemo(() => {
@@ -74,7 +73,6 @@ export function ActivityDetailPageContent({
   const syncUrl = useCallback(
     (overrides: Partial<ActivityDetailPageSearch> = {}) => {
       const href = buildActivityDetailHref(activityId, {
-        destination: initialSearch.destination,
         date: initialSearch.date,
         participants:
           overrides.participants !== undefined
@@ -84,7 +82,7 @@ export function ActivityDetailPageContent({
       });
       router.replace(href, { scroll: false });
     },
-    [activityId, initialSearch.destination, initialSearch.date, participants, selectedScheduleId, router],
+    [activityId, initialSearch.date, participants, selectedScheduleId, router],
   );
 
   useEffect(() => {
