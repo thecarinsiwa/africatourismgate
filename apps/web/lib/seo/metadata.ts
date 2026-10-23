@@ -177,6 +177,7 @@ export async function buildListingPageMetadata(
 export async function buildDetailFallbackMetadata(
   namespace: ListingMetaNamespace,
   path: string,
+  robots?: Metadata['robots'],
 ): Promise<Metadata> {
   const [t, locale] = await Promise.all([
     getTranslations(namespace),
@@ -187,6 +188,7 @@ export async function buildDetailFallbackMetadata(
     description: t('detailMetaFallbackDescription'),
     path,
     locale,
+    ...(robots ? { robots } : {}),
   });
 }
 
@@ -194,6 +196,23 @@ export const PRIVATE_PAGE_ROBOTS: NonNullable<Metadata['robots']> = {
   index: false,
   follow: false,
 };
+
+/** Parameterized public URLs: viewable, but excluded from search indexing. */
+export const NOINDEX_FOLLOW_ROBOTS: NonNullable<Metadata['robots']> = {
+  index: false,
+  follow: true,
+};
+
+/** True when at least one query param has a non-empty value. */
+export function hasNonEmptySearchParams(
+  searchParams: Record<string, string | string[] | undefined>,
+): boolean {
+  return Object.values(searchParams).some((value) => {
+    if (typeof value === 'string') return value.trim().length > 0;
+    if (Array.isArray(value)) return value.some((entry) => entry.trim().length > 0);
+    return false;
+  });
+}
 
 /** Account / booking flows: i18n title + noindex. */
 export async function buildPrivatePageMetadata(
