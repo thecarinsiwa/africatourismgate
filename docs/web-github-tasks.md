@@ -795,7 +795,8 @@ Spec E2E :
 **Livré :**
 - Helper `checkoutSessionError` dans [`mock-booking-checkout.ts`](../apps/web/tests/e2e/helpers/mock-booking-checkout.ts)
 - Override E2E modes booking (`__ATG_E2E_BOOKING_MODES__`) pour forcer Stripe immédiat
-- Spec [`stripe-checkout-errors.spec.ts`](../apps/web/tests/e2e/stripe-checkout-errors.spec.ts) — échec API + retry (`--repeat-each=3` vert, 6/6)
+- Spec [`stripe-checkout-errors.spec.ts`](../apps/web/tests/e2e/stripe-checkout-errors.spec.ts) — échec API safe message, scrub HTTP/stack technique, timeout réseau + retry, dismiss + retry
+- `resolveStripePaymentError` / `isTechnicalStripeErrorMessage` — pas de fuite `HTTP 5xx` / stack dans l’UI
 
 ---
 

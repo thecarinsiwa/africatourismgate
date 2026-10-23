@@ -8,6 +8,27 @@ type StripePaymentErrorProps = {
   onDismiss?: () => void;
 };
 
+/** Raw gateway / stack messages must never reach the checkout UI. */
+export function isTechnicalStripeErrorMessage(message: string): boolean {
+  const normalized = message.toLowerCase();
+  return (
+    /^http\s+\d{3}\b/i.test(message.trim()) ||
+    normalized.includes('internal server error') ||
+    normalized.includes('econnrefused') ||
+    normalized.includes('etimedout') ||
+    normalized.includes('enotfound') ||
+    normalized.includes('socket hang up') ||
+    /\bat\s+[\w$.]+\s*\(/.test(message) ||
+    /\bat\s+object\./i.test(message) ||
+    message.includes('\n    at ') ||
+    /\bstack\b/i.test(message)
+  );
+}
+
+function safeUserDescription(message: string, fallback: string): string {
+  return isTechnicalStripeErrorMessage(message) ? fallback : message;
+}
+
 export function resolveStripePaymentError(
   message: string,
   labels: Translations['checkout']['stripeError'],
@@ -25,11 +46,13 @@ export function resolveStripePaymentError(
   if (
     normalized.includes('network') ||
     normalized.includes('fetch') ||
-    normalized.includes('failed to fetch')
+    normalized.includes('failed to fetch') ||
+    normalized.includes('timed out') ||
+    normalized.includes('timeout')
   ) {
     return {
       title: labels.networkTitle,
-      description: message,
+      description: safeUserDescription(message, labels.networkHint),
       hint: labels.networkHint,
     };
   }
@@ -37,14 +60,14 @@ export function resolveStripePaymentError(
   if (normalized.includes('card') || normalized.includes('payment')) {
     return {
       title: labels.paymentTitle,
-      description: message,
+      description: safeUserDescription(message, labels.paymentHint),
       hint: labels.paymentHint,
     };
   }
 
   return {
     title: labels.genericTitle,
-    description: message,
+    description: safeUserDescription(message, labels.genericHint),
     hint: labels.genericHint,
   };
 }

@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
+  isTechnicalStripeErrorMessage,
   resolveStripePaymentError,
   StripePaymentError,
 } from './stripe-payment-error';
@@ -20,6 +21,20 @@ const labels: Translations['checkout']['stripeError'] = {
   dismiss: 'Dismiss',
 };
 
+describe('isTechnicalStripeErrorMessage', () => {
+  it('flags HTTP status and stack traces', () => {
+    expect(isTechnicalStripeErrorMessage('HTTP 502 Bad Gateway')).toBe(true);
+    expect(
+      isTechnicalStripeErrorMessage(
+        'Error: boom\n    at Object.handler (/app/route.ts:10:5)',
+      ),
+    ).toBe(true);
+    expect(isTechnicalStripeErrorMessage('Unable to start payment. Please try again.')).toBe(
+      false,
+    );
+  });
+});
+
 describe('resolveStripePaymentError', () => {
   it('maps authentication messages to auth copy', () => {
     expect(resolveStripePaymentError('Authentication failed', labels)).toEqual({
@@ -29,12 +44,25 @@ describe('resolveStripePaymentError', () => {
     });
   });
 
-  it('maps network messages and keeps the raw description', () => {
+  it('maps network messages and keeps the raw description when safe', () => {
     expect(resolveStripePaymentError('Failed to fetch', labels)).toEqual({
       title: labels.networkTitle,
       description: 'Failed to fetch',
       hint: labels.networkHint,
     });
+  });
+
+  it('maps timeout messages to network copy', () => {
+    expect(resolveStripePaymentError('Request timed out', labels).title).toBe(
+      labels.networkTitle,
+    );
+  });
+
+  it('scrubs technical HTTP messages from the UI description', () => {
+    const resolved = resolveStripePaymentError('HTTP 502 Bad Gateway', labels);
+    expect(resolved.title).toBe(labels.genericTitle);
+    expect(resolved.description).toBe(labels.genericHint);
+    expect(resolved.description).not.toMatch(/HTTP 502/i);
   });
 
   it('falls back to generic copy', () => {
