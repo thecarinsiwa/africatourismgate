@@ -178,7 +178,7 @@ test.describe('Language switch (FR/EN/ES)', () => {
     await expect(page.getByRole('heading', { name: 'Política de privacidad' })).toBeVisible();
     await expect(page.getByText('Contenido en preparación')).toBeVisible();
     await expect(
-      page.getByRole('navigation', { name: 'Breadcrumb' }).getByRole('link', { name: 'Inicio' }),
+      page.getByRole('navigation', { name: 'Miga de pan' }).getByRole('link', { name: 'Inicio' }),
     ).toBeVisible();
   });
 
@@ -205,14 +205,14 @@ test.describe('Language switch (FR/EN/ES)', () => {
 
     await expect(page.getByRole('heading', { name: 'Qui nous sommes', level: 1 })).toBeVisible();
     await expect(
-      page.getByRole('navigation', { name: 'Breadcrumb' }).getByRole('link', { name: 'À propos' }),
+      page.getByRole('navigation', { name: /Fil d.Ariane/i }).getByRole('link', { name: 'À propos' }),
     ).toBeVisible();
 
     await switchLanguage(page, /Español/i);
 
     await expect(page.getByRole('heading', { name: 'Quiénes somos', level: 1 })).toBeVisible();
     await expect(
-      page.getByRole('navigation', { name: 'Breadcrumb' }).getByRole('link', { name: 'Sobre nosotros' }),
+      page.getByRole('navigation', { name: 'Miga de pan' }).getByRole('link', { name: 'Sobre nosotros' }),
     ).toBeVisible();
   });
 
