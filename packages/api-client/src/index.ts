@@ -69,6 +69,8 @@ import type {
   ActivitiesListQuery,
   ActivityBookingRequest,
   ActivityBookingRequestsListQuery,
+  ActivityBookingRequestStatusEmailPreview,
+  ActivityBookingRequestStatusEmailPreviewRequest,
   ActivityImage,
   ActivityImagesListQuery,
   ActivityItineraryStop,
@@ -3603,6 +3605,16 @@ export class ApiClient {
   getActivityBookingRequest(id: string): Promise<ActivityBookingRequest> {
     return this.request<ActivityBookingRequest>(
       `/activities/booking-requests/${id}`,
+    );
+  }
+
+  previewActivityBookingRequestStatusEmail(
+    id: string,
+    body: ActivityBookingRequestStatusEmailPreviewRequest,
+  ): Promise<ActivityBookingRequestStatusEmailPreview> {
+    return this.request<ActivityBookingRequestStatusEmailPreview>(
+      `/activities/booking-requests/${id}/status-email-preview`,
+      { method: 'POST', body },
     );
   }
 

@@ -183,7 +183,7 @@
     "ariaLabel": "Lista de solicitudes de reserva de actividades",
     "empty": "No hay solicitudes de reserva por ahora.",
     "searchPlaceholder": "Buscar por nombre o correo…",
-    "statusUpdated": "Estado actualizado.",
+    "statusUpdated": "Estado actualizado. Correo enviado al cliente.",
     "filters": {
       "activity": "Actividad",
       "allActivities": "Todas las actividades",
@@ -195,6 +195,24 @@
       "contacted": "Contactado",
       "confirmed": "Confirmado",
       "cancelled": "Cancelado"
+    },
+    "availability": {
+      "available": "Plaza disponible",
+      "unavailable": "Sigue no disponible",
+      "in_progress": "Disponibilidad en verificación",
+      "pending_review": "En espera de confirmación"
+    },
+    "statusConfirm": {
+      "title": "Confirmar cambio de estado",
+      "description": "Se enviará un correo a {email} con el nuevo estado.",
+      "toStatus": "Nuevo estado",
+      "availability": "Mensaje de disponibilidad",
+      "emailSubject": "Asunto",
+      "emailPreview": "Vista previa del mensaje",
+      "iframeTitle": "Vista previa del correo al cliente",
+      "confirm": "Enviar correo y actualizar",
+      "cancel": "Cancelar",
+      "loadingPreview": "Cargando vista previa…"
     },
     "columns": {
       "createdAt": "Recibida",

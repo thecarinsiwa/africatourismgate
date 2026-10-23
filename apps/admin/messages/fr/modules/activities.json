@@ -183,7 +183,7 @@
     "ariaLabel": "Liste des demandes de réservation d'activités",
     "empty": "Aucune demande de réservation pour le moment.",
     "searchPlaceholder": "Rechercher par nom ou e-mail…",
-    "statusUpdated": "Statut mis à jour.",
+    "statusUpdated": "Statut mis à jour. E-mail envoyé au client.",
     "filters": {
       "activity": "Activité",
       "allActivities": "Toutes les activités",
@@ -195,6 +195,24 @@
       "contacted": "Contacté",
       "confirmed": "Confirmé",
       "cancelled": "Annulé"
+    },
+    "availability": {
+      "available": "Créneau rendu disponible",
+      "unavailable": "Toujours indisponible",
+      "in_progress": "Disponibilité en cours de vérification",
+      "pending_review": "En attente de confirmation"
+    },
+    "statusConfirm": {
+      "title": "Confirmer le changement de statut",
+      "description": "Un e-mail sera envoyé à {email} avec le nouveau statut.",
+      "toStatus": "Nouveau statut",
+      "availability": "Message de disponibilité",
+      "emailSubject": "Objet",
+      "emailPreview": "Aperçu du message",
+      "iframeTitle": "Aperçu de l'e-mail client",
+      "confirm": "Envoyer l'e-mail et mettre à jour",
+      "cancel": "Annuler",
+      "loadingPreview": "Chargement de l'aperçu…"
     },
     "columns": {
       "createdAt": "Reçue le",

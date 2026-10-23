@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  Button,
   Card,
   DataTable,
   DataTableActionButton,
@@ -11,6 +12,7 @@ import {
   DataTablePagination,
   FilterBar,
   Input,
+  Modal,
   SearchableSelect,
   Select,
   useToast,
@@ -21,7 +23,9 @@ import {
   ACTIVITY_BOOKING_REQUEST_STATUSES,
   type Activity,
   type ActivityBookingRequest,
+  type ActivityBookingRequestAvailability,
   type ActivityBookingRequestStatus,
+  type ActivityBookingRequestStatusEmailPreview,
 } from '@africatourismgate/types';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -78,6 +82,15 @@ export function ActivityBookingRequestsList() {
   const [activityFilter, setActivityFilter] = useState('');
   const [activities, setActivities] = useState<Activity[]>([]);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [statusConfirm, setStatusConfirm] = useState<{
+    request: ActivityBookingRequest;
+    nextStatus: ActivityBookingRequestStatus;
+  } | null>(null);
+  const [emailPreview, setEmailPreview] = useState<
+    | { status: 'loading' }
+    | { status: 'error'; message: string }
+    | { status: 'ready'; preview: ActivityBookingRequestStatusEmailPreview }
+  >({ status: 'loading' });
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -170,36 +183,70 @@ export function ActivityBookingRequestsList() {
     void load();
   }, [load]);
 
-  const handleStatusChange = useCallback(
-    async (request: ActivityBookingRequest, nextStatus: ActivityBookingRequestStatus) => {
+  const closeStatusConfirm = useCallback(() => {
+    setStatusConfirm(null);
+    setEmailPreview({ status: 'loading' });
+  }, []);
+
+  const openStatusConfirm = useCallback(
+    (request: ActivityBookingRequest, nextStatus: ActivityBookingRequestStatus) => {
       if (nextStatus === request.status) return;
-      setUpdatingId(request.id);
-      try {
-        const updated = await getApiClient().updateActivityBookingRequestStatus(
-          request.id,
-          { status: nextStatus },
+      setStatusConfirm({ request, nextStatus });
+      setEmailPreview({ status: 'loading' });
+      void getApiClient()
+        .previewActivityBookingRequestStatusEmail(request.id, { status: nextStatus })
+        .then((preview) => setEmailPreview({ status: 'ready', preview }))
+        .catch((error) =>
+          setEmailPreview({
+            status: 'error',
+            message: getActivitiesErrorMessage(error),
+          }),
         );
-        setState((current) => {
-          if (current.status !== 'ready') return current;
-          return {
-            ...current,
-            requests: current.requests.map((row) =>
-              row.id === updated.id ? updated : row,
-            ),
-          };
-        });
-        toast({ variant: 'success', message: t('statusUpdated') });
-      } catch (error) {
-        toast({
-          variant: 'error',
-          message: getActivitiesErrorMessage(error),
-        });
-      } finally {
-        setUpdatingId(null);
-      }
     },
-    [getActivitiesErrorMessage, t, toast],
+    [getActivitiesErrorMessage],
   );
+
+  const confirmStatusChange = useCallback(async () => {
+    if (!statusConfirm) return;
+    const { request, nextStatus } = statusConfirm;
+    setUpdatingId(request.id);
+    try {
+      const updated = await getApiClient().updateActivityBookingRequestStatus(
+        request.id,
+        { status: nextStatus },
+      );
+      setState((current) => {
+        if (current.status !== 'ready') return current;
+        return {
+          ...current,
+          requests: current.requests.map((row) =>
+            row.id === updated.id ? updated : row,
+          ),
+        };
+      });
+      toast({ variant: 'success', message: t('statusUpdated') });
+      closeStatusConfirm();
+    } catch (error) {
+      toast({
+        variant: 'error',
+        message: getActivitiesErrorMessage(error),
+      });
+    } finally {
+      setUpdatingId(null);
+    }
+  }, [closeStatusConfirm, getActivitiesErrorMessage, statusConfirm, t, toast]);
+
+  const availabilityTone = (
+    availability: ActivityBookingRequestAvailability,
+  ): string => {
+    if (availability === 'available') {
+      return 'text-emerald-700 dark:text-emerald-400';
+    }
+    if (availability === 'unavailable') {
+      return 'text-red-700 dark:text-red-400';
+    }
+    return 'text-amber-700 dark:text-amber-400';
+  };
 
   const columns = useMemo<ColumnDef<ActivityBookingRequest>[]>(
     () => [
@@ -291,7 +338,7 @@ export function ActivityBookingRequestsList() {
                 label: t(`status.${status}`),
               }))}
               onChange={(e) =>
-                void handleStatusChange(
+                openStatusConfirm(
                   row.original,
                   e.target.value as ActivityBookingRequestStatus,
                 )
@@ -333,8 +380,8 @@ export function ActivityBookingRequestsList() {
     ],
     [
       activityTitleById,
-      handleStatusChange,
       locale,
+      openStatusConfirm,
       t,
       tCommonColumns,
       updatingId,
@@ -423,6 +470,99 @@ export function ActivityBookingRequestsList() {
           />
         ) : null}
       </Card>
+
+      <Modal
+        open={statusConfirm != null}
+        onOpenChange={(open) => {
+          if (!open) closeStatusConfirm();
+        }}
+        title={t('statusConfirm.title')}
+        description={
+          statusConfirm
+            ? t('statusConfirm.description', { email: statusConfirm.request.email })
+            : undefined
+        }
+        className="max-w-3xl"
+        showClose
+      >
+        {statusConfirm ? (
+          <div className="space-y-4">
+            <dl className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                  {t('statusConfirm.toStatus')}
+                </dt>
+                <dd className="mt-1 text-sm font-medium text-atg-fg">
+                  {t(`status.${statusConfirm.nextStatus}`)}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                  {t('statusConfirm.availability')}
+                </dt>
+                <dd
+                  className={`mt-1 text-sm font-semibold ${
+                    emailPreview.status === 'ready'
+                      ? availabilityTone(emailPreview.preview.availability)
+                      : 'text-atg-muted'
+                  }`}
+                >
+                  {emailPreview.status === 'ready'
+                    ? t(`availability.${emailPreview.preview.availability}`)
+                    : '…'}
+                </dd>
+              </div>
+            </dl>
+
+            {emailPreview.status === 'loading' ? (
+              <p className="text-sm text-atg-muted">{t('statusConfirm.loadingPreview')}</p>
+            ) : null}
+            {emailPreview.status === 'error' ? (
+              <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+                {emailPreview.message}
+              </p>
+            ) : null}
+            {emailPreview.status === 'ready' ? (
+              <div className="space-y-2">
+                <p className="text-sm text-atg-muted">
+                  <span className="font-medium text-atg-fg">
+                    {t('statusConfirm.emailSubject')}:
+                  </span>{' '}
+                  {emailPreview.preview.subject}
+                </p>
+                <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                  {t('statusConfirm.emailPreview')}
+                </p>
+                <iframe
+                  title={t('statusConfirm.iframeTitle')}
+                  srcDoc={emailPreview.preview.html}
+                  className="h-[22rem] w-full rounded-lg border border-atg-border bg-white"
+                  sandbox="allow-same-origin"
+                />
+              </div>
+            ) : null}
+
+            <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={closeStatusConfirm}
+                disabled={updatingId === statusConfirm.request.id}
+              >
+                {t('statusConfirm.cancel')}
+              </Button>
+              <Button
+                type="button"
+                onClick={() => void confirmStatusChange()}
+                loading={updatingId === statusConfirm.request.id}
+                disabled={emailPreview.status !== 'ready'}
+              >
+                {t('statusConfirm.confirm')}
+              </Button>
+            </div>
+          </div>
+        ) : null}
+      </Modal>
     </div>
   );
 }

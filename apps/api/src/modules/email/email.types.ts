@@ -207,6 +207,18 @@ export type ActivityBookingRequestAdminEmailPayload = {
   webUrl?: string;
 };
 
+/** Staff updated an activity 0-slot inquiry status → notify the customer. */
+export type ActivityBookingRequestStatusEmailPayload = {
+  to: string;
+  fullName: string;
+  activityTitle: string;
+  preferredDate: string;
+  participants: number;
+  requestId: string;
+  status: 'pending' | 'contacted' | 'confirmed' | 'cancelled';
+  webUrl?: string;
+};
+
 export type PosReceiptEmailLineItem = {
   title: string;
   quantity: number;

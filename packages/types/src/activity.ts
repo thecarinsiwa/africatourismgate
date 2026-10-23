@@ -166,6 +166,24 @@ export interface UpdateActivityBookingRequestStatusRequest {
   status: ActivityBookingRequestStatus;
 }
 
+export type ActivityBookingRequestAvailability =
+  | 'available'
+  | 'unavailable'
+  | 'in_progress'
+  | 'pending_review';
+
+export interface ActivityBookingRequestStatusEmailPreviewRequest {
+  status: ActivityBookingRequestStatus;
+}
+
+export interface ActivityBookingRequestStatusEmailPreview {
+  subject: string;
+  html: string;
+  text: string;
+  availability: ActivityBookingRequestAvailability;
+  status: ActivityBookingRequestStatus;
+}
+
 export interface ActivitiesListQuery {
   page?: number;
   limit?: number;

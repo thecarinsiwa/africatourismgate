@@ -37,6 +37,10 @@ import { ActivitiesListQueryDto } from './dto/activities-list-query.dto';
 import { ActivitiesService } from './activities.service';
 import { ActivityBookingRequestDto } from './dto/activity-booking-request.dto';
 import { ActivityBookingRequestsListQueryDto } from './dto/activity-booking-requests-list-query.dto';
+import {
+  ActivityBookingRequestStatusEmailPreviewDto,
+  ActivityBookingRequestStatusEmailPreviewRequestDto,
+} from './dto/activity-booking-request-status-email-preview.dto';
 import { UpdateActivityBookingRequestStatusDto } from './dto/update-activity-booking-request-status.dto';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 
@@ -108,6 +112,23 @@ export class ActivitiesController {
     @CurrentUser() user: AuthUserDto,
   ): Promise<ActivityBookingRequestDto> {
     return this.bookingRequestsService.findOneForUser(requestId, user);
+  }
+
+  @RequirePermissions('activities.read')
+  @Post('booking-requests/:requestId/status-email-preview')
+  @ApiOperation({
+    summary: 'Preview customer email for a booking-request status change',
+  })
+  previewBookingRequestStatusEmail(
+    @Param('requestId') requestId: string,
+    @Body() dto: ActivityBookingRequestStatusEmailPreviewRequestDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<ActivityBookingRequestStatusEmailPreviewDto> {
+    return this.bookingRequestsService.previewStatusEmailForUser(
+      requestId,
+      dto.status,
+      user,
+    );
   }
 
   @RequirePermissions('activities.write')

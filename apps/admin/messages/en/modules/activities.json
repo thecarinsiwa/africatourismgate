@@ -183,7 +183,7 @@
     "ariaLabel": "Activity booking requests list",
     "empty": "No booking requests yet.",
     "searchPlaceholder": "Search by name or email…",
-    "statusUpdated": "Status updated.",
+    "statusUpdated": "Status updated. Email sent to the customer.",
     "filters": {
       "activity": "Activity",
       "allActivities": "All activities",
@@ -195,6 +195,24 @@
       "contacted": "Contacted",
       "confirmed": "Confirmed",
       "cancelled": "Cancelled"
+    },
+    "availability": {
+      "available": "Slot made available",
+      "unavailable": "Still unavailable",
+      "in_progress": "Availability being checked",
+      "pending_review": "Awaiting confirmation"
+    },
+    "statusConfirm": {
+      "title": "Confirm status change",
+      "description": "An email will be sent to {email} with the new status.",
+      "toStatus": "New status",
+      "availability": "Availability message",
+      "emailSubject": "Subject",
+      "emailPreview": "Message preview",
+      "iframeTitle": "Customer email preview",
+      "confirm": "Send email & update",
+      "cancel": "Cancel",
+      "loadingPreview": "Loading email preview…"
     },
     "columns": {
       "createdAt": "Received",

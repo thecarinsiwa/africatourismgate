@@ -1,8 +1,10 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { PublicActivitiesService } from '../../src/modules/public/activities/public-activities.service';
 import {
+  availabilityForBookingRequestStatus,
   renderActivityBookingRequestAdminEmail,
   renderActivityBookingRequestCustomerEmail,
+  renderActivityBookingRequestStatusEmail,
 } from '../../src/modules/email/activity-booking-request.email.templates';
 import { DEFAULT_EMAIL_BRANDING } from '../../src/modules/email/email-branding.constants';
 import { ActivityBookingRequestsService } from '../../src/modules/resources/activities/activity-booking-requests.service';
@@ -206,7 +208,7 @@ describe('PublicActivitiesService.submitBookingRequest', () => {
 });
 
 describe('ActivityBookingRequestsService.updateStatusForUser', () => {
-  it('updates status for a scoped request', async () => {
+  it('updates status and emails the customer', async () => {
     const row = {
       id: 'req-1',
       activityId: ACTIVITY_ID,
@@ -229,30 +231,48 @@ describe('ActivityBookingRequestsService.updateStatusForUser', () => {
       save: jest.fn(async (entity: typeof row) => entity),
     };
     const activitiesRepository = emptyRepo();
+    activitiesRepository.findOne.mockResolvedValue({
+      id: ACTIVITY_ID,
+      title: 'Kigali City Tour',
+    });
     const orgScopeService = {
       resolveCatalogListOrganizationId: jest.fn(),
       assertCanAccessOrganization: jest.fn().mockResolvedValue(undefined),
+    };
+    const emailService = {
+      sendActivityBookingRequestStatus: jest.fn().mockResolvedValue({ sent: true }),
+      previewActivityBookingRequestStatus: jest.fn(),
     };
 
     const service = new ActivityBookingRequestsService(
       requestsRepository as never,
       activitiesRepository as never,
       orgScopeService as never,
+      emailService as never,
     );
 
     const updated = await service.updateStatusForUser(
       'req-1',
-      { status: 'contacted' },
+      { status: 'confirmed' },
       { id: 'user-1' } as never,
     );
+    await flushAsyncWork();
 
-    expect(updated.status).toBe('contacted');
+    expect(updated.status).toBe('confirmed');
     expect(orgScopeService.assertCanAccessOrganization).toHaveBeenCalledWith(
       expect.objectContaining({ id: 'user-1' }),
       'org-1',
     );
     expect(requestsRepository.save).toHaveBeenCalledWith(
-      expect.objectContaining({ status: 'contacted', updatedByUserId: 'user-1' }),
+      expect.objectContaining({ status: 'confirmed', updatedByUserId: 'user-1' }),
+    );
+    expect(emailService.sendActivityBookingRequestStatus).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: 'jane@example.com',
+        activityTitle: 'Kigali City Tour',
+        status: 'confirmed',
+        requestId: 'req-1',
+      }),
     );
   });
 });
@@ -299,5 +319,42 @@ describe('activity booking request email templates', () => {
     expect(rendered.html).toContain('jane@example.com');
     expect(rendered.html).toContain('Private guide please');
     expect(rendered.text).toContain('+250788000000');
+  });
+
+  it('mentions slot availability for confirmed and cancelled statuses', () => {
+    expect(availabilityForBookingRequestStatus('confirmed')).toBe('available');
+    expect(availabilityForBookingRequestStatus('cancelled')).toBe('unavailable');
+
+    const confirmed = renderActivityBookingRequestStatusEmail(
+      {
+        to: 'jane@example.com',
+        fullName: 'Jane Doe',
+        activityTitle: 'Kigali City Tour',
+        preferredDate: FUTURE_DATE,
+        participants: 2,
+        requestId: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee',
+        status: 'confirmed',
+      },
+      DEFAULT_EMAIL_BRANDING,
+    );
+    expect(confirmed.subject).toMatch(/Slot available/i);
+    expect(confirmed.html).toMatch(/Créneau rendu disponible|Créneau disponible/i);
+    expect(confirmed.text).toMatch(/Créneau disponible/i);
+
+    const cancelled = renderActivityBookingRequestStatusEmail(
+      {
+        to: 'jane@example.com',
+        fullName: 'Jane Doe',
+        activityTitle: 'Kigali City Tour',
+        preferredDate: FUTURE_DATE,
+        participants: 2,
+        requestId: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee',
+        status: 'cancelled',
+      },
+      DEFAULT_EMAIL_BRANDING,
+    );
+    expect(cancelled.subject).toMatch(/Still unavailable/i);
+    expect(cancelled.html).toMatch(/Toujours indisponible/i);
+    expect(cancelled.text).toMatch(/Toujours indisponible/i);
   });
 });
