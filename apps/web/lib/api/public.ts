@@ -397,7 +397,7 @@ export async function searchActivities(
 
 function buildActivityDetailQuery(params: ActivityDetailQuery): string {
   const qs = new URLSearchParams();
-  qs.set('date', params.date);
+  if (params.date) qs.set('date', params.date);
   if (params.participants !== undefined) qs.set('participants', String(params.participants));
   const s = qs.toString();
   return s ? `?${s}` : '';

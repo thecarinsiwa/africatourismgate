@@ -142,12 +142,8 @@ export function toActivitySearchQuery(params: ActivitiesSearchParams): ActivityS
 }
 
 export function toActivityDetailQuery(params: ActivityDetailSearchParams): ActivityDetailQuery {
-  if (!params.date) {
-    throw new Error('Activity detail requires date');
-  }
-
   return {
-    date: params.date,
+    date: params.date || undefined,
     participants: parseParticipantsParam(params.participants),
   };
 }

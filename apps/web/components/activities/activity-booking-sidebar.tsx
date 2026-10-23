@@ -64,17 +64,23 @@ function ActivityBookingContent({
     minutePlural: t.minutePlural,
   });
 
+  const hasDate = Boolean(detail.date);
+
   return (
     <BookingSidebarBody title={t.reserveSection}>
-      <BookingSidebarDateCard
-        label={t.date}
-        value={formatDisplayDate(detail.date, locale)}
-        detail={
-          selectedSchedule
-            ? formatScheduleTime(selectedSchedule.startDatetime, locale)
-            : undefined
-        }
-      />
+      {hasDate ? (
+        <BookingSidebarDateCard
+          label={t.date}
+          value={formatDisplayDate(detail.date, locale)}
+          detail={
+            selectedSchedule
+              ? formatScheduleTime(selectedSchedule.startDatetime, locale)
+              : undefined
+          }
+        />
+      ) : (
+        <BookingSidebarHint tone="warning">{t.noSchedulesHint}</BookingSidebarHint>
+      )}
 
       <BookingSidebarField label={t.participants}>
         <input
@@ -89,7 +95,7 @@ function ActivityBookingContent({
         />
       </BookingSidebarField>
 
-      {!selectedSchedule && (
+      {hasDate && !selectedSchedule && (
         <BookingSidebarHint tone="warning">{t.selectScheduleHint}</BookingSidebarHint>
       )}
 

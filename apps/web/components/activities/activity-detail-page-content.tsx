@@ -65,10 +65,10 @@ export function ActivityDetailPageContent({
     [initialSearch.date, participants, selectedScheduleId],
   );
 
-  const apiQuery = useMemo(() => {
-    if (!initialSearch.date) return null;
-    return toActivityDetailQuery(searchContext);
-  }, [initialSearch.date, searchContext]);
+  const apiQuery = useMemo(
+    () => toActivityDetailQuery(searchContext),
+    [searchContext],
+  );
 
   const syncUrl = useCallback(
     (overrides: Partial<ActivityDetailPageSearch> = {}) => {
@@ -87,13 +87,6 @@ export function ActivityDetailPageContent({
 
   useEffect(() => {
     let cancelled = false;
-
-    if (!apiQuery) {
-      setDetail(null);
-      setLoading(false);
-      setNotFound(true);
-      return;
-    }
 
     setLoading(true);
     setNotFound(false);

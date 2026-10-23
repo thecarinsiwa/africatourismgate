@@ -1441,7 +1441,7 @@
     "totalActivity": "Activity total",
     "reserveSection": "Book",
     "notFound": "Activity not found",
-    "notFoundHint": "This activity does not exist or has no available time slots.",
+    "notFoundHint": "This activity does not exist or is no longer offered.",
     "backToList": "Back to results",
     "providerLabel": "Provider",
     "durationLabel": "Duration",

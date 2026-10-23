@@ -1441,7 +1441,7 @@
     "totalActivity": "Total actividad",
     "reserveSection": "Reservar",
     "notFound": "Actividad no encontrada",
-    "notFoundHint": "Esta actividad no existe o no tiene horarios disponibles.",
+    "notFoundHint": "Esta actividad no existe o ya no se ofrece.",
     "backToList": "Volver a resultados",
     "providerLabel": "Proveedor",
     "durationLabel": "Duración",

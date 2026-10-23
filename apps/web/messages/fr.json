@@ -1441,7 +1441,7 @@
     "totalActivity": "Total activité",
     "reserveSection": "Réserver",
     "notFound": "Activité introuvable",
-    "notFoundHint": "Cette activité n'existe pas ou aucun créneau n'est disponible.",
+    "notFoundHint": "Cette activité n'existe pas ou n'est plus proposée.",
     "backToList": "Retour aux résultats",
     "providerLabel": "Prestataire",
     "durationLabel": "Durée",
