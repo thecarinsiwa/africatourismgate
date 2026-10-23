@@ -45,7 +45,7 @@
     "flights": "Flights",
     "cars": "Car Rental",
     "cruises": "Cruises",
-    "tours": "Tours",
+    "tours": "Activities",
     "partners": "Our partners",
     "mainAria": "Main navigation",
     "mobileAria": "Mobile navigation",
@@ -633,7 +633,7 @@
       "hotels": "Hotels",
       "cars": "Cars",
       "cruises": "Cruises",
-      "tours": "Tours"
+      "tours": "Activities"
     },
     "search": "Search",
     "departDate": "Departure date",
@@ -749,7 +749,7 @@
     "specialistLinks": {
       "premium": "Premium Stays",
       "flights": "First Class Flights",
-      "safaris": "Safaris & Tours",
+      "safaris": "Safaris & Activities",
       "cruises": "Coastal Cruises",
       "cars": "Car Rental",
       "packages": "Packages"
@@ -1042,7 +1042,7 @@
       "flights": "Flights",
       "cars": "Car rentals",
       "cruises": "Cruises",
-      "tours": "Tours & activities"
+      "tours": "Activities"
     }
   },
   "hotels": {
@@ -1394,14 +1394,14 @@
     "breadcrumbAria": "Breadcrumb"
   },
   "activities": {
-    "metaTitle": "Activities & tours in Africa",
-    "metaDescription": "Book guided activities and tours in Africa with Africa Tourism Gate.",
+    "metaTitle": "Activities in Africa",
+    "metaDescription": "Book guided activities in Africa with Africa Tourism Gate.",
     "detailMetaDescription": "Activity {name} with Africa Tourism Gate.",
     "detailMetaFallbackTitle": "Activity",
     "detailMetaFallbackDescription": "Activity details — Africa Tourism Gate",
     "breadcrumbHome": "Home",
     "breadcrumbActivities": "Activities",
-    "heroTitle": "Activities & tours in Africa",
+    "heroTitle": "Activities in Africa",
     "heroSubtitle": "Guided excursions and local experiences — pick your time slot and book online.",
     "resultsFor": "Results for",
     "anyDestination": "All destinations",

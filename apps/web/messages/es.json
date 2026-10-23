@@ -45,7 +45,7 @@
     "flights": "Vuelos",
     "cars": "Alquiler de coches",
     "cruises": "Cruceros",
-    "tours": "Tours",
+    "tours": "Actividades",
     "partners": "Nuestros socios",
     "mainAria": "Navegación principal",
     "mobileAria": "Navegación móvil",
@@ -633,7 +633,7 @@
       "hotels": "Hoteles",
       "cars": "Coches",
       "cruises": "Cruceros",
-      "tours": "Tours"
+      "tours": "Actividades"
     },
     "search": "Buscar",
     "departDate": "Fecha de salida",
@@ -749,7 +749,7 @@
     "specialistLinks": {
       "premium": "Estancias premium",
       "flights": "Vuelos en primera clase",
-      "safaris": "Safaris y tours",
+      "safaris": "Safaris y actividades",
       "cruises": "Cruceros costeros",
       "cars": "Alquiler de coches",
       "packages": "Paquetes"
@@ -1042,7 +1042,7 @@
       "flights": "Vuelos",
       "cars": "Alquiler de vehículos",
       "cruises": "Cruceros",
-      "tours": "Actividades y tours"
+      "tours": "Actividades"
     }
   },
   "hotels": {
@@ -1394,14 +1394,14 @@
     "breadcrumbAria": "Miga de pan"
   },
   "activities": {
-    "metaTitle": "Actividades y tours en África",
-    "metaDescription": "Reserve actividades y tours guiados en África con Africa Tourism Gate.",
+    "metaTitle": "Actividades en África",
+    "metaDescription": "Reserve actividades guiadas en África con Africa Tourism Gate.",
     "detailMetaDescription": "Actividad {name} con Africa Tourism Gate.",
     "detailMetaFallbackTitle": "Actividad",
     "detailMetaFallbackDescription": "Ficha de actividad — Africa Tourism Gate",
     "breadcrumbHome": "Inicio",
     "breadcrumbActivities": "Actividades",
-    "heroTitle": "Actividades y tours en África",
+    "heroTitle": "Actividades en África",
     "heroSubtitle": "Excursiones guiadas y experiencias locales — elija su horario y reserve en línea.",
     "resultsFor": "Resultados para",
     "anyDestination": "Todos los destinos",

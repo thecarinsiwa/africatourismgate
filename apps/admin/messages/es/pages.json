@@ -126,7 +126,7 @@
   },
   "produits": {
     "activites": {
-      "title": "Actividades y tours",
+      "title": "Actividades",
       "description": "Experiencias, socios y franjas horarias por destino.",
       "actions": {
         "providers": "Socios",

@@ -279,8 +279,8 @@ test.describe('i18n pages FR → EN', () => {
       {
         path: '/activities',
         note: 'activities.heroTitle',
-        fr: 'Activités & tours en Afrique',
-        en: 'Activities & tours in Africa',
+        fr: 'Activités en Afrique',
+        en: 'Activities in Africa',
       },
       {
         path: '/packages',
