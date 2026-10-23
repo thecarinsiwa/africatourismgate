@@ -206,44 +206,80 @@ export function ActivityBookingRequestsList() {
       {
         id: 'createdAt',
         header: t('columns.createdAt'),
+        meta: {
+          hideOnMobile: true,
+          mobileDetailLabel: t('columns.createdAt'),
+        },
         cell: ({ row }) => formatDateTime(row.original.createdAt, locale),
       },
       {
         id: 'activity',
         header: t('columns.activity'),
-        cell: ({ row }) =>
-          activityTitleById.get(row.original.activityId) ??
-          row.original.activityId.slice(0, 8),
+        meta: {
+          hideOnMobile: true,
+          mobileDetailLabel: t('columns.activity'),
+        },
+        cell: ({ row }) => (
+          <span className="block max-w-[14rem] truncate">
+            {activityTitleById.get(row.original.activityId) ??
+              row.original.activityId.slice(0, 8)}
+          </span>
+        ),
       },
       {
         id: 'contact',
         header: t('columns.contact'),
-        cell: ({ row }) => (
-          <div className="min-w-0">
-            <p className="font-medium text-atg-fg">{row.original.fullName}</p>
-            <p className="truncate text-xs text-atg-muted">{row.original.email}</p>
-            {row.original.phone ? (
-              <p className="text-xs text-atg-muted">{row.original.phone}</p>
-            ) : null}
-          </div>
-        ),
+        cell: ({ row }) => {
+          const activityTitle =
+            activityTitleById.get(row.original.activityId) ??
+            row.original.activityId.slice(0, 8);
+          return (
+            <div className="min-w-0">
+              <p className="truncate font-medium text-atg-fg">{row.original.fullName}</p>
+              <p className="truncate text-xs text-atg-muted">{row.original.email}</p>
+              {row.original.phone ? (
+                <p className="truncate text-xs text-atg-muted">{row.original.phone}</p>
+              ) : null}
+              <p className="mt-1 truncate text-xs text-atg-muted md:hidden">
+                {activityTitle}
+                {' · '}
+                {formatDateOnly(row.original.preferredDate, locale)}
+                {' · '}
+                {row.original.participants}
+              </p>
+            </div>
+          );
+        },
       },
       {
         id: 'preferredDate',
         header: t('columns.preferredDate'),
+        meta: {
+          hideOnMobile: true,
+          mobileDetailLabel: t('columns.preferredDate'),
+        },
         cell: ({ row }) => formatDateOnly(row.original.preferredDate, locale),
       },
       {
         id: 'participants',
         header: t('columns.participants'),
+        meta: {
+          align: 'center',
+          hideOnMobile: true,
+          mobileDetailLabel: t('columns.participants'),
+        },
         cell: ({ row }) => row.original.participants,
       },
       {
         id: 'status',
         header: t('columns.status'),
+        meta: { cellClassName: 'w-[8.5rem] sm:w-auto' },
         cell: ({ row }) => (
-          <div className="flex min-w-[10rem] flex-col gap-2">
-            <DataTableBadge variant={STATUS_VARIANTS[row.original.status]}>
+          <div className="flex min-w-0 flex-col gap-1.5 sm:min-w-[9rem] sm:gap-2">
+            <DataTableBadge
+              variant={STATUS_VARIANTS[row.original.status]}
+              className="hidden w-fit md:inline-flex"
+            >
               {t(`status.${row.original.status}`)}
             </DataTableBadge>
             <Select
@@ -267,9 +303,13 @@ export function ActivityBookingRequestsList() {
       {
         id: 'message',
         header: t('columns.message'),
+        meta: {
+          hideOnMobile: true,
+          mobileDetailLabel: t('columns.message'),
+        },
         cell: ({ row }) =>
           row.original.message?.trim() ? (
-            <p className="max-w-xs whitespace-pre-wrap text-sm text-atg-muted">
+            <p className="max-w-xs whitespace-pre-wrap break-words text-sm text-atg-muted">
               {row.original.message}
             </p>
           ) : (
@@ -279,7 +319,7 @@ export function ActivityBookingRequestsList() {
       {
         id: 'actions',
         header: tCommonColumns('actions'),
-        meta: { align: 'right' },
+        meta: { align: 'right', cellClassName: 'w-12 sm:w-auto' },
         cell: ({ row }) => (
           <DataTableActions>
             <DataTableActionButton
@@ -302,85 +342,87 @@ export function ActivityBookingRequestsList() {
   );
 
   return (
-    <Card variant="dashboard" padding="md" className="space-y-4">
-      <FilterBar
-        mobileVariant="drawer"
-        activeCount={activeFilterCount}
-        onClear={handleClearFilters}
-        clearLabel={tCommon('filters.clearAll')}
-        applyLabel={tCommon('filters.apply')}
-        toggleLabel={tCommon('filters.toggle')}
-        filters={
-          <>
-            <div className="min-w-[200px] flex-1 sm:max-w-md">
-              <Input
-                type="search"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder={t('searchPlaceholder')}
-                aria-label={t('searchPlaceholder')}
-              />
-            </div>
-            <div className="w-full sm:w-56">
-              <SearchableSelect
-                name="activityFilter"
-                label={t('filters.activity')}
-                value={activityFilter}
-                options={activityOptions}
-                onChange={(next) => {
-                  setActivityFilter(next);
-                  setPage(1);
-                }}
-                searchPlaceholder={tSelect('searchPlaceholder')}
-                emptyMessage={tSelect('empty')}
-                placeholder={t('filters.allActivities')}
-              />
-            </div>
-            <div className="w-full sm:w-48">
-              <Select
-                label={t('filters.status')}
-                value={statusFilter}
-                options={statusOptions}
-                onChange={(e) => {
-                  setStatusFilter(e.target.value as '' | ActivityBookingRequestStatus);
-                  setPage(1);
-                }}
-              />
-            </div>
-          </>
-        }
-      />
-
-      {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {state.message}
-        </p>
-      ) : null}
-
-      <DataTable
-        columns={columns}
-        data={state.status === 'ready' ? state.requests : []}
-        isLoading={state.status === 'loading'}
-        loadingMessage={tDataTable('loading')}
-        emptyMessage={t('empty')}
-        expandRowLabel={tDataTable('expandRow')}
-        collapseRowLabel={tDataTable('collapseRow')}
-        expandRowAriaLabel={tDataTable('expandRowAria')}
-        getRowId={(row) => row.id}
-        aria-label={t('ariaLabel')}
-      />
-
-      {state.status === 'ready' ? (
-        <DataTablePagination
-          page={page}
-          pageSize={PAGE_SIZE}
-          totalPages={state.totalPages}
-          totalItems={state.total}
-          itemLabel={tPagination('activity')}
-          labels={paginationLabels}
-          onPageChange={setPage}
+    <div className="min-w-0 space-y-4 overflow-x-hidden">
+      <Card variant="dashboard" padding="md" className="min-w-0 space-y-4 overflow-x-hidden">
+        <FilterBar
+          mobileVariant="drawer"
+          activeCount={activeFilterCount}
+          onClear={handleClearFilters}
+          clearLabel={tCommon('filters.clearAll')}
+          applyLabel={tCommon('filters.apply')}
+          toggleLabel={tCommon('filters.toggle')}
+          filters={
+            <>
+              <div className="min-w-0 flex-1 sm:min-w-[200px] sm:max-w-md">
+                <Input
+                  type="search"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  placeholder={t('searchPlaceholder')}
+                  aria-label={t('searchPlaceholder')}
+                />
+              </div>
+              <div className="w-full min-w-0 sm:w-56">
+                <SearchableSelect
+                  name="activityFilter"
+                  label={t('filters.activity')}
+                  value={activityFilter}
+                  options={activityOptions}
+                  onChange={(next) => {
+                    setActivityFilter(next);
+                    setPage(1);
+                  }}
+                  searchPlaceholder={tSelect('searchPlaceholder')}
+                  emptyMessage={tSelect('empty')}
+                  placeholder={t('filters.allActivities')}
+                />
+              </div>
+              <div className="w-full min-w-0 sm:w-48">
+                <Select
+                  label={t('filters.status')}
+                  value={statusFilter}
+                  options={statusOptions}
+                  onChange={(e) => {
+                    setStatusFilter(e.target.value as '' | ActivityBookingRequestStatus);
+                    setPage(1);
+                  }}
+                />
+              </div>
+            </>
+          }
         />
-      ) : null}
-    </Card>
+
+        {state.status === 'error' ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {state.message}
+          </p>
+        ) : null}
+
+        <DataTable
+          columns={columns}
+          data={state.status === 'ready' ? state.requests : []}
+          isLoading={state.status === 'loading'}
+          loadingMessage={tDataTable('loading')}
+          emptyMessage={t('empty')}
+          expandRowLabel={tDataTable('expandRow')}
+          collapseRowLabel={tDataTable('collapseRow')}
+          expandRowAriaLabel={tDataTable('expandRowAria')}
+          getRowId={(row) => row.id}
+          aria-label={t('ariaLabel')}
+        />
+
+        {state.status === 'ready' ? (
+          <DataTablePagination
+            page={page}
+            pageSize={PAGE_SIZE}
+            totalPages={state.totalPages}
+            totalItems={state.total}
+            itemLabel={tPagination('request')}
+            labels={paginationLabels}
+            onPageChange={setPage}
+          />
+        ) : null}
+      </Card>
+    </div>
   );
 }
