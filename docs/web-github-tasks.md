@@ -844,24 +844,35 @@ Cocher dans l'issue au fur et à mesure. Remplacer `[id]` par un ID seed/API val
 
 | Route | FR | EN | ES | Notes |
 | ----- | -- | -- | -- | ----- |
-| `/hotels` | ☐ | ☐ | ☐ | Formulaire recherche, filtres, pagination |
-| `/flights` | ☐ | ☐ | ☐ | |
-| `/cars` | ☐ | ☐ | ☐ | |
-| `/cruises` | ☐ | ☐ | ☐ | |
-| `/activities` | ☐ | ☐ | ☐ | |
-| `/packages` | ☐ | ☐ | ☐ | |
-| `/search/[type]` | ☐ | ☐ | ☐ | Tester `hotels`, `activities`, type inconnu |
+| `/hotels` | ✅ | ✅ | ✅ | Recherche, filtres, tri, compteur ; 1 résultat seed |
+| `/flights` | ✅ | ✅ | ✅ | Formulaire + empty/erreur API traduits (listing seed vide) |
+| `/cars` | ✅ | ✅ | ✅ | Empty state FR/EN/ES OK |
+| `/cruises` | ✅ | ✅ | ✅ | Listing seed OK |
+| `/activities` | ✅ | ✅ | ✅ | View-mode a11y traduit ; empty/erreur OK |
+| `/packages` | ✅ | ✅ | ✅ | CTA assisté listing = `requestBooking` |
+| `/search/[type]` | ✅ | ✅ | ✅ | `/search/hotels` OK (`verticalSearch.*`) |
 
 #### Groupe C — Fiches produit (détail)
 
+IDs demo QA 2026-10-22 :
+
+| Verticale | ID |
+| --------- | -- |
+| Hôtel | `9edc1a6f-7675-4fbf-a1df-be734b0a87ae` (Serena Hotel Goma) |
+| Vol | `00000000-0000-4000-8000-000000003020` (seed E2E ; params date requis) |
+| Voiture | `00000000-0000-4000-8000-000000004021` (seed E2E ; dates pickup/return) |
+| Croisière | `00000000-0000-4000-8000-000000003036` (Kinshasa – Banana) |
+| Activité | `00000000-0000-4000-8000-000000004031` (seed E2E ; absent du seed API local → not found) |
+| Forfait | `00000000-0000-4000-8000-000000005001` (Kinshasa Activities Duo) |
+
 | Route | FR | EN | ES | Notes |
 | ----- | -- | -- | -- | ----- |
-| `/hotels/[id]` | ☐ | ☐ | ☐ | Galerie, chambres, sidebar réservation, avis |
-| `/flights/[id]` | ☐ | ☐ | ☐ | Itinéraire, classes tarifaires |
-| `/cars/[id]` | ☐ | ☐ | ☐ | Specs, équipements |
-| `/cruises/[id]` | ☐ | ☐ | ☐ | Itinéraire ports, cabines |
-| `/activities/[id]` | ☐ | ☐ | ☐ | Créneaux, difficulté |
-| `/packages/[id]` | ☐ | ☐ | ☐ | Composition forfait, config par vertical |
+| `/hotels/[id]` | ✅ | ✅ | ✅ | UI chrome OK ; contenu CMS (desc/photos/amenities) souvent EN |
+| `/flights/[id]` | ✅ | ✅ | ✅ | Chrome + messages erreur ; seed listing vide sans critères |
+| `/cars/[id]` | ✅ | ✅ | ✅ | Idem (dates requises) |
+| `/cruises/[id]` | ✅ | ✅ | ✅ | Sidebar CTA suit modes org (`cabin` assisté) |
+| `/activities/[id]` | ✅ | ✅ | ✅ | « Activity not found » traduit ; CTA cartes corrigées |
+| `/packages/[id]` | ✅ | ✅ | ✅ | Sidebar + carte : « Request a booking » / « Solicitar… » |
 
 #### Groupe D — Auth & booking
 
@@ -1008,10 +1019,20 @@ Fiches (IDs demo à documenter dans l'issue) :
 
 ## Critères d'acceptation
 
-- [ ] 7 listings × 3 langues cochés
-- [ ] 6 fiches × 3 langues cochés
-- [ ] Mode assisté (activité/forfait) : CTA traduit correctement en EN/ES
-- [ ] Liste des textes hardcodés trouvés avec fichier + ligne
+- [x] 7 listings × 3 langues cochés — QA 2026-10-22
+- [x] 6 fiches × 3 langues cochés (IDs demo documentés ci-dessus)
+- [x] Mode assisté (activité/forfait) : CTA traduit EN/ES (`checkout.requestBooking`)
+- [x] Liste des textes hardcodés trouvés avec fichier + ligne (voir anomalies)
+
+## Anomalies trouvées (QA 2026-10-22)
+
+| Sévérité | Symptôme | Fichier / ligne | Statut |
+| -------- | -------- | --------------- | ------ |
+| Haute | Cartes listing (hors forfait) ignoraient le mode assisté → toujours `bookNow` alors que sidebar affichait `requestBooking` | `hotel-card.tsx` ~154 ; `activity-card.tsx` ~210 ; `activity-table.tsx` ~126 ; `flight-card.tsx` ~151 ; `car-card.tsx` ~130 ; `cruise-card.tsx` ~133 | ✅ Corrigé → `useBookingCtaLabel(...)` |
+| Basse | Contenu CMS fiche hôtel (description, légendes photo, amenities) reste EN/FR sur UI ES | API catalogue / seed — hors next-intl | ⚠️ documenté |
+| Info | Annonce CMS FR seule | `announcement-banner` | ⚠️ WEB-I18N-01 |
+| Info | Org `booking-modes` locale : `room`/`package`/… souvent `assisted` | `organization-settings/public/booking-modes` | OK (CTA suit modes) |
+| — | Messages « demo / coming soon » sur verticales live | — | ✅ aucun (WEB-004) |
 ```
 
 ---
@@ -1206,6 +1227,7 @@ Corriger tous les textes hardcodés / non traduits identifiés :
 | `/booking/login` | EN/ES | « Mot de passe oublié ? » / show-password FR | `booking-login.ts` + UI defaults | ✅ WEB-I18N-01 |
 | `/` map | FR | Leaflet « Zoom in/out » EN | `destinations-map-inner.tsx` | ✅ WEB-I18N-01 |
 | `/booking/cart` | EN/ES | Erreurs créneau / « Impossible d'afficher… » FR | `reservation-cart-page-content.tsx` | ✅ WEB-I18N-03 |
+| Cartes verticales | EN/ES | CTA listing = toujours « Book now » si mode assisté | `*-card.tsx` / `activity-table.tsx` | ✅ WEB-I18N-02 |
 | (annonce) | EN | Texte CMS FR seul | API announcement-banner | ⚠️ contenu admin |
 
 ## Procédure correction
@@ -1308,7 +1330,7 @@ WEB-012 (README) → WEB-006 (CI E2E) → WEB-002 + WEB-003 (cleanup routes)
 | WEB-014 | | | ✅ |
 | WEB-015 | | | ✅ |
 | WEB-I18N-01 | | | ✅ QA 2026-10-22 |
-| WEB-I18N-02 | | | ☐ |
+| WEB-I18N-02 | | | ✅ QA 2026-10-22 |
 | WEB-I18N-03 | | | ✅ QA 2026-10-22 |
 | WEB-I18N-04 | | | ☐ |
 | WEB-I18N-05 | | | ☐ |

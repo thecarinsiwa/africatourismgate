@@ -9,6 +9,7 @@ import {
   type HotelDetailSearchParams,
   type HotelSearchResult,
 } from '../../lib/hotels/listings';
+import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
 import type { Translations } from '../../lib/i18n/message-types';
 import { PriceDisplay, ProductCard, StarRating } from '../shared';
 
@@ -51,6 +52,7 @@ function isHotelAmenity(code: string): code is HotelAmenity {
 }
 
 export function HotelCard({ hotel, t, searchParams = {} }: HotelCardProps) {
+  const ctaLabel = useBookingCtaLabel('room');
   const detailHref = buildHotelDetailHref(hotel.id, searchParams);
   const reserveHref = buildHotelDetailHref(hotel.id, searchParams, '#reserve');
   const typeLabel = t.types[hotel.propertyType as PropertyType] ?? hotel.propertyType;
@@ -151,7 +153,7 @@ export function HotelCard({ hotel, t, searchParams = {} }: HotelCardProps) {
             href={reserveHref}
             className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-5 py-2 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
           >
-            {t.bookNow}
+            {ctaLabel}
           </Link>
         </>
       }

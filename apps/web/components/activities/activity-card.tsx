@@ -15,6 +15,7 @@ import {
 } from '../../lib/activities/difficulty';
 import type { ActivitySearchResult } from '../../lib/activities/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
+import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
 import type { Translations } from '../../lib/i18n/message-types';
 import { PriceDisplay, ProductCard, StarRating } from '../shared';
 
@@ -34,6 +35,7 @@ export function ActivityCard({
   locale,
   layout = 'list',
 }: ActivityCardProps) {
+  const ctaLabel = useBookingCtaLabel('activity_schedule');
   const effectiveDate =
     searchParams.date ??
     (activity.nextStartDatetime ? activity.nextStartDatetime.slice(0, 10) : undefined);
@@ -207,7 +209,7 @@ export function ActivityCard({
             aria-disabled={!canBook}
             tabIndex={!canBook ? -1 : undefined}
           >
-            {t.bookNow}
+            {ctaLabel}
           </Link>
         </>
       }

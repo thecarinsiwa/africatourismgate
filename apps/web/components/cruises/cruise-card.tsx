@@ -10,6 +10,7 @@ import {
 import { formatCruisePortLabel } from '../../lib/cruises/ports';
 import type { CruiseSearchResult } from '../../lib/cruises/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
+import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
 import type { Translations } from '../../lib/i18n/message-types';
 import { PriceDisplay, ProductCard } from '../shared';
 
@@ -21,6 +22,7 @@ type CruiseCardProps = {
 };
 
 export function CruiseCard({ sailing, t, searchParams = {}, locale }: CruiseCardProps) {
+  const ctaLabel = useBookingCtaLabel('cabin');
   const detailParams: CruiseDetailSearchParams = {
     sailFrom: searchParams.sailFrom ?? sailing.sailFromPortCode,
     sailTo: searchParams.sailTo ?? sailing.sailToPortCode,
@@ -128,7 +130,7 @@ export function CruiseCard({ sailing, t, searchParams = {}, locale }: CruiseCard
             href={reserveHref}
             className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-5 py-2 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
           >
-            {t.bookNow}
+            {ctaLabel}
           </Link>
         </>
       }
