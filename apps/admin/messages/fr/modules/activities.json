@@ -232,7 +232,30 @@
       "description": "Créer un créneau pour {activity} à partir de cette demande.",
       "success": "Créneau créé.",
       "hint": "Date souhaitée : {date} · {count, plural, one {# participant} other {# participants}}"
-    }
+    },
+    "stats": {
+      "total": {
+        "label": "Toutes",
+        "subtitle": "Demandes reçues"
+      },
+      "pending": {
+        "label": "En attente",
+        "subtitle": "À traiter"
+      },
+      "contacted": {
+        "label": "Contactées",
+        "subtitle": "Suivi en cours"
+      },
+      "confirmed": {
+        "label": "Confirmées",
+        "subtitle": "Créneau disponible"
+      },
+      "cancelled": {
+        "label": "Annulées",
+        "subtitle": "Indisponibles"
+      }
+    },
+    "participantsBadge": "{count, plural, one {# pers.} other {# pers.}}"
   },
   "stats": {
     "activities": {

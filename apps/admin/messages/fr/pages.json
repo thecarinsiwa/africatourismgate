@@ -145,7 +145,7 @@
       },
       "demandes": {
         "title": "Demandes de réservation",
-        "description": "Demandes clients pour les activités sans créneau disponible."
+        "description": "Traitez les demandes clients sans créneau : changez le statut, envoyez un e-mail et ajoutez un créneau."
       },
       "id": {
         "metaTitle": "Modifier l'activité",

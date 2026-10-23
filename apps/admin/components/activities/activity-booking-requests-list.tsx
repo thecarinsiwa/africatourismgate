@@ -27,10 +27,13 @@ import {
   type ActivityBookingRequestStatus,
   type ActivityBookingRequestStatusEmailPreview,
 } from '@africatourismgate/types';
+import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { ActivityBookingRequestsListFilter } from '../../config/activity-booking-requests-kpi';
 import { getApiClient } from '../../lib/auth/api';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { ActivityBookingRequestsStatCards } from './activity-booking-requests-stat-cards';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -73,6 +76,13 @@ type SlotFormValues = {
   capacity: string;
 };
 
+function contactInitials(fullName: string): string {
+  const parts = fullName.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return '?';
+  if (parts.length === 1) return parts[0]!.slice(0, 2).toUpperCase();
+  return `${parts[0]!.slice(0, 1)}${parts[parts.length - 1]!.slice(0, 1)}`.toUpperCase();
+}
+
 export function ActivityBookingRequestsList() {
   const { activities: getActivitiesErrorMessage } = useAdminErrorMessages();
   const locale = useLocale();
@@ -102,6 +112,7 @@ export function ActivityBookingRequestsList() {
   });
   const [slotError, setSlotError] = useState<string | null>(null);
   const [slotSubmitting, setSlotSubmitting] = useState(false);
+  const [statsRefreshKey, setStatsRefreshKey] = useState(0);
   const [statusConfirm, setStatusConfirm] = useState<{
     request: ActivityBookingRequest;
     nextStatus: ActivityBookingRequestStatus;
@@ -246,6 +257,7 @@ export function ActivityBookingRequestsList() {
           capacity,
         });
         toast({ variant: 'success', message: t('addSlot.success') });
+        setStatsRefreshKey((key) => key + 1);
         setSlotTarget(null);
         setSlotForm({ startDatetime: '', capacity: '10' });
       } catch (error) {
@@ -294,6 +306,7 @@ export function ActivityBookingRequestsList() {
         };
       });
       toast({ variant: 'success', message: t('statusUpdated') });
+      setStatsRefreshKey((key) => key + 1);
       closeStatusConfirm();
     } catch (error) {
       toast({
@@ -304,6 +317,19 @@ export function ActivityBookingRequestsList() {
       setUpdatingId(null);
     }
   }, [closeStatusConfirm, getActivitiesErrorMessage, statusConfirm, t, toast]);
+
+  const listFilter = useMemo<ActivityBookingRequestsListFilter>(
+    () => ({ status: statusFilter || undefined }),
+    [statusFilter],
+  );
+
+  const handleListFilterChange = useCallback(
+    (filter: ActivityBookingRequestsListFilter) => {
+      setStatusFilter(filter.status ?? '');
+      setPage(1);
+    },
+    [],
+  );
 
   const availabilityTone = (
     availability: ActivityBookingRequestAvailability,
@@ -326,7 +352,11 @@ export function ActivityBookingRequestsList() {
           hideOnMobile: true,
           mobileDetailLabel: t('columns.createdAt'),
         },
-        cell: ({ row }) => formatDateTime(row.original.createdAt, locale),
+        cell: ({ row }) => (
+          <span className="whitespace-nowrap text-sm tabular-nums text-atg-muted">
+            {formatDateTime(row.original.createdAt, locale)}
+          </span>
+        ),
       },
       {
         id: 'activity',
@@ -335,12 +365,20 @@ export function ActivityBookingRequestsList() {
           hideOnMobile: true,
           mobileDetailLabel: t('columns.activity'),
         },
-        cell: ({ row }) => (
-          <span className="block max-w-[14rem] truncate">
-            {activityTitleById.get(row.original.activityId) ??
-              row.original.activityId.slice(0, 8)}
-          </span>
-        ),
+        cell: ({ row }) => {
+          const title =
+            activityTitleById.get(row.original.activityId) ??
+            row.original.activityId.slice(0, 8);
+          return (
+            <Link
+              href={`/produits/activites/${row.original.activityId}`}
+              className="block max-w-[14rem] truncate font-medium text-atg-fg underline-offset-2 hover:text-primary hover:underline"
+              title={title}
+            >
+              {title}
+            </Link>
+          );
+        },
       },
       {
         id: 'contact',
@@ -350,19 +388,37 @@ export function ActivityBookingRequestsList() {
             activityTitleById.get(row.original.activityId) ??
             row.original.activityId.slice(0, 8);
           return (
-            <div className="min-w-0">
-              <p className="truncate font-medium text-atg-fg">{row.original.fullName}</p>
-              <p className="truncate text-xs text-atg-muted">{row.original.email}</p>
-              {row.original.phone ? (
-                <p className="truncate text-xs text-atg-muted">{row.original.phone}</p>
-              ) : null}
-              <p className="mt-1 truncate text-xs text-atg-muted md:hidden">
-                {activityTitle}
-                {' · '}
-                {formatDateOnly(row.original.preferredDate, locale)}
-                {' · '}
-                {row.original.participants}
-              </p>
+            <div className="flex min-w-0 items-start gap-3">
+              <span
+                className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary"
+                aria-hidden
+              >
+                {contactInitials(row.original.fullName)}
+              </span>
+              <div className="min-w-0">
+                <p className="truncate font-medium text-atg-fg">{row.original.fullName}</p>
+                <a
+                  href={`mailto:${row.original.email}`}
+                  className="block truncate text-xs text-atg-muted hover:text-primary"
+                >
+                  {row.original.email}
+                </a>
+                {row.original.phone ? (
+                  <a
+                    href={`tel:${row.original.phone}`}
+                    className="block truncate text-xs text-atg-muted hover:text-primary"
+                  >
+                    {row.original.phone}
+                  </a>
+                ) : null}
+                <p className="mt-1 truncate text-xs text-atg-muted md:hidden">
+                  {activityTitle}
+                  {' · '}
+                  {formatDateOnly(row.original.preferredDate, locale)}
+                  {' · '}
+                  {t('participantsBadge', { count: row.original.participants })}
+                </p>
+              </div>
             </div>
           );
         },
@@ -374,24 +430,23 @@ export function ActivityBookingRequestsList() {
           hideOnMobile: true,
           mobileDetailLabel: t('columns.preferredDate'),
         },
-        cell: ({ row }) => formatDateOnly(row.original.preferredDate, locale),
-      },
-      {
-        id: 'participants',
-        header: t('columns.participants'),
-        meta: {
-          align: 'center',
-          hideOnMobile: true,
-          mobileDetailLabel: t('columns.participants'),
-        },
-        cell: ({ row }) => row.original.participants,
+        cell: ({ row }) => (
+          <div className="space-y-1">
+            <p className="whitespace-nowrap text-sm font-medium text-atg-fg">
+              {formatDateOnly(row.original.preferredDate, locale)}
+            </p>
+            <span className="inline-flex rounded-md bg-atg-surface px-2 py-0.5 text-xs font-medium text-atg-muted ring-1 ring-atg-border/70">
+              {t('participantsBadge', { count: row.original.participants })}
+            </span>
+          </div>
+        ),
       },
       {
         id: 'status',
         header: t('columns.status'),
-        meta: { cellClassName: 'w-[8.5rem] sm:w-auto' },
+        meta: { cellClassName: 'w-[9rem] sm:w-[11rem]' },
         cell: ({ row }) => (
-          <div className="flex min-w-0 flex-col gap-1.5 sm:min-w-[9rem] sm:gap-2">
+          <div className="flex min-w-0 flex-col gap-2">
             <DataTableBadge
               variant={STATUS_VARIANTS[row.original.status]}
               className="hidden w-fit md:inline-flex"
@@ -425,7 +480,10 @@ export function ActivityBookingRequestsList() {
         },
         cell: ({ row }) =>
           row.original.message?.trim() ? (
-            <p className="max-w-xs whitespace-pre-wrap break-words text-sm text-atg-muted">
+            <p
+              className="line-clamp-2 max-w-[16rem] border-l-2 border-primary/30 pl-2 text-sm italic leading-snug text-atg-muted"
+              title={row.original.message}
+            >
               {row.original.message}
             </p>
           ) : (
@@ -459,85 +517,98 @@ export function ActivityBookingRequestsList() {
   );
 
   return (
-    <div className="min-w-0 space-y-4 overflow-x-hidden">
-      <Card variant="dashboard" padding="md" className="min-w-0 space-y-4 overflow-x-hidden">
-        <FilterBar
-          mobileVariant="drawer"
-          activeCount={activeFilterCount}
-          onClear={handleClearFilters}
-          clearLabel={tCommon('filters.clearAll')}
-          applyLabel={tCommon('filters.apply')}
-          toggleLabel={tCommon('filters.toggle')}
-          filters={
-            <>
-              <div className="min-w-0 flex-1 sm:min-w-[200px] sm:max-w-md">
-                <Input
-                  type="search"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder={t('searchPlaceholder')}
-                  aria-label={t('searchPlaceholder')}
-                />
-              </div>
-              <div className="w-full min-w-0 sm:w-56">
-                <SearchableSelect
-                  name="activityFilter"
-                  label={t('filters.activity')}
-                  value={activityFilter}
-                  options={activityOptions}
-                  onChange={(next) => {
-                    setActivityFilter(next);
-                    setPage(1);
-                  }}
-                  searchPlaceholder={tSelect('searchPlaceholder')}
-                  emptyMessage={tSelect('empty')}
-                  placeholder={t('filters.allActivities')}
-                />
-              </div>
-              <div className="w-full min-w-0 sm:w-48">
-                <Select
-                  label={t('filters.status')}
-                  value={statusFilter}
-                  options={statusOptions}
-                  onChange={(e) => {
-                    setStatusFilter(e.target.value as '' | ActivityBookingRequestStatus);
-                    setPage(1);
-                  }}
-                />
-              </div>
-            </>
-          }
-        />
+    <div className="min-w-0 space-y-6 overflow-x-hidden">
+      <ActivityBookingRequestsStatCards
+        className="mb-2"
+        refreshKey={statsRefreshKey}
+        listFilter={listFilter}
+        onListFilterChange={handleListFilterChange}
+      />
+
+      <Card variant="dashboard" padding="none" className="min-w-0 overflow-x-hidden">
+        <div className="space-y-4 border-b border-atg-border/70 p-4 sm:p-5">
+          <FilterBar
+            mobileVariant="drawer"
+            activeCount={activeFilterCount}
+            onClear={handleClearFilters}
+            clearLabel={tCommon('filters.clearAll')}
+            applyLabel={tCommon('filters.apply')}
+            toggleLabel={tCommon('filters.toggle')}
+            filters={
+              <>
+                <div className="min-w-0 flex-1 sm:min-w-[200px] sm:max-w-md">
+                  <Input
+                    type="search"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    placeholder={t('searchPlaceholder')}
+                    aria-label={t('searchPlaceholder')}
+                  />
+                </div>
+                <div className="w-full min-w-0 sm:w-56">
+                  <SearchableSelect
+                    name="activityFilter"
+                    label={t('filters.activity')}
+                    value={activityFilter}
+                    options={activityOptions}
+                    onChange={(next) => {
+                      setActivityFilter(next);
+                      setPage(1);
+                    }}
+                    searchPlaceholder={tSelect('searchPlaceholder')}
+                    emptyMessage={tSelect('empty')}
+                    placeholder={t('filters.allActivities')}
+                  />
+                </div>
+                <div className="w-full min-w-0 sm:w-48">
+                  <Select
+                    label={t('filters.status')}
+                    value={statusFilter}
+                    options={statusOptions}
+                    onChange={(e) => {
+                      setStatusFilter(e.target.value as '' | ActivityBookingRequestStatus);
+                      setPage(1);
+                    }}
+                  />
+                </div>
+              </>
+            }
+          />
+        </div>
 
         {state.status === 'error' ? (
-          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+          <p role="alert" className="px-4 py-3 text-sm text-red-600 dark:text-red-400 sm:px-5">
             {state.message}
           </p>
         ) : null}
 
-        <DataTable
-          columns={columns}
-          data={state.status === 'ready' ? state.requests : []}
-          isLoading={state.status === 'loading'}
-          loadingMessage={tDataTable('loading')}
-          emptyMessage={t('empty')}
-          expandRowLabel={tDataTable('expandRow')}
-          collapseRowLabel={tDataTable('collapseRow')}
-          expandRowAriaLabel={tDataTable('expandRowAria')}
-          getRowId={(row) => row.id}
-          aria-label={t('ariaLabel')}
-        />
+        <div className="min-w-0 px-1 sm:px-2">
+          <DataTable
+            columns={columns}
+            data={state.status === 'ready' ? state.requests : []}
+            isLoading={state.status === 'loading'}
+            loadingMessage={tDataTable('loading')}
+            emptyMessage={t('empty')}
+            expandRowLabel={tDataTable('expandRow')}
+            collapseRowLabel={tDataTable('collapseRow')}
+            expandRowAriaLabel={tDataTable('expandRowAria')}
+            getRowId={(row) => row.id}
+            aria-label={t('ariaLabel')}
+          />
+        </div>
 
         {state.status === 'ready' ? (
-          <DataTablePagination
-            page={page}
-            pageSize={PAGE_SIZE}
-            totalPages={state.totalPages}
-            totalItems={state.total}
-            itemLabel={tPagination('request')}
-            labels={paginationLabels}
-            onPageChange={setPage}
-          />
+          <div className="border-t border-atg-border/70 px-4 py-3 sm:px-5">
+            <DataTablePagination
+              page={page}
+              pageSize={PAGE_SIZE}
+              totalPages={state.totalPages}
+              totalItems={state.total}
+              itemLabel={tPagination('request')}
+              labels={paginationLabels}
+              onPageChange={setPage}
+            />
+          </div>
         ) : null}
       </Card>
 

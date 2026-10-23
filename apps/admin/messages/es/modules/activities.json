@@ -232,7 +232,30 @@
       "description": "Crear un horario para {activity} a partir de esta solicitud.",
       "success": "Horario creado.",
       "hint": "Fecha preferida: {date} · {count, plural, one {# participante} other {# participantes}}"
-    }
+    },
+    "stats": {
+      "total": {
+        "label": "Todas",
+        "subtitle": "Solicitudes recibidas"
+      },
+      "pending": {
+        "label": "Pendientes",
+        "subtitle": "Por tratar"
+      },
+      "contacted": {
+        "label": "Contactadas",
+        "subtitle": "Seguimiento en curso"
+      },
+      "confirmed": {
+        "label": "Confirmadas",
+        "subtitle": "Plaza disponible"
+      },
+      "cancelled": {
+        "label": "Canceladas",
+        "subtitle": "No disponibles"
+      }
+    },
+    "participantsBadge": "{count, plural, one {# pers.} other {# pers.}}"
   },
   "stats": {
     "activities": {

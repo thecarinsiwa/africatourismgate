@@ -145,7 +145,7 @@
       },
       "demandes": {
         "title": "Booking requests",
-        "description": "Customer requests for activities with no available slots."
+        "description": "Handle inquiries with no slots: update status, email the guest, and add a time slot."
       },
       "id": {
         "metaTitle": "Edit activity",

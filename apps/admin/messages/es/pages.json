@@ -145,7 +145,7 @@
       },
       "demandes": {
         "title": "Solicitudes de reserva",
-        "description": "Solicitudes de clientes para actividades sin plazas disponibles."
+        "description": "Gestione peticiones sin plazas: cambie el estado, envíe un correo y añada un horario."
       },
       "id": {
         "metaTitle": "Editar actividad",

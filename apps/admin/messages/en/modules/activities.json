@@ -232,11 +232,34 @@
       "description": "Create a slot for {activity} based on this request.",
       "success": "Time slot created.",
       "hint": "Preferred date: {date} · {count, plural, one {# participant} other {# participants}}"
-    }
+    },
+    "stats": {
+      "total": {
+        "label": "All",
+        "subtitle": "Requests received"
+      },
+      "pending": {
+        "label": "Pending",
+        "subtitle": "Needs action"
+      },
+      "contacted": {
+        "label": "Contacted",
+        "subtitle": "Follow-up ongoing"
+      },
+      "confirmed": {
+        "label": "Confirmed",
+        "subtitle": "Slot available"
+      },
+      "cancelled": {
+        "label": "Cancelled",
+        "subtitle": "Unavailable"
+      }
+    },
+    "participantsBadge": "{count, plural, one {# guest} other {# guests}}"
   },
   "stats": {
     "activities": {
-      "label": "Activitys",
+      "label": "Activities",
       "subtitle": "Catalog experiences"
     },
     "providers": {
