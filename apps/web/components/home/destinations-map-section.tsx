@@ -511,6 +511,8 @@ export function DestinationsMapSection() {
               <DestinationsMapInner
                 markers={markers}
                 ariaLabel={t('mapAria')}
+                zoomInLabel={t('zoomIn')}
+                zoomOutLabel={t('zoomOut')}
                 focus={productFocus ?? focus}
                 fitToMarkers={!selectedDestination || (productsReady && !productFocus)}
                 fitMaxZoom={selectedDestination ? 13 : 8}

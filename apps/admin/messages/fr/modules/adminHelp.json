@@ -119,7 +119,7 @@
     "activites-et-forfaits": {
       "title": "Activités et forfaits",
       "summary": "Expériences, partenaires, créneaux et packages combinés.",
-      "body": "Les [activités](/produits/activites) décrivent les expériences et tours. Créez une activité, rattachez une destination et un partenaire, puis ajoutez les créneaux ou options sur la fiche d'édition.\n\nLes [forfaits](/produits/forfaits) regroupent plusieurs produits (hébergement, activité, etc.) en une offre packagée. Composez le contenu du forfait puis publiez-le selon le workflow prévu.\n\nPermissions typiques : activities.read/write et packages.read/write. Vérifiez la cohérence des destinations et des prix avant mise en ligne."
+      "body": "Les [activités](/produits/activites) décrivent les expériences proposées. Créez une activité, rattachez une destination et un partenaire, puis ajoutez les créneaux ou options sur la fiche d'édition.\n\nLes [forfaits](/produits/forfaits) regroupent plusieurs produits (hébergement, activité, etc.) en une offre packagée. Composez le contenu du forfait puis publiez-le selon le workflow prévu.\n\nPermissions typiques : activities.read/write et packages.read/write. Vérifiez la cohérence des destinations et des prix avant mise en ligne."
     },
     "destinations": {
       "title": "Destinations",
@@ -204,7 +204,7 @@
     "parametres-systeme": {
       "title": "Paramètres système",
       "summary": "E-mails, dons, catalogue public, mobile money et réglages org.",
-      "body": "Le [hub Paramètres](/parametres) regroupe la configuration de l'organisation. Depuis ce point d'entrée, accédez notamment aux e-mails transactionnels, aux dons, au mobile money et aux comptes bancaires.\n\nDans les paramètres d'organisation, la section catalogue / produits activés permet d'afficher ou de masquer chaque verticale du site public (hôtels, vols, locations, croisières, tours, forfaits). Une verticale désactivée disparaît de la navigation et renvoie une page introuvable côté site.\n\nModifiez un réglage avec prudence : un mauvais modèle d'e-mail, un compte bancaire incorrect ou un produit masqué par erreur impacte directement clients et opérations. Enregistrez puis vérifiez un parcours réel (paiement test, notification, menu public).\n\nPermissions typiques : organization_settings.read/write, et droits spécifiques pour mobile money ou comptes bancaires. Ces paramètres sont distincts de ceux du module [GAP](/gap/parametres)."
+      "body": "Le [hub Paramètres](/parametres) regroupe la configuration de l'organisation. Depuis ce point d'entrée, accédez notamment aux e-mails transactionnels, aux dons, au mobile money et aux comptes bancaires.\n\nDans les paramètres d'organisation, la section catalogue / produits activés permet d'afficher ou de masquer chaque verticale du site public (hôtels, vols, locations, croisières, activités, forfaits). Une verticale désactivée disparaît de la navigation et renvoie une page introuvable côté site.\n\nModifiez un réglage avec prudence : un mauvais modèle d'e-mail, un compte bancaire incorrect ou un produit masqué par erreur impacte directement clients et opérations. Enregistrez puis vérifiez un parcours réel (paiement test, notification, menu public).\n\nPermissions typiques : organization_settings.read/write, et droits spécifiques pour mobile money ou comptes bancaires. Ces paramètres sont distincts de ceux du module [GAP](/gap/parametres)."
     },
     "vue-ensemble-tresorerie": {
       "title": "Vue d'ensemble de la trésorerie",

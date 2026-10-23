@@ -10,6 +10,7 @@ import {
 import { resolveVehicleSpecs } from '../../lib/cars/specs';
 import type { VehicleSearchResult } from '../../lib/cars/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
+import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
 import type { Translations } from '../../lib/i18n/message-types';
 import { PriceDisplay, ProductCard } from '../shared';
 import { CarSpecBadges } from './car-spec-badges';
@@ -22,6 +23,7 @@ type CarCardProps = {
 };
 
 export function CarCard({ vehicle, t, searchParams = {}, locale }: CarCardProps) {
+  const ctaLabel = useBookingCtaLabel('vehicle');
   const detailParams: CarDetailSearchParams = {
     pickupLocation: searchParams.pickupLocation ?? vehicle.pickupCity,
     pickupDate: searchParams.pickupDate ?? vehicle.pickupDate,
@@ -125,7 +127,7 @@ export function CarCard({ vehicle, t, searchParams = {}, locale }: CarCardProps)
             href={reserveHref}
             className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-5 py-2 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
           >
-            {t.bookNow}
+            {ctaLabel}
           </Link>
         </>
       }

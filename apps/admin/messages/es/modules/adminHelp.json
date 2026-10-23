@@ -119,7 +119,7 @@
     "activites-et-forfaits": {
       "title": "Actividades y paquetes",
       "summary": "Experiencias, socios, franjas y paquetes combinados.",
-      "body": "Las [actividades](/produits/activites) describen experiencias y tours. Cree una actividad, asocie un destino y un socio, y añada franjas u opciones en la ficha de edición.\n\nLos [paquetes](/produits/forfaits) agrupan varios productos (alojamiento, actividad, etc.) en una oferta empaquetada. Compose el contenido del paquete y publíquelo según el flujo previsto.\n\nPermisos típicos: activities.read/write y packages.read/write. Compruebe destinos y precios antes de publicar."
+      "body": "Las [actividades](/produits/activites) describen las experiencias ofrecidas. Cree una actividad, asocie un destino y un socio, y añada franjas u opciones en la ficha de edición.\n\nLos [paquetes](/produits/forfaits) agrupan varios productos (alojamiento, actividad, etc.) en una oferta empaquetada. Compose el contenido del paquete y publíquelo según el flujo previsto.\n\nPermisos típicos: activities.read/write y packages.read/write. Compruebe destinos y precios antes de publicar."
     },
     "destinations": {
       "title": "Destinos",
@@ -204,7 +204,7 @@
     "parametres-systeme": {
       "title": "Ajustes del sistema",
       "summary": "Correos, donaciones, catálogo público, mobile money y ajustes de org.",
-      "body": "El hub [Ajustes](/parametres) agrupa la configuración de la organización. Desde ahí accede, entre otros, a correos transaccionales, donaciones, mobile money y cuentas bancarias.\n\nEn los ajustes de organización, la sección catálogo / productos activados permite mostrar u ocultar cada vertical del sitio público (hoteles, vuelos, alquileres, cruceros, tours, paquetes). Una vertical desactivada desaparece de la navegación y devuelve una página no encontrada en el sitio público.\n\nModifique con prudencia: una plantilla de correo, una cuenta bancaria incorrecta o un producto oculto por error impacta directamente a clientes y operaciones. Guarde y verifique un flujo real (pago de prueba, notificación, menú público).\n\nPermisos típicos: organization_settings.read/write, y derechos específicos para mobile money o cuentas bancarias. Estos ajustes son distintos de los del módulo [GAP](/gap/parametres)."
+      "body": "El hub [Ajustes](/parametres) agrupa la configuración de la organización. Desde ahí accede, entre otros, a correos transaccionales, donaciones, mobile money y cuentas bancarias.\n\nEn los ajustes de organización, la sección catálogo / productos activados permite mostrar u ocultar cada vertical del sitio público (hoteles, vuelos, alquileres, cruceros, actividades, paquetes). Una vertical desactivada desaparece de la navegación y devuelve una página no encontrada en el sitio público.\n\nModifique con prudencia: una plantilla de correo, una cuenta bancaria incorrecta o un producto oculto por error impacta directamente a clientes y operaciones. Guarde y verifique un flujo real (pago de prueba, notificación, menú público).\n\nPermisos típicos: organization_settings.read/write, y derechos específicos para mobile money o cuentas bancarias. Estos ajustes son distintos de los del módulo [GAP](/gap/parametres)."
     },
     "vue-ensemble-tresorerie": {
       "title": "Visión general de la tesorería",

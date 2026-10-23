@@ -69,8 +69,8 @@ test('displays OneKey balance and tier on /account/loyalty', async ({ page }) =>
   await expect(page.getByTestId('loyalty-points-balance')).toHaveText('250', {
     timeout: 15_000,
   });
-  await expect(page.getByText(/Silver/i)).toBeVisible();
-  await expect(page.getByText(/Programme · ONEKEY/)).toBeVisible();
+  await expect(page.getByText(/Argent|Silver|Plata/i)).toBeVisible();
+  await expect(page.getByText(/Programme · ONEKEY|Program · ONEKEY|Programa · ONEKEY/)).toBeVisible();
   await expect(
     page.getByText(/crédités après|Points are credited|credited after|acreditan tras/i),
   ).toBeVisible();

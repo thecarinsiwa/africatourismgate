@@ -2,6 +2,7 @@
 
 import { SearchableSelect } from '@africatourismgate/ui';
 import { getIsoCountrySelectOptions } from '@africatourismgate/utils';
+import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 
 type NationalitySelectProps = {
@@ -31,10 +32,13 @@ export function NationalitySelect({
   disabled,
   error,
   placeholder = '—',
-  searchPlaceholder = 'Search…',
-  emptyMessage = 'No results.',
+  searchPlaceholder,
+  emptyMessage,
   className,
 }: NationalitySelectProps) {
+  const t = useTranslations('nationalitySelect');
+  const resolvedSearch = searchPlaceholder ?? t('search');
+  const resolvedEmpty = emptyMessage ?? t('noResults');
   const options = useMemo(() => getIsoCountrySelectOptions(locale), [locale]);
 
   return (
@@ -49,8 +53,8 @@ export function NationalitySelect({
       disabled={disabled}
       error={error}
       placeholder={placeholder}
-      searchPlaceholder={searchPlaceholder}
-      emptyMessage={emptyMessage}
+      searchPlaceholder={resolvedSearch}
+      emptyMessage={resolvedEmpty}
       className={className}
     />
   );

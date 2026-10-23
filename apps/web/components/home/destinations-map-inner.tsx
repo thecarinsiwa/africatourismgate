@@ -17,6 +17,8 @@ type MapFocus = {
 type DestinationsMapInnerProps = {
   markers: DestinationMapMarker[];
   ariaLabel: string;
+  zoomInLabel?: string;
+  zoomOutLabel?: string;
   focus?: MapFocus | null;
   /** When true, fit the viewport to current markers (used after products load). */
   fitToMarkers?: boolean;
@@ -29,6 +31,8 @@ type DestinationsMapInnerProps = {
 export function DestinationsMapInner({
   markers,
   ariaLabel,
+  zoomInLabel = 'Zoom in',
+  zoomOutLabel = 'Zoom out',
   focus = null,
   fitToMarkers = true,
   fitMaxZoom = 8,
@@ -65,11 +69,17 @@ export function DestinationsMapInner({
 
       const map = L.map(containerRef.current!, {
         scrollWheelZoom: false,
-        zoomControl: true,
+        zoomControl: false,
         attributionControl: false,
       }).setView([2, 20], 4);
 
-      map.zoomControl.setPosition('topright');
+      L.control
+        .zoom({
+          position: 'topright',
+          zoomInTitle: zoomInLabel,
+          zoomOutTitle: zoomOutLabel,
+        })
+        .addTo(map);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 18,

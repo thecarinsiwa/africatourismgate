@@ -75,7 +75,11 @@ export class ActivityDetailDto {
   @ApiProperty({ example: 'Tourism Gate Experiences Kinshasa' })
   providerName!: string;
 
-  @ApiProperty({ format: 'date', example: '2026-07-20' })
+  @ApiProperty({
+    format: 'date',
+    example: '2026-07-20',
+    description: 'Requested date; empty when detail was loaded without a date.',
+  })
   date!: string;
 
   @ApiProperty({ example: 2 })

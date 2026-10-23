@@ -126,7 +126,7 @@
   },
   "produits": {
     "activites": {
-      "title": "Activités & tours",
+      "title": "Activités",
       "description": "Expériences, partenaires et créneaux par destination.",
       "actions": {
         "providers": "Partenaires",

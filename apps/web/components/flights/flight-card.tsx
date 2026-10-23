@@ -11,6 +11,7 @@ import {
 } from '../../lib/flights/listings';
 import type { FlightSearchResult } from '../../lib/flights/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
+import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
 import type { Translations } from '../../lib/i18n/message-types';
 import { PriceDisplay, ProductCard } from '../shared';
 
@@ -22,6 +23,7 @@ type FlightCardProps = {
 };
 
 export function FlightCard({ flight, t, searchParams = {}, locale }: FlightCardProps) {
+  const ctaLabel = useBookingCtaLabel('flight_class');
   const detailParams = {
     from: searchParams.from ?? flight.departureAirportIata,
     to: searchParams.to ?? flight.arrivalAirportIata,
@@ -146,7 +148,7 @@ export function FlightCard({ flight, t, searchParams = {}, locale }: FlightCardP
             href={reserveHref}
             className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-5 py-2 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
           >
-            {t.bookNow}
+            {ctaLabel}
           </Link>
         </>
       }

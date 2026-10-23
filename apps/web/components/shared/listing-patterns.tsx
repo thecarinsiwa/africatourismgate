@@ -5,6 +5,7 @@ import type { DataTablePaginationLabels } from '@africatourismgate/ui';
 import { cn } from '@africatourismgate/ui';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { useTranslations } from 'next-intl';
 import { LISTING_PAGE_SIZE } from '../../lib/listing/pagination';
 import { ListingCardsSkeleton } from './loading-skeletons';
 
@@ -353,6 +354,7 @@ export function ListingPageBody({
   resultsVariant = 'list',
   pagination,
 }: ListingPageBodyProps) {
+  const tListing = useTranslations('listing');
   return (
     <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
       {notice}
@@ -365,7 +367,7 @@ export function ListingPageBody({
             <ListingCardsSkeleton
               count={loadingSkeletonCount}
               variant={resultsVariant}
-              loadingLabel={loadingMessage ?? 'Loading results'}
+              loadingLabel={loadingMessage ?? tListing('loadingResults')}
             />
           ) : error ? (
             <ListingErrorState {...error} />

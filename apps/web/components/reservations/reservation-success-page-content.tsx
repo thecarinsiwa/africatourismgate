@@ -226,7 +226,8 @@ export function ReservationSuccessPageContent() {
 
         <div className="mt-5 space-y-2 text-sm text-atg-fg">
           <p>
-            <span className="font-semibold">{s.bookingIdLabel}</span> {bookingId ?? 'non fourni'}
+            <span className="font-semibold">{s.bookingIdLabel}</span>{' '}
+            {bookingId ?? s.bookingIdMissing}
           </p>
           {(status === 'loading' || status === 'confirming') && (
             <div className="flex items-center gap-2.5 py-2 text-atg-muted">

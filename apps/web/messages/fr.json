@@ -45,7 +45,7 @@
     "flights": "Vols",
     "cars": "Location de Voitures",
     "cruises": "Croisières",
-    "tours": "Tours",
+    "tours": "Activités",
     "partners": "Nos partenaires",
     "mainAria": "Navigation principale",
     "mobileAria": "Navigation mobile",
@@ -53,7 +53,9 @@
     "donate": "Faire un don",
     "myAccount": "Mon compte",
     "signIn": "Connexion",
-    "signOut": "Se déconnecter"
+    "signOut": "Se déconnecter",
+    "breadcrumbAria": "Fil d’Ariane",
+    "loadingContent": "Chargement du contenu"
   },
   "booking": {
     "meta": {
@@ -116,7 +118,10 @@
         "passwordLabel": "Mot de passe",
         "passwordPlaceholder": "••••••••",
         "submit": "Se connecter",
-        "submitLoading": "Connexion…"
+        "submitLoading": "Connexion…",
+        "forgotPassword": "Mot de passe oublié ?",
+        "showPassword": "Afficher le mot de passe",
+        "hidePassword": "Masquer le mot de passe"
       },
       "errors": {
         "network": "Impossible de joindre le serveur. Vérifiez votre connexion.",
@@ -149,7 +154,9 @@
         "termsLabel": "J'accepte les",
         "termsLink": "conditions d'utilisation",
         "submit": "Créer mon compte",
-        "submitLoading": "Création du compte…"
+        "submitLoading": "Création du compte…",
+        "showPassword": "Afficher le mot de passe",
+        "hidePassword": "Masquer le mot de passe"
       },
       "terms": {
         "modalTitle": "Conditions d'utilisation",
@@ -177,13 +184,49 @@
       "invalidPassword": "Mot de passe incorrect.",
       "genericError": "Impossible de déverrouiller la session. Réessayez.",
       "idleHint": "Verrouillage automatique après {minutes} min d'inactivité."
+    },
+    "verify": {
+      "loginTitle": "Confirmez votre connexion",
+      "loginSubtitle": "Un code de sécurité a été envoyé à votre adresse. Saisissez-le pour vous connecter.",
+      "registerTitle": "Finalisez la création de votre compte",
+      "registerSubtitle": "Un code de sécurité a été envoyé à votre adresse. Saisissez-le pour activer votre compte.",
+      "defaultTitle": "Vérification par e-mail",
+      "defaultSubtitle": "Un code de sécurité a été envoyé à votre adresse. Saisissez-le pour continuer. Si vous n'êtes pas à l'origine de cette opération, ignorez cet e-mail.",
+      "codeLabel": "Code à 6 chiffres",
+      "codeRequired": "Saisissez le code à 6 chiffres reçu par e-mail.",
+      "submit": "Confirmer et continuer",
+      "submitLoading": "Vérification…",
+      "resend": "Envoyer un autre code",
+      "resendLoading": "Envoi…",
+      "resendCooldown": "Renvoyer un code ({seconds} s)",
+      "resendSuccess": "Un nouveau code a été envoyé.",
+      "errors": {
+        "network": "Impossible de joindre le serveur. Vérifiez votre connexion.",
+        "generic": "Code invalide ou expiré. Si vous avez déjà validé ce code (ex. sur le site production), reconnectez-vous avec Google pour en recevoir un nouveau.",
+        "envMissing": "Configuration API manquante.",
+        "conflictGoogle": "Ce compte existe déjà. Relancez « Se connecter avec Google » pour recevoir un nouveau code, ou connectez-vous avec votre mot de passe.",
+        "conflictDefault": "Ce compte existe déjà. Essayez « Se connecter avec Google » à nouveau ou connectez-vous avec votre mot de passe.",
+        "unauthorized": "Compte inactif ou introuvable.",
+        "resendGeneric": "Impossible de renvoyer le code. Réessayez dans un instant.",
+        "resendUnauthorized": "Vérification introuvable ou déjà confirmée."
+      }
+    },
+    "oauthCallback": {
+      "title": "Connexion Google",
+      "pending": "Finalisation de votre session…",
+      "errors": {
+        "invalidParams": "Paramètres OAuth invalides.",
+        "invalidSession": "Session OAuth invalide.",
+        "finalizeFailed": "Impossible de finaliser la connexion Google."
+      }
     }
   },
   "donate": {
     "title": "Soutenir nos actions",
     "intro": "Plusieurs campagnes de don sont disponibles selon le contexte. Choisissez celle qui correspond à votre engagement.",
     "allCampaigns": "Toutes les campagnes",
-    "empty": "Aucune campagne de don disponible pour le moment."
+    "empty": "Aucune campagne de don disponible pour le moment.",
+    "localeFallback": "Aucune campagne dans votre langue pour le moment — affichage des campagnes disponibles dans les autres langues."
   },
   "legal": {
     "termsOfUseTitle": "Conditions d'utilisation",
@@ -204,7 +247,8 @@
         "title": "Politique de confidentialité",
         "description": "Politique de confidentialité Africa Tourism Gate — collecte, usage et protection des données personnelles."
       }
-    }
+    },
+    "breadcrumbAria": "Fil d’Ariane"
   },
   "comingSoon": {
     "badge": "Bientôt disponible",
@@ -254,13 +298,17 @@
     "retry": "Réessayer",
     "noResults": "Aucun article publié",
     "noResultsHint": "Revenez bientôt pour découvrir nos nouveaux contenus.",
+    "notFound": "Article introuvable",
+    "notFoundHint": "Cet article n'existe pas ou n'est plus publié.",
     "localeFallback": "Aucun article dans votre langue pour le moment — affichage des articles disponibles dans les autres langues.",
+    "detailLocaleFallback": "Cet article n'est pas encore disponible dans votre langue — affichage d'une autre version linguistique.",
     "backToBlog": "Retour au blog",
     "publishedOn": "Publié le",
     "breadcrumbHome": "Accueil",
     "breadcrumbBlog": "Blog",
     "detailMetaFallbackTitle": "Article du blog",
-    "detailMetaFallbackDescription": "Découvrez nos articles sur le tourisme en Afrique avec Africa Tourism Gate."
+    "detailMetaFallbackDescription": "Découvrez nos articles sur le tourisme en Afrique avec Africa Tourism Gate.",
+    "breadcrumbAria": "Fil d’Ariane"
   },
   "support": {
     "metaTitle": "Centre d'aide",
@@ -449,6 +497,7 @@
     "heroTitle": "À propos",
     "heroSubtitle": "Découvrez notre mission, notre équipe et nos engagements pour un tourisme africain responsable.",
     "sidebarAria": "Sections À propos",
+    "breadcrumbAria": "Fil d’Ariane",
     "breadcrumbHome": "Accueil",
     "breadcrumbAbout": "À propos",
     "loading": "Chargement…",
@@ -504,6 +553,9 @@
     "contact": {
       "subtitle": "Notre équipe est à votre écoute pour toute question.",
       "infoTitle": "Coordonnées",
+      "phoneLabel": "Téléphone",
+      "emailLabel": "E-mail",
+      "locationLabel": "Adresse",
       "formTitle": "Envoyer un message",
       "formSubtitle": "Décrivez votre demande — nous vous répondrons dans les meilleurs délais."
     },
@@ -571,7 +623,8 @@
     ],
     "prev": "Diapositive précédente",
     "next": "Diapositive suivante",
-    "goToSlide": "Aller à la diapositive {n}"
+    "goToSlide": "Aller à la diapositive {n}",
+    "carouselAria": "Diaporama"
   },
   "search": {
     "tablistAria": "Type de recherche",
@@ -580,7 +633,7 @@
       "hotels": "Hôtels",
       "cars": "Voitures",
       "cruises": "Croisières",
-      "tours": "Tours"
+      "tours": "Activités"
     },
     "search": "Rechercher",
     "departDate": "Date départ",
@@ -696,7 +749,7 @@
     "specialistLinks": {
       "premium": "Hébergements Premium",
       "flights": "Vols Première Classe",
-      "safaris": "Safaris & Tours",
+      "safaris": "Safaris & Activités",
       "cruises": "Croisières Côtières",
       "cars": "Location de Voitures",
       "packages": "Forfaits"
@@ -835,7 +888,9 @@
     "carouselTitle": "Produits",
     "carouselAria": "Carrousel des produits de la destination",
     "viewMore": "Voir plus",
-    "viewMoreProduct": "Voir plus"
+    "viewMoreProduct": "Voir plus",
+    "zoomIn": "Zoom avant",
+    "zoomOut": "Zoom arrière"
   },
   "customerReviews": {
     "title": "Avis de nos clients",
@@ -931,7 +986,8 @@
     "tableCountry": "Pays",
     "tableActivities": "Activités",
     "tableRating": "Note",
-    "tableActions": "Actions"
+    "tableActions": "Actions",
+    "breadcrumbAria": "Fil d’Ariane"
   },
   "gapImpact": {
     "title": "Notre impact",
@@ -956,7 +1012,9 @@
     "pageAria": "Page {page}",
     "range": "{start}–{end} sur {total} {itemLabel}{pluralSuffix}",
     "pageOf": "page {page} / {totalPages}",
-    "resultItem": "résultat"
+    "resultItem": "résultat",
+    "loadingResults": "Chargement des résultats",
+    "loadingDetails": "Chargement des détails"
   },
   "bookingSidebar": {
     "trustDemoCatalog": "Catalogue de démonstration — aperçu interne uniquement.",
@@ -984,7 +1042,7 @@
       "flights": "Vols",
       "cars": "Locations de véhicules",
       "cruises": "Croisières",
-      "tours": "Activités & tours"
+      "tours": "Activités"
     }
   },
   "hotels": {
@@ -1091,7 +1149,8 @@
     "reviewsPrev": "Avis précédent",
     "reviewsNext": "Avis suivant",
     "anonymousGuest": "Voyageur",
-    "galleryCounter": "Photo {current} sur {total}"
+    "galleryCounter": "Photo {current} sur {total}",
+    "breadcrumbAria": "Fil d’Ariane"
   },
   "flights": {
     "metaTitle": "Vols en Afrique",
@@ -1164,7 +1223,8 @@
     "galleryClose": "Fermer la galerie",
     "galleryPrevious": "Photo précédente",
     "galleryNext": "Photo suivante",
-    "galleryCounter": "Photo {current} sur {total}"
+    "galleryCounter": "Photo {current} sur {total}",
+    "breadcrumbAria": "Fil d’Ariane"
   },
   "cars": {
     "metaTitle": "Location de voitures en Afrique",
@@ -1251,7 +1311,8 @@
     "galleryClose": "Fermer la galerie",
     "galleryPrevious": "Photo précédente",
     "galleryNext": "Photo suivante",
-    "galleryCounter": "Photo {current} sur {total}"
+    "galleryCounter": "Photo {current} sur {total}",
+    "breadcrumbAria": "Fil d’Ariane"
   },
   "cruises": {
     "metaTitle": "Croisières fluviales en Afrique",
@@ -1329,17 +1390,18 @@
     "galleryClose": "Fermer la galerie",
     "galleryPrevious": "Photo précédente",
     "galleryNext": "Photo suivante",
-    "galleryCounter": "Photo {current} sur {total}"
+    "galleryCounter": "Photo {current} sur {total}",
+    "breadcrumbAria": "Fil d’Ariane"
   },
   "activities": {
-    "metaTitle": "Activités et tours en Afrique",
-    "metaDescription": "Réservez des activités et tours guidés en Afrique avec Africa Tourism Gate.",
+    "metaTitle": "Activités en Afrique",
+    "metaDescription": "Réservez des activités guidées en Afrique avec Africa Tourism Gate.",
     "detailMetaDescription": "Activité {name} avec Africa Tourism Gate.",
     "detailMetaFallbackTitle": "Activité",
     "detailMetaFallbackDescription": "Fiche activité — Africa Tourism Gate",
     "breadcrumbHome": "Accueil",
     "breadcrumbActivities": "Activités",
-    "heroTitle": "Activités & tours en Afrique",
+    "heroTitle": "Activités en Afrique",
     "heroSubtitle": "Excursions guidées et expériences locales — choisissez votre créneau et réservez en ligne.",
     "resultsFor": "Résultats pour",
     "anyDestination": "Toutes les destinations",
@@ -1379,7 +1441,7 @@
     "totalActivity": "Total activité",
     "reserveSection": "Réserver",
     "notFound": "Activité introuvable",
-    "notFoundHint": "Cette activité n'existe pas ou aucun créneau n'est disponible.",
+    "notFoundHint": "Cette activité n'existe pas ou n'est plus proposée.",
     "backToList": "Retour aux résultats",
     "providerLabel": "Prestataire",
     "durationLabel": "Durée",
@@ -1419,7 +1481,8 @@
     "tableName": "Activité",
     "tablePrice": "Prix",
     "tableAvailability": "Disponibilité",
-    "tableActions": "Actions"
+    "tableActions": "Actions",
+    "breadcrumbAria": "Fil d’Ariane"
   },
   "packages": {
     "metaTitle": "Forfaits combinés en Afrique",
@@ -1577,7 +1640,9 @@
     "itineraryMapLegendTitle": "Légende",
     "itineraryMapLegendPoints": "({count})",
     "itineraryMapPartialHint": "Certains services (véhicule, croisière) ne sont pas affichés sur la carte faute de coordonnées géographiques.",
-    "galleryCounter": "Photo {current} sur {total}"
+    "galleryCounter": "Photo {current} sur {total}",
+    "originalPriceAria": "Prix d’origine",
+    "breadcrumbAria": "Fil d’Ariane"
   },
   "account": {
     "title": "Mon compte",
@@ -1745,6 +1810,22 @@
       "actionRequired": "Action requise",
       "leaveReviewCta": "Laisser un avis",
       "reviewPrompt": "Vous avez {count} séjour(s) terminé(s) en attente d’avis — partagez votre expérience.",
+      "statuses": {
+        "draft": "Brouillon",
+        "pending_approval": "En attente de validation",
+        "pending_payment": "En attente de paiement",
+        "confirmed": "Confirmée",
+        "cancelled": "Annulée",
+        "refunded": "Remboursée"
+      },
+      "itemTypes": {
+        "room": "Hébergement",
+        "flight_class": "Vol",
+        "vehicle": "Véhicule",
+        "cabin": "Cabine",
+        "activity_schedule": "Activité",
+        "package": "Forfait"
+      },
       "detail": {
         "bookedOn": "Réservée le",
         "itemsCount": "Articles",
@@ -1927,7 +2008,7 @@
             "comment": "Commentaire",
             "commentPlaceholder": "Informations complémentaires…",
             "other": "Autres informations",
-            "otherPlaceholder": "Toute autre information utile?"
+            "otherPlaceholder": "Toute autre information utile…"
           }
         },
         "emergencyContact": {
@@ -1954,7 +2035,7 @@
         "messages": {
           "title": "Conversation",
           "subtitle": "Échangez avec notre équipe au sujet de votre demande.",
-          "loading": "Chargement des messages?",
+          "loading": "Chargement des messages…",
           "empty": "Aucun message pour le moment. Notre équipe vous répondra ici.",
           "threadAria": "Fil de messages de la réservation",
           "authorStaff": "Équipe",
@@ -2022,10 +2103,11 @@
       "earnHint": "Les points sont crédités après chaque paiement de réservation confirmé, selon les règles du programme.",
       "allPrograms": "Tous vos programmes",
       "tierMember": "Membre",
-      "tierSilver": "Silver",
-      "tierGold": "Gold",
-      "tierPlatinum": "Platinum"
-    }
+      "tierSilver": "Argent",
+      "tierGold": "Or",
+      "tierPlatinum": "Platine"
+    },
+    "breadcrumbAria": "Fil d’Ariane"
   },
   "checkout": {
     "stepperAriaLabel": "Étapes de réservation",
@@ -2137,7 +2219,8 @@
       "nextStepAccount": "Consultez vos réservations depuis votre espace compte.",
       "nextStepCash": "Préparez le montant en espèces pour le règlement en agence ou à l’arrivée — la confirmation suit l’encaissement.",
       "nextStepBankTransfer": "Effectuez le virement en indiquant la référence de réservation dans le libellé.",
-      "nextStepMobileMoney": "Effectuez le transfert Mobile Money puis envoyez une preuve de paiement."
+      "nextStepMobileMoney": "Effectuez le transfert Mobile Money puis envoyez une preuve de paiement.",
+      "bookingIdMissing": "non fourni"
     },
     "requestSuccess": {
       "title": "Demande envoyée",
@@ -2203,13 +2286,21 @@
       "cameraRetake": "Reprendre",
       "cameraConfirm": "Confirmer",
       "cameraCancel": "Annuler",
-      "cameraError": "Impossible d'accéder à la caméra. Vérifiez les autorisations."
+      "cameraError": "Impossible d'accéder à la caméra. Vérifiez les autorisations.",
+      "uploadFailed": "Échec du téléversement"
     },
     "cancel": {
       "title": "Paiement annulé",
       "subtitle": "Aucun débit n'a été confirmé. Vous pouvez reprendre votre réservation quand vous voulez.",
       "backToCart": "Revenir au panier",
       "continueSearch": "Continuer la recherche"
-    }
+    },
+    "cartDisplayError": "Impossible d'afficher cette réservation.",
+    "vehicleSlotUnavailable": "Créneau indisponible ou modifié.",
+    "activitySlotUnavailable": "Créneau indisponible ou places insuffisantes."
+  },
+  "nationalitySelect": {
+    "search": "Rechercher…",
+    "noResults": "Aucun résultat."
   }
 }

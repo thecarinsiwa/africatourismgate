@@ -7,6 +7,8 @@ type BookingLoginFormTranslator = {
       | 'emailPlaceholder'
       | 'passwordLabel'
       | 'passwordPlaceholder'
+      | 'showPassword'
+      | 'hidePassword'
       | 'submit'
       | 'submitLoading',
   ): string;
@@ -27,6 +29,10 @@ export function buildBookingLoginFormConfig(
     password: {
       label: t('passwordLabel'),
       placeholder: t('passwordPlaceholder'),
+      // No customer forgot-password route on web yet — clear UI-package FR default.
+      forgotPassword: undefined,
+      showPasswordLabel: t('showPassword'),
+      hidePasswordLabel: t('hidePassword'),
     },
     submit: {
       label: t('submit'),

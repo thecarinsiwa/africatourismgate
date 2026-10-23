@@ -147,7 +147,7 @@ export function AboutTeamMemberProfileContent({ slug }: { slug: string }) {
       <section className="relative overflow-hidden bg-[#1b1b2f] text-white">
         <div className="absolute inset-0 bg-gradient-to-r from-[#1b1b2f] via-[#1b1b2f]/90 to-[#1b1b2f]/70" />
         <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-          <nav aria-label="Breadcrumb" className="mb-8">
+          <nav aria-label={t('breadcrumbAria')} className="mb-8">
             <ol className="flex flex-wrap items-center gap-2 text-sm text-white/75">
               <li>
                 <Link href="/" className="hover:text-white">

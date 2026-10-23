@@ -58,23 +58,21 @@ export function ActivityDetailPageContent({
 
   const searchContext = useMemo(
     (): ActivityDetailSearchParams => ({
-      destination: initialSearch.destination,
       date: initialSearch.date,
       participants: String(participants),
       scheduleId: selectedScheduleId ?? undefined,
     }),
-    [initialSearch.destination, initialSearch.date, participants, selectedScheduleId],
+    [initialSearch.date, participants, selectedScheduleId],
   );
 
-  const apiQuery = useMemo(() => {
-    if (!initialSearch.date) return null;
-    return toActivityDetailQuery(searchContext);
-  }, [initialSearch.date, searchContext]);
+  const apiQuery = useMemo(
+    () => toActivityDetailQuery(searchContext),
+    [searchContext],
+  );
 
   const syncUrl = useCallback(
     (overrides: Partial<ActivityDetailPageSearch> = {}) => {
       const href = buildActivityDetailHref(activityId, {
-        destination: initialSearch.destination,
         date: initialSearch.date,
         participants:
           overrides.participants !== undefined
@@ -84,18 +82,11 @@ export function ActivityDetailPageContent({
       });
       router.replace(href, { scroll: false });
     },
-    [activityId, initialSearch.destination, initialSearch.date, participants, selectedScheduleId, router],
+    [activityId, initialSearch.date, participants, selectedScheduleId, router],
   );
 
   useEffect(() => {
     let cancelled = false;
-
-    if (!apiQuery) {
-      setDetail(null);
-      setLoading(false);
-      setNotFound(true);
-      return;
-    }
 
     setLoading(true);
     setNotFound(false);
@@ -265,7 +256,7 @@ export function ActivityDetailPageContent({
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <nav
             className="flex flex-wrap items-center gap-2 text-sm text-atg-muted"
-            aria-label="Breadcrumb"
+            aria-label={a.breadcrumbAria}
           >
             <Link href="/" className="transition-colors hover:text-primary">
               {a.breadcrumbHome}

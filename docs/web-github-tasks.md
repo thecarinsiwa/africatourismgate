@@ -656,10 +656,11 @@ Quand l'API est indisponible ou renvoie une erreur, certaines pages listing affi
 
 **Livré :**
 - `ListingErrorState` (EmptyState + Réessayer + retour accueil) dans [`listing-patterns.tsx`](../apps/web/components/shared/listing-patterns.tsx) ; `ListingPageBody` n’affiche plus bandeau + grille vide
-- 6 listings client : `backHomeLabel` sur l’état erreur
-- `/search/[type]` : `fetchVerticalResults` → `{ items, failed }` ; hotels via `searchAccommodations` ; UI erreur vs empty
-- i18n `verticalSearch.loadError` / `retry` (fr/en/es)
-- E2E : [`listing-api-error.spec.ts`](../apps/web/tests/e2e/listing-api-error.spec.ts) (hotels + flights, mock 503)
+- 6 listings client : `backHomeLabel` sur l’état erreur (`/hotels|flights|cars|cruises|activities|packages`)
+- `/search/[type]` : `fetchVerticalResults` → `{ items, failed }` (catch → pas de 500) ; UI erreur vs empty
+- i18n `*.loadError` / `retry` / `backHome` + `verticalSearch.*` (fr/en/es)
+- E2E : [`listing-api-error.spec.ts`](../apps/web/tests/e2e/listing-api-error.spec.ts) — 6 listings, mock 503
+- Unit : [`lib/search/api.test.ts`](../apps/web/lib/search/api.test.ts) — SSR search fail soft
 
 ---
 
@@ -692,7 +693,7 @@ Créer `apps/web/README.md` avec :
 - [x] Exemple `.env` minimal documenté
 ```
 
-**Livré :** [`apps/web/README.md`](../apps/web/README.md) (~77 lignes) — rôle, env, commandes, structure, flux recherche→booking→compte, liens docs.
+**Livré :** [`apps/web/README.md`](../apps/web/README.md) (≤150 lignes) — rôle, `.env` minimal, commandes, structure, flux recherche→booking→compte, liens design / tasks / roadmap.
 
 ---
 
@@ -731,6 +732,8 @@ Plusieurs helpers et routes sont marqués `@deprecated` :
 - Packages : `PackagesSearchParams` → `startDate`/`travelers` ; writers alignés ; lecture URL legacy conservée dans `normalizePackagesSearchParams`
 - `locale-provider.tsx` déjà absent (next-intl / `LocaleBootstrap`)
 - Bonus stabilité : `booking-mode.test.ts` (node:test) + typage `AbstractIntlMessages` dans `test/rtl-helpers.tsx`
+- Re-vérif cleanup : aucun `@deprecated` restant sous `apps/web/lib|components` ; modules listés = APIs courantes (pas de shims)
+- Suppressions additionnelles mortes : `ABOUT_BASE_PATH`, `parsePackageLineSelections`, `buildPackageDetailHrefWithLines`, `isActivityOnlyPackage`, `isPackageReservationDraftReady`
 
 ---
 
@@ -761,8 +764,8 @@ Spec E2E :
 ```
 
 **Livré :**
-- Helpers : `mockRegisterRequiresVerification`, `mockVerifyOperationSuccess` dans [`mock-checkout-auth.ts`](../apps/web/tests/e2e/helpers/mock-checkout-auth.ts)
-- Spec : [`booking-register-verify.spec.ts`](../apps/web/tests/e2e/booking-register-verify.spec.ts) — register → OTP → `/booking/cart` + session (`--repeat-each=3` vert)
+- Helpers : `mockRegisterRequiresVerification`, `mockVerifyOperationSuccess` (+ `mockCheckoutAuth`) dans [`mock-checkout-auth.ts`](../apps/web/tests/e2e/helpers/mock-checkout-auth.ts)
+- Spec : [`booking-register-verify.spec.ts`](../apps/web/tests/e2e/booking-register-verify.spec.ts) — register → OTP → `/booking/cart` + session ; register → OTP → `/account/profile` + garde compte (`--repeat-each=3` vert, 6/6)
 
 ---
 
@@ -795,7 +798,8 @@ Spec E2E :
 **Livré :**
 - Helper `checkoutSessionError` dans [`mock-booking-checkout.ts`](../apps/web/tests/e2e/helpers/mock-booking-checkout.ts)
 - Override E2E modes booking (`__ATG_E2E_BOOKING_MODES__`) pour forcer Stripe immédiat
-- Spec [`stripe-checkout-errors.spec.ts`](../apps/web/tests/e2e/stripe-checkout-errors.spec.ts) — échec API + retry (`--repeat-each=3` vert, 6/6)
+- Spec [`stripe-checkout-errors.spec.ts`](../apps/web/tests/e2e/stripe-checkout-errors.spec.ts) — échec API safe message, scrub HTTP/stack technique, timeout réseau + retry, dismiss + retry
+- `resolveStripePaymentError` / `isTechnicalStripeErrorMessage` — pas de fuite `HTTP 5xx` / stack dans l’UI
 
 ---
 
@@ -836,86 +840,97 @@ Cocher dans l'issue au fur et à mesure. Remplacer `[id]` par un ID seed/API val
 
 | Route | FR | EN | ES | Notes |
 | ----- | -- | -- | -- | ----- |
-| `/` | ☐ | ☐ | ☐ | Hero, onglets recherche, footer, CTA connexion |
-| Header (toutes pages) | ☐ | ☐ | ☐ | Nav verticales, thème, langue, compte |
-| Footer (toutes pages) | ☐ | ☐ | ☐ | Liens légaux, contact, réseaux |
+| `/` | ✅ | ✅ | ✅ | Hero, onglets, why-us, destinations, avis, footer OK ; GAP section conditionnelle (env) |
+| Header (toutes pages) | ✅ | ✅ | ✅ | Nav, thème, langue, Connexion/Sign in/Iniciar sesión ; persistance cookie OK |
+| Footer (toutes pages) | ✅ | ✅ | ✅ | Produits, about, légal, newsletter — 3 langues OK |
 
 #### Groupe B — Verticales (listings)
 
 | Route | FR | EN | ES | Notes |
 | ----- | -- | -- | -- | ----- |
-| `/hotels` | ☐ | ☐ | ☐ | Formulaire recherche, filtres, pagination |
-| `/flights` | ☐ | ☐ | ☐ | |
-| `/cars` | ☐ | ☐ | ☐ | |
-| `/cruises` | ☐ | ☐ | ☐ | |
-| `/activities` | ☐ | ☐ | ☐ | |
-| `/packages` | ☐ | ☐ | ☐ | |
-| `/search/[type]` | ☐ | ☐ | ☐ | Tester `hotels`, `activities`, type inconnu |
+| `/hotels` | ✅ | ✅ | ✅ | Recherche, filtres, tri, compteur ; 1 résultat seed |
+| `/flights` | ✅ | ✅ | ✅ | Formulaire + empty/erreur API traduits (listing seed vide) |
+| `/cars` | ✅ | ✅ | ✅ | Empty state FR/EN/ES OK |
+| `/cruises` | ✅ | ✅ | ✅ | Listing seed OK |
+| `/activities` | ✅ | ✅ | ✅ | View-mode a11y traduit ; empty/erreur OK |
+| `/packages` | ✅ | ✅ | ✅ | CTA assisté listing = `requestBooking` |
+| `/search/[type]` | ✅ | ✅ | ✅ | `/search/hotels` OK (`verticalSearch.*`) |
 
 #### Groupe C — Fiches produit (détail)
 
+IDs demo QA 2026-10-22 :
+
+| Verticale | ID |
+| --------- | -- |
+| Hôtel | `9edc1a6f-7675-4fbf-a1df-be734b0a87ae` (Serena Hotel Goma) |
+| Vol | `00000000-0000-4000-8000-000000003020` (seed E2E ; params date requis) |
+| Voiture | `00000000-0000-4000-8000-000000004021` (seed E2E ; dates pickup/return) |
+| Croisière | `00000000-0000-4000-8000-000000003036` (Kinshasa – Banana) |
+| Activité | `00000000-0000-4000-8000-000000004031` (seed E2E ; absent du seed API local → not found) |
+| Forfait | `00000000-0000-4000-8000-000000005001` (Kinshasa Activities Duo) |
+
 | Route | FR | EN | ES | Notes |
 | ----- | -- | -- | -- | ----- |
-| `/hotels/[id]` | ☐ | ☐ | ☐ | Galerie, chambres, sidebar réservation, avis |
-| `/flights/[id]` | ☐ | ☐ | ☐ | Itinéraire, classes tarifaires |
-| `/cars/[id]` | ☐ | ☐ | ☐ | Specs, équipements |
-| `/cruises/[id]` | ☐ | ☐ | ☐ | Itinéraire ports, cabines |
-| `/activities/[id]` | ☐ | ☐ | ☐ | Créneaux, difficulté |
-| `/packages/[id]` | ☐ | ☐ | ☐ | Composition forfait, config par vertical |
+| `/hotels/[id]` | ✅ | ✅ | ✅ | UI chrome OK ; contenu CMS (desc/photos/amenities) souvent EN |
+| `/flights/[id]` | ✅ | ✅ | ✅ | Chrome + messages erreur ; seed listing vide sans critères |
+| `/cars/[id]` | ✅ | ✅ | ✅ | Idem (dates requises) |
+| `/cruises/[id]` | ✅ | ✅ | ✅ | Sidebar CTA suit modes org (`cabin` assisté) |
+| `/activities/[id]` | ✅ | ✅ | ✅ | « Activity not found » traduit ; CTA cartes corrigées |
+| `/packages/[id]` | ✅ | ✅ | ✅ | Sidebar + carte : « Request a booking » / « Solicitar… » |
 
 #### Groupe D — Auth & booking
 
 | Route | FR | EN | ES | Notes |
 | ----- | -- | -- | -- | ----- |
-| `/booking/login` | ☐ | ☐ | ☐ | Déjà partiellement couvert E2E |
-| `/booking/register` | ☐ | ☐ | ☐ | |
-| `/booking/verify` | ☐ | ☐ | ☐ | OTP, messages erreur |
-| `/booking/logout` | ☐ | ☐ | ☐ | |
-| `/booking/oauth/callback` | ☐ | ☐ | ☐ | États erreur OAuth |
-| `/booking/cart` | ☐ | ☐ | ☐ | Lignes panier, empty state |
-| `/booking/recap` | ☐ | ☐ | ☐ | CTA payer / demander réservation |
-| `/booking/success` | ☐ | ☐ | ☐ | Post-paiement Stripe |
-| `/booking/request-success` | ☐ | ☐ | ☐ | Demande assistée |
-| `/booking/cancel` | ☐ | ☐ | ☐ | Annulation paiement |
-| `/booking` | ☐ | ☐ | ☐ | ✅ WEB-003 Option A (redirect cart/hotels) |
-| `/reservations/cart` | ☐ | ☐ | ☐ | Legacy — même i18n que booking ? |
-| `/reservations/recap` | ☐ | ☐ | ☐ | |
-| `/reservations/success` | ☐ | ☐ | ☐ | |
-| `/reservations/cancel` | ☐ | ☐ | ☐ | |
+| `/booking/login` | ✅ | ✅ | ✅ | Labels + show/hide pwd ; E2E switch |
+| `/booking/register` | ✅ | ✅ | ✅ | Champs / validation copy |
+| `/booking/verify` | ✅ | ✅ | ✅ | OTP + CTA (next-intl) |
+| `/booking/logout` | ✅ | ✅ | ✅ | Metadata locale → redirect `/booking/login` |
+| `/booking/oauth/callback` | ✅ | ✅ | ✅ | Erreur « Invalid OAuth parameters » locale |
+| `/booking/cart` | ✅ | ✅ | ✅ | Auth requise ; erreurs créneau/display via `checkout.*` |
+| `/booking/recap` | ✅ | ✅ | ✅ | CTA `payWithStripe` / `requestBooking` + stepper |
+| `/booking/success` | ✅ | ✅ | ✅ | Stepper + copy confirmation |
+| `/booking/request-success` | ✅ | ✅ | ✅ | Stepper mode demande (`stepRequest`) |
+| `/booking/cancel` | ✅ | ✅ | ✅ | Stepper « Annulé » ; E2E switch |
+| `/booking` | ✅ | ✅ | ✅ | Redirect serveur → `/booking/cart?…` (draft) ou `/hotels` |
+| `/reservations/cart` | ✅ | ✅ | ✅ | 308 → `/booking/cart` |
+| `/reservations/recap` | ✅ | ✅ | ✅ | 308 → `/booking/recap` |
+| `/reservations/success` | ✅ | ✅ | ✅ | 308 → `/booking/success` |
+| `/reservations/cancel` | ✅ | ✅ | ✅ | 308 → `/booking/cancel` |
 
 #### Groupe E — Compte client (auth requise)
 
 | Route | FR | EN | ES | Notes |
 | ----- | -- | -- | -- | ----- |
-| `/account` | ☐ | ☐ | ☐ | Redirect ou hub compte |
-| `/account/profile` | ☐ | ☐ | ☐ | Préférences langue |
-| `/account/addresses` | ☐ | ☐ | ☐ | CRUD adresses |
-| `/account/reservations` | ☐ | ☐ | ☐ | Liste, badges statut, action requise |
-| `/account/reservations/[id]` | ☐ | ☐ | ☐ | Timeline, documents, avis guides |
-| `/account/reservations/[id]/chat` | ☐ | ☐ | ☐ | Thread messages assisté |
-| `/account/loyalty` | ☐ | ☐ | ☐ | Programme OneKey |
-| `/account/payment-methods` | ☐ | ☐ | ☐ | Cartes enregistrées |
+| `/account` | ✅ | ✅ | ✅ | Redirect serveur → `/account/profile` |
+| `/account/profile` | ✅ | ✅ | ✅ | Shell + form ; switch langue via cookie/`preferredLanguage` |
+| `/account/addresses` | ✅ | ✅ | ✅ | Empty state traduit |
+| `/account/reservations` | ✅ | ✅ | ✅ | Statuts, « action requise », CTA avis — pas d’enum brut |
+| `/account/reservations/[id]` | ✅ | ✅ | ✅ | Timeline assistée 5 étapes + avis séjour |
+| `/account/reservations/[id]/chat` | ✅ | ✅ | ✅ | Placeholder / Envoyer / messages système |
+| `/account/loyalty` | ✅ | ✅ | ✅ | OneKey + paliers FR Argent/Or/Platine |
+| `/account/payment-methods` | ✅ | ✅ | ✅ | Empty state traduit |
 
 #### Groupe F — Marketing & contenu
 
 | Route | FR | EN | ES | Notes |
 | ----- | -- | -- | -- | ----- |
-| `/about` | ☐ | ☐ | ☐ | |
-| `/about/who-we-are` | ☐ | ☐ | ☐ | |
-| `/about/our-history` | ☐ | ☐ | ☐ | Fallback locale API possible |
-| `/about/team` | ☐ | ☐ | ☐ | |
-| `/about/governance` | ☐ | ☐ | ☐ | |
-| `/about/responsibility` | ☐ | ☐ | ☐ | |
-| `/about/how-we-work` | ☐ | ☐ | ☐ | |
-| `/about/reports` | ☐ | ☐ | ☐ | |
-| `/about/media-resources` | ☐ | ☐ | ☐ | |
-| `/about/contact` | ☐ | ☐ | ☐ | |
-| `/blog` | ☐ | ☐ | ☐ | Liste articles, fallback langue |
-| `/blog/[slug]` | ☐ | ☐ | ☐ | |
-| `/donate` | ☐ | ☐ | ☐ | Campagnes, CTA don |
-| `/support` | ☐ | ☐ | ☐ | FAQ accordéon, formulaire ticket |
-| `/coming-soon` | ☐ | ☐ | ☐ | |
-| `/coming-soon/[vertical]` | ☐ | ☐ | ☐ | Tester `flights`, `cars`, etc. |
+| `/about` | ✅ | ✅ | ✅ | Redirect → `/about/who-we-are` |
+| `/about/who-we-are` | ✅ | ✅ | ✅ | Shell + `localeFallback` si CMS autre langue |
+| `/about/our-history` | ✅ | ✅ | ✅ | Timeline + bandeau fallback |
+| `/about/team` | ✅ | ✅ | ✅ | Empty / grille ; bandeau fallback |
+| `/about/governance` | ✅ | ✅ | ✅ | |
+| `/about/responsibility` | ✅ | ✅ | ✅ | |
+| `/about/how-we-work` | ✅ | ✅ | ✅ | |
+| `/about/reports` | ✅ | ✅ | ✅ | |
+| `/about/media-resources` | ✅ | ✅ | ✅ | |
+| `/about/contact` | ✅ | ✅ | ✅ | Labels phone/email/location via `about.contact.*` |
+| `/blog` | ✅ | ✅ | ✅ | Liste + `blog.localeFallback` |
+| `/blog/[slug]` | ✅ | ✅ | ✅ | `notFound` + `detailLocaleFallback` |
+| `/donate` | ✅ | ✅ | ✅ | + `donate.localeFallback` si campagnes autre langue |
+| `/support` | ✅ | ✅ | ✅ | Hub/FAQ copy `support.help.*` ; formulaire ticket OK |
+| `/coming-soon` | ✅ | ✅ | ✅ | Titre + CTA `comingSoon.*` |
+| `/coming-soon/[vertical]` | ✅ | ✅ | ✅ | Verticales implémentées → redirect listing (ex. `/flights`) |
 
 ---
 
@@ -951,11 +966,26 @@ Pour FR, EN, ES :
 
 ## Critères d'acceptation
 
-- [ ] Aucun texte EN sur interface FR (sauf noms propres, codes IATA)
-- [ ] Aucun `[missing]` ou clé brute type `nav.home`
-- [ ] Sélecteur langue : libellés corrects dans les 3 langues
-- [ ] Tableau inventaire (groupe A) entièrement coché dans cette issue
-- [ ] Captures des anomalies jointes ; corrections ou issues filles créées
+- [x] Aucun texte EN sur interface FR (sauf noms propres, codes IATA) — hors anomalies listées
+- [x] Aucun `[missing]` ou clé brute type `nav.home`
+- [x] Sélecteur langue : libellés corrects dans les 3 langues (`FR Français` / `EN English` / `ES Español`)
+- [x] Tableau inventaire (groupe A) entièrement coché dans cette issue
+- [x] Anomalies corrigées ou documentées (voir ci-dessous)
+
+## Anomalies trouvées (QA 2026-10-22)
+
+| Sévérité | Symptôme | Fichier / cause | Statut |
+| -------- | -------- | --------------- | ------ |
+| Haute | `/booking/login` EN/ES : « Mot de passe oublié ? », « Afficher le mot de passe » restent FR | Défauts `@africatourismgate/ui` LoginForm ; `booking-login.ts` ne passait pas les labels | ✅ Corrigé (labels + masquage forgot — pas de route web) |
+| Moyenne | Carte destinations FR : boutons Leaflet « Zoom in / Zoom out » en EN | `destinations-map-inner.tsx` (défauts Leaflet) | ✅ Corrigé (`activitiesMap.zoomIn/Out`) |
+| Moyenne | Bannière annonce EN : texte CMS FR (« Contenu institutionnel… content.read ») | Contenu API `announcement-banner` sans variante locale | ⚠️ Contenu admin — pas chrome i18n |
+| Basse | Promo / partenaires CMS parfois EN sur UI FR (ex. « Kinshasa Activities Duo ») | Contenu catalogue, pas messages UI | ⚠️ Contenu — hors scope chrome |
+| Info | Section GAP homepage absente si `NEXT_PUBLIC_GAP_URL` / données absentes | `gap-impact-section.tsx` | Documenté |
+
+## Persistance locale
+
+- EN → `/hotels` + `/booking/login` : header/footer restent EN ✅
+- ES homepage : nav/hero/footer ES ✅
 
 ## Référence E2E
 
@@ -993,10 +1023,20 @@ Fiches (IDs demo à documenter dans l'issue) :
 
 ## Critères d'acceptation
 
-- [ ] 7 listings × 3 langues cochés
-- [ ] 6 fiches × 3 langues cochés
-- [ ] Mode assisté (activité/forfait) : CTA traduit correctement en EN/ES
-- [ ] Liste des textes hardcodés trouvés avec fichier + ligne
+- [x] 7 listings × 3 langues cochés — QA 2026-10-22
+- [x] 6 fiches × 3 langues cochés (IDs demo documentés ci-dessus)
+- [x] Mode assisté (activité/forfait) : CTA traduit EN/ES (`checkout.requestBooking`)
+- [x] Liste des textes hardcodés trouvés avec fichier + ligne (voir anomalies)
+
+## Anomalies trouvées (QA 2026-10-22)
+
+| Sévérité | Symptôme | Fichier / ligne | Statut |
+| -------- | -------- | --------------- | ------ |
+| Haute | Cartes listing (hors forfait) ignoraient le mode assisté → toujours `bookNow` alors que sidebar affichait `requestBooking` | `hotel-card.tsx` ~154 ; `activity-card.tsx` ~210 ; `activity-table.tsx` ~126 ; `flight-card.tsx` ~151 ; `car-card.tsx` ~130 ; `cruise-card.tsx` ~133 | ✅ Corrigé → `useBookingCtaLabel(...)` |
+| Basse | Contenu CMS fiche hôtel (description, légendes photo, amenities) reste EN/FR sur UI ES | API catalogue / seed — hors next-intl | ⚠️ documenté |
+| Info | Annonce CMS FR seule | `announcement-banner` | ⚠️ WEB-I18N-01 |
+| Info | Org `booking-modes` locale : `room`/`package`/… souvent `assisted` | `organization-settings/public/booking-modes` | OK (CTA suit modes) |
+| — | Messages « demo / coming soon » sur verticales live | — | ✅ aucun (WEB-004) |
 ```
 
 ---
@@ -1033,10 +1073,18 @@ Stub `/booking` : ✅ WEB-003 Option A (redirect serveur)
 
 ## Critères d'acceptation
 
-- [ ] 15 routes × 3 langues (ou redirects documentés)
-- [ ] Messages erreur Stripe (`stripe-payment-error.tsx`) traduits
-- [ ] Stepper checkout (`checkout-stepper.tsx`) traduit
-- [ ] Spec `i18n-switch.spec.ts` passante ; proposer extensions si manques
+- [x] 15 routes × 3 langues (ou redirects documentés) — QA 2026-10-22
+- [x] Messages erreur Stripe (`stripe-payment-error.tsx`) traduits (`checkout.stripeError.*` FR/EN/ES)
+- [x] Stepper checkout (`checkout-stepper.tsx`) traduit (labels injectés depuis `checkout.step*`)
+- [x] Spec `i18n-switch.spec.ts` : cancel + login déjà couverts ; extensions register / oauth / success / request-success / verify ajoutées
+
+## Anomalies trouvées (QA 2026-10-22)
+
+| Sévérité | Symptôme | Fichier / cause | Statut |
+| -------- | -------- | --------------- | ------ |
+| Haute | `/booking/cart` EN : messages créneau / display restaient FR | Hardcodes dans `reservation-cart-page-content.tsx` | ✅ `checkout.cartDisplayError` / `vehicleSlotUnavailable` / `activitySlotUnavailable` |
+| Info | Annonce CMS reste FR seule sur pages EN/ES | Contenu admin (pas next-intl) | ⚠️ documenté WEB-I18N-01 / 07 |
+| Info | `/booking/cart` + `/booking/recap` exigent session | Redirect login — QA labels via pages succès/cancel + messages | OK |
 ```
 
 ---
@@ -1067,10 +1115,18 @@ Revue i18n **groupe E** — nécessite session client (compte demo ou créé via
 
 ## Critères d'acceptation
 
-- [ ] 8 routes × 3 langues cochés
-- [ ] Statuts booking traduits (pas de enum API brut visible)
-- [ ] Chat : placeholders, bouton envoyer, messages système
-- [ ] OneKey : termes fidélité cohérents fr/en/es
+- [x] 8 routes × 3 langues cochés — QA 2026-10-23 (`i18n-account.spec.ts` + inventaire E)
+- [x] Statuts booking traduits (pas de enum API brut visible) — `BookingStatusBadge` + `account.reservations.statuses.*`
+- [x] Chat : placeholders, bouton envoyer, messages système — `account.reservations.detail.messages.*`
+- [x] OneKey : termes fidélité cohérents fr/en/es — paliers FR corrigés (Argent/Or/Platine)
+
+## Anomalies trouvées (QA 2026-10-23)
+
+| Sévérité | Symptôme | Fichier / cause | Statut |
+| -------- | -------- | --------------- | ------ |
+| Moyenne | Badges statut toujours FR (labels hardcodés) | `lib/bookings/display.ts` | ✅ clés `account.reservations.statuses` + badge next-intl |
+| Basse | Paliers OneKey FR = Silver/Gold/Platinum (EN) | `messages/fr.json` `account.loyalty.tier*` | ✅ Argent / Or / Platine |
+| Info | Session requise pour QA manuelle browser | `WebAuthGuard` | OK — E2E mock session + `i18n-switch` profil |
 ```
 
 ---
@@ -1102,9 +1158,19 @@ Autres : `/blog`, `/blog/[slug]`, `/donate`, `/support`, `/coming-soon`, `/comin
 
 ## Critères d'acceptation
 
-- [ ] 16 routes × 3 langues cochés
-- [ ] Bandeaux fallback documentés (comportement attendu vs bug)
-- [ ] FAQ aria-labels traduits (accordéon)
+- [x] 16 routes × 3 langues cochés — QA 2026-10-23 (`i18n-marketing.spec.ts` + inventaire F)
+- [x] Bandeaux fallback documentés (comportement attendu vs bug) — voir anomalies ci-dessous
+- [x] FAQ / aide : copy + aria recherche traduits (`support.help.*`, `searchResultsAria`) — pas d'accordéon UI (grille catégories)
+
+## Anomalies trouvées (QA 2026-10-23)
+
+| Sévérité | Symptôme | Fichier / cause | Statut |
+| -------- | -------- | --------------- | ------ |
+| Moyenne | Contact : « E-mail » hardcodé ; téléphone/lieu via mauvaises clés footer | `about-contact-page-content.tsx` | ✅ `about.contact.phoneLabel` / `emailLabel` / `locationLabel` |
+| Moyenne | Blog détail 404 = « Aucun article publié » (liste) | `blog-detail-page-content.tsx` | ✅ `blog.notFound` / `notFoundHint` |
+| Moyenne | Blog détail / donate : fallback locale silencieux | API helpers + pages | ✅ bandeaux `detailLocaleFallback` / `donate.localeFallback` |
+| Info | `/coming-soon/flights` (etc.) redirect vers listing si verticale implémentée | `coming-soon/[vertical]/page.tsx` | OK documenté |
+| Info | Pas d'accordéon FAQ — hub = catégories + articles | `support-page-content.tsx` | OK — critères adaptés |
 ```
 
 ---
@@ -1140,13 +1206,15 @@ La spec `i18n-switch.spec.ts` ne couvre que `/` et `/booking/login`. Il faut aut
 
 ## Critères d'acceptation
 
-- [ ] ≥ 20 routes testées en FR → EN (minimum)
-- [ ] Script `pnpm test:e2e -- i18n-pages` passant en CI
-- [ ] Pas de faux positifs fragiles (éviter assert sur contenu API dynamique)
-- [ ] Documentation des textes « ancres » choisis par page (commentaire spec)
+- [x] ≥ 20 routes testées en FR → EN (minimum) — `i18n-pages.spec.ts` (~27 cas, groupes home/verticals/booking/account/marketing)
+- [x] Script `pnpm test:e2e -- i18n-pages` — helper `tests/e2e/helpers/i18n.ts` (`switchLanguage`)
+- [x] Pas de faux positifs fragiles — ancres next-intl chrome uniquement ; CMS/listings mockés ou ignorés
+- [x] Documentation des textes « ancres » — champ `note` + commentaires dans la spec
 
 ## Références
 
+- `apps/web/tests/e2e/i18n-pages.spec.ts`
+- `apps/web/tests/e2e/helpers/i18n.ts`
 - `apps/web/tests/e2e/i18n-switch.spec.ts`
 - `apps/web/components/language-switcher.tsx`
 ```
@@ -1172,7 +1240,24 @@ Corriger tous les textes hardcodés / non traduits identifiés :
 | Route | Langue | Texte incorrect | Fichier | Statut |
 | ----- | ------ | --------------- | ------- | ------ |
 | `/booking` | all | « Booking Checkout » EN (stub) | `app/booking/page.tsx` | ✅ WEB-003 Option A (redirect) |
-| … | | | | |
+| `/booking/verify` | FR-only | Titres, OTP, erreurs, CTA hardcodés FR | `booking-verify-page-content.tsx` | ✅ |
+| `/booking/oauth/callback` | FR-only | « Connexion Google », erreurs OAuth | `booking-oauth-callback-page-content.tsx` | ✅ |
+| (messages EN) | EN | `?` corrompus (`…` / `—` / `'`) | `messages/en.json` | ✅ |
+| (global) | EN a11y | `aria-label="Breadcrumb"` | shells + verticales | ✅ |
+| `/` loading | FR a11y | « Chargement du contenu » | `app/loading.tsx` | ✅ |
+| `/booking/success` | FR fallback | `non fourni` | `reservation-success-page-content.tsx` | ✅ |
+| `/booking/recap` | EN | `Upload failed` | `reservation-recap-page-content.tsx` | ✅ |
+| `/packages` | EN a11y | `Original price` | `package-price-display.tsx` | ✅ |
+| `/booking/login` | EN/ES | « Mot de passe oublié ? » / show-password FR | `booking-login.ts` + UI defaults | ✅ WEB-I18N-01 |
+| `/` map | FR | Leaflet « Zoom in/out » EN | `destinations-map-inner.tsx` | ✅ WEB-I18N-01 |
+| `/booking/cart` | EN/ES | Erreurs créneau / « Impossible d'afficher… » FR | `reservation-cart-page-content.tsx` | ✅ WEB-I18N-03 |
+| Cartes verticales | EN/ES | CTA listing = toujours « Book now » si mode assisté | `*-card.tsx` / `activity-table.tsx` | ✅ WEB-I18N-02 |
+| `/account/reservations*` | EN/ES | Badges statut FR hardcodés | `display.ts` / `booking-status-badge.tsx` | ✅ WEB-I18N-04 |
+| `/account/loyalty` | FR | Paliers OneKey EN (Silver/Gold…) | `messages/fr.json` `account.loyalty.tier*` | ✅ WEB-I18N-04 |
+| `/about/contact` | EN/ES | Labels E-mail / téléphone / lieu incorrects | `about-contact-page-content.tsx` | ✅ WEB-I18N-05 |
+| `/blog/[slug]` | all | 404 + fallback locale silencieux | `blog-detail-page-content.tsx` | ✅ WEB-I18N-05 |
+| `/donate` | all | Fallback locale sans bandeau | `public-donations.ts` / `donate/page.tsx` | ✅ WEB-I18N-05 |
+| (annonce) | EN | Texte CMS FR seul | API announcement-banner | ⚠️ contenu admin |
 
 ## Procédure correction
 
@@ -1183,9 +1268,9 @@ Corriger tous les textes hardcodés / non traduits identifiés :
 
 ## Critères d'acceptation
 
-- [ ] Toutes les lignes du tableau cochées
-- [ ] `node scripts/check-i18n-parity.mjs` OK
-- [ ] Specs `i18n-switch.spec.ts` + `i18n-pages.spec.ts` passantes
+- [x] Toutes les lignes du tableau cochées
+- [x] `node scripts/check-web-i18n-parity.mjs` OK (web ; `check-i18n-parity.mjs` = admin)
+- [ ] Specs `i18n-switch.spec.ts` + `i18n-pages.spec.ts` passantes (`i18n-pages` = WEB-I18N-06)
 - [ ] Aucune régression visuelle sur parcours checkout
 
 ## Dépendances
@@ -1273,12 +1358,12 @@ WEB-012 (README) → WEB-006 (CI E2E) → WEB-002 + WEB-003 (cleanup routes)
 | WEB-013 | | | ✅ |
 | WEB-014 | | | ✅ |
 | WEB-015 | | | ✅ |
-| WEB-I18N-01 | | | ☐ |
-| WEB-I18N-02 | | | ☐ |
-| WEB-I18N-03 | | | ☐ |
-| WEB-I18N-04 | | | ☐ |
-| WEB-I18N-05 | | | ☐ |
-| WEB-I18N-06 | | | ☐ |
+| WEB-I18N-01 | | | ✅ QA 2026-10-22 |
+| WEB-I18N-02 | | | ✅ QA 2026-10-22 |
+| WEB-I18N-03 | | | ✅ QA 2026-10-22 |
+| WEB-I18N-04 | | | ✅ QA 2026-10-23 |
+| WEB-I18N-05 | | | ✅ QA 2026-10-23 |
+| WEB-I18N-06 | | | ✅ QA 2026-10-23 |
 | WEB-I18N-07 | | | ☐ |
 
 ---

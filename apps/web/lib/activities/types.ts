@@ -35,7 +35,8 @@ export interface ActivitySearchResult {
 }
 
 export interface ActivityDetailQuery {
-  date: string;
+  /** Omit to load activity metadata without schedule offers. */
+  date?: string;
   participants?: number;
 }
 

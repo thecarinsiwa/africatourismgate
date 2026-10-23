@@ -387,7 +387,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
       const reason = firstFailure.reason;
       throw reason instanceof Error
         ? reason
-        : new Error(typeof reason === 'string' ? reason : 'Upload failed');
+        : new Error(typeof reason === 'string' ? reason : ck.manifest.uploadFailed);
     }
   }
 
@@ -713,6 +713,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
                       }}
                       priceLabel={p.packagePrice}
                       discountBadgeTemplate={p.discountBadge}
+                      originalPriceAria={p.originalPriceAria}
                       className="text-left [&_div]:justify-start"
                     />
                   </div>

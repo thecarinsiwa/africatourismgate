@@ -234,7 +234,7 @@ export function PackageDetailPageContent({
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <nav
             className="flex flex-wrap items-center gap-2 text-sm text-atg-muted"
-            aria-label="Breadcrumb"
+            aria-label={p.breadcrumbAria}
           >
             <Link href="/" className="hover:text-primary">
               {p.breadcrumbHome}

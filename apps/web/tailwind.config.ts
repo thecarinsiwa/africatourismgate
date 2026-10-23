@@ -21,7 +21,11 @@ const config: Config = {
         '2xl': '1536px',
       },
       fontFamily: {
-        sans: ['var(--font-montserrat)', 'sans-serif'],
+        sans: [
+          'var(--font-montserrat, ui-sans-serif)',
+          'system-ui',
+          'sans-serif',
+        ],
       },
       colors: tailwindColors,
     },

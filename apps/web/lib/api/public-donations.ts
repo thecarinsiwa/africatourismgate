@@ -42,14 +42,27 @@ export async function getPublicDonations(
 export async function getPublicDonationsForLocale(
   locale?: string,
   surface: DonationSurface = 'web',
-): Promise<PublicDonationsPayload> {
+): Promise<PublicDonationsPayload & { usedLocaleFallback: boolean }> {
   if (!locale) {
-    return getPublicDonations(undefined, surface);
+    const payload = await getPublicDonations(undefined, surface);
+    return { ...payload, usedLocaleFallback: false };
   }
   try {
-    return await getPublicDonations(locale, surface);
+    const localized = await getPublicDonations(locale, surface);
+    if (localized.items.length > 0 || localized.navbarFeatured) {
+      return { ...localized, usedLocaleFallback: false };
+    }
+    const unlocalized = await getPublicDonations(undefined, surface);
+    return {
+      ...unlocalized,
+      usedLocaleFallback: unlocalized.items.length > 0 || Boolean(unlocalized.navbarFeatured),
+    };
   } catch {
-    return getPublicDonations(undefined, surface);
+    const unlocalized = await getPublicDonations(undefined, surface);
+    return {
+      ...unlocalized,
+      usedLocaleFallback: unlocalized.items.length > 0 || Boolean(unlocalized.navbarFeatured),
+    };
   }
 }
 

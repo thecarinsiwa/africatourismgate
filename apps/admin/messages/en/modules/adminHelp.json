@@ -119,7 +119,7 @@
     "activites-et-forfaits": {
       "title": "Activities and packages",
       "summary": "Experiences, partners, time slots, and combined packages.",
-      "body": "[Activities](/produits/activites) describe experiences and tours. Create an activity, attach a destination and partner, then add slots or options on the edit page.\n\n[Packages](/produits/forfaits) combine several products (accommodation, activity, and so on) into one packaged offer. Build the package contents, then publish according to your workflow.\n\nTypical permissions: activities.read/write and packages.read/write. Check destinations and pricing before going live."
+      "body": "[Activities](/produits/activites) describe the experiences on offer. Create an activity, attach a destination and partner, then add slots or options on the edit page.\n\n[Packages](/produits/forfaits) combine several products (accommodation, activity, and so on) into one packaged offer. Build the package contents, then publish according to your workflow.\n\nTypical permissions: activities.read/write and packages.read/write. Check destinations and pricing before going live."
     },
     "destinations": {
       "title": "Destinations",
@@ -204,7 +204,7 @@
     "parametres-systeme": {
       "title": "System settings",
       "summary": "Emails, donations, public catalog, mobile money, and org settings.",
-      "body": "The [Settings](/parametres) hub groups organization configuration. From there you can reach transactional emails, donations, mobile money, and bank accounts.\n\nIn organization settings, the catalog / enabled products section lets you show or hide each public-site vertical (hotels, flights, car rentals, cruises, tours, packages). A disabled vertical is removed from navigation and returns a not-found page on the public site.\n\nChange settings carefully: a wrong email template, bank account, or accidentally hidden product directly affects customers and operations. Save, then verify a real flow (test payment, notification, public menu).\n\nTypical permissions: organization_settings.read/write, plus specific rights for mobile money or bank accounts. These settings are separate from the [GAP](/gap/parametres) module."
+      "body": "The [Settings](/parametres) hub groups organization configuration. From there you can reach transactional emails, donations, mobile money, and bank accounts.\n\nIn organization settings, the catalog / enabled products section lets you show or hide each public-site vertical (hotels, flights, car rentals, cruises, activities, packages). A disabled vertical is removed from navigation and returns a not-found page on the public site.\n\nChange settings carefully: a wrong email template, bank account, or accidentally hidden product directly affects customers and operations. Save, then verify a real flow (test payment, notification, public menu).\n\nTypical permissions: organization_settings.read/write, plus specific rights for mobile money or bank accounts. These settings are separate from the [GAP](/gap/parametres) module."
     },
     "vue-ensemble-tresorerie": {
       "title": "Treasury overview",

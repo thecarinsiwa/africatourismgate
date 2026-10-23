@@ -1,7 +1,5 @@
 import type { AboutPageSectionKey, AboutResourceType } from '@africatourismgate/types';
 
-export const ABOUT_BASE_PATH = '/about';
-
 export const ABOUT_PATHS = {
   whoWeAre: '/about/who-we-are',
   history: '/about/our-history',

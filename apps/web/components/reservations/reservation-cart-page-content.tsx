@@ -459,9 +459,9 @@ export function ReservationCartPageContent({ draft }: Props) {
 
               {!loading && isVehicleReservationDraft(draft) && vehicleDetail && !vehicleReady && (
                 <p className="text-sm text-red-700 dark:text-red-300">
-                  Créneau indisponible ou modifié.{' '}
+                  {ck.vehicleSlotUnavailable}{' '}
                   <Link href={detailHref} className="font-semibold underline">
-                    Modifier la sélection
+                    {ck.modifySelection}
                   </Link>
                 </p>
               )}
@@ -471,9 +471,9 @@ export function ReservationCartPageContent({ draft }: Props) {
                 activityDetail &&
                 !activityReady && (
                   <p className="text-sm text-red-700 dark:text-red-300">
-                    Créneau indisponible ou places insuffisantes.{' '}
+                    {ck.activitySlotUnavailable}{' '}
                     <Link href={detailHref} className="font-semibold underline">
-                      Modifier la sélection
+                      {ck.modifySelection}
                     </Link>
                   </p>
                 )}
@@ -487,9 +487,9 @@ export function ReservationCartPageContent({ draft }: Props) {
                 !(draft && isPackageReservationDraft(draft) && packageReady) &&
                 !vehicleReady && (
                 <p className="text-sm text-red-700 dark:text-red-300">
-                  Impossible d&apos;afficher cette réservation.{' '}
+                  {ck.cartDisplayError}{' '}
                   <Link href={detailHref} className="font-semibold underline">
-                    Modifier la sélection
+                    {ck.modifySelection}
                   </Link>
                 </p>
               )}
@@ -504,6 +504,7 @@ export function ReservationCartPageContent({ draft }: Props) {
                   <PackagePriceDisplay
                     pricing={packageDetail.pricing}
                     discountBadgeTemplate={p.discountBadge}
+                    originalPriceAria={p.originalPriceAria}
                   />
                 </div>
               ) : (

@@ -397,7 +397,7 @@ export async function searchActivities(
 
 function buildActivityDetailQuery(params: ActivityDetailQuery): string {
   const qs = new URLSearchParams();
-  qs.set('date', params.date);
+  if (params.date) qs.set('date', params.date);
   if (params.participants !== undefined) qs.set('participants', String(params.participants));
   const s = qs.toString();
   return s ? `?${s}` : '';
@@ -560,15 +560,19 @@ export async function getBlogPostBySlug(
 export async function getBlogPostBySlugForLocale(
   slug: string,
   locale?: string,
-): Promise<PublicBlogPostDetail> {
+): Promise<{ post: PublicBlogPostDetail; usedLocaleFallback: boolean }> {
   if (!locale) {
-    return getBlogPostBySlug(slug);
+    const post = await getBlogPostBySlug(slug);
+    return { post, usedLocaleFallback: false };
   }
 
   try {
-    return await getBlogPostBySlug(slug, locale);
+    const post = await getBlogPostBySlug(slug, locale);
+    const usedLocaleFallback = Boolean(post.locale && post.locale !== locale);
+    return { post, usedLocaleFallback };
   } catch {
-    return getBlogPostBySlug(slug);
+    const post = await getBlogPostBySlug(slug);
+    return { post, usedLocaleFallback: true };
   }
 }
 

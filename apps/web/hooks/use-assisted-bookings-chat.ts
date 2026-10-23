@@ -1,11 +1,13 @@
 'use client';
 
 import type { BookingDetail, BookingListItem, BookingStatus } from '@africatourismgate/types';
+import { useMessages } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { isAssistedBookingDetail } from '../components/account/booking-status-timeline';
 import { getAccountApiClient } from '../lib/api/account';
 import { formatBookingDisplayName } from '../lib/bookings/display';
 import { AUTH_CHANGED_EVENT, hasWebSession } from '../lib/auth/client-session';
+import type { Translations } from '../lib/i18n/message-types';
 
 const TERMINAL_STATUSES = new Set<BookingStatus>(['cancelled', 'refunded']);
 const REFRESH_INTERVAL_MS = 20_000;
@@ -26,10 +28,11 @@ function toAssistedBookingChatItem(
   booking: BookingListItem,
   detail: BookingDetail,
   unreadCount: number,
+  itemTypeLabels: Record<string, string>,
 ): AssistedBookingChatItem {
   return {
     id: booking.id,
-    name: formatBookingDisplayName(detail.items),
+    name: formatBookingDisplayName(detail.items, itemTypeLabels),
     status: booking.status,
     totalCents: booking.totalCents,
     currency: booking.currency,
@@ -43,6 +46,7 @@ function toAssistedBookingChatItem(
 
 async function resolveAssistedBooking(
   booking: BookingListItem,
+  itemTypeLabels: Record<string, string>,
 ): Promise<AssistedBookingChatItem | null> {
   const client = await getAccountApiClient();
 
@@ -57,7 +61,7 @@ async function resolveAssistedBooking(
     if (!isAssistedBookingDetail(detail.booking.status, detail.statusHistory ?? [])) {
       return null;
     }
-    return toAssistedBookingChatItem(booking, detail, unread.count);
+    return toAssistedBookingChatItem(booking, detail, unread.count, itemTypeLabels);
   }
 
   const detail = await client.getBooking(booking.id);
@@ -68,19 +72,27 @@ async function resolveAssistedBooking(
     return null;
   }
   const unread = await client.getBookingUnreadMessageCount(booking.id);
-  return toAssistedBookingChatItem(booking, detail, unread.count);
+  return toAssistedBookingChatItem(booking, detail, unread.count, itemTypeLabels);
 }
 
-async function fetchAssistedBookings(): Promise<AssistedBookingChatItem[]> {
+async function fetchAssistedBookings(
+  itemTypeLabels: Record<string, string>,
+): Promise<AssistedBookingChatItem[]> {
   const client = await getAccountApiClient();
   const { data } = await client.listBookings({ limit: 50, sortOrder: 'desc' });
   const candidates = data.filter((booking) => !TERMINAL_STATUSES.has(booking.status));
 
-  const resolved = await Promise.all(candidates.map((booking) => resolveAssistedBooking(booking)));
+  const resolved = await Promise.all(
+    candidates.map((booking) => resolveAssistedBooking(booking, itemTypeLabels)),
+  );
   return resolved.filter((item): item is AssistedBookingChatItem => item !== null);
 }
 
 export function useAssistedBookingsChat() {
+  const messages = useMessages();
+  const itemTypeLabels = (
+    messages as { account: Translations['account'] }
+  ).account.reservations.itemTypes;
   const [items, setItems] = useState<AssistedBookingChatItem[]>([]);
   const [loading, setLoading] = useState(false);
   const itemsRef = useRef(items);
@@ -97,7 +109,7 @@ export function useAssistedBookingsChat() {
       setLoading(true);
     }
     try {
-      const next = await fetchAssistedBookings();
+      const next = await fetchAssistedBookings(itemTypeLabels);
       setItems(next);
     } catch {
       // Keep last known list on background refresh failures to avoid FAB flicker.
@@ -109,7 +121,7 @@ export function useAssistedBookingsChat() {
         setLoading(false);
       }
     }
-  }, []);
+  }, [itemTypeLabels]);
 
   useEffect(() => {
     void refresh();

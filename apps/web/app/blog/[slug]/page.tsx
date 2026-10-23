@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const [t, locale] = await Promise.all([getTranslations('blog'), getLocale()]);
 
   try {
-    const post = await getBlogPostBySlugForLocale(params.slug, locale);
+    const { post } = await getBlogPostBySlugForLocale(params.slug, locale);
     const fromExcerpt = post.excerpt?.trim() ?? '';
     const fromContent = stripHtml(post.content);
     const description =

@@ -1,9 +1,4 @@
 import type { PackagesBrowseQuery } from './types';
-import {
-  appendPackageLineToParams,
-  parsePackageLineAtIndex,
-  type PackageLineSelection,
-} from './package-lines';
 
 export type PackagesSearchParams = {
   search?: string;
@@ -84,61 +79,6 @@ export function buildPackageDetailHref(
   return hash ? `${base}${hash}` : base;
 }
 
-export function parsePackageLineSelections(
-  raw: Record<string, string | string[] | undefined>,
-  itemCount: number,
-): Array<PackageLineSelection | null> {
-  const lineCountRaw = readSearchParam(raw.lineCount);
-  const lineCount = lineCountRaw ? Number.parseInt(lineCountRaw, 10) : itemCount;
-  if (!Number.isFinite(lineCount) || lineCount < 1) {
-    return Array.from({ length: itemCount }, () => null);
-  }
-
-  const fallbackDate =
-    readSearchParam(raw.startDate) ??
-    readSearchParam(raw.date) ??
-    readSearchParam(raw.checkIn);
-  const fallbackParticipants = readSearchParam(raw.travelers) ?? readSearchParam(raw.participants);
-  const fallback = {
-    date: fallbackDate,
-    participants: fallbackParticipants
-      ? Number.parseInt(fallbackParticipants, 10)
-      : undefined,
-  };
-
-  return Array.from({ length: itemCount }, (_, index) => {
-    if (index >= lineCount) return null;
-    return parsePackageLineAtIndex(raw, index, fallback);
-  });
-}
-
-export function buildPackageDetailHrefWithLines(
-  packageId: string,
-  params: PackagesSearchParams,
-  lines: Array<PackageLineSelection | null | undefined>,
-  hash?: string,
-): string {
-  const qs = new URLSearchParams();
-  if (params.search) qs.set('search', params.search);
-  if (params.page) qs.set('page', params.page);
-  if (params.startDate) qs.set('startDate', params.startDate);
-  if (params.travelers) qs.set('travelers', params.travelers);
-
-  const configuredLines = lines.filter((line): line is PackageLineSelection => Boolean(line));
-  if (lines.length > 0) {
-    qs.set('lineCount', String(lines.length));
-    lines.forEach((line, index) => {
-      if (line) appendPackageLineToParams(qs, index, line);
-    });
-  } else if (configuredLines.length > 0) {
-    qs.set('lineCount', String(configuredLines.length));
-  }
-
-  const query = qs.toString();
-  const base = `/packages/${encodeURIComponent(packageId)}${query ? `?${query}` : ''}`;
-  return hash ? `${base}${hash}` : base;
-}
-
 export function toPackagesBrowseQuery(params: PackagesSearchParams): PackagesBrowseQuery {
   const page = Number.parseInt(params.page ?? '1', 10);
   return {
@@ -146,12 +86,6 @@ export function toPackagesBrowseQuery(params: PackagesSearchParams): PackagesBro
     page: Number.isFinite(page) && page >= 1 ? page : 1,
     limit: 50,
   };
-}
-
-export function isActivityOnlyPackage(
-  items: { itemType: string }[],
-): boolean {
-  return items.length > 0 && items.every((item) => item.itemType === 'activity');
 }
 
 export function hasPackageDiscount(pricing: {

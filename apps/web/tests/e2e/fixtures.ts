@@ -9,9 +9,18 @@ import type { Page } from '@playwright/test';
 export const test = base.extend({
   page: async ({ page }, use) => {
     await page.route('**/api/**', async (route) => {
+      const url = route.request().url();
+      // Branding / media assets must not be stubbed as JSON 503 (breaks layout; can cascade).
+      if (url.includes('/api/uploads/')) {
+        await route.fallback();
+        return;
+      }
       await route.fulfill({
         status: 503,
         contentType: 'application/json',
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
         body: JSON.stringify({ message: 'E2E: API not running' }),
       });
     });

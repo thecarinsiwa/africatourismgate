@@ -8,6 +8,7 @@ import {
   type ActivityDetailSearchParams,
 } from '../../lib/activities/listings';
 import type { ActivitySearchResult } from '../../lib/activities/types';
+import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
 import type { Translations } from '../../lib/i18n/message-types';
 import { PriceDisplay } from '../shared';
 
@@ -22,6 +23,7 @@ export function ActivityTable({
   t,
   searchParams = {},
 }: ActivityTableProps) {
+  const ctaLabel = useBookingCtaLabel('activity_schedule');
   const th =
     'px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-atg-muted';
   const td = 'px-4 py-3 align-middle text-sm text-atg-fg';
@@ -61,14 +63,13 @@ export function ActivityTable({
               (activity.nextStartDatetime
                 ? activity.nextStartDatetime.slice(0, 10)
                 : undefined);
-            const detailParams: ActivityDetailSearchParams = {
-              destination: searchParams.destination ?? activity.destination,
+            const bookingParams: ActivityDetailSearchParams = {
               date: effectiveDate,
               participants: searchParams.participants,
             };
-            const detailHref = buildActivityDetailHref(activity.id, detailParams);
+            const detailHref = buildActivityDetailHref(activity.id, {});
             const reserveHref = effectiveDate
-              ? buildActivityDetailHref(activity.id, detailParams, '#schedules')
+              ? buildActivityDetailHref(activity.id, bookingParams, '#schedules')
               : detailHref;
             const canBook = Boolean(
               effectiveDate && activity.availableSchedulesCount > 0,
@@ -123,7 +124,7 @@ export function ActivityTable({
                       aria-disabled={!canBook}
                       tabIndex={!canBook ? -1 : undefined}
                     >
-                      {t.bookNow}
+                      {ctaLabel}
                     </Link>
                   </div>
                 </td>

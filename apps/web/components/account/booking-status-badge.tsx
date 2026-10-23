@@ -1,8 +1,8 @@
+'use client';
+
 import type { BookingStatus } from '@africatourismgate/types';
-import {
-  bookingStatusLabels,
-  bookingStatusStyles,
-} from '../../lib/bookings/display';
+import { useTranslations } from 'next-intl';
+import { bookingStatusStyles } from '../../lib/bookings/display';
 
 type Props = {
   status: BookingStatus;
@@ -10,6 +10,7 @@ type Props = {
 };
 
 export function BookingStatusBadge({ status, size = 'md' }: Props) {
+  const t = useTranslations('account.reservations.statuses');
   const styles = bookingStatusStyles[status];
   const sizeClass =
     size === 'sm'
@@ -21,7 +22,7 @@ export function BookingStatusBadge({ status, size = 'md' }: Props) {
       className={`inline-flex items-center gap-1.5 rounded-full font-medium ${sizeClass} ${styles.badge}`}
     >
       <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${styles.dot}`} aria-hidden />
-      {bookingStatusLabels[status] ?? status}
+      {t(status)}
     </span>
   );
 }

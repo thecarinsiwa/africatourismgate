@@ -147,7 +147,7 @@ export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
         <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
           <nav
             className="mb-6 flex flex-wrap items-center gap-2 text-sm text-white/60"
-            aria-label="Breadcrumb"
+            aria-label={f.breadcrumbAria}
           >
             <Link href="/" className="transition-colors hover:text-white">
               {f.breadcrumbHome}

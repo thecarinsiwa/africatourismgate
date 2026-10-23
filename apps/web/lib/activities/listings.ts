@@ -108,7 +108,7 @@ export function buildActivityDetailHref(
   hash?: string,
 ): string {
   const qs = new URLSearchParams();
-  if (params.destination) qs.set('destination', params.destination);
+  // Destination belongs on the listing search URL only — not on activity detail.
   if (params.date) qs.set('date', params.date);
   if (params.participants) qs.set('participants', params.participants);
   if (params.scheduleId) qs.set('scheduleId', params.scheduleId);
@@ -142,12 +142,8 @@ export function toActivitySearchQuery(params: ActivitiesSearchParams): ActivityS
 }
 
 export function toActivityDetailQuery(params: ActivityDetailSearchParams): ActivityDetailQuery {
-  if (!params.date) {
-    throw new Error('Activity detail requires date');
-  }
-
   return {
-    date: params.date,
+    date: params.date || undefined,
     participants: parseParticipantsParam(params.participants),
   };
 }

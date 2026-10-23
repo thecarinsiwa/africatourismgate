@@ -638,7 +638,10 @@ export class PublicActivitiesService {
     query: ActivityDetailQueryDto,
   ): Promise<ActivityDetailDto> {
     const participants = query.participants ?? 1;
-    parseDateOnly(query.date);
+    const date = query.date?.trim() || undefined;
+    if (date) {
+      parseDateOnly(date);
+    }
 
     const activity = await this.activitiesRepository.findOne({ where: { id } });
     if (!activity || activity.deletedAt) {
@@ -659,12 +662,14 @@ export class PublicActivitiesService {
       throw new NotFoundException('Activité introuvable.');
     }
 
-    const schedules = await this.buildSchedulesForDate(
-      activity.id,
-      query.date,
-      activity.priceCents,
-      activity.currency,
-    );
+    const schedules = date
+      ? await this.buildSchedulesForDate(
+          activity.id,
+          date,
+          activity.priceCents,
+          activity.currency,
+        )
+      : [];
 
     const reviewSummary = await this.loadReviewSummariesByActivityIds([activity.id]);
 
@@ -677,7 +682,7 @@ export class PublicActivitiesService {
       currency: activity.currency,
       destination: destination.name,
       providerName: provider.name,
-      date: query.date,
+      date: date ?? '',
       participants,
       schedules,
       images: await this.loadActivityGallery(activity.id),

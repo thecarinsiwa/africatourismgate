@@ -20,6 +20,7 @@ export function BlogDetailPageContent({ slug }: BlogDetailPageContentProps) {
   const t = useTranslations('blog');
 
   const [post, setPost] = useState<PublicBlogPostDetail | null>(null);
+  const [usedLocaleFallback, setUsedLocaleFallback] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -27,10 +28,14 @@ export function BlogDetailPageContent({ slug }: BlogDetailPageContentProps) {
     let cancelled = false;
     setLoading(true);
     setError(false);
+    setUsedLocaleFallback(false);
 
     void getBlogPostBySlugForLocale(slug, locale)
-      .then((data) => {
-        if (!cancelled) setPost(data);
+      .then(({ post: data, usedLocaleFallback: fallback }) => {
+        if (!cancelled) {
+          setPost(data);
+          setUsedLocaleFallback(fallback);
+        }
       })
       .catch(() => {
         if (!cancelled) {
@@ -57,7 +62,8 @@ export function BlogDetailPageContent({ slug }: BlogDetailPageContentProps) {
           </div>
         ) : error || !post ? (
           <div className="mx-auto max-w-3xl px-4 py-16 text-center">
-            <p className="text-lg font-semibold">{t('noResults')}</p>
+            <p className="text-lg font-semibold">{t('notFound')}</p>
+            <p className="mt-2 text-sm text-atg-muted">{t('notFoundHint')}</p>
             <Link
               href="/blog"
               className="mt-6 inline-flex min-h-[44px] items-center text-primary hover:text-primary/80"
@@ -80,7 +86,7 @@ export function BlogDetailPageContent({ slug }: BlogDetailPageContentProps) {
               }
             />
             <article className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
-              <nav className="mb-6 text-sm text-atg-muted" aria-label="Breadcrumb">
+              <nav className="mb-6 text-sm text-atg-muted" aria-label={t('breadcrumbAria')}>
                 <ol className="flex flex-wrap items-center gap-2">
                   <li>
                     <Link href="/" className="hover:text-primary">
@@ -95,6 +101,15 @@ export function BlogDetailPageContent({ slug }: BlogDetailPageContentProps) {
                   </li>
                 </ol>
               </nav>
+
+              {usedLocaleFallback ? (
+                <p
+                  role="status"
+                  className="mb-6 rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-muted"
+                >
+                  {t('detailLocaleFallback')}
+                </p>
+              ) : null}
 
               {post.publishedAt ? (
                 <p className="text-sm text-atg-muted">
