@@ -1,7 +1,7 @@
 'use client';
 
 import type { BookingStatus, BookingStatusHistoryEntry } from '@africatourismgate/types';
-import { bookingStatusLabels, bookingStatusStyles, formatBookingDateTime } from '../../lib/bookings/display';
+import { bookingStatusStyles, formatBookingDateTime } from '../../lib/bookings/display';
 
 const IMMEDIATE_STEPS: BookingStatus[] = ['draft', 'pending_payment', 'confirmed'];
 const ASSISTED_STEPS = ['request', 'validation', 'discussion', 'payment', 'confirmed'] as const;
@@ -158,8 +158,10 @@ function immediateStepLabel(step: BookingStatus, labels: TimelineLabels): string
       return labels.stepCancelled;
     case 'refunded':
       return labels.stepRefunded;
+    case 'pending_approval':
+      return labels.stepValidation;
     default:
-      return bookingStatusLabels[step] ?? step;
+      return step;
   }
 }
 

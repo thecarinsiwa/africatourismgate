@@ -1803,6 +1803,22 @@
       "actionRequired": "Acción requerida",
       "leaveReviewCta": "Dejar una opinión",
       "reviewPrompt": "Tiene {count} estancia(s) finalizada(s) pendiente(s) de opinión — comparta su experiencia.",
+      "statuses": {
+        "draft": "Borrador",
+        "pending_approval": "Pendiente de validación",
+        "pending_payment": "Pendiente de pago",
+        "confirmed": "Confirmada",
+        "cancelled": "Cancelada",
+        "refunded": "Reembolsada"
+      },
+      "itemTypes": {
+        "room": "Alojamiento",
+        "flight_class": "Vuelo",
+        "vehicle": "Vehículo",
+        "cabin": "Cabina",
+        "activity_schedule": "Actividad",
+        "package": "Paquete"
+      },
       "detail": {
         "bookedOn": "Reservado el",
         "itemsCount": "Elementos",

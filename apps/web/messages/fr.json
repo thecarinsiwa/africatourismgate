@@ -1803,6 +1803,22 @@
       "actionRequired": "Action requise",
       "leaveReviewCta": "Laisser un avis",
       "reviewPrompt": "Vous avez {count} séjour(s) terminé(s) en attente d’avis — partagez votre expérience.",
+      "statuses": {
+        "draft": "Brouillon",
+        "pending_approval": "En attente de validation",
+        "pending_payment": "En attente de paiement",
+        "confirmed": "Confirmée",
+        "cancelled": "Annulée",
+        "refunded": "Remboursée"
+      },
+      "itemTypes": {
+        "room": "Hébergement",
+        "flight_class": "Vol",
+        "vehicle": "Véhicule",
+        "cabin": "Cabine",
+        "activity_schedule": "Activité",
+        "package": "Forfait"
+      },
       "detail": {
         "bookedOn": "Réservée le",
         "itemsCount": "Articles",
@@ -2080,9 +2096,9 @@
       "earnHint": "Les points sont crédités après chaque paiement de réservation confirmé, selon les règles du programme.",
       "allPrograms": "Tous vos programmes",
       "tierMember": "Membre",
-      "tierSilver": "Silver",
-      "tierGold": "Gold",
-      "tierPlatinum": "Platinum"
+      "tierSilver": "Argent",
+      "tierGold": "Or",
+      "tierPlatinum": "Platine"
     },
     "breadcrumbAria": "Fil d’Ariane"
   },

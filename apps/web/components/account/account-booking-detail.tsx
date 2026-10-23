@@ -13,8 +13,6 @@ import { getAccountApiClient } from '../../lib/api/account';
 import { listPublicPaymentBankAccounts } from '../../lib/api/public-payment-bank-accounts';
 import { listPublicMobileMoneyConfig } from '../../lib/api/public-mobile-money';
 import {
-  bookingItemTypeLabels,
-  bookingStatusLabels,
   formatBookingDateTime,
   formatBookingMoney,
   formatStayRange,
@@ -322,7 +320,7 @@ export function AccountBookingDetail({
             {t('reservations.status')}
           </p>
           <p className="mt-1 text-sm font-semibold text-atg-fg">
-            {bookingStatusLabels[booking.status]}
+            {t(`reservations.statuses.${booking.status}`)}
           </p>
         </div>
         <div className="rounded-lg border border-atg-border bg-atg-surface p-4 dark:border-atg-border dark:bg-white/5">
@@ -617,7 +615,10 @@ export function AccountBookingDetail({
             <div className="space-y-3 md:hidden">
               {items.map((item) => {
                 const lineTotal = item.unitPriceCents * item.quantity;
-                const typeLabel = bookingItemTypeLabels[item.itemType] ?? item.itemType;
+                const typeLabel =
+                  account.reservations.itemTypes[
+                    item.itemType as keyof typeof account.reservations.itemTypes
+                  ] ?? item.itemType;
                 return (
                   <article
                     key={item.id}
@@ -669,7 +670,10 @@ export function AccountBookingDetail({
                 <tbody>
                   {items.map((item) => {
                     const lineTotal = item.unitPriceCents * item.quantity;
-                    const typeLabel = bookingItemTypeLabels[item.itemType] ?? item.itemType;
+                    const typeLabel =
+                      account.reservations.itemTypes[
+                        item.itemType as keyof typeof account.reservations.itemTypes
+                      ] ?? item.itemType;
                     return (
                       <tr
                         key={item.id}

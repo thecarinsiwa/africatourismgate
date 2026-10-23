@@ -1,14 +1,5 @@
 import type { BookingStatus } from '@africatourismgate/types';
 
-export const bookingStatusLabels: Record<BookingStatus, string> = {
-  draft: 'Brouillon',
-  pending_approval: 'En attente de validation',
-  pending_payment: 'En attente de paiement',
-  confirmed: 'Confirmée',
-  cancelled: 'Annulée',
-  refunded: 'Remboursée',
-};
-
 export const bookingStatusStyles: Record<
   BookingStatus,
   { badge: string; dot: string }
@@ -39,21 +30,13 @@ export const bookingStatusStyles: Record<
   },
 };
 
-export const bookingItemTypeLabels: Record<string, string> = {
-  room: 'Hébergement',
-  flight_class: 'Vol',
-  vehicle: 'Véhicule',
-  cabin: 'Cabine',
-  activity_schedule: 'Activité',
-  package: 'Forfait',
-};
-
 export function formatBookingMoney(cents: number, currency: string): string {
   return `${(cents / 100).toFixed(2)} ${currency}`;
 }
 
 export function formatBookingDisplayName(
   items: Array<{ itemType: string; titleSnapshot: string }>,
+  itemTypeLabels: Record<string, string> = {},
 ): string {
   if (items.length === 0) {
     return '';
@@ -62,7 +45,7 @@ export function formatBookingDisplayName(
   const first = items[0];
   const primary =
     first.titleSnapshot?.trim() ||
-    bookingItemTypeLabels[first.itemType] ||
+    itemTypeLabels[first.itemType] ||
     first.itemType;
 
   if (items.length === 1) {

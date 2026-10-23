@@ -1803,6 +1803,22 @@
       "actionRequired": "Action required",
       "leaveReviewCta": "Leave a review",
       "reviewPrompt": "You have {count} completed stay(s) waiting for a review — share your experience.",
+      "statuses": {
+        "draft": "Draft",
+        "pending_approval": "Awaiting validation",
+        "pending_payment": "Awaiting payment",
+        "confirmed": "Confirmed",
+        "cancelled": "Cancelled",
+        "refunded": "Refunded"
+      },
+      "itemTypes": {
+        "room": "Stay",
+        "flight_class": "Flight",
+        "vehicle": "Vehicle",
+        "cabin": "Cabin",
+        "activity_schedule": "Activity",
+        "package": "Package"
+      },
       "detail": {
         "bookedOn": "Booked on",
         "itemsCount": "Items",

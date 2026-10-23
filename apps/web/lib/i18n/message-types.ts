@@ -974,6 +974,22 @@ export type Translations = {
       actionRequired: string;
       leaveReviewCta: string;
       reviewPrompt: string;
+      statuses: {
+        draft: string;
+        pending_approval: string;
+        pending_payment: string;
+        confirmed: string;
+        cancelled: string;
+        refunded: string;
+      };
+      itemTypes: {
+        room: string;
+        flight_class: string;
+        vehicle: string;
+        cabin: string;
+        activity_schedule: string;
+        package: string;
+      };
       detail: {
         bookedOn: string;
         itemsCount: string;

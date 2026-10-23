@@ -898,14 +898,14 @@ IDs demo QA 2026-10-22 :
 
 | Route | FR | EN | ES | Notes |
 | ----- | -- | -- | -- | ----- |
-| `/account` | ☐ | ☐ | ☐ | Redirect ou hub compte |
-| `/account/profile` | ☐ | ☐ | ☐ | Préférences langue |
-| `/account/addresses` | ☐ | ☐ | ☐ | CRUD adresses |
-| `/account/reservations` | ☐ | ☐ | ☐ | Liste, badges statut, action requise |
-| `/account/reservations/[id]` | ☐ | ☐ | ☐ | Timeline, documents, avis guides |
-| `/account/reservations/[id]/chat` | ☐ | ☐ | ☐ | Thread messages assisté |
-| `/account/loyalty` | ☐ | ☐ | ☐ | Programme OneKey |
-| `/account/payment-methods` | ☐ | ☐ | ☐ | Cartes enregistrées |
+| `/account` | ✅ | ✅ | ✅ | Redirect serveur → `/account/profile` |
+| `/account/profile` | ✅ | ✅ | ✅ | Shell + form ; switch langue via cookie/`preferredLanguage` |
+| `/account/addresses` | ✅ | ✅ | ✅ | Empty state traduit |
+| `/account/reservations` | ✅ | ✅ | ✅ | Statuts, « action requise », CTA avis — pas d’enum brut |
+| `/account/reservations/[id]` | ✅ | ✅ | ✅ | Timeline assistée 5 étapes + avis séjour |
+| `/account/reservations/[id]/chat` | ✅ | ✅ | ✅ | Placeholder / Envoyer / messages système |
+| `/account/loyalty` | ✅ | ✅ | ✅ | OneKey + paliers FR Argent/Or/Platine |
+| `/account/payment-methods` | ✅ | ✅ | ✅ | Empty state traduit |
 
 #### Groupe F — Marketing & contenu
 
@@ -1111,10 +1111,18 @@ Revue i18n **groupe E** — nécessite session client (compte demo ou créé via
 
 ## Critères d'acceptation
 
-- [ ] 8 routes × 3 langues cochés
-- [ ] Statuts booking traduits (pas de enum API brut visible)
-- [ ] Chat : placeholders, bouton envoyer, messages système
-- [ ] OneKey : termes fidélité cohérents fr/en/es
+- [x] 8 routes × 3 langues cochés — QA 2026-10-23 (`i18n-account.spec.ts` + inventaire E)
+- [x] Statuts booking traduits (pas de enum API brut visible) — `BookingStatusBadge` + `account.reservations.statuses.*`
+- [x] Chat : placeholders, bouton envoyer, messages système — `account.reservations.detail.messages.*`
+- [x] OneKey : termes fidélité cohérents fr/en/es — paliers FR corrigés (Argent/Or/Platine)
+
+## Anomalies trouvées (QA 2026-10-23)
+
+| Sévérité | Symptôme | Fichier / cause | Statut |
+| -------- | -------- | --------------- | ------ |
+| Moyenne | Badges statut toujours FR (labels hardcodés) | `lib/bookings/display.ts` | ✅ clés `account.reservations.statuses` + badge next-intl |
+| Basse | Paliers OneKey FR = Silver/Gold/Platinum (EN) | `messages/fr.json` `account.loyalty.tier*` | ✅ Argent / Or / Platine |
+| Info | Session requise pour QA manuelle browser | `WebAuthGuard` | OK — E2E mock session + `i18n-switch` profil |
 ```
 
 ---
@@ -1228,6 +1236,8 @@ Corriger tous les textes hardcodés / non traduits identifiés :
 | `/` map | FR | Leaflet « Zoom in/out » EN | `destinations-map-inner.tsx` | ✅ WEB-I18N-01 |
 | `/booking/cart` | EN/ES | Erreurs créneau / « Impossible d'afficher… » FR | `reservation-cart-page-content.tsx` | ✅ WEB-I18N-03 |
 | Cartes verticales | EN/ES | CTA listing = toujours « Book now » si mode assisté | `*-card.tsx` / `activity-table.tsx` | ✅ WEB-I18N-02 |
+| `/account/reservations*` | EN/ES | Badges statut FR hardcodés | `display.ts` / `booking-status-badge.tsx` | ✅ WEB-I18N-04 |
+| `/account/loyalty` | FR | Paliers OneKey EN (Silver/Gold…) | `messages/fr.json` `account.loyalty.tier*` | ✅ WEB-I18N-04 |
 | (annonce) | EN | Texte CMS FR seul | API announcement-banner | ⚠️ contenu admin |
 
 ## Procédure correction
@@ -1332,7 +1342,7 @@ WEB-012 (README) → WEB-006 (CI E2E) → WEB-002 + WEB-003 (cleanup routes)
 | WEB-I18N-01 | | | ✅ QA 2026-10-22 |
 | WEB-I18N-02 | | | ✅ QA 2026-10-22 |
 | WEB-I18N-03 | | | ✅ QA 2026-10-22 |
-| WEB-I18N-04 | | | ☐ |
+| WEB-I18N-04 | | | ✅ QA 2026-10-23 |
 | WEB-I18N-05 | | | ☐ |
 | WEB-I18N-06 | | | ☐ |
 | WEB-I18N-07 | | | ☐ |
