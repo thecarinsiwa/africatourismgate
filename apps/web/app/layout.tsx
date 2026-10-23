@@ -39,6 +39,7 @@ import {
 
 const montserrat = Montserrat({
   subsets: ['latin'],
+  display: 'swap',
   variable: '--font-montserrat',
 });
 
@@ -256,7 +257,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   } as CSSProperties;
 
   return (
-    <html lang={locale} className={montserrat.variable} suppressHydrationWarning>
+    <html
+      lang={locale}
+      className={`${montserrat.variable} ${montserrat.className}`}
+      suppressHydrationWarning
+    >
       <body
         className="bg-atg-surface font-sans text-atg-fg antialiased transition-colors duration-300"
         style={themeStyle}
