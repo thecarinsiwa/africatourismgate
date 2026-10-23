@@ -119,7 +119,12 @@
     "activites-et-forfaits": {
       "title": "Activités et forfaits",
       "summary": "Expériences, partenaires, créneaux et packages combinés.",
-      "body": "Les [activités](/produits/activites) décrivent les expériences proposées. Créez une activité, rattachez une destination et un partenaire, puis ajoutez les créneaux ou options sur la fiche d'édition.\n\nLes [forfaits](/produits/forfaits) regroupent plusieurs produits (hébergement, activité, etc.) en une offre packagée. Composez le contenu du forfait puis publiez-le selon le workflow prévu.\n\nPermissions typiques : activities.read/write et packages.read/write. Vérifiez la cohérence des destinations et des prix avant mise en ligne."
+      "body": "Les [activités](/produits/activites) décrivent les expériences proposées. Créez une activité, rattachez une destination et un partenaire, puis ajoutez les créneaux ou options sur la fiche d'édition.\n\nLes [forfaits](/produits/forfaits) regroupent plusieurs produits (hébergement, activité, etc.) en une offre packagée. Composez le contenu du forfait puis publiez-le selon le workflow prévu.\n\nQuand aucun créneau n'est disponible, les [demandes de réservation](/produits/activites/demandes) collectent les demandes clients (si l'option est activée sur l'activité).\n\nPermissions typiques : activities.read/write et packages.read/write. Vérifiez la cohérence des destinations et des prix avant mise en ligne."
+    },
+    "demandes-reservation-activites": {
+      "title": "Demandes de réservation d'activités",
+      "summary": "Traiter les demandes clients sans créneau : statut, e-mail et ajout de créneau.",
+      "body": "La page [Demandes de réservation](/produits/activites/demandes) liste les demandes envoyées depuis le site public lorsqu'une [activité](/produits/activites) n'a plus de créneau et que l'option « Autoriser les demandes sans créneau » est cochée sur la fiche activité.\n\nCes demandes ne sont pas des [réservations](/reservations) confirmées : aucun paiement n'a été pris. Filtrez par activité, statut ou recherche (nom / e-mail), puis changez le statut (en attente, contacté, confirmé, annulé). Avant validation, un aperçu de l'e-mail client s'affiche — le message indique clairement si un créneau est rendu disponible ou si l'activité reste indisponible.\n\nDepuis la colonne Actions, ouvrez la modale pour [ajouter un créneau](/produits/activites) (date/heure et capacité préremplies depuis la demande). Une [notification](/notifications) est aussi créée à chaque nouvelle demande.\n\nPermission activities.read pour consulter la liste et activities.write pour mettre à jour le statut ou créer un créneau."
     },
     "destinations": {
       "title": "Destinations",

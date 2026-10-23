@@ -88,6 +88,7 @@ export const ADMIN_HELP_CATEGORIES: readonly AdminHelpCategory[] = [
       'hebergements',
       'vols-locations-croisieres',
       'activites-et-forfaits',
+      'demandes-reservation-activites',
       'destinations',
     ],
   },
@@ -273,7 +274,18 @@ export const ADMIN_HELP_ARTICLES: readonly AdminHelpArticle[] = [
     relatedSlugs: [
       'hebergements',
       'vols-locations-croisieres',
+      'demandes-reservation-activites',
       'gerer-les-reservations',
+    ],
+  },
+  {
+    id: 'art-demandes-reservation-activites',
+    slug: 'demandes-reservation-activites',
+    categorySlug: 'produits-voyage',
+    relatedSlugs: [
+      'activites-et-forfaits',
+      'gerer-les-reservations',
+      'notifications',
     ],
   },
   {
