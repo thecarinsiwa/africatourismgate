@@ -67,6 +67,10 @@ import type {
   UpdateShipImageRequest,
   Activity,
   ActivitiesListQuery,
+  ActivityBookingRequest,
+  ActivityBookingRequestsListQuery,
+  ActivityBookingRequestStatusEmailPreview,
+  ActivityBookingRequestStatusEmailPreviewRequest,
   ActivityImage,
   ActivityImagesListQuery,
   ActivityItineraryStop,
@@ -84,6 +88,7 @@ import type {
   CreateActivityDescriptionAssetRequest,
   CreateActivityRequest,
   CreateActivityScheduleRequest,
+  UpdateActivityBookingRequestStatusRequest,
   UpdateActivityProviderRequest,
   UpdateActivityImageRequest,
   UpdateActivityItineraryStopRequest,
@@ -3583,6 +3588,44 @@ export class ApiClient {
 
   deleteActivity(id: string): Promise<void> {
     return this.request<void>(`/activities/${id}`, { method: 'DELETE' });
+  }
+
+  listActivityBookingRequests(
+    query?: ActivityBookingRequestsListQuery,
+    requestOptions?: RequestOptions,
+  ): Promise<PaginatedResponse<ActivityBookingRequest>> {
+    return fetchPaginated<ActivityBookingRequest>(
+      this,
+      '/activities/booking-requests',
+      query,
+      requestOptions,
+    );
+  }
+
+  getActivityBookingRequest(id: string): Promise<ActivityBookingRequest> {
+    return this.request<ActivityBookingRequest>(
+      `/activities/booking-requests/${id}`,
+    );
+  }
+
+  previewActivityBookingRequestStatusEmail(
+    id: string,
+    body: ActivityBookingRequestStatusEmailPreviewRequest,
+  ): Promise<ActivityBookingRequestStatusEmailPreview> {
+    return this.request<ActivityBookingRequestStatusEmailPreview>(
+      `/activities/booking-requests/${id}/status-email-preview`,
+      { method: 'POST', body },
+    );
+  }
+
+  updateActivityBookingRequestStatus(
+    id: string,
+    body: UpdateActivityBookingRequestStatusRequest,
+  ): Promise<ActivityBookingRequest> {
+    return this.request<ActivityBookingRequest>(
+      `/activities/booking-requests/${id}`,
+      { method: 'PATCH', body },
+    );
   }
 
   listActivitySchedules(

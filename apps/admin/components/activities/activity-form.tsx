@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Input, SearchableSelect, Select } from '@africatourismgate/ui';
+import { Button, Input, SearchableSelect, Select, Switch } from '@africatourismgate/ui';
 import type {
   Activity,
   ActivityDifficultyLevel,
@@ -37,6 +37,7 @@ export type ActivityFormValues = {
   currency: string;
   latitude: string;
   longitude: string;
+  allowBookingRequestsWhenUnavailable: boolean;
 };
 
 const defaultValues: ActivityFormValues = {
@@ -49,6 +50,7 @@ const defaultValues: ActivityFormValues = {
   currency: FALLBACK_TREASURY_CURRENCY,
   latitude: '',
   longitude: '',
+  allowBookingRequestsWhenUnavailable: false,
 };
 
 function formatCoordInput(value: string | number | null | undefined): string {
@@ -71,6 +73,9 @@ function activityToFormValues(activity: Activity): ActivityFormValues {
     currency: activity.currency,
     latitude: formatCoordInput(activity.latitude),
     longitude: formatCoordInput(activity.longitude),
+    allowBookingRequestsWhenUnavailable: Boolean(
+      activity.allowBookingRequestsWhenUnavailable,
+    ),
   };
 }
 
@@ -91,6 +96,7 @@ function toPayload(
     title: values.title.trim(),
     priceCents: Number(values.priceCents),
     currency: values.currency.trim().toUpperCase(),
+    allowBookingRequestsWhenUnavailable: values.allowBookingRequestsWhenUnavailable,
     ...(values.description.trim() && !isRichTextEmpty(values.description)
       ? { description: values.description.trim() }
       : {}),
@@ -358,6 +364,20 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
           }}
           error={fieldErrors.currency}
         />
+      </div>
+
+      <div className="space-y-2 rounded-xl border border-atg-border p-4">
+        <Switch
+          name="allowBookingRequestsWhenUnavailable"
+          checked={values.allowBookingRequestsWhenUnavailable}
+          onChange={(e) =>
+            updateField('allowBookingRequestsWhenUnavailable', e.target.checked)
+          }
+          label={tForm('allowBookingRequestsWhenUnavailable')}
+        />
+        <p className="text-xs text-atg-muted">
+          {tForm('allowBookingRequestsWhenUnavailableHint')}
+        </p>
       </div>
 
       <div className="space-y-3 rounded-xl border border-atg-border p-4">

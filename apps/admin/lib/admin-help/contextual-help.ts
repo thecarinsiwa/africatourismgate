@@ -99,6 +99,11 @@ const CONTEXTUAL_HELP_RULES: readonly ContextualHelpRule[] = [
     articleSlug: 'vols-locations-croisieres',
   },
   {
+    prefix: '/produits/activites/demandes',
+    categorySlug: 'produits-voyage',
+    articleSlug: 'demandes-reservation-activites',
+  },
+  {
     prefix: '/produits/activites',
     categorySlug: 'produits-voyage',
     articleSlug: 'activites-et-forfaits',

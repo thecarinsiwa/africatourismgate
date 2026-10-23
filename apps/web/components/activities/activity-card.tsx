@@ -3,6 +3,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import {
+  ACTIVITY_BOOKING_REQUEST_HASH,
+  getActivityListingCtaMode,
+} from '../../lib/activities/booking-request';
+import {
   buildActivityDetailHref,
   formatActivityPrice,
   formatDurationMinutes,
@@ -46,9 +50,15 @@ export function ActivityCard({
   };
   // « Voir le détail » → page fiche seule (sans ?destination= de la liste).
   const detailHref = buildActivityDetailHref(activity.id, {});
-  const reserveHref = effectiveDate
-    ? buildActivityDetailHref(activity.id, bookingParams, '#schedules')
-    : detailHref;
+  const ctaMode = getActivityListingCtaMode(activity, searchParams.date);
+  const reserveHref =
+    ctaMode === 'request'
+      ? buildActivityDetailHref(activity.id, {}, ACTIVITY_BOOKING_REQUEST_HASH)
+      : effectiveDate
+        ? buildActivityDetailHref(activity.id, bookingParams, '#schedules')
+        : detailHref;
+  const primaryCtaLabel =
+    ctaMode === 'request' ? t.bookingRequestCta : ctaLabel;
 
   const durationLabel = formatDurationMinutes(activity.durationMinutes, {
     hourSingular: t.hourSingular,
@@ -73,8 +83,6 @@ export function ActivityCard({
     '{n}',
     String(activity.availableSchedulesCount),
   );
-
-  const canBook = Boolean(effectiveDate && activity.availableSchedulesCount > 0);
 
   const imageOverlay = (
     <div className="absolute inset-0 flex flex-col justify-center px-6 py-8 text-white">
@@ -199,18 +207,18 @@ export function ActivityCard({
           >
             {t.viewDetails}
           </Link>
-          <Link
-            href={reserveHref}
-            className={`inline-flex min-h-[44px] items-center rounded-lg px-5 py-2 text-sm font-bold uppercase tracking-wide transition-colors ${
-              canBook
-                ? 'bg-primary text-white hover:bg-primary-hover'
-                : 'cursor-not-allowed bg-atg-border text-atg-muted dark:bg-atg-surface'
-            }`}
-            aria-disabled={!canBook}
-            tabIndex={!canBook ? -1 : undefined}
-          >
-            {ctaLabel}
-          </Link>
+          {ctaMode === 'unavailable' ? (
+            <span className="inline-flex min-h-[44px] items-center rounded-lg bg-atg-border px-5 py-2 text-sm font-bold uppercase tracking-wide text-atg-muted dark:bg-atg-surface">
+              {t.bookingRequestUnavailable}
+            </span>
+          ) : (
+            <Link
+              href={reserveHref}
+              className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-5 py-2 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
+            >
+              {primaryCtaLabel}
+            </Link>
+          )}
         </>
       }
     />

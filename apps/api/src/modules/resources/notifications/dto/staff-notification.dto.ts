@@ -18,6 +18,7 @@ export class StaffNotificationDto {
       'booking_client_message',
       'review_pending',
       'support_ticket_open',
+      'activity_booking_request',
     ],
   })
   type!: StaffNotificationType;

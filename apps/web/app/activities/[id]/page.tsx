@@ -10,6 +10,8 @@ import {
 import {
   buildDetailFallbackMetadata,
   buildPageMetadata,
+  hasNonEmptySearchParams,
+  NOINDEX_FOLLOW_ROBOTS,
   pickOgImages,
   truncateMetaDescription,
 } from '../../../lib/seo/metadata';
@@ -22,9 +24,10 @@ type PageProps = {
 export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
   const path = `/activities/${params.id}`;
   const normalized = normalizeActivitiesSearchParams(searchParams);
+  const robots = hasNonEmptySearchParams(searchParams) ? NOINDEX_FOLLOW_ROBOTS : undefined;
 
   if (!normalized.date) {
-    return buildDetailFallbackMetadata('activities', path);
+    return buildDetailFallbackMetadata('activities', path, robots);
   }
 
   try {
@@ -43,9 +46,10 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
       locale,
       images: pickOgImages(detail.images),
       twitterCard: 'summary_large_image',
+      ...(robots ? { robots } : {}),
     });
   } catch {
-    return buildDetailFallbackMetadata('activities', path);
+    return buildDetailFallbackMetadata('activities', path, robots);
   }
 }
 

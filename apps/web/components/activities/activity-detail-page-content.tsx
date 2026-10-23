@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getActivityDetail } from '../../lib/api/public';
+import { ACTIVITY_BOOKING_REQUEST_HASH } from '../../lib/activities/booking-request';
 import {
   buildActivitiesSearchQuery,
   buildActivityDetailHref,
@@ -55,6 +56,23 @@ export function ActivityDetailPageContent({
   const [selectedScheduleId, setSelectedScheduleId] = useState<string | null>(
     initialSearch.scheduleId ?? null,
   );
+  const [preferBookingRequest, setPreferBookingRequest] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const syncHash = () => {
+      setPreferBookingRequest(window.location.hash === ACTIVITY_BOOKING_REQUEST_HASH);
+    };
+    syncHash();
+    window.addEventListener('hashchange', syncHash);
+    return () => window.removeEventListener('hashchange', syncHash);
+  }, []);
+
+  useEffect(() => {
+    if (!preferBookingRequest || loading) return;
+    const el = document.getElementById('booking-request');
+    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [preferBookingRequest, loading, detail?.id]);
 
   const searchContext = useMemo(
     (): ActivityDetailSearchParams => ({
@@ -178,6 +196,7 @@ export function ActivityDetailPageContent({
         participants,
         onParticipantsChange: handleParticipantsChange,
         onReserve: handleReserve,
+        preferBookingRequest,
         t: a,
         locale,
       }

@@ -122,6 +122,11 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Expériences, partenaires et créneaux par destination.',
     apiResource: 'activities',
   },
+  'produits/activites/demandes': {
+    title: 'Demandes de réservation',
+    description: 'Demandes clients pour les activités sans créneau disponible.',
+    apiResource: 'activities',
+  },
   'produits/forfaits': {
     title: 'Forfaits',
     description: 'Packages combinés, items polymorphes et remise calculée.',

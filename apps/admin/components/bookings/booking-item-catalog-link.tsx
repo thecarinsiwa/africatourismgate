@@ -12,6 +12,7 @@ type BookingItemCatalogLinkProps = {
   itemType: string;
   referenceId: string;
   title: string;
+  catalogProductId?: string | null;
   showReference?: boolean;
 };
 
@@ -19,11 +20,12 @@ export function BookingItemCatalogLink({
   itemType,
   referenceId,
   title,
+  catalogProductId,
   showReference = false,
 }: BookingItemCatalogLinkProps) {
   const t = useTranslations('modules.bookings');
   const itemTypeLabels = useBookingItemTypeLabels();
-  const href = getBookingItemCatalogHref(itemType, referenceId);
+  const href = getBookingItemCatalogHref(itemType, referenceId, catalogProductId);
   const typeLabel = getBookingItemTypeLabel(itemType, itemTypeLabels);
 
   const titleContent = href ? (

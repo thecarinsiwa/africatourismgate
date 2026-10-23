@@ -23,6 +23,8 @@
     "difficulty": "Difficulty",
     "priceCents": "Price (cents)",
     "descriptionPlaceholder": "Describe the activity, itinerary, conditions…",
+    "allowBookingRequestsWhenUnavailable": "Allow booking requests when no slots",
+    "allowBookingRequestsWhenUnavailableHint": "When no slots are available, visitors can submit a booking request (not a confirmed booking).",
     "geographyTitle": "Meeting point",
     "geographyIntro": "Place the activity meeting / start point so it appears on the destinations map.",
     "mapPicker": "Location map",
@@ -177,9 +179,87 @@
       }
     }
   },
+  "bookingRequests": {
+    "ariaLabel": "Activity booking requests list",
+    "empty": "No booking requests yet.",
+    "searchPlaceholder": "Search by name or email…",
+    "statusUpdated": "Status updated. Email sent to the customer.",
+    "filters": {
+      "activity": "Activity",
+      "allActivities": "All activities",
+      "status": "Status",
+      "allStatuses": "All statuses"
+    },
+    "status": {
+      "pending": "Pending",
+      "contacted": "Contacted",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled"
+    },
+    "availability": {
+      "available": "Slot made available",
+      "unavailable": "Still unavailable",
+      "in_progress": "Availability being checked",
+      "pending_review": "Awaiting confirmation"
+    },
+    "statusConfirm": {
+      "title": "Confirm status change",
+      "description": "An email will be sent to {email} with the new status.",
+      "toStatus": "New status",
+      "availability": "Availability message",
+      "emailSubject": "Subject",
+      "emailPreview": "Message preview",
+      "iframeTitle": "Customer email preview",
+      "confirm": "Send email & update",
+      "cancel": "Cancel",
+      "loadingPreview": "Loading email preview…"
+    },
+    "columns": {
+      "createdAt": "Received",
+      "activity": "Activity",
+      "contact": "Contact",
+      "preferredDate": "Preferred date",
+      "participants": "Participants",
+      "status": "Status",
+      "message": "Message"
+    },
+    "actions": {
+      "openActivity": "Open activity",
+      "addSlot": "Add time slot"
+    },
+    "addSlot": {
+      "title": "Add time slot",
+      "description": "Create a slot for {activity} based on this request.",
+      "success": "Time slot created.",
+      "hint": "Preferred date: {date} · {count, plural, one {# participant} other {# participants}}"
+    },
+    "stats": {
+      "total": {
+        "label": "All",
+        "subtitle": "Requests received"
+      },
+      "pending": {
+        "label": "Pending",
+        "subtitle": "Needs action"
+      },
+      "contacted": {
+        "label": "Contacted",
+        "subtitle": "Follow-up ongoing"
+      },
+      "confirmed": {
+        "label": "Confirmed",
+        "subtitle": "Slot available"
+      },
+      "cancelled": {
+        "label": "Cancelled",
+        "subtitle": "Unavailable"
+      }
+    },
+    "participantsBadge": "{count, plural, one {# guest} other {# guests}}"
+  },
   "stats": {
     "activities": {
-      "label": "Activitys",
+      "label": "Activities",
       "subtitle": "Catalog experiences"
     },
     "providers": {

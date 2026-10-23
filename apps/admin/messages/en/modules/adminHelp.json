@@ -119,7 +119,12 @@
     "activites-et-forfaits": {
       "title": "Activities and packages",
       "summary": "Experiences, partners, time slots, and combined packages.",
-      "body": "[Activities](/produits/activites) describe the experiences on offer. Create an activity, attach a destination and partner, then add slots or options on the edit page.\n\n[Packages](/produits/forfaits) combine several products (accommodation, activity, and so on) into one packaged offer. Build the package contents, then publish according to your workflow.\n\nTypical permissions: activities.read/write and packages.read/write. Check destinations and pricing before going live."
+      "body": "[Activities](/produits/activites) describe the experiences on offer. Create an activity, attach a destination and partner, then add slots or options on the edit page.\n\n[Packages](/produits/forfaits) combine several products (accommodation, activity, and so on) into one packaged offer. Build the package contents, then publish according to your workflow.\n\nWhen no slots remain, [booking requests](/produits/activites/demandes) collect customer inquiries (if the option is enabled on the activity).\n\nTypical permissions: activities.read/write and packages.read/write. Check destinations and pricing before going live."
+    },
+    "demandes-reservation-activites": {
+      "title": "Activity booking requests",
+      "summary": "Handle customer inquiries with no slots: status, email, and adding a slot.",
+      "body": "The [Booking requests](/produits/activites/demandes) page lists inquiries submitted from the public site when an [activity](/produits/activites) has no remaining slots and “Allow booking requests when no slots” is enabled on the activity form.\n\nThese are not confirmed [bookings](/reservations): no payment has been taken. Filter by activity, status, or search (name / email), then change the status (pending, contacted, confirmed, cancelled). Before you confirm, a preview of the customer email is shown — it clearly states whether a slot is now available or the activity remains unavailable.\n\nFrom the Actions column, open the modal to [add a time slot](/produits/activites) (datetime and capacity prefilled from the request). A [notification](/notifications) is also created for each new inquiry.\n\nPermission activities.read to view the list and activities.write to update status or create a slot."
     },
     "destinations": {
       "title": "Destinations",

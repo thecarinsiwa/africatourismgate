@@ -21,6 +21,7 @@ const TYPE_TO_CATEGORY: Record<
   booking_client_message: 'message',
   review_pending: 'review',
   support_ticket_open: 'support',
+  activity_booking_request: 'booking',
 };
 
 function shortId(id: string | undefined): string {
@@ -45,6 +46,8 @@ function resolveNotificationHref(
     case 'support_ticket_open':
       if (payload.ticketId) return `/contenu/tickets/${payload.ticketId}`;
       break;
+    case 'activity_booking_request':
+      return '/produits/activites/demandes';
     default:
       break;
   }
@@ -82,8 +85,13 @@ function mapToItem(
     case 'support_ticket_open':
       description = [author, shortId(p.ticketId)].filter(Boolean).join(' · ');
       break;
+    case 'activity_booking_request':
+      description = [p.activityTitle, author, shortId(p.requestId)]
+        .filter(Boolean)
+        .join(' · ');
+      break;
     default:
-      description = shortId(p.bookingId || p.reviewId || p.ticketId);
+      description = shortId(p.bookingId || p.reviewId || p.ticketId || p.requestId);
   }
 
   return {

@@ -126,6 +126,7 @@
     "ticket": "tickets",
     "loyaltyAccount": "accounts",
     "activity": "activity",
+    "request": "request",
     "employee": "employee",
     "department": "department",
     "date": "date",

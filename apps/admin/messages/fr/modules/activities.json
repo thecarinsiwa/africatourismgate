@@ -23,6 +23,8 @@
     "difficulty": "Difficulté",
     "priceCents": "Prix (centimes)",
     "descriptionPlaceholder": "Décrivez l'activité, le programme, les conditions…",
+    "allowBookingRequestsWhenUnavailable": "Autoriser les demandes sans créneau",
+    "allowBookingRequestsWhenUnavailableHint": "Si aucun créneau n'est disponible, les visiteurs peuvent envoyer une demande de réservation (pas une réservation confirmée).",
     "geographyTitle": "Point de rendez-vous",
     "geographyIntro": "Placez le point de départ / rendez-vous de l'activité pour l'afficher sur la carte des destinations.",
     "mapPicker": "Carte de localisation",
@@ -176,6 +178,84 @@
         "destinationRequired": "La destination est obligatoire."
       }
     }
+  },
+  "bookingRequests": {
+    "ariaLabel": "Liste des demandes de réservation d'activités",
+    "empty": "Aucune demande de réservation pour le moment.",
+    "searchPlaceholder": "Rechercher par nom ou e-mail…",
+    "statusUpdated": "Statut mis à jour. E-mail envoyé au client.",
+    "filters": {
+      "activity": "Activité",
+      "allActivities": "Toutes les activités",
+      "status": "Statut",
+      "allStatuses": "Tous les statuts"
+    },
+    "status": {
+      "pending": "En attente",
+      "contacted": "Contacté",
+      "confirmed": "Confirmé",
+      "cancelled": "Annulé"
+    },
+    "availability": {
+      "available": "Créneau rendu disponible",
+      "unavailable": "Toujours indisponible",
+      "in_progress": "Disponibilité en cours de vérification",
+      "pending_review": "En attente de confirmation"
+    },
+    "statusConfirm": {
+      "title": "Confirmer le changement de statut",
+      "description": "Un e-mail sera envoyé à {email} avec le nouveau statut.",
+      "toStatus": "Nouveau statut",
+      "availability": "Message de disponibilité",
+      "emailSubject": "Objet",
+      "emailPreview": "Aperçu du message",
+      "iframeTitle": "Aperçu de l'e-mail client",
+      "confirm": "Envoyer l'e-mail et mettre à jour",
+      "cancel": "Annuler",
+      "loadingPreview": "Chargement de l'aperçu…"
+    },
+    "columns": {
+      "createdAt": "Reçue le",
+      "activity": "Activité",
+      "contact": "Contact",
+      "preferredDate": "Date souhaitée",
+      "participants": "Participants",
+      "status": "Statut",
+      "message": "Message"
+    },
+    "actions": {
+      "openActivity": "Ouvrir l'activité",
+      "addSlot": "Ajouter un créneau"
+    },
+    "addSlot": {
+      "title": "Ajouter un créneau",
+      "description": "Créer un créneau pour {activity} à partir de cette demande.",
+      "success": "Créneau créé.",
+      "hint": "Date souhaitée : {date} · {count, plural, one {# participant} other {# participants}}"
+    },
+    "stats": {
+      "total": {
+        "label": "Toutes",
+        "subtitle": "Demandes reçues"
+      },
+      "pending": {
+        "label": "En attente",
+        "subtitle": "À traiter"
+      },
+      "contacted": {
+        "label": "Contactées",
+        "subtitle": "Suivi en cours"
+      },
+      "confirmed": {
+        "label": "Confirmées",
+        "subtitle": "Créneau disponible"
+      },
+      "cancelled": {
+        "label": "Annulées",
+        "subtitle": "Indisponibles"
+      }
+    },
+    "participantsBadge": "{count, plural, one {# pers.} other {# pers.}}"
   },
   "stats": {
     "activities": {

@@ -181,6 +181,45 @@ export type BookingGuideRemovalEmailPayload = {
   webUrl?: string;
 };
 
+/** Public inquiry when an activity has no bookable slots (not an assisted booking). */
+export type ActivityBookingRequestCustomerEmailPayload = {
+  to: string;
+  fullName: string;
+  activityTitle: string;
+  preferredDate: string;
+  participants: number;
+  requestId: string;
+  webUrl?: string;
+};
+
+export type ActivityBookingRequestAdminEmailPayload = {
+  to: string;
+  activityTitle: string;
+  activityId: string;
+  requestId: string;
+  fullName: string;
+  email: string;
+  phone?: string | null;
+  preferredDate: string;
+  participants: number;
+  message?: string | null;
+  adminUrl?: string;
+  webUrl?: string;
+};
+
+/** Staff updated an activity 0-slot inquiry status → notify the customer. */
+export type ActivityBookingRequestStatusEmailPayload = {
+  to: string;
+  fullName: string;
+  activityId: string;
+  activityTitle: string;
+  preferredDate: string;
+  participants: number;
+  requestId: string;
+  status: 'pending' | 'contacted' | 'confirmed' | 'cancelled';
+  webUrl?: string;
+};
+
 export type PosReceiptEmailLineItem = {
   title: string;
   quantity: number;

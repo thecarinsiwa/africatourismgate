@@ -27,9 +27,17 @@ import {
   renderBookingGuideAssignmentEmail,
   renderBookingGuideRemovalEmail,
 } from './assisted-booking.email.templates';
+import {
+  renderActivityBookingRequestAdminEmail,
+  renderActivityBookingRequestCustomerEmail,
+  renderActivityBookingRequestStatusEmail,
+} from './activity-booking-request.email.templates';
 import { renderPosReceiptEmail } from './pos-receipt.email.templates';
 import type {
   AbandonmentReminderEmailPayload,
+  ActivityBookingRequestAdminEmailPayload,
+  ActivityBookingRequestCustomerEmailPayload,
+  ActivityBookingRequestStatusEmailPayload,
   AdminPendingRegistrationEmailPayload,
   AdminAccountActivatedEmailPayload,
   BookingConfirmationEmailPayload,
@@ -187,6 +195,46 @@ export class EmailService implements OnModuleInit {
     const branding = await this.resolveBranding();
     const { subject, html, text } = renderBookingRequestReceivedEmail(payload, branding);
     return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendActivityBookingRequestCustomer(
+    payload: ActivityBookingRequestCustomerEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderActivityBookingRequestCustomerEmail(
+      payload,
+      branding,
+    );
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendActivityBookingRequestAdmin(
+    payload: ActivityBookingRequestAdminEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderActivityBookingRequestAdminEmail(
+      payload,
+      branding,
+    );
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendActivityBookingRequestStatus(
+    payload: ActivityBookingRequestStatusEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderActivityBookingRequestStatusEmail(
+      payload,
+      branding,
+    );
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async previewActivityBookingRequestStatus(
+    payload: ActivityBookingRequestStatusEmailPayload,
+  ): Promise<{ subject: string; html: string; text: string }> {
+    const branding = await this.resolveBranding();
+    return renderActivityBookingRequestStatusEmail(payload, branding);
   }
 
   async sendBookingApprovedChat(

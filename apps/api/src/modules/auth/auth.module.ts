@@ -53,6 +53,11 @@ import { GoogleStrategy } from './strategies/google.strategy';
           ttl: 60_000,
           limit: 60,
         },
+        {
+          name: 'activityBookingRequest',
+          ttl: 60_000,
+          limit: 10,
+        },
       ],
     }),
   ],

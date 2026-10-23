@@ -47,6 +47,16 @@ export const ACTIVITY_DIFFICULTY_LEVELS = [
 
 export type ActivityDifficultyLevel = (typeof ACTIVITY_DIFFICULTY_LEVELS)[number];
 
+export const ACTIVITY_BOOKING_REQUEST_STATUSES = [
+  'pending',
+  'contacted',
+  'confirmed',
+  'cancelled',
+] as const;
+
+export type ActivityBookingRequestStatus =
+  (typeof ACTIVITY_BOOKING_REQUEST_STATUSES)[number];
+
 /**
  * Activity card fields returned by public browse/search
  * and nested under partner detail.
@@ -65,6 +75,8 @@ export interface PublicActivityListItem {
   nextStartDatetime?: string;
   imageUrl?: string | null;
   difficultyLevel?: ActivityDifficultyLevel | null;
+  /** When true and no slots remain, show the public booking-request form. */
+  allowBookingRequestsWhenUnavailable?: boolean;
   averageRating?: number | null;
   reviewCount?: number;
 }
@@ -89,6 +101,8 @@ export interface Activity {
   longitude?: string | number | null;
   /** NULL = catalogue partagé (toutes orgs). */
   organizationId: string | null;
+  /** When true, visitors can submit an inquiry if no slots are available. */
+  allowBookingRequestsWhenUnavailable: boolean;
   createdAt: string;
   updatedAt: string | null;
 }
@@ -104,9 +118,71 @@ export interface CreateActivityRequest {
   latitude?: number | string | null;
   longitude?: number | string | null;
   organizationId?: string | null;
+  allowBookingRequestsWhenUnavailable?: boolean;
 }
 
 export type UpdateActivityRequest = Partial<CreateActivityRequest>;
+
+/** Public inquiry submitted when an activity has no bookable slots. */
+export interface ActivityBookingRequest {
+  id: string;
+  activityId: string;
+  organizationId: string | null;
+  fullName: string;
+  email: string;
+  phone: string | null;
+  preferredDate: string;
+  participants: number;
+  message: string | null;
+  status: ActivityBookingRequestStatus;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface CreateActivityBookingRequestPayload {
+  fullName: string;
+  email: string;
+  phone?: string | null;
+  preferredDate: string;
+  participants: number;
+  message?: string | null;
+}
+
+export interface CreateActivityBookingRequestResponse {
+  id: string;
+  message: string;
+}
+
+export interface ActivityBookingRequestsListQuery {
+  page?: number;
+  limit?: number;
+  activityId?: string;
+  organizationId?: string;
+  status?: ActivityBookingRequestStatus;
+  search?: string;
+}
+
+export interface UpdateActivityBookingRequestStatusRequest {
+  status: ActivityBookingRequestStatus;
+}
+
+export type ActivityBookingRequestAvailability =
+  | 'available'
+  | 'unavailable'
+  | 'in_progress'
+  | 'pending_review';
+
+export interface ActivityBookingRequestStatusEmailPreviewRequest {
+  status: ActivityBookingRequestStatus;
+}
+
+export interface ActivityBookingRequestStatusEmailPreview {
+  subject: string;
+  html: string;
+  text: string;
+  availability: ActivityBookingRequestAvailability;
+  status: ActivityBookingRequestStatus;
+}
 
 export interface ActivitiesListQuery {
   page?: number;

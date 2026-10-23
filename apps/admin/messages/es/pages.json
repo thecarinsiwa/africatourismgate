@@ -130,6 +130,8 @@
       "description": "Experiencias, socios y franjas horarias por destino.",
       "actions": {
         "providers": "Socios",
+        "bookingRequests": "Solicitudes",
+        "backToList": "Volver a actividades",
         "new": "Nueva actividad"
       },
       "nouveau": {
@@ -140,6 +142,10 @@
       "partenaires": {
         "title": "Socios de actividades",
         "description": "Operadores vinculados a destinos."
+      },
+      "demandes": {
+        "title": "Solicitudes de reserva",
+        "description": "Gestione peticiones sin plazas: cambie el estado, envíe un correo y añada un horario."
       },
       "id": {
         "metaTitle": "Editar actividad",

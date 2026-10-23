@@ -2,6 +2,10 @@
 
 import Link from 'next/link';
 import {
+  ACTIVITY_BOOKING_REQUEST_HASH,
+  getActivityListingCtaMode,
+} from '../../lib/activities/booking-request';
+import {
   buildActivityDetailHref,
   formatActivityPrice,
   formatDurationMinutes,
@@ -68,12 +72,15 @@ export function ActivityTable({
               participants: searchParams.participants,
             };
             const detailHref = buildActivityDetailHref(activity.id, {});
-            const reserveHref = effectiveDate
-              ? buildActivityDetailHref(activity.id, bookingParams, '#schedules')
-              : detailHref;
-            const canBook = Boolean(
-              effectiveDate && activity.availableSchedulesCount > 0,
-            );
+            const ctaMode = getActivityListingCtaMode(activity, searchParams.date);
+            const reserveHref =
+              ctaMode === 'request'
+                ? buildActivityDetailHref(activity.id, {}, ACTIVITY_BOOKING_REQUEST_HASH)
+                : effectiveDate
+                  ? buildActivityDetailHref(activity.id, bookingParams, '#schedules')
+                  : detailHref;
+            const primaryCtaLabel =
+              ctaMode === 'request' ? t.bookingRequestCta : ctaLabel;
             const durationLabel = formatDurationMinutes(activity.durationMinutes, {
               hourSingular: t.hourSingular,
               hourPlural: t.hourPlural,
@@ -114,18 +121,17 @@ export function ActivityTable({
                     >
                       {t.viewDetails}
                     </Link>
-                    <Link
-                      href={reserveHref}
-                      className={
-                        canBook
-                          ? actionClass
-                          : `${actionClass} cursor-not-allowed bg-atg-border text-atg-muted hover:bg-atg-border`
-                      }
-                      aria-disabled={!canBook}
-                      tabIndex={!canBook ? -1 : undefined}
-                    >
-                      {ctaLabel}
-                    </Link>
+                    {ctaMode === 'unavailable' ? (
+                      <span
+                        className={`${actionClass} cursor-default bg-atg-border text-atg-muted hover:bg-atg-border`}
+                      >
+                        {t.bookingRequestUnavailable}
+                      </span>
+                    ) : (
+                      <Link href={reserveHref} className={actionClass}>
+                        {primaryCtaLabel}
+                      </Link>
+                    )}
                   </div>
                 </td>
               </tr>

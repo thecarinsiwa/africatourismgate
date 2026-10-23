@@ -197,6 +197,9 @@ export type {
 export type {
   Activity,
   ActivitiesListQuery,
+  ActivityBookingRequest,
+  ActivityBookingRequestStatus,
+  ActivityBookingRequestsListQuery,
   ActivityDifficultyLevel,
   ActivityImage,
   ActivityImagesListQuery,
@@ -208,6 +211,8 @@ export type {
   ActivityProvidersListQuery,
   ActivitySchedule,
   ActivitySchedulesListQuery,
+  CreateActivityBookingRequestPayload,
+  CreateActivityBookingRequestResponse,
   CreateActivityProviderRequest,
   CreateActivityImageRequest,
   CreateActivityDescriptionAssetRequest,
@@ -217,11 +222,20 @@ export type {
   PublicActivityProvider,
   PublicActivityProviderDetail,
   PublicActivityProviderListItem,
+  UpdateActivityBookingRequestStatusRequest,
+  ActivityBookingRequestAvailability,
+  ActivityBookingRequestStatusEmailPreview,
+  ActivityBookingRequestStatusEmailPreviewRequest,
   UpdateActivityProviderRequest,
   UpdateActivityImageRequest,
   UpdateActivityDescriptionAssetRequest,
   UpdateActivityRequest,
   UpdateActivityScheduleRequest,
+} from './activity.js';
+
+export {
+  ACTIVITY_BOOKING_REQUEST_STATUSES,
+  ACTIVITY_DIFFICULTY_LEVELS,
 } from './activity.js';
 
 export type {

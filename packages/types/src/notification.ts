@@ -2,7 +2,8 @@ export type StaffNotificationType =
   | 'booking_pending_approval'
   | 'booking_client_message'
   | 'review_pending'
-  | 'support_ticket_open';
+  | 'support_ticket_open'
+  | 'activity_booking_request';
 
 export type StaffNotificationPriority = 'high' | 'normal' | 'low';
 
@@ -14,6 +15,10 @@ export type StaffNotificationPayload = {
   messageId?: string;
   reviewId?: string;
   ticketId?: string;
+  /** Activity 0-slot inquiry (`activity_booking_requests`). */
+  requestId?: string;
+  activityId?: string;
+  activityTitle?: string;
   authorName?: string;
   status?: string;
   amountCents?: number;

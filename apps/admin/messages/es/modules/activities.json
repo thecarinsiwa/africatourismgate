@@ -23,6 +23,8 @@
     "difficulty": "Dificultad",
     "priceCents": "Precio (centavos)",
     "descriptionPlaceholder": "Describa la actividad, el programa, las condiciones…",
+    "allowBookingRequestsWhenUnavailable": "Permitir solicitudes sin plazas",
+    "allowBookingRequestsWhenUnavailableHint": "Si no hay plazas disponibles, los visitantes pueden enviar una solicitud de reserva (no es una reserva confirmada).",
     "geographyTitle": "Punto de encuentro",
     "geographyIntro": "Coloque el punto de inicio / encuentro de la actividad para mostrarlo en el mapa de destinos.",
     "mapPicker": "Mapa de ubicación",
@@ -176,6 +178,84 @@
         "destinationRequired": "El destino es obligatorio."
       }
     }
+  },
+  "bookingRequests": {
+    "ariaLabel": "Lista de solicitudes de reserva de actividades",
+    "empty": "No hay solicitudes de reserva por ahora.",
+    "searchPlaceholder": "Buscar por nombre o correo…",
+    "statusUpdated": "Estado actualizado. Correo enviado al cliente.",
+    "filters": {
+      "activity": "Actividad",
+      "allActivities": "Todas las actividades",
+      "status": "Estado",
+      "allStatuses": "Todos los estados"
+    },
+    "status": {
+      "pending": "Pendiente",
+      "contacted": "Contactado",
+      "confirmed": "Confirmado",
+      "cancelled": "Cancelado"
+    },
+    "availability": {
+      "available": "Plaza disponible",
+      "unavailable": "Sigue no disponible",
+      "in_progress": "Disponibilidad en verificación",
+      "pending_review": "En espera de confirmación"
+    },
+    "statusConfirm": {
+      "title": "Confirmar cambio de estado",
+      "description": "Se enviará un correo a {email} con el nuevo estado.",
+      "toStatus": "Nuevo estado",
+      "availability": "Mensaje de disponibilidad",
+      "emailSubject": "Asunto",
+      "emailPreview": "Vista previa del mensaje",
+      "iframeTitle": "Vista previa del correo al cliente",
+      "confirm": "Enviar correo y actualizar",
+      "cancel": "Cancelar",
+      "loadingPreview": "Cargando vista previa…"
+    },
+    "columns": {
+      "createdAt": "Recibida",
+      "activity": "Actividad",
+      "contact": "Contacto",
+      "preferredDate": "Fecha preferida",
+      "participants": "Participantes",
+      "status": "Estado",
+      "message": "Mensaje"
+    },
+    "actions": {
+      "openActivity": "Abrir actividad",
+      "addSlot": "Añadir horario"
+    },
+    "addSlot": {
+      "title": "Añadir horario",
+      "description": "Crear un horario para {activity} a partir de esta solicitud.",
+      "success": "Horario creado.",
+      "hint": "Fecha preferida: {date} · {count, plural, one {# participante} other {# participantes}}"
+    },
+    "stats": {
+      "total": {
+        "label": "Todas",
+        "subtitle": "Solicitudes recibidas"
+      },
+      "pending": {
+        "label": "Pendientes",
+        "subtitle": "Por tratar"
+      },
+      "contacted": {
+        "label": "Contactadas",
+        "subtitle": "Seguimiento en curso"
+      },
+      "confirmed": {
+        "label": "Confirmadas",
+        "subtitle": "Plaza disponible"
+      },
+      "cancelled": {
+        "label": "Canceladas",
+        "subtitle": "No disponibles"
+      }
+    },
+    "participantsBadge": "{count, plural, one {# pers.} other {# pers.}}"
   },
   "stats": {
     "activities": {

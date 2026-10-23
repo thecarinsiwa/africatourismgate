@@ -32,6 +32,27 @@ function loadHelpMessages(locale: (typeof LOCALES)[number]): HelpMessages {
   return JSON.parse(raw) as HelpMessages;
 }
 
+test('activity booking requests route resolves to its help article', () => {
+  assert.deepEqual(
+    resolveAdminContextualHelp('/produits/activites/demandes'),
+    {
+      categorySlug: 'produits-voyage',
+      articleSlug: 'demandes-reservation-activites',
+    },
+  );
+  assert.deepEqual(
+    resolveAdminContextualHelp('/produits/activites'),
+    {
+      categorySlug: 'produits-voyage',
+      articleSlug: 'activites-et-forfaits',
+    },
+  );
+  assert.equal(
+    getAdminContextualHelpHref('/produits/activites/demandes'),
+    '/aide/produits-voyage/demandes-reservation-activites',
+  );
+});
+
 test('treasury and currency routes resolve to their help article', () => {
   const cases: [string, string, string][] = [
     ['/tresorerie', 'tresorerie-comptabilite', 'vue-ensemble-tresorerie'],

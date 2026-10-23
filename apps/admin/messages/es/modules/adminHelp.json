@@ -119,7 +119,12 @@
     "activites-et-forfaits": {
       "title": "Actividades y paquetes",
       "summary": "Experiencias, socios, franjas y paquetes combinados.",
-      "body": "Las [actividades](/produits/activites) describen las experiencias ofrecidas. Cree una actividad, asocie un destino y un socio, y añada franjas u opciones en la ficha de edición.\n\nLos [paquetes](/produits/forfaits) agrupan varios productos (alojamiento, actividad, etc.) en una oferta empaquetada. Compose el contenido del paquete y publíquelo según el flujo previsto.\n\nPermisos típicos: activities.read/write y packages.read/write. Compruebe destinos y precios antes de publicar."
+      "body": "Las [actividades](/produits/activites) describen las experiencias ofrecidas. Cree una actividad, asocie un destino y un socio, y añada franjas u opciones en la ficha de edición.\n\nLos [paquetes](/produits/forfaits) agrupan varios productos (alojamiento, actividad, etc.) en una oferta empaquetada. Compose el contenido del paquete y publíquelo según el flujo previsto.\n\nCuando no quedan plazas, las [solicitudes de reserva](/produits/activites/demandes) recogen las peticiones de clientes (si la opción está activada en la actividad).\n\nPermisos típicos: activities.read/write y packages.read/write. Compruebe destinos y precios antes de publicar."
+    },
+    "demandes-reservation-activites": {
+      "title": "Solicitudes de reserva de actividades",
+      "summary": "Gestionar peticiones sin plazas: estado, correo y alta de horario.",
+      "body": "La página [Solicitudes de reserva](/produits/activites/demandes) lista las peticiones enviadas desde el sitio público cuando una [actividad](/produits/activites) no tiene plazas y la opción « Permitir solicitudes sin plazas » está activada en la ficha.\n\nNo son [reservas](/reservations) confirmadas: no se ha cobrado ningún pago. Filtre por actividad, estado o búsqueda (nombre / correo) y cambie el estado (pendiente, contactado, confirmado, cancelado). Antes de validar, se muestra una vista previa del correo al cliente — indica claramente si hay plaza disponible o si la actividad sigue no disponible.\n\nDesde la columna Acciones, abra el modal para [añadir un horario](/produits/activites) (fecha/hora y capacidad prerellenadas desde la solicitud). También se crea una [notificación](/notifications) por cada nueva petición.\n\nPermiso activities.read para consultar la lista y activities.write para actualizar el estado o crear un horario."
     },
     "destinations": {
       "title": "Destinos",
