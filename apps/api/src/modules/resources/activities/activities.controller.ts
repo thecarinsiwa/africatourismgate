@@ -32,8 +32,13 @@ import { RequirePermissions } from '../../rbac/decorators/require-permissions.de
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { Activities } from '../../../entities/generated';
+import { ActivityBookingRequestsService } from './activity-booking-requests.service';
 import { ActivitiesListQueryDto } from './dto/activities-list-query.dto';
 import { ActivitiesService } from './activities.service';
+import { ActivityBookingRequestDto } from './dto/activity-booking-request.dto';
+import { ActivityBookingRequestsListQueryDto } from './dto/activity-booking-requests-list-query.dto';
+import { UpdateActivityBookingRequestStatusDto } from './dto/update-activity-booking-request-status.dto';
+import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 
 const ACTIVITY_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_ACTIVITY_IMAGE_MIMES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -70,7 +75,10 @@ function descriptionAssetTypeFromExtension(
 @ApiForbiddenResponse({ description: 'Missing permission' })
 @Controller('activities')
 export class ActivitiesController {
-  constructor(private readonly service: ActivitiesService) {}
+  constructor(
+    private readonly service: ActivitiesService,
+    private readonly bookingRequestsService: ActivityBookingRequestsService,
+  ) {}
 
   @RequirePermissions('activities.read')
   @Get()
@@ -80,6 +88,41 @@ export class ActivitiesController {
     @CurrentUser() user: AuthUserDto,
   ) {
     return this.service.findAllForUser(query, user);
+  }
+
+  @RequirePermissions('activities.read')
+  @Get('booking-requests')
+  @ApiOperation({ summary: 'List activity booking requests (0-slot inquiries)' })
+  listBookingRequests(
+    @Query() query: ActivityBookingRequestsListQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<PaginatedResult<ActivityBookingRequestDto>> {
+    return this.bookingRequestsService.findAllForUser(query, user);
+  }
+
+  @RequirePermissions('activities.read')
+  @Get('booking-requests/:requestId')
+  @ApiOperation({ summary: 'Get activity booking request by id' })
+  getBookingRequest(
+    @Param('requestId') requestId: string,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<ActivityBookingRequestDto> {
+    return this.bookingRequestsService.findOneForUser(requestId, user);
+  }
+
+  @RequirePermissions('activities.write')
+  @Patch('booking-requests/:requestId')
+  @ApiOperation({ summary: 'Update activity booking request status' })
+  updateBookingRequestStatus(
+    @Param('requestId') requestId: string,
+    @Body() dto: UpdateActivityBookingRequestStatusDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<ActivityBookingRequestDto> {
+    return this.bookingRequestsService.updateStatusForUser(
+      requestId,
+      dto,
+      user,
+    );
   }
 
   @ApiConsumes('multipart/form-data')

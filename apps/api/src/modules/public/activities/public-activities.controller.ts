@@ -1,9 +1,20 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { Public } from '../../auth/decorators/public.decorator';
 import { ActivityBrowseQueryDto } from './dto/activity-browse-query.dto';
+import { ActivityBookingRequestResponseDto } from './dto/activity-booking-request-response.dto';
 import { ActivityDetailQueryDto } from './dto/activity-detail-query.dto';
 import { ActivitySearchQueryDto } from './dto/activity-search-query.dto';
+import { CreateActivityBookingRequestDto } from './dto/create-activity-booking-request.dto';
 import { PublicActivitiesService } from './public-activities.service';
 
 @ApiTags('public')
@@ -55,6 +66,21 @@ export class PublicActivitiesController {
   })
   getProviderById(@Param('id') id: string) {
     return this.service.getProviderById(id);
+  }
+
+  @Public()
+  @Post('activities/:id/booking-request')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ activityBookingRequest: { limit: 10, ttl: 60_000 } })
+  @ApiOperation({
+    summary:
+      'Submit a booking inquiry when the activity has no available slots (admin toggle required)',
+  })
+  submitBookingRequest(
+    @Param('id') id: string,
+    @Body() dto: CreateActivityBookingRequestDto,
+  ): Promise<ActivityBookingRequestResponseDto> {
+    return this.service.submitBookingRequest(id, dto);
   }
 
   @Public()

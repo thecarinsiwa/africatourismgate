@@ -27,9 +27,15 @@ import {
   renderBookingGuideAssignmentEmail,
   renderBookingGuideRemovalEmail,
 } from './assisted-booking.email.templates';
+import {
+  renderActivityBookingRequestAdminEmail,
+  renderActivityBookingRequestCustomerEmail,
+} from './activity-booking-request.email.templates';
 import { renderPosReceiptEmail } from './pos-receipt.email.templates';
 import type {
   AbandonmentReminderEmailPayload,
+  ActivityBookingRequestAdminEmailPayload,
+  ActivityBookingRequestCustomerEmailPayload,
   AdminPendingRegistrationEmailPayload,
   AdminAccountActivatedEmailPayload,
   BookingConfirmationEmailPayload,
@@ -186,6 +192,28 @@ export class EmailService implements OnModuleInit {
   ): Promise<SendMailResult> {
     const branding = await this.resolveBranding();
     const { subject, html, text } = renderBookingRequestReceivedEmail(payload, branding);
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendActivityBookingRequestCustomer(
+    payload: ActivityBookingRequestCustomerEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderActivityBookingRequestCustomerEmail(
+      payload,
+      branding,
+    );
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendActivityBookingRequestAdmin(
+    payload: ActivityBookingRequestAdminEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderActivityBookingRequestAdminEmail(
+      payload,
+      branding,
+    );
     return this.send('service', { to: payload.to, subject, html, text });
   }
 

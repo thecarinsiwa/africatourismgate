@@ -1,18 +1,28 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { PublicSiteSearchHit } from '@africatourismgate/types';
-import { In, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { filterActivityItineraryStopsByDuration } from '../../../common/activity-itinerary-stops.util';
+import { PLATFORM_ORG_ID } from '../../../common/org-scope/org-scope.service';
+import { newId } from '../../../common/utils/uuid';
 import {
   Activities,
+  ActivityBookingRequests,
   ActivityImages,
   ActivityItineraryStops,
   ActivityProviders,
   ActivitySchedules,
   Destinations,
+  Organizations,
   Reviews,
 } from '../../../entities/generated';
+import { EmailService } from '../../email/email.service';
 import { PublicGalleryImageDto } from '../dto/public-gallery-image.dto';
 import { PublicDestinationDto } from '../accommodations/dto/public-destination.dto';
 import {
@@ -20,23 +30,33 @@ import {
   scoreSiteSearchTextMatch,
 } from '../site-search/site-search-scoring';
 import { ActivityBrowseQueryDto } from './dto/activity-browse-query.dto';
+import { ActivityBookingRequestResponseDto } from './dto/activity-booking-request-response.dto';
 import { ActivityDetailQueryDto } from './dto/activity-detail-query.dto';
 import { ActivityDetailDto } from './dto/activity-detail.dto';
 import { ActivitySearchQueryDto } from './dto/activity-search-query.dto';
 import { ActivitySearchResultDto } from './dto/activity-search-result.dto';
+import { CreateActivityBookingRequestDto } from './dto/create-activity-booking-request.dto';
 import {
   PublicActivityProviderDetailDto,
   PublicActivityProviderListItemDto,
 } from './dto/public-activity-provider.dto';
 import { parseDateOnly } from './activity-dates.util';
 
+const DEFAULT_ADMIN_CONTACT_EMAIL = 'support@africatourismgate.com';
+const BOOKING_REQUEST_CONFIRMATION_MESSAGE =
+  'Your booking request has been received. Our team will contact you shortly to confirm availability.';
+
 type ScheduleOffer = ActivityDetailDto['schedules'][number];
 
 @Injectable()
 export class PublicActivitiesService {
+  private readonly logger = new Logger(PublicActivitiesService.name);
+
   constructor(
     @InjectRepository(Activities)
     private readonly activitiesRepository: Repository<Activities>,
+    @InjectRepository(ActivityBookingRequests)
+    private readonly bookingRequestsRepository: Repository<ActivityBookingRequests>,
     @InjectRepository(ActivityImages)
     private readonly activityImagesRepository: Repository<ActivityImages>,
     @InjectRepository(ActivityItineraryStops)
@@ -47,8 +67,11 @@ export class PublicActivitiesService {
     private readonly schedulesRepository: Repository<ActivitySchedules>,
     @InjectRepository(Destinations)
     private readonly destinationsRepository: Repository<Destinations>,
+    @InjectRepository(Organizations)
+    private readonly organizationsRepository: Repository<Organizations>,
     @InjectRepository(Reviews)
     private readonly reviewsRepository: Repository<Reviews>,
+    private readonly emailService: EmailService,
   ) {}
 
   async listDestinations(): Promise<PublicDestinationDto[]> {
@@ -642,6 +665,110 @@ export class PublicActivitiesService {
     return `/activities/${encodeURIComponent(activityId)}?${params.toString()}`;
   }
 
+  async submitBookingRequest(
+    activityId: string,
+    dto: CreateActivityBookingRequestDto,
+  ): Promise<ActivityBookingRequestResponseDto> {
+    const activity = await this.activitiesRepository.findOne({
+      where: { id: activityId },
+    });
+    if (!activity || activity.deletedAt) {
+      throw new NotFoundException('Activité introuvable.');
+    }
+
+    if (!activity.allowBookingRequestsWhenUnavailable) {
+      throw new BadRequestException(
+        'Les demandes de réservation ne sont pas acceptées pour cette activité.',
+      );
+    }
+
+    const preferredDate = parseDateOnly(dto.preferredDate);
+    const todayUtc = new Date();
+    todayUtc.setUTCHours(0, 0, 0, 0);
+    if (preferredDate.getTime() < todayUtc.getTime()) {
+      throw new BadRequestException(
+        'La date souhaitée ne peut pas être dans le passé.',
+      );
+    }
+
+    if (await this.hasUpcomingAvailableSlots(activity.id)) {
+      throw new BadRequestException(
+        'Des créneaux sont encore disponibles. Merci de réserver via le parcours habituel.',
+      );
+    }
+
+    const organizationId = activity.organizationId ?? PLATFORM_ORG_ID;
+    const phone = dto.phone?.trim() || null;
+    const message = dto.message?.trim() || null;
+    const fullName = dto.fullName.trim();
+    const email = dto.email.trim().toLowerCase();
+
+    const request = this.bookingRequestsRepository.create({
+      id: newId(),
+      activityId: activity.id,
+      organizationId,
+      fullName,
+      email,
+      phone,
+      preferredDate: dto.preferredDate,
+      participants: dto.participants,
+      message,
+      status: 'pending',
+    });
+    await this.bookingRequestsRepository.save(request);
+
+    const webUrl = process.env.NEXT_PUBLIC_WEB_URL;
+    void this.emailService
+      .sendActivityBookingRequestCustomer({
+        to: email,
+        fullName,
+        activityTitle: activity.title,
+        preferredDate: dto.preferredDate,
+        participants: dto.participants,
+        requestId: request.id,
+        webUrl,
+      })
+      .catch((err: unknown) => {
+        const msg = err instanceof Error ? err.message : String(err);
+        this.logger.warn(
+          `Failed to send customer booking-request email (${request.id}): ${msg}`,
+        );
+      });
+
+    void this.resolveAdminContactEmail(organizationId)
+      .then((adminTo) => {
+        if (!adminTo) return;
+        const adminBase = process.env.NEXT_PUBLIC_ADMIN_URL?.replace(/\/$/, '');
+        return this.emailService.sendActivityBookingRequestAdmin({
+          to: adminTo,
+          activityTitle: activity.title,
+          activityId: activity.id,
+          requestId: request.id,
+          fullName,
+          email,
+          phone,
+          preferredDate: dto.preferredDate,
+          participants: dto.participants,
+          message,
+          adminUrl: adminBase
+            ? `${adminBase}/produits/activites/${activity.id}`
+            : undefined,
+          webUrl,
+        });
+      })
+      .catch((err: unknown) => {
+        const msg = err instanceof Error ? err.message : String(err);
+        this.logger.warn(
+          `Failed to send admin booking-request email (${request.id}): ${msg}`,
+        );
+      });
+
+    return {
+      id: request.id,
+      message: BOOKING_REQUEST_CONFIRMATION_MESSAGE,
+    };
+  }
+
   async getById(
     id: string,
     query: ActivityDetailQueryDto,
@@ -868,6 +995,41 @@ export class PublicActivitiesService {
 
   private remainingPlaces(schedule: ActivitySchedules): number {
     return schedule.capacity - schedule.bookedCount;
+  }
+
+  /** True when at least one future schedule still has remaining places. */
+  private async hasUpcomingAvailableSlots(activityId: string): Promise<boolean> {
+    const schedules = await this.schedulesRepository
+      .createQueryBuilder('schedule')
+      .where('schedule.activityId = :activityId', { activityId })
+      .andWhere('schedule.deletedAt IS NULL')
+      .andWhere('schedule.startDatetime >= :now', { now: new Date() })
+      .orderBy('schedule.startDatetime', 'ASC')
+      .getMany();
+
+    return schedules.some((schedule) => this.remainingPlaces(schedule) >= 1);
+  }
+
+  private async resolveAdminContactEmail(
+    organizationId: string,
+  ): Promise<string | null> {
+    const org = await this.organizationsRepository.findOne({
+      where: { id: organizationId, deletedAt: IsNull() },
+    });
+    const fromOrg = org?.contactEmail?.trim();
+    if (fromOrg) {
+      return fromOrg;
+    }
+    if (organizationId !== PLATFORM_ORG_ID) {
+      const platform = await this.organizationsRepository.findOne({
+        where: { id: PLATFORM_ORG_ID, deletedAt: IsNull() },
+      });
+      const fromPlatform = platform?.contactEmail?.trim();
+      if (fromPlatform) {
+        return fromPlatform;
+      }
+    }
+    return DEFAULT_ADMIN_CONTACT_EMAIL;
   }
 
   private resolveActivityMapCoords(
