@@ -5,6 +5,7 @@ import {
   formatDurationMinutes,
   formatScheduleTime,
 } from '../../lib/activities/listings';
+import { shouldShowActivityBookingRequestForm } from '../../lib/activities/booking-request';
 import type { ActivityDetail, ActivityScheduleOffer } from '../../lib/activities/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import type { Translations } from '../../lib/i18n/message-types';
@@ -27,6 +28,7 @@ import {
   useBookingDrawerOpenListener,
   useBookingSidebarTrustHints,
 } from '../shared/booking-sidebar-shell';
+import { ActivityBookingRequestForm } from './activity-booking-request-form';
 
 type ActivityBookingSidebarProps = {
   detail: ActivityDetail;
@@ -34,6 +36,7 @@ type ActivityBookingSidebarProps = {
   participants: number;
   onParticipantsChange: (value: number) => void;
   onReserve: () => void;
+  preferBookingRequest?: boolean;
   t: Translations['activities'];
   locale?: string;
 };
@@ -44,11 +47,17 @@ function ActivityBookingContent({
   participants,
   onParticipantsChange,
   onReserve,
+  preferBookingRequest = false,
   t,
   locale,
 }: ActivityBookingSidebarProps) {
   const trustHints = useBookingSidebarTrustHints();
   const ctaLabel = useBookingCtaLabel('activity_schedule');
+  const showRequestForm = shouldShowActivityBookingRequestForm(
+    detail,
+    participants,
+    preferBookingRequest,
+  );
   const canReserve =
     selectedSchedule != null && selectedSchedule.remainingPlaces >= participants;
 
@@ -65,6 +74,24 @@ function ActivityBookingContent({
   });
 
   const hasDate = Boolean(detail.date);
+
+  if (showRequestForm) {
+    return (
+      <BookingSidebarBody title={t.bookingRequestSection}>
+        <BookingSidebarSummary>
+          {detail.destination}
+          {durationLabel ? ` · ${durationLabel}` : ''}
+        </BookingSidebarSummary>
+        <ActivityBookingRequestForm
+          activityId={detail.id}
+          initialParticipants={participants}
+          initialPreferredDate={detail.date || undefined}
+          t={t}
+        />
+        <BookingSidebarTrustHints items={trustHints} />
+      </BookingSidebarBody>
+    );
+  }
 
   return (
     <BookingSidebarBody title={t.reserveSection}>
@@ -107,6 +134,10 @@ function ActivityBookingContent({
         <BookingSidebarHint tone="error">{t.insufficientPlaces}</BookingSidebarHint>
       )}
 
+      {!canReserve && hasDate && detail.allowBookingRequestsWhenUnavailable === false ? (
+        <BookingSidebarHint tone="error">{t.bookingRequestUnavailable}</BookingSidebarHint>
+      ) : null}
+
       <BookingSidebarSummary>
         {detail.destination} · {participantsLabel}
         {durationLabel ? ` · ${durationLabel}` : ''}
@@ -142,8 +173,13 @@ export function ActivityBookingSidebar(props: ActivityBookingSidebarProps) {
 export function ActivityBookingMobileBar(props: ActivityBookingSidebarProps) {
   const tBooking = useTranslations('bookingSidebar');
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { detail, selectedSchedule, participants, onReserve, t } = props;
+  const { detail, selectedSchedule, participants, onReserve, preferBookingRequest, t } = props;
   const ctaLabel = useBookingCtaLabel('activity_schedule');
+  const showRequestForm = shouldShowActivityBookingRequestForm(
+    detail,
+    participants,
+    preferBookingRequest ?? false,
+  );
   const canReserve =
     selectedSchedule != null && selectedSchedule.remainingPlaces >= participants;
 
@@ -154,21 +190,27 @@ export function ActivityBookingMobileBar(props: ActivityBookingSidebarProps) {
       <BookingSidebarMobileDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        title={t.reserveSection}
+        title={showRequestForm ? t.bookingRequestSection : t.reserveSection}
       >
         <ActivityBookingContent {...props} />
       </BookingSidebarMobileDrawer>
       <BookingSidebarMobileBar
-        priceLabel={selectedSchedule ? t.totalActivity : undefined}
+        priceLabel={!showRequestForm && selectedSchedule ? t.totalActivity : undefined}
         priceAmount={
-          selectedSchedule
+          !showRequestForm && selectedSchedule
             ? formatActivityPrice(selectedSchedule.priceCents * participants, detail.currency)
             : undefined
         }
-        hint={selectedSchedule ? undefined : t.selectScheduleHint}
-        ctaLabel={ctaLabel}
-        ctaDisabled={!canReserve}
-        onCtaClick={onReserve}
+        hint={
+          showRequestForm
+            ? t.bookingRequestSubtitle
+            : selectedSchedule
+              ? undefined
+              : t.selectScheduleHint
+        }
+        ctaLabel={showRequestForm ? t.bookingRequestSubmit : ctaLabel}
+        ctaDisabled={showRequestForm ? false : !canReserve}
+        onCtaClick={showRequestForm ? () => setDrawerOpen(true) : onReserve}
         configureLabel={tBooking('mobileConfigure')}
         onConfigureClick={() => setDrawerOpen(true)}
       />

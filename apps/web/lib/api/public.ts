@@ -412,6 +412,70 @@ export async function getActivityDetail(
   );
 }
 
+export type SubmitActivityBookingRequestPayload = {
+  fullName: string;
+  email: string;
+  phone?: string | null;
+  preferredDate: string;
+  participants: number;
+  message?: string | null;
+};
+
+export type SubmitActivityBookingRequestResponse = {
+  id: string;
+  message: string;
+};
+
+export async function submitActivityBookingRequest(
+  activityId: string,
+  payload: SubmitActivityBookingRequestPayload,
+): Promise<SubmitActivityBookingRequestResponse> {
+  let res: Response;
+  try {
+    res = await fetch(
+      `${apiUrl}/public/activities/${encodeURIComponent(activityId)}/booking-request`,
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+        cache: 'no-store',
+      },
+    );
+  } catch (cause) {
+    if (
+      typeof window !== 'undefined' &&
+      !(typeof navigator !== 'undefined' && navigator.webdriver)
+    ) {
+      notifyApiUnreachable();
+    }
+    const detail = cause instanceof Error ? cause.message : 'network error';
+    throw new Error(
+      `API unreachable: /public/activities/${activityId}/booking-request (${detail})`,
+      { cause },
+    );
+  }
+
+  if (!res.ok) {
+    let message = `API ${res.status}: booking-request`;
+    try {
+      const body = (await res.json()) as { message?: string | string[] };
+      if (typeof body.message === 'string' && body.message.trim()) {
+        message = body.message;
+      } else if (Array.isArray(body.message) && body.message[0]) {
+        message = body.message[0];
+      }
+    } catch {
+      /* ignore JSON parse errors */
+    }
+    throw new Error(message);
+  }
+
+  return res.json() as Promise<SubmitActivityBookingRequestResponse>;
+}
+
 function buildPackagesBrowseQuery(params: PackagesBrowseQuery): string {
   const qs = new URLSearchParams();
   if (params.search) qs.set('search', params.search);
