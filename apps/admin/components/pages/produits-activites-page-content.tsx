@@ -14,6 +14,9 @@ export function ActivitesPageContent() {
         routePath="produits/activites"
         actions={
           <>
+            <Button href="/produits/activites/demandes" variant="outline">
+              {t('actions.bookingRequests')}
+            </Button>
             <Button href="/produits/activites/partenaires" variant="outline">
               {t('actions.providers')}
             </Button>

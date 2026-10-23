@@ -23,6 +23,8 @@
     "difficulty": "Dificultad",
     "priceCents": "Precio (centavos)",
     "descriptionPlaceholder": "Describa la actividad, el programa, las condiciones…",
+    "allowBookingRequestsWhenUnavailable": "Permitir solicitudes sin plazas",
+    "allowBookingRequestsWhenUnavailableHint": "Si no hay plazas disponibles, los visitantes pueden enviar una solicitud de reserva (no es una reserva confirmada).",
     "geographyTitle": "Punto de encuentro",
     "geographyIntro": "Coloque el punto de inicio / encuentro de la actividad para mostrarlo en el mapa de destinos.",
     "mapPicker": "Mapa de ubicación",
@@ -175,6 +177,36 @@
       "validation": {
         "destinationRequired": "El destino es obligatorio."
       }
+    }
+  },
+  "bookingRequests": {
+    "ariaLabel": "Lista de solicitudes de reserva de actividades",
+    "empty": "No hay solicitudes de reserva por ahora.",
+    "searchPlaceholder": "Buscar por nombre o correo…",
+    "statusUpdated": "Estado actualizado.",
+    "filters": {
+      "activity": "Actividad",
+      "allActivities": "Todas las actividades",
+      "status": "Estado",
+      "allStatuses": "Todos los estados"
+    },
+    "status": {
+      "pending": "Pendiente",
+      "contacted": "Contactado",
+      "confirmed": "Confirmado",
+      "cancelled": "Cancelado"
+    },
+    "columns": {
+      "createdAt": "Recibida",
+      "activity": "Actividad",
+      "contact": "Contacto",
+      "preferredDate": "Fecha preferida",
+      "participants": "Participantes",
+      "status": "Estado",
+      "message": "Mensaje"
+    },
+    "actions": {
+      "openActivity": "Abrir actividad"
     }
   },
   "stats": {

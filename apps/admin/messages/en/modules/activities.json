@@ -23,6 +23,8 @@
     "difficulty": "Difficulty",
     "priceCents": "Price (cents)",
     "descriptionPlaceholder": "Describe the activity, itinerary, conditions…",
+    "allowBookingRequestsWhenUnavailable": "Allow booking requests when no slots",
+    "allowBookingRequestsWhenUnavailableHint": "When no slots are available, visitors can submit a booking request (not a confirmed booking).",
     "geographyTitle": "Meeting point",
     "geographyIntro": "Place the activity meeting / start point so it appears on the destinations map.",
     "mapPicker": "Location map",
@@ -175,6 +177,36 @@
       "validation": {
         "destinationRequired": "Destination is required."
       }
+    }
+  },
+  "bookingRequests": {
+    "ariaLabel": "Activity booking requests list",
+    "empty": "No booking requests yet.",
+    "searchPlaceholder": "Search by name or email…",
+    "statusUpdated": "Status updated.",
+    "filters": {
+      "activity": "Activity",
+      "allActivities": "All activities",
+      "status": "Status",
+      "allStatuses": "All statuses"
+    },
+    "status": {
+      "pending": "Pending",
+      "contacted": "Contacted",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled"
+    },
+    "columns": {
+      "createdAt": "Received",
+      "activity": "Activity",
+      "contact": "Contact",
+      "preferredDate": "Preferred date",
+      "participants": "Participants",
+      "status": "Status",
+      "message": "Message"
+    },
+    "actions": {
+      "openActivity": "Open activity"
     }
   },
   "stats": {

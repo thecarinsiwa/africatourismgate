@@ -130,6 +130,8 @@
       "description": "Expériences, partenaires et créneaux par destination.",
       "actions": {
         "providers": "Partenaires",
+        "bookingRequests": "Demandes",
+        "backToList": "Retour aux activités",
         "new": "Nouvelle activité"
       },
       "nouveau": {
@@ -140,6 +142,10 @@
       "partenaires": {
         "title": "Partenaires d'activités",
         "description": "Opérateurs liés aux destinations."
+      },
+      "demandes": {
+        "title": "Demandes de réservation",
+        "description": "Demandes clients pour les activités sans créneau disponible."
       },
       "id": {
         "metaTitle": "Modifier l'activité",

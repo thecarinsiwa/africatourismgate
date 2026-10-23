@@ -130,6 +130,8 @@
       "description": "Experiences, partners and time slots by destination.",
       "actions": {
         "providers": "Partners",
+        "bookingRequests": "Requests",
+        "backToList": "Back to activities",
         "new": "New activity"
       },
       "nouveau": {
@@ -140,6 +142,10 @@
       "partenaires": {
         "title": "Activity partners",
         "description": "Operators linked to destinations."
+      },
+      "demandes": {
+        "title": "Booking requests",
+        "description": "Customer requests for activities with no available slots."
       },
       "id": {
         "metaTitle": "Edit activity",
