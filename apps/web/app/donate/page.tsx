@@ -21,7 +21,8 @@ export default async function DonatePage() {
   const t = await getTranslations('donate');
   const donations = await getPublicDonationsForLocale(locale, 'web').catch(() => ({
     navbarFeatured: null,
-    items: [],
+    items: [] as Awaited<ReturnType<typeof getPublicDonationsForLocale>>['items'],
+    usedLocaleFallback: false,
   }));
 
   return (
@@ -31,6 +32,14 @@ export default async function DonatePage() {
         <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
           <h1 className="text-3xl font-bold text-atg-fg sm:text-4xl">{t('title')}</h1>
           <p className="mt-4 text-base leading-relaxed text-atg-muted">{t('intro')}</p>
+          {donations.usedLocaleFallback ? (
+            <p
+              role="status"
+              className="mt-6 rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-muted"
+            >
+              {t('localeFallback')}
+            </p>
+          ) : null}
         </div>
         {donations.items.length > 0 ? (
           <DonationsListSection items={donations.items} allCampaignsLabel={t('allCampaigns')} />

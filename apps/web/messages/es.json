@@ -225,7 +225,8 @@
     "title": "Apoye nuestras acciones",
     "intro": "Varias campañas de donación están disponibles según el contexto. Elija la que corresponda a su compromiso.",
     "allCampaigns": "Todas las campañas",
-    "empty": "No hay campañas de donación disponibles por el momento."
+    "empty": "No hay campañas de donación disponibles por el momento.",
+    "localeFallback": "Aún no hay campañas en su idioma — se muestran las disponibles en otros idiomas."
   },
   "legal": {
     "termsOfUseTitle": "Condiciones de uso",
@@ -297,7 +298,10 @@
     "retry": "Reintentar",
     "noResults": "No hay artículos publicados",
     "noResultsHint": "Vuelva pronto para descubrir nuevo contenido.",
+    "notFound": "Artículo no encontrado",
+    "notFoundHint": "Este artículo no existe o ya no está publicado.",
     "localeFallback": "No hay artículos en su idioma por ahora — se muestran los disponibles en otros idiomas.",
+    "detailLocaleFallback": "Este artículo aún no está disponible en su idioma — se muestra otra versión lingüística.",
     "backToBlog": "Volver al blog",
     "publishedOn": "Publicado el",
     "breadcrumbHome": "Inicio",
@@ -549,6 +553,9 @@
     "contact": {
       "subtitle": "Nuestro equipo está a su disposición para cualquier consulta.",
       "infoTitle": "Datos de contacto",
+      "phoneLabel": "Teléfono",
+      "emailLabel": "Correo electrónico",
+      "locationLabel": "Dirección",
       "formTitle": "Enviar un mensaje",
       "formSubtitle": "Describa su solicitud — le responderemos lo antes posible."
     },

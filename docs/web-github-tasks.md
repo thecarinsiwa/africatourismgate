@@ -911,22 +911,22 @@ IDs demo QA 2026-10-22 :
 
 | Route | FR | EN | ES | Notes |
 | ----- | -- | -- | -- | ----- |
-| `/about` | ☐ | ☐ | ☐ | |
-| `/about/who-we-are` | ☐ | ☐ | ☐ | |
-| `/about/our-history` | ☐ | ☐ | ☐ | Fallback locale API possible |
-| `/about/team` | ☐ | ☐ | ☐ | |
-| `/about/governance` | ☐ | ☐ | ☐ | |
-| `/about/responsibility` | ☐ | ☐ | ☐ | |
-| `/about/how-we-work` | ☐ | ☐ | ☐ | |
-| `/about/reports` | ☐ | ☐ | ☐ | |
-| `/about/media-resources` | ☐ | ☐ | ☐ | |
-| `/about/contact` | ☐ | ☐ | ☐ | |
-| `/blog` | ☐ | ☐ | ☐ | Liste articles, fallback langue |
-| `/blog/[slug]` | ☐ | ☐ | ☐ | |
-| `/donate` | ☐ | ☐ | ☐ | Campagnes, CTA don |
-| `/support` | ☐ | ☐ | ☐ | FAQ accordéon, formulaire ticket |
-| `/coming-soon` | ☐ | ☐ | ☐ | |
-| `/coming-soon/[vertical]` | ☐ | ☐ | ☐ | Tester `flights`, `cars`, etc. |
+| `/about` | ✅ | ✅ | ✅ | Redirect → `/about/who-we-are` |
+| `/about/who-we-are` | ✅ | ✅ | ✅ | Shell + `localeFallback` si CMS autre langue |
+| `/about/our-history` | ✅ | ✅ | ✅ | Timeline + bandeau fallback |
+| `/about/team` | ✅ | ✅ | ✅ | Empty / grille ; bandeau fallback |
+| `/about/governance` | ✅ | ✅ | ✅ | |
+| `/about/responsibility` | ✅ | ✅ | ✅ | |
+| `/about/how-we-work` | ✅ | ✅ | ✅ | |
+| `/about/reports` | ✅ | ✅ | ✅ | |
+| `/about/media-resources` | ✅ | ✅ | ✅ | |
+| `/about/contact` | ✅ | ✅ | ✅ | Labels phone/email/location via `about.contact.*` |
+| `/blog` | ✅ | ✅ | ✅ | Liste + `blog.localeFallback` |
+| `/blog/[slug]` | ✅ | ✅ | ✅ | `notFound` + `detailLocaleFallback` |
+| `/donate` | ✅ | ✅ | ✅ | + `donate.localeFallback` si campagnes autre langue |
+| `/support` | ✅ | ✅ | ✅ | Hub/FAQ copy `support.help.*` ; formulaire ticket OK |
+| `/coming-soon` | ✅ | ✅ | ✅ | Titre + CTA `comingSoon.*` |
+| `/coming-soon/[vertical]` | ✅ | ✅ | ✅ | Verticales implémentées → redirect listing (ex. `/flights`) |
 
 ---
 
@@ -1154,9 +1154,19 @@ Autres : `/blog`, `/blog/[slug]`, `/donate`, `/support`, `/coming-soon`, `/comin
 
 ## Critères d'acceptation
 
-- [ ] 16 routes × 3 langues cochés
-- [ ] Bandeaux fallback documentés (comportement attendu vs bug)
-- [ ] FAQ aria-labels traduits (accordéon)
+- [x] 16 routes × 3 langues cochés — QA 2026-10-23 (`i18n-marketing.spec.ts` + inventaire F)
+- [x] Bandeaux fallback documentés (comportement attendu vs bug) — voir anomalies ci-dessous
+- [x] FAQ / aide : copy + aria recherche traduits (`support.help.*`, `searchResultsAria`) — pas d'accordéon UI (grille catégories)
+
+## Anomalies trouvées (QA 2026-10-23)
+
+| Sévérité | Symptôme | Fichier / cause | Statut |
+| -------- | -------- | --------------- | ------ |
+| Moyenne | Contact : « E-mail » hardcodé ; téléphone/lieu via mauvaises clés footer | `about-contact-page-content.tsx` | ✅ `about.contact.phoneLabel` / `emailLabel` / `locationLabel` |
+| Moyenne | Blog détail 404 = « Aucun article publié » (liste) | `blog-detail-page-content.tsx` | ✅ `blog.notFound` / `notFoundHint` |
+| Moyenne | Blog détail / donate : fallback locale silencieux | API helpers + pages | ✅ bandeaux `detailLocaleFallback` / `donate.localeFallback` |
+| Info | `/coming-soon/flights` (etc.) redirect vers listing si verticale implémentée | `coming-soon/[vertical]/page.tsx` | OK documenté |
+| Info | Pas d'accordéon FAQ — hub = catégories + articles | `support-page-content.tsx` | OK — critères adaptés |
 ```
 
 ---
@@ -1238,6 +1248,9 @@ Corriger tous les textes hardcodés / non traduits identifiés :
 | Cartes verticales | EN/ES | CTA listing = toujours « Book now » si mode assisté | `*-card.tsx` / `activity-table.tsx` | ✅ WEB-I18N-02 |
 | `/account/reservations*` | EN/ES | Badges statut FR hardcodés | `display.ts` / `booking-status-badge.tsx` | ✅ WEB-I18N-04 |
 | `/account/loyalty` | FR | Paliers OneKey EN (Silver/Gold…) | `messages/fr.json` `account.loyalty.tier*` | ✅ WEB-I18N-04 |
+| `/about/contact` | EN/ES | Labels E-mail / téléphone / lieu incorrects | `about-contact-page-content.tsx` | ✅ WEB-I18N-05 |
+| `/blog/[slug]` | all | 404 + fallback locale silencieux | `blog-detail-page-content.tsx` | ✅ WEB-I18N-05 |
+| `/donate` | all | Fallback locale sans bandeau | `public-donations.ts` / `donate/page.tsx` | ✅ WEB-I18N-05 |
 | (annonce) | EN | Texte CMS FR seul | API announcement-banner | ⚠️ contenu admin |
 
 ## Procédure correction
@@ -1343,7 +1356,7 @@ WEB-012 (README) → WEB-006 (CI E2E) → WEB-002 + WEB-003 (cleanup routes)
 | WEB-I18N-02 | | | ✅ QA 2026-10-22 |
 | WEB-I18N-03 | | | ✅ QA 2026-10-22 |
 | WEB-I18N-04 | | | ✅ QA 2026-10-23 |
-| WEB-I18N-05 | | | ☐ |
+| WEB-I18N-05 | | | ✅ QA 2026-10-23 |
 | WEB-I18N-06 | | | ☐ |
 | WEB-I18N-07 | | | ☐ |
 

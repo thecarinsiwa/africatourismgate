@@ -225,7 +225,8 @@
     "title": "Soutenir nos actions",
     "intro": "Plusieurs campagnes de don sont disponibles selon le contexte. Choisissez celle qui correspond à votre engagement.",
     "allCampaigns": "Toutes les campagnes",
-    "empty": "Aucune campagne de don disponible pour le moment."
+    "empty": "Aucune campagne de don disponible pour le moment.",
+    "localeFallback": "Aucune campagne dans votre langue pour le moment — affichage des campagnes disponibles dans les autres langues."
   },
   "legal": {
     "termsOfUseTitle": "Conditions d'utilisation",
@@ -297,7 +298,10 @@
     "retry": "Réessayer",
     "noResults": "Aucun article publié",
     "noResultsHint": "Revenez bientôt pour découvrir nos nouveaux contenus.",
+    "notFound": "Article introuvable",
+    "notFoundHint": "Cet article n'existe pas ou n'est plus publié.",
     "localeFallback": "Aucun article dans votre langue pour le moment — affichage des articles disponibles dans les autres langues.",
+    "detailLocaleFallback": "Cet article n'est pas encore disponible dans votre langue — affichage d'une autre version linguistique.",
     "backToBlog": "Retour au blog",
     "publishedOn": "Publié le",
     "breadcrumbHome": "Accueil",
@@ -549,6 +553,9 @@
     "contact": {
       "subtitle": "Notre équipe est à votre écoute pour toute question.",
       "infoTitle": "Coordonnées",
+      "phoneLabel": "Téléphone",
+      "emailLabel": "E-mail",
+      "locationLabel": "Adresse",
       "formTitle": "Envoyer un message",
       "formSubtitle": "Décrivez votre demande — nous vous répondrons dans les meilleurs délais."
     },

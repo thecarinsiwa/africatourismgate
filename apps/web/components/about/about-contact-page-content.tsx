@@ -8,7 +8,6 @@ import { SupportTicketForm } from '../support/support-ticket-form';
 
 export function AboutContactPageContent() {
   const t = useTranslations('about');
-  const tFooter = useTranslations('footer');
   const contact = useResolvedPublicContact();
   const socialLinks = useMemo(() => buildSocialLinks(contact), [contact]);
 
@@ -24,7 +23,7 @@ export function AboutContactPageContent() {
           {contact.phone ? (
             <div className="rounded-xl border border-atg-border bg-atg-elevated/50 p-4">
               <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-                {tFooter('contact')}
+                {t('contact.phoneLabel')}
               </p>
               <a href={`tel:${contact.phone.replace(/\s/g, '')}`} className="mt-2 block text-lg font-semibold text-atg-fg hover:text-primary">
                 {contact.phone}
@@ -33,7 +32,9 @@ export function AboutContactPageContent() {
           ) : null}
           {contact.email ? (
             <div className="rounded-xl border border-atg-border bg-atg-elevated/50 p-4">
-              <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">E-mail</p>
+              <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                {t('contact.emailLabel')}
+              </p>
               <a href={`mailto:${contact.email}`} className="mt-2 block text-sm font-medium text-primary hover:underline">
                 {contact.email}
               </a>
@@ -42,7 +43,7 @@ export function AboutContactPageContent() {
           {contact.location ? (
             <div className="rounded-xl border border-atg-border bg-atg-elevated/50 p-4 sm:col-span-2">
               <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-                {tFooter('location')}
+                {t('contact.locationLabel')}
               </p>
               <p className="mt-2 text-sm text-atg-fg">{contact.location}</p>
             </div>

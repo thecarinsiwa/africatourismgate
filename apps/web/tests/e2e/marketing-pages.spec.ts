@@ -61,9 +61,9 @@ test.describe('Marketing pages smoke', () => {
     // 2. Blog missing slug
     await page.goto('/blog/e2e-missing-slug');
     await assertShell(page);
-    await expect(page.getByText(/Aucun article publi[ée]|No published articles|No hay artículos/i)).toBeVisible({
-      timeout: 15_000,
-    });
+    await expect(
+      page.getByText(/Article introuvable|Article not found|Artículo no encontrado/i),
+    ).toBeVisible({ timeout: 15_000 });
     await expect(
       page.getByRole('link', { name: /Retour au blog|Back to blog|Volver al blog/i }),
     ).toBeVisible();
@@ -73,13 +73,13 @@ test.describe('Marketing pages smoke', () => {
     await assertShell(page);
     await expect(
       page.getByRole('heading', {
-        name: /Soutenir nos actions|Support our work|Apoyar nuestras acciones/i,
+        name: /Soutenir nos actions|Support our work|Apoye nuestras acciones/i,
         level: 1,
       }),
     ).toBeVisible();
     await expect(
       page
-        .getByText(/Aucune campagne de don|No donation campaigns|Ninguna campaña de donación/i)
+        .getByText(/Aucune campagne de don|No donation campaigns|No hay campañas de donación/i)
         .or(page.getByRole('heading', { name: /Toutes les campagnes|All campaigns|Todas las campañas/i })),
     ).toBeVisible({ timeout: 15_000 });
 
@@ -90,7 +90,9 @@ test.describe('Marketing pages smoke', () => {
       page.getByRole('heading', { name: /Qui nous sommes|Who we are|Quiénes somos/i, level: 1 }),
     ).toBeVisible();
     await expect(
-      page.getByText(/Contenu en cours de préparation|Content being prepared|Contenido en preparación/i),
+      page.getByText(
+        /Contenu en cours de préparation|Content coming soon|Contenido en preparación/i,
+      ),
     ).toBeVisible({ timeout: 15_000 });
 
     // 5. About team list empty
@@ -121,11 +123,15 @@ test.describe('Marketing pages smoke', () => {
       page.getByLabel(/Rechercher dans l'aide|Search help|Buscar en la ayuda/i),
     ).toBeVisible();
 
-    await page
+    const bookingTopic = page
+      .getByRole('main')
       .getByRole('link', { name: /Réservations|Bookings|Reservas/i })
-      .first()
-      .click();
-    await expect(page).toHaveURL(/\/support\/booking\/?$/);
+      .first();
+    await expect(bookingTopic).toBeVisible();
+    await Promise.all([
+      page.waitForURL(/\/support\/booking\/?$/, { timeout: 15_000 }),
+      bookingTopic.click(),
+    ]);
     await expect(
       page.getByRole('heading', {
         name: /Réservations|Bookings|Reservas/i,
@@ -133,13 +139,17 @@ test.describe('Marketing pages smoke', () => {
       }),
     ).toBeVisible();
 
-    await page
+    const modifyArticle = page
+      .getByRole('main')
       .getByRole('link', {
         name: /modifier ou annuler|change or cancel|cambio o cancelo/i,
       })
-      .first()
-      .click();
-    await expect(page).toHaveURL(/\/support\/booking\/modify-or-cancel\/?$/);
+      .first();
+    await expect(modifyArticle).toBeVisible();
+    await Promise.all([
+      page.waitForURL(/\/support\/booking\/modify-or-cancel\/?$/, { timeout: 15_000 }),
+      modifyArticle.click(),
+    ]);
     await expect(
       page.getByRole('heading', {
         name: /modifier ou annuler|change or cancel|cambio o cancelo/i,

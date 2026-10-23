@@ -225,7 +225,8 @@
     "title": "Support our work",
     "intro": "Several donation campaigns are available depending on the context. Choose the one that fits your commitment.",
     "allCampaigns": "All campaigns",
-    "empty": "No donation campaigns are available at the moment."
+    "empty": "No donation campaigns are available at the moment.",
+    "localeFallback": "No campaigns in your language yet — showing campaigns available in other languages."
   },
   "legal": {
     "termsOfUseTitle": "Terms of use",
@@ -297,7 +298,10 @@
     "retry": "Retry",
     "noResults": "No published articles",
     "noResultsHint": "Check back soon for new content.",
+    "notFound": "Article not found",
+    "notFoundHint": "This article does not exist or is no longer published.",
     "localeFallback": "No articles in your language yet — showing posts available in other languages.",
+    "detailLocaleFallback": "This article is not available in your language yet — showing another language version.",
     "backToBlog": "Back to blog",
     "publishedOn": "Published on",
     "breadcrumbHome": "Home",
@@ -549,6 +553,9 @@
     "contact": {
       "subtitle": "Our team is here to answer your questions.",
       "infoTitle": "Contact details",
+      "phoneLabel": "Phone",
+      "emailLabel": "Email",
+      "locationLabel": "Location",
       "formTitle": "Send a message",
       "formSubtitle": "Describe your request — we will get back to you as soon as possible."
     },

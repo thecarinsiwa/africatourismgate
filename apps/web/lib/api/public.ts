@@ -560,15 +560,19 @@ export async function getBlogPostBySlug(
 export async function getBlogPostBySlugForLocale(
   slug: string,
   locale?: string,
-): Promise<PublicBlogPostDetail> {
+): Promise<{ post: PublicBlogPostDetail; usedLocaleFallback: boolean }> {
   if (!locale) {
-    return getBlogPostBySlug(slug);
+    const post = await getBlogPostBySlug(slug);
+    return { post, usedLocaleFallback: false };
   }
 
   try {
-    return await getBlogPostBySlug(slug, locale);
+    const post = await getBlogPostBySlug(slug, locale);
+    const usedLocaleFallback = Boolean(post.locale && post.locale !== locale);
+    return { post, usedLocaleFallback };
   } catch {
-    return getBlogPostBySlug(slug);
+    const post = await getBlogPostBySlug(slug);
+    return { post, usedLocaleFallback: true };
   }
 }
 
