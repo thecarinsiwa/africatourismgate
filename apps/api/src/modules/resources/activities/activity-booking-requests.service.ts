@@ -106,6 +106,7 @@ export class ActivityBookingRequestsService {
     const rendered = await this.emailService.previewActivityBookingRequestStatus({
       to: row.email,
       fullName: row.fullName,
+      activityId: row.activityId,
       activityTitle,
       preferredDate: this.toDateOnly(row.preferredDate),
       participants: row.participants,
@@ -138,6 +139,7 @@ export class ActivityBookingRequestsService {
         .sendActivityBookingRequestStatus({
           to: saved.email,
           fullName: saved.fullName,
+          activityId: saved.activityId,
           activityTitle,
           preferredDate: this.toDateOnly(saved.preferredDate),
           participants: saved.participants,

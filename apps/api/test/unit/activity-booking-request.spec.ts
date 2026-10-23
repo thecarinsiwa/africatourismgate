@@ -269,6 +269,7 @@ describe('ActivityBookingRequestsService.updateStatusForUser', () => {
     expect(emailService.sendActivityBookingRequestStatus).toHaveBeenCalledWith(
       expect.objectContaining({
         to: 'jane@example.com',
+        activityId: ACTIVITY_ID,
         activityTitle: 'Kigali City Tour',
         status: 'confirmed',
         requestId: 'req-1',
@@ -329,6 +330,7 @@ describe('activity booking request email templates', () => {
       {
         to: 'jane@example.com',
         fullName: 'Jane Doe',
+        activityId: ACTIVITY_ID,
         activityTitle: 'Kigali City Tour',
         preferredDate: FUTURE_DATE,
         participants: 2,
@@ -340,11 +342,19 @@ describe('activity booking request email templates', () => {
     expect(confirmed.subject).toMatch(/Slot available/i);
     expect(confirmed.html).toMatch(/Créneau rendu disponible|Créneau disponible/i);
     expect(confirmed.text).toMatch(/Créneau disponible/i);
+    expect(confirmed.html).toContain(
+      `/activities/${ACTIVITY_ID}?date=${FUTURE_DATE}&amp;participants=2`,
+    );
+    expect(confirmed.html).toMatch(/Réserver maintenant/);
+    expect(confirmed.text).toContain(
+      `/activities/${ACTIVITY_ID}?date=${FUTURE_DATE}&participants=2`,
+    );
 
     const cancelled = renderActivityBookingRequestStatusEmail(
       {
         to: 'jane@example.com',
         fullName: 'Jane Doe',
+        activityId: ACTIVITY_ID,
         activityTitle: 'Kigali City Tour',
         preferredDate: FUTURE_DATE,
         participants: 2,
@@ -356,5 +366,6 @@ describe('activity booking request email templates', () => {
     expect(cancelled.subject).toMatch(/Still unavailable/i);
     expect(cancelled.html).toMatch(/Toujours indisponible/i);
     expect(cancelled.text).toMatch(/Toujours indisponible/i);
+    expect(cancelled.html).toMatch(/Voir l'activité/);
   });
 });

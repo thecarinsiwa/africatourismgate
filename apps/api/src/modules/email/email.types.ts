@@ -211,6 +211,7 @@ export type ActivityBookingRequestAdminEmailPayload = {
 export type ActivityBookingRequestStatusEmailPayload = {
   to: string;
   fullName: string;
+  activityId: string;
   activityTitle: string;
   preferredDate: string;
   participants: number;

@@ -63,15 +63,28 @@ function formatDateOnly(iso: string, locale: string): string {
   }
 }
 
+function preferredDateToLocalInput(dateOnly: string): string {
+  const day = dateOnly.slice(0, 10);
+  return /^\d{4}-\d{2}-\d{2}$/.test(day) ? `${day}T09:00` : '';
+}
+
+type SlotFormValues = {
+  startDatetime: string;
+  capacity: string;
+};
+
 export function ActivityBookingRequestsList() {
   const { activities: getActivitiesErrorMessage } = useAdminErrorMessages();
   const locale = useLocale();
   const t = useTranslations('modules.activities.bookingRequests');
+  const tSchedules = useTranslations('modules.activities.sections.schedules');
   const tCommon = useTranslations('modules.common');
   const tCommonColumns = useTranslations('modules.common.columns');
   const tPagination = useTranslations('modules.common.pagination');
   const tSelect = useTranslations('modules.common.select');
   const tDataTable = useTranslations('modules.common.dataTable');
+  const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
   const paginationLabels = useDataTablePaginationLabels();
   const { toast } = useToast();
 
@@ -82,6 +95,13 @@ export function ActivityBookingRequestsList() {
   const [activityFilter, setActivityFilter] = useState('');
   const [activities, setActivities] = useState<Activity[]>([]);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [slotTarget, setSlotTarget] = useState<ActivityBookingRequest | null>(null);
+  const [slotForm, setSlotForm] = useState<SlotFormValues>({
+    startDatetime: '',
+    capacity: '10',
+  });
+  const [slotError, setSlotError] = useState<string | null>(null);
+  const [slotSubmitting, setSlotSubmitting] = useState(false);
   const [statusConfirm, setStatusConfirm] = useState<{
     request: ActivityBookingRequest;
     nextStatus: ActivityBookingRequestStatus;
@@ -187,6 +207,55 @@ export function ActivityBookingRequestsList() {
     setStatusConfirm(null);
     setEmailPreview({ status: 'loading' });
   }, []);
+
+  const closeSlotModal = useCallback(() => {
+    if (slotSubmitting) return;
+    setSlotTarget(null);
+    setSlotError(null);
+    setSlotForm({ startDatetime: '', capacity: '10' });
+  }, [slotSubmitting]);
+
+  const openSlotModal = useCallback((request: ActivityBookingRequest) => {
+    setSlotTarget(request);
+    setSlotError(null);
+    setSlotForm({
+      startDatetime: preferredDateToLocalInput(request.preferredDate),
+      capacity: String(Math.max(1, request.participants)),
+    });
+  }, []);
+
+  const handleCreateSlot = useCallback(
+    async (event: React.FormEvent) => {
+      event.preventDefault();
+      if (!slotTarget) return;
+      setSlotError(null);
+      if (!slotForm.startDatetime) {
+        setSlotError(tSchedules('validationDateTime'));
+        return;
+      }
+      const capacity = Number(slotForm.capacity);
+      if (!Number.isFinite(capacity) || capacity < 1) {
+        setSlotError(tSchedules('validationCapacity'));
+        return;
+      }
+      setSlotSubmitting(true);
+      try {
+        await getApiClient().createActivitySchedule({
+          activityId: slotTarget.activityId,
+          startDatetime: new Date(slotForm.startDatetime).toISOString(),
+          capacity,
+        });
+        toast({ variant: 'success', message: t('addSlot.success') });
+        setSlotTarget(null);
+        setSlotForm({ startDatetime: '', capacity: '10' });
+      } catch (error) {
+        setSlotError(getActivitiesErrorMessage(error));
+      } finally {
+        setSlotSubmitting(false);
+      }
+    },
+    [getActivitiesErrorMessage, slotForm, slotTarget, t, tSchedules, toast],
+  );
 
   const openStatusConfirm = useCallback(
     (request: ActivityBookingRequest, nextStatus: ActivityBookingRequestStatus) => {
@@ -370,9 +439,9 @@ export function ActivityBookingRequestsList() {
         cell: ({ row }) => (
           <DataTableActions>
             <DataTableActionButton
-              action="edit"
-              href={`/produits/activites/${row.original.activityId}`}
-              label={t('actions.openActivity')}
+              action="calendar"
+              onClick={() => openSlotModal(row.original)}
+              label={t('actions.addSlot')}
             />
           </DataTableActions>
         ),
@@ -381,6 +450,7 @@ export function ActivityBookingRequestsList() {
     [
       activityTitleById,
       locale,
+      openSlotModal,
       openStatusConfirm,
       t,
       tCommonColumns,
@@ -470,6 +540,78 @@ export function ActivityBookingRequestsList() {
           />
         ) : null}
       </Card>
+
+      <Modal
+        open={slotTarget != null}
+        onOpenChange={(open) => {
+          if (!open) closeSlotModal();
+        }}
+        title={t('addSlot.title')}
+        description={
+          slotTarget
+            ? t('addSlot.description', {
+                activity:
+                  activityTitleById.get(slotTarget.activityId) ??
+                  slotTarget.activityId.slice(0, 8),
+              })
+            : undefined
+        }
+        className="max-w-lg"
+        showClose={!slotSubmitting}
+        closeAriaLabel={tActions('close')}
+      >
+        {slotTarget ? (
+          <form onSubmit={(e) => void handleCreateSlot(e)} className="space-y-4">
+            <p className="text-sm text-atg-muted">
+              {t('addSlot.hint', {
+                date: formatDateOnly(slotTarget.preferredDate, locale),
+                count: slotTarget.participants,
+              })}
+            </p>
+            {slotError ? (
+              <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+                {slotError}
+              </p>
+            ) : null}
+            <Input
+              label={tSchedules('dateTime')}
+              type="datetime-local"
+              value={slotForm.startDatetime}
+              onChange={(e) =>
+                setSlotForm((prev) => ({ ...prev, startDatetime: e.target.value }))
+              }
+              disabled={slotSubmitting}
+            />
+            <Input
+              label={tSchedules('capacity')}
+              type="number"
+              min={1}
+              value={slotForm.capacity}
+              onChange={(e) =>
+                setSlotForm((prev) => ({ ...prev, capacity: e.target.value }))
+              }
+              disabled={slotSubmitting}
+            />
+            <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={closeSlotModal}
+                disabled={slotSubmitting}
+              >
+                {tActions('cancel')}
+              </Button>
+              <Button
+                type="submit"
+                loading={slotSubmitting}
+                loadingText={tLoading('submit')}
+              >
+                {tActions('create')}
+              </Button>
+            </div>
+          </form>
+        ) : null}
+      </Modal>
 
       <Modal
         open={statusConfirm != null}

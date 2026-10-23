@@ -224,7 +224,14 @@
       "message": "Message"
     },
     "actions": {
-      "openActivity": "Ouvrir l'activité"
+      "openActivity": "Ouvrir l'activité",
+      "addSlot": "Ajouter un créneau"
+    },
+    "addSlot": {
+      "title": "Ajouter un créneau",
+      "description": "Créer un créneau pour {activity} à partir de cette demande.",
+      "success": "Créneau créé.",
+      "hint": "Date souhaitée : {date} · {count, plural, one {# participant} other {# participants}}"
     }
   },
   "stats": {

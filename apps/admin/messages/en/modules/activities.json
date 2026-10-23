@@ -224,7 +224,14 @@
       "message": "Message"
     },
     "actions": {
-      "openActivity": "Open activity"
+      "openActivity": "Open activity",
+      "addSlot": "Add time slot"
+    },
+    "addSlot": {
+      "title": "Add time slot",
+      "description": "Create a slot for {activity} based on this request.",
+      "success": "Time slot created.",
+      "hint": "Preferred date: {date} · {count, plural, one {# participant} other {# participants}}"
     }
   },
   "stats": {

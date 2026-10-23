@@ -78,6 +78,20 @@ function statusEmailCopy(
   }
 }
 
+function activityBookingUrl(
+  webUrl: string | undefined,
+  activityId: string,
+  preferredDate: string,
+  participants: number,
+): string {
+  const base = webBase(webUrl).replace(/\/$/, '');
+  const params = new URLSearchParams({
+    date: preferredDate.slice(0, 10),
+    participants: String(Math.max(1, participants)),
+  });
+  return `${base}/activities/${encodeURIComponent(activityId)}?${params.toString()}`;
+}
+
 export function renderActivityBookingRequestStatusEmail(
   payload: ActivityBookingRequestStatusEmailPayload,
   branding: EmailBrandingValue,
@@ -86,7 +100,12 @@ export function renderActivityBookingRequestStatusEmail(
   const name = escapeHtml(payload.fullName.trim() || 'Client');
   const activityTitle = escapeHtml(payload.activityTitle);
   const subject = `${copy.subjectPrefix} – ${payload.activityTitle}`;
-  const webUrl = webBase(payload.webUrl);
+  const activityUrl = activityBookingUrl(
+    payload.webUrl,
+    payload.activityId,
+    payload.preferredDate,
+    payload.participants,
+  );
   const availability = availabilityForBookingRequestStatus(payload.status);
   const availabilityColor =
     availability === 'available'
@@ -94,6 +113,8 @@ export function renderActivityBookingRequestStatusEmail(
       : availability === 'unavailable'
         ? '#b91c1c'
         : '#a16207';
+  const ctaLabel =
+    payload.status === 'confirmed' ? 'Réserver maintenant' : "Voir l'activité";
 
   const html = layout(
     subject,
@@ -106,7 +127,7 @@ export function renderActivityBookingRequestStatusEmail(
 <p style="margin:0 0 8px;line-height:1.6;"><strong>Référence :</strong> ${requestRef(payload.requestId)}</p>
 <p style="margin:0 0 8px;line-height:1.6;"><strong>Date souhaitée :</strong> ${escapeHtml(payload.preferredDate)}</p>
 <p style="margin:0 0 16px;line-height:1.6;"><strong>Participants :</strong> ${payload.participants}</p>
-${button(webUrl, 'Visiter le site', branding)}`,
+${button(activityUrl, ctaLabel, branding)}`,
     branding,
     { webUrl: payload.webUrl },
   );
@@ -122,7 +143,7 @@ Référence : ${payload.requestId.slice(0, 8)}
 Date souhaitée : ${payload.preferredDate}
 Participants : ${payload.participants}
 
-${webUrl}`;
+${ctaLabel} : ${activityUrl}`;
 
   return { subject, html, text };
 }

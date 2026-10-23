@@ -224,7 +224,14 @@
       "message": "Mensaje"
     },
     "actions": {
-      "openActivity": "Abrir actividad"
+      "openActivity": "Abrir actividad",
+      "addSlot": "Añadir horario"
+    },
+    "addSlot": {
+      "title": "Añadir horario",
+      "description": "Crear un horario para {activity} a partir de esta solicitud.",
+      "success": "Horario creado.",
+      "hint": "Fecha preferida: {date} · {count, plural, one {# participante} other {# participantes}}"
     }
   },
   "stats": {
