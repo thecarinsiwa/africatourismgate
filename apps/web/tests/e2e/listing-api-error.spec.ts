@@ -1,28 +1,58 @@
 import { expect, test, type Page } from './fixtures';
 
-async function mockAccommodationsApiDown(page: Page) {
-  await page.route('**/api/public/accommodations/search**', async (route) => {
-    await route.fulfill({
-      status: 503,
-      contentType: 'application/json',
-      body: JSON.stringify({ message: 'Service unavailable' }),
-    });
-  });
-}
+type ListingCase = {
+  name: string;
+  path: string;
+  errorText: RegExp;
+};
 
-async function mockFlightsApiDown(page: Page) {
-  await page.route('**/api/public/flights/search**', async (route) => {
-    await route.fulfill({
-      status: 503,
-      contentType: 'application/json',
-      body: JSON.stringify({ message: 'Service unavailable' }),
-    });
-  });
-}
+/**
+ * Client listings call `fetchPublic` → `NEXT_PUBLIC_API_URL` + `/public/...`.
+ * Fixtures already fulfill non-upload `/api/**` with 503 → catch → ListingErrorState.
+ */
+const LISTING_CASES: ListingCase[] = [
+  {
+    name: 'hotels',
+    path: '/hotels',
+    errorText: /Impossible de charger les résultats/i,
+  },
+  {
+    name: 'flights',
+    path: '/flights',
+    errorText: /Impossible de charger les vols/i,
+  },
+  {
+    name: 'cars',
+    path: '/cars',
+    errorText: /Impossible de charger les véhicules/i,
+  },
+  {
+    name: 'cruises',
+    path: '/cruises',
+    errorText: /Impossible de charger les croisières/i,
+  },
+  {
+    name: 'activities',
+    path: '/activities',
+    errorText: /Impossible de charger les activités/i,
+  },
+  {
+    name: 'packages',
+    path: '/packages',
+    errorText: /Impossible de charger les forfaits/i,
+  },
+];
 
-/** Listing retry CTA (connection-lock overlay is suppressed in e2e fixtures). */
 function listingRetryButton(page: Page) {
-  return page.getByRole('button', { name: /^Réessayer$|^Retry$|^Reintentar$/i });
+  return page.getByRole('button', {
+    name: /^Réessayer$|^Retry$|^Reintentar$|^Try again$/i,
+  });
+}
+
+function listingHomeLink(page: Page) {
+  return page.getByRole('link', {
+    name: /Retour à l'accueil|Back to home|Volver al inicio/i,
+  });
 }
 
 test.describe('Listing API error states (WEB-011)', () => {
@@ -33,25 +63,17 @@ test.describe('Listing API error states (WEB-011)', () => {
     await page.context().addCookies([{ name: 'atg-locale', value: 'fr', url: baseURL }]);
   });
 
-  test('hotels listing shows load error + retry when API returns 503', async ({ page }) => {
-    await mockAccommodationsApiDown(page);
+  for (const listing of LISTING_CASES) {
+    test(`${listing.name} listing shows load error + retry + home when API returns 503`, async ({
+      page,
+    }) => {
+      await page.goto(listing.path, { waitUntil: 'domcontentloaded' });
 
-    await page.goto('/hotels');
-
-    await expect(
-      page.getByText(/Impossible de charger les résultats/i).first(),
-    ).toBeVisible({ timeout: 20_000 });
-    await expect(listingRetryButton(page)).toBeVisible();
-  });
-
-  test('flights listing shows load error + retry when API returns 503', async ({ page }) => {
-    await mockFlightsApiDown(page);
-
-    await page.goto('/flights');
-
-    await expect(
-      page.getByText(/Impossible de charger les vols/i).first(),
-    ).toBeVisible({ timeout: 20_000 });
-    await expect(listingRetryButton(page)).toBeVisible();
-  });
+      await expect(page.getByText(listing.errorText).first()).toBeVisible({
+        timeout: 25_000,
+      });
+      await expect(listingRetryButton(page)).toBeVisible();
+      await expect(listingHomeLink(page).first()).toBeVisible();
+    });
+  }
 });

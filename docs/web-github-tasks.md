@@ -656,10 +656,11 @@ Quand l'API est indisponible ou renvoie une erreur, certaines pages listing affi
 
 **Livré :**
 - `ListingErrorState` (EmptyState + Réessayer + retour accueil) dans [`listing-patterns.tsx`](../apps/web/components/shared/listing-patterns.tsx) ; `ListingPageBody` n’affiche plus bandeau + grille vide
-- 6 listings client : `backHomeLabel` sur l’état erreur
-- `/search/[type]` : `fetchVerticalResults` → `{ items, failed }` ; hotels via `searchAccommodations` ; UI erreur vs empty
-- i18n `verticalSearch.loadError` / `retry` (fr/en/es)
-- E2E : [`listing-api-error.spec.ts`](../apps/web/tests/e2e/listing-api-error.spec.ts) (hotels + flights, mock 503)
+- 6 listings client : `backHomeLabel` sur l’état erreur (`/hotels|flights|cars|cruises|activities|packages`)
+- `/search/[type]` : `fetchVerticalResults` → `{ items, failed }` (catch → pas de 500) ; UI erreur vs empty
+- i18n `*.loadError` / `retry` / `backHome` + `verticalSearch.*` (fr/en/es)
+- E2E : [`listing-api-error.spec.ts`](../apps/web/tests/e2e/listing-api-error.spec.ts) — 6 listings, mock 503
+- Unit : [`lib/search/api.test.ts`](../apps/web/lib/search/api.test.ts) — SSR search fail soft
 
 ---
 
