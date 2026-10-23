@@ -761,8 +761,8 @@ Spec E2E :
 ```
 
 **Livré :**
-- Helpers : `mockRegisterRequiresVerification`, `mockVerifyOperationSuccess` dans [`mock-checkout-auth.ts`](../apps/web/tests/e2e/helpers/mock-checkout-auth.ts)
-- Spec : [`booking-register-verify.spec.ts`](../apps/web/tests/e2e/booking-register-verify.spec.ts) — register → OTP → `/booking/cart` + session (`--repeat-each=3` vert)
+- Helpers : `mockRegisterRequiresVerification`, `mockVerifyOperationSuccess` (+ `mockCheckoutAuth`) dans [`mock-checkout-auth.ts`](../apps/web/tests/e2e/helpers/mock-checkout-auth.ts)
+- Spec : [`booking-register-verify.spec.ts`](../apps/web/tests/e2e/booking-register-verify.spec.ts) — register → OTP → `/booking/cart` + session ; register → OTP → `/account/profile` + garde compte (`--repeat-each=3` vert, 6/6)
 
 ---
 
