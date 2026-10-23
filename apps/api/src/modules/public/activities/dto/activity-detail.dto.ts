@@ -100,6 +100,12 @@ export class ActivityDetailDto {
   })
   difficultyLevel!: 'easy' | 'moderate' | 'hard' | 'expert' | null;
 
+  @ApiProperty({
+    description:
+      'When true and no bookable slots remain, the client may show a booking-request form.',
+  })
+  allowBookingRequestsWhenUnavailable!: boolean;
+
   @ApiPropertyOptional({ nullable: true, description: 'Average guest review rating (1–5)' })
   averageRating?: number | null;
 

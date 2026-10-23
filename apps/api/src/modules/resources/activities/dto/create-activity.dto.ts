@@ -2,6 +2,7 @@ import { ACTIVITY_DIFFICULTY_LEVELS } from '../activities.constants';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
   IsIn,
   IsInt,
   IsNotEmpty,
@@ -76,4 +77,13 @@ export class CreateActivityDto {
   @Min(-180)
   @Max(180)
   longitude?: number | null;
+
+  @ApiPropertyOptional({
+    default: false,
+    description:
+      'When true, visitors can submit a booking request if no slots are available.',
+  })
+  @IsOptional()
+  @IsBoolean()
+  allowBookingRequestsWhenUnavailable?: boolean;
 }

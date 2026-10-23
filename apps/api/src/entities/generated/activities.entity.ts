@@ -51,6 +51,51 @@ export class Activities extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'organization_id', length: 36, nullable: true })
   organizationId!: string | null;
 
+  @Column({
+    type: 'boolean',
+    name: 'allow_booking_requests_when_unavailable',
+    default: false,
+  })
+  allowBookingRequestsWhenUnavailable!: boolean;
+
+}
+
+@Entity('activity_booking_requests')
+export class ActivityBookingRequests extends BaseAuditEntity {
+  @PrimaryColumn('uuid', { name: 'id', length: 36 })
+  id!: string;
+
+  @Column({ type: 'varchar', name: 'activity_id', length: 36 })
+  activityId!: string;
+
+  @Column({ type: 'varchar', name: 'organization_id', length: 36, nullable: true })
+  organizationId!: string | null;
+
+  @Column({ type: 'varchar', name: 'full_name', length: 180 })
+  fullName!: string;
+
+  @Column({ type: 'varchar', name: 'email', length: 255 })
+  email!: string;
+
+  @Column({ type: 'varchar', name: 'phone', length: 40, nullable: true })
+  phone!: string | null;
+
+  @Column({ type: 'date', name: 'preferred_date' })
+  preferredDate!: string;
+
+  @Column({ type: 'int', name: 'participants', unsigned: true })
+  participants!: number;
+
+  @Column({ type: 'text', name: 'message', nullable: true })
+  message!: string | null;
+
+  @Column({
+    name: 'status',
+    enum: ['pending', 'contacted', 'confirmed', 'cancelled'],
+    default: 'pending',
+  })
+  status!: 'pending' | 'contacted' | 'confirmed' | 'cancelled';
+
 }
 
 @Entity('activity_schedules')

@@ -30,6 +30,7 @@ export interface ActivitySearchResult {
   nextStartDatetime?: string;
   imageUrl?: string | null;
   difficultyLevel?: ActivityDifficultyLevel | null;
+  allowBookingRequestsWhenUnavailable?: boolean;
   averageRating?: number | null;
   reviewCount?: number;
 }
@@ -75,6 +76,7 @@ export interface ActivityDetail {
   images?: ProductGalleryImage[];
   itineraryStops?: ActivityItineraryStop[];
   difficultyLevel?: ActivityDifficultyLevel | null;
+  allowBookingRequestsWhenUnavailable?: boolean;
   averageRating?: number | null;
   reviewCount?: number;
 }

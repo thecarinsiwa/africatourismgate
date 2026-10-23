@@ -215,6 +215,9 @@ export class PublicActivitiesService {
           availableSchedulesCount: availableSchedules.length,
           imageUrl: imageUrlByActivityId.get(activity.id) ?? null,
           difficultyLevel: activity.difficultyLevel,
+          allowBookingRequestsWhenUnavailable: Boolean(
+            activity.allowBookingRequestsWhenUnavailable,
+          ),
           ...this.toReviewFields(reviewSummaryByActivityId.get(activity.id)),
         };
 
@@ -335,6 +338,9 @@ export class PublicActivitiesService {
         availableSchedulesCount: availableSchedules.length,
         imageUrl: imageUrlByActivityId.get(activity.id) ?? null,
         difficultyLevel: activity.difficultyLevel,
+        allowBookingRequestsWhenUnavailable: Boolean(
+          activity.allowBookingRequestsWhenUnavailable,
+        ),
         ...this.toReviewFields(reviewSummaryByActivityId.get(activity.id)),
       };
 
@@ -466,6 +472,9 @@ export class PublicActivitiesService {
         nextStartDatetime: this.toIsoDatetime(availableSchedules[0].startDatetime),
         imageUrl: imageUrlByActivityId.get(activity.id) ?? null,
         difficultyLevel: activity.difficultyLevel,
+        allowBookingRequestsWhenUnavailable: Boolean(
+          activity.allowBookingRequestsWhenUnavailable,
+        ),
         ...this.toReviewFields(reviewSummaryByActivityId.get(activity.id)),
       });
     }
@@ -691,6 +700,9 @@ export class PublicActivitiesService {
         activity.durationMinutes,
       ),
       difficultyLevel: activity.difficultyLevel,
+      allowBookingRequestsWhenUnavailable: Boolean(
+        activity.allowBookingRequestsWhenUnavailable,
+      ),
       ...this.toReviewFields(reviewSummary.get(activity.id)),
     };
   }
