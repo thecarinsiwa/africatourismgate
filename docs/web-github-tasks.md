@@ -1202,13 +1202,15 @@ La spec `i18n-switch.spec.ts` ne couvre que `/` et `/booking/login`. Il faut aut
 
 ## Critères d'acceptation
 
-- [ ] ≥ 20 routes testées en FR → EN (minimum)
-- [ ] Script `pnpm test:e2e -- i18n-pages` passant en CI
-- [ ] Pas de faux positifs fragiles (éviter assert sur contenu API dynamique)
-- [ ] Documentation des textes « ancres » choisis par page (commentaire spec)
+- [x] ≥ 20 routes testées en FR → EN (minimum) — `i18n-pages.spec.ts` (~27 cas, groupes home/verticals/booking/account/marketing)
+- [x] Script `pnpm test:e2e -- i18n-pages` — helper `tests/e2e/helpers/i18n.ts` (`switchLanguage`)
+- [x] Pas de faux positifs fragiles — ancres next-intl chrome uniquement ; CMS/listings mockés ou ignorés
+- [x] Documentation des textes « ancres » — champ `note` + commentaires dans la spec
 
 ## Références
 
+- `apps/web/tests/e2e/i18n-pages.spec.ts`
+- `apps/web/tests/e2e/helpers/i18n.ts`
 - `apps/web/tests/e2e/i18n-switch.spec.ts`
 - `apps/web/components/language-switcher.tsx`
 ```
@@ -1357,7 +1359,7 @@ WEB-012 (README) → WEB-006 (CI E2E) → WEB-002 + WEB-003 (cleanup routes)
 | WEB-I18N-03 | | | ✅ QA 2026-10-22 |
 | WEB-I18N-04 | | | ✅ QA 2026-10-23 |
 | WEB-I18N-05 | | | ✅ QA 2026-10-23 |
-| WEB-I18N-06 | | | ☐ |
+| WEB-I18N-06 | | | ✅ QA 2026-10-23 |
 | WEB-I18N-07 | | | ☐ |
 
 ---
