@@ -11,11 +11,13 @@ import {
   Organizations,
   Reviews,
 } from '../../../entities/generated';
+import { NotificationsModule } from '../../resources/notifications/notifications.module';
 import { PublicActivitiesController } from './public-activities.controller';
 import { PublicActivitiesService } from './public-activities.service';
 
 @Module({
   imports: [
+    NotificationsModule,
     TypeOrmModule.forFeature([
       Activities,
       ActivityBookingRequests,

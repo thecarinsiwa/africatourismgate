@@ -23,6 +23,7 @@ import {
   Reviews,
 } from '../../../entities/generated';
 import { EmailService } from '../../email/email.service';
+import { NotificationsService } from '../../resources/notifications/notifications.service';
 import { PublicGalleryImageDto } from '../dto/public-gallery-image.dto';
 import { PublicDestinationDto } from '../accommodations/dto/public-destination.dto';
 import {
@@ -72,6 +73,7 @@ export class PublicActivitiesService {
     @InjectRepository(Reviews)
     private readonly reviewsRepository: Repository<Reviews>,
     private readonly emailService: EmailService,
+    private readonly staffNotifications: NotificationsService,
   ) {}
 
   async listDestinations(): Promise<PublicDestinationDto[]> {
@@ -717,6 +719,20 @@ export class PublicActivitiesService {
     });
     await this.bookingRequestsRepository.save(request);
 
+    void this.staffNotifications.fanOut(
+      'activity_booking_request',
+      {
+        href: '/produits/activites/demandes',
+        priority: 'normal',
+        requestId: request.id,
+        activityId: activity.id,
+        activityTitle: activity.title,
+        authorName: fullName,
+        status: 'pending',
+      },
+      ['activities.read'],
+    );
+
     const webUrl = process.env.NEXT_PUBLIC_WEB_URL;
     void this.emailService
       .sendActivityBookingRequestCustomer({
@@ -751,7 +767,7 @@ export class PublicActivitiesService {
           participants: dto.participants,
           message,
           adminUrl: adminBase
-            ? `${adminBase}/produits/activites/${activity.id}`
+            ? `${adminBase}/produits/activites/demandes`
             : undefined,
           webUrl,
         });

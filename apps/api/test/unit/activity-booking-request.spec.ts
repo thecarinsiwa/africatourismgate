@@ -70,6 +70,10 @@ function createPublicService(options?: {
     sendActivityBookingRequestAdmin: jest.fn().mockResolvedValue({ sent: true }),
   };
 
+  const staffNotifications = {
+    fanOut: jest.fn().mockResolvedValue(undefined),
+  };
+
   const service = new PublicActivitiesService(
     activitiesRepository as never,
     bookingRequestsRepository as never,
@@ -81,6 +85,7 @@ function createPublicService(options?: {
     organizationsRepository as never,
     emptyRepo() as never,
     emailService as never,
+    staffNotifications as never,
   );
 
   return {
@@ -90,6 +95,7 @@ function createPublicService(options?: {
     schedulesRepository,
     organizationsRepository,
     emailService,
+    staffNotifications,
   };
 }
 
@@ -152,7 +158,8 @@ describe('PublicActivitiesService.submitBookingRequest', () => {
   });
 
   it('persists the request and notifies customer + admin', async () => {
-    const { service, bookingRequestsRepository, emailService } = createPublicService();
+    const { service, bookingRequestsRepository, emailService, staffNotifications } =
+      createPublicService();
 
     const result = await service.submitBookingRequest(ACTIVITY_ID, validDto);
     await flushAsyncWork();
@@ -168,6 +175,18 @@ describe('PublicActivitiesService.submitBookingRequest', () => {
         participants: 2,
         status: 'pending',
       }),
+    );
+    expect(staffNotifications.fanOut).toHaveBeenCalledWith(
+      'activity_booking_request',
+      expect.objectContaining({
+        href: '/produits/activites/demandes',
+        requestId: result.id,
+        activityId: ACTIVITY_ID,
+        activityTitle: 'Kigali City Tour',
+        authorName: 'Jane Doe',
+        status: 'pending',
+      }),
+      ['activities.read'],
     );
     expect(emailService.sendActivityBookingRequestCustomer).toHaveBeenCalledWith(
       expect.objectContaining({
