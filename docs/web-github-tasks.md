@@ -692,7 +692,7 @@ Créer `apps/web/README.md` avec :
 - [x] Exemple `.env` minimal documenté
 ```
 
-**Livré :** [`apps/web/README.md`](../apps/web/README.md) (~77 lignes) — rôle, env, commandes, structure, flux recherche→booking→compte, liens docs.
+**Livré :** [`apps/web/README.md`](../apps/web/README.md) (≤150 lignes) — rôle, `.env` minimal, commandes, structure, flux recherche→booking→compte, liens design / tasks / roadmap.
 
 ---
 
