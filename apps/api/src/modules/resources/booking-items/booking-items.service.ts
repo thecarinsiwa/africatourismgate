@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { CrudService } from '../../../common/crud/crud.service';
 import { BookingItems, Bookings } from '../../../entities/generated';
+import { BookingItemCatalogService } from '../bookings/booking-item-catalog.service';
 import { BookingItemListItemDto } from './dto/booking-item-list-item.dto';
 import { BookingItemsListQueryDto } from './dto/booking-items-list-query.dto';
 
@@ -31,6 +32,7 @@ export class BookingItemsService extends CrudService<BookingItems> {
   constructor(
     @InjectRepository(BookingItems)
     private readonly bookingItemsRepository: Repository<BookingItems>,
+    private readonly bookingItemCatalog: BookingItemCatalogService,
   ) {
     super(bookingItemsRepository);
   }
@@ -77,7 +79,7 @@ export class BookingItemsService extends CrudService<BookingItems> {
       .limit(limit)
       .getRawMany<BookingItemListRow>();
 
-    const data: BookingItemListItemDto[] = rows.map((row) => {
+    const mapped = rows.map((row) => {
       const quantity = toInt(pick(row, 'item_quantity', 'quantity'));
       const unitPriceCents = toInt(
         pick(row, 'item_unitPriceCents', 'item_unit_price_cents', 'unitPriceCents'),
@@ -104,6 +106,9 @@ export class BookingItemsService extends CrudService<BookingItems> {
           createdAtRaw instanceof Date ? createdAtRaw : new Date(String(createdAtRaw ?? Date.now())),
       };
     });
+
+    const data: BookingItemListItemDto[] =
+      await this.bookingItemCatalog.enrichItems(mapped);
 
     return {
       data,

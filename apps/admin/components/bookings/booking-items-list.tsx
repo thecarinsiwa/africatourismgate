@@ -154,6 +154,7 @@ export function BookingItemsList() {
                 itemType={row.original.itemType}
                 referenceId={row.original.referenceId}
                 title={row.original.titleSnapshot}
+                catalogProductId={row.original.catalogProductId}
                 showReference
               />
             </div>

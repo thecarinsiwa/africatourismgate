@@ -6,9 +6,14 @@ import type { BookingIdentityDocumentDto } from './booking-identity-document.dto
 import type { BookingPaymentProofDto } from './booking-payment-proof.dto';
 import type { BookingEmergencyContactDto } from './booking-emergency-contact.dto';
 
+export type BookingDetailItemDto = BookingItems & {
+  /** Parent catalogue product id for admin deep-links (property, flight, …). */
+  catalogProductId?: string | null;
+};
+
 export type BookingDetailDto = {
   booking: Bookings;
-  items: BookingItems[];
+  items: BookingDetailItemDto[];
   totalCents: number;
   currency: string;
   paidCents: number;

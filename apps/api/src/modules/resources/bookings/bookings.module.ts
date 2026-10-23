@@ -35,6 +35,7 @@ import { MobileMoneyConfigModule } from '../mobile-money-config/mobile-money-con
 import { NotificationsModule } from '../notifications/notifications.module';
 import { BookingCheckoutPromoService } from './booking-checkout-promo.service';
 import { BookingEngineService } from './booking-engine.service';
+import { BookingItemCatalogService } from './booking-item-catalog.service';
 import { BookingPackageCheckoutService } from './booking-package-checkout.service';
 import { BookingStatusHistoryService } from './booking-status-history.service';
 import { StripeModule } from '../../stripe/stripe.module';
@@ -94,6 +95,7 @@ import { PosReceiptPdfService } from './pos-receipt-pdf.service';
   providers: [
     BookingsService,
     BookingEngineService,
+    BookingItemCatalogService,
     BookingStatusHistoryService,
     BookingCheckoutPromoService,
     BookingPackageCheckoutService,
@@ -110,6 +112,7 @@ import { PosReceiptPdfService } from './pos-receipt-pdf.service';
   ],
   exports: [
     BookingEngineService,
+    BookingItemCatalogService,
     BookingManifestService,
     BookingStatusHistoryService,
     BookingPaymentReminderService,

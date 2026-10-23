@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { BookingItems, Bookings, Payments } from '../../../../entities/generated';
+import { Bookings, Payments } from '../../../../entities/generated';
 import type { BookingStatusHistoryEntry } from '../booking-status-history.service';
+import type { BookingDetailItemDto } from './booking-detail.dto';
 import type { BookingIdentityDocumentDto } from './booking-identity-document.dto';
 import type { BookingPaymentProofDto } from './booking-payment-proof.dto';
 import { BookingEmergencyContactDto } from './booking-emergency-contact.dto';
@@ -30,7 +31,7 @@ export class BookingAdminDetailDto {
   booking!: Bookings;
 
   @ApiProperty({ type: [Object] })
-  items!: BookingItems[];
+  items!: BookingDetailItemDto[];
 
   @ApiProperty()
   totalCents!: number;

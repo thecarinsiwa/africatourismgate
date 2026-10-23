@@ -14,6 +14,13 @@ export class BookingItemListItemDto {
   @ApiProperty({ format: 'uuid' })
   referenceId!: string;
 
+  @ApiPropertyOptional({
+    format: 'uuid',
+    nullable: true,
+    description: 'Parent catalogue product id for admin deep-links.',
+  })
+  catalogProductId!: string | null;
+
   @ApiProperty()
   titleSnapshot!: string;
 

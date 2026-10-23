@@ -121,6 +121,11 @@ export interface BookingItem {
   endDate: string | null;
   createdAt: string;
   updatedAt: string | null;
+  /**
+   * Parent catalogue product id for admin deep-links
+   * (property, flight, vehicle, sailing, activity, package).
+   */
+  catalogProductId?: string | null;
 }
 
 export interface BookingRequestResponse {
@@ -537,6 +542,8 @@ export interface BookingItemListItem {
   bookingStatus: BookingStatus;
   currency: string;
   createdAt: string;
+  /** Parent catalogue product id for admin deep-links. */
+  catalogProductId?: string | null;
 }
 
 export interface BookingItemsListQuery {

@@ -57,6 +57,7 @@ import {
   BookingRequestResponseDto,
 } from './dto/booking-request-response.dto';
 import { BookingCheckoutPromoService } from './booking-checkout-promo.service';
+import { BookingItemCatalogService } from './booking-item-catalog.service';
 import { BookingManifestService } from './booking-manifest.service';
 import { BookingPackageCheckoutService } from './booking-package-checkout.service';
 import { BookingStatusHistoryService } from './booking-status-history.service';
@@ -120,6 +121,7 @@ export class BookingEngineService {
     private readonly organizationSettingsService: OrganizationSettingsService,
     private readonly bookingDetailPdf: BookingDetailPdfService,
     private readonly manifestService: BookingManifestService,
+    private readonly bookingItemCatalog: BookingItemCatalogService,
   ) {}
 
   async previewCheckout(
@@ -909,11 +911,12 @@ export class BookingEngineService {
       .addOrderBy('bi.createdAt', 'ASC')
       .getMany();
 
+    const enrichedItems = await this.bookingItemCatalog.enrichItems(items);
     const paymentSummary = await this.getBookingPaymentSummary(booking);
 
     return {
       booking,
-      items,
+      items: enrichedItems,
       totalCents: booking.totalCents,
       currency: booking.currency,
       paidCents: paymentSummary.paidCents,
