@@ -48,16 +48,26 @@ test.describe('About — team grid and profile', () => {
     const card = page.locator('main article').filter({ hasText: MEMBER.name });
     await expect(card).toBeVisible({ timeout: 15_000 });
 
-    await card.getByRole('link', { name: /Voir le profil|View Profile|Ver perfil/i }).click();
-    await expect(page).toHaveURL(/\/about\/team\/carin-siwa$/);
+    const profileLink = card.getByRole('link', {
+      name: /Voir le profil de|View .+['']s profile|Ver el perfil de/i,
+    });
+    await expect(profileLink).toHaveAttribute('href', '/about/team/carin-siwa');
+    await Promise.all([
+      page.waitForURL(/\/about\/team\/carin-siwa$/, { timeout: 15_000 }),
+      profileLink.click(),
+    ]);
 
     await expect(page.getByRole('heading', { level: 1, name: MEMBER.name })).toBeVisible({
       timeout: 15_000,
     });
     await expect(page.getByRole('heading', { level: 2, name: MEMBER.role })).toBeVisible();
 
-    const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' });
-    await expect(breadcrumb.getByRole('link', { name: /Notre équipe|Our Team|Nuestro equipo/i })).toBeVisible();
+    const breadcrumb = page.getByRole('navigation', {
+      name: /Fil d.Ariane|Breadcrumb|Miga de pan/i,
+    });
+    await expect(
+      breadcrumb.getByRole('link', { name: /Notre équipe|Our team|Nuestro equipo/i }),
+    ).toBeVisible();
     await expect(breadcrumb.getByText(MEMBER.name)).toBeVisible();
 
     await expect(page.locator(`main a[href="mailto:${MEMBER.email}"]`)).toBeVisible();
