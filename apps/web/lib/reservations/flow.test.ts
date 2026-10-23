@@ -7,7 +7,7 @@ import {
   buildDraftDetailHref,
   buildReservationQuery,
   isCabinOfferBookable,
-  isPackageReservationDraftReady,
+  isPackageReservationDraftStructurallyComplete,
   parseReservationDraft,
 } from './flow';
 
@@ -376,7 +376,7 @@ test('buildDraftDetailHref routes assisted package draft to package page', () =>
   assert.match(href, /#configure$/);
 });
 
-test('isPackageReservationDraftReady accepts assisted package without schedules', () => {
+test('isPackageReservationDraftStructurallyComplete accepts assisted package', () => {
   const draft = {
     kind: 'package' as const,
     packageId: PACKAGE_ID,
@@ -384,7 +384,7 @@ test('isPackageReservationDraftReady accepts assisted package without schedules'
     endDate: '2026-08-02',
     travelers: 4,
   };
-  assert.equal(isPackageReservationDraftReady(draft), true);
+  assert.equal(isPackageReservationDraftStructurallyComplete(draft), true);
 });
 
 test('buildDraftBrowseHref routes package draft to packages listing', () => {

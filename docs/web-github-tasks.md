@@ -731,6 +731,8 @@ Plusieurs helpers et routes sont marqués `@deprecated` :
 - Packages : `PackagesSearchParams` → `startDate`/`travelers` ; writers alignés ; lecture URL legacy conservée dans `normalizePackagesSearchParams`
 - `locale-provider.tsx` déjà absent (next-intl / `LocaleBootstrap`)
 - Bonus stabilité : `booking-mode.test.ts` (node:test) + typage `AbstractIntlMessages` dans `test/rtl-helpers.tsx`
+- Re-vérif cleanup : aucun `@deprecated` restant sous `apps/web/lib|components` ; modules listés = APIs courantes (pas de shims)
+- Suppressions additionnelles mortes : `ABOUT_BASE_PATH`, `parsePackageLineSelections`, `buildPackageDetailHrefWithLines`, `isActivityOnlyPackage`, `isPackageReservationDraftReady`
 
 ---
 

@@ -138,10 +138,6 @@ export type PackageDraftValidationData = {
   cruiseDetails: Record<string, CruiseSailingDetail | null | undefined>;
 };
 
-export function isPackageReservationDraftReady(draft: PackageReservationDraft): boolean {
-  return isPackageReservationDraftStructurallyComplete(draft);
-}
-
 export function parseReservationDraft(
   searchParams: Record<string, string | string[] | undefined>,
 ): ReservationDraft | null {
