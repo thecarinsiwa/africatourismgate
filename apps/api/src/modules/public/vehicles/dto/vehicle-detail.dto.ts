@@ -37,6 +37,29 @@ export class VehicleDetailAvailabilitySlotDto {
   endDatetime!: string;
 }
 
+export class VehicleDetailRouteDto {
+  @ApiProperty({ format: 'uuid' })
+  id!: string;
+
+  @ApiProperty({ format: 'uuid' })
+  departureDestinationId!: string;
+
+  @ApiProperty({ example: 'Kinshasa' })
+  departureCity!: string;
+
+  @ApiProperty({ format: 'uuid' })
+  arrivalDestinationId!: string;
+
+  @ApiProperty({ example: 'Lubumbashi' })
+  arrivalCity!: string;
+
+  @ApiProperty({ example: 5500 })
+  priceCents!: number;
+
+  @ApiProperty({ example: 'USD' })
+  currency!: string;
+}
+
 export class VehicleDetailDto {
   @ApiProperty({ format: 'uuid' })
   id!: string;
@@ -50,21 +73,18 @@ export class VehicleDetailDto {
   @ApiProperty({ type: VehicleDetailCategoryDto })
   category!: VehicleDetailCategoryDto;
 
+  @ApiProperty({ type: VehicleDetailRouteDto })
+  route!: VehicleDetailRouteDto;
+
   @ApiProperty({ format: 'date', example: '2026-08-01' })
-  pickupDate!: string;
+  travelDate!: string;
 
-  @ApiProperty({ format: 'date', example: '2026-08-08' })
-  returnDate!: string;
-
-  @ApiProperty({ example: 7 })
-  rentalDays!: number;
-
-  @ApiProperty({ example: 5500 })
-  dailyPriceCents!: number;
+  @ApiProperty({ example: 5500, description: 'Prix fixe du tronçon' })
+  priceCents!: number;
 
   @ApiProperty({
-    example: 38500,
-    description: 'Total rental price (rentalDays × dailyPriceCents)',
+    example: 5500,
+    description: 'Total = priceCents (tarif tronçon)',
   })
   totalPriceCents!: number;
 
@@ -76,4 +96,20 @@ export class VehicleDetailDto {
 
   @ApiProperty({ type: [PublicGalleryImageDto] })
   images!: PublicGalleryImageDto[];
+
+  /** @deprecated Use travelDate */
+  @ApiPropertyOptional({ deprecated: true })
+  pickupDate!: string;
+
+  /** @deprecated Use travelDate */
+  @ApiPropertyOptional({ deprecated: true })
+  returnDate!: string;
+
+  /** @deprecated Always 1 */
+  @ApiPropertyOptional({ deprecated: true })
+  rentalDays!: number;
+
+  /** @deprecated Use priceCents */
+  @ApiPropertyOptional({ deprecated: true })
+  dailyPriceCents!: number;
 }

@@ -49,6 +49,8 @@ export interface BookingCheckoutItem {
   startDate?: string;
   endDate?: string;
   date?: string;
+  /** Vehicle tronçon id (`vehicle_routes`) — required for vehicle lines. */
+  routeId?: string;
 }
 
 export interface BookingCheckoutRequest {

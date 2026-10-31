@@ -70,6 +70,14 @@ export class BookingCheckoutItemDto {
   @IsOptional()
   @IsDateString()
   date?: string;
+
+  @ApiPropertyOptional({
+    format: 'uuid',
+    description: 'Required for vehicle: tronçon (vehicle_routes.id) used for fixed pricing',
+  })
+  @IsOptional()
+  @IsUUID('4')
+  routeId?: string;
 }
 
 export class BookingCheckoutDto {

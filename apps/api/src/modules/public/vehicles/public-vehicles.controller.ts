@@ -13,7 +13,7 @@ export class PublicVehiclesController {
   @Public()
   @Get('vehicles/pickup-locations')
   @ApiOperation({
-    summary: 'List destinations with available rental vehicles',
+    summary: 'List destinations used as départ or arrivée on vehicle routes',
   })
   listPickupLocations() {
     return this.service.listPickupLocations();
@@ -22,7 +22,7 @@ export class PublicVehiclesController {
   @Public()
   @Get('vehicles/search')
   @ApiOperation({
-    summary: 'Search vehicles by pickup location and rental dates',
+    summary: 'Search vehicles by tronçon (départ → arrivée) and travel date',
   })
   search(@Query() query: VehicleSearchQueryDto) {
     return this.service.search(query);
@@ -31,7 +31,7 @@ export class PublicVehiclesController {
   @Public()
   @Get('vehicles/:id')
   @ApiOperation({
-    summary: 'Vehicle detail with agency, category, and availability slot',
+    summary: 'Vehicle detail with selected tronçon, agency, and availability slot',
   })
   getById(@Param('id') id: string, @Query() query: VehicleDetailQueryDto) {
     return this.service.getById(id, query);

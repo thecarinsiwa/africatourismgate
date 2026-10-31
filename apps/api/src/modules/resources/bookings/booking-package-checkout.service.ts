@@ -8,6 +8,7 @@ import {
   FlightClasses,
   Rooms,
   VehicleAvailability,
+  VehicleRoutes,
 } from '../../../entities/generated';
 import { PackageItemEnrichedDto } from '../packages/dto/package-detail.dto';
 import { PackagesService } from '../packages/packages.service';
@@ -39,6 +40,8 @@ export class BookingPackageCheckoutService {
     private readonly flightClassesRepository: Repository<FlightClasses>,
     @InjectRepository(VehicleAvailability)
     private readonly vehicleAvailabilityRepository: Repository<VehicleAvailability>,
+    @InjectRepository(VehicleRoutes)
+    private readonly vehicleRoutesRepository: Repository<VehicleRoutes>,
     @InjectRepository(CabinAvailability)
     private readonly cabinAvailabilityRepository: Repository<CabinAvailability>,
     @InjectRepository(Cabins)
@@ -202,6 +205,8 @@ export class BookingPackageCheckoutService {
         return this.resolveFlightLine(item.itemId, query);
       case 'vehicle':
         return this.resolveVehicleLine(item.itemId, query);
+      case 'troncon':
+        return this.resolveTronconLine(item.itemId, query);
       case 'cruise':
         return this.resolveCruiseLine(item.itemId, query);
       default:
@@ -285,12 +290,23 @@ export class BookingPackageCheckoutService {
     vehicleId: string,
     query: PackageApprovalQuery,
   ): Promise<PackageResolvedLineDto | null> {
+    const route = await this.vehicleRoutesRepository
+      .createQueryBuilder('route')
+      .where('route.vehicleId = :vehicleId', { vehicleId })
+      .andWhere('route.deletedAt IS NULL')
+      .orderBy('route.priceCents', 'ASC')
+      .getOne();
+
     let slot = await this.vehicleAvailabilityRepository
       .createQueryBuilder('slot')
       .where('slot.vehicleId = :vehicleId', { vehicleId })
       .andWhere('slot.deletedAt IS NULL')
-      .andWhere('DATE(slot.startDatetime) <= :pickupDate', { pickupDate: query.startDate })
-      .andWhere('DATE(slot.endDatetime) >= :returnDate', { returnDate: query.endDate })
+      .andWhere('DATE(slot.startDatetime) <= :travelDate', {
+        travelDate: query.startDate,
+      })
+      .andWhere('DATE(slot.endDatetime) >= :travelDate', {
+        travelDate: query.startDate,
+      })
       .orderBy('slot.startDatetime', 'ASC')
       .getOne();
 
@@ -309,8 +325,54 @@ export class BookingPackageCheckoutService {
       lineType: 'vehicle',
       itemId: vehicleId,
       availabilitySlotId: slot.id,
+      routeId: route?.id,
       pickupDate: query.startDate,
-      returnDate: query.endDate,
+      returnDate: query.startDate,
+      travelDate: query.startDate,
+    };
+  }
+
+  private async resolveTronconLine(
+    routeId: string,
+    query: PackageApprovalQuery,
+  ): Promise<PackageResolvedLineDto | null> {
+    const route = await this.vehicleRoutesRepository.findOne({
+      where: { id: routeId },
+    });
+    if (!route || route.deletedAt) return null;
+
+    let slot = await this.vehicleAvailabilityRepository
+      .createQueryBuilder('slot')
+      .where('slot.vehicleId = :vehicleId', { vehicleId: route.vehicleId })
+      .andWhere('slot.deletedAt IS NULL')
+      .andWhere('DATE(slot.startDatetime) <= :travelDate', {
+        travelDate: query.startDate,
+      })
+      .andWhere('DATE(slot.endDatetime) >= :travelDate', {
+        travelDate: query.startDate,
+      })
+      .orderBy('slot.startDatetime', 'ASC')
+      .getOne();
+
+    if (!slot) {
+      slot = await this.vehicleAvailabilityRepository
+        .createQueryBuilder('slot')
+        .where('slot.vehicleId = :vehicleId', { vehicleId: route.vehicleId })
+        .andWhere('slot.deletedAt IS NULL')
+        .orderBy('slot.startDatetime', 'ASC')
+        .getOne();
+    }
+
+    if (!slot) return null;
+
+    return {
+      lineType: 'troncon',
+      itemId: routeId,
+      routeId: route.id,
+      availabilitySlotId: slot.id,
+      pickupDate: query.startDate,
+      returnDate: query.startDate,
+      travelDate: query.startDate,
     };
   }
 
@@ -372,6 +434,15 @@ export class BookingPackageCheckoutService {
         return this.catalogKey('flight', flightClass.flightId);
       }
       case 'vehicle': {
+        if (item.routeId) {
+          const route = await this.vehicleRoutesRepository.findOne({
+            where: { id: item.routeId },
+          });
+          if (!route || route.deletedAt) {
+            throw new NotFoundException(`Tronçon introuvable : ${item.routeId}.`);
+          }
+          return this.catalogKey('troncon', route.id);
+        }
         const slot = await this.vehicleAvailabilityRepository.findOne({
           where: { id: item.referenceId },
         });

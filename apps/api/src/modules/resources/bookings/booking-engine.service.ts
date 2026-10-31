@@ -34,8 +34,10 @@ import { EmailService } from '../../email/email.service';
 import type { EmailAttachment } from '../../email/email.types';
 import { EmailVerificationService } from '../../email-verification/email-verification.service';
 import {
+  assertValidTravelDate,
   assertValidVehicleDates,
   slotCoversRentalPeriod,
+  slotCoversTravelDate,
 } from '../../public/vehicles/vehicle-dates.util';
 import { enumerateDates, addDaysToDateOnly, visitSpanDays } from '../room-availability/room-availability-date.util';
 import { enumerateStayNights } from '../../public/accommodations/stay-dates.util';
@@ -1552,23 +1554,26 @@ export class BookingEngineService {
     if (slot.status !== 'available') {
       throw new BadRequestException('Le véhicule n’est pas disponible sur ce créneau.');
     }
-    if (!item.startDate || !item.endDate) {
+    if (!item.routeId) {
       throw new BadRequestException(
-        'startDate et endDate sont requis pour une location véhicule.',
+        'routeId (tronçon) est requis pour une réservation véhicule.',
       );
     }
 
-    assertValidVehicleDates(item.startDate, item.endDate);
-    if (
-      !slotCoversRentalPeriod(
-        slot.startDatetime,
-        slot.endDatetime,
-        item.startDate,
-        item.endDate,
-      )
-    ) {
+    const travelDate = item.startDate ?? item.endDate ?? item.date;
+    if (!travelDate) {
       throw new BadRequestException(
-        'Le créneau véhicule ne couvre pas la période demandée.',
+        'startDate (date du trajet) est requis pour une réservation véhicule.',
+      );
+    }
+    assertValidTravelDate(travelDate);
+    if (item.endDate && item.startDate) {
+      assertValidVehicleDates(item.startDate, item.endDate);
+    }
+
+    if (!slotCoversTravelDate(slot.startDatetime, slot.endDatetime, travelDate)) {
+      throw new BadRequestException(
+        'Le créneau véhicule ne couvre pas la date du trajet.',
       );
     }
 
@@ -1579,14 +1584,16 @@ export class BookingEngineService {
       throw new NotFoundException('Véhicule introuvable.');
     }
 
-    const route = await this.vehicleRoutesRepository
-      .createQueryBuilder('route')
-      .where('route.vehicleId = :vehicleId', { vehicleId: vehicle.id })
-      .andWhere('route.deletedAt IS NULL')
-      .orderBy('route.priceCents', 'ASC')
-      .getOne();
-    if (!route) {
-      throw new BadRequestException('Aucun tronçon tarifé pour ce véhicule.');
+    const route = await this.vehicleRoutesRepository.findOne({
+      where: { id: item.routeId },
+    });
+    if (!route || route.deletedAt) {
+      throw new NotFoundException('Tronçon introuvable.');
+    }
+    if (route.vehicleId !== vehicle.id) {
+      throw new BadRequestException(
+        'Le tronçon ne correspond pas au véhicule du créneau.',
+      );
     }
 
     const unitPriceCents = route.priceCents;
@@ -1600,8 +1607,8 @@ export class BookingEngineService {
         lineTotalCents: item.quantity * unitPriceCents,
         titleSnapshot: vehicle.licensePlate?.trim() || `Véhicule ${vehicle.id.slice(0, 8)}`,
         currency: route.currency,
-        startDate: item.startDate,
-        endDate: item.endDate,
+        startDate: travelDate,
+        endDate: item.endDate ?? travelDate,
         stock: { kind: 'vehicle', availabilityId: item.referenceId },
       },
     ];
@@ -2004,7 +2011,19 @@ export class BookingEngineService {
             referenceId: line.availabilitySlotId!,
             quantity: 1,
             startDate: line.pickupDate,
-            endDate: line.returnDate,
+            endDate: line.returnDate ?? line.pickupDate,
+            routeId: line.routeId,
+          },
+        ];
+      case 'troncon':
+        return [
+          {
+            itemType: 'vehicle',
+            referenceId: line.availabilitySlotId!,
+            quantity: 1,
+            startDate: line.pickupDate ?? line.travelDate,
+            endDate: line.returnDate ?? line.pickupDate ?? line.travelDate,
+            routeId: line.routeId ?? line.itemId,
           },
         ];
       case 'cruise':

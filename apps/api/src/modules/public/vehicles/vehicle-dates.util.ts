@@ -29,6 +29,13 @@ export function addDaysToDateOnly(iso: string, days: number): string {
 
 export const DEFAULT_BROWSE_RENTAL_DAYS = 7;
 
+export function assertValidTravelDate(travelDate?: string): void {
+  if (!travelDate) {
+    return;
+  }
+  parseDateOnly(travelDate);
+}
+
 export function assertValidVehicleDates(
   pickupDate?: string,
   returnDate?: string,
@@ -47,10 +54,13 @@ export function assertValidVehicleDates(
   }
   const pickup = parseDateOnly(pickupDate);
   const returnDay = parseDateOnly(returnDate);
-  if (returnDay <= pickup) {
+  if (returnDay < pickup) {
     throw new BadRequestException(
-      'returnDate doit être postérieure à pickupDate.',
+      'returnDate doit être postérieure ou égale à pickupDate.',
     );
+  }
+  if (returnDay.getTime() === pickup.getTime()) {
+    return;
   }
   const rentalDays = countRentalDays(pickupDate, returnDate);
   if (rentalDays > MAX_RENTAL_DAYS) {
@@ -58,6 +68,15 @@ export function assertValidVehicleDates(
       `La location ne peut pas dépasser ${MAX_RENTAL_DAYS} jours.`,
     );
   }
+}
+
+/** Slot calendar range must cover a single travel day. */
+export function slotCoversTravelDate(
+  slotStart: Date | string,
+  slotEnd: Date | string,
+  travelDate: string,
+): boolean {
+  return slotCoversRentalPeriod(slotStart, slotEnd, travelDate, travelDate);
 }
 
 /** Calendar rental days: pickup inclusive, return exclusive. */

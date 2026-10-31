@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import {
   Activities,
   Cabins,
+  Destinations,
   FlightClasses,
   Flights,
   PackageItems,
@@ -35,6 +36,8 @@ export class PackageItemPricingService {
     private readonly vehiclesRepository: Repository<Vehicles>,
     @InjectRepository(VehicleRoutes)
     private readonly vehicleRoutesRepository: Repository<VehicleRoutes>,
+    @InjectRepository(Destinations)
+    private readonly destinationsRepository: Repository<Destinations>,
     @InjectRepository(Cabins)
     private readonly cabinsRepository: Repository<Cabins>,
     @InjectRepository(Activities)
@@ -59,6 +62,8 @@ export class PackageItemPricingService {
         return this.resolveFlightPrice(itemId);
       case 'vehicle':
         return this.resolveVehiclePrice(itemId);
+      case 'troncon':
+        return this.resolveTronconPrice(itemId);
       case 'cruise':
         return this.resolveCruisePrice(itemId);
       case 'activity':
@@ -191,6 +196,31 @@ export class PackageItemPricingService {
       label: vehicle.licensePlate?.trim() || `Véhicule ${vehicle.id.slice(0, 8)}`,
       unitPriceCents: minRoute.priceCents,
       currency: minRoute.currency,
+    };
+  }
+
+  private async resolveTronconPrice(routeId: string): Promise<ResolvedItemPrice> {
+    const route = await this.vehicleRoutesRepository.findOne({ where: { id: routeId } });
+    if (!route || route.deletedAt) {
+      throw new NotFoundException('Tronçon introuvable.');
+    }
+
+    const [departure, arrival] = await Promise.all([
+      this.destinationsRepository.findOne({
+        where: { id: route.departureDestinationId },
+      }),
+      this.destinationsRepository.findOne({
+        where: { id: route.arrivalDestinationId },
+      }),
+    ]);
+
+    const departureName = departure && !departure.deletedAt ? departure.name : 'Départ';
+    const arrivalName = arrival && !arrival.deletedAt ? arrival.name : 'Arrivée';
+
+    return {
+      label: `${departureName} → ${arrivalName}`,
+      unitPriceCents: route.priceCents,
+      currency: route.currency,
     };
   }
 
