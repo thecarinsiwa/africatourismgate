@@ -9,6 +9,7 @@ import {
   VehicleAvailability,
   VehicleCategories,
   VehicleImages,
+  VehicleRoutes,
   Vehicles,
 } from '../../../entities/generated';
 import { PublicGalleryImageDto } from '../dto/public-gallery-image.dto';
@@ -37,6 +38,8 @@ export class PublicVehiclesService {
     private readonly categoriesRepository: Repository<VehicleCategories>,
     @InjectRepository(VehicleImages)
     private readonly vehicleImagesRepository: Repository<VehicleImages>,
+    @InjectRepository(VehicleRoutes)
+    private readonly vehicleRoutesRepository: Repository<VehicleRoutes>,
     @InjectRepository(RentalAgencies)
     private readonly agenciesRepository: Repository<RentalAgencies>,
     @InjectRepository(VehicleAvailability)
@@ -127,6 +130,8 @@ export class PublicVehiclesService {
     );
 
     const imageUrlByVehicleId = await this.loadPrimaryImageUrlByVehicleId(vehicleIds);
+    const minRoutePriceByVehicleId =
+      await this.loadMinRoutePriceByVehicleId(vehicleIds);
 
     const results: VehicleSearchResultDto[] = [];
 
@@ -166,6 +171,10 @@ export class PublicVehiclesService {
         (agency.destinationId && cityByDestId.get(agency.destinationId)) ||
         query.pickupLocation?.trim() ||
         '';
+      const routePriceCents = minRoutePriceByVehicleId.get(vehicle.id);
+      if (routePriceCents == null) {
+        continue;
+      }
 
       results.push({
         id: vehicle.id,
@@ -175,8 +184,8 @@ export class PublicVehiclesService {
         agencyName: agency.name,
         agencyAddress: agency.address,
         pickupCity,
-        dailyPriceCents: vehicle.dailyPriceCents,
-        totalPriceCents: vehicle.dailyPriceCents * rentalDays,
+        dailyPriceCents: routePriceCents,
+        totalPriceCents: routePriceCents,
         currency: vehicle.currency,
         rentalDays,
         pickupDate,
@@ -455,6 +464,18 @@ export class PublicVehiclesService {
 
     const images = await this.loadVehicleGallery(vehicle.id);
 
+    const route = await this.vehicleRoutesRepository
+      .createQueryBuilder('route')
+      .where('route.vehicleId = :vehicleId', { vehicleId: vehicle.id })
+      .andWhere('route.deletedAt IS NULL')
+      .orderBy('route.priceCents', 'ASC')
+      .getOne();
+    if (!route) {
+      throw new NotFoundException('Aucun tronçon tarifé pour ce véhicule.');
+    }
+    const routePriceCents = route.priceCents;
+    const routeCurrency = route.currency;
+
     return {
       id: vehicle.id,
       licensePlate: vehicle.licensePlate,
@@ -472,9 +493,9 @@ export class PublicVehiclesService {
       pickupDate: query.pickupDate,
       returnDate: query.returnDate,
       rentalDays,
-      dailyPriceCents: vehicle.dailyPriceCents,
-      totalPriceCents: vehicle.dailyPriceCents * rentalDays,
-      currency: vehicle.currency,
+      dailyPriceCents: routePriceCents,
+      totalPriceCents: routePriceCents,
+      currency: routeCurrency,
       availabilitySlot: slot
         ? {
             id: slot.id,
@@ -504,6 +525,30 @@ export class PublicVehiclesService {
       }
     }
     return imageUrlByVehicleId;
+  }
+
+  private async loadMinRoutePriceByVehicleId(
+    vehicleIds: string[],
+  ): Promise<Map<string, number>> {
+    const uniqueIds = [...new Set(vehicleIds.filter(Boolean))];
+    const map = new Map<string, number>();
+    if (!uniqueIds.length) {
+      return map;
+    }
+
+    const rows = await this.vehicleRoutesRepository
+      .createQueryBuilder('route')
+      .select('route.vehicleId', 'vehicleId')
+      .addSelect('MIN(route.priceCents)', 'minPriceCents')
+      .where('route.deletedAt IS NULL')
+      .andWhere('route.vehicleId IN (:...vehicleIds)', { vehicleIds: uniqueIds })
+      .groupBy('route.vehicleId')
+      .getRawMany<{ vehicleId: string; minPriceCents: string }>();
+
+    for (const row of rows) {
+      map.set(row.vehicleId, Number(row.minPriceCents));
+    }
+    return map;
   }
 
   private async loadVehicleGallery(vehicleId: string): Promise<PublicGalleryImageDto[]> {

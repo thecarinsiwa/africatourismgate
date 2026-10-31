@@ -22,6 +22,7 @@ import {
   RoomAvailability,
   Rooms,
   VehicleAvailability,
+  VehicleRoutes,
   Users,
   Vehicles,
 } from '../../../entities/generated';
@@ -34,7 +35,6 @@ import type { EmailAttachment } from '../../email/email.types';
 import { EmailVerificationService } from '../../email-verification/email-verification.service';
 import {
   assertValidVehicleDates,
-  countRentalDays,
   slotCoversRentalPeriod,
 } from '../../public/vehicles/vehicle-dates.util';
 import { enumerateDates, addDaysToDateOnly, visitSpanDays } from '../room-availability/room-availability-date.util';
@@ -97,6 +97,8 @@ export class BookingEngineService {
     private readonly vehicleAvailabilityRepository: Repository<VehicleAvailability>,
     @InjectRepository(Vehicles)
     private readonly vehiclesRepository: Repository<Vehicles>,
+    @InjectRepository(VehicleRoutes)
+    private readonly vehicleRoutesRepository: Repository<VehicleRoutes>,
     @InjectRepository(CabinAvailability)
     private readonly cabinAvailabilityRepository: Repository<CabinAvailability>,
     @InjectRepository(Cabins)
@@ -1577,8 +1579,17 @@ export class BookingEngineService {
       throw new NotFoundException('Véhicule introuvable.');
     }
 
-    const rentalDays = countRentalDays(item.startDate, item.endDate);
-    const unitPriceCents = vehicle.dailyPriceCents;
+    const route = await this.vehicleRoutesRepository
+      .createQueryBuilder('route')
+      .where('route.vehicleId = :vehicleId', { vehicleId: vehicle.id })
+      .andWhere('route.deletedAt IS NULL')
+      .orderBy('route.priceCents', 'ASC')
+      .getOne();
+    if (!route) {
+      throw new BadRequestException('Aucun tronçon tarifé pour ce véhicule.');
+    }
+
+    const unitPriceCents = route.priceCents;
 
     return [
       {
@@ -1586,9 +1597,9 @@ export class BookingEngineService {
         referenceId: item.referenceId,
         quantity: item.quantity,
         unitPriceCents,
-        lineTotalCents: item.quantity * unitPriceCents * rentalDays,
+        lineTotalCents: item.quantity * unitPriceCents,
         titleSnapshot: vehicle.licensePlate?.trim() || `Véhicule ${vehicle.id.slice(0, 8)}`,
-        currency: vehicle.currency,
+        currency: route.currency,
         startDate: item.startDate,
         endDate: item.endDate,
         stock: { kind: 'vehicle', availabilityId: item.referenceId },

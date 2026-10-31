@@ -10,6 +10,7 @@ import { EmailOperationVerificationsModule } from './resources/email-operation-v
 import { RoomImagesModule } from './resources/room-images/room-images.module';
 import { FlightImagesModule } from './resources/flight-images/flight-images.module';
 import { VehicleImagesModule } from './resources/vehicle-images/vehicle-images.module';
+import { VehicleRoutesModule } from './resources/vehicle-routes/vehicle-routes.module';
 import { ShipImagesModule } from './resources/ship-images/ship-images.module';
 import { ActivityImagesModule } from './resources/activity-images/activity-images.module';
 import { ActivityItineraryStopsModule } from './resources/activity-itinerary-stops/activity-itinerary-stops.module';
@@ -122,6 +123,7 @@ import { Module } from '@nestjs/common';
     RoomImagesModule,
     FlightImagesModule,
     VehicleImagesModule,
+    VehicleRoutesModule,
     ShipImagesModule,
     ActivityImagesModule,
     ActivityItineraryStopsModule,

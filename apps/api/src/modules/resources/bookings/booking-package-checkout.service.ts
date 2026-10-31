@@ -183,7 +183,7 @@ export class BookingPackageCheckoutService {
   }
 
   private catalogKey(
-    itemType: 'property' | 'flight' | 'vehicle' | 'cruise' | 'activity',
+    itemType: 'property' | 'flight' | 'vehicle' | 'cruise' | 'activity' | 'troncon',
     itemId: string,
   ): string {
     return `${itemType}:${itemId}`;

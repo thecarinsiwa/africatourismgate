@@ -6,6 +6,7 @@ import {
   RentalAgencies,
   VehicleAvailability,
   VehicleCategories,
+  VehicleRoutes,
   Vehicles,
 } from '../../../../entities/generated';
 import { EmailModule } from '../../../email/email.module';
@@ -18,6 +19,7 @@ import { VehicleReportsService } from './vehicle-reports.service';
       Vehicles,
       RentalAgencies,
       VehicleCategories,
+      VehicleRoutes,
       VehicleAvailability,
       BookingItems,
       Organizations,

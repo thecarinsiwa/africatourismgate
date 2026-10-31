@@ -12,6 +12,7 @@ import {
   RentalAgencies,
   VehicleAvailability,
   VehicleCategories,
+  VehicleRoutes,
   Vehicles,
 } from '../../../../entities/generated';
 import { DEFAULT_EMAIL_BRANDING } from '../../../email/email-branding.constants';
@@ -56,6 +57,8 @@ export class VehicleReportsService {
     private readonly rentalAgenciesRepository: Repository<RentalAgencies>,
     @InjectRepository(VehicleCategories)
     private readonly vehicleCategoriesRepository: Repository<VehicleCategories>,
+    @InjectRepository(VehicleRoutes)
+    private readonly vehicleRoutesRepository: Repository<VehicleRoutes>,
     @InjectRepository(VehicleAvailability)
     private readonly vehicleAvailabilityRepository: Repository<VehicleAvailability>,
     @InjectRepository(BookingItems)
@@ -118,6 +121,9 @@ export class VehicleReportsService {
     const categoryById = await this.loadCategoryMap(
       vehicles.map((vehicle) => vehicle.categoryId),
     );
+    const minRoutePriceByVehicleId = await this.loadMinRoutePriceMap(
+      vehicles.map((vehicle) => vehicle.id),
+    );
 
     const scopedVehicles: ScopedVehicleRow[] = vehicles.map((vehicle) => {
       const agency = agencyById.get(vehicle.agencyId);
@@ -128,6 +134,7 @@ export class VehicleReportsService {
         agencyName: agency?.name ?? '',
         categoryName: category?.name ?? '',
         categoryExampleModel: category?.exampleModel ?? '',
+        minRoutePriceCents: minRoutePriceByVehicleId.get(vehicle.id) ?? null,
       };
     });
 
@@ -272,20 +279,24 @@ export class VehicleReportsService {
   private loadCategorySummaryRows(vehicles: ScopedVehicleRow[]): VehicleWorkbookCategoryRow[] {
     const grouped = new Map<
       string,
-      { categoryName: string; exampleModel: string; totalCents: number; count: number }
+      { categoryName: string; exampleModel: string; totalCents: number; pricedCount: number; count: number }
     >();
 
     for (const vehicle of vehicles) {
       const key = vehicle.categoryId;
       const existing = grouped.get(key);
+      const routePrice = vehicle.minRoutePriceCents ?? 0;
+      const priced = vehicle.minRoutePriceCents != null ? 1 : 0;
       if (existing) {
-        existing.totalCents += vehicle.dailyPriceCents;
+        existing.totalCents += routePrice;
+        existing.pricedCount += priced;
         existing.count += 1;
       } else {
         grouped.set(key, {
           categoryName: vehicle.categoryName,
           exampleModel: vehicle.categoryExampleModel,
-          totalCents: vehicle.dailyPriceCents,
+          totalCents: routePrice,
+          pricedCount: priced,
           count: 1,
         });
       }
@@ -296,9 +307,34 @@ export class VehicleReportsService {
         categoryName: row.categoryName,
         exampleModel: row.exampleModel,
         vehicleCount: row.count,
-        avgDailyPriceCents: Math.round(row.totalCents / row.count),
+        avgRoutePriceCents:
+          row.pricedCount > 0 ? Math.round(row.totalCents / row.pricedCount) : 0,
       }))
       .sort((a, b) => a.categoryName.localeCompare(b.categoryName));
+  }
+
+  private async loadMinRoutePriceMap(
+    vehicleIds: string[],
+  ): Promise<Map<string, number>> {
+    const uniqueIds = [...new Set(vehicleIds.filter(Boolean))];
+    const map = new Map<string, number>();
+    if (uniqueIds.length === 0) {
+      return map;
+    }
+
+    const rows = await this.vehicleRoutesRepository
+      .createQueryBuilder('route')
+      .select('route.vehicleId', 'vehicleId')
+      .addSelect('MIN(route.priceCents)', 'minPriceCents')
+      .where('route.deletedAt IS NULL')
+      .andWhere('route.vehicleId IN (:...vehicleIds)', { vehicleIds: uniqueIds })
+      .groupBy('route.vehicleId')
+      .getRawMany<{ vehicleId: string; minPriceCents: string }>();
+
+    for (const row of rows) {
+      map.set(row.vehicleId, Number(row.minPriceCents));
+    }
+    return map;
   }
 
   private async loadScopedAvailability(

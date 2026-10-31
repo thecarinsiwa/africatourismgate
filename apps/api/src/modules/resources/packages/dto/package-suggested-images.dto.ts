@@ -16,7 +16,9 @@ export class PackageSuggestedImageGroupDto {
   @ApiProperty()
   packageItemId!: string;
 
-  @ApiProperty({ enum: ['property', 'flight', 'vehicle', 'cruise', 'activity'] })
+  @ApiProperty({
+    enum: ['property', 'flight', 'vehicle', 'cruise', 'activity', 'troncon'],
+  })
   itemType!: PackageItems['itemType'];
 
   @ApiProperty()

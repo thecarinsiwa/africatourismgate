@@ -12,7 +12,7 @@ export type VehicleWorkbookCategoryRow = {
   categoryName: string;
   exampleModel: string;
   vehicleCount: number;
-  avgDailyPriceCents: number;
+  avgRoutePriceCents: number;
 };
 
 export type VehicleWorkbookAvailabilityRow = {
@@ -98,7 +98,9 @@ function buildCatalogRows(
     vehicle.licensePlate ?? '',
     vehicle.agencyName,
     vehicle.categoryName,
-    formatMoneyMajor(vehicle.dailyPriceCents),
+    vehicle.minRoutePriceCents != null
+      ? formatMoneyMajor(vehicle.minRoutePriceCents)
+      : null,
     vehicle.currency,
   ]);
 }
@@ -110,7 +112,7 @@ function buildCategoryRows(
     row.categoryName,
     row.exampleModel,
     row.vehicleCount,
-    formatMoneyMajor(row.avgDailyPriceCents),
+    formatMoneyMajor(row.avgRoutePriceCents),
   ]);
 }
 
@@ -142,7 +144,7 @@ export async function buildVehicleWorkbook(input: VehicleWorkbookInput): Promise
       labels.catalog.licensePlate,
       labels.catalog.agency,
       labels.catalog.category,
-      labels.catalog.dailyPrice,
+      labels.catalog.minRoutePrice,
       labels.catalog.currency,
     ],
     buildCatalogRows(input.vehicles),
@@ -155,7 +157,7 @@ export async function buildVehicleWorkbook(input: VehicleWorkbookInput): Promise
       labels.categories.category,
       labels.categories.exampleModel,
       labels.categories.vehicleCount,
-      labels.categories.avgDailyPrice,
+      labels.categories.avgRoutePrice,
     ],
     buildCategoryRows(input.categories),
   );

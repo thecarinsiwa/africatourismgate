@@ -9,6 +9,7 @@ import {
   PackageItems,
   Properties,
   Rooms,
+  VehicleRoutes,
   Vehicles,
 } from '../../../entities/generated';
 import { PackageItemEnrichedDto, PackagePricingDto } from './dto/package-detail.dto';
@@ -32,6 +33,8 @@ export class PackageItemPricingService {
     private readonly flightClassesRepository: Repository<FlightClasses>,
     @InjectRepository(Vehicles)
     private readonly vehiclesRepository: Repository<Vehicles>,
+    @InjectRepository(VehicleRoutes)
+    private readonly vehicleRoutesRepository: Repository<VehicleRoutes>,
     @InjectRepository(Cabins)
     private readonly cabinsRepository: Repository<Cabins>,
     @InjectRepository(Activities)
@@ -173,10 +176,21 @@ export class PackageItemPricingService {
       throw new NotFoundException('Véhicule introuvable.');
     }
 
+    const minRoute = await this.vehicleRoutesRepository
+      .createQueryBuilder('route')
+      .where('route.vehicleId = :vehicleId', { vehicleId })
+      .andWhere('route.deletedAt IS NULL')
+      .orderBy('route.priceCents', 'ASC')
+      .getOne();
+
+    if (!minRoute) {
+      throw new NotFoundException('Aucun tronçon tarifé pour ce véhicule.');
+    }
+
     return {
       label: vehicle.licensePlate?.trim() || `Véhicule ${vehicle.id.slice(0, 8)}`,
-      unitPriceCents: vehicle.dailyPriceCents,
-      currency: vehicle.currency,
+      unitPriceCents: minRoute.priceCents,
+      currency: minRoute.currency,
     };
   }
 

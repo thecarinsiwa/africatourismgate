@@ -53,7 +53,9 @@ export function renderVehicleCatalogPdf(input: RenderVehicleCatalogPdfInput): Pr
         vehicleLabel(vehicle.licensePlate, vehicle.id),
         vehicle.agencyName,
         vehicle.categoryName,
-        formatMoney(vehicle.dailyPriceCents, vehicle.currency),
+        vehicle.minRoutePriceCents != null
+          ? formatMoney(vehicle.minRoutePriceCents, vehicle.currency)
+          : '—',
       ]),
     );
   }

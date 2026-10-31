@@ -11,14 +11,14 @@ export type VehicleWorkbookLabels = {
     licensePlate: string;
     agency: string;
     category: string;
-    dailyPrice: string;
+    minRoutePrice: string;
     currency: string;
   };
   categories: {
     category: string;
     exampleModel: string;
     vehicleCount: string;
-    avgDailyPrice: string;
+    avgRoutePrice: string;
   };
   availability: {
     licensePlate: string;
@@ -43,14 +43,14 @@ const LABELS: Record<VehicleReportLocale, VehicleWorkbookLabels> = {
       licensePlate: 'Immatriculation',
       agency: 'Agence',
       category: 'Catégorie',
-      dailyPrice: 'Prix / jour',
+      minRoutePrice: 'Prix min tronçon',
       currency: 'Devise',
     },
     categories: {
       category: 'Catégorie',
       exampleModel: 'Modèle type',
       vehicleCount: 'Véhicules',
-      avgDailyPrice: 'Prix moyen / jour',
+      avgRoutePrice: 'Prix moyen tronçon',
     },
     availability: {
       licensePlate: 'Immatriculation',
@@ -77,14 +77,14 @@ const LABELS: Record<VehicleReportLocale, VehicleWorkbookLabels> = {
       licensePlate: 'License plate',
       agency: 'Agency',
       category: 'Category',
-      dailyPrice: 'Price / day',
+      minRoutePrice: 'Min route price',
       currency: 'Currency',
     },
     categories: {
       category: 'Category',
       exampleModel: 'Example model',
       vehicleCount: 'Vehicles',
-      avgDailyPrice: 'Avg price / day',
+      avgRoutePrice: 'Avg route price',
     },
     availability: {
       licensePlate: 'License plate',
@@ -111,14 +111,14 @@ const LABELS: Record<VehicleReportLocale, VehicleWorkbookLabels> = {
       licensePlate: 'Matrícula',
       agency: 'Agencia',
       category: 'Categoría',
-      dailyPrice: 'Precio / día',
+      minRoutePrice: 'Precio mín. tramo',
       currency: 'Moneda',
     },
     categories: {
       category: 'Categoría',
       exampleModel: 'Modelo de ejemplo',
       vehicleCount: 'Vehículos',
-      avgDailyPrice: 'Precio medio / día',
+      avgRoutePrice: 'Precio medio tramo',
     },
     availability: {
       licensePlate: 'Matrícula',

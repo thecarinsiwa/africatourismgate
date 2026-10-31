@@ -1,14 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
 import {
-  IsInt,
-  IsNotEmpty,
   IsOptional,
   IsString,
   IsUUID,
   Length,
   MaxLength,
-  Min,
 } from 'class-validator';
 
 export class CreateVehicleDto {
@@ -25,12 +21,6 @@ export class CreateVehicleDto {
   @IsString()
   @MaxLength(32)
   licensePlate?: string;
-
-  @ApiProperty({ example: 4500 })
-  @Type(() => Number)
-  @IsInt()
-  @Min(0)
-  dailyPriceCents!: number;
 
   @ApiProperty({ example: 'USD', default: 'USD' })
   @IsString()
