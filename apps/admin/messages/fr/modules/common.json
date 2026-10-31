@@ -335,7 +335,8 @@
     "flight": "Vol",
     "vehicle": "Véhicule",
     "cruise": "Cabine (croisière)",
-    "activity": "Activité"
+    "activity": "Activité",
+    "troncon": "Tronçon"
   },
   "activityDifficulty": {
     "unspecified": "— Non renseignée —",

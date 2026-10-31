@@ -821,6 +821,7 @@ export type Translations = {
       vehicle: string;
       cruise: string;
       activity: string;
+      troncon: string;
     };
     galleryAria: string;
     galleryOpenLightbox: string;

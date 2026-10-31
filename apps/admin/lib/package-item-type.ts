@@ -19,6 +19,7 @@ const PACKAGE_ITEM_TYPE_ICONS: Record<
   vehicle: SidebarCarIcon,
   cruise: SidebarShipIcon,
   activity: SidebarActivityIcon,
+  troncon: SidebarCarIcon,
 };
 
 export const PACKAGE_ITEM_TYPES = Object.keys(

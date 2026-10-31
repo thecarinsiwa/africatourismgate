@@ -1,6 +1,12 @@
 import type { ProductGalleryImage } from '../shared/product-images';
 
-export type PackageItemType = 'property' | 'flight' | 'vehicle' | 'cruise' | 'activity';
+export type PackageItemType =
+  | 'property'
+  | 'flight'
+  | 'vehicle'
+  | 'cruise'
+  | 'activity'
+  | 'troncon';
 
 export type PackagePricing = {
   subtotalCents: number;

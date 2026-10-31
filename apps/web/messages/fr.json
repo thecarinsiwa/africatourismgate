@@ -1613,7 +1613,8 @@
       "flight": "Vol",
       "vehicle": "Véhicule",
       "cruise": "Cabine croisière",
-      "activity": "Activité"
+      "activity": "Activité",
+      "troncon": "Tronçon"
     },
     "galleryAria": "Galerie photos du forfait",
     "galleryOpenLightbox": "Agrandir la photo",

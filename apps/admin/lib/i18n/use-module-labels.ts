@@ -352,6 +352,7 @@ export function usePackageItemTypeLabels() {
       vehicle: t('vehicle'),
       cruise: t('cruise'),
       activity: t('activity'),
+      troncon: t('troncon'),
     }),
     [t],
   );

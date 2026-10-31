@@ -1613,7 +1613,8 @@
       "flight": "Flight",
       "vehicle": "Vehicle",
       "cruise": "Cruise cabin",
-      "activity": "Activity"
+      "activity": "Activity",
+      "troncon": "Route segment"
     },
     "galleryAria": "Package photo gallery",
     "galleryOpenLightbox": "Enlarge photo",

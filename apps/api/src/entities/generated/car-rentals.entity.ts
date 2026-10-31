@@ -43,14 +43,33 @@ export class Vehicles extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'license_plate', length: 32, nullable: true })
   licensePlate!: string | null;
 
-  @Column({ type: 'int', name: 'daily_price_cents' })
-  dailyPriceCents!: number;
-
   @Column({ type: 'varchar', name: 'currency', length: 3 })
   currency!: string;
 
   @Column({ type: 'varchar', name: 'organization_id', length: 36, nullable: true })
   organizationId!: string | null;
+
+}
+
+@Entity('vehicle_routes')
+export class VehicleRoutes extends BaseAuditEntity {
+  @PrimaryColumn('uuid', { name: 'id', length: 36 })
+  id!: string;
+
+  @Column({ type: 'varchar', name: 'vehicle_id', length: 36 })
+  vehicleId!: string;
+
+  @Column({ type: 'varchar', name: 'departure_destination_id', length: 36 })
+  departureDestinationId!: string;
+
+  @Column({ type: 'varchar', name: 'arrival_destination_id', length: 36 })
+  arrivalDestinationId!: string;
+
+  @Column({ type: 'int', name: 'price_cents' })
+  priceCents!: number;
+
+  @Column({ type: 'varchar', name: 'currency', length: 3 })
+  currency!: string;
 
 }
 

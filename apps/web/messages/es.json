@@ -1613,7 +1613,8 @@
       "flight": "Vuelo",
       "vehicle": "Vehículo",
       "cruise": "Cabina crucero",
-      "activity": "Actividad"
+      "activity": "Actividad",
+      "troncon": "Tramo"
     },
     "galleryAria": "Galería de fotos del paquete",
     "galleryOpenLightbox": "Ampliar foto",

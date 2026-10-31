@@ -30,6 +30,7 @@ export function PackageItemTypeIcon({ itemType, className = '' }: PackageItemTyp
         </svg>
       );
     case 'vehicle':
+    case 'troncon':
       return (
         <svg className={combined} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
           <path

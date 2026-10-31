@@ -8,6 +8,7 @@ const PACKAGE_ITEM_TYPES = [
   'vehicle',
   'cruise',
   'activity',
+  'troncon',
 ] as const satisfies readonly PackageItems['itemType'][];
 
 export class CreatePackageItemDto {

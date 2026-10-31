@@ -335,7 +335,8 @@
     "flight": "Vuelo",
     "vehicle": "Vehículo",
     "cruise": "Camarote (croisière)",
-    "activity": "Actividad"
+    "activity": "Actividad",
+    "troncon": "Tramo"
   },
   "activityDifficulty": {
     "unspecified": "— No renseignée —",
