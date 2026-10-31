@@ -26,6 +26,11 @@ export const PACKAGE_ITEM_TYPES = Object.keys(
   PACKAGE_ITEM_TYPE_ICONS,
 ) as PackageItemType[];
 
+/** Types proposés à l’ajout dans un forfait (véhicule nu remplacé par tronçon). */
+export const PACKAGE_ITEM_TYPES_ADDABLE = PACKAGE_ITEM_TYPES.filter(
+  (type) => type !== 'vehicle',
+);
+
 export function getPackageItemTypeLabel(
   itemType: PackageItemType,
   labels: Record<PackageItemType, string>,

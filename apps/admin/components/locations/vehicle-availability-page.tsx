@@ -25,6 +25,8 @@ export function VehicleAvailabilityPage({ vehicleId }: VehicleAvailabilityPagePr
   const tAvailability = useTranslations('modules.locations.sections.availability');
   const tDetail = useTranslations('modules.locations.detail');
   const tView = useTranslations('modules.locations.view');
+  const tRoutes = useTranslations('modules.locations.sections.routes');
+  const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
   const formatPrice = useFormatMoney();
   const [state, setState] = useState<
@@ -36,7 +38,7 @@ export function VehicleAvailabilityPage({ vehicleId }: VehicleAvailabilityPagePr
         licensePlate: string | null;
         agencyName: string;
         categoryName: string;
-        dailyPriceCents: number;
+        minRoutePriceCents: number | null;
         currency: string;
       }
   >({ status: 'loading' });
@@ -64,10 +66,14 @@ export function VehicleAvailabilityPage({ vehicleId }: VehicleAvailabilityPagePr
       try {
         const client = getApiClient();
         const vehicle = await client.getVehicle(vehicleId);
-        const [agency, category] = await Promise.all([
+        const [agency, category, routesResult] = await Promise.all([
           client.getRentalAgency(vehicle.agencyId),
           client.getVehicleCategory(vehicle.categoryId),
+          client.listVehicleRoutes({ vehicleId, page: 1, limit: 100 }),
         ]);
+        const prices = routesResult.data.map((r) => r.priceCents);
+        const minRoutePriceCents = prices.length ? Math.min(...prices) : null;
+        const cheapest = routesResult.data.find((r) => r.priceCents === minRoutePriceCents);
         if (!cancelled) {
           setState({
             status: 'ready',
@@ -75,8 +81,8 @@ export function VehicleAvailabilityPage({ vehicleId }: VehicleAvailabilityPagePr
             licensePlate: vehicle.licensePlate,
             agencyName: agency.name,
             categoryName: category.name,
-            dailyPriceCents: vehicle.dailyPriceCents,
-            currency: vehicle.currency,
+            minRoutePriceCents,
+            currency: cheapest?.currency ?? vehicle.currency,
           });
         }
       } catch (error) {
@@ -128,8 +134,14 @@ export function VehicleAvailabilityPage({ vehicleId }: VehicleAvailabilityPagePr
     );
   }
 
-  const { label, licensePlate, agencyName, categoryName, dailyPriceCents, currency } =
-    state;
+  const {
+    label,
+    licensePlate,
+    agencyName,
+    categoryName,
+    minRoutePriceCents,
+    currency,
+  } = state;
 
   return (
     <div className="min-w-0 space-y-6 overflow-x-hidden">
@@ -168,7 +180,12 @@ export function VehicleAvailabilityPage({ vehicleId }: VehicleAvailabilityPagePr
           </div>
           <p className="text-sm text-atg-muted">{tAvailability('intro')}</p>
           <p className="tabular-nums text-sm font-semibold text-atg-fg">
-            {formatPrice(dailyPriceCents, currency)}
+            {minRoutePriceCents != null
+              ? formatPrice(minRoutePriceCents, currency)
+              : tCommon('empty.dash')}
+            <span className="ml-2 text-xs font-normal text-atg-muted">
+              {minRoutePriceCents != null ? tRoutes('minPriceHint') : tRoutes('unpriced')}
+            </span>
           </p>
         </div>
       </div>

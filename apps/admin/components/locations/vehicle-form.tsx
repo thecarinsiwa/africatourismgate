@@ -21,7 +21,6 @@ export type VehicleFormValues = {
   agencyId: string;
   categoryId: string;
   licensePlate: string;
-  dailyPriceCents: string;
   currency: string;
 };
 
@@ -29,7 +28,6 @@ const defaultValues: VehicleFormValues = {
   agencyId: '',
   categoryId: '',
   licensePlate: '',
-  dailyPriceCents: '',
   currency: FALLBACK_TREASURY_CURRENCY,
 };
 
@@ -38,7 +36,6 @@ function vehicleToFormValues(vehicle: Vehicle): VehicleFormValues {
     agencyId: vehicle.agencyId,
     categoryId: vehicle.categoryId,
     licensePlate: vehicle.licensePlate ?? '',
-    dailyPriceCents: String(vehicle.dailyPriceCents),
     currency: vehicle.currency,
   };
 }
@@ -47,7 +44,6 @@ function toPayload(values: VehicleFormValues): CreateVehicleRequest {
   return {
     agencyId: values.agencyId,
     categoryId: values.categoryId,
-    dailyPriceCents: Number(values.dailyPriceCents),
     currency: values.currency.trim().toUpperCase(),
     ...(values.licensePlate.trim()
       ? { licensePlate: values.licensePlate.trim().toUpperCase() }
@@ -140,10 +136,6 @@ export function VehicleForm({
     const errors: Partial<Record<keyof VehicleFormValues, string>> = {};
     if (!values.agencyId) errors.agencyId = t('validation.agencyRequired');
     if (!values.categoryId) errors.categoryId = t('validation.categoryRequired');
-    const cents = Number(values.dailyPriceCents);
-    if (!Number.isFinite(cents) || cents < 0) {
-      errors.dailyPriceCents = tCommon('validation.invalidPriceCents');
-    }
     if (values.currency.trim().length !== 3) {
       errors.currency = tCommon('validation.currencyThreeLettersExample');
     }
@@ -162,7 +154,7 @@ export function VehicleForm({
       const payload = toPayload(values);
       if (mode === 'create') {
         const created = await client.createVehicle(payload);
-        router.push(`/produits/locations/${created.id}`);
+        router.push(`/produits/locations/${created.id}?tab=troncons`);
         router.refresh();
       } else if (vehicleId) {
         await client.updateVehicle(vehicleId, payload);
@@ -211,26 +203,17 @@ export function VehicleForm({
         hint={tCommon('form.optional')}
       />
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Input
-          label={t('dailyPriceCents')}
-          type="number"
-          min={0}
-          value={values.dailyPriceCents}
-          onChange={(e) => updateField('dailyPriceCents', e.target.value)}
-          error={fieldErrors.dailyPriceCents}
-        />
-        <Select
-          label={tCommon('form.currency')}
-          value={values.currency}
-          options={currencyOptions}
-          onChange={(e) => {
-            markCurrencyTouched();
-            updateField('currency', e.target.value);
-          }}
-          error={fieldErrors.currency}
-        />
-      </div>
+      <Select
+        label={tCommon('form.currency')}
+        value={values.currency}
+        options={currencyOptions}
+        onChange={(e) => {
+          markCurrencyTouched();
+          updateField('currency', e.target.value);
+        }}
+        error={fieldErrors.currency}
+        hint={t('currencyHint')}
+      />
     </div>
   );
 

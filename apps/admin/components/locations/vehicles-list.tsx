@@ -70,6 +70,9 @@ export function VehiclesList() {
     | { status: 'error'; message: string }
     | { status: 'ready'; vehicles: Vehicle[]; total: number; totalPages: number }
   >({ status: 'loading' });
+  const [minPriceByVehicleId, setMinPriceByVehicleId] = useState<
+    Map<string, { priceCents: number; currency: string }>
+  >(new Map());
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Vehicle | null>(null);
   const [exportOpen, setExportOpen] = useState(false);
@@ -132,13 +135,36 @@ export function VehiclesList() {
   const load = useCallback(async () => {
     setState({ status: 'loading' });
     try {
-      const result = await getApiClient().listVehicles({
+      const client = getApiClient();
+      const result = await client.listVehicles({
         page,
         limit: PAGE_SIZE,
         search: search || undefined,
         agencyId: agencyFilter || undefined,
         categoryId: categoryFilter || undefined,
       });
+      const priceMap = new Map<string, { priceCents: number; currency: string }>();
+      await Promise.all(
+        result.data.map(async (vehicle) => {
+          try {
+            const routes = await client.listVehicleRoutes({
+              vehicleId: vehicle.id,
+              page: 1,
+              limit: 100,
+            });
+            if (!routes.data.length) return;
+            const min = Math.min(...routes.data.map((r) => r.priceCents));
+            const cheapest = routes.data.find((r) => r.priceCents === min);
+            priceMap.set(vehicle.id, {
+              priceCents: min,
+              currency: cheapest?.currency ?? vehicle.currency,
+            });
+          } catch {
+            /* leave unpriced */
+          }
+        }),
+      );
+      setMinPriceByVehicleId(priceMap);
       setState({
         status: 'ready',
         vehicles: result.data,
@@ -284,13 +310,18 @@ export function VehiclesList() {
       },
       {
         id: 'price',
-        header: tColumns('pricePerDay'),
+        header: tColumns('minRoutePrice'),
         meta: { align: 'right', hideOnMobile: true },
-        cell: ({ row }) => (
-          <span className="tabular-nums text-sm">
-            {formatPrice(row.original.dailyPriceCents, row.original.currency)}
-          </span>
-        ),
+        cell: ({ row }) => {
+          const priced = minPriceByVehicleId.get(row.original.id);
+          return (
+            <span className="tabular-nums text-sm">
+              {priced
+                ? formatPrice(priced.priceCents, priced.currency)
+                : emptyDash}
+            </span>
+          );
+        },
       },
       {
         id: 'actions',
@@ -304,6 +335,7 @@ export function VehiclesList() {
       categoryById,
       emptyDash,
       formatPrice,
+      minPriceByVehicleId,
       renderCategory,
       renderVehicleActions,
       t,
@@ -445,10 +477,15 @@ export function VehiclesList() {
                       </div>
                       <div className="flex min-w-0 items-center justify-between gap-2 rounded-lg bg-atg-surface/50 px-3 py-2">
                         <span className="shrink-0 text-xs text-atg-muted">
-                          {tColumns('pricePerDay')}
+                          {tColumns('minRoutePrice')}
                         </span>
                         <span className="min-w-0 truncate tabular-nums text-sm font-semibold text-atg-fg">
-                          {formatPrice(vehicle.dailyPriceCents, vehicle.currency)}
+                          {(() => {
+                            const priced = minPriceByVehicleId.get(vehicle.id);
+                            return priced
+                              ? formatPrice(priced.priceCents, priced.currency)
+                              : emptyDash;
+                          })()}
                         </span>
                       </div>
                       <div className="mt-auto flex min-w-0 justify-end border-t border-atg-border pt-3">
@@ -489,7 +526,12 @@ export function VehiclesList() {
                           <div className="mt-2 flex min-w-0 flex-wrap items-center justify-between gap-2">
                             {renderCategory(vehicle.categoryId)}
                             <span className="tabular-nums text-sm text-atg-fg">
-                              {formatPrice(vehicle.dailyPriceCents, vehicle.currency)}
+                              {(() => {
+                                const priced = minPriceByVehicleId.get(vehicle.id);
+                                return priced
+                                  ? formatPrice(priced.priceCents, priced.currency)
+                                  : emptyDash;
+                              })()}
                             </span>
                           </div>
                         </div>

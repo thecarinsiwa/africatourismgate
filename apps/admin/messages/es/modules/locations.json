@@ -27,7 +27,8 @@
     "agency": "Agencia",
     "category": "Categoría",
     "licensePlate": "Matrícula",
-    "pricePerDay": "Precio / día"
+    "pricePerDay": "Precio / día",
+    "minRoutePrice": "Precio mín. tramo"
   },
   "form": {
     "submitCreate": "Crear vehículo",
@@ -35,6 +36,7 @@
     "category": "Categoría",
     "licensePlate": "Matrícula",
     "dailyPriceCents": "Precio diario (céntimos)",
+    "currencyHint": "Moneda por defecto del vehículo; los precios se definen por tramo.",
     "validation": {
       "agencyRequired": "La agencia es obligatoria.",
       "categoryRequired": "La categoría es obligatoria."
@@ -73,10 +75,38 @@
     "tabsAria": "Secciones del vehículo",
     "tabs": {
       "vehicle": "Vehículo",
+      "routes": "Tramos",
       "availability": "Disponibilidad"
     }
   },
   "sections": {
+    "routes": {
+      "title": "Tramos",
+      "intro": "Tarifas fijas por trayecto (destino de salida → destino de llegada).",
+      "addRoute": "Añadir tramo",
+      "newRoute": "Nuevo tramo",
+      "editRoute": "Editar tramo",
+      "formHint": "Elija la salida, la llegada y el precio fijo del trayecto.",
+      "editFormHint": "Modifique el trayecto o el precio de este tramo.",
+      "departure": "Destino de salida",
+      "arrival": "Destino de llegada",
+      "priceCents": "Precio (céntimos)",
+      "empty": "Ningún tramo para este vehículo.",
+      "minPriceHint": "desde",
+      "unpriced": "Sin tarifa",
+      "count": "{count, plural, =0 {Ningún tramo} one {# tramo} other {# tramos}}",
+      "columns": {
+        "route": "Trayecto",
+        "price": "Precio"
+      },
+      "validation": {
+        "departureRequired": "El destino de salida es obligatorio.",
+        "arrivalRequired": "El destino de llegada es obligatorio.",
+        "sameDestination": "La salida y la llegada deben ser distintas."
+      },
+      "deleteTitle": "Eliminar tramo",
+      "deleteConfirm": "¿Eliminar el tramo « {label} »?"
+    },
     "availability": {
       "title": "Disponibilidad",
       "intro": "Franjas de disponibilidad por fechas (alquiler, mantenimiento, alquilado).",

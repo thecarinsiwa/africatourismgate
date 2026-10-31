@@ -27,7 +27,8 @@
     "agency": "Agence",
     "category": "Catégorie",
     "licensePlate": "Immatriculation",
-    "pricePerDay": "Prix / jour"
+    "pricePerDay": "Prix / jour",
+    "minRoutePrice": "Prix min tronçon"
   },
   "form": {
     "submitCreate": "Créer le véhicule",
@@ -35,6 +36,7 @@
     "category": "Catégorie",
     "licensePlate": "Plaque d'immatriculation",
     "dailyPriceCents": "Prix journalier (centimes)",
+    "currencyHint": "Devise par défaut du véhicule ; les prix se définissent par tronçon.",
     "validation": {
       "agencyRequired": "Agence obligatoire.",
       "categoryRequired": "Catégorie obligatoire."
@@ -73,10 +75,38 @@
     "tabsAria": "Sections du véhicule",
     "tabs": {
       "vehicle": "Véhicule",
+      "routes": "Tronçons",
       "availability": "Disponibilités"
     }
   },
   "sections": {
+    "routes": {
+      "title": "Tronçons",
+      "intro": "Tarifs fixes par trajet (destination de départ → destination d’arrivée).",
+      "addRoute": "Ajouter un tronçon",
+      "newRoute": "Nouveau tronçon",
+      "editRoute": "Modifier le tronçon",
+      "formHint": "Choisissez le départ, l’arrivée et le prix fixe du trajet.",
+      "editFormHint": "Modifiez le trajet ou le prix de ce tronçon.",
+      "departure": "Destination de départ",
+      "arrival": "Destination d’arrivée",
+      "priceCents": "Prix (centimes)",
+      "empty": "Aucun tronçon pour ce véhicule.",
+      "minPriceHint": "à partir de",
+      "unpriced": "Non tarifé",
+      "count": "{count, plural, =0 {Aucun tronçon} one {# tronçon} other {# tronçons}}",
+      "columns": {
+        "route": "Trajet",
+        "price": "Prix"
+      },
+      "validation": {
+        "departureRequired": "Destination de départ obligatoire.",
+        "arrivalRequired": "Destination d’arrivée obligatoire.",
+        "sameDestination": "Le départ et l’arrivée doivent être distincts."
+      },
+      "deleteTitle": "Supprimer le tronçon",
+      "deleteConfirm": "Supprimer le tronçon « {label} » ?"
+    },
     "availability": {
       "title": "Disponibilités",
       "intro": "Créneaux de disponibilité par dates (location, maintenance, loué).",

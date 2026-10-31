@@ -20,6 +20,7 @@ import type {
   VehicleAvailability,
   VehicleCategory,
   VehicleImage,
+  VehicleRoute,
 } from '@africatourismgate/types';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -53,6 +54,7 @@ export function VehicleViewPage({ vehicleId }: VehicleViewPageProps) {
   const tForm = useTranslations('modules.locations.form');
   const tColumns = useTranslations('modules.locations.columns');
   const tAvailability = useTranslations('modules.locations.sections.availability');
+  const tRoutes = useTranslations('modules.locations.sections.routes');
   const tCommon = useTranslations('modules.common');
   const tCommonColumns = useTranslations('modules.common.columns');
   const tDates = useTranslations('modules.common.dates');
@@ -67,6 +69,7 @@ export function VehicleViewPage({ vehicleId }: VehicleViewPageProps) {
   const [agency, setAgency] = useState<RentalAgency | null>(null);
   const [category, setCategory] = useState<VehicleCategory | null>(null);
   const [images, setImages] = useState<VehicleImage[]>([]);
+  const [routes, setRoutes] = useState<VehicleRoute[]>([]);
   const [slots, setSlots] = useState<VehicleAvailability[]>([]);
   const [slotSearch, setSlotSearch] = useState('');
   const [state, setState] = useState<
@@ -103,17 +106,20 @@ export function VehicleViewPage({ vehicleId }: VehicleViewPageProps) {
     try {
       const client = getApiClient();
       const vehicleData = await client.getVehicle(vehicleId);
-      const [agencyData, categoryData, imagesResult, slotsResult] = await Promise.all([
-        client.getRentalAgency(vehicleData.agencyId).catch(() => null),
-        client.getVehicleCategory(vehicleData.categoryId).catch(() => null),
-        client.listVehicleImages({ vehicleId, page: 1, limit: 100 }),
-        client.listVehicleAvailability({ vehicleId, page: 1, limit: 100 }),
-      ]);
+      const [agencyData, categoryData, imagesResult, routesResult, slotsResult] =
+        await Promise.all([
+          client.getRentalAgency(vehicleData.agencyId).catch(() => null),
+          client.getVehicleCategory(vehicleData.categoryId).catch(() => null),
+          client.listVehicleImages({ vehicleId, page: 1, limit: 100 }),
+          client.listVehicleRoutes({ vehicleId, page: 1, limit: 100 }),
+          client.listVehicleAvailability({ vehicleId, page: 1, limit: 100 }),
+        ]);
 
       setVehicle(vehicleData);
       setAgency(agencyData);
       setCategory(categoryData);
       setImages([...imagesResult.data].sort((a, b) => a.sortOrder - b.sortOrder));
+      setRoutes(routesResult.data);
       setSlots(slotsResult.data);
       setState({ status: 'ready' });
     } catch (error) {
@@ -271,7 +277,30 @@ export function VehicleViewPage({ vehicleId }: VehicleViewPageProps) {
             ) : null}
           </div>
           <p className="tabular-nums text-sm font-semibold text-atg-fg">
-            {formatPrice(vehicle.dailyPriceCents, vehicle.currency)}
+            {(() => {
+              const prices = routes.map((r) => r.priceCents);
+              if (!prices.length) {
+                return (
+                  <>
+                    {emptyDash}{' '}
+                    <span className="text-xs font-normal text-atg-muted">
+                      {tRoutes('unpriced')}
+                    </span>
+                  </>
+                );
+              }
+              const min = Math.min(...prices);
+              const currency =
+                routes.find((r) => r.priceCents === min)?.currency ?? vehicle.currency;
+              return (
+                <>
+                  {formatPrice(min, currency)}{' '}
+                  <span className="text-xs font-normal text-atg-muted">
+                    {tRoutes('minPriceHint')}
+                  </span>
+                </>
+              );
+            })()}
           </p>
         </div>
       </div>
@@ -324,8 +353,23 @@ export function VehicleViewPage({ vehicleId }: VehicleViewPageProps) {
                 value={vehicle.licensePlate ?? tDetail('noLicensePlate')}
               />
               <ProfileField
-                label={tColumns('pricePerDay')}
-                value={formatPrice(vehicle.dailyPriceCents, vehicle.currency)}
+                label={tColumns('minRoutePrice')}
+                value={
+                  routes.length
+                    ? formatPrice(
+                        Math.min(...routes.map((r) => r.priceCents)),
+                        routes.find(
+                          (r) =>
+                            r.priceCents ===
+                            Math.min(...routes.map((x) => x.priceCents)),
+                        )?.currency ?? vehicle.currency,
+                      )
+                    : tRoutes('unpriced')
+                }
+              />
+              <ProfileField
+                label={tRoutes('title')}
+                value={tRoutes('count', { count: routes.length })}
               />
               <ProfileField
                 label={tDates('createdAt')}

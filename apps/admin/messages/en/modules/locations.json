@@ -27,7 +27,8 @@
     "agency": "Agency",
     "category": "Category",
     "licensePlate": "License plate",
-    "pricePerDay": "Price / day"
+    "pricePerDay": "Price / day",
+    "minRoutePrice": "Min route price"
   },
   "form": {
     "submitCreate": "Create vehicle",
@@ -35,6 +36,7 @@
     "category": "Category",
     "licensePlate": "License plate",
     "dailyPriceCents": "Daily price (cents)",
+    "currencyHint": "Default vehicle currency; prices are set per route segment.",
     "validation": {
       "agencyRequired": "Agency is required.",
       "categoryRequired": "Category is required."
@@ -73,10 +75,38 @@
     "tabsAria": "Vehicle sections",
     "tabs": {
       "vehicle": "Vehicle",
+      "routes": "Routes",
       "availability": "Availability"
     }
   },
   "sections": {
+    "routes": {
+      "title": "Route segments",
+      "intro": "Fixed fares by trip (departure destination → arrival destination).",
+      "addRoute": "Add route",
+      "newRoute": "New route",
+      "editRoute": "Edit route",
+      "formHint": "Choose departure, arrival, and the fixed trip price.",
+      "editFormHint": "Update this route’s trip or price.",
+      "departure": "Departure destination",
+      "arrival": "Arrival destination",
+      "priceCents": "Price (cents)",
+      "empty": "No routes for this vehicle.",
+      "minPriceHint": "from",
+      "unpriced": "Not priced",
+      "count": "{count, plural, =0 {No routes} one {# route} other {# routes}}",
+      "columns": {
+        "route": "Trip",
+        "price": "Price"
+      },
+      "validation": {
+        "departureRequired": "Departure destination is required.",
+        "arrivalRequired": "Arrival destination is required.",
+        "sameDestination": "Departure and arrival must be different."
+      },
+      "deleteTitle": "Delete route",
+      "deleteConfirm": "Delete route “{label}”?"
+    },
     "availability": {
       "title": "Availability",
       "intro": "Availability slots by date (rental, maintenance, rented).",

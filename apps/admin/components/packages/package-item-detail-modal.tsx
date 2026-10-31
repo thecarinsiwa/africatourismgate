@@ -20,6 +20,8 @@ function productHref(itemType: PackageItemType, itemId: string): string | null {
       return `/produits/vols/${itemId}/voir`;
     case 'vehicle':
       return `/produits/locations/${itemId}/voir`;
+    case 'troncon':
+      return null;
     case 'activity':
       return `/produits/activites/${itemId}/voir`;
     case 'cruise':
