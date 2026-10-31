@@ -49,13 +49,14 @@ export function CarDetailPageContent({
   const [error, setError] = useState(false);
   const [fetchId, setFetchId] = useState(0);
 
-  const [pickupDate, setPickupDate] = useState(initialSearch.pickupDate ?? '');
-  const [returnDate, setReturnDate] = useState(initialSearch.returnDate ?? '');
+  const [travelDate, setTravelDate] = useState(initialSearch.travelDate ?? '');
+  const [routeId, setRouteId] = useState(initialSearch.routeId ?? '');
 
   const searchContext: CarDetailSearchParams = {
-    pickupLocation: initialSearch.pickupLocation,
-    pickupDate,
-    returnDate,
+    routeId: routeId || undefined,
+    departureLocation: initialSearch.departureLocation,
+    arrivalLocation: initialSearch.arrivalLocation,
+    travelDate,
   };
 
   const apiQuery = toVehicleDetailQuery(searchContext);
@@ -63,13 +64,21 @@ export function CarDetailPageContent({
   const syncUrl = useCallback(
     (overrides: Partial<CarDetailSearchParams> = {}) => {
       const href = buildCarDetailHref(vehicleId, {
-        pickupLocation: initialSearch.pickupLocation,
-        pickupDate: overrides.pickupDate ?? pickupDate,
-        returnDate: overrides.returnDate ?? returnDate,
+        routeId: (overrides.routeId ?? routeId) || undefined,
+        departureLocation: initialSearch.departureLocation,
+        arrivalLocation: initialSearch.arrivalLocation,
+        travelDate: (overrides.travelDate ?? travelDate) || undefined,
       });
       router.replace(href, { scroll: false });
     },
-    [vehicleId, initialSearch.pickupLocation, pickupDate, returnDate, router],
+    [
+      vehicleId,
+      initialSearch.departureLocation,
+      initialSearch.arrivalLocation,
+      routeId,
+      travelDate,
+      router,
+    ],
   );
 
   useEffect(() => {
@@ -88,7 +97,11 @@ export function CarDetailPageContent({
 
     void getVehicleDetail(vehicleId, apiQuery)
       .then((data) => {
-        if (!cancelled) setDetail(data);
+        if (cancelled) return;
+        setDetail(data);
+        if (data.route?.id && data.route.id !== routeId) {
+          setRouteId(data.route.id);
+        }
       })
       .catch((err: unknown) => {
         if (cancelled) return;
@@ -106,46 +119,39 @@ export function CarDetailPageContent({
     };
   }, [vehicleId, apiQuery, fetchId]);
 
-  function handlePickupDateChange(value: string) {
-    setPickupDate(value);
-    syncUrl({ pickupDate: value || undefined, returnDate: returnDate || undefined });
-  }
-
-  function handleReturnDateChange(value: string) {
-    setReturnDate(value);
-    syncUrl({ pickupDate: pickupDate || undefined, returnDate: value || undefined });
+  function handleTravelDateChange(value: string) {
+    setTravelDate(value);
+    syncUrl({ travelDate: value || undefined });
   }
 
   function handleReserve() {
-    if (!pickupDate || !returnDate || returnDate <= pickupDate) {
+    if (!travelDate) {
       scrollToBookingSidebar({ openDrawer: true });
       return;
     }
-    if (!detail?.availabilitySlot?.id) return;
+    if (!detail?.availabilitySlot?.id || !detail.route?.id) return;
 
     const query = buildReservationQuery({
       kind: 'vehicle',
       vehicleId,
       availabilitySlotId: detail.availabilitySlot.id,
-      pickupDate,
-      returnDate,
+      routeId: detail.route.id,
+      travelDate,
     });
     router.push(`/booking/cart?${query}`);
   }
 
   const listHref = `/cars${buildCarsSearchQuery({
-    pickupLocation: initialSearch.pickupLocation,
-    pickupDate: pickupDate || initialSearch.pickupDate,
-    returnDate: returnDate || initialSearch.returnDate,
+    departureLocation: initialSearch.departureLocation,
+    arrivalLocation: initialSearch.arrivalLocation,
+    travelDate: travelDate || initialSearch.travelDate,
   })}`;
 
   const sidebarProps = detail
     ? {
         detail,
-        pickupDate,
-        returnDate,
-        onPickupDateChange: handlePickupDateChange,
-        onReturnDateChange: handleReturnDateChange,
+        travelDate,
+        onTravelDateChange: handleTravelDateChange,
         onReserve: handleReserve,
         t: c,
         locale,
@@ -230,10 +236,7 @@ export function CarDetailPageContent({
     detail.category.name ??
     detail.licensePlate ??
     c.categoryTitle;
-  const daysLabel =
-    detail.rentalDays === 1
-      ? `1 ${c.daySingular}`
-      : `${detail.rentalDays} ${c.dayPlural}`;
+  const routeLabel = `${detail.route.departureCity} → ${detail.route.arrivalCity}`;
 
   return (
     <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
@@ -306,11 +309,10 @@ export function CarDetailPageContent({
                     d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
                   />
                 </svg>
-                {initialSearch.pickupLocation ?? detail.agency.city}
+                {routeLabel}
               </p>
               <p className="mt-2 text-sm text-atg-muted">
-                {formatDisplayDate(detail.pickupDate, locale)} →{' '}
-                {formatDisplayDate(detail.returnDate, locale)} · {daysLabel}
+                {formatDisplayDate(detail.travelDate, locale)}
               </p>
               <CarSpecBadges
                 specs={vehicleSpecs}
@@ -329,10 +331,9 @@ export function CarDetailPageContent({
               agencyName={detail.agency.name}
               agencyCity={detail.agency.city}
               agencyAddress={detail.agency.address}
-              pickupLocation={initialSearch.pickupLocation}
-              pickupDate={detail.pickupDate}
-              returnDate={detail.returnDate}
-              daysLabel={daysLabel}
+              departureCity={detail.route.departureCity}
+              arrivalCity={detail.route.arrivalCity}
+              travelDate={detail.travelDate}
               t={c}
               locale={locale}
             />

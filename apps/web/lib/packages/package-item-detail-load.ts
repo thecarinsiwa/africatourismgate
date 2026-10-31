@@ -99,10 +99,11 @@ export async function loadPackageItemDetail(
       return {
         kind: 'vehicle',
         detail: await getVehicleDetail(item.itemId, {
-          pickupDate: start,
-          returnDate: end,
+          travelDate: start,
         }),
       };
+    case 'troncon':
+      throw new Error('Tronçon package item has no standalone public detail page');
     case 'property':
       return {
         kind: 'property',

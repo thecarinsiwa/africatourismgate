@@ -24,22 +24,20 @@ type CarCardProps = {
 
 export function CarCard({ vehicle, t, searchParams = {}, locale }: CarCardProps) {
   const ctaLabel = useBookingCtaLabel('vehicle');
+  const travelDate = searchParams.travelDate ?? vehicle.travelDate;
   const detailParams: CarDetailSearchParams = {
-    pickupLocation: searchParams.pickupLocation ?? vehicle.pickupCity,
-    pickupDate: searchParams.pickupDate ?? vehicle.pickupDate,
-    returnDate: searchParams.returnDate ?? vehicle.returnDate,
+    routeId: vehicle.routeId,
+    departureLocation: searchParams.departureLocation ?? vehicle.departureCity,
+    arrivalLocation: searchParams.arrivalLocation ?? vehicle.arrivalCity,
+    travelDate,
   };
   const detailHref = buildCarDetailHref(vehicle.id, detailParams);
   const reserveHref = buildCarDetailHref(vehicle.id, detailParams, '#reserve');
-  const dailyLabel = formatCarPrice(vehicle.dailyPriceCents, vehicle.currency);
-  const totalLabel = formatCarPrice(vehicle.totalPriceCents, vehicle.currency);
-  const daysLabel =
-    vehicle.rentalDays === 1
-      ? `1 ${t.daySingular}`
-      : `${vehicle.rentalDays} ${t.dayPlural}`;
+  const priceLabel = formatCarPrice(vehicle.priceCents ?? vehicle.totalPriceCents, vehicle.currency);
   const displayTitle =
     vehicle.exampleModel ?? vehicle.licensePlate ?? vehicle.categoryName;
   const specs = resolveVehicleSpecs(vehicle.categoryName);
+  const routeLabel = `${vehicle.departureCity} → ${vehicle.arrivalCity}`;
 
   const imageOverlay = (
     <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
@@ -85,16 +83,15 @@ export function CarCard({ vehicle, t, searchParams = {}, locale }: CarCardProps)
       }
       meta={
         <>
-          <p className="text-sm font-medium text-primary">{vehicle.pickupCity}</p>
+          <p className="text-sm font-medium text-primary">{routeLabel}</p>
           {vehicle.licensePlate ? (
             <p className="mt-0.5 text-xs text-atg-muted">
               {t.licensePlate}: {vehicle.licensePlate}
             </p>
           ) : null}
-          {detailParams.pickupDate && detailParams.returnDate ? (
+          {travelDate ? (
             <p className="mt-1 text-sm text-atg-muted">
-              {formatDisplayDate(detailParams.pickupDate, locale)} →{' '}
-              {formatDisplayDate(detailParams.returnDate, locale)} · {daysLabel}
+              {formatDisplayDate(travelDate, locale)}
             </p>
           ) : null}
         </>
@@ -110,8 +107,8 @@ export function CarCard({ vehicle, t, searchParams = {}, locale }: CarCardProps)
       }
       price={
         <PriceDisplay
-          prefixLabel={`${dailyLabel} ${t.perDay}`}
-          amount={totalLabel}
+          prefixLabel={t.routePriceLabel}
+          amount={priceLabel}
           suffixLabel={t.totalRental}
         />
       }

@@ -107,7 +107,10 @@ function resolveFullPageHref(
     case 'vehicle':
       return buildCarDetailHref(
         data?.kind === 'vehicle' ? data.detail.id : item.itemId,
-        { pickupDate: start, returnDate: end },
+        {
+          travelDate: start,
+          routeId: data?.kind === 'vehicle' ? data.detail.route.id : undefined,
+        },
       );
     case 'property':
       return buildHotelDetailHref(
@@ -215,10 +218,17 @@ function ItemDetailBody({
         <dl className="grid gap-3 sm:grid-cols-2">
           <MetaCell label={c.categoryTitle} value={detail.category.name} />
           <MetaCell label={c.agencyTitle} value={detail.agency.name} />
-          <MetaCell label={c.rentalPeriod} value={`${detail.rentalDays} ${detail.rentalDays === 1 ? c.daySingular : c.dayPlural}`} />
+          <MetaCell
+            label={c.routeLabel}
+            value={`${detail.route.departureCity} → ${detail.route.arrivalCity}`}
+          />
+          <MetaCell
+            label={c.travelDate}
+            value={detail.travelDate}
+          />
           <MetaCell
             label={t.itemDetailPriceLabel}
-            value={`${formatCarPrice(detail.totalPriceCents, detail.currency)} (${formatCarPrice(detail.dailyPriceCents, detail.currency)}${c.perDay})`}
+            value={formatCarPrice(detail.totalPriceCents, detail.currency)}
           />
         </dl>
       </div>

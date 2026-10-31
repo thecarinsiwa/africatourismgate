@@ -39,8 +39,11 @@ export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
   const [fetchId, setFetchId] = useState(0);
 
   const apiQuery = useMemo(() => toVehicleSearchQuery(initialSearch), [initialSearch]);
-  const hasDateFilter = Boolean(initialSearch.pickupDate || initialSearch.returnDate);
-  const displayLocation = initialSearch.pickupLocation?.trim() || c.anyLocation;
+  const hasDateFilter = Boolean(initialSearch.travelDate);
+  const displayLocation =
+    [initialSearch.departureLocation, initialSearch.arrivalLocation]
+      .filter(Boolean)
+      .join(' → ') || c.anyLocation;
 
   useEffect(() => {
     let cancelled = false;
@@ -96,18 +99,16 @@ export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
   const paginationLabels = useMemo(() => toListingPaginationLabels(tListing), [tListing]);
 
   const searchSummary = [
-    initialSearch.pickupDate &&
-      `${c.pickupDate}: ${formatDisplayDate(initialSearch.pickupDate, locale)}`,
-    initialSearch.returnDate &&
-      `${c.returnDate}: ${formatDisplayDate(initialSearch.returnDate, locale)}`,
+    initialSearch.travelDate &&
+      `${c.travelDate}: ${formatDisplayDate(initialSearch.travelDate, locale)}`,
   ]
     .filter(Boolean)
     .join(' · ');
 
   const defaultDetailSearchParams = {
-    pickupLocation: initialSearch.pickupLocation,
-    pickupDate: initialSearch.pickupDate,
-    returnDate: initialSearch.returnDate,
+    departureLocation: initialSearch.departureLocation,
+    arrivalLocation: initialSearch.arrivalLocation,
+    travelDate: initialSearch.travelDate,
   };
 
   return (
@@ -218,16 +219,16 @@ export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
         ) : null}
         {pageItems.map((vehicle) => (
           <CarCard
-            key={vehicle.id}
+            key={`${vehicle.id}-${vehicle.routeId}`}
             vehicle={vehicle}
             t={c}
             searchParams={{
-              pickupLocation:
-                defaultDetailSearchParams.pickupLocation ?? vehicle.pickupCity,
-              pickupDate:
-                defaultDetailSearchParams.pickupDate ?? vehicle.pickupDate,
-              returnDate:
-                defaultDetailSearchParams.returnDate ?? vehicle.returnDate,
+              departureLocation:
+                defaultDetailSearchParams.departureLocation ?? vehicle.departureCity,
+              arrivalLocation:
+                defaultDetailSearchParams.arrivalLocation ?? vehicle.arrivalCity,
+              travelDate: defaultDetailSearchParams.travelDate ?? vehicle.travelDate,
+              routeId: vehicle.routeId,
             }}
             locale={locale}
           />

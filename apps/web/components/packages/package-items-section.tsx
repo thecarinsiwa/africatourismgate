@@ -15,6 +15,7 @@ const ITEM_TYPE_LABEL_KEYS: Record<
   vehicle: 'vehicle',
   cruise: 'cruise',
   activity: 'activity',
+  troncon: 'troncon',
 };
 
 type PackageItemsSectionProps = {

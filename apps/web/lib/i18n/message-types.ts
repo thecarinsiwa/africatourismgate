@@ -467,6 +467,11 @@ export type Translations = {
     pickupDate: string;
     returnDate: string;
     pickupLocation: string;
+    departureLocation: string;
+    arrivalLocation: string;
+    travelDate: string;
+    routeLabel: string;
+    routePriceLabel: string;
     noResults: string;
     noResultsHint: string;
     noSearchParams: string;

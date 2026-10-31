@@ -10,8 +10,7 @@ import type { PackageVehicleLineSelection } from '../../lib/packages/package-lin
 type PackageVehicleConfigItemProps = {
   vehicleId: string;
   label: string;
-  pickupDate: string;
-  returnDate: string;
+  travelDate: string;
   selectedLine: PackageVehicleLineSelection | null;
   onChange: (line: PackageVehicleLineSelection | null) => void;
   t: Translations['packages'];
@@ -21,8 +20,7 @@ type PackageVehicleConfigItemProps = {
 export function PackageVehicleConfigItem({
   vehicleId,
   label,
-  pickupDate,
-  returnDate,
+  travelDate,
   selectedLine,
   onChange,
   t,
@@ -37,7 +35,7 @@ export function PackageVehicleConfigItem({
 
   useEffect(() => {
     let cancelled = false;
-    if (!pickupDate || !returnDate || returnDate <= pickupDate) {
+    if (!travelDate) {
       setDetail(null);
       setLoading(false);
       setError(false);
@@ -47,17 +45,17 @@ export function PackageVehicleConfigItem({
     setLoading(true);
     setError(false);
 
-    void getVehicleDetail(vehicleId, { pickupDate, returnDate })
+    void getVehicleDetail(vehicleId, { travelDate })
       .then((data) => {
         if (cancelled) return;
         setDetail(data);
-        if (data.availabilitySlot?.id) {
+        if (data.availabilitySlot?.id && data.route?.id) {
           onChangeRef.current({
             lineType: 'vehicle',
             itemId: vehicleId,
             availabilitySlotId: data.availabilitySlot.id,
-            pickupDate,
-            returnDate,
+            routeId: data.route.id,
+            travelDate,
           });
         } else {
           onChangeRef.current(null);
@@ -77,12 +75,12 @@ export function PackageVehicleConfigItem({
     return () => {
       cancelled = true;
     };
-  }, [vehicleId, pickupDate, returnDate]);
+  }, [vehicleId, travelDate]);
 
   const configured =
     selectedLine?.itemId === vehicleId &&
-    selectedLine.pickupDate === pickupDate &&
-    selectedLine.returnDate === returnDate;
+    selectedLine.routeId === detail?.route.id &&
+    selectedLine.travelDate === travelDate;
 
   const unavailable = Boolean(detail && !detail.availabilitySlot);
 
@@ -95,29 +93,29 @@ export function PackageVehicleConfigItem({
         <h3 className="mt-1 text-lg font-bold text-atg-fg">{label}</h3>
       </header>
 
-      {!pickupDate || !returnDate || returnDate <= pickupDate ? (
+      {!travelDate ? (
         <p className="text-sm text-amber-700 dark:text-amber-300">{t.selectRentalDatesHint}</p>
       ) : null}
 
-      {pickupDate && returnDate && returnDate > pickupDate && loading && (
+      {travelDate && loading && (
         <div className="flex items-center gap-2.5 py-3">
           <Spinner size="sm" variant="primary" />
           <span className="text-sm text-atg-muted">{t.loadingVehicleAvailability}</span>
         </div>
       )}
 
-      {pickupDate && returnDate && returnDate > pickupDate && error && (
+      {travelDate && error && (
         <p className="text-sm text-red-700 dark:text-red-300">{t.vehicleAvailabilityError}</p>
       )}
 
-      {pickupDate && returnDate && returnDate > pickupDate && !loading && !error && unavailable && (
+      {travelDate && !loading && !error && unavailable && (
         <p className="text-sm text-amber-700 dark:text-amber-300">{t.vehicleAvailabilityError}</p>
       )}
 
       {!loading && !error && detail && detail.availabilitySlot && configured && (
         <p className="text-sm text-emerald-700 dark:text-emerald-300">
-          {t.vehicleDatesConfirmed} · {detail.rentalDays}{' '}
-          {detail.rentalDays === 1 ? c.daySingular : c.dayPlural}
+          {t.vehicleDatesConfirmed} · {detail.route.departureCity} →{' '}
+          {detail.route.arrivalCity} · {c.routePriceLabel}
         </p>
       )}
     </article>

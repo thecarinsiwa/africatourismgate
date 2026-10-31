@@ -1,9 +1,10 @@
 import type { VehicleDetailQuery, VehicleSearchQuery } from './types';
 
 export type CarsSearchParams = {
-  pickupLocation?: string;
-  pickupDate?: string;
-  returnDate?: string;
+  departureLocation?: string;
+  arrivalLocation?: string;
+  travelDate?: string;
+  routeId?: string;
 };
 
 export type CarDetailSearchParams = CarsSearchParams;
@@ -20,47 +21,32 @@ export function readSearchParam(
 export function normalizeCarsSearchParams(
   raw: Record<string, string | string[] | undefined>,
 ): CarsSearchParams {
-  const pickupLocation =
+  const departureLocation =
+    readSearchParam(raw.departureLocation) ??
     readSearchParam(raw.pickupLocation) ??
     readSearchParam(raw.destination) ??
+    readSearchParam(raw.from) ??
     readSearchParam(raw.to);
-  const pickupDate =
+  const arrivalLocation =
+    readSearchParam(raw.arrivalLocation) ?? readSearchParam(raw.dropOffLocation);
+  const travelDate =
+    readSearchParam(raw.travelDate) ??
     readSearchParam(raw.pickupDate) ??
     readSearchParam(raw.checkIn) ??
     readSearchParam(raw.departDate);
-  const returnDate =
-    readSearchParam(raw.returnDate) ?? readSearchParam(raw.checkOut);
+  const routeId = readSearchParam(raw.routeId);
 
   return {
-    pickupLocation: pickupLocation?.trim() || undefined,
-    pickupDate,
-    returnDate,
+    departureLocation: departureLocation?.trim() || undefined,
+    arrivalLocation: arrivalLocation?.trim() || undefined,
+    travelDate,
+    routeId: routeId?.trim() || undefined,
   };
 }
 
+/** True when the user supplied a travel date (optionally with endpoints). */
 export function hasRequiredCarDates(params: CarsSearchParams): boolean {
-  return Boolean(
-    params.pickupLocation?.trim() &&
-      params.pickupDate &&
-      params.returnDate &&
-      params.returnDate > params.pickupDate,
-  );
-}
-
-/** Calendar rental days: pickup inclusive, return exclusive (matches API). */
-export function countRentalDays(pickupDate: string, returnDate: string): number {
-  const pickup = parseDateOnly(pickupDate);
-  const returnDay = parseDateOnly(returnDate);
-  if (!pickup || !returnDay || returnDay <= pickup) return 0;
-  const msPerDay = 24 * 60 * 60 * 1000;
-  return Math.round((returnDay.getTime() - pickup.getTime()) / msPerDay);
-}
-
-export function computeVehicleTotal(
-  dailyPriceCents: number,
-  rentalDays: number,
-): number {
-  return dailyPriceCents * rentalDays;
+  return Boolean(params.travelDate?.trim());
 }
 
 export function formatCarPrice(cents: number, currency: string): string {
@@ -78,9 +64,10 @@ export function formatCarPrice(cents: number, currency: string): string {
 
 export function buildCarsSearchQuery(params: CarsSearchParams): string {
   const qs = new URLSearchParams();
-  if (params.pickupLocation) qs.set('pickupLocation', params.pickupLocation);
-  if (params.pickupDate) qs.set('pickupDate', params.pickupDate);
-  if (params.returnDate) qs.set('returnDate', params.returnDate);
+  if (params.departureLocation) qs.set('departureLocation', params.departureLocation);
+  if (params.arrivalLocation) qs.set('arrivalLocation', params.arrivalLocation);
+  if (params.travelDate) qs.set('travelDate', params.travelDate);
+  if (params.routeId) qs.set('routeId', params.routeId);
   const query = qs.toString();
   return query ? `?${query}` : '';
 }
@@ -91,9 +78,10 @@ export function buildCarDetailHref(
   hash?: string,
 ): string {
   const qs = new URLSearchParams();
-  if (params.pickupLocation) qs.set('pickupLocation', params.pickupLocation);
-  if (params.pickupDate) qs.set('pickupDate', params.pickupDate);
-  if (params.returnDate) qs.set('returnDate', params.returnDate);
+  if (params.routeId) qs.set('routeId', params.routeId);
+  if (params.departureLocation) qs.set('departureLocation', params.departureLocation);
+  if (params.arrivalLocation) qs.set('arrivalLocation', params.arrivalLocation);
+  if (params.travelDate) qs.set('travelDate', params.travelDate);
   const query = qs.toString();
   const base = `/cars/${encodeURIComponent(id)}${query ? `?${query}` : ''}`;
   return hash ? `${base}${hash}` : base;
@@ -102,11 +90,13 @@ export function buildCarDetailHref(
 export function toVehicleSearchQuery(params: CarsSearchParams): VehicleSearchQuery {
   const query: VehicleSearchQuery = { limit: 50 };
 
-  if (params.pickupLocation?.trim()) {
-    query.pickupLocation = params.pickupLocation.trim();
+  if (params.departureLocation?.trim()) {
+    query.departureLocation = params.departureLocation.trim();
   }
-  if (params.pickupDate) query.pickupDate = params.pickupDate;
-  if (params.returnDate) query.returnDate = params.returnDate;
+  if (params.arrivalLocation?.trim()) {
+    query.arrivalLocation = params.arrivalLocation.trim();
+  }
+  if (params.travelDate) query.travelDate = params.travelDate;
 
   return query;
 }
@@ -114,21 +104,14 @@ export function toVehicleSearchQuery(params: CarsSearchParams): VehicleSearchQue
 export function toVehicleDetailQuery(
   params: CarDetailSearchParams,
 ): VehicleDetailQuery | null {
-  if (!params.pickupDate || !params.returnDate || params.returnDate <= params.pickupDate) {
+  if (!params.travelDate) {
     return null;
   }
 
-  return {
-    pickupDate: params.pickupDate,
-    returnDate: params.returnDate,
+  const query: VehicleDetailQuery = {
+    travelDate: params.travelDate,
   };
-}
+  if (params.routeId) query.routeId = params.routeId;
 
-function parseDateOnly(iso: string): Date | null {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
-  if (!match) return null;
-  const year = Number(match[1]);
-  const month = Number(match[2]);
-  const day = Number(match[3]);
-  return new Date(Date.UTC(year, month - 1, day));
+  return query;
 }

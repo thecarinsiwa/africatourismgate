@@ -17,8 +17,11 @@ export type PackageConfigContext = {
   guests: number;
   departureDate: string;
   passengers: number;
-  pickupDate: string;
-  returnDate: string;
+  travelDate: string;
+  /** @deprecated Prefer travelDate */
+  pickupDate?: string;
+  /** @deprecated Prefer travelDate */
+  returnDate?: string;
   sailingId: string;
 };
 
@@ -117,8 +120,7 @@ export function PackageItemConfigItem({
         <PackageVehicleConfigItem
           vehicleId={item.itemId}
           label={item.label}
-          pickupDate={context.pickupDate}
-          returnDate={context.returnDate}
+          travelDate={context.travelDate || context.pickupDate || ''}
           selectedLine={
             selectedLine?.lineType === 'vehicle' && selectedLine.itemId === item.itemId
               ? selectedLine

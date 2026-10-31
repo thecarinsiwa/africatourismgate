@@ -75,6 +75,7 @@ export type {
   VehicleDetailAvailabilitySlot,
   VehicleDetailCategory,
   VehicleDetailQuery,
+  VehicleDetailRoute,
   VehicleSearchQuery,
   VehicleSearchResult,
 } from '../cars/types';
@@ -291,9 +292,13 @@ export async function getFlightDetail(
 
 function buildVehicleSearchQuery(params: VehicleSearchQuery): string {
   const qs = new URLSearchParams();
-  if (params.pickupLocation) qs.set('pickupLocation', params.pickupLocation);
-  if (params.pickupDate) qs.set('pickupDate', params.pickupDate);
-  if (params.returnDate) qs.set('returnDate', params.returnDate);
+  const departure =
+    params.departureLocation?.trim() || params.pickupLocation?.trim();
+  const arrival = params.arrivalLocation?.trim();
+  const travelDate = params.travelDate || params.pickupDate;
+  if (departure) qs.set('departureLocation', departure);
+  if (arrival) qs.set('arrivalLocation', arrival);
+  if (travelDate) qs.set('travelDate', travelDate);
   if (params.page !== undefined) qs.set('page', String(params.page));
   if (params.limit !== undefined) qs.set('limit', String(params.limit));
   const s = qs.toString();
@@ -310,8 +315,15 @@ export async function searchVehicles(
 
 function buildVehicleDetailQuery(params: VehicleDetailQuery): string {
   const qs = new URLSearchParams();
-  qs.set('pickupDate', params.pickupDate);
-  qs.set('returnDate', params.returnDate);
+  if (params.routeId) qs.set('routeId', params.routeId);
+  if (params.departureDestinationId) {
+    qs.set('departureDestinationId', params.departureDestinationId);
+  }
+  if (params.arrivalDestinationId) {
+    qs.set('arrivalDestinationId', params.arrivalDestinationId);
+  }
+  const travelDate = params.travelDate || params.pickupDate;
+  if (travelDate) qs.set('travelDate', travelDate);
   const s = qs.toString();
   return s ? `?${s}` : '';
 }
@@ -512,7 +524,7 @@ export type PackageResolvedLineQuery = {
 };
 
 export type PackageResolvedLine = {
-  lineType: 'property' | 'flight' | 'vehicle' | 'cruise' | 'activity';
+  lineType: 'property' | 'flight' | 'vehicle' | 'cruise' | 'activity' | 'troncon';
   itemId: string;
   scheduleId?: string;
   date?: string;
@@ -525,6 +537,8 @@ export type PackageResolvedLine = {
   departureDate?: string;
   passengers?: number;
   availabilitySlotId?: string;
+  routeId?: string;
+  travelDate?: string;
   pickupDate?: string;
   returnDate?: string;
   sailingId?: string;

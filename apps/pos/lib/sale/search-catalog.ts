@@ -176,8 +176,8 @@ async function searchVehicles(query: string): Promise<SaleCatalogHit[]> {
     kind: 'vehicle' as const,
     vehicle,
     title: vehicle.licensePlate ?? `Véhicule ${vehicle.id.slice(0, 8)}`,
-    subtitle: `${formatCents(vehicle.dailyPriceCents, vehicle.currency)} / jour`,
-    priceCents: vehicle.dailyPriceCents,
+    subtitle: vehicle.currency,
+    priceCents: 0,
     currency: vehicle.currency,
   }));
 }

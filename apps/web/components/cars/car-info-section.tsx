@@ -11,10 +11,9 @@ type CarInfoSectionProps = {
   agencyName: string;
   agencyCity?: string;
   agencyAddress?: string | null;
-  pickupLocation?: string;
-  pickupDate: string;
-  returnDate: string;
-  daysLabel: string;
+  departureCity?: string;
+  arrivalCity?: string;
+  travelDate: string;
   t: Translations['cars'];
   locale?: string;
 };
@@ -27,10 +26,9 @@ export function CarInfoSection({
   agencyName,
   agencyCity,
   agencyAddress,
-  pickupLocation,
-  pickupDate,
-  returnDate,
-  daysLabel,
+  departureCity,
+  arrivalCity,
+  travelDate,
   t,
   locale,
 }: CarInfoSectionProps) {
@@ -92,23 +90,24 @@ export function CarInfoSection({
           ) : null}
         </div>
 
-        {pickupLocation ? (
+        {(departureCity || arrivalCity) && (
           <div>
             <dt className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
-              {t.pickupLocation}
+              {t.routeLabel}
             </dt>
-            <dd className="mt-1 font-medium text-atg-fg">{pickupLocation}</dd>
+            <dd className="mt-1 font-medium text-atg-fg">
+              {departureCity ?? '—'} → {arrivalCity ?? '—'}
+            </dd>
           </div>
-        ) : null}
+        )}
 
         <div>
           <dt className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
-            {t.rentalPeriod}
+            {t.travelDate}
           </dt>
           <dd className="mt-1 font-medium text-atg-fg">
-            {formatDisplayDate(pickupDate, locale)} → {formatDisplayDate(returnDate, locale)}
+            {formatDisplayDate(travelDate, locale)}
           </dd>
-          <dd className="mt-0.5 text-atg-muted">{daysLabel}</dd>
         </div>
       </dl>
     </section>

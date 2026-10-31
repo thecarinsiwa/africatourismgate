@@ -2,9 +2,9 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { countRentalDays, type CarsSearchParams } from '../../lib/cars/listings';
+import type { CarsSearchParams } from '../../lib/cars/listings';
 import { useVehiclePickupLocations } from '../../lib/cars/use-vehicle-pickup-locations';
-import { addDays, todayISODate } from '../../lib/hotels/dates';
+import { todayISODate } from '../../lib/hotels/dates';
 import { useTranslations } from 'next-intl';
 import { buildSearchRoute } from '../../lib/search/route';
 import {
@@ -24,9 +24,13 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
   const t = useTranslations('search');
   const c = useTranslations('cars');
 
-  const [pickupLocation, setPickupLocation] = useState(initialValues.pickupLocation ?? '');
-  const [pickupDate, setPickupDate] = useState(initialValues.pickupDate ?? '');
-  const [returnDate, setReturnDate] = useState(initialValues.returnDate ?? '');
+  const [departureLocation, setDepartureLocation] = useState(
+    initialValues.departureLocation ?? '',
+  );
+  const [arrivalLocation, setArrivalLocation] = useState(
+    initialValues.arrivalLocation ?? '',
+  );
+  const [travelDate, setTravelDate] = useState(initialValues.travelDate ?? '');
   const [error, setError] = useState<string | null>(null);
 
   const {
@@ -41,40 +45,36 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
   );
 
   const today = todayISODate();
-  const returnMinDate = pickupDate ? addDays(pickupDate, 1) : today;
-
-  const rentalDaysLabel = useMemo(() => {
-    if (!pickupDate || !returnDate || returnDate <= pickupDate) return null;
-    const days = countRentalDays(pickupDate, returnDate);
-    return days === 1 ? `1 ${c('daySingular')}` : `${days} ${c('dayPlural')}`;
-  }, [pickupDate, returnDate, c]);
 
   useEffect(() => {
-    setPickupLocation(initialValues.pickupLocation ?? '');
-    setPickupDate(initialValues.pickupDate ?? '');
-    setReturnDate(initialValues.returnDate ?? '');
+    setDepartureLocation(initialValues.departureLocation ?? '');
+    setArrivalLocation(initialValues.arrivalLocation ?? '');
+    setTravelDate(initialValues.travelDate ?? '');
     setError(null);
-  }, [initialValues.pickupLocation, initialValues.pickupDate, initialValues.returnDate]);
+  }, [
+    initialValues.departureLocation,
+    initialValues.arrivalLocation,
+    initialValues.travelDate,
+  ]);
 
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setError(null);
 
-    const hasPartialDates = Boolean(pickupDate) !== Boolean(returnDate);
-    if (hasPartialDates) {
+    if (!departureLocation.trim() || !arrivalLocation.trim() || !travelDate) {
       setError(t('carsRequired'));
       return;
     }
 
-    if (pickupDate && returnDate && returnDate <= pickupDate) {
-      setError(t('carsReturnAfterPickup'));
+    if (departureLocation.trim() === arrivalLocation.trim()) {
+      setError(t('carsSameEndpoints'));
       return;
     }
 
     const params = new URLSearchParams();
-    if (pickupLocation.trim()) params.set('pickupLocation', pickupLocation.trim());
-    if (pickupDate) params.set('pickupDate', pickupDate);
-    if (returnDate) params.set('returnDate', returnDate);
+    params.set('departureLocation', departureLocation.trim());
+    params.set('arrivalLocation', arrivalLocation.trim());
+    params.set('travelDate', travelDate);
 
     router.push(buildSearchRoute('cars', params));
   }
@@ -82,60 +82,49 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
   return (
     <SearchFormPanel id="cars-search" onSubmit={handleSubmit}>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        {rentalDaysLabel ? (
-          <span
-            className="inline-flex min-h-[44px] items-center rounded-lg border border-atg-border bg-atg-surface px-4 py-2 text-sm font-semibold text-atg-fg dark:border-atg-border dark:bg-atg-surface dark:text-white"
-            role="status"
-          >
-            {rentalDaysLabel}
-          </span>
-        ) : (
-          <span className="text-sm text-atg-muted">{t('carsDurationHint')}</span>
-        )}
+        <span className="text-sm text-atg-muted">{t('carsDurationHint')}</span>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_1fr_auto] lg:items-end">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto] lg:items-end">
         <div>
-          <SearchFormLabel>{c('pickupLocation')}</SearchFormLabel>
+          <SearchFormLabel>{c('departureLocation')}</SearchFormLabel>
           <SearchFormDatalistInput
-            name="pickupLocation"
+            name="departureLocation"
             placeholder={carPickupLoading ? c('loading') : c('anyLocation')}
             suggestions={carPickupOptions}
-            value={pickupLocation}
+            value={departureLocation}
             disabled={carPickupLoading}
             onChange={(value) => {
-              setPickupLocation(value);
+              setDepartureLocation(value);
               setError(null);
             }}
           />
         </div>
 
         <div>
-          <SearchFormLabel>{t('pickUp')}</SearchFormLabel>
+          <SearchFormLabel>{c('arrivalLocation')}</SearchFormLabel>
+          <SearchFormDatalistInput
+            name="arrivalLocation"
+            placeholder={carPickupLoading ? c('loading') : c('anyLocation')}
+            suggestions={carPickupOptions}
+            value={arrivalLocation}
+            disabled={carPickupLoading}
+            onChange={(value) => {
+              setArrivalLocation(value);
+              setError(null);
+            }}
+          />
+        </div>
+
+        <div>
+          <SearchFormLabel>{c('travelDate')}</SearchFormLabel>
           <SearchFormInput
             type="date"
-            name="pickupDate"
-            value={pickupDate}
+            name="travelDate"
+            value={travelDate}
             min={today}
             onChange={(value) => {
-              setPickupDate(value);
-              if (returnDate && value && returnDate <= value) {
-                setReturnDate('');
-              }
-              setError(null);
-            }}
-          />
-        </div>
-
-        <div>
-          <SearchFormLabel>{t('dropOff')}</SearchFormLabel>
-          <SearchFormInput
-            type="date"
-            name="returnDate"
-            value={returnDate}
-            min={returnMinDate}
-            onChange={(value) => {
-              setReturnDate(value);
+              setTravelDate(value);
               setError(null);
             }}
           />

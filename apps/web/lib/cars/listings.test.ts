@@ -3,8 +3,6 @@ import assert from 'node:assert/strict';
 import {
   buildCarDetailHref,
   buildCarsSearchQuery,
-  computeVehicleTotal,
-  countRentalDays,
   hasRequiredCarDates,
   normalizeCarsSearchParams,
   toVehicleDetailQuery,
@@ -16,12 +14,12 @@ test('normalizeCarsSearchParams maps legacy home-search params', () => {
     normalizeCarsSearchParams({
       destination: 'Kinshasa',
       checkIn: '2026-08-01',
-      checkOut: '2026-08-08',
     }),
     {
-      pickupLocation: 'Kinshasa',
-      pickupDate: '2026-08-01',
-      returnDate: '2026-08-08',
+      departureLocation: 'Kinshasa',
+      arrivalLocation: undefined,
+      travelDate: '2026-08-01',
+      routeId: undefined,
     },
   );
 });
@@ -29,52 +27,43 @@ test('normalizeCarsSearchParams maps legacy home-search params', () => {
 test('normalizeCarsSearchParams prefers canonical car params', () => {
   assert.deepEqual(
     normalizeCarsSearchParams({
-      pickupLocation: 'Nairobi',
-      pickupDate: '2026-09-01',
-      returnDate: '2026-09-05',
-      destination: 'Kinshasa',
-      checkIn: '2026-08-01',
+      departureLocation: 'Kinshasa',
+      arrivalLocation: 'Lubumbashi',
+      travelDate: '2026-09-01',
+      routeId: 'route-1',
+      destination: 'Nairobi',
+      pickupDate: '2026-08-01',
     }),
     {
-      pickupLocation: 'Nairobi',
-      pickupDate: '2026-09-01',
-      returnDate: '2026-09-05',
+      departureLocation: 'Kinshasa',
+      arrivalLocation: 'Lubumbashi',
+      travelDate: '2026-09-01',
+      routeId: 'route-1',
     },
   );
 });
 
-test('hasRequiredCarDates requires location and valid date range', () => {
+test('hasRequiredCarDates requires travelDate', () => {
   assert.equal(
     hasRequiredCarDates({
-      pickupLocation: 'Kinshasa',
-      pickupDate: '2026-08-01',
-      returnDate: '2026-08-08',
+      departureLocation: 'Kinshasa',
+      arrivalLocation: 'Lubumbashi',
+      travelDate: '2026-08-01',
     }),
     true,
   );
   assert.equal(
     hasRequiredCarDates({
-      pickupLocation: 'Kinshasa',
-      pickupDate: '2026-08-08',
-      returnDate: '2026-08-01',
+      departureLocation: 'Kinshasa',
+      arrivalLocation: 'Lubumbashi',
     }),
     false,
   );
-  assert.equal(hasRequiredCarDates({ pickupDate: '2026-08-01', returnDate: '2026-08-08' }), false);
-});
-
-test('countRentalDays matches API calendar days', () => {
-  assert.equal(countRentalDays('2026-08-01', '2026-08-08'), 7);
-  assert.equal(countRentalDays('2026-08-01', '2026-08-02'), 1);
-});
-
-test('computeVehicleTotal multiplies daily rate by rental days', () => {
-  assert.equal(computeVehicleTotal(5500, 7), 38500);
 });
 
 test('toVehicleSearchQuery returns browse query when params incomplete', () => {
-  assert.deepEqual(toVehicleSearchQuery({ pickupLocation: 'Kinshasa' }), {
-    pickupLocation: 'Kinshasa',
+  assert.deepEqual(toVehicleSearchQuery({ departureLocation: 'Kinshasa' }), {
+    departureLocation: 'Kinshasa',
     limit: 50,
   });
   assert.deepEqual(toVehicleSearchQuery({}), { limit: 50 });
@@ -83,55 +72,53 @@ test('toVehicleSearchQuery returns browse query when params incomplete', () => {
 test('toVehicleSearchQuery maps to API query', () => {
   assert.deepEqual(
     toVehicleSearchQuery({
-      pickupLocation: 'Kinshasa',
-      pickupDate: '2026-08-01',
-      returnDate: '2026-08-08',
+      departureLocation: 'Kinshasa',
+      arrivalLocation: 'Lubumbashi',
+      travelDate: '2026-08-01',
     }),
     {
-      pickupLocation: 'Kinshasa',
-      pickupDate: '2026-08-01',
-      returnDate: '2026-08-08',
+      departureLocation: 'Kinshasa',
+      arrivalLocation: 'Lubumbashi',
+      travelDate: '2026-08-01',
       limit: 50,
     },
   );
 });
 
-test('toVehicleDetailQuery requires valid dates', () => {
+test('toVehicleDetailQuery requires travelDate', () => {
   assert.deepEqual(
     toVehicleDetailQuery({
-      pickupDate: '2026-08-01',
-      returnDate: '2026-08-08',
+      routeId: 'route-1',
+      travelDate: '2026-08-01',
     }),
     {
-      pickupDate: '2026-08-01',
-      returnDate: '2026-08-08',
+      routeId: 'route-1',
+      travelDate: '2026-08-01',
     },
   );
-  assert.equal(
-    toVehicleDetailQuery({ pickupDate: '2026-08-08', returnDate: '2026-08-01' }),
-    null,
-  );
+  assert.equal(toVehicleDetailQuery({ routeId: 'route-1' }), null);
 });
 
 test('buildCarsSearchQuery serializes search params', () => {
   const query = buildCarsSearchQuery({
-    pickupLocation: 'Kinshasa',
-    pickupDate: '2026-08-01',
-    returnDate: '2026-08-08',
+    departureLocation: 'Kinshasa',
+    arrivalLocation: 'Lubumbashi',
+    travelDate: '2026-08-01',
   });
   const params = new URLSearchParams(query.slice(1));
-  assert.equal(params.get('pickupLocation'), 'Kinshasa');
-  assert.equal(params.get('pickupDate'), '2026-08-01');
-  assert.equal(params.get('returnDate'), '2026-08-08');
+  assert.equal(params.get('departureLocation'), 'Kinshasa');
+  assert.equal(params.get('arrivalLocation'), 'Lubumbashi');
+  assert.equal(params.get('travelDate'), '2026-08-01');
 });
 
-test('buildCarDetailHref preserves dates on detail link', () => {
+test('buildCarDetailHref preserves route and travel date', () => {
   assert.equal(
     buildCarDetailHref('veh-1', {
-      pickupLocation: 'Kinshasa',
-      pickupDate: '2026-08-01',
-      returnDate: '2026-08-08',
+      routeId: 'route-1',
+      departureLocation: 'Kinshasa',
+      arrivalLocation: 'Lubumbashi',
+      travelDate: '2026-08-01',
     }),
-    '/cars/veh-1?pickupLocation=Kinshasa&pickupDate=2026-08-01&returnDate=2026-08-08',
+    '/cars/veh-1?routeId=route-1&departureLocation=Kinshasa&arrivalLocation=Lubumbashi&travelDate=2026-08-01',
   );
 });
