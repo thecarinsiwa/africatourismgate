@@ -14,7 +14,8 @@ const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(/\/$/,
 
 async function requestJson<T>(
   path: string,
-  init?: RequestInit & { auth?: boolean },
+  init?: RequestInit,
+  options?: { requireAuth?: boolean },
 ): Promise<T> {
   const headers: Record<string, string> = {
     Accept: 'application/json',
@@ -22,18 +23,15 @@ async function requestJson<T>(
     ...(init?.headers as Record<string, string> | undefined),
   };
 
-  if (init?.auth !== false) {
-    const token = await ensureClientAccessToken();
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    } else if (init?.auth === true) {
-      throw new Error('Not authenticated');
-    }
+  const token = await ensureClientAccessToken();
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  } else if (options?.requireAuth) {
+    throw new Error('Not authenticated');
   }
 
-  const { auth: _auth, ...fetchInit } = init ?? {};
   const response = await fetch(`${apiUrl}${path}`, {
-    ...fetchInit,
+    ...init,
     headers,
     cache: 'no-store',
   });
@@ -61,8 +59,8 @@ export async function upsertBlogReaction(
     {
       method: 'POST',
       body: JSON.stringify(payload),
-      auth: true,
     },
+    { requireAuth: true },
   );
 }
 
@@ -75,7 +73,7 @@ export async function createBlogComment(
     {
       method: 'POST',
       body: JSON.stringify(payload),
-      auth: true,
     },
+    { requireAuth: true },
   );
 }
