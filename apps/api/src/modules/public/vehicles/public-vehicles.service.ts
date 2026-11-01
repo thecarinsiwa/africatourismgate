@@ -156,14 +156,21 @@ export class PublicVehiclesService {
       slotsQuery
         .andWhere('DATE(slot.startDatetime) <= :travelDate', { travelDate })
         .andWhere('DATE(slot.endDatetime) >= :travelDate', { travelDate });
-    } else {
-      slotsQuery.andWhere('DATE(slot.endDatetime) >= :today', {
-        today: todayDateOnly(),
-      });
     }
 
     const slots = await slotsQuery.orderBy('slot.startDatetime', 'ASC').getMany();
-    const bestSlotByVehicleId = this.pickBestSlotPerVehicle(slots);
+    // Browse (no date): prefer slots still covering today; otherwise keep the
+    // latest available window so tronçons remain visible in the catalogue.
+    const relevantSlots = travelDate
+      ? slots
+      : (() => {
+          const today = todayDateOnly();
+          const current = slots.filter(
+            (slot) => dateOnlyFromDatetime(slot.endDatetime) >= today,
+          );
+          return current.length ? current : slots;
+        })();
+    const bestSlotByVehicleId = this.pickBestSlotPerVehicle(relevantSlots);
 
     const imageUrlByVehicleId = await this.loadPrimaryImageUrlByVehicleId(vehicleIds);
     const results: VehicleSearchResultDto[] = [];
@@ -184,9 +191,24 @@ export class PublicVehiclesService {
       let resolvedTravelDate = travelDate;
       if (!resolvedTravelDate) {
         const slotStart = dateOnlyFromDatetime(slot.startDatetime);
+        const slotEnd = dateOnlyFromDatetime(slot.endDatetime);
         const today = todayDateOnly();
-        resolvedTravelDate = slotStart > today ? slotStart : today;
-        if (!slotCoversTravelDate(slot.startDatetime, slot.endDatetime, resolvedTravelDate)) {
+        if (slotStart > today) {
+          resolvedTravelDate = slotStart;
+        } else if (slotEnd >= today) {
+          resolvedTravelDate = today;
+        } else {
+          // Catalogue browse with an expired window: surface the tronçon using
+          // the last day of the slot so designation + route remain visible.
+          resolvedTravelDate = slotEnd;
+        }
+        if (
+          !slotCoversTravelDate(
+            slot.startDatetime,
+            slot.endDatetime,
+            resolvedTravelDate,
+          )
+        ) {
           continue;
         }
       }
