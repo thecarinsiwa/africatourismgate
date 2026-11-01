@@ -172,6 +172,23 @@
         }
       }
     },
+    "routes": {
+      "emptyDefault": "Ningún tramo por ahora.",
+      "emptySearch": "Ningún tramo coincide con los filtros.",
+      "searchLabel": "Búsqueda",
+      "searchPlaceholder": "Buscar un tramo…",
+      "searchAria": "Buscar tramos",
+      "ariaLabel": "Lista de tramos",
+      "allVehicles": "Todos los vehículos",
+      "vehicleFallback": "Vehículo {id}",
+      "formHint": "Elija el vehículo, la salida, la llegada y la tarifa fija del trayecto.",
+      "columns": {
+        "vehicle": "Vehículo"
+      },
+      "validation": {
+        "vehicleRequired": "Vehículo obligatorio."
+      }
+    },
     "agencies": {
       "new": "Nueva agencia",
       "edit": "Editar agencia",
@@ -218,6 +235,10 @@
     "agencies": {
       "label": "Agencias",
       "subtitle": "Puntos de alquiler"
+    },
+    "routes": {
+      "label": "Tramos",
+      "subtitle": "Tarifas salida → llegada"
     }
   },
   "exports": {

@@ -27,6 +27,7 @@ export function LocationsStatCards({ className }: { className?: string }) {
     vehicles: { ...initialCardState },
     categories: { ...initialCardState },
     agencies: { ...initialCardState },
+    routes: { ...initialCardState },
   }));
 
   useEffect(() => {
@@ -43,6 +44,10 @@ export function LocationsStatCards({ className }: { className?: string }) {
         }
         if (key === 'categories') {
           const result = await client.listVehicleCategories({ page: 1, limit: 1 });
+          return { status: 'ready', displayValue: formatCount(result.meta.total) };
+        }
+        if (key === 'routes') {
+          const result = await client.listVehicleRoutes({ page: 1, limit: 1 });
           return { status: 'ready', displayValue: formatCount(result.meta.total) };
         }
         const result = await client.listRentalAgencies({ page: 1, limit: 1 });
@@ -78,7 +83,7 @@ export function LocationsStatCards({ className }: { className?: string }) {
 
   return (
     <div className={className}>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {locationsKpis.map((kpi) => {
           const state = cards[kpi.key];
           const card = (

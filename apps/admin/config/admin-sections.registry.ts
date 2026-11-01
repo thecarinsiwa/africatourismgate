@@ -85,6 +85,11 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Types de véhicules (économique, SUV, etc.).',
     apiResource: 'vehicle-categories',
   },
+  'produits/locations/troncons': {
+    title: 'Tronçons',
+    description: 'Tarifs fixes départ → arrivée par véhicule.',
+    apiResource: 'vehicle-routes',
+  },
   'produits/locations/nouveau': {
     title: 'Nouveau véhicule',
     apiResource: 'vehicles',

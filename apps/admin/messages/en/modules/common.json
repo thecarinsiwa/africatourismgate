@@ -109,6 +109,7 @@
     "room": "room",
     "flight": "flight",
     "vehicle": "vehicle",
+    "route": "route",
     "sailing": "sailing",
     "destination": "destination",
     "guide": "guide",

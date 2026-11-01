@@ -172,6 +172,23 @@
         }
       }
     },
+    "routes": {
+      "emptyDefault": "Aucun tronçon pour le moment.",
+      "emptySearch": "Aucun tronçon ne correspond aux filtres.",
+      "searchLabel": "Recherche",
+      "searchPlaceholder": "Rechercher un tronçon…",
+      "searchAria": "Rechercher un tronçon",
+      "ariaLabel": "Liste des tronçons",
+      "allVehicles": "Tous les véhicules",
+      "vehicleFallback": "Véhicule {id}",
+      "formHint": "Choisissez le véhicule, le départ, l’arrivée et le prix fixe du trajet.",
+      "columns": {
+        "vehicle": "Véhicule"
+      },
+      "validation": {
+        "vehicleRequired": "Véhicule obligatoire."
+      }
+    },
     "agencies": {
       "new": "Nouvelle agence",
       "edit": "Modifier l'agence",
@@ -218,6 +235,10 @@
     "agencies": {
       "label": "Agences",
       "subtitle": "Points de location"
+    },
+    "routes": {
+      "label": "Tronçons",
+      "subtitle": "Tarifs départ → arrivée"
     }
   },
   "exports": {

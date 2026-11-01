@@ -172,6 +172,23 @@
         }
       }
     },
+    "routes": {
+      "emptyDefault": "No routes yet.",
+      "emptySearch": "No route matches these filters.",
+      "searchLabel": "Search",
+      "searchPlaceholder": "Search routes…",
+      "searchAria": "Search routes",
+      "ariaLabel": "Vehicle routes list",
+      "allVehicles": "All vehicles",
+      "vehicleFallback": "Vehicle {id}",
+      "formHint": "Choose the vehicle, departure, arrival and fixed trip fare.",
+      "columns": {
+        "vehicle": "Vehicle"
+      },
+      "validation": {
+        "vehicleRequired": "Vehicle is required."
+      }
+    },
     "agencies": {
       "new": "New agency",
       "edit": "Edit agency",
@@ -218,6 +235,10 @@
     "agencies": {
       "label": "Agencies",
       "subtitle": "Rental locations"
+    },
+    "routes": {
+      "label": "Routes",
+      "subtitle": "Departure → arrival fares"
     }
   },
   "exports": {

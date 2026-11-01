@@ -109,6 +109,7 @@
     "room": "chambre",
     "flight": "vol",
     "vehicle": "véhicule",
+    "route": "tronçon",
     "sailing": "départ",
     "destination": "destination",
     "guide": "guide",
