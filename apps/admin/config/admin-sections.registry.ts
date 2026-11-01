@@ -347,6 +347,11 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Rédiger un article de blog.',
     apiResource: 'blog-posts',
   },
+  'contenu/blog/id': {
+    title: "Modifier l'article",
+    description: 'Mettez à jour le titre, la couverture, le contenu et la publication.',
+    apiResource: 'blog-posts',
+  },
   'contenu/site': {
     title: 'Site & présentation',
     description: 'Contenu institutionnel et vitrine du site public.',

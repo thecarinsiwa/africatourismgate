@@ -43,6 +43,8 @@ import { PublicCatalogProductsDto } from './dto/public-catalog-products.dto';
 import { PublicSiteMaintenanceDto } from './dto/public-site-maintenance.dto';
 import { PublicAnnouncementBannerDto } from './dto/public-announcement-banner.dto';
 import { PublicAnnouncementBannerQueryDto } from './dto/public-announcement-banner-query.dto';
+import { PublicFooterDto } from './dto/public-footer.dto';
+import { PublicFooterQueryDto } from './dto/public-footer-query.dto';
 import { PublicHomepageReviewsDto } from './dto/public-homepage-reviews.dto';
 import { PublicContactDto } from './dto/public-contact.dto';
 import { OrganizationSettingsService } from './organization-settings.service';
@@ -135,6 +137,18 @@ export class OrganizationSettingsController {
       query.organizationSlug,
       query.locale,
     );
+  }
+
+  @Public()
+  @Get('public/footer')
+  @ApiOperation({
+    summary: 'Get localized public site footer copy (tagline, newsletter, credits)',
+  })
+  @ApiOkResponse({ type: PublicFooterDto })
+  findPublicFooter(
+    @Query() query: PublicFooterQueryDto,
+  ): Promise<PublicFooterDto> {
+    return this.service.findPublicFooter(query.organizationSlug, query.locale);
   }
 
   @Public()

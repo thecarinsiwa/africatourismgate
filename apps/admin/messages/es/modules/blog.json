@@ -52,6 +52,20 @@
       "slugUnique": "El slug es único en toda la plataforma (no por idioma).",
       "publishedAtHint": "Al publicar, la fecha se rellena automáticamente si está vacía."
     },
+    "sections": {
+      "identity": "Identidad",
+      "identityHint": "Título, slug y extracto mostrados en listados y SEO.",
+      "cover": "Portada",
+      "coverEmpty": "Sin imagen de portada",
+      "coverEmptyHint": "Añada una imagen 16:9 para la portada y el intercambio social.",
+      "coverPreview": "Vista previa",
+      "body": "Contenido",
+      "publication": "Publicación",
+      "publicationHint": "Estado, idioma y fecha de publicación."
+    },
+    "actions": {
+      "removeCover": "Quitar imagen"
+    },
     "validation": {
       "contentRequired": "El contenido es obligatorio.",
       "coverUrlInvalid": "La URL de la imagen de portada debe ser válida (http o https)."

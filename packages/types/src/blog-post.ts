@@ -55,3 +55,32 @@ export interface PublicBlogPostsListQuery {
   search?: string;
   locale?: string;
 }
+
+export const BLOG_REACTION_TYPES = ['like', 'love', 'clap', 'wow'] as const;
+export type BlogReactionType = (typeof BLOG_REACTION_TYPES)[number];
+
+export type BlogReactionCounts = Record<BlogReactionType, number>;
+
+export interface PublicBlogComment {
+  id: string;
+  authorName: string;
+  body: string;
+  createdAt: string;
+}
+
+export interface PublicBlogEngagement {
+  reactions: BlogReactionCounts;
+  viewerReaction: BlogReactionType | null;
+  comments: PublicBlogComment[];
+  commentsCount: number;
+}
+
+export interface UpsertBlogReactionRequest {
+  reactionType: BlogReactionType;
+}
+
+export interface CreateBlogCommentRequest {
+  authorName?: string;
+  authorEmail?: string;
+  body: string;
+}

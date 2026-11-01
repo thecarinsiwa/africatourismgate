@@ -437,7 +437,9 @@
         "description": "Redacte un artículo de blog para el sitio público."
       },
       "id": {
-        "metaTitle": "Editar artículo"
+        "metaTitle": "Editar artículo",
+        "description": "Actualice el título, la portada, el contenido y la publicación.",
+        "backLabel": "Volver al blog"
       }
     },
     "hero": {
@@ -576,6 +578,7 @@
         "hero": "Hero",
         "happyCustomers": "Clientes satisfechos",
         "announcementBanner": "Banner de anuncio",
+        "footer": "Pie de página",
         "homepageReviews": "Opiniones de clientes"
       }
     },

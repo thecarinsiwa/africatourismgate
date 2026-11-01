@@ -1,0 +1,25 @@
+{
+  "heading": "Pied de page",
+  "description": "Textes marketing du pied de page du site public : tagline et newsletter. Les liens Produits / À propos / légal et le crédit « Conçu par » restent gérés automatiquement.",
+  "contactHint": "Coordonnées, réseaux sociaux et branding : <parametres>Paramètres</parametres>.",
+  "readOnlyHint": "Vous pouvez consulter ce contenu mais pas le modifier (permission organization_settings.write requise).",
+  "denied": "Vous n’avez pas accès au pied de page (permission organization_settings.read requise).",
+  "fields": {
+    "locale": "Langue en cours d’édition",
+    "localeHint": "Le français est obligatoire dès qu’une autre langue est renseignée. Les champs vides d’une langue basculent sur le français, puis sur le texte par défaut.",
+    "localesFilled": "Langues renseignées : {list}",
+    "tagline": "Tagline",
+    "taglinePlaceholder": "Ex. Votre passerelle vers les meilleures expériences de voyage en Afrique…",
+    "newsletterDesc": "Description newsletter",
+    "newsletterDescPlaceholder": "Ex. Inspiration, idées de voyages, bons plans et actualités."
+  },
+  "validation": {
+    "frenchRequired": "Renseignez au moins un champ en français lorsque d’autres langues sont remplies.",
+    "taglineTooLong": "La tagline ne doit pas dépasser {max} caractères.",
+    "newsletterDescTooLong": "La description newsletter ne doit pas dépasser {max} caractères."
+  },
+  "saveButton": "Enregistrer le pied de page",
+  "resetDefaults": "Réinitialiser aux textes par défaut",
+  "saving": "Enregistrement…",
+  "saved": "Pied de page enregistré."
+}

@@ -6,8 +6,9 @@ import type { BlogPost } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
-import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
+import { AdminIntroPage } from '../pages/admin-intro-page';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { BlogPostForm } from './blog-post-form';
 
 type BlogPostEditPageProps = {
@@ -49,26 +50,51 @@ export function BlogPostEditPage({ postId }: BlogPostEditPageProps) {
   }, [postId, getBlogErrorMessage]);
 
   if (state.status === 'loading') {
-    return <p className="text-sm text-atg-muted">{tCommon('loading')}</p>;
+    return (
+      <AdminIntroPage
+        routePath="contenu/blog/id"
+        backHref="/contenu/blog"
+        backLabelKey="backLabel"
+        suppressDescription
+      >
+        <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
+      </AdminIntroPage>
+    );
   }
 
   if (state.status === 'error') {
     return (
-      <div className="space-y-4">
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {state.message}
-        </p>
-        <Link
-          href="/contenu/blog"
-          className="text-sm font-medium text-primary hover:text-primary-hover"
-        >
-          {tCommon('back.toList')}
-        </Link>
-      </div>
+      <AdminIntroPage
+        routePath="contenu/blog/id"
+        backHref="/contenu/blog"
+        backLabelKey="backLabel"
+        suppressDescription
+      >
+        <div className="space-y-4">
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {state.message}
+          </p>
+          <Link
+            href="/contenu/blog"
+            className="text-sm font-medium text-primary hover:text-primary-hover"
+          >
+            {tCommon('back.toList')}
+          </Link>
+        </div>
+      </AdminIntroPage>
     );
   }
 
   const { post } = state;
 
-  return <BlogPostForm mode="edit" postId={postId} initialPost={post} />;
+  return (
+    <AdminIntroPage
+      routePath="contenu/blog/id"
+      backHref="/contenu/blog"
+      backLabelKey="backLabel"
+      suppressDescription
+    >
+      <BlogPostForm mode="edit" postId={postId} initialPost={post} />
+    </AdminIntroPage>
+  );
 }

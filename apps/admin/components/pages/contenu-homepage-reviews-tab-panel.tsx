@@ -121,7 +121,7 @@ export function ContenuHomepageReviewsTabPanel() {
   }
 
   return (
-    <Card className="p-6">
+    <Card className="p-4 sm:p-6">
       <div className="mb-6 space-y-1">
         <h2 className="text-lg font-semibold">{t('heading')}</h2>
         <p className="text-sm text-atg-muted">{t('description')}</p>
@@ -129,35 +129,39 @@ export function ContenuHomepageReviewsTabPanel() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-        <Switch
-          id="homepage-reviews-tripadvisor"
-          label={
-            values.showTripadvisorReviews
-              ? t('fields.tripadvisorOn')
-              : t('fields.tripadvisorOff')
-          }
-          checked={values.showTripadvisorReviews}
-          onChange={(event) => update({ showTripadvisorReviews: event.target.checked })}
-          disabled={!canWrite}
-        />
+        <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8 sm:gap-y-4">
+          <Switch
+            id="homepage-reviews-tripadvisor"
+            wrapperClassName="w-full sm:w-auto"
+            label={
+              values.showTripadvisorReviews
+                ? t('fields.tripadvisorOn')
+                : t('fields.tripadvisorOff')
+            }
+            checked={values.showTripadvisorReviews}
+            onChange={(event) => update({ showTripadvisorReviews: event.target.checked })}
+            disabled={!canWrite}
+          />
 
-        <Switch
-          id="homepage-reviews-platform"
-          label={
-            values.showPlatformReviews ? t('fields.platformOn') : t('fields.platformOff')
-          }
-          checked={values.showPlatformReviews}
-          onChange={(event) => update({ showPlatformReviews: event.target.checked })}
-          disabled={!canWrite}
-        />
+          <Switch
+            id="homepage-reviews-platform"
+            wrapperClassName="w-full sm:w-auto"
+            label={
+              values.showPlatformReviews ? t('fields.platformOn') : t('fields.platformOff')
+            }
+            checked={values.showPlatformReviews}
+            onChange={(event) => update({ showPlatformReviews: event.target.checked })}
+            disabled={!canWrite}
+          />
+        </div>
 
         {bothOff ? (
           <p className="text-sm text-atg-muted">{t('bothOffHint')}</p>
         ) : null}
 
         {canWrite ? (
-          <div className="flex flex-wrap items-center gap-3">
-            <Button type="submit" disabled={!isDirty || saving}>
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
+            <Button type="submit" disabled={!isDirty || saving} className="w-full sm:w-auto">
               {saving ? t('saving') : t('saveButton')}
             </Button>
             {saved && !isDirty ? (

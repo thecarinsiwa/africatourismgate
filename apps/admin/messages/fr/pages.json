@@ -437,7 +437,9 @@
         "description": "Rédigez un article de blog pour le site public."
       },
       "id": {
-        "metaTitle": "Modifier l'article"
+        "metaTitle": "Modifier l'article",
+        "description": "Mettez à jour le titre, la couverture, le contenu et la publication.",
+        "backLabel": "Retour au blog"
       }
     },
     "hero": {
@@ -576,6 +578,7 @@
         "hero": "Hero",
         "happyCustomers": "Clients satisfaits",
         "announcementBanner": "Bandeau d’annonce",
+        "footer": "Pied de page",
         "homepageReviews": "Avis clients"
       }
     },

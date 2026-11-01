@@ -11,6 +11,7 @@ import { buildVerticalListRoute } from '../../lib/search/route';
 import { ABOUT_NAV_ITEMS, ABOUT_PATHS } from '../../lib/about/routes';
 import { LEGAL_PATHS } from '../../lib/legal/routes';
 import { partnersListHref } from '../../lib/partners/listings';
+import { useResolvedPublicFooter } from '../../lib/site/use-resolved-public-footer';
 import { useCatalogProducts } from '../catalog-products-provider';
 import type { CatalogProductKey } from '@africatourismgate/types/organization-settings';
 
@@ -22,6 +23,9 @@ export function HomeFooter() {
   const gapUrl = process.env.NEXT_PUBLIC_GAP_URL?.trim() || null;
   const { branding, logoBroken, setLogoBroken } = useResolvedPublicBranding();
   const contact = useResolvedPublicContact();
+  const cmsFooter = useResolvedPublicFooter();
+  const tagline = cmsFooter?.tagline || t('tagline');
+  const newsletterDesc = cmsFooter?.newsletterDesc || t('newsletterDesc');
   const catalogProducts = useCatalogProducts();
   const socialLinks = useMemo(() => buildSocialLinks(contact), [contact]);
 
@@ -89,7 +93,7 @@ export function HomeFooter() {
                 />
                 <span className="text-lg font-bold">{branding.displayName}</span>
               </Link>
-              <p className="text-sm text-white/60 leading-relaxed mb-5">{t('tagline')}</p>
+              <p className="text-sm text-white/60 leading-relaxed mb-5">{tagline}</p>
               <Link
                 href={ABOUT_PATHS.whoWeAre}
                 className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
@@ -146,7 +150,7 @@ export function HomeFooter() {
               <h3 className="text-sm font-bold uppercase tracking-wide text-white mb-5">
                 {t('newsletter')}
               </h3>
-              <p className="text-sm text-white/60 leading-relaxed mb-4">{t('newsletterDesc')}</p>
+              <p className="text-sm text-white/60 leading-relaxed mb-4">{newsletterDesc}</p>
               <form
                 className="flex gap-0 rounded-lg overflow-hidden"
                 onSubmit={(e) => {
