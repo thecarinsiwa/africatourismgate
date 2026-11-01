@@ -183,7 +183,7 @@
       "vehicleFallback": "Vehículo {id}",
       "formHint": "Elija el vehículo, escriba la salida y la llegada, luego la tarifa fija.",
       "columns": {
-        "vehicle": "Vehículo"
+        "vehicle": "Designación"
       },
       "validation": {
         "vehicleRequired": "Vehículo obligatorio."

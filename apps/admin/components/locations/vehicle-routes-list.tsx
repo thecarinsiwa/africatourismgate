@@ -15,7 +15,11 @@ import {
   useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
-import type { Vehicle, VehicleRoute } from '@africatourismgate/types';
+import type {
+  Vehicle,
+  VehicleCategory,
+  VehicleRoute,
+} from '@africatourismgate/types';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -27,6 +31,21 @@ import { useFormatMoney } from '../../lib/use-format-money';
 
 const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
+
+function vehicleDesignation(
+  vehicle: Vehicle | undefined,
+  categoryById: Map<string, VehicleCategory>,
+  fallback: string,
+): string {
+  if (!vehicle) return fallback;
+  const category = categoryById.get(vehicle.categoryId);
+  return (
+    category?.exampleModel?.trim() ||
+    category?.name?.trim() ||
+    vehicle.licensePlate?.trim() ||
+    fallback
+  );
+}
 
 type FormValues = {
   vehicleId: string;
@@ -66,6 +85,7 @@ export function VehicleRoutesList() {
   const [vehicleFilter, setVehicleFilter] = useState('');
   const [page, setPage] = useState(1);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [categories, setCategories] = useState<VehicleCategory[]>([]);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -91,33 +111,59 @@ export function VehicleRoutesList() {
     [vehicles],
   );
 
+  const categoryById = useMemo(
+    () => new Map(categories.map((c) => [c.id, c])),
+    [categories],
+  );
+
   const vehicleOptions = useMemo(
     () => [
       { value: '', label: t('allVehicles') },
       ...vehicles.map((v) => ({
         value: v.id,
-        label: v.licensePlate?.trim() || t('vehicleFallback', { id: v.id.slice(0, 8) }),
+        label: vehicleDesignation(
+          v,
+          categoryById,
+          t('vehicleFallback', { id: v.id.slice(0, 8) }),
+        ),
       })),
     ],
-    [vehicles, t],
+    [vehicles, categoryById, t],
   );
 
   const formVehicleOptions = useMemo(
     () => [
       { value: '', label: chooseDash },
-      ...vehicles.map((v) => ({
-        value: v.id,
-        label: v.licensePlate?.trim() || t('vehicleFallback', { id: v.id.slice(0, 8) }),
-      })),
+      ...vehicles.map((v) => {
+        const designation = vehicleDesignation(
+          v,
+          categoryById,
+          t('vehicleFallback', { id: v.id.slice(0, 8) }),
+        );
+        const plate = v.licensePlate?.trim();
+        return {
+          value: v.id,
+          label:
+            plate && plate !== designation ? `${designation} · ${plate}` : designation,
+        };
+      }),
     ],
-    [vehicles, t, chooseDash],
+    [vehicles, categoryById, t, chooseDash],
   );
 
   useEffect(() => {
-    void getApiClient()
-      .listVehicles({ page: 1, limit: 100 })
-      .then((vehiclesResult) => setVehicles(vehiclesResult.data))
-      .catch(() => setVehicles([]));
+    void Promise.all([
+      getApiClient().listVehicles({ page: 1, limit: 100 }),
+      getApiClient().listVehicleCategories({ page: 1, limit: 100 }),
+    ])
+      .then(([vehiclesResult, categoriesResult]) => {
+        setVehicles(vehiclesResult.data);
+        setCategories(categoriesResult.data);
+      })
+      .catch(() => {
+        setVehicles([]);
+        setCategories([]);
+      });
   }, []);
 
   const load = useCallback(async () => {
@@ -156,11 +202,15 @@ export function VehicleRoutesList() {
   }, [searchInput]);
 
   function vehicleLabel(vehicleId: string): string {
-    const vehicle = vehicleById.get(vehicleId);
-    return (
-      vehicle?.licensePlate?.trim() ||
-      t('vehicleFallback', { id: vehicleId.slice(0, 8) })
+    return vehicleDesignation(
+      vehicleById.get(vehicleId),
+      categoryById,
+      t('vehicleFallback', { id: vehicleId.slice(0, 8) }),
     );
+  }
+
+  function vehiclePlate(vehicleId: string): string | null {
+    return vehicleById.get(vehicleId)?.licensePlate?.trim() || null;
   }
 
   function routeLabel(route: VehicleRoute): string {
@@ -307,14 +357,25 @@ export function VehicleRoutesList() {
       {
         id: 'vehicle',
         header: t('columns.vehicle'),
-        cell: ({ row }) => (
-          <Link
-            href={`/produits/locations/${row.original.vehicleId}?tab=troncons`}
-            className="text-sm font-medium text-primary hover:underline"
-          >
-            {vehicleLabel(row.original.vehicleId)}
-          </Link>
-        ),
+        cell: ({ row }) => {
+          const designation = vehicleLabel(row.original.vehicleId);
+          const plate = vehiclePlate(row.original.vehicleId);
+          return (
+            <Link
+              href={`/produits/locations/${row.original.vehicleId}?tab=troncons`}
+              className="block min-w-0"
+            >
+              <span className="block text-sm font-medium text-primary hover:underline">
+                {designation}
+              </span>
+              {plate && plate !== designation ? (
+                <span className="mt-0.5 block text-xs text-atg-muted">
+                  {plate}
+                </span>
+              ) : null}
+            </Link>
+          );
+        },
       },
       {
         id: 'route',
@@ -355,7 +416,7 @@ export function VehicleRoutesList() {
         ),
       },
     ],
-    [deletingId, formatPrice, t, tCommon, tRoutes, vehicleById],
+    [categoryById, deletingId, formatPrice, t, tCommon, tRoutes, vehicleById],
   );
 
   const routes = state.status === 'ready' ? state.routes : [];

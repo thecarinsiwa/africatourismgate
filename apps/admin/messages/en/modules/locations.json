@@ -183,7 +183,7 @@
       "vehicleFallback": "Vehicle {id}",
       "formHint": "Choose the vehicle, enter departure and arrival cities, then the fixed fare.",
       "columns": {
-        "vehicle": "Vehicle"
+        "vehicle": "Designation"
       },
       "validation": {
         "vehicleRequired": "Vehicle is required."

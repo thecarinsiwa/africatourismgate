@@ -183,7 +183,7 @@
       "vehicleFallback": "Véhicule {id}",
       "formHint": "Choisissez le véhicule, saisissez le départ et l’arrivée, puis le prix fixe.",
       "columns": {
-        "vehicle": "Véhicule"
+        "vehicle": "Désignation"
       },
       "validation": {
         "vehicleRequired": "Véhicule obligatoire."
