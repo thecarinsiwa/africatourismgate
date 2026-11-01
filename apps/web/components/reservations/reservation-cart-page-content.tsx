@@ -51,7 +51,6 @@ export function ReservationCartPageContent({ draft }: Props) {
   const messages = useMessages();
   const ck = (messages as { checkout: Translations['checkout'] }).checkout;
   const f = useNamespaceLabels('flights');
-  const c = useNamespaceLabels('cars');
   const cr = useNamespaceLabels('cruises');
   const p = useNamespaceLabels('packages');
 
