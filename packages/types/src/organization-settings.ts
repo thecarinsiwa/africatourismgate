@@ -473,6 +473,161 @@ export function resolvePublicAnnouncementBanner(
 }
 
 /**
+ * Public site footer copy — `organization_settings` group `site`, key `footer`.
+ * Structural links (products, about, legal) stay route/i18n-driven; contact/socials
+ * remain under Paramètres (`contact` / `branding`).
+ */
+export const FOOTER_SETTING_KEY = 'footer' as const;
+export const FOOTER_LOCALES = ['fr', 'en', 'es'] as const;
+export type FooterLocale = (typeof FOOTER_LOCALES)[number];
+export const FOOTER_FALLBACK_LOCALE: FooterLocale = 'fr';
+export const FOOTER_TAGLINE_MAX_LENGTH = 400;
+export const FOOTER_NEWSLETTER_DESC_MAX_LENGTH = 280;
+export const FOOTER_DESIGNED_BY_NAMES_MAX_LENGTH = 120;
+
+export interface FooterMessage {
+  tagline: string;
+  newsletterDesc: string;
+  designedByNames: string;
+}
+
+export interface FooterSettingValue {
+  messages: Partial<Record<FooterLocale, FooterMessage>>;
+}
+
+/** Footer copy resolved for one locale (public endpoint). */
+export interface PublicFooter {
+  tagline: string;
+  newsletterDesc: string;
+  designedByNames: string;
+}
+
+export const DEFAULT_FOOTER_MESSAGES: Record<FooterLocale, FooterMessage> = {
+  fr: {
+    tagline:
+      'Votre passerelle vers les meilleures expériences de voyage en Afrique. Découvrez des destinations uniques et réservez en toute confiance.',
+    newsletterDesc:
+      'Inspiration, idées de voyages, bons plans et actualités.',
+    designedByNames: 'Carin Siwa et Ruth Bwiza',
+  },
+  en: {
+    tagline:
+      'Your gateway to the best travel experiences in Africa. Discover unique destinations and book with confidence.',
+    newsletterDesc: 'Inspiration, travel ideas, deals and news.',
+    designedByNames: 'Carin Siwa and Ruth Bwiza',
+  },
+  es: {
+    tagline:
+      'Su puerta de entrada a las mejores experiencias de viaje en África. Descubra destinos únicos y reserve con confianza.',
+    newsletterDesc: 'Inspiración, ideas de viaje, ofertas y noticias.',
+    designedByNames: 'Carin Siwa y Ruth Bwiza',
+  },
+};
+
+export const DEFAULT_FOOTER: FooterSettingValue = {
+  messages: { ...DEFAULT_FOOTER_MESSAGES },
+};
+
+export const DEFAULT_PUBLIC_FOOTER: PublicFooter = {
+  ...DEFAULT_FOOTER_MESSAGES[FOOTER_FALLBACK_LOCALE],
+};
+
+export function isFooterLocale(value: unknown): value is FooterLocale {
+  return (
+    typeof value === 'string' &&
+    (FOOTER_LOCALES as readonly string[]).includes(value)
+  );
+}
+
+function clipFooterField(value: string, maxLength: number): string {
+  return value.length > maxLength ? value.slice(0, maxLength) : value;
+}
+
+function normalizeFooterMessage(value: unknown): FooterMessage | null {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return null;
+  }
+  const raw = value as Record<string, unknown>;
+  const tagline =
+    typeof raw.tagline === 'string' ? raw.tagline.trim() : '';
+  const newsletterDesc =
+    typeof raw.newsletterDesc === 'string' ? raw.newsletterDesc.trim() : '';
+  const designedByNames =
+    typeof raw.designedByNames === 'string' ? raw.designedByNames.trim() : '';
+  if (!tagline && !newsletterDesc && !designedByNames) {
+    return null;
+  }
+  return {
+    tagline: clipFooterField(tagline, FOOTER_TAGLINE_MAX_LENGTH),
+    newsletterDesc: clipFooterField(
+      newsletterDesc,
+      FOOTER_NEWSLETTER_DESC_MAX_LENGTH,
+    ),
+    designedByNames: clipFooterField(
+      designedByNames,
+      FOOTER_DESIGNED_BY_NAMES_MAX_LENGTH,
+    ),
+  };
+}
+
+/** Tolérant : ignore les locales / champs invalides. */
+export function normalizeFooter(
+  value?: Partial<FooterSettingValue> | Record<string, unknown> | null,
+): FooterSettingValue {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return { messages: {} };
+  }
+  const raw = value as Record<string, unknown>;
+  const messages: FooterSettingValue['messages'] = {};
+  const rawMessages = raw.messages;
+  if (rawMessages && typeof rawMessages === 'object' && !Array.isArray(rawMessages)) {
+    for (const locale of FOOTER_LOCALES) {
+      const message = normalizeFooterMessage(
+        (rawMessages as Record<string, unknown>)[locale],
+      );
+      if (message) {
+        messages[locale] = message;
+      }
+    }
+  }
+  return { messages };
+}
+
+/**
+ * Résout le pied de page pour une locale : locale demandée, puis `fr`, puis défauts.
+ * Les champs manquants d’une locale sont complétés depuis `fr` / DEFAULT_FOOTER_MESSAGES.
+ */
+export function resolvePublicFooter(
+  value: Partial<FooterSettingValue> | Record<string, unknown> | null | undefined,
+  locale?: string | null,
+): PublicFooter {
+  const normalized = normalizeFooter(value);
+  const requested = isFooterLocale(locale) ? locale : FOOTER_FALLBACK_LOCALE;
+  const primary =
+    normalized.messages[requested] ??
+    normalized.messages[FOOTER_FALLBACK_LOCALE] ??
+    null;
+  const fallbackFr =
+    normalized.messages[FOOTER_FALLBACK_LOCALE] ??
+    DEFAULT_FOOTER_MESSAGES[FOOTER_FALLBACK_LOCALE];
+  const localeDefaults = DEFAULT_FOOTER_MESSAGES[requested];
+
+  const pick = (
+    field: keyof FooterMessage,
+  ): string =>
+    primary?.[field]?.trim() ||
+    fallbackFr[field]?.trim() ||
+    localeDefaults[field] ||
+    DEFAULT_PUBLIC_FOOTER[field];
+
+  return {
+    tagline: pick('tagline'),
+    newsletterDesc: pick('newsletterDesc'),
+    designedByNames: pick('designedByNames'),
+  };
+}
+
+/**
  * Homepage client reviews carousel — `organization_settings` group `site`, key `homepage_reviews`.
  * Controls which review sources appear in the public “Avis de nos clients” section.
  * When both flags are false, the section is hidden on the public site.
