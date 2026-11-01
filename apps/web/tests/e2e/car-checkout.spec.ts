@@ -6,30 +6,30 @@ import { mockCheckoutAuth } from './helpers/mock-checkout-auth';
 /** Seed-aligned fixture IDs (same as flow.test.ts) — API fully mocked, no live DB. */
 const VEHICLE_ID = '00000000-0000-4000-8000-000000004021';
 const SLOT_ID = '00000000-0000-4000-8000-000000004023';
+const ROUTE_ID = '00000000-0000-4000-8000-000000004024';
 const AGENCY_ID = '00000000-0000-4000-8000-000000004020';
 const CATEGORY_ID = '00000000-0000-4000-8000-000000004010';
 const BOOKING_ID = 'booking-e2e-car';
-const PICKUP = '2026-08-01';
-const RETURN = '2026-08-08';
-const TOTAL_CENTS = 38_500; // 7 × 5500
+const TRAVEL = '2026-08-01';
+const TOTAL_CENTS = 5500;
 const MODEL = 'Toyota Yaris';
 
 const vehicleSearchMock = {
   data: [
     {
       id: VEHICLE_ID,
+      routeId: ROUTE_ID,
       licensePlate: 'CD-KIN-001',
       categoryName: 'Economy',
       exampleModel: MODEL,
       agencyName: 'Tourism Gate Rent Kinshasa',
       agencyAddress: 'Avenue du Commerce, Gombe, Kinshasa',
-      pickupCity: 'Kinshasa',
-      dailyPriceCents: 5500,
+      departureCity: 'Kinshasa',
+      arrivalCity: 'Lubumbashi',
+      priceCents: TOTAL_CENTS,
       totalPriceCents: TOTAL_CENTS,
       currency: 'USD',
-      rentalDays: 7,
-      pickupDate: PICKUP,
-      returnDate: RETURN,
+      travelDate: TRAVEL,
       availabilitySlotId: SLOT_ID,
       imageUrl: null,
     },
@@ -51,10 +51,15 @@ const vehicleDetailMock = {
     name: 'Economy',
     exampleModel: MODEL,
   },
-  pickupDate: PICKUP,
-  returnDate: RETURN,
-  rentalDays: 7,
-  dailyPriceCents: 5500,
+  route: {
+    id: ROUTE_ID,
+    departureCity: 'Kinshasa',
+    arrivalCity: 'Lubumbashi',
+    priceCents: TOTAL_CENTS,
+    currency: 'USD',
+  },
+  travelDate: TRAVEL,
+  priceCents: TOTAL_CENTS,
   totalPriceCents: TOTAL_CENTS,
   currency: 'USD',
   availabilitySlot: {
@@ -66,7 +71,7 @@ const vehicleDetailMock = {
   imageUrl: null,
 };
 
-test('location Kinshasa: liste -> fiche -> panier -> recap -> Stripe -> confirmation', async ({
+test('tronçon Kinshasa→Lubumbashi: liste -> fiche -> panier -> recap -> Stripe -> confirmation', async ({
   page,
 }) => {
   test.setTimeout(60_000);
@@ -95,7 +100,10 @@ test('location Kinshasa: liste -> fiche -> panier -> recap -> Stripe -> confirma
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify([{ id: 'dest-kin', name: 'Kinshasa', countryCode: 'CD' }]),
+      body: JSON.stringify([
+        { id: 'dest-kin', name: 'Kinshasa', countryCode: 'CD' },
+        { id: 'dest-lub', name: 'Lubumbashi', countryCode: 'CD' },
+      ]),
     });
   });
 
@@ -126,7 +134,9 @@ test('location Kinshasa: liste -> fiche -> panier -> recap -> Stripe -> confirma
   });
   await mockManifestApi(page);
 
-  await page.goto(`/cars?pickupDate=${PICKUP}&returnDate=${RETURN}`);
+  await page.goto(
+    `/cars?departureLocation=Kinshasa&arrivalLocation=Lubumbashi&travelDate=${TRAVEL}`,
+  );
 
   await expect(page.getByRole('heading', { name: MODEL })).toBeVisible({ timeout: 15_000 });
   await page.getByRole('link', { name: /voir d[ée]tails|view details|ver detalles/i }).click();
@@ -145,7 +155,7 @@ test('location Kinshasa: liste -> fiche -> panier -> recap -> Stripe -> confirma
   ]);
 
   await page.goto(
-    `/booking/recap?kind=vehicle&vehicleId=${VEHICLE_ID}&availabilitySlotId=${SLOT_ID}&pickupDate=${PICKUP}&returnDate=${RETURN}`,
+    `/booking/recap?kind=vehicle&vehicleId=${VEHICLE_ID}&availabilitySlotId=${SLOT_ID}&routeId=${ROUTE_ID}&travelDate=${TRAVEL}`,
   );
   await expect(page.getByRole('heading', { name: /r[ée]capitulatif|summary|resumen/i })).toBeVisible({
     timeout: 15_000,
@@ -173,8 +183,8 @@ test('location Kinshasa: liste -> fiche -> panier -> recap -> Stripe -> confirma
         itemType: 'vehicle',
         referenceId: SLOT_ID,
         quantity: 1,
-        startDate: PICKUP,
-        endDate: RETURN,
+        routeId: ROUTE_ID,
+        startDate: TRAVEL,
       },
     ],
   });

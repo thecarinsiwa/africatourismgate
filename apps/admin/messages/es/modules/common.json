@@ -25,7 +25,7 @@
     "searchByEmailOrNameAria": "Buscar por correo o nombre",
     "searchByNameOrSlug": "Buscar por nombre o slug…",
     "searchByNameOrSlugAria": "Buscar por nombre o slug",
-    "searchBookings": "Buscar por cliente, correo o ref.…",
+    "searchBookings": "Buscar por nombre, cliente, correo o ref.…",
     "searchBookingsAria": "Buscar reservas"
   },
   "columns": {
@@ -109,6 +109,7 @@
     "room": "habitación",
     "flight": "vuelo",
     "vehicle": "vehículo",
+    "route": "tramo",
     "sailing": "salida",
     "destination": "destino",
     "guide": "guía",
@@ -335,7 +336,8 @@
     "flight": "Vuelo",
     "vehicle": "Vehículo",
     "cruise": "Camarote (croisière)",
-    "activity": "Actividad"
+    "activity": "Actividad",
+    "troncon": "Tramo"
   },
   "activityDifficulty": {
     "unspecified": "— No renseignée —",

@@ -30,8 +30,8 @@ export type VehicleReservationDraft = {
   kind: 'vehicle';
   vehicleId: string;
   availabilitySlotId: string;
-  pickupDate: string;
-  returnDate: string;
+  routeId: string;
+  travelDate: string;
 };
 
 export type CabinReservationDraft = {
@@ -173,8 +173,8 @@ export function parseReservationDraft(
             ? first.checkIn
             : first.lineType === 'flight'
               ? first.departureDate
-              : first.lineType === 'vehicle'
-                ? first.pickupDate
+              : first.lineType === 'vehicle' || first.lineType === 'troncon'
+                ? first.travelDate
                 : startDate;
       const legacyTravelers =
         first.lineType === 'activity'
@@ -241,13 +241,11 @@ export function parseReservationDraft(
 
   if (kind === 'vehicle' || availabilitySlotId) {
     const vehicleId = readString(searchParams.vehicleId);
-    const pickupDate = readString(searchParams.pickupDate);
-    const returnDate = readString(searchParams.returnDate);
+    const routeId = readString(searchParams.routeId);
+    const travelDate =
+      readString(searchParams.travelDate) || readString(searchParams.pickupDate);
 
-    if (!vehicleId || !availabilitySlotId || !pickupDate || !returnDate) {
-      return null;
-    }
-    if (returnDate <= pickupDate) {
+    if (!vehicleId || !availabilitySlotId || !routeId || !travelDate) {
       return null;
     }
 
@@ -255,8 +253,8 @@ export function parseReservationDraft(
       kind: 'vehicle',
       vehicleId,
       availabilitySlotId,
-      pickupDate,
-      returnDate,
+      routeId,
+      travelDate,
     };
   }
 
@@ -336,8 +334,8 @@ export function buildReservationQuery(draft: ReservationDraft): string {
       kind: 'vehicle',
       vehicleId: draft.vehicleId,
       availabilitySlotId: draft.availabilitySlotId,
-      pickupDate: draft.pickupDate,
-      returnDate: draft.returnDate,
+      routeId: draft.routeId,
+      travelDate: draft.travelDate,
     });
     return params.toString();
   }
@@ -402,8 +400,8 @@ export function buildCheckoutItems(draft: ReservationDraft): BookingCheckoutItem
         itemType: 'vehicle',
         referenceId: draft.availabilitySlotId,
         quantity: 1,
-        startDate: draft.pickupDate,
-        endDate: draft.returnDate,
+        routeId: draft.routeId,
+        startDate: draft.travelDate,
       },
     ];
   }
@@ -506,8 +504,8 @@ export function buildDraftDetailHref(draft: ReservationDraft): string {
 
   if (draft.kind === 'vehicle') {
     const params = new URLSearchParams({
-      pickupDate: draft.pickupDate,
-      returnDate: draft.returnDate,
+      routeId: draft.routeId,
+      travelDate: draft.travelDate,
     });
     return `/cars/${encodeURIComponent(draft.vehicleId)}?${params.toString()}`;
   }

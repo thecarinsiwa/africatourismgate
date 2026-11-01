@@ -27,7 +27,8 @@
     "agency": "Agencia",
     "category": "Categoría",
     "licensePlate": "Matrícula",
-    "pricePerDay": "Precio / día"
+    "pricePerDay": "Precio / día",
+    "minRoutePrice": "Precio mín. tramo"
   },
   "form": {
     "submitCreate": "Crear vehículo",
@@ -35,6 +36,7 @@
     "category": "Categoría",
     "licensePlate": "Matrícula",
     "dailyPriceCents": "Precio diario (céntimos)",
+    "currencyHint": "Moneda por defecto del vehículo; los precios se definen por tramo.",
     "validation": {
       "agencyRequired": "La agencia es obligatoria.",
       "categoryRequired": "La categoría es obligatoria."
@@ -73,10 +75,38 @@
     "tabsAria": "Secciones del vehículo",
     "tabs": {
       "vehicle": "Vehículo",
+      "routes": "Tramos",
       "availability": "Disponibilidad"
     }
   },
   "sections": {
+    "routes": {
+      "title": "Tramos",
+      "intro": "Tarifas fijas por trayecto (ciudad de salida → ciudad de llegada, texto libre).",
+      "addRoute": "Añadir tramo",
+      "newRoute": "Nuevo tramo",
+      "editRoute": "Editar tramo",
+      "formHint": "Escriba la salida, la llegada y el precio fijo del trayecto.",
+      "editFormHint": "Modifique el trayecto o el precio de este tramo.",
+      "departure": "Ciudad de salida",
+      "arrival": "Ciudad de llegada",
+      "priceCents": "Precio (céntimos)",
+      "empty": "Ningún tramo para este vehículo.",
+      "minPriceHint": "desde",
+      "unpriced": "Sin tarifa",
+      "count": "{count, plural, =0 {Ningún tramo} one {# tramo} other {# tramos}}",
+      "columns": {
+        "route": "Trayecto",
+        "price": "Precio"
+      },
+      "validation": {
+        "departureRequired": "La ciudad de salida es obligatoria.",
+        "arrivalRequired": "La ciudad de llegada es obligatoria.",
+        "sameDestination": "La salida y la llegada deben ser distintas."
+      },
+      "deleteTitle": "Eliminar tramo",
+      "deleteConfirm": "¿Eliminar el tramo « {label} »?"
+    },
     "availability": {
       "title": "Disponibilidad",
       "intro": "Franjas de disponibilidad por fechas (alquiler, mantenimiento, alquilado).",
@@ -142,6 +172,40 @@
         }
       }
     },
+    "routes": {
+      "emptyDefault": "Ningún tramo por ahora.",
+      "emptySearch": "Ningún tramo coincide con los filtros.",
+      "searchLabel": "Búsqueda",
+      "searchPlaceholder": "Buscar un tramo…",
+      "searchAria": "Buscar tramos",
+      "ariaLabel": "Lista de tramos",
+      "allVehicles": "Todos los vehículos",
+      "vehicleFallback": "Vehículo {id}",
+      "formHint": "Elija el vehículo, escriba la salida y la llegada, luego la tarifa fija.",
+      "viewGrid": "Cuadrícula",
+      "viewTable": "Tabla",
+      "viewModeAria": "Modo de visualización",
+      "columns": {
+        "vehicle": "Designación"
+      },
+      "validation": {
+        "vehicleRequired": "Vehículo obligatorio."
+      },
+      "stats": {
+        "total": {
+          "label": "Tramos",
+          "subtitle": "Trayectos tarifados"
+        },
+        "vehicles": {
+          "label": "Vehículos",
+          "subtitle": "Con al menos un tramo"
+        },
+        "cityPairs": {
+          "label": "Trayectos",
+          "subtitle": "Pares salida → llegada"
+        }
+      }
+    },
     "agencies": {
       "new": "Nueva agencia",
       "edit": "Editar agencia",
@@ -188,6 +252,10 @@
     "agencies": {
       "label": "Agencias",
       "subtitle": "Puntos de alquiler"
+    },
+    "routes": {
+      "label": "Tramos",
+      "subtitle": "Tarifas salida → llegada"
     }
   },
   "exports": {

@@ -75,7 +75,7 @@ export async function fetchVerticalResults(
           id: v.id,
           title: `Vehicle ${v.licensePlate ?? 'N/A'}`,
           subtitle: `Category ${v.categoryId}`,
-          priceLabel: `${Math.round(v.dailyPriceCents / 100)} ${v.currency}/day`,
+          priceLabel: v.currency,
         })),
       );
     } catch {

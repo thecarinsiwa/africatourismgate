@@ -99,10 +99,31 @@ export async function loadPackageItemDetail(
       return {
         kind: 'vehicle',
         detail: await getVehicleDetail(item.itemId, {
-          pickupDate: start,
-          returnDate: end,
+          travelDate: start,
         }),
       };
+    case 'troncon': {
+      const lines = await getPackageResolvedLines(ctx.packageId, {
+        startDate: start,
+        endDate: end,
+        travelers,
+      });
+      const tronconLine = lines.find(
+        (line) => line.lineType === 'troncon' && line.itemId === item.itemId,
+      );
+      const vehicleId = tronconLine?.vehicleId;
+      const routeId = tronconLine?.routeId ?? item.itemId;
+      if (!vehicleId) {
+        throw new Error('Véhicule introuvable pour ce tronçon');
+      }
+      return {
+        kind: 'vehicle',
+        detail: await getVehicleDetail(vehicleId, {
+          travelDate: tronconLine?.travelDate ?? start,
+          routeId,
+        }),
+      };
+    }
     case 'property':
       return {
         kind: 'property',

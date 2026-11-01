@@ -223,6 +223,24 @@ export function BookingsList() {
   const columns = useMemo<ColumnDef<BookingListItem, unknown>[]>(
     () => [
       {
+        id: 'name',
+        header: tCommon('columns.name'),
+        meta: { cellClassName: 'min-w-0' },
+        cell: ({ row }) => {
+          const name = row.original.name?.trim();
+          return (
+            <div className="min-w-0">
+              <span className="block truncate font-medium text-atg-fg">
+                {name || emptyDash}
+              </span>
+              <p className="truncate font-mono text-xs text-atg-muted">
+                {row.original.id.slice(0, 8)}…
+              </p>
+            </div>
+          );
+        },
+      },
+      {
         accessorKey: 'createdAt',
         header: tCommon('columns.date'),
         enableSorting: true,
@@ -236,7 +254,7 @@ export function BookingsList() {
       {
         id: 'client',
         header: tCommon('columns.client'),
-        meta: { cellClassName: 'min-w-0' },
+        meta: { cellClassName: 'min-w-0', hideOnMobile: true },
         cell: ({ row }) => (
           <div className="min-w-0">
             <span className="block truncate font-medium text-atg-fg">{row.original.clientEmail}</span>
@@ -319,6 +337,10 @@ export function BookingsList() {
     exportCsv({
       filename: `reservations-${date}.csv`,
       columns: [
+        {
+          header: tCommon('columns.name'),
+          value: (row) => row.name?.trim() || emptyDash,
+        },
         { header: tCommon('columns.date'), value: (row) => formatDateTime(row.createdAt, locale) },
         { header: tCommon('columns.client'), value: (row) => row.clientEmail },
         {

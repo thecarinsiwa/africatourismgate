@@ -26,11 +26,11 @@ export type PackageFlightLineSelection = {
 };
 
 export type PackageVehicleLineSelection = {
-  lineType: 'vehicle';
+  lineType: 'vehicle' | 'troncon';
   itemId: string;
   availabilitySlotId: string;
-  pickupDate: string;
-  returnDate: string;
+  routeId: string;
+  travelDate: string;
 };
 
 export type PackageCruiseLineSelection = {
@@ -68,6 +68,9 @@ function inferLineType(
   if (readString(raw[`line${index}_activityId`])) return 'activity';
   if (readString(raw[`line${index}_roomId`])) return 'property';
   if (readString(raw[`line${index}_flightClassId`])) return 'flight';
+  if (readString(raw[`line${index}_routeId`])) {
+    return readString(raw[`line${index}_type`]) === 'troncon' ? 'troncon' : 'vehicle';
+  }
   if (readString(raw[`line${index}_availabilitySlotId`])) return 'vehicle';
   if (readString(raw[`line${index}_cabinAvailabilityId`])) return 'cruise';
   return '';
@@ -127,21 +130,25 @@ export function parsePackageLineAtIndex(
     };
   }
 
-  if (lineType === 'vehicle') {
-    const vehicleItemId = itemId || readString(raw[`line${index}_vehicleId`]);
+  if (lineType === 'vehicle' || lineType === 'troncon') {
+    const vehicleItemId =
+      itemId ||
+      readString(raw[`line${index}_vehicleId`]) ||
+      readString(raw[`line${index}_routeId`]);
     const availabilitySlotId = readString(raw[`line${index}_availabilitySlotId`]);
-    const pickupDate =
-      readString(raw[`line${index}_pickupDate`]) || readString(raw.pickupDate);
-    const returnDate =
-      readString(raw[`line${index}_returnDate`]) || readString(raw.returnDate);
-    if (!vehicleItemId || !availabilitySlotId || !pickupDate || !returnDate) return null;
-    if (returnDate <= pickupDate) return null;
+    const routeId = readString(raw[`line${index}_routeId`]);
+    const travelDate =
+      readString(raw[`line${index}_travelDate`]) ||
+      readString(raw.travelDate) ||
+      readString(raw[`line${index}_pickupDate`]) ||
+      readString(raw.pickupDate);
+    if (!vehicleItemId || !availabilitySlotId || !routeId || !travelDate) return null;
     return {
-      lineType: 'vehicle',
+      lineType: lineType === 'troncon' ? 'troncon' : 'vehicle',
       itemId: vehicleItemId,
       availabilitySlotId,
-      pickupDate,
-      returnDate,
+      routeId,
+      travelDate,
     };
   }
 
@@ -220,10 +227,13 @@ export function appendPackageLineToParams(
       params.set(`line${index}_passengers`, String(line.passengers));
       break;
     case 'vehicle':
-      params.set(`line${index}_vehicleId`, line.itemId);
+    case 'troncon':
+      if (line.lineType === 'vehicle') {
+        params.set(`line${index}_vehicleId`, line.itemId);
+      }
       params.set(`line${index}_availabilitySlotId`, line.availabilitySlotId);
-      params.set(`line${index}_pickupDate`, line.pickupDate);
-      params.set(`line${index}_returnDate`, line.returnDate);
+      params.set(`line${index}_routeId`, line.routeId);
+      params.set(`line${index}_travelDate`, line.travelDate);
       break;
     case 'cruise':
       params.set(`line${index}_cabinId`, line.itemId);

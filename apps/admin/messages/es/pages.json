@@ -178,11 +178,13 @@
       "actions": {
         "agencies": "Agencias",
         "categories": "Categorías",
+        "routes": "Tramos",
         "new": "Nuevo vehículo"
       },
       "links": {
         "agencies": "Agencias de alquiler",
-        "categories": "Categorías de vehículos"
+        "categories": "Categorías de vehículos",
+        "routes": "Tramos"
       },
       "agences": {
         "title": "Agencias de alquiler",
@@ -192,6 +194,11 @@
       "categories": {
         "title": "Categorías de vehículos",
         "description": "Tipos de vehículos (compacto, SUV, premium, etc.).",
+        "backLabel": "Volver a vehículos"
+      },
+      "troncons": {
+        "title": "Tramos",
+        "description": "Tarifas fijas por trayecto (salida → llegada) para cada vehículo.",
         "backLabel": "Volver a vehículos"
       },
       "nouveau": {

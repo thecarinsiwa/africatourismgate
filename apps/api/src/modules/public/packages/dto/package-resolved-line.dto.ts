@@ -1,8 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class PackageResolvedLineDto {
-  @ApiProperty({ enum: ['property', 'flight', 'vehicle', 'cruise', 'activity'] })
-  lineType!: 'property' | 'flight' | 'vehicle' | 'cruise' | 'activity';
+  @ApiProperty({
+    enum: ['property', 'flight', 'vehicle', 'cruise', 'activity', 'troncon'],
+  })
+  lineType!: 'property' | 'flight' | 'vehicle' | 'cruise' | 'activity' | 'troncon';
 
   @ApiProperty({ format: 'uuid' })
   itemId!: string;
@@ -39,6 +41,18 @@ export class PackageResolvedLineDto {
 
   @ApiPropertyOptional({ format: 'uuid' })
   availabilitySlotId?: string;
+
+  @ApiPropertyOptional({ format: 'uuid', description: 'vehicle_routes id' })
+  routeId?: string;
+
+  @ApiPropertyOptional({
+    format: 'uuid',
+    description: 'vehicles id (vehicle / tronçon lines)',
+  })
+  vehicleId?: string;
+
+  @ApiPropertyOptional({ format: 'date' })
+  travelDate?: string;
 
   @ApiPropertyOptional({ format: 'date' })
   pickupDate?: string;

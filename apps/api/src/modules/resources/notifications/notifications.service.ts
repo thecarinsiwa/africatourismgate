@@ -4,12 +4,17 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 import type {
   StaffNotificationPayload,
   StaffNotificationType,
 } from '@africatourismgate/types';
 import { newId } from '../../../common/utils/uuid';
+import {
+  BookingItems,
+  Bookings,
+  Users,
+} from '../../../entities/generated';
 import {
   Notifications,
 } from '../../../entities/notification.entity';
@@ -17,6 +22,11 @@ import { PermissionsService } from '../../rbac/permissions.service';
 import { StaffNotificationDto } from './dto/staff-notification.dto';
 
 const DEFAULT_LIST_LIMIT = 50;
+
+const BOOKING_NOTIFICATION_TYPES: StaffNotificationType[] = [
+  'booking_pending_approval',
+  'booking_client_message',
+];
 
 function toDto(row: Notifications): StaffNotificationDto {
   const createdAt =
@@ -39,6 +49,13 @@ function toDto(row: Notifications): StaffNotificationDto {
   };
 }
 
+function formatBookingListName(items: BookingItems[]): string {
+  if (items.length === 0) return '';
+  const primary = items[0]?.titleSnapshot?.trim() || items[0]?.itemType || '';
+  if (items.length === 1) return primary;
+  return `${primary} (+${items.length - 1})`;
+}
+
 @Injectable()
 export class NotificationsService {
   private readonly logger = new Logger(NotificationsService.name);
@@ -46,6 +63,12 @@ export class NotificationsService {
   constructor(
     @InjectRepository(Notifications)
     private readonly repository: Repository<Notifications>,
+    @InjectRepository(BookingItems)
+    private readonly bookingItemsRepository: Repository<BookingItems>,
+    @InjectRepository(Bookings)
+    private readonly bookingsRepository: Repository<Bookings>,
+    @InjectRepository(Users)
+    private readonly usersRepository: Repository<Users>,
     private readonly permissionsService: PermissionsService,
   ) {}
 
@@ -100,7 +123,96 @@ export class NotificationsService {
       qb.andWhere('n.read_at IS NULL');
     }
     const rows = await qb.getMany();
-    return rows.map(toDto);
+    return this.enrichBookingPayloads(rows.map(toDto));
+  }
+
+  /** Backfill bookingTitle / authorName for older notification payloads. */
+  private async enrichBookingPayloads(
+    dtos: StaffNotificationDto[],
+  ): Promise<StaffNotificationDto[]> {
+    const bookingIds = [
+      ...new Set(
+        dtos
+          .filter(
+            (dto) =>
+              BOOKING_NOTIFICATION_TYPES.includes(dto.type) &&
+              dto.payload.bookingId &&
+              (!dto.payload.bookingTitle || !dto.payload.authorName),
+          )
+          .map((dto) => dto.payload.bookingId as string),
+      ),
+    ];
+    if (bookingIds.length === 0) {
+      return dtos;
+    }
+
+    const [items, bookings] = await Promise.all([
+      this.bookingItemsRepository.find({
+        where: { bookingId: In(bookingIds) },
+        order: { createdAt: 'ASC' },
+      }),
+      this.bookingsRepository.find({
+        where: { id: In(bookingIds) },
+      }),
+    ]);
+
+    const itemsByBooking = new Map<string, BookingItems[]>();
+    for (const item of items) {
+      if (item.deletedAt) continue;
+      const list = itemsByBooking.get(item.bookingId) ?? [];
+      list.push(item);
+      itemsByBooking.set(item.bookingId, list);
+    }
+
+    const userIds = [
+      ...new Set(
+        bookings
+          .map((b) => b.userId)
+          .filter((id): id is string => Boolean(id)),
+      ),
+    ];
+    const users =
+      userIds.length > 0
+        ? await this.usersRepository.find({ where: { id: In(userIds) } })
+        : [];
+    const userById = new Map(users.map((u) => [u.id, u]));
+    const bookingById = new Map(bookings.map((b) => [b.id, b]));
+
+    return dtos.map((dto) => {
+      const bookingId = dto.payload.bookingId;
+      if (
+        !bookingId ||
+        !BOOKING_NOTIFICATION_TYPES.includes(dto.type) ||
+        (dto.payload.bookingTitle && dto.payload.authorName)
+      ) {
+        return dto;
+      }
+
+      const title =
+        dto.payload.bookingTitle ||
+        formatBookingListName(itemsByBooking.get(bookingId) ?? []) ||
+        undefined;
+      let authorName = dto.payload.authorName;
+      if (!authorName) {
+        const booking = bookingById.get(bookingId);
+        const owner = booking?.userId
+          ? userById.get(booking.userId)
+          : undefined;
+        authorName =
+          `${owner?.firstName ?? ''} ${owner?.lastName ?? ''}`.trim() ||
+          owner?.email ||
+          undefined;
+      }
+
+      return {
+        ...dto,
+        payload: {
+          ...dto.payload,
+          bookingTitle: title,
+          authorName,
+        },
+      };
+    });
   }
 
   async unreadCount(userId: string): Promise<{ count: number }> {

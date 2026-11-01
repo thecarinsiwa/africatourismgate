@@ -178,11 +178,13 @@
       "actions": {
         "agencies": "Agencies",
         "categories": "Categories",
+        "routes": "Routes",
         "new": "New vehicle"
       },
       "links": {
         "agencies": "Rental agencies",
-        "categories": "Vehicle categories"
+        "categories": "Vehicle categories",
+        "routes": "Routes"
       },
       "agences": {
         "title": "Rental agencies",
@@ -192,6 +194,11 @@
       "categories": {
         "title": "Vehicle categories",
         "description": "Vehicle types (compact, SUV, premium, etc.).",
+        "backLabel": "Back to vehicles"
+      },
+      "troncons": {
+        "title": "Routes",
+        "description": "Fixed fares by trip (departure → arrival) for each vehicle.",
         "backLabel": "Back to vehicles"
       },
       "nouveau": {

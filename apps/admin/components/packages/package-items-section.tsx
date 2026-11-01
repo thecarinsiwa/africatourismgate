@@ -29,7 +29,10 @@ import {
   usePackageItemTypeOptions,
 } from '../../lib/i18n/use-module-labels';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
-import { getPackageItemTypeLabel } from '../../lib/package-item-type';
+import {
+  getPackageItemTypeLabel,
+  PACKAGE_ITEM_TYPES_ADDABLE,
+} from '../../lib/package-item-type';
 import { PackageCompositionBanner } from './package-composition-banner';
 import { PackageItemDetailModal } from './package-item-detail-modal';
 import { PackageItemTypeIcon } from './package-item-type-icon';
@@ -59,7 +62,11 @@ export function PackageItemsSection({
   const tPagination = useTranslations('modules.common.pagination');
   const tDataTable = useTranslations('modules.common.dataTable');
   const paginationLabels = useDataTablePaginationLabels();
-  const itemTypeOptions = usePackageItemTypeOptions();
+  const itemTypeOptions = usePackageItemTypeOptions().filter((option) =>
+    (PACKAGE_ITEM_TYPES_ADDABLE as readonly PackageItemType[]).includes(
+      option.value,
+    ),
+  );
   const itemTypeLabels = usePackageItemTypeLabels();
   const typeId = useId();
   const itemId = useId();
@@ -126,6 +133,25 @@ export function PackageItemsSection({
               id: v.id,
               label: v.licensePlate ?? v.id.slice(0, 8),
             }));
+            break;
+          }
+          case 'troncon': {
+            const [routesResult, vehiclesResult] = await Promise.all([
+              client.listVehicleRoutes({ page: 1, limit: 100 }),
+              client.listVehicles({ page: 1, limit: 100 }),
+            ]);
+            const vehicleById = new Map(
+              vehiclesResult.data.map((v) => [v.id, v] as const),
+            );
+            options = routesResult.data.map((route) => {
+              const vehicle = vehicleById.get(route.vehicleId);
+              const plate = vehicle?.licensePlate?.trim();
+              const suffix = plate ? ` — ${plate}` : '';
+              return {
+                id: route.id,
+                label: `${route.departureCity} → ${route.arrivalCity}${suffix}`,
+              };
+            });
             break;
           }
           case 'cruise': {

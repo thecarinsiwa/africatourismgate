@@ -178,11 +178,13 @@
       "actions": {
         "agencies": "Agences",
         "categories": "Catégories",
+        "routes": "Tronçons",
         "new": "Nouveau véhicule"
       },
       "links": {
         "agencies": "Agences de location",
-        "categories": "Catégories véhicules"
+        "categories": "Catégories véhicules",
+        "routes": "Tronçons"
       },
       "agences": {
         "title": "Agences de location",
@@ -192,6 +194,11 @@
       "categories": {
         "title": "Catégories véhicules",
         "description": "Types de véhicules (compact, SUV, premium, etc.).",
+        "backLabel": "Retour aux véhicules"
+      },
+      "troncons": {
+        "title": "Tronçons",
+        "description": "Tarifs fixes par trajet (départ → arrivée) pour chaque véhicule.",
         "backLabel": "Retour aux véhicules"
       },
       "nouveau": {

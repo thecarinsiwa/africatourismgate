@@ -8,6 +8,7 @@ import type {
   CruiseSailing,
   FlightClassAvailability,
   VehicleAvailability,
+  VehicleRoute,
 } from '@africatourismgate/types';
 import { resolveBookingModeForItemType } from '@africatourismgate/types';
 import { Button, Input } from '@africatourismgate/ui';
@@ -47,6 +48,9 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
 
   const [vehicleSlots, setVehicleSlots] = useState<VehicleAvailability[]>([]);
   const [selectedVehicleSlotId, setSelectedVehicleSlotId] = useState<string | null>(null);
+  const [vehicleRoutes, setVehicleRoutes] = useState<VehicleRoute[]>([]);
+  const [selectedVehicleRouteId, setSelectedVehicleRouteId] = useState<string | null>(null);
+  const [vehicleTravelDate, setVehicleTravelDate] = useState(defaultFlightDate);
 
   const [sailings, setSailings] = useState<CruiseSailing[]>([]);
   const [selectedSailingId, setSelectedSailingId] = useState<string | null>(null);
@@ -76,6 +80,9 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
     setQuantity(1);
     setSelectedScheduleId(null);
     setSelectedVehicleSlotId(null);
+    setSelectedVehicleRouteId(null);
+    setVehicleRoutes([]);
+    setVehicleTravelDate(defaultFlightDate());
     setSelectedSailingId(null);
     setSelectedCabinSlotId(null);
     setRoomDates(defaultRoomStayDates());
@@ -137,16 +144,26 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
           }
         } else if (currentHit.kind === 'vehicle') {
           const now = new Date().toISOString();
-          const res = await client.listVehicleAvailability({
-            vehicleId: currentHit.vehicle.id,
-            startFrom: now,
-            limit: 20,
-          });
+          const [slotsRes, routesRes] = await Promise.all([
+            client.listVehicleAvailability({
+              vehicleId: currentHit.vehicle.id,
+              startFrom: now,
+              limit: 20,
+            }),
+            client.listVehicleRoutes({
+              vehicleId: currentHit.vehicle.id,
+              limit: 50,
+            }),
+          ]);
           if (cancelled) return;
-          const available = res.data.filter((s) => s.status === 'available');
+          const available = slotsRes.data.filter((s) => s.status === 'available');
           setVehicleSlots(available);
           if (available.length === 1) {
             setSelectedVehicleSlotId(available[0]!.id);
+          }
+          setVehicleRoutes(routesRes.data);
+          if (routesRes.data.length === 1) {
+            setSelectedVehicleRouteId(routesRes.data[0]!.id);
           }
         } else if (currentHit.kind === 'cabin') {
           const res = await client.listCruiseSailings({ limit: 20 });
@@ -247,11 +264,15 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
       };
     }
     if (hit!.kind === 'vehicle') {
-      if (!selectedVehicleSlotId) return null;
+      if (!selectedVehicleSlotId || !selectedVehicleRouteId || !vehicleTravelDate) {
+        return null;
+      }
       return {
         itemType: 'vehicle',
         referenceId: selectedVehicleSlotId,
         quantity: 1,
+        routeId: selectedVehicleRouteId,
+        startDate: vehicleTravelDate,
       };
     }
     if (hit!.kind === 'cabin') {
@@ -441,33 +462,72 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
               ) : null}
 
               {hit.kind === 'vehicle' ? (
-                <div className="space-y-3">
-                  <p className="text-sm font-medium text-atg-muted">{labels.slotLabel}</p>
-                  {vehicleSlots.length === 0 ? (
-                    <p className="text-atg-muted">{labels.noSlots}</p>
-                  ) : (
-                    <ul className="space-y-2">
-                      {vehicleSlots.map((slot) => (
-                        <li key={slot.id}>
-                          <Button
-                            type="button"
-                            variant={
-                              selectedVehicleSlotId === slot.id ? 'primary' : 'secondary'
-                            }
-                            size="lg"
-                            fullWidth
-                            className="!h-auto min-h-[3.25rem] flex-col items-start py-3 text-left"
-                            onClick={() => setSelectedVehicleSlotId(slot.id)}
-                          >
-                            <span className="font-semibold">
-                              {formatDisplayDateTime(slot.startDatetime)} →{' '}
-                              {formatDisplayDateTime(slot.endDatetime)}
-                            </span>
-                          </Button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                <div className="space-y-4">
+                  <Input
+                    id="vehicle-travel-date"
+                    type="date"
+                    label={labels.dateLabel}
+                    value={vehicleTravelDate}
+                    onChange={(e) => setVehicleTravelDate(e.target.value)}
+                  />
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-atg-muted">{labels.routeLabel}</p>
+                    {vehicleRoutes.length === 0 ? (
+                      <p className="text-atg-muted">{labels.noRoutes}</p>
+                    ) : (
+                      <ul className="space-y-2">
+                        {vehicleRoutes.map((route) => {
+                          return (
+                            <li key={route.id}>
+                              <Button
+                                type="button"
+                                variant={
+                                  selectedVehicleRouteId === route.id ? 'primary' : 'secondary'
+                                }
+                                size="lg"
+                                fullWidth
+                                className="!h-auto min-h-[3.25rem] justify-between py-3 text-left"
+                                onClick={() => setSelectedVehicleRouteId(route.id)}
+                              >
+                                <span className="font-semibold">
+                                  {route.departureCity} → {route.arrivalCity}
+                                </span>
+                                <span>{formatCents(route.priceCents, route.currency)}</span>
+                              </Button>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-atg-muted">{labels.slotLabel}</p>
+                    {vehicleSlots.length === 0 ? (
+                      <p className="text-atg-muted">{labels.noSlots}</p>
+                    ) : (
+                      <ul className="space-y-2">
+                        {vehicleSlots.map((slot) => (
+                          <li key={slot.id}>
+                            <Button
+                              type="button"
+                              variant={
+                                selectedVehicleSlotId === slot.id ? 'primary' : 'secondary'
+                              }
+                              size="lg"
+                              fullWidth
+                              className="!h-auto min-h-[3.25rem] flex-col items-start py-3 text-left"
+                              onClick={() => setSelectedVehicleSlotId(slot.id)}
+                            >
+                              <span className="font-semibold">
+                                {formatDisplayDateTime(slot.startDatetime)} →{' '}
+                                {formatDisplayDateTime(slot.endDatetime)}
+                              </span>
+                            </Button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
                 </div>
               ) : null}
 

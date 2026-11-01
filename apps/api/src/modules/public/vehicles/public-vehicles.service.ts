@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { PublicSiteSearchHit } from '@africatourismgate/types';
 import { In, Repository } from 'typeorm';
@@ -9,6 +9,7 @@ import {
   VehicleAvailability,
   VehicleCategories,
   VehicleImages,
+  VehicleRoutes,
   Vehicles,
 } from '../../../entities/generated';
 import { PublicGalleryImageDto } from '../dto/public-gallery-image.dto';
@@ -22,9 +23,9 @@ import { VehicleDetailDto } from './dto/vehicle-detail.dto';
 import { VehicleSearchQueryDto } from './dto/vehicle-search-query.dto';
 import { VehicleSearchResultDto } from './dto/vehicle-search-result.dto';
 import {
-  assertValidVehicleDates,
-  countRentalDays,
-  resolveDefaultRentalWindow,
+  assertValidTravelDate,
+  dateOnlyFromDatetime,
+  slotCoversTravelDate,
   todayDateOnly,
 } from './vehicle-dates.util';
 
@@ -37,6 +38,8 @@ export class PublicVehiclesService {
     private readonly categoriesRepository: Repository<VehicleCategories>,
     @InjectRepository(VehicleImages)
     private readonly vehicleImagesRepository: Repository<VehicleImages>,
+    @InjectRepository(VehicleRoutes)
+    private readonly vehicleRoutesRepository: Repository<VehicleRoutes>,
     @InjectRepository(RentalAgencies)
     private readonly agenciesRepository: Repository<RentalAgencies>,
     @InjectRepository(VehicleAvailability)
@@ -45,38 +48,35 @@ export class PublicVehiclesService {
     private readonly destinationsRepository: Repository<Destinations>,
   ) {}
 
+  /** Free-text cities that appear as départ or arrivée on active tronçons. */
   async listPickupLocations(): Promise<PublicDestinationDto[]> {
-    const rows = await this.destinationsRepository
-      .createQueryBuilder('d')
-      .select([
-        'd.id',
-        'd.name',
-        'd.countryCode',
-        'd.latitude',
-        'd.longitude',
-      ])
-      .innerJoin(
-        RentalAgencies,
-        'ra',
-        'ra.destinationId = d.id AND ra.deletedAt IS NULL',
-      )
+    const routes = await this.vehicleRoutesRepository
+      .createQueryBuilder('route')
       .innerJoin(
         Vehicles,
         'v',
-        'v.agencyId = ra.id AND v.deletedAt IS NULL',
+        'v.id = route.vehicleId AND v.deletedAt IS NULL',
       )
-      .where('d.deletedAt IS NULL')
-      .distinct(true)
-      .orderBy('d.name', 'ASC')
+      .where('route.deletedAt IS NULL')
       .getMany();
 
-    return rows.map((d) => ({
-      id: d.id,
-      name: d.name,
-      countryCode: d.countryCode,
-      latitude: this.toCoord(d.latitude),
-      longitude: this.toCoord(d.longitude),
-    }));
+    const names = new Set<string>();
+    for (const route of routes) {
+      const departure = route.departureCity?.trim();
+      const arrival = route.arrivalCity?.trim();
+      if (departure) names.add(departure);
+      if (arrival) names.add(arrival);
+    }
+
+    return [...names]
+      .sort((a, b) => a.localeCompare(b))
+      .map((name) => ({
+        id: name,
+        name,
+        countryCode: '',
+        latitude: null,
+        longitude: null,
+      }));
   }
 
   async search(
@@ -84,17 +84,67 @@ export class PublicVehiclesService {
   ): Promise<PaginatedResult<VehicleSearchResultDto>> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
-    const hasDates = Boolean(query.pickupDate && query.returnDate);
+    const travelDate = query.travelDate ?? query.pickupDate;
+    assertValidTravelDate(travelDate);
 
-    assertValidVehicleDates(query.pickupDate, query.returnDate);
+    const departureLocation = (
+      query.departureLocation ??
+      query.pickupLocation ??
+      ''
+    ).trim();
+    const arrivalLocation = (query.arrivalLocation ?? '').trim();
 
-    const fleet = await this.resolveActiveFleet(query.pickupLocation);
-    if (!fleet) {
+    const routesQb = this.vehicleRoutesRepository
+      .createQueryBuilder('route')
+      .innerJoin(Vehicles, 'vehicle', 'vehicle.id = route.vehicleId')
+      .where('route.deletedAt IS NULL')
+      .andWhere('vehicle.deletedAt IS NULL');
+
+    if (departureLocation) {
+      routesQb.andWhere('route.departureCity LIKE :departureLocation', {
+        departureLocation: `%${departureLocation}%`,
+      });
+    }
+    if (arrivalLocation) {
+      routesQb.andWhere('route.arrivalCity LIKE :arrivalLocation', {
+        arrivalLocation: `%${arrivalLocation}%`,
+      });
+    }
+
+    const routes = await routesQb.orderBy('route.priceCents', 'ASC').getMany();
+    if (!routes.length) {
       return this.emptyPage(page, limit);
     }
 
-    const { activeVehicles, agencyById, cityByDestId } = fleet;
-    const vehicleIds = activeVehicles.map((v) => v.id);
+    const vehicleIds = [...new Set(routes.map((r) => r.vehicleId))];
+    const vehicles = await this.vehiclesRepository.find({
+      where: { id: In(vehicleIds) },
+    });
+    const vehicleById = new Map(
+      vehicles.filter((v) => !v.deletedAt).map((v) => [v.id, v]),
+    );
+
+    const agencyIds = [
+      ...new Set(
+        [...vehicleById.values()].map((v) => v.agencyId).filter(Boolean),
+      ),
+    ];
+    const agencies = agencyIds.length
+      ? await this.agenciesRepository.find({ where: { id: In(agencyIds) } })
+      : [];
+    const agencyById = new Map(
+      agencies.filter((a) => !a.deletedAt).map((a) => [a.id, a]),
+    );
+
+    const categoryIds = [
+      ...new Set([...vehicleById.values()].map((v) => v.categoryId)),
+    ];
+    const categories = categoryIds.length
+      ? await this.categoriesRepository.find({ where: { id: In(categoryIds) } })
+      : [];
+    const categoryById = new Map(
+      categories.filter((c) => !c.deletedAt).map((c) => [c.id, c]),
+    );
 
     const slotsQuery = this.availabilityRepository
       .createQueryBuilder('slot')
@@ -102,37 +152,32 @@ export class PublicVehiclesService {
       .andWhere('slot.status = :status', { status: 'available' })
       .andWhere('slot.deletedAt IS NULL');
 
-    if (hasDates) {
+    if (travelDate) {
       slotsQuery
-        .andWhere('DATE(slot.startDatetime) <= :pickupDate', {
-          pickupDate: query.pickupDate,
-        })
-        .andWhere('DATE(slot.endDatetime) >= :returnDate', {
-          returnDate: query.returnDate,
-        });
-    } else {
-      slotsQuery.andWhere('DATE(slot.endDatetime) >= :today', {
-        today: todayDateOnly(),
-      });
+        .andWhere('DATE(slot.startDatetime) <= :travelDate', { travelDate })
+        .andWhere('DATE(slot.endDatetime) >= :travelDate', { travelDate });
     }
 
     const slots = await slotsQuery.orderBy('slot.startDatetime', 'ASC').getMany();
-
-    const categoryIds = [...new Set(activeVehicles.map((v) => v.categoryId))];
-    const categories = await this.categoriesRepository.find({
-      where: { id: In(categoryIds) },
-    });
-    const categoryById = new Map(
-      categories.filter((c) => !c.deletedAt).map((c) => [c.id, c]),
-    );
+    // Browse (no date): prefer slots still covering today; otherwise keep the
+    // latest available window so tronçons remain visible in the catalogue.
+    const relevantSlots = travelDate
+      ? slots
+      : (() => {
+          const today = todayDateOnly();
+          const current = slots.filter(
+            (slot) => dateOnlyFromDatetime(slot.endDatetime) >= today,
+          );
+          return current.length ? current : slots;
+        })();
+    const bestSlotByVehicleId = this.pickBestSlotPerVehicle(relevantSlots);
 
     const imageUrlByVehicleId = await this.loadPrimaryImageUrlByVehicleId(vehicleIds);
-
     const results: VehicleSearchResultDto[] = [];
 
-    for (const vehicle of activeVehicles) {
-      const vehicleSlots = slots.filter((slot) => slot.vehicleId === vehicle.id);
-      if (!vehicleSlots.length) continue;
+    for (const route of routes) {
+      const vehicle = vehicleById.get(route.vehicleId);
+      if (!vehicle) continue;
 
       const agency = agencyById.get(vehicle.agencyId);
       if (!agency) continue;
@@ -140,49 +185,55 @@ export class PublicVehiclesService {
       const category = categoryById.get(vehicle.categoryId);
       if (!category) continue;
 
-      let slot: VehicleAvailability;
-      let pickupDate: string;
-      let returnDate: string;
+      const slot = bestSlotByVehicleId.get(vehicle.id);
+      if (!slot) continue;
 
-      if (hasDates) {
-        const bestSlot = this.pickBestSlotPerVehicle(vehicleSlots).get(vehicle.id);
-        if (!bestSlot) continue;
-        slot = bestSlot;
-        pickupDate = query.pickupDate!;
-        returnDate = query.returnDate!;
-      } else {
-        slot = vehicleSlots[0];
-        const window = resolveDefaultRentalWindow(
-          slot.startDatetime,
-          slot.endDatetime,
-        );
-        if (!window) continue;
-        pickupDate = window.pickupDate;
-        returnDate = window.returnDate;
+      let resolvedTravelDate = travelDate;
+      if (!resolvedTravelDate) {
+        const slotStart = dateOnlyFromDatetime(slot.startDatetime);
+        const slotEnd = dateOnlyFromDatetime(slot.endDatetime);
+        const today = todayDateOnly();
+        if (slotStart > today) {
+          resolvedTravelDate = slotStart;
+        } else if (slotEnd >= today) {
+          resolvedTravelDate = today;
+        } else {
+          // Catalogue browse with an expired window: surface the tronçon using
+          // the last day of the slot so designation + route remain visible.
+          resolvedTravelDate = slotEnd;
+        }
+        if (
+          !slotCoversTravelDate(
+            slot.startDatetime,
+            slot.endDatetime,
+            resolvedTravelDate,
+          )
+        ) {
+          continue;
+        }
       }
-
-      const rentalDays = countRentalDays(pickupDate, returnDate);
-      const pickupCity =
-        (agency.destinationId && cityByDestId.get(agency.destinationId)) ||
-        query.pickupLocation?.trim() ||
-        '';
 
       results.push({
         id: vehicle.id,
+        routeId: route.id,
         licensePlate: vehicle.licensePlate,
         categoryName: category.name,
         exampleModel: category.exampleModel,
         agencyName: agency.name,
         agencyAddress: agency.address,
-        pickupCity,
-        dailyPriceCents: vehicle.dailyPriceCents,
-        totalPriceCents: vehicle.dailyPriceCents * rentalDays,
-        currency: vehicle.currency,
-        rentalDays,
-        pickupDate,
-        returnDate,
+        departureCity: route.departureCity,
+        arrivalCity: route.arrivalCity,
+        priceCents: route.priceCents,
+        totalPriceCents: route.priceCents,
+        currency: route.currency,
+        travelDate: resolvedTravelDate,
         availabilitySlotId: slot.id,
         imageUrl: imageUrlByVehicleId.get(vehicle.id) ?? null,
+        pickupCity: route.departureCity,
+        dailyPriceCents: route.priceCents,
+        rentalDays: 1,
+        pickupDate: resolvedTravelDate,
+        returnDate: resolvedTravelDate,
       });
     }
 
@@ -347,68 +398,15 @@ export class PublicVehiclesService {
     return hits.slice(0, limit);
   }
 
-  private async resolveActiveFleet(pickupLocation?: string): Promise<{
-    activeVehicles: Vehicles[];
-    agencyById: Map<string, RentalAgencies>;
-    cityByDestId: Map<string, string>;
-  } | null> {
-    let activeAgencies: RentalAgencies[];
-
-    const locationTerm = pickupLocation?.trim();
-    if (locationTerm) {
-      const destinationIds = await this.resolveDestinationIds(locationTerm);
-      if (!destinationIds.length) {
-        return null;
-      }
-
-      const agencies = await this.agenciesRepository.find({
-        where: { destinationId: In(destinationIds) },
-      });
-      activeAgencies = agencies.filter((a) => !a.deletedAt);
-    } else {
-      const agencies = await this.agenciesRepository.find();
-      activeAgencies = agencies.filter((a) => !a.deletedAt);
-    }
-
-    if (!activeAgencies.length) {
-      return null;
-    }
-
-    const agencyById = new Map(activeAgencies.map((a) => [a.id, a]));
-    const agencyIds = activeAgencies.map((a) => a.id);
-
-    const vehicles = await this.vehiclesRepository.find({
-      where: { agencyId: In(agencyIds) },
-    });
-    const activeVehicles = vehicles.filter((v) => !v.deletedAt);
-    if (!activeVehicles.length) {
-      return null;
-    }
-
-    const destIds = [
-      ...new Set(
-        activeAgencies
-          .map((a) => a.destinationId)
-          .filter((id): id is string => Boolean(id)),
-      ),
-    ];
-    const destinations =
-      destIds.length > 0
-        ? await this.destinationsRepository.find({ where: { id: In(destIds) } })
-        : [];
-    const cityByDestId = new Map(
-      destinations.filter((d) => !d.deletedAt).map((d) => [d.id, d.name]),
-    );
-
-    return { activeVehicles, agencyById, cityByDestId };
-  }
-
   async getById(
     id: string,
     query: VehicleDetailQueryDto,
   ): Promise<VehicleDetailDto> {
-    assertValidVehicleDates(query.pickupDate, query.returnDate);
-    const rentalDays = countRentalDays(query.pickupDate, query.returnDate);
+    const travelDate = query.travelDate ?? query.pickupDate;
+    if (!travelDate) {
+      throw new BadRequestException('travelDate est requis.');
+    }
+    assertValidTravelDate(travelDate);
 
     const vehicle = await this.vehiclesRepository.findOne({ where: { id } });
     if (!vehicle || vehicle.deletedAt) {
@@ -429,13 +427,15 @@ export class PublicVehiclesService {
       throw new NotFoundException('Véhicule introuvable.');
     }
 
+    const route = await this.resolveRouteForVehicle(vehicle.id, query);
+
     let city = '';
     if (agency.destinationId) {
-      const destination = await this.destinationsRepository.findOne({
+      const agencyDestination = await this.destinationsRepository.findOne({
         where: { id: agency.destinationId },
       });
-      if (destination && !destination.deletedAt) {
-        city = destination.name;
+      if (agencyDestination && !agencyDestination.deletedAt) {
+        city = agencyDestination.name;
       }
     }
 
@@ -444,12 +444,8 @@ export class PublicVehiclesService {
       .where('slot.vehicleId = :vehicleId', { vehicleId: vehicle.id })
       .andWhere('slot.status = :status', { status: 'available' })
       .andWhere('slot.deletedAt IS NULL')
-      .andWhere('DATE(slot.startDatetime) <= :pickupDate', {
-        pickupDate: query.pickupDate,
-      })
-      .andWhere('DATE(slot.endDatetime) >= :returnDate', {
-        returnDate: query.returnDate,
-      })
+      .andWhere('DATE(slot.startDatetime) <= :travelDate', { travelDate })
+      .andWhere('DATE(slot.endDatetime) >= :travelDate', { travelDate })
       .orderBy('slot.startDatetime', 'ASC')
       .getOne();
 
@@ -469,12 +465,17 @@ export class PublicVehiclesService {
         name: category.name,
         exampleModel: category.exampleModel,
       },
-      pickupDate: query.pickupDate,
-      returnDate: query.returnDate,
-      rentalDays,
-      dailyPriceCents: vehicle.dailyPriceCents,
-      totalPriceCents: vehicle.dailyPriceCents * rentalDays,
-      currency: vehicle.currency,
+      route: {
+        id: route.id,
+        departureCity: route.departureCity,
+        arrivalCity: route.arrivalCity,
+        priceCents: route.priceCents,
+        currency: route.currency,
+      },
+      travelDate,
+      priceCents: route.priceCents,
+      totalPriceCents: route.priceCents,
+      currency: route.currency,
       availabilitySlot: slot
         ? {
             id: slot.id,
@@ -483,7 +484,73 @@ export class PublicVehiclesService {
           }
         : null,
       images,
+      pickupDate: travelDate,
+      returnDate: travelDate,
+      rentalDays: 1,
+      dailyPriceCents: route.priceCents,
     };
+  }
+
+  private async resolveRouteForVehicle(
+    vehicleId: string,
+    query: VehicleDetailQueryDto,
+  ): Promise<VehicleRoutes> {
+    if (query.routeId) {
+      const route = await this.vehicleRoutesRepository.findOne({
+        where: { id: query.routeId },
+      });
+      if (!route || route.deletedAt || route.vehicleId !== vehicleId) {
+        throw new NotFoundException('Tronçon introuvable pour ce véhicule.');
+      }
+      return route;
+    }
+
+    const departureCity = query.departureCity?.trim();
+    const arrivalCity = query.arrivalCity?.trim();
+    if (departureCity && arrivalCity) {
+      const route = await this.vehicleRoutesRepository
+        .createQueryBuilder('route')
+        .where('route.vehicleId = :vehicleId', { vehicleId })
+        .andWhere('route.deletedAt IS NULL')
+        .andWhere('LOWER(route.departureCity) = LOWER(:departureCity)', {
+          departureCity,
+        })
+        .andWhere('LOWER(route.arrivalCity) = LOWER(:arrivalCity)', {
+          arrivalCity,
+        })
+        .getOne();
+      if (!route) {
+        throw new NotFoundException(
+          'Aucun tronçon pour ce couple départ / arrivée.',
+        );
+      }
+      return route;
+    }
+
+    const fallback = await this.vehicleRoutesRepository
+      .createQueryBuilder('route')
+      .where('route.vehicleId = :vehicleId', { vehicleId })
+      .andWhere('route.deletedAt IS NULL')
+      .orderBy('route.priceCents', 'ASC')
+      .getOne();
+    if (!fallback) {
+      throw new NotFoundException('Aucun tronçon tarifé pour ce véhicule.');
+    }
+    return fallback;
+  }
+
+  private async resolveEndpointDestinationIds(input: {
+    destinationId?: string;
+    locationName?: string;
+  }): Promise<string[]> {
+    if (input.destinationId) {
+      return [input.destinationId];
+    }
+    const term = input.locationName?.trim();
+    if (!term) {
+      return [];
+    }
+    return this.resolveDestinationIds(term);
   }
 
   private async loadPrimaryImageUrlByVehicleId(
@@ -521,8 +588,8 @@ export class PublicVehiclesService {
       }));
   }
 
-  private async resolveDestinationIds(pickupLocation: string): Promise<string[]> {
-    const term = pickupLocation.trim();
+  private async resolveDestinationIds(locationName: string): Promise<string[]> {
+    const term = locationName.trim();
     if (!term) {
       return [];
     }

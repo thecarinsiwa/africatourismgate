@@ -449,13 +449,23 @@ INSERT INTO `cruise_ports` (
 -- -----------------------------------------------------------------------------
 INSERT INTO `destinations` (
   `id`, `name`, `slug`, `country_code`, `description`, `is_featured`, `created_by_user_id`
-) VALUES (
+) VALUES
+(
   '00000000-0000-4000-8000-000000002001',
   'Kinshasa',
   'kinshasa',
   'CD',
   'Capital of the Democratic Republic of the Congo',
   1,
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000002003',
+  'Lubumbashi',
+  'lubumbashi',
+  'CD',
+  'Mining capital of Haut-Katanga, Democratic Republic of the Congo',
+  0,
   '00000000-0000-4000-8000-000000000010'
 );
 
@@ -671,14 +681,13 @@ INSERT INTO `rental_agencies` (
 );
 
 INSERT INTO `vehicles` (
-  `id`, `agency_id`, `category_id`, `license_plate`, `daily_price_cents`, `currency`, `created_by_user_id`
+  `id`, `agency_id`, `category_id`, `license_plate`, `currency`, `created_by_user_id`
 ) VALUES
 (
   '00000000-0000-4000-8000-000000004021',
   '00000000-0000-4000-8000-000000004020',
   '00000000-0000-4000-8000-000000004010',
   'CD-KIN-001',
-  5500,
   'USD',
   '00000000-0000-4000-8000-000000000010'
 ),
@@ -687,6 +696,28 @@ INSERT INTO `vehicles` (
   '00000000-0000-4000-8000-000000004020',
   '00000000-0000-4000-8000-000000004012',
   'CD-KIN-SUV',
+  'USD',
+  '00000000-0000-4000-8000-000000000010'
+);
+
+INSERT INTO `vehicle_routes` (
+  `id`, `vehicle_id`, `departure_city`, `arrival_city`,
+  `price_cents`, `currency`, `created_by_user_id`
+) VALUES
+(
+  '00000000-0000-4000-8000-000000004028',
+  '00000000-0000-4000-8000-000000004021',
+  'Kinshasa',
+  'Lubumbashi',
+  5500,
+  'USD',
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000004029',
+  '00000000-0000-4000-8000-000000004022',
+  'Kinshasa',
+  'Lubumbashi',
   12000,
   'USD',
   '00000000-0000-4000-8000-000000000010'
@@ -699,7 +730,7 @@ INSERT INTO `vehicle_availability` (
   '00000000-0000-4000-8000-000000004023',
   '00000000-0000-4000-8000-000000004021',
   '2026-08-01 08:00:00',
-  '2026-08-31 18:00:00',
+  '2027-12-31 18:00:00',
   'available',
   -4.3058000,
   15.3000000,
@@ -709,8 +740,8 @@ INSERT INTO `vehicle_availability` (
   '00000000-0000-4000-8000-000000004024',
   '00000000-0000-4000-8000-000000004022',
   '2026-08-01 08:00:00',
-  '2026-08-31 18:00:00',
-  'rented',
+  '2027-12-31 18:00:00',
+  'available',
   -4.3217000,
   15.3120000,
   '00000000-0000-4000-8000-000000000010'

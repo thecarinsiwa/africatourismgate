@@ -75,6 +75,7 @@ export const CATALOG_PERMISSION_MAP = {
     'vehicle-categories',
     'vehicle-availability',
     'vehicle-images',
+    'vehicle-routes',
   ],
   cruises: [
     'cruise-lines',

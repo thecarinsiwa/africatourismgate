@@ -6,6 +6,7 @@ import {
   VehicleAvailability,
   VehicleCategories,
   VehicleImages,
+  VehicleRoutes,
   Vehicles,
 } from '../../../entities/generated';
 import { PublicVehiclesController } from './public-vehicles.controller';
@@ -17,6 +18,7 @@ import { PublicVehiclesService } from './public-vehicles.service';
       Vehicles,
       VehicleCategories,
       VehicleImages,
+      VehicleRoutes,
       RentalAgencies,
       VehicleAvailability,
       Destinations,

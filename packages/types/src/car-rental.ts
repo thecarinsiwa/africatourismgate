@@ -53,7 +53,6 @@ export interface Vehicle {
   agencyId: string;
   categoryId: string;
   licensePlate: string | null;
-  dailyPriceCents: number;
   currency: string;
   /** NULL = catalogue partagé (toutes orgs). */
   organizationId: string | null;
@@ -65,7 +64,6 @@ export interface CreateVehicleRequest {
   agencyId: string;
   categoryId: string;
   licensePlate?: string;
-  dailyPriceCents: number;
   currency: string;
   organizationId?: string | null;
 }
@@ -144,4 +142,37 @@ export interface VehicleAvailabilityListQuery {
   limit?: number;
   startFrom?: string;
   endTo?: string;
+}
+
+/** Tronçon tarifé : ville départ → ville arrivée (texte libre) pour un véhicule. */
+export interface VehicleRoute {
+  id: string;
+  vehicleId: string;
+  departureCity: string;
+  arrivalCity: string;
+  priceCents: number;
+  currency: string;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface CreateVehicleRouteRequest {
+  vehicleId: string;
+  departureCity: string;
+  arrivalCity: string;
+  priceCents: number;
+  currency: string;
+}
+
+export type UpdateVehicleRouteRequest = Partial<
+  Omit<CreateVehicleRouteRequest, 'vehicleId'>
+>;
+
+export interface VehicleRoutesListQuery {
+  page?: number;
+  limit?: number;
+  vehicleId?: string;
+  departureCity?: string;
+  arrivalCity?: string;
+  search?: string;
 }

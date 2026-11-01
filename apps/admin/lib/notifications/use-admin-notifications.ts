@@ -74,10 +74,14 @@ function mapToItem(
   let description = '';
   switch (row.type) {
     case 'booking_pending_approval':
-      description = [shortId(p.bookingId), author].filter(Boolean).join(' · ');
+      description = [p.bookingTitle, author, shortId(p.bookingId)]
+        .filter(Boolean)
+        .join(' · ');
       break;
     case 'booking_client_message':
-      description = [author, shortId(p.bookingId)].filter(Boolean).join(' · ');
+      description = [p.bookingTitle, author, shortId(p.bookingId)]
+        .filter(Boolean)
+        .join(' · ');
       break;
     case 'review_pending':
       description = author || shortId(p.reviewId);

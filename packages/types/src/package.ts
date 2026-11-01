@@ -1,4 +1,10 @@
-export type PackageItemType = 'property' | 'flight' | 'vehicle' | 'cruise' | 'activity';
+export type PackageItemType =
+  | 'property'
+  | 'flight'
+  | 'vehicle'
+  | 'cruise'
+  | 'activity'
+  | 'troncon';
 
 export interface Package {
   id: string;

@@ -467,6 +467,11 @@ export type Translations = {
     pickupDate: string;
     returnDate: string;
     pickupLocation: string;
+    departureLocation: string;
+    arrivalLocation: string;
+    travelDate: string;
+    routeLabel: string;
+    routePriceLabel: string;
     noResults: string;
     noResultsHint: string;
     noSearchParams: string;
@@ -487,6 +492,7 @@ export type Translations = {
     backToList: string;
     agencyTitle: string;
     categoryTitle: string;
+    exampleModelLabel: string;
     licensePlate: string;
     infoTitle: string;
     equipmentTitle: string;
@@ -821,6 +827,7 @@ export type Translations = {
       vehicle: string;
       cruise: string;
       activity: string;
+      troncon: string;
     };
     galleryAria: string;
     galleryOpenLightbox: string;

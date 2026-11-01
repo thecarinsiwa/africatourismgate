@@ -57,7 +57,7 @@ const LABELS: Record<VehicleReportLocale, VehiclePdfLabels> = {
       colVehicle: 'Véhicule',
       colAgency: 'Agence',
       colCategory: 'Catégorie',
-      colDailyPrice: 'Prix / jour',
+      colDailyPrice: 'Prix min tronçon',
       empty: 'Aucun véhicule dans le périmètre sélectionné.',
     },
     bookings: {
@@ -105,7 +105,7 @@ const LABELS: Record<VehicleReportLocale, VehiclePdfLabels> = {
       colVehicle: 'Vehicle',
       colAgency: 'Agency',
       colCategory: 'Category',
-      colDailyPrice: 'Price / day',
+      colDailyPrice: 'Min route price',
       empty: 'No vehicles in the selected scope.',
     },
     bookings: {
@@ -153,7 +153,7 @@ const LABELS: Record<VehicleReportLocale, VehiclePdfLabels> = {
       colVehicle: 'Vehículo',
       colAgency: 'Agencia',
       colCategory: 'Categoría',
-      colDailyPrice: 'Precio / día',
+      colDailyPrice: 'Precio mín. tramo',
       empty: 'Ningún vehículo en el alcance seleccionado.',
     },
     bookings: {

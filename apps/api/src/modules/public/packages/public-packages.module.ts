@@ -7,6 +7,7 @@ import {
   Packages,
   Rooms,
   VehicleAvailability,
+  VehicleRoutes,
 } from '../../../entities/generated';
 import { PackagesModule } from '../../resources/packages/packages.module';
 import { PublicPackagesController } from './public-packages.controller';
@@ -20,6 +21,7 @@ import { PublicPackagesService } from './public-packages.service';
       Rooms,
       FlightClasses,
       VehicleAvailability,
+      VehicleRoutes,
       CabinAvailability,
     ]),
     PackagesModule,

@@ -18,7 +18,6 @@ import {
   BookingSidebarPriceBlock,
   BookingSidebarSummary,
   BookingSidebarTrustHints,
-  bookingSidebarDateGridClass,
   bookingSidebarInputClass,
   useBookingDrawerOpenListener,
   useBookingSidebarTrustHints,
@@ -26,10 +25,8 @@ import {
 
 type CarBookingSidebarProps = {
   detail: VehicleDetail;
-  pickupDate: string;
-  returnDate: string;
-  onPickupDateChange: (value: string) => void;
-  onReturnDateChange: (value: string) => void;
+  travelDate: string;
+  onTravelDateChange: (value: string) => void;
   onReserve: () => void;
   t: Translations['cars'];
   locale?: string;
@@ -37,57 +34,43 @@ type CarBookingSidebarProps = {
 
 function CarBookingContent({
   detail,
-  pickupDate,
-  returnDate,
-  onPickupDateChange,
-  onReturnDateChange,
+  travelDate,
+  onTravelDateChange,
   onReserve,
   t,
   locale,
 }: CarBookingSidebarProps) {
   const trustHints = useBookingSidebarTrustHints();
   const ctaLabel = useBookingCtaLabel('vehicle');
-  const hasDates = Boolean(pickupDate && returnDate && returnDate > pickupDate);
-  const canReserve = hasDates && Boolean(detail.availabilitySlot?.id);
-  const daysLabel =
-    detail.rentalDays === 1 ? `1 ${t.daySingular}` : `${detail.rentalDays} ${t.dayPlural}`;
+  const hasDate = Boolean(travelDate);
+  const canReserve = hasDate && Boolean(detail.availabilitySlot?.id) && Boolean(detail.route?.id);
 
   return (
     <BookingSidebarBody title={t.reserveSection}>
-      <div className={bookingSidebarDateGridClass}>
-        <BookingSidebarField label={t.pickupDate}>
-          <input
-            type="date"
-            value={pickupDate}
-            onChange={(e) => onPickupDateChange(e.target.value)}
-            className={bookingSidebarInputClass}
-          />
-        </BookingSidebarField>
-        <BookingSidebarField label={t.returnDate}>
-          <input
-            type="date"
-            value={returnDate}
-            min={pickupDate || undefined}
-            onChange={(e) => onReturnDateChange(e.target.value)}
-            className={bookingSidebarInputClass}
-          />
-        </BookingSidebarField>
-      </div>
+      <BookingSidebarField label={t.travelDate}>
+        <input
+          type="date"
+          value={travelDate}
+          onChange={(e) => onTravelDateChange(e.target.value)}
+          className={bookingSidebarInputClass}
+        />
+      </BookingSidebarField>
 
-      {!hasDates && <BookingSidebarHint>{t.selectDatesHint}</BookingSidebarHint>}
+      {!hasDate && <BookingSidebarHint>{t.selectDatesHint}</BookingSidebarHint>}
 
-      {hasDates && (
+      {hasDate && (
         <BookingSidebarSummary>
-          {formatDisplayDate(pickupDate, locale)} → {formatDisplayDate(returnDate, locale)} ·{' '}
-          {daysLabel}
+          {detail.route.departureCity} → {detail.route.arrivalCity}
+          {' · '}
+          {formatDisplayDate(travelDate, locale)}
         </BookingSidebarSummary>
       )}
 
-      {hasDates ? (
+      {hasDate ? (
         <BookingSidebarPriceBlock
           label={t.totalRental}
           amount={formatCarPrice(detail.totalPriceCents, detail.currency)}
-          detail={`${formatCarPrice(detail.dailyPriceCents, detail.currency)} ${t.perDay}`}
+          detail={t.routePriceLabel}
         />
       ) : null}
 
@@ -109,10 +92,11 @@ export function CarBookingMobileBar(props: CarBookingSidebarProps) {
   const tBooking = useTranslations('bookingSidebar');
   const [drawerOpen, setDrawerOpen] = useState(false);
   const ctaLabel = useBookingCtaLabel('vehicle');
-  const hasDates = Boolean(
-    props.pickupDate && props.returnDate && props.returnDate > props.pickupDate,
-  );
-  const canReserve = hasDates && Boolean(props.detail.availabilitySlot?.id);
+  const hasDate = Boolean(props.travelDate);
+  const canReserve =
+    hasDate &&
+    Boolean(props.detail.availabilitySlot?.id) &&
+    Boolean(props.detail.route?.id);
 
   useBookingDrawerOpenListener(() => setDrawerOpen(true));
 
@@ -126,13 +110,13 @@ export function CarBookingMobileBar(props: CarBookingSidebarProps) {
         <CarBookingContent {...props} />
       </BookingSidebarMobileDrawer>
       <BookingSidebarMobileBar
-        priceLabel={hasDates ? props.t.totalRental : undefined}
+        priceLabel={hasDate ? props.t.totalRental : undefined}
         priceAmount={
-          hasDates
+          hasDate
             ? formatCarPrice(props.detail.totalPriceCents, props.detail.currency)
             : undefined
         }
-        hint={hasDates ? undefined : props.t.selectDatesHint}
+        hint={hasDate ? undefined : props.t.selectDatesHint}
         ctaLabel={ctaLabel}
         ctaDisabled={!canReserve}
         onCtaClick={props.onReserve}

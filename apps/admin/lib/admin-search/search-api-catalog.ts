@@ -96,7 +96,9 @@ export async function searchAdminVehicles(
       sourceId: 'vehicles' as const,
       group: 'catalog' as const,
       title: plate || formatAdminSearchIdPrefix(vehicle.id),
-      subtitle: formatMoney(vehicle.dailyPriceCents, vehicle.currency),
+      subtitle: vehicle.licensePlate
+        ? `${vehicle.licensePlate} · ${vehicle.currency}`
+        : vehicle.currency,
       href: adminSearchDeepLinks.vehicle(vehicle.id),
     };
   });

@@ -7,7 +7,13 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, IsNull, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
-import { Bookings, Organizations, Payments, Users } from '../../../entities/generated';
+import {
+  BookingItems,
+  Bookings,
+  Organizations,
+  Payments,
+  Users,
+} from '../../../entities/generated';
 import { CrudService } from '../../../common/crud/crud.service';
 import { BookingEngineService } from './booking-engine.service';
 import { BookingAssistedEmailService } from './booking-assisted-email.service';
@@ -45,6 +51,8 @@ export class BookingsService extends CrudService<Bookings> {
   constructor(
     @InjectRepository(Bookings)
     private readonly bookingsRepository: Repository<Bookings>,
+    @InjectRepository(BookingItems)
+    private readonly bookingItemsRepository: Repository<BookingItems>,
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
     @InjectRepository(Organizations)
@@ -97,12 +105,28 @@ export class BookingsService extends CrudService<Bookings> {
     const ownerUserId = await this.resolveCheckoutOwnerUserId(dto, actorUserId);
     const result = await this.bookingEngine.createBookingRequest(dto, ownerUserId, actorUserId);
     this.assistedEmail.notifyRequestReceived(result.bookingId);
+    const [items, owner] = await Promise.all([
+      this.bookingItemsRepository.find({
+        where: { bookingId: result.bookingId },
+        order: { createdAt: 'ASC' },
+      }),
+      this.usersRepository.findOne({ where: { id: ownerUserId } }),
+    ]);
+    const bookingTitle = this.formatBookingListName(
+      items.filter((item) => !item.deletedAt),
+    );
+    const authorName =
+      `${owner?.firstName ?? ''} ${owner?.lastName ?? ''}`.trim() ||
+      owner?.email ||
+      undefined;
     void this.staffNotifications.fanOut(
       'booking_pending_approval',
       {
         href: `/reservations/${result.bookingId}`,
         priority: 'high',
         bookingId: result.bookingId,
+        bookingTitle: bookingTitle || undefined,
+        authorName,
         status: result.status,
         amountCents: result.totalCents,
         currency: result.currency,
@@ -212,7 +236,12 @@ export class BookingsService extends CrudService<Bookings> {
     }
     if (search) {
       qb.andWhere(
-        '(client.email LIKE :term OR client.firstName LIKE :term OR client.lastName LIKE :term OR booking.id LIKE :term)',
+        `(client.email LIKE :term OR client.firstName LIKE :term OR client.lastName LIKE :term OR booking.id LIKE :term OR EXISTS (
+          SELECT 1 FROM booking_items bi
+          WHERE bi.booking_id = booking.id
+            AND bi.deleted_at IS NULL
+            AND bi.title_snapshot LIKE :term
+        ))`,
         { term: `%${search}%` },
       );
     }
@@ -230,6 +259,22 @@ export class BookingsService extends CrudService<Bookings> {
           })
         : [];
     const userById = new Map(users.map((u) => [u.id, u]));
+
+    const bookingIds = bookings.map((b) => b.id);
+    const items =
+      bookingIds.length > 0
+        ? await this.bookingItemsRepository.find({
+            where: { bookingId: In(bookingIds) },
+            order: { createdAt: 'ASC' },
+          })
+        : [];
+    const itemsByBookingId = new Map<string, BookingItems[]>();
+    for (const item of items) {
+      if (item.deletedAt) continue;
+      const list = itemsByBookingId.get(item.bookingId) ?? [];
+      list.push(item);
+      itemsByBookingId.set(item.bookingId, list);
+    }
 
     const customerView = !staff;
     const paymentInvitedIds = customerView
@@ -257,6 +302,7 @@ export class BookingsService extends CrudService<Bookings> {
         preferredPaymentMethod: booking.preferredPaymentMethod ?? null,
         createdAt: booking.createdAt,
         updatedAt: booking.updatedAt,
+        name: this.formatBookingListName(itemsByBookingId.get(booking.id) ?? []),
         clientEmail: client?.email ?? '—',
         clientFirstName: client?.firstName ?? '',
         clientLastName: client?.lastName ?? '',
@@ -285,6 +331,17 @@ export class BookingsService extends CrudService<Bookings> {
         totalPages: Math.ceil(total / limit) || 1,
       },
     };
+  }
+
+  private formatBookingListName(items: BookingItems[]): string {
+    if (items.length === 0) {
+      return '';
+    }
+    const primary = items[0]?.titleSnapshot?.trim() || items[0]?.itemType || '';
+    if (items.length === 1) {
+      return primary;
+    }
+    return `${primary} (+${items.length - 1})`;
   }
 
   async getCustomerDetail(

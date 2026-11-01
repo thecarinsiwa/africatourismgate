@@ -29,6 +29,7 @@ import type {
   CreateVehicleCategoryRequest,
   CreateVehicleImageRequest,
   CreateVehicleRequest,
+  CreateVehicleRouteRequest,
   Cabin,
   CabinAvailability,
   CabinAvailabilityListQuery,
@@ -463,6 +464,7 @@ import type {
   UpdateVehicleCategoryRequest,
   UpdateVehicleImageRequest,
   UpdateVehicleRequest,
+  UpdateVehicleRouteRequest,
   Vehicle,
   VehicleAvailability,
   VehicleAvailabilityListQuery,
@@ -470,6 +472,8 @@ import type {
   VehicleCategory,
   VehicleImage,
   VehicleImagesListQuery,
+  VehicleRoute,
+  VehicleRoutesListQuery,
   VehiclesListQuery,
   UpdatePropertyImageRequest,
   UpdatePropertyRequest,
@@ -4747,6 +4751,34 @@ export class ApiClient {
 
   deleteVehicleImage(id: string): Promise<void> {
     return this.request<void>(`/vehicle-images/${id}`, { method: 'DELETE' });
+  }
+
+  listVehicleRoutes(
+    query?: VehicleRoutesListQuery,
+  ): Promise<PaginatedResponse<VehicleRoute>> {
+    return fetchPaginated<VehicleRoute>(this, '/vehicle-routes', query);
+  }
+
+  getVehicleRoute(id: string): Promise<VehicleRoute> {
+    return this.request<VehicleRoute>(`/vehicle-routes/${id}`);
+  }
+
+  createVehicleRoute(body: CreateVehicleRouteRequest): Promise<VehicleRoute> {
+    return this.request<VehicleRoute>('/vehicle-routes', { method: 'POST', body });
+  }
+
+  updateVehicleRoute(
+    id: string,
+    body: UpdateVehicleRouteRequest,
+  ): Promise<VehicleRoute> {
+    return this.request<VehicleRoute>(`/vehicle-routes/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteVehicleRoute(id: string): Promise<void> {
+    return this.request<void>(`/vehicle-routes/${id}`, { method: 'DELETE' });
   }
 
   listVehicleAvailability(

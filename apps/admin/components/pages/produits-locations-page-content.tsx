@@ -21,6 +21,9 @@ export function LocationsPageContent() {
             <Button href="/produits/locations/categories" variant="outline">
               {t('actions.categories')}
             </Button>
+            <Button href="/produits/locations/troncons" variant="outline">
+              {t('actions.routes')}
+            </Button>
             <Button href="/produits/locations/nouveau">{t('actions.new')}</Button>
           </>
         }

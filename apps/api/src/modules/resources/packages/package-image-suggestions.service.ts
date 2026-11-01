@@ -9,6 +9,7 @@ import {
   PropertyImages,
   ShipImages,
   VehicleImages,
+  VehicleRoutes,
 } from '../../../entities/generated';
 import {
   PackageSuggestedImageDto,
@@ -35,6 +36,8 @@ export class PackageImageSuggestionsService {
     private readonly flightImagesRepository: Repository<FlightImages>,
     @InjectRepository(VehicleImages)
     private readonly vehicleImagesRepository: Repository<VehicleImages>,
+    @InjectRepository(VehicleRoutes)
+    private readonly vehicleRoutesRepository: Repository<VehicleRoutes>,
     @InjectRepository(Cabins)
     private readonly cabinsRepository: Repository<Cabins>,
     @InjectRepository(ShipImages)
@@ -99,11 +102,27 @@ export class PackageImageSuggestionsService {
           order: { sortOrder: 'ASC', createdAt: 'DESC' },
           take: 12,
         });
+      case 'troncon':
+        return this.loadTronconImages(itemId);
       case 'cruise':
         return this.loadCruiseImages(itemId);
       default:
         return [];
     }
+  }
+
+  private async loadTronconImages(routeId: string): Promise<ProductImageRow[]> {
+    const route = await this.vehicleRoutesRepository.findOne({
+      where: { id: routeId },
+    });
+    if (!route || route.deletedAt) {
+      return [];
+    }
+    return this.vehicleImagesRepository.find({
+      where: { vehicleId: route.vehicleId },
+      order: { sortOrder: 'ASC', createdAt: 'DESC' },
+      take: 12,
+    });
   }
 
   private async loadCruiseImages(cabinId: string): Promise<ProductImageRow[]> {

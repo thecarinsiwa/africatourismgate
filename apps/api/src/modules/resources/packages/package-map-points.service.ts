@@ -9,6 +9,7 @@ import {
   Destinations,
   Flights,
   Properties,
+  VehicleRoutes,
 } from '../../../entities/generated';
 import { filterActivityItineraryStopsByDuration } from '../../../common/activity-itinerary-stops.util';
 import { PackageItemEnrichedDto, PackageMapPointDto } from './dto/package-detail.dto';
@@ -30,6 +31,8 @@ export class PackageMapPointsService {
     private readonly flightsRepository: Repository<Flights>,
     @InjectRepository(Airports)
     private readonly airportsRepository: Repository<Airports>,
+    @InjectRepository(VehicleRoutes)
+    private readonly vehicleRoutesRepository: Repository<VehicleRoutes>,
   ) {}
 
   async resolveForItems(items: PackageItemEnrichedDto[]): Promise<PackageMapPointDto[]> {
@@ -55,6 +58,8 @@ export class PackageMapPointsService {
         return this.resolvePropertyPoints(item);
       case 'flight':
         return this.resolveFlightPoints(item);
+      case 'troncon':
+        return this.resolveTronconPoints(item);
       case 'vehicle':
       case 'cruise':
         return [];
@@ -252,6 +257,20 @@ export class PackageMapPointsService {
     }
 
     return points;
+  }
+
+  private async resolveTronconPoints(
+    item: PackageItemEnrichedDto,
+  ): Promise<PackageMapPointDto[]> {
+    const route = await this.vehicleRoutesRepository.findOne({
+      where: { id: item.itemId },
+    });
+    if (!route || route.deletedAt) {
+      return [];
+    }
+    // Free-text cities have no coordinates — no map points for tronçons.
+    void item;
+    return [];
   }
 
   private toMapPoint(input: PackageMapPointDto): PackageMapPointDto {

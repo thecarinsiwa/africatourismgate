@@ -49,6 +49,8 @@ export interface BookingCheckoutItem {
   startDate?: string;
   endDate?: string;
   date?: string;
+  /** Vehicle tronçon id (`vehicle_routes`) — required for vehicle lines. */
+  routeId?: string;
 }
 
 export interface BookingCheckoutRequest {
@@ -500,6 +502,8 @@ export interface RefundPaymentResponse {
 }
 
 export interface BookingListItem extends Booking {
+  /** Display name from booking line titles (e.g. product / package). */
+  name: string;
   clientEmail: string;
   clientFirstName: string;
   clientLastName: string;

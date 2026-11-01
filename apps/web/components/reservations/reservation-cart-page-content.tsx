@@ -51,7 +51,6 @@ export function ReservationCartPageContent({ draft }: Props) {
   const messages = useMessages();
   const ck = (messages as { checkout: Translations['checkout'] }).checkout;
   const f = useNamespaceLabels('flights');
-  const c = useNamespaceLabels('cars');
   const cr = useNamespaceLabels('cruises');
   const p = useNamespaceLabels('packages');
 
@@ -216,8 +215,8 @@ export function ReservationCartPageContent({ draft }: Props) {
         });
     } else if (isVehicleReservationDraft(draft)) {
       void getVehicleDetail(draft.vehicleId, {
-        pickupDate: draft.pickupDate,
-        returnDate: draft.returnDate,
+        routeId: draft.routeId,
+        travelDate: draft.travelDate,
       })
         .then((data) => {
           if (!cancelled) {
@@ -358,16 +357,11 @@ export function ReservationCartPageContent({ draft }: Props) {
                   title={vehicleReady.category.exampleModel ?? vehicleReady.category.name}
                   details={
                     <>
-                      <p>{vehicleReady.agency.city || c.pickupLocation}</p>
                       <p>
-                        {formatDisplayDate(draft.pickupDate, locale)} {'->'}{' '}
-                        {formatDisplayDate(draft.returnDate, locale)}
+                        {vehicleReady.route.departureCity} →{' '}
+                        {vehicleReady.route.arrivalCity}
                       </p>
-                      <p>
-                        {vehicleReady.rentalDays === 1
-                          ? `1 ${c.daySingular}`
-                          : `${vehicleReady.rentalDays} ${c.dayPlural}`}
-                      </p>
+                      <p>{formatDisplayDate(draft.travelDate, locale)}</p>
                     </>
                   }
                 />

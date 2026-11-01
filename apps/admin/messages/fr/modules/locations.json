@@ -27,7 +27,8 @@
     "agency": "Agence",
     "category": "Catégorie",
     "licensePlate": "Immatriculation",
-    "pricePerDay": "Prix / jour"
+    "pricePerDay": "Prix / jour",
+    "minRoutePrice": "Prix min tronçon"
   },
   "form": {
     "submitCreate": "Créer le véhicule",
@@ -35,6 +36,7 @@
     "category": "Catégorie",
     "licensePlate": "Plaque d'immatriculation",
     "dailyPriceCents": "Prix journalier (centimes)",
+    "currencyHint": "Devise par défaut du véhicule ; les prix se définissent par tronçon.",
     "validation": {
       "agencyRequired": "Agence obligatoire.",
       "categoryRequired": "Catégorie obligatoire."
@@ -73,10 +75,38 @@
     "tabsAria": "Sections du véhicule",
     "tabs": {
       "vehicle": "Véhicule",
+      "routes": "Tronçons",
       "availability": "Disponibilités"
     }
   },
   "sections": {
+    "routes": {
+      "title": "Tronçons",
+      "intro": "Tarifs fixes par trajet (ville de départ → ville d’arrivée, texte libre).",
+      "addRoute": "Ajouter un tronçon",
+      "newRoute": "Nouveau tronçon",
+      "editRoute": "Modifier le tronçon",
+      "formHint": "Saisissez le départ, l’arrivée et le prix fixe du trajet.",
+      "editFormHint": "Modifiez le trajet ou le prix de ce tronçon.",
+      "departure": "Ville de départ",
+      "arrival": "Ville d’arrivée",
+      "priceCents": "Prix (centimes)",
+      "empty": "Aucun tronçon pour ce véhicule.",
+      "minPriceHint": "à partir de",
+      "unpriced": "Non tarifé",
+      "count": "{count, plural, =0 {Aucun tronçon} one {# tronçon} other {# tronçons}}",
+      "columns": {
+        "route": "Trajet",
+        "price": "Prix"
+      },
+      "validation": {
+        "departureRequired": "Ville de départ obligatoire.",
+        "arrivalRequired": "Ville d’arrivée obligatoire.",
+        "sameDestination": "Le départ et l’arrivée doivent être distincts."
+      },
+      "deleteTitle": "Supprimer le tronçon",
+      "deleteConfirm": "Supprimer le tronçon « {label} » ?"
+    },
     "availability": {
       "title": "Disponibilités",
       "intro": "Créneaux de disponibilité par dates (location, maintenance, loué).",
@@ -142,6 +172,40 @@
         }
       }
     },
+    "routes": {
+      "emptyDefault": "Aucun tronçon pour le moment.",
+      "emptySearch": "Aucun tronçon ne correspond aux filtres.",
+      "searchLabel": "Recherche",
+      "searchPlaceholder": "Rechercher un tronçon…",
+      "searchAria": "Rechercher un tronçon",
+      "ariaLabel": "Liste des tronçons",
+      "allVehicles": "Tous les véhicules",
+      "vehicleFallback": "Véhicule {id}",
+      "formHint": "Choisissez le véhicule, saisissez le départ et l’arrivée, puis le prix fixe.",
+      "viewGrid": "Grille",
+      "viewTable": "Tableau",
+      "viewModeAria": "Mode d'affichage",
+      "columns": {
+        "vehicle": "Désignation"
+      },
+      "validation": {
+        "vehicleRequired": "Véhicule obligatoire."
+      },
+      "stats": {
+        "total": {
+          "label": "Tronçons",
+          "subtitle": "Trajets tarifés"
+        },
+        "vehicles": {
+          "label": "Véhicules",
+          "subtitle": "Avec au moins un tronçon"
+        },
+        "cityPairs": {
+          "label": "Trajets",
+          "subtitle": "Couples départ → arrivée"
+        }
+      }
+    },
     "agencies": {
       "new": "Nouvelle agence",
       "edit": "Modifier l'agence",
@@ -188,6 +252,10 @@
     "agencies": {
       "label": "Agences",
       "subtitle": "Points de location"
+    },
+    "routes": {
+      "label": "Tronçons",
+      "subtitle": "Tarifs départ → arrivée"
     }
   },
   "exports": {

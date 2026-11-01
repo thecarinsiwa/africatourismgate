@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { useActivityDestinations } from '../../lib/activities/use-activity-destinations';
 import { listPublicDestinations } from '../../lib/api/public';
-import { countRentalDays } from '../../lib/cars/listings';
 import { useVehiclePickupLocations } from '../../lib/cars/use-vehicle-pickup-locations';
 import { CRUISE_PORT_OPTIONS } from '../../lib/cruises/ports';
 import { toFlightAirportOptions, type FlightAirportOption } from '../../lib/flights/airports';
@@ -247,6 +246,8 @@ export function SearchTabs() {
   const [flightPassengers, setFlightPassengers] = useState('1');
   const [flightTripType, setFlightTripType] = useState<FlightTripType>('oneWay');
   const [flightError, setFlightError] = useState<string | null>(null);
+  const [carDeparture, setCarDeparture] = useState('');
+  const [carArrival, setCarArrival] = useState('');
   const [carError, setCarError] = useState<string | null>(null);
   const [cruiseError, setCruiseError] = useState<string | null>(null);
   const [toursError, setToursError] = useState<string | null>(null);
@@ -318,19 +319,19 @@ export function SearchTabs() {
     if (activeTab === 'cars') {
       setCarError(null);
 
-      if (!destination || !departDate || !returnDate) {
+      if (!carDeparture.trim() || !carArrival.trim() || !departDate) {
         setCarError(t('carsRequired'));
         return;
       }
 
-      if (returnDate <= departDate) {
-        setCarError(t('carsReturnAfterPickup'));
+      if (carDeparture.trim() === carArrival.trim()) {
+        setCarError(t('carsSameEndpoints'));
         return;
       }
 
-      params.set('pickupLocation', destination);
-      params.set('pickupDate', departDate);
-      params.set('returnDate', returnDate);
+      params.set('departureLocation', carDeparture.trim());
+      params.set('arrivalLocation', carArrival.trim());
+      params.set('travelDate', departDate);
       router.push(buildSearchRoute('cars', params));
       return;
     }
@@ -400,18 +401,7 @@ export function SearchTabs() {
   }
 
   const today = todayISODate();
-  const carReturnMinDate = departDate ? addDays(departDate, 1) : today;
   const cruiseEndMinDate = departDate ? addDays(departDate, 1) : today;
-  const carRentalDays = useMemo(() => {
-    if (!departDate || !returnDate || returnDate <= departDate) return 0;
-    return countRentalDays(departDate, returnDate);
-  }, [departDate, returnDate]);
-  const carRentalDaysLabel =
-    carRentalDays === 1
-      ? `1 ${tCars('daySingular')}`
-      : carRentalDays > 1
-        ? `${carRentalDays} ${tCars('dayPlural')}`
-        : null;
 
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId as SearchTab);
@@ -598,61 +588,50 @@ export function SearchTabs() {
             {activeTab === 'cars' && (
               <div className="space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  {carRentalDaysLabel ? (
-                    <span
-                      className="inline-flex min-h-[44px] items-center rounded-lg border border-atg-border bg-atg-surface px-4 py-2 text-sm font-semibold text-atg-fg dark:border-atg-border dark:bg-atg-surface dark:text-white"
-                      role="status"
-                    >
-                      {carRentalDaysLabel}
-                    </span>
-                  ) : (
-                    <span className="text-sm text-atg-muted">
-                      {t('carsDurationHint')}
-                    </span>
-                  )}
+                  <span className="text-sm text-atg-muted">{t('carsDurationHint')}</span>
                 </div>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_1fr_auto] lg:items-end">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto] lg:items-end">
                   <div>
-                    <SearchFormLabel>{tCars('pickupLocation')}</SearchFormLabel>
+                    <SearchFormLabel>{tCars('departureLocation')}</SearchFormLabel>
                     <SearchFormDatalistInput
-                      name="pickupLocation"
+                      name="departureLocation"
                       placeholder={
                         carPickupLoading ? tCars('loading') : t('pickupLocationPh')
                       }
                       suggestions={carPickupOptions}
-                      value={destination}
+                      value={carDeparture}
                       disabled={carPickupLoading}
                       onChange={(value) => {
-                        setDestination(value);
+                        setCarDeparture(value);
                         setCarError(null);
                       }}
                     />
                   </div>
                   <div>
-                    <SearchFormLabel>{t('pickUp')}</SearchFormLabel>
+                    <SearchFormLabel>{tCars('arrivalLocation')}</SearchFormLabel>
+                    <SearchFormDatalistInput
+                      name="arrivalLocation"
+                      placeholder={
+                        carPickupLoading ? tCars('loading') : t('pickupLocationPh')
+                      }
+                      suggestions={carPickupOptions}
+                      value={carArrival}
+                      disabled={carPickupLoading}
+                      onChange={(value) => {
+                        setCarArrival(value);
+                        setCarError(null);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <SearchFormLabel>{tCars('travelDate')}</SearchFormLabel>
                     <SearchFormInput
                       type="date"
-                      name="pickUp"
+                      name="travelDate"
                       value={departDate}
                       min={today}
                       onChange={(value) => {
                         setDepartDate(value);
-                        if (returnDate && value && returnDate <= value) {
-                          setReturnDate('');
-                        }
-                        setCarError(null);
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <SearchFormLabel>{t('dropOff')}</SearchFormLabel>
-                    <SearchFormInput
-                      type="date"
-                      name="dropOff"
-                      value={returnDate}
-                      min={carReturnMinDate}
-                      onChange={(value) => {
-                        setReturnDate(value);
                         setCarError(null);
                       }}
                     />

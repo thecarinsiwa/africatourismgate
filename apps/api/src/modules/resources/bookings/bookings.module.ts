@@ -21,6 +21,7 @@ import {
   Rooms,
   Users,
   VehicleAvailability,
+  VehicleRoutes,
   Vehicles,
 } from '../../../entities/generated';
 import { ReviewsModule } from '../reviews/reviews.module';
@@ -81,6 +82,7 @@ import { PosReceiptPdfService } from './pos-receipt-pdf.service';
       Flights,
       VehicleAvailability,
       Vehicles,
+      VehicleRoutes,
       CabinAvailability,
       Cabins,
       ActivitySchedules,

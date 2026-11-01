@@ -4,6 +4,9 @@ export class VehicleSearchResultDto {
   @ApiProperty({ format: 'uuid' })
   id!: string;
 
+  @ApiProperty({ format: 'uuid', description: 'Tronçon tarifé sélectionné' })
+  routeId!: string;
+
   @ApiPropertyOptional({ example: 'CD-KIN-001', nullable: true })
   licensePlate!: string | null;
 
@@ -20,28 +23,25 @@ export class VehicleSearchResultDto {
   agencyAddress!: string | null;
 
   @ApiProperty({ example: 'Kinshasa' })
-  pickupCity!: string;
+  departureCity!: string;
 
-  @ApiProperty({ example: 5500 })
-  dailyPriceCents!: number;
+  @ApiProperty({ example: 'Lubumbashi' })
+  arrivalCity!: string;
+
+  @ApiProperty({ example: 5500, description: 'Prix fixe du tronçon' })
+  priceCents!: number;
 
   @ApiProperty({
-    example: 38500,
-    description: 'Total rental price (rentalDays × dailyPriceCents)',
+    example: 5500,
+    description: 'Total = priceCents (tarif tronçon, pas journalier)',
   })
   totalPriceCents!: number;
 
   @ApiProperty({ example: 'USD' })
   currency!: string;
 
-  @ApiProperty({ example: 7 })
-  rentalDays!: number;
-
   @ApiProperty({ format: 'date', example: '2026-08-01' })
-  pickupDate!: string;
-
-  @ApiProperty({ format: 'date', example: '2026-08-08' })
-  returnDate!: string;
+  travelDate!: string;
 
   @ApiProperty({
     format: 'uuid',
@@ -51,4 +51,24 @@ export class VehicleSearchResultDto {
 
   @ApiPropertyOptional({ nullable: true, description: 'First vehicle photo URL' })
   imageUrl!: string | null;
+
+  /** @deprecated Use departureCity */
+  @ApiPropertyOptional({ deprecated: true })
+  pickupCity!: string;
+
+  /** @deprecated Use priceCents */
+  @ApiPropertyOptional({ deprecated: true })
+  dailyPriceCents!: number;
+
+  /** @deprecated Always 1 for tronçon pricing */
+  @ApiPropertyOptional({ deprecated: true })
+  rentalDays!: number;
+
+  /** @deprecated Use travelDate */
+  @ApiPropertyOptional({ deprecated: true })
+  pickupDate!: string;
+
+  /** @deprecated Use travelDate */
+  @ApiPropertyOptional({ deprecated: true })
+  returnDate!: string;
 }

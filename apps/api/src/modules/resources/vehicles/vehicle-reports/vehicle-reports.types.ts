@@ -6,6 +6,8 @@ export type ScopedVehicleRow = Vehicles & {
   agencyName: string;
   categoryName: string;
   categoryExampleModel: string;
+  /** Lowest active route (tronçon) price; null if none. */
+  minRoutePriceCents: number | null;
 };
 
 export type VehicleReportScope = {

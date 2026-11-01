@@ -23,6 +23,7 @@ import { useFormatMoney } from '../../lib/use-format-money';
 import { VehicleAvailabilitySection } from './vehicle-availability-section';
 import { VehicleForm } from './vehicle-form';
 import { VehicleImagesSection } from './vehicle-images-section';
+import { VehicleRoutesSection } from './vehicle-routes-section';
 import { VehicleSpecsGrid } from './vehicle-specs-grid';
 import { VehicleThumbnail } from './vehicle-thumbnail';
 
@@ -30,7 +31,7 @@ type VehicleEditPageProps = {
   vehicleId: string;
 };
 
-const TAB_VALUES = ['vehicule', 'disponibilites'] as const;
+const TAB_VALUES = ['vehicule', 'troncons', 'disponibilites'] as const;
 type TabValue = (typeof TAB_VALUES)[number];
 
 function isTabValue(value: string | null): value is TabValue {
@@ -41,7 +42,9 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
   const { locations: getLocationsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.locations.detail');
   const tAvailability = useTranslations('modules.locations.sections.availability');
+  const tRoutes = useTranslations('modules.locations.sections.routes');
   const formatPrice = useFormatMoney();
+  const tCommon = useTranslations('modules.common');
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -56,6 +59,8 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
         vehicle: Vehicle;
         agencyName: string;
         categoryName: string;
+        minRoutePriceCents: number | null;
+        routeCurrency: string | null;
       }
   >({ status: 'loading' });
 
@@ -75,16 +80,22 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
       try {
         const client = getApiClient();
         const vehicle = await client.getVehicle(vehicleId);
-        const [agency, category] = await Promise.all([
+        const [agency, category, routesResult] = await Promise.all([
           client.getRentalAgency(vehicle.agencyId),
           client.getVehicleCategory(vehicle.categoryId),
+          client.listVehicleRoutes({ vehicleId, page: 1, limit: 100 }),
         ]);
+        const prices = routesResult.data.map((r) => r.priceCents);
+        const minRoutePriceCents = prices.length ? Math.min(...prices) : null;
+        const cheapest = routesResult.data.find((r) => r.priceCents === minRoutePriceCents);
         if (!cancelled) {
           setState({
             status: 'ready',
             vehicle,
             agencyName: agency.name,
             categoryName: category.name,
+            minRoutePriceCents,
+            routeCurrency: cheapest?.currency ?? vehicle.currency,
           });
         }
       } catch (error) {
@@ -151,7 +162,8 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
     );
   }
 
-  const { vehicle, agencyName, categoryName } = state;
+  const { vehicle, agencyName, categoryName, minRoutePriceCents, routeCurrency } =
+    state;
   const thumbnailLabel = vehicle.licensePlate ?? categoryName;
 
   return (
@@ -190,7 +202,18 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
             <DataTableBadge variant="default">{categoryName}</DataTableBadge>
           </div>
           <p className="tabular-nums text-sm font-semibold text-atg-fg">
-            {formatPrice(vehicle.dailyPriceCents, vehicle.currency)}
+            {minRoutePriceCents != null && routeCurrency
+              ? formatPrice(minRoutePriceCents, routeCurrency)
+              : tCommon('empty.dash')}
+            {minRoutePriceCents != null ? (
+              <span className="ml-2 text-xs font-normal text-atg-muted">
+                {tRoutes('minPriceHint')}
+              </span>
+            ) : (
+              <span className="ml-2 text-xs font-normal text-atg-muted">
+                {tRoutes('unpriced')}
+              </span>
+            )}
           </p>
         </div>
       </div>
@@ -198,6 +221,7 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList aria-label={t('tabsAria')}>
           <TabsTrigger value="vehicule">{t('tabs.vehicle')}</TabsTrigger>
+          <TabsTrigger value="troncons">{t('tabs.routes')}</TabsTrigger>
           <TabsTrigger value="disponibilites">{t('tabs.availability')}</TabsTrigger>
         </TabsList>
 
@@ -215,6 +239,39 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
                 altFallback={thumbnailLabel}
               />
             }
+          />
+        </TabsContent>
+
+        <TabsContent value="troncons">
+          <VehicleRoutesSection
+            vehicleId={vehicleId}
+            defaultCurrency={vehicle.currency}
+            embedded
+            onChanged={() => {
+              void (async () => {
+                try {
+                  const routesResult = await getApiClient().listVehicleRoutes({
+                    vehicleId,
+                    page: 1,
+                    limit: 100,
+                  });
+                  const prices = routesResult.data.map((r) => r.priceCents);
+                  const min = prices.length ? Math.min(...prices) : null;
+                  const cheapest = routesResult.data.find((r) => r.priceCents === min);
+                  setState((prev) =>
+                    prev.status === 'ready'
+                      ? {
+                          ...prev,
+                          minRoutePriceCents: min,
+                          routeCurrency: cheapest?.currency ?? prev.vehicle.currency,
+                        }
+                      : prev,
+                  );
+                } catch {
+                  /* keep previous price summary */
+                }
+              })();
+            }}
           />
         </TabsContent>
 

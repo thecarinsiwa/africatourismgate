@@ -15,6 +15,7 @@ const FLIGHT_ID = '00000000-0000-4000-8000-000000003020';
 const FLIGHT_CLASS_ECO = '00000000-0000-4000-8000-000000003022';
 const VEHICLE_ID = '00000000-0000-4000-8000-000000004021';
 const VEHICLE_SLOT_ID = '00000000-0000-4000-8000-000000004023';
+const VEHICLE_ROUTE_ID = '00000000-0000-4000-8000-000000004024';
 const SAILING_ID = '00000000-0000-4000-8000-000000003036';
 const CABIN_AVAIL_STD = '00000000-0000-4000-8000-000000003037';
 const PACKAGE_ID = '00000000-0000-4000-8000-000000005001';
@@ -82,27 +83,26 @@ test('parseReservationDraft parses vehicle from query params', () => {
     kind: 'vehicle',
     vehicleId: VEHICLE_ID,
     availabilitySlotId: VEHICLE_SLOT_ID,
-    pickupDate: '2026-08-01',
-    returnDate: '2026-08-08',
+    routeId: VEHICLE_ROUTE_ID,
+    travelDate: '2026-08-01',
   });
 
   assert.deepEqual(draft, {
     kind: 'vehicle',
     vehicleId: VEHICLE_ID,
     availabilitySlotId: VEHICLE_SLOT_ID,
-    pickupDate: '2026-08-01',
-    returnDate: '2026-08-08',
+    routeId: VEHICLE_ROUTE_ID,
+    travelDate: '2026-08-01',
   });
 });
 
-test('parseReservationDraft rejects vehicle when return is not after pickup', () => {
+test('parseReservationDraft rejects vehicle without routeId', () => {
   assert.equal(
     parseReservationDraft({
       kind: 'vehicle',
       vehicleId: VEHICLE_ID,
       availabilitySlotId: VEHICLE_SLOT_ID,
-      pickupDate: '2026-08-08',
-      returnDate: '2026-08-01',
+      travelDate: '2026-08-01',
     }),
     null,
   );
@@ -113,25 +113,25 @@ test('buildReservationQuery serializes vehicle draft', () => {
     kind: 'vehicle',
     vehicleId: VEHICLE_ID,
     availabilitySlotId: VEHICLE_SLOT_ID,
-    pickupDate: '2026-08-01',
-    returnDate: '2026-08-08',
+    routeId: VEHICLE_ROUTE_ID,
+    travelDate: '2026-08-01',
   });
 
   const params = new URLSearchParams(query);
   assert.equal(params.get('kind'), 'vehicle');
   assert.equal(params.get('vehicleId'), VEHICLE_ID);
   assert.equal(params.get('availabilitySlotId'), VEHICLE_SLOT_ID);
-  assert.equal(params.get('pickupDate'), '2026-08-01');
-  assert.equal(params.get('returnDate'), '2026-08-08');
+  assert.equal(params.get('routeId'), VEHICLE_ROUTE_ID);
+  assert.equal(params.get('travelDate'), '2026-08-01');
 });
 
-test('buildCheckoutItems maps vehicle to booking payload with slot reference', () => {
+test('buildCheckoutItems maps vehicle to booking payload with slot and route', () => {
   const items = buildCheckoutItems({
     kind: 'vehicle',
     vehicleId: VEHICLE_ID,
     availabilitySlotId: VEHICLE_SLOT_ID,
-    pickupDate: '2026-08-01',
-    returnDate: '2026-08-08',
+    routeId: VEHICLE_ROUTE_ID,
+    travelDate: '2026-08-01',
   });
 
   assert.deepEqual(items, [
@@ -139,8 +139,8 @@ test('buildCheckoutItems maps vehicle to booking payload with slot reference', (
       itemType: 'vehicle',
       referenceId: VEHICLE_SLOT_ID,
       quantity: 1,
+      routeId: VEHICLE_ROUTE_ID,
       startDate: '2026-08-01',
-      endDate: '2026-08-08',
     },
   ]);
 });
@@ -151,10 +151,10 @@ test('buildDraftDetailHref links vehicle draft back to car detail', () => {
       kind: 'vehicle',
       vehicleId: VEHICLE_ID,
       availabilitySlotId: VEHICLE_SLOT_ID,
-      pickupDate: '2026-08-01',
-      returnDate: '2026-08-08',
+      routeId: VEHICLE_ROUTE_ID,
+      travelDate: '2026-08-01',
     }),
-    `/cars/${VEHICLE_ID}?pickupDate=2026-08-01&returnDate=2026-08-08`,
+    `/cars/${VEHICLE_ID}?routeId=${VEHICLE_ROUTE_ID}&travelDate=2026-08-01`,
   );
 });
 
@@ -164,8 +164,8 @@ test('buildDraftBrowseHref routes vehicle draft to cars listing', () => {
       kind: 'vehicle',
       vehicleId: VEHICLE_ID,
       availabilitySlotId: VEHICLE_SLOT_ID,
-      pickupDate: '2026-08-01',
-      returnDate: '2026-08-08',
+      routeId: VEHICLE_ROUTE_ID,
+      travelDate: '2026-08-01',
     }),
     '/cars',
   );

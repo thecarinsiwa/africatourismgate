@@ -44,12 +44,13 @@ function toPackageLineSelection(line: ResolvedLineResponse): PackageLineSelectio
         passengers: line.passengers!,
       };
     case 'vehicle':
+    case 'troncon':
       return {
-        lineType: 'vehicle',
+        lineType: line.lineType === 'troncon' ? 'troncon' : 'vehicle',
         itemId: line.itemId,
         availabilitySlotId: line.availabilitySlotId!,
-        pickupDate: line.pickupDate!,
-        returnDate: line.returnDate!,
+        routeId: line.routeId!,
+        travelDate: line.travelDate ?? line.pickupDate!,
       };
     case 'cruise':
       return {

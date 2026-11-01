@@ -176,6 +176,7 @@ export type {
   CreateVehicleCategoryRequest,
   CreateVehicleImageRequest,
   CreateVehicleRequest,
+  CreateVehicleRouteRequest,
   RentalAgenciesListQuery,
   RentalAgency,
   UpdateRentalAgencyRequest,
@@ -183,6 +184,7 @@ export type {
   UpdateVehicleCategoryRequest,
   UpdateVehicleImageRequest,
   UpdateVehicleRequest,
+  UpdateVehicleRouteRequest,
   Vehicle,
   VehicleAvailability,
   VehicleAvailabilityListQuery,
@@ -191,6 +193,8 @@ export type {
   VehicleCategory,
   VehicleImage,
   VehicleImagesListQuery,
+  VehicleRoute,
+  VehicleRoutesListQuery,
   VehiclesListQuery,
 } from './car-rental.js';
 

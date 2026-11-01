@@ -20,7 +20,9 @@ import {
   Rooms,
   ShipImages,
   Vehicles,
+  VehicleCategories,
   VehicleImages,
+  VehicleRoutes,
 } from '../../../entities/generated';
 import { PackageImageSuggestionsService } from './package-image-suggestions.service';
 import { PackageItemPricingService } from './package-item-pricing.service';
@@ -40,6 +42,8 @@ import { PackagesService } from './packages.service';
       Flights,
       FlightClasses,
       Vehicles,
+      VehicleCategories,
+      VehicleRoutes,
       Cabins,
       Activities,
       ActivityProviders,

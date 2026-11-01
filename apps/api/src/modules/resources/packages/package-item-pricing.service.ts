@@ -4,11 +4,14 @@ import { Repository } from 'typeorm';
 import {
   Activities,
   Cabins,
+  Destinations,
   FlightClasses,
   Flights,
   PackageItems,
   Properties,
   Rooms,
+  VehicleCategories,
+  VehicleRoutes,
   Vehicles,
 } from '../../../entities/generated';
 import { PackageItemEnrichedDto, PackagePricingDto } from './dto/package-detail.dto';
@@ -32,6 +35,12 @@ export class PackageItemPricingService {
     private readonly flightClassesRepository: Repository<FlightClasses>,
     @InjectRepository(Vehicles)
     private readonly vehiclesRepository: Repository<Vehicles>,
+    @InjectRepository(VehicleCategories)
+    private readonly vehicleCategoriesRepository: Repository<VehicleCategories>,
+    @InjectRepository(VehicleRoutes)
+    private readonly vehicleRoutesRepository: Repository<VehicleRoutes>,
+    @InjectRepository(Destinations)
+    private readonly destinationsRepository: Repository<Destinations>,
     @InjectRepository(Cabins)
     private readonly cabinsRepository: Repository<Cabins>,
     @InjectRepository(Activities)
@@ -56,6 +65,8 @@ export class PackageItemPricingService {
         return this.resolveFlightPrice(itemId);
       case 'vehicle':
         return this.resolveVehiclePrice(itemId);
+      case 'troncon':
+        return this.resolveTronconPrice(itemId);
       case 'cruise':
         return this.resolveCruisePrice(itemId);
       case 'activity':
@@ -173,10 +184,50 @@ export class PackageItemPricingService {
       throw new NotFoundException('Véhicule introuvable.');
     }
 
+    const minRoute = await this.vehicleRoutesRepository
+      .createQueryBuilder('route')
+      .where('route.vehicleId = :vehicleId', { vehicleId })
+      .andWhere('route.deletedAt IS NULL')
+      .orderBy('route.priceCents', 'ASC')
+      .getOne();
+
+    if (!minRoute) {
+      throw new NotFoundException('Aucun tronçon tarifé pour ce véhicule.');
+    }
+
     return {
       label: vehicle.licensePlate?.trim() || `Véhicule ${vehicle.id.slice(0, 8)}`,
-      unitPriceCents: vehicle.dailyPriceCents,
-      currency: vehicle.currency,
+      unitPriceCents: minRoute.priceCents,
+      currency: minRoute.currency,
+    };
+  }
+
+  private async resolveTronconPrice(routeId: string): Promise<ResolvedItemPrice> {
+    const route = await this.vehicleRoutesRepository.findOne({ where: { id: routeId } });
+    if (!route || route.deletedAt) {
+      throw new NotFoundException('Tronçon introuvable.');
+    }
+
+    const routeLabel = `${route.departureCity} → ${route.arrivalCity}`;
+    const vehicle = await this.vehiclesRepository.findOne({
+      where: { id: route.vehicleId },
+    });
+    let designation: string | null = null;
+    if (vehicle && !vehicle.deletedAt) {
+      const category = await this.vehicleCategoriesRepository.findOne({
+        where: { id: vehicle.categoryId },
+      });
+      designation =
+        category?.exampleModel?.trim() ||
+        category?.name?.trim() ||
+        vehicle.licensePlate?.trim() ||
+        null;
+    }
+
+    return {
+      label: designation ? `${designation} · ${routeLabel}` : routeLabel,
+      unitPriceCents: route.priceCents,
+      currency: route.currency,
     };
   }
 
