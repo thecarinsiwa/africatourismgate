@@ -25,7 +25,7 @@
     "searchByEmailOrNameAria": "Search by email or name",
     "searchByNameOrSlug": "Search by name or slug…",
     "searchByNameOrSlugAria": "Search by name or slug",
-    "searchBookings": "Search by customer, email or ref…",
+    "searchBookings": "Search by name, customer, email or ref…",
     "searchBookingsAria": "Search bookings"
   },
   "columns": {

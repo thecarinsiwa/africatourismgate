@@ -33,6 +33,12 @@ export class BookingListItemDto {
   @ApiPropertyOptional({ nullable: true })
   updatedAt!: Date | null;
 
+  @ApiProperty({
+    description:
+      'Nom affiché de la réservation (titres des prestations, ex. « Toyota Yaris (+1) »).',
+  })
+  name!: string;
+
   @ApiProperty()
   clientEmail!: string;
 

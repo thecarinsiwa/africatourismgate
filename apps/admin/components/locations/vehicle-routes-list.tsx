@@ -5,6 +5,7 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 import {
   AlertDialog,
   Button,
+  Card,
   DataTable,
   DataTableActionButton,
   DataTableActions,
@@ -28,9 +29,13 @@ import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labe
 import { FALLBACK_TREASURY_CURRENCY } from '../../lib/treasury/currency-options';
 import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
 import { useFormatMoney } from '../../lib/use-format-money';
+import { ListViewModeToggle } from '../list-view-mode-toggle';
+import { VehicleRoutesStatCards } from './vehicle-routes-stat-cards';
 
 const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
+
+type RoutesViewMode = 'grid' | 'table';
 
 function vehicleDesignation(
   vehicle: Vehicle | undefined,
@@ -84,8 +89,10 @@ export function VehicleRoutesList() {
   const [search, setSearch] = useState('');
   const [vehicleFilter, setVehicleFilter] = useState('');
   const [page, setPage] = useState(1);
+  const [viewMode, setViewMode] = useState<RoutesViewMode>('grid');
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [categories, setCategories] = useState<VehicleCategory[]>([]);
+  const [statsKey, setStatsKey] = useState(0);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -114,6 +121,14 @@ export function VehicleRoutesList() {
   const categoryById = useMemo(
     () => new Map(categories.map((c) => [c.id, c])),
     [categories],
+  );
+
+  const viewModeOptions = useMemo(
+    () => [
+      { value: 'grid' as const, label: t('viewGrid') },
+      { value: 'table' as const, label: t('viewTable') },
+    ],
+    [t],
   );
 
   const vehicleOptions = useMemo(
@@ -320,6 +335,7 @@ export function VehicleRoutesList() {
         });
       }
       resetForm();
+      setStatsKey((key) => key + 1);
       await load();
     } catch (error) {
       setFormError(getLocationsErrorMessage(error));
@@ -339,6 +355,7 @@ export function VehicleRoutesList() {
         message: routeLabel(confirmTarget),
       });
       setConfirmTarget(null);
+      setStatsKey((key) => key + 1);
       await load();
     } catch (error) {
       toast({
@@ -352,11 +369,27 @@ export function VehicleRoutesList() {
     }
   }
 
+  const renderActions = useCallback(
+    (route: VehicleRoute) => (
+      <DataTableActions>
+        <DataTableActionButton action="edit" onClick={() => openEdit(route)} />
+        <DataTableActionButton
+          action="delete"
+          disabled={deletingId === route.id}
+          loading={deletingId === route.id}
+          onClick={() => setConfirmTarget(route)}
+        />
+      </DataTableActions>
+    ),
+    [deletingId],
+  );
+
   const columns = useMemo<ColumnDef<VehicleRoute>[]>(
     () => [
       {
         id: 'vehicle',
         header: t('columns.vehicle'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => {
           const designation = vehicleLabel(row.original.vehicleId);
           const plate = vehiclePlate(row.original.vehicleId);
@@ -365,11 +398,11 @@ export function VehicleRoutesList() {
               href={`/produits/locations/${row.original.vehicleId}?tab=troncons`}
               className="block min-w-0"
             >
-              <span className="block text-sm font-medium text-primary hover:underline">
+              <span className="block truncate text-sm font-medium text-primary hover:underline">
                 {designation}
               </span>
               {plate && plate !== designation ? (
-                <span className="mt-0.5 block text-xs text-atg-muted">
+                <span className="mt-0.5 block truncate text-xs text-atg-muted">
                   {plate}
                 </span>
               ) : null}
@@ -380,8 +413,9 @@ export function VehicleRoutesList() {
       {
         id: 'route',
         header: tRoutes('columns.route'),
+        meta: { cellClassName: 'min-w-0' },
         cell: ({ row }) => (
-          <span className="text-sm font-medium text-atg-fg">
+          <span className="block min-w-0 truncate text-sm font-medium text-atg-fg">
             {routeLabel(row.original)}
           </span>
         ),
@@ -389,7 +423,7 @@ export function VehicleRoutesList() {
       {
         id: 'price',
         header: tRoutes('columns.price'),
-        meta: { align: 'right' },
+        meta: { align: 'right', hideOnMobile: true },
         cell: ({ row }) => (
           <span className="tabular-nums text-sm">
             {formatPrice(row.original.priceCents, row.original.currency)}
@@ -399,179 +433,33 @@ export function VehicleRoutesList() {
       {
         id: 'actions',
         header: tCommon('columns.actions'),
-        meta: { align: 'right' },
-        cell: ({ row }) => (
-          <DataTableActions>
-            <DataTableActionButton
-              action="edit"
-              onClick={() => openEdit(row.original)}
-            />
-            <DataTableActionButton
-              action="delete"
-              disabled={deletingId === row.original.id}
-              loading={deletingId === row.original.id}
-              onClick={() => setConfirmTarget(row.original)}
-            />
-          </DataTableActions>
-        ),
+        meta: { align: 'right', cellClassName: 'w-[5.5rem] sm:w-auto' },
+        cell: ({ row }) => renderActions(row.original),
       },
     ],
-    [categoryById, deletingId, formatPrice, t, tCommon, tRoutes, vehicleById],
+    [categoryById, formatPrice, renderActions, t, tCommon, tRoutes, vehicleById],
   );
 
   const routes = state.status === 'ready' ? state.routes : [];
   const total = state.status === 'ready' ? state.total : 0;
   const totalPages = state.status === 'ready' ? state.totalPages : 1;
+  const hasFilters = Boolean(search || vehicleFilter);
+  const emptyMessage = hasFilters ? t('emptySearch') : t('emptyDefault');
+
+  const pagination = state.status === 'ready' ? (
+    <DataTablePagination
+      page={page}
+      totalPages={totalPages}
+      totalItems={total}
+      pageSize={PAGE_SIZE}
+      itemLabel={tPagination('route')}
+      onPageChange={setPage}
+      labels={paginationLabels}
+    />
+  ) : null;
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div className="flex min-w-0 flex-1 flex-wrap gap-3">
-          <div className="min-w-[12rem] flex-1 sm:max-w-xs">
-            <Input
-              label={t('searchLabel')}
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder={t('searchPlaceholder')}
-              aria-label={t('searchAria')}
-            />
-          </div>
-          <div className="min-w-[12rem] sm:max-w-xs">
-            <Select
-              label={t('columns.vehicle')}
-              value={vehicleFilter}
-              options={vehicleOptions}
-              onChange={(e) => {
-                setVehicleFilter(e.target.value);
-                setPage(1);
-              }}
-            />
-          </div>
-        </div>
-        <Button type="button" onClick={openCreate}>
-          {tRoutes('addRoute')}
-        </Button>
-      </div>
-
-      {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {state.message}
-        </p>
-      ) : null}
-
-      <DataTable
-        columns={columns}
-        data={routes}
-        isLoading={state.status === 'loading'}
-        loadingMessage={tDataTable('loading')}
-        emptyMessage={search || vehicleFilter ? t('emptySearch') : t('emptyDefault')}
-        getRowId={(row) => row.id}
-        aria-label={t('ariaLabel')}
-      />
-
-      {state.status === 'ready' && totalPages > 1 ? (
-        <DataTablePagination
-          page={page}
-          totalPages={totalPages}
-          totalItems={total}
-          pageSize={PAGE_SIZE}
-          itemLabel={tPagination('route')}
-          onPageChange={setPage}
-          labels={paginationLabels}
-        />
-      ) : null}
-
-      <Modal
-        open={showForm}
-        onOpenChange={(open) => {
-          if (!open) resetForm();
-        }}
-        title={editing ? tRoutes('editRoute') : tRoutes('newRoute')}
-        showClose
-        closeAriaLabel={tActions('close')}
-        className="max-w-lg"
-      >
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <p className="text-xs text-atg-muted">
-            {editing ? tRoutes('editFormHint') : t('formHint')}
-          </p>
-          {formError ? (
-            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-              {formError}
-            </p>
-          ) : null}
-          {!editing ? (
-            <Select
-              label={t('columns.vehicle')}
-              value={formValues.vehicleId}
-              options={formVehicleOptions}
-              onChange={(e) =>
-                setFormValues((prev) => ({ ...prev, vehicleId: e.target.value }))
-              }
-              error={fieldErrors.vehicleId}
-              required
-            />
-          ) : (
-            <p className="text-sm text-atg-muted">
-              {t('columns.vehicle')}:{' '}
-              <span className="font-medium text-atg-fg">
-                {vehicleLabel(formValues.vehicleId)}
-              </span>
-            </p>
-          )}
-          <Input
-            label={tRoutes('departure')}
-            name="departureCity"
-            value={formValues.departureCity}
-            onChange={(e) =>
-              setFormValues((prev) => ({ ...prev, departureCity: e.target.value }))
-            }
-            error={fieldErrors.departureCity}
-            required
-          />
-          <Input
-            label={tRoutes('arrival')}
-            name="arrivalCity"
-            value={formValues.arrivalCity}
-            onChange={(e) =>
-              setFormValues((prev) => ({ ...prev, arrivalCity: e.target.value }))
-            }
-            error={fieldErrors.arrivalCity}
-            required
-          />
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Input
-              label={tRoutes('priceCents')}
-              type="number"
-              min={0}
-              value={formValues.priceCents}
-              onChange={(e) =>
-                setFormValues((prev) => ({ ...prev, priceCents: e.target.value }))
-              }
-              error={fieldErrors.priceCents}
-              required
-            />
-            <Select
-              label={tCommon('form.currency')}
-              value={formValues.currency}
-              options={currencyOptions}
-              onChange={(e) =>
-                setFormValues((prev) => ({ ...prev, currency: e.target.value }))
-              }
-              error={fieldErrors.currency}
-            />
-          </div>
-          <div className="flex flex-wrap gap-2 pt-2">
-            <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
-              {editing ? tActions('save') : tRoutes('addRoute')}
-            </Button>
-            <Button type="button" variant="outline" onClick={resetForm} disabled={submitting}>
-              {tActions('cancel')}
-            </Button>
-          </div>
-        </form>
-      </Modal>
-
+    <>
       <AlertDialog
         open={Boolean(confirmTarget)}
         onOpenChange={(open) => {
@@ -591,6 +479,236 @@ export function VehicleRoutesList() {
           void handleDelete();
         }}
       />
-    </div>
+
+      <div className="min-w-0 space-y-6 overflow-x-hidden">
+        <VehicleRoutesStatCards refreshKey={statsKey} />
+
+        <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <div className="min-w-0 w-full flex-1 sm:max-w-md">
+              <Input
+                type="search"
+                placeholder={t('searchPlaceholder')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                aria-label={t('searchAria')}
+              />
+            </div>
+            <div className="min-w-[12rem] w-full sm:w-auto sm:max-w-xs">
+              <Select
+                value={vehicleFilter}
+                options={vehicleOptions}
+                onChange={(e) => {
+                  setVehicleFilter(e.target.value);
+                  setPage(1);
+                }}
+                aria-label={t('columns.vehicle')}
+              />
+            </div>
+            <ListViewModeToggle
+              value={viewMode}
+              options={viewModeOptions}
+              onChange={setViewMode}
+              ariaLabel={t('viewModeAria')}
+              className="w-full sm:w-auto"
+            />
+          </div>
+          <Button
+            type="button"
+            onClick={openCreate}
+            className="w-full shrink-0 sm:w-auto"
+          >
+            {tRoutes('addRoute')}
+          </Button>
+        </div>
+
+        <Modal
+          open={showForm}
+          onOpenChange={(open) => {
+            if (!open && !submitting) resetForm();
+          }}
+          title={editing ? tRoutes('editRoute') : tRoutes('newRoute')}
+          showClose={!submitting}
+          closeAriaLabel={tActions('close')}
+          className="max-w-lg"
+        >
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <p className="text-xs text-atg-muted">
+              {editing ? tRoutes('editFormHint') : t('formHint')}
+            </p>
+            {formError ? (
+              <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+                {formError}
+              </p>
+            ) : null}
+
+            {!editing ? (
+              <Select
+                label={t('columns.vehicle')}
+                value={formValues.vehicleId}
+                options={formVehicleOptions}
+                onChange={(e) =>
+                  setFormValues((prev) => ({ ...prev, vehicleId: e.target.value }))
+                }
+                error={fieldErrors.vehicleId}
+                required
+              />
+            ) : (
+              <div className="rounded-xl border border-atg-border bg-atg-surface/50 px-4 py-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
+                  {t('columns.vehicle')}
+                </p>
+                <p className="mt-1 text-sm font-medium text-atg-fg">
+                  {vehicleLabel(formValues.vehicleId)}
+                </p>
+                {vehiclePlate(formValues.vehicleId) ? (
+                  <p className="mt-0.5 text-xs text-atg-muted">
+                    {vehiclePlate(formValues.vehicleId)}
+                  </p>
+                ) : null}
+              </div>
+            )}
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Input
+                label={tRoutes('departure')}
+                name="departureCity"
+                value={formValues.departureCity}
+                onChange={(e) =>
+                  setFormValues((prev) => ({
+                    ...prev,
+                    departureCity: e.target.value,
+                  }))
+                }
+                error={fieldErrors.departureCity}
+                required
+              />
+              <Input
+                label={tRoutes('arrival')}
+                name="arrivalCity"
+                value={formValues.arrivalCity}
+                onChange={(e) =>
+                  setFormValues((prev) => ({
+                    ...prev,
+                    arrivalCity: e.target.value,
+                  }))
+                }
+                error={fieldErrors.arrivalCity}
+                required
+              />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Input
+                label={tRoutes('priceCents')}
+                type="number"
+                min={0}
+                value={formValues.priceCents}
+                onChange={(e) =>
+                  setFormValues((prev) => ({ ...prev, priceCents: e.target.value }))
+                }
+                error={fieldErrors.priceCents}
+                required
+              />
+              <Select
+                label={tCommon('form.currency')}
+                value={formValues.currency}
+                options={currencyOptions}
+                onChange={(e) =>
+                  setFormValues((prev) => ({ ...prev, currency: e.target.value }))
+                }
+                error={fieldErrors.currency}
+              />
+            </div>
+
+            <div className="flex justify-end gap-3 pt-1">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={resetForm}
+                disabled={submitting}
+              >
+                {tActions('cancel')}
+              </Button>
+              <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
+                {editing ? tActions('save') : tRoutes('addRoute')}
+              </Button>
+            </div>
+          </form>
+        </Modal>
+
+        {state.status === 'error' ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {state.message}
+          </p>
+        ) : viewMode === 'table' ? (
+          <>
+            <Card variant="dashboard" padding="none" className="min-w-0 overflow-hidden">
+              <DataTable
+                columns={columns}
+                data={routes}
+                isLoading={state.status === 'loading'}
+                loadingMessage={tDataTable('loading')}
+                emptyMessage={emptyMessage}
+                emptyVariant={hasFilters ? 'search' : 'default'}
+                expandRowLabel={tDataTable('expandRow')}
+                collapseRowLabel={tDataTable('collapseRow')}
+                expandRowAriaLabel={tDataTable('expandRowAria')}
+                getRowId={(row) => row.id}
+                aria-label={t('ariaLabel')}
+                className="min-w-0"
+              />
+            </Card>
+            {pagination}
+          </>
+        ) : state.status === 'loading' ? (
+          <p className="text-sm text-atg-muted">{tDataTable('loading')}</p>
+        ) : routes.length === 0 ? (
+          <p className="text-sm text-atg-muted">{emptyMessage}</p>
+        ) : (
+          <>
+            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+              {routes.map((route) => {
+                const designation = vehicleLabel(route.vehicleId);
+                const plate = vehiclePlate(route.vehicleId);
+                return (
+                  <li key={route.id} className="min-w-0">
+                    <Card
+                      variant="dashboard"
+                      padding="sm"
+                      className="flex h-full min-w-0 flex-col gap-3 overflow-hidden"
+                    >
+                      <div className="min-w-0 flex-1 space-y-1">
+                        <Link
+                          href={`/produits/locations/${route.vehicleId}?tab=troncons`}
+                          className="block min-w-0"
+                        >
+                          <p className="truncate font-medium text-primary hover:underline">
+                            {designation}
+                          </p>
+                        </Link>
+                        {plate && plate !== designation ? (
+                          <p className="truncate text-xs text-atg-muted">{plate}</p>
+                        ) : null}
+                        <p className="truncate text-sm font-semibold text-atg-fg">
+                          {routeLabel(route)}
+                        </p>
+                        <p className="tabular-nums text-sm text-atg-muted">
+                          {formatPrice(route.priceCents, route.currency)}
+                        </p>
+                      </div>
+                      <div className="mt-auto flex min-w-0 justify-end border-t border-atg-border pt-3">
+                        {renderActions(route)}
+                      </div>
+                    </Card>
+                  </li>
+                );
+              })}
+            </ul>
+            {pagination}
+          </>
+        )}
+      </div>
+    </>
   );
 }

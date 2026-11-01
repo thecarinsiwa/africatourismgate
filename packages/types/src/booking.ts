@@ -502,6 +502,8 @@ export interface RefundPaymentResponse {
 }
 
 export interface BookingListItem extends Booking {
+  /** Display name from booking line titles (e.g. product / package). */
+  name: string;
   clientEmail: string;
   clientFirstName: string;
   clientLastName: string;

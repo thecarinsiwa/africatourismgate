@@ -182,11 +182,28 @@
       "allVehicles": "Tous les véhicules",
       "vehicleFallback": "Véhicule {id}",
       "formHint": "Choisissez le véhicule, saisissez le départ et l’arrivée, puis le prix fixe.",
+      "viewGrid": "Grille",
+      "viewTable": "Tableau",
+      "viewModeAria": "Mode d'affichage",
       "columns": {
         "vehicle": "Désignation"
       },
       "validation": {
         "vehicleRequired": "Véhicule obligatoire."
+      },
+      "stats": {
+        "total": {
+          "label": "Tronçons",
+          "subtitle": "Trajets tarifés"
+        },
+        "vehicles": {
+          "label": "Véhicules",
+          "subtitle": "Avec au moins un tronçon"
+        },
+        "cityPairs": {
+          "label": "Trajets",
+          "subtitle": "Couples départ → arrivée"
+        }
       }
     },
     "agencies": {

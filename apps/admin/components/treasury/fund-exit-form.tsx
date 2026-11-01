@@ -81,9 +81,11 @@ function exitToFormValues(exit: FundExit): FormValues {
 }
 
 function formatBookingLabel(booking: BookingListItem): string {
-  const name = `${booking.clientFirstName} ${booking.clientLastName}`.trim();
+  const client = `${booking.clientFirstName} ${booking.clientLastName}`.trim();
   const ref = booking.id.slice(0, 8);
-  return `${ref}… — ${name || booking.clientEmail} (${formatMoney(booking.totalCents, booking.currency)})`;
+  const title = booking.name?.trim();
+  const who = title || client || booking.clientEmail;
+  return `${ref}… — ${who} (${formatMoney(booking.totalCents, booking.currency)})`;
 }
 
 function formatEligibleLabel(req: ExpenseRequest): string {

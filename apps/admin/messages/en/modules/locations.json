@@ -182,11 +182,28 @@
       "allVehicles": "All vehicles",
       "vehicleFallback": "Vehicle {id}",
       "formHint": "Choose the vehicle, enter departure and arrival cities, then the fixed fare.",
+      "viewGrid": "Grid",
+      "viewTable": "Table",
+      "viewModeAria": "View mode",
       "columns": {
         "vehicle": "Designation"
       },
       "validation": {
         "vehicleRequired": "Vehicle is required."
+      },
+      "stats": {
+        "total": {
+          "label": "Routes",
+          "subtitle": "Priced trips"
+        },
+        "vehicles": {
+          "label": "Vehicles",
+          "subtitle": "With at least one route"
+        },
+        "cityPairs": {
+          "label": "Trips",
+          "subtitle": "Departure → arrival pairs"
+        }
       }
     },
     "agencies": {

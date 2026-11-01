@@ -182,11 +182,28 @@
       "allVehicles": "Todos los vehículos",
       "vehicleFallback": "Vehículo {id}",
       "formHint": "Elija el vehículo, escriba la salida y la llegada, luego la tarifa fija.",
+      "viewGrid": "Cuadrícula",
+      "viewTable": "Tabla",
+      "viewModeAria": "Modo de visualización",
       "columns": {
         "vehicle": "Designación"
       },
       "validation": {
         "vehicleRequired": "Vehículo obligatorio."
+      },
+      "stats": {
+        "total": {
+          "label": "Tramos",
+          "subtitle": "Trayectos tarifados"
+        },
+        "vehicles": {
+          "label": "Vehículos",
+          "subtitle": "Con al menos un tramo"
+        },
+        "cityPairs": {
+          "label": "Trayectos",
+          "subtitle": "Pares salida → llegada"
+        }
       }
     },
     "agencies": {
