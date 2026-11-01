@@ -14,7 +14,6 @@ import {
   ANNOUNCEMENT_BANNER_TEXT_MAX_LENGTH,
   BOOKING_ITEM_TYPE_KEYS,
   CATALOG_PRODUCT_KEYS,
-  FOOTER_DESIGNED_BY_NAMES_MAX_LENGTH,
   FOOTER_FALLBACK_LOCALE,
   FOOTER_LOCALES,
   FOOTER_NEWSLETTER_DESC_MAX_LENGTH,
@@ -305,18 +304,12 @@ function validateFooter(value: Record<string, unknown>): Record<string, unknown>
       `messages.${locale}.newsletterDesc`,
       FOOTER_NEWSLETTER_DESC_MAX_LENGTH,
     );
-    const designedByNames = optionalTrimmedString(
-      entry.designedByNames,
-      `messages.${locale}.designedByNames`,
-      FOOTER_DESIGNED_BY_NAMES_MAX_LENGTH,
-    );
-    if (!tagline && !newsletterDesc && !designedByNames) {
+    if (!tagline && !newsletterDesc) {
       continue;
     }
     const message: FooterMessage = {
       tagline: tagline ?? '',
       newsletterDesc: newsletterDesc ?? '',
-      designedByNames: designedByNames ?? '',
     };
     messages[locale] = message;
   }

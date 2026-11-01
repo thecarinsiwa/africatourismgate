@@ -1,9 +1,8 @@
 'use client';
 
-import { Button, Card, Input } from '@africatourismgate/ui';
+import { Button, Card } from '@africatourismgate/ui';
 import {
   DEFAULT_FOOTER_MESSAGES,
-  FOOTER_DESIGNED_BY_NAMES_MAX_LENGTH,
   FOOTER_FALLBACK_LOCALE,
   FOOTER_LOCALES,
   FOOTER_NEWSLETTER_DESC_MAX_LENGTH,
@@ -35,9 +34,9 @@ type FieldErrors = Partial<Record<string, string>>;
 
 function emptyMessages(): FooterFormValues['messages'] {
   return {
-    fr: { tagline: '', newsletterDesc: '', designedByNames: '' },
-    en: { tagline: '', newsletterDesc: '', designedByNames: '' },
-    es: { tagline: '', newsletterDesc: '', designedByNames: '' },
+    fr: { tagline: '', newsletterDesc: '' },
+    en: { tagline: '', newsletterDesc: '' },
+    es: { tagline: '', newsletterDesc: '' },
   };
 }
 
@@ -49,7 +48,6 @@ function toFormValues(value: FooterSettingValue): FooterFormValues {
       messages[locale] = {
         tagline: message.tagline,
         newsletterDesc: message.newsletterDesc,
-        designedByNames: message.designedByNames,
       };
     }
   }
@@ -61,19 +59,14 @@ function toSettingValue(values: FooterFormValues): FooterSettingValue {
   for (const locale of FOOTER_LOCALES) {
     const tagline = values.messages[locale].tagline.trim();
     const newsletterDesc = values.messages[locale].newsletterDesc.trim();
-    const designedByNames = values.messages[locale].designedByNames.trim();
-    if (!tagline && !newsletterDesc && !designedByNames) continue;
-    messages[locale] = { tagline, newsletterDesc, designedByNames };
+    if (!tagline && !newsletterDesc) continue;
+    messages[locale] = { tagline, newsletterDesc };
   }
   return { messages };
 }
 
 function localeHasContent(message: LocaleDraft): boolean {
-  return Boolean(
-    message.tagline.trim() ||
-      message.newsletterDesc.trim() ||
-      message.designedByNames.trim(),
-  );
+  return Boolean(message.tagline.trim() || message.newsletterDesc.trim());
 }
 
 export function ContenuFooterTabPanel() {
@@ -84,7 +77,6 @@ export function ContenuFooterTabPanel() {
   const localeSelectId = useId();
   const taglineId = useId();
   const newsletterDescId = useId();
-  const designedByNamesId = useId();
 
   const [access, setAccess] = useState<'loading' | 'denied' | 'read' | 'write'>('loading');
   const [loading, setLoading] = useState(true);
@@ -155,7 +147,6 @@ export function ContenuFooterTabPanel() {
       ...prev,
       [`${locale}.tagline`]: undefined,
       [`${locale}.newsletterDesc`]: undefined,
-      [`${locale}.designedByNames`]: undefined,
       'fr.any': undefined,
     }));
     setSaved(false);
@@ -188,15 +179,6 @@ export function ContenuFooterTabPanel() {
           'newsletterDesc',
           t('validation.newsletterDescTooLong', {
             max: FOOTER_NEWSLETTER_DESC_MAX_LENGTH,
-          }),
-        );
-      }
-      if (message.designedByNames.trim().length > FOOTER_DESIGNED_BY_NAMES_MAX_LENGTH) {
-        flag(
-          locale,
-          'designedByNames',
-          t('validation.designedByNamesTooLong', {
-            max: FOOTER_DESIGNED_BY_NAMES_MAX_LENGTH,
           }),
         );
       }
@@ -371,20 +353,6 @@ export function ContenuFooterTabPanel() {
               </span>
             </div>
           </div>
-
-          <Input
-            id={designedByNamesId}
-            label={t('fields.designedByNames')}
-            value={current.designedByNames}
-            maxLength={FOOTER_DESIGNED_BY_NAMES_MAX_LENGTH}
-            onChange={(event) =>
-              updateMessage(editingLocale, { designedByNames: event.target.value })
-            }
-            placeholder={t('fields.designedByNamesPlaceholder')}
-            disabled={!canWrite}
-            error={fieldErrors[`${editingLocale}.designedByNames`]}
-            hint={t('fields.designedByNamesHint')}
-          />
         </section>
 
         {saveError ? <p className="text-sm text-destructive">{saveError}</p> : null}

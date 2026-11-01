@@ -11,9 +11,4 @@ export class PublicFooterDto implements PublicFooter {
     description: 'Newsletter column description in the public site footer',
   })
   newsletterDesc!: string;
-
-  @ApiProperty({
-    description: 'Names credited after “Designed by” in the footer bar',
-  })
-  designedByNames!: string;
 }

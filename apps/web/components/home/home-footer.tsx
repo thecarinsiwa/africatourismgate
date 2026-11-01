@@ -26,7 +26,6 @@ export function HomeFooter() {
   const cmsFooter = useResolvedPublicFooter();
   const tagline = cmsFooter?.tagline || t('tagline');
   const newsletterDesc = cmsFooter?.newsletterDesc || t('newsletterDesc');
-  const designedByNames = cmsFooter?.designedByNames || t('designedByNames');
   const catalogProducts = useCatalogProducts();
   const socialLinks = useMemo(() => buildSocialLinks(contact), [contact]);
 
@@ -278,7 +277,7 @@ export function HomeFooter() {
           </p>
           <p className="text-xs">
             {t('designedBy')}{' '}
-            <strong className="text-white/70">{designedByNames}</strong>
+            <strong className="text-white/70">{t('designedByNames')}</strong>
           </p>
         </div>
       </div>

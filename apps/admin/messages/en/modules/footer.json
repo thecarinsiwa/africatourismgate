@@ -1,6 +1,6 @@
 {
   "heading": "Footer",
-  "description": "Marketing copy for the public site footer: tagline, newsletter blurb, and “Designed by” credit. Product / About / legal links stay automatic.",
+  "description": "Marketing copy for the public site footer: tagline and newsletter blurb. Product / About / legal links and the “Designed by” credit stay automatic.",
   "contactHint": "Contact details, social links and branding: <parametres>Settings</parametres>.",
   "readOnlyHint": "You can view this content but not edit it (organization_settings.write permission required).",
   "denied": "You do not have access to the footer (organization_settings.read permission required).",
@@ -11,16 +11,12 @@
     "tagline": "Tagline",
     "taglinePlaceholder": "E.g. Your gateway to the best travel experiences in Africa…",
     "newsletterDesc": "Newsletter description",
-    "newsletterDescPlaceholder": "E.g. Inspiration, travel ideas, deals and news.",
-    "designedByNames": "“Designed by” names",
-    "designedByNamesPlaceholder": "E.g. Carin Siwa and Ruth Bwiza",
-    "designedByNamesHint": "Shown after the “Designed by” label (translated on the public site)."
+    "newsletterDescPlaceholder": "E.g. Inspiration, travel ideas, deals and news."
   },
   "validation": {
     "frenchRequired": "Fill at least one French field when other languages are set.",
     "taglineTooLong": "The tagline must not exceed {max} characters.",
-    "newsletterDescTooLong": "The newsletter description must not exceed {max} characters.",
-    "designedByNamesTooLong": "The names must not exceed {max} characters."
+    "newsletterDescTooLong": "The newsletter description must not exceed {max} characters."
   },
   "saveButton": "Save footer",
   "resetDefaults": "Reset to default copy",

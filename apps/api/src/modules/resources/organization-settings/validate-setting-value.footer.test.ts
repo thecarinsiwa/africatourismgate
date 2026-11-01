@@ -23,17 +23,14 @@ test('validateSettingValue footer trims and keeps fr/en/es messages', () => {
       fr: {
         tagline: '  Tagline FR  ',
         newsletterDesc: ' News FR ',
-        designedByNames: ' A et B ',
       },
       en: {
         tagline: 'Tagline EN',
         newsletterDesc: 'News EN',
-        designedByNames: 'A and B',
       },
       es: {
         tagline: '   ',
         newsletterDesc: 'News ES',
-        designedByNames: '',
       },
     },
   });
@@ -42,17 +39,14 @@ test('validateSettingValue footer trims and keeps fr/en/es messages', () => {
       fr: {
         tagline: 'Tagline FR',
         newsletterDesc: 'News FR',
-        designedByNames: 'A et B',
       },
       en: {
         tagline: 'Tagline EN',
         newsletterDesc: 'News EN',
-        designedByNames: 'A and B',
       },
       es: {
         tagline: '',
         newsletterDesc: 'News ES',
-        designedByNames: '',
       },
     },
   });
@@ -62,7 +56,7 @@ test('validateSettingValue footer requires fr when any locale is set', () => {
   rejectsWith(
     {
       messages: {
-        en: { tagline: 'Hello', newsletterDesc: '', designedByNames: '' },
+        en: { tagline: 'Hello', newsletterDesc: '' },
       },
     },
     'messages.fr',
@@ -73,8 +67,8 @@ test('validateSettingValue footer rejects unknown locale', () => {
   rejectsWith(
     {
       messages: {
-        fr: { tagline: 'Ok', newsletterDesc: '', designedByNames: '' },
-        de: { tagline: 'Nein', newsletterDesc: '', designedByNames: '' },
+        fr: { tagline: 'Ok', newsletterDesc: '' },
+        de: { tagline: 'Nein', newsletterDesc: '' },
       },
     },
     'messages.de',
@@ -88,7 +82,6 @@ test('validateSettingValue footer enforces length limits', () => {
         fr: {
           tagline: 'x'.repeat(401),
           newsletterDesc: '',
-          designedByNames: '',
         },
       },
     },
@@ -103,13 +96,11 @@ test('resolvePublicFooter falls back to fr then defaults', () => {
         fr: {
           tagline: 'FR only',
           newsletterDesc: '',
-          designedByNames: 'Équipe',
         },
       },
     },
     'en',
   );
   assert.equal(resolved.tagline, 'FR only');
-  assert.equal(resolved.designedByNames, 'Équipe');
   assert.ok(resolved.newsletterDesc.length > 0);
 });

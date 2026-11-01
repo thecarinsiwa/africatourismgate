@@ -15,12 +15,10 @@ export function parsePublicFooter(payload: unknown): PublicFooter | null {
   const tagline = typeof raw.tagline === 'string' ? raw.tagline.trim() : '';
   const newsletterDesc =
     typeof raw.newsletterDesc === 'string' ? raw.newsletterDesc.trim() : '';
-  const designedByNames =
-    typeof raw.designedByNames === 'string' ? raw.designedByNames.trim() : '';
-  if (!tagline && !newsletterDesc && !designedByNames) {
+  if (!tagline && !newsletterDesc) {
     return null;
   }
-  return { tagline, newsletterDesc, designedByNames };
+  return { tagline, newsletterDesc };
 }
 
 export async function getPublicFooter(locale: string): Promise<PublicFooter | null> {

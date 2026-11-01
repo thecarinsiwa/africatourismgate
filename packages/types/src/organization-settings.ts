@@ -483,12 +483,10 @@ export type FooterLocale = (typeof FOOTER_LOCALES)[number];
 export const FOOTER_FALLBACK_LOCALE: FooterLocale = 'fr';
 export const FOOTER_TAGLINE_MAX_LENGTH = 400;
 export const FOOTER_NEWSLETTER_DESC_MAX_LENGTH = 280;
-export const FOOTER_DESIGNED_BY_NAMES_MAX_LENGTH = 120;
 
 export interface FooterMessage {
   tagline: string;
   newsletterDesc: string;
-  designedByNames: string;
 }
 
 export interface FooterSettingValue {
@@ -499,7 +497,6 @@ export interface FooterSettingValue {
 export interface PublicFooter {
   tagline: string;
   newsletterDesc: string;
-  designedByNames: string;
 }
 
 export const DEFAULT_FOOTER_MESSAGES: Record<FooterLocale, FooterMessage> = {
@@ -508,19 +505,16 @@ export const DEFAULT_FOOTER_MESSAGES: Record<FooterLocale, FooterMessage> = {
       'Votre passerelle vers les meilleures expériences de voyage en Afrique. Découvrez des destinations uniques et réservez en toute confiance.',
     newsletterDesc:
       'Inspiration, idées de voyages, bons plans et actualités.',
-    designedByNames: 'Carin Siwa et Ruth Bwiza',
   },
   en: {
     tagline:
       'Your gateway to the best travel experiences in Africa. Discover unique destinations and book with confidence.',
     newsletterDesc: 'Inspiration, travel ideas, deals and news.',
-    designedByNames: 'Carin Siwa and Ruth Bwiza',
   },
   es: {
     tagline:
       'Su puerta de entrada a las mejores experiencias de viaje en África. Descubra destinos únicos y reserve con confianza.',
     newsletterDesc: 'Inspiración, ideas de viaje, ofertas y noticias.',
-    designedByNames: 'Carin Siwa y Ruth Bwiza',
   },
 };
 
@@ -552,9 +546,7 @@ function normalizeFooterMessage(value: unknown): FooterMessage | null {
     typeof raw.tagline === 'string' ? raw.tagline.trim() : '';
   const newsletterDesc =
     typeof raw.newsletterDesc === 'string' ? raw.newsletterDesc.trim() : '';
-  const designedByNames =
-    typeof raw.designedByNames === 'string' ? raw.designedByNames.trim() : '';
-  if (!tagline && !newsletterDesc && !designedByNames) {
+  if (!tagline && !newsletterDesc) {
     return null;
   }
   return {
@@ -562,10 +554,6 @@ function normalizeFooterMessage(value: unknown): FooterMessage | null {
     newsletterDesc: clipFooterField(
       newsletterDesc,
       FOOTER_NEWSLETTER_DESC_MAX_LENGTH,
-    ),
-    designedByNames: clipFooterField(
-      designedByNames,
-      FOOTER_DESIGNED_BY_NAMES_MAX_LENGTH,
     ),
   };
 }
@@ -623,7 +611,6 @@ export function resolvePublicFooter(
   return {
     tagline: pick('tagline'),
     newsletterDesc: pick('newsletterDesc'),
-    designedByNames: pick('designedByNames'),
   };
 }
 
