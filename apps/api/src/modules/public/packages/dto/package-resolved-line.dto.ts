@@ -45,6 +45,12 @@ export class PackageResolvedLineDto {
   @ApiPropertyOptional({ format: 'uuid', description: 'vehicle_routes id' })
   routeId?: string;
 
+  @ApiPropertyOptional({
+    format: 'uuid',
+    description: 'vehicles id (vehicle / tronçon lines)',
+  })
+  vehicleId?: string;
+
   @ApiPropertyOptional({ format: 'date' })
   travelDate?: string;
 

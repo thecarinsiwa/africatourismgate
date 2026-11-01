@@ -10,6 +10,7 @@ import {
   PackageItems,
   Properties,
   Rooms,
+  VehicleCategories,
   VehicleRoutes,
   Vehicles,
 } from '../../../entities/generated';
@@ -34,6 +35,8 @@ export class PackageItemPricingService {
     private readonly flightClassesRepository: Repository<FlightClasses>,
     @InjectRepository(Vehicles)
     private readonly vehiclesRepository: Repository<Vehicles>,
+    @InjectRepository(VehicleCategories)
+    private readonly vehicleCategoriesRepository: Repository<VehicleCategories>,
     @InjectRepository(VehicleRoutes)
     private readonly vehicleRoutesRepository: Repository<VehicleRoutes>,
     @InjectRepository(Destinations)
@@ -205,8 +208,24 @@ export class PackageItemPricingService {
       throw new NotFoundException('Tronçon introuvable.');
     }
 
+    const routeLabel = `${route.departureCity} → ${route.arrivalCity}`;
+    const vehicle = await this.vehiclesRepository.findOne({
+      where: { id: route.vehicleId },
+    });
+    let designation: string | null = null;
+    if (vehicle && !vehicle.deletedAt) {
+      const category = await this.vehicleCategoriesRepository.findOne({
+        where: { id: vehicle.categoryId },
+      });
+      designation =
+        category?.exampleModel?.trim() ||
+        category?.name?.trim() ||
+        vehicle.licensePlate?.trim() ||
+        null;
+    }
+
     return {
-      label: `${route.departureCity} → ${route.arrivalCity}`,
+      label: designation ? `${designation} · ${routeLabel}` : routeLabel,
       unitPriceCents: route.priceCents,
       currency: route.currency,
     };

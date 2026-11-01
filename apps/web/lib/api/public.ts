@@ -538,6 +538,7 @@ export type PackageResolvedLine = {
   passengers?: number;
   availabilitySlotId?: string;
   routeId?: string;
+  vehicleId?: string;
   travelDate?: string;
   pickupDate?: string;
   returnDate?: string;

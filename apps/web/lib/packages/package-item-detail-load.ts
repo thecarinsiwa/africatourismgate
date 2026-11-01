@@ -102,8 +102,28 @@ export async function loadPackageItemDetail(
           travelDate: start,
         }),
       };
-    case 'troncon':
-      throw new Error('Tronçon package item has no standalone public detail page');
+    case 'troncon': {
+      const lines = await getPackageResolvedLines(ctx.packageId, {
+        startDate: start,
+        endDate: end,
+        travelers,
+      });
+      const tronconLine = lines.find(
+        (line) => line.lineType === 'troncon' && line.itemId === item.itemId,
+      );
+      const vehicleId = tronconLine?.vehicleId;
+      const routeId = tronconLine?.routeId ?? item.itemId;
+      if (!vehicleId) {
+        throw new Error('Véhicule introuvable pour ce tronçon');
+      }
+      return {
+        kind: 'vehicle',
+        detail: await getVehicleDetail(vehicleId, {
+          travelDate: tronconLine?.travelDate ?? start,
+          routeId,
+        }),
+      };
+    }
     case 'property':
       return {
         kind: 'property',

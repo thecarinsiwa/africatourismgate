@@ -492,6 +492,7 @@ export type Translations = {
     backToList: string;
     agencyTitle: string;
     categoryTitle: string;
+    exampleModelLabel: string;
     licensePlate: string;
     infoTitle: string;
     equipmentTitle: string;

@@ -112,6 +112,12 @@ function resolveFullPageHref(
           routeId: data?.kind === 'vehicle' ? data.detail.route.id : undefined,
         },
       );
+    case 'troncon':
+      if (data?.kind !== 'vehicle') return null;
+      return buildCarDetailHref(data.detail.id, {
+        travelDate: start,
+        routeId: data.detail.route.id,
+      });
     case 'property':
       return buildHotelDetailHref(
         data?.kind === 'property' ? data.detail.id : item.itemId,
@@ -206,22 +212,36 @@ function ItemDetailBody({
 
   if (data.kind === 'vehicle') {
     const { detail } = data;
+    const designation =
+      detail.category.exampleModel?.trim() ||
+      detail.category.name ||
+      detail.licensePlate ||
+      item.label;
     return (
       <div className="space-y-5">
         {detail.images && detail.images.length > 0 ? (
           <ProductGallery
             images={detail.images}
-            name={detail.category.name}
+            name={designation}
             labels={labels}
           />
         ) : null}
         <dl className="grid gap-3 sm:grid-cols-2">
           <MetaCell label={c.categoryTitle} value={detail.category.name} />
+          {detail.category.exampleModel?.trim() ? (
+            <MetaCell
+              label={c.exampleModelLabel}
+              value={detail.category.exampleModel.trim()}
+            />
+          ) : null}
           <MetaCell label={c.agencyTitle} value={detail.agency.name} />
           <MetaCell
             label={c.routeLabel}
             value={`${detail.route.departureCity} → ${detail.route.arrivalCity}`}
           />
+          {detail.licensePlate ? (
+            <MetaCell label={c.licensePlate} value={detail.licensePlate} />
+          ) : null}
           <MetaCell
             label={c.travelDate}
             value={detail.travelDate}

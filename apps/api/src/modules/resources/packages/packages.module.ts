@@ -20,6 +20,7 @@ import {
   Rooms,
   ShipImages,
   Vehicles,
+  VehicleCategories,
   VehicleImages,
   VehicleRoutes,
 } from '../../../entities/generated';
@@ -41,6 +42,7 @@ import { PackagesService } from './packages.service';
       Flights,
       FlightClasses,
       Vehicles,
+      VehicleCategories,
       VehicleRoutes,
       Cabins,
       Activities,

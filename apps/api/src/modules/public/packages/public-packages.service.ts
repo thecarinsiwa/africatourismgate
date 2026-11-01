@@ -325,6 +325,7 @@ export class PublicPackagesService {
     return {
       lineType: 'vehicle',
       itemId: vehicleId,
+      vehicleId,
       availabilitySlotId: slot.id,
       routeId: route?.id,
       pickupDate: query.startDate,
@@ -370,6 +371,7 @@ export class PublicPackagesService {
       lineType: 'troncon',
       itemId: routeId,
       routeId: route.id,
+      vehicleId: route.vehicleId,
       availabilitySlotId: slot.id,
       pickupDate: query.startDate,
       returnDate: query.startDate,
