@@ -1,9 +1,19 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { PublicBlogComment, PublicBlogEngagement } from '@africatourismgate/types';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { Public } from '../../auth/decorators/public.decorator';
+import { AuthUserDto } from '../../auth/dto/auth-user.dto';
+import { OptionalJwtAuthGuard } from '../../auth/guards/optional-jwt-auth.guard';
 import { CreateBlogCommentDto } from './dto/create-blog-comment.dto';
-import { PublicBlogEngagementQueryDto } from './dto/public-blog-engagement-query.dto';
 import { PublicBlogPostsListQueryDto } from './dto/public-blog-posts-list-query.dto';
 import { UpsertBlogReactionDto } from './dto/upsert-blog-reaction.dto';
 import { PublicBlogService } from './public-blog.service';
@@ -31,35 +41,39 @@ export class PublicBlogController {
   }
 
   @Public()
+  @UseGuards(OptionalJwtAuthGuard)
   @Get('blog/:slug/engagement')
-  @ApiOperation({ summary: 'Get reactions and comments for a published blog post' })
+  @ApiOperation({
+    summary:
+      'Get reactions and comments for a published blog post (viewer reaction when authenticated)',
+  })
   @ApiOkResponse({ description: 'Engagement payload' })
   getEngagement(
     @Param('slug') slug: string,
-    @Query() query: PublicBlogEngagementQueryDto,
+    @CurrentUser() user?: AuthUserDto,
   ): Promise<PublicBlogEngagement> {
-    return this.service.getEngagement(slug, query.visitorKey);
+    return this.service.getEngagement(slug, user?.id);
   }
 
-  @Public()
   @Post('blog/:slug/reactions')
   @ApiOperation({
-    summary: 'Toggle or change the visitor reaction on a published blog post',
+    summary: 'Toggle or change the authenticated user reaction on a published blog post',
   })
   upsertReaction(
     @Param('slug') slug: string,
     @Body() body: UpsertBlogReactionDto,
+    @CurrentUser() user: AuthUserDto,
   ): Promise<PublicBlogEngagement> {
-    return this.service.upsertReaction(slug, body);
+    return this.service.upsertReaction(slug, body, user.id);
   }
 
-  @Public()
   @Post('blog/:slug/comments')
-  @ApiOperation({ summary: 'Post a public comment on a published blog post' })
+  @ApiOperation({ summary: 'Post a comment as the authenticated user' })
   createComment(
     @Param('slug') slug: string,
     @Body() body: CreateBlogCommentDto,
+    @CurrentUser() user: AuthUserDto,
   ): Promise<PublicBlogComment> {
-    return this.service.createComment(slug, body);
+    return this.service.createComment(slug, body, user);
   }
 }

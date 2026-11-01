@@ -27,7 +27,4 @@ export class BlogComments extends BaseAuditEntity {
     default: 'approved',
   })
   status!: BlogCommentStatus;
-
-  @Column({ type: 'varchar', name: 'visitor_key', length: 64, nullable: true })
-  visitorKey!: string | null;
 }

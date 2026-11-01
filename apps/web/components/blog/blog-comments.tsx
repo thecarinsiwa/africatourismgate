@@ -3,13 +3,15 @@
 import type { PublicBlogComment } from '@africatourismgate/types';
 import { Button, Input, Textarea } from '@africatourismgate/ui';
 import { useLocale, useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { formatRelativeReviewDate } from '../../lib/i18n/format-relative-date';
 
 type BlogCommentsProps = {
   comments: PublicBlogComment[];
   submitting?: boolean;
   error?: string | null;
+  defaultAuthorName?: string;
+  defaultAuthorEmail?: string;
   onSubmit: (input: {
     authorName: string;
     authorEmail?: string;
@@ -21,14 +23,24 @@ export function BlogComments({
   comments,
   submitting = false,
   error = null,
+  defaultAuthorName = '',
+  defaultAuthorEmail = '',
   onSubmit,
 }: BlogCommentsProps) {
   const t = useTranslations('blog.engagement');
   const locale = useLocale();
-  const [authorName, setAuthorName] = useState('');
-  const [authorEmail, setAuthorEmail] = useState('');
+  const [authorName, setAuthorName] = useState(defaultAuthorName);
+  const [authorEmail, setAuthorEmail] = useState(defaultAuthorEmail);
   const [body, setBody] = useState('');
   const [fieldError, setFieldError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setAuthorName(defaultAuthorName);
+  }, [defaultAuthorName]);
+
+  useEffect(() => {
+    setAuthorEmail(defaultAuthorEmail);
+  }, [defaultAuthorEmail]);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -62,7 +74,10 @@ export function BlogComments({
         </p>
       </div>
 
-      <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4 rounded-xl border border-atg-border bg-atg-elevated/40 p-4 sm:p-5">
+      <form
+        onSubmit={(e) => void handleSubmit(e)}
+        className="space-y-4 rounded-xl border border-atg-border bg-atg-elevated/40 p-4 sm:p-5"
+      >
         <Input
           label={t('commentName')}
           name="authorName"
@@ -96,7 +111,12 @@ export function BlogComments({
             {fieldError || error}
           </p>
         ) : null}
-        <Button type="submit" loading={submitting} loadingText={t('commentSending')} className="w-full sm:w-auto">
+        <Button
+          type="submit"
+          loading={submitting}
+          loadingText={t('commentSending')}
+          className="w-full sm:w-auto"
+        >
           {t('commentSubmit')}
         </Button>
       </form>

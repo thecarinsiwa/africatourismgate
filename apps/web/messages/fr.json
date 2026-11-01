@@ -339,7 +339,12 @@
       "commentSubmit": "Publier le commentaire",
       "commentSending": "Envoi…",
       "commentValidation": "Indiquez un nom (2 caractères min.) et un commentaire (3 caractères min.).",
-      "commentSubmitError": "Impossible d'envoyer le commentaire. Réessayez."
+      "commentSubmitError": "Impossible d'envoyer le commentaire. Réessayez.",
+      "checkingSession": "Vérification de la session…",
+      "signInPrompt": "Connectez-vous pour réagir à cet article.",
+      "signInToComment": "Connectez-vous pour laisser un commentaire.",
+      "signInRequired": "Vous devez être connecté pour commenter.",
+      "signInCta": "Se connecter"
     }
   },
   "support": {

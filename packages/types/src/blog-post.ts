@@ -76,13 +76,11 @@ export interface PublicBlogEngagement {
 }
 
 export interface UpsertBlogReactionRequest {
-  visitorKey: string;
   reactionType: BlogReactionType;
 }
 
 export interface CreateBlogCommentRequest {
-  visitorKey?: string;
-  authorName: string;
+  authorName?: string;
   authorEmail?: string;
   body: string;
 }

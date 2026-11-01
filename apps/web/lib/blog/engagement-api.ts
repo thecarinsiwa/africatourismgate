@@ -1,10 +1,10 @@
 import type {
-  BlogReactionType,
   CreateBlogCommentRequest,
   PublicBlogComment,
   PublicBlogEngagement,
   UpsertBlogReactionRequest,
 } from '@africatourismgate/types';
+import { ensureClientAccessToken } from '../auth/client-session';
 
 const defaultApiUrl =
   process.env.NODE_ENV === 'production'
@@ -12,14 +12,29 @@ const defaultApiUrl =
     : 'http://localhost:3000/api';
 const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(/\/$/, '');
 
-async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
+async function requestJson<T>(
+  path: string,
+  init?: RequestInit & { auth?: boolean },
+): Promise<T> {
+  const headers: Record<string, string> = {
+    Accept: 'application/json',
+    ...(init?.body ? { 'Content-Type': 'application/json' } : {}),
+    ...(init?.headers as Record<string, string> | undefined),
+  };
+
+  if (init?.auth !== false) {
+    const token = await ensureClientAccessToken();
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    } else if (init?.auth === true) {
+      throw new Error('Not authenticated');
+    }
+  }
+
+  const { auth: _auth, ...fetchInit } = init ?? {};
   const response = await fetch(`${apiUrl}${path}`, {
-    ...init,
-    headers: {
-      Accept: 'application/json',
-      ...(init?.body ? { 'Content-Type': 'application/json' } : {}),
-      ...(init?.headers ?? {}),
-    },
+    ...fetchInit,
+    headers,
     cache: 'no-store',
   });
   if (!response.ok) {
@@ -28,15 +43,12 @@ async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
   return response.json() as Promise<T>;
 }
 
+/** Public read; sends Bearer when logged in so viewerReaction can be resolved. */
 export async function getBlogEngagement(
   slug: string,
-  visitorKey?: string,
 ): Promise<PublicBlogEngagement> {
-  const qs = visitorKey
-    ? `?visitorKey=${encodeURIComponent(visitorKey)}`
-    : '';
   return requestJson<PublicBlogEngagement>(
-    `/public/blog/${encodeURIComponent(slug)}/engagement${qs}`,
+    `/public/blog/${encodeURIComponent(slug)}/engagement`,
   );
 }
 
@@ -49,6 +61,7 @@ export async function upsertBlogReaction(
     {
       method: 'POST',
       body: JSON.stringify(payload),
+      auth: true,
     },
   );
 }
@@ -62,8 +75,7 @@ export async function createBlogComment(
     {
       method: 'POST',
       body: JSON.stringify(payload),
+      auth: true,
     },
   );
 }
-
-export type { BlogReactionType, PublicBlogComment, PublicBlogEngagement };

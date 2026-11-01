@@ -11,8 +11,8 @@ export class BlogPostReactions {
   @Column({ type: 'char', name: 'blog_post_id', length: 36 })
   blogPostId!: string;
 
-  @Column({ type: 'varchar', name: 'visitor_key', length: 64 })
-  visitorKey!: string;
+  @Column({ type: 'char', name: 'user_id', length: 36 })
+  userId!: string;
 
   @Column({
     name: 'reaction_type',

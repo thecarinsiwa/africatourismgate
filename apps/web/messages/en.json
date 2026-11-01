@@ -339,7 +339,12 @@
       "commentSubmit": "Post comment",
       "commentSending": "Sending…",
       "commentValidation": "Please enter a name (min. 2 characters) and a comment (min. 3 characters).",
-      "commentSubmitError": "Could not post your comment. Please try again."
+      "commentSubmitError": "Could not post your comment. Please try again.",
+      "checkingSession": "Checking session…",
+      "signInPrompt": "Sign in to react to this article.",
+      "signInToComment": "Sign in to leave a comment.",
+      "signInRequired": "You must be signed in to comment.",
+      "signInCta": "Sign in"
     }
   },
   "support": {

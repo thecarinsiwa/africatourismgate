@@ -24,6 +24,7 @@ import {
   BLOG_SITE_SEARCH_WEIGHTS,
   scoreSiteSearchTextMatch,
 } from '../site-search/site-search-scoring';
+import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { CreateBlogCommentDto } from './dto/create-blog-comment.dto';
 import { PublicBlogPostsListQueryDto } from './dto/public-blog-posts-list-query.dto';
 import { UpsertBlogReactionDto } from './dto/upsert-blog-reaction.dto';
@@ -174,7 +175,7 @@ export class PublicBlogService {
 
   async getEngagement(
     slug: string,
-    visitorKey?: string,
+    userId?: string,
   ): Promise<PublicBlogEngagement> {
     const post = await this.findPublishedBySlug(slug);
     const [rows, comments] = await Promise.all([
@@ -194,7 +195,7 @@ export class PublicBlogService {
     let viewerReaction: BlogReactionType | null = null;
     for (const row of rows) {
       reactions[row.reactionType] += 1;
-      if (visitorKey && row.visitorKey === visitorKey) {
+      if (userId && row.userId === userId) {
         viewerReaction = row.reactionType;
       }
     }
@@ -210,13 +211,13 @@ export class PublicBlogService {
   async upsertReaction(
     slug: string,
     dto: UpsertBlogReactionDto,
+    userId: string,
   ): Promise<PublicBlogEngagement> {
     const post = await this.findPublishedBySlug(slug);
-    const visitorKey = dto.visitorKey.trim();
     const reactionType = dto.reactionType as EntityReactionType;
 
     const existing = await this.reactionsRepository.findOne({
-      where: { blogPostId: post.id, visitorKey },
+      where: { blogPostId: post.id, userId },
     });
 
     if (existing) {
@@ -231,23 +232,27 @@ export class PublicBlogService {
         this.reactionsRepository.create({
           id: newId(),
           blogPostId: post.id,
-          visitorKey,
+          userId,
           reactionType,
         }),
       );
     }
 
-    return this.getEngagement(slug, visitorKey);
+    return this.getEngagement(slug, userId);
   }
 
   async createComment(
     slug: string,
     dto: CreateBlogCommentDto,
+    user: AuthUserDto,
   ): Promise<PublicBlogComment> {
     const post = await this.findPublishedBySlug(slug);
-    const authorName = dto.authorName.trim();
+    const displayName =
+      dto.authorName?.trim() ||
+      [user.firstName, user.lastName].filter(Boolean).join(' ').trim() ||
+      user.email;
     const body = dto.body.trim();
-    if (!authorName || !body) {
+    if (!displayName || !body) {
       throw new BadRequestException('Le nom et le commentaire sont obligatoires.');
     }
 
@@ -255,11 +260,11 @@ export class PublicBlogService {
       this.commentsRepository.create({
         id: newId(),
         blogPostId: post.id,
-        authorName,
-        authorEmail: dto.authorEmail?.trim() || null,
+        authorName: displayName,
+        authorEmail: dto.authorEmail?.trim() || user.email || null,
         body,
         status: 'approved',
-        visitorKey: dto.visitorKey?.trim() || null,
+        createdByUserId: user.id,
       }),
     );
 

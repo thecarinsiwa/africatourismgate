@@ -8,20 +8,20 @@ import {
 } from 'class-validator';
 
 export class CreateBlogCommentDto {
-  @ApiPropertyOptional({ minLength: 8, maxLength: 64 })
+  @ApiPropertyOptional({
+    description: 'Display name override; defaults to the authenticated user name',
+    minLength: 2,
+    maxLength: 120,
+  })
   @IsOptional()
-  @IsString()
-  @MinLength(8)
-  @MaxLength(64)
-  visitorKey?: string;
-
-  @ApiProperty({ minLength: 2, maxLength: 120 })
   @IsString()
   @MinLength(2)
   @MaxLength(120)
-  authorName!: string;
+  authorName?: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description: 'Contact email override; defaults to the authenticated user email',
+  })
   @IsOptional()
   @IsEmail()
   @MaxLength(255)
