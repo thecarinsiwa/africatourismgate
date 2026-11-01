@@ -356,6 +356,14 @@ INSERT INTO `organization_settings` (
   'tripadvisor_sync',
   '{"locationId":"","apiKey":"","language":"primary"}',
   '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000000027',
+  '00000000-0000-4000-8000-000000000001',
+  'site',
+  'footer',
+  '{"messages":{"fr":{"tagline":"Votre passerelle vers les meilleures expériences de voyage en Afrique. Découvrez des destinations uniques et réservez en toute confiance.","newsletterDesc":"Inspiration, idées de voyages, bons plans et actualités.","designedByNames":"Carin Siwa et Ruth Bwiza"},"en":{"tagline":"Your gateway to the best travel experiences in Africa. Discover unique destinations and book with confidence.","newsletterDesc":"Inspiration, travel ideas, deals and news.","designedByNames":"Carin Siwa and Ruth Bwiza"},"es":{"tagline":"Su puerta de entrada a las mejores experiencias de viaje en África. Descubra destinos únicos y reserve con confianza.","newsletterDesc":"Inspiración, ideas de viaje, ofertas y noticias.","designedByNames":"Carin Siwa y Ruth Bwiza"}}}',
+  '00000000-0000-4000-8000-000000000010'
 );
 
 -- -----------------------------------------------------------------------------

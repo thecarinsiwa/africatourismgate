@@ -24,6 +24,7 @@ import {
   DEFAULT_HOMEPAGE_REVIEWS,
   DEFAULT_TRIPADVISOR_SYNC,
   DEFAULT_WEB_PAYMENT_METHODS,
+  FOOTER_SETTING_KEY,
   mergeTripadvisorSyncApiKey,
   normalizeBookingDeposits,
   normalizeBookingItemTypeModes,
@@ -32,6 +33,7 @@ import {
   normalizeTripadvisorSync,
   normalizeWebPaymentMethods,
   resolvePublicAnnouncementBanner,
+  resolvePublicFooter,
   toTripadvisorSyncAdminSettingValue,
   TRIPADVISOR_SYNC_SETTING_KEY,
   type TripadvisorSyncSettingValue,
@@ -58,6 +60,7 @@ import { PublicPaymentMethodsDto } from './dto/public-payment-methods.dto';
 import { PublicCatalogProductsDto } from './dto/public-catalog-products.dto';
 import { PublicSiteMaintenanceDto } from './dto/public-site-maintenance.dto';
 import { PublicAnnouncementBannerDto } from './dto/public-announcement-banner.dto';
+import { PublicFooterDto } from './dto/public-footer.dto';
 import { PublicHomepageReviewsDto } from './dto/public-homepage-reviews.dto';
 import { OrganizationSettingsListQueryDto } from './dto/organization-settings-list-query.dto';
 import { validateSettingValue } from './validate-setting-value';
@@ -408,6 +411,14 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
     return this.getResolvedAnnouncementBanner(organization.id, locale);
   }
 
+  async findPublicFooter(
+    organizationSlug?: string,
+    locale?: string,
+  ): Promise<PublicFooterDto> {
+    const organization = await this.resolvePublicOrganization(organizationSlug);
+    return this.getResolvedSiteFooter(organization.id, locale);
+  }
+
   async findPublicHomepageReviews(
     organizationSlug?: string,
   ): Promise<PublicHomepageReviewsDto> {
@@ -548,6 +559,33 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
         : null;
 
     return resolvePublicAnnouncementBanner(value, locale);
+  }
+
+  async getResolvedSiteFooter(
+    organizationId: string = PLATFORM_ORG_ID,
+    locale?: string,
+  ): Promise<PublicFooterDto> {
+    const setting = await this.settingsRepository.findOne({
+      where: {
+        organizationId,
+        settingGroup: 'site',
+        settingKey: FOOTER_SETTING_KEY,
+        deletedAt: IsNull(),
+      },
+    });
+
+    if (
+      !setting?.settingValue ||
+      typeof setting.settingValue !== 'object' ||
+      Array.isArray(setting.settingValue)
+    ) {
+      return resolvePublicFooter(null, locale);
+    }
+
+    return resolvePublicFooter(
+      setting.settingValue as Record<string, unknown>,
+      locale,
+    );
   }
 
   async getResolvedHomepageReviews(

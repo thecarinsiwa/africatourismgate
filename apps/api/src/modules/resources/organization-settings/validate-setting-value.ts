@@ -14,6 +14,11 @@ import {
   ANNOUNCEMENT_BANNER_TEXT_MAX_LENGTH,
   BOOKING_ITEM_TYPE_KEYS,
   CATALOG_PRODUCT_KEYS,
+  FOOTER_DESIGNED_BY_NAMES_MAX_LENGTH,
+  FOOTER_FALLBACK_LOCALE,
+  FOOTER_LOCALES,
+  FOOTER_NEWSLETTER_DESC_MAX_LENGTH,
+  FOOTER_TAGLINE_MAX_LENGTH,
   WEB_PAYMENT_METHOD_KEYS,
   isAnnouncementBannerColor,
   isAnnouncementBannerIntensity,
@@ -22,6 +27,7 @@ import {
   normalizeBookingDeposits,
   normalizeBookingItemTypeModes,
   normalizeCatalogProducts,
+  normalizeFooter,
   normalizeHomepageReviews,
   normalizeTripadvisorSync,
   normalizeWebPaymentMethods,
@@ -33,6 +39,8 @@ import {
 import type {
   AnnouncementBannerSettingValue,
   AuthVisualDecorIcon,
+  FooterMessage,
+  FooterSettingValue,
 } from '@africatourismgate/types';
 
 function requireString(
@@ -263,6 +271,63 @@ function validateAnnouncementBanner(
     ...(ctaUrl ? { ctaUrl, ctaNewTab: value.ctaNewTab === true } : {}),
   };
   return result as unknown as Record<string, unknown>;
+}
+
+function validateFooter(value: Record<string, unknown>): Record<string, unknown> {
+  const rawMessages = value.messages ?? {};
+  if (typeof rawMessages !== 'object' || Array.isArray(rawMessages)) {
+    throw new BadRequestException('messages doit être un objet indexé par locale.');
+  }
+  const unknownLocale = Object.keys(rawMessages).find(
+    (key) => !(FOOTER_LOCALES as readonly string[]).includes(key),
+  );
+  if (unknownLocale) {
+    throw new BadRequestException(
+      `messages.${unknownLocale} n'est pas une locale supportée (${FOOTER_LOCALES.join(', ')}).`,
+    );
+  }
+
+  const messages: FooterSettingValue['messages'] = {};
+  for (const locale of FOOTER_LOCALES) {
+    const raw = (rawMessages as Record<string, unknown>)[locale];
+    if (raw === undefined || raw === null) continue;
+    if (typeof raw !== 'object' || Array.isArray(raw)) {
+      throw new BadRequestException(`messages.${locale} est invalide.`);
+    }
+    const entry = raw as Record<string, unknown>;
+    const tagline = optionalTrimmedString(
+      entry.tagline,
+      `messages.${locale}.tagline`,
+      FOOTER_TAGLINE_MAX_LENGTH,
+    );
+    const newsletterDesc = optionalTrimmedString(
+      entry.newsletterDesc,
+      `messages.${locale}.newsletterDesc`,
+      FOOTER_NEWSLETTER_DESC_MAX_LENGTH,
+    );
+    const designedByNames = optionalTrimmedString(
+      entry.designedByNames,
+      `messages.${locale}.designedByNames`,
+      FOOTER_DESIGNED_BY_NAMES_MAX_LENGTH,
+    );
+    if (!tagline && !newsletterDesc && !designedByNames) {
+      continue;
+    }
+    const message: FooterMessage = {
+      tagline: tagline ?? '',
+      newsletterDesc: newsletterDesc ?? '',
+      designedByNames: designedByNames ?? '',
+    };
+    messages[locale] = message;
+  }
+
+  if (Object.keys(messages).length > 0 && !messages[FOOTER_FALLBACK_LOCALE]) {
+    throw new BadRequestException(
+      `messages.${FOOTER_FALLBACK_LOCALE} est obligatoire lorsqu'au moins une locale est renseignée.`,
+    );
+  }
+
+  return normalizeFooter({ messages }) as unknown as Record<string, unknown>;
 }
 
 function validateTripadvisorSync(
@@ -601,6 +666,9 @@ export function validateSettingValue(
     }
     case 'announcement_banner': {
       return validateAnnouncementBanner(value);
+    }
+    case 'footer': {
+      return validateFooter(value);
     }
     case 'homepage_reviews': {
       if (typeof value.showTripadvisorReviews !== 'boolean') {
