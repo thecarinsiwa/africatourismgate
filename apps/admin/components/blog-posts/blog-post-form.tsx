@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Input, Textarea } from '@africatourismgate/ui';
+import { Button, Card, Input, Textarea } from '@africatourismgate/ui';
 import type { BlogPost, BlogPostStatus, CreateBlogPostRequest } from '@africatourismgate/types';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
@@ -73,6 +73,18 @@ function toPayload(values: BlogPostFormValues): CreateBlogPostRequest {
     publishedAt: publishedAt ? new Date(publishedAt).toISOString() : null,
     locale: values.locale,
   };
+}
+
+function isValidCoverImageUrl(url: string): boolean {
+  if (url.startsWith('/api/uploads/') || url.startsWith('/uploads/')) {
+    return true;
+  }
+  try {
+    const parsed = new URL(url);
+    return ['http:', 'https:'].includes(parsed.protocol);
+  } catch {
+    return false;
+  }
 }
 
 type BlogPostFormProps = {
@@ -220,11 +232,18 @@ export function BlogPostForm({ mode, postId, initialPost }: BlogPostFormProps) {
     }
   }
 
+  const coverPreviewUrl = values.coverImageUrl.trim()
+    ? resolveMediaUrl(values.coverImageUrl.trim())
+    : null;
+
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
-      <div className="rounded-lg border border-atg-border bg-atg-elevated/50 px-4 py-3 text-sm text-atg-muted">
+    <form
+      onSubmit={(e) => void handleSubmit(e)}
+      className="mx-auto w-full max-w-6xl space-y-6"
+    >
+      <div className="rounded-xl border border-atg-border/80 bg-gradient-to-br from-atg-elevated via-atg-elevated to-primary/5 px-4 py-3.5 text-sm text-atg-muted sm:px-5">
         <p>{t('info.slugUnique')}</p>
-        <p className="mt-2">{t('info.publishedAtHint')}</p>
+        <p className="mt-1.5">{t('info.publishedAtHint')}</p>
       </div>
 
       {formError ? (
@@ -236,155 +255,220 @@ export function BlogPostForm({ mode, postId, initialPost }: BlogPostFormProps) {
         </p>
       ) : null}
 
-      <Input
-        label={t('fields.title')}
-        name="title"
-        value={values.title}
-        onChange={(e) => updateField('title', e.target.value)}
-        error={fieldErrors.title}
-        required
-      />
-
-      <Input
-        label={tCommon('columns.slug')}
-        name="slug"
-        value={values.slug}
-        onChange={(e) => {
-          setSlugTouched(true);
-          updateField('slug', e.target.value);
-        }}
-        error={fieldErrors.slug}
-        required
-      />
-
-      <Textarea
-        id="excerpt"
-        name="excerpt"
-        label={t('fields.excerpt')}
-        rows={3}
-        value={values.excerpt}
-        onChange={(e) => updateField('excerpt', e.target.value)}
-        placeholder={t('fields.excerptPlaceholder')}
-      />
-
-      <div className="space-y-3">
-        <div>
-          <p className="text-sm font-medium text-atg-fg">{t('fields.coverImageUrl')}</p>
-          <p className="mt-0.5 text-xs text-atg-muted">{t('fields.coverImageHint')}</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <label
-            htmlFor={coverFileInputId}
-            className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10"
-          >
-            {uploadingCover ? tCommonForm('uploading') : tCommonForm('chooseFile')}
-            <input
-              id={coverFileInputId}
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              className="hidden"
-              onChange={(e) => void handleCoverImagePick(e)}
-              disabled={uploadingCover || submitting}
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,22rem)] lg:items-start">
+        <div className="min-w-0 space-y-6">
+          <Card variant="dashboard" padding="md" className="space-y-4">
+            <div>
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
+                {t('sections.identity')}
+              </h2>
+              <p className="mt-1 text-xs text-atg-muted">{t('sections.identityHint')}</p>
+            </div>
+            <Input
+              label={t('fields.title')}
+              name="title"
+              value={values.title}
+              onChange={(e) => updateField('title', e.target.value)}
+              error={fieldErrors.title}
+              required
             />
-          </label>
-          <span className="text-xs text-atg-muted">{tCommonForm('imageFormatHint')}</span>
+            <Input
+              label={tCommon('columns.slug')}
+              name="slug"
+              value={values.slug}
+              onChange={(e) => {
+                setSlugTouched(true);
+                updateField('slug', e.target.value);
+              }}
+              error={fieldErrors.slug}
+              required
+            />
+            <Textarea
+              id="excerpt"
+              name="excerpt"
+              label={t('fields.excerpt')}
+              rows={3}
+              value={values.excerpt}
+              onChange={(e) => updateField('excerpt', e.target.value)}
+              placeholder={t('fields.excerptPlaceholder')}
+            />
+          </Card>
+
+          <Card variant="dashboard" padding="md" className="space-y-4">
+            <div>
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
+                {t('sections.cover')}
+              </h2>
+              <p className="mt-1 text-xs text-atg-muted">{t('fields.coverImageHint')}</p>
+            </div>
+
+            <div className="overflow-hidden rounded-xl border border-atg-border bg-atg-surface/40">
+              {coverPreviewUrl ? (
+                <Image
+                  src={coverPreviewUrl}
+                  alt={t('fields.coverPreviewAlt')}
+                  width={1200}
+                  height={630}
+                  unoptimized
+                  className="aspect-[16/9] w-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none';
+                  }}
+                />
+              ) : (
+                <div className="flex aspect-[16/9] w-full flex-col items-center justify-center gap-2 border-dashed px-4 text-center">
+                  <p className="text-sm font-medium text-atg-fg">{t('sections.coverEmpty')}</p>
+                  <p className="text-xs text-atg-muted">{t('sections.coverEmptyHint')}</p>
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <label
+                htmlFor={coverFileInputId}
+                className="inline-flex cursor-pointer items-center rounded-md border border-atg-border bg-atg-elevated px-3 py-2 text-xs font-medium text-atg-fg transition-colors hover:bg-atg-muted/10"
+              >
+                {uploadingCover ? tCommonForm('uploading') : tCommonForm('chooseFile')}
+                <input
+                  id={coverFileInputId}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={(e) => void handleCoverImagePick(e)}
+                  disabled={uploadingCover || submitting}
+                />
+              </label>
+              {coverPreviewUrl ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  disabled={uploadingCover || submitting}
+                  onClick={() => updateField('coverImageUrl', '')}
+                >
+                  {t('actions.removeCover')}
+                </Button>
+              ) : null}
+              <span className="text-xs text-atg-muted">{tCommonForm('imageFormatHint')}</span>
+            </div>
+
+            <Input
+              label={tCommonForm('externalUrlOptional')}
+              name="coverImageUrl"
+              type="url"
+              value={values.coverImageUrl}
+              onChange={(e) => updateField('coverImageUrl', e.target.value)}
+              placeholder={tCommonForm('urlPlaceholder')}
+              error={fieldErrors.coverImageUrl}
+            />
+          </Card>
+
+          <Card variant="dashboard" padding="md" className="space-y-4">
+            <div>
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
+                {t('sections.body')}
+              </h2>
+              <p className="mt-1 text-xs text-atg-muted">{t('hints.contentHtml')}</p>
+            </div>
+            <RichTextEditor
+              label={t('fields.content')}
+              value={values.content}
+              onChange={(html) => updateField('content', html)}
+              placeholder={t('fields.contentPlaceholder')}
+              contentClassName="min-h-[320px]"
+            />
+            {fieldErrors.content ? (
+              <p className="text-sm text-red-600 dark:text-red-400">{fieldErrors.content}</p>
+            ) : null}
+          </Card>
         </div>
-        {values.coverImageUrl.trim() ? (
-          <Image
-            src={resolveMediaUrl(values.coverImageUrl.trim())}
-            alt={t('fields.coverPreviewAlt')}
-            width={640}
-            height={360}
-            unoptimized
-            className="h-44 w-full max-w-xl rounded-lg border border-atg-border object-cover"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = 'none';
-            }}
-          />
-        ) : null}
-        <Input
-          label={tCommonForm('externalUrlOptional')}
-          name="coverImageUrl"
-          type="url"
-          value={values.coverImageUrl}
-          onChange={(e) => updateField('coverImageUrl', e.target.value)}
-          placeholder={tCommonForm('urlPlaceholder')}
-          error={fieldErrors.coverImageUrl}
-        />
+
+        <aside className="min-w-0 space-y-4 lg:sticky lg:top-6 lg:self-start">
+          <Card variant="dashboard" padding="md" className="space-y-4">
+            <div>
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
+                {t('sections.publication')}
+              </h2>
+              <p className="mt-1 text-xs text-atg-muted">{t('sections.publicationHint')}</p>
+            </div>
+
+            <div>
+              <label htmlFor={statusId} className="mb-2 block text-sm font-medium text-atg-fg">
+                {tCommon('columns.status')}
+              </label>
+              <select
+                id={statusId}
+                value={values.status}
+                onChange={(e) => updateField('status', e.target.value as BlogPostStatus)}
+                className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
+              >
+                <option value="draft">{t('status.draft')}</option>
+                <option value="published">{t('status.published')}</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor={localeId} className="mb-2 block text-sm font-medium text-atg-fg">
+                {t('fields.locale')}
+              </label>
+              <select
+                id={localeId}
+                value={values.locale}
+                onChange={(e) => updateField('locale', e.target.value)}
+                className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
+              >
+                <option value="fr">{tLocale('fr')}</option>
+                <option value="en">{tLocale('en')}</option>
+                <option value="es">{tLocale('es')}</option>
+              </select>
+            </div>
+
+            <Input
+              label={t('fields.publishedAtOptional')}
+              name="publishedAt"
+              type="datetime-local"
+              value={values.publishedAt}
+              onChange={(e) => updateField('publishedAt', e.target.value)}
+              hint={t('hints.publishedAt')}
+            />
+          </Card>
+
+          {coverPreviewUrl ? (
+            <Card variant="dashboard" padding="md" className="space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
+                {t('sections.coverPreview')}
+              </p>
+              <div className="overflow-hidden rounded-lg border border-atg-border">
+                <Image
+                  src={coverPreviewUrl}
+                  alt={t('fields.coverPreviewAlt')}
+                  width={640}
+                  height={360}
+                  unoptimized
+                  className="aspect-[16/9] w-full object-cover"
+                />
+              </div>
+              {values.title.trim() ? (
+                <p className="line-clamp-2 text-sm font-medium text-atg-fg">{values.title.trim()}</p>
+              ) : null}
+            </Card>
+          ) : null}
+        </aside>
       </div>
 
-      <RichTextEditor
-        label={t('fields.content')}
-        value={values.content}
-        onChange={(html) => updateField('content', html)}
-        placeholder={t('fields.contentPlaceholder')}
-        contentClassName="min-h-[280px]"
-      />
-      {fieldErrors.content ? (
-        <p className="mt-1 text-sm text-red-600 dark:text-red-400">{fieldErrors.content}</p>
-      ) : null}
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor={statusId} className="mb-2 block text-sm font-medium text-atg-fg">
-            {tCommon('columns.status')}
-          </label>
-          <select
-            id={statusId}
-            value={values.status}
-            onChange={(e) => updateField('status', e.target.value as BlogPostStatus)}
-            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-          >
-            <option value="draft">{t('status.draft')}</option>
-            <option value="published">{t('status.published')}</option>
-          </select>
-        </div>
-        <div>
-          <label htmlFor={localeId} className="mb-2 block text-sm font-medium text-atg-fg">
-            {t('fields.locale')}
-          </label>
-          <select
-            id={localeId}
-            value={values.locale}
-            onChange={(e) => updateField('locale', e.target.value)}
-            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-          >
-            <option value="fr">{tLocale('fr')}</option>
-            <option value="en">{tLocale('en')}</option>
-            <option value="es">{tLocale('es')}</option>
-          </select>
-        </div>
-      </div>
-
-      <Input
-        label={t('fields.publishedAtOptional')}
-        name="publishedAt"
-        type="datetime-local"
-        value={values.publishedAt}
-        onChange={(e) => updateField('publishedAt', e.target.value)}
-        hint={t('hints.publishedAt')}
-      />
-
-      <div className="flex flex-wrap gap-3 pt-2">
-        <Button type="submit" loading={submitting} loadingText={t('saving')} disabled={uploadingCover}>
+      <div className="sticky bottom-0 z-20 -mx-1 flex flex-col gap-2 border-t border-atg-border bg-atg-bg/95 px-1 py-3 backdrop-blur sm:flex-row sm:flex-wrap sm:gap-3">
+        <Button
+          type="submit"
+          loading={submitting}
+          loadingText={t('saving')}
+          disabled={uploadingCover}
+          className="w-full sm:w-auto"
+        >
           {mode === 'create' ? t('createButton') : t('saveButton')}
         </Button>
-        <Button type="button" variant="outline" href="/contenu/blog">
+        <Button type="button" variant="outline" href="/contenu/blog" className="w-full sm:w-auto">
           {t('cancelButton')}
         </Button>
       </div>
     </form>
   );
-}
-
-function isValidCoverImageUrl(url: string): boolean {
-  if (url.startsWith('/api/uploads/') || url.startsWith('/uploads/')) {
-    return true;
-  }
-  try {
-    const parsed = new URL(url);
-    return ['http:', 'https:'].includes(parsed.protocol);
-  } catch {
-    return false;
-  }
 }

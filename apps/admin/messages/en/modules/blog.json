@@ -52,6 +52,20 @@
       "slugUnique": "The slug is globally unique (not per language).",
       "publishedAtHint": "When publishing, the date is set automatically if left empty."
     },
+    "sections": {
+      "identity": "Identity",
+      "identityHint": "Title, slug and excerpt shown in listings and SEO.",
+      "cover": "Cover",
+      "coverEmpty": "No cover image",
+      "coverEmptyHint": "Add a 16:9 image for the feature slot and social sharing.",
+      "coverPreview": "Preview",
+      "body": "Body",
+      "publication": "Publication",
+      "publicationHint": "Status, language and go-live date."
+    },
+    "actions": {
+      "removeCover": "Remove image"
+    },
     "validation": {
       "contentRequired": "Content is required.",
       "coverUrlInvalid": "Cover image URL must be valid (http or https)."
