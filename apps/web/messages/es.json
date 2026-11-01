@@ -308,7 +308,39 @@
     "breadcrumbBlog": "Blog",
     "detailMetaFallbackTitle": "Artículo del blog",
     "detailMetaFallbackDescription": "Descubre nuestros artículos sobre el turismo en África con Africa Tourism Gate.",
-    "breadcrumbAria": "Miga de pan"
+    "breadcrumbAria": "Miga de pan",
+    "engagement": {
+      "shareAria": "Compartir artículo",
+      "shareTitle": "Compartir",
+      "shareNative": "Compartir…",
+      "shareFacebook": "Facebook",
+      "shareX": "X",
+      "shareLinkedIn": "LinkedIn",
+      "shareWhatsApp": "WhatsApp",
+      "copyLink": "Copiar enlace",
+      "linkCopied": "Enlace copiado",
+      "reactionsAria": "Reacciones",
+      "reactionsTitle": "Reacciones",
+      "reactions": {
+        "like": "Me gusta",
+        "love": "Me encanta",
+        "clap": "Aplauso",
+        "wow": "Impresionante"
+      },
+      "commentsAria": "Comentarios",
+      "commentsTitle": "Comentarios",
+      "commentsCount": "{count, plural, =0 {Ningún comentario} one {# comentario} other {# comentarios}}",
+      "commentsEmpty": "Sea el primero en comentar este artículo.",
+      "commentName": "Su nombre",
+      "commentEmail": "Correo (opcional)",
+      "commentEmailHint": "No se publica — solo para contactarle si es necesario.",
+      "commentBody": "Su comentario",
+      "commentBodyPlaceholder": "Comparta su opinión o una pregunta…",
+      "commentSubmit": "Publicar comentario",
+      "commentSending": "Enviando…",
+      "commentValidation": "Indique un nombre (mín. 2 caracteres) y un comentario (mín. 3 caracteres).",
+      "commentSubmitError": "No se pudo enviar el comentario. Inténtelo de nuevo."
+    }
   },
   "support": {
     "metaTitle": "Centro de ayuda",

@@ -308,7 +308,39 @@
     "breadcrumbBlog": "Blog",
     "detailMetaFallbackTitle": "Blog article",
     "detailMetaFallbackDescription": "Discover our articles about travel in Africa with Africa Tourism Gate.",
-    "breadcrumbAria": "Breadcrumb"
+    "breadcrumbAria": "Breadcrumb",
+    "engagement": {
+      "shareAria": "Share article",
+      "shareTitle": "Share",
+      "shareNative": "Share…",
+      "shareFacebook": "Facebook",
+      "shareX": "X",
+      "shareLinkedIn": "LinkedIn",
+      "shareWhatsApp": "WhatsApp",
+      "copyLink": "Copy link",
+      "linkCopied": "Link copied",
+      "reactionsAria": "Reactions",
+      "reactionsTitle": "Reactions",
+      "reactions": {
+        "like": "Like",
+        "love": "Love",
+        "clap": "Clap",
+        "wow": "Wow"
+      },
+      "commentsAria": "Comments",
+      "commentsTitle": "Comments",
+      "commentsCount": "{count, plural, =0 {No comments} one {# comment} other {# comments}}",
+      "commentsEmpty": "Be the first to comment on this article.",
+      "commentName": "Your name",
+      "commentEmail": "Email (optional)",
+      "commentEmailHint": "Not published — only used to contact you if needed.",
+      "commentBody": "Your comment",
+      "commentBodyPlaceholder": "Share your thoughts or ask a question…",
+      "commentSubmit": "Post comment",
+      "commentSending": "Sending…",
+      "commentValidation": "Please enter a name (min. 2 characters) and a comment (min. 3 characters).",
+      "commentSubmitError": "Could not post your comment. Please try again."
+    }
   },
   "support": {
     "metaTitle": "Help centre",

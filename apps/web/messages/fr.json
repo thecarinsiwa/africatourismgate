@@ -308,7 +308,39 @@
     "breadcrumbBlog": "Blog",
     "detailMetaFallbackTitle": "Article du blog",
     "detailMetaFallbackDescription": "Découvrez nos articles sur le tourisme en Afrique avec Africa Tourism Gate.",
-    "breadcrumbAria": "Fil d’Ariane"
+    "breadcrumbAria": "Fil d’Ariane",
+    "engagement": {
+      "shareAria": "Partager l'article",
+      "shareTitle": "Partager",
+      "shareNative": "Partager…",
+      "shareFacebook": "Facebook",
+      "shareX": "X",
+      "shareLinkedIn": "LinkedIn",
+      "shareWhatsApp": "WhatsApp",
+      "copyLink": "Copier le lien",
+      "linkCopied": "Lien copié",
+      "reactionsAria": "Réactions",
+      "reactionsTitle": "Réactions",
+      "reactions": {
+        "like": "J'aime",
+        "love": "Coup de cœur",
+        "clap": "Bravo",
+        "wow": "Impressionnant"
+      },
+      "commentsAria": "Commentaires",
+      "commentsTitle": "Commentaires",
+      "commentsCount": "{count, plural, =0 {Aucun commentaire} one {# commentaire} other {# commentaires}}",
+      "commentsEmpty": "Soyez le premier à commenter cet article.",
+      "commentName": "Votre nom",
+      "commentEmail": "E-mail (optionnel)",
+      "commentEmailHint": "Non publié — uniquement pour nous contacter si besoin.",
+      "commentBody": "Votre commentaire",
+      "commentBodyPlaceholder": "Partagez votre avis ou une question…",
+      "commentSubmit": "Publier le commentaire",
+      "commentSending": "Envoi…",
+      "commentValidation": "Indiquez un nom (2 caractères min.) et un commentaire (3 caractères min.).",
+      "commentSubmitError": "Impossible d'envoyer le commentaire. Réessayez."
+    }
   },
   "support": {
     "metaTitle": "Centre d'aide",

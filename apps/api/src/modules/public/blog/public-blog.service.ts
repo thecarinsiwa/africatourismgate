@@ -1,14 +1,32 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import type { PublicSiteSearchHit } from '@africatourismgate/types';
-import { Repository } from 'typeorm';
+import type {
+  BlogReactionCounts,
+  BlogReactionType,
+  PublicBlogComment,
+  PublicBlogEngagement,
+  PublicSiteSearchHit,
+} from '@africatourismgate/types';
+import { IsNull, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
+import { newId } from '../../../common/utils/uuid';
+import { BlogComments } from '../../../entities/blog-comment.entity';
+import {
+  BlogPostReactions,
+  type BlogReactionType as EntityReactionType,
+} from '../../../entities/blog-post-reaction.entity';
 import { BlogPosts } from '../../../entities/blog-post.entity';
 import {
   BLOG_SITE_SEARCH_WEIGHTS,
   scoreSiteSearchTextMatch,
 } from '../site-search/site-search-scoring';
+import { CreateBlogCommentDto } from './dto/create-blog-comment.dto';
 import { PublicBlogPostsListQueryDto } from './dto/public-blog-posts-list-query.dto';
+import { UpsertBlogReactionDto } from './dto/upsert-blog-reaction.dto';
 
 export type PublicBlogPostListItemDto = {
   id: string;
@@ -24,11 +42,19 @@ export type PublicBlogPostDetailDto = PublicBlogPostListItemDto & {
   content: string;
 };
 
+function emptyReactionCounts(): BlogReactionCounts {
+  return { like: 0, love: 0, clap: 0, wow: 0 };
+}
+
 @Injectable()
 export class PublicBlogService {
   constructor(
     @InjectRepository(BlogPosts)
     private readonly blogPostsRepository: Repository<BlogPosts>,
+    @InjectRepository(BlogPostReactions)
+    private readonly reactionsRepository: Repository<BlogPostReactions>,
+    @InjectRepository(BlogComments)
+    private readonly commentsRepository: Repository<BlogComments>,
   ) {}
 
   async list(
@@ -142,6 +168,108 @@ export class PublicBlogService {
   }
 
   async getBySlug(slug: string, locale?: string): Promise<PublicBlogPostDetailDto> {
+    const post = await this.findPublishedBySlug(slug, locale);
+    return this.toDetail(post);
+  }
+
+  async getEngagement(
+    slug: string,
+    visitorKey?: string,
+  ): Promise<PublicBlogEngagement> {
+    const post = await this.findPublishedBySlug(slug);
+    const [rows, comments] = await Promise.all([
+      this.reactionsRepository.find({ where: { blogPostId: post.id } }),
+      this.commentsRepository.find({
+        where: {
+          blogPostId: post.id,
+          status: 'approved',
+          deletedAt: IsNull(),
+        },
+        order: { createdAt: 'DESC' },
+        take: 100,
+      }),
+    ]);
+
+    const reactions = emptyReactionCounts();
+    let viewerReaction: BlogReactionType | null = null;
+    for (const row of rows) {
+      reactions[row.reactionType] += 1;
+      if (visitorKey && row.visitorKey === visitorKey) {
+        viewerReaction = row.reactionType;
+      }
+    }
+
+    return {
+      reactions,
+      viewerReaction,
+      comments: comments.map((comment) => this.toComment(comment)),
+      commentsCount: comments.length,
+    };
+  }
+
+  async upsertReaction(
+    slug: string,
+    dto: UpsertBlogReactionDto,
+  ): Promise<PublicBlogEngagement> {
+    const post = await this.findPublishedBySlug(slug);
+    const visitorKey = dto.visitorKey.trim();
+    const reactionType = dto.reactionType as EntityReactionType;
+
+    const existing = await this.reactionsRepository.findOne({
+      where: { blogPostId: post.id, visitorKey },
+    });
+
+    if (existing) {
+      if (existing.reactionType === reactionType) {
+        await this.reactionsRepository.remove(existing);
+      } else {
+        existing.reactionType = reactionType;
+        await this.reactionsRepository.save(existing);
+      }
+    } else {
+      await this.reactionsRepository.save(
+        this.reactionsRepository.create({
+          id: newId(),
+          blogPostId: post.id,
+          visitorKey,
+          reactionType,
+        }),
+      );
+    }
+
+    return this.getEngagement(slug, visitorKey);
+  }
+
+  async createComment(
+    slug: string,
+    dto: CreateBlogCommentDto,
+  ): Promise<PublicBlogComment> {
+    const post = await this.findPublishedBySlug(slug);
+    const authorName = dto.authorName.trim();
+    const body = dto.body.trim();
+    if (!authorName || !body) {
+      throw new BadRequestException('Le nom et le commentaire sont obligatoires.');
+    }
+
+    const saved = await this.commentsRepository.save(
+      this.commentsRepository.create({
+        id: newId(),
+        blogPostId: post.id,
+        authorName,
+        authorEmail: dto.authorEmail?.trim() || null,
+        body,
+        status: 'approved',
+        visitorKey: dto.visitorKey?.trim() || null,
+      }),
+    );
+
+    return this.toComment(saved);
+  }
+
+  private async findPublishedBySlug(
+    slug: string,
+    locale?: string,
+  ): Promise<BlogPosts> {
     const qb = this.blogPostsRepository
       .createQueryBuilder('post')
       .where('post.deletedAt IS NULL')
@@ -158,8 +286,19 @@ export class PublicBlogService {
     if (!post) {
       throw new NotFoundException(`Blog post "${slug}" not found`);
     }
+    return post;
+  }
 
-    return this.toDetail(post);
+  private toComment(comment: BlogComments): PublicBlogComment {
+    return {
+      id: comment.id,
+      authorName: comment.authorName,
+      body: comment.body,
+      createdAt:
+        comment.createdAt instanceof Date
+          ? comment.createdAt.toISOString()
+          : new Date(comment.createdAt as unknown as string).toISOString(),
+    };
   }
 
   private toListItem(post: BlogPosts): PublicBlogPostListItemDto {

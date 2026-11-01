@@ -11,6 +11,8 @@ import { MobileMoneyOperators } from '../entities/mobile-money-operator.entity';
 import { MobileMoneyPaymentNumbers } from '../entities/mobile-money-payment-number.entity';
 import { AboutPages } from '../entities/about-page.entity';
 import { AboutResources } from '../entities/about-resource.entity';
+import { BlogComments } from '../entities/blog-comment.entity';
+import { BlogPostReactions } from '../entities/blog-post-reaction.entity';
 import { BlogPosts } from '../entities/blog-post.entity';
 import { LegalPages } from '../entities/legal-page.entity';
 import { AboutTimelineMilestones } from '../entities/about-timeline-milestone.entity';
@@ -72,6 +74,8 @@ const entityList = [
   ...Object.values(entities).filter((v) => typeof v === 'function'),
   EmailOperationVerifications,
   BlogPosts,
+  BlogPostReactions,
+  BlogComments,
   AboutPages,
   LegalPages,
   TeamMembers,

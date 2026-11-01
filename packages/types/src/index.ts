@@ -497,12 +497,20 @@ export type {
   BlogPost,
   BlogPostStatus,
   BlogPostsListQuery,
+  BlogReactionCounts,
+  BlogReactionType,
+  CreateBlogCommentRequest,
   CreateBlogPostRequest,
+  PublicBlogComment,
+  PublicBlogEngagement,
   PublicBlogPostDetail,
   PublicBlogPostListItem,
   PublicBlogPostsListQuery,
   UpdateBlogPostRequest,
+  UpsertBlogReactionRequest,
 } from './blog-post.js';
+
+export { BLOG_REACTION_TYPES } from './blog-post.js';
 
 export {
   SITE_SEARCH_DEFAULT_LIMIT_PER_TYPE,
