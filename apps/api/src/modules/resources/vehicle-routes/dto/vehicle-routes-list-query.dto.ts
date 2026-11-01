@@ -8,17 +8,19 @@ export class VehicleRoutesListQueryDto extends PaginationQueryDto {
   @IsUUID('4')
   vehicleId?: string;
 
-  @ApiPropertyOptional({ format: 'uuid' })
+  @ApiPropertyOptional({ example: 'Kinshasa' })
   @IsOptional()
-  @IsUUID('4')
-  departureDestinationId?: string;
+  @IsString()
+  @MaxLength(120)
+  departureCity?: string;
 
-  @ApiPropertyOptional({ format: 'uuid' })
+  @ApiPropertyOptional({ example: 'Lubumbashi' })
   @IsOptional()
-  @IsUUID('4')
-  arrivalDestinationId?: string;
+  @IsString()
+  @MaxLength(120)
+  arrivalCity?: string;
 
-  @ApiPropertyOptional({ description: 'Search on destination names (joined later in UI)' })
+  @ApiPropertyOptional({ description: 'Search on departure / arrival city names' })
   @IsOptional()
   @IsString()
   @MaxLength(180)

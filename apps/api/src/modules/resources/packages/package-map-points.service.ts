@@ -268,53 +268,9 @@ export class PackageMapPointsService {
     if (!route || route.deletedAt) {
       return [];
     }
-
-    const [departure, arrival] = await Promise.all([
-      this.destinationsRepository.findOne({
-        where: { id: route.departureDestinationId },
-      }),
-      this.destinationsRepository.findOne({
-        where: { id: route.arrivalDestinationId },
-      }),
-    ]);
-
-    const points: PackageMapPointDto[] = [];
-
-    if (departure && !departure.deletedAt) {
-      const latitude = this.toCoord(departure.latitude);
-      const longitude = this.toCoord(departure.longitude);
-      if (latitude !== null && longitude !== null) {
-        points.push(
-          this.toMapPoint({
-            label: departure.name,
-            latitude,
-            longitude,
-            itemType: item.itemType,
-            itemId: item.itemId,
-            itemName: item.label,
-          }),
-        );
-      }
-    }
-
-    if (arrival && !arrival.deletedAt) {
-      const latitude = this.toCoord(arrival.latitude);
-      const longitude = this.toCoord(arrival.longitude);
-      if (latitude !== null && longitude !== null) {
-        points.push(
-          this.toMapPoint({
-            label: arrival.name,
-            latitude,
-            longitude,
-            itemType: item.itemType,
-            itemId: item.itemId,
-            itemName: item.label,
-          }),
-        );
-      }
-    }
-
-    return points;
+    // Free-text cities have no coordinates — no map points for tronçons.
+    void item;
+    return [];
   }
 
   private toMapPoint(input: PackageMapPointDto): PackageMapPointDto {

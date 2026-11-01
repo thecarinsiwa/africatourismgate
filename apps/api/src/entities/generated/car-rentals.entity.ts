@@ -59,11 +59,11 @@ export class VehicleRoutes extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'vehicle_id', length: 36 })
   vehicleId!: string;
 
-  @Column({ type: 'varchar', name: 'departure_destination_id', length: 36 })
-  departureDestinationId!: string;
+  @Column({ type: 'varchar', name: 'departure_city', length: 120 })
+  departureCity!: string;
 
-  @Column({ type: 'varchar', name: 'arrival_destination_id', length: 36 })
-  arrivalDestinationId!: string;
+  @Column({ type: 'varchar', name: 'arrival_city', length: 120 })
+  arrivalCity!: string;
 
   @Column({ type: 'int', name: 'price_cents' })
   priceCents!: number;

@@ -1,27 +1,11 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsOptional, IsString, IsUUID, MaxLength, MinLength } from 'class-validator';
+import { IsDateString, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 import { PaginationQueryDto } from '../../../../common/dto/pagination-query.dto';
 
 export class VehicleSearchQueryDto extends PaginationQueryDto {
   @ApiPropertyOptional({
-    format: 'uuid',
-    description: 'Destination de départ (tronçon)',
-  })
-  @IsOptional()
-  @IsUUID('4')
-  departureDestinationId?: string;
-
-  @ApiPropertyOptional({
-    format: 'uuid',
-    description: 'Destination d’arrivée (tronçon)',
-  })
-  @IsOptional()
-  @IsUUID('4')
-  arrivalDestinationId?: string;
-
-  @ApiPropertyOptional({
     example: 'Kinshasa',
-    description: 'Nom partiel de la destination de départ (si pas d’id)',
+    description: 'Ville / lieu de départ (texte libre, correspondance partielle)',
   })
   @IsOptional()
   @IsString()
@@ -31,7 +15,7 @@ export class VehicleSearchQueryDto extends PaginationQueryDto {
 
   @ApiPropertyOptional({
     example: 'Lubumbashi',
-    description: 'Nom partiel de la destination d’arrivée (si pas d’id)',
+    description: 'Ville / lieu d’arrivée (texte libre, correspondance partielle)',
   })
   @IsOptional()
   @IsString()

@@ -48,40 +48,35 @@ export class PublicVehiclesService {
     private readonly destinationsRepository: Repository<Destinations>,
   ) {}
 
-  /** Destinations that appear as départ or arrivée on active tronçons. */
+  /** Free-text cities that appear as départ or arrivée on active tronçons. */
   async listPickupLocations(): Promise<PublicDestinationDto[]> {
-    const rows = await this.destinationsRepository
-      .createQueryBuilder('d')
-      .select([
-        'd.id',
-        'd.name',
-        'd.countryCode',
-        'd.latitude',
-        'd.longitude',
-      ])
-      .innerJoin(
-        VehicleRoutes,
-        'route',
-        `(route.departureDestinationId = d.id OR route.arrivalDestinationId = d.id)
-          AND route.deletedAt IS NULL`,
-      )
+    const routes = await this.vehicleRoutesRepository
+      .createQueryBuilder('route')
       .innerJoin(
         Vehicles,
         'v',
         'v.id = route.vehicleId AND v.deletedAt IS NULL',
       )
-      .where('d.deletedAt IS NULL')
-      .distinct(true)
-      .orderBy('d.name', 'ASC')
+      .where('route.deletedAt IS NULL')
       .getMany();
 
-    return rows.map((d) => ({
-      id: d.id,
-      name: d.name,
-      countryCode: d.countryCode,
-      latitude: this.toCoord(d.latitude),
-      longitude: this.toCoord(d.longitude),
-    }));
+    const names = new Set<string>();
+    for (const route of routes) {
+      const departure = route.departureCity?.trim();
+      const arrival = route.arrivalCity?.trim();
+      if (departure) names.add(departure);
+      if (arrival) names.add(arrival);
+    }
+
+    return [...names]
+      .sort((a, b) => a.localeCompare(b))
+      .map((name) => ({
+        id: name,
+        name,
+        countryCode: '',
+        latitude: null,
+        longitude: null,
+      }));
   }
 
   async search(
@@ -92,29 +87,12 @@ export class PublicVehiclesService {
     const travelDate = query.travelDate ?? query.pickupDate;
     assertValidTravelDate(travelDate);
 
-    const departureIds = await this.resolveEndpointDestinationIds({
-      destinationId: query.departureDestinationId,
-      locationName: query.departureLocation ?? query.pickupLocation,
-    });
-    const arrivalIds = await this.resolveEndpointDestinationIds({
-      destinationId: query.arrivalDestinationId,
-      locationName: query.arrivalLocation,
-    });
-
-    if (
-      (query.departureDestinationId ||
-        query.departureLocation ||
-        query.pickupLocation) &&
-      departureIds.length === 0
-    ) {
-      return this.emptyPage(page, limit);
-    }
-    if (
-      (query.arrivalDestinationId || query.arrivalLocation) &&
-      arrivalIds.length === 0
-    ) {
-      return this.emptyPage(page, limit);
-    }
+    const departureLocation = (
+      query.departureLocation ??
+      query.pickupLocation ??
+      ''
+    ).trim();
+    const arrivalLocation = (query.arrivalLocation ?? '').trim();
 
     const routesQb = this.vehicleRoutesRepository
       .createQueryBuilder('route')
@@ -122,14 +100,14 @@ export class PublicVehiclesService {
       .where('route.deletedAt IS NULL')
       .andWhere('vehicle.deletedAt IS NULL');
 
-    if (departureIds.length) {
-      routesQb.andWhere('route.departureDestinationId IN (:...departureIds)', {
-        departureIds,
+    if (departureLocation) {
+      routesQb.andWhere('route.departureCity LIKE :departureLocation', {
+        departureLocation: `%${departureLocation}%`,
       });
     }
-    if (arrivalIds.length) {
-      routesQb.andWhere('route.arrivalDestinationId IN (:...arrivalIds)', {
-        arrivalIds,
+    if (arrivalLocation) {
+      routesQb.andWhere('route.arrivalCity LIKE :arrivalLocation', {
+        arrivalLocation: `%${arrivalLocation}%`,
       });
     }
 
@@ -166,21 +144,6 @@ export class PublicVehiclesService {
       : [];
     const categoryById = new Map(
       categories.filter((c) => !c.deletedAt).map((c) => [c.id, c]),
-    );
-
-    const destIds = [
-      ...new Set(
-        routes.flatMap((r) => [
-          r.departureDestinationId,
-          r.arrivalDestinationId,
-        ]),
-      ),
-    ];
-    const destinations = await this.destinationsRepository.find({
-      where: { id: In(destIds) },
-    });
-    const destinationById = new Map(
-      destinations.filter((d) => !d.deletedAt).map((d) => [d.id, d]),
     );
 
     const slotsQuery = this.availabilityRepository
@@ -228,10 +191,6 @@ export class PublicVehiclesService {
         }
       }
 
-      const departure = destinationById.get(route.departureDestinationId);
-      const arrival = destinationById.get(route.arrivalDestinationId);
-      if (!departure || !arrival) continue;
-
       results.push({
         id: vehicle.id,
         routeId: route.id,
@@ -240,15 +199,15 @@ export class PublicVehiclesService {
         exampleModel: category.exampleModel,
         agencyName: agency.name,
         agencyAddress: agency.address,
-        departureCity: departure.name,
-        arrivalCity: arrival.name,
+        departureCity: route.departureCity,
+        arrivalCity: route.arrivalCity,
         priceCents: route.priceCents,
         totalPriceCents: route.priceCents,
         currency: route.currency,
         travelDate: resolvedTravelDate,
         availabilitySlotId: slot.id,
         imageUrl: imageUrlByVehicleId.get(vehicle.id) ?? null,
-        pickupCity: departure.name,
+        pickupCity: route.departureCity,
         dailyPriceCents: route.priceCents,
         rentalDays: 1,
         pickupDate: resolvedTravelDate,
@@ -447,17 +406,6 @@ export class PublicVehiclesService {
     }
 
     const route = await this.resolveRouteForVehicle(vehicle.id, query);
-    const [departure, arrival] = await Promise.all([
-      this.destinationsRepository.findOne({
-        where: { id: route.departureDestinationId },
-      }),
-      this.destinationsRepository.findOne({
-        where: { id: route.arrivalDestinationId },
-      }),
-    ]);
-    if (!departure || departure.deletedAt || !arrival || arrival.deletedAt) {
-      throw new NotFoundException('Destinations du tronçon introuvables.');
-    }
 
     let city = '';
     if (agency.destinationId) {
@@ -497,10 +445,8 @@ export class PublicVehiclesService {
       },
       route: {
         id: route.id,
-        departureDestinationId: route.departureDestinationId,
-        departureCity: departure.name,
-        arrivalDestinationId: route.arrivalDestinationId,
-        arrivalCity: arrival.name,
+        departureCity: route.departureCity,
+        arrivalCity: route.arrivalCity,
         priceCents: route.priceCents,
         currency: route.currency,
       },
@@ -537,15 +483,21 @@ export class PublicVehiclesService {
       return route;
     }
 
-    if (query.departureDestinationId && query.arrivalDestinationId) {
-      const route = await this.vehicleRoutesRepository.findOne({
-        where: {
-          vehicleId,
-          departureDestinationId: query.departureDestinationId,
-          arrivalDestinationId: query.arrivalDestinationId,
-        },
-      });
-      if (!route || route.deletedAt) {
+    const departureCity = query.departureCity?.trim();
+    const arrivalCity = query.arrivalCity?.trim();
+    if (departureCity && arrivalCity) {
+      const route = await this.vehicleRoutesRepository
+        .createQueryBuilder('route')
+        .where('route.vehicleId = :vehicleId', { vehicleId })
+        .andWhere('route.deletedAt IS NULL')
+        .andWhere('LOWER(route.departureCity) = LOWER(:departureCity)', {
+          departureCity,
+        })
+        .andWhere('LOWER(route.arrivalCity) = LOWER(:arrivalCity)', {
+          arrivalCity,
+        })
+        .getOne();
+      if (!route) {
         throw new NotFoundException(
           'Aucun tronçon pour ce couple départ / arrivée.',
         );

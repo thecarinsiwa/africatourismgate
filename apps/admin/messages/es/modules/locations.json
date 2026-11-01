@@ -82,14 +82,14 @@
   "sections": {
     "routes": {
       "title": "Tramos",
-      "intro": "Tarifas fijas por trayecto (destino de salida → destino de llegada).",
+      "intro": "Tarifas fijas por trayecto (ciudad de salida → ciudad de llegada, texto libre).",
       "addRoute": "Añadir tramo",
       "newRoute": "Nuevo tramo",
       "editRoute": "Editar tramo",
-      "formHint": "Elija la salida, la llegada y el precio fijo del trayecto.",
+      "formHint": "Escriba la salida, la llegada y el precio fijo del trayecto.",
       "editFormHint": "Modifique el trayecto o el precio de este tramo.",
-      "departure": "Destino de salida",
-      "arrival": "Destino de llegada",
+      "departure": "Ciudad de salida",
+      "arrival": "Ciudad de llegada",
       "priceCents": "Precio (céntimos)",
       "empty": "Ningún tramo para este vehículo.",
       "minPriceHint": "desde",
@@ -100,8 +100,8 @@
         "price": "Precio"
       },
       "validation": {
-        "departureRequired": "El destino de salida es obligatorio.",
-        "arrivalRequired": "El destino de llegada es obligatorio.",
+        "departureRequired": "La ciudad de salida es obligatoria.",
+        "arrivalRequired": "La ciudad de llegada es obligatoria.",
         "sameDestination": "La salida y la llegada deben ser distintas."
       },
       "deleteTitle": "Eliminar tramo",
@@ -181,7 +181,7 @@
       "ariaLabel": "Lista de tramos",
       "allVehicles": "Todos los vehículos",
       "vehicleFallback": "Vehículo {id}",
-      "formHint": "Elija el vehículo, la salida, la llegada y la tarifa fija del trayecto.",
+      "formHint": "Elija el vehículo, escriba la salida y la llegada, luego la tarifa fija.",
       "columns": {
         "vehicle": "Vehículo"
       },

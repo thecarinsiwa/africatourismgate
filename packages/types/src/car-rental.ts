@@ -144,12 +144,12 @@ export interface VehicleAvailabilityListQuery {
   endTo?: string;
 }
 
-/** Tronçon tarifé : destination départ → destination arrivée pour un véhicule. */
+/** Tronçon tarifé : ville départ → ville arrivée (texte libre) pour un véhicule. */
 export interface VehicleRoute {
   id: string;
   vehicleId: string;
-  departureDestinationId: string;
-  arrivalDestinationId: string;
+  departureCity: string;
+  arrivalCity: string;
   priceCents: number;
   currency: string;
   createdAt: string;
@@ -158,8 +158,8 @@ export interface VehicleRoute {
 
 export interface CreateVehicleRouteRequest {
   vehicleId: string;
-  departureDestinationId: string;
-  arrivalDestinationId: string;
+  departureCity: string;
+  arrivalCity: string;
   priceCents: number;
   currency: string;
 }
@@ -172,7 +172,7 @@ export interface VehicleRoutesListQuery {
   page?: number;
   limit?: number;
   vehicleId?: string;
-  departureDestinationId?: string;
-  arrivalDestinationId?: string;
+  departureCity?: string;
+  arrivalCity?: string;
   search?: string;
 }

@@ -11,11 +11,10 @@ import {
   DataTableActions,
   Input,
   Modal,
-  SearchableSelect,
   Select,
   type ColumnDef,
 } from '@africatourismgate/ui';
-import type { Destination, VehicleRoute } from '@africatourismgate/types';
+import type { VehicleRoute } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
@@ -24,15 +23,15 @@ import { useActiveCurrencies } from '../../lib/treasury/use-active-currencies';
 import { useFormatMoney } from '../../lib/use-format-money';
 
 type FormValues = {
-  departureDestinationId: string;
-  arrivalDestinationId: string;
+  departureCity: string;
+  arrivalCity: string;
   priceCents: string;
   currency: string;
 };
 
 const emptyForm: FormValues = {
-  departureDestinationId: '',
-  arrivalDestinationId: '',
+  departureCity: '',
+  arrivalCity: '',
   priceCents: '',
   currency: FALLBACK_TREASURY_CURRENCY,
 };
@@ -54,7 +53,6 @@ export function VehicleRoutesSection({
   const t = useTranslations('modules.locations.sections.routes');
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
-  const tSelect = useTranslations('modules.common.select');
   const tLoading = useTranslations('common.loading');
   const formatPrice = useFormatMoney();
   const emptyDash = tCommon('empty.dash');
@@ -64,7 +62,6 @@ export function VehicleRoutesSection({
     | { status: 'error'; message: string }
     | { status: 'ready'; routes: VehicleRoute[] }
   >({ status: 'loading' });
-  const [destinations, setDestinations] = useState<Destination[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<VehicleRoute | null>(null);
   const [formValues, setFormValues] = useState<FormValues>(emptyForm);
@@ -80,31 +77,14 @@ export function VehicleRoutesSection({
     extraCodes: [formValues.currency, defaultCurrency],
   });
 
-  const destinationById = useMemo(
-    () => new Map(destinations.map((d) => [d.id, d])),
-    [destinations],
-  );
-
-  const destinationOptions = useMemo(
-    () => [
-      { value: '', label: tSelect('chooseDash') },
-      ...destinations.map((d) => ({
-        value: d.id,
-        label: `${d.name} (${d.countryCode})`,
-      })),
-    ],
-    [destinations, tSelect],
-  );
-
   const load = useCallback(async () => {
     setState({ status: 'loading' });
     try {
-      const client = getApiClient();
-      const [routesResult, destinationsResult] = await Promise.all([
-        client.listVehicleRoutes({ vehicleId, page: 1, limit: 100 }),
-        client.listDestinations({ page: 1, limit: 100 }),
-      ]);
-      setDestinations(destinationsResult.data);
+      const routesResult = await getApiClient().listVehicleRoutes({
+        vehicleId,
+        page: 1,
+        limit: 100,
+      });
       setState({ status: 'ready', routes: routesResult.data });
     } catch (error) {
       setState({ status: 'error', message: getLocationsErrorMessage(error) });
@@ -134,8 +114,8 @@ export function VehicleRoutesSection({
   function openEdit(route: VehicleRoute) {
     setEditing(route);
     setFormValues({
-      departureDestinationId: route.departureDestinationId,
-      arrivalDestinationId: route.arrivalDestinationId,
+      departureCity: route.departureCity,
+      arrivalCity: route.arrivalCity,
       priceCents: String(route.priceCents),
       currency: route.currency,
     });
@@ -146,18 +126,19 @@ export function VehicleRoutesSection({
 
   function validate(): boolean {
     const errors: Partial<Record<keyof FormValues, string>> = {};
-    if (!formValues.departureDestinationId) {
-      errors.departureDestinationId = t('validation.departureRequired');
+    if (!formValues.departureCity.trim()) {
+      errors.departureCity = t('validation.departureRequired');
     }
-    if (!formValues.arrivalDestinationId) {
-      errors.arrivalDestinationId = t('validation.arrivalRequired');
+    if (!formValues.arrivalCity.trim()) {
+      errors.arrivalCity = t('validation.arrivalRequired');
     }
     if (
-      formValues.departureDestinationId &&
-      formValues.arrivalDestinationId &&
-      formValues.departureDestinationId === formValues.arrivalDestinationId
+      formValues.departureCity.trim() &&
+      formValues.arrivalCity.trim() &&
+      formValues.departureCity.trim().toLowerCase() ===
+        formValues.arrivalCity.trim().toLowerCase()
     ) {
-      errors.arrivalDestinationId = t('validation.sameDestination');
+      errors.arrivalCity = t('validation.sameDestination');
     }
     const cents = Number(formValues.priceCents);
     if (!Number.isFinite(cents) || cents < 0) {
@@ -180,18 +161,20 @@ export function VehicleRoutesSection({
       const client = getApiClient();
       const priceCents = Number(formValues.priceCents);
       const currency = formValues.currency.trim().toUpperCase();
+      const departureCity = formValues.departureCity.trim();
+      const arrivalCity = formValues.arrivalCity.trim();
       if (editing) {
         await client.updateVehicleRoute(editing.id, {
-          departureDestinationId: formValues.departureDestinationId,
-          arrivalDestinationId: formValues.arrivalDestinationId,
+          departureCity,
+          arrivalCity,
           priceCents,
           currency,
         });
       } else {
         await client.createVehicleRoute({
           vehicleId,
-          departureDestinationId: formValues.departureDestinationId,
-          arrivalDestinationId: formValues.arrivalDestinationId,
+          departureCity,
+          arrivalCity,
           priceCents,
           currency,
         });
@@ -223,13 +206,7 @@ export function VehicleRoutesSection({
   }
 
   function routeLabel(route: VehicleRoute): string {
-    const dep =
-      destinationById.get(route.departureDestinationId)?.name ??
-      route.departureDestinationId.slice(0, 8);
-    const arr =
-      destinationById.get(route.arrivalDestinationId)?.name ??
-      route.arrivalDestinationId.slice(0, 8);
-    return `${dep} → ${arr}`;
+    return `${route.departureCity} → ${route.arrivalCity}`;
   }
 
   const columns = useMemo<ColumnDef<VehicleRoute>[]>(
@@ -271,7 +248,7 @@ export function VehicleRoutesSection({
         ),
       },
     ],
-    [deletingId, destinationById, formatPrice, t, tCommon],
+    [deletingId, formatPrice, t, tCommon],
   );
 
   const routes = state.status === 'ready' ? state.routes : [];
@@ -326,32 +303,24 @@ export function VehicleRoutesSection({
               {formError}
             </p>
           ) : null}
-          <SearchableSelect
+          <Input
             label={t('departure')}
-            name="departureDestinationId"
-            value={formValues.departureDestinationId}
-            options={destinationOptions}
-            onChange={(next) =>
-              setFormValues((prev) => ({ ...prev, departureDestinationId: next }))
+            name="departureCity"
+            value={formValues.departureCity}
+            onChange={(e) =>
+              setFormValues((prev) => ({ ...prev, departureCity: e.target.value }))
             }
-            searchPlaceholder={tSelect('searchPlaceholder')}
-            emptyMessage={tSelect('empty')}
-            placeholder={tSelect('chooseDash')}
-            error={fieldErrors.departureDestinationId}
+            error={fieldErrors.departureCity}
             required
           />
-          <SearchableSelect
+          <Input
             label={t('arrival')}
-            name="arrivalDestinationId"
-            value={formValues.arrivalDestinationId}
-            options={destinationOptions}
-            onChange={(next) =>
-              setFormValues((prev) => ({ ...prev, arrivalDestinationId: next }))
+            name="arrivalCity"
+            value={formValues.arrivalCity}
+            onChange={(e) =>
+              setFormValues((prev) => ({ ...prev, arrivalCity: e.target.value }))
             }
-            searchPlaceholder={tSelect('searchPlaceholder')}
-            emptyMessage={tSelect('empty')}
-            placeholder={tSelect('chooseDash')}
-            error={fieldErrors.arrivalDestinationId}
+            error={fieldErrors.arrivalCity}
             required
           />
           <div className="grid gap-4 sm:grid-cols-2">

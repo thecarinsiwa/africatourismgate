@@ -8,14 +8,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Not, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { CrudService } from '../../../common/crud/crud.service';
-import {
-  Destinations,
-  VehicleRoutes,
-  Vehicles,
-} from '../../../entities/generated';
+import { VehicleRoutes, Vehicles } from '../../../entities/generated';
 import { CreateVehicleRouteDto } from './dto/create-vehicle-route.dto';
 import { UpdateVehicleRouteDto } from './dto/update-vehicle-route.dto';
 import { VehicleRoutesListQueryDto } from './dto/vehicle-routes-list-query.dto';
+
+function normalizeCity(value: string): string {
+  return value.trim().replace(/\s+/g, ' ');
+}
 
 @Injectable()
 export class VehicleRoutesService extends CrudService<VehicleRoutes> {
@@ -24,8 +24,6 @@ export class VehicleRoutesService extends CrudService<VehicleRoutes> {
     private readonly vehicleRoutesRepository: Repository<VehicleRoutes>,
     @InjectRepository(Vehicles)
     private readonly vehiclesRepository: Repository<Vehicles>,
-    @InjectRepository(Destinations)
-    private readonly destinationsRepository: Repository<Destinations>,
   ) {
     super(vehicleRoutesRepository);
   }
@@ -43,31 +41,23 @@ export class VehicleRoutesService extends CrudService<VehicleRoutes> {
     if (query.vehicleId) {
       qb.andWhere('route.vehicleId = :vehicleId', { vehicleId: query.vehicleId });
     }
-    if (query.departureDestinationId) {
-      qb.andWhere('route.departureDestinationId = :departureDestinationId', {
-        departureDestinationId: query.departureDestinationId,
+    if (query.departureCity?.trim()) {
+      qb.andWhere('route.departureCity LIKE :departureCity', {
+        departureCity: `%${normalizeCity(query.departureCity)}%`,
       });
     }
-    if (query.arrivalDestinationId) {
-      qb.andWhere('route.arrivalDestinationId = :arrivalDestinationId', {
-        arrivalDestinationId: query.arrivalDestinationId,
+    if (query.arrivalCity?.trim()) {
+      qb.andWhere('route.arrivalCity LIKE :arrivalCity', {
+        arrivalCity: `%${normalizeCity(query.arrivalCity)}%`,
       });
     }
 
     const search = query.search?.trim();
     if (search) {
-      qb.leftJoin(
-        Destinations,
-        'dep',
-        'dep.id = route.departureDestinationId AND dep.deletedAt IS NULL',
-      ).leftJoin(
-        Destinations,
-        'arr',
-        'arr.id = route.arrivalDestinationId AND arr.deletedAt IS NULL',
+      qb.andWhere(
+        '(route.departureCity LIKE :term OR route.arrivalCity LIKE :term)',
+        { term: `%${search}%` },
       );
-      qb.andWhere('(dep.name LIKE :term OR arr.name LIKE :term)', {
-        term: `%${search}%`,
-      });
     }
 
     qb.orderBy('route.createdAt', 'DESC')
@@ -89,17 +79,15 @@ export class VehicleRoutesService extends CrudService<VehicleRoutes> {
 
   async createRoute(dto: CreateVehicleRouteDto): Promise<VehicleRoutes> {
     await this.assertVehicleExists(dto.vehicleId);
-    await this.assertDestinations(dto.departureDestinationId, dto.arrivalDestinationId);
-    await this.assertUniqueRoute(
-      dto.vehicleId,
-      dto.departureDestinationId,
-      dto.arrivalDestinationId,
-    );
+    const departureCity = normalizeCity(dto.departureCity);
+    const arrivalCity = normalizeCity(dto.arrivalCity);
+    this.assertDistinctCities(departureCity, arrivalCity);
+    await this.assertUniqueRoute(dto.vehicleId, departureCity, arrivalCity);
 
     return this.create({
       vehicleId: dto.vehicleId,
-      departureDestinationId: dto.departureDestinationId,
-      arrivalDestinationId: dto.arrivalDestinationId,
+      departureCity,
+      arrivalCity,
       priceCents: dto.priceCents,
       currency: dto.currency.toUpperCase(),
     });
@@ -111,26 +99,21 @@ export class VehicleRoutesService extends CrudService<VehicleRoutes> {
       throw new NotFoundException(`Resource ${id} not found`);
     }
 
-    const departureDestinationId =
-      dto.departureDestinationId ?? existing.departureDestinationId;
-    const arrivalDestinationId =
-      dto.arrivalDestinationId ?? existing.arrivalDestinationId;
+    const departureCity =
+      dto.departureCity !== undefined
+        ? normalizeCity(dto.departureCity)
+        : existing.departureCity;
+    const arrivalCity =
+      dto.arrivalCity !== undefined
+        ? normalizeCity(dto.arrivalCity)
+        : existing.arrivalCity;
 
-    await this.assertDestinations(departureDestinationId, arrivalDestinationId);
-    await this.assertUniqueRoute(
-      existing.vehicleId,
-      departureDestinationId,
-      arrivalDestinationId,
-      id,
-    );
+    this.assertDistinctCities(departureCity, arrivalCity);
+    await this.assertUniqueRoute(existing.vehicleId, departureCity, arrivalCity, id);
 
     return this.update(id, {
-      ...(dto.departureDestinationId !== undefined
-        ? { departureDestinationId: dto.departureDestinationId }
-        : {}),
-      ...(dto.arrivalDestinationId !== undefined
-        ? { arrivalDestinationId: dto.arrivalDestinationId }
-        : {}),
+      ...(dto.departureCity !== undefined ? { departureCity } : {}),
+      ...(dto.arrivalCity !== undefined ? { arrivalCity } : {}),
       ...(dto.priceCents !== undefined ? { priceCents: dto.priceCents } : {}),
       ...(dto.currency !== undefined ? { currency: dto.currency.toUpperCase() } : {}),
     });
@@ -145,42 +128,28 @@ export class VehicleRoutesService extends CrudService<VehicleRoutes> {
     }
   }
 
-  private async assertDestinations(
-    departureDestinationId: string,
-    arrivalDestinationId: string,
-  ): Promise<void> {
-    if (departureDestinationId === arrivalDestinationId) {
+  private assertDistinctCities(departureCity: string, arrivalCity: string): void {
+    if (!departureCity || !arrivalCity) {
+      throw new BadRequestException('Départ et arrivée sont obligatoires.');
+    }
+    if (departureCity.toLowerCase() === arrivalCity.toLowerCase()) {
       throw new BadRequestException(
-        'La destination de départ et d’arrivée doivent être distinctes.',
+        'La ville de départ et d’arrivée doivent être distinctes.',
       );
-    }
-
-    const destinations = await this.destinationsRepository.find({
-      where: [
-        { id: departureDestinationId, deletedAt: IsNull() },
-        { id: arrivalDestinationId, deletedAt: IsNull() },
-      ],
-    });
-    const ids = new Set(destinations.map((d) => d.id));
-    if (!ids.has(departureDestinationId)) {
-      throw new NotFoundException('Destination de départ introuvable.');
-    }
-    if (!ids.has(arrivalDestinationId)) {
-      throw new NotFoundException('Destination d’arrivée introuvable.');
     }
   }
 
   private async assertUniqueRoute(
     vehicleId: string,
-    departureDestinationId: string,
-    arrivalDestinationId: string,
+    departureCity: string,
+    arrivalCity: string,
     excludeId?: string,
   ): Promise<void> {
     const existing = await this.vehicleRoutesRepository.findOne({
       where: {
         vehicleId,
-        departureDestinationId,
-        arrivalDestinationId,
+        departureCity,
+        arrivalCity,
         deletedAt: IsNull(),
         ...(excludeId ? { id: Not(excludeId) } : {}),
       },

@@ -44,8 +44,8 @@ export interface VehicleSearchResult {
 
 export interface VehicleDetailQuery {
   routeId?: string;
-  departureDestinationId?: string;
-  arrivalDestinationId?: string;
+  departureCity?: string;
+  arrivalCity?: string;
   travelDate?: string;
   /** @deprecated Prefer travelDate */
   pickupDate?: string;
@@ -74,9 +74,7 @@ export interface VehicleDetailAvailabilitySlot {
 
 export interface VehicleDetailRoute {
   id: string;
-  departureDestinationId: string;
   departureCity: string;
-  arrivalDestinationId: string;
   arrivalCity: string;
   priceCents: number;
   currency: string;

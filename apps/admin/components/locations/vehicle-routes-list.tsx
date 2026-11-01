@@ -11,12 +11,11 @@ import {
   DataTablePagination,
   Input,
   Modal,
-  SearchableSelect,
   Select,
   useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
-import type { Destination, Vehicle, VehicleRoute } from '@africatourismgate/types';
+import type { Vehicle, VehicleRoute } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -31,16 +30,16 @@ const SEARCH_DEBOUNCE_MS = 300;
 
 type FormValues = {
   vehicleId: string;
-  departureDestinationId: string;
-  arrivalDestinationId: string;
+  departureCity: string;
+  arrivalCity: string;
   priceCents: string;
   currency: string;
 };
 
 const emptyForm: FormValues = {
   vehicleId: '',
-  departureDestinationId: '',
-  arrivalDestinationId: '',
+  departureCity: '',
+  arrivalCity: '',
   priceCents: '',
   currency: FALLBACK_TREASURY_CURRENCY,
 };
@@ -60,13 +59,13 @@ export function VehicleRoutesList() {
   const paginationLabels = useDataTablePaginationLabels();
   const formatPrice = useFormatMoney();
   const emptyDash = tCommon('empty.dash');
+  const chooseDash = tSelect('chooseDash');
 
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [vehicleFilter, setVehicleFilter] = useState('');
   const [page, setPage] = useState(1);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  const [destinations, setDestinations] = useState<Destination[]>([]);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -92,11 +91,6 @@ export function VehicleRoutesList() {
     [vehicles],
   );
 
-  const destinationById = useMemo(
-    () => new Map(destinations.map((d) => [d.id, d])),
-    [destinations],
-  );
-
   const vehicleOptions = useMemo(
     () => [
       { value: '', label: t('allVehicles') },
@@ -110,40 +104,20 @@ export function VehicleRoutesList() {
 
   const formVehicleOptions = useMemo(
     () => [
-      { value: '', label: tSelect('chooseDash') },
+      { value: '', label: chooseDash },
       ...vehicles.map((v) => ({
         value: v.id,
         label: v.licensePlate?.trim() || t('vehicleFallback', { id: v.id.slice(0, 8) }),
       })),
     ],
-    [vehicles, t, tSelect],
-  );
-
-  const destinationOptions = useMemo(
-    () => [
-      { value: '', label: tSelect('chooseDash') },
-      ...destinations.map((d) => ({
-        value: d.id,
-        label: `${d.name} (${d.countryCode})`,
-      })),
-    ],
-    [destinations, tSelect],
+    [vehicles, t, chooseDash],
   );
 
   useEffect(() => {
-    const client = getApiClient();
-    void Promise.all([
-      client.listVehicles({ page: 1, limit: 100 }),
-      client.listDestinations({ page: 1, limit: 100 }),
-    ])
-      .then(([vehiclesResult, destinationsResult]) => {
-        setVehicles(vehiclesResult.data);
-        setDestinations(destinationsResult.data);
-      })
-      .catch(() => {
-        setVehicles([]);
-        setDestinations([]);
-      });
+    void getApiClient()
+      .listVehicles({ page: 1, limit: 100 })
+      .then((vehiclesResult) => setVehicles(vehiclesResult.data))
+      .catch(() => setVehicles([]));
   }, []);
 
   const load = useCallback(async () => {
@@ -190,13 +164,7 @@ export function VehicleRoutesList() {
   }
 
   function routeLabel(route: VehicleRoute): string {
-    const dep =
-      destinationById.get(route.departureDestinationId)?.name ??
-      route.departureDestinationId.slice(0, 8);
-    const arr =
-      destinationById.get(route.arrivalDestinationId)?.name ??
-      route.arrivalDestinationId.slice(0, 8);
-    return `${dep} → ${arr}`;
+    return `${route.departureCity} → ${route.arrivalCity}`;
   }
 
   function resetForm() {
@@ -223,8 +191,8 @@ export function VehicleRoutesList() {
     setEditing(route);
     setFormValues({
       vehicleId: route.vehicleId,
-      departureDestinationId: route.departureDestinationId,
-      arrivalDestinationId: route.arrivalDestinationId,
+      departureCity: route.departureCity,
+      arrivalCity: route.arrivalCity,
       priceCents: String(route.priceCents),
       currency: route.currency,
     });
@@ -238,18 +206,19 @@ export function VehicleRoutesList() {
     if (!editing && !formValues.vehicleId) {
       errors.vehicleId = t('validation.vehicleRequired');
     }
-    if (!formValues.departureDestinationId) {
-      errors.departureDestinationId = tRoutes('validation.departureRequired');
+    if (!formValues.departureCity.trim()) {
+      errors.departureCity = tRoutes('validation.departureRequired');
     }
-    if (!formValues.arrivalDestinationId) {
-      errors.arrivalDestinationId = tRoutes('validation.arrivalRequired');
+    if (!formValues.arrivalCity.trim()) {
+      errors.arrivalCity = tRoutes('validation.arrivalRequired');
     }
     if (
-      formValues.departureDestinationId &&
-      formValues.arrivalDestinationId &&
-      formValues.departureDestinationId === formValues.arrivalDestinationId
+      formValues.departureCity.trim() &&
+      formValues.arrivalCity.trim() &&
+      formValues.departureCity.trim().toLowerCase() ===
+        formValues.arrivalCity.trim().toLowerCase()
     ) {
-      errors.arrivalDestinationId = tRoutes('validation.sameDestination');
+      errors.arrivalCity = tRoutes('validation.sameDestination');
     }
     const cents = Number(formValues.priceCents);
     if (!Number.isFinite(cents) || cents < 0) {
@@ -272,26 +241,32 @@ export function VehicleRoutesList() {
       const client = getApiClient();
       const priceCents = Number(formValues.priceCents);
       const currency = formValues.currency.trim().toUpperCase();
+      const departureCity = formValues.departureCity.trim();
+      const arrivalCity = formValues.arrivalCity.trim();
       if (editing) {
         await client.updateVehicleRoute(editing.id, {
-          departureDestinationId: formValues.departureDestinationId,
-          arrivalDestinationId: formValues.arrivalDestinationId,
+          departureCity,
+          arrivalCity,
           priceCents,
           currency,
         });
-        toast({ variant: 'success', title: tToast('saved'), message: routeLabel(editing) });
+        toast({
+          variant: 'success',
+          title: tToast('saved'),
+          message: `${departureCity} → ${arrivalCity}`,
+        });
       } else {
         await client.createVehicleRoute({
           vehicleId: formValues.vehicleId,
-          departureDestinationId: formValues.departureDestinationId,
-          arrivalDestinationId: formValues.arrivalDestinationId,
+          departureCity,
+          arrivalCity,
           priceCents,
           currency,
         });
         toast({
           variant: 'success',
           title: tToast('created'),
-          message: `${destinationById.get(formValues.departureDestinationId)?.name ?? ''} → ${destinationById.get(formValues.arrivalDestinationId)?.name ?? ''}`,
+          message: `${departureCity} → ${arrivalCity}`,
         });
       }
       resetForm();
@@ -308,12 +283,12 @@ export function VehicleRoutesList() {
     setDeletingId(confirmTarget.id);
     try {
       await getApiClient().deleteVehicleRoute(confirmTarget.id);
-      setConfirmTarget(null);
       toast({
         variant: 'success',
         title: tToast('deleted'),
         message: routeLabel(confirmTarget),
       });
+      setConfirmTarget(null);
       await load();
     } catch (error) {
       toast({
@@ -380,7 +355,7 @@ export function VehicleRoutesList() {
         ),
       },
     ],
-    [deletingId, destinationById, formatPrice, t, tCommon, tRoutes, vehicleById],
+    [deletingId, formatPrice, t, tCommon, tRoutes, vehicleById],
   );
 
   const routes = state.status === 'ready' ? state.routes : [];
@@ -483,32 +458,24 @@ export function VehicleRoutesList() {
               </span>
             </p>
           )}
-          <SearchableSelect
+          <Input
             label={tRoutes('departure')}
-            name="departureDestinationId"
-            value={formValues.departureDestinationId}
-            options={destinationOptions}
-            onChange={(next) =>
-              setFormValues((prev) => ({ ...prev, departureDestinationId: next }))
+            name="departureCity"
+            value={formValues.departureCity}
+            onChange={(e) =>
+              setFormValues((prev) => ({ ...prev, departureCity: e.target.value }))
             }
-            searchPlaceholder={tSelect('searchPlaceholder')}
-            emptyMessage={tSelect('empty')}
-            placeholder={tSelect('chooseDash')}
-            error={fieldErrors.departureDestinationId}
+            error={fieldErrors.departureCity}
             required
           />
-          <SearchableSelect
+          <Input
             label={tRoutes('arrival')}
-            name="arrivalDestinationId"
-            value={formValues.arrivalDestinationId}
-            options={destinationOptions}
-            onChange={(next) =>
-              setFormValues((prev) => ({ ...prev, arrivalDestinationId: next }))
+            name="arrivalCity"
+            value={formValues.arrivalCity}
+            onChange={(e) =>
+              setFormValues((prev) => ({ ...prev, arrivalCity: e.target.value }))
             }
-            searchPlaceholder={tSelect('searchPlaceholder')}
-            emptyMessage={tSelect('empty')}
-            placeholder={tSelect('chooseDash')}
-            error={fieldErrors.arrivalDestinationId}
+            error={fieldErrors.arrivalCity}
             required
           />
           <div className="grid gap-4 sm:grid-cols-2">

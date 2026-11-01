@@ -205,20 +205,8 @@ export class PackageItemPricingService {
       throw new NotFoundException('Tronçon introuvable.');
     }
 
-    const [departure, arrival] = await Promise.all([
-      this.destinationsRepository.findOne({
-        where: { id: route.departureDestinationId },
-      }),
-      this.destinationsRepository.findOne({
-        where: { id: route.arrivalDestinationId },
-      }),
-    ]);
-
-    const departureName = departure && !departure.deletedAt ? departure.name : 'Départ';
-    const arrivalName = arrival && !arrival.deletedAt ? arrival.name : 'Arrivée';
-
     return {
-      label: `${departureName} → ${arrivalName}`,
+      label: `${route.departureCity} → ${route.arrivalCity}`,
       unitPriceCents: route.priceCents,
       currency: route.currency,
     };

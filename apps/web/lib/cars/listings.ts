@@ -112,6 +112,12 @@ export function toVehicleDetailQuery(
     travelDate: params.travelDate,
   };
   if (params.routeId) query.routeId = params.routeId;
+  if (params.departureLocation?.trim()) {
+    query.departureCity = params.departureLocation.trim();
+  }
+  if (params.arrivalLocation?.trim()) {
+    query.arrivalCity = params.arrivalLocation.trim();
+  }
 
   return query;
 }

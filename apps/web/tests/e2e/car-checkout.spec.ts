@@ -53,9 +53,7 @@ const vehicleDetailMock = {
   },
   route: {
     id: ROUTE_ID,
-    departureDestinationId: 'dest-kin',
     departureCity: 'Kinshasa',
-    arrivalDestinationId: 'dest-lub',
     arrivalCity: 'Lubumbashi',
     priceCents: TOTAL_CENTS,
     currency: 'USD',

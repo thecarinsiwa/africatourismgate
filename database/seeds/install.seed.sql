@@ -701,14 +701,14 @@ INSERT INTO `vehicles` (
 );
 
 INSERT INTO `vehicle_routes` (
-  `id`, `vehicle_id`, `departure_destination_id`, `arrival_destination_id`,
+  `id`, `vehicle_id`, `departure_city`, `arrival_city`,
   `price_cents`, `currency`, `created_by_user_id`
 ) VALUES
 (
   '00000000-0000-4000-8000-000000004028',
   '00000000-0000-4000-8000-000000004021',
-  '00000000-0000-4000-8000-000000002001',
-  '00000000-0000-4000-8000-000000002003',
+  'Kinshasa',
+  'Lubumbashi',
   5500,
   'USD',
   '00000000-0000-4000-8000-000000000010'
@@ -716,8 +716,8 @@ INSERT INTO `vehicle_routes` (
 (
   '00000000-0000-4000-8000-000000004029',
   '00000000-0000-4000-8000-000000004022',
-  '00000000-0000-4000-8000-000000002001',
-  '00000000-0000-4000-8000-000000002003',
+  'Kinshasa',
+  'Lubumbashi',
   12000,
   'USD',
   '00000000-0000-4000-8000-000000000010'

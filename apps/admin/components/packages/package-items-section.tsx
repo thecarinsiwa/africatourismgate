@@ -136,30 +136,20 @@ export function PackageItemsSection({
             break;
           }
           case 'troncon': {
-            const [routesResult, destinationsResult, vehiclesResult] = await Promise.all([
+            const [routesResult, vehiclesResult] = await Promise.all([
               client.listVehicleRoutes({ page: 1, limit: 100 }),
-              client.listDestinations({ page: 1, limit: 100 }),
               client.listVehicles({ page: 1, limit: 100 }),
             ]);
-            const destById = new Map(
-              destinationsResult.data.map((d) => [d.id, d.name] as const),
-            );
             const vehicleById = new Map(
               vehiclesResult.data.map((v) => [v.id, v] as const),
             );
             options = routesResult.data.map((route) => {
-              const dep =
-                destById.get(route.departureDestinationId) ??
-                route.departureDestinationId.slice(0, 8);
-              const arr =
-                destById.get(route.arrivalDestinationId) ??
-                route.arrivalDestinationId.slice(0, 8);
               const vehicle = vehicleById.get(route.vehicleId);
               const plate = vehicle?.licensePlate?.trim();
               const suffix = plate ? ` — ${plate}` : '';
               return {
                 id: route.id,
-                label: `${dep} → ${arr}${suffix}`,
+                label: `${route.departureCity} → ${route.arrivalCity}${suffix}`,
               };
             });
             break;

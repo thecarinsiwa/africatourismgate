@@ -41,14 +41,8 @@ export class VehicleDetailRouteDto {
   @ApiProperty({ format: 'uuid' })
   id!: string;
 
-  @ApiProperty({ format: 'uuid' })
-  departureDestinationId!: string;
-
   @ApiProperty({ example: 'Kinshasa' })
   departureCity!: string;
-
-  @ApiProperty({ format: 'uuid' })
-  arrivalDestinationId!: string;
 
   @ApiProperty({ example: 'Lubumbashi' })
   arrivalCity!: string;

@@ -1,5 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsOptional, IsUUID } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsDateString, IsOptional, IsString, IsUUID, MaxLength, MinLength } from 'class-validator';
 
 export class VehicleDetailQueryDto {
   @ApiPropertyOptional({
@@ -10,15 +10,19 @@ export class VehicleDetailQueryDto {
   @IsUUID('4')
   routeId?: string;
 
-  @ApiPropertyOptional({ format: 'uuid' })
+  @ApiPropertyOptional({ example: 'Kinshasa' })
   @IsOptional()
-  @IsUUID('4')
-  departureDestinationId?: string;
+  @IsString()
+  @MinLength(1)
+  @MaxLength(120)
+  departureCity?: string;
 
-  @ApiPropertyOptional({ format: 'uuid' })
+  @ApiPropertyOptional({ example: 'Lubumbashi' })
   @IsOptional()
-  @IsUUID('4')
-  arrivalDestinationId?: string;
+  @IsString()
+  @MinLength(1)
+  @MaxLength(120)
+  arrivalCity?: string;
 
   @ApiPropertyOptional({
     format: 'date',

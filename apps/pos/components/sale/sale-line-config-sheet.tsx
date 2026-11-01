@@ -51,7 +51,6 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
   const [vehicleRoutes, setVehicleRoutes] = useState<VehicleRoute[]>([]);
   const [selectedVehicleRouteId, setSelectedVehicleRouteId] = useState<string | null>(null);
   const [vehicleTravelDate, setVehicleTravelDate] = useState(defaultFlightDate);
-  const [destinationNames, setDestinationNames] = useState<Record<string, string>>({});
 
   const [sailings, setSailings] = useState<CruiseSailing[]>([]);
   const [selectedSailingId, setSelectedSailingId] = useState<string | null>(null);
@@ -84,7 +83,6 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
     setSelectedVehicleRouteId(null);
     setVehicleRoutes([]);
     setVehicleTravelDate(defaultFlightDate());
-    setDestinationNames({});
     setSelectedSailingId(null);
     setSelectedCabinSlotId(null);
     setRoomDates(defaultRoomStayDates());
@@ -146,7 +144,7 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
           }
         } else if (currentHit.kind === 'vehicle') {
           const now = new Date().toISOString();
-          const [slotsRes, routesRes, destsRes] = await Promise.all([
+          const [slotsRes, routesRes] = await Promise.all([
             client.listVehicleAvailability({
               vehicleId: currentHit.vehicle.id,
               startFrom: now,
@@ -156,7 +154,6 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
               vehicleId: currentHit.vehicle.id,
               limit: 50,
             }),
-            client.listDestinations({ limit: 200 }).catch(() => ({ data: [] as { id: string; name: string }[] })),
           ]);
           if (cancelled) return;
           const available = slotsRes.data.filter((s) => s.status === 'available');
@@ -168,11 +165,6 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
           if (routesRes.data.length === 1) {
             setSelectedVehicleRouteId(routesRes.data[0]!.id);
           }
-          const names: Record<string, string> = {};
-          for (const dest of destsRes.data) {
-            names[dest.id] = dest.name;
-          }
-          setDestinationNames(names);
         } else if (currentHit.kind === 'cabin') {
           const res = await client.listCruiseSailings({ limit: 20 });
           if (cancelled) return;
@@ -485,12 +477,6 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
                     ) : (
                       <ul className="space-y-2">
                         {vehicleRoutes.map((route) => {
-                          const from =
-                            destinationNames[route.departureDestinationId] ??
-                            route.departureDestinationId.slice(0, 8);
-                          const to =
-                            destinationNames[route.arrivalDestinationId] ??
-                            route.arrivalDestinationId.slice(0, 8);
                           return (
                             <li key={route.id}>
                               <Button
@@ -504,7 +490,7 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
                                 onClick={() => setSelectedVehicleRouteId(route.id)}
                               >
                                 <span className="font-semibold">
-                                  {from} → {to}
+                                  {route.departureCity} → {route.arrivalCity}
                                 </span>
                                 <span>{formatCents(route.priceCents, route.currency)}</span>
                               </Button>

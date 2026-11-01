@@ -89,10 +89,14 @@ test('toVehicleDetailQuery requires travelDate', () => {
   assert.deepEqual(
     toVehicleDetailQuery({
       routeId: 'route-1',
+      departureLocation: 'Kinshasa',
+      arrivalLocation: 'Lubumbashi',
       travelDate: '2026-08-01',
     }),
     {
       routeId: 'route-1',
+      departureCity: 'Kinshasa',
+      arrivalCity: 'Lubumbashi',
       travelDate: '2026-08-01',
     },
   );

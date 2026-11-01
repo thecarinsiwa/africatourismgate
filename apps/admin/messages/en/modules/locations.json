@@ -82,14 +82,14 @@
   "sections": {
     "routes": {
       "title": "Route segments",
-      "intro": "Fixed fares by trip (departure destination → arrival destination).",
+      "intro": "Fixed fares by trip (departure city → arrival city, free text).",
       "addRoute": "Add route",
       "newRoute": "New route",
       "editRoute": "Edit route",
-      "formHint": "Choose departure, arrival, and the fixed trip price.",
+      "formHint": "Enter departure, arrival, and the fixed trip price.",
       "editFormHint": "Update this route’s trip or price.",
-      "departure": "Departure destination",
-      "arrival": "Arrival destination",
+      "departure": "Departure city",
+      "arrival": "Arrival city",
       "priceCents": "Price (cents)",
       "empty": "No routes for this vehicle.",
       "minPriceHint": "from",
@@ -100,8 +100,8 @@
         "price": "Price"
       },
       "validation": {
-        "departureRequired": "Departure destination is required.",
-        "arrivalRequired": "Arrival destination is required.",
+        "departureRequired": "Departure city is required.",
+        "arrivalRequired": "Arrival city is required.",
         "sameDestination": "Departure and arrival must be different."
       },
       "deleteTitle": "Delete route",
@@ -181,7 +181,7 @@
       "ariaLabel": "Vehicle routes list",
       "allVehicles": "All vehicles",
       "vehicleFallback": "Vehicle {id}",
-      "formHint": "Choose the vehicle, departure, arrival and fixed trip fare.",
+      "formHint": "Choose the vehicle, enter departure and arrival cities, then the fixed fare.",
       "columns": {
         "vehicle": "Vehicle"
       },

@@ -316,11 +316,11 @@ export async function searchVehicles(
 function buildVehicleDetailQuery(params: VehicleDetailQuery): string {
   const qs = new URLSearchParams();
   if (params.routeId) qs.set('routeId', params.routeId);
-  if (params.departureDestinationId) {
-    qs.set('departureDestinationId', params.departureDestinationId);
+  if (params.departureCity?.trim()) {
+    qs.set('departureCity', params.departureCity.trim());
   }
-  if (params.arrivalDestinationId) {
-    qs.set('arrivalDestinationId', params.arrivalDestinationId);
+  if (params.arrivalCity?.trim()) {
+    qs.set('arrivalCity', params.arrivalCity.trim());
   }
   const travelDate = params.travelDate || params.pickupDate;
   if (travelDate) qs.set('travelDate', travelDate);
