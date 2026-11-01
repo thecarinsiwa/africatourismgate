@@ -105,12 +105,28 @@ export class BookingsService extends CrudService<Bookings> {
     const ownerUserId = await this.resolveCheckoutOwnerUserId(dto, actorUserId);
     const result = await this.bookingEngine.createBookingRequest(dto, ownerUserId, actorUserId);
     this.assistedEmail.notifyRequestReceived(result.bookingId);
+    const [items, owner] = await Promise.all([
+      this.bookingItemsRepository.find({
+        where: { bookingId: result.bookingId },
+        order: { createdAt: 'ASC' },
+      }),
+      this.usersRepository.findOne({ where: { id: ownerUserId } }),
+    ]);
+    const bookingTitle = this.formatBookingListName(
+      items.filter((item) => !item.deletedAt),
+    );
+    const authorName =
+      `${owner?.firstName ?? ''} ${owner?.lastName ?? ''}`.trim() ||
+      owner?.email ||
+      undefined;
     void this.staffNotifications.fanOut(
       'booking_pending_approval',
       {
         href: `/reservations/${result.bookingId}`,
         priority: 'high',
         bookingId: result.bookingId,
+        bookingTitle: bookingTitle || undefined,
+        authorName,
         status: result.status,
         amountCents: result.totalCents,
         currency: result.currency,

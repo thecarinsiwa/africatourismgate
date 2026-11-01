@@ -19,6 +19,8 @@ export type StaffNotificationPayload = {
   requestId?: string;
   activityId?: string;
   activityTitle?: string;
+  /** Display name from booking line titles (prestations). */
+  bookingTitle?: string;
   authorName?: string;
   status?: string;
   amountCents?: number;

@@ -7,7 +7,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, IsNull, Repository } from 'typeorm';
 import { newId } from '../../../common/utils/uuid';
-import { BookingMessages, Bookings, Users } from '../../../entities/generated';
+import {
+  BookingItems,
+  BookingMessages,
+  Bookings,
+  Users,
+} from '../../../entities/generated';
 import { PermissionsService } from '../../rbac/permissions.service';
 import { BookingAssistedEmailService } from './booking-assisted-email.service';
 import { BookingNotificationsService } from './booking-notifications.service';
@@ -22,6 +27,8 @@ export class BookingMessagesService {
     private readonly messagesRepository: Repository<BookingMessages>,
     @InjectRepository(Bookings)
     private readonly bookingsRepository: Repository<Bookings>,
+    @InjectRepository(BookingItems)
+    private readonly bookingItemsRepository: Repository<BookingItems>,
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
     private readonly permissionsService: PermissionsService,
@@ -118,13 +125,25 @@ export class BookingMessagesService {
     }
 
     if (!isStaff) {
-      const author = await this.usersRepository.findOne({
-        where: { id: actorUserId },
-      });
+      const [author, items] = await Promise.all([
+        this.usersRepository.findOne({
+          where: { id: actorUserId },
+        }),
+        this.bookingItemsRepository.find({
+          where: { bookingId },
+          order: { createdAt: 'ASC' },
+        }),
+      ]);
       const authorName =
         `${author?.firstName ?? ''} ${author?.lastName ?? ''}`.trim() ||
         author?.email ||
         undefined;
+      const activeItems = items.filter((item) => !item.deletedAt);
+      const firstTitle = activeItems[0]?.titleSnapshot?.trim();
+      const bookingTitle =
+        activeItems.length <= 1
+          ? firstTitle || undefined
+          : `${firstTitle || activeItems[0]?.itemType || ''} (+${activeItems.length - 1})`;
       void this.staffNotifications.fanOut(
         'booking_client_message',
         {
@@ -132,6 +151,7 @@ export class BookingMessagesService {
           priority: 'normal',
           bookingId,
           messageId,
+          bookingTitle,
           authorName,
         },
         ['bookings.read'],
