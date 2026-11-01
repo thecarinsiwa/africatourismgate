@@ -1,0 +1,29 @@
+{
+  "heading": "Pie de página",
+  "description": "Textos de marketing del pie de página del sitio público: eslogan, newsletter y crédito « Diseñado por ». Los enlaces de productos / acerca de / legales siguen siendo automáticos.",
+  "contactHint": "Datos de contacto, redes sociales y marca: <parametres>Ajustes</parametres>.",
+  "readOnlyHint": "Puede consultar este contenido pero no modificarlo (se requiere organization_settings.write).",
+  "denied": "No tiene acceso al pie de página (se requiere organization_settings.read).",
+  "fields": {
+    "locale": "Idioma en edición",
+    "localeHint": "El francés es obligatorio si se rellena otro idioma. Los campos vacíos usan el francés y luego el texto por defecto.",
+    "localesFilled": "Idiomas rellenados: {list}",
+    "tagline": "Eslogan",
+    "taglinePlaceholder": "Ej. Su puerta de entrada a las mejores experiencias de viaje en África…",
+    "newsletterDesc": "Descripción del boletín",
+    "newsletterDescPlaceholder": "Ej. Inspiración, ideas de viaje, ofertas y noticias.",
+    "designedByNames": "Nombres « Diseñado por »",
+    "designedByNamesPlaceholder": "Ej. Carin Siwa y Ruth Bwiza",
+    "designedByNamesHint": "Se muestran tras la etiqueta « Diseñado por » (traducida en el sitio público)."
+  },
+  "validation": {
+    "frenchRequired": "Rellene al menos un campo en francés cuando haya otros idiomas.",
+    "taglineTooLong": "El eslogan no debe superar {max} caracteres.",
+    "newsletterDescTooLong": "La descripción del boletín no debe superar {max} caracteres.",
+    "designedByNamesTooLong": "Los nombres no deben superar {max} caracteres."
+  },
+  "saveButton": "Guardar pie de página",
+  "resetDefaults": "Restablecer textos por defecto",
+  "saving": "Guardando…",
+  "saved": "Pie de página guardado."
+}
