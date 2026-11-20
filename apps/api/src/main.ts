@@ -35,6 +35,8 @@ async function bootstrap() {
     serveStatic(uploadsDir, {
       setHeaders: (res) => {
         res.setHeader('X-Content-Type-Options', 'nosniff');
+        // Explicit: branding/activity images are loaded cross-origin from web/gap.
+        res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
       },
     }),
   );
