@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from '../../auth/decorators/public.decorator';
 import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
@@ -37,7 +37,7 @@ export class PublicAccommodationsController {
   @Get('accommodations/:id/reviews')
   @ApiOperation({ summary: 'List guest reviews for an accommodation' })
   listReviews(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Query() query: PaginationQueryDto,
   ) {
     return this.service.listPropertyReviews(id, query);
@@ -46,7 +46,10 @@ export class PublicAccommodationsController {
   @Public()
   @Get('accommodations/:id')
   @ApiOperation({ summary: 'Accommodation detail with rooms and date pricing' })
-  getById(@Param('id') id: string, @Query() query: PropertyDetailQueryDto) {
+  getById(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query() query: PropertyDetailQueryDto,
+  ) {
     return this.service.getById(id, query);
   }
 }

@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -36,7 +37,7 @@ export class PublicVehicleTripsController {
   @Public()
   @Get('vehicle-trips/:id')
   @ApiOperation({ summary: 'Get a shared vehicle trip by id' })
-  getById(@Param('id') id: string) {
+  getById(@Param('id', ParseUUIDPipe) id: string) {
     return this.service.getById(id);
   }
 
@@ -54,7 +55,7 @@ export class PublicVehicleTripsController {
   @Post('vehicle-trips/:id/join')
   @ApiOperation({ summary: 'Join an open shared trip (reserve seats)' })
   join(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: JoinVehicleTripDto,
     @CurrentUser() user: AuthUserDto,
   ) {
@@ -66,7 +67,7 @@ export class PublicVehicleTripsController {
     summary: 'Update departure time (first booker only, per org rules)',
   })
   updateDeparture(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateVehicleTripDto,
     @CurrentUser() user: AuthUserDto,
   ) {

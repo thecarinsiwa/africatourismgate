@@ -25,6 +25,7 @@ import { DetailPageSkeleton } from '../shared/loading-skeletons';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { ProductGallery } from '../shared';
+import { hasHtmlMarkup, sanitizeHtml, stripHtml } from '../shared/rich-text';
 import { PackageBookingMobileBar, PackageBookingSidebar } from './package-booking-sidebar';
 import {
   PackageCompositionStepper,
@@ -43,14 +44,6 @@ function inferInitialStep(startDate: string, hash: string): PackageCompositionSt
   if (!startDate) return 'overview';
   if (hash === '#recap') return 'recap';
   return 'configure';
-}
-
-function hasHtmlMarkup(value: string): boolean {
-  return /<[^>]+>/.test(value);
-}
-
-function stripHtml(value: string): string {
-  return value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 function countWords(value: string): number {
@@ -315,7 +308,9 @@ export function PackageDetailPageContent({
                   ) : descriptionHasHtml ? (
                     <div
                       className="mt-4 max-w-none break-words text-base leading-relaxed text-atg-muted [overflow-wrap:anywhere] [&_a]:break-all [&_img]:my-3 [&_img]:h-auto [&_img]:max-w-full [&_p]:my-2 [&_strong]:font-semibold"
-                      dangerouslySetInnerHTML={{ __html: detail.package.description }}
+                      dangerouslySetInnerHTML={{
+                        __html: sanitizeHtml(detail.package.description),
+                      }}
                     />
                   ) : (
                     <p className="mt-4 break-words text-base leading-relaxed text-atg-muted [overflow-wrap:anywhere]">

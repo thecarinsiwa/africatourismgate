@@ -21,6 +21,7 @@
     "@africatourismgate/types": "workspace:*",
     "@africatourismgate/ui": "workspace:*",
     "@africatourismgate/utils": "workspace:*",
+    "isomorphic-dompurify": "^4.8.0",
     "leaflet": "^1.9.4",
     "next": "14.2.18",
     "next-intl": "^3.26.0",

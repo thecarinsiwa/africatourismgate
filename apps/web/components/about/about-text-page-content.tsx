@@ -7,6 +7,7 @@ import type { PublicAboutPage } from '@africatourismgate/types';
 import { Spinner } from '@africatourismgate/ui';
 import { getAboutPageBySectionKeyForLocale } from '../../lib/api/public';
 import { useScrollAnimation } from '../home/use-scroll-animation';
+import { sanitizeHtml } from '../shared/rich-text';
 
 type AboutTextPageContentProps = {
   sectionKey: AboutPageSectionKey;
@@ -93,7 +94,7 @@ export function AboutTextPageContent({ sectionKey }: AboutTextPageContentProps) 
 
       <div
         className="prose prose-neutral max-w-none dark:prose-invert prose-p:text-atg-muted prose-headings:text-atg-fg"
-        dangerouslySetInnerHTML={{ __html: page.content }}
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }}
       />
     </article>
   );

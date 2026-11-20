@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from '../../auth/decorators/public.decorator';
 import { CruiseSearchQueryDto } from './dto/cruise-search-query.dto';
@@ -25,7 +25,7 @@ export class PublicCruisesController {
     summary: 'Sailing detail with itinerary and available cabins',
   })
   getSailingById(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Query() query: CruiseSailingDetailQueryDto,
   ) {
     return this.service.getSailingById(id, query);

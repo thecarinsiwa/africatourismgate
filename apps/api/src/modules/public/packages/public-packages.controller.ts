@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from '../../auth/decorators/public.decorator';
 import { PublicPackagesListQueryDto } from './dto/public-packages-list-query.dto';
@@ -30,7 +30,7 @@ export class PublicPackagesController {
     summary: 'Resolve package checkout lines from catalog (ignores availability)',
   })
   resolveLines(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Query() query: PackageResolveLinesQueryDto,
   ) {
     return this.service.resolveLines(id, query);
@@ -39,7 +39,7 @@ export class PublicPackagesController {
   @Public()
   @Get('packages/:id')
   @ApiOperation({ summary: 'Package detail with included items and discount pricing' })
-  getById(@Param('id') id: string) {
+  getById(@Param('id', ParseUUIDPipe) id: string) {
     return this.service.getById(id);
   }
 }

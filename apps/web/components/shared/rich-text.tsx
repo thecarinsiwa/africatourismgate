@@ -1,4 +1,5 @@
 import type { HTMLAttributes } from 'react';
+import DOMPurify from 'isomorphic-dompurify';
 import { cn } from '@africatourismgate/ui';
 
 export function hasHtmlMarkup(value: string | null | undefined): boolean {
@@ -9,6 +10,11 @@ export function hasHtmlMarkup(value: string | null | undefined): boolean {
 export function stripHtml(value: string | null | undefined): string {
   if (!value) return '';
   return value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+/** Sanitize untrusted CMS/HTML before dangerouslySetInnerHTML. */
+export function sanitizeHtml(dirty: string): string {
+  return DOMPurify.sanitize(dirty, { USE_PROFILES: { html: true } });
 }
 
 export type RichTextProps = HTMLAttributes<HTMLDivElement> & {
@@ -31,7 +37,7 @@ export function RichText({
           'max-w-none break-words text-sm leading-relaxed text-atg-muted [overflow-wrap:anywhere] [&_a]:break-all [&_a]:text-primary [&_a]:underline [&_img]:my-3 [&_img]:h-auto [&_img]:max-w-full [&_p]:my-2 [&_strong]:font-semibold',
           className,
         )}
-        dangerouslySetInnerHTML={{ __html: content }}
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(content) }}
         {...props}
       />
     );
