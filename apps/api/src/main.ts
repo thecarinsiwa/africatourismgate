@@ -28,7 +28,14 @@ async function bootstrap() {
     mkdirSync(uploadsDir, { recursive: true });
   }
   // Exposed as /api/uploads/… so nginx `location /api/` can serve branding files.
-  app.use(`/${globalPrefix}/uploads`, serveStatic(uploadsDir));
+  app.use(
+    `/${globalPrefix}/uploads`,
+    serveStatic(uploadsDir, {
+      setHeaders: (res) => {
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+      },
+    }),
+  );
   const emailAssetsDir = getEmailAssetsDir();
   if (emailAssetsDir) {
     app.use(`/${globalPrefix}/email-assets`, serveStatic(emailAssetsDir));
