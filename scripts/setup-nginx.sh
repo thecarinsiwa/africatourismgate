@@ -81,6 +81,9 @@ echo "==> Installing ${CONF_DEST}"
 sudo cp "${CONF_SRC}" "${CONF_DEST}"
 sudo ln -sf "${CONF_DEST}" "/etc/nginx/sites-enabled/${SITE_NAME}"
 
+# Shared HTTPS security headers (included by HTTPS server blocks only).
+install_snippet /etc/nginx/snippets/atg-security-headers.conf atg-security-headers.conf 1
+
 if [[ "${CONF_SRC}" == *http-only* ]]; then
   install_snippet /etc/nginx/snippets/atg-api-servers-http.conf atg-api-servers-http.conf 1
   install_snippet /etc/nginx/snippets/atg-pos-servers-http.conf atg-pos-servers-http.conf \
