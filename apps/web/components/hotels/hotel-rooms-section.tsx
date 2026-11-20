@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { PropertyDetailRoom } from '@africatourismgate/types';
+import { safeCssUrl } from '@africatourismgate/utils';
 import { formatHotelPrice } from '../../lib/hotels/listings';
 import {
   SwipeableGalleryLightbox,
@@ -41,23 +42,28 @@ function RoomImagesThumb({
         role="group"
         aria-label={galleryLabels.ariaLabel}
       >
-        {images.map((img, index) => (
-          <button
-            key={img.id}
-            type="button"
-            onClick={() => setLightboxIndex(index)}
-            className="relative h-11 w-14 shrink-0 overflow-hidden rounded-md border border-atg-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:border-atg-border sm:h-14 sm:w-[4.25rem] sm:rounded-lg"
-            aria-label={
-              img.caption ??
-              `${galleryLabels.openLightbox} (${galleryLabels.counter(index + 1, images.length)})`
-            }
-          >
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url("${img.url}")` }}
-            />
-          </button>
-        ))}
+        {images.map((img, index) => {
+          const cssUrl = safeCssUrl(img.url);
+          return (
+            <button
+              key={img.id}
+              type="button"
+              onClick={() => setLightboxIndex(index)}
+              className="relative h-11 w-14 shrink-0 overflow-hidden rounded-md border border-atg-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:border-atg-border sm:h-14 sm:w-[4.25rem] sm:rounded-lg"
+              aria-label={
+                img.caption ??
+                `${galleryLabels.openLightbox} (${galleryLabels.counter(index + 1, images.length)})`
+              }
+            >
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={
+                  cssUrl ? { backgroundImage: `url("${cssUrl}")` } : undefined
+                }
+              />
+            </button>
+          );
+        })}
       </div>
 
       {lightboxIndex != null ? (

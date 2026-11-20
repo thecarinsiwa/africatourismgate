@@ -1,3 +1,5 @@
+import { safeHref } from '@africatourismgate/utils';
+
 type DonateButtonProps = {
   href: string;
   label: string;
@@ -18,10 +20,13 @@ export function DonateButton({
   variant = 'header',
   className = '',
 }: DonateButtonProps) {
+  const safe = safeHref(href);
+  if (!safe) return null;
+
   const classes = `${variantClasses[variant]} ${className}`.trim();
 
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className={classes}>
+    <a href={safe} target="_blank" rel="noopener noreferrer" className={classes}>
       {label}
     </a>
   );

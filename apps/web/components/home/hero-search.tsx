@@ -1,5 +1,6 @@
 'use client';
 
+import { safeHref } from '@africatourismgate/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -64,13 +65,16 @@ export function HeroSlider() {
         if (localizedSlides.length === 0) return;
 
         setSlides(
-          localizedSlides.map((slide) => ({
+          localizedSlides.map((slide, index) => ({
             id: slide.id,
             subtitle: slide.subtitle,
             title: slide.title,
             description: slide.description,
-            image: slide.imageUrl,
-            href: slide.href ?? undefined,
+            image:
+              safeHref(slide.imageUrl) ??
+              HERO_FALLBACK_IMAGES[index] ??
+              HERO_FALLBACK_IMAGES[0]!,
+            href: slide.href ? safeHref(slide.href) ?? undefined : undefined,
           })),
         );
       })

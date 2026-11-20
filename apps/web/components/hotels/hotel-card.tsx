@@ -1,6 +1,7 @@
 'use client';
 
 import type { PropertyType } from '@africatourismgate/types';
+import { safeCssUrl } from '@africatourismgate/utils';
 import Link from 'next/link';
 import {
   buildHotelDetailHref,
@@ -62,6 +63,7 @@ export function HotelCard({ hotel, t, searchParams = {} }: HotelCardProps) {
   const priceLabel = formatHotelPrice(hotel.minPriceCents, hotel.currency);
   const displayAmenities = hotel.amenityCodes.filter(isHotelAmenity);
   const stars = hotel.starRating ?? 0;
+  const imageCssUrl = safeCssUrl(hotel.imageUrl);
 
   return (
     <ProductCard
@@ -69,7 +71,9 @@ export function HotelCard({ hotel, t, searchParams = {} }: HotelCardProps) {
         <>
           <div
             className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-            style={{ backgroundImage: `url("${hotel.imageUrl ?? ''}")` }}
+            style={
+              imageCssUrl ? { backgroundImage: `url("${imageCssUrl}")` } : undefined
+            }
             role="img"
             aria-label={hotel.name}
           />

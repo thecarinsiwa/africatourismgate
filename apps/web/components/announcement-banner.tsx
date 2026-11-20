@@ -1,5 +1,6 @@
 'use client';
 
+import { safeHref } from '@africatourismgate/utils';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
@@ -125,7 +126,8 @@ function BannerMessage({
   const trackRef = useRef<HTMLParagraphElement>(null);
   const [overflowPx, setOverflowPx] = useState(0);
 
-  const showCta = Boolean(ctaLabel && ctaUrl);
+  const safeCtaUrl = safeHref(ctaUrl);
+  const showCta = Boolean(ctaLabel && safeCtaUrl);
   const ctaContent = (
     <>
       {ctaLabel}
@@ -180,14 +182,14 @@ function BannerMessage({
         }
       >
         <span>{text}</span>
-        {showCta ? (
-          ctaUrl!.startsWith('/') && !ctaNewTab ? (
-            <Link href={ctaUrl!} className={ctaClass}>
+        {showCta && safeCtaUrl ? (
+          safeCtaUrl.startsWith('/') && !ctaNewTab ? (
+            <Link href={safeCtaUrl} className={ctaClass}>
               {ctaContent}
             </Link>
           ) : (
             <a
-              href={ctaUrl!}
+              href={safeCtaUrl}
               className={ctaClass}
               {...(ctaNewTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
             >
