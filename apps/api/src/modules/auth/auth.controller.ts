@@ -267,6 +267,8 @@ export class AuthController {
   }
 
   @Post('register')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ login: { limit: 5, ttl: 60_000 } })
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a new admin user account' })
   @ApiOkResponse({ type: AuthResponseDto })
@@ -344,6 +346,8 @@ export class AuthController {
   }
 
   @Post('reset-password')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ forgotPassword: { limit: 5, ttl: 60_000 } })
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Reset password with a valid token' })
   @ApiOkResponse({ type: ResetPasswordResponseDto })
