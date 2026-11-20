@@ -1,12 +1,16 @@
 import type { Page } from '@playwright/test';
 
+/** Stable UUID v4 ids — public detail routes reject non-UUID path params. */
+export const E2E_HOTEL_ID = '00000000-0000-4000-8000-000000001001';
+export const E2E_ROOM_ID = '00000000-0000-4000-8000-000000001002';
+
 const EMPTY_REVIEWS = {
   data: [],
   meta: { total: 0, page: 1, limit: 12, totalPages: 0 },
 };
 
 const DEFAULT_DETAIL = {
-  id: 'test-hotel',
+  id: E2E_HOTEL_ID,
   name: 'Hotel Test Kinshasa',
   propertyType: 'hotel',
   destinationName: 'Kinshasa',
@@ -23,7 +27,7 @@ const DEFAULT_DETAIL = {
   calendarDays: [],
   rooms: [
     {
-      id: 'room-e2e',
+      id: E2E_ROOM_ID,
       name: 'Suite E2E',
       maxGuests: 2,
       bedConfig: '1 king bed',
@@ -44,7 +48,7 @@ const DEFAULT_DETAIL = {
  * crashes (remounting the room "select" button under Playwright).
  */
 export async function mockTestHotelDetail(page: Page): Promise<void> {
-  await page.route('**/api/public/accommodations/test-hotel**', async (route) => {
+  await page.route(`**/api/public/accommodations/${E2E_HOTEL_ID}**`, async (route) => {
     if (route.request().method() !== 'GET') {
       await route.continue();
       return;
@@ -63,4 +67,19 @@ export async function mockTestHotelDetail(page: Page): Promise<void> {
       body: JSON.stringify(DEFAULT_DETAIL),
     });
   });
+}
+
+export function e2eHotelDetailPath(query: {
+  checkIn: string;
+  checkOut: string;
+  guests: number | string;
+  roomId?: string;
+}): string {
+  const params = new URLSearchParams({
+    checkIn: query.checkIn,
+    checkOut: query.checkOut,
+    guests: String(query.guests),
+    roomId: query.roomId ?? E2E_ROOM_ID,
+  });
+  return `/hotels/${E2E_HOTEL_ID}?${params.toString()}`;
 }

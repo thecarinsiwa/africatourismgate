@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { cn } from '@africatourismgate/ui';
+import { safeCssUrl } from '@africatourismgate/utils';
 
 /** En-tête marketing de page liste/détail — breadcrumb, titre, description et actions en slots. */
 export type PageHeroProps = {
@@ -24,6 +25,8 @@ export function PageHero({
   backgroundImage,
   className,
 }: PageHeroProps) {
+  const cssUrl = safeCssUrl(backgroundImage);
+
   return (
     <section
       className={cn(
@@ -31,10 +34,10 @@ export function PageHero({
         className,
       )}
     >
-      {backgroundImage ? (
+      {cssUrl ? (
         <div
           className="absolute inset-0 bg-cover bg-center opacity-40"
-          style={{ backgroundImage: `url("${backgroundImage}")` }}
+          style={{ backgroundImage: `url("${cssUrl}")` }}
           aria-hidden
         />
       ) : null}

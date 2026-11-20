@@ -14,6 +14,7 @@ import {
 } from '../../lib/flights/listings';
 import type { FlightDetail } from '../../lib/flights/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
+import { isUuidV4 } from '../../lib/ids';
 import { useLocale } from 'next-intl';
 import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import { buildReservationQuery } from '../../lib/reservations/flow';
@@ -89,6 +90,13 @@ export function FlightDetailPageContent({
 
   useEffect(() => {
     let cancelled = false;
+    if (!isUuidV4(flightId)) {
+      setDetail(null);
+      setLoading(false);
+      setNotFound(true);
+      setError(false);
+      return;
+    }
     if (!apiQuery) {
       setDetail(null);
       setLoading(false);
@@ -109,7 +117,7 @@ export function FlightDetailPageContent({
         if (cancelled) return;
         setDetail(null);
         const msg = err instanceof Error ? err.message : String(err);
-        if (msg.includes('404')) setNotFound(true);
+        if (/API (400|404):/.test(msg)) setNotFound(true);
         else setError(true);
       })
       .finally(() => {
@@ -120,6 +128,19 @@ export function FlightDetailPageContent({
       cancelled = true;
     };
   }, [flightId, apiQuery, fetchId]);
+
+  const listHref = `/flights${buildFlightsSearchQuery({
+    from: initialSearch.from,
+    to: initialSearch.to,
+    departureDate: initialSearch.departureDate,
+    returnDate: initialSearch.returnDate,
+    passengers: String(passengers),
+  })}`;
+
+  useEffect(() => {
+    if (!notFound) return;
+    router.replace(listHref);
+  }, [notFound, listHref, router]);
 
   const selectedClass = useMemo(
     () => detail?.classes.find((item) => item.id === selectedClassId) ?? null,
@@ -155,14 +176,6 @@ export function FlightDetailPageContent({
     router.push(`/booking/cart?${query}`);
   }
 
-  const listHref = `/flights${buildFlightsSearchQuery({
-    from: initialSearch.from,
-    to: initialSearch.to,
-    departureDate: initialSearch.departureDate,
-    returnDate: initialSearch.returnDate,
-    passengers: String(passengers),
-  })}`;
-
   const sidebarProps = detail
     ? {
         detail,
@@ -175,27 +188,8 @@ export function FlightDetailPageContent({
       }
     : null;
 
-  if (loading && !detail) {
+  if (notFound || (loading && !detail)) {
     return <DetailPageSkeletonShell loadingLabel={f.loading} />;
-  }
-
-  if (notFound) {
-    return (
-      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
-        <HomeHeader />
-        <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-24 text-center sm:px-6 lg:px-8">
-          <h1 className="text-2xl font-bold text-atg-fg">{f.notFound}</h1>
-          <p className="mt-2 text-sm text-atg-muted">{f.notFoundHint}</p>
-          <Link
-            href={listHref}
-            className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
-          >
-            {f.backToList}
-          </Link>
-        </div>
-        <HomeFooter />
-      </div>
-    );
   }
 
   if (error || !detail || !sidebarProps) {

@@ -14,6 +14,7 @@ import {
 import { formatCruisePortLabel } from '../../lib/cruises/ports';
 import type { CruiseSailingDetail } from '../../lib/cruises/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
+import { isUuidV4 } from '../../lib/ids';
 import { useLocale } from 'next-intl';
 import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import { buildReservationQuery } from '../../lib/reservations/flow';
@@ -84,11 +85,26 @@ export function CruiseDetailPageContent({
     [sailingId, initialSearch, guests, selectedAvailabilityId, router],
   );
 
+  const listHref = `/cruises${buildCruisesSearchQuery({
+    sailFrom: initialSearch.sailFrom,
+    sailTo: initialSearch.sailTo,
+    startDate: initialSearch.startDate,
+    endDate: initialSearch.endDate,
+    guests: String(guests),
+  })}`;
+
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
     setNotFound(false);
     setError(false);
+
+    if (!isUuidV4(sailingId)) {
+      setDetail(null);
+      setNotFound(true);
+      setLoading(false);
+      return;
+    }
 
     void getCruiseSailingDetail(sailingId, apiQuery)
       .then((data) => {
@@ -98,7 +114,8 @@ export function CruiseDetailPageContent({
         if (cancelled) return;
         setDetail(null);
         const msg = err instanceof Error ? err.message : String(err);
-        if (msg.includes('404')) setNotFound(true);
+        // Invalid UUID (400) or missing sailing (404) → leave detail route.
+        if (/API (400|404):/.test(msg)) setNotFound(true);
         else setError(true);
       })
       .finally(() => {
@@ -109,6 +126,11 @@ export function CruiseDetailPageContent({
       cancelled = true;
     };
   }, [sailingId, apiQuery, fetchId]);
+
+  useEffect(() => {
+    if (!notFound) return;
+    router.replace(listHref);
+  }, [notFound, listHref, router]);
 
   const selectedCabin = useMemo(
     () =>
@@ -141,14 +163,6 @@ export function CruiseDetailPageContent({
     router.push(`/booking/cart?${query}`);
   }
 
-  const listHref = `/cruises${buildCruisesSearchQuery({
-    sailFrom: initialSearch.sailFrom,
-    sailTo: initialSearch.sailTo,
-    startDate: initialSearch.startDate,
-    endDate: initialSearch.endDate,
-    guests: String(guests),
-  })}`;
-
   const sidebarProps = detail
     ? {
         detail,
@@ -161,27 +175,8 @@ export function CruiseDetailPageContent({
       }
     : null;
 
-  if (loading && !detail) {
+  if (notFound || (loading && !detail)) {
     return <DetailPageSkeletonShell loadingLabel={c.loading} />;
-  }
-
-  if (notFound) {
-    return (
-      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
-        <HomeHeader />
-        <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-24 text-center sm:px-6 lg:px-8">
-          <h1 className="text-2xl font-bold text-atg-fg">{c.notFound}</h1>
-          <p className="mt-2 text-sm text-atg-muted">{c.notFoundHint}</p>
-          <Link
-            href={listHref}
-            className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
-          >
-            {c.backToList}
-          </Link>
-        </div>
-        <HomeFooter />
-      </div>
-    );
   }
 
   if (error || !detail || !sidebarProps) {

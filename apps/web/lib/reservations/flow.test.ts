@@ -108,6 +108,27 @@ test('parseReservationDraft rejects vehicle without routeId', () => {
   );
 });
 
+test('parseReservationDraft rejects non-UUID ids', () => {
+  assert.equal(
+    parseReservationDraft({
+      kind: 'cabin',
+      sailingId: '00000000-0000-4000-80000-000000003036',
+      cabinAvailabilityId: '00000000-0000-4000-8000-000000003037',
+      guests: '2',
+    }),
+    null,
+  );
+  assert.equal(
+    parseReservationDraft({
+      kind: 'package',
+      packageId: 'not-a-uuid',
+      startDate: '2026-08-01',
+      travelers: '2',
+    }),
+    null,
+  );
+});
+
 test('buildReservationQuery serializes vehicle draft', () => {
   const query = buildReservationQuery({
     kind: 'vehicle',

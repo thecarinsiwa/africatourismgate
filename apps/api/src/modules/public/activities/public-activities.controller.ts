@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  ParseUUIDPipe,
   Post,
   Query,
   UseGuards,
@@ -64,7 +65,7 @@ export class PublicActivitiesController {
   @ApiOperation({
     summary: 'Activity partner detail with destination and public activities',
   })
-  getProviderById(@Param('id') id: string) {
+  getProviderById(@Param('id', ParseUUIDPipe) id: string) {
     return this.service.getProviderById(id);
   }
 
@@ -77,7 +78,7 @@ export class PublicActivitiesController {
       'Submit a booking inquiry when the activity has no available slots (admin toggle required)',
   })
   submitBookingRequest(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: CreateActivityBookingRequestDto,
   ): Promise<ActivityBookingRequestResponseDto> {
     return this.service.submitBookingRequest(id, dto);
@@ -88,7 +89,10 @@ export class PublicActivitiesController {
   @ApiOperation({
     summary: 'Activity detail with available schedule slots',
   })
-  getById(@Param('id') id: string, @Query() query: ActivityDetailQueryDto) {
+  getById(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query() query: ActivityDetailQueryDto,
+  ) {
     return this.service.getById(id, query);
   }
 }

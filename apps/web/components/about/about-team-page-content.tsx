@@ -9,7 +9,7 @@ import { Spinner } from '@africatourismgate/ui';
 import { teamMemberPath } from '../../lib/about/routes';
 import { browseTeamMembersForLocale } from '../../lib/api/public';
 import { useScrollAnimation } from '../home/use-scroll-animation';
-import { stripHtml } from '../shared/rich-text';
+import { stripHtml } from '../shared/html-plain';
 
 export function AboutTeamPageContent() {
   const locale = useLocale();

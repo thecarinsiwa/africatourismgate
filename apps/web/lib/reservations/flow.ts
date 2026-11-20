@@ -7,6 +7,7 @@ import type { ActivityDetail } from '../activities/types';
 import type { VehicleDetail } from '../cars/types';
 import type { CruiseSailingDetail } from '../cruises/types';
 import type { FlightDetail } from '../flights/types';
+import { isUuidV4 } from '../ids';
 import { parsePackageLinesFromSearchParams } from '../packages/package-lines';
 
 export type RoomReservationDraft = {
@@ -155,6 +156,7 @@ export function parseReservationDraft(
 
   if (kind === 'package') {
     const packageId = readString(searchParams.packageId);
+    if (packageId && !isUuidV4(packageId)) return null;
     const startDate =
       readString(searchParams.startDate) ||
       readString(searchParams.date) ||
@@ -216,7 +218,14 @@ export function parseReservationDraft(
     const date = readString(searchParams.date);
     const participants = readPositiveInt(searchParams.participants);
 
-    if (!activityId || !scheduleId || !date || participants == null) {
+    if (
+      !activityId ||
+      !scheduleId ||
+      !date ||
+      participants == null ||
+      !isUuidV4(activityId) ||
+      !isUuidV4(scheduleId)
+    ) {
       return null;
     }
 
@@ -233,7 +242,13 @@ export function parseReservationDraft(
     const sailingId = readString(searchParams.sailingId);
     const guests = readPositiveInt(searchParams.guests);
 
-    if (!sailingId || !cabinAvailabilityId || guests == null) {
+    if (
+      !sailingId ||
+      !cabinAvailabilityId ||
+      guests == null ||
+      !isUuidV4(sailingId) ||
+      !isUuidV4(cabinAvailabilityId)
+    ) {
       return null;
     }
 
@@ -255,7 +270,16 @@ export function parseReservationDraft(
     const departureDatetime =
       readString(searchParams.departureDatetime) || undefined;
 
-    if (!vehicleId || !availabilitySlotId || !routeId || !travelDate) {
+    if (
+      !vehicleId ||
+      !availabilitySlotId ||
+      !routeId ||
+      !travelDate ||
+      !isUuidV4(vehicleId) ||
+      !isUuidV4(availabilitySlotId) ||
+      !isUuidV4(routeId) ||
+      (vehicleTripId != null && !isUuidV4(vehicleTripId))
+    ) {
       return null;
     }
 
@@ -276,7 +300,14 @@ export function parseReservationDraft(
     const departureDate = readString(searchParams.departureDate);
     const passengers = readPositiveInt(searchParams.passengers);
 
-    if (!flightId || !flightClassId || !departureDate || passengers == null) {
+    if (
+      !flightId ||
+      !flightClassId ||
+      !departureDate ||
+      passengers == null ||
+      !isUuidV4(flightId) ||
+      !isUuidV4(flightClassId)
+    ) {
       return null;
     }
 
@@ -295,7 +326,15 @@ export function parseReservationDraft(
   const checkOut = readString(searchParams.checkOut);
   const guests = readPositiveInt(searchParams.guests);
 
-  if (!propertyId || !roomId || !checkIn || !checkOut || guests == null) {
+  if (
+    !propertyId ||
+    !roomId ||
+    !checkIn ||
+    !checkOut ||
+    guests == null ||
+    !isUuidV4(propertyId) ||
+    !isUuidV4(roomId)
+  ) {
     return null;
   }
 

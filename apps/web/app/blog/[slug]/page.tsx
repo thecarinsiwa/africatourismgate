@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import { BlogDetailPageContent } from '../../../components/blog/blog-detail-page-content';
-import { stripHtml } from '../../../components/shared/rich-text';
+import { stripHtml } from '../../../components/shared/html-plain';
 import { getBlogPostBySlugForLocale } from '../../../lib/api/public';
 import {
   buildPageMetadata,

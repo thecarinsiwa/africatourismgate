@@ -15,6 +15,7 @@ import {
 } from '../../lib/packages/listings';
 import type { PackageDetail } from '../../lib/packages/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
+import { isUuidV4 } from '../../lib/ids';
 import { useLocale } from 'next-intl';
 import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import {
@@ -25,6 +26,7 @@ import { DetailPageSkeleton } from '../shared/loading-skeletons';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { ProductGallery } from '../shared';
+import { hasHtmlMarkup, sanitizeHtml, stripHtml } from '../shared/rich-text';
 import { PackageBookingMobileBar, PackageBookingSidebar } from './package-booking-sidebar';
 import {
   PackageCompositionStepper,
@@ -43,14 +45,6 @@ function inferInitialStep(startDate: string, hash: string): PackageCompositionSt
   if (!startDate) return 'overview';
   if (hash === '#recap') return 'recap';
   return 'configure';
-}
-
-function hasHtmlMarkup(value: string): boolean {
-  return /<[^>]+>/.test(value);
-}
-
-function stripHtml(value: string): string {
-  return value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
 function countWords(value: string): number {
@@ -125,6 +119,13 @@ export function PackageDetailPageContent({
     setNotFound(false);
     setError(false);
 
+    if (!isUuidV4(packageId)) {
+      setDetail(null);
+      setNotFound(true);
+      setLoading(false);
+      return;
+    }
+
     void getPackageDetail(packageId)
       .then((data) => {
         if (cancelled) return;
@@ -134,7 +135,7 @@ export function PackageDetailPageContent({
         if (cancelled) return;
         setDetail(null);
         const msg = err instanceof Error ? err.message : String(err);
-        if (msg.includes('404')) setNotFound(true);
+        if (/API (400|404):/.test(msg)) setNotFound(true);
         else setError(true);
       })
       .finally(() => {
@@ -145,6 +146,11 @@ export function PackageDetailPageContent({
       cancelled = true;
     };
   }, [packageId, fetchId]);
+
+  useEffect(() => {
+    if (!notFound) return;
+    router.replace(listHref);
+  }, [notFound, listHref, router]);
 
   useEffect(() => {
     if (!detail) return;
@@ -252,11 +258,11 @@ export function PackageDetailPageContent({
       </div>
 
       <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 pb-40 sm:px-6 lg:px-8 lg:pb-8">
-        {loading && (
+        {(loading || notFound) && (
           <DetailPageSkeleton loadingLabel={p.loadingDetail} layout="package" />
         )}
 
-        {error && (
+        {error && !notFound && (
           <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200">
             <p>{p.loadError}</p>
             <button
@@ -266,19 +272,6 @@ export function PackageDetailPageContent({
             >
               {p.retry}
             </button>
-          </div>
-        )}
-
-        {notFound && !loading && (
-          <div className="rounded-2xl border border-dashed border-atg-border bg-atg-elevated px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <h1 className="text-xl font-bold text-atg-fg">{p.notFound}</h1>
-            <p className="mt-2 text-sm text-atg-muted">{p.notFoundHint}</p>
-            <Link
-              href={listHref}
-              className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
-            >
-              {p.backToList}
-            </Link>
           </div>
         )}
 
@@ -315,7 +308,9 @@ export function PackageDetailPageContent({
                   ) : descriptionHasHtml ? (
                     <div
                       className="mt-4 max-w-none break-words text-base leading-relaxed text-atg-muted [overflow-wrap:anywhere] [&_a]:break-all [&_img]:my-3 [&_img]:h-auto [&_img]:max-w-full [&_p]:my-2 [&_strong]:font-semibold"
-                      dangerouslySetInnerHTML={{ __html: detail.package.description }}
+                      dangerouslySetInnerHTML={{
+                        __html: sanitizeHtml(detail.package.description),
+                      }}
                     />
                   ) : (
                     <p className="mt-4 break-words text-base leading-relaxed text-atg-muted [overflow-wrap:anywhere]">

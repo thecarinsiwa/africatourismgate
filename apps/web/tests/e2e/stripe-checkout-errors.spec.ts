@@ -3,7 +3,10 @@ import { fillCheckoutManifest, mockManifestApi } from './helpers/fill-manifest';
 import { mockBookingCheckoutRoutes } from './helpers/mock-booking-checkout';
 import { mockCheckoutAuth } from './helpers/mock-checkout-auth';
 import { mockBookingModes } from './helpers/mock-booking-modes';
-import { mockTestHotelDetail } from './helpers/mock-hotel-detail';
+import {
+  e2eHotelDetailPath,
+  mockTestHotelDetail,
+} from './helpers/mock-hotel-detail';
 
 const SAFE_PAYMENT_ERROR = 'Unable to start payment. Please try again.';
 
@@ -35,7 +38,11 @@ async function seedCheckoutSession(page: Page): Promise<void> {
 
 async function navigateHotelToRecap(page: Page): Promise<void> {
   await page.goto(
-    '/hotels/test-hotel?checkIn=2026-11-10&checkOut=2026-11-12&guests=2&roomId=room-e2e',
+    e2eHotelDetailPath({
+      checkIn: '2026-11-10',
+      checkOut: '2026-11-12',
+      guests: 2,
+    }),
   );
 
   const selectRoom = page

@@ -6,6 +6,7 @@ import { Spinner } from '@africatourismgate/ui';
 import { useLocale, useTranslations } from 'next-intl';
 import { getLegalPageBySectionKeyForLocale } from '../../lib/api/public';
 import { useScrollAnimation } from '../home/use-scroll-animation';
+import { sanitizeHtml } from '../shared/rich-text';
 import { LegalShell } from './legal-shell';
 
 type LegalDocumentPageContentProps = {
@@ -94,7 +95,7 @@ export function LegalDocumentPageContent({
 
         <div
           className="prose prose-neutral max-w-none dark:prose-invert prose-p:text-atg-muted prose-headings:text-atg-fg prose-a:text-primary"
-          dangerouslySetInnerHTML={{ __html: page.content }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }}
         />
       </article>
     </LegalShell>

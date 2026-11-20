@@ -1,5 +1,6 @@
 import type { PublicDonation } from '@africatourismgate/types';
 import { DonateButton } from './donate-button';
+import { sanitizeHtml } from './shared/rich-text';
 
 type DonationsListSectionProps = {
   items: PublicDonation[];
@@ -31,7 +32,7 @@ export function DonationsListSection({ items, allCampaignsLabel }: DonationsList
                 {item.description ? (
                   <div
                     className="mt-2 text-sm leading-relaxed text-atg-muted [&_p]:mb-2 [&_p:last-child]:mb-0 [&_h2]:mb-2 [&_h2]:mt-3 [&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-atg-fg [&_ul]:mb-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:mb-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_strong]:font-semibold [&_a]:text-primary [&_a]:underline [&_img]:my-2 [&_img]:max-h-64 [&_img]:w-auto [&_img]:max-w-full [&_img]:rounded-md"
-                    dangerouslySetInnerHTML={{ __html: item.description }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.description) }}
                   />
                 ) : null}
               </div>

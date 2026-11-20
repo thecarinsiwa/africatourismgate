@@ -1,6 +1,73 @@
 const PRODUCTION_ADMIN_URL = 'https://app-africatourismgate.org';
 const PRODUCTION_WEB_URL = 'https://africatourismgate.org';
 
+/** Characters that break out of CSS `url("…")` when interpolated raw. */
+const CSS_URL_BREAKOUT = /["'()\\\n\r\f]/;
+
+/** Control chars (C0 + DEL) or backslash — common bypass / CSS breakout vectors. */
+function hasUnsafeUrlChars(value: string): boolean {
+  for (let i = 0; i < value.length; i += 1) {
+    const code = value.charCodeAt(i);
+    if (code <= 0x1f || code === 0x7f || code === 0x5c /* \ */) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * True when `value` is a same-origin path (`/…`, not `//…`) or an absolute
+ * `http:` / `https:` URL. Rejects `javascript:`, `data:`, userinfo phishing, etc.
+ */
+export function isSafeHttpUrl(value: string | null | undefined): boolean {
+  return safeHref(value) !== null;
+}
+
+/**
+ * Returns a trimmed href safe for `<a href>` / `<Link href>` / `src`, or `null`.
+ */
+export function safeHref(value: string | null | undefined): string | null {
+  if (value == null || typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  if (hasUnsafeUrlChars(trimmed)) return null;
+
+  // Relative path (not protocol-relative).
+  if (trimmed.startsWith('/')) {
+    if (trimmed.startsWith('//')) return null;
+    if (trimmed.includes('://')) return null;
+    return trimmed;
+  }
+
+  let parsed: URL;
+  try {
+    parsed = new URL(trimmed);
+  } catch {
+    return null;
+  }
+
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+    return null;
+  }
+
+  // https://user@host phishing / credential stuffing in links
+  if (parsed.username || parsed.password) return null;
+
+  return parsed.toString();
+}
+
+/**
+ * Returns a URL safe to embed in `style={{ backgroundImage: \`url("${…}")\` }}`,
+ * or `null` if unsafe / would break out of the CSS string.
+ */
+export function safeCssUrl(value: string | null | undefined): string | null {
+  const href = safeHref(value);
+  if (!href) return null;
+  if (CSS_URL_BREAKOUT.test(href)) return null;
+  return href;
+}
+
+
 /**
  * Back-office admin (apps/admin).
  * Production: https://app-africatourismgate.org — never the root domain.

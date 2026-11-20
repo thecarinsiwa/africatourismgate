@@ -8,18 +8,12 @@ import { createBookingCheckoutSession, getBooking } from '../../lib/api/booking'
 import { getAuthErrorMessage } from '../../lib/auth/api-errors';
 import { completeWebLoginFromAuthResponse } from '../../lib/auth/complete-web-login';
 import { stripDevOriginFromNextPath } from '../../lib/auth/dev-oauth-return';
+import { normalizeNextPath } from '../../lib/auth/normalize-next-path';
 import { useDevOAuthReturnRedirect } from '../../lib/auth/use-dev-oauth-return-redirect';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 
 const RESEND_COOLDOWN_SECONDS = 60;
-
-function normalizeNextPath(nextPath: string | null): string {
-  if (!nextPath || !nextPath.startsWith('/') || nextPath.startsWith('//')) {
-    return '/booking/cart';
-  }
-  return nextPath;
-}
 
 export function BookingVerifyPageContent() {
   const t = useTranslations('booking.verify');

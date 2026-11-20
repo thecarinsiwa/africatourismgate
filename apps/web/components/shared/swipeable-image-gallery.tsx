@@ -1,5 +1,6 @@
 'use client';
 
+import { safeCssUrl, safeHref } from '@africatourismgate/utils';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTouchSwipe } from '../../lib/hooks/use-touch-swipe';
@@ -80,6 +81,7 @@ export function SwipeableGalleryLightbox({
   const panelRef = useRef<HTMLDivElement>(null);
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
   const active = images[index];
+  const activeSrc = active ? safeHref(active.url) : null;
   const hasMultiple = images.length > 1;
 
   const goPrevious = useCallback(() => {
@@ -193,12 +195,14 @@ export function SwipeableGalleryLightbox({
             </button>
           ) : null}
 
-          <img
-            src={active.url}
-            alt={active.caption ?? `${name} ${index + 1}`}
-            className="max-h-[min(80vh,720px)] w-full rounded-lg object-contain"
-            draggable={false}
-          />
+          {activeSrc ? (
+            <img
+              src={activeSrc}
+              alt={active.caption ?? `${name} ${index + 1}`}
+              className="max-h-[min(80vh,720px)] w-full rounded-lg object-contain"
+              draggable={false}
+            />
+          ) : null}
 
           {hasMultiple ? (
             <button
@@ -248,6 +252,8 @@ export function SwipeableImageGallery({ images, name, labels }: SwipeableImageGa
 
   if (!active) return null;
 
+  const activeCssUrl = safeCssUrl(active.url);
+
   return (
     <section aria-label={labels.ariaLabel} className="min-w-0">
       <button
@@ -263,7 +269,9 @@ export function SwipeableImageGallery({ images, name, labels }: SwipeableImageGa
       >
         <div
           className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-[1.02]"
-          style={{ backgroundImage: `url("${active.url}")` }}
+          style={
+            activeCssUrl ? { backgroundImage: `url("${activeCssUrl}")` } : undefined
+          }
           role="img"
           aria-label={active.caption ?? name}
         />
@@ -284,25 +292,32 @@ export function SwipeableImageGallery({ images, name, labels }: SwipeableImageGa
 
       {sorted.length > 1 ? (
         <div className="mt-3 flex max-w-full gap-2 overflow-x-auto pb-1 snap-x snap-mandatory [-webkit-overflow-scrolling:touch]">
-          {sorted.map((img, index) => (
-            <button
-              key={img.id}
-              type="button"
-              onClick={() => setActiveIndex(index)}
-              className={`relative h-[4.5rem] w-[5.5rem] shrink-0 snap-start overflow-hidden rounded-lg border-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface sm:h-20 sm:w-28 ${
-                index === activeIndex
-                  ? 'border-primary ring-2 ring-primary/30'
-                  : 'border-transparent opacity-80 hover:opacity-100'
-              }`}
-              aria-label={img.caption ?? `${name} ${index + 1}`}
-              aria-current={index === activeIndex ? 'true' : undefined}
-            >
-              <div
-                className="absolute inset-0 bg-cover bg-center"
-                style={{ backgroundImage: `url("${img.url}")` }}
-              />
-            </button>
-          ))}
+          {sorted.map((img, index) => {
+            const thumbCssUrl = safeCssUrl(img.url);
+            return (
+              <button
+                key={img.id}
+                type="button"
+                onClick={() => setActiveIndex(index)}
+                className={`relative h-[4.5rem] w-[5.5rem] shrink-0 snap-start overflow-hidden rounded-lg border-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface sm:h-20 sm:w-28 ${
+                  index === activeIndex
+                    ? 'border-primary ring-2 ring-primary/30'
+                    : 'border-transparent opacity-80 hover:opacity-100'
+                }`}
+                aria-label={img.caption ?? `${name} ${index + 1}`}
+                aria-current={index === activeIndex ? 'true' : undefined}
+              >
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={
+                    thumbCssUrl
+                      ? { backgroundImage: `url("${thumbCssUrl}")` }
+                      : undefined
+                  }
+                />
+              </button>
+            );
+          })}
         </div>
       ) : null}
 

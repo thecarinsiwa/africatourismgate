@@ -18,6 +18,7 @@ import {
 } from '../../lib/activities/difficulty';
 import type { ActivityDetail } from '../../lib/activities/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
+import { isUuidV4 } from '../../lib/ids';
 import { useLocale } from 'next-intl';
 import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import { buildReservationQuery, isActivityScheduleOfferBookable } from '../../lib/reservations/flow';
@@ -110,6 +111,13 @@ export function ActivityDetailPageContent({
     setNotFound(false);
     setError(false);
 
+    if (!isUuidV4(activityId)) {
+      setDetail(null);
+      setNotFound(true);
+      setLoading(false);
+      return;
+    }
+
     void getActivityDetail(activityId, apiQuery)
       .then((data) => {
         if (!cancelled) setDetail(data);
@@ -118,7 +126,7 @@ export function ActivityDetailPageContent({
         if (cancelled) return;
         setDetail(null);
         const msg = err instanceof Error ? err.message : String(err);
-        if (msg.includes('404')) setNotFound(true);
+        if (/API (400|404):/.test(msg)) setNotFound(true);
         else setError(true);
       })
       .finally(() => {
@@ -129,6 +137,17 @@ export function ActivityDetailPageContent({
       cancelled = true;
     };
   }, [activityId, apiQuery, fetchId]);
+
+  const listHref = `/activities${buildActivitiesSearchQuery({
+    destination: initialSearch.destination,
+    date: initialSearch.date,
+    participants: String(participants),
+  })}`;
+
+  useEffect(() => {
+    if (!notFound) return;
+    router.replace(listHref);
+  }, [notFound, listHref, router]);
 
   useEffect(() => {
     if (!detail) return;
@@ -183,12 +202,6 @@ export function ActivityDetailPageContent({
     router.push(`/booking/cart?${query}`);
   }
 
-  const listHref = `/activities${buildActivitiesSearchQuery({
-    destination: initialSearch.destination,
-    date: initialSearch.date,
-    participants: String(participants),
-  })}`;
-
   const sidebarProps = detail
     ? {
         detail,
@@ -201,27 +214,8 @@ export function ActivityDetailPageContent({
       }
     : null;
 
-  if (loading && !detail) {
+  if (notFound || (loading && !detail)) {
     return <DetailPageSkeletonShell loadingLabel={a.loading} />;
-  }
-
-  if (notFound) {
-    return (
-      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
-        <HomeHeader />
-        <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-24 text-center sm:px-6 lg:px-8">
-          <h1 className="text-2xl font-bold text-atg-fg">{a.notFound}</h1>
-          <p className="mt-2 text-sm text-atg-muted">{a.notFoundHint}</p>
-          <Link
-            href={listHref}
-            className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
-          >
-            {a.backToList}
-          </Link>
-        </div>
-        <HomeFooter />
-      </div>
-    );
   }
 
   if (error || !detail || !sidebarProps) {

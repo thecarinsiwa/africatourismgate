@@ -1,8 +1,9 @@
 'use client';
 
+import type { PublicWhyUsContent, PublicWhyUsItem, WhyUsIconKey } from '@africatourismgate/types';
+import { safeHref } from '@africatourismgate/utils';
 import Link from 'next/link';
 import { useEffect, useState, type ReactNode } from 'react';
-import type { PublicWhyUsContent, PublicWhyUsItem, WhyUsIconKey } from '@africatourismgate/types';
 import { useLocale, useTranslations } from 'next-intl';
 import { ABOUT_PATHS } from '../../lib/about/routes';
 import { getPublicWhyUsForLocale } from '../../lib/api/public';
@@ -94,7 +95,7 @@ function toDisplayItems(content: PublicWhyUsContent | null, fallbackItems: Displ
     id: item.id,
     title: item.title,
     description: item.description,
-    linkUrl: item.linkUrl,
+    linkUrl: safeHref(item.linkUrl) ?? ABOUT_PATHS.whoWeAre,
     iconKey: item.iconKey,
   }));
 }

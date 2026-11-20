@@ -10,6 +10,7 @@ import { Spinner } from '@africatourismgate/ui';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { PageHero } from '../shared/page-hero';
+import { sanitizeHtml } from '../shared/rich-text';
 import { BlogEngagementSection } from './blog-engagement-section';
 
 type BlogDetailPageContentProps = {
@@ -131,7 +132,7 @@ export function BlogDetailPageContent({ slug }: BlogDetailPageContentProps) {
 
               <div
                 className="prose prose-neutral mt-8 max-w-none dark:prose-invert prose-p:text-atg-muted prose-headings:text-atg-fg"
-                dangerouslySetInnerHTML={{ __html: post.content }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }}
               />
 
               <BlogEngagementSection slug={post.slug} title={post.title} />

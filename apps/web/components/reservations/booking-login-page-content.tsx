@@ -12,6 +12,7 @@ import {
 import { buildGoogleOAuthStartUrl, loginWithPassword } from '../../lib/api/auth';
 import { getAuthErrorMessage } from '../../lib/auth/api-errors';
 import { completeWebLoginFromAuthResponse } from '../../lib/auth/complete-web-login';
+import { normalizeNextPath } from '../../lib/auth/normalize-next-path';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { GoogleIcon } from '../icons/google-icon';
@@ -21,13 +22,6 @@ type Props = {
   nextPath?: string;
   oauthError?: string;
 };
-
-function normalizeNextPath(nextPath?: string): string {
-  if (!nextPath || !nextPath.startsWith('/') || nextPath.startsWith('//')) {
-    return '/booking/cart';
-  }
-  return nextPath;
-}
 
 function buildRegisterHref(nextPath: string): string {
   const params = new URLSearchParams({ next: nextPath });

@@ -2,7 +2,10 @@ import { expect, test } from './fixtures';
 import { fillCheckoutManifest, mockManifestApi } from './helpers/fill-manifest';
 import { mockBookingCheckoutRoutes } from './helpers/mock-booking-checkout';
 import { mockCheckoutAuth } from './helpers/mock-checkout-auth';
-import { mockTestHotelDetail } from './helpers/mock-hotel-detail';
+import {
+  e2eHotelDetailPath,
+  mockTestHotelDetail,
+} from './helpers/mock-hotel-detail';
 import { mockWebPaymentMethods } from './helpers/mock-web-payment-methods';
 
 test('panier -> recap -> Stripe -> confirmation', async ({ page }) => {
@@ -40,7 +43,11 @@ test('panier -> recap -> Stripe -> confirmation', async ({ page }) => {
   await mockManifestApi(page);
 
   await page.goto(
-    '/hotels/test-hotel?checkIn=2026-11-10&checkOut=2026-11-12&guests=2&roomId=room-e2e',
+    e2eHotelDetailPath({
+      checkIn: '2026-11-10',
+      checkOut: '2026-11-12',
+      guests: 2,
+    }),
   );
 
   const selectRoom = page
@@ -118,7 +125,11 @@ test('panier -> recap -> cash -> attente paiement sur place', async ({ page }) =
   await mockManifestApi(page);
 
   await page.goto(
-    '/hotels/test-hotel?checkIn=2026-11-10&checkOut=2026-11-12&guests=2&roomId=room-e2e',
+    e2eHotelDetailPath({
+      checkIn: '2026-11-10',
+      checkOut: '2026-11-12',
+      guests: 2,
+    }),
   );
 
   const selectRoom = page
