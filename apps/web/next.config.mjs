@@ -49,12 +49,23 @@ function buildContentSecurityPolicy() {
     'https://*.africatourismgate.org',
     'https://*.tile.openstreetmap.org',
     'https://tile.openstreetmap.org',
+    // Leaflet itinerary road routing (override via NEXT_PUBLIC_OSRM_URL).
+    'https://router.project-osrm.org',
   ]);
 
   try {
     connectSrc.add(new URL(apiUrl).origin);
   } catch {
     // ignore invalid NEXT_PUBLIC_API_URL
+  }
+
+  const osrmUrl = process.env.NEXT_PUBLIC_OSRM_URL?.trim();
+  if (osrmUrl) {
+    try {
+      connectSrc.add(new URL(osrmUrl).origin);
+    } catch {
+      // ignore invalid NEXT_PUBLIC_OSRM_URL
+    }
   }
 
   if (!isProduction) {

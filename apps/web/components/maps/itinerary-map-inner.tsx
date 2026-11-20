@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { LayerGroup, Map as LeafletMap } from 'leaflet';
+import {
+  fetchOsrmDrivingRoute,
+  straightLineLatLngs,
+} from '../../lib/maps/osrm-route';
 import type { ItineraryMapPoint } from '../../lib/maps/types';
 
 type ItineraryMapInnerProps = {
@@ -11,6 +15,12 @@ type ItineraryMapInnerProps = {
 };
 
 const DEFAULT_HEIGHT_CLASS = 'h-[320px] w-full sm:h-[400px]';
+const ROUTE_STYLE = {
+  color: 'var(--atg-primary, #c8102e)',
+  weight: 3,
+  opacity: 0.85,
+  lineJoin: 'round' as const,
+};
 
 export function ItineraryMapInner({
   points,
@@ -66,9 +76,15 @@ export function ItineraryMapInner({
       return;
     }
 
-    void import('leaflet').then((L) => {
-      renderItinerary(L, map, layerGroup, points);
+    const controller = new AbortController();
+
+    void import('leaflet').then(async (L) => {
+      await renderItinerary(L, map, layerGroup, points, controller.signal);
     });
+
+    return () => {
+      controller.abort();
+    };
   }, [points, mapReady]);
 
   return (
@@ -81,26 +97,25 @@ export function ItineraryMapInner({
   );
 }
 
-function renderItinerary(
+async function renderItinerary(
   L: typeof import('leaflet'),
   map: LeafletMap,
   layerGroup: import('leaflet').LayerGroup,
   points: ItineraryMapPoint[],
+  signal: AbortSignal,
 ) {
   layerGroup.clearLayers();
 
-  if (!points.length) {
+  if (!points.length || signal.aborted) {
     return;
   }
 
   const bounds = L.latLngBounds([]);
-  const latLngs: import('leaflet').LatLngExpression[] = [];
 
   for (let index = 0; index < points.length; index += 1) {
     const point = points[index];
     const latLng = L.latLng(point.latitude, point.longitude);
     bounds.extend(latLng);
-    latLngs.push(latLng);
 
     const marker = L.marker(latLng, {
       icon: createNumberedMarkerIcon(L, index + 1),
@@ -123,13 +138,33 @@ function renderItinerary(
     marker.addTo(layerGroup);
   }
 
-  if (latLngs.length >= 2) {
-    L.polyline(latLngs, {
-      color: 'var(--atg-primary, #c8102e)',
-      weight: 3,
-      opacity: 0.85,
-      lineJoin: 'round',
+  if (points.length >= 2) {
+    // Draw straight preview immediately, then upgrade to OSRM road geometry.
+    const straight = straightLineLatLngs(points);
+    const preview = L.polyline(straight, {
+      ...ROUTE_STYLE,
+      opacity: 0.35,
+      dashArray: '6 8',
     }).addTo(layerGroup);
+
+    const routed = await fetchOsrmDrivingRoute(points, signal);
+    if (signal.aborted) {
+      return;
+    }
+
+    layerGroup.removeLayer(preview);
+    const path = routed ?? straight;
+    L.polyline(path, ROUTE_STYLE).addTo(layerGroup);
+
+    if (routed) {
+      for (const [lat, lng] of routed) {
+        bounds.extend([lat, lng]);
+      }
+    }
+  }
+
+  if (signal.aborted) {
+    return;
   }
 
   if (points.length === 1) {
