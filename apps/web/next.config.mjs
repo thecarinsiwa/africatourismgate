@@ -38,6 +38,74 @@ const AUTH_EXACT_PATHS = new Set([
   '/reset-password',
 ]);
 
+/**
+ * Baseline security headers + permissive CSP (allows inline theme/locale scripts).
+ * Tighten script-src with nonces in a later pass — not in this change.
+ */
+function buildContentSecurityPolicy() {
+  const connectSrc = new Set([
+    "'self'",
+    'https://app-africatourismgate.org',
+    'https://*.africatourismgate.org',
+    'https://*.tile.openstreetmap.org',
+    'https://tile.openstreetmap.org',
+  ]);
+
+  try {
+    connectSrc.add(new URL(apiUrl).origin);
+  } catch {
+    // ignore invalid NEXT_PUBLIC_API_URL
+  }
+
+  if (!isProduction) {
+    for (const host of ['localhost', '127.0.0.1']) {
+      connectSrc.add(`http://${host}:3000`);
+      connectSrc.add(`http://${host}:${webPort}`);
+      connectSrc.add(`ws://${host}:${webPort}`);
+      connectSrc.add(`wss://${host}:${webPort}`);
+    }
+  }
+
+  const scriptSrc = isProduction
+    ? "'self' 'unsafe-inline'"
+    : "'self' 'unsafe-inline' 'unsafe-eval'";
+
+  const directives = [
+    "default-src 'self'",
+    `script-src ${scriptSrc}`,
+    "style-src 'self' 'unsafe-inline'",
+    // https: covers Wikimedia / remote CMS assets; http: covers local API uploads in dev.
+    "img-src 'self' data: blob: https: http:",
+    "font-src 'self' data:",
+    `connect-src ${[...connectSrc].join(' ')}`,
+    "media-src 'self' blob:",
+    "worker-src 'self' blob:",
+    "frame-src 'self' https://checkout.stripe.com https://js.stripe.com https://hooks.stripe.com",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "object-src 'none'",
+    "form-action 'self' https://checkout.stripe.com https://*.stripe.com https://accounts.google.com",
+  ];
+
+  if (isProduction) {
+    directives.push('upgrade-insecure-requests');
+  }
+
+  return directives.join('; ');
+}
+
+const securityHeaders = [
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'X-Frame-Options', value: 'DENY' },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+  {
+    key: 'Permissions-Policy',
+    // Camera used for manifest / payment-proof capture on checkout.
+    value: 'camera=(self), microphone=(), geolocation=(), payment=()',
+  },
+  { key: 'Content-Security-Policy', value: buildContentSecurityPolicy() },
+];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Isolate E2E prod builds (NEXT_DIST_DIR=.next-e2e) from a concurrent `pnpm dev`
@@ -49,6 +117,14 @@ const nextConfig = {
     NEXT_PUBLIC_GAP_URL: gapPublicUrl,
     WEB_PORT: webPort,
     ATG_REMOTE_API_URL: remoteProxy ? getRemoteApiTargetUrl() : '',
+  },
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: securityHeaders,
+      },
+    ];
   },
   images: {
     // CI / E2E: skip optimizer upstream fetches (Wikimedia 429/404 noise & flakiness).
