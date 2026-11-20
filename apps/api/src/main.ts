@@ -2,6 +2,7 @@ import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { json, static as serveStatic, urlencoded } from 'express';
+import helmet from 'helmet';
 import { existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { AppModule } from './app.module';
@@ -14,6 +15,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { rawBody: true });
   // Behind nginx: honor X-Forwarded-Proto so req.protocol is https in production.
   app.getHttpAdapter().getInstance().set('trust proxy', 1);
+  // Soft Helmet: baseline headers without CSP/COEP (avoids breaking Swagger UI / embeds).
+  app.use(
+    helmet({
+      contentSecurityPolicy: false,
+      crossOriginEmbedderPolicy: false,
+    }),
+  );
   const globalPrefix = process.env.API_GLOBAL_PREFIX ?? 'api';
   const uploadsDir = join(process.cwd(), 'uploads');
   if (!existsSync(uploadsDir)) {
