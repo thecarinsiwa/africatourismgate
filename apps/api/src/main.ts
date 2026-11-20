@@ -43,14 +43,20 @@ async function bootstrap() {
     }),
   );
 
-  const config = new DocumentBuilder()
-    .setTitle('Africa Tourism Gate API')
-    .setDescription('REST API aligned with africatourismgate MySQL schema')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup(globalPrefix, app, document);
+  const isProduction = process.env.NODE_ENV === 'production';
+  const enableSwagger =
+    process.env.ENABLE_SWAGGER === '1' || !isProduction;
+
+  if (enableSwagger) {
+    const config = new DocumentBuilder()
+      .setTitle('Africa Tourism Gate API')
+      .setDescription('REST API aligned with africatourismgate MySQL schema')
+      .setVersion('1.0')
+      .addBearerAuth()
+      .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup(globalPrefix, app, document);
+  }
 
   app.enableCors({
     origin: (() => {
@@ -70,7 +76,9 @@ async function bootstrap() {
   const port = Number(process.env.API_PORT ?? 3000);
   await app.listen(port);
   console.log(`API http://localhost:${port}/${globalPrefix}`);
-  console.log(`Swagger http://localhost:${port}/${globalPrefix}`);
+  if (enableSwagger) {
+    console.log(`Swagger http://localhost:${port}/${globalPrefix}`);
+  }
 }
 
 bootstrap();
