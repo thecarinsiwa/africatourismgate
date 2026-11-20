@@ -196,16 +196,26 @@ function renderItinerary(
   map.setView([points[0].latitude, points[0].longitude], 11);
 }
 
+const PIN_WIDTH = 36;
+const PIN_HEIGHT = 48;
+
 function createNumberedMarkerIcon(
   L: LeafletModule,
   order: number,
 ): import('leaflet').DivIcon {
+  const label = escapeHtml(String(order));
   return L.divIcon({
     className: 'atg-itinerary-marker',
-    html: `<span class="atg-itinerary-marker__badge" aria-hidden="true">${order}</span>`,
-    iconSize: [30, 30],
-    iconAnchor: [15, 15],
-    popupAnchor: [0, -14],
+    html: `<span class="atg-itinerary-marker__pin" aria-hidden="true">
+      <svg class="atg-itinerary-marker__svg" width="${PIN_WIDTH}" height="${PIN_HEIGHT}" viewBox="0 0 36 48" xmlns="http://www.w3.org/2000/svg">
+        <path class="atg-itinerary-marker__shape" d="M18 0C8.06 0 0 8.06 0 18c0 13.5 18 30 18 30s18-16.5 18-30C36 8.06 27.94 0 18 0z"/>
+        <text class="atg-itinerary-marker__label" x="18" y="20" text-anchor="middle" dominant-baseline="central">${label}</text>
+      </svg>
+    </span>`,
+    iconSize: [PIN_WIDTH, PIN_HEIGHT],
+    // Tip of the pin sits on the coordinates.
+    iconAnchor: [PIN_WIDTH / 2, PIN_HEIGHT],
+    popupAnchor: [0, -PIN_HEIGHT + 8],
   });
 }
 

@@ -226,8 +226,34 @@
 }
 
 .atg-itinerary-marker {
-  background: transparent;
-  border: none;
+  background: transparent !important;
+  border: none !important;
+}
+
+.atg-itinerary-marker__pin {
+  display: block;
+  width: 36px;
+  height: 48px;
+  filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.35));
+}
+
+.atg-itinerary-marker__svg {
+  display: block;
+  overflow: visible;
+}
+
+.atg-itinerary-marker__shape {
+  /* Google Maps–style green pin */
+  fill: #34a853;
+  stroke: #ffffff;
+  stroke-width: 1.5;
+}
+
+.atg-itinerary-marker__label {
+  fill: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: system-ui, -apple-system, Segoe UI, sans-serif;
 }
 
 .atg-destinations-map-marker {
@@ -270,18 +296,3 @@
   }
 }
 
-.atg-itinerary-marker__badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 9999px;
-  border: 2px solid #ffffff;
-  background: var(--atg-primary, #c8102e);
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 0.2);
-}
