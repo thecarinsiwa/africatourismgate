@@ -94,7 +94,7 @@ export function HotelDetailPageContent({
         if (!cancelled) {
           setDetail(null);
           const msg = err instanceof Error ? err.message : String(err);
-          if (msg.includes('404')) setNotFound(true);
+          if (/API (400|404):/.test(msg)) setNotFound(true);
           else setError(true);
         }
       })
@@ -106,6 +106,13 @@ export function HotelDetailPageContent({
       cancelled = true;
     };
   }, [propertyId, checkIn, checkOut, guests, calendarMonth, fetchId]);
+
+  const listHref = '/hotels';
+
+  useEffect(() => {
+    if (!notFound) return;
+    router.replace(listHref);
+  }, [notFound, listHref, router]);
 
   useEffect(() => {
     if (!detail || !selectedRoomId) return;
@@ -172,27 +179,8 @@ export function HotelDetailPageContent({
     router.push(`/booking/cart?${query}`);
   }
 
-  if (loading && !detail) {
+  if (notFound || (loading && !detail)) {
     return <DetailPageSkeletonShell loadingLabel={h.loading} />;
-  }
-
-  if (notFound) {
-    return (
-      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
-        <HomeHeader />
-        <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-24 text-center sm:px-6 lg:px-8">
-          <h1 className="text-2xl font-bold text-atg-fg">{h.notFound}</h1>
-          <p className="mt-2 text-sm text-atg-muted">{h.notFoundHint}</p>
-          <Link
-            href="/hotels"
-            className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
-          >
-            {h.backToList}
-          </Link>
-        </div>
-        <HomeFooter />
-      </div>
-    );
   }
 
   if (error || !detail) {
@@ -248,7 +236,7 @@ export function HotelDetailPageContent({
             <span className="text-atg-muted/60" aria-hidden>
               ›
             </span>
-            <Link href="/hotels" className="transition-colors hover:text-primary">
+            <Link href={listHref} className="transition-colors hover:text-primary">
               {h.breadcrumbHotelsDetail}
             </Link>
             <span className="text-atg-muted/60" aria-hidden>

@@ -127,7 +127,7 @@ export function PackageDetailPageContent({
         if (cancelled) return;
         setDetail(null);
         const msg = err instanceof Error ? err.message : String(err);
-        if (msg.includes('404')) setNotFound(true);
+        if (/API (400|404):/.test(msg)) setNotFound(true);
         else setError(true);
       })
       .finally(() => {
@@ -138,6 +138,11 @@ export function PackageDetailPageContent({
       cancelled = true;
     };
   }, [packageId, fetchId]);
+
+  useEffect(() => {
+    if (!notFound) return;
+    router.replace(listHref);
+  }, [notFound, listHref, router]);
 
   useEffect(() => {
     if (!detail) return;
@@ -245,11 +250,11 @@ export function PackageDetailPageContent({
       </div>
 
       <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 pb-40 sm:px-6 lg:px-8 lg:pb-8">
-        {loading && (
+        {(loading || notFound) && (
           <DetailPageSkeleton loadingLabel={p.loadingDetail} layout="package" />
         )}
 
-        {error && (
+        {error && !notFound && (
           <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200">
             <p>{p.loadError}</p>
             <button
@@ -259,19 +264,6 @@ export function PackageDetailPageContent({
             >
               {p.retry}
             </button>
-          </div>
-        )}
-
-        {notFound && !loading && (
-          <div className="rounded-2xl border border-dashed border-atg-border bg-atg-elevated px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <h1 className="text-xl font-bold text-atg-fg">{p.notFound}</h1>
-            <p className="mt-2 text-sm text-atg-muted">{p.notFoundHint}</p>
-            <Link
-              href={listHref}
-              className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
-            >
-              {p.backToList}
-            </Link>
           </div>
         )}
 

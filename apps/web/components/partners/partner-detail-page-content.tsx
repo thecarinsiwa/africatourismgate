@@ -4,6 +4,7 @@ import type { PublicActivityProviderDetail } from '@africatourismgate/types';
 import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { getPublicActivityProvider } from '../../lib/api/public';
@@ -66,6 +67,8 @@ export function PartnerDetailPageContent({ partnerId }: PartnerDetailPageContent
   const tListing = useTranslations('listing');
   const a = useNamespaceLabels('activities');
   const locale = useLocale();
+  const router = useRouter();
+  const listHref = partnersListHref();
 
   const [detail, setDetail] = useState<PublicActivityProviderDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -88,7 +91,7 @@ export function PartnerDetailPageContent({ partnerId }: PartnerDetailPageContent
         if (cancelled) return;
         setDetail(null);
         const msg = err instanceof Error ? err.message : String(err);
-        if (msg.includes('404')) {
+        if (/API (400|404):/.test(msg)) {
           setNotFound(true);
         } else {
           setError(true);
@@ -102,6 +105,11 @@ export function PartnerDetailPageContent({ partnerId }: PartnerDetailPageContent
       cancelled = true;
     };
   }, [partnerId, fetchId]);
+
+  useEffect(() => {
+    if (!notFound) return;
+    router.replace(listHref);
+  }, [notFound, listHref, router]);
 
   const logo = detail?.logoUrl?.trim() ? normalizeBrandingAssetUrl(detail.logoUrl.trim()) : null;
 
@@ -138,7 +146,7 @@ export function PartnerDetailPageContent({ partnerId }: PartnerDetailPageContent
     ? siteSearchDeepLinks.activitiesByDestination(detail.destinationName)
     : '#';
 
-  const heroTitle = detail?.name ?? (notFound ? t('notFoundTitle') : error ? t('loadError') : null);
+  const heroTitle = detail?.name ?? (error && !notFound ? t('loadError') : null);
 
   return (
     <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
@@ -204,11 +212,7 @@ export function PartnerDetailPageContent({ partnerId }: PartnerDetailPageContent
                 <div className="h-10 w-2/3 max-w-md animate-pulse rounded bg-white/15" />
               )}
               <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/80 sm:text-lg">
-                {detail
-                  ? t('detailIntro', { destination: detail.destinationName })
-                  : notFound
-                    ? t('notFoundDescription')
-                    : null}
+                {detail ? t('detailIntro', { destination: detail.destinationName }) : null}
               </p>
             </div>
           </div>
@@ -287,34 +291,25 @@ export function PartnerDetailPageContent({ partnerId }: PartnerDetailPageContent
 
       <ListingPageBody
         error={
-          error
+          error && !notFound
             ? {
                 message: t('loadError'),
                 retryLabel: t('retry'),
                 onRetry: () => setFetchId((value) => value + 1),
                 backHomeLabel: t('backToPartners'),
-                backHomeHref: partnersListHref(),
+                backHomeHref: listHref,
               }
             : null
         }
-        loading={loading}
+        loading={loading || notFound}
         loadingMessage={a.loading}
-        isEmpty={!loading && !error && listings.length === 0}
-        empty={
-          notFound
-            ? {
-                title: t('notFoundTitle'),
-                description: t('notFoundDescription'),
-                backHomeLabel: t('backToPartners'),
-                backHomeHref: partnersListHref(),
-              }
-            : {
-                title: t('noActivities'),
-                description: t('noActivitiesHint'),
-                backHomeLabel: t('backToPartners'),
-                backHomeHref: partnersListHref(),
-              }
-        }
+        isEmpty={!loading && !notFound && !error && listings.length === 0}
+        empty={{
+          title: t('noActivities'),
+          description: t('noActivitiesHint'),
+          backHomeLabel: t('backToPartners'),
+          backHomeHref: listHref,
+        }}
         pagination={
           showPagination ? (
             <ListingPaginationBar
