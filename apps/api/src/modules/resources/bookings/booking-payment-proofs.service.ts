@@ -10,6 +10,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, In, IsNull, Repository } from 'typeorm';
+import {
+  assertUploadContentMatchesDeclaration,
+  removeUploadedFile,
+} from '../../../common/upload/assert-file-signature';
 import { newId } from '../../../common/utils/uuid';
 import {
   BookingPaymentProofs,
@@ -67,10 +71,12 @@ export function assertAllowedPaymentProofUpload(file: Express.Multer.File): void
     !ALLOWED_MIMES.has(file.mimetype) ||
     !ALLOWED_EXTENSIONS.has(extension)
   ) {
+    removeUploadedFile(file);
     throw new BadRequestException(
       'Format non accepté. Utilisez JPEG, PNG, WebP ou PDF (max 10 Mo).',
     );
   }
+  assertUploadContentMatchesDeclaration(file);
 }
 
 export function ensurePaymentProofUploadDir(): string {
