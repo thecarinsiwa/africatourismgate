@@ -1,11 +1,19 @@
 const PRODUCTION_ADMIN_URL = 'https://app-africatourismgate.org';
 const PRODUCTION_WEB_URL = 'https://africatourismgate.org';
 
-/** Control chars + backslash — common bypass / CSS breakout vectors. */
-const UNSAFE_URL_CHARS = /[\u0000-\u001f\u007f\\]/;
-
 /** Characters that break out of CSS `url("…")` when interpolated raw. */
 const CSS_URL_BREAKOUT = /["'()\\\n\r\f]/;
+
+/** Control chars (C0 + DEL) or backslash — common bypass / CSS breakout vectors. */
+function hasUnsafeUrlChars(value: string): boolean {
+  for (let i = 0; i < value.length; i += 1) {
+    const code = value.charCodeAt(i);
+    if (code <= 0x1f || code === 0x7f || code === 0x5c /* \ */) {
+      return true;
+    }
+  }
+  return false;
+}
 
 /**
  * True when `value` is a same-origin path (`/…`, not `//…`) or an absolute
@@ -22,7 +30,7 @@ export function safeHref(value: string | null | undefined): string | null {
   if (value == null || typeof value !== 'string') return null;
   const trimmed = value.trim();
   if (!trimmed) return null;
-  if (UNSAFE_URL_CHARS.test(trimmed)) return null;
+  if (hasUnsafeUrlChars(trimmed)) return null;
 
   // Relative path (not protocol-relative).
   if (trimmed.startsWith('/')) {
