@@ -15,11 +15,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { rawBody: true });
   // Behind nginx: honor X-Forwarded-Proto so req.protocol is https in production.
   app.getHttpAdapter().getInstance().set('trust proxy', 1);
-  // Soft Helmet: baseline headers without CSP/COEP (avoids breaking Swagger UI / embeds).
+  // Soft Helmet: baseline headers without CSP/COEP.
+  // CORP cross-origin: web/gap load /api/uploads from another ATG hostname.
   app.use(
     helmet({
       contentSecurityPolicy: false,
       crossOriginEmbedderPolicy: false,
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
     }),
   );
   const globalPrefix = process.env.API_GLOBAL_PREFIX ?? 'api';
@@ -33,6 +35,8 @@ async function bootstrap() {
     serveStatic(uploadsDir, {
       setHeaders: (res) => {
         res.setHeader('X-Content-Type-Options', 'nosniff');
+        // Explicit: branding/activity images are loaded cross-origin from web/gap.
+        res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
       },
     }),
   );
