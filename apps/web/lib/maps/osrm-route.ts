@@ -22,11 +22,12 @@ export function getOsrmBaseUrl(): string {
 
 /**
  * Fetch a driving route through waypoints via OSRM.
- * Returns `[lat, lng][]` suitable for Leaflet, or `null` on failure.
+ * Returns `[lat, lng][]` for Leaflet, or `null` on failure.
+ * Does not take an AbortSignal — callers ignore stale results with a generation flag
+ * (public OSRM can take 10–30s; aborting on React Strict Mode remounts was dropping routes).
  */
 export async function fetchOsrmDrivingRoute(
   points: ItineraryMapPoint[],
-  signal?: AbortSignal,
 ): Promise<LatLngTuple[] | null> {
   if (points.length < 2) return null;
 
@@ -40,7 +41,6 @@ export async function fetchOsrmDrivingRoute(
 
   try {
     const response = await fetch(url, {
-      signal,
       headers: { Accept: 'application/json' },
     });
     if (!response.ok) return null;

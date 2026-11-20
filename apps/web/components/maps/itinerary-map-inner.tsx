@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { LayerGroup, Map as LeafletMap } from 'leaflet';
 import {
   fetchOsrmDrivingRoute,
   straightLineLatLngs,
+  type LatLngTuple,
 } from '../../lib/maps/osrm-route';
 import type { ItineraryMapPoint } from '../../lib/maps/types';
 
@@ -14,12 +15,17 @@ type ItineraryMapInnerProps = {
   className?: string;
 };
 
+type LeafletModule = typeof import('leaflet');
+
 const DEFAULT_HEIGHT_CLASS = 'h-[320px] w-full sm:h-[400px]';
+// Hex only — Leaflet sets stroke as an SVG attribute; CSS vars are unreliable there.
 const ROUTE_STYLE = {
-  color: 'var(--atg-primary, #c8102e)',
-  weight: 3,
-  opacity: 0.85,
+  color: '#c8102e',
+  weight: 4,
+  opacity: 0.9,
   lineJoin: 'round' as const,
+  // Keep OSRM geometry intact (Leaflet default smoothFactor=1 simplifies the path).
+  smoothFactor: 0,
 };
 
 export function ItineraryMapInner({
@@ -30,7 +36,38 @@ export function ItineraryMapInner({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const layerGroupRef = useRef<LayerGroup | null>(null);
+  const leafletRef = useRef<LeafletModule | null>(null);
   const [mapReady, setMapReady] = useState(false);
+  const [routePath, setRoutePath] = useState<LatLngTuple[] | null>(null);
+
+  const pointsKey = useMemo(
+    () =>
+      points
+        .map((p) => `${p.id}:${p.latitude}:${p.longitude}`)
+        .join('|'),
+    [points],
+  );
+  const latestPointsKeyRef = useRef(pointsKey);
+  latestPointsKeyRef.current = pointsKey;
+
+  // Fetch road geometry independently of the Leaflet mount lifecycle.
+  useEffect(() => {
+    if (points.length < 2) {
+      setRoutePath(null);
+      return;
+    }
+
+    const requestKey = pointsKey;
+    setRoutePath(straightLineLatLngs(points));
+
+    void fetchOsrmDrivingRoute(points).then((routed) => {
+      if (!routed?.length) return;
+      if (latestPointsKeyRef.current !== requestKey) return;
+      setRoutePath(routed);
+    });
+    // pointsKey gates re-fetch; `points` is captured from the render that changed the key.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
+  }, [pointsKey]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -45,6 +82,7 @@ export function ItineraryMapInner({
         return;
       }
 
+      leafletRef.current = L;
       const map = L.map(containerRef.current!, {
         scrollWheelZoom: false,
         attributionControl: false,
@@ -66,26 +104,21 @@ export function ItineraryMapInner({
       layerGroupRef.current = null;
       mapRef.current?.remove();
       mapRef.current = null;
+      leafletRef.current = null;
     };
   }, []);
 
   useEffect(() => {
+    const L = leafletRef.current;
     const map = mapRef.current;
     const layerGroup = layerGroupRef.current;
-    if (!mapReady || !map || !layerGroup) {
+    if (!mapReady || !L || !map || !layerGroup) {
       return;
     }
 
-    const controller = new AbortController();
-
-    void import('leaflet').then(async (L) => {
-      await renderItinerary(L, map, layerGroup, points, controller.signal);
-    });
-
-    return () => {
-      controller.abort();
-    };
-  }, [points, mapReady]);
+    // Sync — do not re-import leaflet (async then() races overwrite the OSRM path).
+    renderItinerary(L, map, layerGroup, points, routePath);
+  }, [points, pointsKey, routePath, mapReady]);
 
   return (
     <div
@@ -97,16 +130,16 @@ export function ItineraryMapInner({
   );
 }
 
-async function renderItinerary(
-  L: typeof import('leaflet'),
+function renderItinerary(
+  L: LeafletModule,
   map: LeafletMap,
-  layerGroup: import('leaflet').LayerGroup,
+  layerGroup: LayerGroup,
   points: ItineraryMapPoint[],
-  signal: AbortSignal,
+  routePath: LatLngTuple[] | null,
 ) {
   layerGroup.clearLayers();
 
-  if (!points.length || signal.aborted) {
+  if (!points.length) {
     return;
   }
 
@@ -139,44 +172,32 @@ async function renderItinerary(
   }
 
   if (points.length >= 2) {
-    // Draw straight preview immediately, then upgrade to OSRM road geometry.
-    const straight = straightLineLatLngs(points);
-    const preview = L.polyline(straight, {
+    const path = routePath ?? straightLineLatLngs(points);
+    const isPreview =
+      !routePath ||
+      (routePath.length === points.length &&
+        routePath.every(
+          (coord, i) =>
+            coord[0] === points[i].latitude && coord[1] === points[i].longitude,
+        ));
+
+    L.polyline(path, {
       ...ROUTE_STYLE,
-      opacity: 0.35,
-      dashArray: '6 8',
+      ...(isPreview ? { opacity: 0.35, dashArray: '6 8' } : {}),
     }).addTo(layerGroup);
 
-    const routed = await fetchOsrmDrivingRoute(points, signal);
-    if (signal.aborted) {
-      return;
+    for (const [lat, lng] of path) {
+      bounds.extend([lat, lng]);
     }
-
-    layerGroup.removeLayer(preview);
-    const path = routed ?? straight;
-    L.polyline(path, ROUTE_STYLE).addTo(layerGroup);
-
-    if (routed) {
-      for (const [lat, lng] of routed) {
-        bounds.extend([lat, lng]);
-      }
-    }
-  }
-
-  if (signal.aborted) {
+    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
     return;
   }
 
-  if (points.length === 1) {
-    map.setView([points[0].latitude, points[0].longitude], 11);
-    return;
-  }
-
-  map.fitBounds(bounds, { padding: [40, 40], maxZoom: 12 });
+  map.setView([points[0].latitude, points[0].longitude], 11);
 }
 
 function createNumberedMarkerIcon(
-  L: typeof import('leaflet'),
+  L: LeafletModule,
   order: number,
 ): import('leaflet').DivIcon {
   return L.divIcon({
