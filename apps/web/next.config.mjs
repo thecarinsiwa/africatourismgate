@@ -112,6 +112,10 @@ const nextConfig = {
   // writing the same apps/web/.next — avoids webpack-runtime "reading 'call'" under next start.
   distDir: process.env.NEXT_DIST_DIR || '.next',
   transpilePackages: ['@africatourismgate/ui', '@africatourismgate/types'],
+  // Keep jsdom out of the Next server webpack graph (DOMPurify SSR / page-data collect).
+  experimental: {
+    serverComponentsExternalPackages: ['isomorphic-dompurify', 'jsdom', 'canvas'],
+  },
   env: {
     NEXT_PUBLIC_API_URL: apiUrl,
     NEXT_PUBLIC_GAP_URL: gapPublicUrl,

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { AboutTeamMemberProfileContent } from '../../../../components/about/about-team-member-profile-content';
-import { stripHtml } from '../../../../components/shared/rich-text';
+import { stripHtml } from '../../../../components/shared/html-plain';
 import { teamMemberPath } from '../../../../lib/about/routes';
 import { getTeamMemberBySlug } from '../../../../lib/api/public';
 

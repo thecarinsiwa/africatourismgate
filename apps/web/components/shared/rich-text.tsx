@@ -1,21 +1,10 @@
 import type { HTMLAttributes } from 'react';
-import DOMPurify from 'isomorphic-dompurify';
 import { cn } from '@africatourismgate/ui';
+import { hasHtmlMarkup } from './html-plain';
+import { sanitizeHtml } from './sanitize-html';
 
-export function hasHtmlMarkup(value: string | null | undefined): boolean {
-  if (!value) return false;
-  return /<[^>]+>/.test(value);
-}
-
-export function stripHtml(value: string | null | undefined): string {
-  if (!value) return '';
-  return value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-}
-
-/** Sanitize untrusted CMS/HTML before dangerouslySetInnerHTML. */
-export function sanitizeHtml(dirty: string): string {
-  return DOMPurify.sanitize(dirty, { USE_PROFILES: { html: true } });
-}
+export { hasHtmlMarkup, stripHtml } from './html-plain';
+export { sanitizeHtml } from './sanitize-html';
 
 export type RichTextProps = HTMLAttributes<HTMLDivElement> & {
   content?: string | null;
