@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { getPublicActivityProvider } from '../../lib/api/public';
 import type { ActivitySearchResult } from '../../lib/activities/types';
+import { isUuidV4 } from '../../lib/ids';
 import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import { useListingPagination } from '../../lib/listing/pagination';
 import { scrollListingToTop, toListingPaginationLabels } from '../../lib/listing/pagination-labels';
@@ -82,6 +83,13 @@ export function PartnerDetailPageContent({ partnerId }: PartnerDetailPageContent
     setLoading(true);
     setNotFound(false);
     setError(false);
+
+    if (!isUuidV4(partnerId)) {
+      setDetail(null);
+      setNotFound(true);
+      setLoading(false);
+      return;
+    }
 
     void getPublicActivityProvider(partnerId)
       .then((row) => {

@@ -18,6 +18,7 @@ import {
 } from '../../lib/activities/difficulty';
 import type { ActivityDetail } from '../../lib/activities/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
+import { isUuidV4 } from '../../lib/ids';
 import { useLocale } from 'next-intl';
 import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import { buildReservationQuery, isActivityScheduleOfferBookable } from '../../lib/reservations/flow';
@@ -109,6 +110,13 @@ export function ActivityDetailPageContent({
     setLoading(true);
     setNotFound(false);
     setError(false);
+
+    if (!isUuidV4(activityId)) {
+      setDetail(null);
+      setNotFound(true);
+      setLoading(false);
+      return;
+    }
 
     void getActivityDetail(activityId, apiQuery)
       .then((data) => {

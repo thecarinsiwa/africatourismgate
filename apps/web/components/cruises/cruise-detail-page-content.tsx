@@ -14,6 +14,7 @@ import {
 import { formatCruisePortLabel } from '../../lib/cruises/ports';
 import type { CruiseSailingDetail } from '../../lib/cruises/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
+import { isUuidV4 } from '../../lib/ids';
 import { useLocale } from 'next-intl';
 import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import { buildReservationQuery } from '../../lib/reservations/flow';
@@ -97,6 +98,13 @@ export function CruiseDetailPageContent({
     setLoading(true);
     setNotFound(false);
     setError(false);
+
+    if (!isUuidV4(sailingId)) {
+      setDetail(null);
+      setNotFound(true);
+      setLoading(false);
+      return;
+    }
 
     void getCruiseSailingDetail(sailingId, apiQuery)
       .then((data) => {

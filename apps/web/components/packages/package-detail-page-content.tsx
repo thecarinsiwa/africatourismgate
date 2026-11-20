@@ -15,6 +15,7 @@ import {
 } from '../../lib/packages/listings';
 import type { PackageDetail } from '../../lib/packages/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
+import { isUuidV4 } from '../../lib/ids';
 import { useLocale } from 'next-intl';
 import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import {
@@ -117,6 +118,13 @@ export function PackageDetailPageContent({
     setLoading(true);
     setNotFound(false);
     setError(false);
+
+    if (!isUuidV4(packageId)) {
+      setDetail(null);
+      setNotFound(true);
+      setLoading(false);
+      return;
+    }
 
     void getPackageDetail(packageId)
       .then((data) => {

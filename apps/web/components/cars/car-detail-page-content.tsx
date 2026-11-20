@@ -17,6 +17,7 @@ import {
 import { resolveVehicleEquipment, resolveVehicleSpecs } from '../../lib/cars/specs';
 import type { VehicleDetail } from '../../lib/cars/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
+import { isUuidV4 } from '../../lib/ids';
 import { useLocale } from 'next-intl';
 import { useNamespaceLabels } from '../../lib/i18n/use-namespace-labels';
 import { buildReservationQuery } from '../../lib/reservations/flow';
@@ -93,6 +94,13 @@ export function CarDetailPageContent({
 
   useEffect(() => {
     let cancelled = false;
+    if (!isUuidV4(vehicleId)) {
+      setDetail(null);
+      setLoading(false);
+      setNotFound(true);
+      setError(false);
+      return;
+    }
     if (!apiQuery) {
       setDetail(null);
       setLoading(false);
