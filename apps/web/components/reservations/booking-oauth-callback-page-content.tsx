@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { getAuthMe } from '../../lib/api/auth';
 import { completeWebLogin } from '../../lib/auth/complete-web-login';
 import { stripDevOriginFromNextPath } from '../../lib/auth/dev-oauth-return';
+import { normalizeNextPath } from '../../lib/auth/normalize-next-path';
 import { useDevOAuthReturnRedirect } from '../../lib/auth/use-dev-oauth-return-redirect';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
@@ -16,13 +17,6 @@ type Props = {
   expiresIn?: string;
   nextPath?: string;
 };
-
-function normalizeNextPath(nextPath?: string): string {
-  if (!nextPath || !nextPath.startsWith('/') || nextPath.startsWith('//')) {
-    return '/booking/cart';
-  }
-  return nextPath;
-}
 
 export function BookingOAuthCallbackPageContent({
   accessToken,

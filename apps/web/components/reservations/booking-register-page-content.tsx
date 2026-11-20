@@ -15,6 +15,7 @@ import { registerCustomer } from '../../lib/api/auth';
 import { getLegalPageBySectionKeyForLocale } from '../../lib/api/public';
 import { getAuthErrorMessage } from '../../lib/auth/api-errors';
 import { completeWebLoginFromAuthResponse } from '../../lib/auth/complete-web-login';
+import { normalizeNextPath } from '../../lib/auth/normalize-next-path';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { RichText } from '../shared/rich-text';
@@ -22,13 +23,6 @@ import { RichText } from '../shared/rich-text';
 type Props = {
   nextPath?: string;
 };
-
-function normalizeNextPath(nextPath?: string): string {
-  if (!nextPath || !nextPath.startsWith('/') || nextPath.startsWith('//')) {
-    return '/booking/cart';
-  }
-  return nextPath;
-}
 
 function buildLoginHref(nextPath: string): string {
   const params = new URLSearchParams({ next: nextPath });
