@@ -578,14 +578,14 @@ export function CheckoutManifestForm({
                 key={index}
                 className="overflow-hidden rounded-lg border border-atg-border dark:border-atg-border"
               >
-                <div className="flex items-stretch gap-1 bg-atg-surface dark:bg-white/5">
+                <div className="flex items-center gap-2 bg-atg-surface px-3 py-2 dark:bg-white/5 sm:px-4">
                   <button
                     type="button"
                     id={triggerId}
                     aria-expanded={expanded}
                     aria-controls={panelId}
                     onClick={() => toggleExpanded(index)}
-                    className="flex min-w-0 flex-1 items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                    className="flex min-w-0 flex-1 items-center gap-3 py-1 text-left transition-colors"
                   >
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-semibold text-atg-fg">
@@ -598,14 +598,43 @@ export function CheckoutManifestForm({
                     <span className="hidden min-w-0 flex-1 truncate text-sm font-semibold text-atg-fg sm:block">
                       {labels.idNumber}: {idSummary}
                     </span>
-                    <span
-                      className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded border border-atg-border text-atg-fg dark:border-atg-border"
-                      aria-hidden="true"
+                  </button>
+                  <div className="flex shrink-0 items-center gap-1.5">
+                    {canRemoveThis ? (
+                      <button
+                        type="button"
+                        disabled={addingTraveler}
+                        onClick={onRemoveTraveler}
+                        aria-label={labels.removeTraveler}
+                        className="inline-flex h-7 w-7 items-center justify-center rounded border border-atg-border text-atg-muted transition-colors hover:border-red-500 hover:text-red-600 disabled:opacity-50 dark:border-atg-border dark:hover:text-red-400"
+                      >
+                        <svg
+                          className="h-3.5 w-3.5"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.226-.038V16.25A2.75 2.75 0 006.75 19h6.5A2.75 2.75 0 0016 16.25V5.935l.226.038a.75.75 0 00.23-1.482A41.4 41.4 0 0014 4.193v-.443A2.75 2.75 0 0011.25 1h-2.5zM10 4c.784 0 1.556.03 2.25.09V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.34C8.444 4.03 9.216 4 10 4zm-2 4.75a.75.75 0 01.75.75v5.5a.75.75 0 01-1.5 0v-5.5a.75.75 0 01.75-.75zm5.5.75a.75.75 0 00-1.5 0v5.5a.75.75 0 001.5 0v-5.5z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </button>
+                    ) : null}
+                    <button
+                      type="button"
+                      aria-expanded={expanded}
+                      aria-controls={panelId}
+                      onClick={() => toggleExpanded(index)}
+                      aria-label={travellerLabel}
+                      className="inline-flex h-7 w-7 items-center justify-center rounded border border-atg-border text-atg-fg transition-colors hover:bg-black/[0.03] dark:border-atg-border dark:hover:bg-white/[0.04]"
                     >
                       <svg
                         className={`h-3.5 w-3.5 transition-transform ${expanded ? 'rotate-180' : ''}`}
                         viewBox="0 0 20 20"
                         fill="currentColor"
+                        aria-hidden="true"
                       >
                         <path
                           fillRule="evenodd"
@@ -613,25 +642,8 @@ export function CheckoutManifestForm({
                           clipRule="evenodd"
                         />
                       </svg>
-                    </span>
-                  </button>
-                  {canRemoveThis ? (
-                    <button
-                      type="button"
-                      disabled={addingTraveler}
-                      onClick={onRemoveTraveler}
-                      aria-label={labels.removeTraveler}
-                      className="shrink-0 px-3 text-atg-muted transition-colors hover:text-red-600 disabled:opacity-50 dark:hover:text-red-400"
-                    >
-                      <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path
-                          fillRule="evenodd"
-                          d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.226-.038V16.25A2.75 2.75 0 006.75 19h6.5A2.75 2.75 0 0016 16.25V5.935l.226.038a.75.75 0 00.23-1.482A41.4 41.4 0 0014 4.193v-.443A2.75 2.75 0 0011.25 1h-2.5zM10 4c.784 0 1.556.03 2.25.09V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.34C8.444 4.03 9.216 4 10 4zm-2 4.75a.75.75 0 01.75.75v5.5a.75.75 0 01-1.5 0v-5.5a.75.75 0 01.75-.75zm5.5.75a.75.75 0 00-1.5 0v5.5a.75.75 0 001.5 0v-5.5z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
                     </button>
-                  ) : null}
+                  </div>
                 </div>
 
                 {expanded ? (
