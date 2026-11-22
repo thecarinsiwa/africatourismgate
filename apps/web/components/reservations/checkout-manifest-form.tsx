@@ -452,7 +452,7 @@ export function CheckoutManifestForm({
   const [cameraIndex, setCameraIndex] = useState<number | null>(null);
   const [previewFile, setPreviewFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
   function openPreview(file: File) {
     const url = URL.createObjectURL(file);
@@ -480,13 +480,10 @@ export function CheckoutManifestForm({
   }, [count, entries, onChange]);
 
   useEffect(() => {
-    if (entries.length === 0) {
-      setExpandedIndex(null);
-      return;
-    }
     setExpandedIndex((current) => {
-      if (current != null && current < entries.length) return current;
-      return entries.length - 1;
+      if (current == null) return null;
+      if (current >= entries.length) return null;
+      return current;
     });
   }, [entries.length]);
 
@@ -495,8 +492,7 @@ export function CheckoutManifestForm({
       .map((key) => Number.parseInt(key, 10))
       .filter((index) => Number.isFinite(index) && validationErrors[index]);
     if (errorIndexes.length === 0) return;
-    const firstError = Math.min(...errorIndexes);
-    setExpandedIndex(firstError);
+    setExpandedIndex(Math.min(...errorIndexes));
   }, [validationErrors]);
 
   function update(index: number, patch: Partial<ManifestEntryDraft>) {
