@@ -948,47 +948,6 @@ export function ReservationRecapPageContent({ draft }: Props) {
 
             {!loading && canPay && travelerCount >= 1 && (
               <div className="space-y-4">
-                {draft &&
-                isVehicleReservationDraft(draft) &&
-                draft.vehicleTripId &&
-                vehicleTrip ? (
-                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-atg-border p-3 dark:border-atg-border">
-                    <div>
-                      <p className="text-sm font-semibold text-atg-fg">
-                        {vehicleSeats > 1
-                          ? `${vehicleSeats} places`
-                          : '1 place'}
-                      </p>
-                      {seatsAdjusting ? (
-                        <p className="mt-1 text-xs text-atg-muted">
-                          {ck.manifest.addingTraveler}
-                        </p>
-                      ) : null}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        disabled={seatsAdjusting || vehicleSeats <= 1}
-                        onClick={() => void adjustVehicleSeats(vehicleSeats - 1)}
-                        aria-label={ck.manifest.removeTraveler}
-                      >
-                        −
-                      </Button>
-                      <Button
-                        type="button"
-                        size="sm"
-                        disabled={
-                          seatsAdjusting || vehicleSeats >= vehicleSeatsMax
-                        }
-                        onClick={() => void adjustVehicleSeats(vehicleSeats + 1)}
-                      >
-                        {ck.manifest.addTraveler}
-                      </Button>
-                    </div>
-                  </div>
-                ) : null}
                 <BookingEmergencyContactForm
                   value={emergencyContact}
                   onChange={(next) => {
@@ -1019,6 +978,18 @@ export function ReservationRecapPageContent({ draft }: Props) {
                   }}
                   labels={ck.manifest}
                   validationErrors={manifestErrors}
+                  {...(draft &&
+                  isVehicleReservationDraft(draft) &&
+                  draft.vehicleTripId &&
+                  vehicleTrip
+                    ? {
+                        onAddTraveler: () => void adjustVehicleSeats(vehicleSeats + 1),
+                        onRemoveTraveler: () => void adjustVehicleSeats(vehicleSeats - 1),
+                        canAddTraveler: !seatsAdjusting && vehicleSeats < vehicleSeatsMax,
+                        canRemoveTraveler: !seatsAdjusting && vehicleSeats > 1,
+                        addingTraveler: seatsAdjusting,
+                      }
+                    : {})}
                 />
               </div>
             )}
