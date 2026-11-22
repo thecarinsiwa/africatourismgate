@@ -1,5 +1,9 @@
 import { expect, test } from './fixtures';
-import { fillCheckoutManifest, mockManifestApi } from './helpers/fill-manifest';
+import {
+  ensureEmergencyContactExpanded,
+  fillCheckoutManifest,
+  mockManifestApi,
+} from './helpers/fill-manifest';
 import { mockCheckoutAuth } from './helpers/mock-checkout-auth';
 
 const PACKAGE_ID = '00000000-0000-4000-8000-000000005001';
@@ -50,6 +54,7 @@ async function fillEmergencyContact(
   page: import('@playwright/test').Page,
   opts?: { name?: string; phone?: string },
 ) {
+  await ensureEmergencyContactExpanded(page);
   await page
     .getByLabel(/nom du contact|contact name|nombre del contacto/i)
     .first()
@@ -61,20 +66,22 @@ async function fillEmergencyContact(
 async function fillTravelersWithoutId(
   page: import('@playwright/test').Page,
 ) {
-  const nameInputs = page.getByLabel(/nom complet|full name|nombre completo/i);
-  const count = await nameInputs.count();
+  const travelerToggles = page.getByRole('button', {
+    name: /^(voyageur|traveler|viajero)\s+\d+$/i,
+  });
+  const count = await travelerToggles.count();
   expect(count).toBeGreaterThan(0);
-  for (let i = 0; i < count; i += 1) {
-    await nameInputs.nth(i).fill(`Voyageur ${i + 1}`);
-  }
 
-  // Traveler "Nationalité" only (emergency country is labeled "Pays").
   for (let i = 0; i < count; i += 1) {
+    await travelerToggles.nth(i).click();
+    await page
+      .getByLabel(/nom complet|full name|nombre completo/i)
+      .fill(`Voyageur ${i + 1}`);
     const nat = page
       .getByRole('button', {
         name: /nationalit|nationality|nacionalidad/i,
       })
-      .nth(i);
+      .first();
     await nat.click();
     await page.locator('input[type="search"]').last().fill('Congo');
     await page.getByRole('option').filter({ hasText: /\(CD\)/i }).first().click();

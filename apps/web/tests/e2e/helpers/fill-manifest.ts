@@ -77,33 +77,52 @@ async function selectTravelerNationality(page: Page, index: number, countryQuery
   await page.getByRole('option').filter({ hasText: /\(CD\)/i }).first().click();
 }
 
+export async function ensureEmergencyContactExpanded(page: Page): Promise<void> {
+  const nameField = page
+    .getByLabel(/nom du contact|contact name|nombre del contacto/i)
+    .first();
+  if (await nameField.isVisible().catch(() => false)) {
+    return;
+  }
+  await page
+    .getByRole('button', {
+      name: /contact d['’]urgence|emergency contact|contacto de emergencia/i,
+    })
+    .first()
+    .click();
+  await nameField.waitFor({ state: 'visible' });
+}
+
 /** Fill booking-level emergency contact + required traveler fields on checkout recap. */
 export async function fillCheckoutManifest(page: Page): Promise<number> {
   // Labels include a required "*" - never use ^…$ anchors on getByLabel.
-  // Emergency phone is the only input[type=tel] on the recap (travelers have no tel field).
+  // Emergency / traveler sections are collapsed accordions on recap by default.
+  await ensureEmergencyContactExpanded(page);
   await page
     .getByLabel(/nom du contact|contact name|nombre del contacto/i)
     .first()
     .fill('Contact Urgence');
+  // Emergency phone is the only input[type=tel] on the recap (travelers have no tel field).
   await page.locator('input[type="tel"]').first().fill('+243900000001');
 
-  const nameInputs = page.getByLabel(/nom complet|full name|nombre completo/i);
-  const count = await nameInputs.count();
-  for (let i = 0; i < count; i += 1) {
-    await nameInputs.nth(i).fill(`Voyageur ${i + 1}`);
-  }
+  // Chevron buttons use aria-label "Voyageur N" / "Traveler N" / "Viajero N".
+  const travelerToggles = page.getByRole('button', {
+    name: /^(voyageur|traveler|viajero)\s+\d+$/i,
+  });
+  const count = await travelerToggles.count();
 
-  // Index from 0: emergency country is labeled "Pays" and is excluded from this locator.
   for (let i = 0; i < count; i += 1) {
-    await selectTravelerNationality(page, i, 'Congo');
-  }
-
-  const idInputs = page.getByLabel(
-    /n[°º]\s*pi[eè]ce|id\s*\/\s*passport|n\.?\s*º?\s*de documento|passport number/i,
-  );
-  const idCount = await idInputs.count();
-  for (let i = 0; i < idCount; i += 1) {
-    await idInputs.nth(i).fill(`P${100000 + i}`);
+    await travelerToggles.nth(i).click();
+    await page
+      .getByLabel(/nom complet|full name|nombre completo/i)
+      .fill(`Voyageur ${i + 1}`);
+    // Only the expanded traveler nationality is in the DOM (Pays ≠ Nationalité).
+    await selectTravelerNationality(page, 0, 'Congo');
+    await page
+      .getByLabel(
+        /n[°º]\s*pi[eè]ce|id\s*\/\s*passport|n\.?\s*º?\s*de documento|passport number/i,
+      )
+      .fill(`P${100000 + i}`);
   }
 
   return count;
