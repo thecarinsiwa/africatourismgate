@@ -78,6 +78,7 @@ export type Translations = {
     stepCancelled: string;
     cartTitle: string;
     vehicleTripOrganizerBanner: string;
+    vehicleTripExistingBooking: string;
     recapTitle: string;
     continueToRecap: string;
     backToCart: string;

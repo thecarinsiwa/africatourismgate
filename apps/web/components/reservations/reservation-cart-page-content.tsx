@@ -16,7 +16,10 @@ import { formatFlightPrice } from '../../lib/flights/listings';
 import type { FlightDetail } from '../../lib/flights/types';
 import { formatCruisePrice } from '../../lib/cruises/listings';
 import type { CruiseSailingDetail } from '../../lib/cruises/types';
-import { getClientAccessToken } from '../../lib/auth/client-session';
+import {
+  ensureClientAccessToken,
+  getClientAccessToken,
+} from '../../lib/auth/client-session';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatHotelPrice } from '../../lib/hotels/listings';
 import { useLocale, useMessages } from 'next-intl';
@@ -222,16 +225,18 @@ export function ReservationCartPageContent({ draft }: Props) {
         });
     } else if (isVehicleReservationDraft(draft)) {
       const tripId = draft.vehicleTripId;
-      void Promise.all([
-        getVehicleDetail(draft.vehicleId, {
-          routeId: draft.routeId,
-          travelDate: draft.travelDate,
-        }),
-        tripId
-          ? getPublicVehicleTrip(tripId, getClientAccessToken())
-          : Promise.resolve(null),
-      ])
-        .then(([data, trip]) => {
+      void (async () => {
+        try {
+          const token = tripId ? await ensureClientAccessToken() : null;
+          const [data, trip] = await Promise.all([
+            getVehicleDetail(draft.vehicleId, {
+              routeId: draft.routeId,
+              travelDate: draft.travelDate,
+            }),
+            tripId
+              ? getPublicVehicleTrip(tripId, token)
+              : Promise.resolve(null),
+          ]);
           if (!cancelled) {
             setVehicleDetail(data);
             setVehicleTrip(trip);
@@ -240,10 +245,10 @@ export function ReservationCartPageContent({ draft }: Props) {
             setCruiseDetail(null);
             setActivityDetail(null);
           }
-        })
-        .finally(() => {
+        } finally {
           if (!cancelled) setLoading(false);
-        });
+        }
+      })();
     }
 
     return () => {
@@ -373,12 +378,14 @@ export function ReservationCartPageContent({ draft }: Props) {
               {!loading && vehicleReady && isVehicleReservationDraft(draft) && (
                 <>
                   {vehicleTrip?.isMine ? (
-                    <p
-                      role="status"
-                      className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-sm text-atg-fg"
-                    >
-                      {ck.vehicleTripOrganizerBanner}
-                    </p>
+                    <div className="space-y-2">
+                      <p
+                        role="status"
+                        className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-sm text-atg-fg"
+                      >
+                        {ck.vehicleTripOrganizerBanner}
+                      </p>
+                    </div>
                   ) : null}
                   <CheckoutRecapLine
                     icon="car"

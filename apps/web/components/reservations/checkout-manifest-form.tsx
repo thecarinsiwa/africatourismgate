@@ -34,6 +34,31 @@ export function emptyManifestEntryDraft(): ManifestEntryDraft {
   };
 }
 
+export function manifestEntryDraftFromApi(entry: {
+  fullName?: string | null;
+  age?: number | null;
+  sex?: BookingManifestSex | null;
+  nationality?: string | null;
+  idNumber?: string | null;
+  allergies?: string | null;
+  seriousMedicalConditions?: string | null;
+  currentMedications?: string | null;
+  dietaryNotes?: string | null;
+}): ManifestEntryDraft {
+  return {
+    fullName: entry.fullName?.trim() ?? '',
+    age: entry.age != null && Number.isFinite(entry.age) ? String(entry.age) : '',
+    sex: entry.sex ?? '',
+    nationality: entry.nationality?.trim() ?? '',
+    idNumber: entry.idNumber?.trim() ?? '',
+    allergies: entry.allergies?.trim() ?? '',
+    seriousMedicalConditions: entry.seriousMedicalConditions?.trim() ?? '',
+    currentMedications: entry.currentMedications?.trim() ?? '',
+    dietaryNotes: entry.dietaryNotes?.trim() ?? '',
+    file: undefined,
+  };
+}
+
 export function manifestDraftToPayload(
   entry: ManifestEntryDraft,
   sortOrder: number,
