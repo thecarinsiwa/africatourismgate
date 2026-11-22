@@ -196,8 +196,8 @@ function renderItinerary(
   map.setView([points[0].latitude, points[0].longitude], 11);
 }
 
-const PIN_WIDTH = 36;
-const PIN_HEIGHT = 48;
+const PIN_WIDTH = 28;
+const PIN_HEIGHT = 36;
 
 function createNumberedMarkerIcon(
   L: LeafletModule,
@@ -215,7 +215,7 @@ function createNumberedMarkerIcon(
     iconSize: [PIN_WIDTH, PIN_HEIGHT],
     // Tip of the pin sits on the coordinates.
     iconAnchor: [PIN_WIDTH / 2, PIN_HEIGHT],
-    popupAnchor: [0, -PIN_HEIGHT + 8],
+    popupAnchor: [0, -PIN_HEIGHT + 6],
   });
 }
 

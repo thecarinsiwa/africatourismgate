@@ -232,9 +232,9 @@
 
 .atg-itinerary-marker__pin {
   display: block;
-  width: 36px;
-  height: 48px;
-  filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.35));
+  width: 24px;
+  height: 32px;
+  filter: drop-shadow(0 1px 3px rgb(0 0 0 / 0.35));
 }
 
 .atg-itinerary-marker__svg {
@@ -243,15 +243,15 @@
 }
 
 .atg-itinerary-marker__shape {
-  /* Google Maps–style green pin */
-  fill: #34a853;
+  /* Brand primary from layout branding (--atg-primary) */
+  fill: var(--atg-primary, #c8102e);
   stroke: #ffffff;
-  stroke-width: 1.5;
+  stroke-width: 1.75;
 }
 
 .atg-itinerary-marker__label {
   fill: #ffffff;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   font-family: system-ui, -apple-system, Segoe UI, sans-serif;
 }
