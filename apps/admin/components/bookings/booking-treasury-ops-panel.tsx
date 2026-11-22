@@ -48,7 +48,7 @@ export function BookingTreasuryOpsPanel({
   const entryStatusLabels = useFundEntryStatusLabels();
   const exitStatusLabels = useFundExitStatusLabels();
   const locale = useLocale();
-  const emptyDash = '—';
+  const emptyDash = '-';
 
   const [state, setState] = useState<
     | { status: 'loading' }

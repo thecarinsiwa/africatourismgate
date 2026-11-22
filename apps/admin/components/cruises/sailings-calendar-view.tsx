@@ -192,7 +192,7 @@ export function SailingsCalendarView({
                             key={sailing.id}
                             href={`/produits/croisieres/${sailing.id}`}
                             className="truncate rounded-md bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/20 sm:text-xs"
-                            title={ship ? `${label} — ${ship.name}` : label}
+                            title={ship ? `${label} - ${ship.name}` : label}
                           >
                             {label}
                           </Link>

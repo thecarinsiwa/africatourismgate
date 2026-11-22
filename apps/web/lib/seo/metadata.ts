@@ -102,7 +102,7 @@ function normalizeOgImages(images?: OgImageInput[]): ResolvedOgImage[] | undefin
 
 /**
  * Absolute HTTPS URL suitable for social cards.
- * Rejects favicons (.ico) — crawlers render them as tiny / broken previews.
+ * Rejects favicons (.ico) - crawlers render them as tiny / broken previews.
  */
 export function resolveOgImageUrl(url: string | null | undefined): string | null {
   const absolute = normalizeBrandingAssetUrl(url);

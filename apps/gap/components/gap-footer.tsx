@@ -25,7 +25,7 @@ export function GapFooter() {
             </a>
           </p>
           <p className="text-white/60">
-            © {year} GAP — {t('rights')}
+            © {year} GAP - {t('rights')}
           </p>
         </div>
       </div>

@@ -182,18 +182,18 @@ See `ecosystem.config.cjs` and `nginx/africatourismgate.conf`.
 
 ## 🗂️ Functional domains
 
-- **👥 Users** — Authentication, profiles, addresses, payment methods, sessions
-- **🏨 Accommodations** — Properties, rooms, availability, amenities, images
-- **✈️ Flights** — Airlines, airports, flights, classes, availability
-- **🚗 Car rentals** — Agencies, vehicles, categories, availability
-- **🚢 Cruises** — Lines, ships, cabins, itineraries, ports
-- **🎯 Activities** — Experiences, suppliers, schedules, bookings
-- **📦 Packages** — Bundles (e.g. hotel + flight), discounts
-- **💳 Bookings & payments** — Bookings, statuses, payments, refunds
-- **⭐ Reviews & ratings** — Scores, comments, photos
-- **🎁 Promotions** — Promo codes, offers, campaigns
-- **📍 Destinations** — Geography, points of interest
-- **💬 Customer support** — Tickets, FAQ, help articles
+- **👥 Users** - Authentication, profiles, addresses, payment methods, sessions
+- **🏨 Accommodations** - Properties, rooms, availability, amenities, images
+- **✈️ Flights** - Airlines, airports, flights, classes, availability
+- **🚗 Car rentals** - Agencies, vehicles, categories, availability
+- **🚢 Cruises** - Lines, ships, cabins, itineraries, ports
+- **🎯 Activities** - Experiences, suppliers, schedules, bookings
+- **📦 Packages** - Bundles (e.g. hotel + flight), discounts
+- **💳 Bookings & payments** - Bookings, statuses, payments, refunds
+- **⭐ Reviews & ratings** - Scores, comments, photos
+- **🎁 Promotions** - Promo codes, offers, campaigns
+- **📍 Destinations** - Geography, points of interest
+- **💬 Customer support** - Tickets, FAQ, help articles
 
 ## 📊 Database architecture
 
@@ -256,4 +256,4 @@ Questions or ideas? Open an issue on the repository.
 
 ---
 
-**Africa Tourism Gate** — *Your digital travel companion* 🧳✈️
+**Africa Tourism Gate** - *Your digital travel companion* 🧳✈️

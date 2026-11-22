@@ -335,7 +335,7 @@ export function renderPasswordResetEmail(
     subject,
     `${headline('Réinitialisation du mot de passe', branding)}
 ${paragraph(`Bonjour <strong>${name}</strong>,`)}
-${paragraph('Vous avez demandé à réinitialiser votre mot de passe. Utilisez le bouton ci-dessous — ce lien est valide <strong>1 heure</strong>.')}
+${paragraph('Vous avez demandé à réinitialiser votre mot de passe. Utilisez le bouton ci-dessous - ce lien est valide <strong>1 heure</strong>.')}
 ${ctaButton(payload.resetUrl, 'Réinitialiser mon mot de passe', branding)}
 ${noticeBox('Si vous n\'êtes pas à l\'origine de cette demande, ignorez cet e-mail. Votre mot de passe actuel reste inchangé.')}
 <p style="margin:16px 0 0;font-size:12px;line-height:1.5;color:${BRAND.muted};word-break:break-all;">Lien direct : ${escapeHtml(payload.resetUrl)}</p>`,
@@ -354,7 +354,7 @@ export function renderTreasuryExternalInviteEmail(
 ): { subject: string; html: string; text: string } {
   const name = escapeHtml(payload.displayName.trim() || 'Collaborateur');
   const ttl = escapeHtml(payload.ttlLabel);
-  const subject = 'Invitation — accès trésorerie externe';
+  const subject = 'Invitation - accès trésorerie externe';
   const html = layout(
     subject,
     `${headline('Accès trésorerie externe', branding)}
@@ -450,7 +450,7 @@ const ADMIN_ACCOUNT_ACTIVATED_COPY: Record<
     cta: 'Se connecter au back-office',
     roleHint: "Si vous n'avez pas encore de rôle attribué, contactez votre administrateur.",
     rolesLabel: 'Rôles attribués',
-    preheader: 'Votre compte admin est prêt — connectez-vous au back-office.',
+    preheader: 'Votre compte admin est prêt - connectez-vous au back-office.',
     textIntro: 'Votre accès au back-office Africa Tourism Gate est activé.',
     textSignInLabel: 'Connexion',
     defaultName: 'Utilisateur',
@@ -463,7 +463,7 @@ const ADMIN_ACCOUNT_ACTIVATED_COPY: Record<
     cta: 'Sign in to the back office',
     roleHint: 'If you have not been assigned a role yet, contact your administrator.',
     rolesLabel: 'Assigned roles',
-    preheader: 'Your admin account is ready — sign in to the back office.',
+    preheader: 'Your admin account is ready - sign in to the back office.',
     textIntro: 'Your Africa Tourism Gate back-office access is now active.',
     textSignInLabel: 'Sign in',
     defaultName: 'User',
@@ -476,7 +476,7 @@ const ADMIN_ACCOUNT_ACTIVATED_COPY: Record<
     cta: 'Iniciar sesión en el back office',
     roleHint: 'Si aún no tiene un rol asignado, contacte a su administrador.',
     rolesLabel: 'Roles asignados',
-    preheader: 'Su cuenta admin está lista — inicie sesión en el back office.',
+    preheader: 'Su cuenta admin está lista - inicie sesión en el back office.',
     textIntro: 'Su acceso al back office de Africa Tourism Gate está activado.',
     textSignInLabel: 'Iniciar sesión',
     defaultName: 'Usuario',
@@ -554,7 +554,7 @@ export function renderBookingConfirmationEmail(
 
   const itemsBlock = itemRows
     ? `<ul style="margin:0;padding-left:18px;">${itemRows}</ul>`
-    : `<span style="color:${BRAND.muted};">—</span>`;
+    : `<span style="color:${BRAND.muted};">-</span>`;
 
   const cardRows: Array<{ label: string; value: string; highlight?: boolean }> =
     [
@@ -572,14 +572,14 @@ export function renderBookingConfirmationEmail(
     : '';
 
   const subject = applySubjectTemplate(
-    branding.bookingSubject ?? 'Confirmation de réservation — {ref}',
+    branding.bookingSubject ?? 'Confirmation de réservation - {ref}',
     { displayName: branding.displayName, ref: refShort },
   );
   const html = layout(
     subject,
     `${headline('Réservation confirmée', branding)}
 ${paragraph(`Bonjour <strong>${name}</strong>,`)}
-${paragraph('Bonne nouvelle — votre réservation est confirmée. Retrouvez le récapitulatif ci-dessous et conservez cet e-mail pour vos archives.')}
+${paragraph('Bonne nouvelle - votre réservation est confirmée. Retrouvez le récapitulatif ci-dessous et conservez cet e-mail pour vos archives.')}
 ${pdfNoteHtml}
 ${infoCard(cardRows, branding)}
 ${ctaButton(reservationsUrl, 'Voir ma réservation', branding)}
@@ -587,7 +587,7 @@ ${ctaButton(reservationsUrl, 'Voir ma réservation', branding)}
     branding,
     {
       webUrl: payload.webUrl,
-      preheader: `Réservation ${refShort} confirmée — total ${total}.`,
+      preheader: `Réservation ${refShort} confirmée - total ${total}.`,
     },
   );
   const itemsText =
@@ -635,14 +635,14 @@ export function renderOperationAlertEmail(
   const base = webBase(payload.webUrl);
   const verifyUrl = `${base}/booking/verify?verificationId=${encodeURIComponent(payload.verificationId)}`;
   const safeCode = escapeHtml(payload.code);
-  const subject = `Alerte sécurité — ${operation} sur votre adresse e-mail`;
+  const subject = `Alerte sécurité - ${operation} sur votre adresse e-mail`;
 
   const html = layout(
     subject,
     `${headline('Alerte de sécurité', branding)}
 ${paragraph(`Bonjour <strong>${name}</strong>,`)}
 ${paragraph(`Une tentative de <strong>${escapeHtml(operation)}</strong> a été initiée avec votre adresse e-mail sur Africa Tourism Gate.`)}
-${noticeBox('<strong>Si c\'est bien vous</strong>, saisissez le code ci-dessous sur la plateforme pour continuer et terminer l\'opération. <strong>Sinon</strong>, ignorez cet e-mail — l\'opération restera bloquée sans ce code.')}
+${noticeBox('<strong>Si c\'est bien vous</strong>, saisissez le code ci-dessous sur la plateforme pour continuer et terminer l\'opération. <strong>Sinon</strong>, ignorez cet e-mail - l\'opération restera bloquée sans ce code.')}
 <p style="margin:0 0 8px;font-size:13px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:${BRAND.muted};text-align:center;">Votre code de vérification</p>
 ${codeDisplayBlock(payload.code, branding)}
 <p style="margin:0;font-size:13px;line-height:1.55;color:${BRAND.muted};text-align:center;">Valide ${payload.expiresInMinutes} minutes</p>
@@ -650,7 +650,7 @@ ${ctaButton(verifyUrl, 'Saisir mon code', branding)}`,
     branding,
     {
       webUrl: payload.webUrl,
-      preheader: `Code ${safeCode} — confirmez ou ignorez cette ${operation}.`,
+      preheader: `Code ${safeCode} - confirmez ou ignorez cette ${operation}.`,
     },
   );
 

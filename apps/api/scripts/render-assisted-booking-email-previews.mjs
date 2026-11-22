@@ -1,5 +1,5 @@
 /**
- * Dev helper — writes static HTML previews for CE-6 assisted booking emails.
+ * Dev helper - writes static HTML previews for CE-6 assisted booking emails.
  * Run: node scripts/render-assisted-booking-email-previews.mjs
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -26,7 +26,7 @@ const sample = {
   bookingId: PREVIEW_BOOKING_ID,
   totalCents: 125_000,
   currency: 'USD',
-  itemTitles: ['Safari 3 jours — Parc national', 'Transfert aéroport'],
+  itemTitles: ['Safari 3 jours - Parc national', 'Transfert aéroport'],
   webUrl,
 };
 

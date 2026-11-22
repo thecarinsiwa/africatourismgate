@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 
-/** Stable UUID v4 ids — public detail routes reject non-UUID path params. */
+/** Stable UUID v4 ids - public detail routes reject non-UUID path params. */
 export const E2E_HOTEL_ID = '00000000-0000-4000-8000-000000001001';
 export const E2E_ROOM_ID = '00000000-0000-4000-8000-000000001002';
 
@@ -43,7 +43,7 @@ const DEFAULT_DETAIL = {
 
 /**
  * Mocks GET /public/accommodations/:id and the sibling /reviews list.
- * The detail glob alone also matches `/reviews` — without a branch, reviews
+ * The detail glob alone also matches `/reviews` - without a branch, reviews
  * receive the property payload, `result.data` is undefined, and HotelReviewsSection
  * crashes (remounting the room "select" button under Playwright).
  */

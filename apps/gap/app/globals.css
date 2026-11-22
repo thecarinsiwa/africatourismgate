@@ -4,7 +4,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* GAP conservation palette — overrides ATG commerce greens */
+/* GAP conservation palette - overrides ATG commerce greens */
 :root {
   --atg-primary: #1b4332;
   --atg-primary-hover: #143326;

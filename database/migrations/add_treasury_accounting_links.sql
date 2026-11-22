@@ -1,4 +1,4 @@
--- TRESO-039 — Pont comptable stub `accounting_links` (pas de moteur SYSCOHADA)
+-- TRESO-039 - Pont comptable stub `accounting_links` (pas de moteur SYSCOHADA)
 -- Down (manuel) : voir commentaires en bas de fichier.
 SET NAMES utf8mb4;
 
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `accounting_links` (
   `fund_op_type` ENUM('fund_entry', 'fund_exit') NOT NULL,
   `fund_op_id` CHAR(36) NOT NULL,
   `journal_entry_id` CHAR(36) DEFAULT NULL
-    COMMENT 'Rempli par l’épic SYSCOHADA futur — nullable dans ce stub',
+    COMMENT 'Rempli par l’épic SYSCOHADA futur - nullable dans ce stub',
   `mapping_rule_key` VARCHAR(120) DEFAULT NULL
     COMMENT 'Clé dans treasury-accounting-mapping.config',
   `status` ENUM('pending', 'linked', 'skipped') NOT NULL DEFAULT 'pending',
@@ -35,6 +35,6 @@ CREATE TABLE IF NOT EXISTS `accounting_links` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------------
--- DOWN (manuel — ne pas placer dans un .sql auto-appliqué par db:sync)
+-- DOWN (manuel - ne pas placer dans un .sql auto-appliqué par db:sync)
 -- ---------------------------------------------------------------------------
 -- DROP TABLE IF EXISTS `accounting_links`;

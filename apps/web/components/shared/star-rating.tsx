@@ -8,7 +8,7 @@ const SIZE_CLASS = {
   md: 'h-4 w-4',
 } as const;
 
-/** Étoiles pleines arrondies — ariaLabel fourni par le parent pour l'accessibilité i18n. */
+/** Étoiles pleines arrondies - ariaLabel fourni par le parent pour l'accessibilité i18n. */
 export type StarRatingProps = {
   value: number;
   max?: number;

@@ -10,7 +10,7 @@ export function isLocalDevOrigin(origin: string): boolean {
   }
 }
 
-/** Embed localhost return hint in `next` — survives production API without web_origin support. */
+/** Embed localhost return hint in `next` - survives production API without web_origin support. */
 export function appendDevOriginToNextPath(
   nextPath: string,
   webOrigin: string,

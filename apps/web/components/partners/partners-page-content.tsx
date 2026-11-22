@@ -187,8 +187,8 @@ function PartnersTable({ partners, t, locale }: { partners: Partner[]; t: Transl
                   <span>{partner.name}</span>
                 </div>
               </th>
-              <td className={td}>{partner.destinationName ?? '—'}</td>
-              <td className={td}>{countryName(partner.countryCode, locale) ?? '—'}</td>
+              <td className={td}>{partner.destinationName ?? '-'}</td>
+              <td className={td}>{countryName(partner.countryCode, locale) ?? '-'}</td>
               <td className={td}>{partner.activitiesCount ?? 0}</td>
               <td className={td}>
                 <PartnerRating partner={partner} t={t} />

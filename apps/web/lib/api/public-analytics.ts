@@ -27,7 +27,7 @@ export function trackPageViewBeacon(payload: TrackPageViewRequest): void {
       keepalive: true,
       credentials: 'omit',
     }).catch(() => {
-      /* ignore network errors — analytics must not affect UX */
+      /* ignore network errors - analytics must not affect UX */
     });
   } catch {
     /* ignore */

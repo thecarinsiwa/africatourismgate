@@ -1196,7 +1196,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Upload branding image (logo, favicon, auth visual — max 2 MB) */
+        /** Upload branding image (logo, favicon, auth visual - max 2 MB) */
         post: operations["OrganizationSettingsController_uploadBranding"];
         delete?: never;
         options?: never;
@@ -2800,7 +2800,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Void (soft-cancel) a fund entry — requires reason */
+        /** Void (soft-cancel) a fund entry - requires reason */
         post: operations["FundEntriesController_voidEntry"];
         delete?: never;
         options?: never;
@@ -3198,7 +3198,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Void (soft-cancel) a fund exit — requires reason */
+        /** Void (soft-cancel) a fund exit - requires reason */
         post: operations["FundExitsController_voidExit"];
         delete?: never;
         options?: never;
@@ -3338,7 +3338,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Treasury summary totals (entries/exits) for a date range — excludes voided (and draft exits) */
+        /** Treasury summary totals (entries/exits) for a date range - excludes voided (and draft exits) */
         get: operations["TreasuryReportsController_getSummary"];
         put?: never;
         post?: never;
@@ -3372,7 +3372,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Export fund entries and/or exits as UTF-8 CSV (BOM) — filters aligned with lists/reports */
+        /** Export fund entries and/or exits as UTF-8 CSV (BOM) - filters aligned with lists/reports */
         get: operations["TreasuryReportsController_exportCsv"];
         put?: never;
         post?: never;
@@ -3389,7 +3389,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Mapping rules from DB (stub:false) — real chart accounts (SYSCO-004) */
+        /** Mapping rules from DB (stub:false) - real chart accounts (SYSCO-004) */
         get: operations["AccountingLinksController_getMappingConfig"];
         put?: never;
         post?: never;
@@ -3462,7 +3462,7 @@ export interface paths {
         get: operations["AccountingLinksController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete pending/skipped link (SYSCO-005) — frees unique key for recreate; forbidden if linked */
+        /** Soft-delete pending/skipped link (SYSCO-005) - frees unique key for recreate; forbidden if linked */
         delete: operations["AccountingLinksController_softDelete"];
         options?: never;
         head?: never;
@@ -3529,7 +3529,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Balance générale (agrégat lignes postées par compte — SYSCO-006) */
+        /** Balance générale (agrégat lignes postées par compte - SYSCO-006) */
         get: operations["JournalEntriesController_getBalance"];
         put?: never;
         post?: never;
@@ -3652,7 +3652,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Close exercise (OD closing entry + lock/close periods) — SYSCO-008 */
+        /** Close exercise (OD closing entry + lock/close periods) - SYSCO-008 */
         post: operations["AccountingExercisesController_closeExercise"];
         delete?: never;
         options?: never;
@@ -7590,7 +7590,7 @@ export interface components {
             footerText?: string;
             /** @example Bienvenue sur {displayName} */
             welcomeSubject?: string;
-            /** @example Confirmation — {ref} */
+            /** @example Confirmation - {ref} */
             bookingSubject?: string;
         };
         EmailPreviewDto: {
@@ -7660,7 +7660,7 @@ export interface components {
             password: string;
             /**
              * Format: uuid
-             * @description Stable browser profile id — one active session per profile
+             * @description Stable browser profile id - one active session per profile
              */
             clientInstanceId?: string;
         };
@@ -7677,7 +7677,7 @@ export interface components {
             user?: components["schemas"]["AuthUserDto"];
             /** @description True when email verification is required before continuing */
             requiresVerification?: boolean;
-            /** @description Verification record ID — enter the code from the alert email */
+            /** @description Verification record ID - enter the code from the alert email */
             verificationId?: string;
             /**
              * @description Why verification is required (login, google_signup, register, booking)
@@ -7704,7 +7704,7 @@ export interface components {
             preferredLanguage?: string;
             /**
              * Format: uuid
-             * @description Stable browser profile id — one active session per profile
+             * @description Stable browser profile id - one active session per profile
              */
             clientInstanceId?: string;
         };
@@ -7766,7 +7766,7 @@ export interface components {
             code: string;
             /**
              * Format: uuid
-             * @description Stable browser profile id — one active session per profile
+             * @description Stable browser profile id - one active session per profile
              */
             clientInstanceId?: string;
         };
@@ -7775,7 +7775,7 @@ export interface components {
             verificationId: string;
         };
         ResendVerificationResponseDto: {
-            /** @description New verification id — replace the one in the client URL */
+            /** @description New verification id - replace the one in the client URL */
             verificationId: string;
             /** @example Un nouveau code a été envoyé. */
             message: string;
@@ -8415,7 +8415,7 @@ export interface components {
         };
         UpsertGuideAvailabilityDto: {
             /**
-             * @description Journée entière (legacy) — ignoré si startDatetime/endDatetime sont fournis.
+             * @description Journée entière (legacy) - ignoré si startDatetime/endDatetime sont fournis.
              * @example 2026-08-15
              */
             date?: string;
@@ -8776,7 +8776,7 @@ export interface components {
             /** @example Soutien aux éco-gardes */
             title: string;
             description?: Record<string, never>;
-            /** @example Urgence sécheresse — Parc des Virunga */
+            /** @example Urgence sécheresse - Parc des Virunga */
             contextNote?: Record<string, never>;
             /** @example Faire un don */
             buttonLabel: string;
@@ -8799,7 +8799,7 @@ export interface components {
             /** @example Soutien aux éco-gardes */
             title?: string;
             description?: Record<string, never>;
-            /** @example Urgence sécheresse — Parc des Virunga */
+            /** @example Urgence sécheresse - Parc des Virunga */
             contextNote?: Record<string, never>;
             /** @example Faire un don */
             buttonLabel?: string;
@@ -9315,7 +9315,7 @@ export interface components {
             /** @example Exercice 2027 */
             label?: string;
             /**
-             * @description Book currency — only when exercise is open and has no posted entries
+             * @description Book currency - only when exercise is open and has no posted entries
              * @example XAF
              */
             currency?: string;

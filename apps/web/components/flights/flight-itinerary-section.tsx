@@ -123,7 +123,7 @@ export function FlightItinerarySection({ detail, t, locale }: FlightItinerarySec
     >
       <h2 className="text-lg font-bold text-atg-fg">{t.itineraryTitle}</h2>
 
-      {/* Mobile — stack vertical */}
+      {/* Mobile - stack vertical */}
       <div className="mt-6 flex flex-col gap-3 md:hidden">
         <AirportBlock
           airport={detail.departureAirport}
@@ -156,7 +156,7 @@ export function FlightItinerarySection({ detail, t, locale }: FlightItinerarySec
         />
       </div>
 
-      {/* Desktop — timeline horizontale */}
+      {/* Desktop - timeline horizontale */}
       <div className="mt-6 hidden md:block">
         <div className="flex items-start justify-between gap-4">
           <AirportBlock

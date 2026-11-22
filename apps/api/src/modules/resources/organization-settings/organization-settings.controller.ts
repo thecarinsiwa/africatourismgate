@@ -230,7 +230,7 @@ export class OrganizationSettingsController {
   @Post('upload-branding')
   @RequirePermissions('organization_settings.write')
   @ApiOperation({
-    summary: 'Upload branding image (logo, favicon, auth visual — max 2 MB)',
+    summary: 'Upload branding image (logo, favicon, auth visual - max 2 MB)',
   })
   uploadBranding(
     @UploadedFile() file: Express.Multer.File | undefined,

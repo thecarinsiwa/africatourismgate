@@ -61,9 +61,9 @@ export function renderPropertyDossierPdf(input: RenderPropertyDossierPdfInput): 
     labels.dossier.type,
     accommodationPropertyTypeLabel(input.locale, input.property.propertyType),
   );
-  drawPdfKeyValue(doc, labels.dossier.stars, input.property.starRating ?? '—');
-  drawPdfKeyValue(doc, labels.dossier.destination, input.property.destinationName || '—');
-  drawPdfKeyValue(doc, labels.dossier.address, input.property.addressLine ?? '—');
+  drawPdfKeyValue(doc, labels.dossier.stars, input.property.starRating ?? '-');
+  drawPdfKeyValue(doc, labels.dossier.destination, input.property.destinationName || '-');
+  drawPdfKeyValue(doc, labels.dossier.address, input.property.addressLine ?? '-');
   drawPdfKeyValue(
     doc,
     labels.dossier.description,
@@ -91,7 +91,7 @@ export function renderPropertyDossierPdf(input: RenderPropertyDossierPdfInput): 
       ],
       input.rooms.map((room) => [
         room.name,
-        room.roomType ?? '—',
+        room.roomType ?? '-',
         String(room.maxGuests),
         formatMoney(room.basePriceCents, room.currency),
       ]),

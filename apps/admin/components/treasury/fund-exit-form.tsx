@@ -85,11 +85,11 @@ function formatBookingLabel(booking: BookingListItem): string {
   const ref = booking.id.slice(0, 8);
   const title = booking.name?.trim();
   const who = title || client || booking.clientEmail;
-  return `${ref}… — ${who} (${formatMoney(booking.totalCents, booking.currency)})`;
+  return `${ref}… - ${who} (${formatMoney(booking.totalCents, booking.currency)})`;
 }
 
 function formatEligibleLabel(req: ExpenseRequest): string {
-  return `${req.title} — ${formatMoney(req.requestedAmountCents, req.currency)} (${req.id.slice(0, 8)}…)`;
+  return `${req.title} - ${formatMoney(req.requestedAmountCents, req.currency)} (${req.id.slice(0, 8)}…)`;
 }
 
 type FundExitFormProps = {
@@ -382,7 +382,7 @@ export function FundExitForm({
 
   const organizationOptions = useMemo(
     () => [
-      { value: '', label: '—' },
+      { value: '', label: '-' },
       ...organizations.map((org) => ({ value: org.id, label: org.name })),
     ],
     [organizations],
@@ -390,7 +390,7 @@ export function FundExitForm({
 
   const eligibleOptions = useMemo(
     () => [
-      { value: '', label: '—' },
+      { value: '', label: '-' },
       ...eligible.map((req) => ({
         value: req.id,
         label: formatEligibleLabel(req),
@@ -635,7 +635,7 @@ export function FundExitForm({
       <Select
         label={tFields('paymentMethod')}
         value={values.paymentMethod}
-        options={[{ value: '', label: '—' }, ...paymentMethodOptions]}
+        options={[{ value: '', label: '-' }, ...paymentMethodOptions]}
         onChange={(e) =>
           updateField('paymentMethod', e.target.value as TreasuryPaymentMethod | '')
         }

@@ -112,8 +112,8 @@ export function BookingEmergencyContactForm({
     onChange({ ...value, ...partial });
   }
 
-  const nameSummary = value.name.trim() || '—';
-  const phoneSummary = value.phone.trim() || '—';
+  const nameSummary = value.name.trim() || '-';
+  const phoneSummary = value.phone.trim() || '-';
 
   const fields = (
     <div className="grid gap-3 sm:grid-cols-2">

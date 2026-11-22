@@ -118,7 +118,7 @@ export function AccountingBalancePanel() {
             href={`/tresorerie/comptabilite/grand-livre?accountId=${row.original.accountId}`}
             className="font-medium text-primary hover:underline"
           >
-            {row.original.accountCode} — {row.original.accountLabel}
+            {row.original.accountCode} - {row.original.accountLabel}
           </Link>
         ),
       },

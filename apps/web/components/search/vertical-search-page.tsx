@@ -44,7 +44,7 @@ export function VerticalSearchPage({
             ← {vs('backHome')}
           </Link>
           <h1 className="mt-3 text-3xl font-bold text-atg-fg">
-            {verticalLabel} — {vs('resultsTitle')}
+            {verticalLabel} - {vs('resultsTitle')}
           </h1>
           <p className="mt-2 text-atg-muted">
             {destination

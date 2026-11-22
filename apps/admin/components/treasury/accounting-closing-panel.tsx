@@ -122,8 +122,8 @@ export function AccountingClosingPanel() {
       const result = await getApiClient().closeAccountingExercise(exercise.id);
       setMessage(
         t('closeSuccess', {
-          closingId: result.closingJournalEntryId ?? '—',
-          openingId: result.openingJournalEntryId ?? '—',
+          closingId: result.closingJournalEntryId ?? '-',
+          openingId: result.openingJournalEntryId ?? '-',
         }),
       );
       await load();
@@ -220,7 +220,7 @@ export function AccountingClosingPanel() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="font-medium text-atg-fg">
-                {exercise.code} — {exercise.label}
+                {exercise.code} - {exercise.label}
               </p>
               <p className="text-sm text-atg-muted">
                 {exercise.startsOn} → {exercise.endsOn} ·{' '}

@@ -1,6 +1,6 @@
-# Africa Tourism Gate — Roadmap post-réunion (corrections & nouvelles fonctionnalités)
+# Africa Tourism Gate - Roadmap post-réunion (corrections & nouvelles fonctionnalités)
 
-> **Mise à jour : août 2026** — Suite à la réunion d’avancement du **29 août 2026**.  
+> **Mise à jour : août 2026** - Suite à la réunion d’avancement du **29 août 2026**.  
 > Branche de base : `main`. **Une PR = un livrable = une branche.**  
 > Complète : [roadmap-development.md](./roadmap-development.md) · [roadmap-development-client-enhance.md](./roadmap-development-client-enhance.md)  
 > Contexte réunion : [presentation-plateforme-08-29-2026.html](./presentation-plateforme-08-29-2026.html)
@@ -16,7 +16,7 @@ Ce document couvre les **corrections** constatées en démo et les **intégratio
 
 | Sujet | Décision |
 | ----- | -------- |
-| Sync API fournisseurs | **Hors V1** — back-office + réservation assistée ; sync en V2 |
+| Sync API fournisseurs | **Hors V1** - back-office + réservation assistée ; sync en V2 |
 | Paiements | Carte (Stripe) + **virement** + **acompte** ; cash on site seul = risqué pour le web |
 | Mobile money | **V1 offline livré** (numéro + preuve) ; intégration PSP API = V2 (Est-Afrique) |
 | Contact d’urgence | À intégrer au manifeste |
@@ -88,31 +88,31 @@ Règles :
 | Portail / onboarding partenaire | ❌ Catalogue `activity_providers` ≠ compte auth ; OAuth Gmail staff/client OK ; pas de rôle `partner` ni portail B2B (PR-10) | `apps/api/src/modules/auth/`, `activity-providers` |
 | Notifications staff persistées | ✅ Table `notifications` + API + hook poll (voir [pr-12-notifications-persist-test.md](./pr-12-notifications-persist-test.md)) | `notifications`, `use-admin-notifications.ts` |
 | Google Maps | ❌ Leaflet + OSM | `apps/web/components/maps/*`, `coordinate-picker-map.tsx` |
-| Sync API fournisseurs | ❌ Exclu V1 volontairement | — |
-| Mobile money | ✅ Offline (pays/opérateur/numéro + preuves + email) — voir [pr-13-mobile-money-test.md](./pr-13-mobile-money-test.md) ; PSP API reporté | `mobile_money_*`, `payment_methods.mobile_money`, checkout web, admin Paramètres |
+| Sync API fournisseurs | ❌ Exclu V1 volontairement | - |
+| Mobile money | ✅ Offline (pays/opérateur/numéro + preuves + email) - voir [pr-13-mobile-money-test.md](./pr-13-mobile-money-test.md) ; PSP API reporté | `mobile_money_*`, `payment_methods.mobile_money`, checkout web, admin Paramètres |
 | Réservation immédiate / assistée | ✅ Mature | `booking-engine.service.ts`, `booking-approval.service.ts` |
 | Assignation guides | ✅ Mature | `booking-guide-assignments.service.ts` |
 
 ---
 
-## Tableau récapitulatif — livrables PR
+## Tableau récapitulatif - livrables PR
 
 | # | Phase | Livrable | Priorité | Branche PR | Dépend de |
 | - | ----- | -------- | -------- | ---------- | --------- |
-| PR-01 | 0 | Validation manifeste checkout (champs obligatoires) | Haute | `feature/pr-01-manifest-validation` | — |
-| PR-02 | 0 | Stabiliser PDF confirmation (email + branding) | Haute | `feature/pr-02-pdf-confirmation-fix` | — |
-| PR-03 | 0 | Download PDF confirmation — compte client | Haute | `feature/pr-03-pdf-client-download` | PR-02 |
-| PR-04 | 1 | Contact d’urgence sur manifeste | Haute | `feature/pr-04-emergency-contact` | — |
+| PR-01 | 0 | Validation manifeste checkout (champs obligatoires) | Haute | `feature/pr-01-manifest-validation` | - |
+| PR-02 | 0 | Stabiliser PDF confirmation (email + branding) | Haute | `feature/pr-02-pdf-confirmation-fix` | - |
+| PR-03 | 0 | Download PDF confirmation - compte client | Haute | `feature/pr-03-pdf-client-download` | PR-02 |
+| PR-04 | 1 | Contact d’urgence sur manifeste | Haute | `feature/pr-04-emergency-contact` | - |
 | PR-05 | 1 | Conditions médicales structurées | Moyenne | `feature/pr-05-medical-conditions` | PR-04 (optionnel) |
-| PR-06 | 1 | Paiement par virement bancaire | Haute | `feature/pr-06-bank-transfer` | — |
-| PR-07 | 1 | Acomptes / paiements partiels — **livré** (voir [pr-07-deposits-test.md](./pr-07-deposits-test.md)) | Haute | `feature/pr-07-booking-deposits` | PR-06 |
-| PR-08 | 1 | Politique cash (restreindre web) — **livré** (voir [pr-08-cash-policy-test.md](./pr-08-cash-policy-test.md)) | Haute | `feature/pr-08-cash-policy` | — |
-| PR-09 | 2 | Clarifier Partenaire vs Staff vs Client (UI + RBAC) — **livré** | Moyenne | `feature/pr-09-partner-roles` | — |
+| PR-06 | 1 | Paiement par virement bancaire | Haute | `feature/pr-06-bank-transfer` | - |
+| PR-07 | 1 | Acomptes / paiements partiels - **livré** (voir [pr-07-deposits-test.md](./pr-07-deposits-test.md)) | Haute | `feature/pr-07-booking-deposits` | PR-06 |
+| PR-08 | 1 | Politique cash (restreindre web) - **livré** (voir [pr-08-cash-policy-test.md](./pr-08-cash-policy-test.md)) | Haute | `feature/pr-08-cash-policy` | - |
+| PR-09 | 2 | Clarifier Partenaire vs Staff vs Client (UI + RBAC) - **livré** | Moyenne | `feature/pr-09-partner-roles` | - |
 | PR-10 | 2 | Onboarding partenaires (questionnaire + invitation Gmail) | Moyenne | `feature/pr-10-partner-onboarding` | PR-09 |
-| PR-11 | 2 | Liaison document identité ↔ entrée manifeste — **livré** (voir [pr-11-manifest-doc-link-test.md](./pr-11-manifest-doc-link-test.md)) | Moyenne | `feature/pr-11-manifest-doc-link` | — |
-| PR-12 | 2 | Notifications admin persistées (serveur) — **livré** (voir [pr-12-notifications-persist-test.md](./pr-12-notifications-persist-test.md)) | Basse | `feature/pr-12-notifications-persist` | — |
-| PR-13 | 3 | Mobile money offline (Est-Afrique) — **config + checkout + preuves livrés** ; PSP API V2 | Basse | `feature/pr-13-mobile-money` | PR-06 / preuves |
-| PR-14 | 3 | Google Maps (clé API + import / enrichissement) | Basse | `feature/pr-14-google-maps` | — |
+| PR-11 | 2 | Liaison document identité ↔ entrée manifeste - **livré** (voir [pr-11-manifest-doc-link-test.md](./pr-11-manifest-doc-link-test.md)) | Moyenne | `feature/pr-11-manifest-doc-link` | - |
+| PR-12 | 2 | Notifications admin persistées (serveur) - **livré** (voir [pr-12-notifications-persist-test.md](./pr-12-notifications-persist-test.md)) | Basse | `feature/pr-12-notifications-persist` | - |
+| PR-13 | 3 | Mobile money offline (Est-Afrique) - **config + checkout + preuves livrés** ; PSP API V2 | Basse | `feature/pr-13-mobile-money` | PR-06 / preuves |
+| PR-14 | 3 | Google Maps (clé API + import / enrichissement) | Basse | `feature/pr-14-google-maps` | - |
 | PR-15 | 3 | Sync inventaire fournisseurs (Excel/FTP puis API) | Basse | `feature/pr-15-supplier-sync` | PR-10 |
 
 ### Phases
@@ -154,7 +154,7 @@ flowchart LR
 
 ## Prompts détaillés (copier-coller dans Cursor Agent)
 
-### PR-01 — Validation manifeste checkout
+### PR-01 - Validation manifeste checkout
 
 **Branche :** `feature/pr-01-manifest-validation`  
 **Priorité :** Haute
@@ -191,7 +191,7 @@ Scénario de test : docs/pr-01-manifest-validation-test.md
 
 ---
 
-### PR-02 — Stabiliser PDF confirmation
+### PR-02 - Stabiliser PDF confirmation
 
 **Branche :** `feature/pr-02-pdf-confirmation-fix`  
 **Priorité :** Haute
@@ -226,7 +226,7 @@ Cause racine + retest : docs/pr-02-pdf-confirmation-fix.md
 
 ---
 
-### PR-03 — Download PDF confirmation — compte client
+### PR-03 - Download PDF confirmation - compte client
 
 **Branche :** `feature/pr-03-pdf-client-download`  
 **Priorité :** Haute  
@@ -260,7 +260,7 @@ Curl + chemin UI + test manuel : docs/pr-03-pdf-client-download.md
 
 ---
 
-### PR-04 — Contact d’urgence sur manifeste
+### PR-04 - Contact d’urgence sur manifeste
 
 **Branche :** `feature/pr-04-emergency-contact`  
 **Priorité :** Haute
@@ -281,7 +281,7 @@ Références :
 
 Objectif (demande Andy) :
 1. Migration : champs emergency_contact_name, emergency_contact_phone, emergency_contact_email,
-   emergency_contact_country, emergency_contact_address (rue/ville) — nullable ou required selon règle métier (recommandé : name + phone required au checkout).
+   emergency_contact_country, emergency_contact_address (rue/ville) - nullable ou required selon règle métier (recommandé : name + phone required au checkout).
 2. API create/update/list incluent les champs.
 3. Formulaires Web / Admin / POS.
 4. Inclure le contact d’urgence dans le PDF confirmation (booking-detail-pdf).
@@ -298,7 +298,7 @@ Scénario de test : docs/pr-04-emergency-contact-test.md
 
 ---
 
-### PR-05 — Conditions médicales structurées
+### PR-05 - Conditions médicales structurées
 
 **Branche :** `feature/pr-05-medical-conditions`  
 **Priorité :** Moyenne  
@@ -336,7 +336,7 @@ Scénario de test : docs/pr-05-medical-conditions-test.md
 
 ---
 
-### PR-06 — Paiement par virement bancaire
+### PR-06 - Paiement par virement bancaire
 
 **Branche :** `feature/pr-06-bank-transfer`  
 **Priorité :** Haute
@@ -373,12 +373,12 @@ Preuves de paiement (upload client + review admin) : docs/pr-06b-payment-proofs-
 
 ---
 
-### PR-07 — Acomptes / paiements partiels
+### PR-07 - Acomptes / paiements partiels
 
 **Branche :** `feature/pr-07-booking-deposits`  
 **Priorité :** Haute  
 **Dépend de :** PR-06  
-**Statut :** ✅ Livré — scénario de test : [pr-07-deposits-test.md](./pr-07-deposits-test.md)
+**Statut :** ✅ Livré - scénario de test : [pr-07-deposits-test.md](./pr-07-deposits-test.md)
 
 **Modèle retenu :** pas de `confirmed_deposit` ; rester `pending_payment` tant que `sum(succeeded) < total` ; passer à `confirmed` uniquement quand soldé. Exposer `paidCents` / `balanceCents` / `depositRequiredCents`. Politique d’annulation = texte i18n informatif uniquement.
 
@@ -398,7 +398,7 @@ Objectif :
 2. Permettre un premier paiement (Stripe ou enregistrement virement/cash partiel) = acompte.
 3. Solde restant exigible avant confirmation finale OU avant date de service (règle documentée).
 4. UI client : montant acompte vs total ; UI admin : historique paiements partiels.
-5. Documenter la règle d’annulation (non-remboursement total si délai non respecté) en texte produit / i18n — pas un moteur juridique.
+5. Documenter la règle d’annulation (non-remboursement total si délai non respecté) en texte produit / i18n - pas un moteur juridique.
 
 Critères d’acceptation :
 - Une réservation peut avoir plusieurs payments liés ; somme < total ⇒ pas confirmed (pending_payment) ; confirmed uniquement si soldé.
@@ -411,13 +411,13 @@ Critères d’acceptation :
 
 ---
 
-### PR-08 — Politique cash (restreindre web)
+### PR-08 - Politique cash (restreindre web)
 
 **Branche :** `feature/pr-08-cash-policy`  
 **Priorité :** Haute  
-**Statut :** ✅ Livré — scénario de test : [pr-08-cash-policy-test.md](./pr-08-cash-policy-test.md)
+**Statut :** ✅ Livré - scénario de test : [pr-08-cash-policy-test.md](./pr-08-cash-policy-test.md)
 
-**Modèle retenu :** pas de nouveau setting `allow_web_cash` — le booléen existant `booking` / `payment_methods.cash` **est** l’autorisation cash web (défaut `false`). POS et `recordCashPayment` admin hors gate. Migration `set_web_payment_methods_cash_default_false.sql` aligne les rows existantes.
+**Modèle retenu :** pas de nouveau setting `allow_web_cash` - le booléen existant `booking` / `payment_methods.cash` **est** l’autorisation cash web (défaut `false`). POS et `recordCashPayment` admin hors gate. Migration `set_web_payment_methods_cash_default_false.sql` aligne les rows existantes.
 
 ```
 Projet : Africa Tourism Gate (pnpm monorepo).
@@ -435,7 +435,7 @@ Objectif (position Andy : cash seul = dangereux) :
 1. Sur le site web public : ne plus proposer cash par défaut ; réactivation explicite via Paramètres (`payment_methods.cash`).
 2. Conserver cash sur POS et enregistrement staff (back-office).
 3. Message clair si un ancien booking cash existe.
-4. Setting org : payment_methods.cash (default false) — alias produit « allow_web_cash ».
+4. Setting org : payment_methods.cash (default false) - alias produit « allow_web_cash ».
 
 Critères d’acceptation :
 - Parcours web immédiat : pas de cash (sauf setting explicitement activé).
@@ -448,7 +448,7 @@ Critères d’acceptation :
 
 ---
 
-### PR-09 — Clarifier Partenaire vs Staff vs Client
+### PR-09 - Clarifier Partenaire vs Staff vs Client
 
 **Branche :** `feature/pr-09-partner-roles`  
 **Priorité :** Moyenne  
@@ -465,7 +465,7 @@ Critères d’acceptation :
 
 - API technique : routes `/activity-providers`, permissions réutilisées `activities.read` / `activities.write`.
 - URL admin : `/produits/activites/partenaires` (redirect depuis l’ancienne URL `fournisseurs`).
-- Paiement : libellé **Prestataire** (`paymentProvider`) — ne pas confondre avec Partenaire catalogue.
+- Paiement : libellé **Prestataire** (`paymentProvider`) - ne pas confondre avec Partenaire catalogue.
 
 ```
 Projet : Africa Tourism Gate (pnpm monorepo).
@@ -495,7 +495,7 @@ Critères d’acceptation :
 
 ---
 
-### PR-10 — Onboarding partenaires
+### PR-10 - Onboarding partenaires
 
 **Branche :** `feature/pr-10-partner-onboarding`  
 **Priorité :** Moyenne  
@@ -511,7 +511,7 @@ Références :
 - organization settings / activity-providers
 - Présentation : questionnaire attributs hébergements partenaires
 
-Objectif (V1.5 — pas encore sync API) :
+Objectif (V1.5 - pas encore sync API) :
 1. Formulaire / questionnaire standardisé attributs hébergement partenaire (champs métier minimaux).
 2. Flux d’invitation email (lien) + option inscription via Gmail pour un rôle partenaire limité.
 3. Espace minimal partenaire OU admin-only intake (si portail complet trop large : intake admin + statut « partenaire invité »).
@@ -527,11 +527,11 @@ Critères d’acceptation :
 
 ---
 
-### PR-11 — Liaison document identité ↔ entrée manifeste
+### PR-11 - Liaison document identité ↔ entrée manifeste
 
 **Branche :** `feature/pr-11-manifest-doc-link`  
 **Priorité :** Moyenne  
-**Statut :** ✅ Livré — scénario de test : [pr-11-manifest-doc-link-test.md](./pr-11-manifest-doc-link-test.md)
+**Statut :** ✅ Livré - scénario de test : [pr-11-manifest-doc-link-test.md](./pr-11-manifest-doc-link-test.md)
 
 ```
 Projet : Africa Tourism Gate (pnpm monorepo).
@@ -558,11 +558,11 @@ Critères d’acceptation :
 
 ---
 
-### PR-12 — Notifications admin persistées
+### PR-12 - Notifications admin persistées
 
 **Branche :** `feature/pr-12-notifications-persist`  
 **Priorité :** Basse  
-**Statut :** ✅ Livré — scénario de test : [pr-12-notifications-persist-test.md](./pr-12-notifications-persist-test.md)
+**Statut :** ✅ Livré - scénario de test : [pr-12-notifications-persist-test.md](./pr-12-notifications-persist-test.md)
 
 ```
 Projet : Africa Tourism Gate (pnpm monorepo).
@@ -588,7 +588,7 @@ Critères d’acceptation :
 
 ---
 
-### PR-13 — Mobile money (Est-Afrique)
+### PR-13 - Mobile money (Est-Afrique)
 
 **Branche :** `feature/pr-13-mobile-money`  
 **Priorité :** Basse  
@@ -601,7 +601,7 @@ Scénario de test : [pr-13-mobile-money-test.md](./pr-13-mobile-money-test.md)
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : `feature/pr-13-mobile-money`.
 
-Livrable PR-13 (V1 — offline, livré) :
+Livrable PR-13 (V1 - offline, livré) :
 - preferredPaymentMethod 'mobile_money' + setting payment_methods.mobile_money
 - Tables mobile_money_countries / operators / payment_numbers + CRUD admin + logos
 - Checkout web : pays → opérateur → numéro + preuve (même pipeline que bank_transfer)
@@ -609,7 +609,7 @@ Livrable PR-13 (V1 — offline, livré) :
 - Admin : Marquer Mobile Money reçu ou valider preuve
 
 Hors scope V1 / V2 :
-1. Choisir un provider PSP (Flutterwave, Africa's Talking, MoMo API) — fixer avant code.
+1. Choisir un provider PSP (Flutterwave, Africa's Talking, MoMo API) - fixer avant code.
 2. Checkout / webhook / confirmation comme Stripe.
 3. Sandbox + runbook env vars + idempotence webhook.
 
@@ -622,7 +622,7 @@ Critères d’acceptation V1 :
 
 ---
 
-### PR-14 — Google Maps
+### PR-14 - Google Maps
 
 **Branche :** `feature/pr-14-google-maps`  
 **Priorité :** Basse
@@ -653,7 +653,7 @@ Critères d’acceptation :
 
 ---
 
-### PR-15 — Sync inventaire fournisseurs (V2)
+### PR-15 - Sync inventaire fournisseurs (V2)
 
 **Branche :** `feature/pr-15-supplier-sync`  
 **Priorité :** Basse  
@@ -672,7 +672,7 @@ Références :
 Objectif (approche progressive Andy) :
 1. Phase A : import manuel / semi-auto fichier Excel (disponibilités chambres) → mise à jour inventaire local.
 2. Phase B (optionnelle dans la même PR ou PR-15b) : dépôt FTP planifié.
-3. Phase C : connecteur API partenaire — UNIQUEMENT si doc API fournie ; sinon stub + backlog.
+3. Phase C : connecteur API partenaire - UNIQUEMENT si doc API fournie ; sinon stub + backlog.
 4. Réservation assistée reste le filet de sécurité en cas de conflit stock.
 
 Critères d’acceptation :
@@ -715,7 +715,7 @@ Critères d’acceptation :
 | -------- | ---- |
 | [roadmap-development.md](./roadmap-development.md) | Socle produit & livrables historiques |
 | [roadmap-development-client-enhance.md](./roadmap-development-client-enhance.md) | Guides + réservation assistée (largement livré) |
-| [roadmap-pos.md](./roadmap-pos.md) | POS — cash reste légitime ici ([PR-08](./pr-08-cash-policy-test.md)) |
-| [pr-08-cash-policy-test.md](./pr-08-cash-policy-test.md) | Scénario de test — cash web off par défaut |
-| [presentation-plateforme-users.md](./presentation-plateforme-users.md) | Vue utilisateurs — catalogue partenaires ≠ compte auth (PR-09) |
+| [roadmap-pos.md](./roadmap-pos.md) | POS - cash reste légitime ici ([PR-08](./pr-08-cash-policy-test.md)) |
+| [pr-08-cash-policy-test.md](./pr-08-cash-policy-test.md) | Scénario de test - cash web off par défaut |
+| [presentation-plateforme-users.md](./presentation-plateforme-users.md) | Vue utilisateurs - catalogue partenaires ≠ compte auth (PR-09) |
 | [presentation-plateforme-08-29-2026.html](./presentation-plateforme-08-29-2026.html) | Support de la réunion source |

@@ -11,7 +11,7 @@ Préparation des **données** avant / pendant le go-live (nettoyage démo, colle
 
 L’API est exposée sur le **même domaine** que l’admin (`/api/…` → nginx → port 3000). **Pas besoin** du sous-domaine `api.africatourismgate.org`.
 
-Les fichiers branding sont servis sous **`/api/uploads/branding/…`** (pas `/uploads/` seul — sinon nginx envoie la requête à Next.js et renvoie du HTML). Les anciennes URLs `/uploads/…` sont redirigées vers `/api/uploads/…` par nginx.
+Les fichiers branding sont servis sous **`/api/uploads/branding/…`** (pas `/uploads/` seul - sinon nginx envoie la requête à Next.js et renvoie du HTML). Les anciennes URLs `/uploads/…` sont redirigées vers `/api/uploads/…` par nginx.
 
 Après `git pull` : `pnpm build`, `bash scripts/restart-production.sh`, puis `sudo bash scripts/setup-nginx.sh` (note : `bash scripts/setup-nginx.sh`, pas `./scripts/…` si le fichier n’est pas exécutable).
 
@@ -29,7 +29,7 @@ Sur `africatourismgate.org`, nginx et `apps/web` redirigent vers `app-africatour
 cd /var/www/africatourismgate
 git pull
 
-# .env (racine) — exemple :
+# .env (racine) - exemple :
 # NEXT_PUBLIC_API_URL=https://app-africatourismgate.org/api
 # NEXT_PUBLIC_ADMIN_URL=https://app-africatourismgate.org
 # NEXT_PUBLIC_WEB_URL=https://africatourismgate.org
@@ -79,7 +79,7 @@ pnpm install
 pnpm --filter @africatourismgate/admin build
 ```
 
-Ne lancez pas `pnpm install` uniquement dans `apps/admin` — les liens workspace (`packages/config`) se font à la racine.
+Ne lancez pas `pnpm install` uniquement dans `apps/admin` - les liens workspace (`packages/config`) se font à la racine.
 
 ## Erreur « Impossible de joindre l’API »
 

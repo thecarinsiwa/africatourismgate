@@ -3,7 +3,7 @@ const defaultServerApiUrl =
     ? 'https://app-africatourismgate.org/api'
     : 'http://localhost:3000/api';
 
-/** API base for public fetches — browser uses same-origin `/api` to avoid CORS. */
+/** API base for public fetches - browser uses same-origin `/api` to avoid CORS. */
 export function getPublicApiBaseUrl(): string {
   if (typeof window !== 'undefined') {
     return '/api';

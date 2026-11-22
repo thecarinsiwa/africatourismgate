@@ -163,7 +163,7 @@ async function main() {
     console.error('P5-1 FAIL');
     process.exit(1);
   }
-  console.log('P5-1 OK — captures dans', OUT);
+  console.log('P5-1 OK - captures dans', OUT);
 }
 
 main().catch((err) => {

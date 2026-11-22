@@ -1,4 +1,4 @@
--- SYSCO-002 — Exercices / périodes comptables (`accounting_exercises`, `accounting_periods`)
+-- SYSCO-002 - Exercices / périodes comptables (`accounting_exercises`, `accounting_periods`)
 -- Seed exercice 2026 + 12 périodes mensuelles pour l’org plateforme.
 -- Down (manuel) : voir commentaires en bas de fichier.
 SET NAMES utf8mb4;
@@ -127,7 +127,7 @@ WHERE EXISTS (
 );
 
 -- ---------------------------------------------------------------------------
--- DOWN (manuel — ne pas placer dans un .sql auto-appliqué par db:sync)
+-- DOWN (manuel - ne pas placer dans un .sql auto-appliqué par db:sync)
 -- ---------------------------------------------------------------------------
 -- DELETE FROM `accounting_periods` WHERE `exercise_id` = '00000000-0000-4000-8000-000000002100';
 -- DELETE FROM `accounting_exercises` WHERE `id` = '00000000-0000-4000-8000-000000002100';

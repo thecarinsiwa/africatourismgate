@@ -13,7 +13,7 @@ export type DataTablePaginationLabels = {
     itemLabel: string;
     pluralSuffix: string;
   }) => string;
-  /** e.g. "page {page} / {totalPages}" — omit segment when totalPages <= 1 */
+  /** e.g. "page {page} / {totalPages}" - omit segment when totalPages <= 1 */
   pageOf?: (params: { page: number; totalPages: number }) => string;
   previousPage: string;
   nextPage: string;

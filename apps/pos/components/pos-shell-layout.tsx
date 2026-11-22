@@ -57,7 +57,7 @@ export function PosShellLayout({ children }: { children: React.ReactNode }) {
     void fetchPublicBranding({ organizationSlug }).then((branding) => {
       if (cancelled) return;
       setLogo({
-        name: `${branding.displayName} — Caisse`,
+        name: `${branding.displayName} - Caisse`,
         logoUrl: branding.logoUrl,
       });
       applyFaviconToDocument(branding.faviconUrl);

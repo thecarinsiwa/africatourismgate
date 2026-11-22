@@ -1,5 +1,5 @@
-// TODO(api): GET /dashboard/stats?period=30d — agrégation serveur recommandée pour KPIs et deltas.
-// users/properties : pas de filtre dateFrom côté API — totaux globaux sans variation.
+// TODO(api): GET /dashboard/stats?period=30d - agrégation serveur recommandée pour KPIs et deltas.
+// users/properties : pas de filtre dateFrom côté API - totaux globaux sans variation.
 
 import type { PaymentListItem } from '@africatourismgate/types';
 import type { DashboardKpiKey } from '../config/dashboard-kpi';
@@ -24,7 +24,7 @@ export type DashboardKpiData = {
   rawValue: number;
   displayValue: string;
   change?: DashboardKpiChange;
-  /** Currency of the payments summed; absent when none — UI falls back to the Admin default. */
+  /** Currency of the payments summed; absent when none - UI falls back to the Admin default. */
   currency?: string;
 };
 

@@ -12,7 +12,7 @@
     "accounting": "Contabilidad"
   },
   "hub": {
-    "statsDash": "—",
+    "statsDash": "-",
     "quickLinks": {
       "title": "Acceso rápido",
       "subtitle": "Submódulos de tesorería según sus permisos",
@@ -219,7 +219,7 @@
       "bookingsLoading": "Buscando reservas…",
       "attachments": {
         "title": "Justificantes",
-        "hint": "JPEG, PNG, WebP o PDF — máx. 10 Mo. Disponibles tras guardar.",
+        "hint": "JPEG, PNG, WebP o PDF - máx. 10 Mo. Disponibles tras guardar.",
         "upload": "Añadir un archivo",
         "empty": "No hay justificantes.",
         "remove": "Eliminar",
@@ -309,7 +309,7 @@
       "bookingsLoading": "Buscando reservas…",
       "attachments": {
         "title": "Justificantes",
-        "hint": "JPEG, PNG, WebP o PDF — máx. 10 MB. Disponibles tras guardar.",
+        "hint": "JPEG, PNG, WebP o PDF - máx. 10 MB. Disponibles tras guardar.",
         "upload": "Añadir un archivo",
         "empty": "Sin justificantes.",
         "remove": "Eliminar",
@@ -556,7 +556,7 @@
     "sections": {
       "bySource": "Por origen (entradas)",
       "byPaymentMethod": "Por método de pago",
-      "chartPaymentMethod": "Gráfico — métodos de pago"
+      "chartPaymentMethod": "Gráfico - métodos de pago"
     },
     "chartUnit": "Importes en {currency} (unidades mayores)",
     "columns": {
@@ -1023,7 +1023,7 @@
     "form": {
       "createTitle": "Nuevo tipo de cambio",
       "editTitle": "Editar tipo",
-      "description": "Entrada manual — 1 origen = tipo × destino.",
+      "description": "Entrada manual - 1 origen = tipo × destino.",
       "fromCurrency": "Moneda origen",
       "toCurrency": "Moneda destino",
       "rate": "Tipo",

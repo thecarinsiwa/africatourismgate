@@ -583,7 +583,7 @@ export function RbacAuditLogsList({
             <option value="">{tFilters('all')}</option>
             {users.map((user) => (
               <option key={user.id} value={user.id}>
-                {user.firstName} {user.lastName} — {user.email}
+                {user.firstName} {user.lastName} - {user.email}
               </option>
             ))}
           </select>

@@ -1,12 +1,12 @@
-# Africa Tourism Gate — Web (`apps/web`)
+# Africa Tourism Gate - Web (`apps/web`)
 
 Site **public client** (voyageurs) : Next.js 14 App Router, React 18, **next-intl** (fr / en / es), Tailwind. Port **3002**. Consomme l’API REST (`apps/api`) via `NEXT_PUBLIC_API_URL`.
 
 ## Prérequis
 
-- Monorepo pnpm (Node **≥ 18.18**, pnpm 9 — voir racine)
+- Monorepo pnpm (Node **≥ 18.18**, pnpm 9 - voir racine)
 - API locale sur `:3000` recommandée pour listings / auth / booking  
-  (ou `ATG_USE_REMOTE_API=1` dans `.env.local` pour proxifier vers l’API distante — voir [`.env.example`](../../.env.example))
+  (ou `ATG_USE_REMOTE_API=1` dans `.env.local` pour proxifier vers l’API distante - voir [`.env.example`](../../.env.example))
 - Copier [`.env.example`](../../.env.example) → `.env` à la **racine** du monorepo
 
 ## Variables d’environnement (minimal)
@@ -51,17 +51,17 @@ components/    # UI par domaine (home, hotels, booking, account, about…)
 lib/           # API public, auth session, search, i18n helpers, SEO
 messages/      # next-intl fr.json / en.json / es.json
 i18n/          # config next-intl (request, routing)
-tests/e2e/     # Playwright (mocks API — pas de MySQL requis)
+tests/e2e/     # Playwright (mocks API - pas de MySQL requis)
 ```
 
 Packages workspace : `@africatourismgate/ui`, `api-client`, `types`, `utils`.
 
 ## Flux principaux
 
-1. **Recherche** — home (`/#search`) → `/hotels|flights|cars|cruises|activities|packages` ou `/search/[type]`
-2. **Fiche** — `/hotels/[id]`, etc. → CTA réservation (sidebar / drawer mobile)
-3. **Booking** — `/booking/login|register` → verify OTP si besoin → cart / recap / paiement → success
-4. **Compte** — `/account/*` (profil, réservations, fidélité, support) après session
+1. **Recherche** - home (`/#search`) → `/hotels|flights|cars|cruises|activities|packages` ou `/search/[type]`
+2. **Fiche** - `/hotels/[id]`, etc. → CTA réservation (sidebar / drawer mobile)
+3. **Booking** - `/booking/login|register` → verify OTP si besoin → cart / recap / paiement → success
+4. **Compte** - `/account/*` (profil, réservations, fidélité, support) après session
 
 Erreurs listing (API down) : `ListingErrorState` (réessayer + accueil). Auth guard + stepper : Vitest.
 
@@ -75,8 +75,8 @@ Checklist PR : [`docs/web-a11y-checklist.md`](../../docs/web-a11y-checklist.md).
 
 ## Docs
 
-- [`docs/web-github-tasks.md`](../../docs/web-github-tasks.md) — backlog web (WEB-*)
-- [`docs/web-design-improvements.md`](../../docs/web-design-improvements.md) — WEB-UX
-- [`docs/roadmap-post-reunion-08-2026.md`](../../docs/roadmap-post-reunion-08-2026.md) — roadmap produit
-- [`docs/roadmap-development.md`](../../docs/roadmap-development.md) — roadmap technique
+- [`docs/web-github-tasks.md`](../../docs/web-github-tasks.md) - backlog web (WEB-*)
+- [`docs/web-design-improvements.md`](../../docs/web-design-improvements.md) - WEB-UX
+- [`docs/roadmap-post-reunion-08-2026.md`](../../docs/roadmap-post-reunion-08-2026.md) - roadmap produit
+- [`docs/roadmap-development.md`](../../docs/roadmap-development.md) - roadmap technique
 - README monorepo : [`../../README.md`](../../README.md)

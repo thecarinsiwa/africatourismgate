@@ -42,7 +42,7 @@ export class AccountingLinksController {
   @Get('mapping-config')
   @ApiOperation({
     summary:
-      'Mapping rules from DB (stub:false) — real chart accounts (SYSCO-004)',
+      'Mapping rules from DB (stub:false) - real chart accounts (SYSCO-004)',
   })
   getMappingConfig(@Query('organizationId') organizationId?: string) {
     return this.service.getMappingConfig(organizationId);
@@ -129,7 +129,7 @@ export class AccountingLinksController {
   @Delete(':id')
   @ApiOperation({
     summary:
-      'Soft-delete pending/skipped link (SYSCO-005) — frees unique key for recreate; forbidden if linked',
+      'Soft-delete pending/skipped link (SYSCO-005) - frees unique key for recreate; forbidden if linked',
   })
   softDelete(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
     return this.service.softDelete(id, user.id);

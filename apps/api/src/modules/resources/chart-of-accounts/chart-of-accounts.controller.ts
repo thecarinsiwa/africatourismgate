@@ -9,7 +9,7 @@ import { ChartOfAccountsService } from './chart-of-accounts.service';
 import { ChartAccountsListQueryDto } from './dto/chart-accounts-list-query.dto';
 
 /**
- * Plan comptable SYSCOHADA (SYSCO-002) — lecture.
+ * Plan comptable SYSCOHADA (SYSCO-002) - lecture.
  * Bridge : `accounting.chart.read` OU `treasury.accounting_link.read` (SYSCO-009).
  */
 @ApiTags('chart-of-accounts')

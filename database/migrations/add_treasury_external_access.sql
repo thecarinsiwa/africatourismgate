@@ -1,6 +1,6 @@
--- TRESO-005 — Collaborateurs externes trésorerie + jetons d’accès sécurisés
+-- TRESO-005 - Collaborateurs externes trésorerie + jetons d’accès sécurisés
 -- Ajoute aussi la FK expense_requests.requested_by_external_id (reportée depuis TRESO-003).
--- Traçabilité des actions : via treasury_audit_logs (TRESO-006) — actor_type=external, actor_id=collaborator.id
+-- Traçabilité des actions : via treasury_audit_logs (TRESO-006) - actor_type=external, actor_id=collaborator.id
 -- Down (manuel) : voir commentaires en bas de fichier.
 SET NAMES utf8mb4;
 
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `treasury_external_collaborators` (
 CREATE TABLE IF NOT EXISTS `treasury_access_tokens` (
   `id` CHAR(36) NOT NULL,
   `collaborator_id` CHAR(36) NOT NULL,
-  `token_hash` VARCHAR(64) NOT NULL COMMENT 'SHA-256 hex du jeton brut — jamais stocké en clair',
+  `token_hash` VARCHAR(64) NOT NULL COMMENT 'SHA-256 hex du jeton brut - jamais stocké en clair',
   `expires_at` DATETIME NOT NULL,
   `scopes` JSON DEFAULT NULL COMMENT 'Snapshot à l’émission ; NULL = hérite du collaborateur',
   `revoked_at` DATETIME DEFAULT NULL,
@@ -74,7 +74,7 @@ EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
 -- ---------------------------------------------------------------------------
--- DOWN (manuel — ne pas placer dans un .sql auto-appliqué par db:sync)
+-- DOWN (manuel - ne pas placer dans un .sql auto-appliqué par db:sync)
 -- ---------------------------------------------------------------------------
 -- ALTER TABLE `expense_requests` DROP FOREIGN KEY `fk_expense_requests_requested_by_external`;
 -- DROP TABLE IF EXISTS `treasury_access_tokens`;

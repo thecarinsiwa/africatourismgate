@@ -85,7 +85,7 @@ async function searchRooms(query: string): Promise<SaleCatalogHit[]> {
         limit: SEARCH_LIMIT,
       });
       for (const room of rooms.data) {
-        const label = `${property.name} — ${room.name}`;
+        const label = `${property.name} - ${room.name}`;
         if (query && !matchesQuery(label, query) && !matchesQuery(room.name, query)) {
           continue;
         }

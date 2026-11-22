@@ -88,17 +88,17 @@
       "promoCode": "Promo code (checkout)",
       "promoCodeHint": "Codes entered at checkout are managed separately. Generate a suggestion, then create the linked code.",
       "discount": "Discount",
-      "discountHint": "Optional — leave off for an informative campaign.",
+      "discountHint": "Optional - leave off for an informative campaign.",
       "discountOff": "No checkout discount: the campaign stays purely informative.",
       "schedule": "Validity & limits",
       "scheduleHint": "Optional dates. Leave empty for a campaign with no time bounds.",
       "publication": "Publication",
       "publicationHint": "Controls whether the campaign is shown to customers.",
       "preview": "Live preview",
-      "previewHint": "Stays visible while you scroll — updates as you type."
+      "previewHint": "Stays visible while you scroll - updates as you type."
     },
     "info": {
-      "codesVsPromotions": "Promo codes are entered by the customer at checkout. Promotions are visible campaigns (banners, pages) — the discount may be optional.",
+      "codesVsPromotions": "Promo codes are entered by the customer at checkout. Promotions are visible campaigns (banners, pages) - the discount may be optional.",
       "managePromoCodesLink": "Manage promo codes"
     },
     "actions": {
@@ -136,7 +136,7 @@
     },
     "hints": {
       "name": "Shown as the campaign title in the preview and on the site.",
-      "suggestedCode": "Not saved with the promotion — used to create a separate promo code.",
+      "suggestedCode": "Not saved with the promotion - used to create a separate promo code.",
       "discountPercent": "Percentage (e.g. 15 for −15%).",
       "discountFixed": "Fixed amount in currency units (e.g. 10 for −10 USD).",
       "maxRedemptions": "Leave empty for unlimited."

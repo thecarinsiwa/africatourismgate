@@ -72,7 +72,7 @@
         "modeImmediate": "Immédiat (paiement)",
         "modeAssisted": "Assisté (demande)",
         "paymentMethodsTitle": "Moyens de paiement (site public)",
-        "paymentMethodsDescription": "Cochez les moyens proposés au checkout web. Le POS et l’encaissement staff ne sont pas concernés. Les espèces sur place sont désactivées par défaut (risque si cash seul sans engagement) — réactivez-les uniquement si vous acceptez ce risque. Le virement nécessite aussi des comptes bancaires publiés. Mobile Money nécessite pays, opérateurs et numéros configurés.",
+        "paymentMethodsDescription": "Cochez les moyens proposés au checkout web. Le POS et l’encaissement staff ne sont pas concernés. Les espèces sur place sont désactivées par défaut (risque si cash seul sans engagement) - réactivez-les uniquement si vous acceptez ce risque. Le virement nécessite aussi des comptes bancaires publiés. Mobile Money nécessite pays, opérateurs et numéros configurés.",
         "paymentMethods": {
           "stripe": "Carte (Stripe)",
           "cash": "Espèces sur place (site public)",
@@ -125,11 +125,11 @@
         "description": "Lorsque le mode est activé, les visiteurs du site public sont redirigés vers une page de maintenance (l’admin reste accessible).",
         "enabled": "Activer le mode maintenance",
         "pageTitle": "Titre affiché",
-        "pageTitleHint": "Optionnel — sinon le titre par défaut de la page maintenance est utilisé.",
+        "pageTitleHint": "Optionnel - sinon le titre par défaut de la page maintenance est utilisé.",
         "message": "Message",
-        "messageHint": "Optionnel — texte affiché aux visiteurs (2000 caractères max).",
+        "messageHint": "Optionnel - texte affiché aux visiteurs (2000 caractères max).",
         "endsAt": "Fin prévue",
-        "endsAtHint": "Optionnel — si renseignée, un compte à rebours s’affiche et le site se rouvre automatiquement à cette date (même si le mode reste coché)."
+        "endsAtHint": "Optionnel - si renseignée, un compte à rebours s’affiche et le site se rouvre automatiquement à cette date (même si le mode reste coché)."
       },
       "loyalty": {
         "title": "Fidélité OneKey",
@@ -168,7 +168,7 @@
   "colorPalette": {
     "contrastWarning": "Contraste insuffisant avec le texte blanc : {ratio} (minimum {min} pour WCAG AA). Les boutons et liens actifs peuvent être difficiles à lire.",
     "currentAria": "Couleur actuelle ({value})",
-    "currentTitle": "Couleur enregistrée — {value}",
+    "currentTitle": "Couleur enregistrée - {value}",
     "currentLabel": "Actuelle",
     "selection": "Sélection :",
     "swatches": {
@@ -252,11 +252,11 @@
       "footerText": "Texte de pied de page",
       "footerPlaceholder": "© '{year}' '{displayName}' · Tous droits réservés",
       "footerHint": "Variables : '{year}', '{displayName}'. Laissez vide pour le texte par défaut.",
-      "welcomeSubject": "Sujet — e-mail de bienvenue",
+      "welcomeSubject": "Sujet - e-mail de bienvenue",
       "welcomeSubjectPlaceholder": "Bienvenue chez '{displayName}'",
       "welcomeSubjectHint": "Variables : '{displayName}'",
-      "bookingSubject": "Sujet — confirmation de réservation",
-      "bookingSubjectPlaceholder": "Confirmation de réservation — '{ref}'",
+      "bookingSubject": "Sujet - confirmation de réservation",
+      "bookingSubjectPlaceholder": "Confirmation de réservation - '{ref}'",
       "bookingSubjectHint": "Variables : '{ref}', '{displayName}'",
       "previewTemplate": "Modèle à prévisualiser",
       "templateWelcome": "Bienvenue (création de compte)",
@@ -542,12 +542,12 @@
         "locale": "Langue",
         "title": "Titre de la page",
         "titlePlaceholder": "Maintenance en cours",
-        "titleHint": "Optionnel — sinon le titre par défaut de la page publique est utilisé.",
+        "titleHint": "Optionnel - sinon le titre par défaut de la page publique est utilisé.",
         "message": "Message",
         "messagePlaceholder": "Nous serons de retour bientôt…",
         "startsAt": "Début",
         "endsAt": "Fin prévue",
-        "endsAtHint": "Optionnel — laissez vide pour une fin indéterminée (réouverture manuelle)."
+        "endsAtHint": "Optionnel - laissez vide pour une fin indéterminée (réouverture manuelle)."
       },
       "validation": {
         "startsAtRequired": "La date de début est obligatoire.",

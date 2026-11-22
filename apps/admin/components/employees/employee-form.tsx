@@ -373,7 +373,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
           <option value="">{tForm('selectUser')}</option>
           {userOptions.map((user) => (
             <option key={user.id} value={user.id}>
-              {user.firstName} {user.lastName} — {user.email}
+              {user.firstName} {user.lastName} - {user.email}
             </option>
           ))}
         </select>
@@ -546,7 +546,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
                 {mgr.user
                   ? `${mgr.user.firstName} ${mgr.user.lastName}`
                   : mgr.employeeCode ?? mgr.id.slice(0, 8)}
-                {mgr.jobTitle ? ` — ${mgr.jobTitle}` : ''}
+                {mgr.jobTitle ? ` - ${mgr.jobTitle}` : ''}
               </option>
             ))}
           </select>

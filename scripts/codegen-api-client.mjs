@@ -90,7 +90,7 @@ async function resolveSpecPath() {
 
 function writeAuthTypes() {
   const content = `/**
- * Auth request/response types derived from OpenAPI (do not edit — run pnpm codegen:api).
+ * Auth request/response types derived from OpenAPI (do not edit - run pnpm codegen:api).
  */
 import type { components, paths } from './schema';
 
@@ -143,7 +143,7 @@ export type AuthTokensResponseDto = components['schemas']['AuthTokensResponseDto
 
 function writeGeneratedIndex() {
   const content = `/**
- * OpenAPI-generated client surface (do not edit — run pnpm codegen:api).
+ * OpenAPI-generated client surface (do not edit - run pnpm codegen:api).
  */
 export type { components, paths } from './schema';
 export * from './auth-types';
@@ -161,7 +161,7 @@ export {
 
 function writeOpenApiClient() {
   const content = `/**
- * Typed fetch client from OpenAPI paths (do not edit — run pnpm codegen:api).
+ * Typed fetch client from OpenAPI paths (do not edit - run pnpm codegen:api).
  */
 import createClient, { type Middleware } from 'openapi-fetch';
 import type { LoginRequestBody, LoginResponseBody } from './auth-types';
@@ -195,7 +195,7 @@ export function createOpenApiClient(options: OpenApiClientOptions) {
   return client;
 }
 
-/** POST /api/auth/login — body and 200 response are fully typed from OpenAPI. */
+/** POST /api/auth/login - body and 200 response are fully typed from OpenAPI. */
 export async function openApiLogin(
   client: OpenApiClient,
   body: LoginRequestBody,

@@ -1,4 +1,4 @@
--- Why us section — English and Spanish locales (French seeded in add_why_us_content.sql)
+-- Why us section - English and Spanish locales (French seeded in add_why_us_content.sql)
 -- Runs after add_why_us_content.sql (numeric suffix avoids localeCompare ordering: *_i18n before *.sql).
 
 INSERT INTO `why_us_sections` (

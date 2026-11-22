@@ -1,4 +1,4 @@
--- TRESO-008 — Permissions RBAC module Trésorerie
+-- TRESO-008 - Permissions RBAC module Trésorerie
 SET NAMES utf8mb4;
 
 INSERT IGNORE INTO `permissions` (`id`, `code`, `resource`, `action`, `description`) VALUES

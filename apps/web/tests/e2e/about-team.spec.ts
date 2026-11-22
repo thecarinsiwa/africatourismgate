@@ -38,7 +38,7 @@ async function mockTeamApi(page: Page) {
   });
 }
 
-test.describe('About — team grid and profile', () => {
+test.describe('About - team grid and profile', () => {
   test.describe.configure({ timeout: 90_000 });
 
   test('card links to the profile page with breadcrumb, contacts and back link', async ({ page }) => {

@@ -290,7 +290,7 @@ export function ContenuFooterTabPanel() {
                 list:
                   filledLocales.length > 0
                     ? filledLocales.map((locale) => locale.toUpperCase()).join(', ')
-                    : '—',
+                    : '-',
               })}
             </p>
           </div>

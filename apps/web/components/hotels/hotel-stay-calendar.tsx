@@ -169,12 +169,12 @@ export function HotelStayCalendar({
                 onClick={() => handleDayClick(date)}
                 aria-label={
                   disabled
-                    ? `${dayNumber} — ${unavailableLabel}`
+                    ? `${dayNumber} - ${unavailableLabel}`
                     : selected
-                      ? `${dayNumber} — ${legendLabels.selected}`
+                      ? `${dayNumber} - ${legendLabels.selected}`
                       : isCheckOut
-                        ? `${dayNumber} — ${legendLabels.available}`
-                        : `${dayNumber} — ${legendLabels.available}`
+                        ? `${dayNumber} - ${legendLabels.available}`
+                        : `${dayNumber} - ${legendLabels.available}`
                 }
                 aria-selected={selected}
                 className={`flex min-h-[3rem] min-w-0 flex-col items-center justify-center rounded-lg px-0.5 py-1 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:min-h-[3.5rem] sm:text-sm ${

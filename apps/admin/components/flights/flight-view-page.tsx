@@ -46,7 +46,7 @@ function ProfileField({ label, value }: { label: string; value: React.ReactNode 
 
 function formatAirportLabel(airport: Airport | null, emptyDash: string): string {
   if (!airport) return emptyDash;
-  return `${airport.iataCode} — ${airport.city}`;
+  return `${airport.iataCode} - ${airport.city}`;
 }
 
 export function FlightViewPage({ flightId }: FlightViewPageProps) {
@@ -249,7 +249,7 @@ export function FlightViewPage({ flightId }: FlightViewPageProps) {
             <h2 className="text-xl font-semibold text-atg-fg">{flight.flightNumber}</h2>
             {airline ? (
               <DataTableBadge variant="muted">
-                {airline.iataCode} — {airline.name}
+                {airline.iataCode} - {airline.name}
               </DataTableBadge>
             ) : null}
           </div>
@@ -271,7 +271,7 @@ export function FlightViewPage({ flightId }: FlightViewPageProps) {
               <ProfileField
                 label={tForm('airline')}
                 value={
-                  airline ? `${airline.iataCode} — ${airline.name}` : emptyDash
+                  airline ? `${airline.iataCode} - ${airline.name}` : emptyDash
                 }
               />
               <ProfileField label={tForm('flightNumber')} value={flight.flightNumber} />

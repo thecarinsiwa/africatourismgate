@@ -6,7 +6,7 @@ import { useEffect } from 'react';
  * Intentionally does not revoke the server session on pagehide.
  *
  * Mobile browsers (and some desktop cases) fire `pagehide` when switching apps
- * or backgrounding the tab — the page can come back with sessionStorage intact.
+ * or backgrounding the tab - the page can come back with sessionStorage intact.
  * A sendBeacon logout there revoked the refresh token and caused 401 → disconnect
  * on the next navigation.
  *

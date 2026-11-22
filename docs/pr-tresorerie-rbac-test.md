@@ -1,4 +1,4 @@
-# TRESO-044 — QA manuelle RBAC trésorerie
+# TRESO-044 - QA manuelle RBAC trésorerie
 
 Branche suggérée : `docs/tresorerie-rbac-qa`  
 Réf. : [admin-tresorerie-readme.md](./admin-tresorerie-readme.md) · [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md) (TRESO-008, TRESO-044) · [tresorerie-domain-model.md](./tresorerie-domain-model.md) §7
@@ -101,13 +101,13 @@ Cocher après passage réel avec chaque compte.
 
 ### Par profil (répéter)
 
-- [ ] **Créateur** — nav OK (pas rapports/audit/compta) ; créer + soumettre OK ; valider/autoriser/sortie/write ❌ ; `POST /fund-entries` → **403**
-- [ ] **Valideur** — valider OK ; autoriser ❌
-- [ ] **Autorisateur** — autoriser OK ; void UI visible ; invite externes OK ; pas `entries.write` / `exits.write`
-- [ ] **Enregistreur** — créer entrée + sortie + transitions sortie OK ; valider besoin ❌ ; rapports nav ❌
-- [ ] **Contrôle** — rapports + audit + compta OK ; create besoin / write flux ❌
-- [ ] **Finance admin** — toutes actions OK
-- [ ] **super_admin** — bypass : toutes routes + toutes API OK sans grants manquants
+- [ ] **Créateur** - nav OK (pas rapports/audit/compta) ; créer + soumettre OK ; valider/autoriser/sortie/write ❌ ; `POST /fund-entries` → **403**
+- [ ] **Valideur** - valider OK ; autoriser ❌
+- [ ] **Autorisateur** - autoriser OK ; void UI visible ; invite externes OK ; pas `entries.write` / `exits.write`
+- [ ] **Enregistreur** - créer entrée + sortie + transitions sortie OK ; valider besoin ❌ ; rapports nav ❌
+- [ ] **Contrôle** - rapports + audit + compta OK ; create besoin / write flux ❌
+- [ ] **Finance admin** - toutes actions OK
+- [ ] **super_admin** - bypass : toutes routes + toutes API OK sans grants manquants
 
 ### Smoke API 403 (exemple curl)
 
@@ -141,14 +141,14 @@ curl -s -o /dev/null -w "%{http_code}" "$API/treasury-audit-logs" \
 
 ---
 
-## Revue code (agent) — écarts
+## Revue code (agent) - écarts
 
 | # | Écart | Statut |
 | - | ----- | ------ |
-| 1 | Profil `authorizer` dans `TREASURY_ROLE_PROFILE_PERMISSIONS` **sans** `expense_requests.create` alors que TRESO-008 / domain §7 sont additifs (Créateur → Valideur → Autorisateur) | **Corrigé** — `create` ajouté au profil `authorizer` |
-| 2 | Route `/tresorerie/externes` accessible avec seul `treasury.read` (anyOf) ; actions write gated `externals.manage` | **Accepté** (lecture liste possible ; invite masquée) — documenté |
-| 3 | Hub / listes flux visibles dès `treasury.read` (boutons write gated) | **Accepté** — by design |
-| 4 | `budgets.write` hors profils sauf finance admin | **Accepté** — aligné constantes |
+| 1 | Profil `authorizer` dans `TREASURY_ROLE_PROFILE_PERMISSIONS` **sans** `expense_requests.create` alors que TRESO-008 / domain §7 sont additifs (Créateur → Valideur → Autorisateur) | **Corrigé** - `create` ajouté au profil `authorizer` |
+| 2 | Route `/tresorerie/externes` accessible avec seul `treasury.read` (anyOf) ; actions write gated `externals.manage` | **Accepté** (lecture liste possible ; invite masquée) - documenté |
+| 3 | Hub / listes flux visibles dès `treasury.read` (boutons write gated) | **Accepté** - by design |
+| 4 | `budgets.write` hors profils sauf finance admin | **Accepté** - aligné constantes |
 
 ### super_admin
 

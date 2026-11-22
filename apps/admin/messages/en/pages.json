@@ -121,7 +121,7 @@
   "fidelite": {
     "comptes": {
       "title": "Loyalty accounts",
-      "description": "OneKey program — point balance, tiers and last activity. Manual adjustment reserved for super admin."
+      "description": "OneKey program - point balance, tiers and last activity. Manual adjustment reserved for super admin."
     }
   },
   "produits": {
@@ -978,7 +978,7 @@
     "metaTitle": "My profile",
     "backLabel": "Back to dashboard",
     "photo": "Profile photo",
-    "photoHint": "JPEG, PNG or WebP — 5 MB max.",
+    "photoHint": "JPEG, PNG or WebP - 5 MB max.",
     "photoAdd": "Add a photo",
     "photoChange": "Change photo",
     "photoUploading": "Uploading…",

@@ -3,9 +3,9 @@
 **Projet :** Africa Tourism Gate  
 **Document :** unique (parties A + B + C + D)  
 **Version :** 1.2  
-**Statut :** Collecte **Demandée** — dossier prêt ; envoi effectif à confirmer (voir `docs/data-collection/TRANSMISSION.md`)  
+**Statut :** Collecte **Demandée** - dossier prêt ; envoi effectif à confirmer (voir `docs/data-collection/TRANSMISSION.md`)  
 **Public :** équipe technique, équipe projet, interlocuteurs société  
-**Dernière revue :** 2026-09-21 (Phase 2 — préparation transmission)
+**Dernière revue :** 2026-09-21 (Phase 2 - préparation transmission)
 
 ---
 
@@ -13,10 +13,10 @@
 
 1. [Introduction](#1-introduction)
 2. [Classification des données](#2-classification-des-données)
-3. [Partie A — Plan de nettoyage de la base](#3-partie-a--plan-de-nettoyage-de-la-base)
-4. [Partie B — Inventaire des données de production à collecter](#4-partie-b--inventaire-des-données-de-production-à-collecter)
-5. [Partie C — Formulaire de collecte (société)](#5-partie-c--formulaire-de-collecte-société)
-6. [Partie D — Modèles CSV / Excel](#6-partie-d--modèles-csv--excel)
+3. [Partie A - Plan de nettoyage de la base](#3-partie-a--plan-de-nettoyage-de-la-base)
+4. [Partie B - Inventaire des données de production à collecter](#4-partie-b--inventaire-des-données-de-production-à-collecter)
+5. [Partie C - Formulaire de collecte (société)](#5-partie-c--formulaire-de-collecte-société)
+6. [Partie D - Modèles CSV / Excel](#6-partie-d--modèles-csv--excel)
 7. [Annexes](#7-annexes)
 
 ---
@@ -82,7 +82,7 @@ Les données bancaires, numéros Mobile Money, identifiants et secrets (Stripe, 
 
 ---
 
-## 3. Partie A — Plan de nettoyage de la base
+## 3. Partie A - Plan de nettoyage de la base
 
 ### 3.1 Objectif
 
@@ -105,7 +105,7 @@ Retirer les données de démonstration / développement sans casser le démarrag
 | Organisation | `organizations` plateforme (Africa Tourism Gate, id `…0001`) | Tenant par défaut |
 | Paramètres | `organization_settings` (locale, booking, payment_methods, deposits, branding, contact, loyalty, email, item_type_modes, auth_visual) | Runtime web / admin / POS |
 | Référentiels catalogue génériques | `amenities` (seed prod) ; `vehicle_categories` à fournir hors seed | Listes de référence |
-| Référentiels transport (option) | `airlines`, `airports`, `cruise_lines`, `cruise_ports` | **Hors seed prod** — à intégrer avec le catalogue réel |
+| Référentiels transport (option) | `airlines`, `airports`, `cruise_lines`, `cruise_ports` | **Hors seed prod** - à intégrer avec le catalogue réel |
 
 ### 3.4 Données à supprimer (démo / test)
 
@@ -119,7 +119,7 @@ Retirer les données de démonstration / développement sans casser le démarrag
 | Activités / package démo | `ACTIVITY_*_DEMO_*`, package `…5001` Kinshasa Duo | `activity_*`, `activities`, `activity_providers`, `packages`, `package_*` |
 | Activité exclusive POS | `ACTIVITY_POS_EXCLUSIVE_GUICHET_EST` | `activity_schedules`, `activities` |
 | Org POS test | `ORG_POS_GUICHET_EST` (`…0002`) | `organization_settings` branding, `organizations` |
-| Guides seed | Marie Kabila (`…0701`), Jean-Pierre Mwamba (`…0702`) — **absents de `seed-ids.txt`**, IDs dans `install.seed.sql` | `tour_guides` (ne pas supprimer le user admin lié au guide interne) |
+| Guides seed | Marie Kabila (`…0701`), Jean-Pierre Mwamba (`…0702`) - **absents de `seed-ids.txt`**, IDs dans `install.seed.sql` | `tour_guides` (ne pas supprimer le user admin lié au guide interne) |
 | Promo test | `POSWELCOME10` / `PROMO_POS_WELCOME10` | `promo_codes` |
 | Compte bancaire sample | `ORG_BANK_DEFAULT` (`…0020`) Rawbank `0001234567890` | `organization_bank_accounts` |
 | Sessions / tokens test | Comptes non prod | `user_sessions`, `password_reset_tokens`, etc. |
@@ -170,7 +170,7 @@ Exécuter dans cet ordre (enfants → parents) :
    - Smoke tests : login admin, catalogue, CMS, parcours paiement
 5. Validation écrite avant application en production (Phase 5).
 
-### 3.8 Suites techniques (après validation — ne pas exécuter sans feu vert)
+### 3.8 Suites techniques (après validation - ne pas exécuter sans feu vert)
 
 | Livrable | Rôle | Statut |
 |----------|------|--------|
@@ -202,7 +202,7 @@ Voir aussi `database/scripts/README.md`.
 
 ---
 
-## 4. Partie B — Inventaire des données de production à collecter
+## 4. Partie B - Inventaire des données de production à collecter
 
 Légende **Obligatoire** : O = obligatoire pour go-live minimal ; F = facultatif / peut arriver après le lancement.
 
@@ -239,18 +239,18 @@ Rôles système déjà en base : `super_admin`, `org_admin`, `support`, `custome
 
 | Nom | Description | Pourquoi | Format | O/F | Module | Exemple | Service |
 |-----|-------------|----------|--------|-----|--------|---------|---------|
-| Fichier clients initial | Import comptes voyageurs | Amorçage CRM | CSV (e-mail, nom, téléphone) | F | Clients | — | Commercial / CRM |
+| Fichier clients initial | Import comptes voyageurs | Amorçage CRM | CSV (e-mail, nom, téléphone) | F | Clients | - | Commercial / CRM |
 
 Sans import, les clients se créent via inscription / checkout.
 
-### 4.4 Catalogue — Destinations et points d’intérêt
+### 4.4 Catalogue - Destinations et points d’intérêt
 
 | Nom | Description | Pourquoi | Format | O/F | Module | Exemple | Service |
 |-----|-------------|----------|--------|-----|--------|---------|---------|
 | Destinations | Villes / régions commercialisées | Navigation catalogue | Nom, slug, code pays ISO2, description, featured | O | Catalogue | Kinshasa, `CD` | Produit / Contenu |
 | Points d’intérêt | Coordonnées / zones | Cartes, hébergement | Nom, lat, lng, destination | F | Catalogue | Gombe, -4.30, 15.30 | Contenu |
 
-### 4.5 Catalogue — Hébergement
+### 4.5 Catalogue - Hébergement
 
 | Nom | Description | Pourquoi | Format | O/F | Module | Exemple | Service |
 |-----|-------------|----------|--------|-----|--------|---------|---------|
@@ -259,7 +259,7 @@ Sans import, les clients se créent via inscription / checkout.
 | Disponibilités | Calendrier | Booking | Date début/fin, stock, prix override | O pour vendre | Hébergement | 2026-10-01 → 2026-12-31 | Ops / Yield |
 | Équipements | Amenities liés | Fiches produit | Codes amenities existants | F | Hébergement | wifi, pool | Partenariats |
 
-### 4.6 Catalogue — Vols
+### 4.6 Catalogue - Vols
 
 | Nom | Description | Pourquoi | Format | O/F | Module | Exemple | Service |
 |-----|-------------|----------|--------|-----|--------|---------|---------|
@@ -267,7 +267,7 @@ Sans import, les clients se créent via inscription / checkout.
 | Aéroports | Airports | Référentiel | IATA, ville, pays | O si vertical actif | Vols | FIH, Kinshasa, CD | Partenariats |
 | Vols + classes | Itinéraires vendables | Catalogue | Numéro, départ/arrivée, classes, prix, dispos | O pour vendre | Vols | KQ210 FIH-NBO | Yield / Partenariats |
 
-### 4.7 Catalogue — Véhicules
+### 4.7 Catalogue - Véhicules
 
 | Nom | Description | Pourquoi | Format | O/F | Module | Exemple | Service |
 |-----|-------------|----------|--------|-----|--------|---------|---------|
@@ -276,14 +276,14 @@ Sans import, les clients se créent via inscription / checkout.
 
 Catégories véhicules : à créer via admin / import (plus dans le seed prod).
 
-### 4.8 Catalogue — Croisières
+### 4.8 Catalogue - Croisières
 
 | Nom | Description | Pourquoi | Format | O/F | Module | Exemple | Service |
 |-----|-------------|----------|--------|-----|--------|---------|---------|
 | Lignes / ports / navires | Référentiel croisière | Vertical croisière | Noms, codes ports, images | O si vertical actif | Croisières | Congo River Spirit | Partenariats |
 | Itinéraires / cabines / départs | Offres vendables | Booking | Dates sailing, cabines, prix, dispos | O pour vendre | Croisières | Kinshasa–Banana | Yield |
 
-### 4.9 Catalogue — Activités et forfaits
+### 4.9 Catalogue - Activités et forfaits
 
 | Nom | Description | Pourquoi | Format | O/F | Module | Exemple | Service |
 |-----|-------------|----------|--------|-----|--------|---------|---------|
@@ -308,7 +308,7 @@ Catégories véhicules : à créer via admin / import (plus dans le seed prod).
 | Nom | Description | Pourquoi | Format | O/F | Module | Exemple | Service |
 |-----|-------------|----------|--------|-----|--------|---------|---------|
 | Devise catalogue | Prix produits | Colonne `currency` (pas de table taux dédiée) | ISO 4217 | O | Finance | `USD` | Finance |
-| Taux de change | Conversion multi-devises | **Non modélisé** en table dédiée aujourd’hui | — | N/A | — | Gérer hors système ou évolution future | Finance |
+| Taux de change | Conversion multi-devises | **Non modélisé** en table dédiée aujourd’hui | - | N/A | - | Gérer hors système ou évolution future | Finance |
 
 ### 4.12 Paramètres commerciaux / booking
 
@@ -328,22 +328,22 @@ Catégories véhicules : à créer via admin / import (plus dans le seed prod).
 | Pages About / équipe / timeline | Qui sommes-nous | `about_*`, `team_members` | Textes + photos | O | CMS | Bio équipe | Direction / RH |
 | Why us / Happy customers | Sections marketing | Tables dédiées | Textes + stats | F | CMS | « 10 ans d’expérience » | Marketing |
 | Blog | Articles | `blog_posts` | Titre, slug, corps, langue | F | CMS | Guide Kinshasa | Contenu |
-| CGU | Conditions | `legal_pages` | Markdown/HTML validé | O | Légal | — | Juridique |
-| Politique de confidentialité | Privacy | `legal_pages` | Texte validé | O | Légal | — | Juridique |
+| CGU | Conditions | `legal_pages` | Markdown/HTML validé | O | Légal | - | Juridique |
+| Politique de confidentialité | Privacy | `legal_pages` | Texte validé | O | Légal | - | Juridique |
 
 ### 4.14 GAP (programme)
 
 | Nom | Description | Pourquoi | Format | O/F | Module | Exemple | Service |
 |-----|-------------|----------|--------|-----|--------|---------|---------|
-| Paramètres site GAP | Config programme | `gap_site_settings` | Liens, options | O si GAP actif | GAP | — | GAP / Produit |
-| Pages / activités / stats / médias GAP | Contenu programme | `gap_pages`, `gap_activities`, `gap_impact_stats`, `gap_media_items` | Textes + images | O si GAP actif | GAP | — | GAP |
-| Dons | Campagnes donation | `donations` | Montants, libellés | F | GAP | — | GAP / Finance |
+| Paramètres site GAP | Config programme | `gap_site_settings` | Liens, options | O si GAP actif | GAP | - | GAP / Produit |
+| Pages / activités / stats / médias GAP | Contenu programme | `gap_pages`, `gap_activities`, `gap_impact_stats`, `gap_media_items` | Textes + images | O si GAP actif | GAP | - | GAP |
+| Dons | Campagnes donation | `donations` | Montants, libellés | F | GAP | - | GAP / Finance |
 
 ### 4.15 Communication
 
 | Nom | Description | Pourquoi | Format | O/F | Module | Exemple | Service |
 |-----|-------------|----------|--------|-----|--------|---------|---------|
-| SMTP / provider e-mail | Envoi transactionnel | Variables d’environnement | Host, port, user, MDP | O | E-mail / Env | — | IT |
+| SMTP / provider e-mail | Envoi transactionnel | Variables d’environnement | Host, port, user, MDP | O | E-mail / Env | - | IT |
 | Branding e-mail | En-tête / pied | `email_branding` setting | Nom, couleur, footer | O | E-mail | © Société 2026 | Marketing |
 
 ### 4.16 Organisations POS additionnelles
@@ -369,14 +369,14 @@ L’org seed « Kinshasa Guichet Est » est **de test** : à supprimer, pas à r
 
 ---
 
-## 5. Partie C — Formulaire de collecte (société)
+## 5. Partie C - Formulaire de collecte (société)
 
 ### 5.1 Consignes pour la société
 
 1. Remplir les tableaux ci-dessous (ou les fichiers CSV de la partie D).
 2. Indiquer le **service responsable** et mettre à jour le **statut**.
 3. Fournir les pièces jointes (logos, photos, PDF légaux) via le canal convenu.
-4. Les secrets (Stripe, SMTP) : canal sécurisé uniquement — ne pas coller les clés secrètes dans ce fichier versionné.
+4. Les secrets (Stripe, SMTP) : canal sécurisé uniquement - ne pas coller les clés secrètes dans ce fichier versionné.
 
 ### 5.2 Statuts de collecte
 
@@ -394,7 +394,7 @@ L’org seed « Kinshasa Guichet Est » est **de test** : à supprimer, pas à r
 
 | Module | Responsable société | Responsable projet | Statut global | Date cible | Commentaire |
 |--------|---------------------|--------------------|---------------|------------|-------------|
-| Entreprise / branding | | | Demandée | | Dossier transmis — voir `docs/data-collection/TRANSMISSION.md` |
+| Entreprise / branding | | | Demandée | | Dossier transmis - voir `docs/data-collection/TRANSMISSION.md` |
 | Utilisateurs / rôles | | | Demandée | | |
 | Clients (import) | | | Demandée | | Facultatif |
 | Destinations | | | Demandée | | |
@@ -414,7 +414,7 @@ L’org seed « Kinshasa Guichet Est » est **de test** : à supprimer, pas à r
 
 Colonnes : **Donnée | Description | Format | Obligatoire | Exemple | Service | Statut | Date | Commentaire**
 
-#### C.1 — Entreprise
+#### C.1 - Entreprise
 
 | Donnée | Description | Format | Obligatoire | Exemple | Service | Statut | Date | Commentaire |
 |--------|-------------|--------|-------------|---------|---------|--------|------|-------------|
@@ -431,7 +431,7 @@ Colonnes : **Donnée | Description | Format | Obligatoire | Exemple | Service | 
 | Localisation affichée | Texte | Texte | Oui | Kinshasa, RD Congo | | Demandée | 2026-09-21 | |
 | Facebook / Instagram / X | URL | URL | Non | | | Demandée | 2026-09-21 | |
 
-#### C.2 — Utilisateurs et staff
+#### C.2 - Utilisateurs et staff
 
 | Donnée | Description | Format | Obligatoire | Exemple | Service | Statut | Date | Commentaire |
 |--------|-------------|--------|-------------|---------|---------|--------|------|-------------|
@@ -442,7 +442,7 @@ Colonnes : **Donnée | Description | Format | Obligatoire | Exemple | Service | 
 | Départements | Liste | Texte | Non | | RH | Demandée | 2026-09-21 | |
 | Guides | Liste | CSV | Non | | Ops | Demandée | 2026-09-21 | |
 
-#### C.3 — Paiements
+#### C.3 - Paiements
 
 | Donnée | Description | Format | Obligatoire | Exemple | Service | Statut | Date | Commentaire |
 |--------|-------------|--------|-------------|---------|---------|--------|------|-------------|
@@ -457,7 +457,7 @@ Colonnes : **Donnée | Description | Format | Obligatoire | Exemple | Service | 
 | Numéros MM | E.164 | Téléphone | Si MM | +243… | Finance | Demandée | 2026-09-21 | |
 | Acomptes activés | Oui/Non | Bool | Non | Non | Finance | Demandée | 2026-09-21 | |
 
-#### C.4 — Catalogue (cocher les verticales actives au lancement)
+#### C.4 - Catalogue (cocher les verticales actives au lancement)
 
 | Verticale | Active au go-live ? (Oui/Non) | Fichier CSV associé | Statut | Date | Commentaire |
 |-----------|-------------------------------|---------------------|--------|------|-------------|
@@ -468,7 +468,7 @@ Colonnes : **Donnée | Description | Format | Obligatoire | Exemple | Service | 
 | Croisières | | `09-cruises.csv` | Demandée | 2026-09-21 | |
 | Activités / packages | | `10-activities-packages.csv` | Demandée | 2026-09-21 | |
 
-#### C.5 — Paramètres booking
+#### C.5 - Paramètres booking
 
 | Donnée | Description | Format | Obligatoire | Exemple | Service | Statut | Date | Commentaire |
 |--------|-------------|--------|-------------|---------|---------|--------|------|-------------|
@@ -481,7 +481,7 @@ Colonnes : **Donnée | Description | Format | Obligatoire | Exemple | Service | 
 | Mode activity_schedule | idem | Enum | Oui | assisted | Produit | Demandée | 2026-09-21 | |
 | Mode package | idem | Enum | Oui | assisted | Produit | Demandée | 2026-09-21 | |
 
-#### C.6 — CMS / légal / GAP / communication
+#### C.6 - CMS / légal / GAP / communication
 
 | Donnée | Description | Format | Obligatoire | Service | Statut | Date | Commentaire |
 |--------|-------------|--------|-------------|--------|--------|------|-------------|
@@ -507,7 +507,7 @@ Colonnes : **Donnée | Description | Format | Obligatoire | Exemple | Service | 
 
 ---
 
-## 6. Partie D — Modèles CSV / Excel
+## 6. Partie D - Modèles CSV / Excel
 
 ### 6.1 Emplacement
 
@@ -711,4 +711,4 @@ Exemples : `ORG_POS_GUICHET_EST`, `PROP_DEMO_HOTEL`, `ROOM_DEMO_STD`, `FLIGHT_DE
 
 ---
 
-*Fin du document — Aucune donnée n’a été modifiée dans la base par la seule rédaction ou revue de ce fichier.*
+*Fin du document - Aucune donnée n’a été modifiée dans la base par la seule rédaction ou revue de ce fichier.*

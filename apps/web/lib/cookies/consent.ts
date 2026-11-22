@@ -5,7 +5,7 @@ export const COOKIE_CONSENT_VERSION = 1 as const;
 
 export type CookieConsentPreferences = {
   version: typeof COOKIE_CONSENT_VERSION;
-  /** Always required — locale, session, security. */
+  /** Always required - locale, session, security. */
   necessary: true;
   /** Anonymous site analytics (`atg-vid` + page views). */
   analytics: boolean;
@@ -58,7 +58,7 @@ export function setCookieConsent(analytics: boolean): CookieConsentPreferences {
         JSON.stringify(preferences),
       );
     } catch {
-      /* private mode / quota — still notify listeners for this session */
+      /* private mode / quota - still notify listeners for this session */
     }
     window.dispatchEvent(
       new CustomEvent(COOKIE_CONSENT_CHANGED_EVENT, { detail: preferences }),

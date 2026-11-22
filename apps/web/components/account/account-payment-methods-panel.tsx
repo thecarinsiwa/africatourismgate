@@ -17,7 +17,7 @@ function methodLabel(method: UserPaymentMethod): string {
   const parts: string[] = [method.type];
   if (method.provider) parts.push(method.provider);
   if (method.lastFour) parts.push(`•••• ${method.lastFour}`);
-  return parts.join(' — ');
+  return parts.join(' - ');
 }
 
 export function AccountPaymentMethodsPanel() {
@@ -124,7 +124,7 @@ export function AccountPaymentMethodsPanel() {
             <div>
               <p className="font-medium capitalize text-atg-fg">
                 {method.type}
-                {method.provider ? ` — ${method.provider}` : ''}
+                {method.provider ? ` - ${method.provider}` : ''}
               </p>
               {method.lastFour ? (
                 <p className="text-sm text-atg-muted">•••• {method.lastFour}</p>

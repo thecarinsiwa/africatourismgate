@@ -126,7 +126,7 @@ export function SailingsList() {
         const ship = shipById.get(it.shipId);
         return {
           value: it.id,
-          label: ship ? `${it.name} — ${ship.name}` : it.name,
+          label: ship ? `${it.name} - ${ship.name}` : it.name,
         };
       }),
     ],
@@ -190,7 +190,7 @@ export function SailingsList() {
     if (!confirmTarget) return '';
     const itinerary = itineraryById.get(confirmTarget.itineraryId);
     return itinerary
-      ? `${itinerary.name} — ${formatDate(confirmTarget.departureDate)}`
+      ? `${itinerary.name} - ${formatDate(confirmTarget.departureDate)}`
       : formatDate(confirmTarget.departureDate);
   }, [confirmTarget, formatDate, itineraryById]);
 

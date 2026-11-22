@@ -121,7 +121,7 @@
   "fidelite": {
     "comptes": {
       "title": "Comptes fidélité",
-      "description": "Programme OneKey — solde de points, paliers et dernière activité. Ajustement manuel réservé au super administrateur."
+      "description": "Programme OneKey - solde de points, paliers et dernière activité. Ajustement manuel réservé au super administrateur."
     }
   },
   "produits": {
@@ -978,7 +978,7 @@
     "metaTitle": "Mon profil",
     "backLabel": "Retour au tableau de bord",
     "photo": "Photo de profil",
-    "photoHint": "JPEG, PNG ou WebP — 5 Mo max.",
+    "photoHint": "JPEG, PNG ou WebP - 5 Mo max.",
     "photoAdd": "Ajouter une photo",
     "photoChange": "Changer la photo",
     "photoUploading": "Envoi…",

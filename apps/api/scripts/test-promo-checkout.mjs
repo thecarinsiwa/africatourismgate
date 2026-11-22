@@ -168,7 +168,7 @@ async function main() {
     throw new Error(`Expected total 8500, got ${previewPromo.data?.totalCents}`);
   }
 
-  console.log('6. POST /bookings with promo — total stored discounted');
+  console.log('6. POST /bookings with promo - total stored discounted');
   const booking = await request('POST', '/bookings', {
     token,
     body: { ...checkoutBase, promoCode },

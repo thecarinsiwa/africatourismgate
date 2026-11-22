@@ -102,8 +102,8 @@ export function ActivityTable({
                     </p>
                   </div>
                 </th>
-                <td className={td}>{activity.destination || '—'}</td>
-                <td className={td}>{durationLabel ?? '—'}</td>
+                <td className={td}>{activity.destination || '-'}</td>
+                <td className={td}>{durationLabel ?? '-'}</td>
                 <td className={td}>
                   <PriceDisplay
                     size="sm"

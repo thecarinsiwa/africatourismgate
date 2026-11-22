@@ -1,6 +1,6 @@
 {
   "meta": {
-    "defaultTitle": "Africa Tourism Gate — Admin",
+    "defaultTitle": "Africa Tourism Gate - Admin",
     "titleTemplate": "%s | Africa Tourism Gate Admin",
     "description": "Back office Africa Tourism Gate"
   },
@@ -63,7 +63,7 @@
     "title": "Navigation rapide",
     "placeholder": "Rechercher une page…",
     "empty": "Aucune page trouvée",
-    "shortcutHint": "Ctrl+F · ⌘F — alias Ctrl/⌘+K ; ? pour l’aide des raccourcis"
+    "shortcutHint": "Ctrl+F · ⌘F - alias Ctrl/⌘+K ; ? pour l’aide des raccourcis"
   },
   "globalSearch": {
     "title": "Recherche admin",
@@ -74,7 +74,7 @@
     "suggestionsTitle": "Suggestions",
     "suggestionsAria": "Suggestions de pages",
     "loading": "Recherche en cours…",
-    "shortcutHint": "Ctrl+F · ⌘F (alias Ctrl/⌘+K) — ↑↓ pour naviguer, Entrée pour ouvrir",
+    "shortcutHint": "Ctrl+F · ⌘F (alias Ctrl/⌘+K) - ↑↓ pour naviguer, Entrée pour ouvrir",
     "close": "Fermer la recherche",
     "resultsLabel": "Résultats de recherche",
     "updating": "Mise à jour…",
@@ -108,7 +108,7 @@
     "openHelpCenter": "Ouvrir le centre d'aide",
     "items": {
       "search": "Ouvrir / fermer la recherche admin",
-      "searchAlias": "Alias — ouvrir / fermer la recherche",
+      "searchAlias": "Alias - ouvrir / fermer la recherche",
       "palette": "Ouvrir / fermer la navigation rapide",
       "lockSession": "Verrouiller la session",
       "escape": "Fermer la recherche ou l’aide",

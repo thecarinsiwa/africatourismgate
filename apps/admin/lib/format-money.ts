@@ -11,7 +11,7 @@ export function formatCount(value: number): string {
 
 /**
  * Formats cents in `currency`; when the record has no valid currency, uses
- * `fallbackCurrency` (Admin default — see `useFormatMoney`), then {@link FALLBACK_TREASURY_CURRENCY}.
+ * `fallbackCurrency` (Admin default - see `useFormatMoney`), then {@link FALLBACK_TREASURY_CURRENCY}.
  */
 export function formatMoney(
   totalCents: number | null | undefined,

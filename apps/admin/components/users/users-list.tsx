@@ -261,7 +261,7 @@ export function UsersList() {
         cell: ({ row }) => {
           const orgId = row.original.organizationId;
           if (!orgId) {
-            return <span className="text-atg-muted">—</span>;
+            return <span className="text-atg-muted">-</span>;
           }
           return (
             <span className="text-atg-muted">{orgNameById.get(orgId) ?? orgId.slice(0, 8)}</span>

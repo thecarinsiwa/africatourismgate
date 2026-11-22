@@ -1,5 +1,5 @@
 /**
- * Contour pays (GeoJSON) via Nominatim — même stack OSM que les cartes admin.
+ * Contour pays (GeoJSON) via Nominatim - même stack OSM que les cartes admin.
  * Cache mémoire par code ISO-2 pour limiter les appels.
  */
 

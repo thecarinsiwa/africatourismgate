@@ -75,7 +75,7 @@ export function resolveOAuthWebUrl(webOrigin?: string): string {
       return origin;
     }
   } catch {
-    // Invalid URL — use fallback.
+    // Invalid URL - use fallback.
   }
 
   return fallback;

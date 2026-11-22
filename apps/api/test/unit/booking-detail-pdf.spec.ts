@@ -31,7 +31,7 @@ function sampleInput(
     },
     items: [
       {
-        title: 'Safari 3 jours — Parc national',
+        title: 'Safari 3 jours - Parc national',
         itemType: 'activity_schedule',
         quantity: 1,
         unitPriceCents: 30750,
@@ -47,7 +47,7 @@ function sampleInput(
     ],
     itinerary: [
       {
-        title: 'Safari 3 jours — Parc national',
+        title: 'Safari 3 jours - Parc national',
         itemType: 'activity_schedule',
         steps: [
           { order: 1, label: 'Accueil au camp', detail: 'Briefing sécurité' },

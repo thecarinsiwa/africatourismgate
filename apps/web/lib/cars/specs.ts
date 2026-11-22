@@ -18,7 +18,7 @@ function normalizeCategoryName(name: string): string {
     .replace(/[\u0300-\u036f]/g, '');
 }
 
-/** Specs dérivées de la catégorie — en attendant exposition API dédiée. */
+/** Specs dérivées de la catégorie - en attendant exposition API dédiée. */
 export function resolveVehicleSpecs(categoryName: string): VehicleSpecs {
   const normalized = normalizeCategoryName(categoryName);
 

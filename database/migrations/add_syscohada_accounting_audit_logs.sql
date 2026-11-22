@@ -1,4 +1,4 @@
--- SYSCO-009 — Journal d’audit écritures SYSCOHADA (`accounting_audit_logs`)
+-- SYSCO-009 - Journal d’audit écritures SYSCOHADA (`accounting_audit_logs`)
 -- Append-only ; corrélation optionnelle avec `treasury_audit_logs`.
 -- Down (manuel) : DROP TABLE IF EXISTS `accounting_audit_logs`;
 SET NAMES utf8mb4;

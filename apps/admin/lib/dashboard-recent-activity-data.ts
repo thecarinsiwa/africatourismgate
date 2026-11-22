@@ -70,7 +70,7 @@ function formatTicketCustomer(ticket: AdminSupportTicketListItem): string {
   if (name && ticket.customerEmail) {
     return `${name} · ${ticket.customerEmail}`;
   }
-  return name || ticket.customerEmail || '—';
+  return name || ticket.customerEmail || '-';
 }
 
 function mapBooking(booking: BookingListItem): DashboardActivityBookingItem {

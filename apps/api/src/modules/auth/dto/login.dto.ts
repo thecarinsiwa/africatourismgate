@@ -23,7 +23,7 @@ export class LoginDto {
   password!: string;
 
   @ApiPropertyOptional({
-    description: 'Stable browser profile id — one active session per profile',
+    description: 'Stable browser profile id - one active session per profile',
     format: 'uuid',
   })
   @IsOptional()

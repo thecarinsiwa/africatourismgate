@@ -29,7 +29,7 @@ function receiptLineItemsTable(
   payload: PosReceiptEmailPayload,
 ): string {
   if (payload.items.length === 0) {
-    return `<p style="margin:0 0 16px;font-size:14px;color:${BRAND.muted};">—</p>`;
+    return `<p style="margin:0 0 16px;font-size:14px;color:${BRAND.muted};">-</p>`;
   }
 
   const rows = payload.items
@@ -83,7 +83,7 @@ function totalsBlock(payload: PosReceiptEmailPayload): string {
     <td style="padding:10px 0 4px;font-size:18px;font-weight:700;text-align:right;color:${BRAND.text};border-top:1px dashed ${BRAND.border};">${total}</td>
   </tr>
 </table>
-<p style="margin:0 0 20px;font-size:12px;line-height:1.5;color:${BRAND.muted};">Montants TTC — TVA incluse</p>`;
+<p style="margin:0 0 20px;font-size:12px;line-height:1.5;color:${BRAND.muted};">Montants TTC - TVA incluse</p>`;
 }
 
 function metaRow(label: string, value: string): string {
@@ -107,7 +107,7 @@ export function renderPosReceiptEmail(
   const name = escapeHtml(payload.firstName.trim() || 'Client');
   const totalLabel = formatMoney(payload.totalCents, payload.currency);
 
-  const subject = `Reçu ${branding.displayName} — ${refShort}`;
+  const subject = `Reçu ${branding.displayName} - ${refShort}`;
 
   const html = layout(
     subject,
@@ -128,7 +128,7 @@ ${totalsBlock(payload)}
     branding,
     {
       webUrl: payload.webUrl,
-      preheader: `Reçu ${refShort} — total ${totalLabel}.`,
+      preheader: `Reçu ${refShort} - total ${totalLabel}.`,
     },
   );
 
@@ -145,19 +145,19 @@ ${totalsBlock(payload)}
   const text = [
     `${branding.displayName}`,
     payload.organizationName,
-    '—'.repeat(32),
+    '-'.repeat(32),
     `Reçu n° ${payload.bookingId}`,
     `Date : ${formatDateFr(payload.issuedAt)}`,
     `Caissier : ${payload.employeeName}`,
     `Client : ${payload.clientName}`,
     `Paiement : ${payload.paymentMethodLabel}`,
-    '—'.repeat(32),
+    '-'.repeat(32),
     ...itemLines,
-    '—'.repeat(32),
+    '-'.repeat(32),
     `Sous-total : ${formatMoney(payload.subtotalCents, payload.currency)}`,
     discountText.trim(),
     `Total TTC : ${totalLabel}`,
-    'Montants TTC — TVA incluse',
+    'Montants TTC - TVA incluse',
     '',
     'Merci pour votre achat !',
   ]

@@ -110,7 +110,7 @@ export function JournalEntryDetail({ entryId }: JournalEntryDetailProps) {
           if (cancelled) return;
           const map: Record<string, string> = {};
           for (const a of accounts.data) {
-            map[a.id] = `${a.code} — ${a.label}`;
+            map[a.id] = `${a.code} - ${a.label}`;
           }
           setAccountLabels(map);
         } catch {
@@ -143,7 +143,7 @@ export function JournalEntryDetail({ entryId }: JournalEntryDetailProps) {
         cell: ({ row }) => {
           const code = row.original.accountCode;
           const label = row.original.accountLabel;
-          if (code && label) return `${code} — ${label}`;
+          if (code && label) return `${code} - ${label}`;
           return accountLabels[row.original.accountId] ?? row.original.accountId;
         },
       },

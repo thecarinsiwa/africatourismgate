@@ -76,7 +76,7 @@ export function breadcrumbFromPath(
   return crumbs;
 }
 
-/** Dernier libellé connu sur le pathname — titre par défaut des pages liste. */
+/** Dernier libellé connu sur le pathname - titre par défaut des pages liste. */
 export function resolveAdminPageTitle(
   pathname: string,
   hrefLabels: Map<string, string>,

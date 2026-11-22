@@ -50,7 +50,7 @@ export interface FlightDetailAirport {
   countryCode: string;
 }
 
-/** Escale intermédiaire — optionnel tant que l'API ne l'expose pas. */
+/** Escale intermédiaire - optionnel tant que l'API ne l'expose pas. */
 export interface FlightLayover {
   airport: FlightDetailAirport;
   durationMinutes: number;
@@ -80,7 +80,7 @@ export interface FlightDetail {
   minPriceCents: number;
   currency: string;
   classes: FlightDetailClass[];
-  /** Escales intermédiaires — absent ou vide = vol direct. */
+  /** Escales intermédiaires - absent ou vide = vol direct. */
   layovers?: FlightLayover[];
   images?: ProductGalleryImage[];
 }

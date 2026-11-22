@@ -1,7 +1,7 @@
-# Africa Tourism Gate — Présentation pour les utilisateurs
+# Africa Tourism Gate - Présentation pour les utilisateurs
 
 > **Pour qui est ce document ?**  
-> Direction, équipes commerciales, support client, partenaires, investisseurs — toute personne qui utilise ou présente la plateforme **sans avoir besoin de connaissances techniques**.
+> Direction, équipes commerciales, support client, partenaires, investisseurs - toute personne qui utilise ou présente la plateforme **sans avoir besoin de connaissances techniques**.
 
 > **Date :** 12 juillet 2026
 
@@ -54,7 +54,7 @@ La plateforme se compose de **quatre interfaces** distinctes, chacune pour un ty
 
 ---
 
-## 3. Le site web — pour les voyageurs
+## 3. Le site web - pour les voyageurs
 
 **Adresse :** [africatourismgate.org](https://africatourismgate.org)
 
@@ -100,7 +100,7 @@ Chaque voyageur peut créer un compte pour :
 
 ---
 
-## 4. L’espace de gestion — pour votre équipe
+## 4. L’espace de gestion - pour votre équipe
 
 **Adresse :** [app-africatourismgate.org](https://app-africatourismgate.org)
 
@@ -128,7 +128,7 @@ Vous pouvez **ajouter, modifier et supprimer** tous vos produits :
 | Vols | Compagnies, aéroports, horaires, classes |
 | Locations | Agences, véhicules, catégories |
 | Croisières | Lignes, navires, cabines, itinéraires |
-| Activités | Tours, horaires, partenaires (catalogue — pas un compte auth ; voir roadmap PR-09 / PR-10) |
+| Activités | Tours, horaires, partenaires (catalogue - pas un compte auth ; voir roadmap PR-09 / PR-10) |
 | Forfaits | Combinaisons de produits avec remise |
 
 ### Réservations
@@ -164,7 +164,7 @@ Vous pouvez **ajouter, modifier et supprimer** tous vos produits :
 
 ---
 
-## 5. Le guichet de vente — pour les vendeurs en agence
+## 5. Le guichet de vente - pour les vendeurs en agence
 
 **Usage :** comptoir, agence de voyage, événement
 
@@ -180,7 +180,7 @@ Quand un client est **physiquement devant vous**, le guichet de vente permet de 
 
 ---
 
-## 6. Le site GAP — Gorilla Ambassadors Program
+## 6. Le site GAP - Gorilla Ambassadors Program
 
 **Adresse :** [gap.africatourismgate.org](https://gap.africatourismgate.org) *(selon configuration)*
 
@@ -193,7 +193,7 @@ Site dédié à votre programme de **conservation et d’impact social** :
 - Statistiques d’impact (ex. surface protégée, communautés touchées)
 - Page de **dons**
 
-Le contenu est **mis à jour depuis l’espace de gestion** — pas besoin de toucher au code.
+Le contenu est **mis à jour depuis l’espace de gestion** - pas besoin de toucher au code.
 
 ---
 
@@ -204,7 +204,7 @@ Le contenu est **mis à jour depuis l’espace de gestion** — pas besoin de to
 | **Qui ?** | Client autonome sur le site | Client accompagné par votre équipe |
 | **Paiement** | Immédiat par carte bancaire | Après validation par le staff |
 | **Cas d’usage** | Voyage standard, disponibilité claire | Groupes, voyages sur mesure, documents à vérifier |
-| **Étapes côté équipe** | — | Recevoir la demande → approuver → collecter manifeste & pièces → confirmer |
+| **Étapes côté équipe** | - | Recevoir la demande → approuver → collecter manifeste & pièces → confirmer |
 
 Les deux modes envoient des **e-mails de confirmation** au client.
 
@@ -267,7 +267,7 @@ Quelques finitions sont encore en cours. Rien de bloquant pour une utilisation q
 
 ## 10. Déroulé suggéré pour une démonstration
 
-### Scénario A — « Je suis un voyageur » (5 min)
+### Scénario A - « Je suis un voyageur » (5 min)
 
 1. Ouvrir le site → choisir la langue
 2. Rechercher un hôtel (ex. Kinshasa) avec dates
@@ -276,7 +276,7 @@ Quelques finitions sont encore en cours. Rien de bloquant pour une utilisation q
 5. Payer → recevoir la confirmation
 6. Aller dans « Mon compte » → voir la réservation
 
-### Scénario B — « Je suis membre de l’équipe » (5 min)
+### Scénario B - « Je suis membre de l’équipe » (5 min)
 
 1. Se connecter à l’espace de gestion
 2. Montrer le tableau de bord (réservations, revenus)
@@ -285,7 +285,7 @@ Quelques finitions sont encore en cours. Rien de bloquant pour une utilisation q
 5. Créer un code promo
 6. Publier ou modifier une bannière d’accueil
 
-### Scénario C — « Je suis vendeur en agence » (3 min)
+### Scénario C - « Je suis vendeur en agence » (3 min)
 
 1. Ouvrir le guichet de vente
 2. Ajouter un produit au panier
@@ -389,7 +389,7 @@ Oui, via le site GAP ou la page dons du site principal.
 
 ---
 
-## Annexe — Accès rapides
+## Annexe - Accès rapides
 
 | Espace | Adresse |
 |--------|---------|
@@ -399,4 +399,4 @@ Oui, via le site GAP ou la page dons du site principal.
 
 ---
 
-*Document rédigé le 11 juillet 2026 — version grand public. Pour les détails techniques, voir [presentation-plateforme.md](./presentation-plateforme.md).*
+*Document rédigé le 11 juillet 2026 - version grand public. Pour les détails techniques, voir [presentation-plateforme.md](./presentation-plateforme.md).*

@@ -133,7 +133,7 @@
       "title": "Availability",
       "intro": "Availability slots by date (rental, maintenance, rented).",
       "backToVehicle": "Back to vehicle",
-      "summary": "Vehicle {label} — {agencyName} / {categoryName}",
+      "summary": "Vehicle {label} - {agencyName} / {categoryName}",
       "slotsCount": "{count, plural, =0 {No slots} one {# slot recorded} other {# slots recorded}}",
       "formHint": "Set the period, pickup location, and vehicle status for this slot.",
       "editFormHint": "Update the period, pickup location, or status for this slot.",

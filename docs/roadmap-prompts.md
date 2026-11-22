@@ -1,4 +1,4 @@
-# Africa Tourism Gate — Roadmap & prompts de développement
+# Africa Tourism Gate - Roadmap & prompts de développement
 
 > Document pour guider les PRs et les sessions Cursor Agent.  
 > Branche de base suggérée : `main`. **Une PR = un livrable = une branche.**
@@ -52,7 +52,7 @@ Règles :
 
 | # | Phase | Livrable | Priorité | Branche PR | Dépend de |
 |---|-------|----------|----------|------------|-----------|
-| 1 | 0 | Module Auth API | Critique | `feature/auth-api` | — |
+| 1 | 0 | Module Auth API | Critique | `feature/auth-api` | - |
 | 2 | 0 | JWT & guards NestJS | Critique | `feature/api-jwt-guards` | 1 |
 | 3 | 0 | DTOs auth & validation | Haute | `feature/auth-dtos-validation` | 1 |
 | 4 | 0 | Client API typé | Haute | `feature/api-client-auth` | 1 |
@@ -70,7 +70,7 @@ Règles :
 | 16 | 1 | Journal audit RBAC | Basse | `feature/admin-rbac-audit-logs` | 15 |
 | 17 | 1 | Paramètres organisation | Moyenne | `feature/admin-org-settings` | 12 |
 | 18 | 2 | Destinations (admin) | Haute | `feature/admin-destinations` | 10 |
-| 19 | 2 | Hébergements — propriétés | Haute | `feature/admin-properties` | 18 |
+| 19 | 2 | Hébergements - propriétés | Haute | `feature/admin-properties` | 18 |
 | 20 | 2 | Chambres & équipements | Haute | `feature/admin-rooms-amenities` | 19 |
 | 21 | 2 | Disponibilités chambres | Haute | `feature/admin-room-availability` | 20 |
 | 22 | 2 | Vols (catalogue) | Moyenne | `feature/admin-flights-catalog` | 10 |
@@ -80,12 +80,12 @@ Règles :
 | 26 | 2 | Packages combinés | Moyenne | `feature/admin-packages` | 19, 22 |
 | 27 | 3 | Logique métier réservation | Critique | `feature/api-booking-engine` | 21 |
 | 28 | 3 | Booking items polymorphes | Haute | `feature/api-booking-items-logic` | 27 |
-| 29 | 3 | Admin — liste réservations | Haute | `feature/admin-bookings` | 27, 10 |
-| 30 | 3 | Admin — détail réservation | Haute | `feature/admin-booking-detail` | 29 |
+| 29 | 3 | Admin - liste réservations | Haute | `feature/admin-bookings` | 27, 10 |
+| 30 | 3 | Admin - détail réservation | Haute | `feature/admin-booking-detail` | 29 |
 | 31 | 3 | Intégration Stripe | Critique | `feature/stripe-payments` | 27 |
 | 32 | 3 | Codes promo & promotions | Moyenne | `feature/promo-codes-checkout` | 27, 31 |
 | 33 | 3 | Remboursements | Moyenne | `feature/payments-refunds` | 31 |
-| 34 | 4 | Remplacer « Coming Soon » | Haute | `feature/web-homepage-v1` | — |
+| 34 | 4 | Remplacer « Coming Soon » | Haute | `feature/web-homepage-v1` | - |
 | 35 | 4 | Recherche hébergements | Haute | `feature/web-hotel-search` | 21, 34 |
 | 36 | 4 | Fiche produit hébergement | Haute | `feature/web-property-detail` | 35 |
 | 37 | 4 | Parcours réservation web | Critique | `feature/web-booking-checkout` | 27, 31, 35 |
@@ -98,8 +98,8 @@ Règles :
 | 44 | 5 | Reçus & impression | Moyenne | `feature/pos-receipts` | 43 |
 | 45 | 6 | Tests API (e2e) | Haute | `feature/api-e2e-tests` | 1, 27 |
 | 46 | 6 | Tests E2E front | Moyenne | `feature/e2e-playwright` | 5, 37 |
-| 47 | 6 | CI GitHub Actions | Haute | `feature/ci-github-actions` | — |
-| 48 | 6 | Observabilité | Moyenne | `feature/api-observability` | — |
+| 47 | 6 | CI GitHub Actions | Haute | `feature/ci-github-actions` | - |
+| 48 | 6 | Observabilité | Moyenne | `feature/api-observability` | - |
 | 49 | 6 | i18n FR/EN | Moyenne | `feature/i18n-fr-en` | 10, 34 |
 | 50 | 6 | OpenAPI → client | Basse | `feature/openapi-codegen` | 4 |
 | 51 | 6 | Durcissement prod | Haute | `feature/production-hardening` | 2, 31 |
@@ -133,7 +133,7 @@ Règles :
 
 ## Prompts détaillés (copier-coller dans Cursor Agent)
 
-### #1 — Module Auth API
+### #1 - Module Auth API
 
 **Branche :** `feature/auth-api`
 
@@ -157,7 +157,7 @@ Critères : login admin@africatourismgate.local / ChangeMe123! OK ; register cr�
 À la fin : fichiers modifiés + test via pnpm dev:api et Swagger.
 ```
 
-### #2 — JWT & guards NestJS
+### #2 - JWT & guards NestJS
 
 **Branche :** `feature/api-jwt-guards`
 
@@ -176,7 +176,7 @@ Critères : GET /api/users sans token → 401 ; avec token valide → 200.
 À la fin : fichiers modifiés + commandes de test.
 ```
 
-### #3 — DTOs auth & validation
+### #3 - DTOs auth & validation
 
 **Branche :** `feature/auth-dtos-validation`
 
@@ -194,7 +194,7 @@ Critères : body invalide → 400 avec détails ; pas de champs inconnus.
 À la fin : fichiers modifiés + exemples curl/Swagger.
 ```
 
-### #4 — Client API typé
+### #4 - Client API typé
 
 **Branche :** `feature/api-client-auth`
 
@@ -212,7 +212,7 @@ Critères : utilisable depuis apps/admin avec NEXT_PUBLIC_API_URL.
 À la fin : fichiers modifiés + exemple d'appel.
 ```
 
-### #5 — Connexion admin → API
+### #5 - Connexion admin → API
 
 **Branche :** `feature/admin-login-api`
 
@@ -230,7 +230,7 @@ Critères : connexion seed admin OK ; mauvais mot de passe → message erreur.
 À la fin : fichiers modifiés + test pnpm dev:admin.
 ```
 
-### #6 — Inscription admin → API
+### #6 - Inscription admin → API
 
 **Branche :** `feature/admin-register-api`
 
@@ -248,7 +248,7 @@ Critères : nouveau compte peut se connecter ; email dupliqué → 409.
 À la fin : fichiers modifiés + test manuel.
 ```
 
-### #7 — Session & middleware admin
+### #7 - Session & middleware admin
 
 **Branche :** `feature/admin-auth-middleware`
 
@@ -266,7 +266,7 @@ Critères : URL protégée sans session → login ; session valide → accès da
 À la fin : fichiers modifiés + scénarios de test.
 ```
 
-### #8 — Mot de passe oublié
+### #8 - Mot de passe oublié
 
 **Branche :** `feature/auth-password-reset`
 
@@ -284,7 +284,7 @@ Critères : reset complet token valide ; token expiré → 400.
 À la fin : fichiers modifiés + test flow complet.
 ```
 
-### #9 — RBAC sur endpoints
+### #9 - RBAC sur endpoints
 
 **Branche :** `feature/api-rbac-enforcement`
 
@@ -302,7 +302,7 @@ Critères : sans permission → 403 ; super_admin → accès total.
 À la fin : fichiers modifiés + tests permission.
 ```
 
-### #10 — Shell dashboard admin
+### #10 - Shell dashboard admin
 
 **Branche :** `feature/admin-dashboard-shell`
 
@@ -320,7 +320,7 @@ Critères : navigation entre sections ; logout fonctionne.
 À la fin : fichiers modifiés + capture routes.
 ```
 
-### #11 — Page tableau de bord
+### #11 - Page tableau de bord
 
 **Branche :** `feature/admin-dashboard-home`
 
@@ -336,7 +336,7 @@ Critères : page charge authentifiée ; chiffres cohérents avec DB seed.
 À la fin : fichiers modifiés + test.
 ```
 
-### #12 — CRUD Organisations
+### #12 - CRUD Organisations
 
 **Branche :** `feature/admin-organizations`
 
@@ -352,7 +352,7 @@ Critères : CRUD complet ; slug unique.
 À la fin : fichiers modifiés + test.
 ```
 
-### #13 — CRUD Utilisateurs
+### #13 - CRUD Utilisateurs
 
 **Branche :** `feature/admin-users`
 
@@ -368,7 +368,7 @@ Critères : création par admin ; statuts active/suspended.
 À la fin : fichiers modifiés + test.
 ```
 
-### #14 — CRUD Employés
+### #14 - CRUD Employés
 
 **Branche :** `feature/admin-employees`
 
@@ -384,7 +384,7 @@ Critères : liste par org ; FK intactes.
 À la fin : fichiers modifiés + test.
 ```
 
-### #15 — Gestion rôles & permissions
+### #15 - Gestion rôles & permissions
 
 **Branche :** `feature/admin-rbac-ui`
 
@@ -400,7 +400,7 @@ Critères : modifier rôle non-system ; assigner rôle à user.
 À la fin : fichiers modifiés + test.
 ```
 
-### #16 — Journal audit RBAC
+### #16 - Journal audit RBAC
 
 **Branche :** `feature/admin-rbac-audit-logs`
 
@@ -416,7 +416,7 @@ Critères : données visibles pour super_admin.
 À la fin : fichiers modifiés + test.
 ```
 
-### #17 — Paramètres organisation
+### #17 - Paramètres organisation
 
 **Branche :** `feature/admin-org-settings`
 
@@ -432,7 +432,7 @@ Critères : sauvegarde OK ; validation email/devise.
 À la fin : fichiers modifiés + test.
 ```
 
-### #18 — Destinations (admin)
+### #18 - Destinations (admin)
 
 **Branche :** `feature/admin-destinations`
 
@@ -448,7 +448,7 @@ Critères : destination avec POI ; liste paginée.
 À la fin : fichiers modifiés + test.
 ```
 
-### #19 — Hébergements — propriétés
+### #19 - Hébergements - propriétés
 
 **Branche :** `feature/admin-properties`
 
@@ -456,7 +456,7 @@ Critères : destination avec POI ; liste paginée.
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-properties`.
 
-Livrable #19 : Hébergements — propriétés
+Livrable #19 : Hébergements - propriétés
 CRUD properties : nom, type, destination, statut, description. property_images, property_amenities.
 
 Critères : fiche complète ; filtre par destination.
@@ -464,7 +464,7 @@ Critères : fiche complète ; filtre par destination.
 À la fin : fichiers modifiés + test.
 ```
 
-### #20 — Chambres & équipements
+### #20 - Chambres & équipements
 
 **Branche :** `feature/admin-rooms-amenities`
 
@@ -480,7 +480,7 @@ Critères : chambres par propriété ; amenities multi-select.
 À la fin : fichiers modifiés + test.
 ```
 
-### #21 — Disponibilités chambres
+### #21 - Disponibilités chambres
 
 **Branche :** `feature/admin-room-availability`
 
@@ -496,7 +496,7 @@ Critères : créer dispo ; conflits gérés proprement.
 À la fin : fichiers modifiés + test.
 ```
 
-### #22 — Vols (catalogue)
+### #22 - Vols (catalogue)
 
 **Branche :** `feature/admin-flights-catalog`
 
@@ -512,7 +512,7 @@ Critères : vol avec classes et dispo ; recherche par code vol.
 À la fin : fichiers modifiés + test.
 ```
 
-### #23 — Location véhicules
+### #23 - Location véhicules
 
 **Branche :** `feature/admin-vehicle-rental`
 
@@ -528,7 +528,7 @@ Critères : véhicule + agence + dispo dates.
 À la fin : fichiers modifiés + test.
 ```
 
-### #24 — Croisières
+### #24 - Croisières
 
 **Branche :** `feature/admin-cruises-catalog`
 
@@ -544,7 +544,7 @@ Critères : sailing avec itinéraire ; cabines réservables.
 À la fin : fichiers modifiés + test.
 ```
 
-### #25 — Activités
+### #25 - Activités
 
 **Branche :** `feature/admin-activities-catalog`
 
@@ -560,7 +560,7 @@ Critères : activité avec créneaux ; filtre destination.
 À la fin : fichiers modifiés + test.
 ```
 
-### #26 — Packages combinés
+### #26 - Packages combinés
 
 **Branche :** `feature/admin-packages`
 
@@ -576,7 +576,7 @@ Critères : package multi-items ; prix cohérent.
 À la fin : fichiers modifiés + test.
 ```
 
-### #27 — Logique métier réservation
+### #27 - Logique métier réservation
 
 **Branche :** `feature/api-booking-engine`
 
@@ -592,7 +592,7 @@ Critères : pas de réservation sans stock ; prix = somme items.
 À la fin : fichiers modifiés + test API.
 ```
 
-### #28 — Booking items polymorphes
+### #28 - Booking items polymorphes
 
 **Branche :** `feature/api-booking-items-logic`
 
@@ -608,7 +608,7 @@ Critères : réservation mixte OK.
 À la fin : fichiers modifiés + test.
 ```
 
-### #29 — Admin — liste réservations
+### #29 - Admin - liste réservations
 
 **Branche :** `feature/admin-bookings`
 
@@ -616,7 +616,7 @@ Critères : réservation mixte OK.
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-bookings`.
 
-Livrable #29 : Admin — liste réservations
+Livrable #29 : Admin - liste réservations
 Tableau bookings paginé, filtres statut/date/client/org. Permission bookings.read.
 
 Critères : données API live.
@@ -624,7 +624,7 @@ Critères : données API live.
 À la fin : fichiers modifiés + test.
 ```
 
-### #30 — Admin — détail réservation
+### #30 - Admin - détail réservation
 
 **Branche :** `feature/admin-booking-detail`
 
@@ -632,7 +632,7 @@ Critères : données API live.
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-booking-detail`.
 
-Livrable #30 : Admin — détail réservation
+Livrable #30 : Admin - détail réservation
 Page /dashboard/bookings/[id] : client, items, paiements, changer statut, annuler avec raison.
 
 Critères : annulation via engine #27 ; historique statuts.
@@ -640,7 +640,7 @@ Critères : annulation via engine #27 ; historique statuts.
 À la fin : fichiers modifiés + test.
 ```
 
-### #31 — Intégration Stripe
+### #31 - Intégration Stripe
 
 **Branche :** `feature/stripe-payments`
 
@@ -656,7 +656,7 @@ Critères : paiement test mode OK ; booking confirmed via webhook.
 À la fin : fichiers modifiés + test Stripe CLI.
 ```
 
-### #32 — Codes promo & promotions
+### #32 - Codes promo & promotions
 
 **Branche :** `feature/promo-codes-checkout`
 
@@ -672,7 +672,7 @@ Critères : code invalide → erreur ; réduction correcte.
 À la fin : fichiers modifiés + test.
 ```
 
-### #33 — Remboursements
+### #33 - Remboursements
 
 **Branche :** `feature/payments-refunds`
 
@@ -688,7 +688,7 @@ Critères : partiel/total ; idempotence webhook.
 À la fin : fichiers modifiés + test.
 ```
 
-### #34 — Remplacer « Coming Soon »
+### #34 - Remplacer « Coming Soon »
 
 **Branche :** `feature/web-homepage-v1`
 
@@ -704,7 +704,7 @@ Critères : responsive ; liens vers /hotels.
 À la fin : fichiers modifiés + test pnpm dev:web.
 ```
 
-### #35 — Recherche hébergements
+### #35 - Recherche hébergements
 
 **Branche :** `feature/web-hotel-search`
 
@@ -720,7 +720,7 @@ Critères : filtres OK ; état vide géré.
 À la fin : fichiers modifiés + test.
 ```
 
-### #36 — Fiche produit hébergement
+### #36 - Fiche produit hébergement
 
 **Branche :** `feature/web-property-detail`
 
@@ -736,7 +736,7 @@ Critères : prix selon dates ; mobile OK.
 À la fin : fichiers modifiés + test.
 ```
 
-### #37 — Parcours réservation web
+### #37 - Parcours réservation web
 
 **Branche :** `feature/web-booking-checkout`
 
@@ -752,7 +752,7 @@ Critères : E2E test mode ; page confirmation.
 À la fin : fichiers modifiés + test.
 ```
 
-### #38 — Compte client web
+### #38 - Compte client web
 
 **Branche :** `feature/web-customer-account`
 
@@ -768,7 +768,7 @@ Critères : voir uniquement ses bookings.
 À la fin : fichiers modifiés + test.
 ```
 
-### #39 — Avis & notes
+### #39 - Avis & notes
 
 **Branche :** `feature/web-reviews`
 
@@ -784,7 +784,7 @@ Critères : note moyenne affichée.
 À la fin : fichiers modifiés + test.
 ```
 
-### #40 — Support client
+### #40 - Support client
 
 **Branche :** `feature/web-support`
 
@@ -800,7 +800,7 @@ Critères : ticket créé en DB.
 À la fin : fichiers modifiés + test.
 ```
 
-### #41 — Fidélité OneKey
+### #41 - Fidélité OneKey
 
 **Branche :** `feature/web-loyalty`
 
@@ -816,7 +816,7 @@ Critères : solde mis à jour.
 À la fin : fichiers modifiés + test.
 ```
 
-### #42 — Shell POS
+### #42 - Shell POS
 
 **Branche :** `feature/pos-shell-auth`
 
@@ -832,7 +832,7 @@ Critères : session employé ; UI grands boutons.
 À la fin : fichiers modifiés + test pnpm dev:pos.
 ```
 
-### #43 — Vente sur place
+### #43 - Vente sur place
 
 **Branche :** `feature/pos-quick-sale`
 
@@ -848,7 +848,7 @@ Critères : vente complète < 10 clics.
 À la fin : fichiers modifiés + test.
 ```
 
-### #44 — Reçus & impression
+### #44 - Reçus & impression
 
 **Branche :** `feature/pos-receipts`
 
@@ -864,7 +864,7 @@ Critères : impression navigateur OK.
 À la fin : fichiers modifiés + test.
 ```
 
-### #45 — Tests API (e2e)
+### #45 - Tests API (e2e)
 
 **Branche :** `feature/api-e2e-tests`
 
@@ -880,7 +880,7 @@ Critères : suite verte sur DB test.
 À la fin : fichiers modifiés + commande CI.
 ```
 
-### #46 — Tests E2E front
+### #46 - Tests E2E front
 
 **Branche :** `feature/e2e-playwright`
 
@@ -896,7 +896,7 @@ Critères : 2 specs headless stables.
 À la fin : fichiers modifiés + commande test.
 ```
 
-### #47 — CI GitHub Actions
+### #47 - CI GitHub Actions
 
 **Branche :** `feature/ci-github-actions`
 
@@ -912,7 +912,7 @@ Critères : PR déclenche CI ; échec si lint/build casse.
 À la fin : fichiers modifiés.
 ```
 
-### #48 — Observabilité
+### #48 - Observabilité
 
 **Branche :** `feature/api-observability`
 
@@ -928,7 +928,7 @@ Critères : unhealthy si DB down.
 À la fin : fichiers modifiés + test health.
 ```
 
-### #49 — i18n FR/EN
+### #49 - i18n FR/EN
 
 **Branche :** `feature/i18n-fr-en`
 
@@ -944,7 +944,7 @@ Critères : FR défaut ; EN sur auth + nav.
 À la fin : fichiers modifiés + test bascule langue.
 ```
 
-### #50 — OpenAPI → client
+### #50 - OpenAPI → client
 
 **Branche :** `feature/openapi-codegen`
 
@@ -960,7 +960,7 @@ Critères : régénération sans erreur ; login typé.
 À la fin : fichiers modifiés + README api.
 ```
 
-### #51 — Durcissement prod
+### #51 - Durcissement prod
 
 **Branche :** `feature/production-hardening`
 
@@ -976,7 +976,7 @@ Critères : checklist sécurité PR ; pas de secrets commités.
 À la fin : fichiers modifiés + doc.
 ```
 
-### #52 — Notifications email
+### #52 - Notifications email
 
 **Branche :** `feature/email-notifications`
 

@@ -31,7 +31,7 @@ async function switchLanguage(page: Page, language: RegExp) {
   // LanguageSwitcher calls router.refresh() which can detach the menu mid-click;
   // noWaitAfter + cookie sync keeps the reload deterministic.
   await menuItem.click({ noWaitAfter: true }).catch(() => {
-    /* menu may already have remounted — cookie path below still applies locale */
+    /* menu may already have remounted - cookie path below still applies locale */
   });
 
   const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://127.0.0.1:3012';
@@ -65,7 +65,7 @@ async function switchLanguage(page: Page, language: RegExp) {
   ).toContainText(code.toUpperCase(), { timeout: 15_000 });
 }
 
-/** Account pages remount the language menu during profile hydrate — avoid UI click races. */
+/** Account pages remount the language menu during profile hydrate - avoid UI click races. */
 async function switchLanguageViaStorage(page: Page, locale: 'en' | 'es' | 'fr') {
   const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://127.0.0.1:3012';
   await page.context().addCookies([
@@ -389,7 +389,7 @@ test.describe('Language switch (FR/EN/ES)', () => {
   });
 
   test('account shell shows English after switch', async ({ page }) => {
-    // Seed session once; never clobber on reload — LocaleBootstrap prefers
+    // Seed session once; never clobber on reload - LocaleBootstrap prefers
     // session.user.preferredLanguage over the atg-locale cookie/localStorage.
     await page.addInitScript(() => {
       let fromStorage: 'fr' | 'en' | 'es' | null = null;
@@ -441,7 +441,7 @@ test.describe('Language switch (FR/EN/ES)', () => {
       );
     });
 
-    // Profile applyUser() re-applies preferredLanguage from GET — keep it in sync
+    // Profile applyUser() re-applies preferredLanguage from GET - keep it in sync
     // with PATCH / cookie so a reload does not force FR again.
     let preferredLanguage: 'fr' | 'en' | 'es' = 'fr';
     await page.route('**/api/auth/me', async (route) => {

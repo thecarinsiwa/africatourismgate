@@ -56,7 +56,7 @@ const {
 function formatPaymentMethod(method: string | null): string {
   if (method === 'cash') return paymentCash;
   if (method === 'card') return paymentCard;
-  return '—';
+  return '-';
 }
 
 function parsePaymentMethod(value: string | null): 'cash' | 'card' | null {
@@ -335,7 +335,7 @@ export function PosSaleSuccessContent() {
           <div>
             <dt className="text-sm font-medium text-atg-muted">{bookingLabel}</dt>
             <dd className="mt-1 break-all font-mono text-base text-atg-fg">
-              {bookingId ?? '—'}
+              {bookingId ?? '-'}
             </dd>
           </div>
           <div>

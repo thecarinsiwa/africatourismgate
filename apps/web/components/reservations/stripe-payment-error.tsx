@@ -72,7 +72,7 @@ export function resolveStripePaymentError(
   };
 }
 
-/** BK5 — erreurs Stripe / checkout explicites. */
+/** BK5 - erreurs Stripe / checkout explicites. */
 export function StripePaymentError({ message, labels, onDismiss }: StripePaymentErrorProps) {
   const resolved = resolveStripePaymentError(message, labels);
 

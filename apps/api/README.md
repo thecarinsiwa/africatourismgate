@@ -42,19 +42,19 @@ Variables (voir root `.env.example`) :
 | `SMTP_HOST` | `mail.africatourismgate.org` (ou `mail93.lwspanel.com`) |
 | `SMTP_PORT` / `SMTP_SECURE` | `465` + `true` (SSL) ou `587` + `false` (TLS) |
 
-Les mots de passe des boîtes mail vont dans `.env.local` (dev) ou `.env` VPS — **jamais** commités.
+Les mots de passe des boîtes mail vont dans `.env.local` (dev) ou `.env` VPS - **jamais** commités.
 
-**Dev (Mailpit)** — capture SMTP sans envoi réel :
+**Dev (Mailpit)** - capture SMTP sans envoi réel :
 
 ```bash
 # Install: https://github.com/axllent/mailpit
 mailpit
-# UI http://localhost:8025 — SMTP localhost:1025
+# UI http://localhost:8025 - SMTP localhost:1025
 pnpm dev:api
 pnpm --filter @africatourismgate/api test:email
 ```
 
-**Dev (Ethereal)** — compte de test jetable :
+**Dev (Ethereal)** - compte de test jetable :
 
 ```bash
 EMAIL_TRANSPORT=ethereal pnpm dev:api
@@ -73,8 +73,8 @@ pnpm codegen:api
 
 The codegen script resolves the spec in this order:
 
-1. `OPENAPI_SPEC` — path to a local `openapi.json`
-2. **Running API** — `GET` `OPENAPI_URL` (default `http://127.0.0.1:3000/api-json`) and saves `apps/api/openapi.json`
+1. `OPENAPI_SPEC` - path to a local `openapi.json`
+2. **Running API** - `GET` `OPENAPI_URL` (default `http://127.0.0.1:3000/api-json`) and saves `apps/api/openapi.json`
 3. Existing `apps/api/openapi.json` (committed snapshot)
 4. `pnpm --filter @africatourismgate/api openapi:export` (Nest bootstrap; requires MySQL + `.env`)
 
@@ -108,7 +108,7 @@ Prerequisites:
 - MySQL reachable with credentials from root `.env` / `.env.local`
 - `DATABASE_NAME` is forced to `africatourismgate_test` during e2e (override via `E2E_DATABASE_NAME`)
 - `SEED_ADMIN_PASSWORD` matching the seeded admin (`database/seeds/README.md`)
-- Optional: `STRIPE_WEBHOOK_SECRET` — if unset, webhook signature tests use a local test secret
+- Optional: `STRIPE_WEBHOOK_SECRET` - if unset, webhook signature tests use a local test secret
 
 On first run against an empty test database, startup imports schema and seeds (`DATABASE_AUTO_SCHEMA` / `DATABASE_AUTO_SEED`, same as dev).
 
@@ -171,7 +171,7 @@ Environment variables (see root `.env.example`):
 - `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_USER`, `DATABASE_PASSWORD`, `DATABASE_NAME`
 - `API_PORT` (default `3000`)
 - `API_GLOBAL_PREFIX` (default `api`)
-- `CORS_ORIGIN` — optional comma-separated list of allowed origins
+- `CORS_ORIGIN` - optional comma-separated list of allowed origins
 
 On **application startup** (not `nest build`), the API:
 
@@ -183,7 +183,7 @@ To disable: `DATABASE_AUTO_SCHEMA=false` and/or `DATABASE_AUTO_SEED=false` in `.
 
 Deployments run `pnpm db:sync` after build and before PM2 restart. That command applies pending SQL migrations and inserts missing seed rows without modifying existing rows.
 
-**Default admin:** `admin@africatourismgate.local` / `ChangeMe123!` — see [database/seeds/README.md](../../database/seeds/README.md).
+**Default admin:** `admin@africatourismgate.local` / `ChangeMe123!` - see [database/seeds/README.md](../../database/seeds/README.md).
 
 Manual sync (optional):
 
@@ -203,8 +203,8 @@ Composite primary keys (`role-permissions`, `property-amenities`) use two path s
 
 ## Architecture
 
-- `src/entities/generated/` — TypeORM entities (generated from SQL)
-- `src/modules/resources/` — CRUD modules per entity
-- `src/common/` — audit base entity, pagination DTO, shared `CrudService`
+- `src/entities/generated/` - TypeORM entities (generated from SQL)
+- `src/modules/resources/` - CRUD modules per entity
+- `src/common/` - audit base entity, pagination DTO, shared `CrudService`
 
 After changing `database/africatourismgate_database.sql`, run `pnpm generate` inside `apps/api`.

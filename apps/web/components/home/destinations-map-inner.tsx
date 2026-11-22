@@ -287,7 +287,7 @@ function normalizeCountryCode(countryCode?: string): string | null {
   return /^[A-Z]{2}$/.test(code) ? code : null;
 }
 
-/** Flag image (flagcdn) — works reliably across platforms unlike emoji flags. */
+/** Flag image (flagcdn) - works reliably across platforms unlike emoji flags. */
 function countryFlagImgHtml(
   countryCode: string | undefined,
   width: number,

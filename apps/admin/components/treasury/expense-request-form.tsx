@@ -177,7 +177,7 @@ export function ExpenseRequestForm({
 
   const organizationOptions = useMemo(
     () => [
-      { value: '', label: '—' },
+      { value: '', label: '-' },
       ...organizations.map((org) => ({ value: org.id, label: org.name })),
     ],
     [organizations],

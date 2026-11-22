@@ -1,4 +1,4 @@
-# PR-07 — Scénario de test (acomptes + solde)
+# PR-07 - Scénario de test (acomptes + solde)
 
 Branche : `feature/pr-07-booking-deposits`  
 Réf. : [roadmap-post-reunion-08-2026.md](./roadmap-post-reunion-08-2026.md) (PR-07)
@@ -23,7 +23,7 @@ Dépend de :
 
 | Élément | Comportement |
 | ------- | ------------ |
-| Setting `booking` / `deposits` | `{ enabled, depositPercent? \| depositFixedCents? }` — XOR % / montant fixe |
+| Setting `booking` / `deposits` | `{ enabled, depositPercent? \| depositFixedCents? }` - XOR % / montant fixe |
 | Défaut | `enabled: false` → checkout / Stripe / preuves = **montant total** (comportement historique) |
 | 1er encaissement (si enabled) | `computeDepositRequiredCents(total)` = % ou fixe plafonné au total |
 | Encaissements suivants | Solde restant (`balanceCents`) |
@@ -74,7 +74,7 @@ Prérequis :
 2. `POST /bookings/:id/checkout-session` (ou PaymentIntent) → `amountCents` = acompte.
 3. Payer l’acompte (Checkout test) → webhook / sync : payment succeeded, booking **pending_payment**.
 4. Nouvelle session → montant = solde ; après paiement → `confirmed`.
-5. Libellé produit Stripe : « Acompte — … » puis « Solde — … ».
+5. Libellé produit Stripe : « Acompte - … » puis « Solde - … ».
 
 ### E. UI client
 

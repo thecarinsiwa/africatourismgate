@@ -254,7 +254,7 @@ export class AccountingLinksService {
   /**
    * Soft-delete (SYSCO-005) : autorisé pour `pending` / `skipped` uniquement.
    * Libère l’unicité `(fund_op_type, fund_op_id)` pour un recreate via Comptabiliser.
-   * Interdit si `linked` — exiger une contrepassation comptable d’abord.
+   * Interdit si `linked` - exiger une contrepassation comptable d’abord.
    */
   async softDelete(
     id: string,
@@ -268,7 +268,7 @@ export class AccountingLinksService {
     }
     if (row.status === 'linked') {
       throw new ConflictException(
-        'Cannot soft-delete a linked accounting link — create a reversal journal entry first (SYSCO-005 policy)',
+        'Cannot soft-delete a linked accounting link - create a reversal journal entry first (SYSCO-005 policy)',
       );
     }
 

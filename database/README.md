@@ -1,4 +1,4 @@
-# Database — Africa Tourism Gate
+# Database - Africa Tourism Gate
 
 ## Requirements
 
@@ -57,8 +57,8 @@ All `*_by_user_id` columns reference `users(id)` with `ON DELETE SET NULL`. List
 
 ## Seeds
 
-- **Dev / demo:** [seeds/install.seed.sql](seeds/install.seed.sql) — RBAC, default org, admin, referentials, demo catalog
-- **Prod minimal:** [seeds/install.seed.prod.sql](seeds/install.seed.prod.sql) — 8 tables (RBAC, org, settings, amenities)
+- **Dev / demo:** [seeds/install.seed.sql](seeds/install.seed.sql) - RBAC, default org, admin, referentials, demo catalog
+- **Prod minimal:** [seeds/install.seed.prod.sql](seeds/install.seed.prod.sql) - 8 tables (RBAC, org, settings, amenities)
 - **Purge / prepare:** [scripts/README.md](scripts/README.md)
 
 Deployments apply seeds through `pnpm db:sync` in insert-only mode (`SEED_PROFILE=prod` for production). The API startup fallback imports the selected seed when the platform organization is missing (`DATABASE_AUTO_SEED=true`).

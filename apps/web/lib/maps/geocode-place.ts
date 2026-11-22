@@ -45,7 +45,7 @@ function writeSessionCache(key: string, value: GeocodedPlace | null): void {
       value == null ? 'null' : JSON.stringify(value),
     );
   } catch {
-    // Quota / private mode — memory cache still applies.
+    // Quota / private mode - memory cache still applies.
   }
 }
 

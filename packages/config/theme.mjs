@@ -11,7 +11,7 @@ export const brand = {
   secondaryHover: '#137a36',
 };
 
-/** Mode clair — surfaces admin / auth */
+/** Mode clair - surfaces admin / auth */
 export const lightSurfaces = {
   surface: '#f4f8f6',
   elevated: '#ffffff',
@@ -20,7 +20,7 @@ export const lightSurfaces = {
   fg: '#0f1a16',
 };
 
-/** Mode sombre — surfaces admin / auth */
+/** Mode sombre - surfaces admin / auth */
 export const darkSurfaces = {
   surface: '#0b1210',
   elevated: '#121f1a',
@@ -29,7 +29,7 @@ export const darkSurfaces = {
   fg: '#ffffff',
 };
 
-/** Couleurs sémantiques (badges, alertes, KPI) — paires light/fg pour contraste WCAG AA */
+/** Couleurs sémantiques (badges, alertes, KPI) - paires light/fg pour contraste WCAG AA */
 const semanticColors = {
   success: {
     DEFAULT: 'var(--atg-success)',

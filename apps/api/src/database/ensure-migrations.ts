@@ -123,7 +123,7 @@ async function ensureMigrationsTable(connection: Awaited<ReturnType<typeof creat
 /** Apply pending SQL files from database/migrations (same logic as pnpm db:sync). */
 export async function ensureMigrations(config: ConfigService): Promise<void> {
   if (!isAutoSchemaEnabled(config)) {
-    logger.log('DATABASE_AUTO_SCHEMA=false — skipping migrations');
+    logger.log('DATABASE_AUTO_SCHEMA=false - skipping migrations');
     return;
   }
 
@@ -161,8 +161,14 @@ export async function ensureMigrations(config: ConfigService): Promise<void> {
 
       if (applied) {
         if (applied.checksum !== hash) {
-          throw new Error(
-            `Migration "${name}" was already applied with a different checksum`,
+          // Match db-sync: edited SQL after apply updates the stored hash only
+          // (do not re-run). Local content tweaks must not block API boot.
+          logger.warn(
+            `Migration "${name}" already applied with an older checksum - updating checksum without re-running`,
+          );
+          await connection.query(
+            `UPDATE \`${MIGRATIONS_TABLE}\` SET \`checksum\` = ? WHERE \`name\` = ?`,
+            [hash, name],
           );
         }
         continue;

@@ -22,7 +22,7 @@ export const ORGANIZATION_LEGAL_FORM_VALUES = [
 export function formatOrganizationLegalForm(
   legalForm: string | null | undefined,
   options: ReadonlyArray<{ value: string; label: string }>,
-  emptyLabel = '—',
+  emptyLabel = '-',
 ): string {
   const trimmed = legalForm?.trim();
   if (!trimmed) return emptyLabel;

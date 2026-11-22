@@ -2,11 +2,11 @@
  * Prepare a production-ready MySQL database for Africa Tourism Gate.
  *
  * Modes:
- *   check         — run pre-purge control SELECTs only (safe)
- *   purge         — remove demo/test seed data (requires --confirm)
- *   fresh         — create/sync schema + migrations + install seed (no DROP)
- *   reset         — DROP database, then fresh install seed only (requires --confirm)
- *   install-only  — truncate all tables except install seed + schema_migrations
+ *   check         - run pre-purge control SELECTs only (safe)
+ *   purge         - remove demo/test seed data (requires --confirm)
+ *   fresh         - create/sync schema + migrations + install seed (no DROP)
+ *   reset         - DROP database, then fresh install seed only (requires --confirm)
+ *   install-only  - truncate all tables except install seed + schema_migrations
  *                   then re-apply prod/dev seed (production go-live command)
  *
  * Examples:
@@ -18,7 +18,7 @@
  *   pnpm db:prod-install-only -- --backup
  *
  * Env (same as db:sync): DATABASE_HOST, DATABASE_PORT, DATABASE_USER,
- * DATABASE_PASSWORD, DATABASE_NAME — loaded from .env / .env.local.
+ * DATABASE_PASSWORD, DATABASE_NAME - loaded from .env / .env.local.
  *
  * After purge / fresh / reset / install-only: set DATABASE_AUTO_SEED=false and prefer
  * SEED_PROFILE=prod for subsequent `pnpm db:sync` when using the prod seed.
@@ -156,7 +156,7 @@ Modes:
   fresh         Schema + migrations + install seed (keeps existing DB if present)
   reset         DROP + recreate DB, then install seed only (requires --confirm)
   install-only  Empty all business tables except install seed tables, then
-                re-apply seed (requires --confirm) — use this in production
+                re-apply seed (requires --confirm) - use this in production
 
 Options:
   --confirm              Required for purge | reset | install-only
@@ -381,14 +381,14 @@ async function modeCheck(mysql) {
 
     const blockers = blockingHits(selectResults);
     if (blockers.length > 0) {
-      log('BLOCKERS detected — do not purge until resolved:');
+      log('BLOCKERS detected - do not purge until resolved:');
       for (const b of blockers) {
         console.log(`  - ${b.name}: ${b.hits}`);
       }
       process.exitCode = 2;
       return;
     }
-    log('Controls OK — no booking/review/promo blockers on demo UUIDs.');
+    log('Controls OK - no booking/review/promo blockers on demo UUIDs.');
     log('Next: pnpm db:prepare-prod -- --mode=purge --confirm [--backup]');
   } finally {
     await connection.end();

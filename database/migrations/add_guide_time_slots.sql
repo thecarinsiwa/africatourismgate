@@ -2,7 +2,7 @@
 -- Run on existing databases after add_guide_availability.sql.
 
 -- ---------------------------------------------------------------------------
--- booking_guide_assignments — add schedule columns
+-- booking_guide_assignments - add schedule columns
 -- ---------------------------------------------------------------------------
 
 SET @sql = IF(
@@ -82,7 +82,7 @@ EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
 -- ---------------------------------------------------------------------------
--- guide_availability — migrate day-level rows to datetime ranges
+-- guide_availability - migrate day-level rows to datetime ranges
 -- ---------------------------------------------------------------------------
 
 SET @sql = IF(
@@ -182,7 +182,7 @@ DEALLOCATE PREPARE stmt;
 -- idx_guide_availability_guide_schedule added above before dropping legacy unique key (FK on guide_id).
 
 -- ---------------------------------------------------------------------------
--- booking_guide_assignment_history — append-only audit trail
+-- booking_guide_assignment_history - append-only audit trail
 -- ---------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS `booking_guide_assignment_history` (

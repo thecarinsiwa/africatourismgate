@@ -1,5 +1,5 @@
 /**
- * Auth request/response types derived from OpenAPI (do not edit — run pnpm codegen:api).
+ * Auth request/response types derived from OpenAPI (do not edit - run pnpm codegen:api).
  */
 import type { components, paths } from './schema';
 

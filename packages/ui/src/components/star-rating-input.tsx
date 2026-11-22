@@ -75,7 +75,7 @@ export function StarRatingInput({
           );
         })}
         <span className="ml-2 text-sm tabular-nums text-atg-muted">
-          {value > 0 ? `${value} / ${max}` : '—'}
+          {value > 0 ? `${value} / ${max}` : '-'}
         </span>
       </div>
       {hint && !error ? (

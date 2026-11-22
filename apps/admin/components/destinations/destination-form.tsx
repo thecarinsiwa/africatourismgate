@@ -277,8 +277,8 @@ export function DestinationForm({
         }}
         title={t('restoreModal.title')}
         description={t('restoreModal.description', {
-          name: deletedDestination?.name ?? '—',
-          slug: deletedDestination?.slug ?? '—',
+          name: deletedDestination?.name ?? '-',
+          slug: deletedDestination?.slug ?? '-',
         })}
         showClose
         closeAriaLabel={t('restoreModal.close')}

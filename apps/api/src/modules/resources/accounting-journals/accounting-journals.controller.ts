@@ -9,7 +9,7 @@ import { AccountingJournalsService } from './accounting-journals.service';
 import { AccountingJournalsListQueryDto } from './dto/accounting-journals-list-query.dto';
 
 /**
- * Journaux SYSCOHADA (SYSCO-003) — lecture.
+ * Journaux SYSCOHADA (SYSCO-003) - lecture.
  * Bridge : `accounting.journal.read` OU `treasury.accounting_link.read`.
  */
 @ApiTags('accounting-journals')

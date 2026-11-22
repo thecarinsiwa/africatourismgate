@@ -68,7 +68,7 @@ test.describe('Marketing pages smoke', () => {
       page.getByRole('link', { name: /Retour au blog|Back to blog|Volver al blog/i }),
     ).toBeVisible();
 
-    // 3. Donate (SSR — page.route cannot force empty; tolerate empty or campaigns)
+    // 3. Donate (SSR - page.route cannot force empty; tolerate empty or campaigns)
     await page.goto('/donate');
     await assertShell(page);
     await expect(

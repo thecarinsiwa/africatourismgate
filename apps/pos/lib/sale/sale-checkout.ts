@@ -13,11 +13,11 @@ import type { SaleManifestDraftEntry } from './types';
 
 /** Motifs d’annulation POS (historique statut API). */
 export const posAbandonCancelReasons = {
-  cashPaymentFailed: 'Abandon caisse — échec paiement espèces',
-  cardIntentFailed: 'Abandon caisse — échec préparation carte',
-  cardSheetClosed: 'Abandon caisse — fermeture paiement carte',
-  assistedApproveFailed: 'Abandon caisse — échec approbation assistée',
-  manualAfterTimeout: 'Abandon caisse — annulation manuelle après délai',
+  cashPaymentFailed: 'Abandon caisse - échec paiement espèces',
+  cardIntentFailed: 'Abandon caisse - échec préparation carte',
+  cardSheetClosed: 'Abandon caisse - fermeture paiement carte',
+  assistedApproveFailed: 'Abandon caisse - échec approbation assistée',
+  manualAfterTimeout: 'Abandon caisse - annulation manuelle après délai',
 } as const;
 
 export type CheckoutCartOptions = {
@@ -200,7 +200,7 @@ export async function checkoutBookingFromCart(
       try {
         await cancelAbandonedPosBooking(
           bookingId,
-          'Abandon caisse — échec enregistrement manifeste',
+          'Abandon caisse - échec enregistrement manifeste',
         );
       } catch {
         // ignore cancel failure; surface original manifest error

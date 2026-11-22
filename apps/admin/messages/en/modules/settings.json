@@ -72,7 +72,7 @@
         "modeImmediate": "Immediate (payment)",
         "modeAssisted": "Assisted (request)",
         "paymentMethodsTitle": "Payment methods (public site)",
-        "paymentMethodsDescription": "Select the methods offered on web checkout. POS and staff cash collection are not affected. Cash on site is off by default (risky if cash is the only commitment) — re-enable only if you accept that risk. Bank transfer also needs published bank accounts. Mobile Money needs countries, operators and numbers configured.",
+        "paymentMethodsDescription": "Select the methods offered on web checkout. POS and staff cash collection are not affected. Cash on site is off by default (risky if cash is the only commitment) - re-enable only if you accept that risk. Bank transfer also needs published bank accounts. Mobile Money needs countries, operators and numbers configured.",
         "paymentMethods": {
           "stripe": "Card (Stripe)",
           "cash": "Cash on site (public site)",
@@ -125,11 +125,11 @@
         "description": "When enabled, public site visitors are redirected to a maintenance page (admin remains accessible).",
         "enabled": "Enable maintenance mode",
         "pageTitle": "Displayed title",
-        "pageTitleHint": "Optional — otherwise the default maintenance page title is used.",
+        "pageTitleHint": "Optional - otherwise the default maintenance page title is used.",
         "message": "Message",
-        "messageHint": "Optional — text shown to visitors (max 2000 characters).",
+        "messageHint": "Optional - text shown to visitors (max 2000 characters).",
         "endsAt": "Scheduled end",
-        "endsAtHint": "Optional — when set, a countdown is shown and the site reopens automatically at that time (even if the toggle stays on)."
+        "endsAtHint": "Optional - when set, a countdown is shown and the site reopens automatically at that time (even if the toggle stays on)."
       },
       "loyalty": {
         "title": "OneKey loyalty",
@@ -168,7 +168,7 @@
   "colorPalette": {
     "contrastWarning": "Insufficient contrast with white text: {ratio} (minimum {min} for WCAG AA). Active buttons and links may be hard to read.",
     "currentAria": "Current color ({value})",
-    "currentTitle": "Saved color — {value}",
+    "currentTitle": "Saved color - {value}",
     "currentLabel": "Current",
     "selection": "Selection:",
     "swatches": {
@@ -252,11 +252,11 @@
       "footerText": "Footer text",
       "footerPlaceholder": "© '{year}' '{displayName}' · All rights reserved",
       "footerHint": "Variables: '{year}', '{displayName}'. Leave empty for the default text.",
-      "welcomeSubject": "Subject — welcome email",
+      "welcomeSubject": "Subject - welcome email",
       "welcomeSubjectPlaceholder": "Welcome to '{displayName}'",
       "welcomeSubjectHint": "Variables: '{displayName}'",
-      "bookingSubject": "Subject — booking confirmation",
-      "bookingSubjectPlaceholder": "Booking confirmation — '{ref}'",
+      "bookingSubject": "Subject - booking confirmation",
+      "bookingSubjectPlaceholder": "Booking confirmation - '{ref}'",
       "bookingSubjectHint": "Variables: '{ref}', '{displayName}'",
       "previewTemplate": "Template to preview",
       "templateWelcome": "Welcome (account creation)",
@@ -542,12 +542,12 @@
         "locale": "Language",
         "title": "Page title",
         "titlePlaceholder": "Under maintenance",
-        "titleHint": "Optional — otherwise the public page default title is used.",
+        "titleHint": "Optional - otherwise the public page default title is used.",
         "message": "Message",
         "messagePlaceholder": "We’ll be back soon…",
         "startsAt": "Starts at",
         "endsAt": "Planned end",
-        "endsAtHint": "Optional — leave empty for an open-ended window (manual reopen)."
+        "endsAtHint": "Optional - leave empty for an open-ended window (manual reopen)."
       },
       "validation": {
         "startsAtRequired": "Start date is required.",

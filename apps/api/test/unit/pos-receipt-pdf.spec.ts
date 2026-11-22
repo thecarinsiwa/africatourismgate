@@ -17,7 +17,7 @@ function sampleContext(overrides: Partial<PosReceiptContext> = {}): PosReceiptCo
     paymentMethodLabel: 'Espèces',
     items: [
       {
-        title: 'Safari 3 jours — Parc national',
+        title: 'Safari 3 jours - Parc national',
         quantity: 2,
         unitPriceCents: 45_000,
         lineTotalCents: 90_000,

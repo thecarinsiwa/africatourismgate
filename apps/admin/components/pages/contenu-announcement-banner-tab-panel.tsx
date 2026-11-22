@@ -307,7 +307,7 @@ export function ContenuAnnouncementBannerTabPanel() {
                 list:
                   filledLocales.length > 0
                     ? filledLocales.map((locale) => locale.toUpperCase()).join(', ')
-                    : '—',
+                    : '-',
               })}
             </p>
           </div>

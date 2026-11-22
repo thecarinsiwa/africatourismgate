@@ -171,7 +171,7 @@ export function AccountAddressesPanel() {
                 <p className="text-sm text-atg-muted">
                   {addr.postalCode ? `${addr.postalCode} ` : ''}
                   {addr.city}
-                  {addr.region ? `, ${addr.region}` : ''} — {addr.countryCode}
+                  {addr.region ? `, ${addr.region}` : ''} - {addr.countryCode}
                 </p>
                 {addr.isDefault === 1 ? (
                   <span className="mt-1 inline-block text-xs font-medium text-primary">

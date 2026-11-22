@@ -1,7 +1,7 @@
-# Africa Tourism Gate — Tâches GitHub Module Trésorerie (Admin)
+# Africa Tourism Gate - Tâches GitHub Module Trésorerie (Admin)
 
 > **Document opérationnel** pour créer des issues GitHub destinées à intégrer le **module Trésorerie** côté Admin (`apps/admin`) avec contrats API Nest minimaux (`apps/api`).  
-> **Mise à jour : septembre 2026** — Basé sur le plan feature `feature/tresorerie-admin-module`.
+> **Mise à jour : septembre 2026** - Basé sur le plan feature `feature/tresorerie-admin-module`.
 
 **Guide module (routes / permissions / client) :** [admin-tresorerie-readme.md](./admin-tresorerie-readme.md)  
 **Modèle de domaine (TRESO-001) :** [tresorerie-domain-model.md](./tresorerie-domain-model.md)  
@@ -35,8 +35,8 @@ gh issue create \
 
 | Domaine | Technologie |
 | -------- | ----------- |
-| Admin | Next.js 14 App Router, React 18, Tailwind, next-intl — port **3001** (`pnpm dev:admin`) |
-| API | NestJS 10, TypeORM, MySQL, JWT, RBAC — port **3000** (`pnpm dev:api`) |
+| Admin | Next.js 14 App Router, React 18, Tailwind, next-intl - port **3001** (`pnpm dev:admin`) |
+| API | NestJS 10, TypeORM, MySQL, JWT, RBAC - port **3000** (`pnpm dev:api`) |
 | Types | `packages/types` |
 | UI | `@africatourismgate/ui` (DataTable, toasts, …) |
 
@@ -46,7 +46,7 @@ gh issue create \
 pnpm install
 cp .env.example .env
 pnpm dev:api    # terminal 1
-pnpm dev:admin  # terminal 2 — http://localhost:3001
+pnpm dev:admin  # terminal 2 - http://localhost:3001
 ```
 
 ### Conventions issues & PR
@@ -70,10 +70,10 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 
 ### Documents liés
 
-- [tresorerie-domain-model.md](./tresorerie-domain-model.md) — TRESO-001
-- [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md) — TRESO-041 handoff épic suivant
-- [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md) — SYSCO-001…012 (comptabilité réglementaire)
-- [web-github-tasks.md](./web-github-tasks.md) — convention documentaire
+- [tresorerie-domain-model.md](./tresorerie-domain-model.md) - TRESO-001
+- [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md) - TRESO-041 handoff épic suivant
+- [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md) - SYSCO-001…012 (comptabilité réglementaire)
+- [web-github-tasks.md](./web-github-tasks.md) - convention documentaire
 - Patterns : `apps/admin/config/dashboard-nav.config.ts`, `admin-route-permissions.ts`, `apps/api/src/modules/rbac/`
 
 ---
@@ -82,58 +82,58 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 
 | ID        | Titre court                                              | Priorité | Type        | Effort |
 | --------- | -------------------------------------------------------- | -------- | ----------- | ------ |
-| TRESO-001 | Spec domaine Trésorerie + schéma cible — ✅              | Haute    | Docs / Spec | M      |
-| TRESO-002 | Migration DB entrées de fonds + pivots réservations — ✅ | Haute    | API / DB    | M      |
-| TRESO-003 | Migration DB états de besoin + sorties + pivots — ✅     | Haute    | API / DB    | M      |
-| TRESO-004 | Migration DB budgets (période / activité / produit) — ✅ | Haute    | API / DB    | M      |
-| TRESO-005 | Migration DB collaborateurs externes + jetons — ✅       | Haute    | API / DB    | M      |
-| TRESO-006 | Migration / extension journal d’audit trésorerie — ✅    | Haute    | API / DB    | S      |
-| TRESO-007 | Types partagés `packages/types` (enums, DTOs) — ✅       | Haute    | API / Types | M      |
-| TRESO-008 | Catalogue RBAC `treasury.*` + sync seed — ✅             | Haute    | API / RBAC  | M      |
-| TRESO-009 | Shell Admin nav + routes + permissions + registry — ✅   | Haute    | Admin       | M      |
-| TRESO-010 | Scaffold i18n fr/en/es modules trésorerie — ✅           | Haute    | i18n        | S      |
-| TRESO-011 | API Nest CRUD `fund-entries` + filtres — ✅              | Haute    | API         | L      |
-| TRESO-012 | API liaison entrées ↔ réservations (0,N) + justificatifs — ✅ | Haute    | API         | M      |
-| TRESO-013 | UI Admin liste + filtres entrées de fonds — ✅           | Haute    | Admin       | M      |
-| TRESO-014 | UI Admin formulaire création/édition entrée — ✅         | Haute    | Admin       | L      |
-| TRESO-015 | UI Admin fiche détail entrée + traçabilité — ✅          | Haute    | Admin       | M      |
-| TRESO-016 | API Nest `expense-requests` CRUD + statuts — ✅          | Haute    | API         | L      |
-| TRESO-017 | API Nest `fund-exits` liées à un état de besoin — ✅     | Haute    | API         | L      |
-| TRESO-018 | API sorties ↔ réservations (0,N) + justificatifs — ✅    | Haute    | API         | M      |
-| TRESO-019 | UI Admin liste/création états de besoin — ✅             | Haute    | Admin       | M      |
-| TRESO-020 | UI Admin circuit validation → décaissement — ✅          | Haute    | Admin       | L      |
-| TRESO-021 | UI Admin liste/création/détail sorties — ✅              | Haute    | Admin       | L      |
-| TRESO-022 | API transitions d’état + historique immutable — ✅       | Haute    | API         | M      |
-| TRESO-023 | API budgets mensuels / annuels — ✅                      | Moyenne  | API         | M      |
-| TRESO-024 | API budgets par activité et produit/service — ✅         | Moyenne  | API         | M      |
-| TRESO-025 | UI Admin budgets liste + formulaires — ✅                | Moyenne  | Admin       | M      |
-| TRESO-026 | UI suivi budget vs réalisé (agrégats légers) — ✅        | Moyenne  | Admin       | M      |
-| TRESO-027 | API invitation e-mail + jeton/lien sécurisé — ✅         | Moyenne  | API         | M      |
-| TRESO-028 | API activate/deactivate + permissions externes — ✅      | Moyenne  | API         | M      |
-| TRESO-029 | UI Admin gestion collaborateurs externes — ✅            | Moyenne  | Admin       | M      |
-| TRESO-030 | Flux minimal état de besoin via jeton — ✅               | Moyenne  | Admin / API | L      |
-| TRESO-031 | API journal d’audit (user, action, old/new) — ✅         | Haute    | API         | M      |
-| TRESO-032 | UI Admin consultation audit trésorerie — ✅              | Haute    | Admin       | M      |
-| TRESO-033 | Annulation / void d’opérations + gates — ✅              | Haute    | API / Admin | M      |
-| TRESO-034 | Lien croisé fiche réservation → opérations — ✅         | Moyenne  | Admin       | S      |
-| TRESO-035 | API agrégats rapports (période, source, mode) — ✅       | Moyenne  | API         | M      |
-| TRESO-036 | UI Admin page rapports trésorerie — ✅                   | Moyenne  | Admin       | M      |
-| TRESO-037 | Export CSV des opérations — ✅                           | Moyenne  | API / Admin | S      |
-| TRESO-038 | Hub `/tresorerie` + cartes stats — ✅                    | Moyenne  | Admin       | S      |
-| TRESO-039 | Stub pont comptable `accounting_link` + mapping — ✅     | Basse    | API         | M      |
-| TRESO-040 | UI placeholder section Comptabilité — ✅                 | Basse    | Admin       | S      |
-| TRESO-041 | Doc handoff épic SYSCOHADA suivant — ✅                  | Basse    | Docs        | S      |
-| TRESO-042 | E2E smoke nav + CRUD entrée — ✅                         | Haute    | Testing     | M      |
-| TRESO-043 | E2E happy path circuit sortie — ✅                       | Haute    | Testing     | M      |
-| TRESO-044 | QA manuelle RBAC rôles trésorerie — ✅                   | Haute    | Testing     | M      |
-| TRESO-045 | Sync OpenAPI + api-client + README module — ✅           | Basse    | Docs / API  | S      |
-| TRESO-046 | Catalogue taux manuels + conversion au post SYSCO — ✅   | Haute    | API / Admin | M      |
+| TRESO-001 | Spec domaine Trésorerie + schéma cible - ✅              | Haute    | Docs / Spec | M      |
+| TRESO-002 | Migration DB entrées de fonds + pivots réservations - ✅ | Haute    | API / DB    | M      |
+| TRESO-003 | Migration DB états de besoin + sorties + pivots - ✅     | Haute    | API / DB    | M      |
+| TRESO-004 | Migration DB budgets (période / activité / produit) - ✅ | Haute    | API / DB    | M      |
+| TRESO-005 | Migration DB collaborateurs externes + jetons - ✅       | Haute    | API / DB    | M      |
+| TRESO-006 | Migration / extension journal d’audit trésorerie - ✅    | Haute    | API / DB    | S      |
+| TRESO-007 | Types partagés `packages/types` (enums, DTOs) - ✅       | Haute    | API / Types | M      |
+| TRESO-008 | Catalogue RBAC `treasury.*` + sync seed - ✅             | Haute    | API / RBAC  | M      |
+| TRESO-009 | Shell Admin nav + routes + permissions + registry - ✅   | Haute    | Admin       | M      |
+| TRESO-010 | Scaffold i18n fr/en/es modules trésorerie - ✅           | Haute    | i18n        | S      |
+| TRESO-011 | API Nest CRUD `fund-entries` + filtres - ✅              | Haute    | API         | L      |
+| TRESO-012 | API liaison entrées ↔ réservations (0,N) + justificatifs - ✅ | Haute    | API         | M      |
+| TRESO-013 | UI Admin liste + filtres entrées de fonds - ✅           | Haute    | Admin       | M      |
+| TRESO-014 | UI Admin formulaire création/édition entrée - ✅         | Haute    | Admin       | L      |
+| TRESO-015 | UI Admin fiche détail entrée + traçabilité - ✅          | Haute    | Admin       | M      |
+| TRESO-016 | API Nest `expense-requests` CRUD + statuts - ✅          | Haute    | API         | L      |
+| TRESO-017 | API Nest `fund-exits` liées à un état de besoin - ✅     | Haute    | API         | L      |
+| TRESO-018 | API sorties ↔ réservations (0,N) + justificatifs - ✅    | Haute    | API         | M      |
+| TRESO-019 | UI Admin liste/création états de besoin - ✅             | Haute    | Admin       | M      |
+| TRESO-020 | UI Admin circuit validation → décaissement - ✅          | Haute    | Admin       | L      |
+| TRESO-021 | UI Admin liste/création/détail sorties - ✅              | Haute    | Admin       | L      |
+| TRESO-022 | API transitions d’état + historique immutable - ✅       | Haute    | API         | M      |
+| TRESO-023 | API budgets mensuels / annuels - ✅                      | Moyenne  | API         | M      |
+| TRESO-024 | API budgets par activité et produit/service - ✅         | Moyenne  | API         | M      |
+| TRESO-025 | UI Admin budgets liste + formulaires - ✅                | Moyenne  | Admin       | M      |
+| TRESO-026 | UI suivi budget vs réalisé (agrégats légers) - ✅        | Moyenne  | Admin       | M      |
+| TRESO-027 | API invitation e-mail + jeton/lien sécurisé - ✅         | Moyenne  | API         | M      |
+| TRESO-028 | API activate/deactivate + permissions externes - ✅      | Moyenne  | API         | M      |
+| TRESO-029 | UI Admin gestion collaborateurs externes - ✅            | Moyenne  | Admin       | M      |
+| TRESO-030 | Flux minimal état de besoin via jeton - ✅               | Moyenne  | Admin / API | L      |
+| TRESO-031 | API journal d’audit (user, action, old/new) - ✅         | Haute    | API         | M      |
+| TRESO-032 | UI Admin consultation audit trésorerie - ✅              | Haute    | Admin       | M      |
+| TRESO-033 | Annulation / void d’opérations + gates - ✅              | Haute    | API / Admin | M      |
+| TRESO-034 | Lien croisé fiche réservation → opérations - ✅         | Moyenne  | Admin       | S      |
+| TRESO-035 | API agrégats rapports (période, source, mode) - ✅       | Moyenne  | API         | M      |
+| TRESO-036 | UI Admin page rapports trésorerie - ✅                   | Moyenne  | Admin       | M      |
+| TRESO-037 | Export CSV des opérations - ✅                           | Moyenne  | API / Admin | S      |
+| TRESO-038 | Hub `/tresorerie` + cartes stats - ✅                    | Moyenne  | Admin       | S      |
+| TRESO-039 | Stub pont comptable `accounting_link` + mapping - ✅     | Basse    | API         | M      |
+| TRESO-040 | UI placeholder section Comptabilité - ✅                 | Basse    | Admin       | S      |
+| TRESO-041 | Doc handoff épic SYSCOHADA suivant - ✅                  | Basse    | Docs        | S      |
+| TRESO-042 | E2E smoke nav + CRUD entrée - ✅                         | Haute    | Testing     | M      |
+| TRESO-043 | E2E happy path circuit sortie - ✅                       | Haute    | Testing     | M      |
+| TRESO-044 | QA manuelle RBAC rôles trésorerie - ✅                   | Haute    | Testing     | M      |
+| TRESO-045 | Sync OpenAPI + api-client + README module - ✅           | Basse    | Docs / API  | S      |
+| TRESO-046 | Catalogue taux manuels + conversion au post SYSCO - ✅   | Haute    | API / Admin | M      |
 
 ---
 
-## Modèles GitHub — prêts à copier
+## Modèles GitHub - prêts à copier
 
-### TRESO-001 — Spec domaine Trésorerie + schéma cible — ✅
+### TRESO-001 - Spec domaine Trésorerie + schéma cible - ✅
 
 **Labels :** `admin`, `tresorerie`, `docs`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-admin-module`  
@@ -178,7 +178,7 @@ Revue documentaire ; croisement avec TRESO-002…006.
 
 ---
 
-### TRESO-002 — Migration DB entrées de fonds + pivots réservations — ✅
+### TRESO-002 - Migration DB entrées de fonds + pivots réservations - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-migration-fund-entries`  
@@ -222,7 +222,7 @@ pnpm db:sync
 - docs/tresorerie-domain-model.md §4.1
 ```
 
-### TRESO-003 — Migration DB états de besoin + sorties + pivots — ✅
+### TRESO-003 - Migration DB états de besoin + sorties + pivots - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-migration-expense-exits`  
@@ -257,7 +257,7 @@ Toute sortie doit être justifiée par un état de besoin ; sorties aussi (0,N) 
 
 ```bash
 pnpm db:sync
-# SHOW COLUMNS FROM fund_exits; — expense_request_id NOT NULL
+# SHOW COLUMNS FROM fund_exits; - expense_request_id NOT NULL
 ```
 
 ## Références
@@ -268,7 +268,7 @@ pnpm db:sync
 
 ---
 
-### TRESO-004 — Migration DB budgets — ✅
+### TRESO-004 - Migration DB budgets - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-migration-budgets`  
@@ -314,7 +314,7 @@ pnpm db:sync
 
 ---
 
-### TRESO-005 — Migration DB collaborateurs externes + jetons — ✅
+### TRESO-005 - Migration DB collaborateurs externes + jetons - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-migration-external-access`  
@@ -360,7 +360,7 @@ pnpm db:sync
 
 ---
 
-### TRESO-006 — Migration / extension journal d’audit trésorerie — ✅
+### TRESO-006 - Migration / extension journal d’audit trésorerie - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-migration-audit`  
@@ -406,7 +406,7 @@ pnpm db:sync
 
 ---
 
-### TRESO-007 — Types partagés packages/types — ✅
+### TRESO-007 - Types partagés packages/types - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-shared-types`  
@@ -450,7 +450,7 @@ pnpm --filter @africatourismgate/types build
 
 ---
 
-### TRESO-008 — Catalogue RBAC treasury.* + sync seed — ✅
+### TRESO-008 - Catalogue RBAC treasury.* + sync seed - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-rbac`  
@@ -527,7 +527,7 @@ pnpm --filter @africatourismgate/api sync:rbac
 
 ---
 
-### TRESO-009 — Shell Admin nav + routes + permissions + registry — ✅
+### TRESO-009 - Shell Admin nav + routes + permissions + registry - ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-admin-shell`  
@@ -573,7 +573,7 @@ Connexion admin ; ouvrir `/tresorerie` et chaque sous-route.
 
 ---
 
-### TRESO-010 — Scaffold i18n fr/en/es modules trésorerie — ✅
+### TRESO-010 - Scaffold i18n fr/en/es modules trésorerie - ✅
 
 **Labels :** `admin`, `tresorerie`, `i18n`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-i18n-scaffold`  
@@ -616,7 +616,7 @@ pnpm check:admin-i18n
 
 ---
 
-### TRESO-011 — API Nest CRUD fund-entries + filtres — ✅
+### TRESO-011 - API Nest CRUD fund-entries + filtres - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-api-fund-entries`  
@@ -663,7 +663,7 @@ pnpm dev:api
 
 ---
 
-### TRESO-012 — API liaison entrées ↔ réservations + justificatifs — ✅
+### TRESO-012 - API liaison entrées ↔ réservations + justificatifs - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-api-fund-entry-links`  
@@ -704,7 +704,7 @@ Créer entrée sans / avec 1 / avec N bookings ; upload justificatif.
 
 ---
 
-### TRESO-013 — UI Admin liste + filtres entrées — ✅
+### TRESO-013 - UI Admin liste + filtres entrées - ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-ui-fund-entries-list`  
@@ -748,7 +748,7 @@ Pattern DataTable + `getApiClient` + `AdminListPageHeader`.
 
 ---
 
-### TRESO-014 — UI Admin formulaire création/édition entrée — ✅
+### TRESO-014 - UI Admin formulaire création/édition entrée - ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-ui-fund-entry-form`  
@@ -793,7 +793,7 @@ Créer entrée liée à 2 réservations ; éditer ; vérifier liste.
 
 ---
 
-### TRESO-015 — UI Admin fiche détail entrée + traçabilité — ✅
+### TRESO-015 - UI Admin fiche détail entrée + traçabilité - ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-ui-fund-entry-detail`  
@@ -834,7 +834,7 @@ Ouvrir détail d’une entrée seed/test.
 
 ---
 
-### TRESO-016 — API Nest expense-requests CRUD + statuts — ✅
+### TRESO-016 - API Nest expense-requests CRUD + statuts - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-api-expense-requests`  
@@ -876,7 +876,7 @@ Swagger smoke create/list/get/patch.
 
 ---
 
-### TRESO-017 — API Nest fund-exits liées à un état de besoin — ✅
+### TRESO-017 - API Nest fund-exits liées à un état de besoin - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-api-fund-exits`  
@@ -916,7 +916,7 @@ Tenter create sans / avec besoin autorisé.
 
 ---
 
-### TRESO-018 — API sorties ↔ réservations + justificatifs — ✅
+### TRESO-018 - API sorties ↔ réservations + justificatifs - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-api-fund-exit-links`  
@@ -956,7 +956,7 @@ Lier 0/1/N bookings ; ajouter justificatif.
 
 ---
 
-### TRESO-019 — UI Admin liste/création états de besoin — ✅
+### TRESO-019 - UI Admin liste/création états de besoin - ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-ui-expense-requests`
@@ -996,7 +996,7 @@ Créer une demande ; la retrouver en liste.
 
 ---
 
-### TRESO-020 — UI Admin circuit validation → décaissement — ✅
+### TRESO-020 - UI Admin circuit validation → décaissement - ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-ui-expense-workflow`
@@ -1037,7 +1037,7 @@ Parcours complet happy path + rejet à validation.
 
 ---
 
-### TRESO-021 — UI Admin liste/création/détail sorties — ✅
+### TRESO-021 - UI Admin liste/création/détail sorties - ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-ui-fund-exits`
@@ -1077,7 +1077,7 @@ Créer sortie depuis besoin autorisé ; vérifier détail.
 
 ---
 
-### TRESO-022 — API transitions d’état + historique immutable — ✅
+### TRESO-022 - API transitions d’état + historique immutable - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-api-workflow-transitions`
@@ -1117,7 +1117,7 @@ Matrice de transitions unitaires / e2e API.
 
 ---
 
-### TRESO-023 — API budgets mensuels / annuels — ✅
+### TRESO-023 - API budgets mensuels / annuels - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:medium`  
 **Branche suggérée :** `feature/tresorerie-api-budgets-period`
@@ -1156,7 +1156,7 @@ Swagger create mois + année.
 
 ---
 
-### TRESO-024 — API budgets par activité et produit/service — ✅
+### TRESO-024 - API budgets par activité et produit/service - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:medium`  
 **Branche suggérée :** `feature/tresorerie-api-budgets-activity-product`
@@ -1196,7 +1196,7 @@ CRUD avec liens activité et package/activity.
 
 ---
 
-### TRESO-025 — UI Admin budgets liste + formulaires — ✅
+### TRESO-025 - UI Admin budgets liste + formulaires - ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:medium`  
 **Branche suggérée :** `feature/tresorerie-ui-budgets`
@@ -1237,7 +1237,7 @@ Créer 3 types de budgets ; lister.
 
 ---
 
-### TRESO-026 — UI suivi budget vs réalisé — ✅
+### TRESO-026 - UI suivi budget vs réalisé - ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:medium`  
 **Branche suggérée :** `feature/tresorerie-ui-budget-vs-actual`  
@@ -1278,7 +1278,7 @@ Budget + quelques opérations ; vérifier écarts.
 
 ---
 
-### TRESO-027 — API invitation e-mail + jeton/lien sécurisé — ✅
+### TRESO-027 - API invitation e-mail + jeton/lien sécurisé - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:medium`  
 **Branche suggérée :** `feature/tresorerie-api-external-invite`  
@@ -1320,7 +1320,7 @@ Invite → recevoir lien → validate token.
 
 ---
 
-### TRESO-028 — API activate/deactivate + permissions externes — ✅
+### TRESO-028 - API activate/deactivate + permissions externes - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:medium`  
 **Branche suggérée :** `feature/tresorerie-api-external-permissions`  
@@ -1361,7 +1361,7 @@ Activer/désactiver ; tenter create besoin.
 
 ---
 
-### TRESO-029 — UI Admin gestion collaborateurs externes — ✅
+### TRESO-029 - UI Admin gestion collaborateurs externes - ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:medium`  
 **Branche suggérée :** `feature/tresorerie-ui-external-collaborators`  
@@ -1401,7 +1401,7 @@ Inviter un email test ; désactiver.
 
 ---
 
-### TRESO-030 — Flux minimal état de besoin via jeton — ✅
+### TRESO-030 - Flux minimal état de besoin via jeton - ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:medium`  
 **Branche suggérée :** `feature/tresorerie-external-need-flow`  
@@ -1443,7 +1443,7 @@ Parcours invite → lien → submit → visible en liste besoins.
 
 ---
 
-### TRESO-031 — API journal d’audit (user, action, old/new) — ✅
+### TRESO-031 - API journal d’audit (user, action, old/new) - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-api-audit`  
@@ -1484,7 +1484,7 @@ Effectuer mutation ; vérifier log.
 
 ---
 
-### TRESO-032 — UI Admin consultation audit trésorerie — ✅
+### TRESO-032 - UI Admin consultation audit trésorerie - ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-ui-audit`  
@@ -1524,7 +1524,7 @@ Générer 3 logs ; filtrer par entity.
 
 ---
 
-### TRESO-033 — Annulation / void d’opérations + gates — ✅
+### TRESO-033 - Annulation / void d’opérations + gates - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-void-operations`  
@@ -1565,7 +1565,7 @@ Void avec/sans permission.
 
 ---
 
-### TRESO-034 — Lien croisé fiche réservation → opérations — ✅
+### TRESO-034 - Lien croisé fiche réservation → opérations - ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:medium`  
 **Branche suggérée :** `feature/tresorerie-booking-crosslink`  
@@ -1606,7 +1606,7 @@ Lier une entrée à une booking ; ouvrir fiche booking.
 
 ---
 
-### TRESO-035 — API agrégats rapports — ✅
+### TRESO-035 - API agrégats rapports - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:medium`  
 **Branche suggérée :** `feature/tresorerie-api-reports`  
@@ -1646,7 +1646,7 @@ Seed opérations ; comparer agrégats.
 
 ---
 
-### TRESO-036 — UI Admin page rapports trésorerie — ✅
+### TRESO-036 - UI Admin page rapports trésorerie - ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:medium`  
 **Branche suggérée :** `feature/tresorerie-ui-reports`  
@@ -1687,7 +1687,7 @@ Changer filtres ; vérifier refresh données.
 
 ---
 
-### TRESO-037 — Export CSV des opérations — ✅
+### TRESO-037 - Export CSV des opérations - ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:medium`  
 **Branche suggérée :** `feature/tresorerie-export-csv`  
@@ -1728,7 +1728,7 @@ Exporter et ouvrir dans tableur.
 
 ---
 
-### TRESO-038 — Hub /tresorerie + cartes stats — ✅
+### TRESO-038 - Hub /tresorerie + cartes stats - ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:medium`
 **Branche suggérée :** `feature/tresorerie-ui-hub`
@@ -1769,7 +1769,7 @@ Ouvrir `/tresorerie` avec jeu de données.
 
 ---
 
-### TRESO-039 — Stub pont comptable accounting_link + mapping — ✅
+### TRESO-039 - Stub pont comptable accounting_link + mapping - ✅
 
 **Labels :** `admin`, `tresorerie`, `api`, `priority:low`
 **Branche suggérée :** `feature/tresorerie-accounting-bridge-stub`
@@ -1810,7 +1810,7 @@ Créer link sur une entrée ; GET.
 
 ---
 
-### TRESO-040 — UI placeholder section Comptabilité — ✅
+### TRESO-040 - UI placeholder section Comptabilité - ✅
 
 **Labels :** `admin`, `tresorerie`, `enhancement`, `priority:low`
 **Branche suggérée :** `feature/tresorerie-ui-accounting-placeholder`
@@ -1850,11 +1850,11 @@ Navigation manuelle.
 
 ---
 
-### TRESO-041 — Doc handoff épic SYSCOHADA suivant — ✅
+### TRESO-041 - Doc handoff épic SYSCOHADA suivant - ✅
 
 **Labels :** `admin`, `tresorerie`, `docs`, `priority:low`
 **Branche suggérée :** `docs/tresorerie-syscohada-epic`
-**Livrable :** [`docs/tresorerie-syscohada-epic-next.md`](./tresorerie-syscohada-epic-next.md) — périmètre reporté, dépendances TRESO, consommation `accounting_link`, esquisse `SYSCO-xxx`
+**Livrable :** [`docs/tresorerie-syscohada-epic-next.md`](./tresorerie-syscohada-epic-next.md) - périmètre reporté, dépendances TRESO, consommation `accounting_link`, esquisse `SYSCO-xxx`
 
 #### Modèle GitHub
 
@@ -1891,11 +1891,11 @@ Revue documentaire.
 
 ---
 
-### TRESO-042 — E2E smoke nav + CRUD entrée — ✅
+### TRESO-042 - E2E smoke nav + CRUD entrée - ✅
 
 **Labels :** `admin`, `tresorerie`, `testing`, `priority:high`
 **Branche suggérée :** `feature/tresorerie-e2e-fund-entry`
-**Livrable :** `tests/e2e/tresorerie-fund-entry-smoke.spec.ts` · helper `treasury-e2e.ts` · pas de job CI admin (aucun pipeline admin e2e existant — cf. POS/web seulement)
+**Livrable :** `tests/e2e/tresorerie-fund-entry-smoke.spec.ts` · helper `treasury-e2e.ts` · pas de job CI admin (aucun pipeline admin e2e existant - cf. POS/web seulement)
 
 #### Modèle GitHub
 
@@ -1932,7 +1932,7 @@ pnpm --filter @africatourismgate/admin test:e2e -- tresorerie
 - CI : pas de job `admin` Playwright dans `.github/workflows/ci.yml` (uniquement API / POS / web). Ne pas ajouter un job lourd hors demande explicite.
 - Isolation : référence unique `E2E-TRESO-<timestamp>`.
 - Prérequis local : API + MySQL seedés (`SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`), Chromium Playwright installé.
-- Correctif annexe : clés i18n `externals.scopes.expense_requests.create` (nested) — les clés plates avec `.` cassaient next-intl.
+- Correctif annexe : clés i18n `externals.scopes.expense_requests.create` (nested) - les clés plates avec `.` cassaient next-intl.
 
 ## Références
 
@@ -1941,7 +1941,7 @@ pnpm --filter @africatourismgate/admin test:e2e -- tresorerie
 
 ---
 
-### TRESO-043 — E2E happy path circuit sortie — ✅
+### TRESO-043 - E2E happy path circuit sortie - ✅
 
 **Labels :** `admin`, `tresorerie`, `testing`, `priority:high`
 **Branche suggérée :** `feature/tresorerie-e2e-expense-workflow`
@@ -1980,7 +1980,7 @@ pnpm --filter @africatourismgate/admin test:e2e -- tresorerie-expense-workflow
 - Happy path : draft → submit → validate → authorize → create exit → upload PNG → disbursed → recorded → besoin `closed` + timeline.
 - Illégal : bouton « enregistrée » absent en draft + API `POST …/fund-exits/:id/transition` `draft→recorded` → 400.
 - Prérequis : API + MySQL seedés (`SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD` = credentials admin réels), Chromium Playwright ; `webServer` Playwright démarre API/admin si absents.
-- Exécution locale : si login API renvoie **401**, le mot de passe admin a divergé du seed `ChangeMe123!` (insert-only ne le réécrit pas) — exporter `SEED_ADMIN_PASSWORD` avant `test:e2e`.
+- Exécution locale : si login API renvoie **401**, le mot de passe admin a divergé du seed `ChangeMe123!` (insert-only ne le réécrit pas) - exporter `SEED_ADMIN_PASSWORD` avant `test:e2e`.
 - Correctif annexe UI : `FundExitWorkflowActions` sur la fiche sortie (transitions draft→disbursed→recorded).
 
 ## Références
@@ -1990,7 +1990,7 @@ pnpm --filter @africatourismgate/admin test:e2e -- tresorerie-expense-workflow
 
 ---
 
-### TRESO-044 — QA manuelle RBAC rôles trésorerie — ✅
+### TRESO-044 - QA manuelle RBAC rôles trésorerie - ✅
 
 **Labels :** `admin`, `tresorerie`, `testing`, `priority:high`  
 **Branche suggérée :** `docs/tresorerie-rbac-qa`  
@@ -2031,7 +2031,7 @@ Parcourir [`docs/pr-tresorerie-rbac-test.md`](./pr-tresorerie-rbac-test.md) avec
 
 ---
 
-### TRESO-045 — Sync OpenAPI + api-client + README module — ✅
+### TRESO-045 - Sync OpenAPI + api-client + README module - ✅
 
 **Labels :** `admin`, `tresorerie`, `docs`, `priority:low`  
 **Branche suggérée :** `feature/tresorerie-openapi-readme`  
@@ -2078,7 +2078,7 @@ pnpm --filter @africatourismgate/admin exec tsc --noEmit
 
 ---
 
-### TRESO-046 — Catalogue taux manuels + conversion au post SYSCO — ✅
+### TRESO-046 - Catalogue taux manuels + conversion au post SYSCO - ✅
 
 **Labels :** `admin`, `tresorerie`, `syscohada`, `api`, `priority:high`  
 **Branche suggérée :** `feature/tresorerie-exchange-rates`  

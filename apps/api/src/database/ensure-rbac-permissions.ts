@@ -186,7 +186,7 @@ const PERMISSION_UPSERTS: Array<{
     action: 'read',
     description: 'View site analytics (visitors, page views)',
   },
-  // TRESO-008 — Module Trésorerie
+  // TRESO-008 - Module Trésorerie
   {
     id: '00000000-0000-4000-8000-000000001057',
     code: 'treasury.read',
@@ -371,7 +371,7 @@ const PERMISSION_UPSERTS: Array<{
   },
 ];
 
-/** Full org_admin set (install.seed.sql) — repairs partial or missing grants. */
+/** Full org_admin set (install.seed.sql) - repairs partial or missing grants. */
 const ORG_ADMIN_PERMISSION_IDS = [
   '00000000-0000-4000-8000-000000001001',
   '00000000-0000-4000-8000-000000001002',

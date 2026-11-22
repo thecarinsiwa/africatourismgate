@@ -104,7 +104,7 @@ export const HELP_CATEGORIES: readonly HelpCategory[] = [
 
 /**
  * Curated hub “quick start” links for travellers.
- * Resolved against HELP_ARTICLES — unknown slugs are ignored.
+ * Resolved against HELP_ARTICLES - unknown slugs are ignored.
  */
 export const HELP_QUICK_START_SLUGS = [
   'how-to-book',

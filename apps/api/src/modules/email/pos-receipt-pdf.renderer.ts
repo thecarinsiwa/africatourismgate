@@ -244,7 +244,7 @@ export function renderPosReceiptPdf(input: PosReceiptPdfInput): Promise<Buffer> 
     .fillColor(MUTED_COLOR)
     .fontSize(7.5)
     .font('Helvetica')
-    .text('Montants TTC — TVA incluse', { width: CONTENT_WIDTH, align: 'right' });
+    .text('Montants TTC - TVA incluse', { width: CONTENT_WIDTH, align: 'right' });
   doc.moveDown(0.3);
 
   drawMetaRow(doc, 'Paiement', context.paymentMethodLabel);
@@ -259,7 +259,7 @@ export function renderPosReceiptPdf(input: PosReceiptPdfInput): Promise<Buffer> 
   doc
     .fillColor('#a1a1aa')
     .fontSize(7.5)
-    .text(`${branding.displayName} — ${context.currency}`, {
+    .text(`${branding.displayName} - ${context.currency}`, {
       width: CONTENT_WIDTH,
       align: 'center',
     });

@@ -14,7 +14,7 @@ import {
 import type { Promotions } from '../../../../entities/generated';
 
 export class CreatePromotionDto {
-  @ApiProperty({ example: 'Soldes été — Afrique de l’Est' })
+  @ApiProperty({ example: 'Soldes été - Afrique de l’Est' })
   @IsNotEmpty({ message: 'Le titre est obligatoire.' })
   @IsString()
   @MaxLength(180)
@@ -22,7 +22,7 @@ export class CreatePromotionDto {
 
   @ApiPropertyOptional({
     description:
-      'Texte libre (ex. destination ou produit ciblé) — le schéma ne stocke pas encore de cible structurée.',
+      'Texte libre (ex. destination ou produit ciblé) - le schéma ne stocke pas encore de cible structurée.',
   })
   @IsOptional()
   @IsString()

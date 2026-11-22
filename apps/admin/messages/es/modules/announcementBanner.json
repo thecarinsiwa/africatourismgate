@@ -30,18 +30,18 @@
   "intensities": {
     "low": {
       "label": "Suave",
-      "hint": "Fondo claro, texto oscuro — información discreta."
+      "hint": "Fondo claro, texto oscuro - información discreta."
     },
     "high": {
       "label": "Intensa",
-      "hint": "Fondo sólido — mensaje urgente o importante."
+      "hint": "Fondo sólido - mensaje urgente o importante."
     }
   },
   "preview": {
     "title": "Vista previa",
     "locale": "Visualización en {locale}",
     "fallback": "Sin texto en este idioma: se muestra el texto en francés",
-    "disabled": "Banner desactivado — no visible en el sitio",
+    "disabled": "Banner desactivado - no visible en el sitio",
     "empty": "Su texto aparecerá aquí"
   },
   "validation": {

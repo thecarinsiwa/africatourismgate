@@ -112,7 +112,7 @@ async function main() {
   }
   console.log(`  OK accountId=${accountId}, balance=${INITIAL_POINTS}`);
 
-  console.log('2. GET /loyalty-accounts (customer — same balance as web panel)');
+  console.log('2. GET /loyalty-accounts (customer - same balance as web panel)');
   const customerList = await request('GET', '/loyalty-accounts?limit=20', {
     token: customerToken,
   });
@@ -159,7 +159,7 @@ async function main() {
   }
   console.log(`  OK balance ${EXPECTED_AFTER_ADJUST} after adjust`);
 
-  console.log('5. GET /loyalty-accounts (customer — balance coherent after adjust)');
+  console.log('5. GET /loyalty-accounts (customer - balance coherent after adjust)');
   const customerAfter = await request('GET', '/loyalty-accounts?limit=20', {
     token: customerToken,
   });
@@ -172,7 +172,7 @@ async function main() {
   }
   console.log(`  OK customer sees ${balanceAfter} points (coherent with admin)`);
 
-  console.log('6. POST adjust-points — rejects negative balance');
+  console.log('6. POST adjust-points - rejects negative balance');
   const overdraft = await request('POST', `/loyalty-accounts/${accountId}/adjust-points`, {
     token: adminToken,
     body: { delta: -99999 },

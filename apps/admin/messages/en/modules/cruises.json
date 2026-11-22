@@ -102,7 +102,7 @@
       "submitCreate": "Create sailing",
       "itinerary": "Itinerary",
       "departureDate": "Departure date",
-      "itineraryOption": "{name} ({shipName}) — {nights} nights",
+      "itineraryOption": "{name} ({shipName}) - {nights} nights",
       "validation": "Itinerary and departure date are required.",
       "fallbackShip": "Unknown ship",
       "noItinerariesHint": "No itineraries available. Create one from a ship page."
@@ -207,7 +207,7 @@
       "title": "Bookable cabins",
       "intro": "Stock and price by category for this sailing.",
       "stopsLabel": "Ports of call: ",
-      "noStopsWarning": "No ports of call on this itinerary — add some from the ship page.",
+      "noStopsWarning": "No ports of call on this itinerary - add some from the ship page.",
       "cabinMeta": "max {maxGuests} · base {basePrice}",
       "cabinsAvailableAria": "Available cabins",
       "priceCentsAria": "Price in cents",
@@ -223,7 +223,7 @@
     "cancel": "Cancel"
   },
   "calendar": {
-    "ariaLabel": "Sailings calendar — {month}",
+    "ariaLabel": "Sailings calendar - {month}",
     "today": "Today"
   },
   "stats": {

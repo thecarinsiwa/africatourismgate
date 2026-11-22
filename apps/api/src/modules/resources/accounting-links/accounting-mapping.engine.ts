@@ -12,7 +12,7 @@ import type { AccountingFundOpType } from '../../../entities/accounting-link.ent
 export type MappingResolveContext = {
   organizationId: string;
   fundOpType: AccountingFundOpType;
-  /** FundEntrySource — ignored for fund_exit */
+  /** FundEntrySource - ignored for fund_exit */
   source?: string | null;
   paymentMethod: string;
 };

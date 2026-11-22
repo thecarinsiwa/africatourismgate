@@ -191,7 +191,7 @@ export class FundExitsController {
   @RequirePermissions('treasury.void')
   @Post(':id/void')
   @ApiOperation({
-    summary: 'Void (soft-cancel) a fund exit — requires reason',
+    summary: 'Void (soft-cancel) a fund exit - requires reason',
   })
   voidExit(
     @Param('id') id: string,

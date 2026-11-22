@@ -33,7 +33,7 @@ install_snippet() {
   if [[ "${enabled}" == "1" ]]; then
     sudo cp "${REPO_DIR}/nginx/snippets/${src}" "${dest}"
   else
-    echo "# disabled — no certificate" | sudo tee "${dest}" >/dev/null
+    echo "# disabled - no certificate" | sudo tee "${dest}" >/dev/null
   fi
 }
 
@@ -178,8 +178,8 @@ if [[ "${CONF_SRC}" != *http-only* ]]; then
   curl -sf -o /dev/null -w "  HTTPS web : %{http_code}\n" "https://africatourismgate.org/" 2>/dev/null \
     || echo "  HTTPS web : failed"
 else
-  echo "  HTTPS admin: — (mode HTTP uniquement)"
-  echo "  HTTPS web : — (mode HTTP uniquement)"
+  echo "  HTTPS admin: - (mode HTTP uniquement)"
+  echo "  HTTPS web : - (mode HTTP uniquement)"
 fi
 
 echo ""

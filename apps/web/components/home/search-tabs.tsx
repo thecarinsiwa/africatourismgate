@@ -181,7 +181,7 @@ function FormCruisePortSelect({
       value={value}
       options={CRUISE_PORT_OPTIONS.map((port) => ({
         value: port.code,
-        label: `${port.code} — ${port.name}`,
+        label: `${port.code} - ${port.name}`,
       }))}
       onChange={onChange}
     />

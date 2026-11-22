@@ -38,7 +38,7 @@ export function CarCard({ vehicle, t, searchParams = {}, locale }: CarCardProps)
     vehicle.exampleModel?.trim() ||
     vehicle.categoryName ||
     vehicle.licensePlate ||
-    '—';
+    '-';
   const specs = resolveVehicleSpecs(vehicle.categoryName);
   const hasRoute =
     Boolean(vehicle.departureCity?.trim()) && Boolean(vehicle.arrivalCity?.trim());

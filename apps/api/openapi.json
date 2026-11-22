@@ -2845,7 +2845,7 @@
             "description": "Missing permission"
           }
         },
-        "summary": "Upload branding image (logo, favicon, auth visual — max 2 MB)",
+        "summary": "Upload branding image (logo, favicon, auth visual - max 2 MB)",
         "tags": [
           "organization-settings"
         ]
@@ -9121,7 +9121,7 @@
             "description": "Missing permission"
           }
         },
-        "summary": "Void (soft-cancel) a fund entry — requires reason",
+        "summary": "Void (soft-cancel) a fund entry - requires reason",
         "tags": [
           "fund-entries"
         ]
@@ -10348,7 +10348,7 @@
             "description": "Missing permission"
           }
         },
-        "summary": "Void (soft-cancel) a fund exit — requires reason",
+        "summary": "Void (soft-cancel) a fund exit - requires reason",
         "tags": [
           "fund-exits"
         ]
@@ -11114,7 +11114,7 @@
             "description": "Missing permission"
           }
         },
-        "summary": "Treasury summary totals (entries/exits) for a date range — excludes voided (and draft exits)",
+        "summary": "Treasury summary totals (entries/exits) for a date range - excludes voided (and draft exits)",
         "tags": [
           "treasury-reports"
         ]
@@ -11368,7 +11368,7 @@
             "description": "Missing permission"
           }
         },
-        "summary": "Export fund entries and/or exits as UTF-8 CSV (BOM) — filters aligned with lists/reports",
+        "summary": "Export fund entries and/or exits as UTF-8 CSV (BOM) - filters aligned with lists/reports",
         "tags": [
           "treasury-reports"
         ]
@@ -11395,7 +11395,7 @@
             "description": "Missing permission"
           }
         },
-        "summary": "Mapping rules from DB (stub:false) — real chart accounts (SYSCO-004)",
+        "summary": "Mapping rules from DB (stub:false) - real chart accounts (SYSCO-004)",
         "tags": [
           "accounting-links"
         ]
@@ -11647,7 +11647,7 @@
             "description": "Missing permission"
           }
         },
-        "summary": "Soft-delete pending/skipped link (SYSCO-005) — frees unique key for recreate; forbidden if linked",
+        "summary": "Soft-delete pending/skipped link (SYSCO-005) - frees unique key for recreate; forbidden if linked",
         "tags": [
           "accounting-links"
         ]
@@ -11992,7 +11992,7 @@
             "description": "Missing permission"
           }
         },
-        "summary": "Balance générale (agrégat lignes postées par compte — SYSCO-006)",
+        "summary": "Balance générale (agrégat lignes postées par compte - SYSCO-006)",
         "tags": [
           "journal-entries"
         ]
@@ -12418,7 +12418,7 @@
             "description": "Missing permission"
           }
         },
-        "summary": "Close exercise (OD closing entry + lock/close periods) — SYSCO-008",
+        "summary": "Close exercise (OD closing entry + lock/close periods) - SYSCO-008",
         "tags": [
           "accounting-exercises"
         ]
@@ -25795,7 +25795,7 @@
           },
           "bookingSubject": {
             "type": "string",
-            "example": "Confirmation — {ref}"
+            "example": "Confirmation - {ref}"
           }
         }
       },
@@ -25969,7 +25969,7 @@
           },
           "clientInstanceId": {
             "type": "string",
-            "description": "Stable browser profile id — one active session per profile",
+            "description": "Stable browser profile id - one active session per profile",
             "format": "uuid"
           }
         },
@@ -26003,7 +26003,7 @@
           },
           "verificationId": {
             "type": "string",
-            "description": "Verification record ID — enter the code from the alert email"
+            "description": "Verification record ID - enter the code from the alert email"
           },
           "verificationPurpose": {
             "type": "string",
@@ -26061,7 +26061,7 @@
           },
           "clientInstanceId": {
             "type": "string",
-            "description": "Stable browser profile id — one active session per profile",
+            "description": "Stable browser profile id - one active session per profile",
             "format": "uuid"
           }
         },
@@ -26214,7 +26214,7 @@
           },
           "clientInstanceId": {
             "type": "string",
-            "description": "Stable browser profile id — one active session per profile",
+            "description": "Stable browser profile id - one active session per profile",
             "format": "uuid"
           }
         },
@@ -26240,7 +26240,7 @@
         "properties": {
           "verificationId": {
             "type": "string",
-            "description": "New verification id — replace the one in the client URL"
+            "description": "New verification id - replace the one in the client URL"
           },
           "message": {
             "type": "string",
@@ -27894,7 +27894,7 @@
           "date": {
             "type": "string",
             "example": "2026-08-15",
-            "description": "Journée entière (legacy) — ignoré si startDatetime/endDatetime sont fournis."
+            "description": "Journée entière (legacy) - ignoré si startDatetime/endDatetime sont fournis."
           },
           "startDatetime": {
             "type": "string",
@@ -28731,7 +28731,7 @@
           },
           "contextNote": {
             "type": "object",
-            "example": "Urgence sécheresse — Parc des Virunga"
+            "example": "Urgence sécheresse - Parc des Virunga"
           },
           "buttonLabel": {
             "type": "string",
@@ -28787,7 +28787,7 @@
           },
           "contextNote": {
             "type": "object",
-            "example": "Urgence sécheresse — Parc des Virunga"
+            "example": "Urgence sécheresse - Parc des Virunga"
           },
           "buttonLabel": {
             "type": "string",
@@ -29974,7 +29974,7 @@
           "currency": {
             "type": "string",
             "example": "XAF",
-            "description": "Book currency — only when exercise is open and has no posted entries",
+            "description": "Book currency - only when exercise is open and has no posted entries",
             "minLength": 3,
             "maxLength": 3
           }

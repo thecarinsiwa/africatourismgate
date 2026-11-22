@@ -34,7 +34,7 @@ export class TreasuryReportsController {
   @Get('summary')
   @ApiOperation({
     summary:
-      'Treasury summary totals (entries/exits) for a date range — excludes voided (and draft exits)',
+      'Treasury summary totals (entries/exits) for a date range - excludes voided (and draft exits)',
   })
   getSummary(@Query() query: TreasuryReportsSummaryQueryDto) {
     return this.service.getSummary(query);
@@ -54,7 +54,7 @@ export class TreasuryReportsController {
   @ApiProduces('text/csv')
   @ApiOperation({
     summary:
-      'Export fund entries and/or exits as UTF-8 CSV (BOM) — filters aligned with lists/reports',
+      'Export fund entries and/or exits as UTF-8 CSV (BOM) - filters aligned with lists/reports',
   })
   async exportCsv(
     @Query() query: TreasuryReportsExportQueryDto,

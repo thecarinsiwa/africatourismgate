@@ -93,7 +93,7 @@ function formatBookingLabel(booking: BookingListItem): string {
   const ref = booking.id.slice(0, 8);
   const title = booking.name?.trim();
   const who = title || client || booking.clientEmail;
-  return `${ref}… — ${who} (${formatMoney(booking.totalCents, booking.currency)})`;
+  return `${ref}… - ${who} (${formatMoney(booking.totalCents, booking.currency)})`;
 }
 
 type FundEntryFormProps = {
@@ -317,7 +317,7 @@ export function FundEntryForm({
 
   const organizationOptions = useMemo(
     () => [
-      { value: '', label: '—' },
+      { value: '', label: '-' },
       ...organizations.map((org) => ({ value: org.id, label: org.name })),
     ],
     [organizations],
@@ -508,7 +508,7 @@ export function FundEntryForm({
         <Select
           label={tFields('source')}
           value={values.source}
-          options={[{ value: '', label: '—' }, ...sourceOptions]}
+          options={[{ value: '', label: '-' }, ...sourceOptions]}
           onChange={(e) =>
             updateField('source', e.target.value as FundEntrySource | '')
           }
@@ -519,7 +519,7 @@ export function FundEntryForm({
         <Select
           label={tFields('paymentMethod')}
           value={values.paymentMethod}
-          options={[{ value: '', label: '—' }, ...paymentMethodOptions]}
+          options={[{ value: '', label: '-' }, ...paymentMethodOptions]}
           onChange={(e) =>
             updateField(
               'paymentMethod',

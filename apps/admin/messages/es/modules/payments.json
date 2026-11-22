@@ -69,7 +69,7 @@
   },
   "refundModal": {
     "title": "Confirmar reembolso",
-    "description": "Reembolso Stripe — máximo reembolsable: {maxAmount}.",
+    "description": "Reembolso Stripe - máximo reembolsable: {maxAmount}.",
     "refundTypeLegend": "Tipo de reembolso",
     "refundTypeTotal": "Total ({amount})",
     "refundTypePartial": "Parcial",

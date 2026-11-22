@@ -125,7 +125,7 @@
       "locationIdPlaceholder": "e.g. 12345678",
       "apiKey": "Terra API key",
       "apiKeyPlaceholder": "Paste your API key",
-      "apiKeyPlaceholderConfigured": "Key saved ({masked}) — leave blank to keep it",
+      "apiKeyPlaceholderConfigured": "Key saved ({masked}) - leave blank to keep it",
       "apiKeyKeepHint": "Leave blank to keep the key already stored.",
       "language": "Review language",
       "languagePlaceholder": "primary",

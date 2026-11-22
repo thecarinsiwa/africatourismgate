@@ -246,7 +246,7 @@ export function FlightDetailPageContent({
             {detail.images && detail.images.length > 0 ? (
               <ProductGallery
                 images={detail.images}
-                name={`${detail.flightNumber} — ${detail.airlineName}`}
+                name={`${detail.flightNumber} - ${detail.airlineName}`}
                 labels={{
                   ariaLabel: f.galleryAria,
                   openLightbox: f.galleryOpenLightbox,

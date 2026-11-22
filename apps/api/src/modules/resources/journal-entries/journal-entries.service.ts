@@ -292,7 +292,7 @@ export class JournalEntriesService {
   }
 
   /**
-   * Balance générale — agrégat des lignes d’écritures `posted` (SYSCO-006).
+   * Balance générale - agrégat des lignes d’écritures `posted` (SYSCO-006).
    */
   async getBalance(query: AccountingBalanceQueryDto): Promise<{
     rows: Array<{
@@ -386,7 +386,7 @@ export class JournalEntriesService {
   }
 
   /**
-   * Bilan (classes 1–5) ou compte de résultat (6–7) — SYSCO-008.
+   * Bilan (classes 1–5) ou compte de résultat (6–7) - SYSCO-008.
    */
   async getFinancialStatement(
     kind: 'balance_sheet' | 'income_statement',
@@ -517,7 +517,7 @@ export class JournalEntriesService {
     }
     if (period.status === 'locked' || period.status === 'closed') {
       throw new BadRequestException(
-        `Accounting period is ${period.status} — cannot post entries`,
+        `Accounting period is ${period.status} - cannot post entries`,
       );
     }
 

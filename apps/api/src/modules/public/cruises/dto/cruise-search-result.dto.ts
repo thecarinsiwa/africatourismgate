@@ -10,7 +10,7 @@ export class CruiseSearchResultDto {
   @ApiProperty({ format: 'date', example: '2026-09-20' })
   returnDate!: string;
 
-  @ApiProperty({ example: 'Kinshasa — Banana' })
+  @ApiProperty({ example: 'Kinshasa - Banana' })
   itineraryName!: string;
 
   @ApiProperty({ example: 'Congo River Spirit' })

@@ -78,7 +78,7 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
     title: tDetail('title'),
     entityLabel:
       state.status === 'ready'
-        ? `${state.review.rating}/5 — ${formatReviewAuthorLabel(state.review)}`
+        ? `${state.review.rating}/5 - ${formatReviewAuthorLabel(state.review)}`
         : undefined,
   });
 

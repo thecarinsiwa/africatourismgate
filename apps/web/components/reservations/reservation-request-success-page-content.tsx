@@ -80,7 +80,7 @@ export function ReservationRequestSuccessPageContent() {
 
         <div className="mt-5 space-y-2 text-sm text-atg-fg">
           <p>
-            <span className="font-semibold">{s.bookingIdLabel}</span> {bookingId ?? '—'}
+            <span className="font-semibold">{s.bookingIdLabel}</span> {bookingId ?? '-'}
           </p>
           {status === 'loading' && (
             <div className="flex items-center gap-2.5 py-2 text-atg-muted">

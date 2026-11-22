@@ -48,7 +48,7 @@ export function ParallaxPromo() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Link
           href={detailsHref}
-          aria-label={`${title} — ${t('details')}`}
+          aria-label={`${title} - ${t('details')}`}
           className={`group relative block overflow-hidden rounded-xl bg-atg-elevated outline-none ring-1 ring-atg-border transition-[transform,box-shadow] duration-500 ease-out hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-24px_rgba(15,23,42,0.35)] focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface sm:rounded-2xl ${
             isVisible ? 'animate-fade-in-up' : 'opacity-0'
           }`}

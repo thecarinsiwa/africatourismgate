@@ -1,11 +1,11 @@
-# PR-02 — PDF confirmation (cause racine + retest)
+# PR-02 - PDF confirmation (cause racine + retest)
 
 Branche : `feature/pr-02-pdf-confirmation-fix`  
 Réf. : [roadmap-post-reunion-08-2026.md](./roadmap-post-reunion-08-2026.md) (PR-02)
 
 ## Cause racine
 
-1. L’email de **confirmation** (`notifyBookingConfirmed`) partait **sans** génération / PJ PDF — le PDF n’était attaché que pour l’approbation assistée et l’assignation guide.
+1. L’email de **confirmation** (`notifyBookingConfirmed`) partait **sans** génération / PJ PDF - le PDF n’était attaché que pour l’approbation assistée et l’assignation guide.
 2. Le logo PDF était fragile hors local : chemins `cwd`/`uploads` incomplets, `fetch` distant **sans timeout**, échecs silencieux.
 3. Si `doc.image` échouait, le renderer réservait quand même l’espace logo → layout « cassé ». Le SMTP n’était pas en cause.
 

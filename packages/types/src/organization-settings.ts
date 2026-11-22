@@ -10,7 +10,7 @@ export interface BookingDefaultsValue {
 }
 
 /**
- * Shared vehicle trips — `organization_settings` group `booking`, key `vehicle_shared_trip`.
+ * Shared vehicle trips - `organization_settings` group `booking`, key `vehicle_shared_trip`.
  */
 export const VEHICLE_SHARED_TRIP_DEPARTURE_EDIT_RULES = [
   'until_first_payment',
@@ -142,7 +142,7 @@ export interface PublicAuthVisual {
   icons: PublicAuthVisualIcon[];
 }
 
-/** Contact web — `organization_settings` (group `contact`, key `web`). */
+/** Contact web - `organization_settings` (group `contact`, key `web`). */
 export interface ContactWebSettingValue {
   location?: string;
   facebookUrl?: string;
@@ -168,7 +168,7 @@ export const DEFAULT_PUBLIC_CONTACT: PublicContact = {
   instagramUrl: 'https://www.instagram.com/africatourismgate/',
 };
 
-/** Branding e-mails transactionnels — `organization_settings` (group `email`, key `email_branding`). */
+/** Branding e-mails transactionnels - `organization_settings` (group `email`, key `email_branding`). */
 export interface EmailBrandingValue {
   displayName: string;
   logoUrl?: string;
@@ -198,7 +198,7 @@ export interface EmailPreviewResponse {
   text: string;
 }
 
-/** Programme OneKey — `organization_settings` (group `loyalty`, key `onekey`). */
+/** Programme OneKey - `organization_settings` (group `loyalty`, key `onekey`). */
 export interface LoyaltyOneKeySettingValue {
   enabled: boolean;
   /** Points crédités par unité majeure de devise (ex. 1 USD → 1 point si taux = 1). */
@@ -481,7 +481,7 @@ export function normalizeAnnouncementBanner(
   return resolved;
 }
 
-/** djb2 — empreinte courte et déterministe (Node + navigateur). */
+/** djb2 - empreinte courte et déterministe (Node + navigateur). */
 function hashAnnouncementBannerContent(input: string): string {
   let hash = 5381;
   for (let i = 0; i < input.length; i += 1) {
@@ -535,7 +535,7 @@ export function resolvePublicAnnouncementBanner(
 }
 
 /**
- * Public site footer copy — `organization_settings` group `site`, key `footer`.
+ * Public site footer copy - `organization_settings` group `site`, key `footer`.
  * Structural links (products, about, legal) stay route/i18n-driven; contact/socials
  * remain under Paramètres (`contact` / `branding`).
  */
@@ -677,7 +677,7 @@ export function resolvePublicFooter(
 }
 
 /**
- * Homepage client reviews carousel — `organization_settings` group `site`, key `homepage_reviews`.
+ * Homepage client reviews carousel - `organization_settings` group `site`, key `homepage_reviews`.
  * Controls which review sources appear in the public “Avis de nos clients” section.
  * When both flags are false, the section is hidden on the public site.
  */
@@ -686,7 +686,7 @@ export interface HomepageReviewsSettingValue {
   showPlatformReviews: boolean;
 }
 
-/** Public payload — same shape as the stored setting. */
+/** Public payload - same shape as the stored setting. */
 export type PublicHomepageReviews = HomepageReviewsSettingValue;
 
 export const DEFAULT_HOMEPAGE_REVIEWS: HomepageReviewsSettingValue = {
@@ -715,7 +715,7 @@ export function normalizeHomepageReviews(
 }
 
 /**
- * Tripadvisor Terra sync credentials — `organization_settings` group `site`, key `tripadvisor_sync`.
+ * Tripadvisor Terra sync credentials - `organization_settings` group `site`, key `tripadvisor_sync`.
  * Admin-only: never exposed via public organization-settings endpoints.
  * `apiKey` is stored in JSON; admin list/bulk responses must mask it.
  */
@@ -728,7 +728,7 @@ export interface TripadvisorSyncSettingValue {
   language: string;
 }
 
-/** Admin-safe view — never includes the clear API key. */
+/** Admin-safe view - never includes the clear API key. */
 export interface TripadvisorSyncAdminValue {
   locationId: string;
   language: string;
@@ -834,7 +834,7 @@ export function mergeTripadvisorSyncApiKey(
 }
 
 /**
- * Acomptes checkout — `organization_settings` group `booking`, key `deposits`.
+ * Acomptes checkout - `organization_settings` group `booking`, key `deposits`.
  * Exactement un de `depositPercent` | `depositFixedCents` quand `enabled`.
  * Statut réservation : reste `pending_payment` jusqu’au solde intégral.
  */

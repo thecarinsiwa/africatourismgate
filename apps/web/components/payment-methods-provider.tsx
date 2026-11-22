@@ -10,7 +10,7 @@ import {
 
 declare global {
   interface Window {
-    /** Playwright E2E only — see tests/e2e/helpers/mock-web-payment-methods.ts */
+    /** Playwright E2E only - see tests/e2e/helpers/mock-web-payment-methods.ts */
     __ATG_E2E_WEB_PAYMENT_METHODS__?: WebPaymentMethodsSettingValue;
   }
 }

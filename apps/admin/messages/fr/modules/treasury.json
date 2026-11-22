@@ -12,7 +12,7 @@
     "accounting": "Comptabilité"
   },
   "hub": {
-    "statsDash": "—",
+    "statsDash": "-",
     "quickLinks": {
       "title": "Accès rapide",
       "subtitle": "Sous-modules de la trésorerie selon vos permissions",
@@ -219,7 +219,7 @@
       "bookingsLoading": "Recherche des réservations…",
       "attachments": {
         "title": "Justificatifs",
-        "hint": "JPEG, PNG, WebP ou PDF — max 10 Mo. Disponibles après enregistrement.",
+        "hint": "JPEG, PNG, WebP ou PDF - max 10 Mo. Disponibles après enregistrement.",
         "upload": "Ajouter un fichier",
         "empty": "Aucun justificatif.",
         "remove": "Supprimer",
@@ -309,7 +309,7 @@
       "bookingsLoading": "Recherche des réservations…",
       "attachments": {
         "title": "Justificatifs",
-        "hint": "JPEG, PNG, WebP ou PDF — max 10 Mo. Disponibles après enregistrement.",
+        "hint": "JPEG, PNG, WebP ou PDF - max 10 Mo. Disponibles après enregistrement.",
         "upload": "Ajouter un fichier",
         "empty": "Aucun justificatif.",
         "remove": "Supprimer",
@@ -556,7 +556,7 @@
     "sections": {
       "bySource": "Par source (entrées)",
       "byPaymentMethod": "Par mode de paiement",
-      "chartPaymentMethod": "Graphique — modes de paiement"
+      "chartPaymentMethod": "Graphique - modes de paiement"
     },
     "chartUnit": "Montants en {currency} (unités majeures)",
     "columns": {
@@ -1023,7 +1023,7 @@
     "form": {
       "createTitle": "Nouveau taux de change",
       "editTitle": "Modifier le taux",
-      "description": "Saisie manuelle — 1 devise source = taux × devise cible.",
+      "description": "Saisie manuelle - 1 devise source = taux × devise cible.",
       "fromCurrency": "Devise source",
       "toCurrency": "Devise cible",
       "rate": "Taux",

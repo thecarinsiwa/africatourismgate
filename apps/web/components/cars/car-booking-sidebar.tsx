@@ -87,7 +87,7 @@ function formatTripTime(iso: string, locale?: string): string {
   }).format(date);
 }
 
-/** UTC calendar day — matches API `DATE(departureDatetime)` filter. */
+/** UTC calendar day - matches API `DATE(departureDatetime)` filter. */
 function tripTravelDate(iso: string): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) {

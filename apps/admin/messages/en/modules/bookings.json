@@ -174,7 +174,7 @@
     },
     "paymentProofs": {
       "title": "Payment proofs",
-      "subtitle": "Receipts uploaded by the customer — approve to record the payment (deposit or balance). The booking is confirmed only when the balance is covered."
+      "subtitle": "Receipts uploaded by the customer - approve to record the payment (deposit or balance). The booking is confirmed only when the balance is covered."
     }
   },
   "timeline": {
@@ -187,7 +187,7 @@
   },
   "manifest": {
     "title": "Manifest",
-    "subtitle": "Traveler manifest for this booking — names, ages, nationalities and additional details.",
+    "subtitle": "Traveler manifest for this booking - names, ages, nationalities and additional details.",
     "suggestedCount": "{count, plural, one {# traveler expected from booking lines} other {# travelers expected from booking lines}}",
     "addTraveler": "Add traveler",
     "empty": "No manifest entries yet.",
@@ -262,7 +262,7 @@
   },
   "identityDocuments": {
     "title": "Identity documents",
-    "subtitle": "Documents uploaded by the customer — approve or request a clearer version.",
+    "subtitle": "Documents uploaded by the customer - approve or request a clearer version.",
     "empty": "No documents uploaded.",
     "travelerEmpty": "No document for this traveler.",
     "unlinkedTitle": "Unlinked documents",
@@ -293,7 +293,7 @@
   },
   "paymentProofs": {
     "title": "Payment proofs",
-    "subtitle": "Receipts uploaded by the customer — approve to record the payment (deposit or balance). The booking is confirmed only when the balance is covered.",
+    "subtitle": "Receipts uploaded by the customer - approve to record the payment (deposit or balance). The booking is confirmed only when the balance is covered.",
     "empty": "No proofs uploaded.",
     "statusLabel": "Status",
     "view": "View",
@@ -330,7 +330,7 @@
     "approve": "Approve",
     "reject": "Reject",
     "invitePayment": "Invite to pay",
-    "cashPaymentHint": "The customer chose (or still has) cash on site. Record the payment from the actions bar — cash is no longer offered by default on web checkout.",
+    "cashPaymentHint": "The customer chose (or still has) cash on site. Record the payment from the actions bar - cash is no longer offered by default on web checkout.",
     "bankTransferPaymentHint": "The customer chose bank transfer. Review the proof in the Documents tab, or mark the transfer as received from the actions bar.",
     "mobileMoneyPaymentHint": "The customer chose Mobile Money. Review the proof in the Documents tab, or mark the payment as received from the actions bar.",
     "totalLabel": "Total ({currency})",
@@ -340,7 +340,7 @@
     "travelersCount": "{count, plural, one {# traveler} other {# travelers}}",
     "travelerNumber": "Traveler {number}",
     "documentModal": {
-      "title": "Document — {name}",
+      "title": "Document - {name}",
       "description": "Identity document for this traveler (matched by upload order).",
       "empty": "No document uploaded for this traveler.",
       "previewError": "Unable to display the document.",
@@ -385,8 +385,8 @@
     "reasonPlaceholder": "E.g. dates and availability confirmed…",
     "rejectReasonLabel": "Rejection reason (customer)",
     "rejectReasonPlaceholder": "E.g. dates unavailable…",
-    "approveSuccess": "Booking approved — the customer will be notified by email.",
-    "rejectSuccess": "Request rejected — the customer will be notified by email.",
+    "approveSuccess": "Booking approved - the customer will be notified by email.",
+    "rejectSuccess": "Request rejected - the customer will be notified by email.",
     "inviteSuccess": "Payment link sent by email. URL: {url}",
     "approveDialog": {
       "title": "Confirm approval",
@@ -416,7 +416,7 @@
     "toast": {
       "newCustomerMessage": "New message from the customer",
       "sent": "Message sent",
-      "sentWithEmail": "Message sent — the customer was notified by email"
+      "sentWithEmail": "Message sent - the customer was notified by email"
     }
   },
   "guides": {
@@ -438,7 +438,7 @@
     "noGuidesForSlot": "No guides available for this time range.",
     "noGuidesAvailable": "No active guides available.",
     "visitWindowHint": "Allowed slots from {start} through {end} (inclusive).",
-    "noVisitDates": "This booking has no dates — guide assignment is not available.",
+    "noVisitDates": "This booking has no dates - guide assignment is not available.",
     "editSlotTitle": "Edit slot",
     "editSlotDescription": "Adjust times for “{name}”. Conflicts are checked on save.",
     "removeTitle": "Remove slot",

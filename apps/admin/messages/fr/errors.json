@@ -60,7 +60,7 @@
     "sectionLocaleConflict": "Un enregistrement existe déjà pour cette section et cette langue."
   },
   "loyaltyAccounts": {
-    "forbidden": "Accès refusé. Lecture : users.read — ajustement : super administrateur uniquement.",
+    "forbidden": "Accès refusé. Lecture : users.read - ajustement : super administrateur uniquement.",
     "notFound": "Compte fidélité introuvable."
   },
   "dashboard": {

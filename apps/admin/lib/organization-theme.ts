@@ -92,7 +92,7 @@ export function brandingFromPlatformSetting(
 
 /**
  * Apply org favicon, or restore the default admin icon when unset.
- * Only mutates our own `data-atg-dynamic-favicon` link — never remove
+ * Only mutates our own `data-atg-dynamic-favicon` link - never remove
  * Next/React-managed `<link rel="icon">` nodes (causes removeChild crashes).
  */
 export function applyFaviconToDocument(faviconUrl: string | null): void {

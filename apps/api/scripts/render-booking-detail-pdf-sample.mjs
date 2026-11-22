@@ -1,5 +1,5 @@
 /**
- * Dev helper — writes a sample booking detail PDF for visual review.
+ * Dev helper - writes a sample booking detail PDF for visual review.
  * Run: pnpm --filter @africatourismgate/api build && node scripts/render-booking-detail-pdf-sample.mjs
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -27,7 +27,7 @@ for (const locale of ['fr', 'en', 'es']) {
     },
     items: [
       {
-        title: 'Safari 3 jours — Parc national',
+        title: 'Safari 3 jours - Parc national',
         itemType: 'activity_schedule',
         quantity: 1,
         unitPriceCents: 30750,

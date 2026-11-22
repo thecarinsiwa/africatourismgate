@@ -33,7 +33,7 @@ export type VehicleReservationDraft = {
   availabilitySlotId: string;
   routeId: string;
   travelDate: string;
-  /** Shared trip — required for tier pricing / multi-seat checkout. */
+  /** Shared trip - required for tier pricing / multi-seat checkout. */
   vehicleTripId?: string;
   /** Seats claimed on the shared trip (checkout quantity). Default 1. */
   seats?: number;

@@ -79,12 +79,12 @@ async function databaseHasPlatformOrganization(
  */
 export async function ensureSeeds(config: ConfigService): Promise<void> {
   if (!isAutoSeedEnabled(config)) {
-    logger.log('DATABASE_AUTO_SEED=false — skipping seed import');
+    logger.log('DATABASE_AUTO_SEED=false - skipping seed import');
     return;
   }
 
   if (await databaseHasPlatformOrganization(config)) {
-    logger.log('Platform organization present — skipping seed import');
+    logger.log('Platform organization present - skipping seed import');
     return;
   }
 
@@ -107,7 +107,7 @@ export async function ensureSeeds(config: ConfigService): Promise<void> {
     await connection.query(sql);
     logger.log('Installation seeds imported successfully');
     logger.warn(
-      'Default admin: admin@africatourismgate.local / ChangeMe123! — change password after first login',
+      'Default admin: admin@africatourismgate.local / ChangeMe123! - change password after first login',
     );
   } finally {
     await connection.end();

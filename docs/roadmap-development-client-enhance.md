@@ -1,6 +1,6 @@
-# Africa Tourism Gate — Roadmap évolutions client (guides & réservation assistée)
+# Africa Tourism Gate - Roadmap évolutions client (guides & réservation assistée)
 
-> **Mise à jour : juin 2026** — Document pour guider les PRs et les sessions Cursor Agent.  
+> **Mise à jour : juin 2026** - Document pour guider les PRs et les sessions Cursor Agent.  
 > Branche de base : `main`. **Une PR = un livrable = une branche.**  
 > Complète la roadmap principale : [roadmap-development.md](./roadmap-development.md)  
 > Design web associé : [web-design-improvements.md](./web-design-improvements.md) (WEB-UX-15, WEB-UX-17)
@@ -11,9 +11,9 @@
 
 Ce document couvre trois axes d’évolution orientés **expérience client** et **opérations agence** :
 
-1. **Guides touristiques** — Associer des guides (agents internes ou prestataires externes) à une réservation, avec gestion et assignation côté admin.
-2. **Réservation assistée** — Le client soumet une demande **sans paiement immédiat** ; l’admin valide, un e-mail renvoie le client vers un **chat** lié à la réservation ; le paiement Stripe n’intervient qu’après accord.
-3. **Améliorations complémentaires** — Notifications, règles par vertical, évaluations guides, documents de voyage.
+1. **Guides touristiques** - Associer des guides (agents internes ou prestataires externes) à une réservation, avec gestion et assignation côté admin.
+2. **Réservation assistée** - Le client soumet une demande **sans paiement immédiat** ; l’admin valide, un e-mail renvoie le client vers un **chat** lié à la réservation ; le paiement Stripe n’intervient qu’après accord.
+3. **Améliorations complémentaires** - Notifications, règles par vertical, évaluations guides, documents de voyage.
 
 ### Parcours cible
 
@@ -59,7 +59,7 @@ Références :
 - docs/roadmap-development.md (livrables #27–33 booking, #57–58 support, #79 email)
 
 Règles :
-- Étendre BookingEngineService et le modèle bookings — ne pas réimplémenter Stripe ni l’auth.
+- Étendre BookingEngineService et le modèle bookings - ne pas réimplémenter Stripe ni l’auth.
 - Nouveau statut booking : pending_approval (migration + booking_status_history).
 - Messages utilisateur en français par défaut ; web i18n FR/EN/ES.
 - RBAC sur endpoints admin sensibles (guides.write, bookings.approve, etc.).
@@ -89,27 +89,27 @@ Règles :
 | Validation admin avant paiement | ❌ Pas de `pending_approval` | `commerce.entity.ts`, migration `add_booking_status_history.sql` |
 | Chat lié à la réservation | ⚠️ Tickets support génériques | `support_tickets` sans `booking_id` |
 | E-mails transactionnels assistés | ⚠️ Confirmation post-paiement seulement | `apps/api/src/modules/email/` |
-| Assignation guide côté admin | ❌ — | — |
-| Règles par vertical (assisté vs immédiat) | ❌ — | Config org ou par `booking_items.item_type` |
+| Assignation guide côté admin | ❌ - | - |
+| Règles par vertical (assisté vs immédiat) | ❌ - | Config org ou par `booking_items.item_type` |
 
 **Statuts booking actuels :** `draft`, `pending_payment`, `confirmed`, `cancelled`, `refunded`.
 
 ---
 
-## Tableau récapitulatif — livrables CE
+## Tableau récapitulatif - livrables CE
 
 | #     | Phase | Livrable | Priorité | Branche PR | Dépend de |
 | ----- | ----- | -------- | -------- | ---------- | --------- |
-| CE-1  | 1 | Schéma DB — `pending_approval`, guides, messages réservation | Haute | `feature/ce-booking-schema` | — |
-| CE-2  | 2 | API — Module guides touristiques (CRUD admin) | Haute | `feature/ce-tour-guides-api` | CE-1 |
-| CE-3  | 2 | API — Workflow réservation assistée (soumission sans paiement) | Haute | `feature/ce-assisted-booking-api` | CE-1 |
-| CE-4  | 2 | API — Messagerie liée à la réservation | Haute | `feature/ce-booking-messages-api` | CE-1 |
-| CE-5  | 2 | API — Actions admin (approuver, refuser, inviter au paiement) | Haute | `feature/ce-booking-approval-api` | CE-3 |
-| CE-6  | 3 | API — E-mails transactionnels (demande, validation, lien chat/paiement) | Haute | `feature/ce-assisted-booking-emails` | CE-4, CE-5, #79 |
-| CE-7  | 4 | Admin — Catalogue et assignation des guides | Haute | `feature/ce-admin-guides` | CE-2 |
-| CE-8  | 4 | Admin — File d’attente validation + détail réservation assistée | Haute | `feature/ce-admin-booking-approval` | CE-5, CE-7 |
-| CE-9  | 5 | Web — Parcours « Demander une réservation » (verticales configurées) | Haute | `feature/ce-web-assisted-request` | CE-3 |
-| CE-10 | 5 | Web — Chat réservation + timeline statut client | Haute | `feature/ce-web-booking-conversation` | CE-4, CE-6 |
+| CE-1  | 1 | Schéma DB - `pending_approval`, guides, messages réservation | Haute | `feature/ce-booking-schema` | - |
+| CE-2  | 2 | API - Module guides touristiques (CRUD admin) | Haute | `feature/ce-tour-guides-api` | CE-1 |
+| CE-3  | 2 | API - Workflow réservation assistée (soumission sans paiement) | Haute | `feature/ce-assisted-booking-api` | CE-1 |
+| CE-4  | 2 | API - Messagerie liée à la réservation | Haute | `feature/ce-booking-messages-api` | CE-1 |
+| CE-5  | 2 | API - Actions admin (approuver, refuser, inviter au paiement) | Haute | `feature/ce-booking-approval-api` | CE-3 |
+| CE-6  | 3 | API - E-mails transactionnels (demande, validation, lien chat/paiement) | Haute | `feature/ce-assisted-booking-emails` | CE-4, CE-5, #79 |
+| CE-7  | 4 | Admin - Catalogue et assignation des guides | Haute | `feature/ce-admin-guides` | CE-2 |
+| CE-8  | 4 | Admin - File d’attente validation + détail réservation assistée | Haute | `feature/ce-admin-booking-approval` | CE-5, CE-7 |
+| CE-9  | 5 | Web - Parcours « Demander une réservation » (verticales configurées) | Haute | `feature/ce-web-assisted-request` | CE-3 |
+| CE-10 | 5 | Web - Chat réservation + timeline statut client | Haute | `feature/ce-web-booking-conversation` | CE-4, CE-6 |
 | CE-11 | 6 | Règles par vertical (assisté vs paiement immédiat) | Moyenne | `feature/ce-booking-mode-config` | CE-3 |
 | CE-12 | 6 | Notifications (e-mail + badge compte client) | Moyenne | `feature/ce-booking-notifications` | CE-6, CE-10 |
 | CE-13 | 7 | Évaluations guides post-séjour | Basse | `feature/ce-guide-reviews` | CE-2 |
@@ -150,7 +150,7 @@ CE-9 → CE-10 → CE-11 → CE-12 → CE-13 → CE-14
 
 ## Prompts détaillés (copier-coller dans Cursor Agent)
 
-### CE-1 — Schéma DB — statuts, guides, messages réservation
+### CE-1 - Schéma DB - statuts, guides, messages réservation
 
 **Branche :** `feature/ce-booking-schema`
 
@@ -158,7 +158,7 @@ CE-9 → CE-10 → CE-11 → CE-12 → CE-13 → CE-14
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/ce-booking-schema`.
 
-Livrable CE-1 : Schéma DB — pending_approval, guides, messages réservation
+Livrable CE-1 : Schéma DB - pending_approval, guides, messages réservation
 Références :
 - database/africatourismgate_database.sql
 - database/migrations/add_booking_status_history.sql
@@ -177,7 +177,7 @@ Objectif :
    - booking_id, guide_id, role ENUM('primary','secondary'), assigned_at, assigned_by_user_id
 4. Créer `booking_messages` :
    - booking_id, user_id nullable, body TEXT, is_staff TINYINT, created_at
-   - (alternative : ajouter booking_id à support_tickets — préférer table dédiée pour clarté)
+   - (alternative : ajouter booking_id à support_tickets - préférer table dédiée pour clarté)
 5. Optionnel : `organization_settings.booking_mode` ENUM('immediate','assisted') ou table config par item_type.
 
 Critères :
@@ -189,7 +189,7 @@ Critères :
 À la fin : fichiers modifiés + commande migration + vérification pnpm db:sync.
 ```
 
-### CE-2 — API — Module guides touristiques
+### CE-2 - API - Module guides touristiques
 
 **Branche :** `feature/ce-tour-guides-api`
 
@@ -197,7 +197,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/ce-tour-guides-api`.
 
-Livrable CE-2 : API — Module guides touristiques (CRUD admin)
+Livrable CE-2 : API - Module guides touristiques (CRUD admin)
 Références :
 - CE-1 (tables tour_guides, booking_guide_assignments)
 - Pattern : apps/api/src/modules/resources/employees/
@@ -207,8 +207,8 @@ Endpoints admin :
 - GET /tour-guides (liste paginée, filtres type/status/destination)
 - GET /tour-guides/:id
 - POST /tour-guides, PATCH /tour-guides/:id, DELETE soft
-- POST /bookings/:id/guides — assigner un ou plusieurs guides
-- DELETE /bookings/:id/guides/:guideId — retirer une assignation
+- POST /bookings/:id/guides - assigner un ou plusieurs guides
+- DELETE /bookings/:id/guides/:guideId - retirer une assignation
 
 DTO Swagger, PermissionsGuard, messages FR.
 
@@ -217,7 +217,7 @@ Critères : guide interne lié à user/employee ; guide externe sans compte obli
 À la fin : fichiers + curl exemples + entrée api-client si pertinent.
 ```
 
-### CE-3 — API — Workflow réservation assistée
+### CE-3 - API - Workflow réservation assistée
 
 **Branche :** `feature/ce-assisted-booking-api`
 
@@ -225,7 +225,7 @@ Critères : guide interne lié à user/employee ; guide externe sans compte obli
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/ce-assisted-booking-api`.
 
-Livrable CE-3 : API — Réservation assistée (soumission sans paiement)
+Livrable CE-3 : API - Réservation assistée (soumission sans paiement)
 Références :
 - apps/api/src/modules/resources/bookings/booking-engine.service.ts
 - Flux actuel : checkout → pending_payment → PaymentIntent
@@ -234,18 +234,18 @@ Objectif :
 - Nouveau endpoint POST /bookings/request (ou flag sur POST /bookings)
 - Crée booking en statut pending_approval (pas de PaymentIntent)
 - Réutilise la logique checkout-preview pour calculer total et booking_items
-- Réponse : booking id, statut, message « Demande enregistrée — en attente de validation »
+- Réponse : booking id, statut, message « Demande enregistrée - en attente de validation »
 
 Règles :
 - Ne pas décrémenter définitivement le stock avant confirmation (ou soft-hold configurable)
 - Historiser transition dans booking_status_history
 
-Critères : test e2e ou supertest — création booking pending_approval sans appel Stripe.
+Critères : test e2e ou supertest - création booking pending_approval sans appel Stripe.
 
 À la fin : fichiers modifiés + scénario test.
 ```
 
-### CE-4 — API — Messagerie liée à la réservation
+### CE-4 - API - Messagerie liée à la réservation
 
 **Branche :** `feature/ce-booking-messages-api`
 
@@ -253,14 +253,14 @@ Critères : test e2e ou supertest — création booking pending_approval sans ap
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/ce-booking-messages-api`.
 
-Livrable CE-4 : API — Messagerie réservation
+Livrable CE-4 : API - Messagerie réservation
 Références :
 - apps/api/src/modules/resources/support-messages/ (pattern thread)
 - Table booking_messages (CE-1)
 
 Endpoints :
-- GET /bookings/:id/messages — client (own) ou staff avec bookings.read
-- POST /bookings/:id/messages — client ou staff
+- GET /bookings/:id/messages - client (own) ou staff avec bookings.read
+- POST /bookings/:id/messages - client ou staff
 - Marquer is_staff pour les réponses admin/agent
 
 Sécurité : le client ne voit que ses réservations ; token optionnel pour lien e-mail (CE-6).
@@ -268,7 +268,7 @@ Sécurité : le client ne voit que ses réservations ; token optionnel pour lien
 À la fin : fichiers + test flux message client ↔ admin.
 ```
 
-### CE-5 — API — Actions admin (approuver, refuser, inviter au paiement)
+### CE-5 - API - Actions admin (approuver, refuser, inviter au paiement)
 
 **Branche :** `feature/ce-booking-approval-api`
 
@@ -276,23 +276,23 @@ Sécurité : le client ne voit que ses réservations ; token optionnel pour lien
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/ce-booking-approval-api`.
 
-Livrable CE-5 : API — Approbation réservation assistée
+Livrable CE-5 : API - Approbation réservation assistée
 Références :
 - apps/api/src/modules/resources/bookings/bookings.service.ts
 - apps/api/src/modules/stripe/stripe.service.ts (createPaymentIntent existant)
 
 Endpoints admin (permission bookings.approve ou bookings.write) :
-- POST /bookings/:id/approve — pending_approval → pending_payment (ou statut intermédiaire awaiting_payment)
+- POST /bookings/:id/approve - pending_approval → pending_payment (ou statut intermédiaire awaiting_payment)
   - Option : ajuster total_cents, assigner guide
-- POST /bookings/:id/reject — → cancelled + motif optionnel
-- POST /bookings/:id/invite-payment — génère/renvoie lien checkout sécurisé
+- POST /bookings/:id/reject - → cancelled + motif optionnel
+- POST /bookings/:id/invite-payment - génère/renvoie lien checkout sécurisé
 
 Transitions validées ; refus si statut incompatible.
 
 À la fin : fichiers + matrice des transitions de statuts documentée.
 ```
 
-**Implémenté (CE-5)** — endpoints :
+**Implémenté (CE-5)** - endpoints :
 
 | Endpoint | Transition | Effets |
 | -------- | ---------- | ------ |
@@ -302,7 +302,7 @@ Transitions validées ; refus si statut incompatible.
 
 Permission : `bookings.approve` **ou** `bookings.write` + staff (`users.read`). RBAC : `bookings.approve` (001045).
 
-### CE-6 — API — E-mails transactionnels assistés
+### CE-6 - API - E-mails transactionnels assistés
 
 **Branche :** `feature/ce-assisted-booking-emails`
 
@@ -310,7 +310,7 @@ Permission : `bookings.approve` **ou** `bookings.write` + staff (`users.read`). 
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/ce-assisted-booking-emails`.
 
-Livrable CE-6 : E-mails — parcours réservation assistée
+Livrable CE-6 : E-mails - parcours réservation assistée
 ...
 ```
 
@@ -325,20 +325,20 @@ Livrable CE-6 : E-mails — parcours réservation assistée
 
 **Fichiers**
 
-- `apps/api/src/modules/email/assisted-booking.email.templates.ts` — rendu HTML/texte des 4 templates
-- `apps/api/src/modules/email/email.types.ts` — payloads
-- `apps/api/src/modules/email/email.service.ts` — `sendBookingRequestReceived`, `sendBookingApprovedChat`, `sendBookingRejected`, `sendBookingPaymentInvite`
-- `apps/api/src/modules/resources/bookings/booking-assisted-email.service.ts` — hooks CE-3 / CE-5
-- `apps/api/src/modules/email/dto/email-preview.dto.ts` + `email.controller.ts` — aperçu API
+- `apps/api/src/modules/email/assisted-booking.email.templates.ts` - rendu HTML/texte des 4 templates
+- `apps/api/src/modules/email/email.types.ts` - payloads
+- `apps/api/src/modules/email/email.service.ts` - `sendBookingRequestReceived`, `sendBookingApprovedChat`, `sendBookingRejected`, `sendBookingPaymentInvite`
+- `apps/api/src/modules/resources/bookings/booking-assisted-email.service.ts` - hooks CE-3 / CE-5
+- `apps/api/src/modules/email/dto/email-preview.dto.ts` + `email.controller.ts` - aperçu API
 
 **Aperçu HTML (dev)**
 
-1. **Fichiers statiques** — `npm run email:preview-assisted` (dans `apps/api`) → `apps/api/src/modules/email/preview/*.html`
-2. **API** — `POST /api/email/preview` avec `template` ∈ `booking_request_received` \| `booking_approved_chat` \| `booking_rejected` \| `booking_payment_invite` (permission `organization_settings.read`)
+1. **Fichiers statiques** - `npm run email:preview-assisted` (dans `apps/api`) → `apps/api/src/modules/email/preview/*.html`
+2. **API** - `POST /api/email/preview` avec `template` ∈ `booking_request_received` \| `booking_approved_chat` \| `booking_rejected` \| `booking_payment_invite` (permission `organization_settings.read`)
 
 Transport dev : Mailpit (`localhost:1025`) par défaut si `EMAIL_TRANSPORT` non défini.
 
-### CE-7 — Admin — Catalogue et assignation des guides
+### CE-7 - Admin - Catalogue et assignation des guides
 
 **Branche :** `feature/ce-admin-guides`
 
@@ -346,15 +346,15 @@ Transport dev : Mailpit (`localhost:1025`) par défaut si `EMAIL_TRANSPORT` non 
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/ce-admin-guides`.
 
-Livrable CE-7 : Admin — Guides touristiques
+Livrable CE-7 : Admin - Guides touristiques
 Références :
 - API CE-2
 - Pattern : apps/admin/components/ (liste + formulaire CRUD)
 - Registry : apps/admin/config/admin-sections.registry.ts
 
 Pages :
-- /guides — liste guides (nom, type, langues, statut)
-- /guides/nouveau, /guides/[id] — édition profil
+- /guides - liste guides (nom, type, langues, statut)
+- /guides/nouveau, /guides/[id] - édition profil
 - Dans détail réservation : section « Guides assignés » + sélecteur
 
 Critères : CRUD complet ; assignation depuis fiche réservation.
@@ -366,7 +366,7 @@ Critères : CRUD complet ; assignation depuis fiche réservation.
 
 | Page | Route | Composant |
 | ---- | ----- | --------- |
-| Liste | `/guides` | `TourGuidesList` — nom, type, langues, statut, filtres |
+| Liste | `/guides` | `TourGuidesList` - nom, type, langues, statut, filtres |
 | Création | `/guides/nouveau` | `TourGuideForm` mode create |
 | Édition | `/guides/[id]` | `TourGuideEditPage` + `TourGuideForm` |
 | Assignation | `/dashboard/bookings/[id]` | `BookingGuidesSection` |
@@ -381,7 +381,7 @@ Critères : CRUD complet ; assignation depuis fiche réservation.
 4. Ouvrir une réservation (`/dashboard/bookings/:id`) → section **Guides assignés** → assigner guide + rôle → retirer
 5. Supprimer un guide depuis la liste (confirmation)
 
-**Implémenté (CE-8)** — validation assistée sur fiche réservation :
+**Implémenté (CE-8)** - validation assistée sur fiche réservation :
 
 | Zone | Fichier |
 |------|---------|
@@ -401,7 +401,7 @@ Critères : CRUD complet ; assignation depuis fiche réservation.
 6. **Inviter au paiement** → toast avec URL Stripe ; Mailpit : `booking_payment_invite`
 7. (Option refus) Sur une autre demande `pending_approval` : saisir motif → **Refuser** → statut `cancelled` ; Mailpit : `booking_rejected`
 
-### CE-8 — Admin — File d’attente validation
+### CE-8 - Admin - File d’attente validation
 
 **Branche :** `feature/ce-admin-booking-approval`
 
@@ -409,7 +409,7 @@ Critères : CRUD complet ; assignation depuis fiche réservation.
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/ce-admin-booking-approval`.
 
-Livrable CE-8 : Admin — Validation réservations assistées
+Livrable CE-8 : Admin - Validation réservations assistées
 Références :
 - API CE-4, CE-5, CE-7
 - apps/admin/components/bookings/ (liste et détail existants)
@@ -425,7 +425,7 @@ Critères : parcours complet admin sans quitter la fiche réservation.
 À la fin : fichiers + scénario test admin → e-mail (mock) → statut mis à jour.
 ```
 
-### CE-9 — Web — Parcours « Demander une réservation »
+### CE-9 - Web - Parcours « Demander une réservation »
 
 **Branche :** `feature/ce-web-assisted-request`
 
@@ -433,7 +433,7 @@ Critères : parcours complet admin sans quitter la fiche réservation.
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/ce-web-assisted-request`.
 
-Livrable CE-9 : Web — Demande de réservation sans paiement immédiat
+Livrable CE-9 : Web - Demande de réservation sans paiement immédiat
 Références :
 - apps/web/components/hotels/hotel-booking-sidebar.tsx (pattern sidebar)
 - API CE-3
@@ -442,7 +442,7 @@ Références :
 Objectif :
 - Pour verticales en mode « assisted » : CTA « Demander une réservation » au lieu de « Payer maintenant »
 - Appel POST /bookings/request après recap panier
-- Page succès : « Demande envoyée — vous serez contacté sous 24–48 h »
+- Page succès : « Demande envoyée - vous serez contacté sous 24–48 h »
 - Auth client requise (register/customer existant)
 
 Config initiale : activités + forfaits en mode assisted ; hôtels/vols en immediate (CE-11 affinera).
@@ -450,7 +450,7 @@ Config initiale : activités + forfaits en mode assisted ; hôtels/vols en immed
 À la fin : fichiers + test Playwright parcours demande.
 ```
 
-**Implémenté (CE-9)** — demande assistée côté web :
+**Implémenté (CE-9)** - demande assistée côté web :
 
 | Zone | Fichier |
 |------|---------|
@@ -468,7 +468,7 @@ Config initiale : activités + forfaits en mode assisted ; hôtels/vols en immed
 2. Forfait : même parcours avec `packageId` dans le payload
 3. Hôtel/vol : inchangé (Stripe immédiat, tests `reservation-checkout` / `flight-checkout`)
 
-### CE-10 — Web — Chat réservation + timeline client
+### CE-10 - Web - Chat réservation + timeline client
 
 **Branche :** `feature/ce-web-booking-conversation`
 
@@ -476,7 +476,7 @@ Config initiale : activités + forfaits en mode assisted ; hôtels/vols en immed
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/ce-web-booking-conversation`.
 
-Livrable CE-10 : Web — Conversation et suivi réservation assistée
+Livrable CE-10 : Web - Conversation et suivi réservation assistée
 Références :
 - API CE-4, CE-6
 - apps/web/components/account/ (réservations existantes)
@@ -492,7 +492,7 @@ Lien e-mail CE-6 : deep link vers cette page (auth ou token).
 À la fin : fichiers + test Playwright lecture/envoi message.
 ```
 
-**Implémenté (CE-10)** — conversation et suivi assisté :
+**Implémenté (CE-10)** - conversation et suivi assisté :
 
 | Zone | Fichier |
 |------|---------|
@@ -511,7 +511,7 @@ Lien e-mail CE-6 : deep link vers cette page (auth ou token).
 3. Envoyer une réponse → `POST /bookings/:id/messages` → message visible dans le fil
 4. Mock `pending_payment` + `paymentInvited: true` → bouton **Procéder au paiement** visible
 
-### CE-11 — Règles par vertical (assisté vs immédiat)
+### CE-11 - Règles par vertical (assisté vs immédiat)
 
 **Branche :** `feature/ce-booking-mode-config`
 
@@ -525,7 +525,7 @@ Références :
 - CE-3, CE-9
 
 Objectif :
-- Admin : réglage par org — quels item_type sont « immediate » vs « assisted »
+- Admin : réglage par org - quels item_type sont « immediate » vs « assisted »
 - API publique : exposer bookingMode dans checkout-preview ou config verticale
 - Web : choix CTA dynamique selon config
 
@@ -534,7 +534,7 @@ Défaut suggéré : activity, package → assisted ; room, flight_class, vehicle
 À la fin : fichiers + doc des défauts.
 ```
 
-**Implémenté (CE-11)** — configuration mode réservation par vertical :
+**Implémenté (CE-11)** - configuration mode réservation par vertical :
 
 | Zone | Fichier |
 |------|---------|
@@ -542,8 +542,8 @@ Défaut suggéré : activity, package → assisted ; room, flight_class, vehicle
 | Seed / migration CE-1 | `database/migrations/add_assisted_booking_and_tour_guides.sql` (`booking.item_type_modes`) |
 | API publique `GET /organization-settings/public/booking-modes` | `organization-settings.controller.ts`, `organization-settings.service.ts` |
 | `bookingMode` dans checkout-preview | `booking-engine.service.ts`, `packages/types/src/booking.ts` |
-| Admin — réglage par org | `apps/admin/components/parametres/organization-settings-form.tsx` |
-| Web — provider + CTA dynamiques | `booking-modes-provider.tsx`, `lib/bookings/booking-mode.ts`, `use-booking-cta.ts`, sidebars verticales |
+| Admin - réglage par org | `apps/admin/components/parametres/organization-settings-form.tsx` |
+| Web - provider + CTA dynamiques | `booking-modes-provider.tsx`, `lib/bookings/booking-mode.ts`, `use-booking-cta.ts`, sidebars verticales |
 
 **Défauts plateforme (`DEFAULT_BOOKING_ITEM_TYPE_MODES`)**
 
@@ -558,7 +558,7 @@ Défaut suggéré : activity, package → assisted ; room, flight_class, vehicle
 
 Les valeurs en base (`organization_settings`, groupe `booking`, clé `item_type_modes`) fusionnent avec ces défauts ; champs absents conservent le défaut.
 
-### CE-12 — Notifications
+### CE-12 - Notifications
 
 **Branche :** `feature/ce-booking-notifications`
 
@@ -578,7 +578,7 @@ Objectif :
 À la fin : fichiers + liste des événements notifiés.
 ```
 
-**Implémenté (CE-12)** — notifications réservation assistée :
+**Implémenté (CE-12)** - notifications réservation assistée :
 
 | Zone | Fichier |
 |------|---------|
@@ -604,7 +604,7 @@ Objectif :
 
 **Badge « action requise »** (liste `/account/reservations`) : `pending_payment` avec invitation Stripe **ou** message staff non lu depuis la dernière consultation du fil.
 
-### CE-13 — Évaluations guides (basse priorité)
+### CE-13 - Évaluations guides (basse priorité)
 
 **Branche :** `feature/ce-guide-reviews`
 
@@ -623,7 +623,7 @@ Modération admin (réutiliser #56).
 À la fin : fichiers + flux post-séjour.
 ```
 
-**Implémenté (CE-13)** — avis guides post-séjour :
+**Implémenté (CE-13)** - avis guides post-séjour :
 
 | Zone | Fichier |
 |------|---------|
@@ -632,7 +632,7 @@ Modération admin (réutiliser #56).
 | Invites + création avis guide | `apps/api/src/modules/resources/reviews/reviews.service.ts` |
 | Détail client + endpoint | `apps/api/src/modules/resources/bookings/bookings.service.ts`, `bookings.controller.ts` (`POST /bookings/:id/guides/:guideId/reviews`) |
 | Client API | `packages/api-client/src/index.ts` (`createGuideReview`) |
-| Compte client — invitation post-séjour | `apps/web/components/account/guide-review-invites-section.tsx`, `account-booking-detail.tsx`, `booking-review-form.tsx` |
+| Compte client - invitation post-séjour | `apps/web/components/account/guide-review-invites-section.tsx`, `account-booking-detail.tsx`, `booking-review-form.tsx` |
 | Modération admin (#56) | `apps/admin/components/reviews/review-detail-page.tsx`, `reviews-list.tsx` (nom guide + lien réservation) |
 
 **Flux post-séjour**
@@ -651,7 +651,7 @@ Réservation confirmed + séjour terminé (isStayEnded) + guide(s) assigné(s)
 - Même fenêtre que les avis réservation : statut `confirmed` et date de fin de séjour passée.
 - Les avis guides démarrent en `pending` (modération obligatoire avant publication publique).
 
-### CE-14 — Documents de voyage / voucher PDF (basse priorité)
+### CE-14 - Documents de voyage / voucher PDF (basse priorité)
 
 **Branche :** `feature/ce-travel-documents`
 
@@ -681,7 +681,7 @@ Téléchargement depuis compte client + pièce jointe e-mail confirmation.
 | `pending_payment` | Validée, attente paiement client | → `confirmed`, `cancelled` | Stripe webhook / `POST /bookings/:id/confirm`, `POST /bookings/:id/cancel` |
 | `confirmed` | Payée et confirmée | → `cancelled`, `refunded` | Webhook remboursement, admin |
 | `cancelled` | Annulée / refusée | → `refunded` (optionnel) | `POST /bookings/:id/reject`, annulation |
-| `refunded` | Remboursée | — | Admin / Stripe |
+| `refunded` | Remboursée | - | Admin / Stripe |
 
 **Parcours assisté (résumé)**
 
@@ -727,7 +727,7 @@ POST /bookings/:id/reject  → cancelled        (depuis pending_approval uniquem
 
 ## Notes pour l'agent Cursor
 
-- **Ne pas casser** le flux paiement immédiat existant — le mode assisté est un chemin parallèle.
+- **Ne pas casser** le flux paiement immédiat existant - le mode assisté est un chemin parallèle.
 - **Toujours historiser** les changements de statut dans `booking_status_history`.
 - **Guides internes** : préférer lien `user_id` / `employees` ; **externes** : fiche autonome sans compte obligatoire.
 - **Sécurité** : liens e-mail chat/paiement via token JWT court ou signed URL avec `booking_id` + `user_id`.

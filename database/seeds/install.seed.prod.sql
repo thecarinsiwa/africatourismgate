@@ -1,5 +1,5 @@
 -- =============================================================================
--- Africa Tourism Gate — seed production minimal (sans catalogue démo)
+-- Africa Tourism Gate - seed production minimal (sans catalogue démo)
 -- =============================================================================
 -- Contenu : permissions, roles, role_permissions, organizations, users,
 --           user_role_assignments, organization_settings, amenities.
@@ -126,7 +126,7 @@ INSERT INTO `organizations` (
 );
 
 -- -----------------------------------------------------------------------------
--- 4. users (super admin — à remplacer / sécuriser en prod)
+-- 4. users (super admin - à remplacer / sécuriser en prod)
 -- -----------------------------------------------------------------------------
 INSERT INTO `users` (
   `id`, `email`, `password_hash`, `first_name`, `last_name`,
@@ -231,7 +231,7 @@ INSERT INTO `role_permissions` (`role_id`, `permission_id`, `granted_by_user_id`
 ('00000000-0000-4000-8000-000000000102', '00000000-0000-4000-8000-000000001019', '00000000-0000-4000-8000-000000000010'),
 ('00000000-0000-4000-8000-000000000102', '00000000-0000-4000-8000-000000001045', '00000000-0000-4000-8000-000000000010');
 
--- customer (own tickets via ownership — no support_tickets.* staff perms)
+-- customer (own tickets via ownership - no support_tickets.* staff perms)
 INSERT INTO `role_permissions` (`role_id`, `permission_id`, `granted_by_user_id`) VALUES
 ('00000000-0000-4000-8000-000000000103', '00000000-0000-4000-8000-000000001012', '00000000-0000-4000-8000-000000000010'),
 ('00000000-0000-4000-8000-000000000103', '00000000-0000-4000-8000-000000001013', '00000000-0000-4000-8000-000000000010'),

@@ -69,7 +69,7 @@
   },
   "refundModal": {
     "title": "Confirm refund",
-    "description": "Stripe refund — maximum refundable: {maxAmount}.",
+    "description": "Stripe refund - maximum refundable: {maxAmount}.",
     "refundTypeLegend": "Refund type",
     "refundTypeTotal": "Full ({amount})",
     "refundTypePartial": "Partial",

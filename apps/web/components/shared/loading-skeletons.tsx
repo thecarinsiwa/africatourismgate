@@ -6,7 +6,7 @@ import type { ReactNode } from 'react';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 
-/** LD1 — skeleton carte produit (même gabarit que `ProductCard`). */
+/** LD1 - skeleton carte produit (même gabarit que `ProductCard`). */
 export function ProductCardSkeleton() {
   return (
     <article
@@ -46,7 +46,7 @@ export type ListingCardsSkeletonProps = {
   loadingLabel?: string;
 };
 
-/** LD1 — grille de cartes listing. */
+/** LD1 - grille de cartes listing. */
 export function ListingCardsSkeleton({
   count = 6,
   variant = 'list',
@@ -148,7 +148,7 @@ function DetailMainColumnSkeleton() {
   );
 }
 
-/** LD1 — corps skeleton fiche détail (galerie + sections + sidebar). */
+/** LD1 - corps skeleton fiche détail (galerie + sections + sidebar). */
 export function DetailPageSkeleton({
   loadingLabel,
   layout = 'standard',
@@ -182,7 +182,7 @@ export type DetailPageSkeletonShellProps = DetailPageSkeletonProps & {
   breadcrumb?: ReactNode;
 };
 
-/** LD1 — page détail complète avec header/footer et fil d'Ariane skeleton. */
+/** LD1 - page détail complète avec header/footer et fil d'Ariane skeleton. */
 export function DetailPageSkeletonShell({
   loadingLabel,
   layout = 'standard',

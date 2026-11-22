@@ -1,13 +1,13 @@
 -- =============================================================================
--- Africa Tourism Gate — MySQL schema (utf8mb4)
+-- Africa Tourism Gate - MySQL schema (utf8mb4)
 -- Compatible: MySQL 8.0+ / MariaDB 10.3+ (uses CHECK constraints; relax if needed)
 --
 -- Row lifecycle (all tables):
 --   created_by_user_id, updated_by_user_id, deleted_by_user_id → users(id), ON DELETE SET NULL
 --     (API / ORM: createBy, updatedBy / editBy, deletedBy)
 --   created_at (DEFAULT CURRENT_TIMESTAMP)
---   updated_at (NULL until first UPDATE; ON UPDATE CURRENT_TIMESTAMP) — maps to edit_at in APIs
---   deleted_at (soft delete; NULL = active) — maps to delete_at in APIs
+--   updated_at (NULL until first UPDATE; ON UPDATE CURRENT_TIMESTAMP) - maps to edit_at in APIs
+--   deleted_at (soft delete; NULL = active) - maps to delete_at in APIs
 -- Application queries should use: WHERE deleted_at IS NULL
 -- Note: UNIQUE keys still apply to soft-deleted rows; adjust app logic or email on delete if needed.
 -- =============================================================================

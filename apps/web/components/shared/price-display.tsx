@@ -1,6 +1,6 @@
 import { cn } from '@africatourismgate/ui';
 
-/** Affichage prix listing — libellés et montants fournis par le parent (i18n + formatage). */
+/** Affichage prix listing - libellés et montants fournis par le parent (i18n + formatage). */
 export type PriceDisplayProps = {
   /** Petit libellé au-dessus du montant (ex. « par nuit »). */
   prefixLabel?: string;

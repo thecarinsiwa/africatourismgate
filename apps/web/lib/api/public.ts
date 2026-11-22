@@ -940,7 +940,7 @@ export async function getPublicFeaturedReviews(
   return fetchPublic<Review[]>(`/public/reviews/featured${query ? `?${query}` : ''}`);
 }
 
-/** Homepage “Avis de nos clients” visibility toggles. Never throws — defaults both on. */
+/** Homepage “Avis de nos clients” visibility toggles. Never throws - defaults both on. */
 export async function getPublicHomepageReviews(): Promise<PublicHomepageReviews> {
   try {
     const raw = await fetchPublic<unknown>(

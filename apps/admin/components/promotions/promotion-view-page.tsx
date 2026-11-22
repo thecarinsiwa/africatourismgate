@@ -211,7 +211,7 @@ export function PromotionViewPage({ promotionId }: PromotionViewPageProps) {
         ) : null}
       </div>
 
-      {/* Hero — one visual composition */}
+      {/* Hero - one visual composition */}
       <section
         className={cn(
           'relative isolate overflow-hidden rounded-2xl border border-atg-border shadow-sm',

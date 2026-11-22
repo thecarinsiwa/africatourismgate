@@ -1,4 +1,4 @@
-# PR-06 — Scénario de test (paiement par virement bancaire)
+# PR-06 - Scénario de test (paiement par virement bancaire)
 
 Branche : `feature/pr-06-bank-transfer`  
 Réf. : [roadmap-post-reunion-08-2026.md](./roadmap-post-reunion-08-2026.md) (PR-06)
@@ -81,7 +81,7 @@ Assert : 2e appel → 400 (paiement déjà enregistré) ; Stripe checkout / invi
 ### G. i18n
 
 1. Basculer FR / EN / ES (checkout, succès, compte, admin).
-2. Labels virement / dialogs / hints / provider « Virement » — pas de clés brutes.
+2. Labels virement / dialogs / hints / provider « Virement » - pas de clés brutes.
 
 ---
 

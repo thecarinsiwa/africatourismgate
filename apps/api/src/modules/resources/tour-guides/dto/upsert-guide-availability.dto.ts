@@ -4,7 +4,7 @@ import { IsDateString, IsIn, IsOptional, ValidateIf } from 'class-validator';
 export class UpsertGuideAvailabilityDto {
   @ApiPropertyOptional({
     example: '2026-08-15',
-    description: 'Journée entière (legacy) — ignoré si startDatetime/endDatetime sont fournis.',
+    description: 'Journée entière (legacy) - ignoré si startDatetime/endDatetime sont fournis.',
   })
   @ValidateIf((dto: UpsertGuideAvailabilityDto) => !dto.startDatetime && !dto.endDatetime)
   @IsDateString()

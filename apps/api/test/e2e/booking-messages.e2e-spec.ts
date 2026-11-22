@@ -5,7 +5,7 @@ import { SEED_ROOM_ID, addDaysIso } from './constants';
 import { createE2eApp } from './create-app';
 
 const MESSAGES_E2E_DATE = '2099-08-22';
-/** Isolated from other e2e suites — availability is ensured in-test, not in beforeAll. */
+/** Isolated from other e2e suites - availability is ensured in-test, not in beforeAll. */
 const OTHER_USER_BOOKING_DATE = '2099-08-25';
 const CUSTOMER_EMAIL = `booking-messages-e2e-${Date.now()}@example.com`;
 const CUSTOMER_PASSWORD = 'ChangeMe123!';

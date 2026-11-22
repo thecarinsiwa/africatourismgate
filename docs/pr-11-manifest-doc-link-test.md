@@ -1,4 +1,4 @@
-# PR-11 — Scénario de test (liaison document identité ↔ manifeste)
+# PR-11 - Scénario de test (liaison document identité ↔ manifeste)
 
 Branche : `feature/pr-11-manifest-doc-link`  
 Réf. : [roadmap-post-reunion-08-2026.md](./roadmap-post-reunion-08-2026.md) (PR-11)
@@ -20,7 +20,7 @@ Réf. : [roadmap-post-reunion-08-2026.md](./roadmap-post-reunion-08-2026.md) (PR
 | ------- | ------------ |
 | `POST /bookings/:id/identity-documents` | Refuse sans `manifestEntryId` (400) |
 | Entrée | Doit exister, même `booking_id`, non soft-deleted |
-| Garde `pending_review` | Un seul pending par `(booking, entrée, type)` — **pas** global par type |
+| Garde `pending_review` | Un seul pending par `(booking, entrée, type)` - **pas** global par type |
 | Checkout | Create manifeste **séquentiel** → upload avec `entry.id` ; échecs upload remontés |
 | Compte | Docs groupés par voyageur ; upload avec sélection voyageur |
 | Admin Documents | Docs groupés sous le nom voyageur ; section « non rattachés » |
@@ -44,7 +44,7 @@ Prérequis :
 3. Booking historique avec N docs et N entrées : backfill best-effort (ordre `created_at` ↔ `sort_order`).
 4. Docs orphelins (pas d’entrée) restent `NULL` et listables.
 
-### B. API — `manifestEntryId` requis
+### B. API - `manifestEntryId` requis
 
 ```bash
 # Sans manifestEntryId → 400
@@ -75,14 +75,14 @@ curl -s -X POST "$API/bookings/$BOOKING_ID/identity-documents" \
 3. Upload : sélectionner voyageur B → envoyer → doc rattaché à B uniquement.
 4. Documents historiques `manifestEntryId = null` : section « Documents non rattachés ».
 
-### E. Admin — onglet Documents
+### E. Admin - onglet Documents
 
 1. Admin → booking → Documents.
 2. Assert : docs groupés sous le nom du voyageur (pas une liste plate sans contexte).
 3. Valider / demander une version claire / refuser : inchangé (par document).
 4. Section « non rattachés » si docs `NULL`.
 
-### F. Assisté — sans heuristique d’index
+### F. Assisté - sans heuristique d’index
 
 1. Booking assisté multi-voyageurs avec docs liés.
 2. Panneau validation assistée → « Voir document » sur voyageur 2.

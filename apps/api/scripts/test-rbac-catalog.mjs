@@ -150,7 +150,7 @@ async function main() {
   try {
     const deniedBefore = await countPermissionDenied(mysql);
 
-    console.log('1. super_admin — GET /properties');
+    console.log('1. super_admin - GET /properties');
     const adminToken = await login(SEED_ADMIN_EMAIL, getSeedAdminPassword());
     assertStatus(
       'GET /properties',
@@ -158,14 +158,14 @@ async function main() {
       200,
     );
 
-    console.log('2. super_admin — GET /flights');
+    console.log('2. super_admin - GET /flights');
     assertStatus(
       'GET /flights',
       (await request('GET', '/flights?limit=1', { token: adminToken })).status,
       200,
     );
 
-    console.log('3. public — GET /public/destinations (no auth)');
+    console.log('3. public - GET /public/destinations (no auth)');
     assertStatus(
       'GET /public/destinations',
       (await request('GET', '/public/destinations')).status,
@@ -175,7 +175,7 @@ async function main() {
     console.log('4. GET /properties without token (expect 401)');
     assertStatus('GET /properties unauthenticated', (await request('GET', '/properties')).status, 401);
 
-    console.log('5. org_admin without properties.read — GET /properties (expect 403)');
+    console.log('5. org_admin without properties.read - GET /properties (expect 403)');
     const { password: orgAdminPassword } = await ensureOrgAdminUser(mysql);
     const revoked = await revokeOrgAdminPropertiesRead(mysql);
     propertiesReadRevoked = revoked > 0;
@@ -197,7 +197,7 @@ async function main() {
     }
     console.log(`  OK audit logs: ${deniedBefore} → ${deniedAfterDenied}`);
 
-    console.log('7. restore org_admin properties.read — GET /properties (expect 200)');
+    console.log('7. restore org_admin properties.read - GET /properties (expect 200)');
     await restoreOrgAdminPropertiesRead(mysql);
     propertiesReadRevoked = false;
     assertStatus(

@@ -3,7 +3,7 @@ import { fillCheckoutManifest, mockManifestApi } from './helpers/fill-manifest';
 import { mockBookingCheckoutRoutes } from './helpers/mock-booking-checkout';
 import { mockCheckoutAuth } from './helpers/mock-checkout-auth';
 
-/** Seed-aligned fixture IDs (same as flow.test.ts) — API fully mocked, no live DB. */
+/** Seed-aligned fixture IDs (same as flow.test.ts) - API fully mocked, no live DB. */
 const VEHICLE_ID = '00000000-0000-4000-8000-000000004021';
 const SLOT_ID = '00000000-0000-4000-8000-000000004023';
 const ROUTE_ID = '00000000-0000-4000-8000-000000004024';

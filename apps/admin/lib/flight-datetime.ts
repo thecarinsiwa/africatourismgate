@@ -29,7 +29,7 @@ export function durationMinutesFromDatetimeLocal(
 
 /** Minutes → readable duration (ex. 390 → "6 h 30"). */
 export function formatDurationMinutes(minutes: number, locale = 'fr'): string {
-  if (!Number.isFinite(minutes) || minutes < 1) return '—';
+  if (!Number.isFinite(minutes) || minutes < 1) return '-';
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
   const lang = locale.slice(0, 2).toLowerCase();

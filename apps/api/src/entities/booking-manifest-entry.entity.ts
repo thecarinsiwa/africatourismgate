@@ -51,7 +51,7 @@ export class BookingManifestEntries {
   @Column({ type: 'varchar', name: 'emergency_contact_address', length: 500, nullable: true })
   emergencyContactAddress!: string | null;
 
-  /** Legacy free-text medical notes — kept for read compatibility; new forms write structured fields. */
+  /** Legacy free-text medical notes - kept for read compatibility; new forms write structured fields. */
   @Column({ type: 'text', name: 'conditions', nullable: true })
   conditions!: string | null;
 

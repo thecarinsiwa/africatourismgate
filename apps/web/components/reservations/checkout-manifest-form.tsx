@@ -582,8 +582,8 @@ export function CheckoutManifestForm({
             const travellerLabel = labels.travelerN.replace('{n}', String(index + 1));
             const fieldErrors = validationErrors[index];
             const expanded = expandedIndex === index;
-            const nameSummary = entry.fullName.trim() || '—';
-            const idSummary = entry.idNumber.trim() || '—';
+            const nameSummary = entry.fullName.trim() || '-';
+            const idSummary = entry.idNumber.trim() || '-';
             const showRemove = Boolean(onRemoveTraveler);
 
             return (

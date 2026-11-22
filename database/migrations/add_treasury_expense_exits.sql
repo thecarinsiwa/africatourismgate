@@ -1,4 +1,4 @@
--- TRESO-003 — États de besoin + sorties de fonds + pivot réservations (0,N) + justificatifs
+-- TRESO-003 - États de besoin + sorties de fonds + pivot réservations (0,N) + justificatifs
 -- Contrainte : fund_exits.expense_request_id NOT NULL (sortie impossible sans état de besoin).
 -- Down (manuel) : voir commentaires en bas de fichier.
 SET NAMES utf8mb4;
@@ -175,7 +175,7 @@ CREATE TABLE IF NOT EXISTS `fund_exit_attachments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------------
--- DOWN (manuel — ne pas placer dans un .sql auto-appliqué par db:sync)
+-- DOWN (manuel - ne pas placer dans un .sql auto-appliqué par db:sync)
 -- ---------------------------------------------------------------------------
 -- DROP TABLE IF EXISTS `fund_exit_attachments`;
 -- DROP TABLE IF EXISTS `fund_exit_bookings`;

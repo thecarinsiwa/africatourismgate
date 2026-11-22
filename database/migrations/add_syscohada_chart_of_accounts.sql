@@ -1,4 +1,4 @@
--- SYSCO-002 — Plan comptable SYSCOHADA multi-org (`chart_of_accounts`)
+-- SYSCO-002 - Plan comptable SYSCOHADA multi-org (`chart_of_accounts`)
 -- Seed minimal classes 4–7 utiles trésorerie (placeholders validés jusqu’à revue finance).
 -- Down (manuel) : voir commentaires en bas de fichier.
 SET NAMES utf8mb4;
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `chart_of_accounts` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------------
--- Seed plateforme (org Africa Tourism Gate) — aligné hints stub TRESO-039
+-- Seed plateforme (org Africa Tourism Gate) - aligné hints stub TRESO-039
 -- IDs stables : 00000000-0000-4000-8000-0000000020xx
 -- ---------------------------------------------------------------------------
 
@@ -190,7 +190,7 @@ SELECT
 FROM `organizations` o
 WHERE o.`id` = '00000000-0000-4000-8000-000000000001';
 
--- Compte résultat net (SYSCO-008 OD de clôture) — aussi via add_syscohada_result_account.sql
+-- Compte résultat net (SYSCO-008 OD de clôture) - aussi via add_syscohada_result_account.sql
 INSERT IGNORE INTO `chart_of_accounts` (
   `id`, `organization_id`, `code`, `label`, `class_number`, `account_type`,
   `parent_id`, `is_postable`, `is_active`, `syscohada_ref`
@@ -210,7 +210,7 @@ FROM `organizations` o
 WHERE o.`id` = '00000000-0000-4000-8000-000000000001';
 
 -- ---------------------------------------------------------------------------
--- DOWN (manuel — ne pas placer dans un .sql auto-appliqué par db:sync)
+-- DOWN (manuel - ne pas placer dans un .sql auto-appliqué par db:sync)
 -- ---------------------------------------------------------------------------
 -- DELETE FROM `chart_of_accounts` WHERE `id` LIKE '00000000-0000-4000-8000-00000000200%';
 -- DROP TABLE IF EXISTS `chart_of_accounts`;

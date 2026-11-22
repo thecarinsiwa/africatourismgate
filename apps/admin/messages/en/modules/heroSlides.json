@@ -73,7 +73,7 @@
       "imageAlt": "Image alt text",
       "imagePreviewAlt": "Slide preview",
       "removeImage": "Remove image",
-      "imageUploadHint": "JPEG, PNG or WebP — max 5 MB",
+      "imageUploadHint": "JPEG, PNG or WebP - max 5 MB",
       "href": "Link (optional)",
       "hrefHint": "Internal or external link on the title. Leave empty for no link.",
       "sortOrder": "Display order",

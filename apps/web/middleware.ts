@@ -125,7 +125,7 @@ async function fetchPublicMaintenance(
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Playwright only — never set this in normal local/prod `.env`.
+  // Playwright only - never set this in normal local/prod `.env`.
   if (process.env.DISABLE_SITE_MAINTENANCE_GATE === '1') {
     return NextResponse.next();
   }

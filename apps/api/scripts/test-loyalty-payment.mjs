@@ -191,7 +191,7 @@ async function main() {
     throw new Error(`Expected positive points delta, amountCents=${payment.amountCents}`);
   }
 
-  console.log('5. GET /loyalty-accounts — balance updated');
+  console.log('5. GET /loyalty-accounts - balance updated');
   const afterList = await request('GET', '/loyalty-accounts?limit=50', { token });
   assertStatus('GET loyalty-accounts (after)', afterList.status, 200);
   const balanceAfter = findOneKeyBalance(afterList.data?.data, SEED_ADMIN_USER_ID);
@@ -204,7 +204,7 @@ async function main() {
     `  OK ONEKEY balance ${balanceBefore} → ${balanceAfter} (+${expectedDelta} pts)`,
   );
 
-  console.log('6. Replay webhook — idempotent (no double credit)');
+  console.log('6. Replay webhook - idempotent (no double credit)');
   await postSignedWebhook(stripe, confirmed);
   const afterReplay = await request('GET', '/loyalty-accounts?limit=50', { token });
   assertStatus('GET loyalty-accounts (after replay)', afterReplay.status, 200);

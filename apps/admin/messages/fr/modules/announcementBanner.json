@@ -30,18 +30,18 @@
   "intensities": {
     "low": {
       "label": "Légère",
-      "hint": "Fond pâle, texte foncé — information discrète."
+      "hint": "Fond pâle, texte foncé - information discrète."
     },
     "high": {
       "label": "Forte",
-      "hint": "Fond plein — message urgent ou important."
+      "hint": "Fond plein - message urgent ou important."
     }
   },
   "preview": {
     "title": "Aperçu",
     "locale": "Affichage en {locale}",
     "fallback": "Pas de texte dans cette langue : le texte français est affiché",
-    "disabled": "Bandeau désactivé — non visible sur le site",
+    "disabled": "Bandeau désactivé - non visible sur le site",
     "empty": "Votre texte apparaîtra ici"
   },
   "validation": {

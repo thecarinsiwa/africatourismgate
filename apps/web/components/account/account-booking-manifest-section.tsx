@@ -258,7 +258,7 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
     if (sex === 'M') return m.sex.M;
     if (sex === 'F') return m.sex.F;
     if (sex === 'other') return m.sex.other;
-    return '—';
+    return '-';
   };
 
   if (!canWrite && !loading && entries.length === 0) {

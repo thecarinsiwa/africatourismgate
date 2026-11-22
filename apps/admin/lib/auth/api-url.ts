@@ -1,4 +1,4 @@
-/** Aligné sur API_PORT (défaut 3000) — voir packages/config/dev-api-url.mjs */
+/** Aligné sur API_PORT (défaut 3000) - voir packages/config/dev-api-url.mjs */
 const DEFAULT_DEV_API_URL = 'http://localhost:3000/api';
 const PRODUCTION_API_URL = 'https://app-africatourismgate.org/api';
 

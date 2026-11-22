@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { cn } from '@africatourismgate/ui';
 
-/** Carte produit listing — coque visuelle à slots (image, titre, meta, corps, prix, actions). */
+/** Carte produit listing - coque visuelle à slots (image, titre, meta, corps, prix, actions). */
 export type ProductCardProps = {
   /** Zone image (fond, gradient, aria-label). */
   image: ReactNode;

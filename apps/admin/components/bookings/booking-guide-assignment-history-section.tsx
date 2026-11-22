@@ -100,7 +100,7 @@ export function BookingGuideAssignmentHistorySection({
         id: 'actor',
         header: t('columns.actor'),
         cell: ({ row }) => (
-          <span className="text-sm text-atg-muted">{row.original.actorDisplayName ?? '—'}</span>
+          <span className="text-sm text-atg-muted">{row.original.actorDisplayName ?? '-'}</span>
         ),
       },
     ],

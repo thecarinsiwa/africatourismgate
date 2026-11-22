@@ -1,11 +1,11 @@
-# Handoff — Épic SYSCOHADA (suite Trésorerie)
+# Handoff - Épic SYSCOHADA (suite Trésorerie)
 
 > **Document de bascule** pour le lot de tâches GitHub comptabilité réglementaire.  
-> **Lot actuel (Admin + API trésorerie opérationnelle) :** hors scope volontaire — voir [admin-tresorerie-readme.md](./admin-tresorerie-readme.md), [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md) (TRESO-001 → TRESO-045) et [tresorerie-domain-model.md](./tresorerie-domain-model.md) §10.  
+> **Lot actuel (Admin + API trésorerie opérationnelle) :** hors scope volontaire - voir [admin-tresorerie-readme.md](./admin-tresorerie-readme.md), [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md) (TRESO-001 → TRESO-045) et [tresorerie-domain-model.md](./tresorerie-domain-model.md) §10.  
 > **Stub livré :** TRESO-039 (`accounting_links`) · TRESO-040 (UI `/tresorerie/comptabilite`).  
 > **Doc tâches épic :** [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md) (SYSCO-001 → SYSCO-012).
 
-**Statut :** doc tâches dérivé — prêt à ouvrir issues GitHub après revue finance / tech lead.  
+**Statut :** doc tâches dérivé - prêt à ouvrir issues GitHub après revue finance / tech lead.  
 **Références métier :** cahier des charges module Trésorerie §2 (comptabilité / états réglementaires) · domaine §4.7 / §10.
 
 ---
@@ -15,7 +15,7 @@
 Le lot Trésorerie Admin livre :
 
 - Flux opérationnels : entrées, états de besoin, sorties, budgets, externes, audit, rapports légers, void.
-- Un **pont stub** `accounting_links` + skeleton de mapping — **sans** génération d’écritures.
+- Un **pont stub** `accounting_links` + skeleton de mapping - **sans** génération d’écritures.
 
 L’épic suivant doit brancher la **comptabilité SYSCOHADA** (OHADA) sur ces opérations, sans refondre le module `payments` commerce ni casser le void / l’audit déjà en place.
 
@@ -62,7 +62,7 @@ Tout ce qui suit est **exclu** du lot TRESO actuel et **cible** de l’épic SYS
 | Livrable | Notes |
 | -------- | ----- |
 | Comptes clients / fournisseurs complets | Auxiliaires ; lien éventuel organisations / bookings |
-| Immobilisations | Amortissements — hors trésorerie opérationnelle |
+| Immobilisations | Amortissements - hors trésorerie opérationnelle |
 | Stocks / inventaires | Si le cahier les rattache à la compta (sinon épic séparé) |
 
 ### 2.5. Clôtures & états financiers
@@ -104,11 +104,11 @@ Tout ce qui suit est **exclu** du lot TRESO actuel et **cible** de l’épic SYS
 | `expense_requests` + historique | Circuit avant décaissement ; écriture typiquement au `disbursed`/`recorded` |
 | `budgets` + vs-actual | Pas d’écritures ; peut alimenter contrôle budgétaire post-compta |
 | `treasury_audit_logs` | Corrélation métier ; ne remplace pas l’audit comptable |
-| `treasury-reports` | Agrégats opérationnels — **pas** un substitut journal/balance |
+| `treasury-reports` | Agrégats opérationnels - **pas** un substitut journal/balance |
 | RBAC `treasury.*` | Continuer à protéger les flux ; ajouter permissions compta |
 | UI `/tresorerie/*` | Hub, listes, void, placeholder compta |
 
-### 3.2. Stub pont — TRESO-039 / TRESO-040
+### 3.2. Stub pont - TRESO-039 / TRESO-040
 
 | Élément | Emplacement / contrat |
 | ------- | --------------------- |
@@ -117,7 +117,7 @@ Tout ce qui suit est **exclu** du lot TRESO actuel et **cible** de l’épic SYS
 | Mapping skeleton | `GET /accounting-links/mapping-config` · `TREASURY_ACCOUNTING_MAPPING_CONFIG` |
 | Types | `AccountingLink`, `CreateAccountingLinkRequest`, `AccountingMappingConfig` (`packages/types`) |
 | Client Admin | `listAccountingLinks`, `createAccountingLink`, `getAccountingMappingConfig` |
-| UI | `/tresorerie/comptabilite` — liste stub + notice handoff |
+| UI | `/tresorerie/comptabilite` - liste stub + notice handoff |
 | Gate void | `assertFundOpNotAccountingLinked` si `status = linked` |
 
 Champs clés du lien :
@@ -160,14 +160,14 @@ sequenceDiagram
 1. **Déclencheur** (à figer en tâches) : création / passage à `recorded` (entrée) ou `disbursed`/`recorded` (sortie) ; ou batch nocturne ; ou action manuelle « Comptabiliser ».
 2. **Résolution mapping** : à partir de `source` / `payment_method` / type d’op → `mapping_rule_key` (remplacer les placeholders `debitAccountHint` / `creditAccountHint` par de vrais comptes du plan).
 3. **Création ou mise à jour** de `accounting_links` (`pending`).
-4. **Persistance** des lignes d’écriture (`journal_entries` + `journal_lines` — noms indicatifs).
+4. **Persistance** des lignes d’écriture (`journal_entries` + `journal_lines` - noms indicatifs).
 5. **Rattachement** : `journal_entry_id` renseigné, `status = linked`.
 6. **Effets de bord** : void fond interdit (gate existante) ; éventuelle contrepassation via nouvelle écriture + lien ou statut dédié.
 
 ### 4.2. Cas `skipped`
 
 - Opération hors périmètre comptable (ex. test, doublon métier).
-- Mapping volontairement non appliqué — **ne pas** générer d’écriture ; garder la traçabilité.
+- Mapping volontairement non appliqué - **ne pas** générer d’écriture ; garder la traçabilité.
 
 ### 4.3. Idempotence
 
@@ -214,13 +214,13 @@ Effort et priorités à caler avec finance / tech lead lors de l’ouverture de 
 
 ## 6. Risques & décisions ouvertes
 
-Décisions tranchées en **recommandation** dans [syscohada-domain-model.md](./syscohada-domain-model.md) §3 — à confirmer en revue finance / tech lead.
+Décisions tranchées en **recommandation** dans [syscohada-domain-model.md](./syscohada-domain-model.md) §3 - à confirmer en revue finance / tech lead.
 
 | Sujet | Question | Recommandation SYSCO-001 |
 | ----- | -------- | ------------------------ |
 | Moment de comptabilisation | À `recorded` uniquement ? Aussi `disbursed` ? Batch ? | Éligible à `recorded` ; déclencheur MVP = action manuelle « Comptabiliser » |
 | Multi-devise | Tenue en XOF/XAF + reports ; ou une devise d’exercice | Une devise de tenue / exercice |
-| Soft-delete + unique | Lien soft-deleted vs unique `(fund_op_type, fund_op_id)` — politique de recreate | Unique parmi non soft-deleted |
+| Soft-delete + unique | Lien soft-deleted vs unique `(fund_op_type, fund_op_id)` - politique de recreate | Unique parmi non soft-deleted |
 | Contrepassation | Nouveau `journal_entry` + lien historique vs update in-place | Nouvelle pièce de contrepassation |
 | Périmètre tiers / immos | Inclus §2 cahier ou épic satellite | Épic satellite |
 | Coexistence `payments` | Mapping paiement commerce → entrée déjà métier ; écriture SYSCO séparée | Écriture uniquement via `fund_*` |

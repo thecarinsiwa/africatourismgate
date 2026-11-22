@@ -31,10 +31,10 @@ import {
 } from './helpers/treasury-e2e';
 
 /**
- * TRESO-043 — happy path circuit état de besoin → sortie enregistrée.
+ * TRESO-043 - happy path circuit état de besoin → sortie enregistrée.
  * Données isolées via titre / référence `E2E-BESOIN-*` / `E2E-SORTIE-*`.
  */
-test.describe('Trésorerie — circuit sortie (workflow)', () => {
+test.describe('Trésorerie - circuit sortie (workflow)', () => {
   test.describe.configure({ mode: 'serial' });
 
   test.beforeEach(async ({ page }) => {

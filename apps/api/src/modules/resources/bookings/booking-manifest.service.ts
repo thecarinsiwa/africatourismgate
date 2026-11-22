@@ -247,8 +247,8 @@ export class BookingManifestService {
       }
       row.idNumber = idNumber;
     }
-    // Deprecated per-traveler emergency fields — ignored (booking-level contact).
-    // `conditions` is legacy read-only — ignore write attempts.
+    // Deprecated per-traveler emergency fields - ignored (booking-level contact).
+    // `conditions` is legacy read-only - ignore write attempts.
     if (dto.allergies !== undefined) {
       row.allergies = normalizeOptionalText(dto.allergies);
     }

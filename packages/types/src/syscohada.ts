@@ -278,7 +278,7 @@ export interface JournalLinesListQuery {
   dateTo?: string;
 }
 
-/** Balance générale (SYSCO-006) — agrégat lignes postées */
+/** Balance générale (SYSCO-006) - agrégat lignes postées */
 export interface AccountingBalanceRow {
   accountId: string;
   accountCode: string;
@@ -360,7 +360,7 @@ export interface AccountingAuditLogsListQuery {
   dateTo?: string;
 }
 
-/** Bilan MVP (classes 1–5) / CR (classes 6–7) — SYSCO-008 */
+/** Bilan MVP (classes 1–5) / CR (classes 6–7) - SYSCO-008 */
 export interface AccountingStatementSection {
   label: string;
   classNumbers: number[];

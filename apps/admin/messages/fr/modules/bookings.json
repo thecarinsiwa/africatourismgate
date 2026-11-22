@@ -174,7 +174,7 @@
     },
     "paymentProofs": {
       "title": "Preuves de paiement",
-      "subtitle": "Justificatifs déposés par le client — validez pour enregistrer le paiement (acompte ou solde). La réservation n’est confirmée que lorsque le solde est couvert."
+      "subtitle": "Justificatifs déposés par le client - validez pour enregistrer le paiement (acompte ou solde). La réservation n’est confirmée que lorsque le solde est couvert."
     }
   },
   "timeline": {
@@ -187,7 +187,7 @@
   },
   "manifest": {
     "title": "Manifeste",
-    "subtitle": "Fiche voyageurs de la réservation — noms, âges, nationalités et informations complémentaires.",
+    "subtitle": "Fiche voyageurs de la réservation - noms, âges, nationalités et informations complémentaires.",
     "suggestedCount": "{count, plural, one {# voyageur attendu selon les lignes} other {# voyageurs attendus selon les lignes}}",
     "addTraveler": "Ajouter un voyageur",
     "empty": "Aucune entrée dans le manifeste.",
@@ -262,7 +262,7 @@
   },
   "identityDocuments": {
     "title": "Pièces d'identité",
-    "subtitle": "Documents déposés par le client — validez ou demandez une version plus claire.",
+    "subtitle": "Documents déposés par le client - validez ou demandez une version plus claire.",
     "empty": "Aucun document déposé.",
     "travelerEmpty": "Aucun document pour ce voyageur.",
     "unlinkedTitle": "Documents non rattachés",
@@ -293,7 +293,7 @@
   },
   "paymentProofs": {
     "title": "Preuves de paiement",
-    "subtitle": "Justificatifs déposés par le client — validez pour enregistrer le paiement (acompte ou solde). La réservation n’est confirmée que lorsque le solde est couvert.",
+    "subtitle": "Justificatifs déposés par le client - validez pour enregistrer le paiement (acompte ou solde). La réservation n’est confirmée que lorsque le solde est couvert.",
     "empty": "Aucune preuve déposée.",
     "statusLabel": "Statut",
     "view": "Voir",
@@ -330,7 +330,7 @@
     "approve": "Approuver",
     "reject": "Refuser",
     "invitePayment": "Inviter au paiement",
-    "cashPaymentHint": "Le client a choisi (ou conserve) le paiement cash sur place. Enregistrez l'encaissement depuis la barre d'actions — le cash n'est plus proposé par défaut au checkout web.",
+    "cashPaymentHint": "Le client a choisi (ou conserve) le paiement cash sur place. Enregistrez l'encaissement depuis la barre d'actions - le cash n'est plus proposé par défaut au checkout web.",
     "bankTransferPaymentHint": "Le client a choisi le virement bancaire. Vérifiez la preuve dans l'onglet Documents, ou marquez le virement reçu depuis la barre d'actions.",
     "mobileMoneyPaymentHint": "Le client a choisi Mobile Money. Vérifiez la preuve dans l'onglet Documents, ou marquez le paiement reçu depuis la barre d'actions.",
     "totalLabel": "Total ({currency})",
@@ -340,7 +340,7 @@
     "travelersCount": "{count, plural, one {# voyageur} other {# voyageurs}}",
     "travelerNumber": "Voyageur {number}",
     "documentModal": {
-      "title": "Document — {name}",
+      "title": "Document - {name}",
       "description": "Pièce d’identité associée à ce voyageur (association par ordre de dépôt).",
       "empty": "Aucun document déposé pour ce voyageur.",
       "previewError": "Impossible d’afficher le document.",
@@ -385,8 +385,8 @@
     "reasonPlaceholder": "Ex. validation des dates et disponibilités…",
     "rejectReasonLabel": "Motif du refus (client)",
     "rejectReasonPlaceholder": "Ex. dates indisponibles…",
-    "approveSuccess": "Réservation approuvée — le client sera notifié par e-mail.",
-    "rejectSuccess": "Demande refusée — le client sera notifié par e-mail.",
+    "approveSuccess": "Réservation approuvée - le client sera notifié par e-mail.",
+    "rejectSuccess": "Demande refusée - le client sera notifié par e-mail.",
     "inviteSuccess": "Lien de paiement envoyé par e-mail. URL : {url}",
     "approveDialog": {
       "title": "Confirmer l'approbation",
@@ -416,7 +416,7 @@
     "toast": {
       "newCustomerMessage": "Nouveau message du client",
       "sent": "Message envoyé",
-      "sentWithEmail": "Message envoyé — le client a été notifié par e-mail"
+      "sentWithEmail": "Message envoyé - le client a été notifié par e-mail"
     }
   },
   "guides": {
@@ -438,7 +438,7 @@
     "noGuidesForSlot": "Aucun guide disponible sur cette plage horaire.",
     "noGuidesAvailable": "Aucun guide actif disponible.",
     "visitWindowHint": "Créneaux autorisés du {start} au {end} (inclus).",
-    "noVisitDates": "Cette réservation n'a pas de dates — assignation de guides impossible.",
+    "noVisitDates": "Cette réservation n'a pas de dates - assignation de guides impossible.",
     "editSlotTitle": "Modifier le créneau",
     "editSlotDescription": "Ajustez les horaires de « {name} ». Les conflits seront vérifiés à l'enregistrement.",
     "removeTitle": "Retirer le créneau",

@@ -147,7 +147,7 @@ export function DashboardUserStats({ className }: { className?: string }) {
               <span className="text-sm text-atg-muted">{row.label}</span>
             </div>
             {stats.status === 'loading' ? (
-              <span className="text-sm font-semibold text-atg-fg">—</span>
+              <span className="text-sm font-semibold text-atg-fg">-</span>
             ) : stats.status === 'error' ? (
               <span className="text-xs text-red-600 dark:text-red-400">{t('errorLabel')}</span>
             ) : (

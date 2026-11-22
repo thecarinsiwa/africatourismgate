@@ -13,7 +13,7 @@ import {
 } from './dto/chart-account.dto';
 
 /**
- * Plan comptable SYSCOHADA (SYSCO-002) — lecture minimale.
+ * Plan comptable SYSCOHADA (SYSCO-002) - lecture minimale.
  * Pas d’écritures (SYSCO-003).
  */
 @Injectable()

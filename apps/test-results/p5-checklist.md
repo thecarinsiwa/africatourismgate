@@ -1,4 +1,4 @@
-# Phase 5 — Checklist livrable
+# Phase 5 - Checklist livrable
 
 Date : 2026-08-20  
 Branche : `feature/admin-ui-phase-5-polish-mobile`

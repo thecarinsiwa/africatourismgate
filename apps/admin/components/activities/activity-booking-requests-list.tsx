@@ -487,7 +487,7 @@ export function ActivityBookingRequestsList() {
               {row.original.message}
             </p>
           ) : (
-            <span className="text-atg-muted">—</span>
+            <span className="text-atg-muted">-</span>
           ),
       },
       {

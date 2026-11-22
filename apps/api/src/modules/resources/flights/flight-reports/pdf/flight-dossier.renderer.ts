@@ -27,7 +27,7 @@ export type RenderFlightDossierPdfInput = FlightPdfBrandingContext & {
 };
 
 function formatDurationMinutes(minutes: number, locale: string): string {
-  if (!Number.isFinite(minutes) || minutes < 1) return '—';
+  if (!Number.isFinite(minutes) || minutes < 1) return '-';
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
   const lang = locale.slice(0, 2).toLowerCase();
@@ -47,10 +47,10 @@ function formatAirport(
   iata: string,
   city: string,
 ): string {
-  if (!iata && !city) return '—';
+  if (!iata && !city) return '-';
   if (!city) return iata;
   if (!iata) return city;
-  return `${iata} — ${city}`;
+  return `${iata} - ${city}`;
 }
 
 export function renderFlightDossierPdf(input: RenderFlightDossierPdfInput): Promise<Buffer> {
@@ -77,8 +77,8 @@ export function renderFlightDossierPdf(input: RenderFlightDossierPdfInput): Prom
     doc,
     labels.dossier.airline,
     input.flight.airlineIata
-      ? `${input.flight.airlineIata} — ${input.flight.airlineName || '—'}`
-      : input.flight.airlineName || '—',
+      ? `${input.flight.airlineIata} - ${input.flight.airlineName || '-'}`
+      : input.flight.airlineName || '-',
   );
   drawPdfKeyValue(
     doc,

@@ -156,7 +156,7 @@ test('profile form submits PATCH /auth/me', async ({ page }) => {
   await expect(firstName).toHaveValue('Updated', { timeout: 15_000 });
   await firstName.blur();
 
-  // Strict Mode / remount can detach the button between enable and click — retry.
+  // Strict Mode / remount can detach the button between enable and click - retry.
   await expect(async () => {
     const btn = page.getByRole('button', { name: /^Enregistrer$|^Save$|^Guardar$/i });
     if (!(await firstName.inputValue()) || (await firstName.inputValue()) !== 'Updated') {

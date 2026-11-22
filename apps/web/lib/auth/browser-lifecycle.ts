@@ -1,37 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
-import { getApiBaseUrl } from '../api/auth';
-import { clearWebAuthState, getWebSession } from './client-session';
-
-function revokeSessionOnUnload(): void {
-  const session = getWebSession();
-  const refreshToken = session?.refreshToken;
-  if (!refreshToken || typeof navigator === 'undefined' || !navigator.sendBeacon) {
-    return;
-  }
-
-  const url = `${getApiBaseUrl()}/auth/logout`;
-  const blob = new Blob([JSON.stringify({ refreshToken })], {
-    type: 'application/json',
-  });
-  navigator.sendBeacon(url, blob);
-  // Drop local tokens immediately so a refresh cannot keep a zombie session
-  // that would spam POST /auth/touch with 401.
-  clearWebAuthState();
-}
-
-/** Revoke refresh token when the browser tab/window is actually unloaded. */
+/**
+ * Web booking session is stored in `sessionStorage`:
+ * - survives F5 / soft navigation in the same tab
+ * - is discarded automatically when the tab/window is closed
+ *
+ * We intentionally do **not** logout or clear tokens on `pagehide`/`unload`:
+ * those events also fire on refresh, which previously forced users back to
+ * `/booking/login` after every reload.
+ */
 export function useBrowserSessionLifecycle(): void {
-  useEffect(() => {
-    function onPageHide(event: PageTransitionEvent) {
-      if (event.persisted) {
-        return;
-      }
-      revokeSessionOnUnload();
-    }
-
-    window.addEventListener('pagehide', onPageHide);
-    return () => window.removeEventListener('pagehide', onPageHide);
-  }, []);
+  // No unload revocation - refresh must keep the session.
 }

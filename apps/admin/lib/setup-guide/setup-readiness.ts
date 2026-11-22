@@ -1,6 +1,6 @@
 /**
  * Collecte des comptes catalogue « Mise en route » via ApiClient.
- * Fan-out `Promise.allSettled` — une ressource en erreur n’empêche pas les autres.
+ * Fan-out `Promise.allSettled` - une ressource en erreur n’empêche pas les autres.
  * Les seuils / verrous modules sont dans setup-progress (s03).
  */
 
@@ -156,7 +156,7 @@ function emptySettings(): Record<SetupSettingsPath, boolean | null> {
   };
 }
 
-/** Snapshot initial (toutes les clés `null`) — avant le fetch live (s09). */
+/** Snapshot initial (toutes les clés `null`) - avant le fetch live (s09). */
 export function createEmptySetupReadinessSnapshot(): SetupReadinessSnapshot {
   return {
     totals: emptyTotals(),

@@ -103,7 +103,7 @@ describe('Bookings (e2e)', () => {
 
     expect(res.body.bookingId).toEqual(expect.any(String));
     expect(res.body.status).toBe('pending_approval');
-    expect(res.body.message).toBe('Demande enregistrée — en attente de validation');
+    expect(res.body.message).toBe('Demande enregistrée - en attente de validation');
     expect(res.body.totalCents).toBe(9000);
     expect(res.body.currency).toBe('USD');
 

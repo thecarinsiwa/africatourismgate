@@ -584,7 +584,7 @@ export class TreasuryReportsService {
     if (filters.currency) {
       qb.andWhere('op.currency = :currency', { currency: filters.currency });
     }
-    // `source` filtre uniquement les entrées — ignoré pour les sorties
+    // `source` filtre uniquement les entrées - ignoré pour les sorties
     if (filters.paymentMethod) {
       qb.andWhere('op.paymentMethod = :paymentMethod', {
         paymentMethod: filters.paymentMethod,

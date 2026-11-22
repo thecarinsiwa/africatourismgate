@@ -171,7 +171,7 @@ export async function generateMetadata(): Promise<Metadata> {
   ]);
   const siteName = branding.displayName;
   const icon = branding.faviconUrl || undefined;
-  const defaultTitle = `${siteName} — ${t('defaultTitle')}`;
+  const defaultTitle = `${siteName} - ${t('defaultTitle')}`;
   const description = t('defaultDescription', { siteName });
   const keywords = parseMetaKeywords(t('keywords'));
 

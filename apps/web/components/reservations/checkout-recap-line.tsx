@@ -83,7 +83,7 @@ function CheckoutVerticalIconGlyph({ icon }: { icon: CheckoutVerticalIcon }) {
   }
 }
 
-/** BK3 — ligne récap avec icône vertical. */
+/** BK3 - ligne récap avec icône vertical. */
 export function CheckoutRecapLine({
   icon,
   eyebrow,

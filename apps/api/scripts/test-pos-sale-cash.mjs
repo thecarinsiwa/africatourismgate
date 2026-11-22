@@ -127,7 +127,7 @@ async function main() {
     throw new Error(`Expected confirmed, got ${paid.data?.booking?.status}`);
   }
 
-  console.log('4. GET /bookings/:id — payment row');
+  console.log('4. GET /bookings/:id - payment row');
   const detail = await request('GET', `/bookings/${bookingId}`, { token });
   assertStatus('GET booking detail', detail.status, 200);
   const cashPayment = (detail.data?.payments ?? []).find((p) => p.provider === 'cash');
@@ -135,7 +135,7 @@ async function main() {
     throw new Error('Cash payment row missing or not succeeded');
   }
 
-  console.log('5. GET /bookings/:id/receipt-pdf — PDF reçu POS');
+  console.log('5. GET /bookings/:id/receipt-pdf - PDF reçu POS');
   const pdfRes = await fetch(`${API_URL}/bookings/${bookingId}/receipt-pdf`, {
     headers: { Authorization: `Bearer ${token}` },
   });

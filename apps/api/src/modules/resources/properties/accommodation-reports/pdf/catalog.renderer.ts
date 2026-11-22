@@ -62,8 +62,8 @@ export function renderCatalogPdf(input: RenderCatalogPdfInput): Promise<Buffer> 
       input.rows.map((row) => [
         row.name,
         accommodationPropertyTypeLabel(input.locale, row.propertyType),
-        row.destinationName || '—',
-        row.starRating ?? '—',
+        row.destinationName || '-',
+        row.starRating ?? '-',
         String(row.roomCount),
       ]),
     );

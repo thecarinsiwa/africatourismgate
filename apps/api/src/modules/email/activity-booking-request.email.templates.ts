@@ -190,7 +190,7 @@ export function renderActivityBookingRequestAdminEmail(
   branding: EmailBrandingValue,
 ): { subject: string; html: string; text: string } {
   const activityTitle = escapeHtml(payload.activityTitle);
-  const subject = `Nouvelle demande de réservation — ${payload.activityTitle}`;
+  const subject = `Nouvelle demande de réservation - ${payload.activityTitle}`;
   const phoneRow = payload.phone?.trim()
     ? `<p style="margin:0 0 8px;line-height:1.6;"><strong>Téléphone :</strong> ${escapeHtml(payload.phone.trim())}</p>`
     : '';

@@ -9,7 +9,7 @@
     "no": "Non"
   },
   "empty": {
-    "dash": "—"
+    "dash": "-"
   },
   "filters": {
     "all": "Tous",
@@ -166,8 +166,8 @@
   },
   "select": {
     "choose": "Choisir…",
-    "chooseDash": "— Choisir —",
-    "chooseFeminine": "— Choisir —",
+    "chooseDash": "- Choisir -",
+    "chooseFeminine": "- Choisir -",
     "searchPlaceholder": "Rechercher…",
     "empty": "Aucun résultat",
     "loading": "Chargement…",
@@ -340,7 +340,7 @@
     "troncon": "Tronçon"
   },
   "activityDifficulty": {
-    "unspecified": "— Non renseignée —",
+    "unspecified": "- Non renseignée -",
     "easy": "Facile",
     "moderate": "Modérée",
     "hard": "Difficile",

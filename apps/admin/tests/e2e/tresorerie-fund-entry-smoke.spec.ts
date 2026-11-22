@@ -14,10 +14,10 @@ import {
 } from './helpers/treasury-e2e';
 
 /**
- * TRESO-042 — smoke happy path entrées de fonds.
+ * TRESO-042 - smoke happy path entrées de fonds.
  * Données isolées via référence unique `E2E-TRESO-*`.
  */
-test.describe('Trésorerie — smoke entrées de fonds', () => {
+test.describe('Trésorerie - smoke entrées de fonds', () => {
   test.describe.configure({ mode: 'serial' });
 
   test.beforeEach(async ({ page }) => {

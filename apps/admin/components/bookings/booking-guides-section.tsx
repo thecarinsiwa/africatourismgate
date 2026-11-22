@@ -468,7 +468,7 @@ export function BookingGuidesSection({
         meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <span className="block max-w-[12rem] truncate text-sm text-atg-muted">
-            {row.original.notes?.trim() || '—'}
+            {row.original.notes?.trim() || '-'}
           </span>
         ),
       },

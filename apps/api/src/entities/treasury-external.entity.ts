@@ -28,7 +28,7 @@ export class TreasuryExternalCollaborators extends BaseAuditEntity {
 }
 
 /**
- * Jeton d’accès sécurisé — seul le hash est persisté.
+ * Jeton d’accès sécurisé - seul le hash est persisté.
  * Traçabilité actions : treasury_audit_logs (TRESO-006) avec actor_type=external.
  */
 @Entity('treasury_access_tokens')

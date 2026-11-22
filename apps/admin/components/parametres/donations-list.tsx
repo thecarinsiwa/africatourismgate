@@ -203,7 +203,7 @@ export function DonationsList() {
               </DataTableBadge>
             ) : null}
             {!row.original.showOnWeb && !row.original.showOnGap ? (
-              <span className="text-muted-foreground">—</span>
+              <span className="text-muted-foreground">-</span>
             ) : null}
           </div>
         ),
@@ -218,7 +218,7 @@ export function DonationsList() {
               {t('featuredYes')}
             </DataTableBadge>
           ) : (
-            <span className="text-muted-foreground">—</span>
+            <span className="text-muted-foreground">-</span>
           ),
       },
       {

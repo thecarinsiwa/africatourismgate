@@ -116,7 +116,7 @@ export function DashboardRecentUsers({ className }: { className?: string }) {
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-atg-fg">{user.email}</p>
                 <p className="truncate text-xs text-atg-muted">
-                  {[user.firstName, user.lastName].filter(Boolean).join(' ') || '—'}
+                  {[user.firstName, user.lastName].filter(Boolean).join(' ') || '-'}
                 </p>
               </div>
               <DataTableBadge variant={statusVariants[user.status]}>

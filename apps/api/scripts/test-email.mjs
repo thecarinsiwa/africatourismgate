@@ -85,7 +85,7 @@ async function main() {
     })
   ).data?.accessToken;
   if (!token) {
-    throw new Error('Admin login failed — set SEED_ADMIN_PASSWORD');
+    throw new Error('Admin login failed - set SEED_ADMIN_PASSWORD');
   }
 
   const existing = await request(

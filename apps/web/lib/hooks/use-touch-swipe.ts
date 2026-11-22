@@ -10,7 +10,7 @@ type UseTouchSwipeOptions = {
   enabled?: boolean;
 };
 
-/** M2 — détection swipe horizontal sur éléments tactiles. */
+/** M2 - détection swipe horizontal sur éléments tactiles. */
 export function useTouchSwipe({
   onSwipeLeft,
   onSwipeRight,

@@ -73,7 +73,7 @@
       "imageAlt": "Texto alternativo de la imagen",
       "imagePreviewAlt": "Vista previa de la diapositiva",
       "removeImage": "Quitar imagen",
-      "imageUploadHint": "JPEG, PNG o WebP — máx. 5 MB",
+      "imageUploadHint": "JPEG, PNG o WebP - máx. 5 MB",
       "href": "Enlace (opcional)",
       "hrefHint": "Enlace interno o externo en el título. Déjelo vacío si no hay enlace.",
       "sortOrder": "Orden de visualización",

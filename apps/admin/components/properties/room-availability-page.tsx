@@ -201,7 +201,7 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
       <p className="text-sm text-atg-muted">
         {tAvailability.has?.('summary')
           ? tAvailability('summary', { roomName, currency })
-          : `${tAvailability('room')} ${roomName} — ${tAvailability('stockHint', { currency })}`}
+          : `${tAvailability('room')} ${roomName} - ${tAvailability('stockHint', { currency })}`}
       </p>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,28rem)_minmax(0,1fr)] lg:items-start xl:grid-cols-[minmax(0,32rem)_minmax(0,1fr)]">

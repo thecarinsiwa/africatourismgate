@@ -170,7 +170,7 @@ function parseBarePaths(text: string): AdminHelpRichTextSegment[] {
       pushLink(segments, pathname, pathname);
       pushText(segments, ')');
     } else if (openParen && !closeParen) {
-      // Unbalanced — keep as text.
+      // Unbalanced - keep as text.
       pushText(segments, full);
     } else {
       pushLink(segments, pathname, pathname);
@@ -209,7 +209,7 @@ export function parseAdminHelpRichText(text: string): AdminHelpRichTextSegment[]
     if (href && isAllowedAdminHelpHref(href) && label) {
       pushLink(segments, label, href);
     } else {
-      // Unsafe / unknown — keep readable label + path as plain text.
+      // Unsafe / unknown - keep readable label + path as plain text.
       pushText(
         segments,
         label && rawHref ? `${label} (${rawHref})` : full,

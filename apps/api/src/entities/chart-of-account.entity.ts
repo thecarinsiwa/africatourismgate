@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { BaseAuditEntity } from '../common/entities/base-audit.entity';
 
-/** Aligné sur docs/syscohada-domain-model.md §5.1 / §6.1 — SYSCO-002 */
+/** Aligné sur docs/syscohada-domain-model.md §5.1 / §6.1 - SYSCO-002 */
 export type ChartAccountType =
   | 'equity'
   | 'fixed_asset'

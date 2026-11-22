@@ -59,7 +59,7 @@ export type BudgetPeriodType = (typeof BUDGET_PERIOD_TYPES)[number];
 export const BUDGET_SCOPE_TYPES = ['general', 'activity', 'product'] as const;
 export type BudgetScopeType = (typeof BUDGET_SCOPE_TYPES)[number];
 
-/** Produit / service budgété — aligné booking items */
+/** Produit / service budgété - aligné booking items */
 export type BudgetProductType = BookingCheckoutItemType;
 
 export const BUDGET_PRODUCT_TYPES: readonly BudgetProductType[] = [
@@ -259,7 +259,7 @@ export interface TransitionExpenseRequestRequest {
   comment?: string | null;
 }
 
-/** Fund exit status transition (TRESO-022) — void = TRESO-033 */
+/** Fund exit status transition (TRESO-022) - void = TRESO-033 */
 export interface TransitionFundExitRequest {
   toStatus: Extract<FundExitStatus, 'disbursed' | 'recorded'>;
   comment?: string | null;
@@ -270,7 +270,7 @@ export interface TransitionFundExitRequest {
 export interface FundExit {
   id: string;
   organizationId: string;
-  /** Obligatoire — sortie toujours liée à un état de besoin */
+  /** Obligatoire - sortie toujours liée à un état de besoin */
   expenseRequestId: string;
   amountCents: number;
   currency: string;
@@ -491,7 +491,7 @@ export interface TreasuryExternalCollaboratorsListQuery {
 export interface TreasuryAccessToken {
   id: string;
   collaboratorId: string;
-  /** Jamais le jeton brut — métadonnée uniquement côté API */
+  /** Jamais le jeton brut - métadonnée uniquement côté API */
   expiresAt: string;
   scopes: TreasuryExternalScope[] | string[] | null;
   revokedAt: string | null;
@@ -667,7 +667,7 @@ export interface CreateAccountingLinkRequest {
   organizationId: string;
   fundOpType: AccountingFundOpType;
   fundOpId: string;
-  /** Optional — filled by future SYSCOHADA epic */
+  /** Optional - filled by future SYSCOHADA epic */
   journalEntryId?: string | null;
   mappingRuleKey?: string | null;
   status?: AccountingLinkStatus;
@@ -679,7 +679,7 @@ export interface UpdateAccountingLinkRequest {
   status?: AccountingLinkStatus;
 }
 
-/** Mapping rule exposée API (SYSCO-004 — comptes réels du plan). */
+/** Mapping rule exposée API (SYSCO-004 - comptes réels du plan). */
 export interface AccountingMappingRule {
   key: string;
   fundOpType: AccountingFundOpType;
@@ -695,7 +695,7 @@ export interface AccountingMappingRule {
   priority: number;
   label: string;
   notes?: string | null;
-  /** @deprecated TRESO-039 hints — absents dès stub:false */
+  /** @deprecated TRESO-039 hints - absents dès stub:false */
   debitAccountHint?: string;
   creditAccountHint?: string;
 }
@@ -723,7 +723,7 @@ export interface SkipAccountingLinkRequest {
 export interface PostAccountingLinkResult {
   link: AccountingLink;
   journalEntryId: string | null;
-  /** true si déjà linked — rejeu no-op */
+  /** true si déjà linked - rejeu no-op */
   noop: boolean;
   mappingRuleKey: string | null;
 }

@@ -229,7 +229,7 @@
         "locale": "Langue"
       },
       "hints": {
-        "imageUpload": "JPEG, PNG ou WebP — max. 5 Mo",
+        "imageUpload": "JPEG, PNG ou WebP - max. 5 Mo",
         "linkUrl": "Lien optionnel vers une page ou une ressource associée."
       },
       "saving": "Enregistrement…",
@@ -288,9 +288,9 @@
         "locale": "Langue"
       },
       "hints": {
-        "photoUpload": "JPEG, PNG ou WebP — max. 5 Mo",
+        "photoUpload": "JPEG, PNG ou WebP - max. 5 Mo",
         "slug": "Profil public : {path}. Laissez vide pour le générer à partir du nom.",
-        "contact": "Facultatif — affiché sur la page profil publique."
+        "contact": "Facultatif - affiché sur la page profil publique."
       },
       "placeholders": {
         "slug": "prenom-nom",
@@ -349,7 +349,7 @@
         "locale": "Langue"
       },
       "hints": {
-        "fileFormat": "PDF, JPEG, PNG ou WebP — max 10 Mo.",
+        "fileFormat": "PDF, JPEG, PNG ou WebP - max 10 Mo.",
         "externalUrl": "Lien vers un document hébergé ailleurs (optionnel si fichier uploadé).",
         "publishedAt": "Laissez vide pour utiliser la date courante à la publication."
       },
@@ -465,7 +465,7 @@
         "imageAlt": "Texte alternatif de l'image",
         "imagePreviewAlt": "Aperçu de la section",
         "removeImage": "Retirer l'image",
-        "imageUploadHint": "JPEG, PNG ou WebP — max. 5 Mo",
+        "imageUploadHint": "JPEG, PNG ou WebP - max. 5 Mo",
         "badgeValue": "Valeur du badge",
         "badgeLabel": "Libellé du badge"
       },

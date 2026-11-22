@@ -1,4 +1,4 @@
-# Database scripts — production preparation
+# Database scripts - production preparation
 
 Orchestration for Part A of [docs/production-data-preparation.md](../../docs/production-data-preparation.md).
 

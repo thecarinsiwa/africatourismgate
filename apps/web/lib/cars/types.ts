@@ -92,7 +92,7 @@ export interface VehicleDetail {
   currency: string;
   availabilitySlot: VehicleDetailAvailabilitySlot | null;
   images?: ProductGalleryImage[];
-  /** Première photo — dérivée de `images` côté API. */
+  /** Première photo - dérivée de `images` côté API. */
   imageUrl?: string | null;
   /** @deprecated Use travelDate */
   pickupDate?: string;

@@ -76,7 +76,7 @@ export function BrandColorPaletteField({
               role="option"
               aria-selected={selected}
               aria-label={`${swatchLabel} (${color.hex})`}
-              title={`${swatchLabel} — ${color.hex}`}
+              title={`${swatchLabel} - ${color.hex}`}
               onClick={() => onChange(color.hex)}
               className={`group relative flex flex-col items-center gap-1 rounded-lg p-1 transition-shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-bg ${
                 selected
@@ -115,7 +115,7 @@ export function BrandColorPaletteField({
       </div>
       <p className="font-mono text-xs text-atg-muted">
         {t('selection')}{' '}
-        <span className="text-atg-fg">{value || '—'}</span>
+        <span className="text-atg-fg">{value || '-'}</span>
       </p>
     </fieldset>
   );

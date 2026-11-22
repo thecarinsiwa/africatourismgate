@@ -1,5 +1,5 @@
 /**
- * Mixed booking: room + activity_schedule — stock allocate on create, restore on cancel.
+ * Mixed booking: room + activity_schedule - stock allocate on create, restore on cancel.
  * Run: pnpm --filter @africatourismgate/api test:bookings-polymorphic
  */
 import { randomUUID } from 'node:crypto';

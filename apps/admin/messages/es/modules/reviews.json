@@ -125,7 +125,7 @@
       "locationIdPlaceholder": "Ej. 12345678",
       "apiKey": "Clave API Terra",
       "apiKeyPlaceholder": "Pegue su clave API",
-      "apiKeyPlaceholderConfigured": "Clave guardada ({masked}) — déjelo vacío para conservarla",
+      "apiKeyPlaceholderConfigured": "Clave guardada ({masked}) - déjelo vacío para conservarla",
       "apiKeyKeepHint": "Deje el campo vacío para conservar la clave ya guardada.",
       "language": "Idioma de las reseñas",
       "languagePlaceholder": "primary",

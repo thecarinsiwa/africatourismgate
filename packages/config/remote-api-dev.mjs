@@ -19,7 +19,7 @@ function readRootEnvFlag(name) {
 }
 
 /**
- * Dev frontends only — proxy browser/SSR calls to the production API
+ * Dev frontends only - proxy browser/SSR calls to the production API
  * so MySQL + apps/api can stay stopped locally (saves disk/RAM).
  *
  * Enable in `.env.local`:

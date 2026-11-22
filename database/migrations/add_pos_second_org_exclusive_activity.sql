@@ -51,7 +51,7 @@ SELECT
   '00000000-0000-4000-8000-000000004050',
   '00000000-0000-4000-8000-000000004030',
   'Atelier exclusif Guichet Est',
-  'Activité exclusive org Guichet Est — ne doit pas apparaître en caisse Africa Tourism Gate (POS-3).',
+  'Activité exclusive org Guichet Est - ne doit pas apparaître en caisse Africa Tourism Gate (POS-3).',
   90,
   'easy',
   7500,

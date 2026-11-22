@@ -72,7 +72,7 @@
         "modeImmediate": "Inmediato (pago)",
         "modeAssisted": "Asistido (solicitud)",
         "paymentMethodsTitle": "Métodos de pago (sitio público)",
-        "paymentMethodsDescription": "Seleccione los métodos ofrecidos en el checkout web. El POS y el cobro en caja del personal no se ven afectados. El efectivo en el lugar está desactivado por defecto (riesgo si el efectivo es el único compromiso) — reactívelo solo si acepta ese riesgo. La transferencia también requiere cuentas bancarias publicadas. Mobile Money requiere países, operadores y números configurados.",
+        "paymentMethodsDescription": "Seleccione los métodos ofrecidos en el checkout web. El POS y el cobro en caja del personal no se ven afectados. El efectivo en el lugar está desactivado por defecto (riesgo si el efectivo es el único compromiso) - reactívelo solo si acepta ese riesgo. La transferencia también requiere cuentas bancarias publicadas. Mobile Money requiere países, operadores y números configurados.",
         "paymentMethods": {
           "stripe": "Tarjeta (Stripe)",
           "cash": "Efectivo en el lugar (sitio público)",
@@ -125,11 +125,11 @@
         "description": "Cuando está activado, los visitantes del sitio público son redirigidos a una página de mantenimiento (el admin sigue accesible).",
         "enabled": "Activar el modo mantenimiento",
         "pageTitle": "Título mostrado",
-        "pageTitleHint": "Opcional — si no, se usa el título por defecto de la página de mantenimiento.",
+        "pageTitleHint": "Opcional - si no, se usa el título por defecto de la página de mantenimiento.",
         "message": "Mensaje",
-        "messageHint": "Opcional — texto mostrado a los visitantes (máx. 2000 caracteres).",
+        "messageHint": "Opcional - texto mostrado a los visitantes (máx. 2000 caracteres).",
         "endsAt": "Fin previsto",
-        "endsAtHint": "Opcional — si se indica, se muestra una cuenta atrás y el sitio se reabre automáticamente a esa hora (aunque el interruptor siga activo)."
+        "endsAtHint": "Opcional - si se indica, se muestra una cuenta atrás y el sitio se reabre automáticamente a esa hora (aunque el interruptor siga activo)."
       },
       "loyalty": {
         "title": "Fidelidad OneKey",
@@ -168,7 +168,7 @@
   "colorPalette": {
     "contrastWarning": "Contraste insuficiente con texto blanco: {ratio} (mínimo {min} para WCAG AA). Los botones y enlaces activos pueden ser difíciles de leer.",
     "currentAria": "Color actual ({value})",
-    "currentTitle": "Color guardado — {value}",
+    "currentTitle": "Color guardado - {value}",
     "currentLabel": "Actual",
     "selection": "Selección:",
     "swatches": {
@@ -252,11 +252,11 @@
       "footerText": "Texto del pie de página",
       "footerPlaceholder": "© '{year}' '{displayName}' · Todos los derechos reservados",
       "footerHint": "Variables: '{year}', '{displayName}'. Deje vacío para el texto predeterminado.",
-      "welcomeSubject": "Asunto — correo de bienvenida",
+      "welcomeSubject": "Asunto - correo de bienvenida",
       "welcomeSubjectPlaceholder": "Bienvenido a '{displayName}'",
       "welcomeSubjectHint": "Variables: '{displayName}'",
-      "bookingSubject": "Asunto — confirmación de reserva",
-      "bookingSubjectPlaceholder": "Confirmación de reserva — '{ref}'",
+      "bookingSubject": "Asunto - confirmación de reserva",
+      "bookingSubjectPlaceholder": "Confirmación de reserva - '{ref}'",
       "bookingSubjectHint": "Variables: '{ref}', '{displayName}'",
       "previewTemplate": "Plantilla a previsualizar",
       "templateWelcome": "Bienvenida (creación de cuenta)",
@@ -542,12 +542,12 @@
         "locale": "Idioma",
         "title": "Título de la página",
         "titlePlaceholder": "Mantenimiento en curso",
-        "titleHint": "Opcional — de lo contrario se usa el título predeterminado de la página pública.",
+        "titleHint": "Opcional - de lo contrario se usa el título predeterminado de la página pública.",
         "message": "Mensaje",
         "messagePlaceholder": "Volveremos pronto…",
         "startsAt": "Inicio",
         "endsAt": "Fin previsto",
-        "endsAtHint": "Opcional — déjelo vacío para un fin indefinido (reapertura manual)."
+        "endsAtHint": "Opcional - déjelo vacío para un fin indefinido (reapertura manual)."
       },
       "validation": {
         "startsAtRequired": "La fecha de inicio es obligatoria.",

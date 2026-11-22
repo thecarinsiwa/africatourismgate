@@ -367,7 +367,7 @@ export function UserRoleAssignmentsList() {
                   { value: '', label: t('filters.allUsers') },
                   ...users.map((user) => ({
                     value: user.id,
-                    label: `${user.firstName} ${user.lastName} — ${user.email}`,
+                    label: `${user.firstName} ${user.lastName} - ${user.email}`,
                   })),
                 ]}
                 onChange={(value) => syncFilters({ userId: value })}

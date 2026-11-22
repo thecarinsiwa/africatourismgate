@@ -88,17 +88,17 @@
       "promoCode": "Código promocional (checkout)",
       "promoCodeHint": "Los códigos introducidos en el checkout se gestionan por separado. Genere una sugerencia y cree el código vinculado.",
       "discount": "Descuento",
-      "discountHint": "Opcional — déjelo desactivado para una campaña informativa.",
+      "discountHint": "Opcional - déjelo desactivado para una campaña informativa.",
       "discountOff": "Sin descuento en el checkout: la campaña permanece puramente informativa.",
       "schedule": "Validez y límites",
       "scheduleHint": "Fechas opcionales. Déjelas vacías para una campaña sin límite temporal.",
       "publication": "Publicación",
       "publicationHint": "Controla la visibilidad de la campaña para los clientes.",
       "preview": "Vista previa en vivo",
-      "previewHint": "Permanece visible al desplazarse — se actualiza al escribir."
+      "previewHint": "Permanece visible al desplazarse - se actualiza al escribir."
     },
     "info": {
-      "codesVsPromotions": "Los códigos promocionales los introduce el cliente en el checkout. Las promociones son campañas visibles (banners, páginas) — el descuento puede ser opcional.",
+      "codesVsPromotions": "Los códigos promocionales los introduce el cliente en el checkout. Las promociones son campañas visibles (banners, páginas) - el descuento puede ser opcional.",
       "managePromoCodesLink": "Gestionar códigos promocionales"
     },
     "actions": {
@@ -136,7 +136,7 @@
     },
     "hints": {
       "name": "Se muestra como título de la campaña en la vista previa y en el sitio.",
-      "suggestedCode": "No se guarda con la promoción — sirve para crear un código promocional distinto.",
+      "suggestedCode": "No se guarda con la promoción - sirve para crear un código promocional distinto.",
       "discountPercent": "Porcentaje (p. ej. 15 para −15 %).",
       "discountFixed": "Importe fijo en unidades monetarias (p. ej. 10 para −10 USD).",
       "maxRedemptions": "Dejar vacío para usos ilimitados."

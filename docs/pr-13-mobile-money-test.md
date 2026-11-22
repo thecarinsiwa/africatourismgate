@@ -1,4 +1,4 @@
-# PR-13 — Scénario de test (Mobile Money — offline + preuves)
+# PR-13 - Scénario de test (Mobile Money - offline + preuves)
 
 Branche : `feature/pr-13-mobile-money`  
 Réf. : [roadmap-post-reunion-08-2026.md](./roadmap-post-reunion-08-2026.md) (PR-13)  
@@ -15,7 +15,7 @@ Dépend de :
 | `preferredPaymentMethod` | `'stripe' \| 'cash' \| 'bank_transfer' \| 'mobile_money'` |
 | Setting `booking` / `payment_methods` | Toggle admin `mobile_money` (défaut **off**) |
 | Config org | Pays → opérateurs (logo) → numéros E.164 (Paramètres → Mobile Money) |
-| API publique | `GET /public/mobile-money-config` — pays/opérateurs/numéros **actifs** uniquement |
+| API publique | `GET /public/mobile-money-config` - pays/opérateurs/numéros **actifs** uniquement |
 | Checkout web | Radio MM → select pays → opérateur → numéros + logo → confirm → `pending_payment` |
 | Preuves | Même flux que virement (`paymentMethod=mobile_money`) |
 | Admin | **Marquer Mobile Money reçu** ou valider preuve ; pas d’invite Stripe |

@@ -89,7 +89,7 @@ export function WebSessionIdleLock() {
           setSessionLocked(true);
           setLocked(true);
         } else if (err.status === 401) {
-          // Invalid/expired refresh token — drop local session and stop touching.
+          // Invalid/expired refresh token - drop local session and stop touching.
           clearWebAuthState();
           setLocked(false);
         }

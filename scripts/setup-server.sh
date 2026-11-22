@@ -44,7 +44,7 @@ cd "${REPO_DIR}"
 if [[ ! -f .env ]]; then
   if [[ -f .env.production.example ]]; then
     cp .env.production.example .env
-    log "Created .env from .env.production.example — edit it before going live."
+    log "Created .env from .env.production.example - edit it before going live."
   else
     echo "No .env found. Copy .env.example or .env.production.example to .env" >&2
     exit 1

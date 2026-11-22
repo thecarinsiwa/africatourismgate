@@ -46,7 +46,7 @@ export function SearchableSelect({
   onChange,
   searchPlaceholder = 'Search…',
   emptyMessage = 'No results.',
-  placeholder = '—',
+  placeholder = '-',
   disabled,
   className,
   id: idProp,

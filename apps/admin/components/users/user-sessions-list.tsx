@@ -49,7 +49,7 @@ function resolveInitialViewMode(layout?: 'table' | 'cards'): SessionsViewMode {
 }
 
 type UserSessionsListProps = UserScopedListProps & {
-  /** Force un mode (fiche utilisateur) — masque le sélecteur. */
+  /** Force un mode (fiche utilisateur) - masque le sélecteur. */
   layout?: 'table' | 'cards';
   readOnly?: boolean;
 };

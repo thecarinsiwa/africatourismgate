@@ -1,4 +1,4 @@
--- Catalogue global de devises (plateforme) — CRUD Admin /système/devises
+-- Catalogue global de devises (plateforme) - CRUD Admin /système/devises
 -- Down (manuel) : voir commentaires en bas de fichier.
 SET NAMES utf8mb4;
 
@@ -68,7 +68,7 @@ JOIN `users` u ON u.`id` = '00000000-0000-4000-8000-000000000010'
 WHERE p.`id` = '00000000-0000-4000-8000-000000001081';
 
 -- ---------------------------------------------------------------------------
--- DOWN (manuel — ne pas placer dans un .sql auto-appliqué par db:sync)
+-- DOWN (manuel - ne pas placer dans un .sql auto-appliqué par db:sync)
 -- ---------------------------------------------------------------------------
 -- DELETE FROM `role_permissions` WHERE `permission_id` IN (
 --   '00000000-0000-4000-8000-000000001081',

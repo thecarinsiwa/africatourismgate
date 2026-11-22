@@ -330,7 +330,7 @@ for (const locale of ['fr', 'en', 'es'] as const) {
       await mockAccountApis(page);
     });
 
-    test(`shell + 8 routes — ${locale}`, async ({ page }) => {
+    test(`shell + 8 routes - ${locale}`, async ({ page }) => {
       const c = COPY[locale];
 
       // /account → profile hub
@@ -357,7 +357,7 @@ for (const locale of ['fr', 'en', 'es'] as const) {
       await page.goto('/account/addresses', { waitUntil: 'domcontentloaded' });
       await expect(page.getByText(c.addressesEmpty)).toBeVisible({ timeout: 15_000 });
 
-      // reservations list — translated statuses, no raw enums
+      // reservations list - translated statuses, no raw enums
       await page.goto('/account/reservations', { waitUntil: 'domcontentloaded' });
       await expect(page.getByText(c.statusPendingApproval)).toBeVisible({ timeout: 15_000 });
       await expect(page.getByText(c.statusConfirmed)).toBeVisible();
@@ -366,7 +366,7 @@ for (const locale of ['fr', 'en', 'es'] as const) {
       await expect(page.getByText('pending_approval')).toHaveCount(0);
       await expect(page.getByText('pending_payment')).toHaveCount(0);
 
-      // detail — assisted timeline (5 steps)
+      // detail - assisted timeline (5 steps)
       await page.goto(`/account/reservations/${BOOKING_ID}`, { waitUntil: 'domcontentloaded' });
       await expect(page.getByText(c.statusPendingApproval).first()).toBeVisible({ timeout: 15_000 });
       await expect(page.getByRole('heading', { name: c.timelineTitle })).toBeVisible();

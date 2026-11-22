@@ -1,5 +1,5 @@
 /**
- * WEB-I18N-06 — automated FR → EN smoke across public (+ mocked auth) routes.
+ * WEB-I18N-06 - automated FR → EN smoke across public (+ mocked auth) routes.
  *
  * Anchor texts are static next-intl chrome only (hero/nav/button). We do not assert
  * on CMS/API bodies (about HTML, blog posts, product titles, announcement banner).
@@ -30,7 +30,7 @@ async function forceLocale(page: Page, locale: AppLocale) {
 }
 
 async function mockSession(page: Page) {
-  // Never clobber session on reload — LocaleBootstrap prefers
+  // Never clobber session on reload - LocaleBootstrap prefers
   // session.user.preferredLanguage over the atg-locale cookie/localStorage.
   await page.addInitScript((userId: string) => {
     let fromStorage: 'fr' | 'en' | 'es' | null = null;
@@ -296,14 +296,14 @@ test.describe('i18n pages FR → EN', () => {
       },
       {
         path: '/search/hotels',
-        note: 'verticalSearch « Hébergements — Résultats » → « Hotels — Results »',
-        fr: 'Hébergements — Résultats',
-        en: 'Hotels — Results',
+        note: 'verticalSearch « Hébergements - Résultats » → « Hotels - Results »',
+        fr: 'Hébergements - Résultats',
+        en: 'Hotels - Results',
       },
     ];
 
     for (const route of verticals) {
-      test(`${route.path} — ${route.note}`, async ({ page }) => {
+      test(`${route.path} - ${route.note}`, async ({ page }) => {
         await smokeFrToEn(page, route);
       });
     }
@@ -338,13 +338,13 @@ test.describe('i18n pages FR → EN', () => {
     ];
 
     for (const route of bookingRoutes) {
-      test(`${route.path} — ${route.note}`, async ({ page }) => {
+      test(`${route.path} - ${route.note}`, async ({ page }) => {
         await smokeFrToEn(page, route);
       });
     }
 
-    test('/booking/cart — checkout.cartTitle (mock auth)', async ({ page }) => {
-      // Anchor: checkout.cartTitle — empty cart chrome, not line-item API titles.
+    test('/booking/cart - checkout.cartTitle (mock auth)', async ({ page }) => {
+      // Anchor: checkout.cartTitle - empty cart chrome, not line-item API titles.
       await mockSession(page);
       await page.goto('/booking/cart', { waitUntil: 'domcontentloaded' });
       await forceLocale(page, 'fr');
@@ -365,7 +365,7 @@ test.describe('i18n pages FR → EN', () => {
       await mockSession(page);
     });
 
-    test('/account/profile — account.title', async ({ page }) => {
+    test('/account/profile - account.title', async ({ page }) => {
       // Anchor: account.title « Mon compte » → « My account » (shell, not profile field values).
       await page.goto('/account/profile', { waitUntil: 'domcontentloaded' });
       await forceLocale(page, 'fr');
@@ -380,8 +380,8 @@ test.describe('i18n pages FR → EN', () => {
       await assertNoCommonFrHeaderChrome(page);
     });
 
-    test('/account/reservations — account.nav.reservations', async ({ page }) => {
-      // Anchor: nav + empty state chrome (mocked empty list — no booking status enums).
+    test('/account/reservations - account.nav.reservations', async ({ page }) => {
+      // Anchor: nav + empty state chrome (mocked empty list - no booking status enums).
       await page.goto('/account/reservations', { waitUntil: 'domcontentloaded' });
       await forceLocale(page, 'fr');
       await expect(page.getByRole('heading', { name: 'Mon compte' })).toBeVisible({
@@ -399,7 +399,7 @@ test.describe('i18n pages FR → EN', () => {
       await assertNoCommonFrHeaderChrome(page);
     });
 
-    test('/account/loyalty — account.nav.loyalty', async ({ page }) => {
+    test('/account/loyalty - account.nav.loyalty', async ({ page }) => {
       await page.route('**/api/loyalty-accounts**', async (route) => {
         await route.fulfill({
           status: 200,
@@ -492,8 +492,8 @@ test.describe('i18n pages FR → EN', () => {
     ];
 
     for (const route of marketing) {
-      test(`${route.path} — ${route.note}`, async ({ page }) => {
-        // Blog FR/EN share the same hero word « Blog » — also assert empty-state chrome.
+      test(`${route.path} - ${route.note}`, async ({ page }) => {
+        // Blog FR/EN share the same hero word « Blog » - also assert empty-state chrome.
         if (route.path === '/blog') {
           await page.goto('/blog', { waitUntil: 'domcontentloaded' });
           await forceLocale(page, 'fr');

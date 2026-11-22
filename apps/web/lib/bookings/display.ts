@@ -67,7 +67,7 @@ export function formatBookingDateTime(iso: string, locale = 'fr-FR'): string {
 }
 
 export function formatBookingDate(value: string | null, locale = 'fr-FR'): string {
-  if (!value) return '—';
+  if (!value) return '-';
   try {
     return new Date(`${value}T12:00:00`).toLocaleDateString(locale, {
       dateStyle: 'medium',
@@ -82,7 +82,7 @@ export function formatStayRange(
   endDate: string | null,
   locale = 'fr-FR',
 ): string {
-  if (!startDate && !endDate) return '—';
+  if (!startDate && !endDate) return '-';
   if (startDate && endDate && startDate !== endDate) {
     return `${formatBookingDate(startDate, locale)} → ${formatBookingDate(endDate, locale)}`;
   }

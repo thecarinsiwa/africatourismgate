@@ -11,7 +11,7 @@ const apiPrefix = process.env.API_GLOBAL_PREFIX ?? 'api';
 const remoteApi = isRemoteApiDev();
 
 console.log('');
-console.log('Africa Tourism Gate — development URLs');
+console.log('Africa Tourism Gate - development URLs');
 console.log('──────────────────────────────────────');
 if (remoteApi) {
   const target = getRemoteApiTargetUrl();
@@ -31,6 +31,6 @@ console.log(`  GAP     http://localhost:${ports.gap}/`);
 console.log('          Production: https://gap.africatourismgate.org/');
 if (remoteApi) {
   console.log('');
-  console.log('  Remote API mode — run: pnpm dev:front');
+  console.log('  Remote API mode - run: pnpm dev:front');
 }
 console.log('');

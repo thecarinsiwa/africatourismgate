@@ -64,7 +64,7 @@ export async function mockManifestApi(page: Page): Promise<void> {
   });
 }
 
-/** Fill traveler nationality SearchableSelect (label Nationalité — not emergency "Pays"). */
+/** Fill traveler nationality SearchableSelect (label Nationalité - not emergency "Pays"). */
 async function selectTravelerNationality(page: Page, index: number, countryQuery: string) {
   const nat = page
     .getByRole('button', {
@@ -79,7 +79,7 @@ async function selectTravelerNationality(page: Page, index: number, countryQuery
 
 /** Fill booking-level emergency contact + required traveler fields on checkout recap. */
 export async function fillCheckoutManifest(page: Page): Promise<number> {
-  // Labels include a required "*" — never use ^…$ anchors on getByLabel.
+  // Labels include a required "*" - never use ^…$ anchors on getByLabel.
   // Emergency phone is the only input[type=tel] on the recap (travelers have no tel field).
   await page
     .getByLabel(/nom du contact|contact name|nombre del contacto/i)

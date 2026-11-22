@@ -420,7 +420,7 @@ export class AccountingExercisesService {
     }
     if (lastPeriod.status === 'locked' || lastPeriod.status === 'closed') {
       throw new BadRequestException(
-        'Last period must be open to post the closing entry — unlock it first',
+        'Last period must be open to post the closing entry - unlock it first',
       );
     }
 

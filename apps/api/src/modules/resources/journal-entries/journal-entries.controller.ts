@@ -79,7 +79,7 @@ export class JournalEntriesController {
   @Get('accounting-balance')
   @ApiOperation({
     summary:
-      'Balance générale (agrégat lignes postées par compte — SYSCO-006)',
+      'Balance générale (agrégat lignes postées par compte - SYSCO-006)',
   })
   getBalance(@Query() query: AccountingBalanceQueryDto) {
     return this.service.getBalance(query);

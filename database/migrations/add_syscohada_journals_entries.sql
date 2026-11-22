@@ -1,4 +1,4 @@
--- SYSCO-003 — Journaux paramétrables + écritures / lignes (`accounting_journals`, `journal_entries`, `journal_lines`)
+-- SYSCO-003 - Journaux paramétrables + écritures / lignes (`accounting_journals`, `journal_entries`, `journal_lines`)
 -- Numérotation légale : `{journal.code}-{exercise.code}-{entry_seq:05d}` unique par (journal, exercice).
 -- Pas de branchement `accounting_links.journal_entry_id` (SYSCO-005).
 -- Down (manuel) : voir commentaires en bas de fichier.
@@ -162,7 +162,7 @@ CREATE TABLE IF NOT EXISTS `journal_lines` (
 -- ---------------------------------------------------------------------------
 -- Seed journaux plateforme (CAI / BQ / OD / AC / VE)
 -- IDs : 00000000-0000-4000-8000-00000000220x
--- Comptes défaut : 57 (caisse), 521 (banque) — seed SYSCO-002
+-- Comptes défaut : 57 (caisse), 521 (banque) - seed SYSCO-002
 -- ---------------------------------------------------------------------------
 
 INSERT IGNORE INTO `accounting_journals` (
@@ -254,7 +254,7 @@ FROM `organizations` o
 WHERE o.`id` = '00000000-0000-4000-8000-000000000001';
 
 -- ---------------------------------------------------------------------------
--- DOWN (manuel — ne pas placer dans un .sql auto-appliqué par db:sync)
+-- DOWN (manuel - ne pas placer dans un .sql auto-appliqué par db:sync)
 -- ---------------------------------------------------------------------------
 -- DROP TABLE IF EXISTS `journal_lines`;
 -- DROP TABLE IF EXISTS `journal_entries`;

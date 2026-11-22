@@ -19,7 +19,7 @@ async function fetchBadgeTotal(fetch: () => Promise<number>): Promise<number | u
   }
 }
 
-/** Compteurs nav sidebar (avis pending, tickets ouverts) — silencieux si 403 ou erreur réseau. */
+/** Compteurs nav sidebar (avis pending, tickets ouverts) - silencieux si 403 ou erreur réseau. */
 export function useNavBadgeCounts(): NavBadgeCounts {
   const { hasPermission, loading: permissionsLoading } = usePermissions();
   const [counts, setCounts] = useState<NavBadgeCounts>({});

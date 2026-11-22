@@ -181,7 +181,7 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
       headerTop = PAGE_MARGIN;
       logoDrawn = true;
     } catch {
-      // logo optional — ne pas réserver d'espace si le rendu échoue
+      // logo optional - ne pas réserver d'espace si le rendu échoue
     }
   }
 

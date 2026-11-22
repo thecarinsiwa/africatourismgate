@@ -143,7 +143,7 @@
     "scopeId": "Scope ID (UUID)",
     "scopeIdHint": "E.g. property, agency, or support queue ID.",
     "expiresAt": "Expiration (optional)",
-    "superAdminWarning": "Reserved for super administrators — scope forced to Global.",
+    "superAdminWarning": "Reserved for super administrators - scope forced to Global.",
     "superAdminConfirmTitle": "Confirm super-admin assignment",
     "superAdminConfirm": "The user will be granted the “{roleName}” role and full access to the platform.",
     "superAdminConfirmButton": "Confirm",

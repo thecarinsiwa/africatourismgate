@@ -92,7 +92,7 @@ export function SessionIdleLock() {
           setSessionLocked(true);
           setLocked(true);
         } else if (err.status === 401) {
-          // Invalid/expired refresh (e.g. revoked on unload) — drop local session.
+          // Invalid/expired refresh (e.g. revoked on unload) - drop local session.
           clearAuthState();
           setLocked(false);
           router.replace('/login');
@@ -127,7 +127,7 @@ export function SessionIdleLock() {
     };
   }, [syncLockedState]);
 
-  // Ctrl/⌘+L — verrouillage manuel immédiat (même depuis un champ de saisie).
+  // Ctrl/⌘+L - verrouillage manuel immédiat (même depuis un champ de saisie).
   useEffect(() => {
     function onLockShortcut(event: KeyboardEvent) {
       if (!isAdminLockSessionShortcut(event)) {

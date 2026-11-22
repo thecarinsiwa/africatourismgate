@@ -12,7 +12,7 @@
     "accounting": "Accounting"
   },
   "hub": {
-    "statsDash": "—",
+    "statsDash": "-",
     "quickLinks": {
       "title": "Quick access",
       "subtitle": "Treasury submodules based on your permissions",
@@ -219,7 +219,7 @@
       "bookingsLoading": "Searching bookings…",
       "attachments": {
         "title": "Supporting documents",
-        "hint": "JPEG, PNG, WebP or PDF — max 10 MB. Available after save.",
+        "hint": "JPEG, PNG, WebP or PDF - max 10 MB. Available after save.",
         "upload": "Add a file",
         "empty": "No attachments.",
         "remove": "Remove",
@@ -309,7 +309,7 @@
       "bookingsLoading": "Searching bookings…",
       "attachments": {
         "title": "Supporting documents",
-        "hint": "JPEG, PNG, WebP or PDF — max 10 MB. Available after save.",
+        "hint": "JPEG, PNG, WebP or PDF - max 10 MB. Available after save.",
         "upload": "Add a file",
         "empty": "No attachments.",
         "remove": "Remove",
@@ -556,7 +556,7 @@
     "sections": {
       "bySource": "By source (entries)",
       "byPaymentMethod": "By payment method",
-      "chartPaymentMethod": "Chart — payment methods"
+      "chartPaymentMethod": "Chart - payment methods"
     },
     "chartUnit": "Amounts in {currency} (major units)",
     "columns": {
@@ -1023,7 +1023,7 @@
     "form": {
       "createTitle": "New exchange rate",
       "editTitle": "Edit rate",
-      "description": "Manual entry — 1 source = rate × target.",
+      "description": "Manual entry - 1 source = rate × target.",
       "fromCurrency": "Source currency",
       "toCurrency": "Target currency",
       "rate": "Rate",

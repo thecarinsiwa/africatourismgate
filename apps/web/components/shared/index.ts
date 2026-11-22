@@ -3,8 +3,8 @@
  *
  * Composants locaux : cartes produit, hero marketing, prix, étoiles, formulaire recherche.
  * Composants partagés admin + web : importer depuis `@africatourismgate/ui` :
- * - `EmptyState` — titre, description, icône et action fournis par le parent
- * - `FilterBar` — passer `clearLabel`, `applyLabel`, `toggleLabel` via next-intl
+ * - `EmptyState` - titre, description, icône et action fournis par le parent
+ * - `FilterBar` - passer `clearLabel`, `applyLabel`, `toggleLabel` via next-intl
  *   (ne pas s'appuyer sur les libellés anglais par défaut)
  */
 

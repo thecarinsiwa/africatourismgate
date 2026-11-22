@@ -1,5 +1,5 @@
 /**
- * OpenAPI-generated client surface (do not edit — run pnpm codegen:api).
+ * OpenAPI-generated client surface (do not edit - run pnpm codegen:api).
  */
 export type { components, paths } from './schema';
 export * from './auth-types';

@@ -19,7 +19,7 @@ async function waitForDashboardDataIdle(page: import('@playwright/test').Page) {
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: 30_000 });
 }
 
-test.describe('Phase 2 — Dashboard periods', () => {
+test.describe('Phase 2 - Dashboard periods', () => {
   test.beforeEach(async ({ page }) => {
     await loginAsSeedAdmin(page);
     await page.goto('/dashboard');
@@ -52,7 +52,7 @@ test.describe('Phase 2 — Dashboard periods', () => {
   });
 });
 
-test.describe('Phase 2 — Breadcrumb navigation', () => {
+test.describe('Phase 2 - Breadcrumb navigation', () => {
   test.beforeEach(async ({ page }) => {
     await loginAsSeedAdmin(page);
   });

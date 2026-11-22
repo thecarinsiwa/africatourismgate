@@ -8,7 +8,7 @@ type SiteSearchGroupIconProps = {
 };
 
 /**
- * Stroke icons per search group — same visual language as home search tabs.
+ * Stroke icons per search group - same visual language as home search tabs.
  */
 export function SiteSearchGroupIcon({
   group,

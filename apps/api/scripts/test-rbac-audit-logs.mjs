@@ -3,8 +3,8 @@
  * Run: pnpm --filter @africatourismgate/api test:rbac-audit
  *
  * Requires in .env.local (gitignored):
- *   SEED_ADMIN_PASSWORD — see database/seeds/README.md
- *   RBAC_TEST_SUPPORT_PASSWORD — any strong password for the ephemeral support test user
+ *   SEED_ADMIN_PASSWORD - see database/seeds/README.md
+ *   RBAC_TEST_SUPPORT_PASSWORD - any strong password for the ephemeral support test user
  */
 import { createConnection } from 'mysql2/promise';
 import { randomUUID } from 'node:crypto';
@@ -117,7 +117,7 @@ async function main() {
   });
 
   try {
-    console.log('1. No token — GET /rbac-audit-logs (expect 401)');
+    console.log('1. No token - GET /rbac-audit-logs (expect 401)');
     assertStatus(
       'GET /rbac-audit-logs',
       (await request('GET', '/rbac-audit-logs')).status,
@@ -126,7 +126,7 @@ async function main() {
 
     const adminToken = await login(SEED_ADMIN_EMAIL, getSeedAdminPassword());
 
-    console.log('2. super_admin — GET /rbac-audit-logs (expect 200, paginated)');
+    console.log('2. super_admin - GET /rbac-audit-logs (expect 200, paginated)');
     const list = await request('GET', '/rbac-audit-logs?page=1&limit=5', {
       token: adminToken,
     });
@@ -168,7 +168,7 @@ async function main() {
     );
     assertStatus('GET by actor', byActor.status, 200);
 
-    console.log('6. org_admin (register) — GET /rbac-audit-logs (expect 403)');
+    console.log('6. org_admin (register) - GET /rbac-audit-logs (expect 403)');
     const orgEmail = `rbac.audit.org.${Date.now()}@africatourismgate.local`;
     const reg = await request('POST', '/auth/register', {
       body: {
@@ -189,7 +189,7 @@ async function main() {
     );
 
     if (list.data.data[0]?.id) {
-      console.log('7. super_admin — GET /rbac-audit-logs/:id');
+      console.log('7. super_admin - GET /rbac-audit-logs/:id');
       const one = await request('GET', `/rbac-audit-logs/${list.data.data[0].id}`, {
         token: adminToken,
       });

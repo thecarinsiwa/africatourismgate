@@ -124,7 +124,7 @@
     },
     "wholeDomain": "Tout le domaine",
     "perAction": "Par action",
-    "ariaToggleDomain": "Tout {domain} — {action}",
+    "ariaToggleDomain": "Tout {domain} - {action}",
     "ariaToggleDomainAll": "Sélectionner toutes les permissions de {domain}",
     "toast": {
       "savedTitle": "Permissions enregistrées",

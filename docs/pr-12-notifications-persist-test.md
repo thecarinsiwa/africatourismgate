@@ -1,4 +1,4 @@
-# PR-12 — Scénario de test (notifications staff persistées)
+# PR-12 - Scénario de test (notifications staff persistées)
 
 Branche : `feature/pr-12-notifications-persist`  
 Réf. : [roadmap-post-reunion-08-2026.md](./roadmap-post-reunion-08-2026.md) (PR-12)
@@ -11,9 +11,9 @@ Réf. : [roadmap-post-reunion-08-2026.md](./roadmap-post-reunion-08-2026.md) (PR
 | Événements V1 | `booking_pending_approval`, `booking_client_message`, `review_pending`, `support_ticket_open` |
 | Fan-out | Users actifs avec la permission cible **ou** `super_admin` |
 | Permissions | `bookings.read` / `reviews.read` / `support_tickets.read` |
-| Hook admin | **API seule** — plus d’agrégation REST ni `localStorage` |
+| Hook admin | **API seule** - plus d’agrégation REST ni `localStorage` |
 | Temps réel | Polling **45 s** + refetch au focus |
-| Backfill | **Aucun** — inbox vide jusqu’aux nouveaux événements |
+| Backfill | **Aucun** - inbox vide jusqu’aux nouveaux événements |
 | WS / FCM | Hors scope |
 
 ## Règle sous test
@@ -43,19 +43,19 @@ Prérequis :
 1. Appliquer `add_staff_notifications.sql`.
 2. Assert : table `notifications`, indexes `idx_notifications_user_created` / `idx_notifications_user_unread`, FK `user_id` → `users`.
 
-### B. Fan-out — pending_approval
+### B. Fan-out - pending_approval
 
 1. Client (ou staff pour client) → `POST /bookings/request` → status `pending_approval`.
 2. Assert DB : une ligne `type = booking_pending_approval` **par** user staff avec `bookings.read` (+ super_admin).
 3. Payload : `bookingId`, `href` type `/reservations?search=…`, `priority: high`.
 
-### C. Fan-out — message client
+### C. Fan-out - message client
 
 1. Sur un booking assisté, client envoie un message.
 2. Assert : lignes `booking_client_message` pour staff `bookings.read`.
 3. Message **staff → client** : **pas** de nouvelle notif staff.
 
-### D. Fan-out — avis + ticket
+### D. Fan-out - avis + ticket
 
 1. Client publie un avis → `review_pending` pour users `reviews.read`.
 2. Création ticket `status = open` → `support_ticket_open` pour users `support_tickets.read`.

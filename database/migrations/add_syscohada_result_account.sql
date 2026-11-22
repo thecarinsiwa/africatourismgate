@@ -1,4 +1,4 @@
--- SYSCO-008 — Compte de résultat net (classe 1) pour OD de clôture MVP
+-- SYSCO-008 - Compte de résultat net (classe 1) pour OD de clôture MVP
 SET NAMES utf8mb4;
 
 INSERT IGNORE INTO `chart_of_accounts` (

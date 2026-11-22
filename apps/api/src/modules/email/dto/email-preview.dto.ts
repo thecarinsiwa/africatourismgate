@@ -61,7 +61,7 @@ export class EmailPreviewBrandingOverrideDto {
   @MaxLength(255)
   welcomeSubject?: string;
 
-  @ApiPropertyOptional({ example: 'Confirmation — {ref}' })
+  @ApiPropertyOptional({ example: 'Confirmation - {ref}' })
   @IsOptional()
   @IsString()
   @MaxLength(255)

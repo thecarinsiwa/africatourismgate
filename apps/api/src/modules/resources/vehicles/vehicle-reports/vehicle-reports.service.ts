@@ -242,7 +242,7 @@ export class VehicleReportsService {
     const byAgencyMap = new Map<string, number>();
 
     for (const vehicle of scope.vehicles) {
-      const label = vehicle.agencyName || '—';
+      const label = vehicle.agencyName || '-';
       byAgencyMap.set(label, (byAgencyMap.get(label) ?? 0) + 1);
     }
 

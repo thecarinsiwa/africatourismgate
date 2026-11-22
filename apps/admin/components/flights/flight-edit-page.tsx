@@ -190,7 +190,7 @@ export function FlightEditPage({ flightId }: FlightEditPageProps) {
               </code>
               {airline ? (
                 <DataTableBadge variant="muted">
-                  {airline.iataCode} — {airline.name}
+                  {airline.iataCode} - {airline.name}
                 </DataTableBadge>
               ) : null}
             </div>

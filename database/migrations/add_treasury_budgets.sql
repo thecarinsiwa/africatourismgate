@@ -1,4 +1,4 @@
--- TRESO-004 — Budgets mensuels / annuels, par activité ou produit/service
+-- TRESO-004 - Budgets mensuels / annuels, par activité ou produit/service
 -- Down (manuel) : voir commentaires en bas de fichier.
 SET NAMES utf8mb4;
 
@@ -61,6 +61,6 @@ CREATE TABLE IF NOT EXISTS `budgets` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------------
--- DOWN (manuel — ne pas placer dans un .sql auto-appliqué par db:sync)
+-- DOWN (manuel - ne pas placer dans un .sql auto-appliqué par db:sync)
 -- ---------------------------------------------------------------------------
 -- DROP TABLE IF EXISTS `budgets`;

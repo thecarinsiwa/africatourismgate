@@ -77,7 +77,7 @@ export interface RefreshTokenRequest {
   refreshToken: string;
 }
 
-/** Same payload as refresh — heartbeat for session activity. */
+/** Same payload as refresh - heartbeat for session activity. */
 export type TouchSessionRequest = RefreshTokenRequest;
 
 export const SESSION_LOCKED_CODE = 'SESSION_LOCKED' as const;
