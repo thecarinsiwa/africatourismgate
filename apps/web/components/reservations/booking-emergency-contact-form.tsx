@@ -223,7 +223,7 @@ export function BookingEmergencyContactForm({
   }
 
   return (
-    <section className="overflow-hidden rounded-xl border border-atg-border bg-atg-elevated dark:border-atg-border dark:bg-atg-elevated">
+    <section className="overflow-hidden rounded-xl border-2 border-red-600 bg-atg-elevated dark:border-red-500 dark:bg-atg-elevated">
       <div className="flex items-center gap-2 bg-atg-surface px-3 py-2 dark:bg-white/5 sm:px-4">
         <button
           type="button"
@@ -251,7 +251,7 @@ export function BookingEmergencyContactForm({
           aria-controls={panelId}
           onClick={() => setExpanded((current) => !current)}
           aria-label={labels.title}
-          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded border border-atg-border text-atg-fg transition-colors hover:bg-black/[0.03] dark:border-atg-border dark:hover:bg-white/[0.04]"
+          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded border border-red-600 text-atg-fg transition-colors hover:bg-red-50 dark:border-red-500 dark:hover:bg-red-950/30"
         >
           <svg
             className={`h-3.5 w-3.5 transition-transform ${expanded ? 'rotate-180' : ''}`}
@@ -272,7 +272,7 @@ export function BookingEmergencyContactForm({
           id={panelId}
           role="region"
           aria-labelledby={triggerId}
-          className="space-y-3 border-t border-atg-border p-4 dark:border-atg-border"
+          className="space-y-3 border-t border-red-600/40 p-4 dark:border-red-500/40"
         >
           {labels.subtitle ? (
             <p className="text-sm text-atg-muted">{labels.subtitle}</p>
