@@ -2464,6 +2464,7 @@
       "removeTraveler": "Remove a traveler",
       "seatsAdjustError": "Unable to update the number of travelers. Please try again.",
       "addingTraveler": "Updating...",
+      "seatsRemaining": "{n} seat(s) remaining",
       "idDocument": "Identity document",
       "idDocumentHint": "JPEG, PNG, WebP or PDF — 10 MB max.",
       "idDocumentSelected": "Choose a file",

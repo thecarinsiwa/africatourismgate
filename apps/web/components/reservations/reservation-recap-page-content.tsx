@@ -414,10 +414,23 @@ export function ReservationRecapPageContent({ draft }: Props) {
   const vehicleSeatsMax = useMemo(() => {
     if (!vehicleTrip) return 1;
     if (vehicleTrip.isMine) {
-      return Math.max(1, vehicleTrip.maxCapacity);
+      // Creator can fill free seats, or stay within seats already reserved for this trip.
+      return Math.max(
+        1,
+        Math.min(
+          vehicleTrip.maxCapacity,
+          Math.max(vehicleSeats, vehicleTrip.seatsReserved) +
+            Math.max(0, vehicleTrip.seatsRemaining),
+        ),
+      );
     }
     return Math.max(1, vehicleSeats + Math.max(0, vehicleTrip.seatsRemaining));
   }, [vehicleTrip, vehicleSeats]);
+
+  const vehicleSeatsRemainingToAdd = useMemo(
+    () => Math.max(0, vehicleSeatsMax - vehicleSeats),
+    [vehicleSeatsMax, vehicleSeats],
+  );
 
   function syncVehicleSeatsUrl(nextSeats: number) {
     if (!draft || !isVehicleReservationDraft(draft)) return;
@@ -992,9 +1005,11 @@ export function ReservationRecapPageContent({ draft }: Props) {
                           setManifestErrors({});
                           void adjustVehicleSeats(vehicleSeats - 1);
                         },
-                        canAddTraveler: !seatsAdjusting && vehicleSeats < vehicleSeatsMax,
+                        canAddTraveler:
+                          !seatsAdjusting && vehicleSeatsRemainingToAdd > 0,
                         canRemoveTraveler: !seatsAdjusting && vehicleSeats > 1,
                         addingTraveler: seatsAdjusting,
+                        seatsRemainingCount: vehicleSeatsRemainingToAdd,
                       }
                     : {})}
                 />

@@ -2464,6 +2464,7 @@
       "removeTraveler": "Retirer le dernier voyageur",
       "seatsAdjustError": "Impossible d'ajouter une place sur ce trajet. Réessayez.",
       "addingTraveler": "Ajout de la place...",
+      "seatsRemaining": "{n} place(s) restante(s)",
       "idDocument": "Pièce d'identité",
       "idDocumentHint": "JPEG, PNG, WebP ou PDF — 10 Mo max.",
       "idDocumentSelected": "Choisir un fichier",

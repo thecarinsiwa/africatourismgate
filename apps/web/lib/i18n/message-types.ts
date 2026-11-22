@@ -244,6 +244,7 @@ export type Translations = {
       removeTraveler: string;
       seatsAdjustError: string;
       addingTraveler: string;
+      seatsRemaining: string;
       idDocument: string;
       idDocumentHint: string;
       idDocumentSelected: string;

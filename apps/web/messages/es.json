@@ -2463,6 +2463,7 @@
       "removeTraveler": "Quitar un viajero",
       "seatsAdjustError": "No se pudo actualizar el número de viajeros. Inténtalo de nuevo.",
       "addingTraveler": "Actualizando...",
+      "seatsRemaining": "{n} plaza(s) restante(s)",
       "idDocument": "Documento de identidad",
       "idDocumentHint": "JPEG, PNG, WebP o PDF — 10 MB máx.",
       "idDocumentSelected": "Elegir archivo",

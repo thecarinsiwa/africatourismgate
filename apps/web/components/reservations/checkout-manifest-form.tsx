@@ -420,6 +420,7 @@ type Labels = {
   addTraveler?: string;
   removeTraveler?: string;
   addingTraveler?: string;
+  seatsRemaining?: string;
 };
 
 type Props = {
@@ -433,6 +434,7 @@ type Props = {
   canAddTraveler?: boolean;
   canRemoveTraveler?: boolean;
   addingTraveler?: boolean;
+  seatsRemainingCount?: number;
 };
 
 export function CheckoutManifestForm({
@@ -446,6 +448,7 @@ export function CheckoutManifestForm({
   canAddTraveler = false,
   canRemoveTraveler = false,
   addingTraveler = false,
+  seatsRemainingCount,
 }: Props) {
   const baseId = useId();
   const locale = useLocale();
@@ -549,14 +552,25 @@ export function CheckoutManifestForm({
             ) : null}
           </div>
           {showAdd ? (
-            <button
-              type="button"
-              disabled={!canAddTraveler || addingTraveler}
-              onClick={onAddTraveler}
-              className="shrink-0 rounded-lg border border-primary px-3 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {labels.addTraveler}
-            </button>
+            <div className="flex shrink-0 flex-col items-end gap-1">
+              {labels.seatsRemaining && seatsRemainingCount != null ? (
+                <p
+                  className={`text-xs tabular-nums ${
+                    seatsRemainingCount > 0 ? 'text-atg-muted' : 'font-medium text-red-600 dark:text-red-400'
+                  }`}
+                >
+                  {labels.seatsRemaining.replace('{n}', String(seatsRemainingCount))}
+                </p>
+              ) : null}
+              <button
+                type="button"
+                disabled={!canAddTraveler || addingTraveler || seatsRemainingCount === 0}
+                onClick={onAddTraveler}
+                className="rounded-lg border border-primary px-3 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {labels.addTraveler}
+              </button>
+            </div>
           ) : null}
         </div>
 
