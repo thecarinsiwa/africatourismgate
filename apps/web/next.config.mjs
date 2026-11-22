@@ -51,6 +51,8 @@ function buildContentSecurityPolicy() {
     'https://tile.openstreetmap.org',
     // Leaflet itinerary road routing (override via NEXT_PUBLIC_OSRM_URL).
     'https://router.project-osrm.org',
+    // Geocode free-text vehicle route cities (departure / arrival).
+    'https://nominatim.openstreetmap.org',
   ]);
 
   try {

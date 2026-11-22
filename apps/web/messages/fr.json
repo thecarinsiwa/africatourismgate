@@ -1405,6 +1405,10 @@
     "galleryPrevious": "Photo précédente",
     "galleryNext": "Photo suivante",
     "galleryCounter": "Photo {current} sur {total}",
+    "routeMapTitle": "Carte du trajet",
+    "routeMapAria": "Carte des points de départ et d’arrivée",
+    "routeMapDeparture": "Départ",
+    "routeMapArrival": "Arrivée",
     "breadcrumbAria": "Fil d’Ariane"
   },
   "cruises": {

@@ -1405,6 +1405,10 @@
     "galleryPrevious": "Previous photo",
     "galleryNext": "Next photo",
     "galleryCounter": "Photo {current} of {total}",
+    "routeMapTitle": "Route map",
+    "routeMapAria": "Map showing departure and arrival points",
+    "routeMapDeparture": "Departure",
+    "routeMapArrival": "Arrival",
     "breadcrumbAria": "Breadcrumb"
   },
   "cruises": {
