@@ -22,6 +22,7 @@ export type {
   AuthMe,
   AuthTokens,
   AuthUser,
+  ForgotPasswordPortal,
   ForgotPasswordRequest,
   ForgotPasswordResponse,
   LoginRequest,

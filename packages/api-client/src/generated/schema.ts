@@ -7736,6 +7736,11 @@ export interface components {
         ForgotPasswordDto: {
             /** @example admin@africatourismgate.local */
             email: string;
+            /**
+             * Which app hosts the reset page linked in the email. Defaults to admin.
+             * @default admin
+             */
+            portal?: "web" | "admin";
         };
         ForgotPasswordResponseDto: {
             /** @example Si un compte existe pour cette adresse, un lien de réinitialisation a été envoyé. */

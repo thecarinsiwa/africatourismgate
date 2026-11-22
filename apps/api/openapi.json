@@ -26143,6 +26143,15 @@
           "email": {
             "type": "string",
             "example": "admin@africatourismgate.local"
+          },
+          "portal": {
+            "type": "string",
+            "enum": [
+              "web",
+              "admin"
+            ],
+            "default": "admin",
+            "description": "Which app hosts the reset page linked in the email. Defaults to admin."
           }
         },
         "required": [

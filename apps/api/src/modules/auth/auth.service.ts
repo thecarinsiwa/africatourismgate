@@ -742,7 +742,7 @@ export class AuthService {
       });
       await this.passwordResetRepo.save(resetRow);
 
-      const resetUrl = `${this.getResetPasswordBaseUrl()}?token=${rawToken}`;
+      const resetUrl = `${this.getResetPasswordBaseUrl(dto.portal)}?token=${rawToken}`;
       const mailResult = await this.emailService.sendPasswordReset({
         to: user.email,
         firstName: user.firstName,
@@ -795,7 +795,18 @@ export class AuthService {
     return { success: true };
   }
 
-  private getResetPasswordBaseUrl(): string {
+  private getResetPasswordBaseUrl(portal?: 'web' | 'admin'): string {
+    if (portal === 'web') {
+      const configured = this.config.get<string>('WEB_RESET_PASSWORD_URL');
+      if (configured?.trim()) {
+        return configured.trim().replace(/\/$/, '');
+      }
+      const webUrl = process.env.NEXT_PUBLIC_WEB_URL?.replace(/\/$/, '');
+      return webUrl
+        ? `${webUrl}/booking/reset-password`
+        : 'http://localhost:3002/booking/reset-password';
+    }
+
     const configured = this.config.get<string>('ADMIN_RESET_PASSWORD_URL');
     if (configured?.trim()) {
       return configured.trim().replace(/\/$/, '');

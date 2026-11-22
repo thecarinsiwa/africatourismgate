@@ -82,8 +82,12 @@ export type TouchSessionRequest = RefreshTokenRequest;
 
 export const SESSION_LOCKED_CODE = 'SESSION_LOCKED' as const;
 
+export type ForgotPasswordPortal = 'web' | 'admin';
+
 export interface ForgotPasswordRequest {
   email: string;
+  /** Which app hosts the reset page linked in the email. Defaults to admin. */
+  portal?: ForgotPasswordPortal;
 }
 
 export interface ForgotPasswordResponse {
