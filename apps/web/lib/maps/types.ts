@@ -5,3 +5,6 @@ export type ItineraryMapPoint = {
   longitude: number;
   description?: string | null;
 };
+
+/** Optional product icon shown on the route polyline. */
+export type ItineraryRouteIcon = 'vehicle';

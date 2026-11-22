@@ -159,6 +159,7 @@ export function CarRouteMapSection({
         ariaLabel={labels.routeMapAria}
         durationLabels={durationLabels}
         onRouteStatsChange={setRouteStats}
+        routeIcon="vehicle"
       />
     </section>
   );

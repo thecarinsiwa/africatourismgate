@@ -5,7 +5,7 @@ import type {
   TravelDurationLabels,
   TravelRouteStatsLabels,
 } from '../../lib/maps/travel-duration';
-import type { ItineraryMapPoint } from '../../lib/maps/types';
+import type { ItineraryMapPoint, ItineraryRouteIcon } from '../../lib/maps/types';
 
 const ItineraryMapInner = dynamic(
   () => import('./itinerary-map-inner').then((m) => m.ItineraryMapInner),
@@ -25,6 +25,8 @@ type ItineraryMapSectionProps = {
   /** When set, shows estimated driving time / distance on the route polyline. */
   durationLabels?: TravelDurationLabels;
   onRouteStatsChange?: (stats: TravelRouteStatsLabels | null) => void;
+  /** Optional product icon on the route (e.g. car for vehicle trips). */
+  routeIcon?: ItineraryRouteIcon;
 };
 
 export function ItineraryMapSection({
@@ -34,6 +36,7 @@ export function ItineraryMapSection({
   mapClassName,
   durationLabels,
   onRouteStatsChange,
+  routeIcon,
 }: ItineraryMapSectionProps) {
   if (!points.length) {
     return null;
@@ -48,6 +51,7 @@ export function ItineraryMapSection({
           className={mapClassName}
           durationLabels={durationLabels}
           onRouteStatsChange={onRouteStatsChange}
+          routeIcon={routeIcon}
         />
       </div>
     </div>

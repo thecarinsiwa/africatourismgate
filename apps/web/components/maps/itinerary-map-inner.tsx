@@ -14,7 +14,7 @@ import {
   type TravelDurationLabels,
   type TravelRouteStatsLabels,
 } from '../../lib/maps/travel-duration';
-import type { ItineraryMapPoint } from '../../lib/maps/types';
+import type { ItineraryMapPoint, ItineraryRouteIcon } from '../../lib/maps/types';
 
 type ItineraryMapInnerProps = {
   points: ItineraryMapPoint[];
@@ -23,6 +23,8 @@ type ItineraryMapInnerProps = {
   /** When set, shows estimated driving time / distance on the route. */
   durationLabels?: TravelDurationLabels;
   onRouteStatsChange?: (stats: TravelRouteStatsLabels | null) => void;
+  /** Optional product icon on the route (e.g. car for vehicle trips). */
+  routeIcon?: ItineraryRouteIcon;
 };
 
 type LeafletModule = typeof import('leaflet');
@@ -50,6 +52,7 @@ export function ItineraryMapInner({
   className,
   durationLabels,
   onRouteStatsChange,
+  routeIcon,
 }: ItineraryMapInnerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
@@ -160,8 +163,8 @@ export function ItineraryMapInner({
     }
 
     // Sync — do not re-import leaflet (async then() races overwrite the OSRM path).
-    renderItinerary(L, map, layerGroup, points, route, durationLabels);
-  }, [points, pointsKey, route, mapReady, durationLabels]);
+    renderItinerary(L, map, layerGroup, points, route, durationLabels, routeIcon);
+  }, [points, pointsKey, route, mapReady, durationLabels, routeIcon]);
 
   return (
     <div
@@ -180,6 +183,7 @@ function renderItinerary(
   points: ItineraryMapPoint[],
   route: RouteState,
   durationLabels: TravelDurationLabels | undefined,
+  routeIcon: ItineraryRouteIcon | undefined,
 ) {
   layerGroup.clearLayers();
 
@@ -231,20 +235,31 @@ function renderItinerary(
       ...(isPreview ? { opacity: 0.35, dashArray: '6 8' } : {}),
     }).addTo(layerGroup);
 
-    if (!isPreview && durationLabels) {
-      const badgeText = formatTravelRouteBadge({
-        durationLabel: formatTravelDurationSeconds(
-          route.durationSeconds,
-          durationLabels,
-        ),
-        distanceLabel: formatTravelDistanceMeters(route.distanceMeters),
-      });
+    if (!isPreview) {
+      const mid = path[Math.floor(path.length / 2)] ?? path[0];
+      const badgeText = durationLabels
+        ? formatTravelRouteBadge({
+            durationLabel: formatTravelDurationSeconds(
+              route.durationSeconds,
+              durationLabels,
+            ),
+            distanceLabel: formatTravelDistanceMeters(route.distanceMeters),
+          })
+        : null;
+
       if (badgeText) {
-        const mid = path[Math.floor(path.length / 2)] ?? path[0];
         L.marker(mid, {
-          icon: createDurationBadgeIcon(L, badgeText),
+          icon: createDurationBadgeIcon(L, badgeText, routeIcon === 'vehicle'),
           interactive: false,
           keyboard: false,
+          zIndexOffset: 250,
+        }).addTo(layerGroup);
+      } else if (routeIcon === 'vehicle') {
+        L.marker(mid, {
+          icon: createVehicleMarkerIcon(L),
+          interactive: false,
+          keyboard: false,
+          zIndexOffset: 200,
         }).addTo(layerGroup);
       }
     }
@@ -282,14 +297,31 @@ function createNumberedMarkerIcon(
   });
 }
 
+const VEHICLE_ICON_SVG = `<svg class="atg-itinerary-vehicle__svg" width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="currentColor" d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>`;
+
+const VEHICLE_ICON_SIZE = 34;
+
+function createVehicleMarkerIcon(L: LeafletModule): import('leaflet').DivIcon {
+  return L.divIcon({
+    className: 'atg-itinerary-vehicle',
+    html: `<span class="atg-itinerary-vehicle__pin" aria-hidden="true">${VEHICLE_ICON_SVG}</span>`,
+    iconSize: [VEHICLE_ICON_SIZE, VEHICLE_ICON_SIZE],
+    iconAnchor: [VEHICLE_ICON_SIZE / 2, VEHICLE_ICON_SIZE / 2],
+  });
+}
+
 function createDurationBadgeIcon(
   L: LeafletModule,
   durationText: string,
+  withVehicleIcon = false,
 ): import('leaflet').DivIcon {
   const label = escapeHtml(durationText);
+  const icon = withVehicleIcon
+    ? `<span class="atg-itinerary-duration__icon">${VEHICLE_ICON_SVG}</span>`
+    : '';
   return L.divIcon({
     className: 'atg-itinerary-duration',
-    html: `<span class="atg-itinerary-duration__badge" aria-hidden="true">${label}</span>`,
+    html: `<span class="atg-itinerary-duration__badge" aria-hidden="true">${icon}<span class="atg-itinerary-duration__text">${label}</span></span>`,
     iconSize: [0, 0],
     iconAnchor: [0, 0],
   });
