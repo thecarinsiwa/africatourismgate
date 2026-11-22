@@ -380,6 +380,7 @@ export function CarDetailPageContent({
                 routeMapDeparture: c.routeMapDeparture,
                 routeMapArrival: c.routeMapArrival,
                 routeMapDuration: c.routeMapDuration,
+                routeMapDistance: c.routeMapDistance,
                 hourSingular: c.hourSingular,
                 hourPlural: c.hourPlural,
                 minuteSingular: c.minuteSingular,

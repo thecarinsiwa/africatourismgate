@@ -8,8 +8,11 @@ import {
   type LatLngTuple,
 } from '../../lib/maps/osrm-route';
 import {
+  formatTravelDistanceMeters,
   formatTravelDurationSeconds,
+  formatTravelRouteBadge,
   type TravelDurationLabels,
+  type TravelRouteStatsLabels,
 } from '../../lib/maps/travel-duration';
 import type { ItineraryMapPoint } from '../../lib/maps/types';
 
@@ -17,9 +20,9 @@ type ItineraryMapInnerProps = {
   points: ItineraryMapPoint[];
   ariaLabel: string;
   className?: string;
-  /** When set, shows estimated driving time on the route. */
+  /** When set, shows estimated driving time / distance on the route. */
   durationLabels?: TravelDurationLabels;
-  onDurationChange?: (durationLabel: string | null) => void;
+  onRouteStatsChange?: (stats: TravelRouteStatsLabels | null) => void;
 };
 
 type LeafletModule = typeof import('leaflet');
@@ -27,6 +30,7 @@ type LeafletModule = typeof import('leaflet');
 type RouteState = {
   path: LatLngTuple[] | null;
   durationSeconds: number | null;
+  distanceMeters: number | null;
 };
 
 const DEFAULT_HEIGHT_CLASS = 'h-[320px] w-full sm:h-[400px]';
@@ -45,18 +49,19 @@ export function ItineraryMapInner({
   ariaLabel,
   className,
   durationLabels,
-  onDurationChange,
+  onRouteStatsChange,
 }: ItineraryMapInnerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const layerGroupRef = useRef<LayerGroup | null>(null);
   const leafletRef = useRef<LeafletModule | null>(null);
-  const onDurationChangeRef = useRef(onDurationChange);
-  onDurationChangeRef.current = onDurationChange;
+  const onRouteStatsChangeRef = useRef(onRouteStatsChange);
+  onRouteStatsChangeRef.current = onRouteStatsChange;
   const [mapReady, setMapReady] = useState(false);
   const [route, setRoute] = useState<RouteState>({
     path: null,
     durationSeconds: null,
+    distanceMeters: null,
   });
 
   const pointsKey = useMemo(
@@ -74,8 +79,8 @@ export function ItineraryMapInner({
   // Fetch road geometry independently of the Leaflet mount lifecycle.
   useEffect(() => {
     if (routePoints.length < 2) {
-      setRoute({ path: null, durationSeconds: null });
-      onDurationChangeRef.current?.(null);
+      setRoute({ path: null, durationSeconds: null, distanceMeters: null });
+      onRouteStatsChangeRef.current?.(null);
       return;
     }
 
@@ -83,8 +88,9 @@ export function ItineraryMapInner({
     setRoute({
       path: straightLineLatLngs(routePoints),
       durationSeconds: null,
+      distanceMeters: null,
     });
-    onDurationChangeRef.current?.(null);
+    onRouteStatsChangeRef.current?.(null);
 
     void fetchOsrmDrivingRoute(routePoints).then((routed) => {
       if (!routed?.path.length) return;
@@ -92,11 +98,16 @@ export function ItineraryMapInner({
       setRoute({
         path: routed.path,
         durationSeconds: routed.durationSeconds,
+        distanceMeters: routed.distanceMeters,
       });
       if (durationLabels) {
-        onDurationChangeRef.current?.(
-          formatTravelDurationSeconds(routed.durationSeconds, durationLabels),
-        );
+        onRouteStatsChangeRef.current?.({
+          durationLabel: formatTravelDurationSeconds(
+            routed.durationSeconds,
+            durationLabels,
+          ),
+          distanceLabel: formatTravelDistanceMeters(routed.distanceMeters),
+        });
       }
     });
   }, [pointsKey, routePoints, durationLabels]);
@@ -220,15 +231,18 @@ function renderItinerary(
       ...(isPreview ? { opacity: 0.35, dashArray: '6 8' } : {}),
     }).addTo(layerGroup);
 
-    if (!isPreview && durationLabels && route.durationSeconds != null) {
-      const durationText = formatTravelDurationSeconds(
-        route.durationSeconds,
-        durationLabels,
-      );
-      if (durationText) {
+    if (!isPreview && durationLabels) {
+      const badgeText = formatTravelRouteBadge({
+        durationLabel: formatTravelDurationSeconds(
+          route.durationSeconds,
+          durationLabels,
+        ),
+        distanceLabel: formatTravelDistanceMeters(route.distanceMeters),
+      });
+      if (badgeText) {
         const mid = path[Math.floor(path.length / 2)] ?? path[0];
         L.marker(mid, {
-          icon: createDurationBadgeIcon(L, durationText),
+          icon: createDurationBadgeIcon(L, badgeText),
           interactive: false,
           keyboard: false,
         }).addTo(layerGroup);

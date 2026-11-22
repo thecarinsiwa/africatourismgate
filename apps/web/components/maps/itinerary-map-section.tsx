@@ -1,7 +1,10 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import type { TravelDurationLabels } from '../../lib/maps/travel-duration';
+import type {
+  TravelDurationLabels,
+  TravelRouteStatsLabels,
+} from '../../lib/maps/travel-duration';
 import type { ItineraryMapPoint } from '../../lib/maps/types';
 
 const ItineraryMapInner = dynamic(
@@ -19,9 +22,9 @@ type ItineraryMapSectionProps = {
   ariaLabel: string;
   className?: string;
   mapClassName?: string;
-  /** When set, shows estimated driving time on the route polyline. */
+  /** When set, shows estimated driving time / distance on the route polyline. */
   durationLabels?: TravelDurationLabels;
-  onDurationChange?: (durationLabel: string | null) => void;
+  onRouteStatsChange?: (stats: TravelRouteStatsLabels | null) => void;
 };
 
 export function ItineraryMapSection({
@@ -30,7 +33,7 @@ export function ItineraryMapSection({
   className,
   mapClassName,
   durationLabels,
-  onDurationChange,
+  onRouteStatsChange,
 }: ItineraryMapSectionProps) {
   if (!points.length) {
     return null;
@@ -44,7 +47,7 @@ export function ItineraryMapSection({
           ariaLabel={ariaLabel}
           className={mapClassName}
           durationLabels={durationLabels}
-          onDurationChange={onDurationChange}
+          onRouteStatsChange={onRouteStatsChange}
         />
       </div>
     </div>

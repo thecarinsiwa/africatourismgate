@@ -5,6 +5,11 @@ export type TravelDurationLabels = {
   minutePlural: string;
 };
 
+export type TravelRouteStatsLabels = {
+  durationLabel: string | null;
+  distanceLabel: string | null;
+};
+
 /**
  * Format OSRM duration (seconds) for map UI.
  * Rounds to the nearest minute; returns null if under 30s.
@@ -38,4 +43,33 @@ export function formatTravelDurationSeconds(
   }
 
   return parts.join(' ') || null;
+}
+
+/**
+ * Format OSRM distance (meters) as kilometers for map UI.
+ * Returns null if under ~50 m.
+ */
+export function formatTravelDistanceMeters(
+  distanceMeters: number | null | undefined,
+): string | null {
+  if (distanceMeters == null || !Number.isFinite(distanceMeters) || distanceMeters < 50) {
+    return null;
+  }
+
+  const km = distanceMeters / 1000;
+  if (km < 10) {
+    const rounded = Math.round(km * 10) / 10;
+    return `${Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1)} km`;
+  }
+  return `${Math.round(km)} km`;
+}
+
+/** Join duration + distance for the map badge, e.g. "33 min · 24 km". */
+export function formatTravelRouteBadge(
+  stats: TravelRouteStatsLabels,
+): string | null {
+  const parts = [stats.durationLabel, stats.distanceLabel].filter(
+    (part): part is string => Boolean(part),
+  );
+  return parts.length ? parts.join(' · ') : null;
 }

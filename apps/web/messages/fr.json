@@ -1410,6 +1410,7 @@
     "routeMapDeparture": "Départ",
     "routeMapArrival": "Arrivée",
     "routeMapDuration": "Durée estimée",
+    "routeMapDistance": "Distance",
     "hourSingular": "1 h",
     "hourPlural": "{n} h",
     "minuteSingular": "1 min",

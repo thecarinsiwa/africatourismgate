@@ -2,7 +2,10 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { geocodePlace } from '../../lib/maps/geocode-place';
-import type { TravelDurationLabels } from '../../lib/maps/travel-duration';
+import type {
+  TravelDurationLabels,
+  TravelRouteStatsLabels,
+} from '../../lib/maps/travel-duration';
 import type { ItineraryMapPoint } from '../../lib/maps/types';
 import { ItineraryMapSection } from '../maps/itinerary-map-section';
 
@@ -12,6 +15,7 @@ type CarRouteMapLabels = {
   routeMapDeparture: string;
   routeMapArrival: string;
   routeMapDuration: string;
+  routeMapDistance: string;
   hourSingular: string;
   hourPlural: string;
   minuteSingular: string;
@@ -30,7 +34,9 @@ export function CarRouteMapSection({
   labels,
 }: CarRouteMapSectionProps) {
   const [points, setPoints] = useState<ItineraryMapPoint[] | null>(null);
-  const [durationLabel, setDurationLabel] = useState<string | null>(null);
+  const [routeStats, setRouteStats] = useState<TravelRouteStatsLabels | null>(
+    null,
+  );
 
   const durationLabels: TravelDurationLabels = useMemo(
     () => ({
@@ -47,6 +53,18 @@ export function CarRouteMapSection({
     ],
   );
 
+  const statsCaption = useMemo(() => {
+    if (!routeStats) return null;
+    const parts: string[] = [];
+    if (routeStats.durationLabel) {
+      parts.push(`${labels.routeMapDuration}: ${routeStats.durationLabel}`);
+    }
+    if (routeStats.distanceLabel) {
+      parts.push(`${labels.routeMapDistance}: ${routeStats.distanceLabel}`);
+    }
+    return parts.length ? parts.join(' · ') : null;
+  }, [routeStats, labels.routeMapDuration, labels.routeMapDistance]);
+
   useEffect(() => {
     const departure = departureCity.trim();
     const arrival = arrivalCity.trim();
@@ -57,7 +75,7 @@ export function CarRouteMapSection({
 
     let cancelled = false;
     const controller = new AbortController();
-    setDurationLabel(null);
+    setRouteStats(null);
 
     void (async () => {
       try {
@@ -129,20 +147,18 @@ export function CarRouteMapSection({
     <section aria-labelledby="car-route-map-heading">
       <h2
         id="car-route-map-heading"
-        className={`text-lg font-bold text-atg-fg ${durationLabel ? 'mb-1' : 'mb-3'}`}
+        className={`text-lg font-bold text-atg-fg ${statsCaption ? 'mb-1' : 'mb-3'}`}
       >
         {labels.routeMapTitle}
       </h2>
-      {durationLabel ? (
-        <p className="mb-3 text-sm text-atg-muted">
-          {labels.routeMapDuration}: {durationLabel}
-        </p>
+      {statsCaption ? (
+        <p className="mb-3 text-sm text-atg-muted">{statsCaption}</p>
       ) : null}
       <ItineraryMapSection
         points={points}
         ariaLabel={labels.routeMapAria}
         durationLabels={durationLabels}
-        onDurationChange={setDurationLabel}
+        onRouteStatsChange={setRouteStats}
       />
     </section>
   );
