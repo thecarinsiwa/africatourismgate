@@ -379,6 +379,11 @@ export function CarDetailPageContent({
                 routeMapAria: c.routeMapAria,
                 routeMapDeparture: c.routeMapDeparture,
                 routeMapArrival: c.routeMapArrival,
+                routeMapDuration: c.routeMapDuration,
+                hourSingular: c.hourSingular,
+                hourPlural: c.hourPlural,
+                minuteSingular: c.minuteSingular,
+                minutePlural: c.minutePlural,
               }}
             />
 

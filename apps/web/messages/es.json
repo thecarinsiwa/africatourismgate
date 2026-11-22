@@ -1408,6 +1408,11 @@
     "routeMapAria": "Mapa con los puntos de salida y llegada",
     "routeMapDeparture": "Salida",
     "routeMapArrival": "Llegada",
+    "routeMapDuration": "Duración estimada",
+    "hourSingular": "1 h",
+    "hourPlural": "{n} h",
+    "minuteSingular": "1 min",
+    "minutePlural": "{n} min",
     "breadcrumbAria": "Miga de pan"
   },
   "cruises": {

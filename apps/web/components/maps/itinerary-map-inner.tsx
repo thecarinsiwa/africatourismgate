@@ -7,15 +7,27 @@ import {
   straightLineLatLngs,
   type LatLngTuple,
 } from '../../lib/maps/osrm-route';
+import {
+  formatTravelDurationSeconds,
+  type TravelDurationLabels,
+} from '../../lib/maps/travel-duration';
 import type { ItineraryMapPoint } from '../../lib/maps/types';
 
 type ItineraryMapInnerProps = {
   points: ItineraryMapPoint[];
   ariaLabel: string;
   className?: string;
+  /** When set, shows estimated driving time on the route. */
+  durationLabels?: TravelDurationLabels;
+  onDurationChange?: (durationLabel: string | null) => void;
 };
 
 type LeafletModule = typeof import('leaflet');
+
+type RouteState = {
+  path: LatLngTuple[] | null;
+  durationSeconds: number | null;
+};
 
 const DEFAULT_HEIGHT_CLASS = 'h-[320px] w-full sm:h-[400px]';
 // Hex only — Leaflet sets stroke as an SVG attribute; CSS vars are unreliable there.
@@ -32,13 +44,20 @@ export function ItineraryMapInner({
   points,
   ariaLabel,
   className,
+  durationLabels,
+  onDurationChange,
 }: ItineraryMapInnerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const layerGroupRef = useRef<LayerGroup | null>(null);
   const leafletRef = useRef<LeafletModule | null>(null);
+  const onDurationChangeRef = useRef(onDurationChange);
+  onDurationChangeRef.current = onDurationChange;
   const [mapReady, setMapReady] = useState(false);
-  const [routePath, setRoutePath] = useState<LatLngTuple[] | null>(null);
+  const [route, setRoute] = useState<RouteState>({
+    path: null,
+    durationSeconds: null,
+  });
 
   const pointsKey = useMemo(
     () =>
@@ -55,19 +74,32 @@ export function ItineraryMapInner({
   // Fetch road geometry independently of the Leaflet mount lifecycle.
   useEffect(() => {
     if (routePoints.length < 2) {
-      setRoutePath(null);
+      setRoute({ path: null, durationSeconds: null });
+      onDurationChangeRef.current?.(null);
       return;
     }
 
     const requestKey = pointsKey;
-    setRoutePath(straightLineLatLngs(routePoints));
+    setRoute({
+      path: straightLineLatLngs(routePoints),
+      durationSeconds: null,
+    });
+    onDurationChangeRef.current?.(null);
 
     void fetchOsrmDrivingRoute(routePoints).then((routed) => {
-      if (!routed?.length) return;
+      if (!routed?.path.length) return;
       if (latestPointsKeyRef.current !== requestKey) return;
-      setRoutePath(routed);
+      setRoute({
+        path: routed.path,
+        durationSeconds: routed.durationSeconds,
+      });
+      if (durationLabels) {
+        onDurationChangeRef.current?.(
+          formatTravelDurationSeconds(routed.durationSeconds, durationLabels),
+        );
+      }
     });
-  }, [pointsKey, routePoints]);
+  }, [pointsKey, routePoints, durationLabels]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -117,8 +149,8 @@ export function ItineraryMapInner({
     }
 
     // Sync — do not re-import leaflet (async then() races overwrite the OSRM path).
-    renderItinerary(L, map, layerGroup, points, routePath);
-  }, [points, pointsKey, routePath, mapReady]);
+    renderItinerary(L, map, layerGroup, points, route, durationLabels);
+  }, [points, pointsKey, route, mapReady, durationLabels]);
 
   return (
     <div
@@ -135,7 +167,8 @@ function renderItinerary(
   map: LeafletMap,
   layerGroup: LayerGroup,
   points: ItineraryMapPoint[],
-  routePath: LatLngTuple[] | null,
+  route: RouteState,
+  durationLabels: TravelDurationLabels | undefined,
 ) {
   layerGroup.clearLayers();
 
@@ -172,11 +205,12 @@ function renderItinerary(
   }
 
   if (points.length >= 2) {
-    const path = routePath ?? straightLineLatLngs(points);
+    const path = route.path ?? straightLineLatLngs(points);
     const isPreview =
-      !routePath ||
-      (routePath.length === points.length &&
-        routePath.every(
+      route.durationSeconds == null ||
+      !route.path ||
+      (route.path.length === points.length &&
+        route.path.every(
           (coord, i) =>
             coord[0] === points[i].latitude && coord[1] === points[i].longitude,
         ));
@@ -185,6 +219,21 @@ function renderItinerary(
       ...ROUTE_STYLE,
       ...(isPreview ? { opacity: 0.35, dashArray: '6 8' } : {}),
     }).addTo(layerGroup);
+
+    if (!isPreview && durationLabels && route.durationSeconds != null) {
+      const durationText = formatTravelDurationSeconds(
+        route.durationSeconds,
+        durationLabels,
+      );
+      if (durationText) {
+        const mid = path[Math.floor(path.length / 2)] ?? path[0];
+        L.marker(mid, {
+          icon: createDurationBadgeIcon(L, durationText),
+          interactive: false,
+          keyboard: false,
+        }).addTo(layerGroup);
+      }
+    }
 
     for (const [lat, lng] of path) {
       bounds.extend([lat, lng]);
@@ -216,6 +265,19 @@ function createNumberedMarkerIcon(
     // Tip of the pin sits on the coordinates.
     iconAnchor: [PIN_WIDTH / 2, PIN_HEIGHT],
     popupAnchor: [0, -PIN_HEIGHT + 6],
+  });
+}
+
+function createDurationBadgeIcon(
+  L: LeafletModule,
+  durationText: string,
+): import('leaflet').DivIcon {
+  const label = escapeHtml(durationText);
+  return L.divIcon({
+    className: 'atg-itinerary-duration',
+    html: `<span class="atg-itinerary-duration__badge" aria-hidden="true">${label}</span>`,
+    iconSize: [0, 0],
+    iconAnchor: [0, 0],
   });
 }
 

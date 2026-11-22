@@ -1409,6 +1409,11 @@
     "routeMapAria": "Carte des points de départ et d’arrivée",
     "routeMapDeparture": "Départ",
     "routeMapArrival": "Arrivée",
+    "routeMapDuration": "Durée estimée",
+    "hourSingular": "1 h",
+    "hourPlural": "{n} h",
+    "minuteSingular": "1 min",
+    "minutePlural": "{n} min",
     "breadcrumbAria": "Fil d’Ariane"
   },
   "cruises": {

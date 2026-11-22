@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { geocodePlace } from '../../lib/maps/geocode-place';
+import type { TravelDurationLabels } from '../../lib/maps/travel-duration';
 import type { ItineraryMapPoint } from '../../lib/maps/types';
 import { ItineraryMapSection } from '../maps/itinerary-map-section';
 
@@ -10,6 +11,11 @@ type CarRouteMapLabels = {
   routeMapAria: string;
   routeMapDeparture: string;
   routeMapArrival: string;
+  routeMapDuration: string;
+  hourSingular: string;
+  hourPlural: string;
+  minuteSingular: string;
+  minutePlural: string;
 };
 
 type CarRouteMapSectionProps = {
@@ -24,6 +30,22 @@ export function CarRouteMapSection({
   labels,
 }: CarRouteMapSectionProps) {
   const [points, setPoints] = useState<ItineraryMapPoint[] | null>(null);
+  const [durationLabel, setDurationLabel] = useState<string | null>(null);
+
+  const durationLabels: TravelDurationLabels = useMemo(
+    () => ({
+      hourSingular: labels.hourSingular,
+      hourPlural: labels.hourPlural,
+      minuteSingular: labels.minuteSingular,
+      minutePlural: labels.minutePlural,
+    }),
+    [
+      labels.hourSingular,
+      labels.hourPlural,
+      labels.minuteSingular,
+      labels.minutePlural,
+    ],
+  );
 
   useEffect(() => {
     const departure = departureCity.trim();
@@ -35,6 +57,7 @@ export function CarRouteMapSection({
 
     let cancelled = false;
     const controller = new AbortController();
+    setDurationLabel(null);
 
     void (async () => {
       try {
@@ -104,10 +127,23 @@ export function CarRouteMapSection({
 
   return (
     <section aria-labelledby="car-route-map-heading">
-      <h2 id="car-route-map-heading" className="mb-3 text-lg font-bold text-atg-fg">
+      <h2
+        id="car-route-map-heading"
+        className={`text-lg font-bold text-atg-fg ${durationLabel ? 'mb-1' : 'mb-3'}`}
+      >
         {labels.routeMapTitle}
       </h2>
-      <ItineraryMapSection points={points} ariaLabel={labels.routeMapAria} />
+      {durationLabel ? (
+        <p className="mb-3 text-sm text-atg-muted">
+          {labels.routeMapDuration}: {durationLabel}
+        </p>
+      ) : null}
+      <ItineraryMapSection
+        points={points}
+        ariaLabel={labels.routeMapAria}
+        durationLabels={durationLabels}
+        onDurationChange={setDurationLabel}
+      />
     </section>
   );
 }

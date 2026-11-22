@@ -1409,6 +1409,11 @@
     "routeMapAria": "Map showing departure and arrival points",
     "routeMapDeparture": "Departure",
     "routeMapArrival": "Arrival",
+    "routeMapDuration": "Estimated travel time",
+    "hourSingular": "1 h",
+    "hourPlural": "{n} h",
+    "minuteSingular": "1 min",
+    "minutePlural": "{n} min",
     "breadcrumbAria": "Breadcrumb"
   },
   "cruises": {

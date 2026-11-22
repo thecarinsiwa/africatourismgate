@@ -2,11 +2,21 @@ import type { ItineraryMapPoint } from './types';
 
 export type LatLngTuple = [number, number];
 
+export type OsrmDrivingRoute = {
+  path: LatLngTuple[];
+  /** Driving duration in seconds (OSRM). */
+  durationSeconds: number;
+  /** Driving distance in meters (OSRM). */
+  distanceMeters: number;
+};
+
 const DEFAULT_OSRM_BASE = 'https://router.project-osrm.org';
 
 type OsrmRouteResponse = {
   code?: string;
   routes?: Array<{
+    duration?: number;
+    distance?: number;
     geometry?: {
       coordinates?: Array<[number, number]>;
     };
@@ -22,13 +32,13 @@ export function getOsrmBaseUrl(): string {
 
 /**
  * Fetch a driving route through waypoints via OSRM.
- * Returns `[lat, lng][]` for Leaflet, or `null` on failure.
+ * Returns path + duration/distance, or `null` on failure.
  * Does not take an AbortSignal — callers ignore stale results with a generation flag
  * (public OSRM can take 10–30s; aborting on React Strict Mode remounts was dropping routes).
  */
 export async function fetchOsrmDrivingRoute(
   points: ItineraryMapPoint[],
-): Promise<LatLngTuple[] | null> {
+): Promise<OsrmDrivingRoute | null> {
   if (points.length < 2) return null;
 
   const coords = points
@@ -46,12 +56,25 @@ export async function fetchOsrmDrivingRoute(
     if (!response.ok) return null;
 
     const data = (await response.json()) as OsrmRouteResponse;
-    if (data.code !== 'Ok' || !data.routes?.[0]?.geometry?.coordinates?.length) {
+    const route = data.routes?.[0];
+    if (
+      data.code !== 'Ok' ||
+      !route?.geometry?.coordinates?.length ||
+      typeof route.duration !== 'number' ||
+      !Number.isFinite(route.duration)
+    ) {
       return null;
     }
 
     // GeoJSON is [lng, lat] → Leaflet wants [lat, lng]
-    return data.routes[0].geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+    return {
+      path: route.geometry.coordinates.map(([lng, lat]) => [lat, lng]),
+      durationSeconds: route.duration,
+      distanceMeters:
+        typeof route.distance === 'number' && Number.isFinite(route.distance)
+          ? route.distance
+          : 0,
+    };
   } catch {
     return null;
   }
