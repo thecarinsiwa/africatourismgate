@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getVehicleDetail } from '../../lib/api/public';
 import {
   createPublicVehicleTrip,
+  ensurePublicVehicleTripSeats,
   joinPublicVehicleTrip,
 } from '../../lib/api/vehicle-trips';
 import { ensureClientAccessToken } from '../../lib/auth/client-session';
@@ -177,12 +178,16 @@ export function CarDetailPageContent({
           ? await joinPublicVehicleTrip(token, payload.tripId, {
               seats: payload.seats,
             })
-          : await createPublicVehicleTrip(token, {
-              vehicleId,
-              routeId: detail.route.id,
-              departureDatetime: payload.departureDatetime,
-              seats: payload.seats,
-            });
+          : payload.mode === 'continue'
+            ? await ensurePublicVehicleTripSeats(token, payload.tripId, {
+                seats: payload.seats,
+              })
+            : await createPublicVehicleTrip(token, {
+                vehicleId,
+                routeId: detail.route.id,
+                departureDatetime: payload.departureDatetime,
+                seats: payload.seats,
+              });
 
       const query = buildReservationQuery({
         kind: 'vehicle',
@@ -196,7 +201,9 @@ export function CarDetailPageContent({
       });
       router.push(`/booking/cart?${query}`);
     } catch {
-      setReserveError(c.reserveTripError);
+      setReserveError(
+        payload.mode === 'continue' ? c.ensureSeatsError : c.reserveTripError,
+      );
     } finally {
       setReserving(false);
     }

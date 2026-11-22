@@ -30,12 +30,22 @@ function createAuthClient(accessToken: string) {
 
 export function listPublicVehicleTrips(
   query?: VehicleTripsListQuery,
+  accessToken?: string | null,
 ): Promise<PaginatedResponse<VehicleTrip>> {
-  return createPublicClient().listPublicVehicleTrips(query);
+  const client = accessToken
+    ? createAuthClient(accessToken)
+    : createPublicClient();
+  return client.listPublicVehicleTrips(query);
 }
 
-export function getPublicVehicleTrip(id: string): Promise<VehicleTrip> {
-  return createPublicClient().getPublicVehicleTrip(id);
+export function getPublicVehicleTrip(
+  id: string,
+  accessToken?: string | null,
+): Promise<VehicleTrip> {
+  const client = accessToken
+    ? createAuthClient(accessToken)
+    : createPublicClient();
+  return client.getPublicVehicleTrip(id);
 }
 
 export function createPublicVehicleTrip(

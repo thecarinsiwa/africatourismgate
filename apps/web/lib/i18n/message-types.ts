@@ -496,6 +496,9 @@ export type Translations = {
     joinPaysInstead: string;
     createTripTitle: string;
     joinTrip: string;
+    yourTrip: string;
+    continueTrip: string;
+    ensureSeatsError: string;
     newTripOption: string;
     departureTime: string;
     seatsRemaining: string;
