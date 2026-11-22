@@ -1,9 +1,7 @@
-import type { PublicDestination } from '@africatourismgate/types';
-import {
-  listPublicAirports,
-  listPublicDestinations,
-  listVehiclePickupLocations,
-} from '../api/public';
+import type {
+  PublicDestination,
+  VehicleRouteOption,
+} from '@africatourismgate/types';
 import type { PublicAirport } from '../flights/types';
 
 /** TTL par défaut des listes de référence (5 minutes). */
@@ -64,25 +62,50 @@ export function createTimedCache<T>(
   };
 }
 
-const destinationsCache = createTimedCache(listPublicDestinations);
-const airportsCache = createTimedCache(listPublicAirports);
-const pickupLocationsCache = createTimedCache(listVehiclePickupLocations);
+type ReferenceCaches = {
+  destinations: TimedCache<PublicDestination[]>;
+  airports: TimedCache<PublicAirport[]>;
+  vehicleRouteOptions: TimedCache<VehicleRouteOption[]>;
+};
 
-export function getCachedDestinations(): Promise<PublicDestination[]> {
-  return destinationsCache.get();
+let caches: ReferenceCaches | null = null;
+
+async function getCaches(): Promise<ReferenceCaches> {
+  if (caches) {
+    return caches;
+  }
+
+  // Lazy import so unit tests of `createTimedCache` do not load the API/UI graph.
+  const api = await import('../api/public');
+  caches = {
+    destinations: createTimedCache(api.listPublicDestinations),
+    airports: createTimedCache(api.listPublicAirports),
+    vehicleRouteOptions: createTimedCache(api.listVehicleRouteOptions),
+  };
+  return caches;
 }
 
-export function getCachedAirports(): Promise<PublicAirport[]> {
-  return airportsCache.get();
+export async function getCachedDestinations(): Promise<PublicDestination[]> {
+  const { destinations } = await getCaches();
+  return destinations.get();
 }
 
-export function getCachedPickupLocations(): Promise<PublicDestination[]> {
-  return pickupLocationsCache.get();
+export async function getCachedAirports(): Promise<PublicAirport[]> {
+  const { airports } = await getCaches();
+  return airports.get();
 }
 
-/** Vide les trois caches (tests / hot-reload). */
+export async function getCachedVehicleRouteOptions(): Promise<
+  VehicleRouteOption[]
+> {
+  const { vehicleRouteOptions } = await getCaches();
+  return vehicleRouteOptions.get();
+}
+
+/** Vide les caches de référence (tests / hot-reload). */
 export function resetSiteSearchReferenceCaches(): void {
-  destinationsCache.reset();
-  airportsCache.reset();
-  pickupLocationsCache.reset();
+  caches?.destinations.reset();
+  caches?.airports.reset();
+  caches?.vehicleRouteOptions.reset();
+  caches = null;
 }

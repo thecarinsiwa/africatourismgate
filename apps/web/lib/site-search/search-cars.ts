@@ -1,11 +1,15 @@
-import type { PublicDestination } from '@africatourismgate/types';
 import { siteSearchDeepLinks } from './deep-links';
 import { normalizeSiteSearchText } from './nav-match';
 import { formatSiteSearchPrefilledSubtitle } from './prefilled';
-import { getCachedPickupLocations } from './reference-data';
+import { getCachedVehicleRouteOptions } from './reference-data';
 import { searchSiteCatalogType } from './search-catalog';
 import { buildSiteSearchResultId, getSiteSearchSourceDefinition } from './sources';
 import type { SiteSearchContext, SiteSearchResultItem } from './types';
+import {
+  matchesSiteVehicleRouteCity,
+  matchesSiteVehicleRoutePair,
+  vehicleRouteCityKey,
+} from './vehicle-route-match';
 
 export type SearchSiteCarsOptions = {
   resultLimit?: number;
@@ -13,19 +17,10 @@ export type SearchSiteCarsOptions = {
   prefilledHint?: string;
 };
 
-export function matchesSitePickupLocation(
-  location: Pick<PublicDestination, 'name' | 'countryCode'>,
-  normalizedQuery: string,
-): boolean {
-  if (!normalizedQuery) {
-    return false;
-  }
-
-  const name = normalizeSiteSearchText(location.name);
-  const country = normalizeSiteSearchText(location.countryCode);
-
-  return name.includes(normalizedQuery) || country.includes(normalizedQuery);
-}
+export {
+  matchesSiteVehicleRouteCity,
+  matchesSiteVehicleRoutePair,
+} from './vehicle-route-match';
 
 async function searchSiteCarsPrefilled(
   query: string,
@@ -39,27 +34,64 @@ async function searchSiteCarsPrefilled(
     return [];
   }
 
-  const locations = await getCachedPickupLocations();
-  const matched = locations.filter((location) =>
-    matchesSitePickupLocation(location, normalized),
-  );
+  const pairs = await getCachedVehicleRouteOptions();
+  const results: SiteSearchResultItem[] = [];
+  const seen = new Set<string>();
 
-  return matched.slice(0, limit).map((location) => ({
-    id: buildSiteSearchResultId('cars', `prefill:${location.id}`),
-    sourceId: 'cars' as const,
-    group: 'cars' as const,
-    title: location.name,
-    subtitle: formatSiteSearchPrefilledSubtitle(
-      location.countryCode,
-      options?.prefilledHint,
-    ),
-    href: siteSearchDeepLinks.carsByPickup(location.name),
-    kind: 'prefilled' as const,
-  }));
+  for (const pair of pairs) {
+    if (!matchesSiteVehicleRoutePair(pair, normalized)) {
+      continue;
+    }
+    const key = `route:${vehicleRouteCityKey(pair.departureCity)}|${vehicleRouteCityKey(pair.arrivalCity)}`;
+    if (seen.has(key)) {
+      continue;
+    }
+    seen.add(key);
+    results.push({
+      id: buildSiteSearchResultId('cars', `prefill:${key}`),
+      sourceId: 'cars' as const,
+      group: 'cars' as const,
+      title: `${pair.departureCity} → ${pair.arrivalCity}`,
+      subtitle: formatSiteSearchPrefilledSubtitle('', options?.prefilledHint),
+      href: siteSearchDeepLinks.carsByRoute(
+        pair.departureCity,
+        pair.arrivalCity,
+      ),
+      kind: 'prefilled' as const,
+    });
+    if (results.length >= limit) {
+      return results;
+    }
+  }
+
+  for (const pair of pairs) {
+    if (!matchesSiteVehicleRouteCity(pair.departureCity, normalized)) {
+      continue;
+    }
+    const key = `dep:${vehicleRouteCityKey(pair.departureCity)}`;
+    if (seen.has(key)) {
+      continue;
+    }
+    seen.add(key);
+    results.push({
+      id: buildSiteSearchResultId('cars', `prefill:${key}`),
+      sourceId: 'cars' as const,
+      group: 'cars' as const,
+      title: pair.departureCity,
+      subtitle: formatSiteSearchPrefilledSubtitle('', options?.prefilledHint),
+      href: siteSearchDeepLinks.carsByDeparture(pair.departureCity),
+      kind: 'prefilled' as const,
+    });
+    if (results.length >= limit) {
+      break;
+    }
+  }
+
+  return results;
 }
 
 /**
- * Source `cars` : fiches catalogue d’abord, raccourcis pickup en secondaire.
+ * Source `cars` : fiches catalogue d’abord, raccourcis tronçon (départ / paire) en secondaire.
  */
 export async function searchSiteCars(
   query: string,
