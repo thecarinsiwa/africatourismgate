@@ -2299,6 +2299,7 @@
     "stepConfirmation": "Confirmación",
     "stepCancelled": "Cancelado",
     "cartTitle": "Carrito de reserva",
+    "vehicleTripOrganizerBanner": "Usted es el organizador de este trayecto. Continúe para finalizar su reserva.",
     "recapTitle": "Resumen",
     "continueToRecap": "Continuar al resumen",
     "backToCart": "Volver al carrito",

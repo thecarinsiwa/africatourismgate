@@ -221,15 +221,15 @@ export function ReservationCartPageContent({ draft }: Props) {
           if (!cancelled) setLoading(false);
         });
     } else if (isVehicleReservationDraft(draft)) {
-      const tripPromise = draft.vehicleTripId
-        ? getPublicVehicleTrip(draft.vehicleTripId)
-        : Promise.resolve(null);
+      const tripId = draft.vehicleTripId;
       void Promise.all([
         getVehicleDetail(draft.vehicleId, {
           routeId: draft.routeId,
           travelDate: draft.travelDate,
         }),
-        tripPromise,
+        tripId
+          ? getPublicVehicleTrip(tripId, getClientAccessToken())
+          : Promise.resolve(null),
       ])
         .then(([data, trip]) => {
           if (!cancelled) {
@@ -371,36 +371,46 @@ export function ReservationCartPageContent({ draft }: Props) {
               )}
 
               {!loading && vehicleReady && isVehicleReservationDraft(draft) && (
-                <CheckoutRecapLine
-                  icon="car"
-                  eyebrow={vehicleReady.agency.name}
-                  title={
-                    `${vehicleReady.route.departureCity} → ${vehicleReady.route.arrivalCity}`
-                  }
-                  details={
-                    <>
-                      <p>
-                        {vehicleReady.category.exampleModel ?? vehicleReady.category.name}
-                      </p>
-                      <p>{formatDisplayDate(draft.travelDate, locale)}</p>
-                      {draft.vehicleTripId && vehicleTrip ? (
-                        <>
-                          <p>
-                            {new Intl.DateTimeFormat(locale || undefined, {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            }).format(new Date(vehicleTrip.departureDatetime))}
-                          </p>
-                          <p>
-                            {draft.seats != null && draft.seats > 1
-                              ? `${draft.seats} places`
-                              : '1 place'}
-                          </p>
-                        </>
-                      ) : null}
-                    </>
-                  }
-                />
+                <>
+                  {vehicleTrip?.isMine ? (
+                    <p
+                      role="status"
+                      className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-sm text-atg-fg"
+                    >
+                      {ck.vehicleTripOrganizerBanner}
+                    </p>
+                  ) : null}
+                  <CheckoutRecapLine
+                    icon="car"
+                    eyebrow={vehicleReady.agency.name}
+                    title={
+                      `${vehicleReady.route.departureCity} → ${vehicleReady.route.arrivalCity}`
+                    }
+                    details={
+                      <>
+                        <p>
+                          {vehicleReady.category.exampleModel ?? vehicleReady.category.name}
+                        </p>
+                        <p>{formatDisplayDate(draft.travelDate, locale)}</p>
+                        {draft.vehicleTripId && vehicleTrip ? (
+                          <>
+                            <p>
+                              {new Intl.DateTimeFormat(locale || undefined, {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              }).format(new Date(vehicleTrip.departureDatetime))}
+                            </p>
+                            <p>
+                              {draft.seats != null && draft.seats > 1
+                                ? `${draft.seats} places`
+                                : '1 place'}
+                            </p>
+                          </>
+                        ) : null}
+                      </>
+                    }
+                  />
+                </>
               )}
 
               {!loading && cruiseReady && cruiseDetail && isCabinReservationDraft(draft) && (

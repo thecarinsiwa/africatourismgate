@@ -2300,6 +2300,7 @@
     "stepConfirmation": "Confirmation",
     "stepCancelled": "Annulé",
     "cartTitle": "Panier réservation",
+    "vehicleTripOrganizerBanner": "Vous êtes l’organisateur de ce trajet. Poursuivez pour finaliser votre réservation.",
     "recapTitle": "Récapitulatif",
     "continueToRecap": "Continuer vers récap",
     "backToCart": "Retour panier",
