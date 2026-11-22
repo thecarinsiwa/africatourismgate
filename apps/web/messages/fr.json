@@ -102,6 +102,14 @@
       "oauthCallback": {
         "title": "Connexion en cours",
         "description": "Finalisation de la connexion sécurisée."
+      },
+      "forgotPassword": {
+        "title": "Mot de passe oublié",
+        "description": "Demandez un lien pour réinitialiser votre mot de passe client."
+      },
+      "resetPassword": {
+        "title": "Réinitialiser le mot de passe",
+        "description": "Définissez un nouveau mot de passe pour votre compte client."
       }
     },
     "login": {
@@ -133,6 +141,50 @@
         "googleNoEmail": "Votre compte Google n'a pas partagé d'adresse e-mail. Autorisez l'accès à l'e-mail ou connectez-vous avec votre mot de passe.",
         "googleAccountInactive": "Ce compte est suspendu ou inactif. Contactez le support.",
         "googleSignupUnavailable": "Impossible de finaliser l'inscription Google pour le moment. Réessayez plus tard ou créez un compte par e-mail."
+      }
+    },
+    "forgotPassword": {
+      "title": "Mot de passe oublié",
+      "subtitle": "Saisissez votre adresse e-mail. Si un compte existe, vous recevrez les instructions pour réinitialiser votre mot de passe.",
+      "successMessage": "Si un compte existe pour cette adresse, un lien de réinitialisation a été envoyé.",
+      "backToLogin": "Retour à la connexion",
+      "form": {
+        "emailLabel": "Adresse e-mail",
+        "emailPlaceholder": "vous@exemple.com",
+        "submit": "Envoyer le lien",
+        "submitLoading": "Envoi…"
+      },
+      "errors": {
+        "network": "Impossible de joindre le serveur. Vérifiez votre connexion.",
+        "generic": "Une erreur est survenue. Veuillez réessayer.",
+        "envMissing": "Configuration API manquante (NEXT_PUBLIC_API_URL)."
+      }
+    },
+    "resetPassword": {
+      "title": "Nouveau mot de passe",
+      "subtitle": "Choisissez un mot de passe sécurisé pour votre compte.",
+      "backToLogin": "Retour à la connexion",
+      "loading": "Chargement…",
+      "form": {
+        "passwordLabel": "Nouveau mot de passe",
+        "passwordPlaceholder": "••••••••",
+        "confirmPasswordLabel": "Confirmer le mot de passe",
+        "confirmPasswordPlaceholder": "••••••••",
+        "confirmPasswordMismatch": "Les mots de passe ne correspondent pas",
+        "submit": "Réinitialiser le mot de passe",
+        "submitLoading": "Réinitialisation…"
+      },
+      "missingToken": {
+        "title": "Lien invalide",
+        "message": "Ce lien de réinitialisation est incomplet ou a expiré. Demandez un nouveau lien.",
+        "forgotLabel": "Demander un nouveau lien",
+        "loginLabel": "Retour à la connexion"
+      },
+      "errors": {
+        "invalidToken": "Lien de réinitialisation expiré ou invalide. Demandez un nouveau lien.",
+        "network": "Impossible de joindre le serveur. Vérifiez votre connexion.",
+        "generic": "Une erreur est survenue. Veuillez réessayer.",
+        "envMissing": "Configuration API manquante (NEXT_PUBLIC_API_URL)."
       }
     },
     "register": {

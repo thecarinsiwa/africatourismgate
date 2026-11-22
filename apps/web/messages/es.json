@@ -102,6 +102,14 @@
       "oauthCallback": {
         "title": "Inicio de sesión en curso",
         "description": "Finalizando el inicio de sesión seguro."
+      },
+      "forgotPassword": {
+        "title": "Contraseña olvidada",
+        "description": "Solicite un enlace para restablecer su contraseña de cliente."
+      },
+      "resetPassword": {
+        "title": "Restablecer contraseña",
+        "description": "Defina una nueva contraseña para su cuenta de cliente."
       }
     },
     "login": {
@@ -133,6 +141,50 @@
         "googleNoEmail": "Su cuenta de Google no compartió una dirección de correo. Autorice el acceso al correo o inicie sesión con su contraseña.",
         "googleAccountInactive": "Esta cuenta está suspendida o inactiva. Contacte con el soporte.",
         "googleSignupUnavailable": "No se pudo completar el registro con Google por ahora. Inténtelo más tarde o cree una cuenta con correo."
+      }
+    },
+    "forgotPassword": {
+      "title": "Contraseña olvidada",
+      "subtitle": "Introduzca su correo electrónico. Si existe una cuenta, recibirá instrucciones para restablecer su contraseña.",
+      "successMessage": "Si existe una cuenta para esta dirección, se ha enviado un enlace de restablecimiento.",
+      "backToLogin": "Volver al inicio de sesión",
+      "form": {
+        "emailLabel": "Correo electrónico",
+        "emailPlaceholder": "usted@ejemplo.com",
+        "submit": "Enviar enlace",
+        "submitLoading": "Enviando…"
+      },
+      "errors": {
+        "network": "No se pudo conectar con el servidor. Compruebe su conexión.",
+        "generic": "Algo salió mal. Inténtelo de nuevo.",
+        "envMissing": "Falta la configuración de la API (NEXT_PUBLIC_API_URL)."
+      }
+    },
+    "resetPassword": {
+      "title": "Nueva contraseña",
+      "subtitle": "Elija una contraseña segura para su cuenta.",
+      "backToLogin": "Volver al inicio de sesión",
+      "loading": "Cargando…",
+      "form": {
+        "passwordLabel": "Nueva contraseña",
+        "passwordPlaceholder": "••••••••",
+        "confirmPasswordLabel": "Confirmar contraseña",
+        "confirmPasswordPlaceholder": "••••••••",
+        "confirmPasswordMismatch": "Las contraseñas no coinciden",
+        "submit": "Restablecer contraseña",
+        "submitLoading": "Restableciendo…"
+      },
+      "missingToken": {
+        "title": "Enlace no válido",
+        "message": "Este enlace de restablecimiento está incompleto o ha expirado. Solicite un nuevo enlace.",
+        "forgotLabel": "Solicitar un nuevo enlace",
+        "loginLabel": "Volver al inicio de sesión"
+      },
+      "errors": {
+        "invalidToken": "Enlace de restablecimiento expirado o no válido. Solicite un nuevo enlace.",
+        "network": "No se pudo conectar con el servidor. Compruebe su conexión.",
+        "generic": "Algo salió mal. Inténtelo de nuevo.",
+        "envMissing": "Falta la configuración de la API (NEXT_PUBLIC_API_URL)."
       }
     },
     "register": {
