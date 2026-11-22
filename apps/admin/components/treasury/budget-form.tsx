@@ -181,7 +181,7 @@ async function searchProducts(
         .slice(0, 20)
         .map((s) => ({
           id: s.id,
-          label: `${s.startDatetime.slice(0, 16)} — ${s.id.slice(0, 8)}…`,
+          label: `${s.startDatetime.slice(0, 16)} - ${s.id.slice(0, 8)}…`,
         }));
     }
     default:
@@ -419,7 +419,7 @@ export function BudgetForm({ mode, budgetId, initialBudget }: BudgetFormProps) {
 
   const productTypeOptions = useMemo(
     () => [
-      { value: '', label: '—' },
+      { value: '', label: '-' },
       ...BUDGET_PRODUCT_TYPES.map((value) => ({
         value,
         label: productTypeLabels[value],
@@ -429,7 +429,7 @@ export function BudgetForm({ mode, budgetId, initialBudget }: BudgetFormProps) {
   );
 
   const monthOptions = useMemo(() => {
-    const opts = [{ value: '', label: '—' }];
+    const opts = [{ value: '', label: '-' }];
     for (let m = 1; m <= 12; m += 1) {
       let label = String(m);
       try {
@@ -450,7 +450,7 @@ export function BudgetForm({ mode, budgetId, initialBudget }: BudgetFormProps) {
 
   const organizationOptions = useMemo(
     () => [
-      { value: '', label: '—' },
+      { value: '', label: '-' },
       ...organizations.map((org) => ({ value: org.id, label: org.name })),
     ],
     [organizations],

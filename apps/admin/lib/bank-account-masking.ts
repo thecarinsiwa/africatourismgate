@@ -8,7 +8,7 @@ export function containsMaskChars(value: string): boolean {
  */
 export function maskAccountNumberForDisplay(value: string): string {
   const trimmed = value.trim();
-  if (!trimmed) return '—';
+  if (!trimmed) return '-';
   if (containsMaskChars(trimmed)) return trimmed;
 
   const visibleTail = trimmed.slice(-4);

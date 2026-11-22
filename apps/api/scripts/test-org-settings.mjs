@@ -60,7 +60,7 @@ async function main() {
   console.log(`API: ${API_URL}\n`);
   const adminToken = await login(SEED_ADMIN_EMAIL, getSeedAdminPassword());
 
-  console.log('1. super_admin — GET /organization-settings?organizationId=platform');
+  console.log('1. super_admin - GET /organization-settings?organizationId=platform');
   const listSettings = await request(
     'GET',
     `/organization-settings?organizationId=${PLATFORM_ORG_ID}&page=1&limit=20`,
@@ -71,7 +71,7 @@ async function main() {
     throw new Error('Expected seeded organization settings');
   }
 
-  console.log('2. super_admin — PUT bulk invalid currency (expect 400)');
+  console.log('2. super_admin - PUT bulk invalid currency (expect 400)');
   const badCurrency = await request('PUT', '/organization-settings/bulk', {
     token: adminToken,
     body: {
@@ -87,7 +87,7 @@ async function main() {
   });
   assertStatus('PUT bulk bad currency', badCurrency.status, 400);
 
-  console.log('3. super_admin — PUT bulk valid currency (expect 200)');
+  console.log('3. super_admin - PUT bulk valid currency (expect 200)');
   const goodCurrency = await request('PUT', '/organization-settings/bulk', {
     token: adminToken,
     body: {
@@ -107,21 +107,21 @@ async function main() {
   });
   assertStatus('PUT bulk EUR', goodCurrency.status, 200);
 
-  console.log('4. super_admin — PATCH organization invalid email (expect 400)');
+  console.log('4. super_admin - PATCH organization invalid email (expect 400)');
   const badEmail = await request('PATCH', `/organizations/${PLATFORM_ORG_ID}`, {
     token: adminToken,
     body: { contactEmail: 'not-an-email' },
   });
   assertStatus('PATCH org bad email', badEmail.status, 400);
 
-  console.log('5. super_admin — PATCH organization valid email (expect 200)');
+  console.log('5. super_admin - PATCH organization valid email (expect 200)');
   const goodEmail = await request('PATCH', `/organizations/${PLATFORM_ORG_ID}`, {
     token: adminToken,
     body: { contactEmail: 'contact@africatourismgate.local' },
   });
   assertStatus('PATCH org valid email', goodEmail.status, 200);
 
-  console.log('6. super_admin — GET bank accounts full account number');
+  console.log('6. super_admin - GET bank accounts full account number');
   const adminBanks = await request(
     'GET',
     `/organization-bank-accounts?organizationId=${PLATFORM_ORG_ID}&page=1&limit=10`,
@@ -136,7 +136,7 @@ async function main() {
   }
   console.log('  OK account number visible to super_admin');
 
-  console.log('7. org_admin via register — scoped access');
+  console.log('7. org_admin via register - scoped access');
   const orgEmail = `org.settings.${Date.now()}@africatourismgate.local`;
   const reg = await request('POST', '/auth/register', {
     body: {
@@ -177,7 +177,7 @@ async function main() {
   );
   assertStatus('GET settings other org (403)', forbiddenOtherOrg.status, 403);
 
-  console.log('8. org_admin — masked bank account number');
+  console.log('8. org_admin - masked bank account number');
   const orgBanks = await request('GET', '/organization-bank-accounts?page=1&limit=10', {
     token: orgToken,
   });
@@ -189,10 +189,10 @@ async function main() {
     }
     console.log('  OK account number masked for org_admin');
   } else {
-    console.log('  (skip mask check — no bank accounts for new org)');
+    console.log('  (skip mask check - no bank accounts for new org)');
   }
 
-  console.log('9. org_admin — POST bank account invalid currency (expect 400)');
+  console.log('9. org_admin - POST bank account invalid currency (expect 400)');
   const badBank = await request('POST', '/organization-bank-accounts', {
     token: orgToken,
     body: {
@@ -204,7 +204,7 @@ async function main() {
   });
   assertStatus('POST bank bad currency', badBank.status, 400);
 
-  console.log('10. org_admin — POST bank account valid (expect 201)');
+  console.log('10. org_admin - POST bank account valid (expect 201)');
   const goodBank = await request('POST', '/organization-bank-accounts', {
     token: orgToken,
     body: {

@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { cn } from '@africatourismgate/ui';
 import { safeCssUrl } from '@africatourismgate/utils';
 
-/** En-tête marketing de page liste/détail — breadcrumb, titre, description et actions en slots. */
+/** En-tête marketing de page liste/détail - breadcrumb, titre, description et actions en slots. */
 export type PageHeroProps = {
   /** Fil d'Ariane ou navigation contextuelle (contenu fourni par le parent). */
   breadcrumb?: ReactNode;

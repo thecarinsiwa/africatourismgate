@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * @deprecated Prefer `AdminSearchNavigator` — kept as alias for existing imports.
+ * @deprecated Prefer `AdminSearchNavigator` - kept as alias for existing imports.
  */
 export {
   AdminSearchNavigator as CommandPalette,

@@ -176,7 +176,7 @@ async function main() {
   console.log('4. Webhook payment_intent.succeeded');
   await postSignedWebhook(stripe, confirmed);
 
-  console.log('5. GET /bookings/:id — expect confirmed + payment succeeded');
+  console.log('5. GET /bookings/:id - expect confirmed + payment succeeded');
   const detail = await request('GET', `/bookings/${bookingId}`, { token });
   assertStatus('GET booking detail', detail.status, 200);
   if (detail.data?.booking?.status !== 'confirmed') {

@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { BaseAuditEntity } from '../common/entities/base-audit.entity';
 
-/** Aligné sur docs/tresorerie-domain-model.md §4.7 — stub pont comptable (TRESO-039). */
+/** Aligné sur docs/tresorerie-domain-model.md §4.7 - stub pont comptable (TRESO-039). */
 export type AccountingFundOpType = 'fund_entry' | 'fund_exit';
 
 export type AccountingLinkStatus = 'pending' | 'linked' | 'skipped';

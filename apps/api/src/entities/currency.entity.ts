@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { BaseAuditEntity } from '../common/entities/base-audit.entity';
 
 /**
- * Catalogue global de devises (plateforme) — ISO 4217.
+ * Catalogue global de devises (plateforme) - ISO 4217.
  * Soft-delete + `is_active` pour retirer des sélecteurs sans casser l’historique.
  */
 @Entity('currencies')

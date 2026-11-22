@@ -501,7 +501,7 @@ test('account support list shows empty state and nav link', async ({ page }) => 
       return;
     }
     const url = route.request().url();
-    // List only — leave detail routes for the other smoke test.
+    // List only - leave detail routes for the other smoke test.
     if (/\/support-tickets\/[^/?]+/.test(url)) {
       await route.continue();
       return;

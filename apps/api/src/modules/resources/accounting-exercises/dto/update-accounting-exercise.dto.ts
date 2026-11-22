@@ -12,7 +12,7 @@ export class UpdateAccountingExerciseDto {
   @ApiPropertyOptional({
     example: 'XAF',
     description:
-      'Book currency — only when exercise is open and has no posted entries',
+      'Book currency - only when exercise is open and has no posted entries',
     minLength: 3,
     maxLength: 3,
   })

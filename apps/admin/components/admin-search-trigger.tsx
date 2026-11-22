@@ -23,7 +23,7 @@ function SearchLoupeIcon({ className }: { className?: string }) {
   );
 }
 
-/** Bouton loupe du header — ouvre le navigateur de recherche globale. */
+/** Bouton loupe du header - ouvre le navigateur de recherche globale. */
 export function AdminSearchTrigger() {
   const t = useTranslations('common.globalSearch');
   const { open, toggle } = useAdminSearchNavigator();

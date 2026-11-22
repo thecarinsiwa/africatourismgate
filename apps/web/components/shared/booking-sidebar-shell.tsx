@@ -129,7 +129,7 @@ export function BookingSidebarMobileDrawer({
   );
 }
 
-/** BK1 — champs formulaire sidebar (M1 : min-h 44px). */
+/** BK1 - champs formulaire sidebar (M1 : min-h 44px). */
 export const bookingSidebarInputClass =
   'min-h-[44px] w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg';
 
@@ -141,7 +141,7 @@ type BookingSidebarDesktopProps = {
   className?: string;
 };
 
-/** Sticky desktop aside — masqué sous lg. */
+/** Sticky desktop aside - masqué sous lg. */
 export function BookingSidebarDesktop({
   id = 'reserve',
   children,
@@ -359,7 +359,7 @@ type BookingSidebarMobileBarProps = {
   onConfigureClick?: () => void;
 };
 
-/** M1 — barre basse fixe mobile avec CTA ≥ 48px. */
+/** M1 - barre basse fixe mobile avec CTA ≥ 48px. */
 export function BookingSidebarMobileBar({
   priceLabel,
   priceAmount,

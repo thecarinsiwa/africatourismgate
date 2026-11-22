@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
  * Charge `.env` / `.env.local` / `.env.production` depuis la racine du monorepo.
  * Résout `@next/env` via le paquet `next` (compatible pnpm en production).
  *
- * @param {string} appConfigFileUrl — `import.meta.url` du next.config.mjs de l'app
+ * @param {string} appConfigFileUrl - `import.meta.url` du next.config.mjs de l'app
  */
 export function loadRootEnv(appConfigFileUrl) {
   const appDir = dirname(fileURLToPath(appConfigFileUrl));

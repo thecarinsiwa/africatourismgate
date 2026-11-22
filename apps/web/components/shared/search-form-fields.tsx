@@ -8,7 +8,7 @@ import { cn } from '@africatourismgate/ui';
 const fieldInputClass =
   'min-h-[44px] w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg transition-colors placeholder:text-atg-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted';
 
-/** Classes de base des champs — réutilisable pour selects personnalisés. */
+/** Classes de base des champs - réutilisable pour selects personnalisés. */
 export const searchFormFieldClass = fieldInputClass;
 
 function safeDomId(reactId: string): string {
@@ -28,7 +28,7 @@ function filterSuggestions(suggestions: string[], query: string): string[] {
   return filtered;
 }
 
-/** Libellé champ recherche — texte fourni par le parent (i18n). */
+/** Libellé champ recherche - texte fourni par le parent (i18n). */
 export function SearchFormLabel({ children }: { children: ReactNode }) {
   return (
     <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-atg-muted">
@@ -77,7 +77,7 @@ export type SearchFormDatalistInputProps = {
   name: string;
   placeholder?: string;
   value: string;
-  /** Suggestions filtrées à la saisie / au focus — la valeur libre reste acceptée. */
+  /** Suggestions filtrées à la saisie / au focus - la valeur libre reste acceptée. */
   suggestions?: string[];
   disabled?: boolean;
   onChange: (value: string) => void;
@@ -266,7 +266,7 @@ export type SearchFormOptionDatalistInputProps = {
   className?: string;
 };
 
-/** Champ texte avec suggestions valeur/libellé — saisie libre ou sélection. */
+/** Champ texte avec suggestions valeur/libellé - saisie libre ou sélection. */
 export function SearchFormOptionDatalistInput({
   name,
   placeholder,
@@ -397,7 +397,7 @@ export type SearchFormSubmitProps = {
   className?: string;
 };
 
-/** Bouton principal de soumission — libellé fourni par le parent. */
+/** Bouton principal de soumission - libellé fourni par le parent. */
 export function SearchFormSubmit({ label, className }: SearchFormSubmitProps) {
   return (
     <button
@@ -414,7 +414,7 @@ export function SearchFormSubmit({ label, className }: SearchFormSubmitProps) {
 
 export type SearchViewAllLinkProps = {
   href: string;
-  /** Libellé visible — fourni par le parent (i18n). */
+  /** Libellé visible - fourni par le parent (i18n). */
   label: string;
   className?: string;
 };

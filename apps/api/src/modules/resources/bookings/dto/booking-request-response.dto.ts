@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import type { BookingStatus } from '@africatourismgate/types';
 
 export const BOOKING_REQUEST_REGISTERED_MESSAGE =
-  'Demande enregistrée — en attente de validation';
+  'Demande enregistrée - en attente de validation';
 
 export class BookingRequestResponseDto {
   @ApiProperty({ format: 'uuid' })

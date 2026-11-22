@@ -1,5 +1,5 @@
 /**
- * Production hostnames — keep in sync with nginx/africatourismgate*.conf
+ * Production hostnames - keep in sync with nginx/africatourismgate*.conf
  *
  * | Rôle        | URL production                         | App PM2    | Port |
  * |-------------|----------------------------------------|------------|------|
@@ -34,7 +34,7 @@ export const ATG_DOMAINS = {
     url: 'https://app-africatourismgate.org/api',
     pm2: 'atg-api',
     port: 3000,
-    label: 'API NestJS (apps/api) — nginx /api → port 3000',
+    label: 'API NestJS (apps/api) - nginx /api → port 3000',
   },
   pos: {
     host: 'pos.africatourismgate.org',
@@ -50,12 +50,12 @@ export const ATG_DOMAINS = {
     url: 'https://gap.africatourismgate.org',
     pm2: 'atg-gap',
     port: 3004,
-    label: 'GAP — Gorilla Ambassadors Program (apps/gap)',
+    label: 'GAP - Gorilla Ambassadors Program (apps/gap)',
   },
 };
 
 /**
- * Chemins réservés à l’admin — redirigés depuis africatourismgate.org vers app-africatourismgate.org.
+ * Chemins réservés à l’admin - redirigés depuis africatourismgate.org vers app-africatourismgate.org.
  * Garder synchronisé avec nginx/africatourismgate*.conf (location admin_redirect).
  */
 export const ADMIN_ONLY_PATHS = [

@@ -182,7 +182,7 @@ export async function searchAdminSailings(
       sourceId: 'sailings' as const,
       group: 'catalog' as const,
       title: itineraryName
-        ? `${itineraryName} — ${sailing.departureDate}`
+        ? `${itineraryName} - ${sailing.departureDate}`
         : sailing.departureDate,
       subtitle: formatAdminSearchIdPrefix(sailing.id),
       href: adminSearchDeepLinks.sailing(sailing.id),

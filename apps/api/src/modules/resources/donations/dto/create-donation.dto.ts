@@ -23,7 +23,7 @@ export class CreateDonationDto {
   @IsString()
   description?: string | null;
 
-  @ApiPropertyOptional({ example: 'Urgence sécheresse — Parc des Virunga' })
+  @ApiPropertyOptional({ example: 'Urgence sécheresse - Parc des Virunga' })
   @IsOptional()
   @IsString()
   @MaxLength(255)

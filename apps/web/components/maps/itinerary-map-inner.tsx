@@ -36,7 +36,7 @@ type RouteState = {
 };
 
 const DEFAULT_HEIGHT_CLASS = 'h-[320px] w-full sm:h-[400px]';
-// Hex only — Leaflet sets stroke as an SVG attribute; CSS vars are unreliable there.
+// Hex only - Leaflet sets stroke as an SVG attribute; CSS vars are unreliable there.
 const ROUTE_STYLE = {
   color: '#c8102e',
   weight: 4,
@@ -162,7 +162,7 @@ export function ItineraryMapInner({
       return;
     }
 
-    // Sync — do not re-import leaflet (async then() races overwrite the OSRM path).
+    // Sync - do not re-import leaflet (async then() races overwrite the OSRM path).
     renderItinerary(L, map, layerGroup, points, route, durationLabels, routeIcon);
   }, [points, pointsKey, route, mapReady, durationLabels, routeIcon]);
 

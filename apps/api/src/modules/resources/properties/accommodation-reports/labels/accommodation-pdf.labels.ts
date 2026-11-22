@@ -64,7 +64,7 @@ const LABELS: Record<AccommodationReportLocale, AccommodationPdfLabels> = {
   fr: {
     generatedOn: 'Document généré le',
     kpi: {
-      documentTitle: 'Synthèse KPI — Hébergements',
+      documentTitle: 'Synthèse KPI - Hébergements',
       summarySection: 'Indicateurs clés',
       properties: 'Hébergements',
       rooms: 'Chambres',
@@ -137,7 +137,7 @@ const LABELS: Record<AccommodationReportLocale, AccommodationPdfLabels> = {
   en: {
     generatedOn: 'Document generated on',
     kpi: {
-      documentTitle: 'KPI summary — Accommodations',
+      documentTitle: 'KPI summary - Accommodations',
       summarySection: 'Key metrics',
       properties: 'Properties',
       rooms: 'Rooms',
@@ -210,7 +210,7 @@ const LABELS: Record<AccommodationReportLocale, AccommodationPdfLabels> = {
   es: {
     generatedOn: 'Documento generado el',
     kpi: {
-      documentTitle: 'Resumen KPI — Alojamientos',
+      documentTitle: 'Resumen KPI - Alojamientos',
       summarySection: 'Indicadores clave',
       properties: 'Alojamientos',
       rooms: 'Habitaciones',

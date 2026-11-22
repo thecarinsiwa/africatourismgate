@@ -26,7 +26,7 @@ const fr = {
   common: {
     accountStatus: { active: 'Actif', suspended: 'Suspendu', deleted: 'Supprimé' },
     boolean: { yes: 'Oui', no: 'Non' },
-    empty: { dash: '—' },
+    empty: { dash: '-' },
     filters: {
       all: 'Tous',
       allFeminine: 'Toutes',
@@ -159,7 +159,7 @@ const fr = {
       scopeIdHint: 'Ex. ID propriété, agence ou file support.',
       expiresAt: 'Expiration (optionnel)',
       superAdminWarning:
-        'Réservé aux super administrateurs — périmètre forcé à Global.',
+        'Réservé aux super administrateurs - périmètre forcé à Global.',
       superAdminConfirm:
         "Attribuer le rôle « {roleName} » ? Cet utilisateur obtiendra un accès complet à la plateforme.",
       validation: {
@@ -432,7 +432,7 @@ const fr = {
     },
     refundModal: {
       title: 'Confirmer le remboursement',
-      description: 'Remboursement Stripe — maximum remboursable : {maxAmount}.',
+      description: 'Remboursement Stripe - maximum remboursable : {maxAmount}.',
       refundTypeLegend: 'Type de remboursement',
       refundTypeTotal: 'Total ({amount})',
       refundTypePartial: 'Partiel',

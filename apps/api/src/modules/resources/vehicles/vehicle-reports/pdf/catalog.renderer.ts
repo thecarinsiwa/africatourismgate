@@ -55,7 +55,7 @@ export function renderVehicleCatalogPdf(input: RenderVehicleCatalogPdfInput): Pr
         vehicle.categoryName,
         vehicle.minRoutePriceCents != null
           ? formatMoney(vehicle.minRoutePriceCents, vehicle.currency)
-          : '—',
+          : '-',
       ]),
     );
   }

@@ -1,4 +1,4 @@
-# Module Trésorerie — Modèle de domaine (TRESO-001)
+# Module Trésorerie - Modèle de domaine (TRESO-001)
 
 > **Statut :** spécification cible avant migrations (TRESO-002…006) et API.  
 > **Périmètre lot :** UI Admin + contrats API minimaux.  
@@ -19,7 +19,7 @@ Deux branches :
 | Branche | Rôle dans ce lot |
 | ------- | ---------------- |
 | **Financière** | Flux de fonds, budgets, workflow sorties, traçabilité |
-| **Comptable** | **Stub uniquement** (`accounting_links`) — pas de plan SYSCOHADA, journal, bilan, etc. |
+| **Comptable** | **Stub uniquement** (`accounting_links`) - pas de plan SYSCOHADA, journal, bilan, etc. |
 
 ---
 
@@ -28,11 +28,11 @@ Deux branches :
 | Principe | Décision |
 | -------- | -------- |
 | Montants | Entiers en **cents** (`amount_cents`), comme `Bookings.totalCents` / `Payments` |
-| Devise | ISO 4217, `varchar(3)` sur chaque opération ; codes issus du catalogue plateforme `currencies` (`/systeme/devises`) ; **défaut formulaires Admin** = `organizations.currency` (Paramètres, ∈ catalogue actif) ; conversion vers devise de tenue d’exercice **à la comptabilisation** via `exchange_rates` (TRESO-046) — pas de feed externe MVP |
+| Devise | ISO 4217, `varchar(3)` sur chaque opération ; codes issus du catalogue plateforme `currencies` (`/systeme/devises`) ; **défaut formulaires Admin** = `organizations.currency` (Paramètres, ∈ catalogue actif) ; conversion vers devise de tenue d’exercice **à la comptabilisation** via `exchange_rates` (TRESO-046) - pas de feed externe MVP |
 | Identifiants | UUID `char(36)` |
 | Multi-tenant | `organization_id` sur les agrégats trésorerie (aligné departments / catalog) |
 | Soft delete / annulation | Pas de delete hard des opérations validées → statut `voided` + audit |
-| Pièces jointes | Métadonnées (storage key, mime, size, uploaded_by) — pattern proche payment proofs |
+| Pièces jointes | Métadonnées (storage key, mime, size, uploaded_by) - pattern proche payment proofs |
 | Réservations | Relation **(0,N)** via tables pivot ; une opération peut n’avoir **aucune** réservation |
 
 ---
@@ -73,7 +73,7 @@ erDiagram
 
 ## 4. Entités et cardinaux
 
-### 4.1. `fund_entries` — Entrées de fonds
+### 4.1. `fund_entries` - Entrées de fonds
 
 Enregistrement d’une rentrée d’argent, traçable, avec source explicite.
 
@@ -94,13 +94,13 @@ Enregistrement d’une rentrée d’argent, traçable, avec source explicite.
 | audit colonnes | | `created_at`, `updated_at` (BaseAudit) |
 
 **Relation réservations :** `fund_entry_bookings`  
-`fund_entries` **(0,N)** `bookings` — pivot `(fund_entry_id, booking_id)` unique.
+`fund_entries` **(0,N)** `bookings` - pivot `(fund_entry_id, booking_id)` unique.
 
 **Justificatifs :** `fund_entry_attachments` (0,N).
 
 ---
 
-### 4.2. `expense_requests` — États de besoin / demandes de dépense
+### 4.2. `expense_requests` - États de besoin / demandes de dépense
 
 Toute sortie de fonds **doit** être justifiée par un état de besoin.
 
@@ -119,11 +119,11 @@ Toute sortie de fonds **doit** être justifiée par un état de besoin.
 | `rejection_reason` | text null | |
 | timestamps workflow | nullable | `submitted_at`, `validated_at`, `authorized_at`, … |
 
-**Historique :** `expense_request_status_history` (append-only) — `from_status`, `to_status`, `actor_type` (`user`\|`external`), `actor_id`, `comment`, `created_at`.
+**Historique :** `expense_request_status_history` (append-only) - `from_status`, `to_status`, `actor_type` (`user`\|`external`), `actor_id`, `comment`, `created_at`.
 
 ---
 
-### 4.3. `fund_exits` — Sorties de fonds
+### 4.3. `fund_exits` - Sorties de fonds
 
 | Champ | Type | Notes |
 | ----- | ---- | ----- |
@@ -140,9 +140,9 @@ Toute sortie de fonds **doit** être justifiée par un état de besoin.
 | `created_by_user_id` | UUID FK | |
 | void fields | nullable | Comme entrées |
 
-**Relation réservations :** `fund_exit_bookings` — **(0,N)** identique aux entrées.
+**Relation réservations :** `fund_exit_bookings` - **(0,N)** identique aux entrées.
 
-**Justificatifs :** `fund_exit_attachments` (obligatoires avant passage à `recorded` — règle service TRESO-022).
+**Justificatifs :** `fund_exit_attachments` (obligatoires avant passage à `recorded` - règle service TRESO-022).
 
 ---
 
@@ -166,7 +166,7 @@ Toute sortie de fonds **doit** être justifiée par un état de besoin.
 
 Unicité suggérée : `(organization_id, period_type, year, month, scope_type, activity_id, product_type, product_id, currency)`.
 
-**Réalisé (lecture) :** agrégation des `fund_entries` / `fund_exits` sur la période (TRESO-026 / 035) — pas de table « réalisé » séparée dans ce lot.
+**Réalisé (lecture) :** agrégation des `fund_entries` / `fund_exits` sur la période (TRESO-026 / 035) - pas de table « réalisé » séparée dans ce lot.
 
 ---
 
@@ -178,8 +178,8 @@ Unicité suggérée : `(organization_id, period_type, year, month, scope_type, a
 | ----- | ----- |
 | `id`, `organization_id`, `email` | Email unique par org |
 | `display_name` | nullable |
-| `is_active` | bool — activation par responsable financier |
-| `scopes` | JSON / table liée — ex. `["expense_requests.create"]` |
+| `is_active` | bool - activation par responsable financier |
+| `scopes` | JSON / table liée - ex. `["expense_requests.create"]` |
 | `created_by_user_id`, timestamps | |
 
 #### `treasury_access_tokens`
@@ -214,7 +214,7 @@ Journal append-only des opérations sensibles.
 
 ---
 
-### 4.7. `accounting_links` — Pont comptable **stub**
+### 4.7. `accounting_links` - Pont comptable **stub**
 
 Traçabilité opération financière ↔ écriture comptable **future** (SYSCOHADA hors lot).
 
@@ -224,8 +224,8 @@ Traçabilité opération financière ↔ écriture comptable **future** (SYSCOHA
 | `organization_id` | |
 | `fund_op_type` | `fund_entry` \| `fund_exit` |
 | `fund_op_id` | UUID |
-| `journal_entry_id` | UUID **nullable** — rempli par l’épic SYSCOHADA |
-| `mapping_rule_key` | varchar null — clé config skeleton |
+| `journal_entry_id` | UUID **nullable** - rempli par l’épic SYSCOHADA |
+| `mapping_rule_key` | varchar null - clé config skeleton |
 | `status` | `pending` \| `linked` \| `skipped` |
 | timestamps | |
 
@@ -233,14 +233,14 @@ Traçabilité opération financière ↔ écriture comptable **future** (SYSCOHA
 
 **API stub (TRESO-039) :**
 - `GET/POST /accounting-links` · `GET/PATCH /accounting-links/:id`
-- `GET /accounting-links/mapping-config` — skeleton JSON (`TREASURY_ACCOUNTING_MAPPING_CONFIG`)
+- `GET /accounting-links/mapping-config` - skeleton JSON (`TREASURY_ACCOUNTING_MAPPING_CONFIG`)
 - Permission : `treasury.accounting_link.read` (lecture **et** création stub)
 - `journal_entry_id` optionnel ; statut `pending` | `linked` | `skipped`
 - Gate void : `assertFundOpNotAccountingLinked` bloque si `status=linked`
 
 ---
 
-### 4.8. `currencies` — Catalogue global de devises (plateforme)
+### 4.8. `currencies` - Catalogue global de devises (plateforme)
 
 Référentiel **unique plateforme** (pas par org) des codes ISO 4217 disponibles dans les sélecteurs Admin (trésorerie, taux, exercices, paramètres org).  
 Migration : [`database/migrations/add_platform_currencies.sql`](../database/migrations/add_platform_currencies.sql).
@@ -263,7 +263,7 @@ Migration : [`database/migrations/add_platform_currencies.sql`](../database/migr
 **Validation Nest :** `CurrenciesService.assertActiveCode` sur create fund/budget/besoin/taux/exercice/org (et update si devise changée).  
 **Désactivation :** retire des listes ; lignes `fund_*` / exercices historiques **conservent** leur code ISO.
 
-### 4.9. `exchange_rates` — Catalogue de taux manuels (TRESO-046)
+### 4.9. `exchange_rates` - Catalogue de taux manuels (TRESO-046)
 
 Référentiel org-scoped pour convertir une opération `fund_*` vers la **devise de tenue** de l’exercice (`accounting_exercises.currency`) lors de « Comptabiliser ».  
 Les codes `from` / `to` doivent appartenir au catalogue `currencies` actif à la création.  
@@ -274,7 +274,7 @@ Pas de connecteur marché MVP ; saisie Admin uniquement.
 | `id` | UUID PK | |
 | `organization_id` | UUID FK | |
 | `from_currency` | char(3) | Devise source (ex. op) |
-| `to_currency` | char(3) | Devise cible (ex. tenue) — ≠ `from` |
+| `to_currency` | char(3) | Devise cible (ex. tenue) - ≠ `from` |
 | `rate` | decimal(18,8) | **1 from = rate × to** (`bookCents ≈ originalCents × rate`) |
 | `effective_on` | date | Applicable à partir de cette date |
 | `notes` | varchar(500) null | |
@@ -284,7 +284,7 @@ Pas de connecteur marché MVP ; saisie Admin uniquement.
 **Résolution :** dernier taux avec `effective_on ≤ onDate` pour la paire. Même devise → rate 1 (pas de ligne catalogue).  
 **API :** `GET/POST/PATCH/DELETE /exchange-rates` · permissions `treasury.fx_rates.read` / `write`.  
 **UI :** `/tresorerie/taux-change` (nav Pilotage).  
-**Consommation SYSCO :** `AccountingPostingService` — détail [syscohada-domain-model.md](./syscohada-domain-model.md) §7.4.
+**Consommation SYSCO :** `AccountingPostingService` - détail [syscohada-domain-model.md](./syscohada-domain-model.md) §7.4.
 
 ---
 
@@ -419,7 +419,7 @@ Convention existante : `{resource}.read` / `{resource}.write` + permissions mét
 IDs seed : `…001057` → `…001068` (lot initial) + `…001079` / `…001080` (`fx_rates.*`, TRESO-046) + `…001081` / `…001082` (`currencies.*`). Synchronisés via `ensure-rbac-permissions`, migrations RBAC / `add_treasury_exchange_rates.sql` / `add_platform_currencies.sql`, et `pnpm --filter @africatourismgate/api sync:rbac`.  
 Constantes : `TREASURY_PERMISSION_CODES` / `TREASURY_ROLE_PROFILE_PERMISSIONS` dans `rbac.constants.ts` ; ressource `currencies` dans le catalogue RBAC.
 
-**Profils indicatifs (assignation `/systeme/roles` — TRESO-044) :**
+**Profils indicatifs (assignation `/systeme/roles` - TRESO-044) :**
 
 | Profil | Permissions |
 | ------ | ----------- |
@@ -451,7 +451,7 @@ Préfixe hub : `/tresorerie`
 | `/tresorerie/taux-change` | Catalogue taux manuels (TRESO-046) ; `toCurrency` défaut = devise org |
 | `/tresorerie/comptabilite` | Hub SYSCO (pont + livres) |
 | `/tresorerie/comptabilite/exercices` | Exercices + devise de tenue (SYSCO) |
-| `/systeme/devises` | Catalogue global ISO (`currencies`) — sélecteurs plateforme |
+| `/systeme/devises` | Catalogue global ISO (`currencies`) - sélecteurs plateforme |
 
 Fichiers config : `dashboard-nav.config.ts`, `admin-route-permissions.ts`, `admin-sections.registry.ts`.
 
@@ -467,7 +467,7 @@ Fichiers config : `dashboard-nav.config.ts`, `admin-route-permissions.ts`, `admi
 | Modules `resources/*` Nest | Structure modules `fund-entries`, `fund-exits`, `expense-requests`, `budgets` |
 | Admin list/form/view | Pattern destinations / paiements |
 
-**Non-objectifs :** remplacer ou fusionner `payments` (encaissements commerce) avec `fund_entries` dans ce lot — une entrée peut *référencer* des réservations payées, sans supprimer le module paiements.
+**Non-objectifs :** remplacer ou fusionner `payments` (encaissements commerce) avec `fund_entries` dans ce lot - une entrée peut *référencer* des réservations payées, sans supprimer le module paiements.
 
 ---
 
@@ -484,19 +484,19 @@ Fichiers config : `dashboard-nav.config.ts`, `admin-route-permissions.ts`, `admi
 - Génération automatique d’écritures comptables
 
 **Livré à la place :** `accounting_links` (stub) + UI placeholder + doc handoff **TRESO-041** (`docs/tresorerie-syscohada-epic-next.md`).  
-**Add-on devises :** catalogue plateforme `currencies` + UI `/systeme/devises` ; taux `exchange_rates` + UI `/tresorerie/taux-change` (**TRESO-046**) ; défaut formulaires = `organizations.currency` (∈ catalogue actif) ; tenue = exercice (`/tresorerie/comptabilite/exercices`, immutabilité si écritures postées) — [syscohada-domain-model.md](./syscohada-domain-model.md) §5.2 / §7.4.  
+**Add-on devises :** catalogue plateforme `currencies` + UI `/systeme/devises` ; taux `exchange_rates` + UI `/tresorerie/taux-change` (**TRESO-046**) ; défaut formulaires = `organizations.currency` (∈ catalogue actif) ; tenue = exercice (`/tresorerie/comptabilite/exercices`, immutabilité si écritures postées) - [syscohada-domain-model.md](./syscohada-domain-model.md) §5.2 / §7.4.  
 **Suite épic :** modèle de domaine [syscohada-domain-model.md](./syscohada-domain-model.md) (SYSCO-001) · tâches [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md).
 
 ---
 
-## 11. Critères TRESO-001 — checklist
+## 11. Critères TRESO-001 - checklist
 
 - [x] Schéma entités + relations (0,N) documenté (§3–4)
 - [x] Circuit de validation formalisé avec statuts (§5.3, §6)
 - [x] Enums sources / modes / budgets documentés (§5)
 - [x] Permissions `treasury.*` listées (§7)
 - [x] Hors-scope SYSCOHADA explicite (§10 → TRESO-041)
-- [ ] Revue validée (tech lead / finance) — **à cocher après relecture humaine**
+- [ ] Revue validée (tech lead / finance) - **à cocher après relecture humaine**
 
 ---
 

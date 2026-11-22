@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { BaseAuditEntity } from '../common/entities/base-audit.entity';
 
-/** Aligné sur docs/syscohada-domain-model.md §5.5–5.6 — SYSCO-003 */
+/** Aligné sur docs/syscohada-domain-model.md §5.5–5.6 - SYSCO-003 */
 export type JournalEntryStatus = 'draft' | 'posted' | 'reversed';
 
 export type JournalEntrySource =

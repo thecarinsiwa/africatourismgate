@@ -32,7 +32,7 @@ test('google oauth callback stores session and redirects to next', async ({ page
   );
 
   // Prod `next start` can finish the client redirect before the intermediate
-  // « Connexion Google » heading is observable — assert the destination instead.
+  // « Connexion Google » heading is observable - assert the destination instead.
   await expect(page).toHaveURL(/\/booking\/cart$/, { timeout: 20_000 });
   await expect(page.getByRole('heading', { name: /Panier|Cart|Carrito/i })).toBeVisible();
 

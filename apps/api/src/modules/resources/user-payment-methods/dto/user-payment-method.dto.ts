@@ -15,7 +15,7 @@ function formatTimestamp(value: string | Date | null | undefined): string | null
   return String(value);
 }
 
-/** API response — external token is never exposed. */
+/** API response - external token is never exposed. */
 export class UserPaymentMethodDto {
   @ApiProperty({ format: 'uuid' })
   id!: string;

@@ -109,7 +109,7 @@ export async function fetchSeedAdminSession(force = false): Promise<StoredSessio
     return cachedSession;
   }
 
-  throw new Error('Échec login seed admin via API (429 — rate limit)');
+  throw new Error('Échec login seed admin via API (429 - rate limit)');
 }
 
 async function fetchOrganizations(token: string): Promise<Organization[]> {
@@ -239,7 +239,7 @@ export async function selectOrganization(page: Page, organizationName: string) {
   await expect(page.getByText(organizationName)).toBeVisible();
 }
 
-/** Connexion fiable pour e2e — session via API + cookies middleware. */
+/** Connexion fiable pour e2e - session via API + cookies middleware. */
 export async function loginAsPosEmployee(
   page: Page,
   options: { organizationName?: string } = {},

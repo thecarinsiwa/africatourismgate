@@ -1,6 +1,6 @@
 /**
  * Catalogue de l’assistant « Mise en route » (guidé).
- * Métadonnées structurelles uniquement — libellés i18n sous `modules.setupGuide.*`.
+ * Métadonnées structurelles uniquement - libellés i18n sous `modules.setupGuide.*`.
  * Les checks `listTotal` / `settingsFlag` seront résolus par setup-readiness (s02).
  */
 

@@ -20,7 +20,7 @@ export class PublicAnalyticsController {
   @Public()
   @Post('page-views')
   @UseGuards(ThrottlerGuard)
-  // Only analyticsBeacon applies — without SkipThrottle, login/forgot/etc. (5/min)
+  // Only analyticsBeacon applies - without SkipThrottle, login/forgot/etc. (5/min)
   // also count and cause 429 on normal browsing / refreshes.
   @SkipThrottle({
     login: true,

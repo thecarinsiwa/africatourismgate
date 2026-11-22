@@ -7,7 +7,7 @@ export const REFRESH_COOKIE = 'atg.admin.refresh';
 export const EXPIRES_COOKIE = 'atg.admin.expires';
 export const USER_COOKIE = 'atg.admin.user';
 
-/** Legacy remember-me cookie — cleared on logout but no longer set. */
+/** Legacy remember-me cookie - cleared on logout but no longer set. */
 export const LEGACY_REMEMBER_COOKIE = 'atg.admin.remember';
 
 const SESSION_COOKIE_NAMES = [

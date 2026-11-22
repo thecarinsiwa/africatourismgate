@@ -30,7 +30,7 @@ export type RbacScopeDisplayLabels = {
 export function formatPermissionDomain(
   resource: string,
   labels: Record<string, string>,
-  emptyDash = '—',
+  emptyDash = '-',
 ): string {
   const trimmed = resource.trim();
   if (!trimmed) return emptyDash;

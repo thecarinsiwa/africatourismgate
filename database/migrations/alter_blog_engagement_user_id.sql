@@ -27,7 +27,7 @@ PREPARE stmt FROM @sql;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
--- Anonymous visitor rows cannot be mapped — clear them before enforcing NOT NULL
+-- Anonymous visitor rows cannot be mapped - clear them before enforcing NOT NULL
 SET @sql = IF(
   (SELECT COUNT(*) FROM information_schema.columns
     WHERE table_schema = DATABASE()

@@ -1,6 +1,7 @@
 import { createApiClient } from '@africatourismgate/api-client';
 import type {
   CreateVehicleTripRequest,
+  EnsureVehicleTripSeatsRequest,
   JoinVehicleTripRequest,
   PaginatedResponse,
   UpdateVehicleTripRequest,
@@ -29,12 +30,22 @@ function createAuthClient(accessToken: string) {
 
 export function listPublicVehicleTrips(
   query?: VehicleTripsListQuery,
+  accessToken?: string | null,
 ): Promise<PaginatedResponse<VehicleTrip>> {
-  return createPublicClient().listPublicVehicleTrips(query);
+  const client = accessToken
+    ? createAuthClient(accessToken)
+    : createPublicClient();
+  return client.listPublicVehicleTrips(query);
 }
 
-export function getPublicVehicleTrip(id: string): Promise<VehicleTrip> {
-  return createPublicClient().getPublicVehicleTrip(id);
+export function getPublicVehicleTrip(
+  id: string,
+  accessToken?: string | null,
+): Promise<VehicleTrip> {
+  const client = accessToken
+    ? createAuthClient(accessToken)
+    : createPublicClient();
+  return client.getPublicVehicleTrip(id);
 }
 
 export function createPublicVehicleTrip(
@@ -50,6 +61,14 @@ export function joinPublicVehicleTrip(
   body: JoinVehicleTripRequest = {},
 ): Promise<VehicleTrip> {
   return createAuthClient(accessToken).joinPublicVehicleTrip(id, body);
+}
+
+export function ensurePublicVehicleTripSeats(
+  accessToken: string,
+  id: string,
+  body: EnsureVehicleTripSeatsRequest,
+): Promise<VehicleTrip> {
+  return createAuthClient(accessToken).ensurePublicVehicleTripSeats(id, body);
 }
 
 export function updatePublicVehicleTrip(

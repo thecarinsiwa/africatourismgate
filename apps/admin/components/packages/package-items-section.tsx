@@ -146,7 +146,7 @@ export function PackageItemsSection({
             options = routesResult.data.map((route) => {
               const vehicle = vehicleById.get(route.vehicleId);
               const plate = vehicle?.licensePlate?.trim();
-              const suffix = plate ? ` — ${plate}` : '';
+              const suffix = plate ? ` - ${plate}` : '';
               return {
                 id: route.id,
                 label: `${route.departureCity} → ${route.arrivalCity}${suffix}`,

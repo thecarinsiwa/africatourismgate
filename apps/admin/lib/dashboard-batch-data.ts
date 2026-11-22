@@ -1,4 +1,4 @@
-// Agrégation batch dashboard — une passe API partagée entre KPIs et graphique tendance.
+// Agrégation batch dashboard - une passe API partagée entre KPIs et graphique tendance.
 
 import type { BookingListItem, PaymentListItem } from '@africatourismgate/types';
 import type { DashboardKpiKey } from '../config/dashboard-kpi';

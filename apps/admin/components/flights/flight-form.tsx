@@ -400,7 +400,7 @@ export function FlightForm({
     () =>
       airlines.map((airline) => ({
         value: airline.id,
-        label: `${airline.iataCode} — ${airline.name}`,
+        label: `${airline.iataCode} - ${airline.name}`,
       })),
     [airlines],
   );
@@ -408,7 +408,7 @@ export function FlightForm({
   const toAirportOption = useCallback(
     (airport: Airport) => ({
       value: airport.id,
-      label: `${airport.iataCode} — ${airport.city}${
+      label: `${airport.iataCode} - ${airport.city}${
         airport.name?.trim() && airport.name.trim() !== airport.city
           ? ` (${airport.name.trim()})`
           : ''

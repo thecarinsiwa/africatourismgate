@@ -1,4 +1,4 @@
--- TRESO-002 — Entrées de fonds + pivot réservations (0,N) + justificatifs (métadonnées)
+-- TRESO-002 - Entrées de fonds + pivot réservations (0,N) + justificatifs (métadonnées)
 -- Down (manuel) : voir commentaires en bas de fichier.
 SET NAMES utf8mb4;
 
@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS `fund_entry_attachments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------------
--- DOWN (manuel — ne pas placer dans un .sql auto-appliqué par db:sync)
+-- DOWN (manuel - ne pas placer dans un .sql auto-appliqué par db:sync)
 -- ---------------------------------------------------------------------------
 -- DROP TABLE IF EXISTS `fund_entry_attachments`;
 -- DROP TABLE IF EXISTS `fund_entry_bookings`;

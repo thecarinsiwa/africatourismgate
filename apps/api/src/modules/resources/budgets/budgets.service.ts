@@ -297,7 +297,7 @@ export class BudgetsService extends CrudService<Budgets> {
 
   /**
    * Agrégat léger budget vs réalisé (sorties disbursed|recorded).
-   * Pas de compta SYSCOHADA — somme des fund_exits sur la fenêtre du budget.
+   * Pas de compta SYSCOHADA - somme des fund_exits sur la fenêtre du budget.
    */
   async getVsActualSummary(
     query: BudgetsVsActualQueryDto,

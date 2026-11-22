@@ -32,9 +32,9 @@ import { resolveInitialOrganizationId } from './organization-settings-form';
 const PAGE_SIZE = 20;
 
 function formatWindowDate(iso: string | null, locale: string): string {
-  if (!iso) return '—';
+  if (!iso) return '-';
   const ms = Date.parse(iso);
-  if (Number.isNaN(ms)) return '—';
+  if (Number.isNaN(ms)) return '-';
   return new Intl.DateTimeFormat(locale, {
     dateStyle: 'short',
     timeStyle: 'short',

@@ -31,7 +31,7 @@ export interface AdminSupportTicketDetail extends AdminSupportTicketListItem {
   messages: SupportTicketMessage[];
 }
 
-/** Owner-scoped ticket detail (web account) — includes the message thread. */
+/** Owner-scoped ticket detail (web account) - includes the message thread. */
 export interface CustomerSupportTicketDetail extends SupportTicket {
   messages: SupportTicketMessage[];
 }
@@ -39,7 +39,7 @@ export interface CustomerSupportTicketDetail extends SupportTicket {
 export interface CreateSupportTicketRequest {
   subject: string;
   body: string;
-  /** Staff only — defaults to the authenticated user when omitted. */
+  /** Staff only - defaults to the authenticated user when omitted. */
   userId?: string;
 }
 

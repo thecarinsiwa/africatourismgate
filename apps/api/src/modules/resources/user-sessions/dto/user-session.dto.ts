@@ -7,7 +7,7 @@ function formatTimestamp(value: string | Date | null | undefined): string | null
   return String(value);
 }
 
-/** API response — refresh token hash is never exposed. */
+/** API response - refresh token hash is never exposed. */
 export class UserSessionDto {
   @ApiProperty({ format: 'uuid' })
   id!: string;

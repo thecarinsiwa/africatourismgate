@@ -2,7 +2,7 @@
  * Admin help-center catalog (static, CMS-ready shape).
  * Structural metadata lives here; titles/summaries/bodies live in i18n under
  * `modules.adminHelp.categories.*` / `modules.adminHelp.articles.*`.
- * No database — articles document how to use the admin panel.
+ * No database - articles document how to use the admin panel.
  */
 
 export const ADMIN_HELP_CATEGORY_SLUGS = [
@@ -165,7 +165,7 @@ export const ADMIN_HELP_CATEGORIES: readonly AdminHelpCategory[] = [
 
 /**
  * Curated hub “quick start” links (dashboard, palette, users, bookings, roles, tickets).
- * Resolved against ADMIN_HELP_ARTICLES — unknown slugs are ignored.
+ * Resolved against ADMIN_HELP_ARTICLES - unknown slugs are ignored.
  */
 export const ADMIN_HELP_QUICK_START_SLUGS = [
   'naviguer-dans-le-dashboard',

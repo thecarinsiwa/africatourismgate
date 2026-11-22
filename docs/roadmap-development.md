@@ -1,6 +1,6 @@
-# Africa Tourism Gate — Roadmap & prompts de développement (v2)
+# Africa Tourism Gate - Roadmap & prompts de développement (v2)
 
-> **Mise à jour : juin 2026** — Document pour guider les PRs et les sessions Cursor Agent.  
+> **Mise à jour : juin 2026** - Document pour guider les PRs et les sessions Cursor Agent.  
 > Branche de base : `main`. **Une PR = un livrable = une branche.**  
 > Document précédent (obsolète) : [roadmap-prompts.md](./roadmap-prompts.md)  
 > **Suite post-réunion août 2026** (corrections + paiements + manifeste + V2) : [roadmap-post-reunion-08-2026.md](./roadmap-post-reunion-08-2026.md)
@@ -55,24 +55,24 @@ Règles :
 | ~50 modules API CRUD + Swagger | ✅ | `apps/api/src/modules/resources/` |
 | Auth JWT (login, register, refresh, logout, forgot/reset) | ✅ | Throttle sur login/forgot ; reset loggé en dev |
 | Google OAuth (API + web callback) | ✅ | `apps/api/src/modules/auth/strategies/google.strategy.ts` |
-| RBAC (PermissionsGuard) | ⚠️ | Appliqué sur ~12 contrôleurs (users, orgs, bookings, payments, roles…) — **pas** sur le catalogue (properties, flights, etc.) |
+| RBAC (PermissionsGuard) | ⚠️ | Appliqué sur ~12 contrôleurs (users, orgs, bookings, payments, roles…) - **pas** sur le catalogue (properties, flights, etc.) |
 | Client API typé | ✅ | `packages/api-client` (~1700 lignes, auth + CRUD + booking + Stripe) |
-| Admin — auth + middleware + session | ✅ | Refresh silencieux, routes protégées |
-| Admin — shell + navigation | ✅ | Sidebar, groupes EN / labels FR |
-| Admin — CRUD opérationnels | ✅ | Organisations, utilisateurs, employés, rôles, audit, paramètres org, hébergements, vols, locations, croisières, activités, forfaits, destinations, réservations |
-| Admin — pages placeholder | ❌ | Paiements, codes promo, promotions, avis, tickets, fidélité, adresses, sessions… → `DashboardSectionPage` « Contenu à venir » |
+| Admin - auth + middleware + session | ✅ | Refresh silencieux, routes protégées |
+| Admin - shell + navigation | ✅ | Sidebar, groupes EN / labels FR |
+| Admin - CRUD opérationnels | ✅ | Organisations, utilisateurs, employés, rôles, audit, paramètres org, hébergements, vols, locations, croisières, activités, forfaits, destinations, réservations |
+| Admin - pages placeholder | ❌ | Paiements, codes promo, promotions, avis, tickets, fidélité, adresses, sessions… → `DashboardSectionPage` « Contenu à venir » |
 | BookingEngine polymorphe | ✅ | Chambres, vols, véhicules, cabines, activités + promo checkout |
 | Stripe (PaymentIntent + webhook) | ✅ | Remboursements API via `POST /payments/:id/refund` |
-| Site web — homepage marketing | ✅ | Hero, onglets recherche, destinations, i18n FR/EN/ES |
-| Site web — hôtels (recherche, fiche, checkout) | ✅ | API publique `public/accommodations` |
-| Site web — compte client | ✅ | Profil, adresses, réservations, moyens de paiement, fidélité |
-| Site web — avis, support, fidélité | ✅ | Tests Playwright présents |
-| Site web — vols / voitures / croisières / tours | ❌ | Onglets UI présents mais **toutes les recherches redirigent vers `/hotels`** |
-| POS — shell, auth, vente rapide | ✅ | Cash + Stripe, multi-types produits |
-| POS — reçus / impression | ✅ | HTML + print + mailto (PDF via dialogue impression) ; finitions → [roadmap-pos.md](./roadmap-pos.md) |
+| Site web - homepage marketing | ✅ | Hero, onglets recherche, destinations, i18n FR/EN/ES |
+| Site web - hôtels (recherche, fiche, checkout) | ✅ | API publique `public/accommodations` |
+| Site web - compte client | ✅ | Profil, adresses, réservations, moyens de paiement, fidélité |
+| Site web - avis, support, fidélité | ✅ | Tests Playwright présents |
+| Site web - vols / voitures / croisières / tours | ❌ | Onglets UI présents mais **toutes les recherches redirigent vers `/hotels`** |
+| POS - shell, auth, vente rapide | ✅ | Cash + Stripe, multi-types produits |
+| POS - reçus / impression | ✅ | HTML + print + mailto (PDF via dialogue impression) ; finitions → [roadmap-pos.md](./roadmap-pos.md) |
 | Tests Playwright web | ✅ | 7 specs dans `apps/web/tests/e2e/` |
 | Tests API e2e | ❌ | Aucun spec Jest/supertest |
-| Tests Playwright admin | ❌ | — |
+| Tests Playwright admin | ❌ | - |
 | CI GitHub Actions | ❌ | Pas de `.github/workflows/` |
 | Health check | ⚠️ | `GET /api/health` sans ping DB |
 | Module email (SMTP) | ❌ | Reset password loggé en console en dev |
@@ -84,20 +84,20 @@ Règles :
 
 | App | URL | Identifiants seed |
 |-----|-----|-------------------|
-| API + Swagger | http://localhost:3000/api | — |
+| API + Swagger | http://localhost:3000/api | - |
 | Admin | http://localhost:3001/login | `admin@africatourismgate.local` / `ChangeMe123!` |
 | Web | http://localhost:3002 | Inscription client via `/booking/login` |
 | POS | http://localhost:3003/login | Compte employé seed |
 
 ---
 
-## Livrables historiques (1–52) — statut
+## Livrables historiques (1–52) - statut
 
 Les livrables du document v1 sont **essentiellement réalisés**. Exceptions notables :
 
 | # | Livrable v1 | Statut |
 |---|-------------|--------|
-| 9 | RBAC sur endpoints | ⚠️ Partiel — voir #62 |
+| 9 | RBAC sur endpoints | ⚠️ Partiel - voir #62 |
 | 14–17, 22–26 | Admin catalogue | ✅ |
 | 27–33 | Booking + Stripe + promo + refunds | ✅ |
 | 34–41 | Site public | ⚠️ Hôtels OK ; autres verticales manquantes (#67–72) |
@@ -116,56 +116,56 @@ Les livrables du document v1 sont **essentiellement réalisés**. Exceptions not
 
 | Phase | Objectif |
 |-------|----------|
-| **7** | Admin — sections placeholder → CRUD complet |
-| **8** | API publique & site web — verticales au-delà des hôtels |
-| **9** | Sécurité — RBAC étendu & multi-tenant |
-| **10** | POS — finitions (voir [roadmap-pos.md](./roadmap-pos.md)) |
-| **11** | Qualité — tests & CI |
+| **7** | Admin - sections placeholder → CRUD complet |
+| **8** | API publique & site web - verticales au-delà des hôtels |
+| **9** | Sécurité - RBAC étendu & multi-tenant |
+| **10** | POS - finitions (voir [roadmap-pos.md](./roadmap-pos.md)) |
+| **11** | Qualité - tests & CI |
 | **12** | Emails & notifications transactionnelles |
 | **13** | i18n admin & polish UX |
 | **14** | Production, observabilité & scale |
 
 ---
 
-## Tableau récapitulatif — livrables restants
+## Tableau récapitulatif - livrables restants
 
 | # | Phase | Livrable | Priorité | Branche PR | Dépend de |
 |---|-------|----------|----------|------------|-----------|
-| 53 | 7 | Admin — Paiements (liste + remboursement) | Haute | `feature/admin-payments` | — |
-| 54 | 7 | Admin — Codes promo | Haute | `feature/admin-promo-codes` | — |
-| 55 | 7 | Admin — Promotions | Moyenne | `feature/admin-promotions` | — |
-| 56 | 7 | Admin — Modération avis | Moyenne | `feature/admin-reviews` | — |
-| 57 | 7 | Admin — Tickets support | Moyenne | `feature/admin-support-tickets` | — |
-| 58 | 7 | Admin — Messages support | Moyenne | `feature/admin-support-messages` | 57 |
-| 59 | 7 | Admin — Comptes fidélité | Basse | `feature/admin-loyalty` | — |
-| 60 | 7 | Admin — Sous-pages utilisateurs | Moyenne | `feature/admin-user-subpages` | — |
-| 61 | 7 | Admin — Lignes de réservation | Basse | `feature/admin-booking-items` | — |
-| 62 | 9 | RBAC complet endpoints catalogue | Haute | `feature/api-rbac-catalog` | — |
-| 63 | 8 | API publique — recherche vols | Haute | `feature/api-public-flights` | — |
-| 64 | 8 | API publique — recherche véhicules | Haute | `feature/api-public-vehicles` | — |
-| 65 | 8 | API publique — recherche croisières | Moyenne | `feature/api-public-cruises` | — |
-| 66 | 8 | API publique — recherche activités | Moyenne | `feature/api-public-activities` | — |
-| 67 | 8 | Web — Vols (recherche + fiche + checkout) | Haute | `feature/web-flights` | 63 |
-| 68 | 8 | Web — Locations véhicules | Haute | `feature/web-cars` | 64 |
-| 69 | 8 | Web — Croisières | Moyenne | `feature/web-cruises` | 65 |
-| 70 | 8 | Web — Activités / tours | Moyenne | `feature/web-activities` | 66 |
-| 71 | 8 | Web — Forfaits combinés | Moyenne | `feature/web-packages` | 67, 34 |
-| 72 | 8 | Web — Onglets recherche → routes dédiées | Haute | `feature/web-search-tabs-routing` | 67–70 |
-| 73 | 10 | POS — Reçus imprimables (base ✅) ; suite → [roadmap-pos.md](./roadmap-pos.md) | — | — | — |
-| 74 | 9 | Upload images propriétés (API + admin) | Moyenne | `feature/property-image-upload` | — |
-| 75 | 11 | Tests API e2e (Jest + supertest) | Haute | `feature/api-e2e-tests` | — |
-| 76 | 11 | Tests E2E admin (Playwright) | Moyenne | `feature/admin-e2e-playwright` | — |
+| 53 | 7 | Admin - Paiements (liste + remboursement) | Haute | `feature/admin-payments` | - |
+| 54 | 7 | Admin - Codes promo | Haute | `feature/admin-promo-codes` | - |
+| 55 | 7 | Admin - Promotions | Moyenne | `feature/admin-promotions` | - |
+| 56 | 7 | Admin - Modération avis | Moyenne | `feature/admin-reviews` | - |
+| 57 | 7 | Admin - Tickets support | Moyenne | `feature/admin-support-tickets` | - |
+| 58 | 7 | Admin - Messages support | Moyenne | `feature/admin-support-messages` | 57 |
+| 59 | 7 | Admin - Comptes fidélité | Basse | `feature/admin-loyalty` | - |
+| 60 | 7 | Admin - Sous-pages utilisateurs | Moyenne | `feature/admin-user-subpages` | - |
+| 61 | 7 | Admin - Lignes de réservation | Basse | `feature/admin-booking-items` | - |
+| 62 | 9 | RBAC complet endpoints catalogue | Haute | `feature/api-rbac-catalog` | - |
+| 63 | 8 | API publique - recherche vols | Haute | `feature/api-public-flights` | - |
+| 64 | 8 | API publique - recherche véhicules | Haute | `feature/api-public-vehicles` | - |
+| 65 | 8 | API publique - recherche croisières | Moyenne | `feature/api-public-cruises` | - |
+| 66 | 8 | API publique - recherche activités | Moyenne | `feature/api-public-activities` | - |
+| 67 | 8 | Web - Vols (recherche + fiche + checkout) | Haute | `feature/web-flights` | 63 |
+| 68 | 8 | Web - Locations véhicules | Haute | `feature/web-cars` | 64 |
+| 69 | 8 | Web - Croisières | Moyenne | `feature/web-cruises` | 65 |
+| 70 | 8 | Web - Activités / tours | Moyenne | `feature/web-activities` | 66 |
+| 71 | 8 | Web - Forfaits combinés | Moyenne | `feature/web-packages` | 67, 34 |
+| 72 | 8 | Web - Onglets recherche → routes dédiées | Haute | `feature/web-search-tabs-routing` | 67–70 |
+| 73 | 10 | POS - Reçus imprimables (base ✅) ; suite → [roadmap-pos.md](./roadmap-pos.md) | - | - | - |
+| 74 | 9 | Upload images propriétés (API + admin) | Moyenne | `feature/property-image-upload` | - |
+| 75 | 11 | Tests API e2e (Jest + supertest) | Haute | `feature/api-e2e-tests` | - |
+| 76 | 11 | Tests E2E admin (Playwright) | Moyenne | `feature/admin-e2e-playwright` | - |
 | 77 | 11 | CI GitHub Actions | Haute | `feature/ci-github-actions` | 75 |
-| 78 | 14 | Health DB + observabilité | Moyenne | `feature/api-observability` | — |
-| 79 | 12 | Module email SMTP | Haute | `feature/email-notifications` | — |
-| 80 | 13 | i18n admin FR/EN | Moyenne | `feature/admin-i18n` | — |
-| 81 | 14 | OpenAPI → codegen client | Basse | `feature/openapi-codegen` | — |
+| 78 | 14 | Health DB + observabilité | Moyenne | `feature/api-observability` | - |
+| 79 | 12 | Module email SMTP | Haute | `feature/email-notifications` | - |
+| 80 | 13 | i18n admin FR/EN | Moyenne | `feature/admin-i18n` | - |
+| 81 | 14 | OpenAPI → codegen client | Basse | `feature/openapi-codegen` | - |
 | 82 | 14 | Durcissement production | Haute | `feature/production-hardening` | 77 |
 | 83 | 9 | Audit scope organisation (multi-tenant) | Haute | `feature/org-scoping-audit` | 62 |
 
 ---
 
-## MVP v2 — priorités courtes
+## MVP v2 - priorités courtes
 
 Objectif : **plateforme multi-verticales en production** avec admin complet et pipeline CI.
 
@@ -197,7 +197,7 @@ Objectif : **plateforme multi-verticales en production** avec admin complet et p
 
 ## Prompts détaillés (copier-coller dans Cursor Agent)
 
-### #53 — Admin — Paiements (liste + remboursement)
+### #53 - Admin - Paiements (liste + remboursement)
 
 **Branche :** `feature/admin-payments`
 
@@ -205,7 +205,7 @@ Objectif : **plateforme multi-verticales en production** avec admin complet et p
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-payments`.
 
-Livrable #53 : Admin — Paiements (liste + remboursement)
+Livrable #53 : Admin - Paiements (liste + remboursement)
 Références :
 - Route placeholder : apps/admin/app/(dashboard)/[...segments]/page.tsx → section `paiements`
 - Registry : apps/admin/config/admin-sections.registry.ts (apiResource: payments)
@@ -228,7 +228,7 @@ Critères :
 À la fin : fichiers modifiés + test pnpm dev:admin.
 ```
 
-### #54 — Admin — Codes promo
+### #54 - Admin - Codes promo
 
 **Branche :** `feature/admin-promo-codes`
 
@@ -236,7 +236,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-promo-codes`.
 
-Livrable #54 : Admin — Codes promo
+Livrable #54 : Admin - Codes promo
 Références :
 - Section `paiements/codes-promo` dans admin-sections.registry.ts
 - API : apps/api/src/modules/resources/promo-codes/
@@ -255,7 +255,7 @@ Critères :
 À la fin : fichiers modifiés + test création code + preview checkout.
 ```
 
-### #55 — Admin — Promotions
+### #55 - Admin - Promotions
 
 **Branche :** `feature/admin-promotions`
 
@@ -263,7 +263,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-promotions`.
 
-Livrable #55 : Admin — Promotions
+Livrable #55 : Admin - Promotions
 Références : API promotions, admin-sections `paiements/promotions`.
 
 CRUD campagnes promotions (titre, description, dates, cible produit/destination, remise).
@@ -274,7 +274,7 @@ Critères : liste + create/edit ; cohérent avec schéma DB existant.
 À la fin : fichiers modifiés + test.
 ```
 
-### #56 — Admin — Modération avis
+### #56 - Admin - Modération avis
 
 **Branche :** `feature/admin-reviews`
 
@@ -282,7 +282,7 @@ Critères : liste + create/edit ; cohérent avec schéma DB existant.
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-reviews`.
 
-Livrable #56 : Admin — Modération avis
+Livrable #56 : Admin - Modération avis
 Références :
 - API : apps/api/src/modules/resources/reviews/reviews.service.ts
 - Web : apps/web/components/hotels/hotel-reviews-section.tsx
@@ -298,7 +298,7 @@ Critères : modération visible ; avis masqué disparaît de la fiche hôtel web
 À la fin : fichiers modifiés + test.
 ```
 
-### #57 — Admin — Tickets support
+### #57 - Admin - Tickets support
 
 **Branche :** `feature/admin-support-tickets`
 
@@ -306,7 +306,7 @@ Critères : modération visible ; avis masqué disparaît de la fiche hôtel web
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-support-tickets`.
 
-Livrable #57 : Admin — Tickets support
+Livrable #57 : Admin - Tickets support
 Références :
 - API support-tickets (RequirePermissions)
 - Web : apps/web/components/support/support-ticket-form.tsx
@@ -322,7 +322,7 @@ Critères : ticket créé depuis web visible et traitable en admin.
 À la fin : fichiers modifiés + test flux web → admin.
 ```
 
-### #58 — Admin — Messages support
+### #58 - Admin - Messages support
 
 **Branche :** `feature/admin-support-messages`
 
@@ -330,7 +330,7 @@ Critères : ticket créé depuis web visible et traitable en admin.
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-support-messages`.
 
-Livrable #58 : Admin — Messages support
+Livrable #58 : Admin - Messages support
 Références : API support-messages, page tickets #57.
 
 Dans le détail ticket : thread messages chronologique, formulaire réponse admin, distinction client/agent.
@@ -340,7 +340,7 @@ Critères : réponse admin visible côté API ; statut ticket mis à jour.
 À la fin : fichiers modifiés + test.
 ```
 
-### #59 — Admin — Comptes fidélité
+### #59 - Admin - Comptes fidélité
 
 **Branche :** `feature/admin-loyalty`
 
@@ -348,7 +348,7 @@ Critères : réponse admin visible côté API ; statut ticket mis à jour.
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-loyalty`.
 
-Livrable #59 : Admin — Comptes fidélité
+Livrable #59 : Admin - Comptes fidélité
 Références : API loyalty-accounts, web account-loyalty-panel.
 
 Page /fidelite/comptes : liste comptes (user, solde points, tier, dernière activité), ajustement manuel points (super_admin), historique si table existe.
@@ -358,7 +358,7 @@ Critères : solde cohérent avec web ; placeholder remplacé.
 À la fin : fichiers modifiés + test.
 ```
 
-### #60 — Admin — Sous-pages utilisateurs
+### #60 - Admin - Sous-pages utilisateurs
 
 **Branche :** `feature/admin-user-subpages`
 
@@ -366,7 +366,7 @@ Critères : solde cohérent avec web ; placeholder remplacé.
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-user-subpages`.
 
-Livrable #60 : Admin — Sous-pages utilisateurs
+Livrable #60 : Admin - Sous-pages utilisateurs
 Sections placeholder :
 - /utilisateurs/adresses → user-addresses
 - /utilisateurs/moyens-paiement → user-payment-methods (masquer données sensibles)
@@ -380,7 +380,7 @@ Critères : 4 pages fonctionnelles ; pas de placeholder.
 À la fin : fichiers modifiés + test.
 ```
 
-### #61 — Admin — Lignes de réservation
+### #61 - Admin - Lignes de réservation
 
 **Branche :** `feature/admin-booking-items`
 
@@ -388,7 +388,7 @@ Critères : 4 pages fonctionnelles ; pas de placeholder.
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-booking-items`.
 
-Livrable #61 : Admin — Lignes de réservation
+Livrable #61 : Admin - Lignes de réservation
 Références : API booking-items, bookings-list admin.
 
 Page /reservations/lignes : tableau global booking_items (type, libellé, dates, montant, booking ref), filtres type/statut/bookingId, lien vers détail réservation.
@@ -398,7 +398,7 @@ Critères : données polymorphes lisibles ; pagination OK.
 À la fin : fichiers modifiés + test.
 ```
 
-### #62 — RBAC complet endpoints catalogue
+### #62 - RBAC complet endpoints catalogue
 
 **Branche :** `feature/api-rbac-catalog`
 
@@ -432,7 +432,7 @@ Critères :
 À la fin : fichiers modifiés + tests curl avec rôles seed.
 ```
 
-### #63 — API publique — recherche vols
+### #63 - API publique - recherche vols
 
 **Branche :** `feature/api-public-flights`
 
@@ -440,7 +440,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/api-public-flights`.
 
-Livrable #63 : API publique — recherche vols
+Livrable #63 : API publique - recherche vols
 Références :
 - Pattern : apps/api/src/modules/public/accommodations/ (PublicAccommodationsService)
 - Entités : flights, flight_classes, flight_class_availability, airports, airlines
@@ -455,7 +455,7 @@ Critères : résultats cohérents avec seed demo ; dates invalides → 400.
 À la fin : fichiers modifiés + exemples curl.
 ```
 
-### #64 — API publique — recherche véhicules
+### #64 - API publique - recherche véhicules
 
 **Branche :** `feature/api-public-vehicles`
 
@@ -463,7 +463,7 @@ Critères : résultats cohérents avec seed demo ; dates invalides → 400.
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/api-public-vehicles`.
 
-Livrable #64 : API publique — recherche véhicules
+Livrable #64 : API publique - recherche véhicules
 Module public/vehicles :
 - GET /api/public/vehicles/search?pickupLocation=&pickupDate=&returnDate=
 - GET /api/public/vehicles/:id?pickupDate=&returnDate=
@@ -474,7 +474,7 @@ Critères : recherche par dates ; véhicule indisponible exclu.
 À la fin : fichiers modifiés + curl.
 ```
 
-### #65 — API publique — recherche croisières
+### #65 - API publique - recherche croisières
 
 **Branche :** `feature/api-public-cruises`
 
@@ -482,17 +482,17 @@ Critères : recherche par dates ; véhicule indisponible exclu.
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/api-public-cruises`.
 
-Livrable #65 : API publique — recherche croisières
+Livrable #65 : API publique - recherche croisières
 Module public/cruises :
 - GET /api/public/cruises/search?sailFrom=&sailTo=&startDate=&endDate=
-- GET /api/public/cruises/sailings/:id — détail sailing, itinéraire, cabines disponibles
+- GET /api/public/cruises/sailings/:id - détail sailing, itinéraire, cabines disponibles
 
 Critères : cabines avec stock ; prix min affiché.
 
 À la fin : fichiers modifiés + curl.
 ```
 
-### #66 — API publique — recherche activités
+### #66 - API publique - recherche activités
 
 **Branche :** `feature/api-public-activities`
 
@@ -500,7 +500,7 @@ Critères : cabines avec stock ; prix min affiché.
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/api-public-activities`.
 
-Livrable #66 : API publique — recherche activités
+Livrable #66 : API publique - recherche activités
 Module public/activities :
 - GET /api/public/activities/search?destination=&date=&participants=
 - GET /api/public/activities/:id?date=&participants=
@@ -511,7 +511,7 @@ Critères : filtre destination ; activité sans créneau exclue.
 À la fin : fichiers modifiés + curl.
 ```
 
-### #67 — Web — Vols (recherche + fiche + checkout)
+### #67 - Web - Vols (recherche + fiche + checkout)
 
 **Branche :** `feature/web-flights`
 
@@ -519,7 +519,7 @@ Critères : filtre destination ; activité sans créneau exclue.
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/web-flights`.
 
-Livrable #67 : Web — Vols (recherche + fiche + checkout)
+Livrable #67 : Web - Vols (recherche + fiche + checkout)
 Références :
 - Pattern hôtels : apps/web/app/hotels/, components/hotels/
 - Booking : apps/web/app/reservations/ ou booking/
@@ -527,8 +527,8 @@ Références :
 - i18n : apps/web/lib/i18n/translations.ts
 
 Créer :
-- /flights — recherche + résultats
-- /flights/[id] — détail vol + classes + CTA Réserver
+- /flights - recherche + résultats
+- /flights/[id] - détail vol + classes + CTA Réserver
 - Intégration panier/checkout existant (booking_items flight_class)
 - Traductions FR/EN pour les nouvelles chaînes
 
@@ -539,7 +539,7 @@ Critères :
 À la fin : fichiers modifiés + test manuel + spec Playwright minimal optionnel.
 ```
 
-### #68 — Web — Locations véhicules
+### #68 - Web - Locations véhicules
 
 **Branche :** `feature/web-cars`
 
@@ -547,7 +547,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/web-cars`.
 
-Livrable #68 : Web — Locations véhicules
+Livrable #68 : Web - Locations véhicules
 Routes /cars et /cars/[id], API #64, checkout vehicle item.
 Réutiliser composants hotels (cards, sidebar booking, i18n).
 
@@ -556,7 +556,7 @@ Critères : dates pickup/return obligatoires ; prix total = jours × tarif.
 À la fin : fichiers modifiés + test.
 ```
 
-### #69 — Web — Croisières
+### #69 - Web - Croisières
 
 **Branche :** `feature/web-cruises`
 
@@ -564,7 +564,7 @@ Critères : dates pickup/return obligatoires ; prix total = jours × tarif.
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/web-cruises`.
 
-Livrable #69 : Web — Croisières
+Livrable #69 : Web - Croisières
 Routes /cruises et /cruises/[id], API #65, sélection cabine, checkout cabin item.
 
 Critères : itinéraire affiché ; cabine sans stock grisée.
@@ -572,7 +572,7 @@ Critères : itinéraire affiché ; cabine sans stock grisée.
 À la fin : fichiers modifiés + test.
 ```
 
-### #70 — Web — Activités / tours
+### #70 - Web - Activités / tours
 
 **Branche :** `feature/web-activities`
 
@@ -580,7 +580,7 @@ Critères : itinéraire affiché ; cabine sans stock grisée.
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/web-activities`.
 
-Livrable #70 : Web — Activités / tours
+Livrable #70 : Web - Activités / tours
 Routes /activities et /activities/[id], API #66, choix créneau schedule, checkout activity_schedule item.
 
 Critères : participants max respecté ; i18n FR/EN.
@@ -588,7 +588,7 @@ Critères : participants max respecté ; i18n FR/EN.
 À la fin : fichiers modifiés + test.
 ```
 
-### #71 — Web — Forfaits combinés
+### #71 - Web - Forfaits combinés
 
 **Branche :** `feature/web-packages`
 
@@ -596,7 +596,7 @@ Critères : participants max respecté ; i18n FR/EN.
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/web-packages`.
 
-Livrable #71 : Web — Forfaits combinés
+Livrable #71 : Web - Forfaits combinés
 Routes /packages et /packages/[id].
 API : packages + package_items (afficher remise, items inclus).
 Checkout : réservation multi-items ou package dédié selon engine existant.
@@ -606,7 +606,7 @@ Critères : prix barré + prix package ; ajout panier multi-lignes.
 À la fin : fichiers modifiés + test.
 ```
 
-### #72 — Web — Onglets recherche → routes dédiées
+### #72 - Web - Onglets recherche → routes dédiées
 
 **Branche :** `feature/web-search-tabs-routing`
 
@@ -614,7 +614,7 @@ Critères : prix barré + prix package ; ajout panier multi-lignes.
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/web-search-tabs-routing`.
 
-Livrable #72 : Web — Onglets recherche → routes dédiées
+Livrable #72 : Web - Onglets recherche → routes dédiées
 Références : apps/web/components/home/search-tabs.tsx (handleSubmit redirige tout vers /hotels).
 
 Modifier handleSubmit :
@@ -632,13 +632,13 @@ Critères : chaque onglet mène à la bonne route ; params conservés.
 À la fin : fichiers modifiés + test chaque onglet.
 ```
 
-### #73 — POS — Reçus imprimables (livré)
+### #73 - POS - Reçus imprimables (livré)
 
-**Statut :** ✅ base livrée — reçu HTML, `window.print`, « PDF » via dialogue d’impression, email via `mailto:`.
+**Statut :** ✅ base livrée - reçu HTML, `window.print`, « PDF » via dialogue d’impression, email via `mailto:`.
 
 **Suite :** finitions POS (historique, email serveur, PDF natif, CI, etc.) dans [roadmap-pos.md](./roadmap-pos.md) (livrables POS-1+). Ne pas rouvrir `feature/pos-receipts`.
 
-### #74 — Upload images propriétés
+### #74 - Upload images propriétés
 
 **Branche :** `feature/property-image-upload`
 
@@ -660,7 +660,7 @@ Critères : image uploadée visible sur fiche web hôtel ; taille max 5 Mo ; typ
 À la fin : fichiers modifiés + test upload.
 ```
 
-### #75 — Tests API e2e
+### #75 - Tests API e2e
 
 **Branche :** `feature/api-e2e-tests`
 
@@ -670,10 +670,10 @@ Branche : crée et bascule sur `feature/api-e2e-tests`.
 
 Livrable #75 : Tests API e2e (Jest + supertest)
 Créer apps/api/test/e2e/ :
-- health.spec.ts — GET /api/health
-- auth.spec.ts — login seed admin, refresh, 401 sans token
-- booking.spec.ts — checkout-preview chambre seed, création booking mock
-- stripe-webhook.spec.ts — mock signature webhook payment_intent.succeeded
+- health.spec.ts - GET /api/health
+- auth.spec.ts - login seed admin, refresh, 401 sans token
+- booking.spec.ts - checkout-preview chambre seed, création booking mock
+- stripe-webhook.spec.ts - mock signature webhook payment_intent.succeeded
 
 Config Jest e2e, script pnpm --filter api test:e2e.
 DB test : DATABASE_NAME=africatourismgate_test ou transactions rollback.
@@ -683,7 +683,7 @@ Critères : suite verte en local ; documenter prérequis dans apps/api/README.md
 À la fin : fichiers modifiés + commande test.
 ```
 
-### #76 — Tests E2E admin (Playwright)
+### #76 - Tests E2E admin (Playwright)
 
 **Branche :** `feature/admin-e2e-playwright`
 
@@ -695,9 +695,9 @@ Livrable #76 : Tests E2E admin (Playwright)
 Références : apps/web/tests/e2e/ (config Playwright).
 
 Setup apps/admin/tests/e2e/ :
-- admin-login.spec.ts — login seed → dashboard
-- admin-property.spec.ts — créer propriété minimale
-- admin-booking.spec.ts — liste réservations visible
+- admin-login.spec.ts - login seed → dashboard
+- admin-property.spec.ts - créer propriété minimale
+- admin-booking.spec.ts - liste réservations visible
 
 Script test:e2e dans apps/admin/package.json.
 
@@ -706,7 +706,7 @@ Critères : 3 specs headless stables ; CI-ready (#77).
 À la fin : fichiers modifiés + commande test.
 ```
 
-### #77 — CI GitHub Actions
+### #77 - CI GitHub Actions
 
 **Branche :** `feature/ci-github-actions`
 
@@ -727,7 +727,7 @@ Critères : PR déclenche CI ; échec si lint/build casse.
 À la fin : fichiers modifiés + note README Contributing.
 ```
 
-### #78 — Health DB + observabilité
+### #78 - Health DB + observabilité
 
 **Branche :** `feature/api-observability`
 
@@ -747,7 +747,7 @@ Critères : health unhealthy si MySQL down ; request-id dans logs.
 À la fin : fichiers modifiés + test arrêt MySQL.
 ```
 
-### #79 — Module email SMTP
+### #79 - Module email SMTP
 
 **Branche :** `feature/email-notifications`
 
@@ -771,7 +771,7 @@ Critères : reset password reçu en dev Mailpit ; pas de crash si SMTP absent (w
 À la fin : fichiers modifiés + doc .env.example.
 ```
 
-### #80 — i18n admin FR/EN
+### #80 - i18n admin FR/EN
 
 **Branche :** `feature/admin-i18n`
 
@@ -793,7 +793,7 @@ Critères : bascule langue sur login + nav ; pas de régression FR.
 À la fin : fichiers modifiés + test bascule.
 ```
 
-### #81 — OpenAPI → codegen client
+### #81 - OpenAPI → codegen client
 
 **Branche :** `feature/openapi-codegen`
 
@@ -814,7 +814,7 @@ Critères : régénération sans erreur ; login typé ; diff reviewable.
 À la fin : fichiers modifiés + commande codegen.
 ```
 
-### #82 — Durcissement production
+### #82 - Durcissement production
 
 **Branche :** `feature/production-hardening`
 
@@ -837,7 +837,7 @@ Critères : checklist docs/production-hardening.md ; review sécurité PR.
 À la fin : fichiers modifiés + checklist.
 ```
 
-### #83 — Audit scope organisation (multi-tenant)
+### #83 - Audit scope organisation (multi-tenant)
 
 **Branche :** `feature/org-scoping-audit`
 
@@ -875,20 +875,20 @@ Critères : tests automatisés (#75) couvrent 2 orgs seed ; doc comportement mul
 
 ## Documents design UX/UI (complémentaires)
 
-Ces roadmaps couvrent le **polish visuel** et la cohérence — à croiser avec les livrables fonctionnels ci-dessus (ex. #67–72 web) sans les mélanger dans une même PR si possible.
+Ces roadmaps couvrent le **polish visuel** et la cohérence - à croiser avec les livrables fonctionnels ci-dessus (ex. #67–72 web) sans les mélanger dans une même PR si possible.
 
 | Application | Document | Commande dev | Préfixe branche |
 | ----------- | -------- | -------------- | --------------- |
 | Admin | [admin-design-improvements.md](./admin-design-improvements.md) | `pnpm dev:admin` | `feature/admin-ui-*` |
 | Site public | [web-design-improvements.md](./web-design-improvements.md) | `pnpm dev:web` | `feature/web-ui-*` |
 
-Composants partagés : `packages/ui`, `packages/config/theme.css` — toute extraction UI doit profiter aux deux apps quand c’est pertinent.
+Composants partagés : `packages/ui`, `packages/config/theme.css` - toute extraction UI doit profiter aux deux apps quand c’est pertinent.
 
 ---
 
 ## Notes pour l'agent Cursor
 
-- **Ne pas réimplémenter** auth, booking engine, Stripe, ou CRUD admin déjà présents — étendre seulement.
+- **Ne pas réimplémenter** auth, booking engine, Stripe, ou CRUD admin déjà présents - étendre seulement.
 - **Toujours vérifier** `database/seeds/install.seed.sql` pour permissions et données demo avant d'écrire des tests.
 - **Swagger** est la source de vérité pour les contrats API : http://localhost:3000/api
 - En cas de doute sur une page admin : chercher une page dédiée sous `apps/admin/app/(dashboard)/` avant le catch-all `[...segments]`.

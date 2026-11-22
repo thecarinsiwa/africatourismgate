@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { OrganizationBankAccounts } from '../../../../entities/generated';
 
-/** Public payment instructions — account number is never masked. */
+/** Public payment instructions - account number is never masked. */
 export class PublicPaymentBankAccountDto {
   @ApiProperty({ format: 'uuid' })
   id!: string;

@@ -1,4 +1,4 @@
-# WEB-003 — PR notes (Option A)
+# WEB-003 - PR notes (Option A)
 
 ## Summary
 

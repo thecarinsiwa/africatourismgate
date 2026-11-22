@@ -4,7 +4,7 @@ export const CRUISE_PORT_OPTIONS = [
 ] as const;
 
 export function formatCruisePortLabel(code: string, name?: string): string {
-  if (name) return `${code} — ${name}`;
+  if (name) return `${code} - ${name}`;
   const match = CRUISE_PORT_OPTIONS.find((port) => port.code === code);
-  return match ? `${match.code} — ${match.name}` : code;
+  return match ? `${match.code} - ${match.name}` : code;
 }

@@ -186,7 +186,7 @@ export const posSalePageConfig = {
 export const posSaleSuccessPageConfig = {
   title: 'Vente enregistrée',
   subtitle: 'La réservation a été confirmée.',
-  pendingSubtitle: 'Paiement reçu — confirmation en cours…',
+  pendingSubtitle: 'Paiement reçu - confirmation en cours…',
   timeoutSubtitle:
     'La confirmation n’est pas encore arrivée. Le stock reste réservé tant que la réservation est en attente.',
   timeoutHint:

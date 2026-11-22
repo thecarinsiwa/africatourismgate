@@ -1,11 +1,11 @@
-# Database seeds — installation
+# Database seeds - installation
 
 Deployments run `pnpm db:sync` after the app build and before the PM2 restart. That command applies pending migrations and then replays the selected seed file in insert-only mode: new rows are inserted, existing rows with the same primary/unique key are left unchanged, and non-insert statements are skipped.
 
 | Profile | File | When |
 |---------|------|------|
 | **dev** (default) | [`install.seed.sql`](./install.seed.sql) | Local / staging with demo catalog |
-| **prod** | [`install.seed.prod.sql`](./install.seed.prod.sql) | Bootstrap prod — 8 tables uniquement (RBAC + org + settings + amenities) |
+| **prod** | [`install.seed.prod.sql`](./install.seed.prod.sql) | Bootstrap prod - 8 tables uniquement (RBAC + org + settings + amenities) |
 
 ```bash
 # Dev / demo (default)
@@ -43,7 +43,7 @@ For API integration scripts (`pnpm --filter @africatourismgate/api test:*`), set
 SEED_ADMIN_PASSWORD=your_seed_password_here
 ```
 
-## What is seeded (dev — `install.seed.sql`)
+## What is seeded (dev - `install.seed.sql`)
 
 | # | Table | Content |
 | - | ----- | ------- |
@@ -64,7 +64,7 @@ SEED_ADMIN_PASSWORD=your_seed_password_here
 
 Fixed UUIDs are documented in [seed-ids.txt](seed-ids.txt).
 
-## What is seeded (prod — `install.seed.prod.sql`)
+## What is seeded (prod - `install.seed.prod.sql`)
 
 | # | Table | Content |
 | - | ----- | ------- |
@@ -99,8 +99,8 @@ DATABASE_AUTO_SEED=false
 
 Before go-live, do **not** rely on the demo/install seed as production catalog data. See:
 
-- [Production database preparation](../../docs/production-data-preparation.md) — cleanup plan, data inventory, collection form, CSV templates
+- [Production database preparation](../../docs/production-data-preparation.md) - cleanup plan, data inventory, collection form, CSV templates
 - [Data collection CSV templates](../../docs/data-collection/README.md)
-- [database/scripts/README.md](../scripts/README.md) — `purge-demo-data.sql` + `prepare-production-db.mjs`
+- [database/scripts/README.md](../scripts/README.md) - `purge-demo-data.sql` + `prepare-production-db.mjs`
 
 In production, set `DATABASE_AUTO_SEED=false` after bootstrap and keep `SEED_PROFILE=prod` (or an equivalent `DATABASE_SEED_FILE`) so `pnpm db:sync` does not re-insert demo catalog rows.

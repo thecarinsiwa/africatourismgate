@@ -1,4 +1,4 @@
-// TODO(api): GET /dashboard/stats?period=30d — agrégation serveur recommandée.
+// TODO(api): GET /dashboard/stats?period=30d - agrégation serveur recommandée.
 // Limite actuelle : payments ignore dateFrom/status côté API (controller utilise PaginationQueryDto basique).
 
 import type { BookingListItem, PaymentListItem } from '@africatourismgate/types';
@@ -14,7 +14,7 @@ export type TrendPoint = {
 
 export type DashboardTrendResult = {
   points: TrendPoint[];
-  /** Currency of the payments; `null` when none — UI falls back to the Admin default. */
+  /** Currency of the payments; `null` when none - UI falls back to the Admin default. */
   currency: string | null;
 };
 

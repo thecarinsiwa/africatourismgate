@@ -89,7 +89,7 @@
       },
       "cancel": {
         "title": "Paiement annulé",
-        "description": "Le paiement a été annulé — vous pouvez réessayer."
+        "description": "Le paiement a été annulé - vous pouvez réessayer."
       },
       "verify": {
         "title": "Vérification du compte",
@@ -102,6 +102,14 @@
       "oauthCallback": {
         "title": "Connexion en cours",
         "description": "Finalisation de la connexion sécurisée."
+      },
+      "forgotPassword": {
+        "title": "Mot de passe oublié",
+        "description": "Demandez un lien pour réinitialiser votre mot de passe client."
+      },
+      "resetPassword": {
+        "title": "Réinitialiser le mot de passe",
+        "description": "Définissez un nouveau mot de passe pour votre compte client."
       }
     },
     "login": {
@@ -111,7 +119,7 @@
       "dividerLabel": "Pas encore de compte ?",
       "createAccount": "Créer un compte",
       "google": "Se connecter avec Google",
-      "backToHotels": "Retour aux hôtels",
+      "backToHome": "Retour à l'accueil",
       "form": {
         "emailLabel": "Adresse e-mail",
         "emailPlaceholder": "vous@exemple.com",
@@ -135,12 +143,56 @@
         "googleSignupUnavailable": "Impossible de finaliser l'inscription Google pour le moment. Réessayez plus tard ou créez un compte par e-mail."
       }
     },
+    "forgotPassword": {
+      "title": "Mot de passe oublié",
+      "subtitle": "Saisissez votre adresse e-mail. Si un compte existe, vous recevrez les instructions pour réinitialiser votre mot de passe.",
+      "successMessage": "Si un compte existe pour cette adresse, un lien de réinitialisation a été envoyé.",
+      "backToLogin": "Retour à la connexion",
+      "form": {
+        "emailLabel": "Adresse e-mail",
+        "emailPlaceholder": "vous@exemple.com",
+        "submit": "Envoyer le lien",
+        "submitLoading": "Envoi…"
+      },
+      "errors": {
+        "network": "Impossible de joindre le serveur. Vérifiez votre connexion.",
+        "generic": "Une erreur est survenue. Veuillez réessayer.",
+        "envMissing": "Configuration API manquante (NEXT_PUBLIC_API_URL)."
+      }
+    },
+    "resetPassword": {
+      "title": "Nouveau mot de passe",
+      "subtitle": "Choisissez un mot de passe sécurisé pour votre compte.",
+      "backToLogin": "Retour à la connexion",
+      "loading": "Chargement…",
+      "form": {
+        "passwordLabel": "Nouveau mot de passe",
+        "passwordPlaceholder": "••••••••",
+        "confirmPasswordLabel": "Confirmer le mot de passe",
+        "confirmPasswordPlaceholder": "••••••••",
+        "confirmPasswordMismatch": "Les mots de passe ne correspondent pas",
+        "submit": "Réinitialiser le mot de passe",
+        "submitLoading": "Réinitialisation…"
+      },
+      "missingToken": {
+        "title": "Lien invalide",
+        "message": "Ce lien de réinitialisation est incomplet ou a expiré. Demandez un nouveau lien.",
+        "forgotLabel": "Demander un nouveau lien",
+        "loginLabel": "Retour à la connexion"
+      },
+      "errors": {
+        "invalidToken": "Lien de réinitialisation expiré ou invalide. Demandez un nouveau lien.",
+        "network": "Impossible de joindre le serveur. Vérifiez votre connexion.",
+        "generic": "Une erreur est survenue. Veuillez réessayer.",
+        "envMissing": "Configuration API manquante (NEXT_PUBLIC_API_URL)."
+      }
+    },
     "register": {
       "title": "Créer un compte client",
       "subtitle": "Inscrivez-vous pour réserver, suivre vos voyages et gérer votre profil.",
       "dividerLabel": "Déjà un compte ?",
       "signIn": "Se connecter",
-      "backToHotels": "Retour aux hôtels",
+      "backToHome": "Retour à l'accueil",
       "form": {
         "firstNameLabel": "Prénom",
         "lastNameLabel": "Nom",
@@ -226,7 +278,7 @@
     "intro": "Plusieurs campagnes de don sont disponibles selon le contexte. Choisissez celle qui correspond à votre engagement.",
     "allCampaigns": "Toutes les campagnes",
     "empty": "Aucune campagne de don disponible pour le moment.",
-    "localeFallback": "Aucune campagne dans votre langue pour le moment — affichage des campagnes disponibles dans les autres langues."
+    "localeFallback": "Aucune campagne dans votre langue pour le moment - affichage des campagnes disponibles dans les autres langues."
   },
   "legal": {
     "termsOfUseTitle": "Conditions d'utilisation",
@@ -237,15 +289,15 @@
     "loading": "Chargement…",
     "emptyPage": "Contenu en cours de préparation",
     "emptyPageHint": "Ce document sera bientôt disponible. Contactez le support pour en savoir plus.",
-    "localeFallback": "Contenu affiché dans une autre langue — la version dans votre langue sera publiée prochainement.",
+    "localeFallback": "Contenu affiché dans une autre langue - la version dans votre langue sera publiée prochainement.",
     "meta": {
       "termsOfUse": {
         "title": "Conditions d'utilisation",
-        "description": "Conditions d'utilisation de la plateforme Africa Tourism Gate — règles d'accès, compte client et réservations."
+        "description": "Conditions d'utilisation de la plateforme Africa Tourism Gate - règles d'accès, compte client et réservations."
       },
       "privacyPolicy": {
         "title": "Politique de confidentialité",
-        "description": "Politique de confidentialité Africa Tourism Gate — collecte, usage et protection des données personnelles."
+        "description": "Politique de confidentialité Africa Tourism Gate - collecte, usage et protection des données personnelles."
       }
     },
     "breadcrumbAria": "Fil d’Ariane"
@@ -258,15 +310,15 @@
     "backToSearch": "Modifier ma recherche",
     "backHome": "Retour à l'accueil",
     "metaTitle": "Bientôt disponible",
-    "metaDescription": "Africa Tourism Gate — section en cours de préparation.",
-    "verticalMetaTitle": "{label} — Bientôt disponible",
+    "metaDescription": "Africa Tourism Gate - section en cours de préparation.",
+    "verticalMetaTitle": "{label} - Bientôt disponible",
     "verticalMetaDescription": "La réservation en ligne {label} arrive bientôt sur Africa Tourism Gate."
   },
   "maintenance": {
     "badge": "Maintenance",
     "title": "Maintenance en cours",
-    "message": "Le site est temporairement indisponible. Nous revenons bientôt — merci de votre patience.",
-    "localeFallback": "Aucun message de maintenance dans votre langue pour le moment — affichage du texte par défaut.",
+    "message": "Le site est temporairement indisponible. Nous revenons bientôt - merci de votre patience.",
+    "localeFallback": "Aucun message de maintenance dans votre langue pour le moment - affichage du texte par défaut.",
     "endsAtLabel": "Retour prévu : {date}",
     "countdownLabel": "Réouverture dans",
     "countdownDays": "Jours",
@@ -328,8 +380,8 @@
 
     "notFound": "Article introuvable",
     "notFoundHint": "Cet article n'existe pas ou n'est plus publié.",
-    "localeFallback": "Aucun article dans votre langue pour le moment — affichage des articles disponibles dans les autres langues.",
-    "detailLocaleFallback": "Cet article n'est pas encore disponible dans votre langue — affichage d'une autre version linguistique.",
+    "localeFallback": "Aucun article dans votre langue pour le moment - affichage des articles disponibles dans les autres langues.",
+    "detailLocaleFallback": "Cet article n'est pas encore disponible dans votre langue - affichage d'une autre version linguistique.",
     "backToBlog": "Retour au blog",
     "publishedOn": "Publié le",
     "breadcrumbHome": "Accueil",
@@ -361,7 +413,7 @@
       "commentsEmpty": "Soyez le premier à commenter cet article.",
       "commentName": "Votre nom",
       "commentEmail": "E-mail (optionnel)",
-      "commentEmailHint": "Non publié — uniquement pour nous contacter si besoin.",
+      "commentEmailHint": "Non publié - uniquement pour nous contacter si besoin.",
       "commentBody": "Votre commentaire",
       "commentBodyPlaceholder": "Partagez votre avis ou une question…",
       "commentSubmit": "Publier le commentaire",
@@ -411,7 +463,7 @@
     "submit": "Envoyer la demande",
     "submitting": "Envoi en cours…",
     "successTitle": "Demande enregistrée",
-    "successMessage": "Merci. Votre ticket a été créé. Notre équipe vous répondra sous 24 à 48 h ouvrées — suivez le fil dans votre compte.",
+    "successMessage": "Merci. Votre ticket a été créé. Notre équipe vous répondra sous 24 à 48 h ouvrées - suivez le fil dans votre compte.",
     "successViewTicket": "Ouvrir mon ticket",
     "successViewAll": "Voir tous mes tickets",
     "subjectRequired": "Le sujet est obligatoire.",
@@ -479,7 +531,7 @@
         "payment-methods": {
           "title": "Quels moyens de paiement acceptez-vous ?",
           "summary": "Carte en ligne et, selon le produit, options hors carte.",
-          "body": "Au [récapitulatif](/booking/recap), le paiement par carte bancaire sécurisé (Stripe) est proposé pour de nombreuses confirmations immédiates. Le débit et la facture dépendent du produit réservé.\n\nSelon le cas, d’autres options (espèces, virement, mobile money) peuvent apparaître — voir l’article sur les paiements hors carte.\n\nVous pouvez enregistrer une carte dans [Mon compte → Moyens de paiement](/account/payment-methods) pour accélérer les prochains checkouts."
+          "body": "Au [récapitulatif](/booking/recap), le paiement par carte bancaire sécurisé (Stripe) est proposé pour de nombreuses confirmations immédiates. Le débit et la facture dépendent du produit réservé.\n\nSelon le cas, d’autres options (espèces, virement, mobile money) peuvent apparaître - voir l’article sur les paiements hors carte.\n\nVous pouvez enregistrer une carte dans [Mon compte → Moyens de paiement](/account/payment-methods) pour accélérer les prochains checkouts."
         },
         "offline-payments": {
           "title": "Espèces, virement ou mobile money",
@@ -499,7 +551,7 @@
         "failed-payment": {
           "title": "Mon paiement a échoué",
           "summary": "Que faire si la carte est refusée ou le débit incomplet.",
-          "body": "Sur le récapitulatif ou la page de confirmation, vérifiez le plafond de la carte, la date d'expiration et réessayez. Aucun séjour n'est confirmé tant que le paiement n'est pas validé.\n\nVous pouvez aussi revenir depuis [Mon compte → Réservations](/account/reservations) si un paiement restant est proposé, ou choisir une autre option affichée au checkout.\n\nSi un montant a été réservé sans confirmation, contactez le support avec la date, le montant et la référence éventuelle — ne renvoyez jamais le cryptogramme dans un ticket."
+          "body": "Sur le récapitulatif ou la page de confirmation, vérifiez le plafond de la carte, la date d'expiration et réessayez. Aucun séjour n'est confirmé tant que le paiement n'est pas validé.\n\nVous pouvez aussi revenir depuis [Mon compte → Réservations](/account/reservations) si un paiement restant est proposé, ou choisir une autre option affichée au checkout.\n\nSi un montant a été réservé sans confirmation, contactez le support avec la date, le montant et la référence éventuelle - ne renvoyez jamais le cryptogramme dans un ticket."
         },
         "cancellation-policy": {
           "title": "Quelle est votre politique d'annulation ?",
@@ -549,7 +601,7 @@
         "how-to-contact": {
           "title": "Comment contacter le support ?",
           "summary": "Chat réservation pour un séjour ; ticket pour le reste.",
-          "body": "Deux canaux complémentaires :\n\n• Chat de réservation — pour une question liée à un séjour précis (dates, documents, manifeste, suite du voyage). Ouvrez [Mon compte → Réservations](/account/reservations) → détail du séjour → chat. Les échanges restent attachés à cette réservation.\n\n• Ticket support — pour le compte, la facturation générale, un paiement hors séjour, ou si vous n’avez pas encore de réservation. Connectez-vous, puis utilisez Contacter le support en bas du [centre d'aide](/support). Indiquez la référence si vous en avez une.\n\nVous pouvez aussi consulter À propos → Nous contacter pour les coordonnées publiques. Voir aussi l’article sur le chat d’une réservation."
+          "body": "Deux canaux complémentaires :\n\n• Chat de réservation - pour une question liée à un séjour précis (dates, documents, manifeste, suite du voyage). Ouvrez [Mon compte → Réservations](/account/reservations) → détail du séjour → chat. Les échanges restent attachés à cette réservation.\n\n• Ticket support - pour le compte, la facturation générale, un paiement hors séjour, ou si vous n’avez pas encore de réservation. Connectez-vous, puis utilisez Contacter le support en bas du [centre d'aide](/support). Indiquez la référence si vous en avez une.\n\nVous pouvez aussi consulter À propos → Nous contacter pour les coordonnées publiques. Voir aussi l’article sur le chat d’une réservation."
         }
       }
     },
@@ -569,7 +621,7 @@
     "loadError": "Impossible de charger le contenu. Vérifiez que l'API est démarrée.",
     "emptyPage": "Contenu en cours de préparation",
     "emptyPageHint": "Cette section sera bientôt disponible. Contactez-nous pour en savoir plus.",
-    "localeFallback": "Contenu affiché dans une autre langue — la version dans votre langue sera publiée prochainement.",
+    "localeFallback": "Contenu affiché dans une autre langue - la version dans votre langue sera publiée prochainement.",
     "nav": {
       "whoWeAre": "Qui nous sommes",
       "history": "Notre histoire",
@@ -622,7 +674,7 @@
       "emailLabel": "E-mail",
       "locationLabel": "Adresse",
       "formTitle": "Envoyer un message",
-      "formSubtitle": "Décrivez votre demande — nous vous répondrons dans les meilleurs délais."
+      "formSubtitle": "Décrivez votre demande - nous vous répondrons dans les meilleurs délais."
     },
     "meta": {
       "whoWeAre": {
@@ -683,7 +735,7 @@
       {
         "subtitle": "Croisière de 12 jours",
         "title": "ZANZIBAR → MADAGASCAR",
-        "description": "Navigation côtière le long de l'Océan Indien — plages de rêve et faune unique."
+        "description": "Navigation côtière le long de l'Océan Indien - plages de rêve et faune unique."
       }
     ],
     "prev": "Diapositive précédente",
@@ -781,7 +833,7 @@
     "placeholder": "Hôtels, vols, tronçons, croisières, activités, forfaits, blog…",
     "empty": "Aucun résultat",
     "emptyHint": "Essayez une ville, un tronçon (départ → arrivée) ou un nom de produit.",
-    "shortcutHint": "Ctrl+K · ⌘K ou / — ↑↓ pour naviguer, Entrée pour ouvrir",
+    "shortcutHint": "Ctrl+K · ⌘K ou / - ↑↓ pour naviguer, Entrée pour ouvrir",
     "close": "Fermer la recherche",
     "resultsLabel": "Résultats de recherche",
     "updating": "Mise à jour…",
@@ -862,7 +914,7 @@
   },
   "promo": {
     "badge": "Offre spéciale",
-    "title": "Safari au Kenya — Forfait Vacances",
+    "title": "Safari au Kenya - Forfait Vacances",
     "description": "Découvrez les plaines infinies du Masai Mara, observez les Big Five dans leur habitat naturel et profitez d'hébergements de luxe au cœur de la savane. Une expérience qui changera votre vision de l'Afrique.",
     "priceFrom": "À partir de :",
     "perPerson": "/personne",
@@ -913,7 +965,7 @@
       {
         "title": "Plages de Zanzibar",
         "subtitle": "Tanzanie, 6 jours",
-        "description": "Sable blanc, eaux turquoise et épices — le paradis de l'Océan Indien."
+        "description": "Sable blanc, eaux turquoise et épices - le paradis de l'Océan Indien."
       }
     ]
   },
@@ -1001,11 +1053,11 @@
     "title": "Nos partenaires",
     "subtitle": "Des opérateurs locaux de confiance qui animent les expériences à travers l'Afrique.",
     "ariaLabel": "Partenaires d'activités",
-    "metaTitle": "Nos partenaires — opérateurs d'activités en Afrique",
+    "metaTitle": "Nos partenaires - opérateurs d'activités en Afrique",
     "metaDescription": "Découvrez les partenaires d'activités d'Africa Tourism Gate : opérateurs locaux de confiance à travers l'Afrique.",
-    "detailMetaDescription": "{name} à {destination} — expériences et activités avec Africa Tourism Gate.",
+    "detailMetaDescription": "{name} à {destination} - expériences et activités avec Africa Tourism Gate.",
     "detailMetaFallbackTitle": "Partenaire",
-    "detailMetaFallbackDescription": "Fiche partenaire — Africa Tourism Gate",
+    "detailMetaFallbackDescription": "Fiche partenaire - Africa Tourism Gate",
     "heroTitle": "Nos partenaires",
     "heroSubtitle": "Des opérateurs locaux de confiance qui animent les expériences à travers l'Afrique.",
     "breadcrumbHome": "Accueil",
@@ -1085,7 +1137,7 @@
     "loadingDetails": "Chargement des détails"
   },
   "bookingSidebar": {
-    "trustDemoCatalog": "Catalogue de démonstration — aperçu interne uniquement.",
+    "trustDemoCatalog": "Catalogue de démonstration - aperçu interne uniquement.",
     "trustTransparentPricing": "Montant affiché sans frais cachés.",
     "trustSupport": "Une question ? Notre équipe vous accompagne.",
     "mobileConfigure": "Options",
@@ -1120,7 +1172,7 @@
     "breadcrumbHotels": "Hébergements",
     "breadcrumbHotelsDetail": "Hôtels",
     "heroTitle": "Hébergements d'exception en Afrique",
-    "heroSubtitle": "Lodges de safari, riads authentiques et resorts en bord de mer — sélectionnés par nos experts voyage.",
+    "heroSubtitle": "Lodges de safari, riads authentiques et resorts en bord de mer - sélectionnés par nos experts voyage.",
     "resultsFor": "Résultats pour",
     "allAfrica": "Toute l'Afrique",
     "propertiesFound": "Établissements",
@@ -1171,7 +1223,7 @@
     "featuredBadge": "Coup de cœur",
     "detailMetaDescription": "Réservez votre séjour à {name}. Galerie, équipements et chambres.",
     "detailMetaFallbackTitle": "Hébergement",
-    "detailMetaFallbackDescription": "Fiche produit hébergement — Africa Tourism Gate",
+    "detailMetaFallbackDescription": "Fiche produit hébergement - Africa Tourism Gate",
     "galleryAria": "Galerie photos",
     "galleryOpenLightbox": "Agrandir la photo",
     "galleryClose": "Fermer la galerie",
@@ -1225,7 +1277,7 @@
     "metaDescription": "Comparez et réservez des vols vers les principales destinations africaines avec Africa Tourism Gate.",
     "detailMetaDescription": "Réservez {flightNumber} de {from} vers {to}.",
     "detailMetaFallbackTitle": "Vol",
-    "detailMetaFallbackDescription": "Fiche vol — Africa Tourism Gate",
+    "detailMetaFallbackDescription": "Fiche vol - Africa Tourism Gate",
     "breadcrumbHome": "Accueil",
     "breadcrumbFlights": "Vols",
     "breadcrumbFlightsDetail": "Vols",
@@ -1252,7 +1304,7 @@
     "noResultsHint": "Essayez d'autres dates ou aéroports (ex. Kinshasa → Nairobi).",
     "noSearchParams": "Lancez une recherche de vols",
     "noSearchParamsHint": "Indiquez un départ, une destination et une date de départ.",
-    "browseAllHint": "Tous les vols disponibles — tarifs à la prochaine date avec places libres.",
+    "browseAllHint": "Tous les vols disponibles - tarifs à la prochaine date avec places libres.",
     "startSearch": "Lancer une recherche",
     "backHome": "Retour à l'accueil",
     "viewDetails": "Voir détails",
@@ -1299,12 +1351,12 @@
     "metaDescription": "Comparez et réservez des tronçons tarifés (départ → arrivée) auprès d'agences locales avec Africa Tourism Gate.",
     "detailMetaDescription": "Réservez le tronçon {name} via {city} avec Africa Tourism Gate.",
     "detailMetaFallbackTitle": "Tronçon",
-    "detailMetaFallbackDescription": "Fiche tronçon — Africa Tourism Gate",
+    "detailMetaFallbackDescription": "Fiche tronçon - Africa Tourism Gate",
     "breadcrumbHome": "Accueil",
     "breadcrumbCars": "Tronçons",
     "breadcrumbCarsDetail": "Locations",
     "heroTitle": "Tronçons en Afrique",
-    "heroSubtitle": "Choisissez un trajet départ → arrivée auprès d'agences locales — tarif fixe par tronçon.",
+    "heroSubtitle": "Choisissez un trajet départ → arrivée auprès d'agences locales - tarif fixe par tronçon.",
     "resultsFor": "Résultats pour",
     "anyLocation": "Toutes les villes",
     "vehiclesFound": "tronçons",
@@ -1331,7 +1383,7 @@
     "noResultsHint": "Essayez une autre date ou un autre couple départ / arrivée (ex. Kinshasa → Lubumbashi).",
     "noSearchParams": "Lancez une recherche de tronçon",
     "noSearchParamsHint": "Indiquez le départ et l'arrivée.",
-    "browseAllHint": "Tous les tronçons disponibles — tarif fixe par trajet.",
+    "browseAllHint": "Tous les tronçons disponibles - tarif fixe par trajet.",
     "startSearch": "Lancer une recherche",
     "backHome": "Retour à l'accueil",
     "viewDetails": "Voir détails",
@@ -1341,13 +1393,16 @@
     "pricePerPerson": "Par personne",
     "seatsLabel": "Places",
     "openTripsTitle": "Trajets ouverts",
-    "noOpenTrips": "Aucun trajet ouvert — créez le vôtre.",
+    "noOpenTrips": "Aucun trajet ouvert - créez le vôtre.",
     "openTripDatesTitle": "Dates déjà occupées",
-    "openTripDatesHint": "Des voyageurs ont déjà ouvert un trajet — choisissez une date pour le rejoindre.",
+    "openTripDatesHint": "Des voyageurs ont déjà ouvert un trajet - choisissez une date pour le rejoindre.",
     "openTripDateTrips": "{n} trajet(s)",
     "joinPaysInstead": "En rejoignant : {join} au lieu de {solo} / pers.",
     "createTripTitle": "Nouveau trajet",
     "joinTrip": "Rejoindre ce trajet",
+    "yourTrip": "Votre trajet",
+    "continueTrip": "Continuer ma réservation",
+    "ensureSeatsError": "Impossible d’ajuster vos places sur ce trajet. Réessayez.",
     "newTripOption": "Créer un nouveau trajet",
     "departureTime": "Heure de départ",
     "seatsRemaining": "{n} place(s) restante(s)",
@@ -1423,12 +1478,12 @@
     "metaDescription": "Comparez et réservez des croisières sur le fleuve Congo et les côtes africaines avec Africa Tourism Gate.",
     "detailMetaDescription": "Croisière {name} à bord du {ship} avec Africa Tourism Gate.",
     "detailMetaFallbackTitle": "Croisière",
-    "detailMetaFallbackDescription": "Fiche croisière — Africa Tourism Gate",
+    "detailMetaFallbackDescription": "Fiche croisière - Africa Tourism Gate",
     "breadcrumbHome": "Accueil",
     "breadcrumbCruises": "Croisières",
     "breadcrumbCruisesDetail": "Croisières",
     "heroTitle": "Croisières en Afrique",
-    "heroSubtitle": "Itinéraires fluviaux et côtiers — choisissez votre cabine et embarquez en toute sérénité.",
+    "heroSubtitle": "Itinéraires fluviaux et côtiers - choisissez votre cabine et embarquez en toute sérénité.",
     "resultsFor": "Résultats pour",
     "anyRoute": "Toutes les routes",
     "sailingsFound": "départs",
@@ -1451,7 +1506,7 @@
     "noResultsHint": "Essayez d'autres dates ou ports (ex. CDKIN → CDBNW).",
     "noSearchParams": "Lancez une recherche de croisières",
     "noSearchParamsHint": "Indiquez les ports, une plage de dates de départ et le nombre de voyageurs.",
-    "browseAllHint": "Toutes les croisières disponibles — tarifs pour les cabines en stock.",
+    "browseAllHint": "Toutes les croisières disponibles - tarifs pour les cabines en stock.",
     "startSearch": "Lancer une recherche",
     "backHome": "Retour à l'accueil",
     "viewDetails": "Voir détails",
@@ -1502,11 +1557,11 @@
     "metaDescription": "Réservez des activités guidées en Afrique avec Africa Tourism Gate.",
     "detailMetaDescription": "Activité {name} avec Africa Tourism Gate.",
     "detailMetaFallbackTitle": "Activité",
-    "detailMetaFallbackDescription": "Fiche activité — Africa Tourism Gate",
+    "detailMetaFallbackDescription": "Fiche activité - Africa Tourism Gate",
     "breadcrumbHome": "Accueil",
     "breadcrumbActivities": "Activités",
     "heroTitle": "Activités en Afrique",
-    "heroSubtitle": "Excursions guidées et expériences locales — choisissez votre créneau et réservez en ligne.",
+    "heroSubtitle": "Excursions guidées et expériences locales - choisissez votre créneau et réservez en ligne.",
     "resultsFor": "Résultats pour",
     "anyDestination": "Toutes les destinations",
     "activitiesFound": "activités",
@@ -1613,13 +1668,13 @@
   "packages": {
     "metaTitle": "Forfaits combinés en Afrique",
     "metaDescription": "Économisez avec nos forfaits combinés : activités, hébergements et plus sur Africa Tourism Gate.",
-    "detailMetaDescription": "Forfait combiné {name} — Africa Tourism Gate.",
+    "detailMetaDescription": "Forfait combiné {name} - Africa Tourism Gate.",
     "detailMetaFallbackTitle": "Forfait",
-    "detailMetaFallbackDescription": "Fiche forfait — Africa Tourism Gate",
+    "detailMetaFallbackDescription": "Fiche forfait - Africa Tourism Gate",
     "breadcrumbHome": "Accueil",
     "breadcrumbPackages": "Forfaits",
     "heroTitle": "Forfaits combinés en Afrique",
-    "heroSubtitle": "Regroupez plusieurs prestations à prix réduit — comparez le prix catalogue et le prix forfait.",
+    "heroSubtitle": "Regroupez plusieurs prestations à prix réduit - comparez le prix catalogue et le prix forfait.",
     "cardBadge": "Forfait combiné",
     "resultsFor": "Forfaits disponibles",
     "packagesFound": "forfaits",
@@ -1780,7 +1835,7 @@
     "meta": {
       "home": {
         "title": "Mon compte",
-        "description": "Espace client Africa Tourism Gate — profil, réservations et préférences."
+        "description": "Espace client Africa Tourism Gate - profil, réservations et préférences."
       },
       "profile": {
         "title": "Profil",
@@ -1870,7 +1925,7 @@
       "personalInfo": "Informations personnelles",
       "personalInfoHint": "Vos coordonnées utilisées pour les réservations.",
       "photo": "Photo de profil",
-      "photoHint": "JPEG, PNG ou WebP — 5 Mo max.",
+      "photoHint": "JPEG, PNG ou WebP - 5 Mo max.",
       "photoAdd": "Ajouter une photo",
       "photoChange": "Changer la photo",
       "photoUploading": "Envoi…",
@@ -1936,7 +1991,7 @@
       "filterAria": "Filtrer par statut",
       "actionRequired": "Action requise",
       "leaveReviewCta": "Laisser un avis",
-      "reviewPrompt": "Vous avez {count} séjour(s) terminé(s) en attente d’avis — partagez votre expérience.",
+      "reviewPrompt": "Vous avez {count} séjour(s) terminé(s) en attente d’avis - partagez votre expérience.",
       "statuses": {
         "draft": "Brouillon",
         "pending_approval": "En attente de validation",
@@ -1960,7 +2015,7 @@
         "balanceLabel": "Solde restant",
         "depositDueLabel": "À régler maintenant",
         "cancellationPolicyTitle": "Politique d’annulation (indicative)",
-        "cancellationPolicyBody": "En cas d’acompte, le solde doit être réglé avant la date de service. L’acompte n’est généralement pas remboursable sauf accord contraire. Cette mention est informative — contactez-nous pour toute question.",
+        "cancellationPolicyBody": "En cas d’acompte, le solde doit être réglé avant la date de service. L’acompte n’est généralement pas remboursable sauf accord contraire. Cette mention est informative - contactez-nous pour toute question.",
         "itemsTitle": "Détail de la réservation",
         "noItems": "Aucun article enregistré.",
         "item": "Prestation",
@@ -1995,7 +2050,7 @@
         "reviewPublished": "Merci, votre avis a été publié.",
         "reviewStarAria": "{n} sur 5",
         "timelineTitle": "Suivi de la réservation",
-        "timelinePlaceholder": "Historique détaillé non disponible — étapes estimées selon le statut actuel.",
+        "timelinePlaceholder": "Historique détaillé non disponible - étapes estimées selon le statut actuel.",
         "timelineStepCreated": "Réservation créée",
         "timelineStepPending": "En attente de paiement",
         "timelineStepConfirmed": "Confirmée",
@@ -2009,9 +2064,9 @@
         "timelineUpcoming": "À venir",
         "proceedToPayment": "Procéder au paiement",
         "paymentInvitePending": "Vous recevrez un e-mail avec le lien de paiement dès que votre demande sera validée.",
-        "cashPaymentPending": "Cette réservation est en paiement espèces. Réglez en agence ou à l’arrivée — confirmation après encaissement (le cash n’est plus proposé par défaut au checkout web).",
-        "bankTransferPaymentPending": "Vous avez choisi le virement bancaire. Effectuez le virement avec la référence de réservation — validation par notre équipe requise.",
-        "mobileMoneyPaymentPending": "Vous avez choisi Mobile Money. Effectuez le transfert avec la référence de réservation puis envoyez une preuve — validation par notre équipe requise.",
+        "cashPaymentPending": "Cette réservation est en paiement espèces. Réglez en agence ou à l’arrivée - confirmation après encaissement (le cash n’est plus proposé par défaut au checkout web).",
+        "bankTransferPaymentPending": "Vous avez choisi le virement bancaire. Effectuez le virement avec la référence de réservation - validation par notre équipe requise.",
+        "mobileMoneyPaymentPending": "Vous avez choisi Mobile Money. Effectuez le transfert avec la référence de réservation puis envoyez une preuve - validation par notre équipe requise.",
         "paymentProofs": {
           "title": "Preuve de paiement",
           "subtitle": "Déposez le bordereau ou une photo du justificatif (acompte ou solde). Notre équipe validera le paiement.",
@@ -2019,7 +2074,7 @@
           "upload": "Envoyer un fichier",
           "uploading": "Envoi…",
           "takePhoto": "Prendre une photo",
-          "fileHint": "JPEG, PNG, WebP ou PDF — 10 Mo max.",
+          "fileHint": "JPEG, PNG, WebP ou PDF - 10 Mo max.",
           "uploadError": "Impossible d'envoyer la preuve.",
           "fileTooLarge": "Fichier trop volumineux (10 Mo max).",
           "view": "Voir",
@@ -2056,7 +2111,7 @@
           "unlinkedTitle": "Documents non rattachés",
           "documentType": "Type de document",
           "file": "Fichier",
-          "fileHint": "JPEG, PNG, WebP ou PDF — 10 Mo max.",
+          "fileHint": "JPEG, PNG, WebP ou PDF - 10 Mo max.",
           "upload": "Envoyer le document",
           "uploading": "Envoi…",
           "uploadError": "Impossible d'envoyer le document.",
@@ -2245,11 +2300,14 @@
     "stepConfirmation": "Confirmation",
     "stepCancelled": "Annulé",
     "cartTitle": "Panier réservation",
+    "vehicleTripOrganizerBanner": "Vous êtes l’organisateur de ce trajet. Vous ne pouvez pas le rejoindre, poursuivez ou modifiez votre réservation.",
+    "vehicleTripExistingBooking": "Une réservation existe déjà pour ce trajet. Voir ma réservation",
+    "vehicleSharedPricePerPerson": "Prix partagé : {price} / personne",
     "recapTitle": "Récapitulatif",
     "continueToRecap": "Continuer vers récap",
     "backToCart": "Retour panier",
     "payWithStripe": "Payer avec Stripe",
-    "payWithCash": "Confirmer — paiement sur place",
+    "payWithCash": "Confirmer - paiement sur place",
     "cashSubmitting": "Enregistrement…",
     "paymentMethodTitle": "Mode de paiement",
     "paymentMethodHint": "Choisissez comment vous souhaitez régler cette réservation.",
@@ -2257,10 +2315,10 @@
     "paymentMethodStripe": "Carte (Stripe)",
     "paymentMethodStripeHint": "Paiement sécurisé en ligne immédiat.",
     "paymentMethodCash": "Espèces sur place",
-    "paymentMethodCashHint": "Réservation en attente — paiement en agence ou à l’arrivée.",
+    "paymentMethodCashHint": "Réservation en attente - paiement en agence ou à l’arrivée.",
     "paymentMethodBankTransfer": "Virement bancaire",
-    "paymentMethodBankTransferHint": "Réservation en attente — réglez par virement ; validation par notre équipe.",
-    "payWithBankTransfer": "Confirmer — paiement par virement",
+    "paymentMethodBankTransferHint": "Réservation en attente - réglez par virement ; validation par notre équipe.",
+    "payWithBankTransfer": "Confirmer - paiement par virement",
     "bankTransferSubmitting": "Enregistrement…",
     "bankTransferAccountsTitle": "Coordonnées bancaires",
     "bankTransferAccountsEmpty": "Aucun compte bancaire n’est publié pour le moment. Contactez-nous pour obtenir les coordonnées.",
@@ -2270,8 +2328,8 @@
     "bankTransferCurrency": "Devise",
     "bankTransferReferenceHint": "Indiquez la référence {ref} dans le libellé du virement.",
     "paymentMethodMobileMoney": "Mobile Money",
-    "paymentMethodMobileMoneyHint": "Réservation en attente — payez via Mobile Money puis envoyez une preuve.",
-    "payWithMobileMoney": "Confirmer — paiement Mobile Money",
+    "paymentMethodMobileMoneyHint": "Réservation en attente - payez via Mobile Money puis envoyez une preuve.",
+    "payWithMobileMoney": "Confirmer - paiement Mobile Money",
     "mobileMoneySubmitting": "Enregistrement…",
     "mobileMoneyTitle": "Paiement Mobile Money",
     "mobileMoneyEmpty": "Aucune configuration Mobile Money n’est publiée pour le moment. Contactez-nous pour obtenir les numéros.",
@@ -2334,7 +2392,7 @@
       "balanceLabel": "Solde restant :",
       "depositDueLabel": "À régler maintenant :",
       "cancellationPolicyTitle": "Politique d’annulation (indicative)",
-      "cancellationPolicyBody": "En cas d’acompte, le solde doit être réglé avant la date de service. L’acompte n’est généralement pas remboursable sauf accord contraire. Cette mention est informative — contactez-nous pour toute question.",
+      "cancellationPolicyBody": "En cas d’acompte, le solde doit être réglé avant la date de service. L’acompte n’est généralement pas remboursable sauf accord contraire. Cette mention est informative - contactez-nous pour toute question.",
       "verifying": "Vérification du statut en cours…",
       "statusUnavailable": "Statut détaillé indisponible pour le moment. Rechargez la page dans quelques instants.",
       "backHome": "Retour accueil",
@@ -2344,7 +2402,7 @@
       "nextStepsTitle": "Prochaines étapes",
       "nextStepEmail": "Un e-mail de confirmation vous sera envoyé sous peu.",
       "nextStepAccount": "Consultez vos réservations depuis votre espace compte.",
-      "nextStepCash": "Préparez le montant en espèces pour le règlement en agence ou à l’arrivée — la confirmation suit l’encaissement.",
+      "nextStepCash": "Préparez le montant en espèces pour le règlement en agence ou à l’arrivée - la confirmation suit l’encaissement.",
       "nextStepBankTransfer": "Effectuez le virement en indiquant la référence de réservation dans le libellé.",
       "nextStepMobileMoney": "Effectuez le transfert Mobile Money puis envoyez une preuve de paiement.",
       "bookingIdMissing": "non fourni"
@@ -2403,8 +2461,17 @@
       "idNumberRequired": "Le n° de pièce d'identité du voyageur {n} est obligatoire.",
       "emergencyContactNameRequired": "Le nom du contact d'urgence est obligatoire.",
       "emergencyContactPhoneRequired": "Le téléphone du contact d'urgence est obligatoire.",
-      "idDocument": "Pièce d'identité",
-      "idDocumentHint": "JPEG, PNG, WebP ou PDF — 10 Mo max.",
+      "addTraveler": "Ajouter un voyageur",
+      "removeTraveler": "Retirer le dernier voyageur",
+      "seatsAdjustError": "Impossible d'ajouter une place sur ce trajet. Réessayez.",
+      "addingTraveler": "Ajout de la place...",
+      "seatsRemaining": "{n} place(s) restante(s)",
+            "saveTraveler": "Enregistrer",
+      "savingTraveler": "Enregistrement…",
+      "saveTravelerSuccess": "Voyageur enregistré.",
+      "saveTravelerError": "Impossible d'enregistrer ce voyageur. Réessayez.",
+"idDocument": "Pièce d'identité",
+      "idDocumentHint": "JPEG, PNG, WebP ou PDF - 10 Mo max.",
       "idDocumentSelected": "Choisir un fichier",
       "idDocumentRemove": "Retirer",
       "viewDocument": "Voir le document",

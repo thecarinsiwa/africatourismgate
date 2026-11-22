@@ -82,7 +82,7 @@ export const pagesI18n = {
       comptes: {
         title: 'Comptes fidélité',
         description:
-          'Programme OneKey — solde de points, paliers et dernière activité. Ajustement manuel réservé au super administrateur.',
+          'Programme OneKey - solde de points, paliers et dernière activité. Ajustement manuel réservé au super administrateur.',
       },
     },
     produits: {
@@ -356,7 +356,7 @@ export const pagesI18n = {
       comptes: {
         title: 'Loyalty accounts',
         description:
-          'OneKey program — point balance, tiers and last activity. Manual adjustment reserved for super admin.',
+          'OneKey program - point balance, tiers and last activity. Manual adjustment reserved for super admin.',
       },
     },
     produits: {
@@ -621,7 +621,7 @@ export const pagesI18n = {
       comptes: {
         title: 'Cuentas de fidelidad',
         description:
-          'Programa OneKey — saldo de puntos, niveles y última actividad. Ajuste manual reservado al superadministrador.',
+          'Programa OneKey - saldo de puntos, niveles y última actividad. Ajuste manual reservado al superadministrador.',
       },
     },
     produits: {

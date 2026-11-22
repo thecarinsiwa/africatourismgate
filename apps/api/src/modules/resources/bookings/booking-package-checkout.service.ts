@@ -132,7 +132,7 @@ export class BookingPackageCheckoutService {
       const line = await this.resolveCatalogLineForApproval(item, query);
       if (!line) {
         throw new BadRequestException(
-          `Créez d'abord des créneaux pour la date demandée (${query.startDate}) — prestation : ${item.label}.`,
+          `Créez d'abord des créneaux pour la date demandée (${query.startDate}) - prestation : ${item.label}.`,
         );
       }
       lines.push(line);

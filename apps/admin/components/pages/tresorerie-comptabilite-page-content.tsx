@@ -6,7 +6,7 @@ import { AccountingLinksList } from '../treasury/accounting-links-list';
 import { AdminListPageHeader } from './admin-list-page-header';
 
 /**
- * Hub Comptabilité SYSCOHADA — pont accounting_links + livres (SYSCO-006).
+ * Hub Comptabilité SYSCOHADA - pont accounting_links + livres (SYSCO-006).
  */
 export function TresorerieComptabilitePageContent() {
   return (

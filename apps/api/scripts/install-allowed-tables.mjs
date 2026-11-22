@@ -32,13 +32,13 @@ export const PROD_MIGRATION_DATA_TABLES = new Set([
   'organization_settings',
   // Institutional CMS defaults (skipped on first apply when prodSafe was stricter).
   'about_pages',
-  // SYSCO-002 — plan / exercices seed plateforme
+  // SYSCO-002 - plan / exercices seed plateforme
   'chart_of_accounts',
   'accounting_exercises',
   'accounting_periods',
-  // SYSCO-003 — journaux seed plateforme
+  // SYSCO-003 - journaux seed plateforme
   'accounting_journals',
-  // SYSCO-004 — mapping rules seed
+  // SYSCO-004 - mapping rules seed
   'accounting_mapping_rules',
 ]);
 

@@ -32,7 +32,7 @@ export function CruisesSearchForm({ initialValues }: CruisesSearchFormProps) {
   const [error, setError] = useState<string | null>(null);
 
   const portOptions = useMemo(
-    () => CRUISE_PORT_OPTIONS.map((port) => ({ value: port.code, label: `${port.code} — ${port.name}` })),
+    () => CRUISE_PORT_OPTIONS.map((port) => ({ value: port.code, label: `${port.code} - ${port.name}` })),
     [],
   );
 

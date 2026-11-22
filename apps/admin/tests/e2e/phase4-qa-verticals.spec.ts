@@ -57,14 +57,14 @@ const GAP_PAGES_TABLE = /Liste des pages GAP|GAP pages list|Lista de páginas GA
 const GAP_ACCESS_DENIED =
   /n'avez pas la permission gap\.read|do not have gap\.read permission|no tiene permiso gap\.read/i;
 
-test.describe('Phase 4 QA — checklist verticals', () => {
+test.describe('Phase 4 QA - checklist verticals', () => {
   test.describe.configure({ mode: 'serial' });
 
   test.beforeEach(async ({ page }) => {
     await loginAsSeedAdmin(page);
   });
 
-  test('H4 + V3 — grilles disponibilités chambres et classes vol', async ({ page }) => {
+  test('H4 + V3 - grilles disponibilités chambres et classes vol', async ({ page }) => {
     await page.goto(roomAvailabilityPath());
     await waitForPageIdle(page);
     await ensureAvailabilityMonth(page);
@@ -88,7 +88,7 @@ test.describe('Phase 4 QA — checklist verticals', () => {
     await expect(flightGrid.locator('.bg-atg-success-light').first()).toBeVisible();
   });
 
-  test('V1 + C2 — timeline vol et escales croisière', async ({ page }) => {
+  test('V1 + C2 - timeline vol et escales croisière', async ({ page }) => {
     await page.goto(flightViewPath());
     await waitForPageIdle(page);
 
@@ -110,7 +110,7 @@ test.describe('Phase 4 QA — checklist verticals', () => {
     ).toBeVisible();
   });
 
-  test('AC1 — galerie photos activité', async ({ page }) => {
+  test('AC1 - galerie photos activité', async ({ page }) => {
     await page.goto(activityEditPath());
     await waitForPageIdle(page);
 
@@ -125,7 +125,7 @@ test.describe('Phase 4 QA — checklist verticals', () => {
     ).toBeVisible();
   });
 
-  test('P1 — composition forfait visuelle', async ({ page }) => {
+  test('P1 - composition forfait visuelle', async ({ page }) => {
     await page.goto(packageViewPath());
     await waitForPageIdle(page);
 
@@ -134,7 +134,7 @@ test.describe('Phase 4 QA — checklist verticals', () => {
     await expect(composition.getByRole('listitem')).toHaveCount(1);
   });
 
-  test('DE1 — hero destination', async ({ page }) => {
+  test('DE1 - hero destination', async ({ page }) => {
     await page.goto(destinationViewPath());
     await waitForPageIdle(page);
 
@@ -146,7 +146,7 @@ test.describe('Phase 4 QA — checklist verticals', () => {
     await expect(hero.getByText('CD')).toBeVisible();
   });
 
-  test('GAP — contenu admin cohérent avec la vitrine', async ({ page }) => {
+  test('GAP - contenu admin cohérent avec la vitrine', async ({ page }) => {
     await page.goto('/gap/pages');
     await waitForPageIdle(page);
     test.skip(
@@ -194,7 +194,7 @@ test.describe('Phase 4 QA — checklist verticals', () => {
   });
 });
 
-test.describe('Phase 4 QA — smoke navigation verticals', () => {
+test.describe('Phase 4 QA - smoke navigation verticals', () => {
   test.describe.configure({ mode: 'serial' });
 
   test.beforeEach(async ({ page }) => {
@@ -270,7 +270,7 @@ test.describe('Phase 4 QA — smoke navigation verticals', () => {
     await expect(page.getByRole('table').first()).toBeVisible();
   });
 
-  test('/produits/vols — liste principale', async ({ page }) => {
+  test('/produits/vols - liste principale', async ({ page }) => {
     await page.goto('/produits/vols');
     await waitForPageIdle(page);
     await expect(page.getByRole('heading', { name: FLIGHTS_HEADING }).first()).toBeVisible();

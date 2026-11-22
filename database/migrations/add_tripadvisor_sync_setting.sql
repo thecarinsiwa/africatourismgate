@@ -1,5 +1,5 @@
 -- Tripadvisor Terra sync credentials (idempotent).
--- Admin › Contenu › Avis — locationId + apiKey + language.
+-- Admin › Contenu › Avis - locationId + apiKey + language.
 -- Never expose via public organization-settings endpoints.
 -- Skips when platform org is not present yet (CI schema sync before seed).
 -- Fresh installs also get this via database/seeds/install.seed*.sql.

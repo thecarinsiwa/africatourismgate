@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   });
 
   return {
-    title: `${messages.title} — ${tPlaceholder('meta.titleSuffix')}`,
+    title: `${messages.title} - ${tPlaceholder('meta.titleSuffix')}`,
     description: messages.description,
   };
 }

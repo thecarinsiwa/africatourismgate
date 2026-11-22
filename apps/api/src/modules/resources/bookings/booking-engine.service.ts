@@ -242,7 +242,7 @@ export class BookingEngineService {
       fromStatus: null,
       toStatus: initialStatus,
       reason: isPosStaffCheckout
-        ? 'Création caisse POS — en attente de paiement'
+        ? 'Création caisse POS - en attente de paiement'
         : 'Création de la réservation (en attente de vérification)',
       changedByUserId: actorUserId ?? null,
     });
@@ -421,7 +421,7 @@ export class BookingEngineService {
       bookingId: id,
       fromStatus,
       toStatus: 'pending_payment',
-      reason: options?.reason?.trim() || 'Approbation — en attente de paiement',
+      reason: options?.reason?.trim() || 'Approbation - en attente de paiement',
       changedByUserId: actorUserId,
     });
 
@@ -691,7 +691,7 @@ export class BookingEngineService {
     const paymentId = newId();
     const trimmedNote = note?.trim();
     const confirmReason = trimmedNote
-      ? `Paiement cash caisse — ${trimmedNote}`
+      ? `Paiement cash caisse - ${trimmedNote}`
       : paidCents === 0 && amount < booking.totalCents
         ? 'Acompte cash caisse'
         : 'Paiement cash caisse';
@@ -762,12 +762,12 @@ export class BookingEngineService {
     const confirmReason =
       provider === 'mobile_money'
         ? trimmedNote
-          ? `Paiement Mobile Money reçu — ${trimmedNote}`
+          ? `Paiement Mobile Money reçu - ${trimmedNote}`
           : isPartial && paidCents === 0
             ? 'Acompte Mobile Money reçu'
             : 'Paiement Mobile Money reçu'
         : trimmedNote
-          ? `Virement bancaire reçu — ${trimmedNote}`
+          ? `Virement bancaire reçu - ${trimmedNote}`
           : isPartial && paidCents === 0
             ? 'Acompte virement reçu'
             : 'Virement bancaire reçu';
@@ -835,7 +835,7 @@ export class BookingEngineService {
           await this.allocateStock(manager, lines, 'restore', actorUserId);
         }
       } else {
-        // Shared trip seats are reserved before assisted approval — release on reject.
+        // Shared trip seats are reserved before assisted approval - release on reject.
         const tripLines = lines.filter((line) => line.stock?.kind === 'vehicle_trip');
         if (tripLines.length > 0) {
           await this.allocateStock(manager, tripLines, 'restore', actorUserId);
@@ -2353,6 +2353,11 @@ export class BookingEngineService {
       booking.totalCents = Math.max(0, booking.totalCents - refundCents);
       await this.bookingsRepository.save(booking);
     }
+  }
+
+  /** Seat quantities already claimed by active bookings on a shared trip. */
+  async countActiveTripSeatClaims(tripId: string): Promise<number> {
+    return this.sumActiveTripSeatClaims(tripId);
   }
 
   private async sumActiveTripSeatClaims(

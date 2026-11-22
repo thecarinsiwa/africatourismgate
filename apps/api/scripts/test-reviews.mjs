@@ -141,7 +141,7 @@ async function main() {
   console.log('1. Create confirmed booking with past stay dates');
   const pastBookingId = await createConfirmedBooking(customerToken, PAST_START, PAST_END);
 
-  console.log('2. GET /bookings/:id — canReview true, no review');
+  console.log('2. GET /bookings/:id - canReview true, no review');
   const beforeReview = await request('GET', `/bookings/${pastBookingId}`, {
     token: customerToken,
   });
@@ -177,7 +177,7 @@ async function main() {
   });
   assertStatus('POST duplicate review', duplicate.status, 409);
 
-  console.log('5. GET /bookings/:id — review present, canReview false');
+  console.log('5. GET /bookings/:id - review present, canReview false');
   const afterReview = await request('GET', `/bookings/${pastBookingId}`, {
     token: customerToken,
   });
@@ -189,7 +189,7 @@ async function main() {
     throw new Error('Expected review on booking detail');
   }
 
-  console.log('6. GET /reviews/:id (admin) — status pending');
+  console.log('6. GET /reviews/:id (admin) - status pending');
   const adminReview = await request('GET', `/reviews/${reviewId}`, {
     token: adminToken,
   });
@@ -218,7 +218,7 @@ async function main() {
   }
   console.log('  OK pending review excluded from public list');
 
-  console.log('8. PATCH /reviews/:id — approve');
+  console.log('8. PATCH /reviews/:id - approve');
   const approve = await request('PATCH', `/reviews/${reviewId}`, {
     token: adminToken,
     body: { status: 'approved' },
@@ -228,7 +228,7 @@ async function main() {
     throw new Error(`Expected approved, got ${approve.data?.status}`);
   }
 
-  console.log('9. GET /public/accommodations/:id — visible after approval');
+  console.log('9. GET /public/accommodations/:id - visible after approval');
   const propertyDetail = await request(
     'GET',
     `/public/accommodations/${SEED_PROPERTY_ID}?guests=2`,
@@ -255,7 +255,7 @@ async function main() {
   }
   console.log(`  OK ${publicReviews.data.data.length} review(s) listed`);
 
-  console.log('10. PATCH /reviews/:id — hide');
+  console.log('10. PATCH /reviews/:id - hide');
   const hide = await request('PATCH', `/reviews/${reviewId}`, {
     token: adminToken,
     body: { status: 'hidden' },
@@ -272,7 +272,7 @@ async function main() {
   }
   console.log('  OK hidden review excluded from public list');
 
-  console.log('11. DELETE /reviews/:id — soft delete');
+  console.log('11. DELETE /reviews/:id - soft delete');
   const del = await request('DELETE', `/reviews/${reviewId}`, { token: adminToken });
   assertStatus('DELETE review', del.status, 200);
   const adminList = await request('GET', '/reviews?limit=100', { token: adminToken });
@@ -282,7 +282,7 @@ async function main() {
   }
   console.log('  OK soft-deleted review absent from admin list');
 
-  console.log('12. Future stay — POST review → 400');
+  console.log('12. Future stay - POST review → 400');
   const futureBookingId = await createConfirmedBooking(customerToken, FUTURE_DATE, FUTURE_DATE);
   const tooEarly = await request('POST', `/bookings/${futureBookingId}/reviews`, {
     token: customerToken,

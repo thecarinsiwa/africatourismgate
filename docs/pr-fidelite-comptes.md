@@ -1,4 +1,4 @@
-# feat(admin): loyalty accounts — AdminIntroPage UX, KPIs, and adjust Modal
+# feat(admin): loyalty accounts - AdminIntroPage UX, KPIs, and adjust Modal
 
 **Branch:** `feature/admin-ui-loyalty-accounts`
 

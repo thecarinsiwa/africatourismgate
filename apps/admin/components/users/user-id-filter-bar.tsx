@@ -203,7 +203,7 @@ export function UserIdFilterBar({
             <option value="">{tFilter('allUsers')}</option>
             {users.map((user) => (
               <option key={user.id} value={user.id}>
-                {user.firstName} {user.lastName} — {user.email}
+                {user.firstName} {user.lastName} - {user.email}
               </option>
             ))}
             {userId && !users.some((user) => user.id === userId) ? (

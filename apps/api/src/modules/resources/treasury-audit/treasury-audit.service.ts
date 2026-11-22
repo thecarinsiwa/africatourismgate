@@ -30,7 +30,7 @@ export type TreasuryAuditWriteParams = {
 };
 
 /**
- * Journal append-only trésorerie — écriture depuis services métier + lecture filtrée.
+ * Journal append-only trésorerie - écriture depuis services métier + lecture filtrée.
  */
 @Injectable()
 export class TreasuryAuditService {

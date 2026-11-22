@@ -31,7 +31,7 @@ export function NationalitySelect({
   required,
   disabled,
   error,
-  placeholder = '—',
+  placeholder = '-',
   searchPlaceholder,
   emptyMessage,
   className,

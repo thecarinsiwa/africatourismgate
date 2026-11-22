@@ -148,7 +148,7 @@ jobs:
       - name: POS E2E tests
         run: pnpm --filter @africatourismgate/pos test:e2e
 
-  # Build web once, then run Playwright in parallel shards (mocked API — no MySQL).
+  # Build web once, then run Playwright in parallel shards (mocked API - no MySQL).
   web-e2e-build:
     runs-on: ubuntu-24.04
     env:

@@ -174,12 +174,12 @@ export function BudgetVsActualPanel() {
           const monthLabel = new Intl.DateTimeFormat(locale, {
             month: 'long',
           }).format(new Date(2000, row.month - 1, 1));
-          return `${period} — ${monthLabel} ${row.year}`;
+          return `${period} - ${monthLabel} ${row.year}`;
         } catch {
-          return `${period} — ${row.month}/${row.year}`;
+          return `${period} - ${row.month}/${row.year}`;
         }
       }
-      return `${period} — ${row.year}`;
+      return `${period} - ${row.year}`;
     },
     [locale, periodLabels],
   );

@@ -184,7 +184,7 @@ export function PromoCodeForm({
         onOpenChange={setConflictModalOpen}
         title={t('conflictModal.title')}
         description={t('conflictModal.description', {
-          code: values.code.trim().toUpperCase() || '—',
+          code: values.code.trim().toUpperCase() || '-',
         })}
         showClose
         closeAriaLabel={t('conflictModal.close')}

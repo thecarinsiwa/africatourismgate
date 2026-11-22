@@ -3,7 +3,7 @@
 HTTP client typé pour les apps (Admin, POS, web, gap).
 
 - **Méthodes métier** : `src/index.ts` (`ApiClient`)
-- **Schéma OpenAPI** : `src/generated/` (généré — ne pas éditer à la main)
+- **Schéma OpenAPI** : `src/generated/` (généré - ne pas éditer à la main)
 
 ```bash
 pnpm --filter @africatourismgate/api openapi:export

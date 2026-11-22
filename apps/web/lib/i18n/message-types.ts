@@ -77,6 +77,9 @@ export type Translations = {
     stepConfirmation: string;
     stepCancelled: string;
     cartTitle: string;
+    vehicleTripOrganizerBanner: string;
+    vehicleTripExistingBooking: string;
+    vehicleSharedPricePerPerson: string;
     recapTitle: string;
     continueToRecap: string;
     backToCart: string;
@@ -238,6 +241,15 @@ export type Translations = {
       idNumberRequired: string;
       emergencyContactNameRequired: string;
       emergencyContactPhoneRequired: string;
+      addTraveler: string;
+      removeTraveler: string;
+      seatsAdjustError: string;
+      addingTraveler: string;
+      seatsRemaining: string;
+      saveTraveler: string;
+      savingTraveler: string;
+      saveTravelerSuccess: string;
+      saveTravelerError: string;
       idDocument: string;
       idDocumentHint: string;
       idDocumentSelected: string;
@@ -496,6 +508,9 @@ export type Translations = {
     joinPaysInstead: string;
     createTripTitle: string;
     joinTrip: string;
+    yourTrip: string;
+    continueTrip: string;
+    ensureSeatsError: string;
     newTripOption: string;
     departureTime: string;
     seatsRemaining: string;
@@ -1337,7 +1352,7 @@ export type Translations = {
       subtitle: string;
       divider: string;
       google: string;
-      backToHotels: string;
+      backToHome: string;
       form: {
         emailLabel: string;
         emailPlaceholder: string;

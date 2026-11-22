@@ -1,4 +1,4 @@
--- SYSCO-009 — Permissions RBAC `accounting.*` (complète treasury.accounting_link.read)
+-- SYSCO-009 - Permissions RBAC `accounting.*` (complète treasury.accounting_link.read)
 SET NAMES utf8mb4;
 
 INSERT IGNORE INTO `permissions` (`id`, `code`, `resource`, `action`, `description`) VALUES

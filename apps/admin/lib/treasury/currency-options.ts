@@ -48,7 +48,7 @@ export function treasuryCurrencySelectOptions(options?: {
     const catalogLabel = labels?.[code]?.trim();
     items.push({
       value: code,
-      label: catalogLabel ? `${code} — ${catalogLabel}` : code,
+      label: catalogLabel ? `${code} - ${catalogLabel}` : code,
     });
   };
 
@@ -64,7 +64,7 @@ export function treasuryCurrencySelectOptions(options?: {
   }
 
   if (options?.includeEmpty) {
-    return [{ value: '', label: options.emptyLabel ?? '—' }, ...items];
+    return [{ value: '', label: options.emptyLabel ?? '-' }, ...items];
   }
   return items;
 }

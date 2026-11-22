@@ -188,7 +188,7 @@ export interface VehicleRoutePriceTiersListQuery {
 
 /**
  * Tronçon tarifé : ville départ → ville arrivée (texte libre) pour un véhicule.
- * `active` gates the public /cars catalogue only — inactive routes remain
+ * `active` gates the public /cars catalogue only - inactive routes remain
  * selectable in package products (`item_type: 'troncon'`).
  * `priceCents` remains the legacy / package fallback (often the 1-person tier).
  */
@@ -260,6 +260,8 @@ export interface VehicleTrip {
   arrivalCity: string;
   paymentClosesAt: string;
   canJoin: boolean;
+  /** True when the authenticated viewer created this trip. */
+  isMine: boolean;
   canEditDeparture: boolean;
   createdAt: string;
   updatedAt: string | null;
@@ -268,7 +270,7 @@ export interface VehicleTrip {
 export interface VehicleTripsListQuery {
   routeId?: string;
   vehicleId?: string;
-  /** YYYY-MM-DD — trips departing that calendar day */
+  /** YYYY-MM-DD - trips departing that calendar day */
   travelDate?: string;
   status?: VehicleTripStatus;
   page?: number;
@@ -286,6 +288,11 @@ export interface CreateVehicleTripRequest {
 
 export interface JoinVehicleTripRequest {
   seats?: number;
+}
+
+/** Creator-only: ensure reserved pool covers claimed seats + this checkout quantity. */
+export interface EnsureVehicleTripSeatsRequest {
+  seats: number;
 }
 
 export interface UpdateVehicleTripRequest {

@@ -1,4 +1,4 @@
--- Payment proofs (bank transfer / mobile money) — client upload + staff review
+-- Payment proofs (bank transfer / mobile money) - client upload + staff review
 CREATE TABLE IF NOT EXISTS `booking_payment_proofs` (
   `id` CHAR(36) NOT NULL,
   `booking_id` CHAR(36) NOT NULL,

@@ -148,7 +148,7 @@ describe('site-search-scoring', () => {
     const itinerary = scoreSiteSearchTextMatch('kinshasa', [
       {
         weight: CRUISE_SITE_SEARCH_WEIGHTS.itinerary,
-        value: 'Kinshasa — Banana',
+        value: 'Kinshasa - Banana',
       },
       { weight: CRUISE_SITE_SEARCH_WEIGHTS.ship, value: 'Congo River Spirit' },
       { weight: CRUISE_SITE_SEARCH_WEIGHTS.line, value: 'Africa River Cruises' },

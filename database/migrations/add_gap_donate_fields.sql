@@ -1,4 +1,4 @@
--- GAP site settings — bouton Donate (defensive: columns may already exist in fresh schema import)
+-- GAP site settings - bouton Donate (defensive: columns may already exist in fresh schema import)
 
 SET @sql = IF(
   (SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'gap_site_settings' AND column_name = 'donate_url') = 0,

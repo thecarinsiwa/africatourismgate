@@ -59,7 +59,7 @@ export async function switchLanguage(page: Page, locale: AppLocale): Promise<voi
     .getByRole('button', { name: /Choisir la langue|Select language|Elegir idioma/i })
     .first();
 
-  // Account hydrate can re-apply preferredLanguage after the first paint — retry once.
+  // Account hydrate can re-apply preferredLanguage after the first paint - retry once.
   try {
     await expect(langBtn).toContainText(locale.toUpperCase(), { timeout: 5_000 });
   } catch {
@@ -100,7 +100,7 @@ export async function switchLanguageViaMenu(page: Page, locale: AppLocale): Prom
   const menuItem = page.getByRole('menuitemradio', { name: MENU_LABEL[locale] });
   await expect(menuItem).toBeVisible({ timeout: 10_000 });
   await menuItem.click({ noWaitAfter: true }).catch(() => {
-    /* remount race — cookie path below still applies */
+    /* remount race - cookie path below still applies */
   });
   await switchLanguage(page, locale);
 }

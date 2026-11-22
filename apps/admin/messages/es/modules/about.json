@@ -229,7 +229,7 @@
         "locale": "Idioma"
       },
       "hints": {
-        "imageUpload": "JPEG, PNG o WebP — máx. 5 MB",
+        "imageUpload": "JPEG, PNG o WebP - máx. 5 MB",
         "linkUrl": "Enlace opcional a una página o recurso asociado."
       },
       "saving": "Guardando…",
@@ -288,9 +288,9 @@
         "locale": "Idioma"
       },
       "hints": {
-        "photoUpload": "JPEG, PNG o WebP — máx. 5 MB",
+        "photoUpload": "JPEG, PNG o WebP - máx. 5 MB",
         "slug": "Perfil público: {path}. Déjelo vacío para generarlo a partir del nombre.",
-        "contact": "Opcional — se muestra en la página de perfil pública."
+        "contact": "Opcional - se muestra en la página de perfil pública."
       },
       "placeholders": {
         "slug": "nombre-apellido",
@@ -349,7 +349,7 @@
         "locale": "Idioma"
       },
       "hints": {
-        "fileFormat": "PDF, JPEG, PNG o WebP — máx. 10 MB.",
+        "fileFormat": "PDF, JPEG, PNG o WebP - máx. 10 MB.",
         "externalUrl": "Enlace a un documento alojado en otro sitio (opcional si hay archivo).",
         "publishedAt": "Dejar vacío para usar la fecha actual al publicar."
       },
@@ -465,7 +465,7 @@
         "imageAlt": "Texto alternativo de la imagen",
         "imagePreviewAlt": "Vista previa de la sección",
         "removeImage": "Quitar imagen",
-        "imageUploadHint": "JPEG, PNG o WebP — máx. 5 MB",
+        "imageUploadHint": "JPEG, PNG o WebP - máx. 5 MB",
         "badgeValue": "Valor del distintivo",
         "badgeLabel": "Etiqueta del distintivo"
       },

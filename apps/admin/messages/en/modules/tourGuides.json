@@ -115,7 +115,7 @@
     "contactEmail": "Contact email",
     "linkedUser": "Linked user account",
     "openFullCalendar": "Global calendar",
-    "inactiveHint": "Inactive guide — schedule remains viewable.",
+    "inactiveHint": "Inactive guide - schedule remains viewable.",
     "tabsAria": "Guide sections",
     "tabs": {
       "profile": "Profile",
@@ -125,7 +125,7 @@
     "schedule": {
       "title": "Schedule",
       "intro": "Availability and mission slots. Click a day for hourly detail or to mark unavailability.",
-      "ariaLabel": "Guide schedule — {month}"
+      "ariaLabel": "Guide schedule - {month}"
     }
   },
   "sections": {
@@ -141,7 +141,7 @@
     }
   },
   "calendar": {
-    "ariaLabel": "Availability calendar — {month}",
+    "ariaLabel": "Availability calendar - {month}",
     "availableShort": "{count} avail.",
     "occupiedShort": "{count} busy",
     "unavailableShort": "{count} unavail.",
@@ -154,7 +154,7 @@
     "noActiveGuides": "No active guides match these filters.",
     "today": "Today",
     "dayModal": {
-      "title": "Availability — {date}",
+      "title": "Availability - {date}",
       "intro": "Hourly schedule for active guides. Assignments appear in amber, unavailability in gray.",
       "empty": "No active guides on this day.",
       "viewBooking": "View booking",

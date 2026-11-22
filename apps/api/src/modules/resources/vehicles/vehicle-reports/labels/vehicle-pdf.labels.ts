@@ -42,7 +42,7 @@ const LABELS: Record<VehicleReportLocale, VehiclePdfLabels> = {
   fr: {
     generatedOn: 'Document généré le',
     kpi: {
-      documentTitle: 'Synthèse KPI — Véhicules',
+      documentTitle: 'Synthèse KPI - Véhicules',
       summarySection: 'Indicateurs clés',
       vehicles: 'Véhicules',
       agencies: 'Agences',
@@ -90,7 +90,7 @@ const LABELS: Record<VehicleReportLocale, VehiclePdfLabels> = {
   en: {
     generatedOn: 'Document generated on',
     kpi: {
-      documentTitle: 'KPI summary — Vehicles',
+      documentTitle: 'KPI summary - Vehicles',
       summarySection: 'Key metrics',
       vehicles: 'Vehicles',
       agencies: 'Agencies',
@@ -138,7 +138,7 @@ const LABELS: Record<VehicleReportLocale, VehiclePdfLabels> = {
   es: {
     generatedOn: 'Documento generado el',
     kpi: {
-      documentTitle: 'Resumen KPI — Vehículos',
+      documentTitle: 'Resumen KPI - Vehículos',
       summarySection: 'Indicadores clave',
       vehicles: 'Vehículos',
       agencies: 'Agencias',

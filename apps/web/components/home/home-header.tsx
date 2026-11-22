@@ -214,7 +214,8 @@ export function HomeHeader() {
   }, [pathname]);
 
   useEffect(() => {
-    const media = window.matchMedia('(min-width: 1024px)');
+    // Match Tailwind `xl` — desktop nav needs more than `lg` once account + sign-out are visible.
+    const media = window.matchMedia('(min-width: 1280px)');
     const handleChange = (event: MediaQueryListEvent) => {
       if (event.matches) setMenuOpen(false);
     };
@@ -317,17 +318,17 @@ export function HomeHeader() {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-0 sm:gap-3 sm:px-6 lg:px-8">
           <Link
             href="/"
-            className={`flex min-w-0 flex-1 items-center rounded-md py-3 sm:py-4 lg:flex-none lg:shrink-0 ${FOCUS_RING}`}
+            className={`flex min-w-0 flex-1 items-center rounded-md py-3 sm:py-4 xl:flex-none xl:shrink-0 ${FOCUS_RING}`}
           >
             <BrandingMark
               showName
               className="flex min-w-0 items-center gap-1.5 sm:gap-2"
               logoClassName="h-8 w-8 shrink-0 rounded-full object-cover sm:h-10 sm:w-10"
-              nameClassName="truncate text-sm font-bold text-atg-fg sm:text-base lg:text-lg"
+              nameClassName="truncate text-sm font-bold text-atg-fg sm:text-base xl:max-w-[11rem] xl:truncate xl:text-base 2xl:max-w-none 2xl:text-lg"
             />
           </Link>
 
-          <nav className="hidden items-center gap-0 lg:flex min-w-0 flex-1 justify-center" aria-label={t('mainAria')}>
+          <nav className="hidden min-w-0 flex-1 items-center justify-center gap-0 xl:flex" aria-label={t('mainAria')}>
             {navLinks.map((link) => {
               const linkActive = isNavItemActive(link.href, pathname, link.children);
               return (
@@ -339,7 +340,7 @@ export function HomeHeader() {
                 >
                   <Link
                     href={link.href}
-                    className={`relative flex items-center gap-1 px-3 py-5 text-sm font-medium whitespace-nowrap ${navLinkClass(linkActive, 'desktop')}`}
+                    className={`relative flex items-center gap-1 px-2 py-5 text-sm font-medium whitespace-nowrap 2xl:px-3 ${navLinkClass(linkActive, 'desktop')}`}
                     aria-current={linkActive && link.children.length === 0 ? 'page' : undefined}
                   >
                     {link.label}
@@ -372,7 +373,7 @@ export function HomeHeader() {
             })}
           </nav>
 
-          <div className="hidden items-center gap-2 lg:flex shrink-0">
+          <div className="hidden shrink-0 items-center gap-1.5 xl:flex 2xl:gap-2">
             <SiteSearchTrigger />
             {donateHref ? (
               <DonateButton
@@ -383,7 +384,7 @@ export function HomeHeader() {
             ) : null}
             <Link
               href={hasSession ? '/account' : '/booking/login?next=%2Faccount'}
-              className={`inline-flex min-h-[44px] items-center whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors ${FOCUS_RING} ${
+              className={`inline-flex min-h-[44px] items-center whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium transition-colors 2xl:px-3 ${FOCUS_RING} ${
                 onAccountArea
                   ? 'bg-primary/10 text-primary'
                   : 'text-atg-fg hover:text-primary dark:text-white/75 dark:hover:text-white'
@@ -395,7 +396,7 @@ export function HomeHeader() {
             {hasSession ? (
               <Link
                 href="/booking/logout"
-                className={`inline-flex min-h-[44px] items-center whitespace-nowrap rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:border-red-300 hover:bg-red-100 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950/60 ${FOCUS_RING}`}
+                className={`inline-flex min-h-[44px] items-center whitespace-nowrap rounded-lg border border-red-200 bg-red-50 px-2.5 py-2 text-sm font-medium text-red-700 transition-colors hover:border-red-300 hover:bg-red-100 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950/60 2xl:px-3 ${FOCUS_RING}`}
               >
                 {t('signOut')}
               </Link>
@@ -403,7 +404,7 @@ export function HomeHeader() {
           </div>
 
           <div className="flex shrink-0 items-center gap-0.5 sm:gap-1.5">
-            <SiteSearchTrigger className="lg:hidden" />
+            <SiteSearchTrigger className="xl:hidden" />
 
             <button
               type="button"
@@ -426,7 +427,7 @@ export function HomeHeader() {
             <button
               ref={menuButtonRef}
               type="button"
-              className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-atg-muted transition-colors hover:bg-atg-surface hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white sm:h-11 sm:w-11 lg:hidden ${FOCUS_RING}`}
+              className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-atg-muted transition-colors hover:bg-atg-surface hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white sm:h-11 sm:w-11 xl:hidden ${FOCUS_RING}`}
               aria-expanded={menuOpen}
               aria-controls="mobile-nav"
               onClick={() => setMenuOpen((o) => !o)}
@@ -450,7 +451,7 @@ export function HomeHeader() {
           ref={mobileNavRef}
           id="mobile-nav"
           tabIndex={-1}
-          className="border-t border-atg-border bg-atg-elevated px-4 py-4 shadow-lg transition-[opacity,transform] duration-200 ease-out opacity-100 translate-y-0 max-h-[calc(100dvh-8.5rem-var(--atg-banner-h,0px))] overflow-y-auto overscroll-contain dark:border-atg-border dark:bg-atg-elevated lg:hidden"
+          className="max-h-[calc(100dvh-8.5rem-var(--atg-banner-h,0px))] translate-y-0 overflow-y-auto overscroll-contain border-t border-atg-border bg-atg-elevated px-4 py-4 opacity-100 shadow-lg transition-[opacity,transform] duration-200 ease-out dark:border-atg-border dark:bg-atg-elevated xl:hidden"
           aria-label={t('mobileAria')}
         >
           <div className="mb-3 flex items-center justify-between gap-2">

@@ -56,7 +56,7 @@ describe('slugify', () => {
   });
 
   it('returns an empty string when nothing is usable', () => {
-    expect(slugify('—')).toBe('');
+    expect(slugify('-')).toBe('');
   });
 });
 

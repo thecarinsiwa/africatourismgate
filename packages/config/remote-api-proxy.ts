@@ -83,7 +83,7 @@ export async function proxyRemoteApiRequest(
   return forwardApiRequest(req, target, pathSegments);
 }
 
-/** @deprecated Use proxyRemoteApiRequest — local Nest is now the default target. */
+/** @deprecated Use proxyRemoteApiRequest - local Nest is now the default target. */
 export async function proxyLocalDevApiRequest(
   req: Request,
   pathSegments: string[],

@@ -291,7 +291,7 @@ export function AccountingExercisesList() {
       {
         id: 'periods',
         header: tColumns('periods'),
-        cell: ({ row }) => row.original.periods?.length ?? '—',
+        cell: ({ row }) => row.original.periods?.length ?? '-',
       },
       {
         id: 'status',
@@ -403,7 +403,7 @@ export function AccountingExercisesList() {
             <Select
               label={t('form.organization')}
               value={form.organizationId}
-              options={[{ value: '', label: '—' }, ...orgOptions]}
+              options={[{ value: '', label: '-' }, ...orgOptions]}
               onChange={(e) => {
                 currencyTouchedRef.current = false;
                 setForm((prev) => ({

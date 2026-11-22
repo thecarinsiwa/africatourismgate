@@ -229,7 +229,7 @@
         "locale": "Language"
       },
       "hints": {
-        "imageUpload": "JPEG, PNG or WebP — max 5 MB",
+        "imageUpload": "JPEG, PNG or WebP - max 5 MB",
         "linkUrl": "Optional link to a related page or resource."
       },
       "saving": "Saving…",
@@ -288,9 +288,9 @@
         "locale": "Language"
       },
       "hints": {
-        "photoUpload": "JPEG, PNG or WebP — max. 5 MB",
+        "photoUpload": "JPEG, PNG or WebP - max. 5 MB",
         "slug": "Public profile: {path}. Leave empty to generate it from the name.",
-        "contact": "Optional — shown on the public profile page."
+        "contact": "Optional - shown on the public profile page."
       },
       "placeholders": {
         "slug": "first-last",
@@ -349,7 +349,7 @@
         "locale": "Language"
       },
       "hints": {
-        "fileFormat": "PDF, JPEG, PNG or WebP — max 10 MB.",
+        "fileFormat": "PDF, JPEG, PNG or WebP - max 10 MB.",
         "externalUrl": "Link to a document hosted elsewhere (optional if file uploaded).",
         "publishedAt": "Leave empty to use the current date when publishing."
       },
@@ -465,7 +465,7 @@
         "imageAlt": "Image alt text",
         "imagePreviewAlt": "Section preview",
         "removeImage": "Remove image",
-        "imageUploadHint": "JPEG, PNG or WebP — max 5 MB",
+        "imageUploadHint": "JPEG, PNG or WebP - max 5 MB",
         "badgeValue": "Badge value",
         "badgeLabel": "Badge label"
       },

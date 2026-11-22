@@ -1,4 +1,4 @@
-# Module Admin — Trésorerie
+# Module Admin - Trésorerie
 
 Guide court d’intégration : routes UI, permissions RBAC, flux métier, client API.
 
@@ -52,7 +52,7 @@ Config : `apps/admin/config/admin-route-permissions.ts`, `dashboard-nav.config.t
 | `treasury.fx_rates.read` | Catalogue taux de change |
 | `treasury.fx_rates.write` | CRUD taux de change |
 
-Profils indicatifs (`TREASURY_ROLE_PROFILE_PERMISSIONS`) : créateur, valideur, autorisateur, trésorier (enregistreur), contrôle (+ `fx_rates.read`), finance admin (toutes `treasury.*`) — voir QA RBAC.  
+Profils indicatifs (`TREASURY_ROLE_PROFILE_PERMISSIONS`) : créateur, valideur, autorisateur, trésorier (enregistreur), contrôle (+ `fx_rates.read`), finance admin (toutes `treasury.*`) - voir QA RBAC.  
 `super_admin` : bypass inchangé.
 
 ---
@@ -101,7 +101,7 @@ pnpm --filter @africatourismgate/api-client build
 
 Variante : `pnpm codegen:api -- --refresh-spec` (fetch live `/api-json` ou re-export).
 
-Export CSV rapports : `GET /treasury-reports/export` — helper Admin `apps/admin/lib/treasury-reports-export.ts`.
+Export CSV rapports : `GET /treasury-reports/export` - helper Admin `apps/admin/lib/treasury-reports-export.ts`.
 
 ---
 
@@ -119,14 +119,14 @@ Trois niveaux distincts :
 - Catalogue global : CRUD Admin (nav Système) ; `is_active` / soft-delete retire la devise des listes ; ops historiques gardent leur code ISO.  
 - Permissions : page `currencies.read` / bouton créer `currencies.write` ; `GET /currencies` = toute session authentifiée (sélecteurs).  
 - Admin : hook `useActiveCurrencies` (`activeOnly=true`) ; seed offline = XOF/XAF/EUR/USD/MAD/GHS/NGN si API KO.  
-- API create (fund / budget / besoin / taux / exercice / org) : `assertActiveCode` — code hors catalogue actif → **400**.  
+- API create (fund / budget / besoin / taux / exercice / org) : `assertActiveCode` - code hors catalogue actif → **400**.  
 - Création d’exercice : `currency` défaut = devise org ; périodes mensuelles auto.  
-- Changer la devise d’exercice : seulement si `open` et **aucune** écriture `posted` (sinon 409) — [syscohada-domain-model.md](./syscohada-domain-model.md) §5.2.  
+- Changer la devise d’exercice : seulement si `open` et **aucune** écriture `posted` (sinon 409) - [syscohada-domain-model.md](./syscohada-domain-model.md) §5.2.  
 - Comptabilisation : si `fund_*.currency ≠` tenue → lookup taux ; sans taux → post **400** (§7.4).  
 **Hors MVP :** feed BCEAO/API, inverse auto, conversion des rapports trésorerie, catalogue multi-org.
 
 ---
 
-## Hors scope (SYSCOHADA — lot TRESO initial)
+## Hors scope (SYSCOHADA - lot TRESO initial)
 
-Le lot TRESO-001…045 ne livrait pas plan / journal / bilan. L’épic SYSCOHADA + TRESO-046 (taux) + UI exercices complètent la chaîne — détails [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md) · [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md).
+Le lot TRESO-001…045 ne livrait pas plan / journal / bilan. L’épic SYSCOHADA + TRESO-046 (taux) + UI exercices complètent la chaîne - détails [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md) · [admin-syscohada-github-tasks.md](./admin-syscohada-github-tasks.md).

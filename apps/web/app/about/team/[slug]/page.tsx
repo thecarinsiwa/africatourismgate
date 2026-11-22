@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   try {
     const member = await getTeamMemberBySlug(params.slug, await getLocale());
-    const title = `${member.name} — ${member.role} | ${teamLabel}`;
+    const title = `${member.name} - ${member.role} | ${teamLabel}`;
     const description = stripHtml(member.bio).slice(0, 160) || member.role;
     return {
       title,

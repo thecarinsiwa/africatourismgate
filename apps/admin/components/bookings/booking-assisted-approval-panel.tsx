@@ -511,7 +511,7 @@ export function BookingAssistedApprovalPanel({
           <div>
             <p className="mb-1 text-sm font-medium text-atg-fg">{t('visitEndDate')}</p>
             <p className="flex h-11 items-center rounded-lg border border-atg-border bg-atg-muted/20 px-3 text-sm tabular-nums text-atg-muted">
-              {computedVisitEndDate || '—'}
+              {computedVisitEndDate || '-'}
             </p>
             <p className="mt-1 text-xs text-atg-muted">{t('visitEndDateAutoHint')}</p>
           </div>
@@ -684,7 +684,7 @@ export function BookingAssistedApprovalPanel({
                       value={
                         traveler.basePriceCents != null
                           ? formatMoney(traveler.basePriceCents, currency)
-                          : '—'
+                          : '-'
                       }
                     />
 

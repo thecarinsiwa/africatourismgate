@@ -182,12 +182,12 @@ export function BudgetsList() {
           const monthLabel = new Intl.DateTimeFormat(locale, {
             month: 'long',
           }).format(new Date(2000, item.month - 1, 1));
-          return `${period} — ${monthLabel} ${item.year}`;
+          return `${period} - ${monthLabel} ${item.year}`;
         } catch {
-          return `${period} — ${item.month}/${item.year}`;
+          return `${period} - ${item.month}/${item.year}`;
         }
       }
-      return `${period} — ${item.year}`;
+      return `${period} - ${item.year}`;
     },
     [locale, periodLabels],
   );

@@ -8,7 +8,7 @@ export type StatCardChangeDirection = 'up' | 'down' | 'flat';
 
 export type StatCardChange = {
   direction: StatCardChangeDirection;
-  /** Ex. « +12,5 % » — déjà localisé. */
+  /** Ex. « +12,5 % » - déjà localisé. */
   formattedPercent: string;
   /** Ex. « vs période précédente ». */
   label: string;

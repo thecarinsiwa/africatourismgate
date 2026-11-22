@@ -19,7 +19,7 @@ import { SetupModuleNav } from './setup-module-nav';
 import { SetupStepCard } from './setup-step-card';
 
 /**
- * Page « Mise en route » — readiness live via ApiClient (erreurs partielles → unknown).
+ * Page « Mise en route » - readiness live via ApiClient (erreurs partielles → unknown).
  */
 export function SetupGuidePageContent() {
   const t = useTranslations('modules.setupGuide.ui');

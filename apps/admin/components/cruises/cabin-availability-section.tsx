@@ -20,7 +20,7 @@ type CabinAvailabilitySectionProps = {
   sailingId: string;
   shipId: string;
   itineraryId: string;
-  /** Sans bordure supérieure — usage dans un onglet. */
+  /** Sans bordure supérieure - usage dans un onglet. */
   embedded?: boolean;
 };
 
@@ -69,7 +69,7 @@ export function CabinAvailabilitySection({
 
       setPorts(stopsRes.data);
       const labels = new Map(
-        cruisePortsRes.data.map((p) => [p.id, `${p.code} — ${p.name}`]),
+        cruisePortsRes.data.map((p) => [p.id, `${p.code} - ${p.name}`]),
       );
       setPortLabels(labels);
     } catch (err) {

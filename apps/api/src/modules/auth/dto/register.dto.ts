@@ -64,7 +64,7 @@ export class RegisterDto {
   preferredLanguage?: string;
 
   @ApiPropertyOptional({
-    description: 'Stable browser profile id — one active session per profile',
+    description: 'Stable browser profile id - one active session per profile',
     format: 'uuid',
   })
   @IsOptional()

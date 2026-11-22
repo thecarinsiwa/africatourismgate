@@ -143,7 +143,7 @@
     "scopeId": "ID du périmètre (UUID)",
     "scopeIdHint": "Ex. ID propriété, agence ou file d'attente support.",
     "expiresAt": "Expiration (optionnel)",
-    "superAdminWarning": "Réservé aux super administrateurs — périmètre forcé à Global.",
+    "superAdminWarning": "Réservé aux super administrateurs - périmètre forcé à Global.",
     "superAdminConfirmTitle": "Confirmer l'attribution super-admin",
     "superAdminConfirm": "L'utilisateur obtiendra le rôle « {roleName} » et un accès complet à la plateforme.",
     "superAdminConfirmButton": "Confirmer",

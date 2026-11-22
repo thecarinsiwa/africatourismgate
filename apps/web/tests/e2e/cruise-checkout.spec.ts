@@ -14,7 +14,7 @@ const sailingDetailMock = {
   departureDate: '2026-09-15',
   returnDate: '2026-09-20',
   durationNights: 5,
-  itineraryName: 'Kinshasa — Banana',
+  itineraryName: 'Kinshasa - Banana',
   shipName: 'Congo River Spirit',
   cruiseLineName: 'Africa River Cruises',
   sailFromPortCode: 'CDKIN',
@@ -109,13 +109,13 @@ test('croisière CDKIN→CDBNW: itinéraire, cabine grisée, panier -> recap -> 
 
   await page.goto(`/cruises/${SAILING_ID}?guests=2`);
 
-  await expect(page.getByRole('heading', { name: 'Kinshasa — Banana' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Kinshasa - Banana' })).toBeVisible();
 
   const itinerary = page.locator('section').filter({
     has: page.getByRole('heading', { name: /itinéraire|itinerary|itinerario/i }),
   });
-  await expect(itinerary.locator('ol').getByText('CDKIN — Kinshasa Port')).toBeVisible();
-  await expect(itinerary.locator('ol').getByText('CDBNW — Banana Port')).toBeVisible();
+  await expect(itinerary.locator('ol').getByText('CDKIN - Kinshasa Port')).toBeVisible();
+  await expect(itinerary.locator('ol').getByText('CDBNW - Banana Port')).toBeVisible();
 
   const suiteCard = page.locator('article').filter({ hasText: 'Suite' });
   await expect(suiteCard.getByText(/complet|sold out|agotado/i)).toBeVisible();
@@ -148,7 +148,7 @@ test('croisière CDKIN→CDBNW: itinéraire, cabine grisée, panier -> recap -> 
   await expect(page.getByRole('heading', { name: /r[ée]capitulatif|summary|resumen/i })).toBeVisible({
     timeout: 15_000,
   });
-  await expect(page.getByText('Kinshasa — Banana')).toBeVisible();
+  await expect(page.getByText('Kinshasa - Banana')).toBeVisible();
   await expect(page.getByText('Standard')).toBeVisible();
 
   await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();

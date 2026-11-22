@@ -20,7 +20,7 @@ type UseActiveCurrenciesResult = {
   codes: string[];
   /** Catalog labels keyed by ISO code (empty when fallback). */
   labelsByCode: Record<string, string>;
-  /** Select options (`CODE — label` when catalog labels are known). */
+  /** Select options (`CODE - label` when catalog labels are known). */
   options: CurrencySelectOption[];
   loading: boolean;
   /** True when using seeded offline list instead of API. */

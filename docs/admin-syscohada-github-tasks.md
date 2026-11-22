@@ -1,10 +1,10 @@
-# Africa Tourism Gate — Tâches GitHub Épic SYSCOHADA (suite Trésorerie)
+# Africa Tourism Gate - Tâches GitHub Épic SYSCOHADA (suite Trésorerie)
 
 > **Document opérationnel** pour créer des issues GitHub destinées à brancher la **comptabilité réglementaire SYSCOHADA (OHADA)** sur le module Trésorerie déjà livré.  
-> **Mise à jour : septembre 2026** — Dérivé de [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md) (TRESO-041).
+> **Mise à jour : septembre 2026** - Dérivé de [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md) (TRESO-041).
 
 **Handoff / périmètre :** [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md)  
-**Lot amont (stub pont) :** [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md) — TRESO-039 / TRESO-040 / TRESO-041  
+**Lot amont (stub pont) :** [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md) - TRESO-039 / TRESO-040 / TRESO-041  
 **Modèle domaine Trésorerie :** [tresorerie-domain-model.md](./tresorerie-domain-model.md) §4.7 / §10  
 **Modèle domaine SYSCOHADA (SYSCO-001) :** [syscohada-domain-model.md](./syscohada-domain-model.md)
 
@@ -35,8 +35,8 @@ gh issue create \
 
 | Domaine | Technologie |
 | -------- | ----------- |
-| Admin | Next.js 14 App Router, React 18, Tailwind, next-intl — port **3001** (`pnpm dev:admin`) |
-| API | NestJS 10, TypeORM, MySQL, JWT, RBAC — port **3000** (`pnpm dev:api`) |
+| Admin | Next.js 14 App Router, React 18, Tailwind, next-intl - port **3001** (`pnpm dev:admin`) |
+| API | NestJS 10, TypeORM, MySQL, JWT, RBAC - port **3000** (`pnpm dev:api`) |
 | Types | `packages/types` |
 | UI | `@africatourismgate/ui` (DataTable, toasts, …) |
 
@@ -46,7 +46,7 @@ gh issue create \
 pnpm install
 cp .env.example .env
 pnpm dev:api    # terminal 1
-pnpm dev:admin  # terminal 2 — http://localhost:3001
+pnpm dev:admin  # terminal 2 - http://localhost:3001
 ```
 
 ### Conventions issues & PR
@@ -70,10 +70,10 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 
 ### Documents liés
 
-- [syscohada-domain-model.md](./syscohada-domain-model.md) — SYSCO-001
-- [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md) — handoff TRESO-041
-- [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md) — lot TRESO-001…045
-- [tresorerie-domain-model.md](./tresorerie-domain-model.md) — domaine + hors scope §10
+- [syscohada-domain-model.md](./syscohada-domain-model.md) - SYSCO-001
+- [tresorerie-syscohada-epic-next.md](./tresorerie-syscohada-epic-next.md) - handoff TRESO-041
+- [admin-tresorerie-github-tasks.md](./admin-tresorerie-github-tasks.md) - lot TRESO-001…045
+- [tresorerie-domain-model.md](./tresorerie-domain-model.md) - domaine + hors scope §10
 - Stub : `apps/api/.../treasury-accounting-mapping.config.ts`, UI `/tresorerie/comptabilite`
 
 ### Prérequis avant démarrage
@@ -89,16 +89,16 @@ pnpm dev:admin  # terminal 2 — http://localhost:3001
 
 | ID        | Titre court                                              | Priorité | Type           | Effort | Dépendances |
 | --------- | -------------------------------------------------------- | -------- | -------------- | ------ | ----------- |
-| SYSCO-001 | Spec domaine comptable OHADA + schéma cible — ✅         | Haute    | Docs / Spec    | M      | Domaine TRESO §10 |
-| SYSCO-002 | Migration plan comptable + exercices — ✅                | Haute    | API / DB       | L      | SYSCO-001 |
-| SYSCO-003 | Migration journaux / écritures / lignes — ✅             | Haute    | API / DB       | L      | SYSCO-002 |
-| SYSCO-004 | Moteur mapping + job/API « comptabiliser » — ✅          | Haute    | API            | L      | TRESO-039, SYSCO-002 |
-| SYSCO-005 | Remplir `accounting_links.journal_entry_id` + statuts — ✅ | Haute    | API            | M      | TRESO-039, SYSCO-003–004 |
-| SYSCO-006 | UI journal + grand livre + balance — ✅                       | Haute    | Admin          | L      | SYSCO-003 |
+| SYSCO-001 | Spec domaine comptable OHADA + schéma cible - ✅         | Haute    | Docs / Spec    | M      | Domaine TRESO §10 |
+| SYSCO-002 | Migration plan comptable + exercices - ✅                | Haute    | API / DB       | L      | SYSCO-001 |
+| SYSCO-003 | Migration journaux / écritures / lignes - ✅             | Haute    | API / DB       | L      | SYSCO-002 |
+| SYSCO-004 | Moteur mapping + job/API « comptabiliser » - ✅          | Haute    | API            | L      | TRESO-039, SYSCO-002 |
+| SYSCO-005 | Remplir `accounting_links.journal_entry_id` + statuts - ✅ | Haute    | API            | M      | TRESO-039, SYSCO-003–004 |
+| SYSCO-006 | UI journal + grand livre + balance - ✅                       | Haute    | Admin          | L      | SYSCO-003 |
 | SYSCO-007 | Livres caisse / banque + rapprochements                  | Moyenne  | Admin / API    | L      | SYSCO-003, comptes classe 5 |
-| SYSCO-008 | Clôtures + bilan + compte de résultat — ✅               | Moyenne  | Admin / API    | L      | SYSCO-006 |
-| SYSCO-009 | RBAC `accounting.*` + audit écritures — ✅               | Haute    | API / RBAC     | M      | TRESO-008 pattern |
-| SYSCO-010 | Remplacer placeholder `/tresorerie/comptabilite` — ✅    | Haute    | Admin          | M      | TRESO-040, SYSCO-005–006 |
+| SYSCO-008 | Clôtures + bilan + compte de résultat - ✅               | Moyenne  | Admin / API    | L      | SYSCO-006 |
+| SYSCO-009 | RBAC `accounting.*` + audit écritures - ✅               | Haute    | API / RBAC     | M      | TRESO-008 pattern |
+| SYSCO-010 | Remplacer placeholder `/tresorerie/comptabilite` - ✅    | Haute    | Admin          | M      | TRESO-040, SYSCO-005–006 |
 | SYSCO-011 | E2E : opération → linked → visible au journal            | Haute    | Testing        | M      | TRESO-042/043, SYSCO-005–006 |
 | SYSCO-012 | Sync OpenAPI + doc module compta                         | Basse    | Docs / API     | S      | TRESO-045 pattern, SYSCO-003–010 |
 
@@ -116,13 +116,13 @@ ensemble MVP ──► SYSCO-012
 
 ---
 
-## Modèles GitHub — prêts à copier
+## Modèles GitHub - prêts à copier
 
-### SYSCO-001 — Spec domaine comptable OHADA + schéma cible — ✅
+### SYSCO-001 - Spec domaine comptable OHADA + schéma cible - ✅
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `docs`, `priority:high`  
 **Branche suggérée :** `docs/syscohada-domain-model`  
-**Livrable :** [`docs/syscohada-domain-model.md`](./syscohada-domain-model.md) — schéma `chart_of_accounts` / `journal_*` / exercices / mapping · décisions §3 · permissions `accounting.*`
+**Livrable :** [`docs/syscohada-domain-model.md`](./syscohada-domain-model.md) - schéma `chart_of_accounts` / `journal_*` / exercices / mapping · décisions §3 · permissions `accounting.*`
 
 #### Modèle GitHub
 
@@ -147,7 +147,7 @@ Le lot Trésorerie livre un stub `accounting_links` sans plan SYSCOHADA ni écri
 ## Critères d'acceptation
 
 - [x] Schéma tables + enums documentés
-- [x] Moments de comptabilisation tranchés (recommandations §3 — revue humaine à confirmer)
+- [x] Moments de comptabilisation tranchés (recommandations §3 - revue humaine à confirmer)
 - [x] Consommation stub `accounting_link` alignée handoff §4
 - [x] Hors-scope explicite (payments, fusion tables, liasse…)
 
@@ -164,7 +164,7 @@ Revue documentaire finance / tech lead.
 
 ---
 
-### SYSCO-002 — Migration plan comptable + exercices — ✅
+### SYSCO-002 - Migration plan comptable + exercices - ✅
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `api`, `priority:high`  
 **Branche suggérée :** `feature/syscohada-chart-exercises`  
@@ -217,7 +217,7 @@ pnpm db:sync
 
 ---
 
-### SYSCO-003 — Migration journaux / écritures / lignes — ✅
+### SYSCO-003 - Migration journaux / écritures / lignes - ✅
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `api`, `priority:high`  
 **Branche suggérée :** `feature/syscohada-journals-entries`  
@@ -255,7 +255,7 @@ Les écritures SYSCOHADA doivent vivre hors stub : journal paramétrable + pièc
 
 ```bash
 pnpm db:sync
-# POST /api/journal-entries — 2 lignes équilibrées (status posted)
+# POST /api/journal-entries - 2 lignes équilibrées (status posted)
 # POST déséquilibrée → 400
 # GET /api/journal-lines?accountId=…&postedOnly=true
 ```
@@ -268,7 +268,7 @@ pnpm db:sync
 
 ---
 
-### SYSCO-004 — Moteur mapping (remplace skeleton) + job/API « comptabiliser » — ✅
+### SYSCO-004 - Moteur mapping (remplace skeleton) + job/API « comptabiliser » - ✅
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `api`, `priority:high`  
 **Branche suggérée :** `feature/syscohada-mapping-engine`  
@@ -318,7 +318,7 @@ pnpm db:sync
 
 ---
 
-### SYSCO-005 — Remplir `accounting_links.journal_entry_id` + statuts — ✅
+### SYSCO-005 - Remplir `accounting_links.journal_entry_id` + statuts - ✅
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `api`, `priority:high`  
 **Branche suggérée :** `feature/syscohada-accounting-links-link`  
@@ -369,7 +369,7 @@ pnpm db:sync
 
 ---
 
-### SYSCO-006 — UI journal + grand livre + balance — ✅
+### SYSCO-006 - UI journal + grand livre + balance - ✅
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `enhancement`, `priority:high`
 **Branche suggérée :** `feature/syscohada-ui-books`
@@ -415,7 +415,7 @@ Seed écritures → naviguer journal → grand livre compte X → balance pério
 
 ---
 
-### SYSCO-007 — Livres caisse / banque + rapprochements
+### SYSCO-007 - Livres caisse / banque + rapprochements
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `enhancement`, `priority:medium`  
 **Branche suggérée :** `feature/syscohada-cash-bank-books`  
@@ -433,7 +433,7 @@ Aligner la trésorerie réglementaire (classe 5) sur les modes de paiement opér
 1. Livre de caisse : mouvements liés espèces / compte caisse
 2. Livre de banque : virements / chèques / compte banque
 3. Rapprochement bancaire MVP : importer/saisir solde relevé, pointer écritures
-4. Mapping distinct mobile money (sous-compte) — hors stub actuel
+4. Mapping distinct mobile money (sous-compte) - hors stub actuel
 
 ## Fichiers clés
 
@@ -459,7 +459,7 @@ Comptabiliser entrée cash + sortie virement ; vérifier livres ; pointer 1 lign
 
 ---
 
-### SYSCO-008 — Clôtures + bilan + compte de résultat — ✅
+### SYSCO-008 - Clôtures + bilan + compte de résultat - ✅
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `enhancement`, `priority:medium`  
 **Branche suggérée :** `feature/syscohada-closing-statements`  
@@ -504,7 +504,7 @@ Clôturer période test ; tenter POST écriture → refus ; générer bilan/CR.
 
 ---
 
-### SYSCO-009 — RBAC `accounting.*` + audit écritures — ✅
+### SYSCO-009 - RBAC `accounting.*` + audit écritures - ✅
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `api`, `priority:high`  
 **Branche suggérée :** `feature/syscohada-rbac-audit`  
@@ -550,7 +550,7 @@ Compte lecture seule : GET OK, POST 403 ; super_admin bypass ; entrée audit apr
 
 ---
 
-### SYSCO-010 — Remplacer placeholder `/tresorerie/comptabilite` — ✅
+### SYSCO-010 - Remplacer placeholder `/tresorerie/comptabilite` - ✅
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `enhancement`, `priority:high`  
 **Branche suggérée :** `feature/syscohada-ui-comptabilite-hub`  
@@ -596,7 +596,7 @@ Depuis une entrée `recorded` : Comptabiliser → statut linked → Voir au jour
 
 ---
 
-### SYSCO-011 — E2E : opération → linked → visible au journal
+### SYSCO-011 - E2E : opération → linked → visible au journal
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `testing`, `priority:high`  
 **Branche suggérée :** `feature/syscohada-e2e-posting`  
@@ -646,7 +646,7 @@ pnpm --filter @africatourismgate/admin test:e2e -- syscohada
 
 ---
 
-### SYSCO-012 — Sync OpenAPI + doc module compta
+### SYSCO-012 - Sync OpenAPI + doc module compta
 
 **Labels :** `admin`, `syscohada`, `comptabilite`, `docs`, `priority:low`  
 **Branche suggérée :** `feature/syscohada-openapi-readme`  
@@ -696,7 +696,7 @@ pnpm --filter @africatourismgate/admin exec tsc --noEmit
 
 ## Décisions à trancher avant / pendant l’épic
 
-Recommandations figées dans [syscohada-domain-model.md](./syscohada-domain-model.md) §3 — **confirmées pour implémentation** (revue oct. 2026).
+Recommandations figées dans [syscohada-domain-model.md](./syscohada-domain-model.md) §3 - **confirmées pour implémentation** (revue oct. 2026).
 
 | Sujet | Question | Impact tâches |
 | ----- | -------- | ------------- |
@@ -715,15 +715,15 @@ Recommandations figées dans [syscohada-domain-model.md](./syscohada-domain-mode
 - [x] Dépendances lot TRESO listées (handoff §3)
 - [x] Consommation `accounting_link` décrite (handoff §4)
 - [x] Doc tâches `admin-syscohada-github-tasks.md` (SYSCO-001…012)
-- [x] Revue finance / tech lead (comptes, moments de comptabilisation) — décisions §3 adoptées oct. 2026
+- [x] Revue finance / tech lead (comptes, moments de comptabilisation) - décisions §3 adoptées oct. 2026
 - [ ] Labels GitHub `syscohada` / `comptabilite` créés sur le dépôt (manuel)
-- [ ] Issues GitHub créées depuis les modèles SYSCO-008 / 009 / 010 — **reporté** (`gh` indisponible en atelier ; créer manuellement si suivi GitHub requis)
+- [ ] Issues GitHub créées depuis les modèles SYSCO-008 / 009 / 010 - **reporté** (`gh` indisponible en atelier ; créer manuellement si suivi GitHub requis)
 
 ---
 
-## Smoke manuel (lot SYSCO-008/009/010 — oct. 2026)
+## Smoke manuel (lot SYSCO-008/009/010 - oct. 2026)
 
-Parcours minimal (sans job CI Playwright lourd — SYSCO-011 reste ouvert pour spec dédiée) :
+Parcours minimal (sans job CI Playwright lourd - SYSCO-011 reste ouvert pour spec dédiée) :
 
 1. Entrée de fonds `recorded` → hub `/tresorerie/comptabilite` → **Comptabiliser** → statut `linked` → deep-link journal.
 2. Même flux → **Ignorer** → statut `skipped`.

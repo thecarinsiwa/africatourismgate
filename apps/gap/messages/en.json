@@ -47,7 +47,7 @@
     "loading": "Loading…",
     "empty": "Content is not available at the moment.",
     "emptyHint": "Please check back later or contact the GAP team.",
-    "localeFallback": "This content is not yet available in your language — showing another locale.",
+    "localeFallback": "This content is not yet available in your language - showing another locale.",
     "learnMore": "Learn more",
     "backHome": "Back to home"
   },
@@ -78,13 +78,13 @@
     "watch": "Watch video"
   },
   "footer": {
-    "tagline": "Environmental education program — Virunga National Park, DRC.",
+    "tagline": "Environmental education program - Virunga National Park, DRC.",
     "mainSite": "Africa Tourism Gate",
     "rights": "All rights reserved."
   },
   "meta": {
     "siteName": "Gorilla Ambassadors Program",
-    "defaultDescription": "Gorilla Ambassadors Program — environmental education and conservation in Virunga National Park."
+    "defaultDescription": "Gorilla Ambassadors Program - environmental education and conservation in Virunga National Park."
   },
   "donate": {
     "title": "Support the GAP program",

@@ -122,7 +122,7 @@ export class AccountingPostingService {
 
     if (link?.status === 'skipped') {
       throw new ConflictException(
-        'Fund operation was skipped for accounting — soft-delete the link (DELETE /accounting-links/:id) then post again',
+        'Fund operation was skipped for accounting - soft-delete the link (DELETE /accounting-links/:id) then post again',
       );
     }
 
@@ -378,7 +378,7 @@ export class AccountingPostingService {
       });
       if (!resolved) {
         throw new BadRequestException(
-          `No exchange rate for ${opCurrency}→${bookCurrency} on or before ${entryDate} — add a rate under Trésorerie › Taux de change`,
+          `No exchange rate for ${opCurrency}→${bookCurrency} on or before ${entryDate} - add a rate under Trésorerie › Taux de change`,
         );
       }
       fxRate = resolved.rate;

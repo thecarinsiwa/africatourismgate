@@ -1,4 +1,4 @@
--- Taux de change manuels (MVP) — conversion à la comptabilisation SYSCOHADA
+-- Taux de change manuels (MVP) - conversion à la comptabilisation SYSCOHADA
 -- Down (manuel) : voir commentaires en bas de fichier.
 SET NAMES utf8mb4;
 
@@ -60,7 +60,7 @@ WHERE p.`id` IN (
 );
 
 -- ---------------------------------------------------------------------------
--- DOWN (manuel — ne pas placer dans un .sql auto-appliqué par db:sync)
+-- DOWN (manuel - ne pas placer dans un .sql auto-appliqué par db:sync)
 -- ---------------------------------------------------------------------------
 -- DELETE FROM `role_permissions` WHERE `permission_id` IN (
 --   '00000000-0000-4000-8000-000000001079',

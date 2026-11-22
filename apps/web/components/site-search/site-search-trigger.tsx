@@ -29,7 +29,7 @@ export type SiteSearchTriggerProps = {
   onAfterToggle?: () => void;
 };
 
-/** Bouton loupe — ouvre le navigateur de recherche globale. */
+/** Bouton loupe - ouvre le navigateur de recherche globale. */
 export function SiteSearchTrigger({
   className,
   onAfterToggle,

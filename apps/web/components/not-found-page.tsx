@@ -14,7 +14,7 @@ export function NotFoundPage() {
       <HomeHeader />
 
       <main className="relative flex flex-1 flex-col overflow-x-hidden">
-        {/* Atmosphere — soft brand wash + radial depth */}
+        {/* Atmosphere - soft brand wash + radial depth */}
         <div
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_15%,color-mix(in_srgb,var(--atg-primary)_18%,transparent),transparent_55%),radial-gradient(ellipse_at_85%_95%,color-mix(in_srgb,var(--atg-secondary)_12%,transparent),transparent_45%)]"
           aria-hidden
@@ -31,7 +31,7 @@ export function NotFoundPage() {
         />
 
         <div className="relative z-10 mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center px-4 py-10 text-center sm:px-6 sm:py-16 md:py-20 lg:py-24">
-          {/* Watermark 404 — entier, lisible, derrière le contenu */}
+          {/* Watermark 404 - entier, lisible, derrière le contenu */}
           <p
             className="pointer-events-none absolute inset-x-0 top-[10%] z-0 select-none px-3 text-center font-extrabold leading-none tracking-tight text-primary opacity-[0.18] animate-fade-in-up dark:opacity-[0.28] sm:top-[8%] sm:px-4 md:top-[6%]"
             style={{ fontSize: 'clamp(4.75rem, 26vw, 11rem)' }}

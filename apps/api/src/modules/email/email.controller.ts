@@ -67,7 +67,7 @@ export class EmailController {
       bookingId: PREVIEW_BOOKING_ID,
       totalCents: 125_000,
       currency: 'USD',
-      itemTitles: ['Safari 3 jours — Parc national', 'Transfert aéroport'],
+      itemTitles: ['Safari 3 jours - Parc national', 'Transfert aéroport'],
       webUrl: previewWebUrl,
     };
 
@@ -108,7 +108,7 @@ export class EmailController {
             paymentMethodLabel: 'Espèces',
             items: [
               {
-                title: 'Safari 3 jours — Parc national',
+                title: 'Safari 3 jours - Parc national',
                 quantity: 2,
                 unitPriceCents: 45_000,
                 lineTotalCents: 90_000,

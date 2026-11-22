@@ -1,7 +1,7 @@
-# Africa Tourism Gate — Améliorations design Admin
+# Africa Tourism Gate - Améliorations design Admin
 
-> **Document de référence UX/UI** — suggestions par module pour l’application `apps/admin`.  
-> **Mise à jour : juin 2026** — Basé sur l’état actuel du code (`packages/ui`, shell, CRUD existants).
+> **Document de référence UX/UI** - suggestions par module pour l’application `apps/admin`.  
+> **Mise à jour : juin 2026** - Basé sur l’état actuel du code (`packages/ui`, shell, CRUD existants).
 
 ---
 
@@ -10,9 +10,9 @@
 1. Consultez le **tableau récapitulatif** pour choisir un livrable design (UX-1 à UX-22).
 2. Copiez le **prompt détaillé** correspondant dans Cursor Agent.
 3. Ouvrez la **branche PR** indiquée, implémentez, testez avec `pnpm dev:admin`.
-4. Commencez par **UX-1** (fondations) — les autres livrables en dépendent en grande partie.
-5. Croisez avec [roadmap-development.md](./roadmap-development.md) : certaines pages placeholder seront remplacées par de vrais CRUD — le design peut être anticipé dès maintenant.
-6. Pour le site public, voir le workflow parallèle [web-design-improvements.md](./web-design-improvements.md) — composants `packages/ui` partagés.
+4. Commencez par **UX-1** (fondations) - les autres livrables en dépendent en grande partie.
+5. Croisez avec [roadmap-development.md](./roadmap-development.md) : certaines pages placeholder seront remplacées par de vrais CRUD - le design peut être anticipé dès maintenant.
+6. Pour le site public, voir le workflow parallèle [web-design-improvements.md](./web-design-improvements.md) - composants `packages/ui` partagés.
 7. Ne demandez un commit que lorsque vous êtes satisfait du résultat.
 
 ### Légende des priorités
@@ -52,13 +52,13 @@ Règles design :
 
 ---
 
-## Tableau récapitulatif — livrables design
+## Tableau récapitulatif - livrables design
 
 
 | #     | Phase | Livrable                                 | Priorité | Branche PR                         | Dépend de  |
 | ----- | ----- | ---------------------------------------- | -------- | ---------------------------------- | ---------- |
-| UX-1  | 1     | Design system — composants fondation     | Haute    | `feature/admin-ui-foundation`      | —          |
-| UX-2  | 1     | Thème — tokens sémantiques & typographie | Haute    | `feature/admin-ui-theme-tokens`    | UX-1       |
+| UX-1  | 1     | Design system - composants fondation     | Haute    | `feature/admin-ui-foundation`      | -          |
+| UX-2  | 1     | Thème - tokens sémantiques & typographie | Haute    | `feature/admin-ui-theme-tokens`    | UX-1       |
 | UX-3  | 2     | Shell, navigation & layout               | Haute    | `feature/admin-ui-shell`           | UX-1       |
 | UX-4  | 2     | Authentification (login / register)      | Moyenne  | `feature/admin-ui-auth`            | UX-1       |
 | UX-5  | 2     | Tableau de bord                          | Haute    | `feature/admin-ui-dashboard`       | UX-1, UX-2 |
@@ -118,7 +118,7 @@ UX-20 → UX-21 → UX-22
 
 | Aspect                     | État | Observation                                                                                                        |
 | -------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------ |
-| Design system              | ⚠️   | Tokens CSS (`theme.css`), `Card`, `Button`, `Input`, `DataTable` — pas de `Select`, `Modal`, `Toast`, `Breadcrumb` |
+| Design system              | ⚠️   | Tokens CSS (`theme.css`), `Card`, `Button`, `Input`, `DataTable` - pas de `Select`, `Modal`, `Toast`, `Breadcrumb` |
 | Shell & navigation         | ✅    | Sidebar groupée, thème clair/sombre, branding org dynamique                                                        |
 | Pages liste (CRUD)         | ⚠️   | Pattern répétitif mais homogène ; filtres natifs `<select>`                                                        |
 | Pages détail / formulaires | ⚠️   | Champs empilés, peu de structure visuelle, chargement texte seul                                                   |
@@ -145,7 +145,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 | Composant               | Priorité    | Description                                                                                                       |
 | ----------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------- |
-| `PageHeader`            | **Haute**   | Titre (`h1`), description, slot actions (CTA), slot breadcrumb — remplace le bloc dupliqué dans chaque `page.tsx` |
+| `PageHeader`            | **Haute**   | Titre (`h1`), description, slot actions (CTA), slot breadcrumb - remplace le bloc dupliqué dans chaque `page.tsx` |
 | `Breadcrumb`            | **Haute**   | Fil d’Ariane pour les pages imbriquées (ex. Croisières → Navire → Itinéraire)                                     |
 | `Select`                | **Haute**   | Remplace les `<select>` natifs des listes (hébergements, réservations, paiements…)                                |
 | `Modal` / `AlertDialog` | **Haute**   | Confirmation de suppression, remboursement, modération avis                                                       |
@@ -179,7 +179,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 | Suggestion               | Priorité    | Détail                                                                                                 |
 | ------------------------ | ----------- | ------------------------------------------------------------------------------------------------------ |
 | Palette sémantique       | **Haute**   | Tokens `--atg-success`, `--atg-warning`, `--atg-danger`, `--atg-info` dans `packages/config/theme.css` |
-| KPIs différenciés        | **Moyenne** | Couleurs d’icône distinctes par métrique — `dashboard-kpi-cards.tsx`                                   |
+| KPIs différenciés        | **Moyenne** | Couleurs d’icône distinctes par métrique - `dashboard-kpi-cards.tsx`                                   |
 | Contraste sidebar active | **Basse**   | Lien actif `bg-primary text-white` : test WCAG avec couleur org personnalisée                          |
 
 
@@ -202,7 +202,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ## Module : Shell, navigation & layout
 
-> **Livrable : UX-3** — **Branche :** `feature/admin-ui-shell`
+> **Livrable : UX-3** - **Branche :** `feature/admin-ui-shell`
 
 **Fichiers :** `packages/ui/src/components/dashboard-shell.tsx`, `sidebar.tsx`, `app-header.tsx`, `apps/admin/components/dashboard-shell-layout.tsx`
 
@@ -212,7 +212,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 | S1  | Fil d’Ariane dans le header  | **Haute**   | Afficher le chemin courant à côté du bouton menu (mobile) ou sous le logo (desktop) |
 | S2  | Titre de page contextuel     | **Moyenne** | Propager le titre de la page active dans `AppHeader`                                |
 | S3  | Indicateur de section active | **Moyenne** | Barre verticale ou pastille sur le groupe sidebar ouvert                            |
-| S4  | Raccourci recherche globale  | ✅        | Ctrl/⌘+F (+ alias Ctrl/⌘+K) + icône loupe — pages, aide, entités métier |
+| S4  | Raccourci recherche globale  | ✅        | Ctrl/⌘+F (+ alias Ctrl/⌘+K) + icône loupe - pages, aide, entités métier |
 | S5  | Badge compteur nav           | **Basse**   | Ex. tickets support en attente, avis à modérer                                      |
 | S6  | Sidebar compacte             | **Basse**   | Mode icônes seules sur `xl:`                                                        |
 | S7  | Pied de sidebar              | **Basse**   | Version app + lien documentation / support                                          |
@@ -222,7 +222,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ## Module : Authentification
 
-> **Livrable : UX-4** — **Branche :** `feature/admin-ui-auth`
+> **Livrable : UX-4** - **Branche :** `feature/admin-ui-auth`
 
 **Fichiers :** `apps/admin/components/auth/login-page-content.tsx`, `auth-page-shell.tsx`, `admin-login-form.tsx`
 
@@ -239,7 +239,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ## Module : Tableau de bord
 
-> **Livrable : UX-5** — **Branche :** `feature/admin-ui-dashboard`
+> **Livrable : UX-5** - **Branche :** `feature/admin-ui-dashboard`
 
 **Fichiers :** `apps/admin/app/(dashboard)/dashboard/page.tsx`, `dashboard-kpi-cards.tsx`, etc.
 
@@ -248,7 +248,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 | --- | -------------------------------- | ----------- | -------------------------------------------------------- |
 | D1  | Graphiques tendance              | **Haute**   | Courbes ou barres : réservations / revenus 7 ou 30 jours |
 | D2  | KPIs avec variation              | **Moyenne** | Badge « +12 % vs mois dernier »                          |
-| D3  | Skeleton KPI                     | **Moyenne** | Pulse animé au lieu du tiret « — »                       |
+| D3  | Skeleton KPI                     | **Moyenne** | Pulse animé au lieu du tiret « - »                       |
 | D4  | Actions rapides personnalisables | **Basse**   | Basées sur permissions RBAC                              |
 | D5  | Fil d’activité récente           | **Moyenne** | Timeline unifiée                                         |
 | D6  | Sélecteur de période             | **Moyenne** | Filtre 7j / 30j / 90j                                    |
@@ -259,7 +259,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ## Module : Utilisateurs & authentification (nav)
 
-> **Livrable : UX-6** — **Branche :** `feature/admin-ui-users`
+> **Livrable : UX-6** - **Branche :** `feature/admin-ui-users`
 
 **Routes :** `/utilisateurs`, `/utilisateurs/employes`, adresses, moyens-paiement, sessions, journaux-securite
 
@@ -280,7 +280,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ## Module : Fidélité
 
-> **Livrable : UX-7** — **Branche :** `feature/admin-ui-loyalty`
+> **Livrable : UX-7** - **Branche :** `feature/admin-ui-loyalty`
 
 
 | #   | Suggestion                 | Priorité    | Détail                           |
@@ -294,7 +294,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ## Module : Hébergements
 
-> **Livrable : UX-8** — **Branche :** `feature/admin-ui-accommodations`
+> **Livrable : UX-8** - **Branche :** `feature/admin-ui-accommodations`
 
 
 | #   | Suggestion                  | Priorité    | Détail                                                 |
@@ -313,7 +313,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ## Module : Vols
 
-> **Livrable : UX-9** — **Branche :** `feature/admin-ui-flights`
+> **Livrable : UX-9** - **Branche :** `feature/admin-ui-flights`
 
 
 | #   | Suggestion                    | Priorité    | Détail                                   |
@@ -329,7 +329,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ## Module : Locations véhicules
 
-> **Livrable : UX-10** — **Branche :** `feature/admin-ui-vehicles`
+> **Livrable : UX-10** - **Branche :** `feature/admin-ui-vehicles`
 
 
 | #   | Suggestion           | Priorité    | Détail                      |
@@ -344,7 +344,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ## Module : Croisières
 
-> **Livrable : UX-11** — **Branche :** `feature/admin-ui-cruises`
+> **Livrable : UX-11** - **Branche :** `feature/admin-ui-cruises`
 
 
 | #   | Suggestion              | Priorité    | Détail                                 |
@@ -360,7 +360,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ## Module : Activités & tours
 
-> **Livrable : UX-12** — **Branche :** `feature/admin-ui-activities`
+> **Livrable : UX-12** - **Branche :** `feature/admin-ui-activities`
 
 
 | #   | Suggestion         | Priorité    | Détail                    |
@@ -375,7 +375,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ## Module : Forfaits
 
-> **Livrable : UX-13** — **Branche :** `feature/admin-ui-packages`
+> **Livrable : UX-13** - **Branche :** `feature/admin-ui-packages`
 
 
 | #   | Suggestion           | Priorité    | Détail                           |
@@ -389,7 +389,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ## Module : Destinations
 
-> **Livrable : UX-14** — **Branche :** `feature/admin-ui-destinations`
+> **Livrable : UX-14** - **Branche :** `feature/admin-ui-destinations`
 
 
 | #   | Suggestion        | Priorité    | Détail                                      |
@@ -403,7 +403,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ## Module : Réservations
 
-> **Livrable : UX-15** — **Branche :** `feature/admin-ui-bookings`
+> **Livrable : UX-15** - **Branche :** `feature/admin-ui-bookings`
 
 
 | #   | Suggestion            | Priorité    | Détail                                 |
@@ -412,7 +412,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 | R2  | Fiche réservation     | **Haute**   | Layout 2 colonnes + timeline statuts   |
 | R3  | Timeline statuts      | **Moyenne** | draft → pending → confirmed            |
 | R4  | Lignes réservation    | **Moyenne** | Icône type produit + lien catalogue    |
-| R5  | Actions contextuelles | **Moyenne** | Annuler, rembourser — modales          |
+| R5  | Actions contextuelles | **Moyenne** | Annuler, rembourser - modales          |
 | R6  | Export / impression   | **Basse**   | PDF confirmation                       |
 
 
@@ -420,7 +420,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ## Module : Paiements
 
-> **Livrable : UX-16** — **Branche :** `feature/admin-ui-payments`
+> **Livrable : UX-16** - **Branche :** `feature/admin-ui-payments`
 
 
 | #   | Suggestion                | Priorité    | Détail                                          |
@@ -437,7 +437,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ## Module : Contenu & support
 
-> **Livrable : UX-17** — **Branche :** `feature/admin-ui-content-support`
+> **Livrable : UX-17** - **Branche :** `feature/admin-ui-content-support`
 
 
 | #   | Suggestion                | Priorité    | Détail                               |
@@ -453,7 +453,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ## Module : Organisations
 
-> **Livrable : UX-18** — **Branche :** `feature/admin-ui-organizations`
+> **Livrable : UX-18** - **Branche :** `feature/admin-ui-organizations`
 
 
 | #   | Suggestion         | Priorité    | Détail                                    |
@@ -465,9 +465,9 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ---
 
-## Module : Système — Rôles & RBAC
+## Module : Système - Rôles & RBAC
 
-> **Livrable : UX-19** — **Branche :** `feature/admin-ui-rbac`
+> **Livrable : UX-19** - **Branche :** `feature/admin-ui-rbac`
 
 
 | #   | Suggestion          | Priorité    | Détail                           |
@@ -482,7 +482,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ## Module : Paramètres organisation
 
-> **Livrable : UX-20** — **Branche :** `feature/admin-ui-settings`
+> **Livrable : UX-20** - **Branche :** `feature/admin-ui-settings`
 
 
 | #   | Suggestion            | Priorité    | Détail                          |
@@ -499,7 +499,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ## Module : Pages placeholder
 
-> **Livrable : UX-21** — **Branche :** `feature/admin-ui-empty-states`
+> **Livrable : UX-21** - **Branche :** `feature/admin-ui-empty-states`
 
 
 | #   | Suggestion        | Priorité    | Détail                               |
@@ -512,7 +512,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ## Module : Mobile & polish global
 
-> **Livrable : UX-22** — **Branche :** `feature/admin-ui-mobile-polish`
+> **Livrable : UX-22** - **Branche :** `feature/admin-ui-mobile-polish`
 
 
 | #   | Suggestion          | Priorité    | Détail                                    |
@@ -541,7 +541,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ## Prompts détaillés (copier-coller dans Cursor Agent)
 
-### UX-1 — Design system — composants fondation
+### UX-1 - Design system - composants fondation
 
 **Branche :** `feature/admin-ui-foundation`
 
@@ -549,7 +549,7 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-ui-foundation`.
 
-Livrable UX-1 : Design system — composants fondation
+Livrable UX-1 : Design system - composants fondation
 Références :
 - packages/ui/src/components/ (Card, Button, Input, DataTable existants)
 - packages/ui/src/index.tsx (exports)
@@ -557,12 +557,12 @@ Références :
 - docs/admin-design-improvements.md
 
 Créer dans packages/ui et exporter :
-1. PageHeader — title, description, actions slot, breadcrumb slot
-2. Breadcrumb — items { label, href? }, séparateur ›
-3. Select — styled, accessible, même API que native (value, onChange, options, label)
-4. AlertDialog — title, description, confirm/cancel, variant danger
-5. Modal — overlay, focus trap, Escape pour fermer
-6. Toast — provider + hook useToast ; variants success/error/info ; aria-live
+1. PageHeader - title, description, actions slot, breadcrumb slot
+2. Breadcrumb - items { label, href? }, séparateur ›
+3. Select - styled, accessible, même API que native (value, onChange, options, label)
+4. AlertDialog - title, description, confirm/cancel, variant danger
+5. Modal - overlay, focus trap, Escape pour fermer
+6. Toast - provider + hook useToast ; variants success/error/info ; aria-live
 
 Migrer UNE liste pilote (hebergements) :
 - Remplacer <select> destination par Select
@@ -579,7 +579,7 @@ Critères :
 À la fin : fichiers modifiés + test pnpm dev:admin sur /hebergements.
 ```
 
-### UX-2 — Thème — tokens sémantiques & typographie
+### UX-2 - Thème - tokens sémantiques & typographie
 
 **Branche :** `feature/admin-ui-theme-tokens`
 
@@ -587,7 +587,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-ui-theme-tokens`.
 
-Livrable UX-2 : Thème — tokens sémantiques & typographie
+Livrable UX-2 : Thème - tokens sémantiques & typographie
 Références :
 - packages/config/theme.css
 - packages/ui/src/components/data-table-badge.tsx
@@ -609,7 +609,7 @@ Critères :
 À la fin : fichiers modifiés + capture dashboard + liste hébergements avec badges.
 ```
 
-### UX-3 — Shell, navigation & layout
+### UX-3 - Shell, navigation & layout
 
 **Branche :** `feature/admin-ui-shell`
 
@@ -628,7 +628,7 @@ Améliorer le shell admin :
 - S1 : Intégrer Breadcrumb dans AppHeader ou zone sous header (configurable par page)
 - S2 : Prop title optionnelle dans DashboardShell / AppHeader
 - S3 : Indicateur visuel sur groupe sidebar actif (barre latérale primary)
-- Helper apps/admin/lib/breadcrumb-from-path.ts — génère crumbs depuis pathname + nav config
+- Helper apps/admin/lib/breadcrumb-from-path.ts - génère crumbs depuis pathname + nav config
 
 Migrer 2 pages imbriquées en exemple :
 - /produits/croisieres/navires/[shipId]
@@ -642,7 +642,7 @@ Critères :
 À la fin : fichiers modifiés + test navigation desktop/mobile.
 ```
 
-### UX-4 — Authentification (login / register)
+### UX-4 - Authentification (login / register)
 
 **Branche :** `feature/admin-ui-auth`
 
@@ -650,14 +650,14 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-ui-auth`.
 
-Livrable UX-4 : Authentification — polish design
+Livrable UX-4 : Authentification - polish design
 Références :
 - apps/admin/components/auth/login-page-content.tsx, auth-page-shell.tsx
 - apps/admin/components/admin-login-form.tsx
 - apps/web (inspiration split layout marketing)
 
 Améliorations :
-- A1 : AuthPageShell split lg: — formulaire gauche, panneau visuel droit (gradient + motif Afrique, sans image externe obligatoire)
+- A1 : AuthPageShell split lg: - formulaire gauche, panneau visuel droit (gradient + motif Afrique, sans image externe obligatoire)
 - A2 : Si branding org disponible (session/future), afficher logoUrl sur login
 - A3 : État loading sur bouton submit AdminLoginForm
 - A4 : Encadré alerte erreur (border red + bg red/5) sous le formulaire
@@ -670,7 +670,7 @@ Critères :
 À la fin : fichiers modifiés + captures login clair/sombre.
 ```
 
-### UX-5 — Tableau de bord
+### UX-5 - Tableau de bord
 
 **Branche :** `feature/admin-ui-dashboard`
 
@@ -678,7 +678,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-ui-dashboard`.
 
-Livrable UX-5 : Tableau de bord — design enrichi
+Livrable UX-5 : Tableau de bord - design enrichi
 Références :
 - apps/admin/app/(dashboard)/dashboard/page.tsx
 - apps/admin/components/dashboard-kpi-cards.tsx, dashboard-user-stats.tsx, dashboard-platform-overview.tsx
@@ -686,7 +686,7 @@ Références :
 - UX-1 : StatCard, Skeleton ; UX-2 : tokens couleur KPI
 
 Implémenter :
-- D1 : Graphique tendance (recharts ou SVG léger) — réservations et/ou revenus 30j ; données via API existantes ou agrégation client
+- D1 : Graphique tendance (recharts ou SVG léger) - réservations et/ou revenus 30j ; données via API existantes ou agrégation client
 - D3 : Skeleton pulse sur KPI cards pendant chargement
 - D6 : Sélecteur période 7j/30j/90j en PageHeader dashboard
 - D7 : Message « Bonjour, {firstName} » dans header page
@@ -702,7 +702,7 @@ Critères :
 À la fin : fichiers modifiés + capture dashboard avec données seed.
 ```
 
-### UX-6 — Utilisateurs & auth (nav)
+### UX-6 - Utilisateurs & auth (nav)
 
 **Branche :** `feature/admin-ui-users`
 
@@ -710,7 +710,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-ui-users`.
 
-Livrable UX-6 : Utilisateurs — design
+Livrable UX-6 : Utilisateurs - design
 Références :
 - apps/admin/components/users/users-list.tsx
 - apps/admin/app/(dashboard)/utilisateurs/[id]/page.tsx
@@ -718,7 +718,7 @@ Références :
 - UX-1 : Tabs, PageHeader, Select, Avatar (créer Avatar dans ui si absent)
 
 Implémenter :
-- U1 : Composant Avatar (initiales, couleur hash email) — colonne users-list
+- U1 : Composant Avatar (initiales, couleur hash email) - colonne users-list
 - U2 : Fiche /utilisateurs/[id] en Tabs : Profil | Adresses | Moyens paiement | Sessions | Rôles (contenu existant ou liens intégrés)
 - U3 : DataTableBadge statut compte
 - U4 : FilterBar organisation/statut/rôle sur users-list
@@ -732,7 +732,7 @@ Critères :
 À la fin : fichiers modifiés + test /utilisateurs et fiche détail.
 ```
 
-### UX-7 — Fidélité
+### UX-7 - Fidélité
 
 **Branche :** `feature/admin-ui-loyalty`
 
@@ -740,7 +740,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-ui-loyalty`.
 
-Livrable UX-7 : Fidélité — design
+Livrable UX-7 : Fidélité - design
 Références :
 - apps/admin/components/loyalty/loyalty-accounts-list.tsx
 - apps/admin/app/(dashboard)/fidelite/comptes/page.tsx
@@ -758,7 +758,7 @@ Critères :
 À la fin : fichiers modifiés + test /fidelite/comptes.
 ```
 
-### UX-8 — Hébergements
+### UX-8 - Hébergements
 
 **Branche :** `feature/admin-ui-accommodations`
 
@@ -766,7 +766,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-ui-accommodations`.
 
-Livrable UX-8 : Hébergements — design
+Livrable UX-8 : Hébergements - design
 Références :
 - apps/admin/components/properties/ (properties-list, property-form, room-availability-grid)
 - apps/admin/components/amenities/
@@ -776,7 +776,7 @@ Implémenter :
 - H1 : Colonne thumbnail (placeholder gradient + icône maison si pas d’image)
 - H2 : Fiche /hebergements/[id] en Tabs : Infos | Chambres | Équipements | Disponibilités
 - H3 : property-form sectionné en Cards
-- H4 : room-availability-grid — calendrier mensuel coloré (occupation), navigation mois améliorée
+- H4 : room-availability-grid - calendrier mensuel coloré (occupation), navigation mois améliorée
 - H6 : amenities-list en grille icônes
 - H7 : Star rating input visuel (optionnel)
 
@@ -788,7 +788,7 @@ Critères :
 À la fin : fichiers modifiés + captures liste, fiche, grille dispo.
 ```
 
-### UX-9 — Vols
+### UX-9 - Vols
 
 **Branche :** `feature/admin-ui-flights`
 
@@ -796,16 +796,16 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-ui-flights`.
 
-Livrable UX-9 : Vols — design
+Livrable UX-9 : Vols - design
 Références :
 - apps/admin/components/flights/ (flights-list, flight-edit-page, flight-classes-section, airports-list, airlines-list)
 - UX-8 : pattern Tabs et calendrier dispo
 
 Implémenter :
-- V1 : Composant FlightTimeline — aéroport départ, durée, arrivée, codes IATA en badges
+- V1 : Composant FlightTimeline - aéroport départ, durée, arrivée, codes IATA en badges
 - V2 : flight-classes-section en cards grid
 - V3 : Réutiliser pattern calendrier UX-8 pour flight-class-availability
-- V4 : airlines/airports — colonne logo/drapeau placeholder, recherche unifiée
+- V4 : airlines/airports - colonne logo/drapeau placeholder, recherche unifiée
 
 Critères :
 - flight-edit-page utilise Tabs : Vol | Classes
@@ -814,7 +814,7 @@ Critères :
 À la fin : fichiers modifiés + test /produits/vols et fiche vol.
 ```
 
-### UX-10 — Locations véhicules
+### UX-10 - Locations véhicules
 
 **Branche :** `feature/admin-ui-vehicles`
 
@@ -822,15 +822,15 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-ui-vehicles`.
 
-Livrable UX-10 : Locations véhicules — design
+Livrable UX-10 : Locations véhicules - design
 Références :
 - apps/admin/components/locations/ (vehicles-list, vehicle-edit-page, rental-agencies-list, categories)
 - UX-8 : pattern liste thumbnail
 
 Implémenter :
 - L1 : Thumbnail véhicule dans liste
-- L2 : Fiche véhicule — grille specs (places, transmission, carburant) avec icônes SVG inline
-- L4 : Catégories — icône par type (compact, SUV, luxe)
+- L2 : Fiche véhicule - grille specs (places, transmission, carburant) avec icônes SVG inline
+- L4 : Catégories - icône par type (compact, SUV, luxe)
 
 Critères :
 - Cohérent avec properties-list post UX-1
@@ -839,7 +839,7 @@ Critères :
 À la fin : fichiers modifiés + test /produits/locations.
 ```
 
-### UX-11 — Croisières
+### UX-11 - Croisières
 
 **Branche :** `feature/admin-ui-cruises`
 
@@ -847,7 +847,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-ui-cruises`.
 
-Livrable UX-11 : Croisières — design
+Livrable UX-11 : Croisières - design
 Références :
 - apps/admin/components/cruises/ (ships-list, itineraries-section, itinerary-ports-section, sailings-list, cabins-section)
 - UX-3 : Breadcrumb hiérarchique
@@ -856,7 +856,7 @@ Implémenter :
 - C1 : Breadcrumbs dynamiques Croisières › {Ligne} › {Navire} › {Itinéraire}
 - C2 : itinerary-ports-section en timeline horizontale/verticale avec ports et dates
 - C3 : cabins-section en cards
-- C4 : sailings-list — toggle liste / calendrier mensuel
+- C4 : sailings-list - toggle liste / calendrier mensuel
 
 Critères :
 - Navigation profonde compréhensible
@@ -865,7 +865,7 @@ Critères :
 À la fin : fichiers modifiés + test parcours navires/itinéraires.
 ```
 
-### UX-12 — Activités & tours
+### UX-12 - Activités & tours
 
 **Branche :** `feature/admin-ui-activities`
 
@@ -873,7 +873,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-ui-activities`.
 
-Livrable UX-12 : Activités — design
+Livrable UX-12 : Activités - design
 Références :
 - apps/admin/components/activities/activities-list.tsx
 - apps/admin/app/(dashboard)/produits/activites/[id]/page.tsx
@@ -892,7 +892,7 @@ Critères :
 À la fin : fichiers modifiés + test /produits/activites.
 ```
 
-### UX-13 — Forfaits
+### UX-13 - Forfaits
 
 **Branche :** `feature/admin-ui-packages`
 
@@ -900,12 +900,12 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-ui-packages`.
 
-Livrable UX-13 : Forfaits — design
+Livrable UX-13 : Forfaits - design
 Références :
 - apps/admin/components/packages/package-form.tsx, package-items-section.tsx
 
 Implémenter :
-- P1 : package-items-section — icône par itemType (flight, property, activity…)
+- P1 : package-items-section - icône par itemType (flight, property, activity…)
 - P2 : Encart récap prix : somme composants vs prix forfait + badge économie
 - P3 (optionnel) : Mini preview card style web
 
@@ -916,7 +916,7 @@ Critères :
 À la fin : fichiers modifiés + test /produits/forfaits.
 ```
 
-### UX-14 — Destinations
+### UX-14 - Destinations
 
 **Branche :** `feature/admin-ui-destinations`
 
@@ -924,7 +924,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-ui-destinations`.
 
-Livrable UX-14 : Destinations — design
+Livrable UX-14 : Destinations - design
 Références :
 - apps/admin/app/(dashboard)/produits/destinations/
 - Composants destinations existants
@@ -941,7 +941,7 @@ Critères :
 À la fin : fichiers modifiés + test /produits/destinations.
 ```
 
-### UX-15 — Réservations
+### UX-15 - Réservations
 
 **Branche :** `feature/admin-ui-bookings`
 
@@ -949,7 +949,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-ui-bookings`.
 
-Livrable UX-15 : Réservations — design
+Livrable UX-15 : Réservations - design
 Références :
 - apps/admin/components/bookings/bookings-list.tsx, booking-items-list.tsx
 - apps/admin/app/(dashboard)/dashboard/bookings/[id]/page.tsx (si existe)
@@ -959,7 +959,7 @@ Implémenter :
 - R1 : FilterBar repliable pour bookings-list (statut, client, org, dates)
 - R2 : Fiche réservation layout 2 colonnes : client + statut | lignes + paiements
 - R3 : Composant BookingStatusTimeline
-- R4 : booking-items-list — icône type produit + lien catalogue
+- R4 : booking-items-list - icône type produit + lien catalogue
 - R5 : Barre actions avec AlertDialog confirmation
 
 Critères :
@@ -970,7 +970,7 @@ Critères :
 À la fin : fichiers modifiés + test /reservations + fiche détail.
 ```
 
-### UX-16 — Paiements
+### UX-16 - Paiements
 
 **Branche :** `feature/admin-ui-payments`
 
@@ -978,7 +978,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-ui-payments`.
 
-Livrable UX-16 : Paiements — design
+Livrable UX-16 : Paiements - design
 Références :
 - apps/admin/components/payments/payments-list.tsx
 - apps/admin/components/promo-codes/, promotions/
@@ -986,9 +986,9 @@ Références :
 
 Implémenter :
 - PA1 : Colonnes montant alignées droite, tabular-nums
-- PA2 : Drawer détail paiement — Stripe IDs, lien booking, historique remboursements
-- PA3 : Modal remboursement — montant partiel/total, raison, preview
-- PA4 : promo-codes-list — badges type %, validité, usage/limit
+- PA2 : Drawer détail paiement - Stripe IDs, lien booking, historique remboursements
+- PA3 : Modal remboursement - montant partiel/total, raison, preview
+- PA4 : promo-codes-list - badges type %, validité, usage/limit
 - PA5 : promotion preview bandeau
 
 Critères :
@@ -999,7 +999,7 @@ Critères :
 À la fin : fichiers modifiés + test /paiements + codes promo.
 ```
 
-### UX-17 — Contenu & support
+### UX-17 - Contenu & support
 
 **Branche :** `feature/admin-ui-content-support`
 
@@ -1007,16 +1007,16 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-ui-content-support`.
 
-Livrable UX-17 : Contenu & support — design
+Livrable UX-17 : Contenu & support - design
 Références :
 - apps/admin/components/reviews/reviews-list.tsx, review-detail-page.tsx
 - apps/admin/app/(dashboard)/contenu/
 - apps/admin/components/dashboard-section-page.tsx (placeholders tickets/messages)
 
 Implémenter :
-- CO1 : review-detail-page — layout 2 colonnes, étoiles, commentaire, contexte booking, actions Approuver/Masquer sticky footer
-- CO2 : reviews-list — preview tronqué + actions rapides inline
-- CO3 : tickets-list style inbox (statut, priorité, assigné, date) — si CRUD absent, EmptyState riche CO5
+- CO1 : review-detail-page - layout 2 colonnes, étoiles, commentaire, contexte booking, actions Approuver/Masquer sticky footer
+- CO2 : reviews-list - preview tronqué + actions rapides inline
+- CO3 : tickets-list style inbox (statut, priorité, assigné, date) - si CRUD absent, EmptyState riche CO5
 - CO5 : Remplacer DashboardSectionPage par EmptyState illustré + CTA
 
 Critères :
@@ -1026,7 +1026,7 @@ Critères :
 À la fin : fichiers modifiés + test /contenu/avis.
 ```
 
-### UX-18 — Organisations
+### UX-18 - Organisations
 
 **Branche :** `feature/admin-ui-organizations`
 
@@ -1034,7 +1034,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-ui-organizations`.
 
-Livrable UX-18 : Organisations — design
+Livrable UX-18 : Organisations - design
 Références :
 - apps/admin/components/organizations/organization-form.tsx
 - apps/admin/app/(dashboard)/organisations/
@@ -1051,7 +1051,7 @@ Critères :
 À la fin : fichiers modifiés + test /organisations.
 ```
 
-### UX-19 — Rôles & RBAC
+### UX-19 - Rôles & RBAC
 
 **Branche :** `feature/admin-ui-rbac`
 
@@ -1059,15 +1059,15 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-ui-rbac`.
 
-Livrable UX-19 : Rôles & RBAC — design
+Livrable UX-19 : Rôles & RBAC - design
 Références :
 - apps/admin/components/rbac/ (roles, permissions, assignations, audit)
 - apps/admin/app/(dashboard)/systeme/
 
 Implémenter :
-- RB1 : Matrice permissions — grille groupée par domaine (properties.*, bookings.*…) avec checkboxes
-- RB2 : user-role-assignments — recherche user + chips rôles
-- RB3 : rbac-audit-logs — FilterBar date/acteur + row expandable JSON
+- RB1 : Matrice permissions - grille groupée par domaine (properties.*, bookings.*…) avec checkboxes
+- RB2 : user-role-assignments - recherche user + chips rôles
+- RB3 : rbac-audit-logs - FilterBar date/acteur + row expandable JSON
 - RB4 : Badge couleur par rôle
 
 Critères :
@@ -1077,7 +1077,7 @@ Critères :
 À la fin : fichiers modifiés + test /systeme/roles.
 ```
 
-### UX-20 — Paramètres organisation
+### UX-20 - Paramètres organisation
 
 **Branche :** `feature/admin-ui-settings`
 
@@ -1085,14 +1085,14 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/admin-ui-settings`.
 
-Livrable UX-20 : Paramètres organisation — design
+Livrable UX-20 : Paramètres organisation - design
 Références :
 - apps/admin/components/parametres/ (organization-settings-page, brand-color-palette-field, parametres-subnav)
 - apps/admin/components/organization-theme-provider.tsx
 
 Implémenter :
 - PM1 : parametres-subnav en vertical tabs sticky
-- PM2 : Split view — formulaire branding | preview live sidebar+bouton (utilise applyBranding)
+- PM2 : Split view - formulaire branding | preview live sidebar+bouton (utilise applyBranding)
 - PM3 : Contrast checker sur brand-color-palette-field (warning si ratio < 4.5:1)
 - PM4 : Masquage IBAN comptes bancaires
 - PM6 : Sticky bar « Modifications non enregistrées » + Enregistrer / Annuler
@@ -1104,7 +1104,7 @@ Critères :
 À la fin : fichiers modifiés + test /parametres clair/sombre + org custom color.
 ```
 
-### UX-21 — Pages placeholder & empty states
+### UX-21 - Pages placeholder & empty states
 
 **Branche :** `feature/admin-ui-empty-states`
 
@@ -1132,7 +1132,7 @@ Critères :
 À la fin : fichiers modifiés + captures pages placeholder.
 ```
 
-### UX-22 — Mobile, responsive & polish global
+### UX-22 - Mobile, responsive & polish global
 
 **Branche :** `feature/admin-ui-mobile-polish`
 
@@ -1147,7 +1147,7 @@ Références :
 - apps/admin/messages/fr.json, en.json
 
 Implémenter :
-- M1 : DataTable responsive — option hiddenColumns mobile + expand row pour détails
+- M1 : DataTable responsive - option hiddenColumns mobile + expand row pour détails
 - M2 : Migrer chaînes FR en dur des KPI dashboard et labels listes fréquentes vers next-intl
 - M3 (optionnel) : Cmd+K palette recherche stub → **livré** : recherche globale Ctrl/⌘+F (+ alias K), loupe header
 - M4 (optionnel) : Hook exportCsv réutilisable

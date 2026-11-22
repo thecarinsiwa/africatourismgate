@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { BaseAuditEntity } from '../common/entities/base-audit.entity';
 
-/** Aligné sur docs/syscohada-domain-model.md §5.7 — SYSCO-004 */
+/** Aligné sur docs/syscohada-domain-model.md §5.7 - SYSCO-004 */
 export type AccountingMappingFundOpType = 'fund_entry' | 'fund_exit';
 
 @Entity('accounting_mapping_rules')

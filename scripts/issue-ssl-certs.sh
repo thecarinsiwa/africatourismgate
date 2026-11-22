@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Émet les certificats Let's Encrypt — un certificat par domaine (comme nginx/africatourismgate.conf).
+# Émet les certificats Let's Encrypt - un certificat par domaine (comme nginx/africatourismgate.conf).
 # À lancer sur le VPS après que le DNS pointe vers ce serveur.
 set -euo pipefail
 
-echo "Africa Tourism Gate — certificats SSL par rôle"
+echo "Africa Tourism Gate - certificats SSL par rôle"
 echo ""
 echo "  Site public : africatourismgate.org (+ www)"
 echo "  Admin       : app-africatourismgate.org (+ www)  → /login"
-echo "  API         : app-africatourismgate.org/api (nginx) — api.* optionnel"
+echo "  API         : app-africatourismgate.org/api (nginx) - api.* optionnel"
 echo "  POS         : pos.africatourismgate.org (optionnel)"
 echo "  GAP         : gap.africatourismgate.org (optionnel)"
 echo ""
@@ -33,7 +33,7 @@ issue app-africatourismgate.org -d www.app-africatourismgate.org
 
 echo ""
 echo "==> API (nécessite un enregistrement DNS A : api → IP du VPS)"
-issue api.africatourismgate.org || echo "==> API ignoré — configurez le DNS puis relancez certbot pour api."
+issue api.africatourismgate.org || echo "==> API ignoré - configurez le DNS puis relancez certbot pour api."
 
 echo ""
 issue pos.africatourismgate.org || echo "==> POS ignoré (optionnel)."

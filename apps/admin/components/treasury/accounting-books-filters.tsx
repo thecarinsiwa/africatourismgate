@@ -224,7 +224,7 @@ export function AccountingBooksFilters({
                 { value: '', label: tCommon('filters.all') },
                 ...exercises.map((ex) => ({
                   value: ex.id,
-                  label: `${ex.code} — ${ex.label}`,
+                  label: `${ex.code} - ${ex.label}`,
                 })),
               ]}
             />
@@ -255,7 +255,7 @@ export function AccountingBooksFilters({
                   { value: '', label: tCommon('filters.all') },
                   ...journals.map((j) => ({
                     value: j.id,
-                    label: `${j.code} — ${j.label}`,
+                    label: `${j.code} - ${j.label}`,
                   })),
                 ]}
               />
@@ -279,7 +279,7 @@ export function AccountingBooksFilters({
                   },
                   ...accounts.map((a) => ({
                     value: a.id,
-                    label: `${a.code} — ${a.label}`,
+                    label: `${a.code} - ${a.label}`,
                   })),
                 ]}
               />

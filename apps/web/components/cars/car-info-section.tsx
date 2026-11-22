@@ -48,7 +48,7 @@ export function CarInfoSection({
               {t.routeLabel}
             </dt>
             <dd className="mt-1 font-medium text-atg-fg">
-              {departureCity ?? '—'} → {arrivalCity ?? '—'}
+              {departureCity ?? '-'} → {arrivalCity ?? '-'}
             </dd>
           </div>
         )}

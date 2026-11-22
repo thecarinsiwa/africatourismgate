@@ -87,7 +87,7 @@ const APPROVED_EMAIL_COPY: Record<
   }
 > = {
   fr: {
-    subject: 'Réservation approuvée — échangez avec notre équipe',
+    subject: 'Réservation approuvée - échangez avec notre équipe',
     headline: 'Demande approuvée',
     greeting: 'Bonjour',
     intro: 'a été validée par notre équipe.',
@@ -100,7 +100,7 @@ const APPROVED_EMAIL_COPY: Record<
       '\nUn récapitulatif PDF détaillé de votre réservation est joint à ce message.',
   },
   en: {
-    subject: 'Booking approved — chat with our team',
+    subject: 'Booking approved - chat with our team',
     headline: 'Request approved',
     greeting: 'Hello',
     intro: 'has been approved by our team.',
@@ -111,7 +111,7 @@ const APPROVED_EMAIL_COPY: Record<
     pdfNoteText: '\nA detailed PDF summary of your booking is attached to this email.',
   },
   es: {
-    subject: 'Reserva aprobada — converse con nuestro equipo',
+    subject: 'Reserva aprobada - converse con nuestro equipo',
     headline: 'Solicitud aprobada',
     greeting: 'Hola',
     intro: 'ha sido aprobada por nuestro equipo.',
@@ -130,7 +130,7 @@ export function renderBookingRequestReceivedEmail(
   branding: EmailBrandingValue,
 ): { subject: string; html: string; text: string } {
   const name = escapeHtml(payload.firstName.trim() || 'Client');
-  const subject = `Demande de réservation reçue — ${payload.bookingId.slice(0, 8)}`;
+  const subject = `Demande de réservation reçue - ${payload.bookingId.slice(0, 8)}`;
   const accountUrl = `${webBase(payload.webUrl)}/account/reservations`;
   const html = layout(
     subject,
@@ -209,7 +209,7 @@ export function renderBookingPaymentInviteEmail(
   branding: EmailBrandingValue,
 ): { subject: string; html: string; text: string } {
   const name = escapeHtml(payload.firstName.trim() || 'Client');
-  const subject = `Paiement de votre réservation — lien sécurisé`;
+  const subject = `Paiement de votre réservation - lien sécurisé`;
   const total = escapeHtml(formatMoney(payload.totalCents, payload.currency));
   const travelerBlock = payload.travelerPricing?.length
     ? travelerPricingHtml(payload.travelerPricing, payload.currency)
@@ -235,7 +235,7 @@ export function renderBookingBankTransferInstructionsEmail(
   branding: EmailBrandingValue,
 ): { subject: string; html: string; text: string } {
   const name = escapeHtml(payload.firstName.trim() || 'Client');
-  const subject = `Instructions de virement — réservation ${payload.bookingId.slice(0, 8)}`;
+  const subject = `Instructions de virement - réservation ${payload.bookingId.slice(0, 8)}`;
   const total = escapeHtml(formatMoney(payload.totalCents, payload.currency));
   const ref = bookingRef(payload.bookingId);
   const accountsHtml =
@@ -257,13 +257,13 @@ Devise : ${escapeHtml(account.currency)}${swift}
 
   const accountsText =
     payload.accounts.length === 0
-      ? 'Aucun compte bancaire configuré — contactez-nous.'
+      ? 'Aucun compte bancaire configuré - contactez-nous.'
       : payload.accounts
           .map((account) => {
             const swift = account.swiftBic?.trim()
               ? `, SWIFT/BIC ${account.swiftBic.trim()}`
               : '';
-            return `- ${account.bankName} — ${account.accountName} — ${account.accountNumber} (${account.currency})${swift}`;
+            return `- ${account.bankName} - ${account.accountName} - ${account.accountNumber} (${account.currency})${swift}`;
           })
           .join('\n');
 
@@ -288,7 +288,7 @@ export function renderBookingMobileMoneyInstructionsEmail(
   branding: EmailBrandingValue,
 ): { subject: string; html: string; text: string } {
   const name = escapeHtml(payload.firstName.trim() || 'Client');
-  const subject = `Instructions Mobile Money — réservation ${payload.bookingId.slice(0, 8)}`;
+  const subject = `Instructions Mobile Money - réservation ${payload.bookingId.slice(0, 8)}`;
   const total = escapeHtml(formatMoney(payload.totalCents, payload.currency));
   const ref = bookingRef(payload.bookingId);
 
@@ -306,14 +306,14 @@ export function renderBookingMobileMoneyInstructionsEmail(
               })
               .join('');
             return `<li style="margin:0 0 12px;padding:12px 16px;background:#f4f6f5;border-radius:8px;">
-<strong>${escapeHtml(operator.operatorName)}</strong> — ${escapeHtml(operator.countryName)} (${escapeHtml(operator.countryCode)})${numbers}
+<strong>${escapeHtml(operator.operatorName)}</strong> - ${escapeHtml(operator.countryName)} (${escapeHtml(operator.countryCode)})${numbers}
 </li>`;
           })
           .join('')}</ul>`;
 
   const operatorsText =
     payload.operators.length === 0
-      ? 'Aucune configuration Mobile Money publiée — contactez-nous.'
+      ? 'Aucune configuration Mobile Money publiée - contactez-nous.'
       : payload.operators
           .map((operator) => {
             const numbers = operator.numbers
@@ -322,7 +322,7 @@ export function renderBookingMobileMoneyInstructionsEmail(
                 return `${number.phoneE164}${label}`;
               })
               .join(', ');
-            return `- ${operator.operatorName} — ${operator.countryName} (${operator.countryCode}) : ${numbers}`;
+            return `- ${operator.operatorName} - ${operator.countryName} (${operator.countryCode}) : ${numbers}`;
           })
           .join('\n');
 
@@ -348,7 +348,7 @@ export function renderBookingStaffMessageEmail(
 ): { subject: string; html: string; text: string } {
   const name = escapeHtml(payload.firstName.trim() || 'Client');
   const preview = escapeHtml(payload.messagePreview.trim());
-  const subject = `Nouveau message de notre équipe — réservation ${payload.bookingId.slice(0, 8)}`;
+  const subject = `Nouveau message de notre équipe - réservation ${payload.bookingId.slice(0, 8)}`;
   const html = layout(
     subject,
     `<h1 style="margin:0 0 16px;font-size:22px;">Nouveau message</h1>
@@ -369,7 +369,7 @@ export function renderBookingPaymentReminderEmail(
   branding: EmailBrandingValue,
 ): { subject: string; html: string; text: string } {
   const name = escapeHtml(payload.firstName.trim() || 'Client');
-  const subject = `Rappel — finalisez le paiement de votre réservation`;
+  const subject = `Rappel - finalisez le paiement de votre réservation`;
   const total = escapeHtml(formatMoney(payload.totalCents, payload.currency));
   const html = layout(
     subject,
@@ -442,7 +442,7 @@ export function renderBookingIdentityDocumentUploadRequestEmail(
   const copy = IDENTITY_UPLOAD_EMAIL_COPY[locale];
   const name = escapeHtml(payload.firstName.trim() || 'Client');
   const traveler = escapeHtml(payload.travelerName.trim());
-  const subject = `${copy.subject} — ${payload.bookingId.slice(0, 8)}`;
+  const subject = `${copy.subject} - ${payload.bookingId.slice(0, 8)}`;
   const noteBlock = payload.staffNote?.trim()
     ? `<p style="margin:16px 0;padding:12px 16px;background:#f4f6f5;border-radius:8px;border-left:4px solid #0d9488;line-height:1.6;"><strong>${escapeHtml(copy.noteLabel)} :</strong> ${escapeHtml(payload.staffNote.trim())}</p>`
     : '';
@@ -484,7 +484,7 @@ const GUIDE_ASSIGNMENT_EMAIL_COPY: Record<
   }
 > = {
   fr: {
-    subject: 'Nouvelle mission — réservation assignée',
+    subject: 'Nouvelle mission - réservation assignée',
     headline: 'Mission assignée',
     greeting: 'Bonjour',
     intro: 'Vous avez été assigné(e) comme guide sur la réservation suivante :',
@@ -500,7 +500,7 @@ const GUIDE_ASSIGNMENT_EMAIL_COPY: Record<
       '\nUn récapitulatif PDF détaillé de la réservation est joint à ce message.',
   },
   en: {
-    subject: 'New assignment — booking assigned to you',
+    subject: 'New assignment - booking assigned to you',
     headline: 'Assignment confirmed',
     greeting: 'Hello',
     intro: 'You have been assigned as a guide on the following booking:',
@@ -514,7 +514,7 @@ const GUIDE_ASSIGNMENT_EMAIL_COPY: Record<
     pdfNoteText: '\nA detailed PDF summary of the booking is attached to this email.',
   },
   es: {
-    subject: 'Nueva misión — reserva asignada',
+    subject: 'Nueva misión - reserva asignada',
     headline: 'Misión asignada',
     greeting: 'Hola',
     intro: 'Ha sido asignado/a como guía en la siguiente reserva:',
@@ -571,7 +571,7 @@ export function renderBookingGuideAssignmentEmail(
     payload.visitEndDate,
     locale,
   );
-  const subject = `${copy.subject} — ${payload.bookingId.slice(0, 8)}`;
+  const subject = `${copy.subject} - ${payload.bookingId.slice(0, 8)}`;
   const datesBlock = visitPeriod
     ? `<p style="margin:0 0 8px;line-height:1.6;"><strong>${escapeHtml(copy.datesLabel)} :</strong> ${escapeHtml(visitPeriod)}</p>`
     : '';
@@ -618,7 +618,7 @@ const GUIDE_REMOVAL_EMAIL_COPY: Record<
   }
 > = {
   fr: {
-    subject: 'Mission retirée — réservation',
+    subject: 'Mission retirée - réservation',
     headline: 'Mission retirée',
     greeting: 'Bonjour',
     intro:
@@ -631,7 +631,7 @@ const GUIDE_REMOVAL_EMAIL_COPY: Record<
     body: 'Pour toute question, contactez l’équipe Africa Tourism Gate.',
   },
   en: {
-    subject: 'Assignment removed — booking',
+    subject: 'Assignment removed - booking',
     headline: 'Assignment removed',
     greeting: 'Hello',
     intro: 'Your assignment as a guide on the following booking has been removed by our team:',
@@ -643,7 +643,7 @@ const GUIDE_REMOVAL_EMAIL_COPY: Record<
     body: 'If you have any questions, please contact the Africa Tourism Gate team.',
   },
   es: {
-    subject: 'Misión retirada — reserva',
+    subject: 'Misión retirada - reserva',
     headline: 'Misión retirada',
     greeting: 'Hola',
     intro:
@@ -671,7 +671,7 @@ export function renderBookingGuideRemovalEmail(
     payload.visitEndDate,
     locale,
   );
-  const subject = `${copy.subject} — ${payload.bookingId.slice(0, 8)}`;
+  const subject = `${copy.subject} - ${payload.bookingId.slice(0, 8)}`;
   const datesBlock = visitPeriod
     ? `<p style="margin:0 0 8px;line-height:1.6;"><strong>${escapeHtml(copy.datesLabel)} :</strong> ${escapeHtml(visitPeriod)}</p>`
     : '';

@@ -50,7 +50,7 @@ function ScheduleChip({
       ? t.insufficientPlaces
       : t.placesLeft.replace('{n}', String(schedule.remainingPlaces));
 
-  const ariaLabel = `${timeLabel} — ${statusLabel} — ${formatActivityPrice(schedule.priceCents, currency)} ${t.perParticipant}`;
+  const ariaLabel = `${timeLabel} - ${statusLabel} - ${formatActivityPrice(schedule.priceCents, currency)} ${t.perParticipant}`;
 
   return (
     <button

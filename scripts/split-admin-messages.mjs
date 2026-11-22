@@ -52,7 +52,7 @@ for (const locale of ADMIN_LOCALES) {
 
   for (const extra of Object.keys(data.modules)) {
     if (!ADMIN_MODULE_NAMES.includes(extra)) {
-      console.warn(`Warning: extra module "${extra}" in ${locale}.json — writing anyway`);
+      console.warn(`Warning: extra module "${extra}" in ${locale}.json - writing anyway`);
       writeFileSync(
         join(modulesDir, `${extra}.json`),
         `${JSON.stringify(data.modules[extra], null, 2)}\n`,

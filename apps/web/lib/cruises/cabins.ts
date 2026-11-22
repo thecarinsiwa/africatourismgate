@@ -8,7 +8,7 @@ function normalizeCategoryName(name: string): string {
     .replace(/[\u0300-\u036f]/g, '');
 }
 
-/** Pont dérivé de la catégorie — en attendant exposition API dédiée. */
+/** Pont dérivé de la catégorie - en attendant exposition API dédiée. */
 export function resolveCabinDeck(categoryName: string): CabinDeckKey {
   const normalized = normalizeCategoryName(categoryName);
 

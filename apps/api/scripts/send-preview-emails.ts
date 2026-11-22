@@ -68,7 +68,7 @@ async function main(): Promise<void> {
       totalCents: 18900,
       currency: 'USD',
       itemTitles: [
-        'Chambre Deluxe — Hôtel Démonstration Kinshasa',
+        'Chambre Deluxe - Hôtel Démonstration Kinshasa',
         'Petit-déjeuner inclus',
       ],
       webUrl,

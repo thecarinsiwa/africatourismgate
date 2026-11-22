@@ -4,7 +4,7 @@ import { cookieConsentStorageState } from './tests/e2e/helpers/cookie-consent';
 const port = 3099;
 const baseURL = `http://127.0.0.1:${port}`;
 
-/** Isolated prod build on :3099 + `.next-e2e` — avoids sharing `.next` with `pnpm dev`. */
+/** Isolated prod build on :3099 + `.next-e2e` - avoids sharing `.next` with `pnpm dev`. */
 process.env.NEXT_DIST_DIR ||= '.next-e2e';
 
 export default defineConfig({

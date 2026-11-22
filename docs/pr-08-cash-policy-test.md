@@ -1,4 +1,4 @@
-# PR-08 — Scénario de test (politique cash web)
+# PR-08 - Scénario de test (politique cash web)
 
 Branche : `feature/pr-08-cash-policy`  
 Réf. : [roadmap-post-reunion-08-2026.md](./roadmap-post-reunion-08-2026.md) (PR-08)
@@ -9,7 +9,7 @@ Dépend de : [pr-06-bank-transfer-test.md](./pr-06-bank-transfer-test.md) (setti
 
 | Élément | Décision |
 | ------- | -------- |
-| Setting | **Pas de nouveau `allow_web_cash`** — le booléen `payment_methods.cash` **est** l’autorisation cash web |
+| Setting | **Pas de nouveau `allow_web_cash`** - le booléen `payment_methods.cash` **est** l’autorisation cash web |
 | Défaut | `cash: false` (Stripe on ; cash / virement / MM off jusqu’à activation admin) |
 | POS | Cash **toujours** autorisé (`skipWebPaymentGate`) |
 | Admin caisse | `POST …/cash-payment` **inchangé** (hors gate web) |
@@ -46,14 +46,14 @@ Prérequis (scénario cash **on**) :
 4. Cocher cash → Enregistrer → `GET /organization-settings/public/payment-methods` → `"cash": true`.
 5. Décoche → `"cash": false`.
 
-### B. Checkout web — cash off (défaut)
+### B. Checkout web - cash off (défaut)
 
 1. Ne pas activer cash (ou après migration / seed).
 2. Parcours immédiat (hôtel / vol / etc.) → récap.
 3. Assert : **pas** de radio `preferredPaymentMethod=cash`.
 4. Stripe (et autres moyens activés) disponibles.
 
-### C. Checkout web — cash on
+### C. Checkout web - cash on
 
 1. Activer `payment_methods.cash` (Paramètres).
 2. Récap → radio cash visible → confirmer paiement sur place.
@@ -71,13 +71,13 @@ curl -s -X POST "$API/bookings" \
 # Assert: 400 tant que payment_methods.cash === false
 ```
 
-### E. POS — cash inchangé
+### E. POS - cash inchangé
 
 1. POS → vente / checkout avec paiement cash.
 2. Assert : succès sans dépendre du setting web.
 3. (Régression) Setting `cash: false` sur l’org → POS cash toujours OK.
 
-### F. Admin — encaissement cash
+### F. Admin - encaissement cash
 
 1. Booking `pending_payment` (cash legacy ou web avec cash on).
 2. Barre d’actions → **Enregistrer paiement cash** → `succeeded` (+ acompte/solde si PR-07).

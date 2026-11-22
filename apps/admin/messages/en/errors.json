@@ -60,7 +60,7 @@
     "sectionLocaleConflict": "A record already exists for this section and language."
   },
   "loyaltyAccounts": {
-    "forbidden": "Access denied. Read: users.read — adjustment: super admin only.",
+    "forbidden": "Access denied. Read: users.read - adjustment: super admin only.",
     "notFound": "Loyalty account not found."
   },
   "dashboard": {

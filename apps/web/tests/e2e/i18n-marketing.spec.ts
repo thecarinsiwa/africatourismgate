@@ -138,7 +138,7 @@ for (const locale of ['fr', 'en', 'es'] as const) {
       await mockEmptyCms(page);
     });
 
-    test(`16 routes shell — ${locale}`, async ({ page }) => {
+    test(`16 routes shell - ${locale}`, async ({ page }) => {
       const c = COPY[locale];
 
       // /about → who-we-are

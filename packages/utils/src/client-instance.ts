@@ -1,6 +1,6 @@
 const CLIENT_INSTANCE_STORAGE_KEY = 'atg.client.instance';
 
-/** Stable browser profile id — survives tab close; not an auth token. */
+/** Stable browser profile id - survives tab close; not an auth token. */
 export function getOrCreateClientInstanceId(): string {
   if (typeof window === 'undefined') {
     return '';

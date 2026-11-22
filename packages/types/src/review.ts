@@ -8,7 +8,7 @@ export interface Review {
   authorFirstName: string | null;
   /** Reviewer profile photo when available (platform reviews only). */
   authorAvatarUrl?: string | null;
-  /** Origin of the review — drives homepage badges and filtering. */
+  /** Origin of the review - drives homepage badges and filtering. */
   source: ReviewSource;
   createdAt: string;
 }
@@ -67,7 +67,7 @@ export interface CreateBookingReviewRequest {
   body?: string;
 }
 
-/** Admin Contenu › Avis — manual Tripadvisor review for the homepage carousel. */
+/** Admin Contenu › Avis - manual Tripadvisor review for the homepage carousel. */
 export interface CreateAdminTripadvisorReviewRequest {
   rating: number;
   title?: string;

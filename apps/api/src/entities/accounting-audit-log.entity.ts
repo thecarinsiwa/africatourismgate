@@ -25,7 +25,7 @@ export type AccountingAuditAction =
 export type AccountingAuditActorType = 'user' | 'system';
 
 /**
- * Journal append-only comptabilité — ne pas UPDATE/DELETE depuis l’API (SYSCO-009).
+ * Journal append-only comptabilité - ne pas UPDATE/DELETE depuis l’API (SYSCO-009).
  */
 @Entity('accounting_audit_logs')
 export class AccountingAuditLogs {

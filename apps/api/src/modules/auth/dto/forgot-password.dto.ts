@@ -1,5 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, MaxLength } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsEmail, IsIn, IsNotEmpty, IsOptional, MaxLength } from 'class-validator';
+
+export type ForgotPasswordPortal = 'web' | 'admin';
 
 export class ForgotPasswordDto {
   @ApiProperty({ example: 'admin@africatourismgate.local' })
@@ -9,4 +11,12 @@ export class ForgotPasswordDto {
     message: "L'adresse e-mail ne doit pas dépasser 255 caractères.",
   })
   email!: string;
+
+  /** Which app hosts the reset page linked in the email. Defaults to admin. */
+  @ApiPropertyOptional({ enum: ['web', 'admin'], default: 'admin' })
+  @IsOptional()
+  @IsIn(['web', 'admin'], {
+    message: "Le portail doit être 'web' ou 'admin'.",
+  })
+  portal?: ForgotPasswordPortal;
 }

@@ -59,7 +59,7 @@ export function formatItemDateRange(
   if (!end || end === start) {
     return formatVisitDate(start, locale);
   }
-  // ASCII separator only — Helvetica in PDFKit cannot render Unicode arrows (→).
+  // ASCII separator only - Helvetica in PDFKit cannot render Unicode arrows (→).
   return `${formatVisitDate(start, locale)} - ${formatVisitDate(end, locale)}`;
 }
 

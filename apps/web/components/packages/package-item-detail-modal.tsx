@@ -273,7 +273,7 @@ function ItemDetailBody({
           {detail.stay.nights > 0 ? (
             <MetaCell
               label={h.checkIn}
-              value={`${detail.stay.checkIn ?? '—'} → ${detail.stay.checkOut ?? '—'}`}
+              value={`${detail.stay.checkIn ?? '-'} → ${detail.stay.checkOut ?? '-'}`}
             />
           ) : null}
           <MetaCell

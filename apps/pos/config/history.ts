@@ -29,7 +29,7 @@ export const posHistoryPageConfig = {
     bank_transfer: 'Virement',
     mobile_money: 'Mobile Money',
   } satisfies Record<BookingPreferredPaymentMethod, string>,
-  paymentUnknown: '—',
+  paymentUnknown: '-',
 } as const;
 
 export function getHistoryStatusLabel(status: BookingStatus): string {

@@ -12,7 +12,7 @@ export const modulesI18n = {
         "no": "Non"
       },
       "empty": {
-        "dash": "—"
+        "dash": "-"
       },
       "filters": {
         "all": "Tous",
@@ -128,8 +128,8 @@ export const modulesI18n = {
       },
       "select": {
         "choose": "Choisir…",
-        "chooseDash": "— Choisir —",
-        "chooseFeminine": "— Choisir —"
+        "chooseDash": "- Choisir -",
+        "chooseFeminine": "- Choisir -"
       },
       "back": {
         "toList": "← Retour à la liste"
@@ -263,7 +263,7 @@ export const modulesI18n = {
         "activity": "Activité"
       },
       "activityDifficulty": {
-        "unspecified": "— Non renseignée —",
+        "unspecified": "- Non renseignée -",
         "easy": "Facile",
         "moderate": "Modérée",
         "hard": "Difficile",
@@ -407,7 +407,7 @@ export const modulesI18n = {
         "scopeId": "ID du scope (UUID)",
         "scopeIdHint": "Ex. ID propriété, agence ou file support.",
         "expiresAt": "Expiration (optionnel)",
-        "superAdminWarning": "Réservé aux super administrateurs — périmètre forcé à Global.",
+        "superAdminWarning": "Réservé aux super administrateurs - périmètre forcé à Global.",
         "superAdminConfirm": "Attribuer le rôle « {roleName} » ? Cet utilisateur obtiendra un accès complet à la plateforme.",
         "validation": {
           "userAndRoleRequired": "Utilisateur et rôle sont obligatoires.",
@@ -710,7 +710,7 @@ export const modulesI18n = {
       },
       "refundModal": {
         "title": "Confirmer le remboursement",
-        "description": "Remboursement Stripe — maximum remboursable : {maxAmount}.",
+        "description": "Remboursement Stripe - maximum remboursable : {maxAmount}.",
         "refundTypeLegend": "Type de remboursement",
         "refundTypeTotal": "Total ({amount})",
         "refundTypePartial": "Partiel",
@@ -1090,7 +1090,7 @@ export const modulesI18n = {
           "submitCreate": "Créer le départ",
           "itinerary": "Itinéraire",
           "departureDate": "Date de départ",
-          "itineraryOption": "{name} ({shipName}) — {nights} nuits",
+          "itineraryOption": "{name} ({shipName}) - {nights} nuits",
           "validation": "Itinéraire et date de départ sont obligatoires."
         },
         "itinerary": {
@@ -1147,7 +1147,7 @@ export const modulesI18n = {
           "title": "Cabines réservables",
           "intro": "Stock et prix par catégorie pour ce départ.",
           "stopsLabel": "Escales : ",
-          "noStopsWarning": "Aucune escale sur cet itinéraire — ajoutez-en depuis la fiche navire.",
+          "noStopsWarning": "Aucune escale sur cet itinéraire - ajoutez-en depuis la fiche navire.",
           "cabinMeta": "max {maxGuests} · base {basePrice}",
           "cabinsAvailableAria": "Cabines disponibles",
           "priceCentsAria": "Prix en centimes",
@@ -1160,7 +1160,7 @@ export const modulesI18n = {
         "deleteShip": "Supprimer le navire « {name} » ?"
       },
       "calendar": {
-        "ariaLabel": "Calendrier des départs — {month}",
+        "ariaLabel": "Calendrier des départs - {month}",
         "today": "Aujourd'hui"
       },
       "stats": {
@@ -1519,7 +1519,7 @@ export const modulesI18n = {
         },
         "wholeDomain": "Tout le domaine",
         "perAction": "Par action",
-        "ariaToggleDomain": "Tout {domain} — {action}",
+        "ariaToggleDomain": "Tout {domain} - {action}",
         "toast": {
           "savedTitle": "Permissions enregistrées",
           "savedMessage": "La matrice du rôle a été mise à jour.",
@@ -1824,7 +1824,7 @@ export const modulesI18n = {
       },
       "form": {
         "info": {
-          "codesVsPromotions": "Les codes promo sont saisis par le client au checkout. Les promotions sont des campagnes visibles (bannières, pages) — la réduction peut être optionnelle.",
+          "codesVsPromotions": "Les codes promo sont saisis par le client au checkout. Les promotions sont des campagnes visibles (bannières, pages) - la réduction peut être optionnelle.",
           "managePromoCodesLink": "Gérer les codes promo",
           "targetHint": "Cible produit / destination (optionnel, pour affichage marketing)."
         },
@@ -2030,7 +2030,7 @@ export const modulesI18n = {
       "colorPalette": {
         "contrastWarning": "Contraste insuffisant avec le texte blanc : {ratio} (minimum {min} pour WCAG AA). Les boutons et liens actifs peuvent être difficiles à lire.",
         "currentAria": "Couleur actuelle ({value})",
-        "currentTitle": "Couleur enregistrée — {value}",
+        "currentTitle": "Couleur enregistrée - {value}",
         "currentLabel": "Actuelle",
         "selection": "Sélection :",
         "swatches": {
@@ -2112,12 +2112,12 @@ export const modulesI18n = {
           "secondaryColor": "Couleur secondaire",
           "secondaryColorHint": "Couleur d'accompagnement (optionnel).",
           "footerText": "Texte de pied de page",
-          "footerPlaceholder": "© Africa Tourism Gate — Tous droits réservés",
-          "welcomeSubject": "Sujet — e-mail de bienvenue",
+          "footerPlaceholder": "© Africa Tourism Gate - Tous droits réservés",
+          "welcomeSubject": "Sujet - e-mail de bienvenue",
           "welcomeSubjectPlaceholder": "Bienvenue chez {displayName}",
           "welcomeSubjectHint": "Variables : {displayName}",
-          "bookingSubject": "Sujet — confirmation de réservation",
-          "bookingSubjectPlaceholder": "Confirmation de réservation — {ref}",
+          "bookingSubject": "Sujet - confirmation de réservation",
+          "bookingSubjectPlaceholder": "Confirmation de réservation - {ref}",
           "bookingSubjectHint": "Variables : {ref}, {displayName}",
           "previewTemplate": "Modèle à prévisualiser",
           "templateWelcome": "Bienvenue (création de compte)",
@@ -2199,7 +2199,7 @@ export const modulesI18n = {
         "no": "No"
       },
       "empty": {
-        "dash": "—"
+        "dash": "-"
       },
       "filters": {
         "all": "All",
@@ -2315,8 +2315,8 @@ export const modulesI18n = {
       },
       "select": {
         "choose": "Choisir…",
-        "chooseDash": "— Choisir —",
-        "chooseFeminine": "— Choisir —"
+        "chooseDash": "- Choisir -",
+        "chooseFeminine": "- Choisir -"
       },
       "back": {
         "toList": "← Back à la liste"
@@ -2450,7 +2450,7 @@ export const modulesI18n = {
         "activity": "Activity"
       },
       "activityDifficulty": {
-        "unspecified": "— No renseignée —",
+        "unspecified": "- No renseignée -",
         "easy": "Easy",
         "moderate": "Moderate",
         "hard": "Hard",
@@ -2594,7 +2594,7 @@ export const modulesI18n = {
         "scopeId": "ID du scope (UUID)",
         "scopeIdHint": "Ex. ID propriété, agence ou file support.",
         "expiresAt": "Expiration (optionnel)",
-        "superAdminWarning": "Réservé aux super administrateurs — périmètre forcé à Global.",
+        "superAdminWarning": "Réservé aux super administrateurs - périmètre forcé à Global.",
         "superAdminConfirm": "Assign role « {roleName} »? This user will get full platform access.",
         "validation": {
           "userAndRoleRequired": "User et rôle sont obligatoires.",
@@ -2897,7 +2897,7 @@ export const modulesI18n = {
       },
       "refundModal": {
         "title": "Confirmer le remboursement",
-        "description": "Remboursement Stripe — maximum remboursable : {maxAmount}.",
+        "description": "Remboursement Stripe - maximum remboursable : {maxAmount}.",
         "refundTypeLegend": "Type de remboursement",
         "refundTypeTotal": "Total ({amount})",
         "refundTypePartial": "Partial",
@@ -3277,7 +3277,7 @@ export const modulesI18n = {
           "submitCreate": "Créer le départ",
           "itinerary": "Itinerary",
           "departureDate": "Date de départ",
-          "itineraryOption": "{name} ({shipName}) — {nights} nuits",
+          "itineraryOption": "{name} ({shipName}) - {nights} nuits",
           "validation": "Itinerary et date de départ sont obligatoires."
         },
         "itinerary": {
@@ -3334,7 +3334,7 @@ export const modulesI18n = {
           "title": "Cabins réservables",
           "intro": "Stock et prix par catégorie pour ce départ.",
           "stopsLabel": "Ports of call : ",
-          "noStopsWarning": "None escale sur cet itinéraire — ajoutez-en depuis la fiche navire.",
+          "noStopsWarning": "None escale sur cet itinéraire - ajoutez-en depuis la fiche navire.",
           "cabinMeta": "max {maxGuests} · base {basePrice}",
           "cabinsAvailableAria": "Cabins disponibles",
           "priceCentsAria": "Price en centimes",
@@ -3347,7 +3347,7 @@ export const modulesI18n = {
         "deleteShip": "Supprimer le navire « {name} » ?"
       },
       "calendar": {
-        "ariaLabel": "Calendrier des départs — {month}",
+        "ariaLabel": "Calendrier des départs - {month}",
         "today": "Tojourd'hui"
       },
       "stats": {
@@ -3706,7 +3706,7 @@ export const modulesI18n = {
         },
         "wholeDomain": "Tout le domaine",
         "perAction": "Par action",
-        "ariaToggleDomain": "Tout {domain} — {action}",
+        "ariaToggleDomain": "Tout {domain} - {action}",
         "toast": {
           "savedTitle": "Permissions enregistrées",
           "savedMessage": "La matrice du rôle a été mise à jour.",
@@ -4011,7 +4011,7 @@ export const modulesI18n = {
       },
       "form": {
         "info": {
-          "codesVsPromotions": "Les codes promo sont saisis par le client au checkout. Les promotions sont des campagnes visibles (bannières, pages) — la réduction peut être optionnelle.",
+          "codesVsPromotions": "Les codes promo sont saisis par le client au checkout. Les promotions sont des campagnes visibles (bannières, pages) - la réduction peut être optionnelle.",
           "managePromoCodesLink": "Gérer les codes promo",
           "targetHint": "Cible produit / destination (optionnel, pour affichage marketing)."
         },
@@ -4217,7 +4217,7 @@ export const modulesI18n = {
       "colorPalette": {
         "contrastWarning": "Contraste insuffisant avec le texte blanc : {ratio} (minimum {min} pour WCAG AA). Les boutons et liens actifs peuvent être difficiles à lire.",
         "currentAria": "Couleur actuelle ({value})",
-        "currentTitle": "Couleur enregistrée — {value}",
+        "currentTitle": "Couleur enregistrée - {value}",
         "currentLabel": "Actuelle",
         "selection": "Sélection :",
         "swatches": {
@@ -4299,12 +4299,12 @@ export const modulesI18n = {
           "secondaryColor": "Couleur secondaire",
           "secondaryColorHint": "Couleur d'accompagnement (optionnel).",
           "footerText": "Texte de pied de page",
-          "footerPlaceholder": "© Africa Tourism Gate — All droits réservés",
-          "welcomeSubject": "Sujet — e-mail de bienvenue",
+          "footerPlaceholder": "© Africa Tourism Gate - All droits réservés",
+          "welcomeSubject": "Sujet - e-mail de bienvenue",
           "welcomeSubjectPlaceholder": "Bienvenue chez {displayName}",
           "welcomeSubjectHint": "Variables : {displayName}",
-          "bookingSubject": "Sujet — confirmation de réservation",
-          "bookingSubjectPlaceholder": "Confirmation de réservation — {ref}",
+          "bookingSubject": "Sujet - confirmation de réservation",
+          "bookingSubjectPlaceholder": "Confirmation de réservation - {ref}",
           "bookingSubjectHint": "Variables : {ref}, {displayName}",
           "previewTemplate": "Modèle à prévisualiser",
           "templateWelcome": "Bienvenue (création de compte)",
@@ -4386,7 +4386,7 @@ export const modulesI18n = {
         "no": "No"
       },
       "empty": {
-        "dash": "—"
+        "dash": "-"
       },
       "filters": {
         "all": "Todos",
@@ -4502,8 +4502,8 @@ export const modulesI18n = {
       },
       "select": {
         "choose": "Choisir…",
-        "chooseDash": "— Choisir —",
-        "chooseFeminine": "— Choisir —"
+        "chooseDash": "- Choisir -",
+        "chooseFeminine": "- Choisir -"
       },
       "back": {
         "toList": "← Volver à la liste"
@@ -4637,7 +4637,7 @@ export const modulesI18n = {
         "activity": "Actividad"
       },
       "activityDifficulty": {
-        "unspecified": "— No renseignée —",
+        "unspecified": "- No renseignée -",
         "easy": "Fácil",
         "moderate": "Moderada",
         "hard": "Difícil",
@@ -4781,7 +4781,7 @@ export const modulesI18n = {
         "scopeId": "ID du scope (UUID)",
         "scopeIdHint": "Ex. ID propriété, agence ou file support.",
         "expiresAt": "Expiration (optionnel)",
-        "superAdminWarning": "Réservé aux super administrateurs — périmètre forcé à Global.",
+        "superAdminWarning": "Réservé aux super administrateurs - périmètre forcé à Global.",
         "superAdminConfirm": "¿Asignar el rol « {roleName} »? Este usuario obtendrá acceso completo a la plataforma.",
         "validation": {
           "userAndRoleRequired": "Usuario et rôle sont obligatoires.",
@@ -5084,7 +5084,7 @@ export const modulesI18n = {
       },
       "refundModal": {
         "title": "Confirmer le remboursement",
-        "description": "Remboursement Stripe — maximum remboursable : {maxAmount}.",
+        "description": "Remboursement Stripe - maximum remboursable : {maxAmount}.",
         "refundTypeLegend": "Tipo de remboursement",
         "refundTypeTotal": "Total ({amount})",
         "refundTypePartial": "Parcial",
@@ -5464,7 +5464,7 @@ export const modulesI18n = {
           "submitCreate": "Créer le départ",
           "itinerary": "Itinerario",
           "departureDate": "Fecha de départ",
-          "itineraryOption": "{name} ({shipName}) — {nights} nuits",
+          "itineraryOption": "{name} ({shipName}) - {nights} nuits",
           "validation": "Itinerario et date de départ sont obligatoires."
         },
         "itinerary": {
@@ -5521,7 +5521,7 @@ export const modulesI18n = {
           "title": "Camarotes réservables",
           "intro": "Stock et prix par catégorie pour ce départ.",
           "stopsLabel": "Escalas : ",
-          "noStopsWarning": "Ninguna escale sur cet itinéraire — ajoutez-en depuis la fiche navire.",
+          "noStopsWarning": "Ninguna escale sur cet itinéraire - ajoutez-en depuis la fiche navire.",
           "cabinMeta": "max {maxGuests} · base {basePrice}",
           "cabinsAvailableAria": "Camarotes disponibles",
           "priceCentsAria": "Precio en centimes",
@@ -5534,7 +5534,7 @@ export const modulesI18n = {
         "deleteShip": "Supprimer le navire « {name} » ?"
       },
       "calendar": {
-        "ariaLabel": "Calendrier des départs — {month}",
+        "ariaLabel": "Calendrier des départs - {month}",
         "today": "Hastajourd'hui"
       },
       "stats": {
@@ -5893,7 +5893,7 @@ export const modulesI18n = {
         },
         "wholeDomain": "Tout le domaine",
         "perAction": "Par action",
-        "ariaToggleDomain": "Tout {domain} — {action}",
+        "ariaToggleDomain": "Tout {domain} - {action}",
         "toast": {
           "savedTitle": "Permissions enregistrées",
           "savedMessage": "La matrice du rôle a été mise à jour.",
@@ -6198,7 +6198,7 @@ export const modulesI18n = {
       },
       "form": {
         "info": {
-          "codesVsPromotions": "Les codes promo sont saisis par le client au checkout. Les promotions sont des campagnes visibles (bannières, pages) — la réduction peut être optionnelle.",
+          "codesVsPromotions": "Les codes promo sont saisis par le client au checkout. Les promotions sont des campagnes visibles (bannières, pages) - la réduction peut être optionnelle.",
           "managePromoCodesLink": "Gérer les codes promo",
           "targetHint": "Cible produit / destination (optionnel, pour affichage marketing)."
         },
@@ -6404,7 +6404,7 @@ export const modulesI18n = {
       "colorPalette": {
         "contrastWarning": "Contraste insuffisant avec le texte blanc : {ratio} (minimum {min} pour WCAG AA). Les boutons et liens actifs peuvent être difficiles à lire.",
         "currentAria": "Couleur actuelle ({value})",
-        "currentTitle": "Couleur enregistrée — {value}",
+        "currentTitle": "Couleur enregistrée - {value}",
         "currentLabel": "Actuelle",
         "selection": "Sélection :",
         "swatches": {
@@ -6486,12 +6486,12 @@ export const modulesI18n = {
           "secondaryColor": "Couleur secondaire",
           "secondaryColorHint": "Couleur d'accompagnement (optionnel).",
           "footerText": "Texte de pied de page",
-          "footerPlaceholder": "© Africa Tourism Gate — Todos droits réservés",
-          "welcomeSubject": "Sujet — e-mail de bienvenue",
+          "footerPlaceholder": "© Africa Tourism Gate - Todos droits réservés",
+          "welcomeSubject": "Sujet - e-mail de bienvenue",
           "welcomeSubjectPlaceholder": "Bienvenue chez {displayName}",
           "welcomeSubjectHint": "Variables : {displayName}",
-          "bookingSubject": "Sujet — confirmation de réservation",
-          "bookingSubjectPlaceholder": "Confirmation de réservation — {ref}",
+          "bookingSubject": "Sujet - confirmation de réservation",
+          "bookingSubjectPlaceholder": "Confirmation de réservation - {ref}",
           "bookingSubjectHint": "Variables : {ref}, {displayName}",
           "previewTemplate": "Modèle à prévisualiser",
           "templateWelcome": "Bienvenue (création de compte)",

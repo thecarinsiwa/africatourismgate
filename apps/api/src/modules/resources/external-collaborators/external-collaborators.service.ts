@@ -52,7 +52,7 @@ export type InviteTreasuryExternalResult = {
   collaborator: TreasuryExternalCollaboratorDto;
   token: TreasuryAccessTokenDto;
   emailSent: boolean;
-  /** Raw invite URL — returned when email was not delivered (dev stub) */
+  /** Raw invite URL - returned when email was not delivered (dev stub) */
   inviteUrl?: string;
 };
 
@@ -231,7 +231,7 @@ export class ExternalCollaboratorsService {
         `Treasury external invite email not sent to ${collaborator.email}` +
           (mailResult.previewUrl
             ? ` (preview: ${mailResult.previewUrl})`
-            : ` — inviteUrl=${inviteUrl}`),
+            : ` - inviteUrl=${inviteUrl}`),
       );
     } else if (mailResult.previewUrl) {
       this.logger.log(

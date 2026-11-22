@@ -1,7 +1,7 @@
-# Africa Tourism Gate — Workflow améliorations design Web
+# Africa Tourism Gate - Workflow améliorations design Web
 
-> **Document de référence UX/UI** — workflow et livrables pour l’application publique `apps/web`.  
-> **Mise à jour : juin 2026** — Basé sur l’état actuel du code (`packages/ui`, homepage, verticales, checkout).
+> **Document de référence UX/UI** - workflow et livrables pour l’application publique `apps/web`.  
+> **Mise à jour : juin 2026** - Basé sur l’état actuel du code (`packages/ui`, homepage, verticales, checkout).
 
 ---
 
@@ -42,7 +42,7 @@ Règles design :
 - Branding dynamique (couleurs org) : ne pas hardcoder #0B6E4F sauf fallback documenté.
 - Préférer composants partagés packages/ui plutôt que dupliquer dans apps/web.
 - Mode clair + sombre testés ; mobile-first ≤ 768px.
-- Textes via next-intl (apps/web/messages/fr.json, en.json, es.json) — pas de chaînes en dur.
+- Textes via next-intl (apps/web/messages/fr.json, en.json, es.json) - pas de chaînes en dur.
 - Ne pas refactorer hors scope du livrable WEB-UX.
 - Pas de commit sauf si je le demande explicitement.
 
@@ -75,20 +75,20 @@ flowchart LR
 
 ---
 
-## Tableau récapitulatif — livrables design
+## Tableau récapitulatif - livrables design
 
 | #        | Phase | Livrable                                      | Priorité | Branche PR                              | Dépend de        |
 | -------- | ----- | --------------------------------------------- | -------- | --------------------------------------- | ---------------- |
-| WEB-UX-1 | 1     | Fondations — composants web réutilisables     | Haute    | `feature/web-ui-foundation`             | —                |
+| WEB-UX-1 | 1     | Fondations - composants web réutilisables     | Haute    | `feature/web-ui-foundation`             | -                |
 | WEB-UX-2 | 1     | Tokens, typo & cohérence couleurs marketing   | Haute    | `feature/web-ui-theme-tokens`           | WEB-UX-1         |
 | WEB-UX-3 | 2     | Header, footer & navigation globale           | Haute    | `feature/web-ui-shell`                  | WEB-UX-1         |
-| WEB-UX-4 | 2     | Homepage — hero, sections marketing           | Haute    | `feature/web-ui-homepage`               | WEB-UX-1, WEB-UX-3 |
-| WEB-UX-5 | 3     | Recherche unifiée — onglets & formulaires     | Haute    | `feature/web-ui-search-forms`           | WEB-UX-1         |
-| WEB-UX-6 | 3     | Listes & filtres — pattern vertical           | Haute    | `feature/web-ui-listings`               | WEB-UX-1, WEB-UX-5 |
-| WEB-UX-7 | 4     | Hôtels — fiche & galerie (référence)          | Moyenne  | `feature/web-ui-hotels-detail`          | WEB-UX-6         |
-| WEB-UX-8 | 4     | Vols — liste, fiche, classes                  | Moyenne  | `feature/web-ui-flights`                | WEB-UX-6         |
+| WEB-UX-4 | 2     | Homepage - hero, sections marketing           | Haute    | `feature/web-ui-homepage`               | WEB-UX-1, WEB-UX-3 |
+| WEB-UX-5 | 3     | Recherche unifiée - onglets & formulaires     | Haute    | `feature/web-ui-search-forms`           | WEB-UX-1         |
+| WEB-UX-6 | 3     | Listes & filtres - pattern vertical           | Haute    | `feature/web-ui-listings`               | WEB-UX-1, WEB-UX-5 |
+| WEB-UX-7 | 4     | Hôtels - fiche & galerie (référence)          | Moyenne  | `feature/web-ui-hotels-detail`          | WEB-UX-6         |
+| WEB-UX-8 | 4     | Vols - liste, fiche, classes                  | Moyenne  | `feature/web-ui-flights`                | WEB-UX-6         |
 | WEB-UX-9 | 4     | Locations véhicules                           | Moyenne  | `feature/web-ui-cars`                   | WEB-UX-6         |
-| WEB-UX-10| 4     | Croisières — itinéraire & cabines             | Moyenne  | `feature/web-ui-cruises`                | WEB-UX-6         |
+| WEB-UX-10| 4     | Croisières - itinéraire & cabines             | Moyenne  | `feature/web-ui-cruises`                | WEB-UX-6         |
 | WEB-UX-11| 4     | Activités / tours                             | Moyenne  | `feature/web-ui-activities`             | WEB-UX-6         |
 | WEB-UX-12| 4     | Forfaits combinés                             | Moyenne  | `feature/web-ui-packages`               | WEB-UX-6         |
 | WEB-UX-13| 5     | Sidebar réservation & sticky CTA              | Haute    | `feature/web-ui-booking-sidebar`        | WEB-UX-1         |
@@ -133,7 +133,7 @@ WEB-UX-17 → WEB-UX-18 → WEB-UX-19 → WEB-UX-20
 - Une PR = un livrable WEB-UX testable visuellement
 - Titre PR exemple : `[WEB-UX-6] Web design: unified listing filters & product cards`
 - Corps PR : résumé + IDs suggestion couverts + plan de test + captures avant/après (desktop + mobile)
-- Ne pas mélanger refonte fonctionnelle (#67–72 roadmap) et polish pur — séparer PRs si les deux sont nécessaires
+- Ne pas mélanger refonte fonctionnelle (#67–72 roadmap) et polish pur - séparer PRs si les deux sont nécessaires
 
 ---
 
@@ -141,12 +141,12 @@ WEB-UX-17 → WEB-UX-18 → WEB-UX-19 → WEB-UX-20
 
 | Aspect                     | État | Observation                                                                 |
 | -------------------------- | ---- | --------------------------------------------------------------------------- |
-| Design system partagé      | ⚠️   | `Button`, `Card`, `Input`, `AppShell` — cartes produit dupliquées par vertical |
+| Design system partagé      | ⚠️   | `Button`, `Card`, `Input`, `AppShell` - cartes produit dupliquées par vertical |
 | Homepage marketing         | ✅   | Hero, onglets recherche, destinations, partenaires, i18n FR/EN/ES           |
 | Header / footer            | ✅   | Nav multi-verticales, thème clair/sombre, langue, branding dynamique        |
-| Recherche hôtels           | ✅   | Formulaire + liste + fiche riche (galerie, chambres, avis) — **référence**  |
+| Recherche hôtels           | ✅   | Formulaire + liste + fiche riche (galerie, chambres, avis) - **référence**  |
 | Autres verticales          | ⚠️   | Pages présentes ; cohérence visuelle inégale vs hôtels                      |
-| Cartes produit             | ⚠️   | `HotelCard`, `FlightCard`, `CarCard`… — patterns similaires mais non unifiés |
+| Cartes produit             | ⚠️   | `HotelCard`, `FlightCard`, `CarCard`… - patterns similaires mais non unifiés |
 | Sidebar réservation        | ⚠️   | Un sidebar par vertical ; structure proche mais styles divergents           |
 | Checkout                   | ⚠️   | Fonctionnel (Stripe) ; étapes visuelles peu guidées                         |
 | Compte client              | ⚠️   | `AccountShell` basique ; nav latérale simple                                |
@@ -171,15 +171,15 @@ Ces améliorations bénéficient à **toutes** les verticales. Privilégier `pac
 
 | Composant              | Priorité  | Description                                                                 |
 | ---------------------- | --------- | --------------------------------------------------------------------------- |
-| `ProductCard`          | **Haute** | Image, titre, meta, prix, CTA — base pour hôtel/vol/voiture/croisière/activité |
+| `ProductCard`          | **Haute** | Image, titre, meta, prix, CTA - base pour hôtel/vol/voiture/croisière/activité |
 | `SearchFormShell`      | **Haute** | Conteneur formulaire recherche (tabs + champs + submit)                     |
-| `FilterBar`            | **Haute** | Tri, filtres, compteur résultats — listes verticales                        |
+| `FilterBar`            | **Haute** | Tri, filtres, compteur résultats - listes verticales                        |
 | `PageHero`             | **Moyenne** | Titre page liste/détail + breadcrumb + description                        |
 | `PriceDisplay`         | **Moyenne** | Prix barré, devise, « à partir de », taxes incluses                       |
 | `StarRating`           | **Moyenne** | Unifier `hotels/star-rating.tsx` et duplications inline                     |
 | `BookingSidebarShell`  | **Haute** | Layout sticky : récap, dates, CTA réserver                                  |
 | `EmptyState`           | **Moyenne** | Illustration légère + message + CTA retour recherche                      |
-| `Skeleton` variants    | **Moyenne** | Carte, galerie, sidebar — aligner admin UX-1 si disponible                  |
+| `Skeleton` variants    | **Moyenne** | Carte, galerie, sidebar - aligner admin UX-1 si disponible                  |
 
 ### 2. Typographie & espacement (WEB-UX-2)
 
@@ -223,7 +223,7 @@ Ces améliorations bénéficient à **toutes** les verticales. Privilégier `pac
 
 ---
 
-## Par module — suggestions prioritaires
+## Par module - suggestions prioritaires
 
 ### Shell & homepage (WEB-UX-3, WEB-UX-4)
 
@@ -296,7 +296,7 @@ Ces améliorations bénéficient à **toutes** les verticales. Privilégier `pac
 ## Checklist qualité par PR design
 
 - [ ] Utilise composants fondation WEB-UX-1 (ou pattern documenté)
-- [ ] Tokens `--atg-*` / classes `text-atg-fg` — pas de gris hardcodés nouveaux
+- [ ] Tokens `--atg-*` / classes `text-atg-fg` - pas de gris hardcodés nouveaux
 - [ ] Mode clair + sombre vérifiés
 - [ ] Responsive testé ≤ 768px (sidebar, grilles, nav)
 - [ ] Textes via `apps/web/messages/*.json` (fr, en, es)
@@ -330,7 +330,7 @@ node scripts/check-i18n-parity.mjs
 
 ## Prompts détaillés (copier-coller dans Cursor Agent)
 
-### WEB-UX-1 — Fondations — composants web réutilisables
+### WEB-UX-1 - Fondations - composants web réutilisables
 
 **Branche :** `feature/web-ui-foundation`
 
@@ -338,7 +338,7 @@ node scripts/check-i18n-parity.mjs
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/web-ui-foundation`.
 
-Livrable WEB-UX-1 : Fondations — composants web réutilisables
+Livrable WEB-UX-1 : Fondations - composants web réutilisables
 Références :
 - apps/web/components/hotels/hotel-card.tsx (pattern carte la plus aboutie)
 - packages/ui/src/components/
@@ -361,7 +361,7 @@ Contraintes :
 À la fin : fichiers modifiés, IDs T1–T2 couverts si applicable, commandes test.
 ```
 
-### WEB-UX-2 — Tokens, typo & cohérence couleurs
+### WEB-UX-2 - Tokens, typo & cohérence couleurs
 
 **Branche :** `feature/web-ui-theme-tokens`
 
@@ -379,7 +379,7 @@ Objectif :
 Scope limité : pas de refonte layout, uniquement tokens et typo.
 ```
 
-### WEB-UX-3 — Header, footer & navigation globale
+### WEB-UX-3 - Header, footer & navigation globale
 
 **Branche :** `feature/web-ui-shell`
 
@@ -398,12 +398,12 @@ Objectif :
 Test : naviguer toutes verticales + compte, clair/sombre, 375px width.
 ```
 
-### WEB-UX-4 — Homepage — hero & sections marketing
+### WEB-UX-4 - Homepage - hero & sections marketing
 
 **Branche :** `feature/web-ui-homepage`
 
 ```
-Livrable WEB-UX-4 : Homepage — hero, sections marketing
+Livrable WEB-UX-4 : Homepage - hero, sections marketing
 Branche : `feature/web-ui-homepage`
 
 Fichiers : apps/web/app/page.tsx, components/home/*
@@ -417,12 +417,12 @@ Objectif :
 Test : / en fr, en, es + dark mode.
 ```
 
-### WEB-UX-5 — Recherche unifiée — onglets & formulaires
+### WEB-UX-5 - Recherche unifiée - onglets & formulaires
 
 **Branche :** `feature/web-ui-search-forms`
 
 ```
-Livrable WEB-UX-5 : Recherche unifiée — onglets & formulaires
+Livrable WEB-UX-5 : Recherche unifiée - onglets & formulaires
 Branche : `feature/web-ui-search-forms`
 
 Références :
@@ -434,15 +434,15 @@ Objectif :
 - Chaque onglet soumet vers la bonne route vertical (L1)
 - Formulaires vols, voitures, croisières, activités alignés visuellement sur hôtels (L2)
 
-Ne pas implémenter nouvelles API — design et routing uniquement si déjà supporté.
+Ne pas implémenter nouvelles API - design et routing uniquement si déjà supporté.
 ```
 
-### WEB-UX-6 — Listes & filtres — pattern vertical
+### WEB-UX-6 - Listes & filtres - pattern vertical
 
 **Branche :** `feature/web-ui-listings`
 
 ```
-Livrable WEB-UX-6 : Listes & filtres — pattern vertical
+Livrable WEB-UX-6 : Listes & filtres - pattern vertical
 Branche : `feature/web-ui-listings`
 
 Objectif :
@@ -454,7 +454,7 @@ Objectif :
 Référence visuelle : apps/web/components/hotels/hotels-page-content.tsx
 ```
 
-### WEB-UX-7 — Hôtels — fiche & galerie (référence)
+### WEB-UX-7 - Hôtels - fiche & galerie (référence)
 
 **Branche :** `feature/web-ui-hotels-detail`
 
@@ -462,7 +462,7 @@ Référence visuelle : apps/web/components/hotels/hotels-page-content.tsx
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/web-ui-hotels-detail`.
 
-Livrable WEB-UX-7 : Hôtels — fiche & galerie (référence)
+Livrable WEB-UX-7 : Hôtels - fiche & galerie (référence)
 Dépend de : WEB-UX-1, WEB-UX-6
 
 Références :
@@ -487,7 +487,7 @@ Critères :
 À la fin : fichiers modifiés, IDs H1–H2, commandes test.
 ```
 
-### WEB-UX-8 — Vols — liste, fiche, classes
+### WEB-UX-8 - Vols - liste, fiche, classes
 
 **Branche :** `feature/web-ui-flights`
 
@@ -495,13 +495,13 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/web-ui-flights`.
 
-Livrable WEB-UX-8 : Vols — liste, fiche, classes
+Livrable WEB-UX-8 : Vols - liste, fiche, classes
 Dépend de : WEB-UX-6
 
 Références :
 - apps/web/components/flights/ (flights-page-content, flight-card, flight-detail-page-content)
 - flight-itinerary-section.tsx, flight-classes-section.tsx, flight-booking-sidebar.tsx
-- docs/roadmap-development.md livrable #67 (fonctionnel — ne pas mélanger si gros scope)
+- docs/roadmap-development.md livrable #67 (fonctionnel - ne pas mélanger si gros scope)
 
 Implémenter :
 - F1 : Timeline escales visuelle améliorée (badges IATA, durée, stack mobile)
@@ -516,7 +516,7 @@ Critères :
 À la fin : fichiers modifiés, IDs F1–F2, pnpm dev:web + test:e2e flight-checkout si touché.
 ```
 
-### WEB-UX-9 — Locations véhicules
+### WEB-UX-9 - Locations véhicules
 
 **Branche :** `feature/web-ui-cars`
 
@@ -524,7 +524,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/web-ui-cars`.
 
-Livrable WEB-UX-9 : Locations véhicules — design
+Livrable WEB-UX-9 : Locations véhicules - design
 Dépend de : WEB-UX-6
 
 Références :
@@ -543,7 +543,7 @@ Critères :
 À la fin : fichiers modifiés, ID V1, test /cars et /cars/[id].
 ```
 
-### WEB-UX-10 — Croisières — itinéraire & cabines
+### WEB-UX-10 - Croisières - itinéraire & cabines
 
 **Branche :** `feature/web-ui-cruises`
 
@@ -551,7 +551,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/web-ui-cruises`.
 
-Livrable WEB-UX-10 : Croisières — itinéraire & cabines
+Livrable WEB-UX-10 : Croisières - itinéraire & cabines
 Dépend de : WEB-UX-6
 
 Références :
@@ -560,7 +560,7 @@ Références :
 - docs/roadmap-development.md livrables #69, spec cruise-checkout.spec.ts
 
 Implémenter :
-- CR1 : Timeline ports (ordre, dates, nom port) — horizontal desktop, vertical mobile
+- CR1 : Timeline ports (ordre, dates, nom port) - horizontal desktop, vertical mobile
 - Cabines en cards avec capacité, pont, prix « à partir de »
 - cruise-card aligné ProductCard
 
@@ -571,7 +571,7 @@ Critères :
 À la fin : fichiers modifiés, ID CR1, test /cruises/[id].
 ```
 
-### WEB-UX-11 — Activités / tours
+### WEB-UX-11 - Activités / tours
 
 **Branche :** `feature/web-ui-activities`
 
@@ -579,7 +579,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/web-ui-activities`.
 
-Livrable WEB-UX-11 : Activités / tours — design
+Livrable WEB-UX-11 : Activités / tours - design
 Dépend de : WEB-UX-6
 
 Références :
@@ -599,7 +599,7 @@ Critères :
 À la fin : fichiers modifiés, ID A1, test /activities/[id].
 ```
 
-### WEB-UX-12 — Forfaits combinés
+### WEB-UX-12 - Forfaits combinés
 
 **Branche :** `feature/web-ui-packages`
 
@@ -607,7 +607,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/web-ui-packages`.
 
-Livrable WEB-UX-12 : Forfaits combinés — design
+Livrable WEB-UX-12 : Forfaits combinés - design
 Dépend de : WEB-UX-6
 
 Références :
@@ -627,7 +627,7 @@ Critères :
 À la fin : fichiers modifiés, ID P1, test /packages/[id].
 ```
 
-### WEB-UX-13 — Sidebar réservation & sticky CTA
+### WEB-UX-13 - Sidebar réservation & sticky CTA
 
 **Branche :** `feature/web-ui-booking-sidebar`
 
@@ -645,12 +645,12 @@ Objectif :
 Test : fiche hôtel + vol + activité, 375px.
 ```
 
-### WEB-UX-14 — Parcours checkout
+### WEB-UX-14 - Parcours checkout
 
 **Branche :** `feature/web-ui-checkout`
 
 ```
-Livrable WEB-UX-14 : Parcours checkout — design stepper
+Livrable WEB-UX-14 : Parcours checkout - design stepper
 Branche : `feature/web-ui-checkout`
 
 Fichiers : apps/web/app/booking/, apps/web/app/reservations/, components/reservations/
@@ -663,7 +663,7 @@ Objectif :
 Lancer : pnpm --filter @africatourismgate/web test:e2e après changements.
 ```
 
-### WEB-UX-15 — Espace compte client
+### WEB-UX-15 - Espace compte client
 
 **Branche :** `feature/web-ui-account`
 
@@ -671,7 +671,7 @@ Lancer : pnpm --filter @africatourismgate/web test:e2e après changements.
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/web-ui-account`.
 
-Livrable WEB-UX-15 : Espace compte client — design
+Livrable WEB-UX-15 : Espace compte client - design
 Dépend de : WEB-UX-1, WEB-UX-3
 
 Références :
@@ -680,9 +680,9 @@ Références :
 - Specs : customer-account.spec.ts, customer-loyalty.spec.ts
 
 Implémenter :
-- AC1 : Nav compte — sidebar ou tabs plus visible (état actif, icônes optionnelles)
-- AC2 : Liste réservations — badges statut colorés (confirmé, en attente, annulé) + filtre rapide
-- AC3 : Détail réservation — timeline statuts si données API disponibles, sinon placeholder structuré
+- AC1 : Nav compte - sidebar ou tabs plus visible (état actif, icônes optionnelles)
+- AC2 : Liste réservations - badges statut colorés (confirmé, en attente, annulé) + filtre rapide
+- AC3 : Détail réservation - timeline statuts si données API disponibles, sinon placeholder structuré
 - Harmoniser breadcrumb account-shell avec PageHero
 
 Critères :
@@ -692,7 +692,7 @@ Critères :
 À la fin : fichiers modifiés, IDs AC1–AC3, test:e2e customer-account.
 ```
 
-### WEB-UX-16 — Auth booking (login, OAuth, logout)
+### WEB-UX-16 - Auth booking (login, OAuth, logout)
 
 **Branche :** `feature/web-ui-booking-auth`
 
@@ -700,7 +700,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/web-ui-booking-auth`.
 
-Livrable WEB-UX-16 : Auth booking — polish design
+Livrable WEB-UX-16 : Auth booking - polish design
 Dépend de : WEB-UX-3
 
 Références :
@@ -722,7 +722,7 @@ Critères :
 À la fin : fichiers modifiés, ID AU1, captures login clair/sombre.
 ```
 
-### WEB-UX-17 — Support, FAQ & avis
+### WEB-UX-17 - Support, FAQ & avis
 
 **Branche :** `feature/web-ui-support-reviews`
 
@@ -730,7 +730,7 @@ Critères :
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/web-ui-support-reviews`.
 
-Livrable WEB-UX-17 : Support, FAQ & avis — design
+Livrable WEB-UX-17 : Support, FAQ & avis - design
 Dépend de : WEB-UX-1
 
 Références :
@@ -742,7 +742,7 @@ Références :
 Implémenter :
 - SP1 : FAQ accordéon accessible (aria-expanded, clavier Enter/Space)
 - support-ticket-form : sections Cards, validation visuelle champs
-- RV1 : Formulaire avis — étoiles interactives, compteur caractères, succès toast ou bannière
+- RV1 : Formulaire avis - étoiles interactives, compteur caractères, succès toast ou bannière
 - hotel-reviews-section : avatars initiales, date relative i18n
 
 Critères :
@@ -752,7 +752,7 @@ Critères :
 À la fin : fichiers modifiés, IDs SP1, RV1, test:e2e support + reviews.
 ```
 
-### WEB-UX-18 — Empty states & pages coming-soon
+### WEB-UX-18 - Empty states & pages coming-soon
 
 **Branche :** `feature/web-ui-empty-states`
 
@@ -769,7 +769,7 @@ Références :
 - EmptyState (WEB-UX-1)
 
 Implémenter :
-- E1 : Pages coming-soon et [vertical] — illustration légère SVG ou emoji, titre + description i18n, CTA retour recherche/home
+- E1 : Pages coming-soon et [vertical] - illustration légère SVG ou emoji, titre + description i18n, CTA retour recherche/home
 - Remplacer listes vides génériques par EmptyState (recherche sans résultat, compte sans réservation)
 - Cohérence visuelle avec tokens atg (pas de bordures gray-100 ad hoc)
 
@@ -780,7 +780,7 @@ Critères :
 À la fin : fichiers modifiés, ID E1, liste pages mises à jour.
 ```
 
-### WEB-UX-19 — Mobile, responsive & touch
+### WEB-UX-19 - Mobile, responsive & touch
 
 **Branche :** `feature/web-ui-mobile-polish`
 
@@ -805,7 +805,7 @@ Pages prioritaires :
 Livrer : liste pages testées + captures 375px clair/sombre.
 ```
 
-### WEB-UX-20 — Performance perçue & skeletons
+### WEB-UX-20 - Performance perçue & skeletons
 
 **Branche :** `feature/web-ui-loading-states`
 
@@ -828,7 +828,7 @@ Implémenter :
 - Boutons submit : spinner inline pendant fetch
 
 Contraintes :
-- Pas de changement logique fetch — uniquement états loading UI
+- Pas de changement logique fetch - uniquement états loading UI
 - Éviter layout shift (skeleton même hauteur que contenu final)
 
 Critères :

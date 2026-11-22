@@ -9,7 +9,7 @@ export class ResendVerificationDto {
 }
 
 export class ResendVerificationResponseDto {
-  @ApiProperty({ description: 'New verification id — replace the one in the client URL' })
+  @ApiProperty({ description: 'New verification id - replace the one in the client URL' })
   verificationId!: string;
 
   @ApiProperty({ example: 'Un nouveau code a été envoyé.' })

@@ -121,7 +121,7 @@
   "fidelite": {
     "comptes": {
       "title": "Cuentas de fidelidad",
-      "description": "Programa OneKey — saldo de puntos, niveles y última actividad. Ajuste manual reservado al superadministrador."
+      "description": "Programa OneKey - saldo de puntos, niveles y última actividad. Ajuste manual reservado al superadministrador."
     }
   },
   "produits": {
@@ -978,7 +978,7 @@
     "metaTitle": "Mi perfil",
     "backLabel": "Volver al panel",
     "photo": "Foto de perfil",
-    "photoHint": "JPEG, PNG o WebP — 5 MB máx.",
+    "photoHint": "JPEG, PNG o WebP - 5 MB máx.",
     "photoAdd": "Añadir una foto",
     "photoChange": "Cambiar foto",
     "photoUploading": "Enviando…",

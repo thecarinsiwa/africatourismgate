@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { BaseAuditEntity } from '../common/entities/base-audit.entity';
 
 /**
- * Taux de change manuels (MVP) — conversion à la comptabilisation.
+ * Taux de change manuels (MVP) - conversion à la comptabilisation.
  * Convention : 1 unité `fromCurrency` = `rate` unités `toCurrency`.
  */
 @Entity('exchange_rates')

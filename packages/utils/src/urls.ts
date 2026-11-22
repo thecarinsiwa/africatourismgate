@@ -4,7 +4,7 @@ const PRODUCTION_WEB_URL = 'https://africatourismgate.org';
 /** Characters that break out of CSS `url("…")` when interpolated raw. */
 const CSS_URL_BREAKOUT = /["'()\\\n\r\f]/;
 
-/** Control chars (C0 + DEL) or backslash — common bypass / CSS breakout vectors. */
+/** Control chars (C0 + DEL) or backslash - common bypass / CSS breakout vectors. */
 function hasUnsafeUrlChars(value: string): boolean {
   for (let i = 0; i < value.length; i += 1) {
     const code = value.charCodeAt(i);
@@ -70,7 +70,7 @@ export function safeCssUrl(value: string | null | undefined): string | null {
 
 /**
  * Back-office admin (apps/admin).
- * Production: https://app-africatourismgate.org — never the root domain.
+ * Production: https://app-africatourismgate.org - never the root domain.
  */
 export function getAdminAppUrl(): string {
   const fromEnv = process.env.NEXT_PUBLIC_ADMIN_URL?.trim();
@@ -104,7 +104,7 @@ export function getAdminLoginUrl(): string {
   return `${getAdminAppUrl()}/login`;
 }
 
-/** Origin for static uploads (`/uploads/...`) — API base URL without `/api`. */
+/** Origin for static uploads (`/uploads/...`) - API base URL without `/api`. */
 export function getApiPublicOrigin(): string {
   const fromEnv = process.env.NEXT_PUBLIC_API_URL?.trim();
   if (fromEnv) return fromEnv.replace(/\/$/, '').replace(/\/api$/, '');

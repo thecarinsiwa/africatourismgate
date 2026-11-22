@@ -115,7 +115,7 @@ export function BlogEngagementSection({ slug, title }: BlogEngagementSectionProp
       setViewerReaction(next.viewerReaction);
       setComments(next.comments);
     } catch {
-      // Ignore — keep previous state.
+      // Ignore - keep previous state.
     } finally {
       setReactionBusy(false);
     }

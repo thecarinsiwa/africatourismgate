@@ -468,7 +468,7 @@ async function selectLocale(
   await page.getByRole('menuitemradio', { name: localeName }).click();
 }
 
-test.describe('Admin help center — locale smoke', () => {
+test.describe('Admin help center - locale smoke', () => {
   test.describe.configure({ mode: 'serial' });
 
   test.beforeEach(async ({ page }) => {

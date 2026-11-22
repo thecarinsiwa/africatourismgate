@@ -112,7 +112,7 @@ export class PackageMapPointsService {
 
         return [
           this.toMapPoint({
-            label: `${item.label} — ${stop.name}`,
+            label: `${item.label} - ${stop.name}`,
             latitude,
             longitude,
             itemType: item.itemType,
@@ -268,7 +268,7 @@ export class PackageMapPointsService {
     if (!route || route.deletedAt) {
       return [];
     }
-    // Free-text cities have no coordinates — no map points for tronçons.
+    // Free-text cities have no coordinates - no map points for tronçons.
     void item;
     return [];
   }

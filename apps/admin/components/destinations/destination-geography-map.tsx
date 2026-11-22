@@ -126,7 +126,7 @@ export function DestinationGeographyMap({
       mapRef.current?.remove();
       mapRef.current = null;
     };
-    // Init once — coords/country handled in dedicated effects.
+    // Init once - coords/country handled in dedicated effects.
   }, []);
 
   useEffect(() => {
@@ -217,7 +217,7 @@ export function DestinationGeographyMap({
 
         const bounds = layer.getBounds();
         if (bounds.isValid()) {
-          // Cadre uniquement le pays — le marqueur peut rester hors zone
+          // Cadre uniquement le pays - le marqueur peut rester hors zone
           // jusqu'à ce que l'utilisateur reclique (ex. changement de pays).
           map.fitBounds(bounds, {
             padding: [28, 28],

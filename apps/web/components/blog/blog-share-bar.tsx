@@ -43,7 +43,7 @@ export function BlogShareBar({ title, url }: BlogShareBarProps) {
     try {
       await navigator.share({ title, url });
     } catch {
-      // User cancelled — ignore.
+      // User cancelled - ignore.
     }
   }, [title, url]);
 

@@ -97,7 +97,7 @@ INSERT INTO `about_pages` (
   'governance',
   'Notre gouvernance',
   'Une structure de gouvernance transparente au service de nos utilisateurs et partenaires.',
-  '<p>Africa Tourism Gate est dirigée par un conseil d''administration et une direction opérationnelle responsables de la stratégie, de la conformité et de la qualité de service.</p><p>Les décisions majeures — politique tarifaire, partenariats stratégiques, standards de sécurité — sont prises de manière collégiale et documentées.</p><p>Nous publions régulièrement nos rapports d''activité et nos indicateurs clés pour assurer la transparence envers nos parties prenantes.</p>',
+  '<p>Africa Tourism Gate est dirigée par un conseil d''administration et une direction opérationnelle responsables de la stratégie, de la conformité et de la qualité de service.</p><p>Les décisions majeures - politique tarifaire, partenariats stratégiques, standards de sécurité - sont prises de manière collégiale et documentées.</p><p>Nous publions régulièrement nos rapports d''activité et nos indicateurs clés pour assurer la transparence envers nos parties prenantes.</p>',
   NULL,
   'published',
   '2026-06-01 10:00:00',

@@ -11,7 +11,7 @@ export type SearchAdminPagesOptions = {
 
 /**
  * Source locale `pages` : filtre la nav admin (et aliases « aide/help »).
- * Ne dépend pas du shell UI — `navItems` fournis via le contexte.
+ * Ne dépend pas du shell UI - `navItems` fournis via le contexte.
  */
 export async function searchAdminPages(
   query: string,

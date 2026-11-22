@@ -7,7 +7,7 @@ import { getPublicFooter } from './footer';
 
 /**
  * Loads CMS footer copy for the active locale.
- * Returns `null` while loading or if the public endpoint fails — callers
+ * Returns `null` while loading or if the public endpoint fails - callers
  * should fall back to next-intl `footer.*` strings.
  */
 export function useResolvedPublicFooter(): PublicFooter | null {

@@ -53,7 +53,7 @@
   }
 }
 
-/** Impression reçu caisse — masquer chrome POS, imprimer le reçu seul. */
+/** Impression reçu caisse - masquer chrome POS, imprimer le reçu seul. */
 @media print {
   @page {
     margin: 12mm;

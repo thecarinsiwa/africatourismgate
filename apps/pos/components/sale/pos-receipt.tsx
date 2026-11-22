@@ -139,7 +139,7 @@ export function PosReceipt({ data }: PosReceiptProps) {
         Merci pour votre achat !
       </p>
       <p className="mt-1 text-center text-xs text-gray-400">
-        {data.displayName} — {data.currency}
+        {data.displayName} - {data.currency}
       </p>
     </article>
   );

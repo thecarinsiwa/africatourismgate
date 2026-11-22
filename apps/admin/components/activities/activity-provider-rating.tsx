@@ -32,7 +32,7 @@ export function ActivityProviderRating({ className }: ActivityProviderRatingProp
           <StarOutline key={index} className="h-3.5 w-3.5" />
         ))}
       </span>
-      <span className="text-sm tabular-nums text-atg-muted">—</span>
+      <span className="text-sm tabular-nums text-atg-muted">-</span>
     </div>
   );
 }

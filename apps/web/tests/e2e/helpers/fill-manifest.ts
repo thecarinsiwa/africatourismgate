@@ -64,7 +64,7 @@ export async function mockManifestApi(page: Page): Promise<void> {
   });
 }
 
-/** Fill traveler nationality SearchableSelect (label Nationalité — not emergency "Pays"). */
+/** Fill traveler nationality SearchableSelect (label Nationalité - not emergency "Pays"). */
 async function selectTravelerNationality(page: Page, index: number, countryQuery: string) {
   const nat = page
     .getByRole('button', {
@@ -77,33 +77,65 @@ async function selectTravelerNationality(page: Page, index: number, countryQuery
   await page.getByRole('option').filter({ hasText: /\(CD\)/i }).first().click();
 }
 
+const EMERGENCY_ACCORDION_NAME =
+  /contact d['’]urgence|emergency contact|contacto de emergencia/i;
+const EMERGENCY_NAME_LABEL =
+  /nom du contact|contact name|nombre del contacto/i;
+const TRAVELER_TOGGLE_NAME = /^(voyageur|traveler|viajero)\s+\d+$/i;
+
+export async function ensureEmergencyContactExpanded(page: Page): Promise<void> {
+  const nameField = page.getByLabel(EMERGENCY_NAME_LABEL).first();
+  if (await nameField.isVisible().catch(() => false)) {
+    return;
+  }
+
+  // Prefer the collapsed chevron (aria-expanded=false + exact section title).
+  const collapsedChevron = page
+    .getByRole('button', { name: EMERGENCY_ACCORDION_NAME, expanded: false })
+    .last();
+  if ((await collapsedChevron.count()) > 0) {
+    await collapsedChevron.click();
+  } else {
+    await page.getByRole('button', { name: EMERGENCY_ACCORDION_NAME }).first().click();
+  }
+
+  await nameField.waitFor({ state: 'visible', timeout: 15_000 });
+}
+
 /** Fill booking-level emergency contact + required traveler fields on checkout recap. */
 export async function fillCheckoutManifest(page: Page): Promise<number> {
-  // Labels include a required "*" — never use ^…$ anchors on getByLabel.
+  // Labels include a required "*" - never use ^…$ anchors on getByLabel.
+  // Emergency / traveler sections are collapsed accordions on recap by default.
+  await ensureEmergencyContactExpanded(page);
+  await page.getByLabel(EMERGENCY_NAME_LABEL).first().fill('Contact Urgence');
   // Emergency phone is the only input[type=tel] on the recap (travelers have no tel field).
-  await page
-    .getByLabel(/nom du contact|contact name|nombre del contacto/i)
-    .first()
-    .fill('Contact Urgence');
   await page.locator('input[type="tel"]').first().fill('+243900000001');
 
-  const nameInputs = page.getByLabel(/nom complet|full name|nombre completo/i);
-  const count = await nameInputs.count();
-  for (let i = 0; i < count; i += 1) {
-    await nameInputs.nth(i).fill(`Voyageur ${i + 1}`);
-  }
+  // Chevron buttons use aria-label "Voyageur N" / "Traveler N" / "Viajero N".
+  const travelerToggles = page.getByRole('button', { name: TRAVELER_TOGGLE_NAME });
+  await travelerToggles.first().waitFor({ state: 'visible', timeout: 15_000 });
+  const count = await travelerToggles.count();
 
-  // Index from 0: emergency country is labeled "Pays" and is excluded from this locator.
   for (let i = 0; i < count; i += 1) {
-    await selectTravelerNationality(page, i, 'Congo');
-  }
-
-  const idInputs = page.getByLabel(
-    /n[°º]\s*pi[eè]ce|id\s*\/\s*passport|n\.?\s*º?\s*de documento|passport number/i,
-  );
-  const idCount = await idInputs.count();
-  for (let i = 0; i < idCount; i += 1) {
-    await idInputs.nth(i).fill(`P${100000 + i}`);
+    const toggle = travelerToggles.nth(i);
+    const expanded = await toggle.getAttribute('aria-expanded');
+    if (expanded !== 'true') {
+      await toggle.click();
+    }
+    // Use textbox role — getByLabel also matches the traveler fieldset whose
+    // accessible name includes the collapsed "N° pièce d'identité: …" summary.
+    const nameInput = page.getByRole('textbox', {
+      name: /nom complet|full name|nombre completo/i,
+    });
+    await nameInput.waitFor({ state: 'visible', timeout: 10_000 });
+    await nameInput.fill(`Voyageur ${i + 1}`);
+    // Only the expanded traveler nationality is in the DOM (Pays ≠ Nationalité).
+    await selectTravelerNationality(page, 0, 'Congo');
+    await page
+      .getByRole('textbox', {
+        name: /n[°º]\s*pi[eè]ce|id\s*\/\s*passport|n\.?\s*º?\s*de documento|passport number/i,
+      })
+      .fill(`P${100000 + i}`);
   }
 
   return count;

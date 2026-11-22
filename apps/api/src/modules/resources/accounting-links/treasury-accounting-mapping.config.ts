@@ -1,5 +1,5 @@
 /**
- * @deprecated SYSCO-004 — remplacé par la table `accounting_mapping_rules`
+ * @deprecated SYSCO-004 - remplacé par la table `accounting_mapping_rules`
  * et `AccountingMappingEngine`. Conservé uniquement pour référence historique
  * des clés stub TRESO-039. Ne plus importer en production.
  *
@@ -8,7 +8,7 @@
 export type AccountingMappingRule = {
   key: string;
   fundOpType: 'fund_entry' | 'fund_exit';
-  /** @deprecated Hints texte — utiliser debit_account_id / credit_account_id en DB */
+  /** @deprecated Hints texte - utiliser debit_account_id / credit_account_id en DB */
   debitAccountHint: string;
   creditAccountHint: string;
   label: string;
@@ -27,14 +27,14 @@ export const TREASURY_ACCOUNTING_MAPPING_CONFIG: AccountingMappingConfig = {
   version: 1,
   stub: true,
   description:
-    'DEPRECATED — utiliser accounting_mapping_rules (SYSCO-004).',
+    'DEPRECATED - utiliser accounting_mapping_rules (SYSCO-004).',
   rules: [
     {
       key: 'fund_entry.default',
       fundOpType: 'fund_entry',
       debitAccountHint: '57',
       creditAccountHint: '70',
-      label: 'Entrée de fonds — mapping par défaut',
+      label: 'Entrée de fonds - mapping par défaut',
     },
     {
       key: 'fund_entry.booking_payment',
@@ -48,7 +48,7 @@ export const TREASURY_ACCOUNTING_MAPPING_CONFIG: AccountingMappingConfig = {
       fundOpType: 'fund_exit',
       debitAccountHint: '60',
       creditAccountHint: '57',
-      label: 'Sortie de fonds — mapping par défaut',
+      label: 'Sortie de fonds - mapping par défaut',
     },
     {
       key: 'fund_exit.expense_request',

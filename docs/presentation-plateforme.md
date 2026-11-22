@@ -1,7 +1,7 @@
-# Africa Tourism Gate — Présentation de la plateforme
+# Africa Tourism Gate - Présentation de la plateforme
 
 > **Date :** 12 juillet 2026  
-> **Objectif :** présenter l’état d’avancement du projet — ce qui est livré, ce qui reste à faire, et la vision produit.
+> **Objectif :** présenter l’état d’avancement du projet - ce qui est livré, ce qui reste à faire, et la vision produit.
 
 ---
 
@@ -26,7 +26,7 @@ Elle couvre l’ensemble du parcours client et opérationnel :
 
 ## 2. Architecture technique
 
-### Monorepo pnpm — 5 applications + 5 packages partagés
+### Monorepo pnpm - 5 applications + 5 packages partagés
 
 ```
 africatourismgate/
@@ -77,7 +77,7 @@ africatourismgate/
 
 ## 3. Ce qui est déjà fait
 
-### 3.1 API — Cœur métier (`apps/api`)
+### 3.1 API - Cœur métier (`apps/api`)
 
 **Authentification & sécurité**
 - Login, inscription (staff + client), refresh token, logout
@@ -195,7 +195,7 @@ Interface de gestion opérationnelle complète pour le staff.
 
 ---
 
-### 3.4 Point de vente — POS (`apps/pos`)
+### 3.4 Point de vente - POS (`apps/pos`)
 
 - Authentification employé + sélection d'organisation
 - Vente rapide multi-produits (toutes les verticales)
@@ -204,7 +204,7 @@ Interface de gestion opérationnelle complète pour le staff.
 
 ---
 
-### 3.5 Site GAP — Gorilla Ambassadors Program (`apps/gap`)
+### 3.5 Site GAP - Gorilla Ambassadors Program (`apps/gap`)
 
 - Site dédié au programme de conservation
 - Pages : accueil, à propos, objectifs, UNESCO, activités, médias, dons
@@ -245,7 +245,7 @@ Interface de gestion opérationnelle complète pour le staff.
 
 ---
 
-## 4. Parcours utilisateur — démo suggérée
+## 4. Parcours utilisateur - démo suggérée
 
 ### Parcours client (site web)
 
@@ -276,7 +276,7 @@ Interface de gestion opérationnelle complète pour le staff.
 | Admin | http://localhost:3001/login | `admin@africatourismgate.local` / `ChangeMe123!` |
 | Web | http://localhost:3002 | Inscription client via `/booking/login` |
 | POS | http://localhost:3003/login | Compte employé seed |
-| API Swagger | http://localhost:3000/api | — |
+| API Swagger | http://localhost:3000/api | - |
 
 **Lancer en local :** `pnpm dev` (depuis la racine du monorepo)
 
@@ -284,7 +284,7 @@ Interface de gestion opérationnelle complète pour le staff.
 
 ## 5. Ce qui reste à faire
 
-### Priorité haute — fonctionnalités incomplètes
+### Priorité haute - fonctionnalités incomplètes
 
 | Élément | Description | Impact |
 |---------|-------------|--------|
@@ -293,7 +293,7 @@ Interface de gestion opérationnelle complète pour le staff.
 | **Messages support standalone** | Page `/contenu/messages` en placeholder ; les messages sont gérés dans chaque ticket | UX admin |
 | **Health check DB** | `GET /api/health` ne vérifie pas la connexion MySQL | Observabilité prod |
 
-### Priorité moyenne — qualité & ops
+### Priorité moyenne - qualité & ops
 
 | Élément | Description |
 |---------|-------------|
@@ -303,12 +303,12 @@ Interface de gestion opérationnelle complète pour le staff.
 | **Doc BDD pédagogique** | Fichier annoncé dans le README mais absent du repo |
 | **Roadmap doc** | `docs/roadmap-development.md` (juin 2026) obsolète sur plusieurs points |
 
-### Priorité basse — améliorations UX (roadmaps design)
+### Priorité basse - améliorations UX (roadmaps design)
 
 Deux documents détaillent des PRs UX sans nouvelle feature API :
 
-- **Admin :** `docs/admin-design-improvements.md` — livrables UX-1 à UX-22
-- **Web :** `docs/web-design-improvements.md` — livrables WEB-UX-1 à WEB-UX-20
+- **Admin :** `docs/admin-design-improvements.md` - livrables UX-1 à UX-22
+- **Web :** `docs/web-design-improvements.md` - livrables WEB-UX-1 à WEB-UX-20
 
 Exemples : polish visuel, micro-interactions, accessibilité, responsive, empty states.
 
@@ -325,7 +325,7 @@ Exemples : polish visuel, micro-interactions, accessibilité, responsive, empty 
 
 ---
 
-## 6. Synthèse — tableau de bord d'avancement
+## 6. Synthèse - tableau de bord d'avancement
 
 ### Par couche applicative
 
@@ -411,7 +411,7 @@ R : Non, le POS nécessite une connexion à l'API. Il est conçu pour les guiche
 
 ---
 
-## Annexe — commandes utiles pour la démo
+## Annexe - commandes utiles pour la démo
 
 ```bash
 # Installer les dépendances
@@ -436,4 +436,4 @@ pnpm deploy
 
 ---
 
-*Document généré le 11 juillet 2026 — basé sur l'analyse du code source du monorepo Africa Tourism Gate.*
+*Document généré le 11 juillet 2026 - basé sur l'analyse du code source du monorepo Africa Tourism Gate.*

@@ -67,7 +67,7 @@ INSERT INTO `hero_slides` (
   '00000000-0000-4000-8000-00000000c004',
   'Croisière de 12 jours',
   'ZANZIBAR À MADAGASCAR',
-  'Navigation côtière le long de l''Océan Indien — plages de rêve et faune unique.',
+  'Navigation côtière le long de l''Océan Indien - plages de rêve et faune unique.',
   'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/A_giraffe_with_a_beautiful_background_of_Nairobi_City_Skyline_%28cropped%29.jpg/1280px-A_giraffe_with_a_beautiful_background_of_Nairobi_City_Skyline_%28cropped%29.jpg',
   'Girafe devant la skyline de Nairobi',
   '/cruises',

@@ -1,6 +1,6 @@
-# Module Comptabilité SYSCOHADA — Modèle de domaine (SYSCO-001)
+# Module Comptabilité SYSCOHADA - Modèle de domaine (SYSCO-001)
 
-> **Statut :** spécification **validée pour implémentation** (revue métier oct. 2026 — décisions §3 confirmées).  
+> **Statut :** spécification **validée pour implémentation** (revue métier oct. 2026 - décisions §3 confirmées).  
 > **Périmètre épic :** comptabilité réglementaire OHADA branchée sur le module Trésorerie.  
 > **Amont livré :** stub `accounting_links` (TRESO-039) · hub livres (SYSCO-006) · handoff (TRESO-041).
 
@@ -20,10 +20,10 @@ Compléter la chaîne Trésorerie :
 
 | Branche | Rôle dans cet épic |
 | ------- | ------------------ |
-| **Financière (TRESO)** | Source d’opérations (`fund_entries` / `fund_exits`) — **inchangée** |
+| **Financière (TRESO)** | Source d’opérations (`fund_entries` / `fund_exits`) - **inchangée** |
 | **Comptable (SYSCO)** | Plan, journaux, exercices, écritures, mapping, livres, clôtures MVP |
 
-Référentiel cible : **SYSCOHADA** (Système Comptable OHADA) — classes 1–8, partie double, journaux, états financiers.
+Référentiel cible : **SYSCOHADA** (Système Comptable OHADA) - classes 1–8, partie double, journaux, états financiers.
 
 ---
 
@@ -32,13 +32,13 @@ Référentiel cible : **SYSCOHADA** (Système Comptable OHADA) — classes 1–8
 | Principe | Décision |
 | -------- | -------- |
 | Montants | Entiers en **cents** (`*_cents`), alignés Trésorerie / Bookings |
-| Catalogue devises | Table plateforme `currencies` (`/systeme/devises`) — codes ISO actifs pour tous les sélecteurs ; validation Nest `assertActiveCode` à la création |
+| Catalogue devises | Table plateforme `currencies` (`/systeme/devises`) - codes ISO actifs pour tous les sélecteurs ; validation Nest `assertActiveCode` à la création |
 | Devise opération | ISO 4217 sur chaque `fund_*` ; **défaut formulaires Admin** = `organizations.currency` (Paramètres, ∈ catalogue actif) |
-| Devise de tenue | **Une devise d’exercice** (`accounting_exercises.currency`, ∈ catalogue actif) — typiquement `XOF` ou `XAF` ; distincte de `organizations.currency` |
+| Devise de tenue | **Une devise d’exercice** (`accounting_exercises.currency`, ∈ catalogue actif) - typiquement `XOF` ou `XAF` ; distincte de `organizations.currency` |
 | Conversion | Si `fund_*.currency ≠` devise de tenue : lookup `exchange_rates` (taux **manuels**, TRESO-046) à la date d’op → montants d’écriture en tenue ; `journal_lines.original_*` + `fx_rate` ; **refus** du post si aucun taux applicable |
 | Identifiants | UUID `char(36)` |
 | Multi-tenant | `organization_id` sur **tous** les agrégats comptables |
-| Soft delete | Comptes / règles / journaux : soft-delete possible ; **écritures postées** : pas de delete — contrepassation uniquement |
+| Soft delete | Comptes / règles / journaux : soft-delete possible ; **écritures postées** : pas de delete - contrepassation uniquement |
 | Partie double | Toute écriture : Σ débits = Σ crédits (même devise de tenue) |
 | Idempotence pont | Une opération fond = au plus un `accounting_links` actif (voir §8.3) |
 | Non-objectifs | Ne pas remplacer `payments` ; ne pas fusionner `fund_entries` ↔ `payments` |
@@ -55,7 +55,7 @@ Référentiel cible : **SYSCOHADA** (Système Comptable OHADA) — classes 1–8
 | Multi-devise | Multi-tenue vs une devise d’exercice | **Une devise de tenue / exercice** ; codes ISO issus du catalogue plateforme `currencies` ; conversion à la date d’op via `exchange_rates` (saisie Admin, pas de feed externe MVP) | États OHADA mono-devise ; ops multi-devises restent possibles |
 | Soft-delete + unique | Unique global vs actif seul | Unique `(fund_op_type, fund_op_id)` **parmi `deleted_at IS NULL`** (index partiel ou recreate après soft-delete) | Permet recreate après `skipped` / erreur `pending` |
 | Contrepassation | Update in-place vs nouvelle pièce | **Nouvelle `journal_entry` de contrepassation** ; link historique conservé ; void fond reste bloqué si `linked` | Intégrité légale des pièces |
-| Tiers / immos / stocks | Inclus MVP vs satellite | **Épic satellite** — hors SYSCO-001…012 sauf comptes collectifs minimaux au plan | Focus trésorerie → écritures |
+| Tiers / immos / stocks | Inclus MVP vs satellite | **Épic satellite** - hors SYSCO-001…012 sauf comptes collectifs minimaux au plan | Focus trésorerie → écritures |
 | Coexistence `payments` | Fusion vs écriture séparée | **Écriture SYSCO uniquement via `fund_*`** ; `payments` commerce hors générateur | Handoff §2.7 |
 
 ### 3.1. Éligibilité à la comptabilisation
@@ -98,7 +98,7 @@ erDiagram
 
 ## 5. Entités et schémas
 
-### 5.1. `chart_of_accounts` — Plan comptable
+### 5.1. `chart_of_accounts` - Plan comptable
 
 Comptes SYSCOHADA par organisation (classes 1–8). Sous-comptes = lignes avec `code` plus long + `parent_id` optionnel.
 
@@ -106,7 +106,7 @@ Comptes SYSCOHADA par organisation (classes 1–8). Sous-comptes = lignes avec `
 | ----- | ---- | ----- |
 | `id` | UUID PK | |
 | `organization_id` | UUID FK | |
-| `code` | varchar(20) | Ex. `521`, `5211`, `701` — unique par org (actifs) |
+| `code` | varchar(20) | Ex. `521`, `5211`, `701` - unique par org (actifs) |
 | `label` | varchar(255) | Libellé |
 | `class_number` | tinyint | 1–8 (SYSCOHADA) |
 | `account_type` | enum | Voir §6.1 |
@@ -118,7 +118,7 @@ Comptes SYSCOHADA par organisation (classes 1–8). Sous-comptes = lignes avec `
 
 **Unicité :** `(organization_id, code)` parmi non soft-deleted.
 
-**Seed MVP (SYSCO-002 — org plateforme, codes alignés hints stub) :**
+**Seed MVP (SYSCO-002 - org plateforme, codes alignés hints stub) :**
 
 | Code | Classe | Type | Usage |
 | ---- | ------ | ---- | ----- |
@@ -134,7 +134,7 @@ Comptes SYSCOHADA par organisation (classes 1–8). Sous-comptes = lignes avec `
 
 ---
 
-### 5.2. `accounting_exercises` — Exercices
+### 5.2. `accounting_exercises` - Exercices
 
 | Champ | Type | Notes |
 | ----- | ---- | ----- |
@@ -156,14 +156,14 @@ Comptes SYSCOHADA par organisation (classes 1–8). Sous-comptes = lignes avec `
 | Action | Endpoint / UI | Permission | Comportement |
 | ------ | ------------- | ---------- | ------------ |
 | Créer | `POST /accounting-exercises` · `/tresorerie/comptabilite/exercices` | `accounting.chart.write` | `currency` défaut = `organizations.currency` si omis ; génère périodes **mensuelles** sur `[starts_on, ends_on]` |
-| Modifier | `PATCH /accounting-exercises/:id` | `accounting.chart.write` | `label` libre ; `currency` **seulement** si `status = open` **et** aucune `journal_entries` `posted` pour l’exercice — sinon **409** |
+| Modifier | `PATCH /accounting-exercises/:id` | `accounting.chart.write` | `label` libre ; `currency` **seulement** si `status = open` **et** aucune `journal_entries` `posted` pour l’exercice - sinon **409** |
 | Lire | `GET /accounting-exercises` | `accounting.read` (bridge `treasury.accounting_link.read`) | Inclut `periods` si demandé |
 
-**Immutabilité devise :** une fois des écritures postées (ou exercice non `open`), la devise de tenue est figée — éviter de casser les montants déjà comptabilisés.
+**Immutabilité devise :** une fois des écritures postées (ou exercice non `open`), la devise de tenue est figée - éviter de casser les montants déjà comptabilisés.
 
 ---
 
-### 5.3. `accounting_periods` — Périodes
+### 5.3. `accounting_periods` - Périodes
 
 | Champ | Type | Notes |
 | ----- | ---- | ----- |
@@ -179,7 +179,7 @@ Comptes SYSCOHADA par organisation (classes 1–8). Sous-comptes = lignes avec `
 
 ---
 
-### 5.4. `accounting_journals` — Journaux paramétrables
+### 5.4. `accounting_journals` - Journaux paramétrables
 
 | Champ | Type | Notes |
 | ----- | ---- | ----- |
@@ -196,7 +196,7 @@ Comptes SYSCOHADA par organisation (classes 1–8). Sous-comptes = lignes avec `
 
 ---
 
-### 5.5. `journal_entries` — Écritures (pièces)
+### 5.5. `journal_entries` - Écritures (pièces)
 
 | Champ | Type | Notes |
 | ----- | ---- | ----- |
@@ -224,7 +224,7 @@ Comptes SYSCOHADA par organisation (classes 1–8). Sous-comptes = lignes avec `
 
 ---
 
-### 5.6. `journal_lines` — Lignes d’écriture
+### 5.6. `journal_lines` - Lignes d’écriture
 
 | Champ | Type | Notes |
 | ----- | ---- | ----- |
@@ -247,7 +247,7 @@ Comptes SYSCOHADA par organisation (classes 1–8). Sous-comptes = lignes avec `
 
 ---
 
-### 5.7. `accounting_mapping_rules` — Règles de mapping
+### 5.7. `accounting_mapping_rules` - Règles de mapping
 
 Remplace le skeleton `TREASURY_ACCOUNTING_MAPPING_CONFIG` (`stub: true`).
 
@@ -255,7 +255,7 @@ Remplace le skeleton `TREASURY_ACCOUNTING_MAPPING_CONFIG` (`stub: true`).
 | ----- | ---- | ----- |
 | `id` | UUID PK | |
 | `organization_id` | UUID FK | |
-| `key` | varchar(120) | Ex. `fund_entry.booking_payment` — stable |
+| `key` | varchar(120) | Ex. `fund_entry.booking_payment` - stable |
 | `version` | int | Versioning ; résolution = dernière version active |
 | `fund_op_type` | enum | `fund_entry` \| `fund_exit` |
 | `match_source` | varchar null | `FundEntrySource` si entrée ; null = wildcard |
@@ -286,9 +286,9 @@ Remplace le skeleton `TREASURY_ACCOUNTING_MAPPING_CONFIG` (`stub: true`).
 
 ---
 
-### 5.8. `accounting_links` — Pont (évolution stub TRESO-039)
+### 5.8. `accounting_links` - Pont (évolution stub TRESO-039)
 
-Table **existante** — pas de refonte ; comportement enrichi.
+Table **existante** - pas de refonte ; comportement enrichi.
 
 | Champ | Usage SYSCO |
 | ----- | ----------- |
@@ -319,15 +319,15 @@ linked --void fond--> BLOQUÉ (gate existante)
 | Rejeu si `linked` + `journal_entry_id` | **No-op** HTTP 200 (`noop: true`) |
 | Reprise si `pending` + `journal_entry_id` déjà posé | Finalise `linked` sans recréer d’écriture |
 | `skipped` | Pas d’écriture ; `POST …/skip` ; pour re-comptabiliser : `DELETE` soft-delete puis `POST …/post` |
-| Soft-delete `pending`/`skipped` | `DELETE /accounting-links/:id` — libère `uk_accounting_links_fund_op_active` |
-| Soft-delete `linked` | **403/409** — d’abord contrepassation comptable |
+| Soft-delete `pending`/`skipped` | `DELETE /accounting-links/:id` - libère `uk_accounting_links_fund_op_active` |
+| Soft-delete `linked` | **403/409** - d’abord contrepassation comptable |
 | Void fond si `linked` actif | **Bloqué** (`assertFundOpNotAccountingLinked`, ignore soft-deleted) |
 | Contrepassation | **Nouvelle** `journal_entry` `source=reversal` ; le link `linked` d’origine **reste** (pas d’update in-place de la pièce) |
 | Unicité | `uniq_fund_op` généré = `fund_op_type:fund_op_id` si `deleted_at IS NULL` ; sinon NULL |
 
 ---
 
-### 5.9. `accounting_audit_logs` — Audit écritures
+### 5.9. `accounting_audit_logs` - Audit écritures
 
 Module dédié (ne remplace pas `treasury_audit_logs`).
 
@@ -339,12 +339,12 @@ Module dédié (ne remplace pas `treasury_audit_logs`).
 | `action` | `create` \| `update` \| `post` \| `reverse` \| `lock` \| `close` \| `skip` \| … |
 | `actor_type` / `actor_id` | `user` \| `system` |
 | `old_json` / `new_json` | |
-| `correlation_treasury_audit_id` | UUID null — lien optionnel |
+| `correlation_treasury_audit_id` | UUID null - lien optionnel |
 | `created_at` | |
 
 ---
 
-### 5.10. Rapprochements (SYSCO-007 — schéma indicatif)
+### 5.10. Rapprochements (SYSCO-007 - schéma indicatif)
 
 | Table | Rôle |
 | ----- | ---- |
@@ -440,7 +440,7 @@ sequenceDiagram
 | `linked` | No-op succès ou 409 (à figer en API : **recommandé no-op 200**) |
 | `skipped` | 409 sauf force explicite (hors MVP) |
 
-### 7.4. Conversion multi-devise (taux manuels — TRESO-046)
+### 7.4. Conversion multi-devise (taux manuels - TRESO-046)
 
 **Couches devises :**
 
@@ -453,8 +453,8 @@ sequenceDiagram
 
 Catalogue org-scoped `exchange_rates` (CRUD Admin `/tresorerie/taux-change`, API `/exchange-rates`) ; `from`/`to` ∈ catalogue `currencies` actif à la création.  
 **Convention :** `rate` = unités de devise **cible** pour 1 unité **source** (`bookCents ≈ originalCents × rate`, arrondi entier ; min 1 si montant op > 0).  
-**Devise de tenue :** `accounting_exercises.currency` (configurée sur `/tresorerie/comptabilite/exercices` — **pas** `organizations.currency` au post).  
-**Défaut ops / taux :** formulaires trésorerie et `toCurrency` des taux préremplissent avec `organizations.currency` (Paramètres) — l’utilisateur peut changer (options = devises actives via `useActiveCurrencies`).  
+**Devise de tenue :** `accounting_exercises.currency` (configurée sur `/tresorerie/comptabilite/exercices` - **pas** `organizations.currency` au post).  
+**Défaut ops / taux :** formulaires trésorerie et `toCurrency` des taux préremplissent avec `organizations.currency` (Paramètres) - l’utilisateur peut changer (options = devises actives via `useActiveCurrencies`).  
 **Résolution :** dernier taux avec `effective_on ≤ operation_date` pour la paire `(from=op.currency, to=exercise.currency)`.  
 **Paire typique :** `from` = devise op · `to` = devise d’exercice.
 
@@ -462,7 +462,7 @@ Catalogue org-scoped `exchange_rates` (CRUD Admin `/tresorerie/taux-change`, API
 | --- | ---------------------------------------------- |
 | `op.currency = exercise.currency` | Pas de lookup ; `bookCents = amount_cents` ; `fx_rate` null |
 | Devises différentes + taux trouvé | Lignes en tenue ; `original_amount_cents` / `original_currency` = op ; `fx_rate` = taux |
-| Devises différentes **sans** taux | **400** — message orientant vers Trésorerie › Taux de change ; link reste `pending` |
+| Devises différentes **sans** taux | **400** - message orientant vers Trésorerie › Taux de change ; link reste `pending` |
 
 **Hors MVP FX :** feed BCEAO / API marché, taux inverse auto, multi-tenue concurrente, conversion des rapports / KPIs trésorerie, catalogue devises multi-org.
 
@@ -545,7 +545,7 @@ Pas de faux écrans avant données réelles (règle TRESO-040 conservée).
 | Balance | agrégats débit/crédit/solde par compte / période |
 | Livre de caisse | journal `CAI` ∪ lines compte caisse ∪ ops `payment_method = cash` comptabilisées |
 | Livre de banque | journal `BQ` ∪ comptes banque |
-| Bilan / CR | classes 1–5 vs 6–7 (+ OD clôture) — SYSCO-008 |
+| Bilan / CR | classes 1–5 vs 6–7 (+ OD clôture) - SYSCO-008 |
 
 ---
 
@@ -562,7 +562,7 @@ Pas de faux écrans avant données réelles (règle TRESO-040 conservée).
 - Fusion `fund_entries` ↔ `payments`
 - Refonte RBAC hors `accounting.*` / pont
 - Multi-devise de tenue concurrente dans un même exercice
-- Feed de taux externe (BCEAO, ECB, …) — saisie manuelle uniquement (TRESO-046)
+- Feed de taux externe (BCEAO, ECB, …) - saisie manuelle uniquement (TRESO-046)
 - Taux inverse automatique / croisement de paires non saisies
 - Conversion des agrégats / rapports trésorerie hors écritures SYSCO
 
@@ -591,15 +591,15 @@ Pas de faux écrans avant données réelles (règle TRESO-040 conservée).
 
 ---
 
-## 14. Critères SYSCO-001 — checklist
+## 14. Critères SYSCO-001 - checklist
 
 - [x] Schéma tables + enums documentés (§5–6)
-- [x] Moments de comptabilisation tranchés — **recommandation** §3 (revue humaine à confirmer)
+- [x] Moments de comptabilisation tranchés - **recommandation** §3 (revue humaine à confirmer)
 - [x] Consommation stub `accounting_link` alignée handoff §4 (§5.8, §7)
 - [x] Hors-scope explicite (§12)
 - [x] Permissions `accounting.*` listées (§9)
 - [x] Multi-org, devise de tenue, numérotation (§2, §5.2, §8)
-- [x] Revue validée finance / tech lead — **décisions §3 adoptées pour l’implémentation** (oct. 2026) ; seed comptes `57`/`521`/`538`/`411`/`60`/`61`/`70` figé
+- [x] Revue validée finance / tech lead - **décisions §3 adoptées pour l’implémentation** (oct. 2026) ; seed comptes `57`/`521`/`538`/`411`/`60`/`61`/`70` figé
 
 ---
 
@@ -607,21 +607,21 @@ Pas de faux écrans avant données réelles (règle TRESO-040 conservée).
 
 | Tâche | Livrable |
 | ----- | -------- |
-| SYSCO-002 — ✅ | Migrations `chart_of_accounts` + `accounting_exercises` / `accounting_periods` + seed + API lecture |
-| SYSCO-003 — ✅ | Migrations `accounting_journals` + `journal_entries` + `journal_lines` + API create/list |
-| SYSCO-004 — ✅ | Moteur mapping + API `POST /accounting-links/post` (Comptabiliser) |
-| SYSCO-005 — ✅ | Pont `pending` → `linked` + `journal_entry_id` (inclus dans post) |
-| SYSCO-006 — ✅ | UI journal + grand livre + balance |
-| SYSCO-009 — ✅ | Seed RBAC `accounting.*` + `accounting_audit_logs` + UI audit |
-| SYSCO-010 — ✅ | Actions Comptabiliser / Ignorer + détail link sur le hub |
-| SYSCO-008 — ✅ | Clôtures (lock/close) + OD + RAN MVP + bilan + compte de résultat |
-| TRESO-046 — ✅ | Catalogue `exchange_rates` + conversion FX au post (§7.4) |
-| Devise org + exercices — ✅ | Défaut formulaires = `organizations.currency` ; UI/API exercices + immutabilité devise (§5.2) |
-| Catalogue `currencies` — ✅ | Table + CRUD `/systeme/devises` + sélecteurs `useActiveCurrencies` + validation API (§2 / §7.4) |
+| SYSCO-002 - ✅ | Migrations `chart_of_accounts` + `accounting_exercises` / `accounting_periods` + seed + API lecture |
+| SYSCO-003 - ✅ | Migrations `accounting_journals` + `journal_entries` + `journal_lines` + API create/list |
+| SYSCO-004 - ✅ | Moteur mapping + API `POST /accounting-links/post` (Comptabiliser) |
+| SYSCO-005 - ✅ | Pont `pending` → `linked` + `journal_entry_id` (inclus dans post) |
+| SYSCO-006 - ✅ | UI journal + grand livre + balance |
+| SYSCO-009 - ✅ | Seed RBAC `accounting.*` + `accounting_audit_logs` + UI audit |
+| SYSCO-010 - ✅ | Actions Comptabiliser / Ignorer + détail link sur le hub |
+| SYSCO-008 - ✅ | Clôtures (lock/close) + OD + RAN MVP + bilan + compte de résultat |
+| TRESO-046 - ✅ | Catalogue `exchange_rates` + conversion FX au post (§7.4) |
+| Devise org + exercices - ✅ | Défaut formulaires = `organizations.currency` ; UI/API exercices + immutabilité devise (§5.2) |
+| Catalogue `currencies` - ✅ | Table + CRUD `/systeme/devises` + sélecteurs `useActiveCurrencies` + validation API (§2 / §7.4) |
 | SYSCO-007 | Livres caisse/banque + rapprochements (après clôtures MVP) |
 | SYSCO-011 | Smoke E2E fond → Comptabiliser → linked / journal |
 | SYSCO-012 | Sync OpenAPI + README module compta (basse priorité) |
 
 ---
 
-*Spec SYSCO-001 — septembre 2026. Revue métier formelle : décisions §3 confirmées pour go-live implémentation (octobre 2026). Mettre à jour ce fichier si la finance modifie §3.*
+*Spec SYSCO-001 - septembre 2026. Revue métier formelle : décisions §3 confirmées pour go-live implémentation (octobre 2026). Mettre à jour ce fichier si la finance modifie §3.*

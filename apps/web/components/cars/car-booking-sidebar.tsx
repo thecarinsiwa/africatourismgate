@@ -10,6 +10,10 @@ import type { Translations } from '../../lib/i18n/message-types';
 import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
 import { listPublicVehicleTrips } from '../../lib/api/vehicle-trips';
 import {
+  AUTH_CHANGED_EVENT,
+  ensureClientAccessToken,
+} from '../../lib/auth/client-session';
+import {
   BookingSidebarBody,
   BookingSidebarCta,
   BookingSidebarDesktop,
@@ -35,7 +39,16 @@ export type CarReservePayload =
       mode: 'join';
       seats: number;
       tripId: string;
+    }
+  | {
+      mode: 'continue';
+      seats: number;
+      tripId: string;
     };
+
+function isSelectableOpenTrip(trip: VehicleTrip): boolean {
+  return trip.canJoin || trip.isMine;
+}
 
 type CarBookingSidebarProps = {
   detail: VehicleDetail;
@@ -74,7 +87,7 @@ function formatTripTime(iso: string, locale?: string): string {
   }).format(date);
 }
 
-/** UTC calendar day — matches API `DATE(departureDatetime)` filter. */
+/** UTC calendar day - matches API `DATE(departureDatetime)` filter. */
 function tripTravelDate(iso: string): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) {
@@ -127,6 +140,13 @@ function CarBookingContent({
   const [tripsLoading, setTripsLoading] = useState(false);
   const [openTripDates, setOpenTripDates] = useState<OpenTripDateOption[]>([]);
   const [openTripDatesLoading, setOpenTripDatesLoading] = useState(false);
+  const [authEpoch, setAuthEpoch] = useState(0);
+
+  useEffect(() => {
+    const onAuthChanged = () => setAuthEpoch((n) => n + 1);
+    window.addEventListener(AUTH_CHANGED_EVENT, onAuthChanged);
+    return () => window.removeEventListener(AUTH_CHANGED_EVENT, onAuthChanged);
+  }, []);
 
   useEffect(() => {
     setDepartureLocal(defaultDepartureLocal(travelDate));
@@ -140,12 +160,18 @@ function CarBookingContent({
     }
     let cancelled = false;
     setOpenTripDatesLoading(true);
-    void listPublicVehicleTrips({
-      vehicleId: detail.id,
-      routeId: detail.route.id,
-      status: 'open',
-      limit: 50,
-    })
+    void ensureClientAccessToken()
+      .then((token) =>
+        listPublicVehicleTrips(
+          {
+            vehicleId: detail.id,
+            routeId: detail.route!.id,
+            status: 'open',
+            limit: 50,
+          },
+          token,
+        ),
+      )
       .then((page) => {
         if (cancelled) return;
         const today = todayISODate();
@@ -159,7 +185,7 @@ function CarBookingContent({
           }
         >();
         for (const trip of page.data) {
-          if (!trip.canJoin) continue;
+          if (!isSelectableOpenTrip(trip)) continue;
           const date = tripTravelDate(trip.departureDatetime);
           if (!date || date < today) continue;
           const current = byDate.get(date);
@@ -198,7 +224,7 @@ function CarBookingContent({
     return () => {
       cancelled = true;
     };
-  }, [detail.id, detail.route?.id]);
+  }, [detail.id, detail.route?.id, authEpoch]);
 
   useEffect(() => {
     if (!hasDate || !detail.route?.id) {
@@ -207,18 +233,28 @@ function CarBookingContent({
     }
     let cancelled = false;
     setTripsLoading(true);
-    void listPublicVehicleTrips({
-      vehicleId: detail.id,
-      routeId: detail.route.id,
-      travelDate,
-      status: 'open',
-      limit: 20,
-    })
+    void ensureClientAccessToken()
+      .then((token) =>
+        listPublicVehicleTrips(
+          {
+            vehicleId: detail.id,
+            routeId: detail.route!.id,
+            travelDate,
+            status: 'open',
+            limit: 20,
+          },
+          token,
+        ),
+      )
       .then((page) => {
         if (cancelled) return;
-        const open = page.data.filter((trip) => trip.canJoin);
-        setTrips(open);
-        setSelectedTripId(open.length > 0 ? open[0]!.id : 'new');
+        const open = page.data.filter(isSelectableOpenTrip);
+        const mineFirst = [...open].sort((a, b) => {
+          if (a.isMine === b.isMine) return 0;
+          return a.isMine ? -1 : 1;
+        });
+        setTrips(mineFirst);
+        setSelectedTripId(mineFirst.length > 0 ? mineFirst[0]!.id : 'new');
       })
       .catch(() => {
         if (!cancelled) setTrips([]);
@@ -229,7 +265,7 @@ function CarBookingContent({
     return () => {
       cancelled = true;
     };
-  }, [detail.id, detail.route?.id, travelDate, hasDate]);
+  }, [detail.id, detail.route?.id, travelDate, hasDate, authEpoch]);
 
   const selectedTrip =
     selectedTripId !== 'new'
@@ -237,6 +273,9 @@ function CarBookingContent({
       : null;
 
   const maxSeats = useMemo(() => {
+    if (selectedTrip?.isMine) {
+      return Math.max(1, selectedTrip.maxCapacity);
+    }
     if (selectedTrip) {
       return Math.max(1, selectedTrip.seatsRemaining);
     }
@@ -267,7 +306,11 @@ function CarBookingContent({
     seats >= 1 &&
     (selectedTripId === 'new'
       ? Boolean(departureLocal) && Boolean(detail.availabilitySlot?.id)
-      : Boolean(selectedTrip?.canJoin));
+      : Boolean(selectedTrip?.canJoin || selectedTrip?.isMine));
+
+  const actionCtaLabel = selectedTrip?.isMine
+    ? t.continueTrip
+    : ctaLabel;
 
   function handleCta() {
     if (!canReserve) return;
@@ -276,6 +319,14 @@ function CarBookingContent({
         mode: 'create',
         seats,
         departureDatetime: toIsoFromLocalInput(departureLocal),
+      });
+      return;
+    }
+    if (selectedTrip?.isMine) {
+      onReserve({
+        mode: 'continue',
+        seats,
+        tripId: selectedTripId,
       });
       return;
     }
@@ -394,12 +445,14 @@ function CarBookingContent({
             )}
             {!tripsLoading &&
               trips.map((trip) => {
-                const joinLabel = formatJoinPaysInstead(
-                  t.joinPaysInstead,
-                  trip.priceCentsPerPerson,
-                  soloPriceCents,
-                  trip.currency,
-                );
+                const joinLabel = trip.isMine
+                  ? null
+                  : formatJoinPaysInstead(
+                      t.joinPaysInstead,
+                      trip.priceCentsPerPerson,
+                      soloPriceCents,
+                      trip.currency,
+                    );
                 return (
                   <label
                     key={trip.id}
@@ -409,7 +462,7 @@ function CarBookingContent({
                         : 'border-atg-border bg-atg-elevated'
                     }`}
                   >
-                    <span className="flex items-center gap-2">
+                    <span className="flex flex-wrap items-center gap-2">
                       <input
                         type="radio"
                         name="vehicle-trip"
@@ -419,6 +472,11 @@ function CarBookingContent({
                       <span className="font-medium text-atg-fg">
                         {formatTripTime(trip.departureDatetime, locale)}
                       </span>
+                      {trip.isMine ? (
+                        <span className="rounded-md bg-primary/10 px-1.5 py-0.5 text-xs font-semibold text-primary">
+                          {t.yourTrip}
+                        </span>
+                      ) : null}
                       <span className="text-atg-muted">
                         · {formatCarPrice(trip.priceCentsPerPerson, trip.currency)}{' '}
                         {t.pricePerPerson.toLowerCase()}
@@ -483,7 +541,7 @@ function CarBookingContent({
       ) : null}
 
       <BookingSidebarCta
-        label={reserving ? t.reservingTrip : ctaLabel}
+        label={reserving ? t.reservingTrip : actionCtaLabel}
         disabled={!canReserve}
         onClick={handleCta}
       />

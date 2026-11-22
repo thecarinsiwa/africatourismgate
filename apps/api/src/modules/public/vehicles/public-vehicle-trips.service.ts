@@ -27,6 +27,7 @@ import { BookingEngineService } from '../../resources/bookings/booking-engine.se
 import { OrganizationSettingsService } from '../../resources/organization-settings/organization-settings.service';
 import {
   CreateVehicleTripDto,
+  EnsureVehicleTripSeatsDto,
   JoinVehicleTripDto,
   UpdateVehicleTripDto,
   VehicleTripDto,
@@ -69,6 +70,7 @@ export class PublicVehicleTripsService {
 
   async list(
     query: VehicleTripsListQueryDto,
+    viewerUserId?: string,
   ): Promise<PaginatedResult<VehicleTripDto>> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
@@ -101,7 +103,7 @@ export class PublicVehicleTripsService {
       .take(limit);
 
     const [trips, total] = await qb.getManyAndCount();
-    const data = await this.toDtos(trips, rules);
+    const data = await this.toDtos(trips, rules, viewerUserId);
 
     return {
       data,
@@ -188,6 +190,12 @@ export class PublicVehicleTripsService {
     const trip = await this.requireTrip(tripId);
     const rules = await this.loadRules();
 
+    if (trip.createdByUserId === userId) {
+      throw new BadRequestException(
+        'Vous êtes déjà le créateur de ce trajet. Continuez votre réservation ou ajoutez des places.',
+      );
+    }
+
     if (trip.status !== 'open') {
       throw new BadRequestException('Ce trajet n’accepte plus de passagers.');
     }
@@ -203,6 +211,51 @@ export class PublicVehicleTripsService {
     trip.updatedByUserId = userId;
     const saved = await this.tripsRepository.save(trip);
     const [dtoOut] = await this.toDtos([saved], rules, userId);
+    return dtoOut;
+  }
+
+  /**
+   * Creator-only: ensure seatsReserved covers active claims + seats for this checkout.
+   * Does not use join semantics (no blind increment).
+   */
+  async ensureSeats(
+    tripId: string,
+    dto: EnsureVehicleTripSeatsDto,
+    userId: string,
+  ): Promise<VehicleTripDto> {
+    const seats = dto.seats;
+    const trip = await this.requireTrip(tripId);
+    const rules = await this.loadRules();
+
+    if (trip.createdByUserId !== userId) {
+      throw new ForbiddenException(
+        'Seul le créateur du trajet peut ajuster ses places réservées.',
+      );
+    }
+    if (trip.status !== 'open') {
+      throw new BadRequestException(
+        'Ce trajet n’accepte plus de réservations.',
+      );
+    }
+    this.assertBeforePaymentClose(trip.departureDatetime, rules);
+
+    const claimed = await this.bookingEngine.countActiveTripSeatClaims(tripId);
+    const needed = claimed + seats;
+    if (needed > trip.maxCapacity) {
+      throw new BadRequestException(
+        `Capacité insuffisante (${seats} demandées, ${Math.max(0, trip.maxCapacity - claimed)} disponibles).`,
+      );
+    }
+
+    if (needed > trip.seatsReserved) {
+      trip.seatsReserved = needed;
+      trip.updatedByUserId = userId;
+      const saved = await this.tripsRepository.save(trip);
+      const [dtoOut] = await this.toDtos([saved], rules, userId);
+      return dtoOut;
+    }
+
+    const [dtoOut] = await this.toDtos([trip], rules, userId);
     return dtoOut;
   }
 
@@ -440,13 +493,16 @@ export class PublicVehicleTripsService {
       );
       const beforeClose = now < paymentClosesAt.getTime();
       const seatsRemaining = Math.max(0, trip.maxCapacity - trip.seatsReserved);
-      const canJoin =
-        trip.status === 'open' && beforeClose && seatsRemaining > 0;
-      const isCreator = Boolean(
+      const isMine = Boolean(
         viewerUserId && trip.createdByUserId === viewerUserId,
       );
+      const canJoin =
+        !isMine &&
+        trip.status === 'open' &&
+        beforeClose &&
+        seatsRemaining > 0;
       let canEditDeparture = false;
-      if (isCreator && trip.status === 'open' && beforeClose) {
+      if (isMine && trip.status === 'open' && beforeClose) {
         if (rules.departureTimeEditableUntil === 'until_payment_close') {
           canEditDeparture = true;
         } else {
@@ -471,6 +527,7 @@ export class PublicVehicleTripsService {
         arrivalCity: route?.arrivalCity ?? '',
         paymentClosesAt: paymentClosesAt.toISOString(),
         canJoin,
+        isMine,
         canEditDeparture,
         createdAt: this.toIso(trip.createdAt),
         updatedAt: trip.updatedAt ? this.toIso(trip.updatedAt) : null,

@@ -3,7 +3,7 @@
  * Run: pnpm --filter @africatourismgate/api test:admin-user-subpages
  *
  * Requires API on :3000, seeded DB, and in .env.local:
- *   SEED_ADMIN_PASSWORD — see database/seeds/README.md
+ *   SEED_ADMIN_PASSWORD - see database/seeds/README.md
  */
 import { randomUUID } from 'node:crypto';
 import { loadEnv } from './lib/load-env.mjs';
@@ -211,7 +211,7 @@ async function main() {
   assertPaginated('GET /rbac-audit-logs', audit.data);
   console.log(`  OK meta.total = ${audit.data.meta.total}`);
 
-  console.log('9. org user — GET /rbac-audit-logs (expect 403)');
+  console.log('9. org user - GET /rbac-audit-logs (expect 403)');
   assertStatus(
     'GET /rbac-audit-logs (non-super-admin)',
     (

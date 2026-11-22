@@ -62,7 +62,7 @@ export function UserRoleAssignmentForm({
       { value: '', label: tRoles('selectPlaceholder') },
       ...users.map((user) => ({
         value: user.id,
-        label: `${user.firstName} ${user.lastName} — ${user.email}`,
+        label: `${user.firstName} ${user.lastName} - ${user.email}`,
       })),
     ],
     [tRoles, users],

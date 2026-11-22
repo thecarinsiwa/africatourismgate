@@ -3,7 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 
 /**
  * Runs JWT validation only when an Authorization Bearer token is present.
- * Missing/invalid tokens do not fail the request — request.user stays unset.
+ * Missing/invalid tokens do not fail the request - request.user stays unset.
  * Use with @Public() routes that optionally personalize for logged-in users.
  */
 @Injectable()

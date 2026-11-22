@@ -88,17 +88,17 @@
       "promoCode": "Code promo (checkout)",
       "promoCodeHint": "Les codes saisis au checkout sont gérés séparément. Générez une suggestion puis créez le code lié.",
       "discount": "Réduction",
-      "discountHint": "Optionnelle — laissez désactivé pour une campagne informative.",
+      "discountHint": "Optionnelle - laissez désactivé pour une campagne informative.",
       "discountOff": "Aucune réduction au checkout : la campagne reste purement informative.",
       "schedule": "Validité & limites",
       "scheduleHint": "Dates optionnelles. Laissez vide pour une campagne sans borne temporelle.",
       "publication": "Publication",
       "publicationHint": "Contrôle l’affichage de la campagne côté clients.",
       "preview": "Aperçu live",
-      "previewHint": "Reste visible pendant le défilement — mise à jour au fil de la saisie."
+      "previewHint": "Reste visible pendant le défilement - mise à jour au fil de la saisie."
     },
     "info": {
-      "codesVsPromotions": "Les codes promo sont saisis par le client au checkout. Les promotions sont des campagnes visibles (bannières, pages) — la réduction peut être optionnelle.",
+      "codesVsPromotions": "Les codes promo sont saisis par le client au checkout. Les promotions sont des campagnes visibles (bannières, pages) - la réduction peut être optionnelle.",
       "managePromoCodesLink": "Gérer les codes promo"
     },
     "actions": {
@@ -136,7 +136,7 @@
     },
     "hints": {
       "name": "Affiché comme titre de la campagne dans l’aperçu et sur le site.",
-      "suggestedCode": "Non enregistré avec la promotion — sert à créer un code promo distinct.",
+      "suggestedCode": "Non enregistré avec la promotion - sert à créer un code promo distinct.",
       "discountPercent": "Pourcentage (ex. 15 pour −15 %).",
       "discountFixed": "Montant fixe en unités monétaires (ex. 10 pour −10 USD).",
       "maxRedemptions": "Laisser vide pour illimité."

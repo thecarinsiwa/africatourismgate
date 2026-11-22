@@ -303,7 +303,7 @@ export class BookingsService extends CrudService<Bookings> {
         createdAt: booking.createdAt,
         updatedAt: booking.updatedAt,
         name: this.formatBookingListName(itemsByBookingId.get(booking.id) ?? []),
-        clientEmail: client?.email ?? '—',
+        clientEmail: client?.email ?? '-',
         clientFirstName: client?.firstName ?? '',
         clientLastName: client?.lastName ?? '',
         organizationId: client?.organizationId ?? null,

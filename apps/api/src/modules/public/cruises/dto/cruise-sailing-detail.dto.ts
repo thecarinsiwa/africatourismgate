@@ -60,7 +60,7 @@ export class CruiseSailingDetailDto {
   @ApiProperty({ example: 5 })
   durationNights!: number;
 
-  @ApiProperty({ example: 'Kinshasa — Banana' })
+  @ApiProperty({ example: 'Kinshasa - Banana' })
   itineraryName!: string;
 
   @ApiProperty({ example: 'Congo River Spirit' })

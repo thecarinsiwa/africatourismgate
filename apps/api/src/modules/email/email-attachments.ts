@@ -84,7 +84,7 @@ async function fetchLogoBuffer(url: string): Promise<Buffer | null> {
     return buffer;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    logger.warn(`Logo PDF: fetch échoué pour ${url} — ${message}`);
+    logger.warn(`Logo PDF: fetch échoué pour ${url} - ${message}`);
     return null;
   }
 }
@@ -116,7 +116,7 @@ export async function resolveLogoForPdf(
   const fallback = resolveLogoFilePath();
   if (!fallback) {
     logger.warn(
-      'Logo PDF: aucun logo résolu (local, remote, EMAIL_LOGO_URL, assets) — PDF sans logo',
+      'Logo PDF: aucun logo résolu (local, remote, EMAIL_LOGO_URL, assets) - PDF sans logo',
     );
   }
   return fallback;
@@ -149,7 +149,7 @@ function isLocalhostUrl(url: string): boolean {
 }
 
 /**
- * URL publique du logo (pas de pièce jointe CID — affichage inline dans le HTML).
+ * URL publique du logo (pas de pièce jointe CID - affichage inline dans le HTML).
  * Gmail et autres clients doivent pouvoir charger l'image via HTTPS.
  */
 export function resolveEmailLogoUrl(): string {

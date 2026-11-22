@@ -5,7 +5,7 @@ cd "${ROOT}/apps/pos"
 export NODE_ENV=production
 
 if [[ ! -d .next ]]; then
-  echo "Missing apps/pos/.next — run: cd ${ROOT} && pnpm build" >&2
+  echo "Missing apps/pos/.next - run: cd ${ROOT} && pnpm build" >&2
   exit 1
 fi
 

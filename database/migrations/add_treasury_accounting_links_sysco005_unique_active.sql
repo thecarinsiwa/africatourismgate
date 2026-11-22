@@ -1,4 +1,4 @@
--- SYSCO-005 — Unicité accounting_links parmi non soft-deleted
+-- SYSCO-005 - Unicité accounting_links parmi non soft-deleted
 -- Permet recreate après soft-delete d’un link pending/skipped.
 -- Down (manuel) : voir commentaires en bas.
 SET NAMES utf8mb4;
@@ -66,7 +66,7 @@ DEALLOCATE PREPARE stmt;
 -- Commentaire journal_entry_id
 ALTER TABLE `accounting_links`
   MODIFY COLUMN `journal_entry_id` CHAR(36) DEFAULT NULL
-    COMMENT 'UUID journal_entries — renseigné quand status=linked (SYSCO-005)';
+    COMMENT 'UUID journal_entries - renseigné quand status=linked (SYSCO-005)';
 
 -- ---------------------------------------------------------------------------
 -- DOWN (manuel)

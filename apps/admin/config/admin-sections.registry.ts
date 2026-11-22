@@ -38,7 +38,7 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
   },
   'fidelite/comptes': {
     title: 'Comptes fidélité',
-    description: 'Programme OneKey — points et récompenses.',
+    description: 'Programme OneKey - points et récompenses.',
     apiResource: 'loyalty-accounts',
   },
   hebergements: {

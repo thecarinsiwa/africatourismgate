@@ -1,4 +1,4 @@
--- GAP impact stats — English and Spanish locales (French seeded in add_gap_content.sql)
+-- GAP impact stats - English and Spanish locales (French seeded in add_gap_content.sql)
 
 INSERT INTO `gap_impact_stats` (
   `id`, `label`, `value_display`, `description`, `color_key`, `sort_order`,

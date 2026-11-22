@@ -19,7 +19,7 @@ export const paymentStatusVariants: Record<
 export function formatPaymentProvider(
   provider: string | null,
   providerLabels: Record<string, string>,
-  emptyLabel = '—',
+  emptyLabel = '-',
 ): string {
   if (!provider) return emptyLabel;
   return providerLabels[provider] ?? provider;

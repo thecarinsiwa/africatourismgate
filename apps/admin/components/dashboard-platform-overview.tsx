@@ -184,7 +184,7 @@ export function DashboardPlatformOverview({ className }: { className?: string })
               <span className="mt-3 text-xs text-atg-muted">{metric.label}</span>
               <span className="mt-1 text-lg font-bold text-atg-fg">
                 {state.status === 'loading'
-                  ? '—'
+                  ? '-'
                   : state.status === 'error'
                     ? '!'
                     : formatCount(state.value ?? 0)}

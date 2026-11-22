@@ -1,4 +1,4 @@
-# PR-04 — Scénario de test (contact d’urgence)
+# PR-04 - Scénario de test (contact d’urgence)
 
 Branche : `feature/pr-04-emergency-contact`  
 Réf. : [roadmap-post-reunion-08-2026.md](./roadmap-post-reunion-08-2026.md) (PR-04)
@@ -60,7 +60,7 @@ Migration : `database/migrations/add_manifest_emergency_contact.sql`
 
 ## Tests automatisés
 
-### Unit (API — PDF)
+### Unit (API - PDF)
 
 ```bash
 cd apps/api

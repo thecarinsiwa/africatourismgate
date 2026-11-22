@@ -1,7 +1,7 @@
-# Transmission — Collecte des données de production
+# Transmission - Collecte des données de production
 
 **Projet :** Africa Tourism Gate  
-**Phase :** 2 — Envoi à la société  
+**Phase :** 2 - Envoi à la société  
 **Date de préparation du dossier :** 2026-09-21  
 **Statut envoi :** À expédier par l’équipe projet (contacts société à renseigner)
 
@@ -48,9 +48,9 @@ data-collection/
 
 ---
 
-## 2. Modèle d’e-mail (FR) — à envoyer
+## 2. Modèle d’e-mail (FR) - à envoyer
 
-**Objet :** Africa Tourism Gate — Demande de données pour la mise en production
+**Objet :** Africa Tourism Gate - Demande de données pour la mise en production
 
 ```text
 Bonjour,
@@ -60,9 +60,9 @@ vous transmettons le dossier de collecte des données nécessaires à la configu
 et à l’alimentation du système.
 
 Pièces jointes / lien de partage :
-- production-data-preparation.md — guide unique (nettoyage DB, inventaire, formulaire
+- production-data-preparation.md - guide unique (nettoyage DB, inventaire, formulaire
   de collecte avec suivi de statut, spécifications CSV)
-- dossier data-collection/ — 13 modèles CSV + consignes de remplissage
+- dossier data-collection/ - 13 modèles CSV + consignes de remplissage
 
 Consignes principales :
 1. Remplir les tableaux du formulaire (partie C) et/ou les fichiers CSV concernés.
@@ -70,7 +70,7 @@ Consignes principales :
 3. Prioriser les verticales actives au lancement (hébergement, vols, etc.).
 4. Transmettre logos, photos et textes légaux (CGU, confidentialité) en pièces jointes.
 5. Les secrets (clés Stripe, mots de passe SMTP) : canal sécurisé séparé uniquement
-   — ne pas les coller dans les CSV ni dans un e-mail non chiffré.
+   - ne pas les coller dans les CSV ni dans un e-mail non chiffré.
 
 Statuts de suivi (à mettre à jour au fil de l’eau) :
 À demander → Demandée → Reçue → En cours de vérification → Validée → À corriger
@@ -110,7 +110,7 @@ Cordialement,
 | Canal | E-mail / Drive / autre : ________ |
 | Date / heure d’envoi | |
 | Envoyé par | |
-| Accusé de réception | Oui / Non — date : |
+| Accusé de réception | Oui / Non - date : |
 
 ---
 
@@ -123,7 +123,7 @@ Cordialement,
 
 ---
 
-## 5. Suite (Phase 2 — suivi)
+## 5. Suite (Phase 2 - suivi)
 
 Après envoi :
 

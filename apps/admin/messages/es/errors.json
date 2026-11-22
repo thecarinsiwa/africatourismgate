@@ -60,7 +60,7 @@
     "sectionLocaleConflict": "Ya existe un registro para esta sección e idioma."
   },
   "loyaltyAccounts": {
-    "forbidden": "Acceso denegado. Lectura: users.read — ajuste: solo superadministrador.",
+    "forbidden": "Acceso denegado. Lectura: users.read - ajuste: solo superadministrador.",
     "notFound": "Cuenta de fidelidad no encontrada."
   },
   "dashboard": {

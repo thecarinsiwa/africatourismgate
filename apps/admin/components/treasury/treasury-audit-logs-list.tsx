@@ -68,7 +68,7 @@ function actionBadgeVariant(
 
 function formatJson(value: Record<string, unknown> | null): string {
   if (!value || Object.keys(value).length === 0) {
-    return '—';
+    return '-';
   }
   return JSON.stringify(value, null, 2);
 }

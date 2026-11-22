@@ -351,7 +351,7 @@ export function RoomImagesSection({
                   embedded ? 'text-sm' : 'text-base',
                 )}
               >
-                {embedded ? tGallery('title') : `${tGallery('title')} — ${roomName}`}
+                {embedded ? tGallery('title') : `${tGallery('title')} - ${roomName}`}
               </h3>
               {state.status === 'ready' ? (
                 <DataTableBadge variant="muted">

@@ -1,4 +1,4 @@
-/** Phase 3c modules FR strings — merged into modules.* by generate-modules-i18n-data.mjs */
+/** Phase 3c modules FR strings - merged into modules.* by generate-modules-i18n-data.mjs */
 export const phase3cModulesFr = {
   common: {
     rbacScope: {
@@ -111,7 +111,7 @@ export const phase3cModulesFr = {
       columns: { scope: 'Périmètre' },
       wholeDomain: 'Tout le domaine',
       perAction: 'Par action',
-      ariaToggleDomain: 'Tout {domain} — {action}',
+      ariaToggleDomain: 'Tout {domain} - {action}',
       toast: {
         savedTitle: 'Permissions enregistrées',
         savedMessage: 'La matrice du rôle a été mise à jour.',
@@ -351,7 +351,7 @@ export const phase3cModulesFr = {
     form: {
       info: {
         codesVsPromotions:
-          'Les codes promo sont saisis par le client au checkout. Les promotions sont des campagnes visibles (bannières, pages) — la réduction peut être optionnelle.',
+          'Les codes promo sont saisis par le client au checkout. Les promotions sont des campagnes visibles (bannières, pages) - la réduction peut être optionnelle.',
         managePromoCodesLink: 'Gérer les codes promo',
         targetHint: 'Cible produit / destination (optionnel, pour affichage marketing).',
       },
@@ -538,7 +538,7 @@ export const phase3cModulesFr = {
       contrastWarning:
         'Contraste insuffisant avec le texte blanc : {ratio} (minimum {min} pour WCAG AA). Les boutons et liens actifs peuvent être difficiles à lire.',
       currentAria: 'Couleur actuelle ({value})',
-      currentTitle: 'Couleur enregistrée — {value}',
+      currentTitle: 'Couleur enregistrée - {value}',
       currentLabel: 'Actuelle',
       selection: 'Sélection :',
       swatches: {
@@ -616,12 +616,12 @@ export const phase3cModulesFr = {
         secondaryColor: 'Couleur secondaire',
         secondaryColorHint: "Couleur d'accompagnement (optionnel).",
         footerText: 'Texte de pied de page',
-        footerPlaceholder: '© Africa Tourism Gate — Tous droits réservés',
-        welcomeSubject: 'Sujet — e-mail de bienvenue',
+        footerPlaceholder: '© Africa Tourism Gate - Tous droits réservés',
+        welcomeSubject: 'Sujet - e-mail de bienvenue',
         welcomeSubjectPlaceholder: 'Bienvenue chez {displayName}',
         welcomeSubjectHint: 'Variables : {displayName}',
-        bookingSubject: 'Sujet — confirmation de réservation',
-        bookingSubjectPlaceholder: 'Confirmation de réservation — {ref}',
+        bookingSubject: 'Sujet - confirmation de réservation',
+        bookingSubjectPlaceholder: 'Confirmation de réservation - {ref}',
         bookingSubjectHint: 'Variables : {ref}, {displayName}',
         previewTemplate: 'Modèle à prévisualiser',
         templateWelcome: 'Bienvenue (création de compte)',

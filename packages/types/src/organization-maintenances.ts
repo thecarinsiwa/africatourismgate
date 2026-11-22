@@ -23,7 +23,7 @@ export interface OrganizationMaintenance extends AuditFields {
   title: string | null;
   message: string | null;
   enabled: boolean;
-  /** ISO 8601 datetime — fenêtre active à partir de cette date. */
+  /** ISO 8601 datetime - fenêtre active à partir de cette date. */
   startsAt: string;
   /** ISO 8601 datetime, or null when no planned end. */
   endsAt: string | null;
@@ -60,7 +60,7 @@ export interface PublicSiteMaintenance {
   localeFallback: boolean;
   title: string | null;
   message: string | null;
-  /** ISO 8601 — début de fenêtre (optionnel pour compat legacy). */
+  /** ISO 8601 - début de fenêtre (optionnel pour compat legacy). */
   startsAt: string | null;
   endsAt: string | null;
 }

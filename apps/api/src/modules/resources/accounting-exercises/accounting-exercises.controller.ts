@@ -77,7 +77,7 @@ export class AccountingExercisesController {
   @Post('accounting-exercises/:id/close')
   @ApiOperation({
     summary:
-      'Close exercise (OD closing entry + lock/close periods) — SYSCO-008',
+      'Close exercise (OD closing entry + lock/close periods) - SYSCO-008',
   })
   closeExercise(
     @Param('id') id: string,

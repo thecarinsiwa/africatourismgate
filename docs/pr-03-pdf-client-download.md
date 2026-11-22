@@ -1,4 +1,4 @@
-# PR-03 — Download PDF confirmation (compte client)
+# PR-03 - Download PDF confirmation (compte client)
 
 Branche : `feature/pr-03-pdf-client-download`  
 Réf. : [roadmap-post-reunion-08-2026.md](./roadmap-post-reunion-08-2026.md) (PR-03)  
@@ -12,9 +12,9 @@ Endpoint authentifié + bouton compte client pour retélécharger le **même PDF
 
 | Zone | Fichier |
 | ---- | ------- |
-| API | `apps/api/src/modules/resources/bookings/bookings.controller.ts` — `GET :id/confirmation-pdf` |
-| API | `apps/api/src/modules/resources/bookings/booking-engine.service.ts` — `generateConfirmationPdf` |
-| Client | `packages/api-client/src/index.ts` — `downloadBookingConfirmationPdf` |
+| API | `apps/api/src/modules/resources/bookings/bookings.controller.ts` - `GET :id/confirmation-pdf` |
+| API | `apps/api/src/modules/resources/bookings/booking-engine.service.ts` - `generateConfirmationPdf` |
+| Client | `packages/api-client/src/index.ts` - `downloadBookingConfirmationPdf` |
 | UI | `apps/web/components/account/account-booking-detail.tsx` |
 | i18n | `apps/web/lib/i18n/translations.ts`, `translations-es.ts` |
 
@@ -36,19 +36,19 @@ Permission: bookings.read
 ### curl
 
 ```bash
-# Owner — OK (statut confirmed)
+# Owner - OK (statut confirmed)
 curl -sS -o reservation.pdf -w "%{http_code}\n" \
   -H "Authorization: Bearer $OWNER_TOKEN" \
   "http://localhost:3000/api/bookings/$BOOKING_ID/confirmation-pdf"
 # → 200 ; file reservation.pdf
 
-# Autre client — 403
+# Autre client - 403
 curl -sS -o /dev/null -w "%{http_code}\n" \
   -H "Authorization: Bearer $OTHER_TOKEN" \
   "http://localhost:3000/api/bookings/$BOOKING_ID/confirmation-pdf"
 # → 403
 
-# Staff — OK
+# Staff - OK
 curl -sS -o reservation-staff.pdf -w "%{http_code}\n" \
   -H "Authorization: Bearer $STAFF_TOKEN" \
   "http://localhost:3000/api/bookings/$BOOKING_ID/confirmation-pdf"
@@ -65,7 +65,7 @@ Bouton « Télécharger la confirmation » visible si `status === 'confirmed'`.
 
 ## Test manuel
 
-1. Confirmer une réservation (Stripe / cash / post-approbation) — statut `confirmed`.
+1. Confirmer une réservation (Stripe / cash / post-approbation) - statut `confirmed`.
 2. Compte client → **Mes réservations** → ouvrir la réservation.
 3. Cliquer **Télécharger la confirmation** → fichier `reservation-XXXXXXXX.pdf` ouvrable (manifeste + total, comme l’email).
 4. Se connecter avec un **autre** compte → curl ou tentative d’accès API → **403**.

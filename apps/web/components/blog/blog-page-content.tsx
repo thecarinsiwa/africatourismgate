@@ -307,7 +307,7 @@ export function BlogPageContent() {
           <span className="whitespace-nowrap text-sm tabular-nums text-atg-muted">
             {row.original.publishedAt
               ? formatRelativeReviewDate(row.original.publishedAt, locale)
-              : '—'}
+              : '-'}
           </span>
         ),
       },

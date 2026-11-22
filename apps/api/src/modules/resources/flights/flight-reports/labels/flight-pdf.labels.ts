@@ -59,7 +59,7 @@ const LABELS: Record<FlightReportLocale, FlightPdfLabels> = {
   fr: {
     generatedOn: 'Document généré le',
     kpi: {
-      documentTitle: 'Synthèse KPI — Vols',
+      documentTitle: 'Synthèse KPI - Vols',
       summarySection: 'Indicateurs clés',
       flights: 'Vols',
       classes: 'Classes cabine',
@@ -125,7 +125,7 @@ const LABELS: Record<FlightReportLocale, FlightPdfLabels> = {
   en: {
     generatedOn: 'Document generated on',
     kpi: {
-      documentTitle: 'KPI summary — Flights',
+      documentTitle: 'KPI summary - Flights',
       summarySection: 'Key metrics',
       flights: 'Flights',
       classes: 'Cabin classes',
@@ -191,7 +191,7 @@ const LABELS: Record<FlightReportLocale, FlightPdfLabels> = {
   es: {
     generatedOn: 'Documento generado el',
     kpi: {
-      documentTitle: 'Resumen KPI — Vuelos',
+      documentTitle: 'Resumen KPI - Vuelos',
       summarySection: 'Indicadores clave',
       flights: 'Vuelos',
       classes: 'Clases de cabina',

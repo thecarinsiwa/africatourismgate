@@ -5,7 +5,7 @@ import { useDefaultCurrency } from '../components/organization-currency-provider
 
 /**
  * Keeps a create-form currency field on the Admin default currency (which loads
- * asynchronously) until the user picks a currency — call `markTouched` from the field.
+ * asynchronously) until the user picks a currency - call `markTouched` from the field.
  */
 export function useDefaultCurrencyField(
   enabled: boolean,

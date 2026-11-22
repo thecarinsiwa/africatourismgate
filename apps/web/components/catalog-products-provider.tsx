@@ -10,7 +10,7 @@ import {
 
 declare global {
   interface Window {
-    /** Playwright E2E only — see tests/e2e/helpers/mock-catalog-products.ts */
+    /** Playwright E2E only - see tests/e2e/helpers/mock-catalog-products.ts */
     __ATG_E2E_CATALOG_PRODUCTS__?: CatalogProductsSettingValue;
   }
 }

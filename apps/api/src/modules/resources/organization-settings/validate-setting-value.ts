@@ -636,7 +636,7 @@ export function validateSettingValue(
 
       if (hasPercent && hasFixed) {
         throw new BadRequestException(
-          'Indiquez soit depositPercent, soit depositFixedCents — pas les deux.',
+          'Indiquez soit depositPercent, soit depositFixedCents - pas les deux.',
         );
       }
 

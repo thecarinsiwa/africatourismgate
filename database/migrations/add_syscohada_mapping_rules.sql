@@ -1,4 +1,4 @@
--- SYSCO-004 — Référentiel mapping trésorerie → comptes SYSCOHADA (`accounting_mapping_rules`)
+-- SYSCO-004 - Référentiel mapping trésorerie → comptes SYSCOHADA (`accounting_mapping_rules`)
 -- Remplace le skeleton in-process TREASURY_ACCOUNTING_MAPPING_CONFIG (stub: true).
 -- Down (manuel) : voir commentaires en bas de fichier.
 SET NAMES utf8mb4;
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `accounting_mapping_rules` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------------
--- Seed plateforme — IDs 00000000-0000-4000-8000-00000000240x
+-- Seed plateforme - IDs 00000000-0000-4000-8000-00000000240x
 -- Comptes : 57/521/538/411/60/61/70 · Journaux : CAI/BQ/OD
 -- ---------------------------------------------------------------------------
 
@@ -75,7 +75,7 @@ SELECT
   '00000000-0000-4000-8000-000000002007',
   20,
   1,
-  'Entrée de fonds — espèces',
+  'Entrée de fonds - espèces',
   'Débit 57 Caisse / crédit 70 Ventes'
 WHERE EXISTS (SELECT 1 FROM `accounting_journals` WHERE `id` = '00000000-0000-4000-8000-000000002201');
 
@@ -99,7 +99,7 @@ SELECT
   '00000000-0000-4000-8000-000000002007',
   20,
   1,
-  'Entrée de fonds — virement',
+  'Entrée de fonds - virement',
   'Débit 521 Banques / crédit 70'
 WHERE EXISTS (SELECT 1 FROM `accounting_journals` WHERE `id` = '00000000-0000-4000-8000-000000002202');
 
@@ -121,7 +121,7 @@ INSERT IGNORE INTO `accounting_mapping_rules` (
   '00000000-0000-4000-8000-000000002007',
   20,
   1,
-  'Entrée de fonds — mobile money',
+  'Entrée de fonds - mobile money',
   'Débit 538 / crédit 70'
 );
 
@@ -167,7 +167,7 @@ INSERT IGNORE INTO `accounting_mapping_rules` (
   '00000000-0000-4000-8000-000000002007',
   1,
   1,
-  'Entrée de fonds — mapping par défaut',
+  'Entrée de fonds - mapping par défaut',
   'Fallback wildcard'
 );
 
@@ -190,7 +190,7 @@ INSERT IGNORE INTO `accounting_mapping_rules` (
   '00000000-0000-4000-8000-000000002001',
   20,
   1,
-  'Sortie de fonds — espèces',
+  'Sortie de fonds - espèces',
   'Débit 60 / crédit 57'
 );
 
@@ -213,11 +213,11 @@ INSERT IGNORE INTO `accounting_mapping_rules` (
   '00000000-0000-4000-8000-000000002002',
   20,
   1,
-  'Sortie de fonds — virement',
+  'Sortie de fonds - virement',
   'Débit 60 / crédit 521'
 );
 
--- Sortie liée état de besoin (services extérieurs) — clé historique stub
+-- Sortie liée état de besoin (services extérieurs) - clé historique stub
 INSERT IGNORE INTO `accounting_mapping_rules` (
   `id`, `organization_id`, `key`, `version`, `fund_op_type`,
   `match_source`, `match_payment_method`,
@@ -259,7 +259,7 @@ INSERT IGNORE INTO `accounting_mapping_rules` (
   '00000000-0000-4000-8000-000000002001',
   1,
   1,
-  'Sortie de fonds — mapping par défaut',
+  'Sortie de fonds - mapping par défaut',
   'Fallback wildcard'
 );
 

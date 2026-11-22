@@ -102,7 +102,7 @@
       "submitCreate": "Créer le départ",
       "itinerary": "Itinéraire",
       "departureDate": "Date de départ",
-      "itineraryOption": "{name} ({shipName}) — {nights} nuits",
+      "itineraryOption": "{name} ({shipName}) - {nights} nuits",
       "validation": "Itinéraire et date de départ sont obligatoires.",
       "fallbackShip": "Navire inconnu",
       "noItinerariesHint": "Aucun itinéraire disponible. Créez-en un depuis la fiche d’un navire."
@@ -207,7 +207,7 @@
       "title": "Cabines réservables",
       "intro": "Stock et prix par catégorie pour ce départ.",
       "stopsLabel": "Escales : ",
-      "noStopsWarning": "Aucune escale sur cet itinéraire — ajoutez-en depuis la fiche navire.",
+      "noStopsWarning": "Aucune escale sur cet itinéraire - ajoutez-en depuis la fiche navire.",
       "cabinMeta": "max {maxGuests} · base {basePrice}",
       "cabinsAvailableAria": "Cabines disponibles",
       "priceCentsAria": "Prix en centimes",
@@ -223,7 +223,7 @@
     "cancel": "Annuler"
   },
   "calendar": {
-    "ariaLabel": "Calendrier des départs — {month}",
+    "ariaLabel": "Calendrier des départs - {month}",
     "today": "Aujourd'hui"
   },
   "stats": {

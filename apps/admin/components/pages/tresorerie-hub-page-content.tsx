@@ -5,7 +5,7 @@ import { TresorerieStatCards } from '../treasury/tresorerie-stat-cards';
 import { AdminListPageHeader } from './admin-list-page-header';
 
 /**
- * Hub Trésorerie (TRESO-038) — KPI légers + accès rapide aux sous-modules.
+ * Hub Trésorerie (TRESO-038) - KPI légers + accès rapide aux sous-modules.
  */
 export function TresorerieHubPageContent() {
   return (

@@ -25,7 +25,7 @@ export class AuthResponseDto extends AuthTokensResponseDto {
   requiresVerification?: boolean;
 
   @ApiPropertyOptional({
-    description: 'Verification record ID — enter the code from the alert email',
+    description: 'Verification record ID - enter the code from the alert email',
   })
   verificationId?: string;
 

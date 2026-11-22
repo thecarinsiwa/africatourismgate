@@ -91,7 +91,7 @@
     },
     "logo": {
       "change": "Changer",
-      "changeHint": "Choisir un logo (JPEG, PNG, WebP, GIF ou SVG — max. 2 Mo)",
+      "changeHint": "Choisir un logo (JPEG, PNG, WebP, GIF ou SVG - max. 2 Mo)",
       "uploading": "Upload…",
       "uploadSuccess": "Logo mis à jour.",
       "invalidFormat": "Format accepté : JPEG, PNG, WebP, GIF ou SVG.",

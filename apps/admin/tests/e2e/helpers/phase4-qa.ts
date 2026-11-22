@@ -5,10 +5,10 @@ export { waitForPageIdle } from './phase3-qa';
 /** Mois cible des seeds disponibilités chambres / classes vol. */
 export const SEED_AVAILABILITY_YEAR_MONTH = '2026-08';
 
-/** Site vitrine GAP (apps/gap) — aligné sur playwright.config.ts. */
+/** Site vitrine GAP (apps/gap) - aligné sur playwright.config.ts. */
 export const gapURL = process.env.PLAYWRIGHT_GAP_URL ?? 'http://localhost:3004';
 
-/** Admin — origine absolue pour revenir depuis la vitrine GAP. */
+/** Admin - origine absolue pour revenir depuis la vitrine GAP. */
 export const adminURL = (process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3001').replace(
   /\/$/,
   '',

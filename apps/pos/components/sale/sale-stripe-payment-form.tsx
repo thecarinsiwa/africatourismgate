@@ -61,7 +61,7 @@ export function SaleStripePaymentForm({
       }
 
       // Paiement Stripe accepté : même si le poll webhook timeout,
-      // aller sur la page succès (ne pas annuler — le stock/paiement sont en cours).
+      // aller sur la page succès (ne pas annuler - le stock/paiement sont en cours).
       await waitForBookingConfirmed(bookingId);
       onSuccess();
     } catch (err) {

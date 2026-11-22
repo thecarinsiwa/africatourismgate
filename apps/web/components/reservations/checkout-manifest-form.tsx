@@ -6,6 +6,13 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { useLocale } from 'next-intl';
 import { NationalitySelect } from './nationality-select';
 
+export type ManifestEntryExistingDocument = {
+  id: string;
+  mimeType: string;
+  filename: string;
+  previewUrl?: string;
+};
+
 export type ManifestEntryDraft = {
   fullName: string;
   age: string;
@@ -17,6 +24,9 @@ export type ManifestEntryDraft = {
   currentMedications: string;
   dietaryNotes: string;
   file?: File;
+  /** Persisted manifest row id when editing an existing booking traveler. */
+  entryId?: string;
+  existingDocument?: ManifestEntryExistingDocument;
 };
 
 export function emptyManifestEntryDraft(): ManifestEntryDraft {
@@ -31,6 +41,37 @@ export function emptyManifestEntryDraft(): ManifestEntryDraft {
     currentMedications: '',
     dietaryNotes: '',
     file: undefined,
+    entryId: undefined,
+    existingDocument: undefined,
+  };
+}
+
+export function manifestEntryDraftFromApi(entry: {
+  id?: string;
+  fullName?: string | null;
+  age?: number | null;
+  sex?: BookingManifestSex | null;
+  nationality?: string | null;
+  idNumber?: string | null;
+  allergies?: string | null;
+  seriousMedicalConditions?: string | null;
+  currentMedications?: string | null;
+  dietaryNotes?: string | null;
+  existingDocument?: ManifestEntryExistingDocument;
+}): ManifestEntryDraft {
+  return {
+    fullName: entry.fullName?.trim() ?? '',
+    age: entry.age != null && Number.isFinite(entry.age) ? String(entry.age) : '',
+    sex: entry.sex ?? '',
+    nationality: entry.nationality?.trim() ?? '',
+    idNumber: entry.idNumber?.trim() ?? '',
+    allergies: entry.allergies?.trim() ?? '',
+    seriousMedicalConditions: entry.seriousMedicalConditions?.trim() ?? '',
+    currentMedications: entry.currentMedications?.trim() ?? '',
+    dietaryNotes: entry.dietaryNotes?.trim() ?? '',
+    file: undefined,
+    entryId: entry.id,
+    existingDocument: entry.existingDocument,
   };
 }
 
@@ -392,6 +433,14 @@ type Labels = {
   cameraConfirm: string;
   cameraCancel: string;
   cameraError: string;
+  addTraveler?: string;
+  removeTraveler?: string;
+  addingTraveler?: string;
+  seatsRemaining?: string;
+  saveTraveler?: string;
+  savingTraveler?: string;
+  saveTravelerSuccess?: string;
+  saveTravelerError?: string;
 };
 
 type Props = {
@@ -400,14 +449,45 @@ type Props = {
   onChange: (entries: ManifestEntryDraft[]) => void;
   labels: Labels;
   validationErrors: Record<number, ManifestFieldErrors>;
+  onAddTraveler?: () => void;
+  onRemoveTraveler?: (index: number) => void;
+  canAddTraveler?: boolean;
+  canRemoveTraveler?: boolean;
+  addingTraveler?: boolean;
+  seatsRemainingCount?: number;
+  /** Persist one traveler (and optional ID doc) on an existing booking. */
+  onSaveTraveler?: (
+    index: number,
+    entry: ManifestEntryDraft,
+  ) => Promise<ManifestEntryDraft>;
 };
 
-export function CheckoutManifestForm({ count, entries, onChange, labels, validationErrors }: Props) {
+export function CheckoutManifestForm({
+  count,
+  entries,
+  onChange,
+  labels,
+  validationErrors,
+  onAddTraveler,
+  onRemoveTraveler,
+  canAddTraveler = false,
+  canRemoveTraveler = false,
+  addingTraveler = false,
+  seatsRemainingCount,
+  onSaveTraveler,
+}: Props) {
   const baseId = useId();
   const locale = useLocale();
   const [cameraIndex, setCameraIndex] = useState<number | null>(null);
   const [previewFile, setPreviewFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [savingIndex, setSavingIndex] = useState<number | null>(null);
+  const [saveFeedback, setSaveFeedback] = useState<{
+    index: number;
+    tone: 'ok' | 'error';
+    message: string;
+  } | null>(null);
 
   function openPreview(file: File) {
     const url = URL.createObjectURL(file);
@@ -415,17 +495,57 @@ export function CheckoutManifestForm({ count, entries, onChange, labels, validat
     setPreviewFile(file);
   }
 
+  function openExistingPreview(doc: ManifestEntryExistingDocument) {
+    if (!doc.previewUrl) return;
+    setPreviewUrl(doc.previewUrl);
+    setPreviewFile(
+      new File([], doc.filename || 'document', {
+        type: doc.mimeType || 'application/octet-stream',
+      }),
+    );
+  }
+
   const closePreview = useCallback(() => {
     setPreviewUrl((current) => {
-      if (current) URL.revokeObjectURL(current);
+      // Do not revoke existingDocument preview URLs owned by the draft.
+      const isOwnedByDraft = entries.some(
+        (entry) => entry.existingDocument?.previewUrl === current,
+      );
+      if (current && !isOwnedByDraft) URL.revokeObjectURL(current);
       return null;
     });
     setPreviewFile(null);
-  }, []);
+  }, [entries]);
 
   const closeCamera = useCallback(() => {
     setCameraIndex(null);
   }, []);
+
+  async function handleSaveTraveler(index: number) {
+    if (!onSaveTraveler || !labels.saveTraveler) return;
+    const entry = entries[index];
+    if (!entry) return;
+    setSavingIndex(index);
+    setSaveFeedback(null);
+    try {
+      const saved = await onSaveTraveler(index, entry);
+      const next = entries.map((item, i) => (i === index ? saved : item));
+      onChange(next);
+      setSaveFeedback({
+        index,
+        tone: 'ok',
+        message: labels.saveTravelerSuccess ?? 'OK',
+      });
+    } catch {
+      setSaveFeedback({
+        index,
+        tone: 'error',
+        message: labels.saveTravelerError ?? 'Error',
+      });
+    } finally {
+      setSavingIndex(null);
+    }
+  }
 
   useEffect(() => {
     if (entries.length === count) return;
@@ -434,9 +554,29 @@ export function CheckoutManifestForm({ count, entries, onChange, labels, validat
     onChange(next);
   }, [count, entries, onChange]);
 
+  useEffect(() => {
+    setExpandedIndex((current) => {
+      if (current == null) return null;
+      if (current >= entries.length) return null;
+      return current;
+    });
+  }, [entries.length]);
+
+  useEffect(() => {
+    const errorIndexes = Object.keys(validationErrors)
+      .map((key) => Number.parseInt(key, 10))
+      .filter((index) => Number.isFinite(index) && validationErrors[index]);
+    if (errorIndexes.length === 0) return;
+    setExpandedIndex(Math.min(...errorIndexes));
+  }, [validationErrors]);
+
   function update(index: number, patch: Partial<ManifestEntryDraft>) {
     const next = entries.map((e, i) => (i === index ? { ...e, ...patch } : e));
     onChange(next);
+  }
+
+  function toggleExpanded(index: number) {
+    setExpandedIndex((current) => (current === index ? null : index));
   }
 
   if (entries.length === 0) return null;
@@ -449,6 +589,8 @@ export function CheckoutManifestForm({ count, entries, onChange, labels, validat
     cancel: labels.cameraCancel,
     cameraError: labels.cameraError,
   };
+
+  const showAdd = Boolean(onAddTraveler && labels.addTraveler);
 
   return (
     <>
@@ -473,257 +615,524 @@ export function CheckoutManifestForm({ count, entries, onChange, labels, validat
       ) : null}
 
       <div className="space-y-4 rounded-xl border border-atg-border bg-atg-elevated p-5 dark:border-atg-border dark:bg-atg-elevated">
-        <div>
-          <h3 className="text-base font-semibold text-atg-fg">{labels.title}</h3>
-          <p className="mt-1 text-sm text-atg-muted">{labels.subtitle}</p>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-base font-semibold text-atg-fg">{labels.title}</h3>
+            <p className="mt-1 text-sm text-atg-muted">{labels.subtitle}</p>
+            {addingTraveler && labels.addingTraveler ? (
+              <p className="mt-1 text-xs text-atg-muted">{labels.addingTraveler}</p>
+            ) : null}
+          </div>
+          {showAdd ? (
+            <div className="flex shrink-0 flex-col items-end gap-1">
+              {labels.seatsRemaining && seatsRemainingCount != null ? (
+                <p
+                  className={`text-xs tabular-nums ${
+                    seatsRemainingCount > 0 ? 'text-atg-muted' : 'font-medium text-red-600 dark:text-red-400'
+                  }`}
+                >
+                  {labels.seatsRemaining.replace('{n}', String(seatsRemainingCount))}
+                </p>
+              ) : null}
+              <button
+                type="button"
+                disabled={!canAddTraveler || addingTraveler || seatsRemainingCount === 0}
+                onClick={onAddTraveler}
+                className="rounded-lg border border-primary px-3 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {labels.addTraveler}
+              </button>
+            </div>
+          ) : null}
         </div>
 
-        {entries.map((entry, index) => {
-          const idPrefix = `${baseId}-t${index}`;
-          const travellerLabel = labels.travelerN.replace('{n}', String(index + 1));
-          const fieldErrors = validationErrors[index];
-          return (
-            <fieldset
-              key={index}
-              className="space-y-3 rounded-lg border border-atg-border p-4 dark:border-atg-border"
-            >
-              <legend className="px-1 text-sm font-semibold text-atg-fg">{travellerLabel}</legend>
+        <div className="space-y-3">
+          {entries.map((entry, index) => {
+            const idPrefix = `${baseId}-t${index}`;
+            const panelId = `${idPrefix}-panel`;
+            const triggerId = `${idPrefix}-trigger`;
+            const travellerLabel = labels.travelerN.replace('{n}', String(index + 1));
+            const fieldErrors = validationErrors[index];
+            const expanded = expandedIndex === index;
+            const nameSummary = entry.fullName.trim() || '-';
+            const idSummary = entry.idNumber.trim() || '-';
+            const showRemove = Boolean(onRemoveTraveler);
 
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="sm:col-span-2">
-                  <label htmlFor={`${idPrefix}-name`} className="block text-sm font-medium text-atg-fg">
-                    {labels.fullName}
-                    <span className="ml-1 text-red-500" aria-hidden="true">
-                      *
-                    </span>
-                  </label>
-                  <input
-                    id={`${idPrefix}-name`}
-                    type="text"
-                    value={entry.fullName}
-                    onChange={(e) => update(index, { fullName: e.target.value })}
-                    className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
-                    autoComplete="name"
-                    required
-                    aria-required="true"
-                    aria-invalid={Boolean(fieldErrors?.fullName)}
-                  />
-                  {fieldErrors?.fullName ? (
-                    <p role="alert" className="mt-1 text-xs text-red-600 dark:text-red-400">
-                      {fieldErrors.fullName}
-                    </p>
-                  ) : null}
-                </div>
-
-                <div>
-                  <label htmlFor={`${idPrefix}-age`} className="block text-sm font-medium text-atg-fg">
-                    {labels.age}
-                  </label>
-                  <input
-                    id={`${idPrefix}-age`}
-                    type="number"
-                    min={0}
-                    max={150}
-                    value={entry.age}
-                    onChange={(e) => update(index, { age: e.target.value })}
-                    className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor={`${idPrefix}-sex`} className="block text-sm font-medium text-atg-fg">
-                    {labels.sex}
-                  </label>
-                  <select
-                    id={`${idPrefix}-sex`}
-                    value={entry.sex}
-                    onChange={(e) => update(index, { sex: e.target.value as ManifestEntryDraft['sex'] })}
-                    className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
+            return (
+              <div
+                key={index}
+                className="overflow-hidden rounded-lg border border-atg-border dark:border-atg-border"
+              >
+                <div className="flex items-center gap-2 bg-atg-surface px-3 py-2 dark:bg-white/5 sm:px-4">
+                  <button
+                    type="button"
+                    id={triggerId}
+                    aria-expanded={expanded}
+                    aria-controls={panelId}
+                    onClick={() => toggleExpanded(index)}
+                    className="flex min-w-0 flex-1 items-center gap-3 py-1 text-left transition-colors"
                   >
-                    <option value="">{labels.sexUnspecified}</option>
-                    <option value="M">{labels.sexM}</option>
-                    <option value="F">{labels.sexF}</option>
-                    <option value="other">{labels.sexOther}</option>
-                  </select>
-                </div>
-
-                <div>
-                  <NationalitySelect
-                    id={`${idPrefix}-nat`}
-                    label={labels.nationality}
-                    value={entry.nationality}
-                    onChange={(code) => update(index, { nationality: code })}
-                    locale={locale}
-                    required
-                    error={fieldErrors?.nationality}
-                    placeholder={labels.nationalityPlaceholder}
-                    searchPlaceholder={labels.nationalitySearch}
-                    emptyMessage={labels.nationalityEmpty}
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor={`${idPrefix}-id`} className="block text-sm font-medium text-atg-fg">
-                    {labels.idNumber}
-                    <span className="ml-1 text-red-500" aria-hidden="true">
-                      *
+                    {entry.existingDocument?.previewUrl &&
+                    entry.existingDocument.mimeType.startsWith('image/') &&
+                    !entry.file ? (
+                      <img
+                        src={entry.existingDocument.previewUrl}
+                        alt=""
+                        className="h-9 w-9 shrink-0 rounded object-cover"
+                      />
+                    ) : null}
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-semibold text-atg-fg">
+                        {travellerLabel} : {nameSummary}
+                      </span>
+                      <span className="mt-0.5 block truncate text-sm text-atg-muted sm:hidden">
+                        {labels.idNumber}: {idSummary}
+                      </span>
                     </span>
-                  </label>
-                  <input
-                    id={`${idPrefix}-id`}
-                    type="text"
-                    value={entry.idNumber}
-                    onChange={(e) => update(index, { idNumber: e.target.value })}
-                    className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 font-mono text-sm text-atg-fg dark:border-atg-border"
-                    required
-                    aria-required="true"
-                    aria-invalid={Boolean(fieldErrors?.idNumber)}
-                  />
-                  {fieldErrors?.idNumber ? (
-                    <p role="alert" className="mt-1 text-xs text-red-600 dark:text-red-400">
-                      {fieldErrors.idNumber}
-                    </p>
-                  ) : null}
-                </div>
-
-                <div className="sm:col-span-2 space-y-3 rounded-lg border border-atg-border/80 p-3 dark:border-atg-border">
-                  <p className="text-sm font-semibold text-atg-fg">{labels.medicalSection}</p>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div className="sm:col-span-2">
-                      <label htmlFor={`${idPrefix}-allergies`} className="block text-sm font-medium text-atg-fg">
-                        {labels.allergies}
-                      </label>
-                      <textarea
-                        id={`${idPrefix}-allergies`}
-                        rows={2}
-                        value={entry.allergies}
-                        onChange={(e) => update(index, { allergies: e.target.value })}
-                        placeholder={labels.allergiesPlaceholder}
-                        className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
-                      />
-                    </div>
-                    <div className="sm:col-span-2">
-                      <label
-                        htmlFor={`${idPrefix}-serious-med`}
-                        className="block text-sm font-medium text-atg-fg"
+                    <span className="hidden min-w-0 flex-1 truncate text-sm font-semibold text-atg-fg sm:block">
+                      {labels.idNumber}: {idSummary}
+                    </span>
+                  </button>
+                  <div className="flex shrink-0 items-center gap-1.5">
+                    {showRemove ? (
+                      <button
+                        type="button"
+                        disabled={addingTraveler || !canRemoveTraveler}
+                        onClick={() => onRemoveTraveler?.(index)}
+                        aria-label={labels.removeTraveler}
+                        title={labels.removeTraveler}
+                        className="inline-flex h-7 w-7 items-center justify-center rounded border border-atg-border text-red-600 transition-colors hover:border-red-500 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-atg-border dark:text-red-400 dark:hover:bg-red-950/30"
                       >
-                        {labels.seriousMedicalConditions}
-                      </label>
-                      <textarea
-                        id={`${idPrefix}-serious-med`}
-                        rows={2}
-                        value={entry.seriousMedicalConditions}
-                        onChange={(e) => update(index, { seriousMedicalConditions: e.target.value })}
-                        placeholder={labels.seriousMedicalConditionsPlaceholder}
-                        className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor={`${idPrefix}-meds`} className="block text-sm font-medium text-atg-fg">
-                        {labels.currentMedications}
-                      </label>
-                      <textarea
-                        id={`${idPrefix}-meds`}
-                        rows={2}
-                        value={entry.currentMedications}
-                        onChange={(e) => update(index, { currentMedications: e.target.value })}
-                        placeholder={labels.currentMedicationsPlaceholder}
-                        className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor={`${idPrefix}-dietary`} className="block text-sm font-medium text-atg-fg">
-                        {labels.dietaryNotes}
-                      </label>
-                      <textarea
-                        id={`${idPrefix}-dietary`}
-                        rows={2}
-                        value={entry.dietaryNotes}
-                        onChange={(e) => update(index, { dietaryNotes: e.target.value })}
-                        placeholder={labels.dietaryNotesPlaceholder}
-                        className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
-                      />
-                    </div>
+                        <svg
+                          className="h-3.5 w-3.5"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.226-.038V16.25A2.75 2.75 0 006.75 19h6.5A2.75 2.75 0 0016 16.25V5.935l.226.038a.75.75 0 00.23-1.482A41.4 41.4 0 0014 4.193v-.443A2.75 2.75 0 0011.25 1h-2.5zM10 4c.784 0 1.556.03 2.25.09V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.34C8.444 4.03 9.216 4 10 4zm-2 4.75a.75.75 0 01.75.75v5.5a.75.75 0 01-1.5 0v-5.5a.75.75 0 01.75-.75zm5.5.75a.75.75 0 00-1.5 0v5.5a.75.75 0 001.5 0v-5.5z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </button>
+                    ) : null}
+                    <button
+                      type="button"
+                      aria-expanded={expanded}
+                      aria-controls={panelId}
+                      onClick={() => toggleExpanded(index)}
+                      aria-label={travellerLabel}
+                      className="inline-flex h-7 w-7 items-center justify-center rounded border border-atg-border text-atg-fg transition-colors hover:bg-black/[0.03] dark:border-atg-border dark:hover:bg-white/[0.04]"
+                    >
+                      <svg
+                        className={`h-3.5 w-3.5 transition-transform ${expanded ? 'rotate-180' : ''}`}
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
                   </div>
                 </div>
 
-                {/* Document upload / camera */}
-                <div className="sm:col-span-2">
-                  <p className="text-sm font-medium text-atg-fg">{labels.idDocument}</p>
-                  <p className="mt-0.5 text-xs text-atg-muted">{labels.idDocumentHint}</p>
-
-                  {entry.file ? (
-                    /* File preview */
-                    <div className="mt-2 flex items-center gap-3 rounded-lg border border-atg-border bg-atg-surface px-3 py-2 dark:border-atg-border dark:bg-white/5">
-                      {entry.file.type.startsWith('image/') ? (
-                        <img
-                          src={URL.createObjectURL(entry.file)}
-                          alt=""
-                          className="h-10 w-14 shrink-0 rounded object-cover"
-                        />
-                      ) : (
-                        <svg className="h-8 w-8 shrink-0 text-atg-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                        </svg>
-                      )}
-                      <span className="flex-1 truncate text-sm text-atg-fg">{entry.file.name}</span>
-                      <button
-                        type="button"
-                        onClick={() => openPreview(entry.file!)}
-                        className="shrink-0 text-xs font-medium text-primary hover:underline"
-                      >
-                        {labels.viewDocument}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => update(index, { file: undefined })}
-                        className="shrink-0 text-xs text-atg-muted hover:text-red-600 dark:hover:text-red-400"
-                      >
-                        {labels.idDocumentRemove}
-                      </button>
-                    </div>
-                  ) : (
-                    /* Upload + Camera buttons */
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      <label
-                        htmlFor={`${idPrefix}-file`}
-                        className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-atg-border px-4 py-2.5 text-sm text-atg-muted transition-colors hover:border-primary hover:text-primary dark:border-atg-border"
-                      >
-                        <svg className="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                          <path d="M9.25 13.25a.75.75 0 001.5 0V4.636l2.955 3.129a.75.75 0 001.09-1.03l-4.25-4.5a.75.75 0 00-1.09 0l-4.25 4.5a.75.75 0 101.09 1.03L9.25 4.636v8.614z" />
-                          <path d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" />
-                        </svg>
-                        {labels.idDocumentSelected}
+                {expanded ? (
+                  <fieldset
+                    id={panelId}
+                    className="space-y-3 border-t border-atg-border p-4 dark:border-atg-border"
+                  >
+                    {/* Legend only — do not aria-labelledby the summary trigger (it
+                        includes "N° pièce…", which made getByLabel match the fieldset). */}
+                    <legend className="sr-only">{travellerLabel}</legend>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div className="sm:col-span-2">
+                        <label
+                          htmlFor={`${idPrefix}-name`}
+                          className="block text-sm font-medium text-atg-fg"
+                        >
+                          {labels.fullName}
+                          <span className="ml-1 text-red-500" aria-hidden="true">
+                            *
+                          </span>
+                        </label>
                         <input
-                          id={`${idPrefix}-file`}
-                          type="file"
-                          accept="image/jpeg,image/png,image/webp,application/pdf"
-                          className="sr-only"
-                          onChange={(e) => {
-                            const f = e.target.files?.[0];
-                            if (f) update(index, { file: f });
-                            e.target.value = '';
-                          }}
+                          id={`${idPrefix}-name`}
+                          type="text"
+                          value={entry.fullName}
+                          onChange={(e) => update(index, { fullName: e.target.value })}
+                          className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
+                          autoComplete="name"
+                          required
+                          aria-required="true"
+                          aria-invalid={Boolean(fieldErrors?.fullName)}
                         />
-                      </label>
+                        {fieldErrors?.fullName ? (
+                          <p role="alert" className="mt-1 text-xs text-red-600 dark:text-red-400">
+                            {fieldErrors.fullName}
+                          </p>
+                        ) : null}
+                      </div>
 
-                      <button
-                        type="button"
-                        onClick={() => setCameraIndex(index)}
-                        className="flex items-center gap-2 rounded-lg border border-dashed border-atg-border px-4 py-2.5 text-sm text-atg-muted transition-colors hover:border-primary hover:text-primary dark:border-atg-border"
-                      >
-                        <svg className="h-4 w-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                          <path fillRule="evenodd" d="M1 8a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 018.07 3h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0016.07 6H17a2 2 0 012 2v7a2 2 0 01-2 2H3a2 2 0 01-2-2V8zm13.5 3a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM10 14a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" clipRule="evenodd" />
-                        </svg>
-                        {labels.takePhoto}
-                      </button>
+                      <div>
+                        <label
+                          htmlFor={`${idPrefix}-age`}
+                          className="block text-sm font-medium text-atg-fg"
+                        >
+                          {labels.age}
+                        </label>
+                        <input
+                          id={`${idPrefix}-age`}
+                          type="number"
+                          min={0}
+                          max={150}
+                          value={entry.age}
+                          onChange={(e) => update(index, { age: e.target.value })}
+                          className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor={`${idPrefix}-sex`}
+                          className="block text-sm font-medium text-atg-fg"
+                        >
+                          {labels.sex}
+                        </label>
+                        <select
+                          id={`${idPrefix}-sex`}
+                          value={entry.sex}
+                          onChange={(e) =>
+                            update(index, { sex: e.target.value as ManifestEntryDraft['sex'] })
+                          }
+                          className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
+                        >
+                          <option value="">{labels.sexUnspecified}</option>
+                          <option value="M">{labels.sexM}</option>
+                          <option value="F">{labels.sexF}</option>
+                          <option value="other">{labels.sexOther}</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <NationalitySelect
+                          id={`${idPrefix}-nat`}
+                          label={labels.nationality}
+                          value={entry.nationality}
+                          onChange={(code) => update(index, { nationality: code })}
+                          locale={locale}
+                          required
+                          error={fieldErrors?.nationality}
+                          placeholder={labels.nationalityPlaceholder}
+                          searchPlaceholder={labels.nationalitySearch}
+                          emptyMessage={labels.nationalityEmpty}
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor={`${idPrefix}-id`}
+                          className="block text-sm font-medium text-atg-fg"
+                        >
+                          {labels.idNumber}
+                          <span className="ml-1 text-red-500" aria-hidden="true">
+                            *
+                          </span>
+                        </label>
+                        <input
+                          id={`${idPrefix}-id`}
+                          type="text"
+                          value={entry.idNumber}
+                          onChange={(e) => update(index, { idNumber: e.target.value })}
+                          className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 font-mono text-sm text-atg-fg dark:border-atg-border"
+                          required
+                          aria-required="true"
+                          aria-invalid={Boolean(fieldErrors?.idNumber)}
+                        />
+                        {fieldErrors?.idNumber ? (
+                          <p role="alert" className="mt-1 text-xs text-red-600 dark:text-red-400">
+                            {fieldErrors.idNumber}
+                          </p>
+                        ) : null}
+                      </div>
+
+                      <div className="sm:col-span-2 space-y-3 rounded-lg border border-atg-border/80 p-3 dark:border-atg-border">
+                        <p className="text-sm font-semibold text-atg-fg">{labels.medicalSection}</p>
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          <div className="sm:col-span-2">
+                            <label
+                              htmlFor={`${idPrefix}-allergies`}
+                              className="block text-sm font-medium text-atg-fg"
+                            >
+                              {labels.allergies}
+                            </label>
+                            <textarea
+                              id={`${idPrefix}-allergies`}
+                              rows={2}
+                              value={entry.allergies}
+                              onChange={(e) => update(index, { allergies: e.target.value })}
+                              placeholder={labels.allergiesPlaceholder}
+                              className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
+                            />
+                          </div>
+                          <div className="sm:col-span-2">
+                            <label
+                              htmlFor={`${idPrefix}-serious-med`}
+                              className="block text-sm font-medium text-atg-fg"
+                            >
+                              {labels.seriousMedicalConditions}
+                            </label>
+                            <textarea
+                              id={`${idPrefix}-serious-med`}
+                              rows={2}
+                              value={entry.seriousMedicalConditions}
+                              onChange={(e) =>
+                                update(index, { seriousMedicalConditions: e.target.value })
+                              }
+                              placeholder={labels.seriousMedicalConditionsPlaceholder}
+                              className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
+                            />
+                          </div>
+                          <div>
+                            <label
+                              htmlFor={`${idPrefix}-meds`}
+                              className="block text-sm font-medium text-atg-fg"
+                            >
+                              {labels.currentMedications}
+                            </label>
+                            <textarea
+                              id={`${idPrefix}-meds`}
+                              rows={2}
+                              value={entry.currentMedications}
+                              onChange={(e) =>
+                                update(index, { currentMedications: e.target.value })
+                              }
+                              placeholder={labels.currentMedicationsPlaceholder}
+                              className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
+                            />
+                          </div>
+                          <div>
+                            <label
+                              htmlFor={`${idPrefix}-dietary`}
+                              className="block text-sm font-medium text-atg-fg"
+                            >
+                              {labels.dietaryNotes}
+                            </label>
+                            <textarea
+                              id={`${idPrefix}-dietary`}
+                              rows={2}
+                              value={entry.dietaryNotes}
+                              onChange={(e) => update(index, { dietaryNotes: e.target.value })}
+                              placeholder={labels.dietaryNotesPlaceholder}
+                              className="mt-1 w-full rounded-lg border border-atg-border bg-transparent px-3 py-2 text-sm text-atg-fg dark:border-atg-border"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <p className="text-sm font-medium text-atg-fg">{labels.idDocument}</p>
+                        <p className="mt-0.5 text-xs text-atg-muted">{labels.idDocumentHint}</p>
+
+                        {entry.file ? (
+                          <div className="mt-2 flex items-center gap-3 rounded-lg border border-atg-border bg-atg-surface px-3 py-2 dark:border-atg-border dark:bg-white/5">
+                            {entry.file.type.startsWith('image/') ? (
+                              <img
+                                src={URL.createObjectURL(entry.file)}
+                                alt=""
+                                className="h-10 w-14 shrink-0 rounded object-cover"
+                              />
+                            ) : (
+                              <svg
+                                className="h-8 w-8 shrink-0 text-atg-muted"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth={1.5}
+                                aria-hidden="true"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                                />
+                              </svg>
+                            )}
+                            <span className="flex-1 truncate text-sm text-atg-fg">
+                              {entry.file.name}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => openPreview(entry.file!)}
+                              className="shrink-0 text-xs font-medium text-primary hover:underline"
+                            >
+                              {labels.viewDocument}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => update(index, { file: undefined })}
+                              className="shrink-0 text-xs text-atg-muted hover:text-red-600 dark:hover:text-red-400"
+                            >
+                              {labels.idDocumentRemove}
+                            </button>
+                          </div>
+                        ) : entry.existingDocument ? (
+                          <div className="mt-2 space-y-2">
+                            <div className="flex items-center gap-3 rounded-lg border border-atg-border bg-atg-surface px-3 py-2 dark:border-atg-border dark:bg-white/5">
+                              {entry.existingDocument.previewUrl &&
+                              entry.existingDocument.mimeType.startsWith('image/') ? (
+                                <img
+                                  src={entry.existingDocument.previewUrl}
+                                  alt=""
+                                  className="h-16 w-24 shrink-0 rounded object-cover"
+                                />
+                              ) : (
+                                <svg
+                                  className="h-8 w-8 shrink-0 text-atg-muted"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth={1.5}
+                                  aria-hidden="true"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                                  />
+                                </svg>
+                              )}
+                              <span className="flex-1 truncate text-sm text-atg-fg">
+                                {entry.existingDocument.filename}
+                              </span>
+                              {entry.existingDocument.previewUrl ? (
+                                <button
+                                  type="button"
+                                  onClick={() => openExistingPreview(entry.existingDocument!)}
+                                  className="shrink-0 text-xs font-medium text-primary hover:underline"
+                                >
+                                  {labels.viewDocument}
+                                </button>
+                              ) : null}
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              <label
+                                htmlFor={`${idPrefix}-file`}
+                                className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-atg-border px-4 py-2.5 text-sm text-atg-muted transition-colors hover:border-primary hover:text-primary dark:border-atg-border"
+                              >
+                                {labels.idDocumentSelected}
+                                <input
+                                  id={`${idPrefix}-file`}
+                                  type="file"
+                                  accept="image/jpeg,image/png,image/webp,application/pdf"
+                                  className="sr-only"
+                                  onChange={(e) => {
+                                    const f = e.target.files?.[0];
+                                    if (f) update(index, { file: f });
+                                    e.target.value = '';
+                                  }}
+                                />
+                              </label>
+                              <button
+                                type="button"
+                                onClick={() => setCameraIndex(index)}
+                                className="flex items-center gap-2 rounded-lg border border-dashed border-atg-border px-4 py-2.5 text-sm text-atg-muted transition-colors hover:border-primary hover:text-primary dark:border-atg-border"
+                              >
+                                {labels.takePhoto}
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            <label
+                              htmlFor={`${idPrefix}-file`}
+                              className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-atg-border px-4 py-2.5 text-sm text-atg-muted transition-colors hover:border-primary hover:text-primary dark:border-atg-border"
+                            >
+                              <svg
+                                className="h-4 w-4 shrink-0"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                aria-hidden="true"
+                              >
+                                <path d="M9.25 13.25a.75.75 0 001.5 0V4.636l2.955 3.129a.75.75 0 001.09-1.03l-4.25-4.5a.75.75 0 00-1.09 0l-4.25 4.5a.75.75 0 101.09 1.03L9.25 4.636v8.614z" />
+                                <path d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" />
+                              </svg>
+                              {labels.idDocumentSelected}
+                              <input
+                                id={`${idPrefix}-file`}
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp,application/pdf"
+                                className="sr-only"
+                                onChange={(e) => {
+                                  const f = e.target.files?.[0];
+                                  if (f) update(index, { file: f });
+                                  e.target.value = '';
+                                }}
+                              />
+                            </label>
+
+                            <button
+                              type="button"
+                              onClick={() => setCameraIndex(index)}
+                              className="flex items-center gap-2 rounded-lg border border-dashed border-atg-border px-4 py-2.5 text-sm text-atg-muted transition-colors hover:border-primary hover:text-primary dark:border-atg-border"
+                            >
+                              <svg
+                                className="h-4 w-4 shrink-0"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                aria-hidden="true"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M1 8a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 018.07 3h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0016.07 6H17a2 2 0 012 2v7a2 2 0 01-2 2H3a2 2 0 01-2-2V8zm13.5 3a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM10 14a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              {labels.takePhoto}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      {onSaveTraveler && labels.saveTraveler ? (
+                        <div className="sm:col-span-2 flex flex-wrap items-center justify-between gap-2 border-t border-atg-border pt-3 dark:border-atg-border">
+                          {saveFeedback?.index === index ? (
+                            <p
+                              role="status"
+                              className={`text-sm ${
+                                saveFeedback.tone === 'ok'
+                                  ? 'text-green-700 dark:text-green-400'
+                                  : 'text-red-600 dark:text-red-400'
+                              }`}
+                            >
+                              {saveFeedback.message}
+                            </p>
+                          ) : (
+                            <span />
+                          )}
+                          <button
+                            type="button"
+                            disabled={savingIndex === index}
+                            onClick={() => void handleSaveTraveler(index)}
+                            className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            {savingIndex === index
+                              ? (labels.savingTraveler ?? labels.saveTraveler)
+                              : labels.saveTraveler}
+                          </button>
+                        </div>
+                      ) : null}
                     </div>
-                  )}
-                </div>
+                  </fieldset>
+                ) : null}
               </div>
-            </fieldset>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </>
   );

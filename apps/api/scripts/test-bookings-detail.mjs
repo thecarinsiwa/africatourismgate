@@ -132,7 +132,7 @@ async function main() {
     throw new Error(`Expected confirmed, got ${confirm.data?.booking?.status}`);
   }
 
-  console.log('4. GET detail — history includes confirmation');
+  console.log('4. GET detail - history includes confirmation');
   const afterConfirm = await request('GET', `/bookings/${bookingId}`, { token });
   const history = afterConfirm.data?.statusHistory ?? [];
   const hasConfirmed = history.some((h) => h.toStatus === 'confirmed');
@@ -143,14 +143,14 @@ async function main() {
   console.log('5. POST /bookings/:id/cancel with reason');
   const cancel = await request('POST', `/bookings/${bookingId}/cancel`, {
     token,
-    body: { reason: 'Test annulation client — intégration' },
+    body: { reason: 'Test annulation client - intégration' },
   });
   assertStatus('POST cancel', cancel.status, 201);
   if (cancel.data?.booking?.status !== 'cancelled') {
     throw new Error(`Expected cancelled, got ${cancel.data?.booking?.status}`);
   }
 
-  console.log('6. GET detail — cancel reason in history');
+  console.log('6. GET detail - cancel reason in history');
   const afterCancel = await request('GET', `/bookings/${bookingId}`, { token });
   const cancelEntry = (afterCancel.data?.statusHistory ?? []).find(
     (h) => h.toStatus === 'cancelled',

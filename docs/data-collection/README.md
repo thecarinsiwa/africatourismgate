@@ -1,4 +1,4 @@
-# Modèles de collecte de données — Africa Tourism Gate
+# Modèles de collecte de données - Africa Tourism Gate
 
 Fichiers CSV destinés à la **collecte** des données de production auprès de la société.  
 Document parent : [production-data-preparation.md](../production-data-preparation.md) (parties B, C, D).  
@@ -50,7 +50,7 @@ Chaque fichier contient **une ligne d’en-tête** et des **lignes d’exemple c
 | Colonne | Valeurs |
 |---------|---------|
 | `role_code` | `super_admin`, `org_admin`, `support`, `customer`, `gap_coordinator` |
-| `guide_type` | *(obsolète dans les CSV — utiliser `type`)* |
+| `guide_type` | *(obsolète dans les CSV - utiliser `type`)* |
 | `type` (11) | `internal`, `external` |
 | `status` (11) | `active`, `inactive` |
 | `record_type` (05) | `destination`, `poi` |

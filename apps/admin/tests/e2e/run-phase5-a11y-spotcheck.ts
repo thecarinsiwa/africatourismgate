@@ -53,7 +53,7 @@ const AUDIT_SOURCE = `({ pageLabel }) => {
       const cls = html.className ? '.' + String(html.className).split(' ')[0] : '';
       findings.push({ page: pageLabel, severity: 'error', issue: 'Contrôle icône sans nom accessible (' + tag + cls + ')' });
     } else if ((tag === 'input' || tag === 'select' || tag === 'textarea') && !hasName && type !== 'hidden') {
-      findings.push({ page: pageLabel, severity: 'warn', issue: 'Champ ' + tag + ' sans label accessible (id=' + (html.id || '—') + ')' });
+      findings.push({ page: pageLabel, severity: 'warn', issue: 'Champ ' + tag + ' sans label accessible (id=' + (html.id || '-') + ')' });
     }
   }
 
@@ -91,7 +91,7 @@ const AUDIT_SOURCE = `({ pageLabel }) => {
       findings.push({
         page: pageLabel,
         severity: 'warn',
-        issue: 'Contraste muted faible (~' + ratio.toFixed(2) + ':1) — ' + String(el.innerText || '').slice(0, 40),
+        issue: 'Contraste muted faible (~' + ratio.toFixed(2) + ':1) - ' + String(el.innerText || '').slice(0, 40),
       });
     }
   }
@@ -206,7 +206,7 @@ async function main() {
     console.error(`P5-6: ${report.errors.length} erreur(s) a11y`);
     process.exitCode = 2;
   } else {
-    console.log(`P5-6 OK — ${report.warns.length} warning(s), captures dans ${OUT}`);
+    console.log(`P5-6 OK - ${report.warns.length} warning(s), captures dans ${OUT}`);
   }
 }
 

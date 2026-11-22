@@ -4,7 +4,7 @@ import { Card } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
 
 /**
- * Bannière livres SYSCOHADA — données API réelles uniquement (SYSCO-006).
+ * Bannière livres SYSCOHADA - données API réelles uniquement (SYSCO-006).
  */
 export function AccountingBridgeNotice({ className }: { className?: string }) {
   const t = useTranslations('modules.treasury.accounting.notice');

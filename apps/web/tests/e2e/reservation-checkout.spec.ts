@@ -89,7 +89,7 @@ test('panier -> recap -> Stripe -> confirmation', async ({ page }) => {
 
 test('panier -> recap -> cash -> attente paiement sur place', async ({ page }) => {
   test.setTimeout(60_000);
-  // PR-08: cash web is off by default — enable explicitly for this scenario.
+  // PR-08: cash web is off by default - enable explicitly for this scenario.
   await mockWebPaymentMethods(page, { cash: true });
   await mockCheckoutAuth(page);
 
@@ -160,7 +160,7 @@ test('panier -> recap -> cash -> attente paiement sur place', async ({ page }) =
   await fillCheckoutManifest(page);
   await page
     .getByRole('button', {
-      name: /confirmer — paiement sur place|confirm — pay on site|confirmar — pago en efectivo|demander une r[ée]servation|request a booking|solicitar una reserva/i,
+      name: /confirmer - paiement sur place|confirm - pay on site|confirmar - pago en efectivo|demander une r[ée]servation|request a booking|solicitar una reserva/i,
     })
     .click();
   await expect(page).toHaveURL(

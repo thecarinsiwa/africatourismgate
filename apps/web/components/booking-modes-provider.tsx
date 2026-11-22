@@ -9,7 +9,7 @@ import {
 
 declare global {
   interface Window {
-    /** Playwright E2E only — see tests/e2e/helpers/mock-booking-modes.ts */
+    /** Playwright E2E only - see tests/e2e/helpers/mock-booking-modes.ts */
     __ATG_E2E_BOOKING_MODES__?: Partial<ResolvedBookingItemTypeModes>;
   }
 }

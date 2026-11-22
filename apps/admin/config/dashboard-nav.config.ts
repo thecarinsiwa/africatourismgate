@@ -196,7 +196,7 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
   },
 ];
 
-/** Routes imbriquées hors menu latéral — clés i18n `nav.links.*` ou `nav.breadcrumb.*`. */
+/** Routes imbriquées hors menu latéral - clés i18n `nav.links.*` ou `nav.breadcrumb.*`. */
 export type AdminBreadcrumbRouteConfig = {
   href: string;
   labelKey: string;

@@ -1,4 +1,4 @@
--- Hero slides — English and Spanish locales (French seeded in add_hero_slides.sql)
+-- Hero slides - English and Spanish locales (French seeded in add_hero_slides.sql)
 -- Runs after add_hero_slides.sql (numeric suffix avoids localeCompare ordering: *_i18n before *.sql).
 
 INSERT INTO `hero_slides` (
@@ -48,7 +48,7 @@ INSERT INTO `hero_slides` (
   '00000000-0000-4000-8000-00000000c014',
   '12-day cruise',
   'ZANZIBAR TO MADAGASCAR',
-  'Coastal sailing along the Indian Ocean — dream beaches and unique wildlife.',
+  'Coastal sailing along the Indian Ocean - dream beaches and unique wildlife.',
   'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/A_giraffe_with_a_beautiful_background_of_Nairobi_City_Skyline_%28cropped%29.jpg/1280px-A_giraffe_with_a_beautiful_background_of_Nairobi_City_Skyline_%28cropped%29.jpg',
   'Giraffe with Nairobi city skyline',
   '/cruises',

@@ -41,7 +41,7 @@ export function buildAdminHelpBreadcrumbTail({
 
 /**
  * Registers shell title + breadcrumb trail for help category/article pages.
- * Renders nothing — the dashboard shell displays the crumbs.
+ * Renders nothing - the dashboard shell displays the crumbs.
  */
 export function AdminHelpBreadcrumbs({
   categorySlug,

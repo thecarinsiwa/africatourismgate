@@ -66,7 +66,7 @@ export function toTourGuideBookingListItemDto(
     totalCents: booking.totalCents,
     currency: booking.currency,
     createdAt: formatTimestamp(booking.createdAt),
-    clientEmail: client?.email ?? '—',
+    clientEmail: client?.email ?? '-',
     clientFirstName: client?.firstName ?? '',
     clientLastName: client?.lastName ?? '',
     organizationId: client?.organizationId ?? null,

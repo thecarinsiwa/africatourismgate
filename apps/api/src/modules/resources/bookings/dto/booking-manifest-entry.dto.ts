@@ -42,7 +42,7 @@ export class BookingManifestEntryDto {
   @ApiPropertyOptional()
   idNumber?: string | null;
 
-  /** May be null — emergency contact is booking-level (legacy per-traveler fields deprecated). */
+  /** May be null - emergency contact is booking-level (legacy per-traveler fields deprecated). */
   @ApiPropertyOptional()
   emergencyContactName?: string | null;
 
@@ -58,7 +58,7 @@ export class BookingManifestEntryDto {
   @ApiPropertyOptional()
   emergencyContactAddress?: string | null;
 
-  /** Legacy free-text medical notes — read-only; prefer structured fields below. */
+  /** Legacy free-text medical notes - read-only; prefer structured fields below. */
   @ApiPropertyOptional()
   conditions?: string | null;
 
@@ -125,7 +125,7 @@ export class CreateBookingManifestEntryDto {
   idNumber!: string;
 
   /**
-   * @deprecated Ignored — use booking-level emergency contact (`PATCH …/emergency-contact`).
+   * @deprecated Ignored - use booking-level emergency contact (`PATCH …/emergency-contact`).
    * Accepted so older clients are not rejected by forbidNonWhitelisted.
    */
   @ApiPropertyOptional({ deprecated: true })
@@ -135,7 +135,7 @@ export class CreateBookingManifestEntryDto {
   emergencyContactName?: string;
 
   /**
-   * @deprecated Ignored — use booking-level emergency contact (`PATCH …/emergency-contact`).
+   * @deprecated Ignored - use booking-level emergency contact (`PATCH …/emergency-contact`).
    * Accepted so older clients are not rejected by forbidNonWhitelisted.
    */
   @ApiPropertyOptional({ deprecated: true })
@@ -144,21 +144,21 @@ export class CreateBookingManifestEntryDto {
   @MaxLength(40)
   emergencyContactPhone?: string;
 
-  /** @deprecated Ignored — use booking-level emergency contact. */
+  /** @deprecated Ignored - use booking-level emergency contact. */
   @ApiPropertyOptional({ deprecated: true })
   @IsOptional()
   @IsEmail({}, { message: "L'e-mail du contact d'urgence est invalide." })
   @MaxLength(255)
   emergencyContactEmail?: string;
 
-  /** @deprecated Ignored — use booking-level emergency contact. */
+  /** @deprecated Ignored - use booking-level emergency contact. */
   @ApiPropertyOptional({ deprecated: true })
   @IsOptional()
   @IsString()
   @MaxLength(100)
   emergencyContactCountry?: string;
 
-  /** @deprecated Ignored — use booking-level emergency contact. */
+  /** @deprecated Ignored - use booking-level emergency contact. */
   @ApiPropertyOptional({ deprecated: true })
   @IsOptional()
   @IsString()
@@ -166,7 +166,7 @@ export class CreateBookingManifestEntryDto {
   emergencyContactAddress?: string;
 
   /**
-   * @deprecated Legacy free-text — ignored for persistence; use structured medical fields.
+   * @deprecated Legacy free-text - ignored for persistence; use structured medical fields.
    * Accepted so older clients are not rejected by forbidNonWhitelisted.
    */
   @ApiPropertyOptional({ deprecated: true })
@@ -219,7 +219,7 @@ export class CreateBookingManifestEntryDto {
   sortOrder?: number;
 }
 
-/** Partial update — pricing flows may patch price without resending nationality/idNumber. */
+/** Partial update - pricing flows may patch price without resending nationality/idNumber. */
 export class UpdateBookingManifestEntryDto extends PartialType(
   CreateBookingManifestEntryDto,
 ) {}

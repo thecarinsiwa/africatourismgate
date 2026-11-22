@@ -1,6 +1,6 @@
 /**
  * Raccourcis du navigateur de recherche publique.
- * Principal : Ctrl/⌘+K — alias : touche `/`.
+ * Principal : Ctrl/⌘+K - alias : touche `/`.
  * Ctrl/⌘+F n’est volontairement pas intercepté (find natif du navigateur).
  */
 

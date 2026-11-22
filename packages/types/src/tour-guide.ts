@@ -8,7 +8,7 @@ export type BookingItemTypeKey =
   | 'activity_schedule'
   | 'package';
 
-/** Per vertical booking mode — stored in `organization_settings` (group `booking`, key `item_type_modes`). */
+/** Per vertical booking mode - stored in `organization_settings` (group `booking`, key `item_type_modes`). */
 export type BookingItemTypeModes = Partial<Record<BookingItemTypeKey, BookingMode>>;
 
 export type ResolvedBookingItemTypeModes = Record<BookingItemTypeKey, BookingMode>;

@@ -12,7 +12,7 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Africa Tourism Gate — Caisse',
+    default: 'Africa Tourism Gate - Caisse',
     template: '%s | Africa Tourism Gate Caisse',
   },
   description: 'Point de vente Africa Tourism Gate',

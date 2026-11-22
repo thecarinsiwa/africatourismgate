@@ -6,7 +6,7 @@ export { SEED_ORGANIZATION_ID, waitForPageIdle };
 /** Nav group label (FR / EN / ES). */
 export const TREASURY_NAV_GROUP = /^Trésorerie$|^Treasury$|^Tesorería$/i;
 
-/** Sidebar child — fund entries list. */
+/** Sidebar child - fund entries list. */
 export const TREASURY_ENTRIES_NAV =
   /^Entrées de fonds$|^Fund entries$|^Entradas de fondos$/i;
 

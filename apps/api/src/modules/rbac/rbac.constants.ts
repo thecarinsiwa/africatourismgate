@@ -42,7 +42,7 @@ export const RBAC_AUDIT_EVENT_LABELS: Record<RbacAuditEventType, string> = {
 export const PERMISSIONS_KEY = 'permissions';
 
 /**
- * Catalog API RBAC — permission resource → controller path segments.
+ * Catalog API RBAC - permission resource → controller path segments.
  *
  * Convention: `GET` (list + findOne) requires `{resource}.read`;
  * `POST` / `PATCH` / `DELETE` require `{resource}.write`.
@@ -106,7 +106,7 @@ export const CATALOG_PERMISSION_MAP = {
 } as const;
 
 /**
- * Permissions trésorerie (TRESO-008) — codes exacts pour `@RequirePermissions`.
+ * Permissions trésorerie (TRESO-008) - codes exacts pour `@RequirePermissions`.
  * `super_admin` bypass inchangé via PermissionsGuard.
  */
 export const TREASURY_PERMISSION_CODES = [

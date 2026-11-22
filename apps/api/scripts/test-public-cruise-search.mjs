@@ -47,7 +47,7 @@ async function main() {
   }
   const browseSailing = browseAll.data.data.find((s) => s.id === SAILING_DEMO_KIN_BNW);
   if (!browseSailing) {
-    throw new Error('Seed sailing Kinshasa — Banana not found in browse-all results');
+    throw new Error('Seed sailing Kinshasa - Banana not found in browse-all results');
   }
   console.log(
     `  OK browse-all: ${browseAll.data.data.length} sailing(s), incl. ${browseSailing.itineraryName}`,
@@ -63,7 +63,7 @@ async function main() {
   }
   const sailing = search.data.data.find((s) => s.id === SAILING_DEMO_KIN_BNW);
   if (!sailing) {
-    throw new Error('Seed sailing Kinshasa — Banana not found');
+    throw new Error('Seed sailing Kinshasa - Banana not found');
   }
   if (sailing.minPriceCents !== 245000) {
     throw new Error(`Expected minPriceCents 245000, got ${sailing.minPriceCents}`);

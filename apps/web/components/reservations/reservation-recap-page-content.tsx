@@ -10,17 +10,24 @@ import type {
 import { Button, Spinner } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createBooking, createBookingCheckoutSession, requestBooking } from '../../lib/api/booking';
 import { listPublicPaymentBankAccounts } from '../../lib/api/public-payment-bank-accounts';
 import { listPublicMobileMoneyConfig } from '../../lib/api/public-mobile-money';
-import { uploadBookingIdentityDocument } from '../../lib/api/booking-identity-documents';
+import {
+  fetchBookingIdentityDocumentBlob,
+  uploadBookingIdentityDocument,
+} from '../../lib/api/booking-identity-documents';
 import { formatCarPrice } from '../../lib/cars/listings';
 import type { VehicleDetail } from '../../lib/cars/types';
 import { formatActivityPrice, formatScheduleTime } from '../../lib/activities/listings';
 import type { ActivityDetail } from '../../lib/activities/types';
 import { getAccommodationDetail, getActivityDetail, getCruiseSailingDetail, getFlightDetail, getPackageDetail, getVehicleDetail } from '../../lib/api/public';
-import { getPublicVehicleTrip } from '../../lib/api/vehicle-trips';
+import {
+  ensurePublicVehicleTripSeats,
+  getPublicVehicleTrip,
+  joinPublicVehicleTrip,
+} from '../../lib/api/vehicle-trips';
 import { formatPackagePrice } from '../../lib/packages/listings';
 import type { PackageDetail } from '../../lib/packages/types';
 import { formatAirportLabel } from '../../lib/flights/airports';
@@ -28,7 +35,12 @@ import { formatFlightPrice } from '../../lib/flights/listings';
 import type { FlightDetail } from '../../lib/flights/types';
 import { formatCruisePrice } from '../../lib/cruises/listings';
 import type { CruiseSailingDetail } from '../../lib/cruises/types';
-import { ensureClientAccessToken, getClientAccessToken } from '../../lib/auth/client-session';
+import {
+  ensureClientAccessToken,
+  getClientAccessToken,
+  getWebSession,
+} from '../../lib/auth/client-session';
+import { loadVehicleTripBookingPrefill } from '../../lib/reservations/vehicle-trip-booking';
 import { useBookingItemTypeModes } from '../../components/booking-modes-provider';
 import { useWebPaymentMethods } from '../../components/payment-methods-provider';
 import { isAssistedBookingDraft } from '../../lib/bookings/booking-mode';
@@ -88,6 +100,16 @@ export function ReservationRecapPageContent({ draft }: Props) {
   const [flightDetail, setFlightDetail] = useState<FlightDetail | null>(null);
   const [vehicleDetail, setVehicleDetail] = useState<VehicleDetail | null>(null);
   const [vehicleTrip, setVehicleTrip] = useState<VehicleTrip | null>(null);
+  const [existingVehicleBookingId, setExistingVehicleBookingId] = useState<string | null>(
+    null,
+  );
+  const [vehicleSeats, setVehicleSeats] = useState(() =>
+    draft && isVehicleReservationDraft(draft) && draft.seats != null && draft.seats >= 1
+      ? draft.seats
+      : 1,
+  );
+  const [seatsAdjusting, setSeatsAdjusting] = useState(false);
+  const committedVehicleSeatsRef = useRef(vehicleSeats);
   const [cruiseDetail, setCruiseDetail] = useState<CruiseSailingDetail | null>(null);
   const [activityDetail, setActivityDetail] = useState<ActivityDetail | null>(null);
   const [packageDetail, setPackageDetail] = useState<PackageDetail | null>(null);
@@ -250,35 +272,62 @@ export function ReservationRecapPageContent({ draft }: Props) {
           if (!cancelled) setLoading(false);
         });
     } else if (isVehicleReservationDraft(draft)) {
-      const tripPromise = draft.vehicleTripId
-        ? getPublicVehicleTrip(draft.vehicleTripId)
-        : Promise.resolve(null);
-      void Promise.all([
-        getVehicleDetail(draft.vehicleId, {
-          routeId: draft.routeId,
-          travelDate: draft.travelDate,
-        }),
-        tripPromise,
-      ])
-        .then(([data, trip]) => {
-          if (!cancelled) {
-            setVehicleDetail(data);
-            setVehicleTrip(trip);
-            setHotelDetail(null);
-            setFlightDetail(null);
-            setCruiseDetail(null);
-            setActivityDetail(null);
+      const tripId = draft.vehicleTripId;
+      const seats =
+        draft.seats != null && draft.seats >= 1 ? draft.seats : 1;
+      void (async () => {
+        try {
+          const token = await ensureClientAccessToken();
+          const [data, trip] = await Promise.all([
+            getVehicleDetail(draft.vehicleId, {
+              routeId: draft.routeId,
+              travelDate: draft.travelDate,
+            }),
+            tripId
+              ? getPublicVehicleTrip(tripId, token)
+              : Promise.resolve(null),
+          ]);
+          if (cancelled) return;
+          setVehicleDetail(data);
+          setVehicleTrip(trip);
+          setHotelDetail(null);
+          setFlightDetail(null);
+          setCruiseDetail(null);
+          setActivityDetail(null);
+
+          if (token && tripId) {
+            try {
+              const prefill = await loadVehicleTripBookingPrefill(
+                token,
+                tripId,
+                seats,
+                getWebSession()?.user ?? null,
+              );
+              if (cancelled) return;
+              setExistingVehicleBookingId(prefill.bookingId);
+              setEmergencyContact(prefill.emergencyContact);
+              setManifestEntries(prefill.manifestEntries);
+            } catch {
+              if (!cancelled) setExistingVehicleBookingId(null);
+            }
           }
-        })
-        .finally(() => {
+        } finally {
           if (!cancelled) setLoading(false);
-        });
+        }
+      })();
     }
 
     return () => {
       cancelled = true;
     };
   }, [draft]);
+
+  useEffect(() => {
+    if (!draft || !isVehicleReservationDraft(draft) || !draft.vehicleTripId) return;
+    const seats = draft.seats != null && draft.seats >= 1 ? draft.seats : 1;
+    setVehicleSeats(seats);
+    committedVehicleSeatsRef.current = seats;
+  }, [draft && isVehicleReservationDraft(draft) ? draft.vehicleTripId : null]);
 
   const room = useMemo(
     () =>
@@ -359,8 +408,155 @@ export function ReservationRecapPageContent({ draft }: Props) {
     if (isCabinReservationDraft(draft)) return draft.guests;
     if (isActivityScheduleReservationDraft(draft)) return draft.participants;
     if (isPackageReservationDraft(draft)) return draft.travelers;
+    if (isVehicleReservationDraft(draft)) {
+      return vehicleSeats >= 1 ? vehicleSeats : 1;
+    }
     return 1;
-  }, [draft]);
+  }, [draft, vehicleSeats]);
+
+  const vehicleSeatsMax = useMemo(() => {
+    if (!vehicleTrip) return 1;
+    if (vehicleTrip.isMine) {
+      // Creator can fill free seats, or stay within seats already reserved for this trip.
+      return Math.max(
+        1,
+        Math.min(
+          vehicleTrip.maxCapacity,
+          Math.max(vehicleSeats, vehicleTrip.seatsReserved) +
+            Math.max(0, vehicleTrip.seatsRemaining),
+        ),
+      );
+    }
+    return Math.max(1, vehicleSeats + Math.max(0, vehicleTrip.seatsRemaining));
+  }, [vehicleTrip, vehicleSeats]);
+
+  const vehicleSeatsRemainingToAdd = useMemo(
+    () => Math.max(0, vehicleSeatsMax - vehicleSeats),
+    [vehicleSeatsMax, vehicleSeats],
+  );
+
+  function syncVehicleSeatsUrl(nextSeats: number) {
+    if (!draft || !isVehicleReservationDraft(draft)) return;
+    const nextDraft: ReservationDraft = { ...draft, seats: nextSeats };
+    router.replace(`/booking/recap?${buildReservationQuery(nextDraft)}`, {
+      scroll: false,
+    });
+  }
+
+  async function adjustVehicleSeats(nextSeats: number) {
+    if (!draft || !isVehicleReservationDraft(draft) || !draft.vehicleTripId || !vehicleTrip) {
+      return;
+    }
+    const clamped = Math.max(1, Math.min(nextSeats, vehicleSeatsMax));
+    if (clamped === vehicleSeats || seatsAdjusting) return;
+
+    if (clamped > committedVehicleSeatsRef.current) {
+      setSeatsAdjusting(true);
+      setError(null);
+      try {
+        const token = await ensureClientAccessToken();
+        if (!token) {
+          setError(ck.stripeError.authDescription);
+          return;
+        }
+        const updatedTrip = vehicleTrip.isMine
+          ? await ensurePublicVehicleTripSeats(token, draft.vehicleTripId, {
+              seats: clamped,
+            })
+          : await joinPublicVehicleTrip(token, draft.vehicleTripId, {
+              seats: clamped - committedVehicleSeatsRef.current,
+            });
+        setVehicleTrip(updatedTrip);
+        committedVehicleSeatsRef.current = clamped;
+      } catch {
+        setError(ck.manifest.seatsAdjustError);
+        return;
+      } finally {
+        setSeatsAdjusting(false);
+      }
+    }
+
+    setVehicleSeats(clamped);
+    syncVehicleSeatsUrl(clamped);
+  }
+
+  async function saveTravelerEntry(
+    index: number,
+    entry: ManifestEntryDraft,
+  ): Promise<ManifestEntryDraft> {
+    const n = String(index + 1);
+    const fieldErrors: ManifestFieldErrors = {};
+    if (!entry.fullName.trim()) {
+      fieldErrors.fullName = ck.manifest.fullNameRequired.replace('{n}', n);
+    }
+    if (!entry.nationality.trim()) {
+      fieldErrors.nationality = ck.manifest.nationalityRequired.replace('{n}', n);
+    }
+    if (!entry.idNumber.trim()) {
+      fieldErrors.idNumber = ck.manifest.idNumberRequired.replace('{n}', n);
+    }
+    if (Object.keys(fieldErrors).length > 0) {
+      setManifestErrors((prev) => ({ ...prev, [index]: fieldErrors }));
+      throw new Error('validation');
+    }
+    setManifestErrors((prev) => {
+      const next = { ...prev };
+      delete next[index];
+      return next;
+    });
+
+    const bookingId = existingVehicleBookingId;
+    if (!bookingId) {
+      return entry;
+    }
+
+    const accessToken = await ensureClientAccessToken();
+    if (!accessToken) {
+      throw new Error('auth');
+    }
+    const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api').replace(
+      /\/$/,
+      '',
+    );
+    const apiClient = createApiClient({ baseUrl: apiBaseUrl, accessToken });
+    const payload = manifestDraftToPayload(entry, index);
+    const saved = entry.entryId
+      ? await apiClient.updateBookingManifestEntry(bookingId, entry.entryId, payload)
+      : await apiClient.createBookingManifestEntry(bookingId, payload);
+
+    let existingDocument = entry.existingDocument;
+    if (entry.file) {
+      const uploaded = await uploadBookingIdentityDocument(
+        bookingId,
+        entry.file,
+        'passport',
+        saved.id,
+      );
+      let previewUrl: string | undefined;
+      try {
+        const blob = await fetchBookingIdentityDocumentBlob(bookingId, uploaded.id);
+        previewUrl = URL.createObjectURL(blob);
+      } catch {
+        previewUrl = undefined;
+      }
+      if (existingDocument?.previewUrl) {
+        URL.revokeObjectURL(existingDocument.previewUrl);
+      }
+      existingDocument = {
+        id: uploaded.id,
+        mimeType: uploaded.mimeType,
+        filename: uploaded.originalFilename,
+        previewUrl,
+      };
+    }
+
+    return {
+      ...entry,
+      entryId: saved.id,
+      file: undefined,
+      existingDocument,
+    };
+  }
 
   async function persistManifestEntries(accessToken: string, bookingId: string) {
     const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api').replace(
@@ -477,7 +673,11 @@ export function ReservationRecapPageContent({ draft }: Props) {
     setSubmitting(true);
     setError(null);
     try {
-      const payload = buildCheckoutRequest(draft, preferredPaymentMethod);
+      const checkoutDraft =
+        isVehicleReservationDraft(draft) && draft.vehicleTripId
+          ? { ...draft, seats: vehicleSeats >= 1 ? vehicleSeats : 1 }
+          : draft;
+      const payload = buildCheckoutRequest(checkoutDraft, preferredPaymentMethod);
       if (isAssisted) {
         const response = await requestBooking(accessToken, payload);
         if (travelerCount >= 1) {
@@ -560,7 +760,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
             ? formatCarPrice(
                 draft!.vehicleTripId && vehicleTrip
                   ? vehicleTrip.priceCentsPerPerson *
-                      (draft!.seats != null && draft!.seats >= 1 ? draft!.seats : 1)
+                      (vehicleSeats >= 1 ? vehicleSeats : 1)
                   : vehicleReady.totalPriceCents,
                 vehicleTrip?.currency ?? vehicleReady.currency,
               )
@@ -757,35 +957,66 @@ export function ReservationRecapPageContent({ draft }: Props) {
               )}
 
             {!loading && vehicleReady && isVehicleReservationDraft(draft) && (
-              <CheckoutRecapLine
-                icon="car"
-                eyebrow={vehicleReady.agency.name}
-                title={`${vehicleReady.route.departureCity} → ${vehicleReady.route.arrivalCity}`}
-                details={
-                  <>
-                    <p>
-                      {vehicleReady.category.exampleModel ?? vehicleReady.category.name}
+              <>
+                {vehicleTrip?.isMine ? (
+                  <div className="space-y-2">
+                    <p
+                      role="status"
+                      className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-sm text-atg-fg"
+                    >
+                      {ck.vehicleTripOrganizerBanner}
                     </p>
-                    <p>{formatDisplayDate(draft.travelDate, locale)}</p>
-                    {draft.vehicleTripId && vehicleTrip ? (
-                      <>
-                        <p>
-                          {new Intl.DateTimeFormat(locale || undefined, {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          }).format(new Date(vehicleTrip.departureDatetime))}
-                        </p>
-                        <p>
-                          {draft.seats != null && draft.seats > 1
-                            ? `${draft.seats} places`
-                            : '1 place'}
-                        </p>
-                      </>
+                    {existingVehicleBookingId ? (
+                      <p className="text-sm text-atg-muted">
+                        <Link
+                          href={`/account/reservations/${existingVehicleBookingId}`}
+                          className="font-semibold text-primary underline-offset-2 hover:underline"
+                        >
+                          {ck.vehicleTripExistingBooking}
+                        </Link>
+                      </p>
                     ) : null}
-                  </>
-                }
-                price={totalLabel ?? undefined}
-              />
+                  </div>
+                ) : null}
+                <CheckoutRecapLine
+                  icon="car"
+                  eyebrow={vehicleReady.agency.name}
+                  title={`${vehicleReady.route.departureCity} → ${vehicleReady.route.arrivalCity}`}
+                  details={
+                    <>
+                      <p>
+                        {vehicleReady.category.exampleModel ?? vehicleReady.category.name}
+                      </p>
+                      <p>{formatDisplayDate(draft.travelDate, locale)}</p>
+                      {draft.vehicleTripId && vehicleTrip ? (
+                        <>
+                          <p>
+                            {new Intl.DateTimeFormat(locale || undefined, {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            }).format(new Date(vehicleTrip.departureDatetime))}
+                          </p>
+                          <p>
+                            {vehicleSeats > 1
+                              ? `${vehicleSeats} places`
+                              : '1 place'}
+                          </p>
+                          <p className="font-medium text-atg-fg">
+                            {ck.vehicleSharedPricePerPerson.replace(
+                              '{price}',
+                              formatCarPrice(
+                                vehicleTrip.priceCentsPerPerson,
+                                vehicleTrip.currency,
+                              ),
+                            )}
+                          </p>
+                        </>
+                      ) : null}
+                    </>
+                  }
+                  price={totalLabel ?? undefined}
+                />
+              </>
             )}
 
             {!loading && isCabinReservationDraft(draft) && cruiseDetail && !cruiseReady && (
@@ -840,6 +1071,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
                     nationalityEmpty: ck.manifest.nationalityEmpty,
                   }}
                   errors={emergencyContactErrors}
+                  collapsible
                 />
                 <CheckoutManifestForm
                   count={travelerCount}
@@ -850,6 +1082,27 @@ export function ReservationRecapPageContent({ draft }: Props) {
                   }}
                   labels={ck.manifest}
                   validationErrors={manifestErrors}
+                  onSaveTraveler={saveTravelerEntry}
+                  {...(draft &&
+                  isVehicleReservationDraft(draft) &&
+                  draft.vehicleTripId &&
+                  vehicleTrip
+                    ? {
+                        onAddTraveler: () => void adjustVehicleSeats(vehicleSeats + 1),
+                        onRemoveTraveler: (index: number) => {
+                          setManifestEntries((prev) =>
+                            prev.filter((_, i) => i !== index),
+                          );
+                          setManifestErrors({});
+                          void adjustVehicleSeats(vehicleSeats - 1);
+                        },
+                        canAddTraveler:
+                          !seatsAdjusting && vehicleSeatsRemainingToAdd > 0,
+                        canRemoveTraveler: !seatsAdjusting && vehicleSeats > 1,
+                        addingTraveler: seatsAdjusting,
+                        seatsRemainingCount: vehicleSeatsRemainingToAdd,
+                      }
+                    : {})}
                 />
               </div>
             )}

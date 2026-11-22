@@ -1,5 +1,5 @@
 /**
- * Manual test plan for #128 / PR #133 — email branding admin + transactional emails.
+ * Manual test plan for #128 / PR #133 - email branding admin + transactional emails.
  * Prérequis: API (:3010), MySQL seedée, Mailpit (:1025) ou SMTP configuré.
  *
  * Run: node apps/api/scripts/test-email-branding-manual.mjs
@@ -23,7 +23,7 @@ const results = [];
 function record(id, label, ok, detail = '') {
   results.push({ id, label, ok, detail });
   const mark = ok ? 'PASS' : 'FAIL';
-  console.log(`[${mark}] ${id} ${label}${detail ? ` — ${detail}` : ''}`);
+  console.log(`[${mark}] ${id} ${label}${detail ? ` - ${detail}` : ''}`);
 }
 
 async function request(method, path, { token, body } = {}) {
@@ -63,7 +63,7 @@ async function main() {
   console.log(`Admin: ${ADMIN_URL}`);
   console.log('');
 
-  // 0 — infra
+  // 0 - infra
   try {
     const health = await request('GET', '/health');
     record('0a', 'API health', health.status === 200, `HTTP ${health.status}`);
@@ -89,7 +89,7 @@ async function main() {
     mailBefore !== null ? `${mailBefore} message(s)` : 'http://localhost:8025 indisponible',
   );
 
-  // 1 — login admin
+  // 1 - login admin
   const login = await request('POST', '/auth/login', {
     body: { email: SEED_ADMIN_EMAIL, password: getSeedAdminPassword() },
   });
@@ -107,7 +107,7 @@ async function main() {
   record('1b', 'Permission organization_settings.read', canRead);
   record('1c', 'Permission organization_settings.write', canWrite);
 
-  // 2 — load settings (formulaire pré-rempli)
+  // 2 - load settings (formulaire pré-rempli)
   const settings = await request('GET', `/organization-settings?organizationId=${PLATFORM_ORG_ID}&page=1&limit=100`, {
     token,
   });
@@ -136,7 +136,7 @@ async function main() {
     bookingSubject: 'Réservation {ref} confirmée',
   };
 
-  // 3 — preview welcome + booking (sans sauvegarde)
+  // 3 - preview welcome + booking (sans sauvegarde)
   for (const template of ['welcome', 'booking']) {
     const preview = await request('POST', '/email/preview', {
       token,
@@ -155,7 +155,7 @@ async function main() {
     );
   }
 
-  // 4 — save branding
+  // 4 - save branding
   const uniqueName = `ATG Manual ${Date.now()}`;
   const savePayload = {
     organizationId: PLATFORM_ORG_ID,
@@ -186,7 +186,7 @@ async function main() {
     reloaded?.settingValue?.displayName ?? 'missing',
   );
 
-  // 5 — welcome email (register)
+  // 5 - welcome email (register)
   const regEmail = `manual.branding.${Date.now()}@africatourismgate.local`;
   const reg = await request('POST', '/auth/register', {
     body: {
@@ -198,7 +198,7 @@ async function main() {
   });
   record('5', 'Register → welcome email', reg.status === 201, `HTTP ${reg.status}`);
 
-  // 6 — booking confirmation email (cash payment)
+  // 6 - booking confirmation email (cash payment)
   const SEED_ROOM_ID = '00000000-0000-4000-8000-000000002011';
   const TEST_DATE = '2099-12-15';
   const avail = await request(

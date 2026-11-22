@@ -156,7 +156,7 @@ export function getWebContextualHelpHref(pathname: string): string {
   return supportArticlePath(target.categorySlug, target.articleSlug);
 }
 
-/** Exported for tests / docs — ordered rules with longest-prefix matching. */
+/** Exported for tests / docs - ordered rules with longest-prefix matching. */
 export function getWebContextualHelpRules(): readonly ContextualHelpRule[] {
   return CONTEXTUAL_HELP_RULES;
 }

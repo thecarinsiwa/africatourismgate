@@ -12,7 +12,7 @@ import { join } from 'node:path';
 
 const AUDIT_COMMIT = '8db33ec5f12bb674c3aa225df8a81894a64fee48';
 const DROP_COMMITS = new Set([
-  'd35bc1f5f4170af02be750632436686483f20f13', // Fix Guard secure rbac — folded into 8db33ec
+  'd35bc1f5f4170af02be750632436686483f20f13', // Fix Guard secure rbac - folded into 8db33ec
 ]);
 const SNAPSHOT_REF = 'refs/atg/secret-fix-snapshot';
 const REBASE_PARENT = 'fdf1889';

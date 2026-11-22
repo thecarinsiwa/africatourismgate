@@ -9,7 +9,7 @@
     "no": "No"
   },
   "empty": {
-    "dash": "—"
+    "dash": "-"
   },
   "filters": {
     "all": "Todos",
@@ -166,8 +166,8 @@
   },
   "select": {
     "choose": "Elegir…",
-    "chooseDash": "— Elegir —",
-    "chooseFeminine": "— Elegir —",
+    "chooseDash": "- Elegir -",
+    "chooseFeminine": "- Elegir -",
     "searchPlaceholder": "Buscar…",
     "empty": "Ningún resultado",
     "loading": "Cargando…",
@@ -340,7 +340,7 @@
     "troncon": "Tramo"
   },
   "activityDifficulty": {
-    "unspecified": "— No renseignée —",
+    "unspecified": "- No renseignée -",
     "easy": "Fácil",
     "moderate": "Moderada",
     "hard": "Difícil",

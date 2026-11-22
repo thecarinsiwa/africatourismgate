@@ -1,5 +1,5 @@
 /**
- * Dev helper — writes a sample POS receipt PDF for visual review (POS-9).
+ * Dev helper - writes a sample POS receipt PDF for visual review (POS-9).
  * Run: pnpm --filter @africatourismgate/api pdf:preview-pos-receipt
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -25,7 +25,7 @@ const sampleContext = {
   paymentMethodLabel: 'Espèces',
   items: [
     {
-      title: 'Safari 3 jours — Parc national',
+      title: 'Safari 3 jours - Parc national',
       quantity: 2,
       unitPriceCents: 45_000,
       lineTotalCents: 90_000,

@@ -1,7 +1,7 @@
 import { Skeleton, Spinner } from '@africatourismgate/ui';
 import { getTranslations } from 'next-intl/server';
 
-/** Fallback Next.js route — feedback immédiat avec spinner et squelette (LD1). */
+/** Fallback Next.js route - feedback immédiat avec spinner et squelette (LD1). */
 export default async function Loading() {
   const t = await getTranslations('nav');
 

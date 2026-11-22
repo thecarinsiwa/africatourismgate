@@ -74,7 +74,7 @@ async function navigateHotelToRecap(page: Page): Promise<void> {
   await page.locator('input[name="preferredPaymentMethod"][value="stripe"]').check();
   await fillCheckoutManifest(page);
 
-  // Client override applies after mount — wait for immediate Stripe CTA.
+  // Client override applies after mount - wait for immediate Stripe CTA.
   await expect(payWithStripeButton(page)).toBeVisible({ timeout: 15_000 });
 }
 
@@ -119,7 +119,7 @@ async function expectSuccessAfterRetry(page: Page, bookingId: string): Promise<v
 const STRIPE_ERROR_TITLE =
   /Paiement refusé|Payment declined|Pago rechazado|Connexion interrompue|Connection interrupted|Conexión interrumpida|Paiement impossible|Payment could not start|No se pudo iniciar el pago/i;
 
-/** StripePaymentError only — excludes Next.js `#__next-route-announcer__` (also role=alert). */
+/** StripePaymentError only - excludes Next.js `#__next-route-announcer__` (also role=alert). */
 function stripePaymentErrorAlert(page: Page) {
   return page.locator('[role="alert"]:not(#__next-route-announcer__)').filter({
     hasText: STRIPE_ERROR_TITLE,

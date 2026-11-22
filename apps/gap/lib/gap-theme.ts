@@ -1,5 +1,5 @@
 /**
- * GAP — Gorilla Ambassadors Program brand palette.
+ * GAP - Gorilla Ambassadors Program brand palette.
  * Conservation forest greens, distinct from the main ATG commerce site.
  */
 export const gapBrand = {

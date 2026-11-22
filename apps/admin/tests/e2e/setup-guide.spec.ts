@@ -43,7 +43,7 @@ test.describe('Admin setup guide (mise en route)', () => {
     const destinationsModule = moduleNav.locator(
       '[data-module-id="destinations"]',
     );
-    // Module souvent encore verrouillé (prérequis platform) — sélection autorisée.
+    // Module souvent encore verrouillé (prérequis platform) - sélection autorisée.
     await expect(destinationsModule).toBeVisible();
     await destinationsModule.click();
     await expect(destinationsModule).toHaveAttribute('aria-current', 'true');

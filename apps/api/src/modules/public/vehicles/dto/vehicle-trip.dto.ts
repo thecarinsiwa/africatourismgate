@@ -75,6 +75,16 @@ export class JoinVehicleTripDto {
   seats?: number;
 }
 
+/** Creator-only: ensure the trip pool covers claimed seats + this checkout quantity. */
+export class EnsureVehicleTripSeatsDto {
+  @ApiProperty({ example: 1, minimum: 1, maximum: 50 })
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(50)
+  seats!: number;
+}
+
 export class UpdateVehicleTripDto {
   @ApiProperty({
     example: '2026-11-20T09:00:00.000Z',
@@ -132,6 +142,11 @@ export class VehicleTripDto {
 
   @ApiProperty()
   canJoin!: boolean;
+
+  @ApiProperty({
+    description: 'True when the authenticated viewer created this trip',
+  })
+  isMine!: boolean;
 
   @ApiProperty()
   canEditDeparture!: boolean;

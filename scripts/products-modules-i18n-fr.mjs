@@ -1,10 +1,10 @@
-/** Product tourism modules FR strings — merged into modules.* by generate-modules-i18n-data.mjs */
+/** Product tourism modules FR strings - merged into modules.* by generate-modules-i18n-data.mjs */
 export const productsModulesFr = {
   common: {
     select: {
       choose: 'Choisir…',
-      chooseDash: '— Choisir —',
-      chooseFeminine: '— Choisir —',
+      chooseDash: '- Choisir -',
+      chooseFeminine: '- Choisir -',
     },
     back: { toList: '← Retour à la liste' },
     pagination: {
@@ -196,7 +196,7 @@ export const productsModulesFr = {
       activity: 'Activité',
     },
     activityDifficulty: {
-      unspecified: '— Non renseignée —',
+      unspecified: '- Non renseignée -',
       easy: 'Facile',
       moderate: 'Modérée',
       hard: 'Difficile',
@@ -504,7 +504,7 @@ export const productsModulesFr = {
         submitCreate: 'Créer le départ',
         itinerary: 'Itinéraire',
         departureDate: 'Date de départ',
-        itineraryOption: '{name} ({shipName}) — {nights} nuits',
+        itineraryOption: '{name} ({shipName}) - {nights} nuits',
         validation: 'Itinéraire et date de départ sont obligatoires.',
       },
       itinerary: {
@@ -561,7 +561,7 @@ export const productsModulesFr = {
         title: 'Cabines réservables',
         intro: 'Stock et prix par catégorie pour ce départ.',
         stopsLabel: 'Escales : ',
-        noStopsWarning: 'Aucune escale sur cet itinéraire — ajoutez-en depuis la fiche navire.',
+        noStopsWarning: 'Aucune escale sur cet itinéraire - ajoutez-en depuis la fiche navire.',
         cabinMeta: 'max {maxGuests} · base {basePrice}',
         cabinsAvailableAria: 'Cabines disponibles',
         priceCentsAria: 'Prix en centimes',
@@ -571,7 +571,7 @@ export const productsModulesFr = {
       },
     },
     dialogs: { deleteShip: 'Supprimer le navire « {name} » ?' },
-    calendar: { ariaLabel: 'Calendrier des départs — {month}', today: "Aujourd'hui" },
+    calendar: { ariaLabel: 'Calendrier des départs - {month}', today: "Aujourd'hui" },
     stats: {
       sailings: { label: 'Départs', subtitle: 'Croisières programmées' },
       ships: { label: 'Navires', subtitle: 'Flotte catalogue' },

@@ -27,7 +27,7 @@ import { CurrenciesService } from './currencies.service';
 export class CurrenciesController {
   constructor(private readonly service: CurrenciesService) {}
 
-  /** Any authenticated session — used by org / treasury / accounting selects. */
+  /** Any authenticated session - used by org / treasury / accounting selects. */
   @Get()
   @ApiOperation({
     summary:

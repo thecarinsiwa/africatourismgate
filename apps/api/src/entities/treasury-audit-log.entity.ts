@@ -25,7 +25,7 @@ export type TreasuryAuditAction =
 export type TreasuryAuditActorType = 'user' | 'external' | 'system';
 
 /**
- * Journal append-only — ne pas UPDATE/DELETE depuis l’API (TRESO-031).
+ * Journal append-only - ne pas UPDATE/DELETE depuis l’API (TRESO-031).
  * Pattern voisin de `rbac_audit_logs` (actor + payload JSON + created_at).
  */
 @Entity('treasury_audit_logs')

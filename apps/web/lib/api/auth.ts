@@ -5,7 +5,14 @@ import {
   type AuthResponse,
   type AuthTokens,
 } from '@africatourismgate/api-client';
-import type { LoginRequest, RegisterRequest, VerifyOperationRequest } from '@africatourismgate/types';
+import type {
+  ForgotPasswordResponse,
+  LoginRequest,
+  RegisterRequest,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
+  VerifyOperationRequest,
+} from '@africatourismgate/types';
 import { getOrCreateClientInstanceId, withClientInstanceId } from '@africatourismgate/utils';
 import { appendDevOriginToNextPath, isLocalDevOrigin } from '../auth/dev-oauth-return';
 import { getOAuthApiBaseUrl } from './oauth-api-url';
@@ -22,6 +29,21 @@ export function loginWithPassword(body: LoginRequest): Promise<AuthResponse> {
   return createApiClient({ baseUrl: getApiBaseUrl() }).login(
     withClientInstanceId(body),
   );
+}
+
+export function forgotPassword(body: {
+  email: string;
+}): Promise<ForgotPasswordResponse> {
+  return createApiClient({ baseUrl: getApiBaseUrl() }).forgotPassword({
+    email: body.email,
+    portal: 'web',
+  });
+}
+
+export function resetPassword(
+  body: ResetPasswordRequest,
+): Promise<ResetPasswordResponse> {
+  return createApiClient({ baseUrl: getApiBaseUrl() }).resetPassword(body);
 }
 
 export function verifyOperation(body: VerifyOperationRequest): Promise<AuthResponse> {

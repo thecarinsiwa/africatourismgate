@@ -1,4 +1,4 @@
-# PR-01 — Scénario de test (validation manifeste)
+# PR-01 - Scénario de test (validation manifeste)
 
 Branche : `feature/pr-01-manifest-validation`  
 Réf. : [roadmap-post-reunion-08-2026.md](./roadmap-post-reunion-08-2026.md) (PR-01)
@@ -13,7 +13,7 @@ Surfaces : checkout web (immédiat + assisté), admin, compte client, POS (si ma
 
 ## Tests manuels
 
-### A. Checkout web — assisté (forfait / activité)
+### A. Checkout web - assisté (forfait / activité)
 
 1. Ouvrir un forfait ou une activité en mode assisté → panier → récap.
 2. Vérifier le sous-titre manifeste (plus de « Seul le nom… ») et les `*` sur nom, nationalité, n° pièce.
@@ -21,7 +21,7 @@ Surfaces : checkout web (immédiat + assisté), admin, compte client, POS (si ma
 4. Remplir le n° pièce, laisser le genre vide → soumettre → **succès** (page demande envoyée).
 5. En admin, ouvrir la réservation : voyageurs avec nationalité + n° pièce.
 
-### B. Checkout web — immédiat (hôtel)
+### B. Checkout web - immédiat (hôtel)
 
 1. Réserver une chambre → récap.
 2. Le formulaire manifeste apparaît (voyageurs = guests).

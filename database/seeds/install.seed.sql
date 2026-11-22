@@ -1,5 +1,5 @@
 -- =============================================================================
--- Africa Tourism Gate — installation seeds (idempotent: only run when DB is empty)
+-- Africa Tourism Gate - installation seeds (idempotent: only run when DB is empty)
 -- Default admin: admin@africatourismgate.local / ChangeMe123!
 -- =============================================================================
 
@@ -234,7 +234,7 @@ INSERT INTO `role_permissions` (`role_id`, `permission_id`, `granted_by_user_id`
 ('00000000-0000-4000-8000-000000000102', '00000000-0000-4000-8000-000000001019', '00000000-0000-4000-8000-000000000010'),
 ('00000000-0000-4000-8000-000000000102', '00000000-0000-4000-8000-000000001045', '00000000-0000-4000-8000-000000000010');
 
--- customer (own tickets via ownership — no support_tickets.* staff perms)
+-- customer (own tickets via ownership - no support_tickets.* staff perms)
 INSERT INTO `role_permissions` (`role_id`, `permission_id`, `granted_by_user_id`) VALUES
 ('00000000-0000-4000-8000-000000000103', '00000000-0000-4000-8000-000000001012', '00000000-0000-4000-8000-000000000010'),
 ('00000000-0000-4000-8000-000000000103', '00000000-0000-4000-8000-000000001013', '00000000-0000-4000-8000-000000000010'),
@@ -662,7 +662,7 @@ INSERT INTO `flight_images` (
   '00000000-0000-4000-8000-00000000302a',
   '00000000-0000-4000-8000-000000003020',
   'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Clouds_from_above_%28Unsplash%29.jpg/1280px-Clouds_from_above_%28Unsplash%29.jpg',
-  'Vue aérienne — Kinshasa → Nairobi',
+  'Vue aérienne - Kinshasa → Nairobi',
   1,
   '00000000-0000-4000-8000-000000000010'
 ),
@@ -808,7 +808,7 @@ INSERT INTO `vehicle_images` (
   '00000000-0000-4000-8000-000000004025',
   '00000000-0000-4000-8000-000000004021',
   'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Car_keys.jpg/1280px-Car_keys.jpg',
-  'Toyota Yaris — économique',
+  'Toyota Yaris - économique',
   1,
   '00000000-0000-4000-8000-000000000010'
 ),
@@ -824,7 +824,7 @@ INSERT INTO `vehicle_images` (
   '00000000-0000-4000-8000-000000004027',
   '00000000-0000-4000-8000-000000004022',
   'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Car_keys.jpg/1280px-Car_keys.jpg',
-  'SUV — catégorie confort',
+  'SUV - catégorie confort',
   1,
   '00000000-0000-4000-8000-000000000010'
 );
@@ -867,7 +867,7 @@ INSERT INTO `itineraries` (
 ) VALUES (
   '00000000-0000-4000-8000-000000003031',
   '00000000-0000-4000-8000-000000003030',
-  'Kinshasa — Banana',
+  'Kinshasa - Banana',
   5,
   '00000000-0000-4000-8000-000000000010'
 );
@@ -993,7 +993,7 @@ INSERT INTO `activities` (
   '00000000-0000-4000-8000-000000004050',
   '00000000-0000-4000-8000-000000004030',
   'Atelier exclusif Guichet Est',
-  'Activité exclusive org Guichet Est — ne doit pas apparaître en caisse Africa Tourism Gate (POS-3).',
+  'Activité exclusive org Guichet Est - ne doit pas apparaître en caisse Africa Tourism Gate (POS-3).',
   90,
   'easy',
   7500,
@@ -1071,7 +1071,7 @@ INSERT INTO `activity_images` (
   '00000000-0000-4000-8000-000000004039',
   '00000000-0000-4000-8000-000000004032',
   'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Kinshasa_Gombe_%28cropped%29.jpg/1280px-Kinshasa_Gombe_%28cropped%29.jpg',
-  'Kinshasa — point de départ',
+  'Kinshasa - point de départ',
   2,
   '00000000-0000-4000-8000-000000000010'
 );
@@ -1233,7 +1233,7 @@ INSERT INTO `package_images` (
 );
 
 -- -----------------------------------------------------------------------------
--- CE-1: tour_guides (demo — 1 internal, 1 external)
+-- CE-1: tour_guides (demo - 1 internal, 1 external)
 -- -----------------------------------------------------------------------------
 INSERT INTO `tour_guides` (
   `id`, `type`, `user_id`, `organization_id`, `display_name`, `bio`, `photo_url`, `contact_email`,

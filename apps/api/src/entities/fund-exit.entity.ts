@@ -135,7 +135,7 @@ export class FundExits extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'organization_id', length: 36 })
   organizationId!: string;
 
-  /** NOT NULL en DB — une sortie exige toujours un état de besoin */
+  /** NOT NULL en DB - une sortie exige toujours un état de besoin */
   @Column({ type: 'varchar', name: 'expense_request_id', length: 36 })
   expenseRequestId!: string;
 

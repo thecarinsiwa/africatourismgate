@@ -135,7 +135,7 @@ async function main() {
   }
   console.log(`  OK ${list.data.data.length} ticket(s) in customer list`);
 
-  console.log('4. GET /support-messages — message persisted');
+  console.log('4. GET /support-messages - message persisted');
   const messages = await request('GET', '/support-messages?limit=100', { token });
   assertStatus('GET support-messages', messages.status, 200);
   const row = (messages.data?.data ?? []).find(
@@ -206,7 +206,7 @@ async function main() {
   }
   console.log(`  OK staffMessageId=${staffMessageId}, ticket pending`);
 
-  console.log('5d. GET /support-messages — staff reply persisted');
+  console.log('5d. GET /support-messages - staff reply persisted');
   const messagesAfterReply = await request('GET', '/support-messages?limit=100', {
     token: adminToken,
   });
@@ -222,7 +222,7 @@ async function main() {
   }
   console.log('  OK staff reply row in DB list');
 
-  console.log('5e. GET /support-tickets/:id — thread includes staff reply');
+  console.log('5e. GET /support-tickets/:id - thread includes staff reply');
   const detailAfterReply = await request('GET', `/support-tickets/${ticketId}`, {
     token: adminToken,
   });

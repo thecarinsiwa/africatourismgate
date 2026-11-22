@@ -49,7 +49,7 @@ export interface BookingCheckoutItem {
   startDate?: string;
   endDate?: string;
   date?: string;
-  /** Vehicle tronçon id (`vehicle_routes`) — required for vehicle lines. */
+  /** Vehicle tronçon id (`vehicle_routes`) - required for vehicle lines. */
   routeId?: string;
   /**
    * Shared vehicle trip id (`vehicle_trips`).
@@ -63,7 +63,7 @@ export interface BookingCheckoutRequest {
   currency?: string;
   promoCode?: string;
   promotionId?: string;
-  /** Active package bundle — server validates items and applies package discount. */
+  /** Active package bundle - server validates items and applies package discount. */
   packageId?: string;
   /** Staff only (e.g. POS): booking is owned by this user instead of the actor. */
   customerUserId?: string;
@@ -288,7 +288,7 @@ export interface BookingManifestEntry {
   emergencyContactCountry?: string | null;
   /** @deprecated Prefer booking-level `BookingDetail.emergencyContact`. */
   emergencyContactAddress?: string | null;
-  /** Legacy free-text medical notes — read-only; prefer structured fields. */
+  /** Legacy free-text medical notes - read-only; prefer structured fields. */
   conditions?: string | null;
   allergies?: string | null;
   seriousMedicalConditions?: string | null;
@@ -304,26 +304,26 @@ export interface CreateBookingManifestEntryRequest {
   fullName: string;
   /** Required on create (checkout / admin / POS). */
   nationality: string;
-  /** Required on create — passport or national ID number. */
+  /** Required on create - passport or national ID number. */
   idNumber: string;
   /**
-   * @deprecated Ignored for new writes — use booking-level emergency contact.
+   * @deprecated Ignored for new writes - use booking-level emergency contact.
    * Kept optional for backward-compatible clients.
    */
   emergencyContactName?: string;
   /**
-   * @deprecated Ignored for new writes — use booking-level emergency contact.
+   * @deprecated Ignored for new writes - use booking-level emergency contact.
    * Kept optional for backward-compatible clients.
    */
   emergencyContactPhone?: string;
   priceCents?: number;
   age?: number;
   sex?: BookingManifestSex;
-  /** @deprecated Ignored for new writes — use booking-level emergency contact. */
+  /** @deprecated Ignored for new writes - use booking-level emergency contact. */
   emergencyContactEmail?: string;
-  /** @deprecated Ignored for new writes — use booking-level emergency contact. */
+  /** @deprecated Ignored for new writes - use booking-level emergency contact. */
   emergencyContactCountry?: string;
-  /** @deprecated Ignored for new writes — use booking-level emergency contact. */
+  /** @deprecated Ignored for new writes - use booking-level emergency contact. */
   emergencyContactAddress?: string;
   /** @deprecated Ignored for persistence; use structured medical fields or `other`. */
   conditions?: string;
@@ -336,7 +336,7 @@ export interface CreateBookingManifestEntryRequest {
   sortOrder?: number;
 }
 
-/** Partial update — omit fields that should stay unchanged. */
+/** Partial update - omit fields that should stay unchanged. */
 export type UpdateBookingManifestEntryRequest = Partial<CreateBookingManifestEntryRequest>;
 
 export interface BookingDetail {

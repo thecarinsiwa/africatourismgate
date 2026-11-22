@@ -120,18 +120,18 @@ async function main() {
   try {
     const deniedBefore = await countPermissionDenied(mysql);
 
-    console.log('1. super_admin — GET /users');
+    console.log('1. super_admin - GET /users');
     const adminToken = await login(SEED_ADMIN_EMAIL, getSeedAdminPassword());
     assertStatus('GET /users', (await request('GET', '/users', { token: adminToken })).status, 200);
 
-    console.log('2. super_admin — GET /payments');
+    console.log('2. super_admin - GET /payments');
     assertStatus(
       'GET /payments',
       (await request('GET', '/payments', { token: adminToken })).status,
       200,
     );
 
-    console.log('3. support user — GET /payments (expect 403)');
+    console.log('3. support user - GET /payments (expect 403)');
     await ensureSupportUser(mysql);
     const supportToken = await login(
       RBAC_TEST_SUPPORT_EMAIL,
@@ -143,7 +143,7 @@ async function main() {
       403,
     );
 
-    console.log('4. support user — GET /bookings (expect 200)');
+    console.log('4. support user - GET /bookings (expect 200)');
     assertStatus(
       'GET /bookings',
       (await request('GET', '/bookings', { token: supportToken })).status,

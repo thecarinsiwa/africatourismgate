@@ -8,7 +8,7 @@ type TresorerieStubPageContentProps = {
 };
 
 /**
- * Shell TRESO-009 — pages stub en attendant CRUD (TRESO-013+).
+ * Shell TRESO-009 - pages stub en attendant CRUD (TRESO-013+).
  */
 export function TresorerieStubPageContent({
   routePath,

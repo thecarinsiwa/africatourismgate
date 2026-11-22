@@ -38,7 +38,7 @@ export function AdminImagesGalleryGrid<T extends AdminGalleryImage>({
   isLoading = false,
   loadingMessage,
   deletingId = null,
-  emptyDash = '—',
+  emptyDash = '-',
   viewLabel,
   editLabel,
   deleteLabel,

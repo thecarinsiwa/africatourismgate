@@ -426,7 +426,7 @@ async function main() {
 
   log(`Using database "${mysql.database}" on ${mysql.host}:${mysql.port}`);
   if (prodSafe) {
-    log('SEED_PROFILE=prod — unauthorized table data will not be imported');
+    log('SEED_PROFILE=prod - unauthorized table data will not be imported');
   }
   await ensureDatabaseExists(mysql);
 

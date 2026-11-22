@@ -1,4 +1,4 @@
--- CE-1: Assisted booking workflow — pending_approval status, tour guides, booking messages
+-- CE-1: Assisted booking workflow - pending_approval status, tour guides, booking messages
 -- Run on existing databases after initial schema import.
 
 ALTER TABLE `bookings`

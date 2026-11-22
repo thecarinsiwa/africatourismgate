@@ -1,4 +1,4 @@
--- Gorilla Ambassadors Program (GAP) — site vitrine CMS tables + seed FR initial
+-- Gorilla Ambassadors Program (GAP) - site vitrine CMS tables + seed FR initial
 
 CREATE TABLE IF NOT EXISTS `gap_site_settings` (
   `id` CHAR(36) NOT NULL,
@@ -120,7 +120,7 @@ INSERT INTO `gap_site_settings` (
   'Initiative congolaise d''éducation environnementale pour protéger les gorilles de montagne et promouvoir la conservation de la biodiversité au Parc national des Virunga et dans d''autres parcs.',
   'https://upload.wikimedia.org/wikipedia/commons/d/de/Mountain_gorilla_from_Susa_Group_in_Karisimbi_thicket_of_Volcanoes_National_Park_in_Rwanda._Emmanuel_Kwizera.jpg',
   'Gorille de montagne dans la forêt du Parc national des Virunga',
-  'Reconnu par l''UNESCO — Green Citizens',
+  'Reconnu par l''UNESCO - Green Citizens',
   'https://en.unesco.org/green-citizens',
   'published',
   'fr',
@@ -145,7 +145,7 @@ INSERT INTO `gap_pages` (
   'about',
   'Le programme',
   'Créé en 2019 par de jeunes environnementalistes de Congo Tourism Gate, le GAP sensibilise les communautés autour du Parc national des Virunga.',
-  '<p>Le <strong>Gorilla Ambassadors Program (GAP)</strong> est un programme d''éducation environnementale créé en 2019 en République démocratique du Congo. Il est porté par l''association locale <strong>Congo Tourism Gate</strong>.</p><p>Son objectif principal est de contribuer à la conservation des gorilles de montagne et de leur habitat dans le <strong>Parc national des Virunga</strong>, site classé au patrimoine mondial de l''UNESCO, ainsi que dans d''autres parcs de la région.</p><p>Face aux menaces qui pèsent sur le parc — braconnage, conflits armés, destruction de l''habitat — le programme agit en impliquant directement les populations riveraines, en particulier les jeunes, pour construire une culture de protection de la biodiversité.</p>',
+  '<p>Le <strong>Gorilla Ambassadors Program (GAP)</strong> est un programme d''éducation environnementale créé en 2019 en République démocratique du Congo. Il est porté par l''association locale <strong>Congo Tourism Gate</strong>.</p><p>Son objectif principal est de contribuer à la conservation des gorilles de montagne et de leur habitat dans le <strong>Parc national des Virunga</strong>, site classé au patrimoine mondial de l''UNESCO, ainsi que dans d''autres parcs de la région.</p><p>Face aux menaces qui pèsent sur le parc - braconnage, conflits armés, destruction de l''habitat - le programme agit en impliquant directement les populations riveraines, en particulier les jeunes, pour construire une culture de protection de la biodiversité.</p>',
   NULL,
   'published',
   '2019-01-01 10:00:00',
@@ -307,7 +307,7 @@ ON DUPLICATE KEY UPDATE
   `sort_order` = VALUES(`sort_order`),
   `status` = VALUES(`status`);
 
--- Seed: médias (placeholders — URLs à compléter via l'admin)
+-- Seed: médias (placeholders - URLs à compléter via l'admin)
 INSERT INTO `gap_media_items` (
   `id`, `media_type`, `title`, `description`, `file_url`, `external_url`,
   `thumbnail_url`, `published_at`, `sort_order`, `status`, `locale`, `created_by_user_id`

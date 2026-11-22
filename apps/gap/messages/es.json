@@ -47,7 +47,7 @@
     "loading": "Cargando…",
     "empty": "El contenido no está disponible por el momento.",
     "emptyHint": "Vuelva más tarde o contacte al equipo GAP.",
-    "localeFallback": "Este contenido aún no está disponible en su idioma — se muestra otra versión.",
+    "localeFallback": "Este contenido aún no está disponible en su idioma - se muestra otra versión.",
     "learnMore": "Más información",
     "backHome": "Volver al inicio"
   },
@@ -78,13 +78,13 @@
     "watch": "Ver vídeo"
   },
   "footer": {
-    "tagline": "Programa de educación ambiental — Parque Nacional de Virunga, RDC.",
+    "tagline": "Programa de educación ambiental - Parque Nacional de Virunga, RDC.",
     "mainSite": "Africa Tourism Gate",
     "rights": "Todos los derechos reservados."
   },
   "meta": {
     "siteName": "Gorilla Ambassadors Program",
-    "defaultDescription": "Programa de embajadores de gorilas — educación ambiental y conservación en el Parque Nacional de Virunga."
+    "defaultDescription": "Programa de embajadores de gorilas - educación ambiental y conservación en el Parque Nacional de Virunga."
   },
   "donate": {
     "title": "Apoyar el programa GAP",

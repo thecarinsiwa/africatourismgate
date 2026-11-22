@@ -47,7 +47,7 @@ export function PosHomePageContent() {
           {organization ? (
             <>
               {' '}
-              — <span className="font-medium text-atg-fg">{organization}</span>
+              - <span className="font-medium text-atg-fg">{organization}</span>
             </>
           ) : null}
         </p>

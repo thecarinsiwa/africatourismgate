@@ -74,7 +74,7 @@ export function resolvePosReceiptPaymentMethodLabel(
   if (detail.booking.preferredPaymentMethod === 'stripe') {
     return 'Carte bancaire';
   }
-  return '—';
+  return '-';
 }
 
 export function buildPosReceiptContext(
@@ -96,7 +96,7 @@ export function buildPosReceiptContext(
     bookingId: detail.booking.id,
     issuedAt: toIsoReceiptDate(detail.booking.createdAt),
     organizationName,
-    employeeName: formatPersonName(actor.firstName, actor.lastName, '—'),
+    employeeName: formatPersonName(actor.firstName, actor.lastName, '-'),
     clientName: formatPersonName(
       detail.client.firstName,
       detail.client.lastName,

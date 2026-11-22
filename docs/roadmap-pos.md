@@ -1,6 +1,6 @@
-# Africa Tourism Gate — Roadmap POS (caisse)
+# Africa Tourism Gate - Roadmap POS (caisse)
 
-> **Mise à jour : août 2026** — Document pour corriger, stabiliser et améliorer `apps/pos`.  
+> **Mise à jour : août 2026** - Document pour corriger, stabiliser et améliorer `apps/pos`.  
 > Branche de base : `main`. **Une PR = un livrable = une branche.**  
 > Complète : [roadmap-development.md](./roadmap-development.md) (livrable historique #73).  
 > Contexte plateforme : [presentation-plateforme.md](./presentation-plateforme.md).
@@ -24,7 +24,7 @@ Branche : crée et bascule sur `[BRANCHE]`.
 Livrable POS-N : [TITRE]
 Références :
 - apps/pos (Next.js 14, App Router, port 3003)
-- apps/api — BookingEngineService, bookings.controller (checkout-preview, bookings, cash-payment, payment-intent)
+- apps/api - BookingEngineService, bookings.controller (checkout-preview, bookings, cash-payment, payment-intent)
 - packages/api-client, packages/types (booking.ts)
 - docs/roadmap-pos.md, docs/production-domains.md
 
@@ -68,7 +68,7 @@ Employé → apps/pos (login JWT + cookies)
 | App | URL | Compte |
 |-----|-----|--------|
 | POS | http://localhost:3003/login | Employé seed |
-| API / Swagger | http://localhost:3000/api | — |
+| API / Swagger | http://localhost:3000/api | - |
 | Admin (vérif bookings) | http://localhost:3001 | `admin@africatourismgate.local` / `ChangeMe123!` |
 
 ---
@@ -122,10 +122,10 @@ Employé → apps/pos (login JWT + cookies)
 
 | Phase | Objectif |
 |-------|----------|
-| **A** | Stabiliser — CI, orphelins, scope org |
-| **B** | Parcours caisse — client, historique, forfaits, promos |
-| **C** | Reçus & notifications — email serveur, PDF natif |
-| **D** | Qualité & prod — E2E, polish UX, déploiement |
+| **A** | Stabiliser - CI, orphelins, scope org |
+| **B** | Parcours caisse - client, historique, forfaits, promos |
+| **C** | Reçus & notifications - email serveur, PDF natif |
+| **D** | Qualité & prod - E2E, polish UX, déploiement |
 
 ---
 
@@ -133,18 +133,18 @@ Employé → apps/pos (login JWT + cookies)
 
 | # | Phase | Livrable | Priorité | Branche PR | Dépend de |
 |---|-------|----------|----------|------------|-----------|
-| POS-0 | A | Alignement doc (reçus faits, ce fichier = source) | Haute | `chore/pos-roadmap-docs` | — |
-| POS-1 | A | CI — build + lint `apps/pos` | Haute | `chore/ci-pos` | — |
-| POS-2 | A | Annulation / cleanup bookings abandonnés | Haute | `fix/pos-orphan-bookings` | — |
-| POS-3 | A | Catalogue filtré par organisation sélectionnée | Haute | `fix/pos-org-catalog-scope` ✅ | — |
-| POS-4 | B | Sélecteur client (`customerUserId`) | Haute | `feature/pos-customer-select` ✅ | — |
+| POS-0 | A | Alignement doc (reçus faits, ce fichier = source) | Haute | `chore/pos-roadmap-docs` | - |
+| POS-1 | A | CI - build + lint `apps/pos` | Haute | `chore/ci-pos` | - |
+| POS-2 | A | Annulation / cleanup bookings abandonnés | Haute | `fix/pos-orphan-bookings` | - |
+| POS-3 | A | Catalogue filtré par organisation sélectionnée | Haute | `fix/pos-org-catalog-scope` ✅ | - |
+| POS-4 | B | Sélecteur client (`customerUserId`) | Haute | `feature/pos-customer-select` ✅ | - |
 | POS-5 | B | Historique ventes du jour | Haute | `feature/pos-sales-history` ✅ | POS-3 |
-| POS-6 | B | Codes promo / remises au panier POS | Moyenne | `feature/pos-promo-codes` ✅ | — |
-| POS-7 | B | Forfaits (`packageId`) au POS | Moyenne | `feature/pos-packages` ✅ | — |
+| POS-6 | B | Codes promo / remises au panier POS | Moyenne | `feature/pos-promo-codes` ✅ | - |
+| POS-7 | B | Forfaits (`packageId`) au POS | Moyenne | `feature/pos-packages` ✅ | - |
 | POS-8 | C | Email reçu transactionnel (serveur) | Moyenne | `feature/pos-receipt-email` ✅ | 79 (SMTP) |
-| POS-9 | C | PDF reçu natif (serveur ou lib) | Basse | `feature/pos-receipt-pdf` ✅ | — |
+| POS-9 | C | PDF reçu natif (serveur ou lib) | Basse | `feature/pos-receipt-pdf` ✅ | - |
 | POS-10 | D | Tests E2E Playwright POS | Haute | `feature/pos-e2e-playwright` | POS-1 |
-| POS-11 | D | Polish UX caisse (erreurs, retry, feedback tactile) | Moyenne | `feature/pos-ux-polish` | — |
+| POS-11 | D | Polish UX caisse (erreurs, retry, feedback tactile) | Moyenne | `feature/pos-ux-polish` | - |
 | POS-12 | D | Déploiement POS prod non optionnel (si besoin métier) | Basse | `chore/pos-prod-enable` | POS-1, POS-10 |
 
 ### Ordre d’exécution recommandé
@@ -181,7 +181,7 @@ POS-12 en dernier selon prod
 
 ## Prompts détaillés (copier-coller)
 
-### POS-0 — Alignement documentation
+### POS-0 - Alignement documentation
 
 **Branche :** `chore/pos-roadmap-docs`
 
@@ -204,7 +204,7 @@ Critères : docs cohérentes entre elles ; aucun statut faux sur les reçus.
 
 ---
 
-### POS-1 — CI build + lint POS
+### POS-1 - CI build + lint POS
 
 **Branche :** `chore/ci-pos`
 
@@ -212,12 +212,12 @@ Critères : docs cohérentes entre elles ; aucun statut faux sur les reçus.
 Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `chore/ci-pos`.
 
-Livrable POS-1 : CI — build + lint apps/pos
+Livrable POS-1 : CI - build + lint apps/pos
 Références : .github/workflows/ci.yml, apps/pos/package.json, apps/web (pattern CI existant)
 
 Étendre le workflow GitHub Actions pour builder (et lint si script présent) apps/pos.
 Réutiliser la même stratégie de cache / pnpm que les autres apps.
-Ne pas bloquer toute la CI sur des apps optionnelles si le repo a déjà un pattern « continue-on-error » — préférer un job dédié `pos` qui doit passer.
+Ne pas bloquer toute la CI sur des apps optionnelles si le repo a déjà un pattern « continue-on-error » - préférer un job dédié `pos` qui doit passer.
 
 Critères : PR rouge si `apps/pos` ne compile pas ; job visible dans Actions.
 
@@ -226,9 +226,9 @@ Critères : PR rouge si `apps/pos` ne compile pas ; job visible dans Actions.
 
 ---
 
-### POS-2 — Cleanup bookings abandonnés (livré)
+### POS-2 - Cleanup bookings abandonnés (livré)
 
-**Statut :** ✅ — `cancelAbandonedPosBooking` + annulation sur échec cash/intent, fermeture sheet carte, bouton manuel page succès. **Pas de job TTL API** (`pending_payment` aussi utilisé par le web).
+**Statut :** ✅ - `cancelAbandonedPosBooking` + annulation sur échec cash/intent, fermeture sheet carte, bouton manuel page succès. **Pas de job TTL API** (`pending_payment` aussi utilisé par le web).
 
 **Branche historique :** `fix/pos-orphan-bookings`
 
@@ -247,7 +247,7 @@ Problème : après POST /bookings, si cash-payment ou Stripe échoue / est aband
 À faire (côté POS + API minimale si besoin) :
 1. Sur échec paiement ou fermeture sheet carte : proposer / déclencher annulation du booking créé (endpoint cancel existant si disponible).
 2. Sur timeout d’attente confirmation carte : message clair + lien / action annuler.
-3. Option API (si absente) : job ou règle « pending_payment POS > N minutes → cancel + restore stock » — seulement si simple et alignée BookingEngine.
+3. Option API (si absente) : job ou règle « pending_payment POS > N minutes → cancel + restore stock » - seulement si simple et alignée BookingEngine.
 4. Ne pas casser le parcours succès cash/carte.
 
 Critères :
@@ -260,9 +260,9 @@ Critères :
 
 ---
 
-### POS-3 — Scope catalogue par organisation (livré)
+### POS-3 - Scope catalogue par organisation (livré)
 
-**Statut :** ✅ — migration `organization_id` catalogue (NULL = partagé) ; listes API scopées ; POS `search-catalog` + preview/create envoient l’org session ; seed 2e org + activité exclusive.
+**Statut :** ✅ - migration `organization_id` catalogue (NULL = partagé) ; listes API scopées ; POS `search-catalog` + preview/create envoient l’org session ; seed 2e org + activité exclusive.
 
 **Branche historique :** `fix/pos-org-catalog-scope`
 
@@ -294,13 +294,13 @@ Critères : avec 2 orgs seed, la caisse org A ne voit pas les produits exclusifs
 4. Produits partagés (ex. Gombe City Tour, `organization_id` NULL) visibles sur les deux orgs
 5. Preview / createBooking avec org B + produit exclusif B → OK ; forcer un produit exclusif B sous org A → 400
 
-**IDs seed :** `ORG_POS_GUICHET_EST`, `ACTIVITY_POS_EXCLUSIVE_GUICHET_EST` — voir `database/seeds/seed-ids.txt`
+**IDs seed :** `ORG_POS_GUICHET_EST`, `ACTIVITY_POS_EXCLUSIVE_GUICHET_EST` - voir `database/seeds/seed-ids.txt`
 
 ---
 
-### POS-4 — Sélecteur client (livré)
+### POS-4 - Sélecteur client (livré)
 
-**Statut :** ✅ — barre + sheet Client (passage / recherche `listUsers` audience=client) ; `createBookingFromCart` envoie `customerUserId` ; labels `customer.*` dans `config/sale.ts`.
+**Statut :** ✅ - barre + sheet Client (passage / recherche `listUsers` audience=client) ; `createBookingFromCart` envoie `customerUserId` ; labels `customer.*` dans `config/sale.ts`.
 
 **Branche historique :** `feature/pos-customer-select`
 
@@ -332,7 +332,7 @@ Critères : booking créé visible côté admin avec le bon user ; emails confir
 
 ---
 
-### POS-5 — Historique ventes du jour
+### POS-5 - Historique ventes du jour
 
 **Branche :** `feature/pos-sales-history`
 
@@ -363,7 +363,7 @@ Critères : après une vente cash, elle apparaît dans l’historique du jour ; 
 
 ---
 
-### POS-6 — Codes promo au POS
+### POS-6 - Codes promo au POS
 
 **Branche :** `feature/pos-promo-codes`
 
@@ -387,7 +387,7 @@ Critères : même code valide que sur le web réduit le total à la caisse ; cas
 
 ---
 
-### POS-7 — Forfaits au POS
+### POS-7 - Forfaits au POS
 
 **Branche :** `feature/pos-packages`
 
@@ -412,7 +412,7 @@ Critères : ajouter un forfait seed au panier → preview OK → cash → confir
 
 ---
 
-### POS-8 — Email reçu serveur
+### POS-8 - Email reçu serveur
 
 **Branche :** `feature/pos-receipt-email`
 
@@ -439,7 +439,7 @@ Critères : email reçu en boîte (Mailhog / SMTP dev) ; pas de régression impr
 
 ---
 
-### POS-9 — PDF reçu natif
+### POS-9 - PDF reçu natif
 
 **Branche :** `feature/pos-receipt-pdf`
 
@@ -461,7 +461,7 @@ Critères : fichier PDF téléchargeable avec branding ; lisible sur mobile/tabl
 
 ---
 
-### POS-10 — E2E Playwright POS
+### POS-10 - E2E Playwright POS
 
 **Branche :** `feature/pos-e2e-playwright`
 
@@ -491,7 +491,7 @@ Critères : `pnpm --filter @africatourismgate/pos test:e2e` (ou script équivale
 
 ---
 
-### POS-11 — Polish UX caisse
+### POS-11 - Polish UX caisse
 
 **Branche :** `feature/pos-ux-polish`
 
@@ -518,7 +518,7 @@ Critères : parcours vente moins d’erreurs silencieuses ; pas de double charge
 
 ---
 
-### POS-12 — Activation prod POS
+### POS-12 - Activation prod POS
 
 **Branche :** `chore/pos-prod-enable`
 

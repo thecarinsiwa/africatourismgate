@@ -279,7 +279,7 @@ export class BookingDetailPdfEnrichmentService {
       amountCents: payment.amountCents,
       currency: payment.currency,
       status: payment.status,
-      provider: payment.provider?.trim() || '—',
+      provider: payment.provider?.trim() || '-',
       createdAt:
         payment.createdAt instanceof Date
           ? payment.createdAt.toISOString()
@@ -495,12 +495,12 @@ export class BookingDetailPdfEnrichmentService {
     if (activeStops.length) {
       return activeStops.map((stop, index) => ({
         order: index + 1,
-        label: `${fallbackLabel} — ${stop.name}`,
+        label: `${fallbackLabel} - ${stop.name}`,
         detail: stop.description?.trim() || null,
       }));
     }
 
-    return [{ order: 1, label: `${fallbackLabel} — ${activity.title}` }];
+    return [{ order: 1, label: `${fallbackLabel} - ${activity.title}` }];
   }
 
   private async resolvePropertyItineraryById(
@@ -513,7 +513,7 @@ export class BookingDetailPdfEnrichmentService {
     if (!property) {
       return [{ order: 1, label: fallbackLabel }];
     }
-    return [{ order: 1, label: `${fallbackLabel} — ${property.name}` }];
+    return [{ order: 1, label: `${fallbackLabel} - ${property.name}` }];
   }
 
   private async resolveFlightItineraryById(
@@ -538,13 +538,13 @@ export class BookingDetailPdfEnrichmentService {
     if (departureAirport && !departureAirport.deletedAt) {
       steps.push({
         order: steps.length + 1,
-        label: `${fallbackLabel} — ${copy.departure} : ${departureAirport.name}`,
+        label: `${fallbackLabel} - ${copy.departure} : ${departureAirport.name}`,
       });
     }
     if (arrivalAirport && !arrivalAirport.deletedAt) {
       steps.push({
         order: steps.length + 1,
-        label: `${fallbackLabel} — ${copy.arrival} : ${arrivalAirport.name}`,
+        label: `${fallbackLabel} - ${copy.arrival} : ${arrivalAirport.name}`,
       });
     }
     return steps.length ? steps : [{ order: 1, label: fallbackLabel }];
@@ -565,7 +565,7 @@ export class BookingDetailPdfEnrichmentService {
       return [{ order: 1, label: room.name }];
     }
 
-    return [{ order: 1, label: `${property.name} — ${room.name}` }];
+    return [{ order: 1, label: `${property.name} - ${room.name}` }];
   }
 
   private async resolveFlightClassItinerary(

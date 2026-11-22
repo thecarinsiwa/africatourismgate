@@ -9,7 +9,7 @@
     "no": "No"
   },
   "empty": {
-    "dash": "—"
+    "dash": "-"
   },
   "filters": {
     "all": "All",
@@ -166,8 +166,8 @@
   },
   "select": {
     "choose": "Choose…",
-    "chooseDash": "— Choose —",
-    "chooseFeminine": "— Choose —",
+    "chooseDash": "- Choose -",
+    "chooseFeminine": "- Choose -",
     "searchPlaceholder": "Search…",
     "empty": "No results",
     "loading": "Loading…",
@@ -340,7 +340,7 @@
     "troncon": "Route segment"
   },
   "activityDifficulty": {
-    "unspecified": "— No renseignée —",
+    "unspecified": "- No renseignée -",
     "easy": "Easy",
     "moderate": "Moderate",
     "hard": "Hard",

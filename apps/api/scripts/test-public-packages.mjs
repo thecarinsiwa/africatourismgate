@@ -112,7 +112,7 @@ async function main() {
     throw new Error('Expected totalCents < subtotalCents when discount applies');
   }
   console.log(
-    `  OK package "${listed.name}" — ${listed.itemCount} items, total ${listed.pricing.totalCents} cents`,
+    `  OK package "${listed.name}" - ${listed.itemCount} items, total ${listed.pricing.totalCents} cents`,
   );
 
   console.log('3. GET /public/packages/:id (no auth)');

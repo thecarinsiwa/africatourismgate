@@ -144,7 +144,7 @@ export function WhyUsSectionForm({ locale, onSaved }: WhyUsSectionFormProps) {
           {!expanded ? (
             <p className="mt-1 truncate text-sm text-atg-muted" title={summarySubtitle || undefined}>
               <span className="font-medium text-atg-fg">{summaryTitle}</span>
-              {summarySubtitle ? ` — ${summarySubtitle}` : null}
+              {summarySubtitle ? ` - ${summarySubtitle}` : null}
             </p>
           ) : (
             <p className="mt-1 text-xs text-atg-muted">{t('hint')}</p>

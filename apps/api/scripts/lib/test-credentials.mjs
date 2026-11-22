@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 /**
- * Credentials for local integration scripts — never hardcode passwords here.
+ * Credentials for local integration scripts - never hardcode passwords here.
  * Set SEED_ADMIN_PASSWORD in .env.local (matches database/seeds/README.md).
  */
 export function requireEnv(name, hint) {

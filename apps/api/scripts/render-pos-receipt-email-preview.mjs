@@ -1,5 +1,5 @@
 /**
- * Dev helper — writes static HTML preview for POS receipt email (POS-8).
+ * Dev helper - writes static HTML preview for POS receipt email (POS-8).
  * Run: pnpm --filter @africatourismgate/api email:preview-pos-receipt
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -25,7 +25,7 @@ const sample = {
   paymentMethodLabel: 'Espèces',
   items: [
     {
-      title: 'Safari 3 jours — Parc national',
+      title: 'Safari 3 jours - Parc national',
       quantity: 2,
       unitPriceCents: 45_000,
       lineTotalCents: 90_000,

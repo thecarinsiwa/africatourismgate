@@ -1,4 +1,4 @@
-/** HTML helpers without DOMPurify — safe to import from Server Components / generateMetadata. */
+/** HTML helpers without DOMPurify - safe to import from Server Components / generateMetadata. */
 
 export function hasHtmlMarkup(value: string | null | undefined): boolean {
   if (!value) return false;

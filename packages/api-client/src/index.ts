@@ -32,6 +32,7 @@ import type {
   CreateVehicleRoutePriceTierRequest,
   CreateVehicleRouteRequest,
   CreateVehicleTripRequest,
+  EnsureVehicleTripSeatsRequest,
   JoinVehicleTripRequest,
   UpdateVehicleTripRequest,
   Cabin,
@@ -4861,6 +4862,19 @@ export class ApiClient {
       method: 'POST',
       body,
     });
+  }
+
+  ensurePublicVehicleTripSeats(
+    id: string,
+    body: EnsureVehicleTripSeatsRequest,
+  ): Promise<VehicleTrip> {
+    return this.request<VehicleTrip>(
+      `/public/vehicle-trips/${id}/ensure-seats`,
+      {
+        method: 'POST',
+        body,
+      },
+    );
   }
 
   updatePublicVehicleTrip(

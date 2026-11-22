@@ -115,7 +115,7 @@
     "contactEmail": "E-mail de contact",
     "linkedUser": "Compte utilisateur",
     "openFullCalendar": "Calendrier global",
-    "inactiveHint": "Guide inactif — le planning reste consultable.",
+    "inactiveHint": "Guide inactif - le planning reste consultable.",
     "tabsAria": "Sections du guide",
     "tabs": {
       "profile": "Profil",
@@ -125,7 +125,7 @@
     "schedule": {
       "title": "Planning",
       "intro": "Disponibilités et créneaux de mission. Cliquez sur un jour pour voir le détail horaire ou marquer une indisponibilité.",
-      "ariaLabel": "Planning du guide — {month}"
+      "ariaLabel": "Planning du guide - {month}"
     }
   },
   "sections": {
@@ -141,7 +141,7 @@
     }
   },
   "calendar": {
-    "ariaLabel": "Calendrier de disponibilité — {month}",
+    "ariaLabel": "Calendrier de disponibilité - {month}",
     "availableShort": "{count} dispo",
     "occupiedShort": "{count} occupés",
     "unavailableShort": "{count} indispo",
@@ -154,7 +154,7 @@
     "noActiveGuides": "Aucun guide actif pour ces filtres.",
     "today": "Aujourd'hui",
     "dayModal": {
-      "title": "Disponibilité — {date}",
+      "title": "Disponibilité - {date}",
       "intro": "Planning horaire des guides actifs. Les missions apparaissent en orange, les indisponibilités en gris.",
       "empty": "Aucun guide actif ce jour-là.",
       "viewBooking": "Voir la réservation",

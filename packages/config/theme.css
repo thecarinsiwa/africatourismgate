@@ -1,5 +1,5 @@
 /**
- * Variables CSS mode clair / sombre — import dans globals.css de chaque app.
+ * Variables CSS mode clair / sombre - import dans globals.css de chaque app.
  * Bascule via class="dark" sur <html> (next-themes).
  *
  * Échelle typographique admin (Tailwind) :
@@ -26,7 +26,7 @@
  * Contraste CTA (C1) : --atg-primary défaut #0b6e4f sur texte blanc ≈ 4.6:1 (WCAG AA).
  * Branding org : primaryColor custom doit conserver ≥ 4.5:1 vs #ffffff sur boutons bg-primary.
  *
- * Couleurs sémantiques — paires light/fg calibrées pour contraste WCAG AA (≥ 4.5:1)
+ * Couleurs sémantiques - paires light/fg calibrées pour contraste WCAG AA (≥ 4.5:1)
  * sur fond de badge (DataTableBadge). Classes Tailwind : bg-atg-success-light,
  * text-atg-success-fg, text-atg-success, ring-atg-success/25, etc.
  */
@@ -45,25 +45,25 @@
   --atg-muted: #5c6d66;
   --atg-fg: #0f1a16;
 
-  /* Sémantique — succès */
+  /* Sémantique - succès */
   --atg-success: #15803d;
   --atg-success-hover: #166534;
   --atg-success-light: #dcfce7;
   --atg-success-fg: #14532d;
 
-  /* Sémantique — avertissement */
+  /* Sémantique - avertissement */
   --atg-warning: #b45309;
   --atg-warning-hover: #92400e;
   --atg-warning-light: #fef3c7;
   --atg-warning-fg: #78350f;
 
-  /* Sémantique — danger */
+  /* Sémantique - danger */
   --atg-danger: #b91c1c;
   --atg-danger-hover: #991b1b;
   --atg-danger-light: #fee2e2;
   --atg-danger-fg: #7f1d1d;
 
-  /* Sémantique — info */
+  /* Sémantique - info */
   --atg-info: #0369a1;
   --atg-info-hover: #0284c7;
   --atg-info-light: #e0f2fe;

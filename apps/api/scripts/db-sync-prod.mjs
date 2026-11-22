@@ -1,5 +1,5 @@
 /**
- * Production db:sync entrypoint — forces SEED_PROFILE=prod so migrations/seeds
+ * Production db:sync entrypoint - forces SEED_PROFILE=prod so migrations/seeds
  * skip data for tables outside the install allowlist.
  */
 import { spawnSync } from 'node:child_process';

@@ -124,7 +124,7 @@ export function AccountingFinancialStatementPanel({ kind }: Props) {
         id: 'account',
         header: tColumns('account'),
         cell: ({ row }) =>
-          `${row.original.accountCode} — ${row.original.accountLabel}`,
+          `${row.original.accountCode} - ${row.original.accountLabel}`,
       },
       {
         id: 'debit',

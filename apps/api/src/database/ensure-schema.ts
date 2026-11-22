@@ -63,7 +63,7 @@ async function databaseHasTables(mysql: MysqlConfig): Promise<boolean> {
  */
 export async function ensureSchema(config: ConfigService): Promise<void> {
   if (!isAutoSchemaEnabled(config)) {
-    logger.log('DATABASE_AUTO_SCHEMA=false — skipping schema import');
+    logger.log('DATABASE_AUTO_SCHEMA=false - skipping schema import');
     return;
   }
 
@@ -71,7 +71,7 @@ export async function ensureSchema(config: ConfigService): Promise<void> {
   const mysql = getMysqlConfig(config);
 
   if (await databaseHasTables(mysql)) {
-    logger.log(`Tables already exist in "${mysql.database}" — skipping schema import`);
+    logger.log(`Tables already exist in "${mysql.database}" - skipping schema import`);
     return;
   }
 

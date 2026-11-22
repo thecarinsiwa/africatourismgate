@@ -15,12 +15,12 @@ import {
 
 const GUIDES_HEADING = /^Guides touristiques$|^Tour guides$|^Guías turísticos$/i;
 
-test.describe('Phase 3 QA — 6 routes clés', () => {
+test.describe('Phase 3 QA - 6 routes clés', () => {
   test.beforeEach(async ({ page }) => {
     await loginAsSeedAdmin(page);
   });
 
-  test('/organisations — colonne Effectifs en tabular-nums', async ({ page }) => {
+  test('/organisations - colonne Effectifs en tabular-nums', async ({ page }) => {
     await page.goto('/organisations');
     await waitForPageIdle(page);
 
@@ -29,7 +29,7 @@ test.describe('Phase 3 QA — 6 routes clés', () => {
     await expectTabularNumsVisible(table);
   });
 
-  test('/organisations/[id] — Tabs clavier (ArrowRight)', async ({ page }) => {
+  test('/organisations/[id] - Tabs clavier (ArrowRight)', async ({ page }) => {
     await page.goto(`/organisations/${SEED_ORGANIZATION_ID}`);
     await waitForPageIdle(page);
 
@@ -43,7 +43,7 @@ test.describe('Phase 3 QA — 6 routes clés', () => {
     );
   });
 
-  test('/guides — StatCards en tabular-nums', async ({ page }) => {
+  test('/guides - StatCards en tabular-nums', async ({ page }) => {
     await page.goto('/guides');
     await waitForPageIdle(page);
 
@@ -51,7 +51,7 @@ test.describe('Phase 3 QA — 6 routes clés', () => {
     await expectTabularNumsVisible(page.locator('main'));
   });
 
-  test('/fidelite/comptes — Drawer historique : focus trap + Escape', async ({ page }) => {
+  test('/fidelite/comptes - Drawer historique : focus trap + Escape', async ({ page }) => {
     await page.goto('/fidelite/comptes');
     await waitForPageIdle(page);
 
@@ -65,7 +65,7 @@ test.describe('Phase 3 QA — 6 routes clés', () => {
     });
   });
 
-  test('/utilisateurs/employes — StatCards et codes en tabular-nums', async ({ page }) => {
+  test('/utilisateurs/employes - StatCards et codes en tabular-nums', async ({ page }) => {
     await page.goto('/utilisateurs/employes');
     await waitForPageIdle(page);
 
@@ -77,14 +77,14 @@ test.describe('Phase 3 QA — 6 routes clés', () => {
     }
   });
 
-  test('/contenu/hero — StatCards en tabular-nums', async ({ page }) => {
+  test('/contenu/hero - StatCards en tabular-nums', async ({ page }) => {
     await page.goto('/contenu/hero');
     await waitForPageIdle(page);
 
     await expectTabularNumsVisible(page.locator('main'));
   });
 
-  test('/contenu/avis/[id] — barre modération sticky + toasts accessibles', async ({ page }) => {
+  test('/contenu/avis/[id] - barre modération sticky + toasts accessibles', async ({ page }) => {
     const hasReview = await gotoFirstReviewDetail(page);
     test.skip(!hasReview, 'Aucun avis en seed');
 

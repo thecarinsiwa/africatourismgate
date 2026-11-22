@@ -33,7 +33,7 @@ export function getOsrmBaseUrl(): string {
 /**
  * Fetch a driving route through waypoints via OSRM.
  * Returns path + duration/distance, or `null` on failure.
- * Does not take an AbortSignal — callers ignore stale results with a generation flag
+ * Does not take an AbortSignal - callers ignore stale results with a generation flag
  * (public OSRM can take 10–30s; aborting on React Strict Mode remounts was dropping routes).
  */
 export async function fetchOsrmDrivingRoute(

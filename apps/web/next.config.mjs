@@ -40,7 +40,7 @@ const AUTH_EXACT_PATHS = new Set([
 
 /**
  * Baseline security headers + permissive CSP (allows inline theme/locale scripts).
- * Tighten script-src with nonces in a later pass — not in this change.
+ * Tighten script-src with nonces in a later pass - not in this change.
  */
 function buildContentSecurityPolicy() {
   const connectSrc = new Set([
@@ -122,7 +122,7 @@ const securityHeaders = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Isolate E2E prod builds (NEXT_DIST_DIR=.next-e2e) from a concurrent `pnpm dev`
-  // writing the same apps/web/.next — avoids webpack-runtime "reading 'call'" under next start.
+  // writing the same apps/web/.next - avoids webpack-runtime "reading 'call'" under next start.
   distDir: process.env.NEXT_DIST_DIR || '.next',
   transpilePackages: ['@africatourismgate/ui', '@africatourismgate/types'],
   env: {

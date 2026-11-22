@@ -1,4 +1,4 @@
-# PR-06b — Scénario de test (preuves de paiement — virement)
+# PR-06b - Scénario de test (preuves de paiement - virement)
 
 Branche : `feature/pr-06b-payment-proofs` (ou suite de `feature/pr-06-bank-transfer`)  
 Réf. : [roadmap-post-reunion-08-2026.md](./roadmap-post-reunion-08-2026.md) (PR-06)  
@@ -40,14 +40,14 @@ Prérequis : virement activé + compte bancaire publié (voir PR-06).
 2. Même panneau upload / statut / note staff si redemande.
 3. Après rejet ou « nouvelle preuve demandée » : upload à nouveau possible (version +1).
 
-### C. Admin — validation
+### C. Admin - validation
 
 1. Réservation → onglet Documents → **Preuves de paiement**.
 2. Voir le fichier (inline).
 3. **Valider le paiement** → booking `confirmed`, payment `succeeded`, preuve `approved`.
 4. Barre d’actions : pas de bouton « Marquer virement reçu » tant qu’une preuve est `pending_review`.
 
-### D. Admin — redemande / rejet
+### D. Admin - redemande / rejet
 
 1. Preuve `pending_review` → **Demander une nouvelle preuve** (note obligatoire) → client voit la note.
 2. Ou **Rejeter** (note optionnelle) → client peut re-uploader.
@@ -87,7 +87,7 @@ curl -s -X POST "$API/bookings/$BOOKING_ID/payment-proofs/$PROOF_ID/request-resu
 ### G. i18n
 
 1. Basculer FR / EN / ES (success, compte, admin Documents).
-2. Titres / statuts / dialogs — pas de clés brutes.
+2. Titres / statuts / dialogs - pas de clés brutes.
 
 ---
 

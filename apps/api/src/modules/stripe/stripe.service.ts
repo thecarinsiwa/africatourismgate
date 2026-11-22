@@ -336,7 +336,7 @@ export class StripeService {
   }
 
   /**
-   * Partial refund while the booking stays confirmed — used when shared-trip
+   * Partial refund while the booking stays confirmed - used when shared-trip
    * headcount rises and the per-person tier price drops.
    */
   async createEqualizationRefundForPayment(
@@ -748,10 +748,10 @@ export class StripeService {
   ): string {
     const shortId = bookingId.slice(0, 8);
     if (paidCents === 0 && chargeCents < totalCents) {
-      return `Acompte — réservation ${shortId}`;
+      return `Acompte - réservation ${shortId}`;
     }
     if (paidCents > 0 || chargeCents < totalCents) {
-      return `Solde — réservation ${shortId}`;
+      return `Solde - réservation ${shortId}`;
     }
     return `Réservation ${shortId}`;
   }

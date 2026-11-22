@@ -1,4 +1,4 @@
--- TRESO-006 — Journal d’audit trésorerie (append-only)
+-- TRESO-006 - Journal d’audit trésorerie (append-only)
 -- Pattern inspiré de rbac_audit_logs ; table dédiée pour entity_type / old/new JSON métier.
 -- Pas de updated_at / deleted_at : historique non modifiable côté schéma applicatif.
 -- Down (manuel) : voir commentaires en bas de fichier.
@@ -48,6 +48,6 @@ CREATE TABLE IF NOT EXISTS `treasury_audit_logs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------------
--- DOWN (manuel — ne pas placer dans un .sql auto-appliqué par db:sync)
+-- DOWN (manuel - ne pas placer dans un .sql auto-appliqué par db:sync)
 -- ---------------------------------------------------------------------------
 -- DROP TABLE IF EXISTS `treasury_audit_logs`;

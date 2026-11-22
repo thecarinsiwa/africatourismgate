@@ -281,7 +281,7 @@ export class FlightReportsService {
     const byAirlineMap = new Map<string, number>();
 
     for (const flight of scope.flights) {
-      const label = flight.airlineName || flight.airlineIata || '—';
+      const label = flight.airlineName || flight.airlineIata || '-';
       byAirlineMap.set(label, (byAirlineMap.get(label) ?? 0) + 1);
     }
 

@@ -136,7 +136,7 @@ async function main() {
       }
     }
   } else {
-    console.log('  OK empty list (no booking items yet) — skip filter checks');
+    console.log('  OK empty list (no booking items yet) - skip filter checks');
   }
 
   console.log('5. GET /booking-items without token (expect 401)');

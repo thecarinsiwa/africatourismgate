@@ -21,7 +21,7 @@ const replacements = [
   ['text-gray-500', 'text-atg-muted'],
   ['text-gray-400', 'text-atg-muted'],
   ['placeholder:text-gray-400', 'placeholder:text-atg-muted'],
-  // bg-white on cards/panels — after borders so we don't break white/opacity variants
+  // bg-white on cards/panels - after borders so we don't break white/opacity variants
   ['border-atg-border bg-white', 'border-atg-border bg-atg-elevated'],
   ['bg-white shadow', 'bg-atg-elevated shadow'],
   ['bg-white px', 'bg-atg-elevated px'],

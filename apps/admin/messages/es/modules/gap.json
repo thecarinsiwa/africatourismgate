@@ -42,14 +42,14 @@
       "hero": "Imagen hero",
       "heroHint": "Banner en la parte superior de la página GAP. La subida y la URL externa comparten el mismo campo.",
       "preview": "Vista previa en vivo",
-      "previewHint": "Permanece visible al desplazarse — renderizado aproximado del hero."
+      "previewHint": "Permanece visible al desplazarse - renderizado aproximado del hero."
     },
     "preview": {
       "badge": "Hero GAP",
       "defaultTitle": "Gorilla Ambassadors Program",
       "emptySubtitle": "Subtítulo aún no definido…",
       "altLabel": "Alt: {alt}",
-      "ariaLabel": "Vista previa del hero GAP — {title}"
+      "ariaLabel": "Vista previa del hero GAP - {title}"
     },
     "fields": {
       "title": "Título",
@@ -59,8 +59,8 @@
       "heroImageUrl": "URL de la imagen (o resultado de la subida)",
       "heroImageAlt": "Texto alternativo de la imagen",
       "heroPreviewAlt": "Vista previa de la imagen principal",
-      "heroEmpty": "Aún no hay imagen — suba un archivo o introduzca una URL.",
-      "heroUploadHint": "JPEG, PNG o WebP — máx. 5 MB · recomendado 1920×1080",
+      "heroEmpty": "Aún no hay imagen - suba un archivo o introduzca una URL.",
+      "heroUploadHint": "JPEG, PNG o WebP - máx. 5 MB · recomendado 1920×1080",
       "heroPriorityHint": "Un archivo subido rellena este campo y sustituye la URL anterior.",
       "heroAltHint": "Descripción breve para accesibilidad y SEO.",
       "removeHero": "Quitar la imagen",

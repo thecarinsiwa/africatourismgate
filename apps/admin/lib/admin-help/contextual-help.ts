@@ -380,7 +380,7 @@ export function getAdminContextualHelpHref(pathname: string): string {
   return adminHelpArticlePath(target.categorySlug, target.articleSlug);
 }
 
-/** Exported for tests / docs — ordered rules with longest-prefix matching. */
+/** Exported for tests / docs - ordered rules with longest-prefix matching. */
 export function getAdminContextualHelpRules(): readonly ContextualHelpRule[] {
   return CONTEXTUAL_HELP_RULES;
 }

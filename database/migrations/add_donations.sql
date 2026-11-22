@@ -1,4 +1,4 @@
--- Campagnes de don (plateforme + GAP) — une seule mise en avant navbar par locale
+-- Campagnes de don (plateforme + GAP) - une seule mise en avant navbar par locale
 
 CREATE TABLE IF NOT EXISTS `donations` (
   `id` CHAR(36) NOT NULL,

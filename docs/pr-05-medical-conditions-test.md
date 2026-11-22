@@ -1,4 +1,4 @@
-# PR-05 — Scénario de test (conditions médicales structurées)
+# PR-05 - Scénario de test (conditions médicales structurées)
 
 Branche : `feature/pr-05-medical-conditions`  
 Réf. : [roadmap-post-reunion-08-2026.md](./roadmap-post-reunion-08-2026.md) (PR-05)  
@@ -12,7 +12,7 @@ Dépend de : [PR-04](./pr-04-emergency-contact-test.md) (recommandé, même zone
 | `seriousMedicalConditions` | optionnel | nullable |
 | `currentMedications` | optionnel | nullable |
 | `dietaryNotes` | optionnel | nullable |
-| `conditions` (legacy) | **lecture seule** — non écrit par les nouveaux formulaires | nullable ; migré vers `other` si `other` vide |
+| `conditions` (legacy) | **lecture seule** - non écrit par les nouveaux formulaires | nullable ; migré vers `other` si `other` vide |
 
 Surfaces : checkout web, compte client, admin, POS, PDF confirmation.
 
@@ -66,7 +66,7 @@ Migration : `database/migrations/add_manifest_medical_conditions.sql`
 
 ## Tests automatisés
 
-### Unit (API — PDF)
+### Unit (API - PDF)
 
 ```bash
 cd apps/api

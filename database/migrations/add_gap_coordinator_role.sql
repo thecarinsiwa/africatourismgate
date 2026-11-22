@@ -1,4 +1,4 @@
--- GAP coordinator system role — gap.read + gap.write only
+-- GAP coordinator system role - gap.read + gap.write only
 SET NAMES utf8mb4;
 
 INSERT INTO `roles` (`id`, `code`, `name`, `description`, `is_system`) VALUES

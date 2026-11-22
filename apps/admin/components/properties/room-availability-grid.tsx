@@ -446,10 +446,10 @@ export function RoomAvailabilityGrid({
                           <span className="block">
                             {Number.isFinite(units)
                               ? tCalendar('unitsShort', { count: units })
-                              : '—'}
+                              : '-'}
                           </span>
                           <span className="block text-xs opacity-90">
-                            {Number.isFinite(cents) ? formatPrice(cents, currency) : '—'}
+                            {Number.isFinite(cents) ? formatPrice(cents, currency) : '-'}
                           </span>
                         </span>
                       </button>
@@ -570,12 +570,12 @@ export function RoomAvailabilityGrid({
                       <span className="mt-1 text-xs tabular-nums">
                         {Number.isFinite(units)
                           ? tCalendar('unitsShort', { count: units })
-                          : '—'}
+                          : '-'}
                       </span>
                       <span className="text-[10px] tabular-nums opacity-90 sm:text-xs">
                         {Number.isFinite(cents)
                           ? formatPrice(cents, currency)
-                          : '—'}
+                          : '-'}
                       </span>
                     </div>
                   )}

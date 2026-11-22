@@ -97,7 +97,7 @@ async function fetchSeedAdminSession(force = false): Promise<StoredSession> {
     return cachedSession;
   }
 
-  throw new Error('Échec login seed admin via API (429 — rate limit)');
+  throw new Error('Échec login seed admin via API (429 - rate limit)');
 }
 
 async function applySessionToPage(page: Page, session: StoredSession) {
@@ -142,7 +142,7 @@ async function applySessionToPage(page: Page, session: StoredSession) {
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 60_000 });
 }
 
-/** Connexion fiable pour e2e — session via API + cookies middleware. */
+/** Connexion fiable pour e2e - session via API + cookies middleware. */
 export async function loginAsSeedAdmin(page: Page) {
   await waitForApiHealth();
 

@@ -30,18 +30,18 @@
   "intensities": {
     "low": {
       "label": "Light",
-      "hint": "Pale background, dark text — discreet information."
+      "hint": "Pale background, dark text - discreet information."
     },
     "high": {
       "label": "Strong",
-      "hint": "Solid background — urgent or important message."
+      "hint": "Solid background - urgent or important message."
     }
   },
   "preview": {
     "title": "Preview",
     "locale": "As shown in {locale}",
     "fallback": "No text in this language: the French text is shown",
-    "disabled": "Banner disabled — not visible on the site",
+    "disabled": "Banner disabled - not visible on the site",
     "empty": "Your text will appear here"
   },
   "validation": {

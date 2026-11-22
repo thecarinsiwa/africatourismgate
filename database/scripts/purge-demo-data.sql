@@ -1,5 +1,5 @@
 -- =============================================================================
--- Africa Tourism Gate — purge des données démo / test (Partie A)
+-- Africa Tourism Gate - purge des données démo / test (Partie A)
 -- =============================================================================
 -- Prérequis :
 --   1. Backup mysqldump + checksum SHA-256
@@ -106,7 +106,7 @@ FROM (
 ) AS t;
 
 -- -----------------------------------------------------------------------------
--- B. DELETE (enfants → parents) — UUID seed uniquement
+-- B. DELETE (enfants → parents) - UUID seed uniquement
 -- -----------------------------------------------------------------------------
 
 SET FOREIGN_KEY_CHECKS = 0;
@@ -233,7 +233,7 @@ WHERE `organization_id` = '00000000-0000-4000-8000-000000000002';
 DELETE FROM `organizations`
 WHERE `id` = '00000000-0000-4000-8000-000000000002';
 
--- B.6 Sessions / tokens (comptes non prod — ici toutes les sessions seed admin
+-- B.6 Sessions / tokens (comptes non prod - ici toutes les sessions seed admin
 --     restent utiles pour le smoke test ; on ne purge que les tokens expirés
 --     génériques si la table existe)
 DELETE FROM `password_reset_tokens`

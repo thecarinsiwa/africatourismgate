@@ -14,7 +14,7 @@ export const posReceiptLabels = {
   subtotal: 'Sous-total',
   discount: 'Remise',
   totalTtc: 'Total TTC',
-  taxIncludedNote: 'Montants TTC — TVA incluse',
+  taxIncludedNote: 'Montants TTC - TVA incluse',
   payment: 'Paiement',
 } as const;
 
@@ -36,8 +36,8 @@ export type PosReceiptData = {
 };
 
 function formatEmployeeName(session: PosStoredSession | null): string {
-  if (!session?.user) return '—';
-  return `${session.user.firstName} ${session.user.lastName}`.trim() || '—';
+  if (!session?.user) return '-';
+  return `${session.user.firstName} ${session.user.lastName}`.trim() || '-';
 }
 
 function resolvePaymentMethodLabel(
@@ -49,7 +49,7 @@ function resolvePaymentMethodLabel(
   if (succeeded?.provider === 'stripe') return 'Carte bancaire';
   if (fallback === 'cash') return 'Espèces';
   if (fallback === 'card') return 'Carte bancaire';
-  return '—';
+  return '-';
 }
 
 export function buildReceiptData(
@@ -104,18 +104,18 @@ export function buildReceiptPlainText(data: PosReceiptData): string {
   const lines = [
     data.displayName,
     data.organizationName,
-    '—'.repeat(32),
+    '-'.repeat(32),
     `Reçu n° ${data.bookingId}`,
     `Date : ${data.issuedAtLabel}`,
     `Caissier : ${data.employeeName}`,
     `Client : ${data.clientName}`,
     `E-mail : ${data.clientEmail}`,
-    '—'.repeat(32),
+    '-'.repeat(32),
     ...data.items.flatMap((item) => [
       item.title,
       `  ${item.quantity} × ${item.unitPriceLabel} = ${item.lineTotalLabel}`,
     ]),
-    '—'.repeat(32),
+    '-'.repeat(32),
     `${posReceiptLabels.subtotal} : ${data.subtotalLabel}`,
   ];
 
@@ -127,7 +127,7 @@ export function buildReceiptPlainText(data: PosReceiptData): string {
     `${posReceiptLabels.totalTtc} : ${data.totalLabel}`,
     posReceiptLabels.taxIncludedNote,
     `${posReceiptLabels.payment} : ${data.paymentMethodLabel}`,
-    '—'.repeat(32),
+    '-'.repeat(32),
     'Merci pour votre achat !',
   );
 
@@ -139,7 +139,7 @@ export function buildReceiptMailtoUrl(email: string, data: PosReceiptData): stri
   if (!trimmed) return '';
 
   const subject = encodeURIComponent(
-    `Reçu ${data.displayName} — ${data.bookingId.slice(0, 8).toUpperCase()}`,
+    `Reçu ${data.displayName} - ${data.bookingId.slice(0, 8).toUpperCase()}`,
   );
   const body = encodeURIComponent(buildReceiptPlainText(data));
   return `mailto:${trimmed}?subject=${subject}&body=${body}`;

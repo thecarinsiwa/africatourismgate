@@ -88,7 +88,7 @@ export function buildSiteNavSearchItems(
 
 /**
  * Source locale `pages` : filtre la nav publique (et aliases aide/legal/don).
- * Ne dépend pas du shell UI — `navItems` fournis via le contexte.
+ * Ne dépend pas du shell UI - `navItems` fournis via le contexte.
  */
 export async function searchSitePages(
   query: string,
