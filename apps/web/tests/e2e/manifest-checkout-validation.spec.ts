@@ -144,10 +144,11 @@ async function gotoPackageRecap(page: import('@playwright/test').Page) {
   await expect(
     page.getByText(/informations des voyageurs|traveler information|información de los viajeros/i),
   ).toBeVisible();
+  // Collapsible accordion — title is on a button, not an <h3>.
   await expect(
-    page.getByRole('heading', {
-      name: /contact d.urgence|emergency contact|contacto de emergencia/i,
-    }),
+    page.getByRole('button', {
+      name: /contact d['’]urgence|emergency contact|contacto de emergencia/i,
+    }).first(),
   ).toBeVisible();
 }
 
