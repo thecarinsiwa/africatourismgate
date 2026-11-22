@@ -91,6 +91,7 @@ const vehicleTripMock = {
   arrivalCity: 'Lubumbashi',
   paymentClosesAt: '2026-08-01T06:00:00.000Z',
   canJoin: true,
+  isMine: false,
   canEditDeparture: true,
   createdAt: '2026-07-01T00:00:00.000Z',
   updatedAt: null,

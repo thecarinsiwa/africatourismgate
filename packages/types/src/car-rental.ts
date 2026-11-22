@@ -260,6 +260,8 @@ export interface VehicleTrip {
   arrivalCity: string;
   paymentClosesAt: string;
   canJoin: boolean;
+  /** True when the authenticated viewer created this trip. */
+  isMine: boolean;
   canEditDeparture: boolean;
   createdAt: string;
   updatedAt: string | null;

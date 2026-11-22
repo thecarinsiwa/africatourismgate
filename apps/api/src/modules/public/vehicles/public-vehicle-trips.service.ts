@@ -69,6 +69,7 @@ export class PublicVehicleTripsService {
 
   async list(
     query: VehicleTripsListQueryDto,
+    viewerUserId?: string,
   ): Promise<PaginatedResult<VehicleTripDto>> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
@@ -101,7 +102,7 @@ export class PublicVehicleTripsService {
       .take(limit);
 
     const [trips, total] = await qb.getManyAndCount();
-    const data = await this.toDtos(trips, rules);
+    const data = await this.toDtos(trips, rules, viewerUserId);
 
     return {
       data,
@@ -187,6 +188,12 @@ export class PublicVehicleTripsService {
     const seats = dto.seats ?? 1;
     const trip = await this.requireTrip(tripId);
     const rules = await this.loadRules();
+
+    if (trip.createdByUserId === userId) {
+      throw new BadRequestException(
+        'Vous êtes déjà le créateur de ce trajet. Continuez votre réservation ou ajoutez des places.',
+      );
+    }
 
     if (trip.status !== 'open') {
       throw new BadRequestException('Ce trajet n’accepte plus de passagers.');
@@ -440,13 +447,16 @@ export class PublicVehicleTripsService {
       );
       const beforeClose = now < paymentClosesAt.getTime();
       const seatsRemaining = Math.max(0, trip.maxCapacity - trip.seatsReserved);
-      const canJoin =
-        trip.status === 'open' && beforeClose && seatsRemaining > 0;
-      const isCreator = Boolean(
+      const isMine = Boolean(
         viewerUserId && trip.createdByUserId === viewerUserId,
       );
+      const canJoin =
+        !isMine &&
+        trip.status === 'open' &&
+        beforeClose &&
+        seatsRemaining > 0;
       let canEditDeparture = false;
-      if (isCreator && trip.status === 'open' && beforeClose) {
+      if (isMine && trip.status === 'open' && beforeClose) {
         if (rules.departureTimeEditableUntil === 'until_payment_close') {
           canEditDeparture = true;
         } else {
@@ -471,6 +481,7 @@ export class PublicVehicleTripsService {
         arrivalCity: route?.arrivalCity ?? '',
         paymentClosesAt: paymentClosesAt.toISOString(),
         canJoin,
+        isMine,
         canEditDeparture,
         createdAt: this.toIso(trip.createdAt),
         updatedAt: trip.updatedAt ? this.toIso(trip.updatedAt) : null,

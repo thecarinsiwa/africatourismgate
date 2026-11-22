@@ -133,6 +133,11 @@ export class VehicleTripDto {
   @ApiProperty()
   canJoin!: boolean;
 
+  @ApiProperty({
+    description: 'True when the authenticated viewer created this trip',
+  })
+  isMine!: boolean;
+
   @ApiProperty()
   canEditDeparture!: boolean;
 

@@ -7,11 +7,13 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from '../../auth/decorators/public.decorator';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
+import { OptionalJwtAuthGuard } from '../../auth/guards/optional-jwt-auth.guard';
 import {
   CreateVehicleTripDto,
   JoinVehicleTripDto,
@@ -26,19 +28,30 @@ export class PublicVehicleTripsController {
   constructor(private readonly service: PublicVehicleTripsService) {}
 
   @Public()
+  @UseGuards(OptionalJwtAuthGuard)
   @Get('vehicle-trips')
   @ApiOperation({
-    summary: 'List shared vehicle trips (open by default)',
+    summary:
+      'List shared vehicle trips (open by default; isMine when authenticated)',
   })
-  list(@Query() query: VehicleTripsListQueryDto) {
-    return this.service.list(query);
+  list(
+    @Query() query: VehicleTripsListQueryDto,
+    @CurrentUser() user?: AuthUserDto,
+  ) {
+    return this.service.list(query, user?.id);
   }
 
   @Public()
+  @UseGuards(OptionalJwtAuthGuard)
   @Get('vehicle-trips/:id')
-  @ApiOperation({ summary: 'Get a shared vehicle trip by id' })
-  getById(@Param('id', ParseUUIDPipe) id: string) {
-    return this.service.getById(id);
+  @ApiOperation({
+    summary: 'Get a shared vehicle trip by id (isMine when authenticated)',
+  })
+  getById(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user?: AuthUserDto,
+  ) {
+    return this.service.getById(id, user?.id);
   }
 
   @Post('vehicle-trips')
