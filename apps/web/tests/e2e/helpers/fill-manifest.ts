@@ -77,20 +77,29 @@ async function selectTravelerNationality(page: Page, index: number, countryQuery
   await page.getByRole('option').filter({ hasText: /\(CD\)/i }).first().click();
 }
 
+const EMERGENCY_ACCORDION_NAME =
+  /contact d['’]urgence|emergency contact|contacto de emergencia/i;
+const EMERGENCY_NAME_LABEL =
+  /nom du contact|contact name|nombre del contacto/i;
+const TRAVELER_TOGGLE_NAME = /^(voyageur|traveler|viajero)\s+\d+$/i;
+
 export async function ensureEmergencyContactExpanded(page: Page): Promise<void> {
-  const nameField = page
-    .getByLabel(/nom du contact|contact name|nombre del contacto/i)
-    .first();
+  const nameField = page.getByLabel(EMERGENCY_NAME_LABEL).first();
   if (await nameField.isVisible().catch(() => false)) {
     return;
   }
-  await page
-    .getByRole('button', {
-      name: /contact d['’]urgence|emergency contact|contacto de emergencia/i,
-    })
-    .first()
-    .click();
-  await nameField.waitFor({ state: 'visible' });
+
+  // Prefer the collapsed chevron (aria-expanded=false + exact section title).
+  const collapsedChevron = page
+    .getByRole('button', { name: EMERGENCY_ACCORDION_NAME, expanded: false })
+    .last();
+  if ((await collapsedChevron.count()) > 0) {
+    await collapsedChevron.click();
+  } else {
+    await page.getByRole('button', { name: EMERGENCY_ACCORDION_NAME }).first().click();
+  }
+
+  await nameField.waitFor({ state: 'visible', timeout: 15_000 });
 }
 
 /** Fill booking-level emergency contact + required traveler fields on checkout recap. */
@@ -98,24 +107,24 @@ export async function fillCheckoutManifest(page: Page): Promise<number> {
   // Labels include a required "*" - never use ^…$ anchors on getByLabel.
   // Emergency / traveler sections are collapsed accordions on recap by default.
   await ensureEmergencyContactExpanded(page);
-  await page
-    .getByLabel(/nom du contact|contact name|nombre del contacto/i)
-    .first()
-    .fill('Contact Urgence');
+  await page.getByLabel(EMERGENCY_NAME_LABEL).first().fill('Contact Urgence');
   // Emergency phone is the only input[type=tel] on the recap (travelers have no tel field).
   await page.locator('input[type="tel"]').first().fill('+243900000001');
 
   // Chevron buttons use aria-label "Voyageur N" / "Traveler N" / "Viajero N".
-  const travelerToggles = page.getByRole('button', {
-    name: /^(voyageur|traveler|viajero)\s+\d+$/i,
-  });
+  const travelerToggles = page.getByRole('button', { name: TRAVELER_TOGGLE_NAME });
+  await travelerToggles.first().waitFor({ state: 'visible', timeout: 15_000 });
   const count = await travelerToggles.count();
 
   for (let i = 0; i < count; i += 1) {
-    await travelerToggles.nth(i).click();
-    await page
-      .getByLabel(/nom complet|full name|nombre completo/i)
-      .fill(`Voyageur ${i + 1}`);
+    const toggle = travelerToggles.nth(i);
+    const expanded = await toggle.getAttribute('aria-expanded');
+    if (expanded !== 'true') {
+      await toggle.click();
+    }
+    const nameInput = page.getByLabel(/nom complet|full name|nombre completo/i);
+    await nameInput.waitFor({ state: 'visible', timeout: 10_000 });
+    await nameInput.fill(`Voyageur ${i + 1}`);
     // Only the expanded traveler nationality is in the DOM (Pays ≠ Nationalité).
     await selectTravelerNationality(page, 0, 'Congo');
     await page

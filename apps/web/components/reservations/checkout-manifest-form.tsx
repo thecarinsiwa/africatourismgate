@@ -6,6 +6,13 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { useLocale } from 'next-intl';
 import { NationalitySelect } from './nationality-select';
 
+export type ManifestEntryExistingDocument = {
+  id: string;
+  mimeType: string;
+  filename: string;
+  previewUrl?: string;
+};
+
 export type ManifestEntryDraft = {
   fullName: string;
   age: string;
@@ -17,6 +24,9 @@ export type ManifestEntryDraft = {
   currentMedications: string;
   dietaryNotes: string;
   file?: File;
+  /** Persisted manifest row id when editing an existing booking traveler. */
+  entryId?: string;
+  existingDocument?: ManifestEntryExistingDocument;
 };
 
 export function emptyManifestEntryDraft(): ManifestEntryDraft {
@@ -31,10 +41,13 @@ export function emptyManifestEntryDraft(): ManifestEntryDraft {
     currentMedications: '',
     dietaryNotes: '',
     file: undefined,
+    entryId: undefined,
+    existingDocument: undefined,
   };
 }
 
 export function manifestEntryDraftFromApi(entry: {
+  id?: string;
   fullName?: string | null;
   age?: number | null;
   sex?: BookingManifestSex | null;
@@ -44,6 +57,7 @@ export function manifestEntryDraftFromApi(entry: {
   seriousMedicalConditions?: string | null;
   currentMedications?: string | null;
   dietaryNotes?: string | null;
+  existingDocument?: ManifestEntryExistingDocument;
 }): ManifestEntryDraft {
   return {
     fullName: entry.fullName?.trim() ?? '',
@@ -56,6 +70,8 @@ export function manifestEntryDraftFromApi(entry: {
     currentMedications: entry.currentMedications?.trim() ?? '',
     dietaryNotes: entry.dietaryNotes?.trim() ?? '',
     file: undefined,
+    entryId: entry.id,
+    existingDocument: entry.existingDocument,
   };
 }
 
@@ -421,6 +437,10 @@ type Labels = {
   removeTraveler?: string;
   addingTraveler?: string;
   seatsRemaining?: string;
+  saveTraveler?: string;
+  savingTraveler?: string;
+  saveTravelerSuccess?: string;
+  saveTravelerError?: string;
 };
 
 type Props = {
@@ -435,6 +455,11 @@ type Props = {
   canRemoveTraveler?: boolean;
   addingTraveler?: boolean;
   seatsRemainingCount?: number;
+  /** Persist one traveler (and optional ID doc) on an existing booking. */
+  onSaveTraveler?: (
+    index: number,
+    entry: ManifestEntryDraft,
+  ) => Promise<ManifestEntryDraft>;
 };
 
 export function CheckoutManifestForm({
@@ -449,6 +474,7 @@ export function CheckoutManifestForm({
   canRemoveTraveler = false,
   addingTraveler = false,
   seatsRemainingCount,
+  onSaveTraveler,
 }: Props) {
   const baseId = useId();
   const locale = useLocale();
@@ -456,6 +482,12 @@ export function CheckoutManifestForm({
   const [previewFile, setPreviewFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [savingIndex, setSavingIndex] = useState<number | null>(null);
+  const [saveFeedback, setSaveFeedback] = useState<{
+    index: number;
+    tone: 'ok' | 'error';
+    message: string;
+  } | null>(null);
 
   function openPreview(file: File) {
     const url = URL.createObjectURL(file);
@@ -463,17 +495,57 @@ export function CheckoutManifestForm({
     setPreviewFile(file);
   }
 
+  function openExistingPreview(doc: ManifestEntryExistingDocument) {
+    if (!doc.previewUrl) return;
+    setPreviewUrl(doc.previewUrl);
+    setPreviewFile(
+      new File([], doc.filename || 'document', {
+        type: doc.mimeType || 'application/octet-stream',
+      }),
+    );
+  }
+
   const closePreview = useCallback(() => {
     setPreviewUrl((current) => {
-      if (current) URL.revokeObjectURL(current);
+      // Do not revoke existingDocument preview URLs owned by the draft.
+      const isOwnedByDraft = entries.some(
+        (entry) => entry.existingDocument?.previewUrl === current,
+      );
+      if (current && !isOwnedByDraft) URL.revokeObjectURL(current);
       return null;
     });
     setPreviewFile(null);
-  }, []);
+  }, [entries]);
 
   const closeCamera = useCallback(() => {
     setCameraIndex(null);
   }, []);
+
+  async function handleSaveTraveler(index: number) {
+    if (!onSaveTraveler || !labels.saveTraveler) return;
+    const entry = entries[index];
+    if (!entry) return;
+    setSavingIndex(index);
+    setSaveFeedback(null);
+    try {
+      const saved = await onSaveTraveler(index, entry);
+      const next = entries.map((item, i) => (i === index ? saved : item));
+      onChange(next);
+      setSaveFeedback({
+        index,
+        tone: 'ok',
+        message: labels.saveTravelerSuccess ?? 'OK',
+      });
+    } catch {
+      setSaveFeedback({
+        index,
+        tone: 'error',
+        message: labels.saveTravelerError ?? 'Error',
+      });
+    } finally {
+      setSavingIndex(null);
+    }
+  }
 
   useEffect(() => {
     if (entries.length === count) return;
@@ -600,6 +672,15 @@ export function CheckoutManifestForm({
                     onClick={() => toggleExpanded(index)}
                     className="flex min-w-0 flex-1 items-center gap-3 py-1 text-left transition-colors"
                   >
+                    {entry.existingDocument?.previewUrl &&
+                    entry.existingDocument.mimeType.startsWith('image/') &&
+                    !entry.file ? (
+                      <img
+                        src={entry.existingDocument.previewUrl}
+                        alt=""
+                        className="h-9 w-9 shrink-0 rounded object-cover"
+                      />
+                    ) : null}
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-semibold text-atg-fg">
                         {travellerLabel} : {nameSummary}
@@ -898,6 +979,72 @@ export function CheckoutManifestForm({
                               {labels.idDocumentRemove}
                             </button>
                           </div>
+                        ) : entry.existingDocument ? (
+                          <div className="mt-2 space-y-2">
+                            <div className="flex items-center gap-3 rounded-lg border border-atg-border bg-atg-surface px-3 py-2 dark:border-atg-border dark:bg-white/5">
+                              {entry.existingDocument.previewUrl &&
+                              entry.existingDocument.mimeType.startsWith('image/') ? (
+                                <img
+                                  src={entry.existingDocument.previewUrl}
+                                  alt=""
+                                  className="h-16 w-24 shrink-0 rounded object-cover"
+                                />
+                              ) : (
+                                <svg
+                                  className="h-8 w-8 shrink-0 text-atg-muted"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth={1.5}
+                                  aria-hidden="true"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                                  />
+                                </svg>
+                              )}
+                              <span className="flex-1 truncate text-sm text-atg-fg">
+                                {entry.existingDocument.filename}
+                              </span>
+                              {entry.existingDocument.previewUrl ? (
+                                <button
+                                  type="button"
+                                  onClick={() => openExistingPreview(entry.existingDocument!)}
+                                  className="shrink-0 text-xs font-medium text-primary hover:underline"
+                                >
+                                  {labels.viewDocument}
+                                </button>
+                              ) : null}
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              <label
+                                htmlFor={`${idPrefix}-file`}
+                                className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-atg-border px-4 py-2.5 text-sm text-atg-muted transition-colors hover:border-primary hover:text-primary dark:border-atg-border"
+                              >
+                                {labels.idDocumentSelected}
+                                <input
+                                  id={`${idPrefix}-file`}
+                                  type="file"
+                                  accept="image/jpeg,image/png,image/webp,application/pdf"
+                                  className="sr-only"
+                                  onChange={(e) => {
+                                    const f = e.target.files?.[0];
+                                    if (f) update(index, { file: f });
+                                    e.target.value = '';
+                                  }}
+                                />
+                              </label>
+                              <button
+                                type="button"
+                                onClick={() => setCameraIndex(index)}
+                                className="flex items-center gap-2 rounded-lg border border-dashed border-atg-border px-4 py-2.5 text-sm text-atg-muted transition-colors hover:border-primary hover:text-primary dark:border-atg-border"
+                              >
+                                {labels.takePhoto}
+                              </button>
+                            </div>
+                          </div>
                         ) : (
                           <div className="mt-2 flex flex-wrap gap-2">
                             <label
@@ -949,6 +1096,35 @@ export function CheckoutManifestForm({
                           </div>
                         )}
                       </div>
+
+                      {onSaveTraveler && labels.saveTraveler ? (
+                        <div className="sm:col-span-2 flex flex-wrap items-center justify-between gap-2 border-t border-atg-border pt-3 dark:border-atg-border">
+                          {saveFeedback?.index === index ? (
+                            <p
+                              role="status"
+                              className={`text-sm ${
+                                saveFeedback.tone === 'ok'
+                                  ? 'text-green-700 dark:text-green-400'
+                                  : 'text-red-600 dark:text-red-400'
+                              }`}
+                            >
+                              {saveFeedback.message}
+                            </p>
+                          ) : (
+                            <span />
+                          )}
+                          <button
+                            type="button"
+                            disabled={savingIndex === index}
+                            onClick={() => void handleSaveTraveler(index)}
+                            className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            {savingIndex === index
+                              ? (labels.savingTraveler ?? labels.saveTraveler)
+                              : labels.saveTraveler}
+                          </button>
+                        </div>
+                      ) : null}
                     </div>
                   </fieldset>
                 ) : null}

@@ -412,6 +412,15 @@ export function ReservationCartPageContent({ draft }: Props) {
                                 ? `${draft.seats} places`
                                 : '1 place'}
                             </p>
+                            <p className="font-medium text-atg-fg">
+                              {ck.vehicleSharedPricePerPerson.replace(
+                                '{price}',
+                                formatCarPrice(
+                                  vehicleTrip.priceCentsPerPerson,
+                                  vehicleTrip.currency,
+                                ),
+                              )}
+                            </p>
                           </>
                         ) : null}
                       </>

@@ -14,7 +14,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { createBooking, createBookingCheckoutSession, requestBooking } from '../../lib/api/booking';
 import { listPublicPaymentBankAccounts } from '../../lib/api/public-payment-bank-accounts';
 import { listPublicMobileMoneyConfig } from '../../lib/api/public-mobile-money';
-import { uploadBookingIdentityDocument } from '../../lib/api/booking-identity-documents';
+import {
+  fetchBookingIdentityDocumentBlob,
+  uploadBookingIdentityDocument,
+} from '../../lib/api/booking-identity-documents';
 import { formatCarPrice } from '../../lib/cars/listings';
 import type { VehicleDetail } from '../../lib/cars/types';
 import { formatActivityPrice, formatScheduleTime } from '../../lib/activities/listings';
@@ -477,6 +480,84 @@ export function ReservationRecapPageContent({ draft }: Props) {
     syncVehicleSeatsUrl(clamped);
   }
 
+  async function saveTravelerEntry(
+    index: number,
+    entry: ManifestEntryDraft,
+  ): Promise<ManifestEntryDraft> {
+    const n = String(index + 1);
+    const fieldErrors: ManifestFieldErrors = {};
+    if (!entry.fullName.trim()) {
+      fieldErrors.fullName = ck.manifest.fullNameRequired.replace('{n}', n);
+    }
+    if (!entry.nationality.trim()) {
+      fieldErrors.nationality = ck.manifest.nationalityRequired.replace('{n}', n);
+    }
+    if (!entry.idNumber.trim()) {
+      fieldErrors.idNumber = ck.manifest.idNumberRequired.replace('{n}', n);
+    }
+    if (Object.keys(fieldErrors).length > 0) {
+      setManifestErrors((prev) => ({ ...prev, [index]: fieldErrors }));
+      throw new Error('validation');
+    }
+    setManifestErrors((prev) => {
+      const next = { ...prev };
+      delete next[index];
+      return next;
+    });
+
+    const bookingId = existingVehicleBookingId;
+    if (!bookingId) {
+      return entry;
+    }
+
+    const accessToken = await ensureClientAccessToken();
+    if (!accessToken) {
+      throw new Error('auth');
+    }
+    const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api').replace(
+      /\/$/,
+      '',
+    );
+    const apiClient = createApiClient({ baseUrl: apiBaseUrl, accessToken });
+    const payload = manifestDraftToPayload(entry, index);
+    const saved = entry.entryId
+      ? await apiClient.updateBookingManifestEntry(bookingId, entry.entryId, payload)
+      : await apiClient.createBookingManifestEntry(bookingId, payload);
+
+    let existingDocument = entry.existingDocument;
+    if (entry.file) {
+      const uploaded = await uploadBookingIdentityDocument(
+        bookingId,
+        entry.file,
+        'passport',
+        saved.id,
+      );
+      let previewUrl: string | undefined;
+      try {
+        const blob = await fetchBookingIdentityDocumentBlob(bookingId, uploaded.id);
+        previewUrl = URL.createObjectURL(blob);
+      } catch {
+        previewUrl = undefined;
+      }
+      if (existingDocument?.previewUrl) {
+        URL.revokeObjectURL(existingDocument.previewUrl);
+      }
+      existingDocument = {
+        id: uploaded.id,
+        mimeType: uploaded.mimeType,
+        filename: uploaded.originalFilename,
+        previewUrl,
+      };
+    }
+
+    return {
+      ...entry,
+      entryId: saved.id,
+      file: undefined,
+      existingDocument,
+    };
+  }
+
   async function persistManifestEntries(accessToken: string, bookingId: string) {
     const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api').replace(
       /\/$/,
@@ -920,6 +1001,15 @@ export function ReservationRecapPageContent({ draft }: Props) {
                               ? `${vehicleSeats} places`
                               : '1 place'}
                           </p>
+                          <p className="font-medium text-atg-fg">
+                            {ck.vehicleSharedPricePerPerson.replace(
+                              '{price}',
+                              formatCarPrice(
+                                vehicleTrip.priceCentsPerPerson,
+                                vehicleTrip.currency,
+                              ),
+                            )}
+                          </p>
                         </>
                       ) : null}
                     </>
@@ -992,6 +1082,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
                   }}
                   labels={ck.manifest}
                   validationErrors={manifestErrors}
+                  onSaveTraveler={saveTravelerEntry}
                   {...(draft &&
                   isVehicleReservationDraft(draft) &&
                   draft.vehicleTripId &&

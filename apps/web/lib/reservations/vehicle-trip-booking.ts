@@ -2,9 +2,11 @@ import { createApiClient } from '@africatourismgate/api-client';
 import type {
   AuthUser,
   BookingDetail,
+  BookingIdentityDocument,
   BookingManifestEntry,
   BookingStatus,
 } from '@africatourismgate/types';
+import { fetchBookingIdentityDocumentBlob } from '../api/booking-identity-documents';
 import {
   emptyEmergencyContactDraft,
   type EmergencyContactDraft,
@@ -13,6 +15,7 @@ import {
   emptyManifestEntryDraft,
   manifestEntryDraftFromApi,
   type ManifestEntryDraft,
+  type ManifestEntryExistingDocument,
 } from '../../components/reservations/checkout-manifest-form';
 
 const OPEN_BOOKING_STATUSES = new Set<BookingStatus>([
@@ -59,6 +62,35 @@ export async function findOpenBookingForVehicleTrip(
   return null;
 }
 
+function pickLatestDocument(
+  docs: BookingIdentityDocument[],
+  manifestEntryId: string,
+): BookingIdentityDocument | null {
+  const linked = docs.filter((doc) => doc.manifestEntryId === manifestEntryId);
+  if (linked.length === 0) return null;
+  return linked.reduce((best, doc) => (doc.version >= best.version ? doc : best));
+}
+
+async function toExistingDocument(
+  bookingId: string,
+  doc: BookingIdentityDocument,
+): Promise<ManifestEntryExistingDocument> {
+  const base: ManifestEntryExistingDocument = {
+    id: doc.id,
+    mimeType: doc.mimeType,
+    filename: doc.originalFilename,
+  };
+  try {
+    const blob = await fetchBookingIdentityDocumentBlob(bookingId, doc.id);
+    return {
+      ...base,
+      previewUrl: URL.createObjectURL(blob),
+    };
+  } catch {
+    return base;
+  }
+}
+
 export async function loadVehicleTripBookingPrefill(
   accessToken: string,
   vehicleTripId: string,
@@ -74,19 +106,33 @@ export async function loadVehicleTripBookingPrefill(
       accessToken,
     });
     let entries: BookingManifestEntry[] = [];
+    let documents: BookingIdentityDocument[] = [];
     try {
       entries = await client.listBookingManifestEntries(existing.booking.id);
     } catch {
       entries = [];
     }
+    try {
+      documents = await client.listBookingIdentityDocuments(existing.booking.id);
+    } catch {
+      documents = [];
+    }
     entries = [...entries].sort((a, b) => a.sortOrder - b.sortOrder);
 
-    const manifestEntries = Array.from({ length: count }, (_, index) => {
-      const fromApi = entries[index];
-      return fromApi
-        ? manifestEntryDraftFromApi(fromApi)
-        : emptyManifestEntryDraft();
-    });
+    const manifestEntries = await Promise.all(
+      Array.from({ length: count }, async (_, index) => {
+        const fromApi = entries[index];
+        if (!fromApi) return emptyManifestEntryDraft();
+        const latest = pickLatestDocument(documents, fromApi.id);
+        const existingDocument = latest
+          ? await toExistingDocument(existing.booking.id, latest)
+          : undefined;
+        return manifestEntryDraftFromApi({
+          ...fromApi,
+          existingDocument,
+        });
+      }),
+    );
 
     return {
       bookingId: existing.booking.id,

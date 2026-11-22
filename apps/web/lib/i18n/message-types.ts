@@ -79,6 +79,7 @@ export type Translations = {
     cartTitle: string;
     vehicleTripOrganizerBanner: string;
     vehicleTripExistingBooking: string;
+    vehicleSharedPricePerPerson: string;
     recapTitle: string;
     continueToRecap: string;
     backToCart: string;
@@ -245,6 +246,10 @@ export type Translations = {
       seatsAdjustError: string;
       addingTraveler: string;
       seatsRemaining: string;
+      saveTraveler: string;
+      savingTraveler: string;
+      saveTravelerSuccess: string;
+      saveTravelerError: string;
       idDocument: string;
       idDocumentHint: string;
       idDocumentSelected: string;
