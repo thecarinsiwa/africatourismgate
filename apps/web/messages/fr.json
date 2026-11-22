@@ -780,6 +780,7 @@
     "title": "Rechercher sur le site",
     "placeholder": "Hôtels, vols, tronçons, croisières, activités, forfaits, blog…",
     "empty": "Aucun résultat",
+    "emptyHint": "Essayez une ville, un tronçon (départ → arrivée) ou un nom de produit.",
     "shortcutHint": "Ctrl+K · ⌘K ou / — ↑↓ pour naviguer, Entrée pour ouvrir",
     "close": "Fermer la recherche",
     "resultsLabel": "Résultats de recherche",

@@ -44,4 +44,5 @@ test('siteSearch groups cover every UI group id', () => {
   assert.ok(typeof fr.resultCount === 'string');
   assert.ok(typeof fr.kindEntity === 'string');
   assert.ok(typeof fr.kindPrefilled === 'string');
+  assert.ok(typeof fr.emptyHint === 'string');
 });

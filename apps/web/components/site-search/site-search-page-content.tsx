@@ -85,7 +85,7 @@ export function SiteSearchPageContent({
           isEmpty={showEmpty}
           empty={{
             title: t('empty'),
-            description: t('placeholder'),
+            description: t('emptyHint'),
             backHomeLabel: tNav('home'),
             backHomeHref: '/',
           }}

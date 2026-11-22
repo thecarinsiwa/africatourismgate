@@ -779,6 +779,7 @@
     "title": "Buscar en el sitio",
     "placeholder": "Hoteles, vuelos, trayectos, cruceros, actividades, paquetes, blog…",
     "empty": "Sin resultados",
+    "emptyHint": "Pruebe una ciudad, un trayecto (salida → llegada) o el nombre de un producto.",
     "shortcutHint": "Ctrl+K · ⌘K o / — ↑↓ para navegar, Entrar para abrir",
     "close": "Cerrar la búsqueda",
     "resultsLabel": "Resultados de búsqueda",

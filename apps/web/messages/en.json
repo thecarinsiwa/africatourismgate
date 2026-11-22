@@ -780,6 +780,7 @@
     "title": "Search the site",
     "placeholder": "Hotels, flights, routes, cruises, activities, packages, blog…",
     "empty": "No results",
+    "emptyHint": "Try a city, a route (departure → arrival), or a product name.",
     "shortcutHint": "Ctrl+K · ⌘K or / — ↑↓ to navigate, Enter to open",
     "close": "Close search",
     "resultsLabel": "Search results",
