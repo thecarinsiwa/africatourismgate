@@ -240,6 +240,10 @@ export type Translations = {
       idNumberRequired: string;
       emergencyContactNameRequired: string;
       emergencyContactPhoneRequired: string;
+      addTraveler: string;
+      removeTraveler: string;
+      seatsAdjustError: string;
+      addingTraveler: string;
       idDocument: string;
       idDocumentHint: string;
       idDocumentSelected: string;

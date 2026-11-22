@@ -10,7 +10,7 @@ import type {
 import { Button, Spinner } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createBooking, createBookingCheckoutSession, requestBooking } from '../../lib/api/booking';
 import { listPublicPaymentBankAccounts } from '../../lib/api/public-payment-bank-accounts';
 import { listPublicMobileMoneyConfig } from '../../lib/api/public-mobile-money';
@@ -20,7 +20,11 @@ import type { VehicleDetail } from '../../lib/cars/types';
 import { formatActivityPrice, formatScheduleTime } from '../../lib/activities/listings';
 import type { ActivityDetail } from '../../lib/activities/types';
 import { getAccommodationDetail, getActivityDetail, getCruiseSailingDetail, getFlightDetail, getPackageDetail, getVehicleDetail } from '../../lib/api/public';
-import { getPublicVehicleTrip } from '../../lib/api/vehicle-trips';
+import {
+  ensurePublicVehicleTripSeats,
+  getPublicVehicleTrip,
+  joinPublicVehicleTrip,
+} from '../../lib/api/vehicle-trips';
 import { formatPackagePrice } from '../../lib/packages/listings';
 import type { PackageDetail } from '../../lib/packages/types';
 import { formatAirportLabel } from '../../lib/flights/airports';
@@ -96,6 +100,13 @@ export function ReservationRecapPageContent({ draft }: Props) {
   const [existingVehicleBookingId, setExistingVehicleBookingId] = useState<string | null>(
     null,
   );
+  const [vehicleSeats, setVehicleSeats] = useState(() =>
+    draft && isVehicleReservationDraft(draft) && draft.seats != null && draft.seats >= 1
+      ? draft.seats
+      : 1,
+  );
+  const [seatsAdjusting, setSeatsAdjusting] = useState(false);
+  const committedVehicleSeatsRef = useRef(vehicleSeats);
   const [cruiseDetail, setCruiseDetail] = useState<CruiseSailingDetail | null>(null);
   const [activityDetail, setActivityDetail] = useState<ActivityDetail | null>(null);
   const [packageDetail, setPackageDetail] = useState<PackageDetail | null>(null);
@@ -308,6 +319,13 @@ export function ReservationRecapPageContent({ draft }: Props) {
     };
   }, [draft]);
 
+  useEffect(() => {
+    if (!draft || !isVehicleReservationDraft(draft) || !draft.vehicleTripId) return;
+    const seats = draft.seats != null && draft.seats >= 1 ? draft.seats : 1;
+    setVehicleSeats(seats);
+    committedVehicleSeatsRef.current = seats;
+  }, [draft && isVehicleReservationDraft(draft) ? draft.vehicleTripId : null]);
+
   const room = useMemo(
     () =>
       draft && isRoomReservationDraft(draft)
@@ -388,10 +406,63 @@ export function ReservationRecapPageContent({ draft }: Props) {
     if (isActivityScheduleReservationDraft(draft)) return draft.participants;
     if (isPackageReservationDraft(draft)) return draft.travelers;
     if (isVehicleReservationDraft(draft)) {
-      return draft.seats != null && draft.seats >= 1 ? draft.seats : 1;
+      return vehicleSeats >= 1 ? vehicleSeats : 1;
     }
     return 1;
-  }, [draft]);
+  }, [draft, vehicleSeats]);
+
+  const vehicleSeatsMax = useMemo(() => {
+    if (!vehicleTrip) return 1;
+    if (vehicleTrip.isMine) {
+      return Math.max(1, vehicleTrip.maxCapacity);
+    }
+    return Math.max(1, vehicleSeats + Math.max(0, vehicleTrip.seatsRemaining));
+  }, [vehicleTrip, vehicleSeats]);
+
+  function syncVehicleSeatsUrl(nextSeats: number) {
+    if (!draft || !isVehicleReservationDraft(draft)) return;
+    const nextDraft: ReservationDraft = { ...draft, seats: nextSeats };
+    router.replace(`/booking/recap?${buildReservationQuery(nextDraft)}`, {
+      scroll: false,
+    });
+  }
+
+  async function adjustVehicleSeats(nextSeats: number) {
+    if (!draft || !isVehicleReservationDraft(draft) || !draft.vehicleTripId || !vehicleTrip) {
+      return;
+    }
+    const clamped = Math.max(1, Math.min(nextSeats, vehicleSeatsMax));
+    if (clamped === vehicleSeats || seatsAdjusting) return;
+
+    if (clamped > committedVehicleSeatsRef.current) {
+      setSeatsAdjusting(true);
+      setError(null);
+      try {
+        const token = await ensureClientAccessToken();
+        if (!token) {
+          setError(ck.stripeError.authDescription);
+          return;
+        }
+        const updatedTrip = vehicleTrip.isMine
+          ? await ensurePublicVehicleTripSeats(token, draft.vehicleTripId, {
+              seats: clamped,
+            })
+          : await joinPublicVehicleTrip(token, draft.vehicleTripId, {
+              seats: clamped - committedVehicleSeatsRef.current,
+            });
+        setVehicleTrip(updatedTrip);
+        committedVehicleSeatsRef.current = clamped;
+      } catch {
+        setError(ck.manifest.seatsAdjustError);
+        return;
+      } finally {
+        setSeatsAdjusting(false);
+      }
+    }
+
+    setVehicleSeats(clamped);
+    syncVehicleSeatsUrl(clamped);
+  }
 
   async function persistManifestEntries(accessToken: string, bookingId: string) {
     const apiBaseUrl = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api').replace(
@@ -508,7 +579,11 @@ export function ReservationRecapPageContent({ draft }: Props) {
     setSubmitting(true);
     setError(null);
     try {
-      const payload = buildCheckoutRequest(draft, preferredPaymentMethod);
+      const checkoutDraft =
+        isVehicleReservationDraft(draft) && draft.vehicleTripId
+          ? { ...draft, seats: vehicleSeats >= 1 ? vehicleSeats : 1 }
+          : draft;
+      const payload = buildCheckoutRequest(checkoutDraft, preferredPaymentMethod);
       if (isAssisted) {
         const response = await requestBooking(accessToken, payload);
         if (travelerCount >= 1) {
@@ -591,7 +666,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
             ? formatCarPrice(
                 draft!.vehicleTripId && vehicleTrip
                   ? vehicleTrip.priceCentsPerPerson *
-                      (draft!.seats != null && draft!.seats >= 1 ? draft!.seats : 1)
+                      (vehicleSeats >= 1 ? vehicleSeats : 1)
                   : vehicleReady.totalPriceCents,
                 vehicleTrip?.currency ?? vehicleReady.currency,
               )
@@ -828,8 +903,8 @@ export function ReservationRecapPageContent({ draft }: Props) {
                             }).format(new Date(vehicleTrip.departureDatetime))}
                           </p>
                           <p>
-                            {draft.seats != null && draft.seats > 1
-                              ? `${draft.seats} places`
+                            {vehicleSeats > 1
+                              ? `${vehicleSeats} places`
                               : '1 place'}
                           </p>
                         </>
@@ -873,6 +948,47 @@ export function ReservationRecapPageContent({ draft }: Props) {
 
             {!loading && canPay && travelerCount >= 1 && (
               <div className="space-y-4">
+                {draft &&
+                isVehicleReservationDraft(draft) &&
+                draft.vehicleTripId &&
+                vehicleTrip ? (
+                  <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-atg-border p-3 dark:border-atg-border">
+                    <div>
+                      <p className="text-sm font-semibold text-atg-fg">
+                        {vehicleSeats > 1
+                          ? `${vehicleSeats} places`
+                          : '1 place'}
+                      </p>
+                      {seatsAdjusting ? (
+                        <p className="mt-1 text-xs text-atg-muted">
+                          {ck.manifest.addingTraveler}
+                        </p>
+                      ) : null}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        disabled={seatsAdjusting || vehicleSeats <= 1}
+                        onClick={() => void adjustVehicleSeats(vehicleSeats - 1)}
+                        aria-label={ck.manifest.removeTraveler}
+                      >
+                        −
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        disabled={
+                          seatsAdjusting || vehicleSeats >= vehicleSeatsMax
+                        }
+                        onClick={() => void adjustVehicleSeats(vehicleSeats + 1)}
+                      >
+                        {ck.manifest.addTraveler}
+                      </Button>
+                    </div>
+                  </div>
+                ) : null}
                 <BookingEmergencyContactForm
                   value={emergencyContact}
                   onChange={(next) => {
