@@ -27,6 +27,7 @@ import { BookingEngineService } from '../../resources/bookings/booking-engine.se
 import { OrganizationSettingsService } from '../../resources/organization-settings/organization-settings.service';
 import {
   CreateVehicleTripDto,
+  EnsureVehicleTripSeatsDto,
   JoinVehicleTripDto,
   UpdateVehicleTripDto,
   VehicleTripDto,
@@ -210,6 +211,51 @@ export class PublicVehicleTripsService {
     trip.updatedByUserId = userId;
     const saved = await this.tripsRepository.save(trip);
     const [dtoOut] = await this.toDtos([saved], rules, userId);
+    return dtoOut;
+  }
+
+  /**
+   * Creator-only: ensure seatsReserved covers active claims + seats for this checkout.
+   * Does not use join semantics (no blind increment).
+   */
+  async ensureSeats(
+    tripId: string,
+    dto: EnsureVehicleTripSeatsDto,
+    userId: string,
+  ): Promise<VehicleTripDto> {
+    const seats = dto.seats;
+    const trip = await this.requireTrip(tripId);
+    const rules = await this.loadRules();
+
+    if (trip.createdByUserId !== userId) {
+      throw new ForbiddenException(
+        'Seul le créateur du trajet peut ajuster ses places réservées.',
+      );
+    }
+    if (trip.status !== 'open') {
+      throw new BadRequestException(
+        'Ce trajet n’accepte plus de réservations.',
+      );
+    }
+    this.assertBeforePaymentClose(trip.departureDatetime, rules);
+
+    const claimed = await this.bookingEngine.countActiveTripSeatClaims(tripId);
+    const needed = claimed + seats;
+    if (needed > trip.maxCapacity) {
+      throw new BadRequestException(
+        `Capacité insuffisante (${seats} demandées, ${Math.max(0, trip.maxCapacity - claimed)} disponibles).`,
+      );
+    }
+
+    if (needed > trip.seatsReserved) {
+      trip.seatsReserved = needed;
+      trip.updatedByUserId = userId;
+      const saved = await this.tripsRepository.save(trip);
+      const [dtoOut] = await this.toDtos([saved], rules, userId);
+      return dtoOut;
+    }
+
+    const [dtoOut] = await this.toDtos([trip], rules, userId);
     return dtoOut;
   }
 

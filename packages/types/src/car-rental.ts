@@ -290,6 +290,11 @@ export interface JoinVehicleTripRequest {
   seats?: number;
 }
 
+/** Creator-only: ensure reserved pool covers claimed seats + this checkout quantity. */
+export interface EnsureVehicleTripSeatsRequest {
+  seats: number;
+}
+
 export interface UpdateVehicleTripRequest {
   departureDatetime: string;
 }

@@ -180,6 +180,7 @@ export type {
   CreateVehicleRoutePriceTierRequest,
   CreateVehicleRouteRequest,
   CreateVehicleTripRequest,
+  EnsureVehicleTripSeatsRequest,
   JoinVehicleTripRequest,
   UpdateVehicleTripRequest,
   RentalAgenciesListQuery,

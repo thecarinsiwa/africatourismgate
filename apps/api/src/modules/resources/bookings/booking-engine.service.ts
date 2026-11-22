@@ -2355,6 +2355,11 @@ export class BookingEngineService {
     }
   }
 
+  /** Seat quantities already claimed by active bookings on a shared trip. */
+  async countActiveTripSeatClaims(tripId: string): Promise<number> {
+    return this.sumActiveTripSeatClaims(tripId);
+  }
+
   private async sumActiveTripSeatClaims(
     tripId: string,
     manager?: EntityManager,

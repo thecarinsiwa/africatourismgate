@@ -1,6 +1,7 @@
 import { createApiClient } from '@africatourismgate/api-client';
 import type {
   CreateVehicleTripRequest,
+  EnsureVehicleTripSeatsRequest,
   JoinVehicleTripRequest,
   PaginatedResponse,
   UpdateVehicleTripRequest,
@@ -50,6 +51,14 @@ export function joinPublicVehicleTrip(
   body: JoinVehicleTripRequest = {},
 ): Promise<VehicleTrip> {
   return createAuthClient(accessToken).joinPublicVehicleTrip(id, body);
+}
+
+export function ensurePublicVehicleTripSeats(
+  accessToken: string,
+  id: string,
+  body: EnsureVehicleTripSeatsRequest,
+): Promise<VehicleTrip> {
+  return createAuthClient(accessToken).ensurePublicVehicleTripSeats(id, body);
 }
 
 export function updatePublicVehicleTrip(

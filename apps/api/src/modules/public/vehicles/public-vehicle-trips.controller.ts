@@ -16,6 +16,7 @@ import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { OptionalJwtAuthGuard } from '../../auth/guards/optional-jwt-auth.guard';
 import {
   CreateVehicleTripDto,
+  EnsureVehicleTripSeatsDto,
   JoinVehicleTripDto,
   UpdateVehicleTripDto,
   VehicleTripsListQueryDto,
@@ -73,6 +74,19 @@ export class PublicVehicleTripsController {
     @CurrentUser() user: AuthUserDto,
   ) {
     return this.service.join(id, dto, user.id);
+  }
+
+  @Post('vehicle-trips/:id/ensure-seats')
+  @ApiOperation({
+    summary:
+      'Ensure reserved seats for checkout (trip creator only; not a join)',
+  })
+  ensureSeats(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: EnsureVehicleTripSeatsDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.ensureSeats(id, dto, user.id);
   }
 
   @Patch('vehicle-trips/:id')
