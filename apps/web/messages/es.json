@@ -43,7 +43,7 @@
     "help": "Ayuda",
     "hotels": "Hoteles",
     "flights": "Vuelos",
-    "cars": "Alquiler de coches",
+    "cars": "Trayectos",
     "cruises": "Cruceros",
     "tours": "Actividades",
     "partners": "Nuestros socios",
@@ -695,7 +695,7 @@
     "tabs": {
       "flights": "Vuelos",
       "hotels": "Hoteles",
-      "cars": "Coches",
+      "cars": "Trayectos",
       "cruises": "Cruceros",
       "tours": "Actividades"
     },
@@ -777,7 +777,7 @@
   },
   "siteSearch": {
     "title": "Buscar en el sitio",
-    "placeholder": "Hoteles, vuelos, coches, cruceros, actividades, paquetes, blog…",
+    "placeholder": "Hoteles, vuelos, trayectos, cruceros, actividades, paquetes, blog…",
     "empty": "Sin resultados",
     "shortcutHint": "Ctrl+K · ⌘K o / — ↑↓ para navegar, Entrar para abrir",
     "close": "Cerrar la búsqueda",
@@ -802,7 +802,7 @@
       "packages": "Paquetes",
       "cruises": "Cruceros",
       "flights": "Vuelos",
-      "cars": "Coches",
+      "cars": "Trayectos",
       "blog": "Blog",
       "help": "Ayuda"
     }
@@ -817,7 +817,7 @@
       "flights": "Vuelos en primera clase",
       "safaris": "Safaris y actividades",
       "cruises": "Cruceros costeros",
-      "cars": "Alquiler de coches",
+      "cars": "Trayectos",
       "packages": "Paquetes"
     },
     "newsletter": "Newsletter",
@@ -925,7 +925,7 @@
     "bars": {
       "flights": "Vuelos",
       "hotels": "Hoteles",
-      "cars": "Coches",
+      "cars": "Trayectos",
       "cruises": "Cruceros"
     }
   },
@@ -1106,7 +1106,7 @@
     "verticals": {
       "hotels": "Alojamientos",
       "flights": "Vuelos",
-      "cars": "Alquiler de vehículos",
+      "cars": "Trayectos",
       "cruises": "Cruceros",
       "tours": "Actividades"
     }

@@ -43,7 +43,7 @@
     "help": "Help",
     "hotels": "Hotels",
     "flights": "Flights",
-    "cars": "Car Rental",
+    "cars": "Routes",
     "cruises": "Cruises",
     "tours": "Activities",
     "partners": "Our partners",
@@ -696,7 +696,7 @@
     "tabs": {
       "flights": "Flights",
       "hotels": "Hotels",
-      "cars": "Cars",
+      "cars": "Routes",
       "cruises": "Cruises",
       "tours": "Activities"
     },
@@ -778,7 +778,7 @@
   },
   "siteSearch": {
     "title": "Search the site",
-    "placeholder": "Hotels, flights, cars, cruises, activities, packages, blog…",
+    "placeholder": "Hotels, flights, routes, cruises, activities, packages, blog…",
     "empty": "No results",
     "shortcutHint": "Ctrl+K · ⌘K or / — ↑↓ to navigate, Enter to open",
     "close": "Close search",
@@ -803,7 +803,7 @@
       "packages": "Packages",
       "cruises": "Cruises",
       "flights": "Flights",
-      "cars": "Cars",
+      "cars": "Routes",
       "blog": "Blog",
       "help": "Help"
     }
@@ -818,7 +818,7 @@
       "flights": "First Class Flights",
       "safaris": "Safaris & Activities",
       "cruises": "Coastal Cruises",
-      "cars": "Car Rental",
+      "cars": "Routes",
       "packages": "Packages"
     },
     "newsletter": "Newsletter",
@@ -926,7 +926,7 @@
     "bars": {
       "flights": "Flights",
       "hotels": "Hotels",
-      "cars": "Cars",
+      "cars": "Routes",
       "cruises": "Cruises"
     }
   },
@@ -1107,7 +1107,7 @@
     "verticals": {
       "hotels": "Hotels",
       "flights": "Flights",
-      "cars": "Car rentals",
+      "cars": "Routes",
       "cruises": "Cruises",
       "tours": "Activities"
     }
