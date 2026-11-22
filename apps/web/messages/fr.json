@@ -119,7 +119,7 @@
       "dividerLabel": "Pas encore de compte ?",
       "createAccount": "Créer un compte",
       "google": "Se connecter avec Google",
-      "backToHotels": "Retour aux hôtels",
+      "backToHome": "Retour à l'accueil",
       "form": {
         "emailLabel": "Adresse e-mail",
         "emailPlaceholder": "vous@exemple.com",
@@ -192,7 +192,7 @@
       "subtitle": "Inscrivez-vous pour réserver, suivre vos voyages et gérer votre profil.",
       "dividerLabel": "Déjà un compte ?",
       "signIn": "Se connecter",
-      "backToHotels": "Retour aux hôtels",
+      "backToHome": "Retour à l'accueil",
       "form": {
         "firstNameLabel": "Prénom",
         "lastNameLabel": "Nom",

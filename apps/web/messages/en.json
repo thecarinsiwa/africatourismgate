@@ -119,7 +119,7 @@
       "dividerLabel": "Don't have an account yet?",
       "createAccount": "Create an account",
       "google": "Sign in with Google",
-      "backToHotels": "Back to hotels",
+      "backToHome": "Back to home",
       "form": {
         "emailLabel": "Email address",
         "emailPlaceholder": "you@example.com",
@@ -192,7 +192,7 @@
       "subtitle": "Sign up to book trips, track your reservations, and manage your profile.",
       "dividerLabel": "Already have an account?",
       "signIn": "Sign in",
-      "backToHotels": "Back to hotels",
+      "backToHome": "Back to home",
       "form": {
         "firstNameLabel": "First name",
         "lastNameLabel": "Last name",

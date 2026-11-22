@@ -147,10 +147,10 @@ export function BookingRegisterPageContent({ nextPath }: Props) {
             {t('signIn')}
           </Link>
           <Link
-            href="/hotels"
+            href="/"
             className="mt-3 inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover"
           >
-            {t('backToHotels')}
+            {t('backToHome')}
           </Link>
         </section>
       </main>

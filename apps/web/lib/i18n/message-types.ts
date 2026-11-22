@@ -1352,7 +1352,7 @@ export type Translations = {
       subtitle: string;
       divider: string;
       google: string;
-      backToHotels: string;
+      backToHome: string;
       form: {
         emailLabel: string;
         emailPlaceholder: string;
