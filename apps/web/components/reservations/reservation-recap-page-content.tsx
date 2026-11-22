@@ -968,6 +968,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
                     nationalityEmpty: ck.manifest.nationalityEmpty,
                   }}
                   errors={emergencyContactErrors}
+                  collapsible
                 />
                 <CheckoutManifestForm
                   count={travelerCount}
@@ -984,7 +985,13 @@ export function ReservationRecapPageContent({ draft }: Props) {
                   vehicleTrip
                     ? {
                         onAddTraveler: () => void adjustVehicleSeats(vehicleSeats + 1),
-                        onRemoveTraveler: () => void adjustVehicleSeats(vehicleSeats - 1),
+                        onRemoveTraveler: (index: number) => {
+                          setManifestEntries((prev) =>
+                            prev.filter((_, i) => i !== index),
+                          );
+                          setManifestErrors({});
+                          void adjustVehicleSeats(vehicleSeats - 1);
+                        },
                         canAddTraveler: !seatsAdjusting && vehicleSeats < vehicleSeatsMax,
                         canRemoveTraveler: !seatsAdjusting && vehicleSeats > 1,
                         addingTraveler: seatsAdjusting,

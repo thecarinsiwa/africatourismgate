@@ -429,7 +429,7 @@ type Props = {
   labels: Labels;
   validationErrors: Record<number, ManifestFieldErrors>;
   onAddTraveler?: () => void;
-  onRemoveTraveler?: () => void;
+  onRemoveTraveler?: (index: number) => void;
   canAddTraveler?: boolean;
   canRemoveTraveler?: boolean;
   addingTraveler?: boolean;
@@ -570,8 +570,7 @@ export function CheckoutManifestForm({
             const expanded = expandedIndex === index;
             const nameSummary = entry.fullName.trim() || '—';
             const idSummary = entry.idNumber.trim() || '—';
-            const canRemoveThis =
-              Boolean(onRemoveTraveler) && canRemoveTraveler && index === entries.length - 1;
+            const showRemove = Boolean(onRemoveTraveler);
 
             return (
               <div
@@ -600,13 +599,14 @@ export function CheckoutManifestForm({
                     </span>
                   </button>
                   <div className="flex shrink-0 items-center gap-1.5">
-                    {canRemoveThis ? (
+                    {showRemove ? (
                       <button
                         type="button"
-                        disabled={addingTraveler}
-                        onClick={onRemoveTraveler}
+                        disabled={addingTraveler || !canRemoveTraveler}
+                        onClick={() => onRemoveTraveler?.(index)}
                         aria-label={labels.removeTraveler}
-                        className="inline-flex h-7 w-7 items-center justify-center rounded border border-atg-border text-atg-muted transition-colors hover:border-red-500 hover:text-red-600 disabled:opacity-50 dark:border-atg-border dark:hover:text-red-400"
+                        title={labels.removeTraveler}
+                        className="inline-flex h-7 w-7 items-center justify-center rounded border border-atg-border text-red-600 transition-colors hover:border-red-500 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-atg-border dark:text-red-400 dark:hover:bg-red-950/30"
                       >
                         <svg
                           className="h-3.5 w-3.5"
