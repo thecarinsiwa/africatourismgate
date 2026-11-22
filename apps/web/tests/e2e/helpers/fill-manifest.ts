@@ -122,15 +122,19 @@ export async function fillCheckoutManifest(page: Page): Promise<number> {
     if (expanded !== 'true') {
       await toggle.click();
     }
-    const nameInput = page.getByLabel(/nom complet|full name|nombre completo/i);
+    // Use textbox role — getByLabel also matches the traveler fieldset whose
+    // accessible name includes the collapsed "N° pièce d'identité: …" summary.
+    const nameInput = page.getByRole('textbox', {
+      name: /nom complet|full name|nombre completo/i,
+    });
     await nameInput.waitFor({ state: 'visible', timeout: 10_000 });
     await nameInput.fill(`Voyageur ${i + 1}`);
     // Only the expanded traveler nationality is in the DOM (Pays ≠ Nationalité).
     await selectTravelerNationality(page, 0, 'Congo');
     await page
-      .getByLabel(
-        /n[°º]\s*pi[eè]ce|id\s*\/\s*passport|n\.?\s*º?\s*de documento|passport number/i,
-      )
+      .getByRole('textbox', {
+        name: /n[°º]\s*pi[eè]ce|id\s*\/\s*passport|n\.?\s*º?\s*de documento|passport number/i,
+      })
       .fill(`P${100000 + i}`);
   }
 

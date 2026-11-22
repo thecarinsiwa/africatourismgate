@@ -744,9 +744,10 @@ export function CheckoutManifestForm({
                 {expanded ? (
                   <fieldset
                     id={panelId}
-                    aria-labelledby={triggerId}
                     className="space-y-3 border-t border-atg-border p-4 dark:border-atg-border"
                   >
+                    {/* Legend only — do not aria-labelledby the summary trigger (it
+                        includes "N° pièce…", which made getByLabel match the fieldset). */}
                     <legend className="sr-only">{travellerLabel}</legend>
                     <div className="grid gap-3 sm:grid-cols-2">
                       <div className="sm:col-span-2">
