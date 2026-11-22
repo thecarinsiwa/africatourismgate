@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { SkipThrottle, Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { Public } from '../../auth/decorators/public.decorator';
 import { ActivityBrowseQueryDto } from './dto/activity-browse-query.dto';
 import { ActivityBookingRequestResponseDto } from './dto/activity-booking-request-response.dto';
@@ -72,6 +72,11 @@ export class PublicActivitiesController {
   @Public()
   @Post('activities/:id/booking-request')
   @UseGuards(ThrottlerGuard)
+  @SkipThrottle({
+    login: true,
+    forgotPassword: true,
+    analyticsBeacon: true,
+  })
   @Throttle({ activityBookingRequest: { limit: 10, ttl: 60_000 } })
   @ApiOperation({
     summary:

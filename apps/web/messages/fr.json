@@ -43,7 +43,7 @@
     "help": "Aide",
     "hotels": "Hôtels",
     "flights": "Vols",
-    "cars": "Location de Voitures",
+    "cars": "Tronçons",
     "cruises": "Croisières",
     "tours": "Activités",
     "partners": "Nos partenaires",
@@ -696,7 +696,7 @@
     "tabs": {
       "flights": "Vols",
       "hotels": "Hôtels",
-      "cars": "Voitures",
+      "cars": "Tronçons",
       "cruises": "Croisières",
       "tours": "Activités"
     },
@@ -778,8 +778,9 @@
   },
   "siteSearch": {
     "title": "Rechercher sur le site",
-    "placeholder": "Hôtels, vols, voitures, croisières, activités, forfaits, blog…",
+    "placeholder": "Hôtels, vols, tronçons, croisières, activités, forfaits, blog…",
     "empty": "Aucun résultat",
+    "emptyHint": "Essayez une ville, un tronçon (départ → arrivée) ou un nom de produit.",
     "shortcutHint": "Ctrl+K · ⌘K ou / — ↑↓ pour naviguer, Entrée pour ouvrir",
     "close": "Fermer la recherche",
     "resultsLabel": "Résultats de recherche",
@@ -803,7 +804,7 @@
       "packages": "Forfaits",
       "cruises": "Croisières",
       "flights": "Vols",
-      "cars": "Voitures",
+      "cars": "Tronçons",
       "blog": "Blog",
       "help": "Aide"
     }
@@ -818,7 +819,7 @@
       "flights": "Vols Première Classe",
       "safaris": "Safaris & Activités",
       "cruises": "Croisières Côtières",
-      "cars": "Location de Voitures",
+      "cars": "Tronçons",
       "packages": "Forfaits"
     },
     "newsletter": "Newsletter",
@@ -926,7 +927,7 @@
     "bars": {
       "flights": "Vols",
       "hotels": "Hôtels",
-      "cars": "Voitures",
+      "cars": "Tronçons",
       "cruises": "Croisières"
     }
   },
@@ -1107,7 +1108,7 @@
     "verticals": {
       "hotels": "Hébergements",
       "flights": "Vols",
-      "cars": "Locations de véhicules",
+      "cars": "Tronçons",
       "cruises": "Croisières",
       "tours": "Activités"
     }
@@ -1405,6 +1406,16 @@
     "galleryPrevious": "Photo précédente",
     "galleryNext": "Photo suivante",
     "galleryCounter": "Photo {current} sur {total}",
+    "routeMapTitle": "Carte du trajet",
+    "routeMapAria": "Carte des points de départ et d’arrivée",
+    "routeMapDeparture": "Départ",
+    "routeMapArrival": "Arrivée",
+    "routeMapDuration": "Durée estimée",
+    "routeMapDistance": "Distance",
+    "hourSingular": "1 h",
+    "hourPlural": "{n} h",
+    "minuteSingular": "1 min",
+    "minutePlural": "{n} min",
     "breadcrumbAria": "Fil d’Ariane"
   },
   "cruises": {

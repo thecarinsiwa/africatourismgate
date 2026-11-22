@@ -316,7 +316,9 @@ export class PublicVehiclesService {
           OR LOWER(COALESCE(v.licensePlate, '')) LIKE :pattern)`,
         { pattern },
       )
-      .orderBy('cat.name', 'ASC')
+      // Order only on the root entity: MySQL + getMany() wraps DISTINCT and
+      // cannot reference joined columns as distinctAlias.cat_name.
+      .orderBy('v.id', 'ASC')
       .take(fetchLimit)
       .getMany();
 

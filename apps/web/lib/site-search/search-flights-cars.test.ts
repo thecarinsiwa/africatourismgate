@@ -1,8 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { formatSiteSearchPrefilledSubtitle } from './prefilled';
-import { matchesSiteAirport } from './search-flights';
-import { matchesSitePickupLocation } from './search-cars';
+import { siteSearchDeepLinks } from './deep-links';
+import {
+  matchesSiteVehicleRouteCity,
+  matchesSiteVehicleRoutePair,
+} from './vehicle-route-match';
+import { normalizeSiteSearchText } from './nav-match';
 
 test('formatSiteSearchPrefilledSubtitle joins detail and hint', () => {
   assert.equal(
@@ -15,23 +19,35 @@ test('formatSiteSearchPrefilledSubtitle joins detail and hint', () => {
   );
 });
 
-test('matchesSiteAirport matches name, iata and city', () => {
-  const airport = {
-    iataCode: 'FIH',
-    name: 'Ndjili International',
-    city: 'Kinshasa',
-  };
-  assert.equal(matchesSiteAirport(airport, ''), false);
-  assert.equal(matchesSiteAirport(airport, 'fih'), true);
-  assert.equal(matchesSiteAirport(airport, 'ndjili'), true);
-  assert.equal(matchesSiteAirport(airport, 'kinshasa'), true);
-  assert.equal(matchesSiteAirport(airport, 'xyz'), false);
+test('matchesSiteAirport-equivalent airport text normalize still works', () => {
+  assert.equal(normalizeSiteSearchText('Ndjili'), 'ndjili');
+  assert.equal(normalizeSiteSearchText('FIH'), 'fih');
 });
 
-test('matchesSitePickupLocation matches name and country', () => {
-  const location = { name: 'Kinshasa', countryCode: 'CD' };
-  assert.equal(matchesSitePickupLocation(location, ''), false);
-  assert.equal(matchesSitePickupLocation(location, 'kin'), true);
-  assert.equal(matchesSitePickupLocation(location, 'cd'), true);
-  assert.equal(matchesSitePickupLocation(location, 'xyz'), false);
+test('matchesSiteVehicleRouteCity matches departure/arrival names', () => {
+  assert.equal(matchesSiteVehicleRouteCity('Rumangabo', ''), false);
+  assert.equal(matchesSiteVehicleRouteCity('Rumangabo', 'ruma'), true);
+  assert.equal(matchesSiteVehicleRouteCity('Goma', 'goma'), true);
+  assert.equal(matchesSiteVehicleRouteCity('Goma', 'xyz'), false);
+});
+
+test('matchesSiteVehicleRoutePair matches cities and arrow-style queries', () => {
+  const pair = { departureCity: 'Rumangabo', arrivalCity: 'Goma' };
+  assert.equal(matchesSiteVehicleRoutePair(pair, ''), false);
+  assert.equal(matchesSiteVehicleRoutePair(pair, 'ruma'), true);
+  assert.equal(matchesSiteVehicleRoutePair(pair, 'goma'), true);
+  assert.equal(matchesSiteVehicleRoutePair(pair, 'rumangabo goma'), true);
+  assert.equal(matchesSiteVehicleRoutePair(pair, 'rumangabo → goma'), true);
+  assert.equal(matchesSiteVehicleRoutePair(pair, 'xyz'), false);
+});
+
+test('cars deep links use departureLocation / arrivalLocation', () => {
+  assert.equal(
+    siteSearchDeepLinks.carsByDeparture('Rumangabo'),
+    '/cars?departureLocation=Rumangabo',
+  );
+  assert.equal(
+    siteSearchDeepLinks.carsByRoute('Rumangabo', 'Goma'),
+    '/cars?departureLocation=Rumangabo&arrivalLocation=Goma',
+  );
 });

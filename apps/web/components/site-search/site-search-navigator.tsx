@@ -283,9 +283,13 @@ function SiteSearchNavigatorModal() {
           ) : null}
 
           {!loading && isEmpty ? (
-            <p className="px-4 py-6 text-center text-sm text-atg-muted">
-              {t('empty')}
-            </p>
+            <div
+              className="flex flex-col items-center gap-1 px-4 py-8 text-center"
+              data-testid="site-search-empty"
+            >
+              <p className="text-sm font-medium text-atg-fg">{t('empty')}</p>
+              <p className="max-w-sm text-xs text-atg-muted">{t('emptyHint')}</p>
+            </div>
           ) : null}
 
           {!loading && !hasResults && !isEmpty && groups.some((g) => g.error) ? (

@@ -35,6 +35,7 @@ import { CarConditionsSection } from './car-conditions-section';
 import { CarEquipmentSection } from './car-equipment-section';
 import { CarHeroMedia } from './car-hero-media';
 import { CarInfoSection } from './car-info-section';
+import { CarRouteMapSection } from './car-route-map-section';
 import { CarSpecBadges } from './car-spec-badges';
 
 export type CarDetailPageSearch = CarDetailSearchParams;
@@ -368,6 +369,23 @@ export function CarDetailPageContent({
               travelDate={detail.travelDate}
               t={c}
               locale={locale}
+            />
+
+            <CarRouteMapSection
+              departureCity={detail.route.departureCity}
+              arrivalCity={detail.route.arrivalCity}
+              labels={{
+                routeMapTitle: c.routeMapTitle,
+                routeMapAria: c.routeMapAria,
+                routeMapDeparture: c.routeMapDeparture,
+                routeMapArrival: c.routeMapArrival,
+                routeMapDuration: c.routeMapDuration,
+                routeMapDistance: c.routeMapDistance,
+                hourSingular: c.hourSingular,
+                hourPlural: c.hourPlural,
+                minuteSingular: c.minuteSingular,
+                minutePlural: c.minutePlural,
+              }}
             />
 
             <CarEquipmentSection

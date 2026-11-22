@@ -49,10 +49,18 @@ export const siteSearchDeepLinks = {
     return buildSearchRoute('flights', params);
   },
 
-  /** Listing voitures pré-rempli avec un lieu de prise en charge. */
-  carsByPickup: (pickupLocation: string) => {
+  /** Listing tronçons pré-rempli avec une ville de départ. */
+  carsByDeparture: (departureLocation: string) => {
     const params = new URLSearchParams();
-    params.set('pickupLocation', pickupLocation);
+    params.set('departureLocation', departureLocation);
+    return buildSearchRoute('cars', params);
+  },
+
+  /** Listing tronçons pré-rempli avec un couple départ → arrivée. */
+  carsByRoute: (departureLocation: string, arrivalLocation: string) => {
+    const params = new URLSearchParams();
+    params.set('departureLocation', departureLocation);
+    params.set('arrivalLocation', arrivalLocation);
     return buildSearchRoute('cars', params);
   },
 
