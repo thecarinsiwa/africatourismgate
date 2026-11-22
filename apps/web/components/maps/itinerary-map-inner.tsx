@@ -47,27 +47,27 @@ export function ItineraryMapInner({
         .join('|'),
     [points],
   );
+  // Stable snapshot for effects: only changes when coordinates/ids change.
+  const routePoints = useMemo(() => points, [pointsKey]);
   const latestPointsKeyRef = useRef(pointsKey);
   latestPointsKeyRef.current = pointsKey;
 
   // Fetch road geometry independently of the Leaflet mount lifecycle.
   useEffect(() => {
-    if (points.length < 2) {
+    if (routePoints.length < 2) {
       setRoutePath(null);
       return;
     }
 
     const requestKey = pointsKey;
-    setRoutePath(straightLineLatLngs(points));
+    setRoutePath(straightLineLatLngs(routePoints));
 
-    void fetchOsrmDrivingRoute(points).then((routed) => {
+    void fetchOsrmDrivingRoute(routePoints).then((routed) => {
       if (!routed?.length) return;
       if (latestPointsKeyRef.current !== requestKey) return;
       setRoutePath(routed);
     });
-    // pointsKey gates re-fetch; `points` is captured from the render that changed the key.
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional
-  }, [pointsKey]);
+  }, [pointsKey, routePoints]);
 
   useEffect(() => {
     const container = containerRef.current;
