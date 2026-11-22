@@ -554,6 +554,16 @@ export type Translations = {
     galleryPrevious: string;
     galleryNext: string;
     galleryCounter: (current: number, total: number) => string;
+    routeMapTitle: string;
+    routeMapAria: string;
+    routeMapDeparture: string;
+    routeMapArrival: string;
+    routeMapDuration: string;
+    routeMapDistance: string;
+    hourSingular: string;
+    hourPlural: string;
+    minuteSingular: string;
+    minutePlural: string;
   };
   cruises: {
     metaTitle: string;
